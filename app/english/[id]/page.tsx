@@ -10,9 +10,12 @@ import {
   Lightbulb,
   Star,
 } from "lucide-react";
+import dynamic from "next/dynamic";
 import PageLayout from "@/components/PageLayout";
 import { englishLessons } from "@/data/lessons";
 import { completeLesson } from "@/lib/progress";
+
+const PassagePlayer = dynamic(() => import("@/components/PassagePlayer"), { ssr: false });
 
 const STOP_WORDS = new Set([
   "the","a","an","is","are","was","were","in","on","at","to","of","and","or",
@@ -214,6 +217,7 @@ export default function EnglishLessonPage({ params }: Props) {
             <p className="text-xs text-gray-400 font-semibold uppercase tracking-wide mb-3">
               Read carefully
             </p>
+            <PassagePlayer passage={lesson.passage} />
             <div className="prose prose-sm max-w-none">
               {lesson.passage.split("\n\n").map((para, i) => (
                 <p key={i} className="text-gray-800 text-[15px] leading-[1.8] mb-4 last:mb-0">
