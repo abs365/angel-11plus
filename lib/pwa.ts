@@ -1,12 +1,16 @@
 /**
- * Registers the service worker and handles the update lifecycle.
+ * Service-worker registration and update detection.
  *
- * First install:  SW enters "installed" state with no previous controller →
- *                 we send SKIP_WAITING so it activates immediately.
+ * Design:
+ *  - The SW always calls self.skipWaiting() in its install handler, so it
+ *    activates immediately with no "waiting" gap.
+ *  - We capture whether a controller existed BEFORE registration.
+ *    · First install  → hadController is false → controllerchange is silent.
+ *    · Update deploy  → hadController is true  → controllerchange fires the
+ *                        sw-update-available event, prompting the user to reload.
  *
- * Update:         SW enters "installed" while an existing controller is active →
- *                 we dispatch "sw-update-available" so the UpdateToast can prompt
- *                 the user before reloading.
+ * This avoids the statechange/updatefound race that previously left the SW
+ * stuck in "waiting" on Android PWA cold-starts.
  */
 export function registerSW(): void {
   if (typeof window === 'undefined') return;
@@ -14,36 +18,38 @@ export function registerSW(): void {
 
   window.addEventListener('load', async () => {
     try {
+      // Snapshot before registration so we can distinguish install vs update.
+      const hadController = !!navigator.serviceWorker.controller;
+      console.log('[PWA] Registering SW. Had controller:', hadController);
+
       const reg = await navigator.serviceWorker.register('/sw.js', { scope: '/' });
+      console.log('[PWA] SW registered. State:', reg.active?.state ?? 'none active yet');
 
-      reg.addEventListener('updatefound', () => {
-        const worker = reg.installing;
-        if (!worker) return;
-
-        worker.addEventListener('statechange', () => {
-          if (worker.state !== 'installed') return;
-
-          if (navigator.serviceWorker.controller) {
-            // A new version is waiting while the old one is still running.
-            window.dispatchEvent(
-              new CustomEvent('sw-update-available', { detail: reg })
-            );
-          } else {
-            // No previous controller — first install. Activate immediately.
-            worker.postMessage({ type: 'SKIP_WAITING' });
-          }
-        });
+      // controllerchange fires when a new SW takes control of this client.
+      // With skipWaiting-in-install, this fires shortly after every new deploy.
+      navigator.serviceWorker.addEventListener('controllerchange', () => {
+        console.log('[PWA] Controller changed. Had controller:', hadController);
+        if (hadController) {
+          // An update just silently activated. Invite the user to reload.
+          window.dispatchEvent(
+            new CustomEvent('sw-update-available', { detail: reg })
+          );
+        }
+        // First install (hadController=false): SW is now active. No toast needed.
       });
 
-      // Handle the case where the user reloads the tab while a new SW is already
-      // waiting (e.g., tab was in the background during a deploy).
-      if (reg.waiting && navigator.serviceWorker.controller) {
+      // Edge case: a waiting worker exists on page load (e.g., user returned
+      // to a backgrounded tab after a deploy where skipWaiting was NOT yet in
+      // place — old SW build).  Show the toast so they can still update.
+      if (reg.waiting && hadController) {
+        console.log('[PWA] Found waiting SW on load — dispatching update event.');
         window.dispatchEvent(
           new CustomEvent('sw-update-available', { detail: reg })
         );
       }
+
     } catch (err) {
-      // SW failure is non-fatal — the app continues to work without it.
+      // SW failure is non-fatal — app continues to work without offline support.
       console.warn('[PWA] Service worker registration failed:', err);
     }
   });

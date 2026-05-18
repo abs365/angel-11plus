@@ -5,29 +5,18 @@ import { RefreshCw, X } from "lucide-react";
 
 export default function UpdateToast() {
   const [visible, setVisible] = useState(false);
-  const [reg, setReg] = useState<ServiceWorkerRegistration | null>(null);
 
   useEffect(() => {
-    const handler = (e: Event) => {
-      const detail = (e as CustomEvent<ServiceWorkerRegistration>).detail;
-      setReg(detail);
-      setVisible(true);
-    };
+    const handler = () => setVisible(true);
     window.addEventListener("sw-update-available", handler);
     return () => window.removeEventListener("sw-update-available", handler);
   }, []);
 
   function handleRefresh() {
-    if (reg?.waiting) {
-      // Tell the waiting SW to take over, then reload once it does.
-      navigator.serviceWorker.addEventListener(
-        "controllerchange",
-        () => window.location.reload(),
-        { once: true }
-      );
-      reg.waiting.postMessage({ type: "SKIP_WAITING" });
-    }
+    // The new SW already activated (skipWaiting is called in install).
+    // Just reload so the browser fetches fresh content under the new SW.
     setVisible(false);
+    window.location.reload();
   }
 
   if (!visible) return null;
