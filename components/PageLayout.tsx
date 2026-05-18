@@ -9,7 +9,7 @@ export default function PageLayout({ children }: PageLayoutProps) {
     <div className="min-h-screen bg-[#f8f7ff]">
       <Navigation />
       {/* Main content — offset for sidebar on md+ */}
-      <main className="md:ml-64 pb-20 md:pb-0 min-h-screen">
+      <main className="md:ml-64 pb-nav-safe md:pb-0 min-h-screen">
         {children}
       </main>
     </div>

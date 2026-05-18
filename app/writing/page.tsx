@@ -16,9 +16,16 @@ import {
 import PageLayout from "@/components/PageLayout";
 import { writingPrompts } from "@/data/writing";
 import { completeLesson } from "@/lib/progress";
-import WritingFeedback from "@/components/WritingFeedback";
+import dynamic from "next/dynamic";
 import type { WritingPrompt } from "@/types";
 import type { WritingFeedback as WritingFeedbackData } from "@/types/writing-feedback";
+
+// Lazy-load the feedback panel — only needed after submission, not on initial render.
+const WritingFeedback = dynamic(() => import("@/components/WritingFeedback"), {
+  loading: () => (
+    <div className="animate-pulse bg-gray-100 rounded-2xl h-48" aria-hidden="true" />
+  ),
+});
 
 type WritingState = "list" | "active" | "done";
 type FeedbackState = "idle" | "loading" | "ready" | "error";

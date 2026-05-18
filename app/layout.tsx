@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import { AuthProvider } from "@/components/providers/AuthProvider";
+import PWAProvider from "@/components/PWAProvider";
 
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? "https://angel11plus.com";
 
@@ -15,6 +16,13 @@ export const metadata: Metadata = {
     "Premium 11+ preparation platform for Essex CSSE and selective school entry. Adaptive practice in English, Maths, Vocabulary and Writing.",
 
   manifest: "/manifest.json",
+
+  // iOS PWA — enables "Add to Home Screen" full-screen mode.
+  appleWebApp: {
+    capable: true,
+    title: "Angel 11+",
+    statusBarStyle: "black-translucent",
+  },
 
   openGraph: {
     type: "website",
@@ -41,7 +49,7 @@ export const metadata: Metadata = {
   },
 
   robots: {
-    index: false,  // private educational platform — keep out of search engines
+    index: false, // private educational platform — keep out of search engines
     follow: false,
   },
 };
@@ -52,6 +60,8 @@ export const viewport: Viewport = {
   maximumScale: 1,
   userScalable: false,
   themeColor: "#7c3aed",
+  // Needed for iOS safe-area env() variables to work correctly in standalone mode.
+  viewportFit: "cover",
 };
 
 export default function RootLayout({
@@ -63,6 +73,7 @@ export default function RootLayout({
     <html lang="en" className="h-full">
       <body className="min-h-full antialiased">
         <AuthProvider>{children}</AuthProvider>
+        <PWAProvider />
       </body>
     </html>
   );
