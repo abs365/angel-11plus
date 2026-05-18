@@ -1,11 +1,39 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { BookOpen, Mail, ArrowRight, CheckCircle, AlertCircle } from "lucide-react";
 import { useAuth } from "@/components/providers/AuthProvider";
 
 type State = "idle" | "sending" | "sent" | "error";
+
+// Domains that are reserved for documentation or are well-known disposable services
+const BLOCKED_DOMAINS = new Set([
+  "example.com", "example.org", "example.net",
+  "test.com", "test.org", "test.net",
+  "fake.com", "fake.org",
+  "mailinator.com", "yopmail.com", "tempmail.com",
+  "guerrillamail.com", "10minutemail.com", "trashmail.com",
+  "sharklasers.com", "spam4.me", "dispostable.com",
+]);
+
+function validateEmail(raw: string): string | null {
+  const email = raw.trim();
+  // Reject spaces anywhere
+  if (/\s/.test(email)) return "Please enter a valid email address";
+  // Require local@domain.tld with TLD of at least 2 chars
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) return "Please enter a valid email address";
+  const domain = email.slice(email.indexOf("@") + 1).toLowerCase();
+  if (BLOCKED_DOMAINS.has(domain)) return "Please enter a valid email address";
+  return null;
+}
+
+function isRateLimitError(msg: string) {
+  return /rate.?limit|only request this after/i.test(msg);
+}
+
+// Minimum gap between Supabase calls to prevent rapid-fire submissions
+const DEBOUNCE_MS = 2_000;
 
 export default function LoginPage() {
   const { user, signInWithMagicLink } = useAuth();
@@ -13,6 +41,26 @@ export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [state, setState] = useState<State>("idle");
   const [errorMsg, setErrorMsg] = useState("");
+  const [rateLimitUntil, setRateLimitUntil] = useState<number | null>(null);
+  const [secondsLeft, setSecondsLeft] = useState(0);
+  const lastSubmitRef = useRef(0);
+
+  useEffect(() => {
+    if (!rateLimitUntil) return;
+
+    const id = setInterval(() => {
+      const remaining = Math.ceil((rateLimitUntil - Date.now()) / 1000);
+      if (remaining <= 0) {
+        clearInterval(id);
+        setSecondsLeft(0);
+        setRateLimitUntil(null);
+      } else {
+        setSecondsLeft(remaining);
+      }
+    }, 1000);
+
+    return () => clearInterval(id);
+  }, [rateLimitUntil]);
 
   // Already signed in — go to dashboard
   if (user) {
@@ -20,9 +68,31 @@ export default function LoginPage() {
     return null;
   }
 
+  function handleEmailChange(e: React.ChangeEvent<HTMLInputElement>) {
+    setEmail(e.target.value);
+    // Clear validation / auth errors as the user edits; keep rate-limit countdown running
+    if (state === "error" && secondsLeft === 0) {
+      setState("idle");
+      setErrorMsg("");
+    }
+  }
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!email.trim()) return;
+    if (secondsLeft > 0) return;
+
+    // Client-side validation — no debounce needed, no API call made
+    const validationError = validateEmail(email);
+    if (validationError) {
+      setState("error");
+      setErrorMsg(validationError);
+      return;
+    }
+
+    // Debounce guard for actual Supabase requests
+    const now = Date.now();
+    if (now - lastSubmitRef.current < DEBOUNCE_MS) return;
+    lastSubmitRef.current = now;
 
     setState("sending");
     setErrorMsg("");
@@ -31,7 +101,14 @@ export default function LoginPage() {
 
     if (error) {
       setState("error");
-      setErrorMsg(error);
+      if (isRateLimitError(error)) {
+        setErrorMsg("Please wait 60 seconds before requesting another magic link.");
+        const until = Date.now() + 60_000;
+        setRateLimitUntil(until);
+        setSecondsLeft(60);
+      } else {
+        setErrorMsg(error);
+      }
     } else {
       setState("sent");
     }
@@ -99,7 +176,7 @@ export default function LoginPage() {
                       id="email"
                       type="email"
                       value={email}
-                      onChange={(e) => setEmail(e.target.value)}
+                      onChange={handleEmailChange}
                       placeholder="you@example.com"
                       autoComplete="email"
                       autoFocus
@@ -118,7 +195,7 @@ export default function LoginPage() {
 
                 <button
                   type="submit"
-                  disabled={state === "sending" || !email.trim()}
+                  disabled={state === "sending" || !email.trim() || secondsLeft > 0}
                   className="flex items-center justify-center gap-2 w-full bg-purple-600 text-white rounded-xl py-4 font-semibold text-base hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                 >
                   {state === "sending" ? (
@@ -126,6 +203,8 @@ export default function LoginPage() {
                       <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
                       Sending link…
                     </>
+                  ) : secondsLeft > 0 ? (
+                    `Try again in ${secondsLeft}s`
                   ) : (
                     <>
                       Send magic link
