@@ -31,7 +31,7 @@ export default function WritingFeedback({ feedback }: WritingFeedbackProps) {
         <div className="flex items-center justify-between mb-3">
           <div>
             <p className="text-gray-400 text-xs font-semibold uppercase tracking-wide">
-              AI Tutor Analysis
+              Angel Smart Feedback
             </p>
             <p className="text-gray-900 font-bold text-lg mt-0.5">Your Writing Feedback</p>
           </div>

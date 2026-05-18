@@ -84,7 +84,7 @@ export default function WritingPage() {
       const data = await res.json();
 
       if (!res.ok) {
-        setFeedbackError(data.error ?? "Something went wrong. Please try again.");
+        setFeedbackError(data.error ?? "Smart feedback is temporarily unavailable. Please try again.");
         setFeedbackState("error");
         return;
       }
@@ -156,14 +156,14 @@ export default function WritingPage() {
             </div>
           </div>
 
-          {/* AI Feedback section */}
+          {/* Smart Feedback section */}
           {feedbackState === "idle" && (
             <button
               onClick={requestAIFeedback}
               className="w-full mb-5 flex items-center justify-center gap-2.5 bg-indigo-600 text-white rounded-xl py-4 font-semibold text-sm hover:bg-indigo-700 transition-colors"
             >
               <Sparkles size={16} />
-              Get AI Tutor Feedback
+              Get Angel Smart Feedback
             </button>
           )}
 
@@ -189,7 +189,7 @@ export default function WritingPage() {
                   d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
                 />
               </svg>
-              <p className="text-indigo-600 text-sm font-medium">Analysing your writing…</p>
+              <p className="text-indigo-600 text-sm font-medium">Preparing Angel Smart Feedback…</p>
             </div>
           )}
 
@@ -387,12 +387,12 @@ export default function WritingPage() {
           </p>
         </div>
 
-        {/* AI coaching note */}
+        {/* Smart coaching note */}
         <div className="flex items-center gap-2.5 bg-indigo-50 border border-indigo-100 rounded-xl px-4 py-3 mb-5">
           <Sparkles size={14} className="text-indigo-500 shrink-0" />
           <p className="text-indigo-700 text-sm">
             After submitting, you can request{" "}
-            <strong>AI tutor feedback</strong> — tailored analysis of your technique, strengths, and
+            <strong>Angel Smart Feedback</strong> — tailored analysis of your technique, strengths, and
             one specific improvement.
           </p>
         </div>

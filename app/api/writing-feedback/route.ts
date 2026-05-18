@@ -71,7 +71,7 @@ export async function POST(request: NextRequest) {
   const apiKey = process.env.OPENAI_API_KEY;
   if (!apiKey) {
     return NextResponse.json(
-      { error: "AI feedback is not configured on this server." },
+      { error: "Smart feedback is temporarily unavailable." },
       { status: 503 }
     );
   }
@@ -108,7 +108,7 @@ export async function POST(request: NextRequest) {
     });
   } catch {
     return NextResponse.json(
-      { error: "Could not reach the AI service. Please try again." },
+      { error: "Smart feedback is temporarily unavailable. Please check your connection." },
       { status: 502 }
     );
   }
@@ -117,7 +117,7 @@ export async function POST(request: NextRequest) {
     const errText = await openAiResponse.text().catch(() => "");
     console.error("OpenAI error:", openAiResponse.status, errText);
     return NextResponse.json(
-      { error: "AI service returned an error. Please try again." },
+      { error: "Smart feedback is temporarily unavailable. Please try again." },
       { status: 502 }
     );
   }

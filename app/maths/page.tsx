@@ -20,6 +20,14 @@ import { computeAdaptiveState } from "@/lib/adaptiveEngine";
 
 type Mode = "menu" | "reasoning" | "arithmetic" | "done";
 
+/** Strip currency symbols and spaces, then parse as float. Returns null for non-numeric input. */
+function normalizeNumeric(raw: string): number | null {
+  const cleaned = raw.replace(/\s/g, "").replace(/^[£$€]/, "");
+  if (!cleaned) return null;
+  const n = parseFloat(cleaned);
+  return isNaN(n) ? null : n;
+}
+
 const skillColors: Record<string, string> = {
   arithmetic: "bg-blue-100 text-blue-700",
   reasoning: "bg-purple-100 text-purple-700",
@@ -91,12 +99,23 @@ export default function MathsPage() {
 
   function checkAnswer() {
     if (!current) return;
-    const userAnswer = (answers[current.id] ?? "").trim().toLowerCase();
-    const correct = String(current.answer).toLowerCase();
-    const isCorrect =
-      userAnswer === correct ||
-      userAnswer.replace(/\s/g, "") === correct.replace(/\s/g, "") ||
-      userAnswer === correct.split(";")[0].trim().toLowerCase();
+    const userRaw = (answers[current.id] ?? "").trim().toLowerCase();
+    const correctRaw = String(current.answer).toLowerCase();
+
+    const userNum = normalizeNumeric(userRaw);
+    const correctNum = normalizeNumeric(correctRaw);
+
+    let isCorrect: boolean;
+    if (userNum !== null && correctNum !== null) {
+      isCorrect = Math.abs(userNum - correctNum) < 0.0001;
+    } else {
+      const userNorm = userRaw.replace(/\s/g, "");
+      const correctNorm = correctRaw.replace(/\s/g, "");
+      isCorrect =
+        userNorm === correctNorm ||
+        userRaw === correctRaw.split(";")[0].trim();
+    }
+
     setChecked((prev) => ({ ...prev, [current.id]: isCorrect }));
     recordSkillResult(current.skill, isCorrect);
   }

@@ -21,7 +21,7 @@ export const metadata: Metadata = {
     siteName: "Angel 11+",
     title: "Angel 11+ — Selective School Preparation",
     description:
-      "Adaptive 11+ exam preparation for Essex CSSE. English comprehension, Maths reasoning, Vocabulary and AI-powered writing coaching.",
+      "Adaptive 11+ exam preparation for Essex CSSE. English comprehension, Maths reasoning, Vocabulary and Smart writing feedback.",
     url: APP_URL,
     // og:image — add /og-image.png (1200×630) once brand assets are ready
     // images: [{ url: "/og-image.png", width: 1200, height: 630 }],
@@ -31,7 +31,7 @@ export const metadata: Metadata = {
     card: "summary",
     title: "Angel 11+ — Selective School Preparation",
     description:
-      "Adaptive 11+ exam prep for Essex CSSE. English, Maths, Vocabulary, AI writing coach.",
+      "Adaptive 11+ exam prep for Essex CSSE. English, Maths, Vocabulary, Smart writing feedback.",
     // images: ["/og-image.png"],  // uncomment when brand asset exists
   },
 

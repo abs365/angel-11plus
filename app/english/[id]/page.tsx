@@ -14,6 +14,52 @@ import PageLayout from "@/components/PageLayout";
 import { englishLessons } from "@/data/lessons";
 import { completeLesson } from "@/lib/progress";
 
+const STOP_WORDS = new Set([
+  "the","a","an","is","are","was","were","in","on","at","to","of","and","or",
+  "but","that","this","with","as","it","its","he","she","they","his","her",
+  "their","we","be","been","being","have","has","had","do","does","did","for",
+  "from","by","not","which","who","what","how","when","there","more","so",
+  "than","if","up","into","over","after","before","about","would","could",
+  "should","make","use","also","very","just","even","like","some","all",
+  "one","two","no","can","will","may","might","much","then","these","those",
+  "my","your","our","him","them","us","me","you","said","says",
+]);
+
+function extractKeywords(text: string): string[] {
+  return [...new Set(
+    text
+      .toLowerCase()
+      .replace(/[^a-z\s]/g, " ")
+      .split(/\s+/)
+      .filter((w) => w.length > 3 && !STOP_WORDS.has(w))
+  )];
+}
+
+/**
+ * Rubric: 0 = blank/unrelated, 1 = partial/vague, 2 = correct with evidence.
+ * Scaled to actual question marks.
+ */
+function scoreAnswer(userAnswer: string, modelAnswer: string | undefined, maxMarks: number): number {
+  const trimmed = userAnswer.trim();
+  if (!trimmed || trimmed.length < 8) return 0;
+
+  if (!modelAnswer) {
+    return trimmed.length >= 40 ? maxMarks : Math.max(1, Math.round(maxMarks / 2));
+  }
+
+  const keywords = extractKeywords(modelAnswer);
+  const userLower = trimmed.toLowerCase();
+  const hits = keywords.filter((kw) => userLower.includes(kw)).length;
+  const ratio = keywords.length > 0 ? hits / keywords.length : 0;
+  // Length threshold scales with marks: 2-mark ≈ 56, 3-mark ≈ 64, 4-mark ≈ 72
+  const lengthOk = trimmed.length >= 40 + maxMarks * 8;
+
+  if (trimmed.length < 15 && hits === 0) return 0;
+  if (hits === 0 && trimmed.length < 60) return 0;
+  if (lengthOk && ratio >= 0.18) return maxMarks;
+  return Math.max(1, Math.round(maxMarks / 2));
+}
+
 interface Props {
   params: Promise<{ id: string }>;
 }
@@ -53,8 +99,13 @@ export default function EnglishLessonPage({ params }: Props) {
   const answeredCount = lesson.questions.filter((q) => (answers[q.id] ?? "").trim().length > 0).length;
 
   function handleSubmit() {
-    const xp = answeredCount * 10 + 20;
-    completeLesson(lesson!.id, Math.round((answeredCount / lesson!.questions.length) * 100), xp);
+    const earnedMarks = lesson!.questions.reduce(
+      (sum, q) => sum + scoreAnswer(answers[q.id] ?? "", q.modelAnswer, q.marks),
+      0
+    );
+    const score = totalMarks > 0 ? Math.round((earnedMarks / totalMarks) * 100) : 0;
+    const xp = Math.max(10, Math.round((earnedMarks / Math.max(totalMarks, 1)) * 50) + 10);
+    completeLesson(lesson!.id, score, xp);
     setXpGained(xp);
     setSubmitted(true);
     window.scrollTo({ top: 0, behavior: "smooth" });
