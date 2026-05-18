@@ -1,6 +1,7 @@
 import type { UserProgress } from "@/types";
 import type { AnalyticsReport, SubjectAnalytics } from "@/types/analytics";
 import type { AdaptiveState, AdaptiveTier, DailyMission, MissionItem } from "@/types/adaptive";
+import { getTopReplayItem } from "./replayEngine";
 
 // ─── Tier determination ───────────────────────────────────────────────────────
 
@@ -86,7 +87,8 @@ const SUBJECT_MINUTES: Record<string, number> = {
 
 function reasonText(
   subject: SubjectAnalytics,
-  priority: "primary" | "secondary" | "review"
+  priority: "primary" | "secondary" | "review",
+  weakSkillLabel?: string
 ): string {
   if (priority === "review") {
     return `You're strong here — a quick session keeps your ${subject.label.toLowerCase()} score exam-ready.`;
@@ -111,7 +113,10 @@ function reasonText(
       writing: `Your writing average is ${subject.avgScore}% — use the checklist actively as you write, not afterwards.`,
       "mock-test": `Your mock average is ${subject.avgScore}% — identify which section cost you most marks and focus there.`,
     };
-    return copy[subject.subject] ?? `Your ${subject.label.toLowerCase()} score (${subject.avgScore}%) has room to grow — focused practice here pays off.`;
+    const base = copy[subject.subject] ?? `Your ${subject.label.toLowerCase()} score (${subject.avgScore}%) has room to grow — focused practice here pays off.`;
+    return weakSkillLabel
+      ? `${base} Weakest skill: ${weakSkillLabel.toLowerCase()}.`
+      : base;
   }
 
   // developing
@@ -129,7 +134,8 @@ function buildItem(
   subject: SubjectAnalytics,
   tier: AdaptiveTier,
   priority: "primary" | "secondary" | "review",
-  index: number
+  index: number,
+  weakSkillLabel?: string
 ): MissionItem {
   const minutes = Math.round(
     SUBJECT_MINUTES[subject.subject] * (priority === "review" ? 0.5 : 1)
@@ -142,7 +148,7 @@ function buildItem(
         ? `Review ${SUBJECT_LABELS[subject.subject]}`
         : SUBJECT_LABELS[subject.subject],
     href: `/${subject.subject}`,
-    reason: reasonText(subject, priority),
+    reason: reasonText(subject, priority, weakSkillLabel),
     tier,
     priority,
     estimatedMinutes: Math.max(10, minutes),
@@ -164,7 +170,8 @@ function urgency(s: SubjectAnalytics): number {
 function buildDailyMission(
   report: AnalyticsReport,
   englishTier: AdaptiveTier,
-  mathsTier: AdaptiveTier
+  mathsTier: AdaptiveTier,
+  p: UserProgress
 ): DailyMission {
   // Brand-new user — fixed starter mission
   if (report.totalSessions === 0) {
@@ -199,6 +206,14 @@ function buildDailyMission(
     };
   }
 
+  // Find the weakest skill per subject for richer reason text
+  const weakSkillBySubject = new Map<string, string>();
+  for (const skill of report.skills) {
+    if (skill.status === "weak" && !weakSkillBySubject.has(skill.group)) {
+      weakSkillBySubject.set(skill.group, skill.label);
+    }
+  }
+
   const nonMock = report.subjects.filter((s) => s.subject !== "mock-test");
   const sorted = [...nonMock].sort((a, b) => urgency(b) - urgency(a));
 
@@ -213,7 +228,7 @@ function buildDailyMission(
         : primary.subject === "maths"
         ? mathsTier
         : tierFromSubject(primary);
-    items.push(buildItem(primary, tier, "primary", 0));
+    items.push(buildItem(primary, tier, "primary", 0, weakSkillBySubject.get(primary.subject)));
   }
 
   // Secondary — second-most urgent (only if meaningfully urgent)
@@ -225,7 +240,7 @@ function buildDailyMission(
         : secondary.subject === "maths"
         ? mathsTier
         : tierFromSubject(secondary);
-    items.push(buildItem(secondary, tier, "secondary", 1));
+    items.push(buildItem(secondary, tier, "secondary", 1, weakSkillBySubject.get(secondary.subject)));
   }
 
   // Review — a strong subject to maintain (different from primary + secondary)
@@ -244,6 +259,24 @@ function buildDailyMission(
         ? mathsTier
         : tierFromSubject(reviewSubject);
     items.push(buildItem(reviewSubject, tier, "review", 2));
+  }
+
+  // Replay item — surface the most urgent weak skill if it targets a new subject
+  const topReplay = getTopReplayItem(p, report);
+  if (topReplay && items.length < 3) {
+    const alreadyCovered = items.some((i) => i.subject === topReplay.subject);
+    if (!alreadyCovered) {
+      items.push({
+        id: "mission-replay",
+        subject: topReplay.subject,
+        label: `Revise: ${topReplay.skillLabel}`,
+        href: topReplay.href,
+        reason: topReplay.reason,
+        tier: "foundation",
+        priority: "secondary",
+        estimatedMinutes: 15,
+      });
+    }
   }
 
   // Mock test nudge — after 5+ sessions if not yet attempted
@@ -311,6 +344,6 @@ export function computeAdaptiveState(
     mathsTier,
     recommendedEnglishLesson: pickEnglishLesson(englishTier, progress.completedLessons),
     recommendedMathsMode: pickMathsMode(report, progress.completedLessons),
-    dailyMission: buildDailyMission(report, englishTier, mathsTier),
+    dailyMission: buildDailyMission(report, englishTier, mathsTier, progress),
   };
 }

@@ -1,5 +1,6 @@
 import type { SubjectAnalytics, SkillAnalytics } from "./analytics";
 import type { BadgeDefinition } from "./gamification";
+import type { SubjectConfidence } from "./adaptiveDifficulty";
 
 export type ExamReadiness = "not-ready" | "building" | "nearly-ready" | "exam-ready";
 
@@ -32,4 +33,5 @@ export interface ParentReport {
   earnedBadges: BadgeDefinition[];
   weeklyXP: number;
   hasEnoughData: boolean;
+  subjectConfidence: SubjectConfidence[];
 }

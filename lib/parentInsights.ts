@@ -3,6 +3,7 @@ import type { AnalyticsReport, SubjectAnalytics } from "@/types/analytics";
 import type { GamificationState } from "@/types/gamification";
 import type { ExamReadiness, FocusArea, ParentInsight, ParentReport } from "@/types/parent";
 import { XP_MILESTONES, BADGE_DEFINITIONS } from "./gamification";
+import { computeAdaptiveProfile } from "./adaptiveDifficulty";
 
 // ─── Exam readiness ───────────────────────────────────────────────────────────
 
@@ -46,7 +47,8 @@ export const READINESS_CONFIG: Record<
 
 function getExamReadiness(
   p: UserProgress,
-  report: AnalyticsReport
+  report: AnalyticsReport,
+  overallConfidence: number
 ): ExamReadiness {
   const sessions = report.totalSessions;
   const score = report.overallScore;
@@ -54,8 +56,9 @@ function getExamReadiness(
   const hasMock = p.completedLessons.includes("mock-test");
 
   if (sessions < 3) return "not-ready";
-  if (score >= 72 && sessions >= 8 && hasMock && attempted >= 3) return "exam-ready";
-  if (score >= 55 && sessions >= 5 && attempted >= 2) return "nearly-ready";
+  // Confidence >= 70 confirms consistency + accuracy together
+  if (score >= 70 && sessions >= 8 && hasMock && attempted >= 3 && overallConfidence >= 70) return "exam-ready";
+  if (score >= 55 && sessions >= 5 && attempted >= 2 && overallConfidence >= 45) return "nearly-ready";
   return "building";
 }
 
@@ -297,7 +300,8 @@ export function computeParentReport(
   report: AnalyticsReport,
   gamification: GamificationState
 ): ParentReport {
-  const readiness = getExamReadiness(p, report);
+  const profile = computeAdaptiveProfile(p, report);
+  const readiness = getExamReadiness(p, report, profile.overallConfidence);
   const earnedBadges = BADGE_DEFINITIONS.filter((b) =>
     gamification.earnedIds.includes(b.id)
   );
@@ -318,5 +322,6 @@ export function computeParentReport(
     earnedBadges,
     weeklyXP: getWeeklyXP(p),
     hasEnoughData: report.totalSessions >= 1,
+    subjectConfidence: profile.subjectConfidence,
   };
 }

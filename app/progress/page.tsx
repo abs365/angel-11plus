@@ -19,9 +19,12 @@ import { computeGamification, BADGE_DEFINITIONS } from "@/lib/gamification";
 import InsightCard from "@/components/InsightCard";
 import { SubjectBar, SkillBar } from "@/components/SubjectBreakdown";
 import BadgeCard from "@/components/BadgeCard";
+import DifficultyBadge from "@/components/DifficultyBadge";
+import { computeAdaptiveProfile } from "@/lib/adaptiveDifficulty";
 import type { UserProgress } from "@/types";
 import type { AnalyticsReport } from "@/types/analytics";
 import type { GamificationState } from "@/types/gamification";
+import type { AdaptiveProfile } from "@/types/adaptiveDifficulty";
 
 const lessonNames: Record<string, string> = {
   "eng-001": "The Lighthouse Mystery",
@@ -41,12 +44,15 @@ export default function ProgressPage() {
   const [progress, setProgress] = useState<UserProgress | null>(null);
   const [report, setReport] = useState<AnalyticsReport | null>(null);
   const [gamification, setGamification] = useState<GamificationState | null>(null);
+  const [adaptiveProfile, setAdaptiveProfile] = useState<AdaptiveProfile | null>(null);
 
   useEffect(() => {
     const p = getProgress();
+    const r = computeAnalytics(p);
     setProgress(p);
-    setReport(computeAnalytics(p));
+    setReport(r);
     setGamification(computeGamification(p));
+    setAdaptiveProfile(computeAdaptiveProfile(p, r));
   }, []);
 
   function resetProgress() {
@@ -295,6 +301,54 @@ export default function ProgressPage() {
                 ))}
               </div>
             </div>
+
+            {/* Learning confidence — only when sessions exist */}
+            {adaptiveProfile && adaptiveProfile.subjectConfidence.some((c) => c.score > 0) && (
+              <div className="bg-white rounded-2xl border border-gray-100 p-5 mb-4">
+                <div className="mb-4">
+                  <h2 className="text-gray-900 font-semibold">Learning Confidence</h2>
+                  <p className="text-gray-400 text-xs mt-0.5">
+                    Combines accuracy and practice consistency per subject
+                  </p>
+                </div>
+                <div className="flex flex-col gap-4">
+                  {adaptiveProfile.subjectConfidence
+                    .filter((c) => c.score > 0)
+                    .map((c) => {
+                      const barColor =
+                        c.score >= 70 ? "bg-green-500"
+                        : c.score >= 50 ? "bg-amber-400"
+                        : "bg-red-400";
+                      return (
+                        <div key={c.subject} className="flex items-center gap-4">
+                          <div className="w-24 shrink-0">
+                            <p className="text-gray-700 text-sm font-medium capitalize">
+                              {c.subject === "mock-test" ? "Mock Test" : c.subject.charAt(0).toUpperCase() + c.subject.slice(1)}
+                            </p>
+                            <div className="mt-1">
+                              <DifficultyBadge tier={c.tier} />
+                            </div>
+                          </div>
+                          <div className="flex-1">
+                            <div className="flex items-center justify-between mb-1">
+                              <span className="text-xs text-gray-500 font-medium">{c.score}%</span>
+                              <span className="text-[10px] text-gray-300">
+                                accuracy {c.accuracy}% · consistency {c.consistency}%
+                              </span>
+                            </div>
+                            <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+                              <div
+                                className={`h-full rounded-full transition-all duration-700 ${barColor}`}
+                                style={{ width: `${c.score}%` }}
+                              />
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
+                </div>
+              </div>
+            )}
 
             {/* Skill analysis — only when there's enough data */}
             {report.skills.length > 0 && (

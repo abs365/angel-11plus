@@ -27,6 +27,8 @@ import { computeGamification, BADGE_DEFINITIONS } from "@/lib/gamification";
 import { computeParentReport, READINESS_CONFIG } from "@/lib/parentInsights";
 import type { ParentReport } from "@/types/parent";
 import type { SubjectAnalytics } from "@/types/analytics";
+import type { SubjectConfidence } from "@/types/adaptiveDifficulty";
+import DifficultyBadge from "@/components/DifficultyBadge";
 
 // ─── Subject icon map ────────────────────────────────────────────────────────
 
@@ -202,6 +204,7 @@ export default function ParentDashboardPage() {
                   const Icon = SUBJECT_ICONS[s.subject] ?? BookOpen;
                   const colors = SUBJECT_COLORS[s.subject];
                   const sl = statusLabel(s.status);
+                  const conf = report.subjectConfidence.find((c) => c.subject === s.subject);
                   return (
                     <div key={s.subject} className="bg-white rounded-xl p-4 flex items-center gap-3">
                       <div className={`w-9 h-9 rounded-lg flex items-center justify-center shrink-0 ${colors.bg}`}>
@@ -210,9 +213,14 @@ export default function ParentDashboardPage() {
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center justify-between mb-1.5">
                           <span className="text-sm font-semibold text-gray-900">{s.label}</span>
-                          <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${sl.className}`}>
-                            {sl.text}
-                          </span>
+                          <div className="flex items-center gap-1.5">
+                            {conf && conf.score > 0 && (
+                              <DifficultyBadge tier={conf.tier} />
+                            )}
+                            <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${sl.className}`}>
+                              {sl.text}
+                            </span>
+                          </div>
                         </div>
                         {s.attempts > 0 ? (
                           <>
@@ -223,7 +231,9 @@ export default function ParentDashboardPage() {
                               />
                             </div>
                             <p className="text-xs text-gray-400 mt-1">
-                              Avg {s.avgScore}% · {s.attempts} session{s.attempts !== 1 ? "s" : ""}
+                              Avg {s.avgScore}%
+                              {conf && conf.score > 0 && ` · Confidence ${conf.score}%`}
+                              {` · ${s.attempts} session${s.attempts !== 1 ? "s" : ""}`}
                             </p>
                           </>
                         ) : (
