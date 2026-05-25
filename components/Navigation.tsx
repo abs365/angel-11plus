@@ -13,6 +13,7 @@ import {
   LogIn,
   LogOut,
   User,
+  Users,
 } from "lucide-react";
 import { useAuth } from "@/components/providers/AuthProvider";
 
@@ -24,6 +25,7 @@ const navItems = [
   { href: "/writing", label: "Writing", icon: Pencil },
   { href: "/mock-test", label: "Mock", icon: ClipboardList },
   { href: "/progress", label: "Progress", icon: BarChart2 },
+  { href: "/parent", label: "Parent", icon: Users, sidebarOnly: true, badge: "Beta" },
 ];
 
 export default function Navigation() {
@@ -46,7 +48,7 @@ export default function Navigation() {
         </div>
 
         <div className="flex flex-col gap-1 flex-1">
-          {navItems.map(({ href, label, icon: Icon }) => {
+          {navItems.map(({ href, label, icon: Icon, badge }) => {
             const active = pathname === href || pathname.startsWith(href + "/");
             return (
               <Link
@@ -63,6 +65,11 @@ export default function Navigation() {
                   className={active ? "text-purple-600" : "text-gray-400"}
                 />
                 {label}
+                {badge && (
+                  <span className="text-[9px] font-semibold bg-purple-100 text-purple-500 px-1.5 py-0.5 rounded-full leading-none">
+                    {badge}
+                  </span>
+                )}
                 {active && (
                   <span className="ml-auto w-1.5 h-1.5 rounded-full bg-purple-500" />
                 )}
@@ -109,7 +116,7 @@ export default function Navigation() {
       {/* Mobile bottom nav */}
       <nav className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white border-t border-gray-100 px-2 pb-safe">
         <div className="flex justify-around items-center h-16">
-          {navItems.map(({ href, label, icon: Icon }) => {
+          {navItems.filter((item) => !item.sidebarOnly).map(({ href, label, icon: Icon }) => {
             const active = pathname === href || pathname.startsWith(href + "/");
             return (
               <Link
