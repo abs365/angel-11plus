@@ -15,6 +15,10 @@ import {
   User,
   Users,
   MapPin,
+  Brain,
+  Eye,
+  Box,
+  Hash,
 } from "lucide-react";
 import { useAuth } from "@/components/providers/AuthProvider";
 
@@ -28,6 +32,10 @@ const navItems = [
   { href: "/progress", label: "Progress", icon: BarChart2 },
   { href: "/parent", label: "Parent", icon: Users, sidebarOnly: true, badge: "Beta" },
   { href: "/pathways", label: "Pathway", icon: MapPin, sidebarOnly: true },
+  { href: "/verbal-reasoning", label: "Verbal", icon: Brain, sidebarOnly: true },
+  { href: "/non-verbal-reasoning", label: "Non-Verbal", icon: Eye, sidebarOnly: true },
+  { href: "/spatial-reasoning", label: "Spatial", icon: Box, sidebarOnly: true },
+  { href: "/numerical-reasoning", label: "Numerical", icon: Hash, sidebarOnly: true },
 ];
 
 export default function Navigation() {

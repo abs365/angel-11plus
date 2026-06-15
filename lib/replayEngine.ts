@@ -18,6 +18,10 @@ const SKILL_SUBJECT: Partial<Record<SkillType, ReplayItem["subject"]>> = {
   pattern:       "maths",
   fractions:     "maths",
   writing:       "writing",
+  "verbal-reasoning":     "verbal-reasoning",
+  "non-verbal-reasoning": "non-verbal-reasoning",
+  "spatial-reasoning":    "spatial-reasoning",
+  "numerical-reasoning":  "numerical-reasoning",
 };
 
 const SKILL_HREF: Partial<Record<SkillType, string>> = {
@@ -34,6 +38,10 @@ const SKILL_HREF: Partial<Record<SkillType, string>> = {
   pattern:       "/maths",
   fractions:     "/maths",
   writing:       "/writing",
+  "verbal-reasoning":     "/verbal-reasoning",
+  "non-verbal-reasoning": "/non-verbal-reasoning",
+  "spatial-reasoning":    "/spatial-reasoning",
+  "numerical-reasoning":  "/numerical-reasoning",
 };
 
 const REPLAY_REASONS: Partial<Record<SkillType, string>> = {
@@ -50,6 +58,10 @@ const REPLAY_REASONS: Partial<Record<SkillType, string>> = {
   pattern:        "Sequences are weak — write each term out explicitly before looking for the rule.",
   fractions:      "Fractions accuracy is low — find a common denominator as the very first step, every time.",
   writing:        "Writing feedback shows room to improve — use the checklist actively while writing, not after.",
+  "verbal-reasoning":     "Verbal Reasoning needs work — focus on identifying word patterns and letter codes before answering.",
+  "non-verbal-reasoning": "Non-Verbal Reasoning is below target — look for rotation, reflection and counting rules in each pattern.",
+  "spatial-reasoning":    "Spatial Reasoning needs attention — practise folding and rotation mentally before attempting each question.",
+  "numerical-reasoning":  "Numerical Reasoning needs focus — read each question twice and identify the mathematical relationship first.",
 };
 
 // ─── Public API ───────────────────────────────────────────────────────────────

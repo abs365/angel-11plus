@@ -6,7 +6,7 @@ interface SubjectCardProps {
   title: string;
   description: string;
   icon: LucideIcon;
-  color: "purple" | "blue" | "green" | "orange" | "pink" | "indigo";
+  color: "purple" | "blue" | "green" | "orange" | "pink" | "indigo" | "violet" | "teal" | "cyan" | "rose";
   badge?: string;
 }
 
@@ -64,6 +64,42 @@ const colorMap = {
     border: "border-indigo-100",
     hover: "hover:bg-indigo-100",
     badge: "bg-indigo-100 text-indigo-700",
+  },
+  violet: {
+    bg: "bg-violet-50",
+    icon: "bg-violet-100 text-violet-600",
+    title: "text-violet-900",
+    desc: "text-violet-600",
+    border: "border-violet-100",
+    hover: "hover:bg-violet-100",
+    badge: "bg-violet-100 text-violet-700",
+  },
+  teal: {
+    bg: "bg-teal-50",
+    icon: "bg-teal-100 text-teal-600",
+    title: "text-teal-900",
+    desc: "text-teal-600",
+    border: "border-teal-100",
+    hover: "hover:bg-teal-100",
+    badge: "bg-teal-100 text-teal-700",
+  },
+  cyan: {
+    bg: "bg-cyan-50",
+    icon: "bg-cyan-100 text-cyan-600",
+    title: "text-cyan-900",
+    desc: "text-cyan-600",
+    border: "border-cyan-100",
+    hover: "hover:bg-cyan-100",
+    badge: "bg-cyan-100 text-cyan-700",
+  },
+  rose: {
+    bg: "bg-rose-50",
+    icon: "bg-rose-100 text-rose-600",
+    title: "text-rose-900",
+    desc: "text-rose-600",
+    border: "border-rose-100",
+    hover: "hover:bg-rose-100",
+    badge: "bg-rose-100 text-rose-700",
   },
 };
 

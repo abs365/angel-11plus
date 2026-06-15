@@ -21,6 +21,10 @@ import {
   CheckCircle,
   Info,
   MapPin,
+  Brain,
+  Eye,
+  Box,
+  Hash,
 } from "lucide-react";
 import { getProgress, getSelectedPathwayId } from "@/lib/progress";
 import { computeAnalytics } from "@/lib/analytics";
@@ -41,6 +45,10 @@ const SUBJECT_ICONS: Record<string, React.ComponentType<{ size?: number; classNa
   vocabulary: BookMarked,
   writing: Pencil,
   "mock-test": ClipboardList,
+  "verbal-reasoning": Brain,
+  "non-verbal-reasoning": Eye,
+  "spatial-reasoning": Box,
+  "numerical-reasoning": Hash,
 };
 
 const SUBJECT_COLORS: Record<string, { bar: string; bg: string; text: string }> = {
@@ -49,6 +57,10 @@ const SUBJECT_COLORS: Record<string, { bar: string; bg: string; text: string }> 
   vocabulary: { bar: "bg-green-500", bg: "bg-green-50", text: "text-green-700" },
   writing: { bar: "bg-orange-500", bg: "bg-orange-50", text: "text-orange-700" },
   "mock-test": { bar: "bg-pink-500", bg: "bg-pink-50", text: "text-pink-700" },
+  "verbal-reasoning": { bar: "bg-violet-500", bg: "bg-violet-50", text: "text-violet-700" },
+  "non-verbal-reasoning": { bar: "bg-cyan-500", bg: "bg-cyan-50", text: "text-cyan-700" },
+  "spatial-reasoning": { bar: "bg-teal-500", bg: "bg-teal-50", text: "text-teal-700" },
+  "numerical-reasoning": { bar: "bg-rose-500", bg: "bg-rose-50", text: "text-rose-700" },
 };
 
 // ─── Status label ────────────────────────────────────────────────────────────
@@ -279,6 +291,47 @@ export default function ParentDashboardPage() {
                     </div>
                   );
                 })}
+              </div>
+            </section>
+
+            {/* Reasoning Readiness */}
+            <section>
+              <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">
+                Reasoning Readiness
+              </h2>
+              <div className="space-y-2">
+                {report.subjects
+                  .filter((s) => ["verbal-reasoning", "non-verbal-reasoning", "spatial-reasoning", "numerical-reasoning"].includes(s.subject))
+                  .map((s) => {
+                    const Icon = SUBJECT_ICONS[s.subject] ?? Brain;
+                    const colors = SUBJECT_COLORS[s.subject] ?? { bar: "bg-gray-500", bg: "bg-gray-50", text: "text-gray-700" };
+                    const sl = statusLabel(s.status);
+                    return (
+                      <div key={s.subject} className="bg-white rounded-xl p-4 flex items-center gap-3">
+                        <div className={`w-9 h-9 rounded-lg flex items-center justify-center shrink-0 ${colors.bg}`}>
+                          <Icon size={17} className={colors.text} />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center justify-between mb-1.5">
+                            <span className="text-sm font-semibold text-gray-900">{s.label}</span>
+                            <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${sl.className}`}>
+                              {sl.text}
+                            </span>
+                          </div>
+                          {s.attempts > 0 ? (
+                            <>
+                              <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                                <div className={`h-full rounded-full ${colors.bar}`} style={{ width: `${s.avgScore}%` }} />
+                              </div>
+                              <p className="text-xs text-gray-400 mt-1">Avg {s.avgScore}% · {s.attempts} session{s.attempts !== 1 ? "s" : ""}</p>
+                            </>
+                          ) : (
+                            <p className="text-xs text-gray-400">No sessions yet</p>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
               </div>
             </section>
 

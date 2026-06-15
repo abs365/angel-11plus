@@ -14,6 +14,10 @@ import {
   Clock,
   CheckCircle,
   MapPin,
+  Brain,
+  Eye,
+  Box,
+  Hash,
 } from "lucide-react";
 import PageLayout from "@/components/PageLayout";
 import SubjectCard from "@/components/SubjectCard";
@@ -33,7 +37,7 @@ import type { DailyMission as DailyMissionData } from "@/types/adaptive";
 import type { WeeklyGoal } from "@/types/gamification";
 import type { Pathway } from "@/types/pathway";
 
-const subjects = [
+const coreSubjects = [
   {
     href: "/english",
     title: "English Comprehension",
@@ -80,6 +84,41 @@ const subjects = [
     description: "Track your scores, streaks, XP and completed lessons.",
     icon: BarChart2,
     color: "indigo" as const,
+  },
+];
+
+const reasoningSubjects = [
+  {
+    href: "/verbal-reasoning",
+    title: "Verbal Reasoning",
+    description: "Word analogies, letter codes, hidden words & sequences.",
+    icon: Brain,
+    color: "violet" as const,
+    badge: "GL · CEM · ISEB",
+  },
+  {
+    href: "/non-verbal-reasoning",
+    title: "Non-Verbal Reasoning",
+    description: "Pattern grids, rotation, reflection & symbol sequences.",
+    icon: Eye,
+    color: "cyan" as const,
+    badge: "GL · ISEB",
+  },
+  {
+    href: "/spatial-reasoning",
+    title: "Spatial Reasoning",
+    description: "Paper folding, 3D shapes, symmetry & compass directions.",
+    icon: Box,
+    color: "teal" as const,
+    badge: "Independent",
+  },
+  {
+    href: "/numerical-reasoning",
+    title: "Numerical Reasoning",
+    description: "Number patterns, ratio, averages & data interpretation.",
+    icon: Hash,
+    color: "rose" as const,
+    badge: "CEM · GL · ISEB",
   },
 ];
 
@@ -267,9 +306,22 @@ export default function DashboardPage() {
           </p>
         </div>
 
-        {/* Subject cards grid */}
+        {/* Core subject cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {subjects.map((subject) => (
+          {coreSubjects.map((subject) => (
+            <SubjectCard key={subject.href} {...subject} />
+          ))}
+        </div>
+
+        {/* Reasoning section */}
+        <div className="mt-8 mb-4">
+          <h2 className="text-gray-900 font-bold text-xl">Reasoning Skills</h2>
+          <p className="text-gray-400 text-sm mt-0.5">
+            Required for GL, CEM, ISEB and many independent school pathways
+          </p>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {reasoningSubjects.map((subject) => (
             <SubjectCard key={subject.href} {...subject} />
           ))}
         </div>

@@ -10,7 +10,8 @@ export interface SubjectConfidence {
 
 export interface ReplayItem {
   id: string;
-  subject: "english" | "maths" | "vocabulary" | "writing" | "mock-test";
+  subject: "english" | "maths" | "vocabulary" | "writing" | "mock-test"
+    | "verbal-reasoning" | "non-verbal-reasoning" | "spatial-reasoning" | "numerical-reasoning";
   skillLabel: string;
   href: string;
   urgency: number;   // 0–100, higher = more urgent to revisit

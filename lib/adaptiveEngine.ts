@@ -75,6 +75,10 @@ const SUBJECT_LABELS: Record<string, string> = {
   vocabulary: "Vocabulary Builder",
   writing: "Creative Writing",
   "mock-test": "Mock Test",
+  "verbal-reasoning": "Verbal Reasoning",
+  "non-verbal-reasoning": "Non-Verbal Reasoning",
+  "spatial-reasoning": "Spatial Reasoning",
+  "numerical-reasoning": "Numerical Reasoning",
 };
 
 const SUBJECT_MINUTES: Record<string, number> = {
@@ -83,6 +87,10 @@ const SUBJECT_MINUTES: Record<string, number> = {
   vocabulary: 10,
   writing: 30,
   "mock-test": 45,
+  "verbal-reasoning": 15,
+  "non-verbal-reasoning": 15,
+  "spatial-reasoning": 15,
+  "numerical-reasoning": 15,
 };
 
 function reasonText(
@@ -96,11 +104,15 @@ function reasonText(
 
   if (subject.status === "not-started") {
     const copy: Record<string, string> = {
-      english: "Essex CSSE tests comprehension heavily — start building your reading technique.",
-      maths: "Maths reasoning accounts for half your 11+ marks — don't leave it untouched.",
+      english: "Comprehension is tested in every 11+ pathway — start building your reading technique.",
+      maths: "Maths reasoning accounts for a large share of 11+ marks — don't leave it untouched.",
       vocabulary: "Strong vocabulary lifts both your English and Writing scores at once.",
       writing: "Creative writing is a scored 11+ component — start with a structured prompt.",
       "mock-test": "Timed practice reveals timing gaps that topic work alone cannot show.",
+      "verbal-reasoning": "Verbal Reasoning appears in GL, CEM and ISEB — start building your word pattern technique.",
+      "non-verbal-reasoning": "Non-Verbal Reasoning is tested in GL and ISEB — practice pattern recognition now.",
+      "spatial-reasoning": "Spatial Reasoning tests 3D thinking and symmetry — build this skill with focused practice.",
+      "numerical-reasoning": "Numerical Reasoning combines number patterns and data — an essential CEM skill.",
     };
     return copy[subject.subject] ?? "You haven't tried this section yet — now is a good time.";
   }
@@ -112,6 +124,10 @@ function reasonText(
       vocabulary: `Your vocabulary score is ${subject.avgScore}% — revisit the words you marked as uncertain each session.`,
       writing: `Your writing average is ${subject.avgScore}% — use the checklist actively as you write, not afterwards.`,
       "mock-test": `Your mock average is ${subject.avgScore}% — identify which section cost you most marks and focus there.`,
+      "verbal-reasoning": `Your Verbal Reasoning score is ${subject.avgScore}% — work on letter codes and word analogies before moving on.`,
+      "non-verbal-reasoning": `Your Non-Verbal Reasoning score is ${subject.avgScore}% — slow down and identify the rule before answering.`,
+      "spatial-reasoning": `Your Spatial Reasoning score is ${subject.avgScore}% — practise folding and rotation on paper before attempting digital questions.`,
+      "numerical-reasoning": `Your Numerical Reasoning score is ${subject.avgScore}% — identify the mathematical relationship in each question before calculating.`,
     };
     const base = copy[subject.subject] ?? `Your ${subject.label.toLowerCase()} score (${subject.avgScore}%) has room to grow — focused practice here pays off.`;
     return weakSkillLabel
@@ -126,6 +142,10 @@ function reasonText(
     vocabulary: `Your vocabulary score is ${subject.avgScore}% — consistent daily review closes this gap quickly.`,
     writing: `Your writing is at ${subject.avgScore}% — vary your sentence openers and technique use to improve further.`,
     "mock-test": `You scored ${subject.avgScore}% on your mock — identify the weaker section and focus there next sitting.`,
+    "verbal-reasoning": `You're at ${subject.avgScore}% in Verbal Reasoning — more practice with letter codes will push this above 75%.`,
+    "non-verbal-reasoning": `Your Non-Verbal Reasoning is at ${subject.avgScore}% — consistency with pattern rules will lift this quickly.`,
+    "spatial-reasoning": `Your Spatial Reasoning is at ${subject.avgScore}% — visualise each fold or rotation before answering.`,
+    "numerical-reasoning": `Your Numerical Reasoning is at ${subject.avgScore}% — writing out each step clearly will improve your accuracy.`,
   };
   return copy[subject.subject] ?? `You're at ${subject.avgScore}% — consistency will bring this above 75%.`;
 }

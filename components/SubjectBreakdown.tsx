@@ -6,12 +6,16 @@ interface SubjectBarProps {
   subject: SubjectAnalytics;
 }
 
-const barColor = {
+const barColor: Record<string, string> = {
   purple: "bg-purple-500",
   blue: "bg-blue-500",
   green: "bg-emerald-500",
   orange: "bg-amber-500",
   pink: "bg-pink-500",
+  violet: "bg-violet-500",
+  cyan: "bg-cyan-500",
+  teal: "bg-teal-500",
+  rose: "bg-rose-500",
 };
 
 const statusColor = {

@@ -2,7 +2,8 @@ export type AdaptiveTier = "foundation" | "developing" | "advanced" | "challenge
 
 export interface MissionItem {
   id: string;
-  subject: "english" | "maths" | "vocabulary" | "writing" | "mock-test";
+  subject: "english" | "maths" | "vocabulary" | "writing" | "mock-test"
+    | "verbal-reasoning" | "non-verbal-reasoning" | "spatial-reasoning" | "numerical-reasoning";
   label: string;
   href: string;
   reason: string;

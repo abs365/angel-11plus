@@ -215,6 +215,22 @@ const SUBJECT_ADVICE: Record<string, { detail: string; href: string }> = {
     detail: "Complete a full timed mock to identify timing weaknesses. Review the section with the lowest score immediately after.",
     href: "/mock-test",
   },
+  "Verbal Reasoning": {
+    detail: "Encourage your child to work through letter codes and word analogies slowly — accuracy matters more than speed at this stage.",
+    href: "/verbal-reasoning",
+  },
+  "Non-Verbal Reasoning": {
+    detail: "Look for the rule before answering each pattern question — rotation, reflection or counting. Identifying the rule first prevents errors.",
+    href: "/non-verbal-reasoning",
+  },
+  "Spatial Reasoning": {
+    detail: "Encourage your child to visualise each fold, rotation or reflection mentally rather than guessing. Short daily sessions build this skill.",
+    href: "/spatial-reasoning",
+  },
+  "Numerical Reasoning": {
+    detail: "Write out every step of a number pattern or data question. Identifying the mathematical relationship before calculating prevents errors.",
+    href: "/numerical-reasoning",
+  },
 };
 
 function buildFocusAreas(report: AnalyticsReport): FocusArea[] {

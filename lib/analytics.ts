@@ -82,6 +82,19 @@ function buildSubjectAnalytics(p: UserProgress): SubjectAnalytics[] {
   const mockScore = p.scores["mock-test"];
   const mockScores = mockScore !== undefined ? [mockScore] : [];
 
+  // Reasoning subjects — each is a single session ID
+  const vrScore = p.scores["verbal-reasoning"];
+  const vrScores = vrScore !== undefined ? [vrScore] : [];
+
+  const nvrScore = p.scores["non-verbal-reasoning"];
+  const nvrScores = nvrScore !== undefined ? [nvrScore] : [];
+
+  const srScore = p.scores["spatial-reasoning"];
+  const srScores = srScore !== undefined ? [srScore] : [];
+
+  const nrScore = p.scores["numerical-reasoning"];
+  const nrScores = nrScore !== undefined ? [nrScore] : [];
+
   return [
     {
       subject: "english",
@@ -128,13 +141,49 @@ function buildSubjectAnalytics(p: UserProgress): SubjectAnalytics[] {
       bestScore: mockScores.length ? Math.max(...mockScores) : 0,
       status: status(mean(mockScores), mockScores.length),
     },
+    {
+      subject: "verbal-reasoning",
+      label: "Verbal Reasoning",
+      color: "violet",
+      attempts: vrScores.length,
+      avgScore: mean(vrScores),
+      bestScore: vrScores.length ? Math.max(...vrScores) : 0,
+      status: status(mean(vrScores), vrScores.length),
+    },
+    {
+      subject: "non-verbal-reasoning",
+      label: "Non-Verbal Reasoning",
+      color: "cyan",
+      attempts: nvrScores.length,
+      avgScore: mean(nvrScores),
+      bestScore: nvrScores.length ? Math.max(...nvrScores) : 0,
+      status: status(mean(nvrScores), nvrScores.length),
+    },
+    {
+      subject: "spatial-reasoning",
+      label: "Spatial Reasoning",
+      color: "teal",
+      attempts: srScores.length,
+      avgScore: mean(srScores),
+      bestScore: srScores.length ? Math.max(...srScores) : 0,
+      status: status(mean(srScores), srScores.length),
+    },
+    {
+      subject: "numerical-reasoning",
+      label: "Numerical Reasoning",
+      color: "rose",
+      attempts: nrScores.length,
+      avgScore: mean(nrScores),
+      bestScore: nrScores.length ? Math.max(...nrScores) : 0,
+      status: status(mean(nrScores), nrScores.length),
+    },
   ];
 }
 
 // ─── skill analytics ─────────────────────────────────────────────────────────
 
 function buildSkillAnalytics(p: UserProgress): SkillAnalytics[] {
-  const skills: Map<SkillType, { correct: number; attempted: number; group: "english" | "maths" }> =
+  const skills: Map<SkillType, { correct: number; attempted: number; group: "english" | "maths" | "reasoning" }> =
     new Map();
 
   // 1. Explicit per-question results from maths (recorded by recordSkillResult)
@@ -144,6 +193,15 @@ function buildSkillAnalytics(p: UserProgress): SkillAnalytics[] {
       const rec = p.skillScores[skill];
       if (rec && rec.attempted > 0) {
         skills.set(skill, { ...rec, group: "maths" });
+      }
+    }
+
+    // Reasoning skills (verbal, non-verbal, spatial, numerical)
+    const reasoningSkills: SkillType[] = ["verbal-reasoning", "non-verbal-reasoning", "spatial-reasoning", "numerical-reasoning"];
+    for (const skill of reasoningSkills) {
+      const rec = p.skillScores[skill];
+      if (rec && rec.attempted > 0) {
+        skills.set(skill, { ...rec, group: "reasoning" });
       }
     }
   }

@@ -33,6 +33,10 @@ const lessonNames: Record<string, string> = {
   "maths-reasoning": "Maths Reasoning Session",
   "maths-arithmetic": "Speed Arithmetic",
   "vocab-session": "Vocabulary Flashcards",
+  "verbal-reasoning": "Verbal Reasoning Session",
+  "non-verbal-reasoning": "Non-Verbal Reasoning Session",
+  "spatial-reasoning": "Spatial Reasoning Session",
+  "numerical-reasoning": "Numerical Reasoning Session",
 };
 
 for (let i = 1; i <= 4; i++) {
@@ -385,6 +389,22 @@ export default function ProgressPage() {
                     <div className="flex flex-col gap-2.5">
                       {report.skills
                         .filter((s) => s.group === "maths")
+                        .map((s) => (
+                          <SkillBar key={s.skill} skill={s} />
+                        ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Reasoning skills */}
+                {report.skills.filter((s) => s.group === "reasoning").length > 0 && (
+                  <div className={report.skills.filter((s) => s.group !== "reasoning").length > 0 ? "mt-4" : ""}>
+                    <p className="text-xs text-gray-400 font-semibold uppercase tracking-wide mb-2.5">
+                      Reasoning
+                    </p>
+                    <div className="flex flex-col gap-2.5">
+                      {report.skills
+                        .filter((s) => s.group === "reasoning")
                         .map((s) => (
                           <SkillBar key={s.skill} skill={s} />
                         ))}

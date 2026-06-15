@@ -2,10 +2,21 @@ import type { SkillType } from "./index";
 
 export type PerformanceStatus = "strong" | "developing" | "weak" | "not-started";
 
+export type SubjectKey =
+  | "english"
+  | "maths"
+  | "vocabulary"
+  | "writing"
+  | "mock-test"
+  | "verbal-reasoning"
+  | "non-verbal-reasoning"
+  | "spatial-reasoning"
+  | "numerical-reasoning";
+
 export interface SubjectAnalytics {
-  subject: "english" | "maths" | "vocabulary" | "writing" | "mock-test";
+  subject: SubjectKey;
   label: string;
-  color: "purple" | "blue" | "green" | "orange" | "pink";
+  color: "purple" | "blue" | "green" | "orange" | "pink" | "violet" | "cyan" | "teal" | "rose";
   attempts: number;
   avgScore: number;
   bestScore: number;
@@ -15,7 +26,7 @@ export interface SubjectAnalytics {
 export interface SkillAnalytics {
   skill: SkillType;
   label: string;
-  group: "english" | "maths";
+  group: "english" | "maths" | "reasoning";
   questionsAttempted: number;
   estimatedAccuracy: number;
   status: PerformanceStatus;
