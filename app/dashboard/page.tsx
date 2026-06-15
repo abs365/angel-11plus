@@ -11,7 +11,6 @@ import {
   BarChart2,
   Flame,
   Star,
-  Lightbulb,
   MapPin,
   Puzzle,
   Shapes,
@@ -19,6 +18,11 @@ import {
   Hash,
   Play,
   CheckCircle,
+  Trophy,
+  Award,
+  ChevronRight,
+  Clock,
+  Sparkles,
 } from "lucide-react";
 import PageLayout from "@/components/PageLayout";
 import SubjectCard from "@/components/SubjectCard";
@@ -26,9 +30,8 @@ import { getProgress, markBadgesSeen, getSelectedPathwayId } from "@/lib/progres
 import { migrateLocalProgressToSupabase } from "@/lib/migrateProgress";
 import { computeAnalytics } from "@/lib/analytics";
 import { computeAdaptiveState } from "@/lib/adaptiveEngine";
-import { computeGamification } from "@/lib/gamification";
+import { computeGamification, BADGE_DEFINITIONS } from "@/lib/gamification";
 import InsightCard from "@/components/InsightCard";
-import DailyMission from "@/components/DailyMission";
 import NewBadgeBanner from "@/components/NewBadgeBanner";
 import { getPathwayById } from "@/lib/pathways";
 import type { UserProgress } from "@/types";
@@ -36,6 +39,8 @@ import type { AnalyticsReport } from "@/types/analytics";
 import type { DailyMission as DailyMissionData } from "@/types/adaptive";
 import type { WeeklyGoal } from "@/types/gamification";
 import type { Pathway } from "@/types/pathway";
+
+// ─── Subject data ─────────────────────────────────────────────────────────────
 
 const coreSubjects = [
   {
@@ -122,25 +127,80 @@ const reasoningSubjects = [
   },
 ];
 
-const tips = [
-  "Read the passage twice before answering — once for story, once for detail.",
-  "In inference questions, always quote from the text to support your answer.",
-  "For maths problems, write your working clearly — even rough marks count.",
-  "Vary your sentence openers in writing. Don't start every sentence with 'I' or 'The'.",
-  "Learn the difference between synonyms — 'sad' and 'desolate' are NOT the same.",
-  "Short sentences build tension. Long sentences create description. Use both.",
-  "When describing atmosphere, use at least three different techniques.",
-  "Timed practice is essential. 11+ is a race as much as a test of knowledge.",
-];
+// ─── Mission priority styles ───────────────────────────────────────────────────
 
-function WelcomeHero({ progress, tip }: { progress: UserProgress; tip: string }) {
+const missionPriorityBorder: Record<string, string> = {
+  primary: "border-l-rose-400 dark:border-l-rose-600",
+  secondary: "border-l-amber-400 dark:border-l-amber-600",
+  review: "border-l-emerald-400 dark:border-l-emerald-600",
+};
+
+const missionPriorityChip: Record<string, string> = {
+  primary: "bg-rose-100 dark:bg-rose-950 text-rose-600 dark:text-rose-400",
+  secondary: "bg-amber-100 dark:bg-amber-950 text-amber-700 dark:text-amber-400",
+  review: "bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-400",
+};
+
+const PRIORITY_LABEL: Record<string, string> = {
+  primary: "Focus",
+  secondary: "Next",
+  review: "Maintain",
+};
+
+// ─── Pathway accent ───────────────────────────────────────────────────────────
+
+const pathwayIconBg: Record<string, string> = {
+  blue: "bg-blue-100 dark:bg-blue-900",
+  indigo: "bg-indigo-100 dark:bg-indigo-900",
+  purple: "bg-purple-100 dark:bg-purple-900",
+  emerald: "bg-emerald-100 dark:bg-emerald-900",
+  amber: "bg-amber-100 dark:bg-amber-900",
+  teal: "bg-teal-100 dark:bg-teal-900",
+  gray: "bg-gray-100 dark:bg-gray-800",
+};
+
+const pathwayIconText: Record<string, string> = {
+  blue: "text-blue-600 dark:text-blue-400",
+  indigo: "text-indigo-600 dark:text-indigo-400",
+  purple: "text-purple-600 dark:text-purple-400",
+  emerald: "text-emerald-600 dark:text-emerald-400",
+  amber: "text-amber-600 dark:text-amber-400",
+  teal: "text-teal-600 dark:text-teal-400",
+  gray: "text-gray-600 dark:text-gray-400",
+};
+
+// ─── Encouraging message ──────────────────────────────────────────────────────
+
+function getEncouragingMessage(progress: UserProgress, weeklyGoal: WeeklyGoal | null): string {
+  if (weeklyGoal?.isComplete) return "Weekly goal achieved — outstanding consistency.";
+  if (progress.streak >= 14) return "Fourteen days strong. You're building unstoppable habits.";
+  if (progress.streak >= 7) return "A full week of practice. Real habits are forming.";
+  if (progress.streak >= 3) return "Great consistency this week — keep going.";
+  if (progress.completedLessons.length >= 20) return "You're building a strong foundation. Keep it up.";
+  if (progress.completedLessons.length >= 5) return "Solid progress — you're on the right track.";
+  if (progress.completedLessons.length >= 1) return "Welcome back. Let's make today count.";
+  return "Welcome to Angel 11+. Your journey starts here.";
+}
+
+// ─── Welcome Hero ─────────────────────────────────────────────────────────────
+
+function WelcomeHero({
+  progress,
+  weeklyGoal,
+}: {
+  progress: UserProgress;
+  weeklyGoal: WeeklyGoal | null;
+}) {
   const hour = new Date().getHours();
-  const greeting = hour < 12 ? "Good morning" : hour < 17 ? "Good afternoon" : "Good evening";
+  const greeting =
+    hour < 12 ? "Good morning" : hour < 17 ? "Good afternoon" : "Good evening";
   const level = Math.floor(progress.xp / 100) + 1;
   const xpInLevel = progress.xp % 100;
+  const message = getEncouragingMessage(progress, weeklyGoal);
 
   return (
     <div className="bg-gradient-to-br from-purple-600 via-purple-700 to-indigo-700 rounded-2xl px-6 py-5 shadow-lg">
+      {/* Name + Level */}
       <div className="flex items-start justify-between mb-4">
         <div>
           <p className="text-purple-200 text-sm font-medium">{greeting}</p>
@@ -152,6 +212,7 @@ function WelcomeHero({ progress, tip }: { progress: UserProgress; tip: string })
         </div>
       </div>
 
+      {/* Stats */}
       <div className="flex items-center gap-5 mb-4">
         <div>
           <p className="text-white font-bold text-xl leading-none">{progress.xp}</p>
@@ -174,7 +235,8 @@ function WelcomeHero({ progress, tip }: { progress: UserProgress; tip: string })
         </div>
       </div>
 
-      <div className="mb-3">
+      {/* XP Progress bar */}
+      <div className="mb-4">
         <div className="flex justify-between text-xs text-purple-300 mb-1.5">
           <span>Level {level} → {level + 1}</span>
           <span>{xpInLevel}/100 XP</span>
@@ -187,15 +249,16 @@ function WelcomeHero({ progress, tip }: { progress: UserProgress; tip: string })
         </div>
       </div>
 
-      {tip && (
-        <div className="bg-white/10 rounded-xl px-4 py-2.5 flex gap-2 items-start">
-          <Lightbulb size={14} className="text-yellow-300 shrink-0 mt-0.5" />
-          <p className="text-purple-100 text-xs leading-relaxed">{tip}</p>
-        </div>
-      )}
+      {/* Encouraging message */}
+      <div className="bg-white/10 rounded-xl px-4 py-2.5 flex gap-2.5 items-center">
+        <Sparkles size={14} className="text-yellow-300 shrink-0" />
+        <p className="text-purple-100 text-sm font-medium leading-snug">{message}</p>
+      </div>
     </div>
   );
 }
+
+// ─── Dashboard ────────────────────────────────────────────────────────────────
 
 export default function DashboardPage() {
   const [progress, setProgress] = useState<UserProgress | null>(null);
@@ -203,7 +266,7 @@ export default function DashboardPage() {
   const [mission, setMission] = useState<DailyMissionData | null>(null);
   const [weeklyGoal, setWeeklyGoal] = useState<WeeklyGoal | null>(null);
   const [newBadgeIds, setNewBadgeIds] = useState<string[]>([]);
-  const [tip, setTip] = useState("");
+  const [earnedBadgeIds, setEarnedBadgeIds] = useState<string[]>([]);
   const [pathway, setPathway] = useState<Pathway | undefined>();
 
   useEffect(() => {
@@ -217,7 +280,7 @@ export default function DashboardPage() {
     setMission(adaptive.dailyMission);
     setWeeklyGoal(gamification.weeklyGoal);
     setNewBadgeIds(gamification.newlyEarnedIds);
-    setTip(tips[Math.floor(Math.random() * tips.length)]);
+    setEarnedBadgeIds(gamification.earnedIds);
     setPathway(getPathwayById(getSelectedPathwayId() ?? ""));
     migrateLocalProgressToSupabase().catch(() => {});
   }, []);
@@ -227,14 +290,16 @@ export default function DashboardPage() {
     setNewBadgeIds([]);
   }
 
-  const remainingMissionItems = mission ? mission.items.slice(1) : [];
+  const earnedBadges = BADGE_DEFINITIONS.filter((b) => earnedBadgeIds.includes(b.id));
+  const accentBg = pathway ? (pathwayIconBg[pathway.accentColor] ?? pathwayIconBg.purple) : pathwayIconBg.purple;
+  const accentText = pathway ? (pathwayIconText[pathway.accentColor] ?? pathwayIconText.purple) : pathwayIconText.purple;
 
   return (
     <PageLayout>
-      <div className="max-w-4xl mx-auto px-4 py-6 md:px-8 md:py-8 space-y-6">
+      <div className="max-w-4xl mx-auto px-4 py-6 md:px-8 md:py-8 space-y-8">
 
         {/* 1. Welcome Hero */}
-        {progress && <WelcomeHero progress={progress} tip={tip} />}
+        {progress && <WelcomeHero progress={progress} weeklyGoal={weeklyGoal} />}
 
         {/* 2. New Badge Banner */}
         {newBadgeIds.length > 0 && (
@@ -243,126 +308,103 @@ export default function DashboardPage() {
 
         {/* 3. Today's Mission */}
         <section>
-          <div className="flex items-center gap-2 mb-3">
-            <div className="w-7 h-7 rounded-lg bg-purple-100 flex items-center justify-center shrink-0">
-              <Target size={15} className="text-purple-600" />
+          <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center gap-2.5">
+              <div className="w-8 h-8 rounded-xl bg-purple-100 dark:bg-purple-900 flex items-center justify-center shrink-0">
+                <Target size={16} className="text-purple-600 dark:text-purple-400" />
+              </div>
+              <div>
+                <h2 className="text-gray-900 dark:text-gray-100 font-bold text-xl leading-tight">
+                  Today&apos;s Mission
+                </h2>
+                {pathway && (
+                  <p className="text-xs text-purple-500 dark:text-purple-400 font-medium mt-0.5">
+                    {pathway.shortName} pathway
+                  </p>
+                )}
+              </div>
             </div>
-            <h2 className="text-gray-900 font-bold text-xl">Today&apos;s Mission</h2>
+            {mission && mission.items.length > 0 && (
+              <div className="flex items-center gap-1.5 text-gray-400 dark:text-gray-500">
+                <Clock size={13} />
+                <span className="text-xs font-medium">~{mission.totalMinutes} min</span>
+              </div>
+            )}
           </div>
 
           {mission && mission.items.length > 0 ? (
-            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-              {/* Primary mission item — featured hero */}
-              <Link
-                href={mission.items[0].href}
-                className="block bg-gradient-to-br from-purple-50 to-indigo-50 border-b border-purple-100/60 px-5 py-5 hover:from-purple-100 hover:to-indigo-100 transition-colors group"
-              >
-                <p className="text-purple-500 text-xs font-semibold uppercase tracking-wide mb-1.5">
-                  Start here · {mission.focusArea}
-                </p>
-                <div className="flex items-center justify-between gap-3">
-                  <div className="flex-1 min-w-0">
-                    <p className="text-gray-900 font-bold text-lg leading-tight">
-                      {mission.items[0].label}
-                    </p>
-                    <p className="text-gray-500 text-xs mt-1 leading-relaxed line-clamp-2">
-                      {mission.items[0].reason}
-                    </p>
+            <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 shadow-sm overflow-hidden">
+              {/* Mission items */}
+              <div className="p-5 space-y-3">
+                {mission.items.map((item, i) => (
+                  <div
+                    key={item.id}
+                    className={`flex items-start gap-3.5 p-4 rounded-xl bg-gray-50 dark:bg-gray-800/60 border-l-4 ${missionPriorityBorder[item.priority]}`}
+                  >
+                    <div className="w-5 h-5 rounded-full bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 flex items-center justify-center shrink-0 mt-0.5">
+                      <span className="text-[10px] font-bold text-gray-400 dark:text-gray-500">
+                        {i + 1}
+                      </span>
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 flex-wrap mb-1">
+                        <span
+                          className={`text-[10px] font-bold uppercase tracking-wide px-2 py-0.5 rounded-full ${missionPriorityChip[item.priority]}`}
+                        >
+                          {PRIORITY_LABEL[item.priority]}
+                        </span>
+                        <span className="text-gray-900 dark:text-gray-100 font-semibold text-sm">
+                          {item.label}
+                        </span>
+                      </div>
+                      <p className="text-gray-400 dark:text-gray-500 text-xs leading-relaxed">
+                        {item.reason}
+                      </p>
+                      <div className="flex items-center gap-1 mt-1.5">
+                        <Clock size={10} className="text-gray-300 dark:text-gray-600" />
+                        <span className="text-gray-300 dark:text-gray-600 text-xs">
+                          ~{item.estimatedMinutes} min
+                        </span>
+                      </div>
+                    </div>
                   </div>
-                  <div className="bg-purple-600 group-hover:bg-purple-700 text-white rounded-xl px-4 py-2.5 text-sm font-semibold shrink-0 flex items-center gap-1.5 transition-colors shadow-sm">
-                    <Play size={13} />
-                    Start
-                  </div>
-                </div>
-              </Link>
+                ))}
+              </div>
 
-              {/* Secondary items */}
-              {remainingMissionItems.length > 0 && (
-                <div className="px-5">
-                  <DailyMission
-                    mission={{ ...mission, items: remainingMissionItems }}
-                  />
-                </div>
-              )}
+              {/* Divider */}
+              <div className="h-px bg-gray-100 dark:bg-gray-800 mx-5" />
+
+              {/* Single CTA */}
+              <div className="p-5">
+                <Link
+                  href={mission.items[0].href}
+                  className="flex items-center justify-center gap-2.5 w-full bg-purple-600 hover:bg-purple-700 dark:bg-purple-700 dark:hover:bg-purple-600 text-white rounded-xl py-3.5 font-semibold text-sm transition-colors shadow-sm"
+                >
+                  <Play size={16} />
+                  Start Today&apos;s Mission
+                </Link>
+              </div>
             </div>
           ) : (
-            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-8 text-center">
-              <Target size={32} className="text-purple-200 mx-auto mb-3" />
-              <p className="text-gray-600 font-semibold text-sm mb-1">No mission yet</p>
-              <p className="text-gray-400 text-xs">Complete a practice session to unlock your daily mission</p>
+            <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 shadow-sm p-8 text-center">
+              <Target size={32} className="text-purple-200 dark:text-purple-800 mx-auto mb-3" />
+              <p className="text-gray-700 dark:text-gray-300 font-semibold text-sm mb-1">
+                No mission yet
+              </p>
+              <p className="text-gray-400 dark:text-gray-500 text-xs">
+                Complete a practice session to unlock your daily mission
+              </p>
             </div>
           )}
         </section>
 
-        {/* 4. Pathway + Weekly Goal */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          {/* Pathway */}
-          <Link
-            href="/pathways"
-            className="flex items-center gap-3 bg-white rounded-xl px-4 py-3.5 border border-gray-100 hover:shadow-sm hover:border-purple-100 transition-all"
-          >
-            <div className="w-9 h-9 rounded-xl bg-purple-50 flex items-center justify-center shrink-0">
-              <MapPin size={16} className="text-purple-600" />
-            </div>
-            <div className="flex-1 min-w-0">
-              {pathway ? (
-                <>
-                  <p className="text-xs text-gray-400 font-medium">Current pathway</p>
-                  <p className="text-sm font-semibold text-gray-900 truncate">{pathway.name}</p>
-                </>
-              ) : (
-                <>
-                  <p className="text-sm font-semibold text-gray-900">Choose Your Pathway</p>
-                  <p className="text-xs text-gray-400 mt-0.5">GL · CEM · CSSE · ISEB</p>
-                </>
-              )}
-            </div>
-            <span className="text-xs text-purple-600 font-medium shrink-0">
-              {pathway ? "Change" : "Choose →"}
-            </span>
-          </Link>
-
-          {/* Weekly Goal */}
-          {weeklyGoal && (
-            <div
-              className={`flex items-center gap-3 rounded-xl px-4 py-3.5 border ${
-                weeklyGoal.isComplete
-                  ? "bg-emerald-50 border-emerald-100"
-                  : "bg-white border-gray-100"
-              }`}
-            >
-              {weeklyGoal.isComplete ? (
-                <CheckCircle size={20} className="text-emerald-500 shrink-0" />
-              ) : (
-                <div className="flex gap-1 shrink-0">
-                  {Array.from({ length: weeklyGoal.target }).map((_, i) => (
-                    <div
-                      key={i}
-                      className={`w-2.5 h-2.5 rounded-full ${
-                        i < weeklyGoal.sessions ? "bg-indigo-400" : "bg-gray-200"
-                      }`}
-                    />
-                  ))}
-                </div>
-              )}
-              <p
-                className={`text-sm font-medium leading-snug ${
-                  weeklyGoal.isComplete ? "text-emerald-700" : "text-gray-600"
-                }`}
-              >
-                {weeklyGoal.isComplete
-                  ? "Weekly goal complete!"
-                  : `${weeklyGoal.sessions} of ${weeklyGoal.target} sessions this week`}
-              </p>
-            </div>
-          )}
-        </div>
-
-        {/* 5. Core Subjects */}
+        {/* 4. Continue Learning — Core Subjects */}
         <section>
           <div className="mb-4">
-            <h2 className="text-gray-900 font-bold text-xl">Core Subjects</h2>
-            <p className="text-gray-400 text-sm mt-0.5">
+            <h2 className="text-gray-900 dark:text-gray-100 font-bold text-xl">
+              Continue Learning
+            </h2>
+            <p className="text-gray-400 dark:text-gray-500 text-sm mt-0.5">
               English · Maths · Vocabulary · Writing · Mocks
             </p>
           </div>
@@ -371,13 +413,13 @@ export default function DashboardPage() {
               <SubjectCard key={subject.href} {...subject} />
             ))}
           </div>
-        </section>
 
-        {/* 6. Reasoning Skills */}
-        <section>
-          <div className="mb-4">
-            <h2 className="text-gray-900 font-bold text-xl">Reasoning Skills</h2>
-            <p className="text-gray-400 text-sm mt-0.5">
+          {/* Reasoning Skills */}
+          <div className="mt-6 mb-4">
+            <h3 className="text-gray-900 dark:text-gray-100 font-bold text-lg">
+              Reasoning Skills
+            </h3>
+            <p className="text-gray-400 dark:text-gray-500 text-sm mt-0.5">
               Required for GL, CEM, ISEB and many independent school pathways
             </p>
           </div>
@@ -388,12 +430,166 @@ export default function DashboardPage() {
           </div>
         </section>
 
+        {/* 5. Achievements */}
+        {progress && (
+          <section>
+            <h2 className="text-gray-900 dark:text-gray-100 font-bold text-xl mb-3">
+              Achievements
+            </h2>
+
+            {/* Stats row */}
+            <div className="grid grid-cols-3 gap-3 mb-3">
+              <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-4 text-center">
+                <Flame size={22} className="text-orange-500 mx-auto mb-2" />
+                <p className="text-gray-900 dark:text-gray-100 font-bold text-2xl leading-none">
+                  {progress.streak}
+                </p>
+                <p className="text-gray-400 dark:text-gray-500 text-[11px] mt-1.5">Day streak</p>
+              </div>
+              <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-4 text-center">
+                <Trophy size={22} className="text-amber-500 mx-auto mb-2" />
+                <p className="text-gray-900 dark:text-gray-100 font-bold text-2xl leading-none">
+                  {progress.completedLessons.length}
+                </p>
+                <p className="text-gray-400 dark:text-gray-500 text-[11px] mt-1.5">Sessions</p>
+              </div>
+              <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-4 text-center">
+                <Star size={22} className="text-purple-500 mx-auto mb-2" />
+                <p className="text-gray-900 dark:text-gray-100 font-bold text-2xl leading-none">
+                  {progress.xp}
+                </p>
+                <p className="text-gray-400 dark:text-gray-500 text-[11px] mt-1.5">Total XP</p>
+              </div>
+            </div>
+
+            {/* Weekly goal */}
+            {weeklyGoal && (
+              <div
+                className={`flex items-center gap-3 rounded-xl px-4 py-3 border mb-3 ${
+                  weeklyGoal.isComplete
+                    ? "bg-emerald-50 dark:bg-emerald-950 border-emerald-100 dark:border-emerald-900"
+                    : "bg-white dark:bg-gray-900 border-gray-100 dark:border-gray-800"
+                }`}
+              >
+                {weeklyGoal.isComplete ? (
+                  <CheckCircle size={18} className="text-emerald-500 shrink-0" />
+                ) : (
+                  <div className="flex gap-1.5 shrink-0">
+                    {Array.from({ length: weeklyGoal.target }).map((_, i) => (
+                      <div
+                        key={i}
+                        className={`w-2.5 h-2.5 rounded-full ${
+                          i < weeklyGoal.sessions
+                            ? "bg-indigo-400 dark:bg-indigo-500"
+                            : "bg-gray-200 dark:bg-gray-700"
+                        }`}
+                      />
+                    ))}
+                  </div>
+                )}
+                <p
+                  className={`text-sm font-medium leading-snug ${
+                    weeklyGoal.isComplete
+                      ? "text-emerald-700 dark:text-emerald-400"
+                      : "text-gray-600 dark:text-gray-400"
+                  }`}
+                >
+                  {weeklyGoal.isComplete
+                    ? "Weekly goal complete — great work!"
+                    : `${weeklyGoal.sessions} of ${weeklyGoal.target} sessions this week`}
+                </p>
+              </div>
+            )}
+
+            {/* Earned badges */}
+            {earnedBadges.length > 0 && (
+              <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-4">
+                <p className="text-[10px] font-bold uppercase tracking-widest text-gray-300 dark:text-gray-600 mb-3">
+                  Badges Earned
+                </p>
+                <div className="flex flex-wrap gap-2">
+                  {earnedBadges.slice(0, 6).map((badge) => (
+                    <div
+                      key={badge.id}
+                      className="flex items-center gap-1.5 bg-purple-50 dark:bg-purple-950 text-purple-700 dark:text-purple-300 px-3 py-1.5 rounded-full text-xs font-medium border border-purple-100 dark:border-purple-900"
+                    >
+                      <Award size={11} />
+                      {badge.name}
+                    </div>
+                  ))}
+                  {earnedBadges.length > 6 && (
+                    <Link
+                      href="/progress"
+                      className="flex items-center gap-1 bg-gray-50 dark:bg-gray-800 text-gray-500 dark:text-gray-400 px-3 py-1.5 rounded-full text-xs font-medium border border-gray-100 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                    >
+                      +{earnedBadges.length - 6} more
+                    </Link>
+                  )}
+                </div>
+              </div>
+            )}
+          </section>
+        )}
+
+        {/* 6. Your Pathway */}
+        <section>
+          <h2 className="text-gray-900 dark:text-gray-100 font-bold text-xl mb-3">
+            Your Pathway
+          </h2>
+          <Link
+            href="/pathways"
+            className="flex items-center gap-4 bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 px-5 py-4 shadow-sm hover:shadow-md hover:border-purple-100 dark:hover:border-purple-900 transition-all group"
+          >
+            <div
+              className={`w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 ${accentBg}`}
+            >
+              <MapPin size={22} className={accentText} />
+            </div>
+            <div className="flex-1 min-w-0">
+              {pathway ? (
+                <>
+                  <p className="text-[10px] font-bold uppercase tracking-widest text-purple-400 dark:text-purple-500 mb-0.5">
+                    Current Pathway
+                  </p>
+                  <p className="text-gray-900 dark:text-gray-100 font-bold text-base leading-snug">
+                    {pathway.name}
+                  </p>
+                  <p className="text-gray-400 dark:text-gray-500 text-xs mt-0.5 line-clamp-1">
+                    {pathway.description}
+                  </p>
+                </>
+              ) : (
+                <>
+                  <p className="text-[10px] font-bold uppercase tracking-widest text-purple-400 dark:text-purple-500 mb-0.5">
+                    Get Started
+                  </p>
+                  <p className="text-gray-900 dark:text-gray-100 font-bold text-base leading-snug">
+                    Choose Your 11+ Pathway
+                  </p>
+                  <p className="text-gray-400 dark:text-gray-500 text-xs mt-0.5">
+                    GL · CEM · CSSE · ISEB · Independent
+                  </p>
+                </>
+              )}
+            </div>
+            <ChevronRight
+              size={18}
+              className="text-gray-300 dark:text-gray-600 group-hover:text-purple-500 dark:group-hover:text-purple-400 transition-colors shrink-0"
+            />
+          </Link>
+        </section>
+
         {/* 7. Learning Insights */}
         {report && report.hasEnoughData && report.insights.length > 0 && (
           <section>
             <div className="flex items-center justify-between mb-3">
-              <h2 className="text-gray-900 font-bold text-xl">Learning Insights</h2>
-              <Link href="/progress" className="text-purple-600 text-xs font-medium hover:underline">
+              <h2 className="text-gray-900 dark:text-gray-100 font-bold text-xl">
+                Learning Insights
+              </h2>
+              <Link
+                href="/progress"
+                className="text-purple-600 dark:text-purple-400 text-xs font-medium hover:underline"
+              >
                 Full report →
               </Link>
             </div>
@@ -406,14 +602,14 @@ export default function DashboardPage() {
         )}
 
         {/* 8. About + disclaimer */}
-        <div className="bg-white rounded-2xl p-5 border border-gray-100">
-          <p className="text-gray-500 text-xs font-semibold uppercase tracking-wide mb-2">
+        <div className="bg-white dark:bg-gray-900 rounded-2xl p-5 border border-gray-100 dark:border-gray-800">
+          <p className="text-gray-500 dark:text-gray-400 text-xs font-semibold uppercase tracking-wide mb-2">
             About Angel 11+
           </p>
-          <p className="text-gray-700 text-sm leading-relaxed mb-2">
+          <p className="text-gray-700 dark:text-gray-300 text-sm leading-relaxed mb-2">
             Original exam-style practice for UK 11+ preparation across English, Maths, Reasoning, Writing and Vocabulary.
           </p>
-          <p className="text-gray-400 text-xs leading-relaxed">
+          <p className="text-gray-400 dark:text-gray-500 text-xs leading-relaxed">
             Angel 11+ provides original practice content and is not affiliated with or endorsed by any exam board or school.
           </p>
         </div>

@@ -128,9 +128,12 @@ export default function Navigation() {
 
         {/* Sectioned nav */}
         <div className="flex flex-col flex-1 overflow-y-auto">
-          {navSections.map((section) => (
-            <div key={section.label} className="mb-1">
-              <p className="px-3 pt-3 pb-1.5 text-[10px] font-bold uppercase tracking-widest text-gray-300 dark:text-gray-600">
+          {navSections.map((section, idx) => (
+            <div
+              key={section.label}
+              className={idx > 0 ? "mt-1 pt-2 border-t border-gray-100 dark:border-gray-800" : ""}
+            >
+              <p className="px-3 pt-2 pb-1.5 text-[10px] font-bold uppercase tracking-widest text-gray-300 dark:text-gray-600">
                 {section.label}
               </p>
               <div className="flex flex-col gap-0.5">
@@ -142,7 +145,7 @@ export default function Navigation() {
           ))}
 
           {/* Parent Area — separated at bottom of nav list */}
-          <div className="mt-3 pt-3 border-t border-gray-100">
+          <div className="mt-3 pt-3 border-t border-gray-100 dark:border-gray-800">
             <p className="px-3 pb-1.5 text-[10px] font-bold uppercase tracking-widest text-gray-300 dark:text-gray-600">
               Parent Area
             </p>
