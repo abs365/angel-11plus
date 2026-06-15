@@ -1,6 +1,6 @@
 "use client";
 
-import { Box } from "lucide-react";
+import { Compass } from "lucide-react";
 import ReasoningSession from "@/components/ReasoningSession";
 import { spatialReasoningQuestions } from "@/data/spatial-reasoning";
 
@@ -12,7 +12,7 @@ export default function SpatialReasoningPage() {
       description="Paper folding · 3D shapes · Symmetry · Rotation · Grid navigation"
       skillType="spatial-reasoning"
       themeColor="teal"
-      icon={Box}
+      icon={Compass}
       questions={spatialReasoningQuestions}
       skills={["Paper Folding", "3D Visualisation", "Symmetry", "Compass Directions", "Rotation", "Shape Properties", "Grid Navigation"]}
       examBoards="Independent Schools · ISEB"

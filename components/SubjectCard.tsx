@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { LucideIcon } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 
 interface SubjectCardProps {
   href: string;
@@ -12,94 +13,104 @@ interface SubjectCardProps {
 
 const colorMap = {
   purple: {
-    bg: "bg-purple-50",
-    icon: "bg-purple-100 text-purple-600",
-    title: "text-purple-900",
-    desc: "text-purple-600",
-    border: "border-purple-100",
-    hover: "hover:bg-purple-100",
-    badge: "bg-purple-100 text-purple-700",
+    bg: "bg-purple-50 dark:bg-purple-950",
+    icon: "bg-purple-100 dark:bg-purple-900 text-purple-600 dark:text-purple-300",
+    title: "text-purple-900 dark:text-purple-100",
+    desc: "text-purple-600 dark:text-purple-400",
+    border: "border-purple-100 dark:border-purple-900",
+    hover: "hover:bg-purple-100 dark:hover:bg-purple-900",
+    badge: "bg-purple-100 dark:bg-purple-900 text-purple-700 dark:text-purple-300",
+    arrow: "text-purple-300 dark:text-purple-700 group-hover:text-purple-500 dark:group-hover:text-purple-400",
   },
   blue: {
-    bg: "bg-blue-50",
-    icon: "bg-blue-100 text-blue-600",
-    title: "text-blue-900",
-    desc: "text-blue-600",
-    border: "border-blue-100",
-    hover: "hover:bg-blue-100",
-    badge: "bg-blue-100 text-blue-700",
+    bg: "bg-blue-50 dark:bg-blue-950",
+    icon: "bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-300",
+    title: "text-blue-900 dark:text-blue-100",
+    desc: "text-blue-600 dark:text-blue-400",
+    border: "border-blue-100 dark:border-blue-900",
+    hover: "hover:bg-blue-100 dark:hover:bg-blue-900",
+    badge: "bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300",
+    arrow: "text-blue-300 dark:text-blue-700 group-hover:text-blue-500 dark:group-hover:text-blue-400",
   },
   green: {
-    bg: "bg-emerald-50",
-    icon: "bg-emerald-100 text-emerald-600",
-    title: "text-emerald-900",
-    desc: "text-emerald-600",
-    border: "border-emerald-100",
-    hover: "hover:bg-emerald-100",
-    badge: "bg-emerald-100 text-emerald-700",
+    bg: "bg-emerald-50 dark:bg-emerald-950",
+    icon: "bg-emerald-100 dark:bg-emerald-900 text-emerald-600 dark:text-emerald-300",
+    title: "text-emerald-900 dark:text-emerald-100",
+    desc: "text-emerald-600 dark:text-emerald-400",
+    border: "border-emerald-100 dark:border-emerald-900",
+    hover: "hover:bg-emerald-100 dark:hover:bg-emerald-900",
+    badge: "bg-emerald-100 dark:bg-emerald-900 text-emerald-700 dark:text-emerald-300",
+    arrow: "text-emerald-300 dark:text-emerald-700 group-hover:text-emerald-500 dark:group-hover:text-emerald-400",
   },
   orange: {
-    bg: "bg-amber-50",
-    icon: "bg-amber-100 text-amber-600",
-    title: "text-amber-900",
-    desc: "text-amber-600",
-    border: "border-amber-100",
-    hover: "hover:bg-amber-100",
-    badge: "bg-amber-100 text-amber-700",
+    bg: "bg-amber-50 dark:bg-amber-950",
+    icon: "bg-amber-100 dark:bg-amber-900 text-amber-600 dark:text-amber-300",
+    title: "text-amber-900 dark:text-amber-100",
+    desc: "text-amber-600 dark:text-amber-400",
+    border: "border-amber-100 dark:border-amber-900",
+    hover: "hover:bg-amber-100 dark:hover:bg-amber-900",
+    badge: "bg-amber-100 dark:bg-amber-900 text-amber-700 dark:text-amber-300",
+    arrow: "text-amber-300 dark:text-amber-700 group-hover:text-amber-500 dark:group-hover:text-amber-400",
   },
   pink: {
-    bg: "bg-pink-50",
-    icon: "bg-pink-100 text-pink-600",
-    title: "text-pink-900",
-    desc: "text-pink-600",
-    border: "border-pink-100",
-    hover: "hover:bg-pink-100",
-    badge: "bg-pink-100 text-pink-700",
+    bg: "bg-pink-50 dark:bg-pink-950",
+    icon: "bg-pink-100 dark:bg-pink-900 text-pink-600 dark:text-pink-300",
+    title: "text-pink-900 dark:text-pink-100",
+    desc: "text-pink-600 dark:text-pink-400",
+    border: "border-pink-100 dark:border-pink-900",
+    hover: "hover:bg-pink-100 dark:hover:bg-pink-900",
+    badge: "bg-pink-100 dark:bg-pink-900 text-pink-700 dark:text-pink-300",
+    arrow: "text-pink-300 dark:text-pink-700 group-hover:text-pink-500 dark:group-hover:text-pink-400",
   },
   indigo: {
-    bg: "bg-indigo-50",
-    icon: "bg-indigo-100 text-indigo-600",
-    title: "text-indigo-900",
-    desc: "text-indigo-600",
-    border: "border-indigo-100",
-    hover: "hover:bg-indigo-100",
-    badge: "bg-indigo-100 text-indigo-700",
+    bg: "bg-indigo-50 dark:bg-indigo-950",
+    icon: "bg-indigo-100 dark:bg-indigo-900 text-indigo-600 dark:text-indigo-300",
+    title: "text-indigo-900 dark:text-indigo-100",
+    desc: "text-indigo-600 dark:text-indigo-400",
+    border: "border-indigo-100 dark:border-indigo-900",
+    hover: "hover:bg-indigo-100 dark:hover:bg-indigo-900",
+    badge: "bg-indigo-100 dark:bg-indigo-900 text-indigo-700 dark:text-indigo-300",
+    arrow: "text-indigo-300 dark:text-indigo-700 group-hover:text-indigo-500 dark:group-hover:text-indigo-400",
   },
   violet: {
-    bg: "bg-violet-50",
-    icon: "bg-violet-100 text-violet-600",
-    title: "text-violet-900",
-    desc: "text-violet-600",
-    border: "border-violet-100",
-    hover: "hover:bg-violet-100",
-    badge: "bg-violet-100 text-violet-700",
+    bg: "bg-violet-50 dark:bg-violet-950",
+    icon: "bg-violet-100 dark:bg-violet-900 text-violet-600 dark:text-violet-300",
+    title: "text-violet-900 dark:text-violet-100",
+    desc: "text-violet-600 dark:text-violet-400",
+    border: "border-violet-100 dark:border-violet-900",
+    hover: "hover:bg-violet-100 dark:hover:bg-violet-900",
+    badge: "bg-violet-100 dark:bg-violet-900 text-violet-700 dark:text-violet-300",
+    arrow: "text-violet-300 dark:text-violet-700 group-hover:text-violet-500 dark:group-hover:text-violet-400",
   },
   teal: {
-    bg: "bg-teal-50",
-    icon: "bg-teal-100 text-teal-600",
-    title: "text-teal-900",
-    desc: "text-teal-600",
-    border: "border-teal-100",
-    hover: "hover:bg-teal-100",
-    badge: "bg-teal-100 text-teal-700",
+    bg: "bg-teal-50 dark:bg-teal-950",
+    icon: "bg-teal-100 dark:bg-teal-900 text-teal-600 dark:text-teal-300",
+    title: "text-teal-900 dark:text-teal-100",
+    desc: "text-teal-600 dark:text-teal-400",
+    border: "border-teal-100 dark:border-teal-900",
+    hover: "hover:bg-teal-100 dark:hover:bg-teal-900",
+    badge: "bg-teal-100 dark:bg-teal-900 text-teal-700 dark:text-teal-300",
+    arrow: "text-teal-300 dark:text-teal-700 group-hover:text-teal-500 dark:group-hover:text-teal-400",
   },
   cyan: {
-    bg: "bg-cyan-50",
-    icon: "bg-cyan-100 text-cyan-600",
-    title: "text-cyan-900",
-    desc: "text-cyan-600",
-    border: "border-cyan-100",
-    hover: "hover:bg-cyan-100",
-    badge: "bg-cyan-100 text-cyan-700",
+    bg: "bg-cyan-50 dark:bg-cyan-950",
+    icon: "bg-cyan-100 dark:bg-cyan-900 text-cyan-600 dark:text-cyan-300",
+    title: "text-cyan-900 dark:text-cyan-100",
+    desc: "text-cyan-600 dark:text-cyan-400",
+    border: "border-cyan-100 dark:border-cyan-900",
+    hover: "hover:bg-cyan-100 dark:hover:bg-cyan-900",
+    badge: "bg-cyan-100 dark:bg-cyan-900 text-cyan-700 dark:text-cyan-300",
+    arrow: "text-cyan-300 dark:text-cyan-700 group-hover:text-cyan-500 dark:group-hover:text-cyan-400",
   },
   rose: {
-    bg: "bg-rose-50",
-    icon: "bg-rose-100 text-rose-600",
-    title: "text-rose-900",
-    desc: "text-rose-600",
-    border: "border-rose-100",
-    hover: "hover:bg-rose-100",
-    badge: "bg-rose-100 text-rose-700",
+    bg: "bg-rose-50 dark:bg-rose-950",
+    icon: "bg-rose-100 dark:bg-rose-900 text-rose-600 dark:text-rose-300",
+    title: "text-rose-900 dark:text-rose-100",
+    desc: "text-rose-600 dark:text-rose-400",
+    border: "border-rose-100 dark:border-rose-900",
+    hover: "hover:bg-rose-100 dark:hover:bg-rose-900",
+    badge: "bg-rose-100 dark:bg-rose-900 text-rose-700 dark:text-rose-300",
+    arrow: "text-rose-300 dark:text-rose-700 group-hover:text-rose-500 dark:group-hover:text-rose-400",
   },
 };
 
@@ -115,11 +126,11 @@ export default function SubjectCard({
   return (
     <Link href={href} className="block group">
       <div
-        className={`${c.bg} ${c.border} ${c.hover} border rounded-2xl p-5 transition-all duration-200 group-hover:shadow-md group-active:scale-[0.98] cursor-pointer`}
+        className={`${c.bg} ${c.border} ${c.hover} border shadow-sm rounded-2xl p-6 transition-all duration-200 group-hover:shadow-lg group-hover:-translate-y-0.5 group-active:scale-[0.98] cursor-pointer`}
       >
-        <div className="flex items-start justify-between mb-4">
-          <div className={`${c.icon} p-3 rounded-xl`}>
-            <Icon size={22} />
+        <div className="flex items-start justify-between mb-5">
+          <div className={`${c.icon} p-3.5 rounded-2xl shrink-0`}>
+            <Icon size={24} />
           </div>
           {badge && (
             <span className={`${c.badge} text-xs font-semibold px-2.5 py-1 rounded-full`}>
@@ -127,8 +138,11 @@ export default function SubjectCard({
             </span>
           )}
         </div>
-        <h3 className={`${c.title} font-semibold text-base mb-1`}>{title}</h3>
-        <p className={`${c.desc} text-sm leading-snug`}>{description}</p>
+        <h3 className={`${c.title} font-bold text-base mb-1.5 leading-snug`}>{title}</h3>
+        <p className={`${c.desc} text-sm leading-relaxed`}>{description}</p>
+        <div className="flex justify-end mt-4">
+          <ChevronRight size={16} className={`${c.arrow} transition-colors`} />
+        </div>
       </div>
     </Link>
   );

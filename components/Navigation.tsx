@@ -67,7 +67,7 @@ const navSections: NavSection[] = [
 
 const parentItem: NavItem = {
   href: "/parent",
-  label: "Parent Dashboard",
+  label: "Parent Hub",
   icon: Users,
   badge: "Beta",
 };
@@ -87,18 +87,21 @@ function SidebarLink({ item, pathname }: { item: NavItem; pathname: string }) {
       href={item.href}
       className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-150 ${
         active
-          ? "bg-purple-50 text-purple-700"
-          : "text-gray-500 hover:bg-gray-50 hover:text-gray-800"
+          ? "bg-purple-50 dark:bg-purple-950 text-purple-700 dark:text-purple-300"
+          : "text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-gray-800 dark:hover:text-gray-200"
       }`}
     >
-      <item.icon size={17} className={active ? "text-purple-600" : "text-gray-400"} />
+      <item.icon
+        size={17}
+        className={active ? "text-purple-600 dark:text-purple-400" : "text-gray-400 dark:text-gray-500"}
+      />
       <span className="flex-1">{item.label}</span>
       {item.badge && (
-        <span className="text-[9px] font-semibold bg-purple-100 text-purple-500 px-1.5 py-0.5 rounded-full leading-none">
+        <span className="text-[9px] font-semibold bg-purple-100 dark:bg-purple-900 text-purple-500 dark:text-purple-300 px-1.5 py-0.5 rounded-full leading-none">
           {item.badge}
         </span>
       )}
-      {active && <span className="w-1.5 h-1.5 rounded-full bg-purple-500 shrink-0" />}
+      {active && <span className="w-1.5 h-1.5 rounded-full bg-purple-500 dark:bg-purple-400 shrink-0" />}
     </Link>
   );
 }
@@ -116,18 +119,18 @@ export default function Navigation() {
   return (
     <>
       {/* Desktop / Tablet sidebar */}
-      <nav className="hidden md:flex flex-col w-64 min-h-screen bg-white border-r border-gray-100 px-3 py-6 fixed left-0 top-0 z-40">
+      <nav className="hidden md:flex flex-col w-64 min-h-screen bg-white dark:bg-gray-950 border-r border-gray-100 dark:border-gray-800 px-3 py-6 fixed left-0 top-0 z-40">
         {/* Brand */}
         <div className="mb-5 px-3">
-          <h1 className="text-xl font-bold text-purple-700">Angel 11+</h1>
-          <p className="text-xs text-gray-400 mt-0.5">Smart UK 11+ Prep</p>
+          <h1 className="text-xl font-bold text-purple-700 dark:text-purple-400">Angel 11+</h1>
+          <p className="text-xs text-gray-400 dark:text-gray-600 mt-0.5">Smart UK 11+ Prep</p>
         </div>
 
         {/* Sectioned nav */}
         <div className="flex flex-col flex-1 overflow-y-auto">
           {navSections.map((section) => (
             <div key={section.label} className="mb-1">
-              <p className="px-3 pt-3 pb-1.5 text-[10px] font-bold uppercase tracking-widest text-gray-300">
+              <p className="px-3 pt-3 pb-1.5 text-[10px] font-bold uppercase tracking-widest text-gray-300 dark:text-gray-600">
                 {section.label}
               </p>
               <div className="flex flex-col gap-0.5">
@@ -140,7 +143,7 @@ export default function Navigation() {
 
           {/* Parent Area — separated at bottom of nav list */}
           <div className="mt-3 pt-3 border-t border-gray-100">
-            <p className="px-3 pb-1.5 text-[10px] font-bold uppercase tracking-widest text-gray-300">
+            <p className="px-3 pb-1.5 text-[10px] font-bold uppercase tracking-widest text-gray-300 dark:text-gray-600">
               Parent Area
             </p>
             <SidebarLink item={parentItem} pathname={pathname} />
@@ -148,18 +151,18 @@ export default function Navigation() {
         </div>
 
         {/* User auth — pinned at very bottom */}
-        <div className="mt-4 pt-4 border-t border-gray-100">
+        <div className="mt-4 pt-4 border-t border-gray-100 dark:border-gray-800">
           {!loading && user ? (
             <div className="px-3 py-1">
               <div className="flex items-center gap-2 mb-2">
-                <div className="w-7 h-7 rounded-full bg-purple-100 flex items-center justify-center shrink-0">
-                  <User size={14} className="text-purple-600" />
+                <div className="w-7 h-7 rounded-full bg-purple-100 dark:bg-purple-900 flex items-center justify-center shrink-0">
+                  <User size={14} className="text-purple-600 dark:text-purple-300" />
                 </div>
-                <p className="text-xs text-gray-600 font-medium truncate flex-1">{user.email}</p>
+                <p className="text-xs text-gray-600 dark:text-gray-400 font-medium truncate flex-1">{user.email}</p>
               </div>
               <button
                 onClick={handleSignOut}
-                className="flex items-center gap-2 w-full text-xs text-gray-400 hover:text-gray-700 py-1.5 px-1 rounded-lg hover:bg-gray-50 transition-colors"
+                className="flex items-center gap-2 w-full text-xs text-gray-400 dark:text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 py-1.5 px-1 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
               >
                 <LogOut size={13} />
                 Sign out
@@ -169,19 +172,19 @@ export default function Navigation() {
             <div className="px-3 py-1">
               <Link
                 href="/login"
-                className="flex items-center gap-2 w-full text-xs text-purple-600 font-medium py-1.5 px-2 rounded-lg hover:bg-purple-50 transition-colors"
+                className="flex items-center gap-2 w-full text-xs text-purple-600 dark:text-purple-400 font-medium py-1.5 px-2 rounded-lg hover:bg-purple-50 dark:hover:bg-purple-950 transition-colors"
               >
                 <LogIn size={13} />
                 Sign in to sync progress
               </Link>
-              <p className="text-xs text-gray-300 mt-1 px-2">Powered by Angel Digital</p>
+              <p className="text-xs text-gray-300 dark:text-gray-600 mt-1 px-2">Powered by Angel Digital</p>
             </div>
           )}
         </div>
       </nav>
 
       {/* Mobile bottom nav */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white border-t border-gray-100 px-1 pb-safe">
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white dark:bg-gray-950 border-t border-gray-100 dark:border-gray-800 px-1 pb-safe">
         <div className="flex justify-around items-center h-16">
           {mobileNavItems.map(({ href, label, icon: Icon }) => {
             const active = pathname === href || pathname.startsWith(href + "/");
