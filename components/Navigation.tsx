@@ -8,37 +8,100 @@ import {
   Pencil,
   BookMarked,
   BarChart2,
-  ClipboardList,
   LayoutDashboard,
   LogIn,
   LogOut,
   User,
   Users,
   MapPin,
-  Brain,
-  Eye,
-  Box,
   Hash,
-  FileText,
+  Target,
+  Puzzle,
+  Shapes,
+  Compass,
 } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 import { useAuth } from "@/components/providers/AuthProvider";
 
-const navItems = [
+type NavItem = {
+  href: string;
+  label: string;
+  icon: LucideIcon;
+  badge?: string;
+};
+
+type NavSection = {
+  label: string;
+  items: NavItem[];
+};
+
+const navSections: NavSection[] = [
+  {
+    label: "Learning",
+    items: [
+      { href: "/dashboard", label: "Home", icon: LayoutDashboard },
+      { href: "/english", label: "English", icon: BookOpen },
+      { href: "/maths", label: "Maths", icon: Calculator },
+      { href: "/vocabulary", label: "Vocabulary", icon: BookMarked },
+      { href: "/writing", label: "Writing", icon: Pencil },
+      { href: "/progress", label: "Progress", icon: BarChart2 },
+    ],
+  },
+  {
+    label: "Reasoning",
+    items: [
+      { href: "/verbal-reasoning", label: "Verbal Reasoning", icon: Puzzle },
+      { href: "/non-verbal-reasoning", label: "Non-Verbal", icon: Shapes },
+      { href: "/spatial-reasoning", label: "Spatial", icon: Compass },
+      { href: "/numerical-reasoning", label: "Numerical", icon: Hash },
+    ],
+  },
+  {
+    label: "Exams",
+    items: [
+      { href: "/mocks", label: "Mock Tests", icon: Target },
+      { href: "/pathways", label: "Exam Pathways", icon: MapPin },
+    ],
+  },
+];
+
+const parentItem: NavItem = {
+  href: "/parent",
+  label: "Parent Dashboard",
+  icon: Users,
+  badge: "Beta",
+};
+
+const mobileNavItems = [
   { href: "/dashboard", label: "Home", icon: LayoutDashboard },
   { href: "/english", label: "English", icon: BookOpen },
   { href: "/maths", label: "Maths", icon: Calculator },
-  { href: "/vocabulary", label: "Vocab", icon: BookMarked },
-  { href: "/writing", label: "Writing", icon: Pencil },
-  { href: "/mock-test", label: "Mock", icon: ClipboardList },
-  { href: "/mocks", label: "Mocks", icon: FileText, sidebarOnly: true },
+  { href: "/mocks", label: "Exams", icon: Target },
   { href: "/progress", label: "Progress", icon: BarChart2 },
-  { href: "/parent", label: "Parent", icon: Users, sidebarOnly: true, badge: "Beta" },
-  { href: "/pathways", label: "Pathway", icon: MapPin, sidebarOnly: true },
-  { href: "/verbal-reasoning", label: "Verbal", icon: Brain, sidebarOnly: true },
-  { href: "/non-verbal-reasoning", label: "Non-Verbal", icon: Eye, sidebarOnly: true },
-  { href: "/spatial-reasoning", label: "Spatial", icon: Box, sidebarOnly: true },
-  { href: "/numerical-reasoning", label: "Numerical", icon: Hash, sidebarOnly: true },
 ];
+
+function SidebarLink({ item, pathname }: { item: NavItem; pathname: string }) {
+  const active = pathname === item.href || pathname.startsWith(item.href + "/");
+  return (
+    <Link
+      href={item.href}
+      className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-150 ${
+        active
+          ? "bg-purple-50 text-purple-700"
+          : "text-gray-500 hover:bg-gray-50 hover:text-gray-800"
+      }`}
+    >
+      <item.icon size={17} className={active ? "text-purple-600" : "text-gray-400"} />
+      <span className="flex-1">{item.label}</span>
+      {item.badge && (
+        <span className="text-[9px] font-semibold bg-purple-100 text-purple-500 px-1.5 py-0.5 rounded-full leading-none">
+          {item.badge}
+        </span>
+      )}
+      {active && <span className="w-1.5 h-1.5 rounded-full bg-purple-500 shrink-0" />}
+    </Link>
+  );
+}
 
 export default function Navigation() {
   const pathname = usePathname();
@@ -53,54 +116,46 @@ export default function Navigation() {
   return (
     <>
       {/* Desktop / Tablet sidebar */}
-      <nav className="hidden md:flex flex-col w-64 min-h-screen bg-white border-r border-gray-100 px-4 py-6 fixed left-0 top-0 z-40">
-        <div className="mb-8 px-2">
+      <nav className="hidden md:flex flex-col w-64 min-h-screen bg-white border-r border-gray-100 px-3 py-6 fixed left-0 top-0 z-40">
+        {/* Brand */}
+        <div className="mb-5 px-3">
           <h1 className="text-xl font-bold text-purple-700">Angel 11+</h1>
           <p className="text-xs text-gray-400 mt-0.5">Smart UK 11+ Prep</p>
         </div>
 
-        <div className="flex flex-col gap-1 flex-1">
-          {navItems.map(({ href, label, icon: Icon, badge }) => {
-            const active = pathname === href || pathname.startsWith(href + "/");
-            return (
-              <Link
-                key={href}
-                href={href}
-                className={`flex items-center gap-3 px-3 py-3 rounded-xl text-sm font-medium transition-all duration-150 ${
-                  active
-                    ? "bg-purple-50 text-purple-700"
-                    : "text-gray-500 hover:bg-gray-50 hover:text-gray-800"
-                }`}
-              >
-                <Icon
-                  size={18}
-                  className={active ? "text-purple-600" : "text-gray-400"}
-                />
-                {label}
-                {badge && (
-                  <span className="text-[9px] font-semibold bg-purple-100 text-purple-500 px-1.5 py-0.5 rounded-full leading-none">
-                    {badge}
-                  </span>
-                )}
-                {active && (
-                  <span className="ml-auto w-1.5 h-1.5 rounded-full bg-purple-500" />
-                )}
-              </Link>
-            );
-          })}
+        {/* Sectioned nav */}
+        <div className="flex flex-col flex-1 overflow-y-auto">
+          {navSections.map((section) => (
+            <div key={section.label} className="mb-1">
+              <p className="px-3 pt-3 pb-1.5 text-[10px] font-bold uppercase tracking-widest text-gray-300">
+                {section.label}
+              </p>
+              <div className="flex flex-col gap-0.5">
+                {section.items.map((item) => (
+                  <SidebarLink key={item.href} item={item} pathname={pathname} />
+                ))}
+              </div>
+            </div>
+          ))}
+
+          {/* Parent Area — separated at bottom of nav list */}
+          <div className="mt-3 pt-3 border-t border-gray-100">
+            <p className="px-3 pb-1.5 text-[10px] font-bold uppercase tracking-widest text-gray-300">
+              Parent Area
+            </p>
+            <SidebarLink item={parentItem} pathname={pathname} />
+          </div>
         </div>
 
-        {/* User section */}
-        <div className="mt-auto pt-4 border-t border-gray-100">
+        {/* User auth — pinned at very bottom */}
+        <div className="mt-4 pt-4 border-t border-gray-100">
           {!loading && user ? (
-            <div className="px-3 py-2">
+            <div className="px-3 py-1">
               <div className="flex items-center gap-2 mb-2">
                 <div className="w-7 h-7 rounded-full bg-purple-100 flex items-center justify-center shrink-0">
                   <User size={14} className="text-purple-600" />
                 </div>
-                <p className="text-xs text-gray-600 font-medium truncate flex-1">
-                  {user.email}
-                </p>
+                <p className="text-xs text-gray-600 font-medium truncate flex-1">{user.email}</p>
               </div>
               <button
                 onClick={handleSignOut}
@@ -111,7 +166,7 @@ export default function Navigation() {
               </button>
             </div>
           ) : (
-            <div className="px-3 py-2">
+            <div className="px-3 py-1">
               <Link
                 href="/login"
                 className="flex items-center gap-2 w-full text-xs text-purple-600 font-medium py-1.5 px-2 rounded-lg hover:bg-purple-50 transition-colors"
@@ -126,28 +181,28 @@ export default function Navigation() {
       </nav>
 
       {/* Mobile bottom nav */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white border-t border-gray-100 px-2 pb-safe">
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white border-t border-gray-100 px-1 pb-safe">
         <div className="flex justify-around items-center h-16">
-          {navItems.filter((item) => !item.sidebarOnly).map(({ href, label, icon: Icon }) => {
+          {mobileNavItems.map(({ href, label, icon: Icon }) => {
             const active = pathname === href || pathname.startsWith(href + "/");
             return (
               <Link
                 key={href}
                 href={href}
-                className={`flex flex-col items-center gap-0.5 px-2 py-1.5 rounded-lg min-w-[44px] transition-colors ${
+                className={`flex flex-col items-center gap-0.5 px-2 py-1.5 rounded-lg min-w-[52px] transition-colors ${
                   active ? "text-purple-700" : "text-gray-400"
                 }`}
               >
-                <Icon size={20} />
+                <Icon size={20} className={active ? "text-purple-600" : "text-gray-400"} />
                 <span className="text-[10px] font-medium">{label}</span>
               </Link>
             );
           })}
-          {/* Login / user avatar on mobile */}
+          {/* Parent / login */}
           <Link
-            href={user ? "/progress" : "/login"}
-            className={`flex flex-col items-center gap-0.5 px-2 py-1.5 rounded-lg min-w-[44px] transition-colors ${
-              pathname === "/login" ? "text-purple-700" : "text-gray-400"
+            href={user ? "/parent" : "/login"}
+            className={`flex flex-col items-center gap-0.5 px-2 py-1.5 rounded-lg min-w-[52px] transition-colors ${
+              pathname === "/parent" || pathname === "/login" ? "text-purple-700" : "text-gray-400"
             }`}
           >
             {user ? (
@@ -157,7 +212,7 @@ export default function Navigation() {
             ) : (
               <LogIn size={20} />
             )}
-            <span className="text-[10px] font-medium">{user ? "Me" : "Login"}</span>
+            <span className="text-[10px] font-medium">{user ? "Parent" : "Login"}</span>
           </Link>
         </div>
       </nav>
