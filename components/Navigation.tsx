@@ -19,6 +19,10 @@ import {
   Puzzle,
   Shapes,
   Compass,
+  HelpCircle,
+  MessageSquare,
+  Mail,
+  Sparkles,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { useAuth } from "@/components/providers/AuthProvider";
@@ -71,6 +75,13 @@ const parentItem: NavItem = {
   icon: Users,
   badge: "Beta",
 };
+
+const supportItems: NavItem[] = [
+  { href: "/getting-started", label: "Getting Started", icon: HelpCircle },
+  { href: "/feedback", label: "Send Feedback", icon: MessageSquare },
+  { href: "/contact", label: "Contact", icon: Mail },
+  { href: "/beta", label: "Beta Info", icon: Sparkles },
+];
 
 const mobileNavItems = [
   { href: "/dashboard", label: "Home", icon: LayoutDashboard },
@@ -150,6 +161,18 @@ export default function Navigation() {
               Parent Area
             </p>
             <SidebarLink item={parentItem} pathname={pathname} />
+          </div>
+
+          {/* Support — beta & help links */}
+          <div className="mt-2 pt-2 border-t border-gray-100 dark:border-gray-800">
+            <p className="px-3 pb-1.5 text-[10px] font-bold uppercase tracking-widest text-gray-300 dark:text-gray-600">
+              Support
+            </p>
+            <div className="flex flex-col gap-0.5">
+              {supportItems.map((item) => (
+                <SidebarLink key={item.href} item={item} pathname={pathname} />
+              ))}
+            </div>
           </div>
         </div>
 
