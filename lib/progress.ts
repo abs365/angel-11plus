@@ -84,3 +84,12 @@ export function markBadgesSeen(newIds: string[]): void {
   const p = getProgress();
   saveProgress({ ...p, earnedBadgeIds: [...(p.earnedBadgeIds ?? []), ...newIds] });
 }
+
+export function setSelectedPathway(id: string): void {
+  const p = getProgress();
+  saveProgress({ ...p, selectedPathwayId: id });
+}
+
+export function getSelectedPathwayId(): string | undefined {
+  return getProgress().selectedPathwayId;
+}

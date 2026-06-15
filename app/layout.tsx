@@ -9,11 +9,11 @@ export const metadata: Metadata = {
   metadataBase: new URL(APP_URL),
 
   title: {
-    default: "Angel 11+ — Selective School Preparation",
+    default: "Angel 11+ — Smart UK 11+ Preparation",
     template: "%s | Angel 11+",
   },
   description:
-    "Premium 11+ preparation platform for Essex CSSE and selective school entry. Adaptive practice in English, Maths, Vocabulary and Writing.",
+    "Original exam-style practice for UK 11+ preparation across English, Maths, Reasoning, Writing and Reading Fluency. Covers GL, CEM, CSSE, ISEB and Independent pathways.",
 
   manifest: "/manifest.json",
 
@@ -27,9 +27,9 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     siteName: "Angel 11+",
-    title: "Angel 11+ — Selective School Preparation",
+    title: "Angel 11+ — Smart UK 11+ Preparation",
     description:
-      "Adaptive 11+ exam preparation for Essex CSSE. English comprehension, Maths reasoning, Vocabulary and Smart writing feedback.",
+      "Original exam-style practice for UK 11+ preparation. Adaptive learning across English, Maths, Reasoning, Writing and Reading Fluency.",
     url: APP_URL,
     // og:image — add /og-image.png (1200×630) once brand assets are ready
     // images: [{ url: "/og-image.png", width: 1200, height: 630 }],
@@ -37,9 +37,9 @@ export const metadata: Metadata = {
 
   twitter: {
     card: "summary",
-    title: "Angel 11+ — Selective School Preparation",
+    title: "Angel 11+ — Smart UK 11+ Preparation",
     description:
-      "Adaptive 11+ exam prep for Essex CSSE. English, Maths, Vocabulary, Smart writing feedback.",
+      "Original exam-style 11+ practice for GL, CEM, CSSE, ISEB and Independent pathways. Adaptive learning, Smart Feedback.",
     // images: ["/og-image.png"],  // uncomment when brand asset exists
   },
 

@@ -48,6 +48,10 @@ const SKILL_LABELS: Record<SkillType, string> = {
   pattern: "Sequences & patterns",
   fractions: "Fractions",
   writing: "Writing",
+  "verbal-reasoning": "Verbal Reasoning",
+  "non-verbal-reasoning": "Non-Verbal Reasoning",
+  "spatial-reasoning": "Spatial Reasoning",
+  "numerical-reasoning": "Numerical Reasoning",
 };
 
 // ─── subject analytics ───────────────────────────────────────────────────────

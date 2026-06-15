@@ -13,7 +13,11 @@ export type SkillType =
   | "word-problem"
   | "pattern"
   | "fractions"
-  | "writing";
+  | "writing"
+  | "verbal-reasoning"
+  | "non-verbal-reasoning"
+  | "spatial-reasoning"
+  | "numerical-reasoning";
 
 export interface Question {
   id: string;
@@ -79,4 +83,5 @@ export interface UserProgress {
   skillScores?: Partial<Record<SkillType, SkillRecord>>;
   earnedBadgeIds?: string[];
   weeklyStats?: { weekStart: string; sessions: number };
+  selectedPathwayId?: string;
 }

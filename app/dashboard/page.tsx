@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import {
   BookOpen,
   Calculator,
@@ -12,11 +13,12 @@ import {
   Target,
   Clock,
   CheckCircle,
+  MapPin,
 } from "lucide-react";
 import PageLayout from "@/components/PageLayout";
 import SubjectCard from "@/components/SubjectCard";
 import XPBar from "@/components/XPBar";
-import { getProgress, markBadgesSeen } from "@/lib/progress";
+import { getProgress, markBadgesSeen, getSelectedPathwayId } from "@/lib/progress";
 import { migrateLocalProgressToSupabase } from "@/lib/migrateProgress";
 import { computeAnalytics } from "@/lib/analytics";
 import { computeAdaptiveState } from "@/lib/adaptiveEngine";
@@ -24,16 +26,18 @@ import { computeGamification } from "@/lib/gamification";
 import InsightCard from "@/components/InsightCard";
 import DailyMission from "@/components/DailyMission";
 import NewBadgeBanner from "@/components/NewBadgeBanner";
+import { getPathwayById } from "@/lib/pathways";
 import type { UserProgress } from "@/types";
 import type { AnalyticsReport } from "@/types/analytics";
 import type { DailyMission as DailyMissionData } from "@/types/adaptive";
 import type { WeeklyGoal } from "@/types/gamification";
+import type { Pathway } from "@/types/pathway";
 
 const subjects = [
   {
     href: "/english",
     title: "English Comprehension",
-    description: "Inference, evidence & atmosphere. Essex CSSE style passages.",
+    description: "Inference, evidence & atmosphere. Original exam-style passages.",
     icon: BookOpen,
     color: "purple" as const,
     badge: "3 lessons",
@@ -97,6 +101,7 @@ export default function DashboardPage() {
   const [weeklyGoal, setWeeklyGoal] = useState<WeeklyGoal | null>(null);
   const [newBadgeIds, setNewBadgeIds] = useState<string[]>([]);
   const [tip, setTip] = useState("");
+  const [pathway, setPathway] = useState<Pathway | undefined>();
 
   useEffect(() => {
     const p = getProgress();
@@ -110,6 +115,7 @@ export default function DashboardPage() {
     setWeeklyGoal(gamification.weeklyGoal);
     setNewBadgeIds(gamification.newlyEarnedIds);
     setTip(tips[Math.floor(Math.random() * tips.length)]);
+    setPathway(getPathwayById(getSelectedPathwayId() ?? ""));
     migrateLocalProgressToSupabase().catch(() => {});
   }, []);
 
@@ -210,6 +216,32 @@ export default function DashboardPage() {
         {/* Daily mission */}
         {mission && <DailyMission mission={mission} />}
 
+        {/* Pathway card */}
+        <Link
+          href="/pathways"
+          className="mt-3 flex items-center gap-3 bg-white rounded-xl px-4 py-3.5 border border-gray-100 hover:shadow-sm transition-shadow"
+        >
+          <div className="w-8 h-8 rounded-xl bg-purple-50 flex items-center justify-center shrink-0">
+            <MapPin size={15} className="text-purple-600" />
+          </div>
+          <div className="flex-1 min-w-0">
+            {pathway ? (
+              <>
+                <p className="text-xs text-gray-400 font-medium">Current pathway</p>
+                <p className="text-sm font-semibold text-gray-900">{pathway.name}</p>
+              </>
+            ) : (
+              <>
+                <p className="text-sm font-semibold text-gray-900">Choose Your 11+ Pathway</p>
+                <p className="text-xs text-gray-400 mt-0.5">GL · CEM · CSSE · ISEB · Independent</p>
+              </>
+            )}
+          </div>
+          <span className="text-xs text-purple-600 font-medium shrink-0">
+            {pathway ? "Change" : "Choose →"}
+          </span>
+        </Link>
+
         {/* Intelligence panel — top 2 insights when there's data */}
         {report && report.hasEnoughData && report.insights.length > 0 && (
           <div className="mt-4">
@@ -242,16 +274,16 @@ export default function DashboardPage() {
           ))}
         </div>
 
-        {/* Essex CSSE note */}
+        {/* About + disclaimer */}
         <div className="mt-8 bg-white rounded-2xl p-5 border border-gray-100">
           <p className="text-gray-500 text-xs font-semibold uppercase tracking-wide mb-2">
-            About this platform
+            About Angel 11+
           </p>
-          <p className="text-gray-700 text-sm leading-relaxed">
-            All content is designed specifically for{" "}
-            <strong>Essex CSSE selective school entry</strong>. Questions focus on
-            inference, reasoning, precision and exam technique — the exact skills
-            tested at 11+.
+          <p className="text-gray-700 text-sm leading-relaxed mb-3">
+            Original exam-style practice for UK 11+ preparation across English, Maths, Reasoning, Writing and Reading Fluency.
+          </p>
+          <p className="text-gray-400 text-xs leading-relaxed">
+            Angel 11+ provides original exam-style practice and is not affiliated with or endorsed by any exam board or school.
           </p>
         </div>
       </div>

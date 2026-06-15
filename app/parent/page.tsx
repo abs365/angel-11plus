@@ -20,14 +20,17 @@ import {
   AlertCircle,
   CheckCircle,
   Info,
+  MapPin,
 } from "lucide-react";
-import { getProgress } from "@/lib/progress";
+import { getProgress, getSelectedPathwayId } from "@/lib/progress";
 import { computeAnalytics } from "@/lib/analytics";
 import { computeGamification, BADGE_DEFINITIONS } from "@/lib/gamification";
 import { computeParentReport, READINESS_CONFIG } from "@/lib/parentInsights";
+import { getPathwayById } from "@/lib/pathways";
 import type { ParentReport } from "@/types/parent";
 import type { SubjectAnalytics } from "@/types/analytics";
 import type { SubjectConfidence } from "@/types/adaptiveDifficulty";
+import type { Pathway } from "@/types/pathway";
 import DifficultyBadge from "@/components/DifficultyBadge";
 
 // ─── Subject icon map ────────────────────────────────────────────────────────
@@ -103,12 +106,14 @@ function EmptyState() {
 
 export default function ParentDashboardPage() {
   const [report, setReport] = useState<ParentReport | null>(null);
+  const [pathway, setPathway] = useState<Pathway | undefined>();
 
   useEffect(() => {
     const p = getProgress();
     const analytics = computeAnalytics(p);
     const gamification = computeGamification(p);
     setReport(computeParentReport(p, analytics, gamification));
+    setPathway(getPathwayById(getSelectedPathwayId() ?? ""));
   }, []);
 
   if (!report) return null;
@@ -168,6 +173,37 @@ export default function ParentDashboardPage() {
                   icon={<Clock size={16} className="text-green-500" />}
                 />
               </div>
+            </section>
+
+            {/* Learning Pathway */}
+            <section>
+              <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">
+                Learning Pathway
+              </h2>
+              <Link
+                href="/pathways"
+                className="bg-white rounded-xl p-4 flex items-center gap-3 hover:shadow-sm transition-shadow block"
+              >
+                <div className="w-9 h-9 rounded-lg bg-purple-50 flex items-center justify-center shrink-0">
+                  <MapPin size={17} className="text-purple-600" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  {pathway ? (
+                    <>
+                      <p className="text-sm font-semibold text-gray-900">{pathway.name}</p>
+                      <p className="text-xs text-gray-500 mt-0.5 leading-relaxed">
+                        {pathway.subjects.join(" · ")}
+                      </p>
+                    </>
+                  ) : (
+                    <>
+                      <p className="text-sm font-semibold text-gray-900">No pathway selected</p>
+                      <p className="text-xs text-gray-500 mt-0.5">Tap to choose GL, CEM, CSSE or another pathway</p>
+                    </>
+                  )}
+                </div>
+                <ChevronRight size={16} className="text-gray-300 shrink-0" />
+              </Link>
             </section>
 
             {/* Exam Readiness */}
@@ -365,6 +401,11 @@ export default function ParentDashboardPage() {
                 </div>
               </div>
             </section>
+
+            {/* Legal disclaimer */}
+            <p className="text-xs text-gray-400 text-center leading-relaxed px-4 pb-2">
+              Angel 11+ provides original exam-style practice and is not affiliated with or endorsed by any exam board or school.
+            </p>
 
           </div>
         )}

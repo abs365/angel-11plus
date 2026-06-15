@@ -14,6 +14,7 @@ import {
   LogOut,
   User,
   Users,
+  MapPin,
 } from "lucide-react";
 import { useAuth } from "@/components/providers/AuthProvider";
 
@@ -26,6 +27,7 @@ const navItems = [
   { href: "/mock-test", label: "Mock", icon: ClipboardList },
   { href: "/progress", label: "Progress", icon: BarChart2 },
   { href: "/parent", label: "Parent", icon: Users, sidebarOnly: true, badge: "Beta" },
+  { href: "/pathways", label: "Pathway", icon: MapPin, sidebarOnly: true },
 ];
 
 export default function Navigation() {
@@ -44,7 +46,7 @@ export default function Navigation() {
       <nav className="hidden md:flex flex-col w-64 min-h-screen bg-white border-r border-gray-100 px-4 py-6 fixed left-0 top-0 z-40">
         <div className="mb-8 px-2">
           <h1 className="text-xl font-bold text-purple-700">Angel 11+</h1>
-          <p className="text-xs text-gray-400 mt-0.5">Selective School Prep</p>
+          <p className="text-xs text-gray-400 mt-0.5">Smart UK 11+ Prep</p>
         </div>
 
         <div className="flex flex-col gap-1 flex-1">
