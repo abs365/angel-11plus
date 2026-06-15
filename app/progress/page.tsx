@@ -86,17 +86,17 @@ export default function ProgressPage() {
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-3">
-            <div className="bg-indigo-100 p-2.5 rounded-xl">
-              <BarChart2 size={22} className="text-indigo-600" />
+            <div className="bg-indigo-100 dark:bg-indigo-900 p-3 rounded-2xl">
+              <BarChart2 size={22} className="text-indigo-600 dark:text-indigo-400" />
             </div>
             <div>
-              <h1 className="text-gray-900 font-bold text-2xl">My Progress</h1>
-              <p className="text-gray-400 text-sm">Track your 11+ journey</p>
+              <h1 className="text-gray-900 dark:text-gray-100 font-bold text-2xl">My Progress</h1>
+              <p className="text-gray-400 dark:text-gray-500 text-sm">Track your 11+ journey</p>
             </div>
           </div>
           <button
             onClick={resetProgress}
-            className="text-gray-400 hover:text-gray-600 p-2 rounded-lg hover:bg-gray-100 transition-colors"
+            className="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
             title="Reset progress"
           >
             <RefreshCw size={16} />
@@ -136,37 +136,37 @@ export default function ProgressPage() {
 
         {/* XP Milestone bar */}
         {gamification && (
-          <div className="bg-white rounded-2xl border border-gray-100 p-5 mb-5">
+          <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-5 mb-5">
             <div className="flex items-center justify-between mb-3">
               <div>
-                <p className="text-gray-400 text-xs font-semibold uppercase tracking-wide mb-0.5">
+                <p className="text-gray-400 dark:text-gray-500 text-xs font-semibold uppercase tracking-wide mb-0.5">
                   Current rank
                 </p>
-                <p className="text-gray-900 font-bold text-lg leading-tight">
+                <p className="text-gray-900 dark:text-gray-100 font-bold text-lg leading-tight">
                   {gamification.currentMilestone.label}
                 </p>
               </div>
               {gamification.nextMilestone ? (
                 <div className="text-right">
-                  <p className="text-gray-400 text-xs mb-0.5">Next rank</p>
-                  <p className="text-gray-600 font-semibold text-sm">
+                  <p className="text-gray-400 dark:text-gray-500 text-xs mb-0.5">Next rank</p>
+                  <p className="text-gray-600 dark:text-gray-400 font-semibold text-sm">
                     {gamification.nextMilestone.label}
                   </p>
                 </div>
               ) : (
-                <span className="bg-indigo-100 text-indigo-600 text-xs font-bold px-2.5 py-1 rounded-full">
+                <span className="bg-indigo-100 dark:bg-indigo-900 text-indigo-600 dark:text-indigo-400 text-xs font-bold px-2.5 py-1 rounded-full">
                   Maximum rank
                 </span>
               )}
             </div>
-            <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+            <div className="h-2 bg-gray-100 dark:bg-gray-800 rounded-full overflow-hidden">
               <div
                 className="h-full bg-indigo-500 rounded-full transition-all duration-700"
                 style={{ width: `${gamification.milestoneProgress}%` }}
               />
             </div>
             {gamification.nextMilestone && (
-              <p className="text-gray-400 text-xs mt-2">
+              <p className="text-gray-400 dark:text-gray-500 text-xs mt-2">
                 {progress!.xp} / {gamification.nextMilestone.threshold} XP
                 {" · "}
                 {gamification.nextMilestone.threshold - progress!.xp} XP to{" "}
@@ -178,37 +178,37 @@ export default function ProgressPage() {
 
         {/* Stats grid */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
-          <div className="bg-white rounded-2xl p-4 border border-gray-100 text-center">
+          <div className="bg-white dark:bg-gray-900 rounded-2xl p-4 border border-gray-100 dark:border-gray-800 text-center">
             <Flame size={20} className="text-orange-500 mx-auto mb-2" />
-            <p className="text-gray-900 font-bold text-2xl">{progress.streak}</p>
-            <p className="text-gray-400 text-xs mt-0.5">Day Streak</p>
+            <p className="text-gray-900 dark:text-gray-100 font-bold text-2xl">{progress.streak}</p>
+            <p className="text-gray-400 dark:text-gray-500 text-xs mt-0.5">Day Streak</p>
           </div>
-          <div className="bg-white rounded-2xl p-4 border border-gray-100 text-center">
+          <div className="bg-white dark:bg-gray-900 rounded-2xl p-4 border border-gray-100 dark:border-gray-800 text-center">
             <CheckCircle size={20} className="text-green-500 mx-auto mb-2" />
-            <p className="text-gray-900 font-bold text-2xl">{progress.completedLessons.length}</p>
-            <p className="text-gray-400 text-xs mt-0.5">Completed</p>
+            <p className="text-gray-900 dark:text-gray-100 font-bold text-2xl">{progress.completedLessons.length}</p>
+            <p className="text-gray-400 dark:text-gray-500 text-xs mt-0.5">Completed</p>
           </div>
-          <div className="bg-white rounded-2xl p-4 border border-gray-100 text-center">
+          <div className="bg-white dark:bg-gray-900 rounded-2xl p-4 border border-gray-100 dark:border-gray-800 text-center">
             <Target size={20} className="text-blue-500 mx-auto mb-2" />
-            <p className="text-gray-900 font-bold text-2xl">{completionPct}%</p>
-            <p className="text-gray-400 text-xs mt-0.5">Coverage</p>
+            <p className="text-gray-900 dark:text-gray-100 font-bold text-2xl">{completionPct}%</p>
+            <p className="text-gray-400 dark:text-gray-500 text-xs mt-0.5">Coverage</p>
           </div>
-          <div className="bg-white rounded-2xl p-4 border border-gray-100 text-center">
+          <div className="bg-white dark:bg-gray-900 rounded-2xl p-4 border border-gray-100 dark:border-gray-800 text-center">
             <Trophy size={20} className="text-amber-500 mx-auto mb-2" />
-            <p className="text-gray-900 font-bold text-2xl">
+            <p className="text-gray-900 dark:text-gray-100 font-bold text-2xl">
               {Object.values(progress.scores).filter((s) => s >= 80).length}
             </p>
-            <p className="text-gray-400 text-xs mt-0.5">80%+ scores</p>
+            <p className="text-gray-400 dark:text-gray-500 text-xs mt-0.5">80%+ scores</p>
           </div>
         </div>
 
         {/* Completed lessons */}
         {progress.completedLessons.length > 0 ? (
-          <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden mb-5">
-            <div className="px-5 py-4 border-b border-gray-50">
-              <h2 className="text-gray-900 font-semibold">Completed Sessions</h2>
+          <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 overflow-hidden mb-5">
+            <div className="px-5 py-4 border-b border-gray-50 dark:border-gray-800">
+              <h2 className="text-gray-900 dark:text-gray-100 font-semibold">Completed Sessions</h2>
             </div>
-            <div className="divide-y divide-gray-50">
+            <div className="divide-y divide-gray-50 dark:divide-gray-800">
               {progress.completedLessons.map((id) => {
                 const score = progress.scores[id];
                 const name = lessonNames[id] ?? id;
@@ -216,16 +216,16 @@ export default function ProgressPage() {
                   <div key={id} className="px-5 py-3.5 flex items-center justify-between">
                     <div className="flex items-center gap-2.5">
                       <CheckCircle size={15} className="text-green-400 shrink-0" />
-                      <p className="text-gray-700 text-sm font-medium">{name}</p>
+                      <p className="text-gray-700 dark:text-gray-300 text-sm font-medium">{name}</p>
                     </div>
                     {score !== undefined && (
                       <span
                         className={`text-xs font-bold px-2.5 py-1 rounded-full ${
                           score >= 80
-                            ? "bg-green-100 text-green-700"
+                            ? "bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300"
                             : score >= 60
-                            ? "bg-amber-100 text-amber-700"
-                            : "bg-red-100 text-red-600"
+                            ? "bg-amber-100 dark:bg-amber-900 text-amber-700 dark:text-amber-300"
+                            : "bg-red-100 dark:bg-red-900 text-red-600 dark:text-red-400"
                         }`}
                       >
                         {score}%
@@ -237,19 +237,19 @@ export default function ProgressPage() {
             </div>
           </div>
         ) : (
-          <div className="bg-white rounded-2xl border border-dashed border-gray-200 p-8 text-center mb-5">
-            <Star size={24} className="text-gray-200 mx-auto mb-3" />
-            <p className="text-gray-400 font-medium mb-1">No sessions completed yet</p>
-            <p className="text-gray-300 text-sm">Start with English or Maths to earn XP</p>
+          <div className="bg-white dark:bg-gray-900 rounded-2xl border border-dashed border-gray-200 dark:border-gray-700 p-8 text-center mb-5">
+            <Star size={24} className="text-gray-200 dark:text-gray-700 mx-auto mb-3" />
+            <p className="text-gray-400 dark:text-gray-500 font-medium mb-1">No sessions completed yet</p>
+            <p className="text-gray-300 dark:text-gray-600 text-sm">Start with English or Maths to earn XP</p>
           </div>
         )}
 
         {/* English lesson progress */}
-        <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden mb-8">
-          <div className="px-5 py-4 border-b border-gray-50">
-            <h2 className="text-gray-900 font-semibold">English Lessons</h2>
+        <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 overflow-hidden mb-8">
+          <div className="px-5 py-4 border-b border-gray-50 dark:border-gray-800">
+            <h2 className="text-gray-900 dark:text-gray-100 font-semibold">English Lessons</h2>
           </div>
-          <div className="divide-y divide-gray-50">
+          <div className="divide-y divide-gray-50 dark:divide-gray-800">
             {englishLessons.map((lesson) => {
               const done = progress.completedLessons.includes(lesson.id);
               const score = progress.scores[lesson.id];
@@ -258,10 +258,10 @@ export default function ProgressPage() {
                   <div className="flex items-center gap-2.5">
                     <div
                       className={`w-2.5 h-2.5 rounded-full shrink-0 ${
-                        done ? "bg-green-400" : "bg-gray-200"
+                        done ? "bg-green-400" : "bg-gray-200 dark:bg-gray-700"
                       }`}
                     />
-                    <p className={`text-sm font-medium ${done ? "text-gray-700" : "text-gray-400"}`}>
+                    <p className={`text-sm font-medium ${done ? "text-gray-700 dark:text-gray-300" : "text-gray-400 dark:text-gray-500"}`}>
                       {lesson.title}
                     </p>
                   </div>
@@ -269,16 +269,16 @@ export default function ProgressPage() {
                     <span
                       className={`text-xs font-bold px-2.5 py-1 rounded-full ${
                         score >= 80
-                          ? "bg-green-100 text-green-700"
+                          ? "bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300"
                           : score >= 60
-                          ? "bg-amber-100 text-amber-700"
-                          : "bg-red-100 text-red-600"
+                          ? "bg-amber-100 dark:bg-amber-900 text-amber-700 dark:text-amber-300"
+                          : "bg-red-100 dark:bg-red-900 text-red-600 dark:text-red-400"
                       }`}
                     >
                       {score}%
                     </span>
                   ) : (
-                    <span className="text-xs text-gray-300">Not started</span>
+                    <span className="text-xs text-gray-300 dark:text-gray-600">Not started</span>
                   )}
                 </div>
               );
@@ -290,12 +290,12 @@ export default function ProgressPage() {
         {report && (
           <>
             {/* Subject breakdown */}
-            <div className="bg-white rounded-2xl border border-gray-100 p-5 mb-4">
+            <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-5 mb-4">
               <div className="flex items-center justify-between mb-4">
-                <h2 className="text-gray-900 font-semibold">Subject Breakdown</h2>
+                <h2 className="text-gray-900 dark:text-gray-100 font-semibold">Subject Breakdown</h2>
                 {report.overallScore > 0 && (
-                  <span className="text-xs text-gray-400 font-medium">
-                    Overall avg: <strong className="text-gray-700">{report.overallScore}%</strong>
+                  <span className="text-xs text-gray-400 dark:text-gray-500 font-medium">
+                    Overall avg: <strong className="text-gray-700 dark:text-gray-300">{report.overallScore}%</strong>
                   </span>
                 )}
               </div>
@@ -306,12 +306,12 @@ export default function ProgressPage() {
               </div>
             </div>
 
-            {/* Learning confidence — only when sessions exist */}
+            {/* Learning confidence */}
             {adaptiveProfile && adaptiveProfile.subjectConfidence.some((c) => c.score > 0) && (
-              <div className="bg-white rounded-2xl border border-gray-100 p-5 mb-4">
+              <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-5 mb-4">
                 <div className="mb-4">
-                  <h2 className="text-gray-900 font-semibold">Learning Confidence</h2>
-                  <p className="text-gray-400 text-xs mt-0.5">
+                  <h2 className="text-gray-900 dark:text-gray-100 font-semibold">Learning Confidence</h2>
+                  <p className="text-gray-400 dark:text-gray-500 text-xs mt-0.5">
                     Combines accuracy and practice consistency per subject
                   </p>
                 </div>
@@ -326,7 +326,7 @@ export default function ProgressPage() {
                       return (
                         <div key={c.subject} className="flex items-center gap-4">
                           <div className="w-24 shrink-0">
-                            <p className="text-gray-700 text-sm font-medium capitalize">
+                            <p className="text-gray-700 dark:text-gray-300 text-sm font-medium capitalize">
                               {c.subject === "mock-test" ? "Mock Test" : c.subject.charAt(0).toUpperCase() + c.subject.slice(1)}
                             </p>
                             <div className="mt-1">
@@ -335,12 +335,12 @@ export default function ProgressPage() {
                           </div>
                           <div className="flex-1">
                             <div className="flex items-center justify-between mb-1">
-                              <span className="text-xs text-gray-500 font-medium">{c.score}%</span>
-                              <span className="text-[10px] text-gray-300">
+                              <span className="text-xs text-gray-500 dark:text-gray-400 font-medium">{c.score}%</span>
+                              <span className="text-[10px] text-gray-300 dark:text-gray-600">
                                 accuracy {c.accuracy}% · consistency {c.consistency}%
                               </span>
                             </div>
-                            <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+                            <div className="h-2 bg-gray-100 dark:bg-gray-800 rounded-full overflow-hidden">
                               <div
                                 className={`h-full rounded-full transition-all duration-700 ${barColor}`}
                                 style={{ width: `${c.score}%` }}
@@ -354,12 +354,12 @@ export default function ProgressPage() {
               </div>
             )}
 
-            {/* Skill analysis — only when there's enough data */}
+            {/* Skill analysis */}
             {report.skills.length > 0 && (
-              <div className="bg-white rounded-2xl border border-gray-100 p-5 mb-4">
+              <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-5 mb-4">
                 <div className="mb-4">
-                  <h2 className="text-gray-900 font-semibold">Skill Analysis</h2>
-                  <p className="text-gray-400 text-xs mt-0.5">
+                  <h2 className="text-gray-900 dark:text-gray-100 font-semibold">Skill Analysis</h2>
+                  <p className="text-gray-400 dark:text-gray-500 text-xs mt-0.5">
                     Based on your answers so far — weakest skills shown first
                   </p>
                 </div>
@@ -367,7 +367,7 @@ export default function ProgressPage() {
                 {/* English skills */}
                 {report.skills.filter((s) => s.group === "english").length > 0 && (
                   <div className="mb-4">
-                    <p className="text-xs text-gray-400 font-semibold uppercase tracking-wide mb-2.5">
+                    <p className="text-xs text-gray-400 dark:text-gray-500 font-semibold uppercase tracking-wide mb-2.5">
                       English
                     </p>
                     <div className="flex flex-col gap-2.5">
@@ -383,7 +383,7 @@ export default function ProgressPage() {
                 {/* Maths skills */}
                 {report.skills.filter((s) => s.group === "maths").length > 0 && (
                   <div>
-                    <p className="text-xs text-gray-400 font-semibold uppercase tracking-wide mb-2.5">
+                    <p className="text-xs text-gray-400 dark:text-gray-500 font-semibold uppercase tracking-wide mb-2.5">
                       Maths
                     </p>
                     <div className="flex flex-col gap-2.5">
@@ -399,7 +399,7 @@ export default function ProgressPage() {
                 {/* Reasoning skills */}
                 {report.skills.filter((s) => s.group === "reasoning").length > 0 && (
                   <div className={report.skills.filter((s) => s.group !== "reasoning").length > 0 ? "mt-4" : ""}>
-                    <p className="text-xs text-gray-400 font-semibold uppercase tracking-wide mb-2.5">
+                    <p className="text-xs text-gray-400 dark:text-gray-500 font-semibold uppercase tracking-wide mb-2.5">
                       Reasoning
                     </p>
                     <div className="flex flex-col gap-2.5">
@@ -417,7 +417,7 @@ export default function ProgressPage() {
             {/* Learning insights */}
             {report.insights.length > 0 && (
               <div className="mb-4">
-                <h2 className="text-gray-900 font-semibold mb-3">Learning Intelligence</h2>
+                <h2 className="text-gray-900 dark:text-gray-100 font-semibold mb-3">Learning Intelligence</h2>
                 <div className="flex flex-col gap-3">
                   {report.insights.slice(0, 4).map((insight) => (
                     <InsightCard key={insight.id} insight={insight} />
@@ -444,9 +444,9 @@ export default function ProgressPage() {
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-2">
                 <Award size={18} className="text-indigo-500" />
-                <h2 className="text-gray-900 font-bold text-lg">Achievements</h2>
+                <h2 className="text-gray-900 dark:text-gray-100 font-bold text-lg">Achievements</h2>
               </div>
-              <span className="text-gray-400 text-sm">
+              <span className="text-gray-400 dark:text-gray-500 text-sm">
                 {gamification.earnedIds.length} / {BADGE_DEFINITIONS.length} earned
               </span>
             </div>
@@ -455,8 +455,8 @@ export default function ProgressPage() {
             <div
               className={`flex items-center gap-3 rounded-xl px-4 py-3 mb-5 border ${
                 gamification.weeklyGoal.isComplete
-                  ? "bg-emerald-50 border-emerald-100"
-                  : "bg-white border-gray-100"
+                  ? "bg-emerald-50 dark:bg-emerald-950 border-emerald-100 dark:border-emerald-900"
+                  : "bg-white dark:bg-gray-900 border-gray-100 dark:border-gray-800"
               }`}
             >
               <div className="flex gap-1.5 shrink-0">
@@ -468,18 +468,18 @@ export default function ProgressPage() {
                         ? gamification.weeklyGoal.isComplete
                           ? "bg-emerald-400"
                           : "bg-indigo-400"
-                        : "bg-gray-200"
+                        : "bg-gray-200 dark:bg-gray-700"
                     }`}
                   />
                 ))}
               </div>
               <div className="flex-1">
-                <p className={`text-sm font-semibold ${gamification.weeklyGoal.isComplete ? "text-emerald-700" : "text-gray-700"}`}>
+                <p className={`text-sm font-semibold ${gamification.weeklyGoal.isComplete ? "text-emerald-700 dark:text-emerald-300" : "text-gray-700 dark:text-gray-300"}`}>
                   {gamification.weeklyGoal.isComplete
                     ? "Weekly goal complete"
                     : `${gamification.weeklyGoal.sessions} of ${gamification.weeklyGoal.target} sessions this week`}
                 </p>
-                <p className="text-gray-400 text-xs mt-0.5">
+                <p className="text-gray-400 dark:text-gray-500 text-xs mt-0.5">
                   {gamification.weeklyGoal.isComplete
                     ? "Outstanding consistency this week."
                     : `${gamification.weeklyGoal.target - gamification.weeklyGoal.sessions} more session${gamification.weeklyGoal.target - gamification.weeklyGoal.sessions !== 1 ? "s" : ""} to reach your weekly target.`}
@@ -498,7 +498,7 @@ export default function ProgressPage() {
               };
               return (
                 <div key={category} className="mb-6">
-                  <p className="text-xs text-gray-400 font-semibold uppercase tracking-wide mb-3">
+                  <p className="text-xs text-gray-400 dark:text-gray-500 font-semibold uppercase tracking-wide mb-3">
                     {categoryLabels[category]}
                   </p>
                   <div className="grid grid-cols-2 md:grid-cols-3 gap-2.5">

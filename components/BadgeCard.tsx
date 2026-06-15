@@ -31,16 +31,16 @@ const ICON_MAP: Record<string, React.ElementType> = {
 };
 
 const EARNED_ICON_CLASS: Record<BadgeDefinition["color"], string> = {
-  orange: "bg-orange-100 text-orange-500",
-  red: "bg-red-100 text-red-500",
-  rose: "bg-rose-100 text-rose-500",
-  purple: "bg-purple-100 text-purple-600",
-  blue: "bg-blue-100 text-blue-600",
-  green: "bg-green-100 text-green-600",
-  amber: "bg-amber-100 text-amber-600",
-  indigo: "bg-indigo-100 text-indigo-600",
-  pink: "bg-pink-100 text-pink-600",
-  gray: "bg-gray-100 text-gray-500",
+  orange: "bg-orange-100 dark:bg-orange-900 text-orange-500 dark:text-orange-300",
+  red: "bg-red-100 dark:bg-red-900 text-red-500 dark:text-red-300",
+  rose: "bg-rose-100 dark:bg-rose-900 text-rose-500 dark:text-rose-300",
+  purple: "bg-purple-100 dark:bg-purple-900 text-purple-600 dark:text-purple-300",
+  blue: "bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-300",
+  green: "bg-green-100 dark:bg-green-900 text-green-600 dark:text-green-300",
+  amber: "bg-amber-100 dark:bg-amber-900 text-amber-600 dark:text-amber-300",
+  indigo: "bg-indigo-100 dark:bg-indigo-900 text-indigo-600 dark:text-indigo-300",
+  pink: "bg-pink-100 dark:bg-pink-900 text-pink-600 dark:text-pink-300",
+  gray: "bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400",
 };
 
 interface BadgeCardProps {
@@ -54,14 +54,14 @@ export default function BadgeCard({ badge, earned, compact = false }: BadgeCardP
 
   if (!earned) {
     return (
-      <div className={`flex items-start gap-3 bg-gray-50 rounded-xl border border-dashed border-gray-200 ${compact ? "p-3" : "p-4"}`}>
-        <div className="shrink-0 w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center">
-          <Lock size={13} className="text-gray-300" />
+      <div className={`flex items-start gap-3 bg-gray-50 dark:bg-gray-800 rounded-xl border border-dashed border-gray-200 dark:border-gray-700 ${compact ? "p-3" : "p-4"}`}>
+        <div className="shrink-0 w-8 h-8 bg-gray-100 dark:bg-gray-700 rounded-lg flex items-center justify-center">
+          <Lock size={13} className="text-gray-300 dark:text-gray-600" />
         </div>
         <div className="min-w-0">
-          <p className="text-gray-300 font-semibold text-sm truncate">{badge.name}</p>
+          <p className="text-gray-300 dark:text-gray-600 font-semibold text-sm truncate">{badge.name}</p>
           {!compact && (
-            <p className="text-gray-300 text-xs mt-0.5 leading-snug">{badge.description}</p>
+            <p className="text-gray-300 dark:text-gray-600 text-xs mt-0.5 leading-snug">{badge.description}</p>
           )}
         </div>
       </div>
@@ -71,14 +71,14 @@ export default function BadgeCard({ badge, earned, compact = false }: BadgeCardP
   const iconClass = EARNED_ICON_CLASS[badge.color];
 
   return (
-    <div className={`flex items-start gap-3 bg-white rounded-xl border border-gray-100 ${compact ? "p-3" : "p-4"}`}>
+    <div className={`flex items-start gap-3 bg-white dark:bg-gray-900 rounded-xl border border-gray-100 dark:border-gray-800 ${compact ? "p-3" : "p-4"}`}>
       <div className={`shrink-0 w-8 h-8 rounded-lg flex items-center justify-center ${iconClass}`}>
         <Icon size={14} />
       </div>
       <div className="min-w-0">
-        <p className="text-gray-800 font-semibold text-sm truncate">{badge.name}</p>
+        <p className="text-gray-800 dark:text-gray-100 font-semibold text-sm truncate">{badge.name}</p>
         {!compact && (
-          <p className="text-gray-400 text-xs mt-0.5 leading-snug">{badge.description}</p>
+          <p className="text-gray-400 dark:text-gray-500 text-xs mt-0.5 leading-snug">{badge.description}</p>
         )}
       </div>
     </div>

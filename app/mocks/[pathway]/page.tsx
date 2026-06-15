@@ -169,10 +169,10 @@ export default function MockPage({
 
   if (!config) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-950">
         <div className="text-center">
-          <p className="text-gray-500 mb-4">Mock not found.</p>
-          <Link href="/mocks" className="text-blue-600 font-medium">Back to Mocks</Link>
+          <p className="text-gray-500 dark:text-gray-400 mb-4">Mock not found.</p>
+          <Link href="/mocks" className="text-blue-600 dark:text-blue-400 font-medium">Back to Mocks</Link>
         </div>
       </div>
     );
@@ -310,7 +310,7 @@ export default function MockPage({
   // INTRO
   if (mode === "intro") {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
         <header className={`${config.headerBg} text-white`}>
           <div className="max-w-2xl mx-auto px-4 pt-4 pb-6">
             <Link href="/mocks" className="flex items-center gap-1.5 text-white text-opacity-80 text-sm mb-4 hover:text-opacity-100 transition">
@@ -329,30 +329,30 @@ export default function MockPage({
 
         <main className="max-w-2xl mx-auto px-4 py-6 space-y-5">
           {/* Info */}
-          <div className="bg-white rounded-2xl border border-gray-100 p-5 space-y-4">
+          <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-5 space-y-4">
             <div className="flex items-center gap-3">
-              <Clock size={18} className="text-gray-400" />
-              <span className="text-sm text-gray-700">Total time: <strong>{config.totalMinutes} minutes</strong></span>
+              <Clock size={18} className="text-gray-400 dark:text-gray-500" />
+              <span className="text-sm text-gray-700 dark:text-gray-300">Total time: <strong>{config.totalMinutes} minutes</strong></span>
             </div>
             <div className="space-y-2">
-              <p className="text-sm font-semibold text-gray-700">Sections</p>
+              <p className="text-sm font-semibold text-gray-700 dark:text-gray-300">Sections</p>
               {config.sections.map((s, i) => (
-                <div key={s.id} className="flex items-center gap-2 text-sm text-gray-600">
-                  <span className="w-5 h-5 rounded-full bg-gray-100 flex items-center justify-center text-xs font-bold text-gray-500">
+                <div key={s.id} className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
+                  <span className="w-5 h-5 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center text-xs font-bold text-gray-500 dark:text-gray-400">
                     {i + 1}
                   </span>
                   <span className="flex-1">{s.name}</span>
-                  <span className="text-xs text-gray-400">{s.count} questions · {s.minutes} min</span>
+                  <span className="text-xs text-gray-400 dark:text-gray-500">{s.count} questions · {s.minutes} min</span>
                 </div>
               ))}
             </div>
           </div>
 
           {/* Rules */}
-          <div className="bg-amber-50 border border-amber-100 rounded-xl p-4">
+          <div className="bg-amber-50 dark:bg-amber-950 border border-amber-100 dark:border-amber-900 rounded-xl p-4">
             <div className="flex gap-2.5">
               <AlertCircle size={16} className="text-amber-500 shrink-0 mt-0.5" />
-              <div className="text-xs text-amber-700 space-y-1 leading-relaxed">
+              <div className="text-xs text-amber-700 dark:text-amber-300 space-y-1 leading-relaxed">
                 <p className="font-semibold">Before you start</p>
                 <p>Each section is timed separately. Type your answer and press Enter or tap Submit. Answers are not case-sensitive. Work through sections in order — you cannot go back.</p>
                 <p className="mt-1 font-medium">This is original practice content and is not affiliated with {config.badge}.</p>
@@ -377,23 +377,23 @@ export default function MockPage({
     const isLow = timeLeft < 60;
 
     return (
-      <div className="min-h-screen bg-gray-50 flex flex-col">
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-950 flex flex-col">
         {/* Header */}
-        <header className="bg-white border-b border-gray-100 sticky top-0 z-20">
+        <header className="bg-white dark:bg-gray-900 border-b border-gray-100 dark:border-gray-800 sticky top-0 z-20">
           <div className="max-w-2xl mx-auto px-4 h-14 flex items-center gap-3">
-            <span className="text-sm font-semibold text-gray-900 flex-1">
+            <span className="text-sm font-semibold text-gray-900 dark:text-gray-100 flex-1">
               {currentSection.name}
-              <span className="text-xs text-gray-400 ml-2 font-normal">
+              <span className="text-xs text-gray-400 dark:text-gray-500 ml-2 font-normal">
                 Section {sectionIdx + 1}/{config.sections.length}
               </span>
             </span>
-            <div className={`flex items-center gap-1 text-sm font-bold ${isLow ? "text-red-500" : "text-gray-700"}`}>
+            <div className={`flex items-center gap-1 text-sm font-bold ${isLow ? "text-red-500" : "text-gray-700 dark:text-gray-300"}`}>
               <Clock size={15} />
               {formatTime(timeLeft)}
             </div>
           </div>
           {/* Progress bar */}
-          <div className="h-1 bg-gray-100">
+          <div className="h-1 bg-gray-100 dark:bg-gray-800">
             <div
               className={`h-1 transition-all duration-300 ${config.headerBg}`}
               style={{ width: `${progress}%` }}
@@ -404,20 +404,20 @@ export default function MockPage({
         {/* Question */}
         <main className="flex-1 max-w-2xl mx-auto w-full px-4 py-6 flex flex-col gap-5">
           <div className="flex items-center justify-between">
-            <span className="text-xs text-gray-400">
+            <span className="text-xs text-gray-400 dark:text-gray-500">
               Question {questionIdx + 1} of {sectionQuestions.length}
             </span>
-            <span className="text-xs text-gray-400">{currentQuestion.category}</span>
+            <span className="text-xs text-gray-400 dark:text-gray-500">{currentQuestion.category}</span>
           </div>
 
-          <div className="bg-white rounded-2xl border border-gray-100 p-5">
-            <p className="text-base font-medium text-gray-900 leading-relaxed whitespace-pre-line">
+          <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-5">
+            <p className="text-base font-medium text-gray-900 dark:text-gray-100 leading-relaxed whitespace-pre-line">
               {currentQuestion.question}
             </p>
           </div>
 
           {answered ? (
-            <div className={`rounded-2xl border p-5 ${wasCorrect ? "bg-green-50 border-green-100" : "bg-red-50 border-red-100"}`}>
+            <div className={`rounded-2xl border p-5 ${wasCorrect ? "bg-green-50 dark:bg-green-950 border-green-100 dark:border-green-900" : "bg-red-50 dark:bg-red-950 border-red-100 dark:border-red-900"}`}>
               <div className="flex items-start gap-2.5">
                 {wasCorrect ? (
                   <CheckCircle size={18} className="text-green-500 shrink-0 mt-0.5" />
@@ -425,10 +425,10 @@ export default function MockPage({
                   <XCircle size={18} className="text-red-400 shrink-0 mt-0.5" />
                 )}
                 <div className="flex-1">
-                  <p className={`text-sm font-semibold mb-1 ${wasCorrect ? "text-green-700" : "text-red-600"}`}>
+                  <p className={`text-sm font-semibold mb-1 ${wasCorrect ? "text-green-700 dark:text-green-300" : "text-red-600 dark:text-red-400"}`}>
                     {wasCorrect ? "Correct!" : `Incorrect — answer: ${currentQuestion.answer}`}
                   </p>
-                  <p className="text-xs text-gray-600 leading-relaxed">{currentQuestion.explanation}</p>
+                  <p className="text-xs text-gray-600 dark:text-gray-400 leading-relaxed">{currentQuestion.explanation}</p>
                 </div>
               </div>
               <button
@@ -450,7 +450,7 @@ export default function MockPage({
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && input.trim() && submitAnswer()}
                 placeholder="Type your answer…"
-                className="w-full rounded-2xl border border-gray-200 bg-white px-4 py-3.5 text-base text-gray-900 placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-300"
+                className="w-full rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 px-4 py-3.5 text-base text-gray-900 dark:text-gray-100 placeholder-gray-300 dark:placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-300"
               />
               <button
                 onClick={submitAnswer}
@@ -458,7 +458,7 @@ export default function MockPage({
                 className={`w-full py-3.5 rounded-2xl font-semibold text-sm transition-all ${
                   input.trim()
                     ? `${config.headerBg} text-white hover:opacity-90`
-                    : "bg-gray-100 text-gray-400 cursor-not-allowed"
+                    : "bg-gray-100 dark:bg-gray-800 text-gray-400 dark:text-gray-500 cursor-not-allowed"
                 }`}
               >
                 Submit Answer
@@ -476,10 +476,10 @@ export default function MockPage({
     const isLastSection = sectionIdx + 1 >= config.sections.length;
 
     return (
-      <div className="min-h-screen bg-gray-50">
-        <header className="bg-white border-b border-gray-100">
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
+        <header className="bg-white dark:bg-gray-900 border-b border-gray-100 dark:border-gray-800">
           <div className="max-w-2xl mx-auto px-4 h-14 flex items-center">
-            <span className="text-sm font-bold text-gray-900">
+            <span className="text-sm font-bold text-gray-900 dark:text-gray-100">
               Section {sectionIdx + 1} Complete
             </span>
           </div>
@@ -490,18 +490,18 @@ export default function MockPage({
             <div className={`w-20 h-20 rounded-full ${config.headerBg} flex items-center justify-center mx-auto mb-4`}>
               <span className="text-2xl font-bold text-white">{lastResult?.score ?? 0}%</span>
             </div>
-            <h2 className="text-xl font-bold text-gray-900 mb-1">{currentSection.name} done</h2>
-            <p className="text-gray-500 text-sm">
+            <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-1">{currentSection.name} done</h2>
+            <p className="text-gray-500 dark:text-gray-400 text-sm">
               {lastResult?.correct ?? 0} correct out of {lastResult?.total ?? 0} questions
             </p>
           </div>
 
           {/* Section summary */}
-          <div className="bg-white rounded-2xl border border-gray-100 p-4 space-y-2">
+          <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-4 space-y-2">
             {sectionResults.map((r, i) => (
               <div key={r.sectionId} className="flex items-center gap-3">
-                <span className="text-xs text-gray-400 w-5">{i + 1}</span>
-                <span className="text-sm text-gray-700 flex-1">{r.sectionName}</span>
+                <span className="text-xs text-gray-400 dark:text-gray-500 w-5">{i + 1}</span>
+                <span className="text-sm text-gray-700 dark:text-gray-300 flex-1">{r.sectionName}</span>
                 <span className={`text-sm font-bold ${r.score >= 75 ? "text-green-600" : r.score >= 55 ? "text-amber-600" : "text-red-500"}`}>
                   {r.score}%
                 </span>
@@ -538,7 +538,7 @@ export default function MockPage({
     const grade = pct >= 80 ? "Excellent" : pct >= 65 ? "Good" : pct >= 50 ? "Developing" : "Needs Practice";
 
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
         <header className={`${config.headerBg} text-white`}>
           <div className="max-w-2xl mx-auto px-4 pt-4 pb-6">
             <h1 className="text-lg font-bold mb-0.5">Mock Complete</h1>
@@ -548,12 +548,12 @@ export default function MockPage({
 
         <main className="max-w-2xl mx-auto px-4 -mt-3 pb-12 space-y-5">
           {/* Score card */}
-          <div className="bg-white rounded-2xl border border-gray-100 p-6 text-center shadow-sm">
+          <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-6 text-center shadow-sm">
             <div className={`text-5xl font-black mb-1 ${pct >= 75 ? "text-green-600" : pct >= 55 ? "text-amber-600" : "text-red-500"}`}>
               {pct}%
             </div>
-            <p className="text-lg font-semibold text-gray-800 mb-0.5">{grade}</p>
-            <p className="text-sm text-gray-400">{totalCorrect} of {totalQs} questions correct</p>
+            <p className="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-0.5">{grade}</p>
+            <p className="text-sm text-gray-400 dark:text-gray-500">{totalCorrect} of {totalQs} questions correct</p>
             <div className="mt-4 flex items-center justify-center gap-1.5 text-sm text-amber-600 font-semibold">
               <Trophy size={15} />
               +{config.xpReward} XP earned
@@ -561,16 +561,16 @@ export default function MockPage({
           </div>
 
           {/* Per-section breakdown */}
-          <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden">
-            <div className="px-4 py-3 border-b border-gray-50">
-              <p className="text-sm font-semibold text-gray-800">Section Breakdown</p>
+          <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 overflow-hidden">
+            <div className="px-4 py-3 border-b border-gray-50 dark:border-gray-800">
+              <p className="text-sm font-semibold text-gray-800 dark:text-gray-100">Section Breakdown</p>
             </div>
-            <div className="divide-y divide-gray-50">
+            <div className="divide-y divide-gray-50 dark:divide-gray-800">
               {sectionResults.map((r) => (
                 <div key={r.sectionId} className="px-4 py-3 flex items-center gap-3">
                   <div className="flex-1">
-                    <p className="text-sm font-medium text-gray-800">{r.sectionName}</p>
-                    <div className="mt-1.5 h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                    <p className="text-sm font-medium text-gray-800 dark:text-gray-100">{r.sectionName}</p>
+                    <div className="mt-1.5 h-1.5 bg-gray-100 dark:bg-gray-800 rounded-full overflow-hidden">
                       <div
                         className={`h-full rounded-full ${r.score >= 75 ? "bg-green-500" : r.score >= 55 ? "bg-amber-400" : "bg-red-400"}`}
                         style={{ width: `${r.score}%` }}
@@ -581,7 +581,7 @@ export default function MockPage({
                     <p className={`text-sm font-bold ${r.score >= 75 ? "text-green-600" : r.score >= 55 ? "text-amber-600" : "text-red-500"}`}>
                       {r.score}%
                     </p>
-                    <p className="text-xs text-gray-400">{r.correct}/{r.total}</p>
+                    <p className="text-xs text-gray-400 dark:text-gray-500">{r.correct}/{r.total}</p>
                   </div>
                 </div>
               ))}
@@ -589,20 +589,20 @@ export default function MockPage({
           </div>
 
           {/* What to do next */}
-          <div className="bg-white rounded-2xl border border-gray-100 p-4">
-            <p className="text-sm font-semibold text-gray-800 mb-2">What to do next</p>
+          <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-4">
+            <p className="text-sm font-semibold text-gray-800 dark:text-gray-100 mb-2">What to do next</p>
             {pct < 60 && (
-              <p className="text-xs text-gray-500 leading-relaxed mb-2">
+              <p className="text-xs text-gray-500 dark:text-gray-400 leading-relaxed mb-2">
                 Focus on the sections where you scored lowest. Return to the practice modules to review those topics before attempting this mock again.
               </p>
             )}
             {pct >= 60 && pct < 80 && (
-              <p className="text-xs text-gray-500 leading-relaxed mb-2">
+              <p className="text-xs text-gray-500 dark:text-gray-400 leading-relaxed mb-2">
                 Good effort. Target the sections below 75% for extra practice, then retake this mock to track your improvement.
               </p>
             )}
             {pct >= 80 && (
-              <p className="text-xs text-gray-500 leading-relaxed mb-2">
+              <p className="text-xs text-gray-500 dark:text-gray-400 leading-relaxed mb-2">
                 Strong result. Try one of the other mock types to broaden your preparation, or increase your practice frequency to maintain this standard.
               </p>
             )}
@@ -617,7 +617,7 @@ export default function MockPage({
                 setSaved(false);
                 startSection();
               }}
-              className="flex items-center justify-center gap-1.5 py-3.5 rounded-xl border border-gray-200 text-sm font-semibold text-gray-700 hover:bg-gray-50 transition-colors"
+              className="flex items-center justify-center gap-1.5 py-3.5 rounded-xl border border-gray-200 dark:border-gray-700 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
             >
               <RotateCcw size={15} />
               Retry Mock
@@ -633,7 +633,7 @@ export default function MockPage({
 
           <Link
             href="/parent"
-            className="block text-center text-sm text-gray-400 hover:text-gray-700 transition-colors py-2"
+            className="block text-center text-sm text-gray-400 dark:text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 transition-colors py-2"
           >
             View full report in Parent Dashboard
           </Link>

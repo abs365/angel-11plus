@@ -20,10 +20,9 @@ import dynamic from "next/dynamic";
 import type { WritingPrompt } from "@/types";
 import type { WritingFeedback as WritingFeedbackData } from "@/types/writing-feedback";
 
-// Lazy-load the feedback panel — only needed after submission, not on initial render.
 const WritingFeedback = dynamic(() => import("@/components/WritingFeedback"), {
   loading: () => (
-    <div className="animate-pulse bg-gray-100 rounded-2xl h-48" aria-hidden="true" />
+    <div className="animate-pulse bg-gray-100 dark:bg-gray-800 rounded-2xl h-48" aria-hidden="true" />
   ),
 });
 
@@ -31,9 +30,9 @@ type WritingState = "list" | "active" | "done";
 type FeedbackState = "idle" | "loading" | "ready" | "error";
 
 const typeColors: Record<string, string> = {
-  narrative: "bg-orange-100 text-orange-700",
-  descriptive: "bg-blue-100 text-blue-700",
-  persuasive: "bg-purple-100 text-purple-700",
+  narrative: "bg-orange-100 dark:bg-orange-900 text-orange-700 dark:text-orange-300",
+  descriptive: "bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300",
+  persuasive: "bg-purple-100 dark:bg-purple-900 text-purple-700 dark:text-purple-300",
 };
 
 export default function WritingPage() {
@@ -115,27 +114,27 @@ export default function WritingPage() {
         <div className="max-w-2xl mx-auto px-4 py-8 md:px-8">
           {/* Header */}
           <div className="text-center mb-6">
-            <div className="inline-flex items-center justify-center w-14 h-14 bg-orange-100 rounded-full mb-3">
-              <CheckCircle size={28} className="text-orange-600" />
+            <div className="inline-flex items-center justify-center w-14 h-14 bg-orange-100 dark:bg-orange-900 rounded-full mb-3">
+              <CheckCircle size={28} className="text-orange-600 dark:text-orange-400" />
             </div>
-            <h1 className="text-gray-900 font-bold text-2xl mb-1">Writing Submitted</h1>
-            <p className="text-gray-500 text-sm">
+            <h1 className="text-gray-900 dark:text-gray-100 font-bold text-2xl mb-1">Writing Submitted</h1>
+            <p className="text-gray-500 dark:text-gray-400 text-sm">
               {wordCount} words · {checkedCount}/{selectedPrompt.checklist.length} checklist items
             </p>
-            <div className="inline-flex items-center gap-2 bg-orange-50 text-orange-700 px-4 py-2 rounded-full font-semibold mt-3 text-sm">
+            <div className="inline-flex items-center gap-2 bg-orange-50 dark:bg-orange-950 text-orange-700 dark:text-orange-300 px-4 py-2 rounded-full font-semibold mt-3 text-sm">
               <Star size={15} className="text-orange-500" />
               +{xpGained} XP earned
             </div>
           </div>
 
           {/* Written piece */}
-          <div className="bg-white rounded-2xl p-5 border border-gray-100 mb-4">
-            <p className="text-xs text-gray-400 font-semibold uppercase tracking-wide mb-3">
+          <div className="bg-white dark:bg-gray-900 rounded-2xl p-5 border border-gray-100 dark:border-gray-800 mb-4">
+            <p className="text-xs text-gray-400 dark:text-gray-500 font-semibold uppercase tracking-wide mb-3">
               Your Response — {selectedPrompt.title}
             </p>
             <div>
               {writingText.split("\n").map((para, i) => (
-                <p key={i} className="text-gray-700 text-[15px] leading-relaxed mb-3 last:mb-0">
+                <p key={i} className="text-gray-700 dark:text-gray-300 text-[15px] leading-relaxed mb-3 last:mb-0">
                   {para || <>&nbsp;</>}
                 </p>
               ))}
@@ -143,8 +142,8 @@ export default function WritingPage() {
           </div>
 
           {/* Checklist review */}
-          <div className="bg-white rounded-2xl p-5 border border-gray-100 mb-5">
-            <p className="text-xs text-gray-400 font-semibold uppercase tracking-wide mb-3">
+          <div className="bg-white dark:bg-gray-900 rounded-2xl p-5 border border-gray-100 dark:border-gray-800 mb-5">
+            <p className="text-xs text-gray-400 dark:text-gray-500 font-semibold uppercase tracking-wide mb-3">
               Checklist review
             </p>
             <div className="flex flex-col gap-2">
@@ -153,9 +152,9 @@ export default function WritingPage() {
                   {checklist[item] ? (
                     <CheckCircle size={15} className="text-green-500 shrink-0" />
                   ) : (
-                    <div className="w-3.5 h-3.5 rounded-full border-2 border-gray-200 shrink-0" />
+                    <div className="w-3.5 h-3.5 rounded-full border-2 border-gray-200 dark:border-gray-700 shrink-0" />
                   )}
-                  <p className={`text-sm ${checklist[item] ? "text-gray-700" : "text-gray-400"}`}>
+                  <p className={`text-sm ${checklist[item] ? "text-gray-700 dark:text-gray-300" : "text-gray-400 dark:text-gray-500"}`}>
                     {item}
                   </p>
                 </div>
@@ -175,7 +174,7 @@ export default function WritingPage() {
           )}
 
           {feedbackState === "loading" && (
-            <div className="w-full mb-5 flex items-center justify-center gap-3 bg-indigo-50 border border-indigo-100 rounded-xl py-5">
+            <div className="w-full mb-5 flex items-center justify-center gap-3 bg-indigo-50 dark:bg-indigo-950 border border-indigo-100 dark:border-indigo-900 rounded-xl py-5">
               <svg
                 className="animate-spin h-4 w-4 text-indigo-500"
                 xmlns="http://www.w3.org/2000/svg"
@@ -196,15 +195,15 @@ export default function WritingPage() {
                   d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
                 />
               </svg>
-              <p className="text-indigo-600 text-sm font-medium">Preparing Angel Smart Feedback…</p>
+              <p className="text-indigo-600 dark:text-indigo-400 text-sm font-medium">Preparing Angel Smart Feedback…</p>
             </div>
           )}
 
           {feedbackState === "error" && feedbackError && (
-            <div className="mb-5 bg-red-50 border border-red-100 rounded-xl px-4 py-3.5 flex items-start gap-2.5">
+            <div className="mb-5 bg-red-50 dark:bg-red-950 border border-red-100 dark:border-red-900 rounded-xl px-4 py-3.5 flex items-start gap-2.5">
               <AlertCircle size={15} className="text-red-400 mt-0.5 shrink-0" />
               <div className="flex-1">
-                <p className="text-red-600 text-sm">{feedbackError}</p>
+                <p className="text-red-600 dark:text-red-400 text-sm">{feedbackError}</p>
               </div>
               <button
                 onClick={requestAIFeedback}
@@ -231,7 +230,7 @@ export default function WritingPage() {
             </button>
             <button
               onClick={() => startPrompt(selectedPrompt)}
-              className="flex-1 bg-gray-100 text-gray-700 rounded-xl py-3.5 font-semibold text-sm hover:bg-gray-200 transition-colors"
+              className="flex-1 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-xl py-3.5 font-semibold text-sm hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
             >
               Try Again
             </button>
@@ -250,13 +249,13 @@ export default function WritingPage() {
           <div className="flex items-center justify-between mb-5">
             <button
               onClick={() => setState("list")}
-              className="flex items-center gap-1.5 text-gray-400 hover:text-gray-700 text-sm transition-colors"
+              className="flex items-center gap-1.5 text-gray-400 dark:text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 text-sm transition-colors"
             >
               <ArrowLeft size={16} />
               Writing
             </button>
             <div className="flex items-center gap-3">
-              <span className="text-gray-400 text-sm">{wordCount} words</span>
+              <span className="text-gray-400 dark:text-gray-500 text-sm">{wordCount} words</span>
               <div className="flex items-center gap-1.5 text-orange-600 text-sm font-medium">
                 <Timer size={15} />
                 {selectedPrompt.timeMinutes} min task
@@ -265,7 +264,7 @@ export default function WritingPage() {
           </div>
 
           {/* Prompt */}
-          <div className="bg-orange-50 rounded-2xl p-5 border border-orange-100 mb-5">
+          <div className="bg-orange-50 dark:bg-orange-950 rounded-2xl p-5 border border-orange-100 dark:border-orange-900 mb-5">
             <div className="flex items-center gap-2 mb-2">
               <span
                 className={`text-xs font-semibold px-2 py-0.5 rounded-full capitalize ${typeColors[selectedPrompt.type]}`}
@@ -277,8 +276,8 @@ export default function WritingPage() {
                 {selectedPrompt.timeMinutes} minutes
               </span>
             </div>
-            <h2 className="text-gray-900 font-bold text-lg mb-2">{selectedPrompt.title}</h2>
-            <div className="text-gray-700 text-sm leading-relaxed whitespace-pre-line">
+            <h2 className="text-gray-900 dark:text-gray-100 font-bold text-lg mb-2">{selectedPrompt.title}</h2>
+            <div className="text-gray-700 dark:text-gray-300 text-sm leading-relaxed whitespace-pre-line">
               {selectedPrompt.prompt}
             </div>
           </div>
@@ -290,16 +289,16 @@ export default function WritingPage() {
                 value={writingText}
                 onChange={(e) => setWritingText(e.target.value)}
                 placeholder="Begin writing here..."
-                className="w-full h-72 md:h-96 bg-white border border-gray-200 rounded-2xl px-5 py-4 text-[15px] text-gray-800 leading-relaxed resize-none focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent"
+                className="w-full h-72 md:h-96 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-2xl px-5 py-4 text-[15px] text-gray-800 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-600 leading-relaxed resize-none focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent"
               />
               <div className="flex items-center justify-between mt-2">
-                <p className="text-gray-400 text-xs">
+                <p className="text-gray-400 dark:text-gray-500 text-xs">
                   Target: aim for{" "}
                   {selectedPrompt.type === "persuasive" ? "350+" : "300+"} words
                 </p>
                 <p
                   className={`text-xs font-medium ${
-                    wordCount >= 300 ? "text-green-600" : "text-gray-400"
+                    wordCount >= 300 ? "text-green-600" : "text-gray-400 dark:text-gray-500"
                   }`}
                 >
                   {wordCount} words
@@ -309,11 +308,11 @@ export default function WritingPage() {
 
             {/* Checklist sidebar */}
             <div className="mt-4 md:mt-0 md:w-72 shrink-0">
-              <div className="bg-white rounded-2xl border border-gray-100 p-4 sticky top-4">
-                <p className="text-xs text-gray-500 font-semibold uppercase tracking-wide mb-3">
+              <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-4 sticky top-4">
+                <p className="text-xs text-gray-500 dark:text-gray-400 font-semibold uppercase tracking-wide mb-3">
                   Checklist ({checkedCount}/{selectedPrompt.checklist.length})
                 </p>
-                <div className="w-full bg-gray-100 rounded-full h-1.5 mb-3">
+                <div className="w-full bg-gray-100 dark:bg-gray-800 rounded-full h-1.5 mb-3">
                   <div
                     className="bg-orange-400 h-full rounded-full transition-all"
                     style={{
@@ -333,14 +332,14 @@ export default function WritingPage() {
                       ) : (
                         <Square
                           size={16}
-                          className="text-gray-300 mt-0.5 shrink-0 group-hover:text-gray-400 transition-colors"
+                          className="text-gray-300 dark:text-gray-600 mt-0.5 shrink-0 group-hover:text-gray-400 dark:group-hover:text-gray-500 transition-colors"
                         />
                       )}
                       <span
                         className={`text-xs leading-snug transition-colors ${
                           checklist[item]
-                            ? "text-gray-700 line-through"
-                            : "text-gray-500"
+                            ? "text-gray-700 dark:text-gray-300 line-through"
+                            : "text-gray-500 dark:text-gray-400"
                         }`}
                       >
                         {item}
@@ -361,7 +360,7 @@ export default function WritingPage() {
             Submit Writing
           </button>
           {wordCount < 20 && (
-            <p className="text-center text-gray-400 text-xs mt-2">
+            <p className="text-center text-gray-400 dark:text-gray-500 text-xs mt-2">
               Write at least 20 words to submit
             </p>
           )}
@@ -376,18 +375,18 @@ export default function WritingPage() {
       <div className="max-w-3xl mx-auto px-4 py-6 md:px-8 md:py-8">
         {/* Header */}
         <div className="flex items-center gap-3 mb-5">
-          <div className="bg-orange-100 p-3 rounded-2xl">
-            <Pencil size={22} className="text-orange-600" />
+          <div className="bg-orange-100 dark:bg-orange-900 p-3 rounded-2xl">
+            <Pencil size={22} className="text-orange-600 dark:text-orange-400" />
           </div>
           <div>
-            <h1 className="text-gray-900 font-bold text-2xl">Creative Writing</h1>
-            <p className="text-gray-400 text-sm">Narrative · Descriptive · Persuasive</p>
+            <h1 className="text-gray-900 dark:text-gray-100 font-bold text-2xl">Creative Writing</h1>
+            <p className="text-gray-400 dark:text-gray-500 text-sm">Narrative · Descriptive · Persuasive</p>
           </div>
         </div>
 
         {/* Tip */}
-        <div className="bg-orange-50 rounded-xl p-4 border border-orange-100 mb-5">
-          <p className="text-orange-700 text-sm leading-relaxed">
+        <div className="bg-orange-50 dark:bg-orange-950 rounded-xl p-4 border border-orange-100 dark:border-orange-900 mb-5">
+          <p className="text-orange-700 dark:text-orange-300 text-sm leading-relaxed">
             <strong>Examiner tip:</strong> In 11+ writing, quality beats quantity. One precise
             adjective is worth five vague ones. Vary your sentence openings and always leave time
             to proofread.
@@ -395,9 +394,9 @@ export default function WritingPage() {
         </div>
 
         {/* Smart coaching note */}
-        <div className="flex items-center gap-2.5 bg-indigo-50 border border-indigo-100 rounded-xl px-4 py-3 mb-5">
+        <div className="flex items-center gap-2.5 bg-indigo-50 dark:bg-indigo-950 border border-indigo-100 dark:border-indigo-900 rounded-xl px-4 py-3 mb-5">
           <Sparkles size={14} className="text-indigo-500 shrink-0" />
-          <p className="text-indigo-700 text-sm">
+          <p className="text-indigo-700 dark:text-indigo-300 text-sm">
             After submitting, you can request{" "}
             <strong>Angel Smart Feedback</strong> — tailored analysis of your technique, strengths, and
             one specific improvement.
@@ -410,7 +409,7 @@ export default function WritingPage() {
             <button
               key={prompt.id}
               onClick={() => startPrompt(prompt)}
-              className="bg-white rounded-2xl p-5 border border-gray-100 hover:border-orange-200 hover:shadow-sm active:scale-[0.98] transition-all text-left group"
+              className="bg-white dark:bg-gray-900 rounded-2xl p-5 border border-gray-100 dark:border-gray-800 hover:border-orange-200 dark:hover:border-orange-700 hover:shadow-sm active:scale-[0.98] transition-all text-left group"
             >
               <div className="flex items-start justify-between mb-3">
                 <div className="flex items-center gap-2">
@@ -419,17 +418,17 @@ export default function WritingPage() {
                   >
                     {prompt.type}
                   </span>
-                  <span className="text-xs text-gray-400 flex items-center gap-1">
+                  <span className="text-xs text-gray-400 dark:text-gray-500 flex items-center gap-1">
                     <Clock size={11} />
                     {prompt.timeMinutes} min
                   </span>
                 </div>
-                <span className="text-gray-300 text-xs">{prompt.checklist.length} point checklist</span>
+                <span className="text-gray-300 dark:text-gray-600 text-xs">{prompt.checklist.length} point checklist</span>
               </div>
-              <h3 className="text-gray-900 font-semibold text-base mb-2 group-hover:text-orange-700 transition-colors">
+              <h3 className="text-gray-900 dark:text-gray-100 font-semibold text-base mb-2 group-hover:text-orange-700 dark:group-hover:text-orange-300 transition-colors">
                 {prompt.title}
               </h3>
-              <p className="text-gray-400 text-sm leading-snug line-clamp-2">
+              <p className="text-gray-400 dark:text-gray-500 text-sm leading-snug line-clamp-2">
                 {prompt.prompt.split("\n")[0]}
               </p>
             </button>

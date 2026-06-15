@@ -19,10 +19,10 @@ const barColor: Record<string, string> = {
 };
 
 const statusColor = {
-  strong: "bg-green-100 text-green-700",
-  developing: "bg-amber-100 text-amber-700",
-  weak: "bg-red-100 text-red-600",
-  "not-started": "bg-gray-100 text-gray-400",
+  strong: "bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300",
+  developing: "bg-amber-100 dark:bg-amber-900 text-amber-700 dark:text-amber-300",
+  weak: "bg-red-100 dark:bg-red-900 text-red-600 dark:text-red-300",
+  "not-started": "bg-gray-100 dark:bg-gray-800 text-gray-400 dark:text-gray-500",
 };
 
 const statusLabel = {
@@ -39,15 +39,15 @@ export function SubjectBar({ subject: s }: SubjectBarProps) {
   return (
     <div className="flex items-center gap-4">
       <div className="w-24 shrink-0">
-        <p className="text-gray-700 text-sm font-medium truncate">{s.label}</p>
-        <p className="text-gray-400 text-xs">
+        <p className="text-gray-700 dark:text-gray-300 text-sm font-medium truncate">{s.label}</p>
+        <p className="text-gray-400 dark:text-gray-500 text-xs">
           {notStarted ? "0 sessions" : `${s.attempts} session${s.attempts !== 1 ? "s" : ""}`}
         </p>
       </div>
 
       <div className="flex-1">
         <div className="flex items-center justify-between mb-1">
-          <span className="text-xs text-gray-400">
+          <span className="text-xs text-gray-400 dark:text-gray-500">
             {notStarted ? "–" : `${s.avgScore}% avg`}
           </span>
           <span
@@ -56,7 +56,7 @@ export function SubjectBar({ subject: s }: SubjectBarProps) {
             {statusLabel[s.status]}
           </span>
         </div>
-        <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+        <div className="h-2 bg-gray-100 dark:bg-gray-800 rounded-full overflow-hidden">
           <div
             className={`h-full rounded-full transition-all duration-700 ${notStarted ? "bg-gray-200" : bar}`}
             style={{ width: notStarted ? "0%" : `${s.avgScore}%` }}
@@ -83,16 +83,16 @@ const skillBarColor = {
 export function SkillBar({ skill: s }: SkillBarProps) {
   return (
     <div className="flex items-center gap-3">
-      <p className="text-gray-600 text-xs font-medium w-28 shrink-0 truncate">{s.label}</p>
+      <p className="text-gray-600 dark:text-gray-400 text-xs font-medium w-28 shrink-0 truncate">{s.label}</p>
       <div className="flex-1">
-        <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden">
+        <div className="h-1.5 bg-gray-100 dark:bg-gray-800 rounded-full overflow-hidden">
           <div
             className={`h-full rounded-full transition-all duration-700 ${skillBarColor[s.status]}`}
             style={{ width: `${s.estimatedAccuracy}%` }}
           />
         </div>
       </div>
-      <p className="text-xs text-gray-400 w-8 text-right shrink-0">
+      <p className="text-xs text-gray-400 dark:text-gray-500 w-8 text-right shrink-0">
         {s.estimatedAccuracy}%
       </p>
     </div>

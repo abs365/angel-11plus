@@ -12,64 +12,64 @@ import type { SkillType } from "@/types";
 
 const THEME = {
   violet: {
-    header: "bg-violet-100",
-    icon: "text-violet-600",
-    pill: "bg-violet-50",
-    pillText: "text-violet-700",
-    skills: "bg-violet-50",
-    skillsTitle: "text-violet-700",
-    skillsBadge: "bg-violet-100 text-violet-700",
+    header: "bg-violet-100 dark:bg-violet-900",
+    icon: "text-violet-600 dark:text-violet-400",
+    pill: "bg-violet-50 dark:bg-violet-950",
+    pillText: "text-violet-700 dark:text-violet-300",
+    skills: "bg-violet-50 dark:bg-violet-950",
+    skillsTitle: "text-violet-700 dark:text-violet-300",
+    skillsBadge: "bg-violet-100 text-violet-700 dark:bg-violet-900 dark:text-violet-300",
     bar: "bg-violet-500",
     button: "bg-violet-600 hover:bg-violet-700",
-    working: "bg-violet-50",
-    workingText: "text-violet-600",
-    back: "text-gray-400 hover:text-gray-700",
-    xpBadge: "bg-violet-50 text-violet-700",
+    working: "bg-violet-50 dark:bg-violet-950",
+    workingText: "text-violet-600 dark:text-violet-400",
+    back: "text-gray-400 hover:text-gray-700 dark:text-gray-500 dark:hover:text-gray-300",
+    xpBadge: "bg-violet-50 text-violet-700 dark:bg-violet-950 dark:text-violet-300",
   },
   cyan: {
-    header: "bg-cyan-100",
-    icon: "text-cyan-600",
-    pill: "bg-cyan-50",
-    pillText: "text-cyan-700",
-    skills: "bg-cyan-50",
-    skillsTitle: "text-cyan-700",
-    skillsBadge: "bg-cyan-100 text-cyan-700",
+    header: "bg-cyan-100 dark:bg-cyan-900",
+    icon: "text-cyan-600 dark:text-cyan-400",
+    pill: "bg-cyan-50 dark:bg-cyan-950",
+    pillText: "text-cyan-700 dark:text-cyan-300",
+    skills: "bg-cyan-50 dark:bg-cyan-950",
+    skillsTitle: "text-cyan-700 dark:text-cyan-300",
+    skillsBadge: "bg-cyan-100 text-cyan-700 dark:bg-cyan-900 dark:text-cyan-300",
     bar: "bg-cyan-500",
     button: "bg-cyan-600 hover:bg-cyan-700",
-    working: "bg-cyan-50",
-    workingText: "text-cyan-600",
-    back: "text-gray-400 hover:text-gray-700",
-    xpBadge: "bg-cyan-50 text-cyan-700",
+    working: "bg-cyan-50 dark:bg-cyan-950",
+    workingText: "text-cyan-600 dark:text-cyan-400",
+    back: "text-gray-400 hover:text-gray-700 dark:text-gray-500 dark:hover:text-gray-300",
+    xpBadge: "bg-cyan-50 text-cyan-700 dark:bg-cyan-950 dark:text-cyan-300",
   },
   teal: {
-    header: "bg-teal-100",
-    icon: "text-teal-600",
-    pill: "bg-teal-50",
-    pillText: "text-teal-700",
-    skills: "bg-teal-50",
-    skillsTitle: "text-teal-700",
-    skillsBadge: "bg-teal-100 text-teal-700",
+    header: "bg-teal-100 dark:bg-teal-900",
+    icon: "text-teal-600 dark:text-teal-400",
+    pill: "bg-teal-50 dark:bg-teal-950",
+    pillText: "text-teal-700 dark:text-teal-300",
+    skills: "bg-teal-50 dark:bg-teal-950",
+    skillsTitle: "text-teal-700 dark:text-teal-300",
+    skillsBadge: "bg-teal-100 text-teal-700 dark:bg-teal-900 dark:text-teal-300",
     bar: "bg-teal-500",
     button: "bg-teal-600 hover:bg-teal-700",
-    working: "bg-teal-50",
-    workingText: "text-teal-600",
-    back: "text-gray-400 hover:text-gray-700",
-    xpBadge: "bg-teal-50 text-teal-700",
+    working: "bg-teal-50 dark:bg-teal-950",
+    workingText: "text-teal-600 dark:text-teal-400",
+    back: "text-gray-400 hover:text-gray-700 dark:text-gray-500 dark:hover:text-gray-300",
+    xpBadge: "bg-teal-50 text-teal-700 dark:bg-teal-950 dark:text-teal-300",
   },
   rose: {
-    header: "bg-rose-100",
-    icon: "text-rose-600",
-    pill: "bg-rose-50",
-    pillText: "text-rose-700",
-    skills: "bg-rose-50",
-    skillsTitle: "text-rose-700",
-    skillsBadge: "bg-rose-100 text-rose-700",
+    header: "bg-rose-100 dark:bg-rose-900",
+    icon: "text-rose-600 dark:text-rose-400",
+    pill: "bg-rose-50 dark:bg-rose-950",
+    pillText: "text-rose-700 dark:text-rose-300",
+    skills: "bg-rose-50 dark:bg-rose-950",
+    skillsTitle: "text-rose-700 dark:text-rose-300",
+    skillsBadge: "bg-rose-100 text-rose-700 dark:bg-rose-900 dark:text-rose-300",
     bar: "bg-rose-500",
     button: "bg-rose-600 hover:bg-rose-700",
-    working: "bg-rose-50",
-    workingText: "text-rose-600",
-    back: "text-gray-400 hover:text-gray-700",
-    xpBadge: "bg-rose-50 text-rose-700",
+    working: "bg-rose-50 dark:bg-rose-950",
+    workingText: "text-rose-600 dark:text-rose-400",
+    back: "text-gray-400 hover:text-gray-700 dark:text-gray-500 dark:hover:text-gray-300",
+    xpBadge: "bg-rose-50 text-rose-700 dark:bg-rose-950 dark:text-rose-300",
   },
 };
 
@@ -181,8 +181,8 @@ export default function ReasoningSession({
             <div className={`inline-flex items-center justify-center w-16 h-16 ${t.header} rounded-full mb-4`}>
               <CheckCircle size={32} className={t.icon} />
             </div>
-            <h1 className="text-gray-900 font-bold text-2xl mb-2">Session Complete!</h1>
-            <p className="text-gray-500">
+            <h1 className="text-gray-900 dark:text-gray-100 font-bold text-2xl mb-2">Session Complete!</h1>
+            <p className="text-gray-500 dark:text-gray-400">
               {correctCount} of {questions.length} correct — {score}%
             </p>
             <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-full mt-3 font-semibold ${t.xpBadge}`}>
@@ -197,15 +197,15 @@ export default function ReasoningSession({
               return (
                 <div
                   key={q.id}
-                  className={`bg-white rounded-xl p-4 border ${
+                  className={`rounded-xl p-4 border ${
                     wasCorrect === true
-                      ? "border-green-200 bg-green-50"
+                      ? "border-green-200 dark:border-green-800 bg-green-50 dark:bg-green-950"
                       : wasCorrect === false
-                      ? "border-red-100 bg-red-50"
-                      : "border-gray-100"
+                      ? "border-red-100 dark:border-red-900 bg-red-50 dark:bg-red-950"
+                      : "bg-white dark:bg-gray-900 border-gray-100 dark:border-gray-800"
                   }`}
                 >
-                  <p className="text-gray-800 text-sm font-medium mb-2 whitespace-pre-line">{q.question}</p>
+                  <p className="text-gray-800 dark:text-gray-100 text-sm font-medium mb-2 whitespace-pre-line">{q.question}</p>
                   <div className="flex items-start gap-2">
                     {wasCorrect === true ? (
                       <CheckCircle size={14} className="text-green-500 mt-0.5 shrink-0" />
@@ -213,13 +213,13 @@ export default function ReasoningSession({
                       <XCircle size={14} className="text-red-400 mt-0.5 shrink-0" />
                     ) : null}
                     <div className="flex-1">
-                      <p className="text-gray-500 text-xs">
-                        Answer: <strong className="text-gray-800">{q.answer}</strong>
+                      <p className="text-gray-500 dark:text-gray-400 text-xs">
+                        Answer: <strong className="text-gray-800 dark:text-gray-100">{q.answer}</strong>
                         {answers[q.id] && wasCorrect === false && (
                           <> · You wrote: <span className="text-red-500">{answers[q.id]}</span></>
                         )}
                       </p>
-                      <p className="text-gray-400 text-xs mt-1 leading-relaxed">{q.explanation}</p>
+                      <p className="text-gray-400 dark:text-gray-500 text-xs mt-1 leading-relaxed">{q.explanation}</p>
                     </div>
                   </div>
                 </div>
@@ -236,7 +236,7 @@ export default function ReasoningSession({
             </button>
             <button
               onClick={startSession}
-              className="flex items-center gap-2 bg-gray-100 text-gray-700 rounded-xl py-3.5 px-4 font-semibold text-sm hover:bg-gray-200 transition-colors"
+              className="flex items-center gap-2 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-xl py-3.5 px-4 font-semibold text-sm hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
             >
               <RefreshCw size={14} />
               Again
@@ -253,12 +253,12 @@ export default function ReasoningSession({
       <PageLayout>
         <div className="max-w-2xl mx-auto px-4 py-6 md:px-8 md:py-8">
           <div className="flex items-center gap-3 mb-6">
-            <div className={`${t.header} p-2.5 rounded-xl`}>
+            <div className={`${t.header} p-3 rounded-2xl`}>
               <Icon size={22} className={t.icon} />
             </div>
             <div>
-              <h1 className="text-gray-900 font-bold text-2xl">{subjectName}</h1>
-              <p className="text-gray-400 text-sm">{description}</p>
+              <h1 className="text-gray-900 dark:text-gray-100 font-bold text-2xl">{subjectName}</h1>
+              <p className="text-gray-400 dark:text-gray-500 text-sm">{description}</p>
             </div>
           </div>
 
@@ -294,9 +294,9 @@ export default function ReasoningSession({
           </div>
 
           {examBoards && (
-            <div className="mt-3 bg-white rounded-xl px-4 py-3 border border-gray-100">
-              <p className="text-xs text-gray-400 font-semibold uppercase tracking-wide mb-1">Required by</p>
-              <p className="text-sm text-gray-700">{examBoards}</p>
+            <div className="mt-3 bg-white dark:bg-gray-900 rounded-xl px-4 py-3 border border-gray-100 dark:border-gray-800">
+              <p className="text-xs text-gray-400 dark:text-gray-500 font-semibold uppercase tracking-wide mb-1">Required by</p>
+              <p className="text-sm text-gray-700 dark:text-gray-300">{examBoards}</p>
             </div>
           )}
         </div>
@@ -316,28 +316,28 @@ export default function ReasoningSession({
           >
             ← {subjectName}
           </button>
-          <div className="flex-1 bg-gray-100 rounded-full h-2">
+          <div className="flex-1 bg-gray-100 dark:bg-gray-800 rounded-full h-2">
             <div
               className={`h-full rounded-full transition-all ${t.bar}`}
               style={{ width: `${((currentIndex + 1) / questions.length) * 100}%` }}
             />
           </div>
-          <span className="text-gray-400 text-sm shrink-0">
+          <span className="text-gray-400 dark:text-gray-500 text-sm shrink-0">
             {currentIndex + 1}/{questions.length}
           </span>
         </div>
 
         {/* Question card */}
         {current && (
-          <div className="bg-white rounded-2xl p-6 border border-gray-100 mb-4">
+          <div className="bg-white dark:bg-gray-900 rounded-2xl p-6 border border-gray-100 dark:border-gray-800 mb-4">
             <div className="flex items-center gap-2 mb-4">
               <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${t.skillsBadge}`}>
                 {current.category}
               </span>
-              <span className="text-xs text-gray-400">{current.marks} mark{current.marks !== 1 ? "s" : ""}</span>
+              <span className="text-xs text-gray-400 dark:text-gray-500">{current.marks} mark{current.marks !== 1 ? "s" : ""}</span>
             </div>
 
-            <p className="text-gray-800 font-medium text-[16px] leading-relaxed mb-5 whitespace-pre-line">
+            <p className="text-gray-800 dark:text-gray-100 font-medium text-[16px] leading-relaxed mb-5 whitespace-pre-line">
               {current.question}
             </p>
 
@@ -352,8 +352,8 @@ export default function ReasoningSession({
               </button>
             )}
             {showHint[current.id] && current.hint && (
-              <div className="mb-3 bg-amber-50 rounded-xl px-4 py-2.5">
-                <p className="text-xs text-amber-700">{current.hint}</p>
+              <div className="mb-3 bg-amber-50 dark:bg-amber-950 rounded-xl px-4 py-2.5">
+                <p className="text-xs text-amber-700 dark:text-amber-300">{current.hint}</p>
               </div>
             )}
 
@@ -374,20 +374,20 @@ export default function ReasoningSession({
               className={`w-full rounded-xl px-4 py-3.5 text-base font-medium focus:outline-none focus:ring-2 transition-all ${
                 isChecked
                   ? isCorrect
-                    ? "bg-green-50 border-2 border-green-400 text-green-700"
-                    : "bg-red-50 border-2 border-red-300 text-red-700"
-                  : "bg-gray-50 border border-gray-200 focus:ring-violet-400 focus:border-transparent"
+                    ? "bg-green-50 dark:bg-green-950 border-2 border-green-400 dark:border-green-600 text-green-700 dark:text-green-300"
+                    : "bg-red-50 dark:bg-red-950 border-2 border-red-300 dark:border-red-700 text-red-700 dark:text-red-300"
+                  : "bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-600 focus:ring-violet-400 focus:border-transparent"
               }`}
             />
 
             {isChecked && (
-              <div className={`mt-3 rounded-xl p-3 flex items-start gap-2 ${isCorrect ? "bg-green-50" : "bg-red-50"}`}>
+              <div className={`mt-3 rounded-xl p-3 flex items-start gap-2 ${isCorrect ? "bg-green-50 dark:bg-green-950" : "bg-red-50 dark:bg-red-950"}`}>
                 {isCorrect ? (
                   <CheckCircle size={16} className="text-green-500 mt-0.5 shrink-0" />
                 ) : (
                   <XCircle size={16} className="text-red-400 mt-0.5 shrink-0" />
                 )}
-                <p className={`text-sm font-medium ${isCorrect ? "text-green-700" : "text-red-600"}`}>
+                <p className={`text-sm font-medium ${isCorrect ? "text-green-700 dark:text-green-300" : "text-red-600 dark:text-red-400"}`}>
                   {isCorrect ? "Correct!" : `Incorrect — answer: ${current.answer}`}
                 </p>
               </div>
@@ -406,7 +406,7 @@ export default function ReasoningSession({
             {showExplanation[current.id] && (
               <div className={`mt-2 rounded-xl p-3 ${t.working}`}>
                 <p className={`text-xs font-semibold mb-1 ${t.workingText}`}>Explanation:</p>
-                <p className="text-sm text-gray-700 leading-relaxed">{current.explanation}</p>
+                <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed">{current.explanation}</p>
               </div>
             )}
           </div>
