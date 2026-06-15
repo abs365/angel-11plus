@@ -277,7 +277,7 @@ export default function VocabularyPage() {
       <div className="max-w-3xl mx-auto px-4 py-6 md:px-8 md:py-8">
         {/* Header */}
         <div className="flex items-center gap-3 mb-5">
-          <div className="bg-green-100 p-2.5 rounded-xl">
+          <div className="bg-green-100 p-3 rounded-2xl">
             <BookMarked size={22} className="text-green-600" />
           </div>
           <div>

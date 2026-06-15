@@ -37,7 +37,7 @@ import { getPathwayById } from "@/lib/pathways";
 import type { UserProgress } from "@/types";
 import type { AnalyticsReport } from "@/types/analytics";
 import type { DailyMission as DailyMissionData } from "@/types/adaptive";
-import type { WeeklyGoal } from "@/types/gamification";
+import type { WeeklyGoal, XPMilestone } from "@/types/gamification";
 import type { Pathway } from "@/types/pathway";
 
 // ─── Subject data ─────────────────────────────────────────────────────────────
@@ -187,19 +187,22 @@ function getEncouragingMessage(progress: UserProgress, weeklyGoal: WeeklyGoal | 
 function WelcomeHero({
   progress,
   weeklyGoal,
+  milestoneProgress,
+  nextMilestone,
 }: {
   progress: UserProgress;
   weeklyGoal: WeeklyGoal | null;
+  milestoneProgress: number;
+  nextMilestone: XPMilestone | null;
 }) {
   const hour = new Date().getHours();
   const greeting =
     hour < 12 ? "Good morning" : hour < 17 ? "Good afternoon" : "Good evening";
   const level = Math.floor(progress.xp / 100) + 1;
-  const xpInLevel = progress.xp % 100;
   const message = getEncouragingMessage(progress, weeklyGoal);
 
   return (
-    <div className="bg-gradient-to-br from-purple-600 via-purple-700 to-indigo-700 rounded-2xl px-6 py-5 shadow-lg">
+    <div className="bg-gradient-to-br from-purple-600 via-purple-700 to-indigo-700 rounded-2xl px-6 py-5 shadow-lg shadow-purple-200 dark:shadow-purple-950">
       {/* Name + Level */}
       <div className="flex items-start justify-between mb-4">
         <div>
@@ -212,39 +215,43 @@ function WelcomeHero({
         </div>
       </div>
 
-      {/* Stats */}
-      <div className="flex items-center gap-5 mb-4">
+      {/* Stats row */}
+      <div className="flex items-center gap-4 mb-4">
         <div>
-          <p className="text-white font-bold text-xl leading-none">{progress.xp}</p>
-          <p className="text-purple-300 text-xs mt-0.5">Total XP</p>
+          <p className="text-white font-bold text-2xl leading-none">{progress.xp}</p>
+          <p className="text-purple-300 text-xs mt-1">Total XP</p>
         </div>
-        <div className="h-7 w-px bg-white/20" />
+        <div className="h-8 w-px bg-white/20" />
         <div className="flex items-center gap-1.5">
-          <Flame size={15} className="text-orange-300" />
+          <Flame size={16} className="text-orange-300 shrink-0" />
           <div>
-            <p className="text-white font-bold text-xl leading-none">{progress.streak}</p>
-            <p className="text-purple-300 text-xs mt-0.5">Day streak</p>
+            <p className="text-white font-bold text-2xl leading-none">{progress.streak}</p>
+            <p className="text-purple-300 text-xs mt-1">Day streak</p>
           </div>
         </div>
-        <div className="h-7 w-px bg-white/20" />
+        <div className="h-8 w-px bg-white/20" />
         <div>
-          <p className="text-white font-bold text-xl leading-none">
+          <p className="text-white font-bold text-2xl leading-none">
             {progress.completedLessons.length}
           </p>
-          <p className="text-purple-300 text-xs mt-0.5">Sessions</p>
+          <p className="text-purple-300 text-xs mt-1">Sessions</p>
         </div>
       </div>
 
-      {/* XP Progress bar */}
+      {/* Milestone progress bar */}
       <div className="mb-4">
         <div className="flex justify-between text-xs text-purple-300 mb-1.5">
-          <span>Level {level} → {level + 1}</span>
-          <span>{xpInLevel}/100 XP</span>
+          <span>{progress.xp} XP</span>
+          {nextMilestone ? (
+            <span>→ {nextMilestone.label} ({nextMilestone.threshold} XP)</span>
+          ) : (
+            <span>Top Rank reached</span>
+          )}
         </div>
         <div className="h-2 bg-white/20 rounded-full overflow-hidden">
           <div
             className="h-full bg-white rounded-full transition-all duration-700"
-            style={{ width: `${xpInLevel}%` }}
+            style={{ width: `${nextMilestone ? milestoneProgress : 100}%` }}
           />
         </div>
       </div>
@@ -267,6 +274,8 @@ export default function DashboardPage() {
   const [weeklyGoal, setWeeklyGoal] = useState<WeeklyGoal | null>(null);
   const [newBadgeIds, setNewBadgeIds] = useState<string[]>([]);
   const [earnedBadgeIds, setEarnedBadgeIds] = useState<string[]>([]);
+  const [milestoneProgress, setMilestoneProgress] = useState<number>(0);
+  const [nextMilestone, setNextMilestone] = useState<XPMilestone | null>(null);
   const [pathway, setPathway] = useState<Pathway | undefined>();
 
   useEffect(() => {
@@ -281,6 +290,8 @@ export default function DashboardPage() {
     setWeeklyGoal(gamification.weeklyGoal);
     setNewBadgeIds(gamification.newlyEarnedIds);
     setEarnedBadgeIds(gamification.earnedIds);
+    setMilestoneProgress(gamification.milestoneProgress);
+    setNextMilestone(gamification.nextMilestone);
     setPathway(getPathwayById(getSelectedPathwayId() ?? ""));
     migrateLocalProgressToSupabase().catch(() => {});
   }, []);
@@ -299,7 +310,14 @@ export default function DashboardPage() {
       <div className="max-w-4xl mx-auto px-4 py-6 md:px-8 md:py-8 space-y-8">
 
         {/* 1. Welcome Hero */}
-        {progress && <WelcomeHero progress={progress} weeklyGoal={weeklyGoal} />}
+        {progress && (
+          <WelcomeHero
+            progress={progress}
+            weeklyGoal={weeklyGoal}
+            milestoneProgress={milestoneProgress}
+            nextMilestone={nextMilestone}
+          />
+        )}
 
         {/* 2. New Badge Banner */}
         {newBadgeIds.length > 0 && (
@@ -310,8 +328,8 @@ export default function DashboardPage() {
         <section>
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-xl bg-purple-100 dark:bg-purple-900 flex items-center justify-center shrink-0">
-                <Target size={16} className="text-purple-600 dark:text-purple-400" />
+              <div className="w-9 h-9 rounded-xl bg-purple-100 dark:bg-purple-900 flex items-center justify-center shrink-0">
+                <Target size={17} className="text-purple-600 dark:text-purple-400" />
               </div>
               <div>
                 <h2 className="text-gray-900 dark:text-gray-100 font-bold text-xl leading-tight">
@@ -325,8 +343,8 @@ export default function DashboardPage() {
               </div>
             </div>
             {mission && mission.items.length > 0 && (
-              <div className="flex items-center gap-1.5 text-gray-400 dark:text-gray-500">
-                <Clock size={13} />
+              <div className="flex items-center gap-1.5 text-gray-400 dark:text-gray-500 bg-gray-50 dark:bg-gray-800 px-3 py-1.5 rounded-full">
+                <Clock size={12} />
                 <span className="text-xs font-medium">~{mission.totalMinutes} min</span>
               </div>
             )}
@@ -341,8 +359,8 @@ export default function DashboardPage() {
                     key={item.id}
                     className={`flex items-start gap-3.5 p-4 rounded-xl bg-gray-50 dark:bg-gray-800/60 border-l-4 ${missionPriorityBorder[item.priority]}`}
                   >
-                    <div className="w-5 h-5 rounded-full bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 flex items-center justify-center shrink-0 mt-0.5">
-                      <span className="text-[10px] font-bold text-gray-400 dark:text-gray-500">
+                    <div className="w-6 h-6 rounded-full bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 flex items-center justify-center shrink-0 mt-0.5 shadow-sm">
+                      <span className="text-[11px] font-bold text-gray-500 dark:text-gray-400">
                         {i + 1}
                       </span>
                     </div>
@@ -378,7 +396,7 @@ export default function DashboardPage() {
               <div className="p-5">
                 <Link
                   href={mission.items[0].href}
-                  className="flex items-center justify-center gap-2.5 w-full bg-purple-600 hover:bg-purple-700 dark:bg-purple-700 dark:hover:bg-purple-600 text-white rounded-xl py-3.5 font-semibold text-sm transition-colors shadow-sm"
+                  className="flex items-center justify-center gap-2.5 w-full bg-purple-600 hover:bg-purple-700 active:scale-[0.98] dark:bg-purple-700 dark:hover:bg-purple-600 text-white rounded-xl py-3.5 font-semibold text-sm transition-all shadow-sm shadow-purple-200 dark:shadow-purple-950"
                 >
                   <Play size={16} />
                   Start Today&apos;s Mission
@@ -386,14 +404,24 @@ export default function DashboardPage() {
               </div>
             </div>
           ) : (
+            /* Empty state — first visit */
             <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 shadow-sm p-8 text-center">
-              <Target size={32} className="text-purple-200 dark:text-purple-800 mx-auto mb-3" />
-              <p className="text-gray-700 dark:text-gray-300 font-semibold text-sm mb-1">
-                No mission yet
+              <div className="w-16 h-16 bg-purple-50 dark:bg-purple-950 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                <Target size={30} className="text-purple-400 dark:text-purple-600" />
+              </div>
+              <p className="text-gray-900 dark:text-gray-100 font-bold text-base mb-1.5">
+                Start your first session
               </p>
-              <p className="text-gray-400 dark:text-gray-500 text-xs">
-                Complete a practice session to unlock your daily mission
+              <p className="text-gray-400 dark:text-gray-500 text-sm leading-relaxed mb-5 max-w-xs mx-auto">
+                Complete any practice to unlock your personalised daily mission
               </p>
+              <Link
+                href="/english"
+                className="inline-flex items-center gap-2 bg-purple-600 hover:bg-purple-700 active:scale-[0.98] text-white rounded-xl px-5 py-2.5 font-semibold text-sm transition-all"
+              >
+                <Play size={14} />
+                Start Learning
+              </Link>
             </div>
           )}
         </section>
@@ -415,7 +443,7 @@ export default function DashboardPage() {
           </div>
 
           {/* Reasoning Skills */}
-          <div className="mt-6 mb-4">
+          <div className="mt-7 mb-4">
             <h3 className="text-gray-900 dark:text-gray-100 font-bold text-lg">
               Reasoning Skills
             </h3>
@@ -437,48 +465,54 @@ export default function DashboardPage() {
               Achievements
             </h2>
 
-            {/* Stats row */}
+            {/* Coloured stat cards */}
             <div className="grid grid-cols-3 gap-3 mb-3">
-              <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-4 text-center">
-                <Flame size={22} className="text-orange-500 mx-auto mb-2" />
-                <p className="text-gray-900 dark:text-gray-100 font-bold text-2xl leading-none">
+              <div className="bg-orange-50 dark:bg-orange-950 rounded-2xl border border-orange-100 dark:border-orange-900 p-4 text-center">
+                <Flame size={24} className="text-orange-500 mx-auto mb-2" />
+                <p className="text-orange-900 dark:text-orange-100 font-bold text-2xl leading-none">
                   {progress.streak}
                 </p>
-                <p className="text-gray-400 dark:text-gray-500 text-[11px] mt-1.5">Day streak</p>
+                <p className="text-orange-400 dark:text-orange-500 text-[11px] mt-1.5 font-medium">
+                  Day streak
+                </p>
               </div>
-              <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-4 text-center">
-                <Trophy size={22} className="text-amber-500 mx-auto mb-2" />
-                <p className="text-gray-900 dark:text-gray-100 font-bold text-2xl leading-none">
+              <div className="bg-amber-50 dark:bg-amber-950 rounded-2xl border border-amber-100 dark:border-amber-900 p-4 text-center">
+                <Trophy size={24} className="text-amber-500 mx-auto mb-2" />
+                <p className="text-amber-900 dark:text-amber-100 font-bold text-2xl leading-none">
                   {progress.completedLessons.length}
                 </p>
-                <p className="text-gray-400 dark:text-gray-500 text-[11px] mt-1.5">Sessions</p>
+                <p className="text-amber-400 dark:text-amber-500 text-[11px] mt-1.5 font-medium">
+                  Sessions
+                </p>
               </div>
-              <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-4 text-center">
-                <Star size={22} className="text-purple-500 mx-auto mb-2" />
-                <p className="text-gray-900 dark:text-gray-100 font-bold text-2xl leading-none">
+              <div className="bg-purple-50 dark:bg-purple-950 rounded-2xl border border-purple-100 dark:border-purple-900 p-4 text-center">
+                <Star size={24} className="text-purple-500 mx-auto mb-2" />
+                <p className="text-purple-900 dark:text-purple-100 font-bold text-2xl leading-none">
                   {progress.xp}
                 </p>
-                <p className="text-gray-400 dark:text-gray-500 text-[11px] mt-1.5">Total XP</p>
+                <p className="text-purple-400 dark:text-purple-500 text-[11px] mt-1.5 font-medium">
+                  Total XP
+                </p>
               </div>
             </div>
 
             {/* Weekly goal */}
             {weeklyGoal && (
               <div
-                className={`flex items-center gap-3 rounded-xl px-4 py-3 border mb-3 ${
+                className={`flex items-center gap-3 rounded-xl px-4 py-3.5 border mb-3 ${
                   weeklyGoal.isComplete
                     ? "bg-emerald-50 dark:bg-emerald-950 border-emerald-100 dark:border-emerald-900"
                     : "bg-white dark:bg-gray-900 border-gray-100 dark:border-gray-800"
                 }`}
               >
                 {weeklyGoal.isComplete ? (
-                  <CheckCircle size={18} className="text-emerald-500 shrink-0" />
+                  <CheckCircle size={20} className="text-emerald-500 shrink-0" />
                 ) : (
                   <div className="flex gap-1.5 shrink-0">
                     {Array.from({ length: weeklyGoal.target }).map((_, i) => (
                       <div
                         key={i}
-                        className={`w-2.5 h-2.5 rounded-full ${
+                        className={`w-3 h-3 rounded-full transition-colors ${
                           i < weeklyGoal.sessions
                             ? "bg-indigo-400 dark:bg-indigo-500"
                             : "bg-gray-200 dark:bg-gray-700"
@@ -528,6 +562,23 @@ export default function DashboardPage() {
                 </div>
               </div>
             )}
+
+            {/* No badges yet */}
+            {earnedBadges.length === 0 && (
+              <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 px-4 py-5 flex items-center gap-3">
+                <div className="w-10 h-10 bg-purple-50 dark:bg-purple-950 rounded-xl flex items-center justify-center shrink-0">
+                  <Award size={18} className="text-purple-300 dark:text-purple-700" />
+                </div>
+                <div>
+                  <p className="text-gray-700 dark:text-gray-300 font-semibold text-sm">
+                    Badges unlock as you learn
+                  </p>
+                  <p className="text-gray-400 dark:text-gray-500 text-xs mt-0.5">
+                    Complete sessions to earn your first badge
+                  </p>
+                </div>
+              </div>
+            )}
           </section>
         )}
 
@@ -538,7 +589,7 @@ export default function DashboardPage() {
           </h2>
           <Link
             href="/pathways"
-            className="flex items-center gap-4 bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 px-5 py-4 shadow-sm hover:shadow-md hover:border-purple-100 dark:hover:border-purple-900 transition-all group"
+            className="flex items-center gap-4 bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 px-5 py-4 shadow-sm hover:shadow-md hover:border-purple-100 dark:hover:border-purple-900 active:scale-[0.98] transition-all group"
           >
             <div
               className={`w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 ${accentBg}`}

@@ -211,7 +211,7 @@ export default function MathsPage() {
       <PageLayout>
         <div className="max-w-2xl mx-auto px-4 py-6 md:px-8 md:py-8">
           <div className="flex items-center gap-3 mb-6">
-            <div className="bg-blue-100 p-2.5 rounded-xl">
+            <div className="bg-blue-100 p-3 rounded-2xl">
               <Calculator size={22} className="text-blue-600" />
             </div>
             <div>
@@ -223,7 +223,7 @@ export default function MathsPage() {
           <div className="grid gap-4">
             <button
               onClick={() => startMode("reasoning")}
-              className="bg-white rounded-2xl p-6 border border-gray-100 hover:border-blue-200 hover:shadow-sm transition-all text-left group"
+              className="bg-white rounded-2xl p-6 border border-gray-100 hover:border-blue-200 hover:shadow-sm active:scale-[0.98] transition-all text-left group"
             >
               <div className="flex items-center justify-between mb-3">
                 <div className="bg-blue-100 p-2.5 rounded-xl">
@@ -251,7 +251,7 @@ export default function MathsPage() {
 
             <button
               onClick={() => startMode("arithmetic")}
-              className="bg-white rounded-2xl p-6 border border-gray-100 hover:border-orange-200 hover:shadow-sm transition-all text-left group"
+              className="bg-white rounded-2xl p-6 border border-gray-100 hover:border-orange-200 hover:shadow-sm active:scale-[0.98] transition-all text-left group"
             >
               <div className="flex items-center justify-between mb-3">
                 <div className="bg-orange-100 p-2.5 rounded-xl">

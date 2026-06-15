@@ -47,7 +47,7 @@ export default function EnglishPage() {
       <div className="max-w-3xl mx-auto px-4 py-6 md:px-8 md:py-8">
         {/* Header */}
         <div className="flex items-center gap-3 mb-2">
-          <div className="bg-purple-100 p-2.5 rounded-xl">
+          <div className="bg-purple-100 p-3 rounded-2xl">
             <BookOpen size={22} className="text-purple-600" />
           </div>
           <div>
@@ -80,7 +80,7 @@ export default function EnglishPage() {
               onClick={() => setSelectedDifficulty(null)}
               className={`px-3 py-1.5 rounded-full text-sm font-medium transition-colors ${
                 !selectedDifficulty
-                  ? "bg-gray-900 text-white"
+                  ? "bg-purple-600 text-white"
                   : "bg-gray-100 text-gray-600 hover:bg-gray-200"
               }`}
             >
@@ -108,7 +108,7 @@ export default function EnglishPage() {
             <Link
               key={lesson.id}
               href={`/english/${lesson.id}`}
-              className="block bg-white rounded-2xl p-5 border border-gray-100 hover:border-purple-200 hover:shadow-sm transition-all group"
+              className="block bg-white rounded-2xl p-5 border border-gray-100 hover:border-purple-200 hover:shadow-sm active:scale-[0.98] transition-all group"
             >
               <div className="flex items-start justify-between">
                 <div className="flex-1 min-w-0">

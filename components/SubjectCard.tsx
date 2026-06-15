@@ -14,6 +14,7 @@ interface SubjectCardProps {
 const colorMap = {
   purple: {
     bg: "bg-purple-50 dark:bg-purple-950",
+    strip: "bg-purple-300 dark:bg-purple-700",
     icon: "bg-purple-100 dark:bg-purple-900 text-purple-600 dark:text-purple-300",
     title: "text-purple-900 dark:text-purple-100",
     desc: "text-purple-600 dark:text-purple-400",
@@ -24,6 +25,7 @@ const colorMap = {
   },
   blue: {
     bg: "bg-blue-50 dark:bg-blue-950",
+    strip: "bg-blue-300 dark:bg-blue-700",
     icon: "bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-300",
     title: "text-blue-900 dark:text-blue-100",
     desc: "text-blue-600 dark:text-blue-400",
@@ -34,6 +36,7 @@ const colorMap = {
   },
   green: {
     bg: "bg-emerald-50 dark:bg-emerald-950",
+    strip: "bg-emerald-300 dark:bg-emerald-700",
     icon: "bg-emerald-100 dark:bg-emerald-900 text-emerald-600 dark:text-emerald-300",
     title: "text-emerald-900 dark:text-emerald-100",
     desc: "text-emerald-600 dark:text-emerald-400",
@@ -44,6 +47,7 @@ const colorMap = {
   },
   orange: {
     bg: "bg-amber-50 dark:bg-amber-950",
+    strip: "bg-amber-300 dark:bg-amber-700",
     icon: "bg-amber-100 dark:bg-amber-900 text-amber-600 dark:text-amber-300",
     title: "text-amber-900 dark:text-amber-100",
     desc: "text-amber-600 dark:text-amber-400",
@@ -54,6 +58,7 @@ const colorMap = {
   },
   pink: {
     bg: "bg-pink-50 dark:bg-pink-950",
+    strip: "bg-pink-300 dark:bg-pink-700",
     icon: "bg-pink-100 dark:bg-pink-900 text-pink-600 dark:text-pink-300",
     title: "text-pink-900 dark:text-pink-100",
     desc: "text-pink-600 dark:text-pink-400",
@@ -64,6 +69,7 @@ const colorMap = {
   },
   indigo: {
     bg: "bg-indigo-50 dark:bg-indigo-950",
+    strip: "bg-indigo-300 dark:bg-indigo-700",
     icon: "bg-indigo-100 dark:bg-indigo-900 text-indigo-600 dark:text-indigo-300",
     title: "text-indigo-900 dark:text-indigo-100",
     desc: "text-indigo-600 dark:text-indigo-400",
@@ -74,6 +80,7 @@ const colorMap = {
   },
   violet: {
     bg: "bg-violet-50 dark:bg-violet-950",
+    strip: "bg-violet-300 dark:bg-violet-700",
     icon: "bg-violet-100 dark:bg-violet-900 text-violet-600 dark:text-violet-300",
     title: "text-violet-900 dark:text-violet-100",
     desc: "text-violet-600 dark:text-violet-400",
@@ -84,6 +91,7 @@ const colorMap = {
   },
   teal: {
     bg: "bg-teal-50 dark:bg-teal-950",
+    strip: "bg-teal-300 dark:bg-teal-700",
     icon: "bg-teal-100 dark:bg-teal-900 text-teal-600 dark:text-teal-300",
     title: "text-teal-900 dark:text-teal-100",
     desc: "text-teal-600 dark:text-teal-400",
@@ -94,6 +102,7 @@ const colorMap = {
   },
   cyan: {
     bg: "bg-cyan-50 dark:bg-cyan-950",
+    strip: "bg-cyan-300 dark:bg-cyan-700",
     icon: "bg-cyan-100 dark:bg-cyan-900 text-cyan-600 dark:text-cyan-300",
     title: "text-cyan-900 dark:text-cyan-100",
     desc: "text-cyan-600 dark:text-cyan-400",
@@ -104,6 +113,7 @@ const colorMap = {
   },
   rose: {
     bg: "bg-rose-50 dark:bg-rose-950",
+    strip: "bg-rose-300 dark:bg-rose-700",
     icon: "bg-rose-100 dark:bg-rose-900 text-rose-600 dark:text-rose-300",
     title: "text-rose-900 dark:text-rose-100",
     desc: "text-rose-600 dark:text-rose-400",
@@ -126,22 +136,27 @@ export default function SubjectCard({
   return (
     <Link href={href} className="block group">
       <div
-        className={`${c.bg} ${c.border} ${c.hover} border shadow-sm rounded-2xl p-6 transition-all duration-200 group-hover:shadow-lg group-hover:-translate-y-0.5 group-active:scale-[0.98] cursor-pointer`}
+        className={`${c.bg} ${c.border} ${c.hover} border shadow-sm rounded-2xl overflow-hidden transition-all duration-200 group-hover:shadow-xl group-hover:-translate-y-1 group-active:scale-[0.98] cursor-pointer`}
       >
-        <div className="flex items-start justify-between mb-5">
-          <div className={`${c.icon} p-3.5 rounded-2xl shrink-0`}>
-            <Icon size={24} />
+        {/* Colour identity strip */}
+        <div className={`h-1.5 ${c.strip}`} />
+
+        <div className="p-6">
+          <div className="flex items-start justify-between mb-5">
+            <div className={`${c.icon} p-4 rounded-2xl shrink-0`}>
+              <Icon size={24} />
+            </div>
+            {badge && (
+              <span className={`${c.badge} text-xs font-semibold px-2.5 py-1 rounded-full mt-1`}>
+                {badge}
+              </span>
+            )}
           </div>
-          {badge && (
-            <span className={`${c.badge} text-xs font-semibold px-2.5 py-1 rounded-full`}>
-              {badge}
-            </span>
-          )}
-        </div>
-        <h3 className={`${c.title} font-bold text-base mb-1.5 leading-snug`}>{title}</h3>
-        <p className={`${c.desc} text-sm leading-relaxed`}>{description}</p>
-        <div className="flex justify-end mt-4">
-          <ChevronRight size={16} className={`${c.arrow} transition-colors`} />
+          <h3 className={`${c.title} font-bold text-base mb-1.5 leading-snug`}>{title}</h3>
+          <p className={`${c.desc} text-sm leading-relaxed`}>{description}</p>
+          <div className="flex justify-end mt-4">
+            <ChevronRight size={16} className={`${c.arrow} transition-colors`} />
+          </div>
         </div>
       </div>
     </Link>

@@ -376,7 +376,7 @@ export default function WritingPage() {
       <div className="max-w-3xl mx-auto px-4 py-6 md:px-8 md:py-8">
         {/* Header */}
         <div className="flex items-center gap-3 mb-5">
-          <div className="bg-orange-100 p-2.5 rounded-xl">
+          <div className="bg-orange-100 p-3 rounded-2xl">
             <Pencil size={22} className="text-orange-600" />
           </div>
           <div>
@@ -410,7 +410,7 @@ export default function WritingPage() {
             <button
               key={prompt.id}
               onClick={() => startPrompt(prompt)}
-              className="bg-white rounded-2xl p-5 border border-gray-100 hover:border-orange-200 hover:shadow-sm transition-all text-left group"
+              className="bg-white rounded-2xl p-5 border border-gray-100 hover:border-orange-200 hover:shadow-sm active:scale-[0.98] transition-all text-left group"
             >
               <div className="flex items-start justify-between mb-3">
                 <div className="flex items-center gap-2">
