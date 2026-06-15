@@ -1,6 +1,6 @@
 // Angel 11+ Service Worker
 // Bump CACHE_VER whenever you need to force a full cache flush on all clients.
-const CACHE_VER    = 'v2';
+const CACHE_VER    = 'v3';
 const STATIC_CACHE = `angel-static-${CACHE_VER}`;
 const PAGES_CACHE  = `angel-pages-${CACHE_VER}`;
 const OFFLINE_PAGE = '/offline.html';
@@ -17,7 +17,11 @@ const PRECACHE_PAGES = [
   '/vocabulary',
   '/writing',
   '/progress',
-  '/mock-test',
+  '/mocks',
+  '/pathways',
+  '/parent',
+  '/beta',
+  '/getting-started',
   '/offline.html',
 ];
 
@@ -25,7 +29,6 @@ const PRECACHE_ASSETS = [
   '/manifest.json',
   '/icon-192.png',
   '/icon-512.png',
-  '/favicon.ico',
 ];
 
 // ── Install ───────────────────────────────────────────────────────────────────
