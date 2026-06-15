@@ -54,11 +54,20 @@ function getExamReadiness(
   const score = report.overallScore;
   const attempted = report.subjects.filter((s) => s.attempts > 0 && s.subject !== "mock-test").length;
   const hasMock = p.completedLessons.includes("mock-test");
+  const mockResults = p.mockResults ?? [];
+  const bestMockScore = mockResults.length > 0
+    ? Math.max(...mockResults.map((r) => r.totalScore))
+    : 0;
+  const mockBoost = bestMockScore >= 75;
 
   if (sessions < 3) return "not-ready";
   // Confidence >= 70 confirms consistency + accuracy together
   if (score >= 70 && sessions >= 8 && hasMock && attempted >= 3 && overallConfidence >= 70) return "exam-ready";
+  // Strong mock score can also unlock exam-ready
+  if (score >= 65 && sessions >= 6 && mockBoost && attempted >= 3) return "exam-ready";
   if (score >= 55 && sessions >= 5 && attempted >= 2 && overallConfidence >= 45) return "nearly-ready";
+  // Good mock performance can unlock nearly-ready sooner
+  if (score >= 50 && sessions >= 4 && mockBoost) return "nearly-ready";
   return "building";
 }
 
@@ -151,11 +160,11 @@ function buildParentInsights(
   }
 
   // Attention: no mock test after enough sessions
-  const mockDone = p.completedLessons.includes("mock-test");
+  const mockDone = p.completedLessons.includes("mock-test") || (p.mockResults ?? []).length > 0;
   if (!mockDone && sessions >= 6) {
     insights.push({
       id: "no-mock",
-      text: `Your child hasn't attempted a timed mock test yet. A full mock exam reveals timing and pressure weaknesses that topic practice alone doesn't show — it's an important next step.`,
+      text: `Your child hasn't attempted a timed practice mock yet. A full mock exam reveals timing and pressure weaknesses that topic practice alone doesn't show — it's an important next step. Visit the Mocks section to start one.`,
       type: "attention",
     });
   }
@@ -213,7 +222,7 @@ const SUBJECT_ADVICE: Record<string, { detail: string; href: string }> = {
   },
   "Mock Test": {
     detail: "Complete a full timed mock to identify timing weaknesses. Review the section with the lowest score immediately after.",
-    href: "/mock-test",
+    href: "/mocks",
   },
   "Verbal Reasoning": {
     detail: "Encourage your child to work through letter codes and word analogies slowly — accuracy matters more than speed at this stage.",

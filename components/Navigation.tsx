@@ -19,6 +19,7 @@ import {
   Eye,
   Box,
   Hash,
+  FileText,
 } from "lucide-react";
 import { useAuth } from "@/components/providers/AuthProvider";
 
@@ -29,6 +30,7 @@ const navItems = [
   { href: "/vocabulary", label: "Vocab", icon: BookMarked },
   { href: "/writing", label: "Writing", icon: Pencil },
   { href: "/mock-test", label: "Mock", icon: ClipboardList },
+  { href: "/mocks", label: "Mocks", icon: FileText, sidebarOnly: true },
   { href: "/progress", label: "Progress", icon: BarChart2 },
   { href: "/parent", label: "Parent", icon: Users, sidebarOnly: true, badge: "Beta" },
   { href: "/pathways", label: "Pathway", icon: MapPin, sidebarOnly: true },

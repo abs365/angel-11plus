@@ -84,4 +84,5 @@ export interface UserProgress {
   earnedBadgeIds?: string[];
   weeklyStats?: { weekStart: string; sessions: number };
   selectedPathwayId?: string;
+  mockResults?: import("./mock").MockResult[];
 }

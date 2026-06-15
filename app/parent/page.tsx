@@ -25,8 +25,12 @@ import {
   Eye,
   Box,
   Hash,
+  FileText,
+  Play,
 } from "lucide-react";
 import { getProgress, getSelectedPathwayId } from "@/lib/progress";
+import { getMockResults } from "@/lib/mockProgress";
+import type { MockResult } from "@/types/mock";
 import { computeAnalytics } from "@/lib/analytics";
 import { computeGamification, BADGE_DEFINITIONS } from "@/lib/gamification";
 import { computeParentReport, READINESS_CONFIG } from "@/lib/parentInsights";
@@ -119,6 +123,7 @@ function EmptyState() {
 export default function ParentDashboardPage() {
   const [report, setReport] = useState<ParentReport | null>(null);
   const [pathway, setPathway] = useState<Pathway | undefined>();
+  const [mockResults, setMockResults] = useState<MockResult[]>([]);
 
   useEffect(() => {
     const p = getProgress();
@@ -126,6 +131,7 @@ export default function ParentDashboardPage() {
     const gamification = computeGamification(p);
     setReport(computeParentReport(p, analytics, gamification));
     setPathway(getPathwayById(getSelectedPathwayId() ?? ""));
+    setMockResults(getMockResults());
   }, []);
 
   if (!report) return null;
@@ -333,6 +339,119 @@ export default function ParentDashboardPage() {
                     );
                   })}
               </div>
+            </section>
+
+            {/* Mock Performance */}
+            <section>
+              <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">
+                Mock Performance
+              </h2>
+              {mockResults.length === 0 ? (
+                <div className="bg-white rounded-2xl border border-gray-100 p-5 flex items-start gap-3">
+                  <div className="w-9 h-9 rounded-lg bg-gray-100 flex items-center justify-center shrink-0">
+                    <FileText size={16} className="text-gray-400" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-semibold text-gray-800 mb-0.5">No mocks attempted yet</p>
+                    <p className="text-xs text-gray-400 leading-relaxed mb-3">
+                      Timed mock exams reveal how your child performs under exam conditions. Aim for at least one mock per fortnight.
+                    </p>
+                    <Link
+                      href="/mocks"
+                      className="inline-flex items-center gap-1.5 text-xs font-semibold text-purple-600 bg-purple-50 px-3 py-1.5 rounded-lg hover:bg-purple-100 transition-colors"
+                    >
+                      <Play size={12} />
+                      Start a Practice Mock
+                    </Link>
+                  </div>
+                </div>
+              ) : (
+                <div className="space-y-2">
+                  {/* Summary row */}
+                  <div className="grid grid-cols-2 gap-2">
+                    <div className="bg-white rounded-xl p-4 border border-gray-100">
+                      <p className="text-xs text-gray-400 mb-0.5">Mocks completed</p>
+                      <p className="text-2xl font-black text-gray-900">{mockResults.length}</p>
+                    </div>
+                    <div className="bg-white rounded-xl p-4 border border-gray-100">
+                      <p className="text-xs text-gray-400 mb-0.5">Best score</p>
+                      <p className={`text-2xl font-black ${
+                        Math.max(...mockResults.map(r => r.totalScore)) >= 75
+                          ? "text-green-600"
+                          : Math.max(...mockResults.map(r => r.totalScore)) >= 55
+                          ? "text-amber-600"
+                          : "text-red-500"
+                      }`}>
+                        {Math.max(...mockResults.map(r => r.totalScore))}%
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Recent mock results */}
+                  <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden">
+                    <div className="px-4 py-3 border-b border-gray-50 flex items-center justify-between">
+                      <p className="text-sm font-semibold text-gray-800">Recent Mocks</p>
+                      <Link href="/mocks" className="text-xs text-purple-600 font-medium">View all</Link>
+                    </div>
+                    <div className="divide-y divide-gray-50">
+                      {mockResults.slice(-3).reverse().map((r) => (
+                        <div key={r.id} className="px-4 py-3 flex items-center gap-3">
+                          <div className="w-8 h-8 rounded-lg bg-gray-100 flex items-center justify-center shrink-0">
+                            <FileText size={13} className="text-gray-400" />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-sm font-semibold text-gray-800 truncate">{r.pathwayName}</p>
+                            <p className="text-xs text-gray-400">
+                              {new Date(r.date).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })}
+                            </p>
+                          </div>
+                          <div className="text-right shrink-0">
+                            <p className={`text-sm font-bold ${r.totalScore >= 75 ? "text-green-600" : r.totalScore >= 55 ? "text-amber-600" : "text-red-500"}`}>
+                              {r.totalScore}%
+                            </p>
+                            <p className="text-xs text-gray-400">{r.durationMinutes} min</p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Section breakdown of most recent mock */}
+                  {mockResults.length > 0 && mockResults[mockResults.length - 1].sectionResults.length > 0 && (
+                    <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden">
+                      <div className="px-4 py-3 border-b border-gray-50">
+                        <p className="text-sm font-semibold text-gray-800">Last Mock — Section Breakdown</p>
+                      </div>
+                      <div className="p-4 space-y-3">
+                        {mockResults[mockResults.length - 1].sectionResults.map((s) => (
+                          <div key={s.sectionId}>
+                            <div className="flex items-center justify-between mb-1">
+                              <span className="text-xs font-medium text-gray-700">{s.sectionName}</span>
+                              <span className={`text-xs font-bold ${s.score >= 75 ? "text-green-600" : s.score >= 55 ? "text-amber-600" : "text-red-500"}`}>
+                                {s.score}%
+                              </span>
+                            </div>
+                            <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                              <div
+                                className={`h-full rounded-full ${s.score >= 75 ? "bg-green-500" : s.score >= 55 ? "bg-amber-400" : "bg-red-400"}`}
+                                style={{ width: `${s.score}%` }}
+                              />
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  <Link
+                    href="/mocks"
+                    className="flex items-center justify-center gap-1.5 w-full py-3 rounded-xl border border-gray-200 text-sm font-semibold text-gray-600 hover:bg-gray-50 transition-colors"
+                  >
+                    <Play size={14} />
+                    Start another mock
+                  </Link>
+                </div>
+              )}
             </section>
 
             {/* Parent Insights */}
