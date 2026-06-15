@@ -2,6 +2,8 @@
 // To migrate to Supabase: swap each localStorage block with a supabase.from(...).insert() call
 // and change the signatures to async. The shape of each type is already Supabase-insert-ready.
 
+import { trackEvent } from "./betaTracking";
+
 export type FeedbackType = "suggestion" | "positive" | "general";
 
 export interface FeedbackEntry {
@@ -37,11 +39,21 @@ export interface BetaFamilyApplication {
   submittedAt: string;
 }
 
+export interface Testimonial {
+  id: string;
+  parentName: string;
+  yearGroup: string;
+  feedback: string;
+  publishPermission: boolean;
+  submittedAt: string;
+}
+
 const KEYS = {
   feedback: "angel11plus_feedback",
   bugs: "angel11plus_bugs",
   features: "angel11plus_features",
   betaFamilies: "angel11plus_beta_families",
+  testimonials: "angel11plus_testimonials",
 } as const;
 
 function readList<T>(key: string): T[] {
@@ -62,6 +74,7 @@ export function saveFeedback(data: Omit<FeedbackEntry, "id" | "submittedAt">): v
     id: crypto.randomUUID(),
     submittedAt: new Date().toISOString(),
   });
+  trackEvent("feedback_submitted", { type: data.type });
 }
 
 export function saveBugReport(data: Omit<BugReport, "id" | "submittedAt">): void {
@@ -70,6 +83,7 @@ export function saveBugReport(data: Omit<BugReport, "id" | "submittedAt">): void
     id: crypto.randomUUID(),
     submittedAt: new Date().toISOString(),
   });
+  trackEvent("bug_reported", { page: data.page, issueType: data.issueType });
 }
 
 export function saveFeatureRequest(data: Omit<FeatureRequest, "id" | "submittedAt">): void {
@@ -78,6 +92,7 @@ export function saveFeatureRequest(data: Omit<FeatureRequest, "id" | "submittedA
     id: crypto.randomUUID(),
     submittedAt: new Date().toISOString(),
   });
+  trackEvent("feature_requested");
 }
 
 export function saveBetaFamilyApplication(data: Omit<BetaFamilyApplication, "id" | "submittedAt">): void {
@@ -86,6 +101,16 @@ export function saveBetaFamilyApplication(data: Omit<BetaFamilyApplication, "id"
     id: crypto.randomUUID(),
     submittedAt: new Date().toISOString(),
   });
+  trackEvent("beta_family_registered", { pathway: data.pathway, yearGroup: data.yearGroup });
+}
+
+export function saveTestimonial(data: Omit<Testimonial, "id" | "submittedAt">): void {
+  appendItem<Testimonial>(KEYS.testimonials, {
+    ...data,
+    id: crypto.randomUUID(),
+    submittedAt: new Date().toISOString(),
+  });
+  trackEvent("testimonial_submitted", { publishPermission: data.publishPermission });
 }
 
 export function getFeedback(): FeedbackEntry[] {
@@ -102,4 +127,8 @@ export function getFeatureRequests(): FeatureRequest[] {
 
 export function getBetaFamilyApplications(): BetaFamilyApplication[] {
   return readList<BetaFamilyApplication>(KEYS.betaFamilies);
+}
+
+export function getTestimonials(): Testimonial[] {
+  return readList<Testimonial>(KEYS.testimonials);
 }

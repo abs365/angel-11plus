@@ -79,8 +79,8 @@ const parentItem: NavItem = {
 const supportItems: NavItem[] = [
   { href: "/getting-started", label: "Getting Started", icon: HelpCircle },
   { href: "/feedback", label: "Send Feedback", icon: MessageSquare },
+  { href: "/testimonial", label: "Share Experience", icon: Sparkles },
   { href: "/contact", label: "Contact", icon: Mail },
-  { href: "/beta", label: "Beta Info", icon: Sparkles },
 ];
 
 const mobileNavItems = [

@@ -13,6 +13,7 @@ import { spatialReasoningQuestions } from "@/data/spatial-reasoning";
 import { numericalReasoningQuestions } from "@/data/numerical-reasoning";
 import { saveMockResult } from "@/lib/mockProgress";
 import { completeLesson } from "@/lib/progress";
+import { trackEvent } from "@/lib/betaTracking";
 import type { MockPathwayId, MockSectionResult } from "@/types/mock";
 import type { ReasoningQuestion } from "@/types/reasoning";
 
@@ -250,6 +251,7 @@ export default function MockPage({
       };
       saveMockResult(result);
       completeLesson("mock-test", totalScore, config.xpReward);
+      trackEvent("mock_completed", { pathway: pathwayId, score: totalScore });
       setSaved(true);
     }
   }, [mode, saved, sectionResults, pathwayId, config]);
@@ -361,7 +363,10 @@ export default function MockPage({
           </div>
 
           <button
-            onClick={startSection}
+            onClick={() => {
+              trackEvent("mock_started", { pathway: pathwayId });
+              startSection();
+            }}
             className={`w-full ${config.headerBg} text-white font-semibold py-4 rounded-2xl text-base transition-opacity hover:opacity-90`}
           >
             Start Mock Exam
