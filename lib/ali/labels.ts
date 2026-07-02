@@ -16,6 +16,24 @@ export const COMPETENCY_LABELS: Record<string, string> = {
   "vr.hidden-words": "Hidden Words",
   "vr.sequences": "Sequences",
   "vr.compound-words": "Compound Words",
+
+  // Mathematics (Phase ALI 2.0) — QUESTION_AUTHORING_STANDARD.md §11.2
+  "maths.addition-subtraction": "Addition & Subtraction",
+  "maths.multiplication": "Multiplication",
+  "maths.division": "Division",
+  "maths.fractions": "Fractions",
+  "maths.decimals": "Decimals",
+  "maths.percentages": "Percentages",
+  "maths.ratio-proportion": "Ratio & Proportion",
+  "maths.algebra": "Algebra",
+  "maths.geometry": "Geometry",
+  "maths.measurement": "Measurement",
+  "maths.time": "Time",
+  "maths.money": "Money",
+  "maths.statistics": "Statistics",
+  "maths.problem-solving": "Problem Solving",
+  "maths.powers-roots": "Powers, Roots & Order of Operations",
+  "maths.factors-multiples": "Factors, Multiples & Primes",
 };
 
 export function competencyLabel(code: string): string {

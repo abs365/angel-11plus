@@ -215,3 +215,62 @@ Mastery (implementation plan §1.4) requires correct answers across `mastery_thr
 - [ ] Checked against §6/§7 originality and copyright requirements
 - [ ] `mastery_threshold` left at default unless §8's raise-conditions apply
 - [ ] `pathway` set deliberately, not defaulted without thought
+
+---
+
+## 11. Competency Definitions — Mathematics (Phase ALI 2.0)
+
+Extends §3's approach to a second subject, exactly as §3 anticipated ("built the same way — from real existing category/type distinctions, not invented"). All other sections (§1 metadata, §2 writing standards, §5 UK English, §6 originality, §7 copyright, §8 mastery guidance, §10 review checklist) apply to Mathematics unchanged — this section only adds what's subject-specific: the competency taxonomy and its difficulty calibration.
+
+### 11.1 Why this taxonomy required real refinement, not just adoption
+
+`MathsQuestion` (`types/index.ts`) has no `category` field the way `ReasoningQuestion` did for Verbal Reasoning — there was no existing ground truth to read the taxonomy from. Reviewing all 20 real questions in `data/maths.ts` (`mathsQuestions` + `quickArithmetic`) against the suggested 14-competency list surfaced two real gaps, not just a confirmation:
+
+- **Three questions (`mth-002`, `qa-008`, `qa-009`) don't fit any of the 14 suggested competencies** — they test powers, roots, and order of operations (`4³ + √144`, `√225`, `2³ × 5`), which is a distinct, common 11+ topic block, not a natural fit for "Multiplication" or any other listed competency.
+- **One question (`qa-010`, "LCM of 6 and 9") also doesn't fit** — factors/multiples/LCM/HCF is its own recognized 11+ topic, distinct from basic multiplication or division fluency.
+
+Both gaps are added as new competencies below rather than force-fitted into an existing one. This is the same discipline Decision 13 established for Verbal Reasoning: derive the taxonomy from what the content actually tests, don't assume a proposed list is complete without checking it against real questions.
+
+### 11.2 Competency taxonomy (16 competencies)
+
+| Competency code | Label | What it tests | Real example from `data/maths.ts` |
+|---|---|---|---|
+| `maths.addition-subtraction` | Addition & Subtraction | Multi-digit addition/subtraction fluency | `qa-001`, `qa-002` |
+| `maths.multiplication` | Multiplication | Multi-digit multiplication fluency | `qa-003` |
+| `maths.division` | Division | Division fluency, including remainders | `qa-004` |
+| `maths.fractions` | Fractions | Fraction arithmetic, simplification, fraction-of-amount | `mth-004`, `qa-006` |
+| `maths.decimals` | Decimals | Decimal arithmetic and place value | `mth-008`, `qa-005` |
+| `maths.percentages` | Percentages | Percentage-of-amount and reverse-percentage problems | `mth-010`, `qa-007` |
+| `maths.ratio-proportion` | Ratio & Proportion | Sharing in a given ratio, scaling | `mth-007b` |
+| `maths.algebra` | Algebra | Forming and solving simple equations, nth-term sequences | `mth-003`, `mth-006` |
+| `maths.geometry` | Geometry | Area, perimeter, volume, shape properties | `mth-003`, `mth-009` |
+| `maths.measurement` | Measurement | Units, conversions, speed/distance/time | `mth-001` |
+| `maths.time` | Time | Reading and calculating with time | *(none yet — defined for future content, no current question maps here; see §11.4)* |
+| `maths.money` | Money | Cost, profit/loss, change | `mth-005` |
+| `maths.statistics` | Statistics | Averages, data interpretation, charts | *(none yet — defined for future content; see §11.4)* |
+| `maths.problem-solving` | Problem Solving | Multi-step word problems combining several skills | `mth-001`, `mth-005` |
+| `maths.powers-roots` | Powers, Roots & Order of Operations | Indices, square/cube roots, calculation order | `mth-002`, `qa-008`, `qa-009` |
+| `maths.factors-multiples` | Factors, Multiples & Primes | LCM, HCF, prime factorisation | `qa-010` |
+
+### 11.3 Multi-topic questions get one primary competency, not several
+
+Several real questions genuinely test more than one topic (`mth-003` combines algebraic setup with a geometry answer; `mth-001` and `mth-005` are word problems that also touch measurement/money specifically). Per §2.1's "one skill per question" writing standard, **new** Mathematics questions should be written to test one competency cleanly. For the 20 **existing** questions, which predate this taxonomy, tag by the dominant skill being assessed — the reasoning step that actually determines whether the student gets it right — not every topic the surface content touches. `mth-003` is tagged `maths.algebra` (the width-variable setup is the actual difficulty), not `maths.geometry`, even though the final answer is an area. `mth-001` is tagged `maths.problem-solving` (the multi-step distance/speed/time reasoning is what's being tested), not `maths.measurement`.
+
+### 11.4 Difficulty calibration
+
+Reuses the general rubric (§4.1) and the same required-before-import fields (§1). Calibration notes specific to Mathematics:
+
+- **`maths.powers-roots` and `maths.factors-multiples`**: difficulty scales with the size of numbers involved and whether the operation is "recognise a known value" (√144, easy-medium) vs. "compute from an unfamiliar base" (harder).
+- **`maths.algebra`**: difficulty scales with the number of steps between the given information and the answer — `mth-003` (perimeter → width → length → area, 4 steps) sits at `medium`/`hard` by this measure, not `easy`, even though no step individually is hard.
+- **`maths.problem-solving`**: by definition multi-step; should rarely be tagged `easy` — a genuinely one-step word problem is better tagged by its actual operation (e.g. `maths.money` for a single subtraction-in-context).
+- **`maths.time` / `maths.statistics`**: no real questions exist yet to calibrate against (§11.2) — the first questions written for these competencies should be tagged conservatively (`easy`/`medium`) until real attempt data exists to check them against (§4.4's general rule).
+
+### 11.5 Worked examples (illustrative only — not the production tagging pass)
+
+Same caveat as §9: these are training examples for reviewers, not the real hand-tagging pass for the 20 existing questions, which remains a separate human-owned task per the standing "do not automate metadata generation" principle (Decision 3, extended to every subject by Decision 3's own reasoning, not just Verbal Reasoning).
+
+**`mth-004`** ("What is 3/8 + 5/6?") — `skill: maths.fractions`, `content_difficulty: medium` (requires finding a common denominator across two different-value fractions, one extra step beyond a same-denominator addition), `estimated_time_seconds: 60`, `pathway: ["gl","cem","iseb"]` (generic fraction arithmetic, not board-specific).
+
+**`qa-010`** ("LCM of 6 and 9") — `skill: maths.factors-multiples`, `content_difficulty: easy` (small numbers, a single well-known technique), `estimated_time_seconds: 25`, `pathway: ["gl","cem","iseb"]`.
+
+**`mth-009`** ("cylinder volume") — `skill: maths.geometry`, `content_difficulty: hard` (3D formula recall + three-factor multiplication + a given approximation for π to apply correctly), `estimated_time_seconds: 75`, `pathway: ["gl","iseb"]` (volume-of-3D-shapes is less universal across all four boards than basic arithmetic).
