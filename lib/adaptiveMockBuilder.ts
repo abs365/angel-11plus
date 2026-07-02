@@ -1,6 +1,7 @@
 import type { AdaptiveTier } from "@/types/adaptive";
 import type { BankQuestion, ContentDifficulty } from "@/types/ali/questionBank";
 import type { StudentQuestionHistoryRow } from "@/types/ali/history";
+import type { MockGenerationTrace } from "@/types/ali/observability";
 import { selectQuestions } from "./ali/selection";
 import { deriveWeakCompetencies } from "./ali/weakness";
 
@@ -39,12 +40,20 @@ function distributionCounts(tier: AdaptiveTier, count: number): Record<ContentDi
   return result;
 }
 
+export interface AdaptiveSectionResult {
+  questions: BankQuestion[];
+  trace: MockGenerationTrace;
+}
+
 /**
  * Assembles one adaptive mock section — the sole consumer of lib/ali/*
  * (ALI_DECISION_LOG.md Decision 8/12: mock assembly is one consumer of
  * Angel Learning Intelligence, not the whole system). Pure function given
  * pre-fetched bank/history; all Supabase I/O happens in the caller
  * (lib/ali/questionBank.ts, lib/ali/history.ts).
+ *
+ * Also returns a MockGenerationTrace (Phase ALI 1.1 observability) —
+ * internal/debugging only, see lib/ali/observability.ts's logSelectionTrace().
  */
 export function buildAdaptiveSection(
   bank: BankQuestion[],
@@ -52,21 +61,24 @@ export function buildAdaptiveSection(
   currentSequence: number,
   tier: AdaptiveTier,
   count: number,
+  sectionId: string = "adaptive-section",
   random: () => number = Math.random
-): BankQuestion[] {
+): AdaptiveSectionResult {
   const weakSkills = deriveWeakCompetencies(bank, history);
   const targetCounts = distributionCounts(tier, count);
 
   const selected: BankQuestion[] = [];
   const usedIds = new Set<string>();
+  const traceEntries: MockGenerationTrace["entries"] = [];
 
   for (const difficulty of DIFFICULTIES) {
     const target = targetCounts[difficulty];
     if (target === 0) continue;
     const candidates = bank.filter((q) => q.contentDifficulty === difficulty && !usedIds.has(q.id));
-    const picked = selectQuestions(candidates, history, currentSequence, weakSkills, target, random);
+    const { questions: picked, trace } = selectQuestions(candidates, history, currentSequence, weakSkills, target, random);
     for (const q of picked) usedIds.add(q.id);
     selected.push(...picked);
+    traceEntries.push(...trace);
   }
 
   // Top-up if a sparse bank (e.g. the Slice 1 synthetic fixture, or an
@@ -74,7 +86,7 @@ export function buildAdaptiveSection(
   // never a steady-state concern once the bank grows (architecture §7).
   if (selected.length < count) {
     const remainingCandidates = bank.filter((q) => !usedIds.has(q.id));
-    const topUp = selectQuestions(
+    const { questions: topUp, trace } = selectQuestions(
       remainingCandidates,
       history,
       currentSequence,
@@ -83,7 +95,16 @@ export function buildAdaptiveSection(
       random
     );
     selected.push(...topUp);
+    traceEntries.push(...trace);
   }
 
-  return selected;
+  return {
+    questions: selected,
+    trace: {
+      generatedAt: new Date().toISOString(),
+      sectionId,
+      confidenceInfluence: { tier, targetDistribution: targetCounts },
+      entries: traceEntries,
+    },
+  };
 }

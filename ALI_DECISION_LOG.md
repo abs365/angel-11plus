@@ -129,3 +129,15 @@ Permanent architectural history of ALI. Every entry below was a real decision ma
 **Rationale:** Preserve the reasoning behind ALI's design choices independently of the implementation-plan documents, which get rewritten/superseded across revisions (v1→v2→v3) and would otherwise lose the "why" behind earlier drafts.
 **Date:** 2026-07-02
 **Implications:** Every future ALI architectural decision (e.g. extending to competency-level difficulty, migrating confidence/replay/readiness to read from ALI directly, adding a new subject) gets a new numbered entry here, not a silent change.
+
+### Decision 22 — Phase ALI 1.1: prove Slice 1 before any expansion; observability is console-only
+**Decision:** Before any Slice 2 work (new subjects, new adaptive features, new question banks), a dedicated validation phase was run instead. Observability was added as a lightweight, console-only trace (`lib/ali/observability.ts`, `types/ali/observability.ts`) attached to every generated mock section — never persisted to a new table, never exposed to end users.
+**Rationale:** "Quality before scale, observability before expansion" — explicit engineering principle for this phase. A console trace was chosen over a persisted table because the ask was for debugging/validation visibility, not a permanent analytics pipeline; adding a new table would itself be exactly the kind of expansion this phase was meant to avoid.
+**Date:** 2026-07-02
+**Implications:** `selectQuestions()` and `buildAdaptiveSection()`'s return types changed from `BankQuestion[]` to `{ questions, trace }` to carry this data out — a mechanical, non-functional refactor of the Slice 1 selection API, not a behavior change (verified via the same pure-function test suite, all still passing).
+
+### Decision 23 — Validation findings are documented, not silently patched
+**Decision:** Three real findings surfaced by end-to-end simulation (`ALI_VALIDATION_PROTOCOL.md` §Findings — exam readiness never leaving "not-ready" under ALI-only usage; Daily Mission rarely surfacing VR-specific remediation; small-sample score volatility) were documented as open product questions, not fixed in this phase.
+**Rationale:** Findings 1 and 2 are pre-existing characteristics of `lib/parentInsights.ts`/`lib/adaptiveEngine.ts` (session-counting model, cross-subject urgency weighting) that ALI's repeated-single-subject usage pattern exposes but did not cause. Fixing them would mean modifying shared, non-ALI legacy code — explicitly out of this phase's scope ("no new adaptive features," and more importantly, changing shared confidence/mission logic is a cross-cutting product decision, not a Phase 1.1 validation task).
+**Date:** 2026-07-02
+**Implications:** These findings block nothing about ALI's own correctness (all 7 validation scenarios passed for ALI's own mechanisms) but should be resolved or explicitly accepted before Slice 2 broadens usage, since they'll only become more visible as more students use ALI-only practice patterns.

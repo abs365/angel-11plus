@@ -1,5 +1,6 @@
 import type { BankQuestion, CompetencyCode, ContentDifficulty } from "@/types/ali/questionBank";
 import type { StudentQuestionHistoryRow } from "@/types/ali/history";
+import type { SelectionReason, SelectionTraceEntry } from "@/types/ali/observability";
 
 /**
  * Question-count cooldown thresholds (ALI_DECISION_LOG.md Decision 4).
@@ -20,12 +21,20 @@ const MASTERED_RESURFACE_MULTIPLIER = 3;
 interface Weighted {
   question: BankQuestion;
   weight: number;
+  reason: SelectionReason;
+}
+
+export interface SelectionResult {
+  questions: BankQuestion[];
+  trace: SelectionTraceEntry[];
 }
 
 /**
  * Selects `count` questions from `candidates` for one adaptive mock section.
- * Pure function, no I/O — reads pre-fetched candidates/history, returns a
- * selection. See ADAPTIVE_ASSESSMENT_ENGINE_IMPLEMENTATION_PLAN.md §3.
+ * Pure function, no I/O — reads pre-fetched candidates/history, returns both
+ * the selection and a trace explaining every decision (ALI_VALIDATION_
+ * PROTOCOL.md — Phase ALI 1.1 observability, internal/debugging only, never
+ * shown to end users). See ADAPTIVE_ASSESSMENT_ENGINE_IMPLEMENTATION_PLAN.md §3.
  *
  * Order of operations matters:
  *   1. Absolute exclusion of the immediately preceding mock's questions
@@ -38,6 +47,7 @@ interface Weighted {
  *      > cooling-down (excluded by default).
  *   4. Weak-skill override: a cooling-down question (never one excluded by
  *      step 1) becomes eligible if its competency is in `weakSkills`.
+ *   4b. Guaranteed minimum reserve for overridden questions (Decision 17).
  *   5. Weighted random sample without replacement.
  */
 export function selectQuestions(
@@ -47,7 +57,7 @@ export function selectQuestions(
   weakSkills: Set<CompetencyCode>,
   count: number,
   random: () => number = Math.random
-): BankQuestion[] {
+): SelectionResult {
   // Step 1 — absolute exclusion of the immediately preceding mock's questions.
   let previousMockStamp = -1;
   for (const row of history.values()) {
@@ -71,17 +81,21 @@ export function selectQuestions(
   const eligibleSeen: BankQuestion[] = [];
   const masteredResurface: BankQuestion[] = [];
   const coolingDown: BankQuestion[] = [];
+  const cooldownById = new Map<string, { distance: number | null; threshold: number; eligible: boolean }>();
 
   for (const q of remaining) {
     const row = history.get(q.id);
+    const threshold = COOLDOWN_QUESTIONS[q.contentDifficulty];
+
     if (!row || row.timesSeen === 0) {
       unseen.push(q);
+      cooldownById.set(q.id, { distance: null, threshold, eligible: true });
       continue;
     }
 
     const distance = currentSequence - row.lastPresentedAtSequence;
-    const threshold = COOLDOWN_QUESTIONS[q.contentDifficulty];
     const eligible = distance >= threshold;
+    cooldownById.set(q.id, { distance, threshold, eligible });
 
     if (row.masteryState === "mastered") {
       if (distance >= threshold * MASTERED_RESURFACE_MULTIPLIER) {
@@ -111,35 +125,39 @@ export function selectQuestions(
     }
   }
 
-  // Step 4b — guaranteed minimum inclusion for overridden weak-skill questions.
-  // Giving them equal weight to ordinary review (as in an earlier draft) only
-  // makes them *possible* to select, not *intentional* — with enough unseen
-  // content competing for the same slots, weak-skill remediation could be
-  // crowded out entirely by chance, which fails the "weak competencies are
-  // intentionally revisited" requirement. Reserving ~20% of the section
-  // (at least 1, capped at what's actually available) makes remediation a
-  // guarantee, not a probability, while still leaving most of the section
-  // driven by the normal weighting.
+  // Step 4b — guaranteed minimum inclusion for overridden weak-skill questions
+  // (Decision 17 — equal-weight eligibility alone doesn't guarantee weak
+  // competencies are actually revisited, only makes it possible).
+  const reasonById = new Map<string, SelectionReason>();
   const selected: BankQuestion[] = [];
   if (overridden.length > 0 && count > 0) {
     const reserveCount = Math.min(overridden.length, Math.max(1, Math.floor(count * 0.2)));
-    const reservedPool: Weighted[] = overridden.map((question) => ({ question, weight: 1 }));
+    const reservedPool: Weighted[] = overridden.map((question) => ({
+      question,
+      weight: 1,
+      reason: "weak-skill-override-reserved",
+    }));
     const reserved = weightedSampleWithoutReplacement(reservedPool, reserveCount, random);
+    for (const q of reserved) reasonById.set(q.id, "weak-skill-override-reserved");
     selected.push(...reserved);
   }
   const reservedIds = new Set(selected.map((q) => q.id));
   const remainingOverridden = overridden.filter((q) => !reservedIds.has(q.id));
 
   const pool: Weighted[] = [
-    ...unseen.map((question) => ({ question, weight: 3 })),
-    ...eligibleSeen.map((question) => ({ question, weight: 2 })),
-    ...remainingOverridden.map((question) => ({ question, weight: 2 })),
-    ...masteredResurface.map((question) => ({ question, weight: 1 })),
+    ...unseen.map((question) => ({ question, weight: 3, reason: "unseen" as SelectionReason })),
+    ...eligibleSeen.map((question) => ({ question, weight: 2, reason: "eligible-seen" as SelectionReason })),
+    ...remainingOverridden.map((question) => ({ question, weight: 2, reason: "weak-skill-override-pool" as SelectionReason })),
+    ...masteredResurface.map((question) => ({ question, weight: 1, reason: "mastered-resurface" as SelectionReason })),
   ];
 
   // Step 5 — weighted random sample without replacement, filling the rest
   // of the section around the reserved weak-skill slots.
   const additional = weightedSampleWithoutReplacement(pool, count - selected.length, random);
+  for (const q of additional) {
+    const source = pool.find((w) => w.question.id === q.id);
+    if (source) reasonById.set(q.id, source.reason);
+  }
   selected.push(...additional);
 
   // Fallback: only if the eligible pool is smaller than `count` (expected at
@@ -149,16 +167,38 @@ export function selectQuestions(
     const alreadySelected = new Set(selected.map((q) => q.id));
     const fallbackPool: Weighted[] = stillCoolingDown
       .filter((q) => !alreadySelected.has(q.id))
-      .map((question) => ({ question, weight: 1 }));
+      .map((question) => ({ question, weight: 1, reason: "fallback-shortfall" as SelectionReason }));
     const fallbackAdditional = weightedSampleWithoutReplacement(
       fallbackPool,
       count - selected.length,
       random
     );
+    for (const q of fallbackAdditional) reasonById.set(q.id, "fallback-shortfall");
     selected.push(...fallbackAdditional);
   }
 
-  return selected;
+  const trace: SelectionTraceEntry[] = selected.map((q) => {
+    const cooldown = cooldownById.get(q.id) ?? {
+      distance: null,
+      threshold: COOLDOWN_QUESTIONS[q.contentDifficulty],
+      eligible: true,
+    };
+    const reason = reasonById.get(q.id) ?? "unseen";
+    const weakOverride = reason === "weak-skill-override-reserved" || reason === "weak-skill-override-pool";
+    return {
+      questionId: q.id,
+      competency: q.skill,
+      difficultyTier: q.contentDifficulty,
+      selectionReason: reason,
+      cooldownStatus: cooldown,
+      weakSkillOverride: weakOverride,
+      replayReason: weakOverride
+        ? `Competency "${q.skill}" is currently weak — resurfaced ahead of its normal cooldown for remediation.`
+        : null,
+    };
+  });
+
+  return { questions: selected, trace };
 }
 
 function weightedSampleWithoutReplacement(

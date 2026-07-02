@@ -15,6 +15,7 @@ import { ensureProfile } from "@/lib/supabaseProgress";
 import { fetchQuestionBank } from "@/lib/ali/questionBank";
 import { fetchStudentHistory, ensureAdaptiveState, recordPresentation, recordOutcome } from "@/lib/ali/history";
 import { buildAdaptiveSection } from "@/lib/adaptiveMockBuilder";
+import { logSelectionTrace } from "@/lib/ali/observability";
 import { getProgress, recordSkillResult, completeLesson } from "@/lib/progress";
 import { computeAnalytics } from "@/lib/analytics";
 import { computeSubjectConfidence } from "@/lib/adaptiveDifficulty";
@@ -149,7 +150,15 @@ export default function AdaptiveGlMockPage() {
     const vrSubject = report.subjects.find((s) => s.subject === "verbal-reasoning");
     const tier: AdaptiveTier = vrSubject ? computeSubjectConfidence(vrSubject, progress).tier : "foundation";
 
-    const selected = buildAdaptiveSection(bank, history, currentSequence, tier, VR_SECTION.count);
+    const { questions: selected, trace } = buildAdaptiveSection(
+      bank,
+      history,
+      currentSequence,
+      tier,
+      VR_SECTION.count,
+      VR_SECTION.id
+    );
+    logSelectionTrace(trace); // internal/debugging only — never rendered (Phase ALI 1.1)
 
     if (!synthetic && selected.length > 0) {
       await recordPresentation(supabase, profileId, selected.map((q) => q.id));
