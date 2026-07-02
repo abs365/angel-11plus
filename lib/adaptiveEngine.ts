@@ -1,7 +1,30 @@
 import type { UserProgress } from "@/types";
 import type { AnalyticsReport, SubjectAnalytics } from "@/types/analytics";
 import type { AdaptiveState, AdaptiveTier, DailyMission, MissionItem } from "@/types/adaptive";
+import type { AliCompetencySignal } from "@/types/ali/missionSignal";
 import { getTopReplayItem } from "./replayEngine";
+
+// ─── ALI competency labels (Phase ALI 1.3) ────────────────────────────────────
+// Human-readable names for the competency codes ALI tags questions with
+// (QUESTION_AUTHORING_STANDARD.md §3). Presentation-only — falls back to the
+// raw code if a label is ever missing, never throws.
+
+const COMPETENCY_LABELS: Record<string, string> = {
+  "vr.analogies": "Word Analogies",
+  "vr.odd-one-out": "Odd One Out",
+  "vr.synonyms": "Synonyms",
+  "vr.antonyms": "Antonyms",
+  "vr.letter-codes": "Letter Codes",
+  "vr.number-codes": "Number Codes",
+  "vr.word-codes": "Word Codes",
+  "vr.hidden-words": "Hidden Words",
+  "vr.sequences": "Sequences",
+  "vr.compound-words": "Compound Words",
+};
+
+function competencyLabel(code: string): string {
+  return COMPETENCY_LABELS[code] ?? code;
+}
 
 // ─── Tier determination ───────────────────────────────────────────────────────
 
@@ -150,16 +173,39 @@ function reasonText(
   return copy[subject.subject] ?? `You're at ${subject.avgScore}% — consistency will bring this above 75%.`;
 }
 
+/**
+ * ALI-native reason text (Phase ALI 1.3) — used instead of reasonText()'s
+ * legacy copy templates when ALI has flagged real weak competencies for
+ * this subject. Deliberately a separate code path, not a branch inside
+ * reasonText() itself: reasonText() gates on the legacy `status` field
+ * (e.g. "weak"), which inherits the Math.max ratchet (Decision 24) and can
+ * read "strong" even while ALI knows specific competencies are weak. Only
+ * fires for subjects with a non-empty `weakCompetencies` list, so it never
+ * touches reasonText()'s output for any subject without real ALI data —
+ * preserving it byte-for-byte for every other subject (validated in
+ * scripts/_ali_mission_validation.ts, deleted before commit).
+ */
+function aliReasonText(subjectLabel: string, signal: AliCompetencySignal): string {
+  const names = signal.weakCompetencies.map(competencyLabel);
+  const list = names.length === 1 ? names[0] : `${names.slice(0, -1).join(", ")} and ${names[names.length - 1]}`;
+  return `${list} need${names.length === 1 ? "s" : ""} reinforcement in ${subjectLabel} — focused practice here will lift the whole subject fastest.`;
+}
+
 function buildItem(
   subject: SubjectAnalytics,
   tier: AdaptiveTier,
   priority: "primary" | "secondary" | "review",
   index: number,
-  weakSkillLabel?: string
+  weakSkillLabel?: string,
+  aliSignal?: AliCompetencySignal
 ): MissionItem {
   const minutes = Math.round(
     SUBJECT_MINUTES[subject.subject] * (priority === "review" ? 0.5 : 1)
   );
+  const reason =
+    priority !== "review" && aliSignal && aliSignal.weakCompetencies.length > 0
+      ? aliReasonText(SUBJECT_LABELS[subject.subject], aliSignal)
+      : reasonText(subject, priority, weakSkillLabel);
   return {
     id: `mission-${index}`,
     subject: subject.subject,
@@ -168,7 +214,7 @@ function buildItem(
         ? `Review ${SUBJECT_LABELS[subject.subject]}`
         : SUBJECT_LABELS[subject.subject],
     href: `/${subject.subject}`,
-    reason: reasonText(subject, priority, weakSkillLabel),
+    reason,
     tier,
     priority,
     estimatedMinutes: Math.max(10, minutes),
@@ -177,8 +223,45 @@ function buildItem(
 
 // ─── Urgency ordering ─────────────────────────────────────────────────────────
 
-function urgency(s: SubjectAnalytics): number {
+/**
+ * Mission urgency per subject (Phase ALI 1.3 — ALI_LEARNING_MODEL.md §4,
+ * scoped down per this phase's explicit instruction: only subjects with
+ * real ALI competency data branch to new logic; every other subject —
+ * including an ALI-covered subject that simply hasn't been attempted yet —
+ * falls through to the byte-for-byte original formula).
+ *
+ * For subjects with attempted ALI competency data (currently Verbal
+ * Reasoning, once a student has done at least one adaptive mock): urgency
+ * is driven by ALI's native weak-competency flag directly, bypassing the
+ * legacy `avgScore`/`status` fields — those inherit the Math.max ratchet
+ * (ALI_DECISION_LOG.md Decision 24), which this phase is explicitly
+ * instructed NOT to modify. Reading around it here, for ALI-covered
+ * subjects only, achieves the fix without touching the score storage model.
+ */
+function urgency(s: SubjectAnalytics, aliSignal: AliCompetencySignal | undefined): number {
   if (s.subject === "mock-test") return -1;
+
+  if (aliSignal && aliSignal.attemptedCompetencies.length > 0) {
+    if (aliSignal.weakCompetencies.length > 0) {
+      // Always outranks the legacy "not-started" branch below (item 3:
+      // never-attempted subjects "cannot indefinitely outrank known
+      // weaknesses"). Capped so a large weak count doesn't run away.
+      return 140 + Math.min(aliSignal.weakCompetencies.length * 5, 40);
+    }
+    // No weak competencies right now — priority reduces as mastery coverage
+    // grows (item 2: "recently mastered competencies gradually reduce in
+    // priority"). Banded on mastery ratio rather than a raw event/time decay
+    // — deliberately simple, no new stored history needed beyond what
+    // ali_student_question_history already tracks.
+    const masteryRatio = aliSignal.masteredCompetencies.length / aliSignal.attemptedCompetencies.length;
+    if (masteryRatio >= 0.8) return 5; // maintain-only, lowest priority band
+    if (masteryRatio >= 0.5) return 30; // developing, moderate
+    return 60; // still building, below "not-started" (80) but above "strong" (0)
+  }
+
+  // Legacy branch — byte-for-byte unchanged. Used for every non-ALI subject,
+  // and for an ALI-covered subject before it has any attempted competency
+  // data (item: "preserve existing behaviour" applies uniformly here).
   if (s.status === "weak") return 100 + (100 - s.avgScore);
   if (s.status === "not-started") return 80;
   if (s.status === "developing") return 50 + (75 - s.avgScore);
@@ -233,9 +316,18 @@ function buildDailyMission(
       weakSkillBySubject.set(skill.group, skill.label);
     }
   }
+  // ALI competency names take precedence where available — strictly more
+  // specific than the legacy skill-group label above (Phase ALI 1.3).
+  for (const [subject, signal] of Object.entries(p.aliCompetencySignal ?? {})) {
+    if (signal && signal.weakCompetencies.length > 0) {
+      weakSkillBySubject.set(subject, signal.weakCompetencies.map(competencyLabel).join(" and "));
+    }
+  }
 
   const nonMock = report.subjects.filter((s) => s.subject !== "mock-test");
-  const sorted = [...nonMock].sort((a, b) => urgency(b) - urgency(a));
+  const sorted = [...nonMock].sort(
+    (a, b) => urgency(b, p.aliCompetencySignal?.[b.subject]) - urgency(a, p.aliCompetencySignal?.[a.subject])
+  );
 
   const items: MissionItem[] = [];
 
@@ -248,11 +340,11 @@ function buildDailyMission(
         : primary.subject === "maths"
         ? mathsTier
         : tierFromSubject(primary);
-    items.push(buildItem(primary, tier, "primary", 0, weakSkillBySubject.get(primary.subject)));
+    items.push(buildItem(primary, tier, "primary", 0, weakSkillBySubject.get(primary.subject), p.aliCompetencySignal?.[primary.subject]));
   }
 
   // Secondary — second-most urgent (only if meaningfully urgent)
-  const secondary = sorted.find((s, i) => i > 0 && urgency(s) > 20);
+  const secondary = sorted.find((s, i) => i > 0 && urgency(s, p.aliCompetencySignal?.[s.subject]) > 20);
   if (secondary) {
     const tier =
       secondary.subject === "english"
@@ -260,7 +352,7 @@ function buildDailyMission(
         : secondary.subject === "maths"
         ? mathsTier
         : tierFromSubject(secondary);
-    items.push(buildItem(secondary, tier, "secondary", 1, weakSkillBySubject.get(secondary.subject)));
+    items.push(buildItem(secondary, tier, "secondary", 1, weakSkillBySubject.get(secondary.subject), p.aliCompetencySignal?.[secondary.subject]));
   }
 
   // Review — a strong subject to maintain (different from primary + secondary)

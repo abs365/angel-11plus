@@ -85,6 +85,25 @@ export function markBadgesSeen(newIds: string[]): void {
   saveProgress({ ...p, earnedBadgeIds: [...(p.earnedBadgeIds ?? []), ...newIds] });
 }
 
+/**
+ * Bridges an ALI competency-level signal into UserProgress (Phase ALI 1.3)
+ * so lib/adaptiveEngine.ts's Daily Mission prioritisation can read it
+ * synchronously without a Supabase round-trip. Purely additive — does not
+ * touch `scores`/`skillScores` or the Math.max ratchet behaviour (left
+ * unchanged per this phase's explicit safety instruction; see
+ * ALI_DECISION_LOG.md Decision 24 and ALI_LEARNING_MODEL.md §2.2).
+ */
+export function recordAliCompetencySignal(
+  subject: string,
+  signal: import("@/types/ali/missionSignal").AliCompetencySignal
+): void {
+  const p = getProgress();
+  saveProgress({
+    ...p,
+    aliCompetencySignal: { ...p.aliCompetencySignal, [subject]: signal },
+  });
+}
+
 export function setSelectedPathway(id: string): void {
   const p = getProgress();
   saveProgress({ ...p, selectedPathwayId: id });

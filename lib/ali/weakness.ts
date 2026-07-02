@@ -1,5 +1,6 @@
 import type { BankQuestion, CompetencyCode } from "@/types/ali/questionBank";
 import type { StudentQuestionHistoryRow } from "@/types/ali/history";
+import type { AliCompetencySignal } from "@/types/ali/missionSignal";
 
 /**
  * Derives weak competencies natively from ALI's own history data — a
@@ -23,4 +24,46 @@ export function deriveWeakCompetencies(
     }
   }
   return weak;
+}
+
+/**
+ * Derives the full competency-level signal bridged into UserProgress
+ * (Phase ALI 1.3 — lib/progress.ts's recordAliCompetencySignal()), consumed
+ * by lib/adaptiveEngine.ts's Daily Mission prioritisation. Pure, no I/O.
+ *
+ * A competency is `mastered` when every attempted question within it is
+ * currently mastered (a partial mix of mastered/weak/learning within one
+ * competency is not counted as mastered — the competency as a whole isn't
+ * safe yet). `attemptedCompetencies` is the denominator Daily Missions uses
+ * for a mastery-ratio-based urgency band (ALI_LEARNING_MODEL.md §4.2) — it
+ * excludes competencies with zero attempted questions entirely.
+ */
+export function deriveCompetencySignal(
+  bank: BankQuestion[],
+  history: Map<string, StudentQuestionHistoryRow>,
+  subject: string
+): AliCompetencySignal {
+  const byCompetency = new Map<CompetencyCode, { attempted: number; mastered: number }>();
+  for (const q of bank) {
+    const row = history.get(q.id);
+    if (!row || row.timesSeen === 0) continue;
+    const entry = byCompetency.get(q.skill) ?? { attempted: 0, mastered: 0 };
+    entry.attempted += 1;
+    if (row.masteryState === "mastered") entry.mastered += 1;
+    byCompetency.set(q.skill, entry);
+  }
+
+  const attemptedCompetencies = [...byCompetency.keys()];
+  const masteredCompetencies = attemptedCompetencies.filter(
+    (c) => byCompetency.get(c)!.mastered === byCompetency.get(c)!.attempted
+  );
+  const weakCompetencies = [...deriveWeakCompetencies(bank, history)];
+
+  return {
+    subject,
+    weakCompetencies,
+    masteredCompetencies,
+    attemptedCompetencies,
+    updatedAt: new Date().toISOString(),
+  };
 }

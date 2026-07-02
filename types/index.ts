@@ -85,4 +85,7 @@ export interface UserProgress {
   weeklyStats?: { weekStart: string; sessions: number };
   selectedPathwayId?: string;
   mockResults?: import("./mock").MockResult[];
+  // ALI competency bridge (Phase ALI 1.3) — additive only, does not touch
+  // `scores`/the Math.max ratchet. Keyed by ALI subject.
+  aliCompetencySignal?: Partial<Record<string, import("./ali/missionSignal").AliCompetencySignal>>;
 }

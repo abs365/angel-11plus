@@ -16,7 +16,9 @@ import { fetchQuestionBank } from "@/lib/ali/questionBank";
 import { fetchStudentHistory, ensureAdaptiveState, recordPresentation, recordOutcome } from "@/lib/ali/history";
 import { buildAdaptiveSection } from "@/lib/adaptiveMockBuilder";
 import { logSelectionTrace } from "@/lib/ali/observability";
-import { getProgress, recordSkillResult, completeLesson } from "@/lib/progress";
+import { applyAttemptOutcome } from "@/lib/ali/mastery";
+import { deriveCompetencySignal } from "@/lib/ali/weakness";
+import { getProgress, recordSkillResult, completeLesson, recordAliCompetencySignal } from "@/lib/progress";
 import { computeAnalytics } from "@/lib/analytics";
 import { computeSubjectConfidence } from "@/lib/adaptiveDifficulty";
 import { saveAdaptiveMockResult } from "@/lib/adaptiveMockProgress";
@@ -103,6 +105,13 @@ export default function AdaptiveGlMockPage() {
   const inputRef = useRef<HTMLInputElement>(null);
   const profileIdRef = useRef<string | null>(null);
   const sessionIdRef = useRef<string>(`adaptive-gl-${Date.now()}`);
+  // Local mirror of the VR bank/history, kept in sync as questions are
+  // answered (Phase ALI 1.3) — lets the Daily Mission bridge write
+  // (recordAliCompetencySignal, below) compute a fresh competency signal
+  // without a Supabase round-trip, exactly mirroring what recordOutcome()
+  // writes for real via the same pure applyAttemptOutcome() function.
+  const vrBankRef = useRef<BankQuestion[]>([]);
+  const vrHistoryRef = useRef<Map<string, StudentQuestionHistoryRow>>(new Map());
 
   const currentSection = sections[sectionIdx];
   const currentQuestion = currentSection?.questions[questionIdx];
@@ -159,6 +168,9 @@ export default function AdaptiveGlMockPage() {
       VR_SECTION.id
     );
     logSelectionTrace(trace); // internal/debugging only — never rendered (Phase ALI 1.1)
+
+    vrBankRef.current = bank;
+    vrHistoryRef.current = new Map(history);
 
     if (!synthetic && selected.length > 0) {
       await recordPresentation(supabase, profileId, selected.map((q) => q.id));
@@ -269,6 +281,15 @@ export default function AdaptiveGlMockPage() {
         completeLesson("verbal-reasoning", vrResult.score, Math.round(XP_REWARD * (vrResult.total / totalQuestions || 0)));
       }
       completeLesson("mock-test", totalScore, XP_REWARD);
+
+      // ALI competency signal bridge (Phase ALI 1.3) — feeds Daily Mission
+      // prioritisation (lib/adaptiveEngine.ts) without a Supabase round-trip.
+      // Purely additive; does not touch `scores`/the Math.max ratchet.
+      if (vrBankRef.current.length > 0) {
+        const signal = deriveCompetencySignal(vrBankRef.current, vrHistoryRef.current, "verbal-reasoning");
+        recordAliCompetencySignal("verbal-reasoning", signal);
+      }
+
       trackEvent("mock_completed", { pathway: "gl", variant: "adaptive", score: totalScore });
       setSaved(true);
     }
@@ -297,6 +318,31 @@ export default function AdaptiveGlMockPage() {
           bankQuestion.masteryThreshold
         ).catch(() => {});
       }
+
+      // Local mirror (Phase ALI 1.3) — kept in sync via the same pure
+      // applyAttemptOutcome() the real Supabase write uses, regardless of
+      // whether the Supabase call above fired, so the end-of-mock
+      // competency signal (below) is accurate even on the synthetic
+      // fixture path.
+      if (bankQuestion) {
+        const current = vrHistoryRef.current.get(bankQuestion.id) ?? {
+          profileId: profileId ?? "unknown",
+          questionId: bankQuestion.id,
+          source: "adaptive_mock",
+          timesSeen: 0,
+          timesCorrect: 0,
+          distinctCorrectSessions: 0,
+          lastCorrectSessionId: null,
+          lastPresentedAt: new Date().toISOString(),
+          lastPresentedAtSequence: 0,
+          lastAttemptCorrect: null,
+          secondLastAttemptCorrect: null,
+          masteryState: "new" as const,
+        };
+        const updated = applyAttemptOutcome(current, correct, sessionIdRef.current, bankQuestion.masteryThreshold);
+        vrHistoryRef.current.set(bankQuestion.id, { ...current, ...updated });
+      }
+
       // Bridge into the existing coarse SkillType, so today's confidence/
       // replay/readiness functions see this result immediately (§0.5.3).
       recordSkillResult("verbal-reasoning", correct);
