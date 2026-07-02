@@ -18,7 +18,8 @@ import { buildAdaptiveSection } from "@/lib/adaptiveMockBuilder";
 import { logSelectionTrace } from "@/lib/ali/observability";
 import { applyAttemptOutcome } from "@/lib/ali/mastery";
 import { deriveCompetencySignal } from "@/lib/ali/weakness";
-import { getProgress, recordSkillResult, completeLesson, recordAliCompetencySignal } from "@/lib/progress";
+import { computeLearningGainDelta, updateLearningGain } from "@/lib/ali/learningGain";
+import { getProgress, recordSkillResult, completeLesson, recordAliCompetencySignal, recordAliLearningGain } from "@/lib/progress";
 import { computeAnalytics } from "@/lib/analytics";
 import { computeSubjectConfidence } from "@/lib/adaptiveDifficulty";
 import { saveAdaptiveMockResult } from "@/lib/adaptiveMockProgress";
@@ -282,12 +283,24 @@ export default function AdaptiveGlMockPage() {
       }
       completeLesson("mock-test", totalScore, XP_REWARD);
 
-      // ALI competency signal bridge (Phase ALI 1.3) — feeds Daily Mission
-      // prioritisation (lib/adaptiveEngine.ts) without a Supabase round-trip.
-      // Purely additive; does not touch `scores`/the Math.max ratchet.
+      // ALI competency signal bridge (Phase ALI 1.3/1.4) — feeds Daily
+      // Mission prioritisation and Parent Insights' competency-first
+      // summaries without a Supabase round-trip. Purely additive; does not
+      // touch `scores`/the Math.max ratchet. The previous cached signal is
+      // read first so deriveCompetencySignal() can compute which
+      // competencies became mastered as of THIS mock (recentlyMastered),
+      // and so Learning Gain (internal only, Phase ALI 1.4 — never rendered
+      // in any UI this phase) can compute a real improvement-over-time delta.
       if (vrBankRef.current.length > 0) {
-        const signal = deriveCompetencySignal(vrBankRef.current, vrHistoryRef.current, "verbal-reasoning");
+        const previousProgress = getProgress();
+        const previousSignal = previousProgress.aliCompetencySignal?.["verbal-reasoning"];
+        const previousGain = previousProgress.aliLearningGain?.["verbal-reasoning"];
+
+        const signal = deriveCompetencySignal(vrBankRef.current, vrHistoryRef.current, "verbal-reasoning", previousSignal);
         recordAliCompetencySignal("verbal-reasoning", signal);
+
+        const gainDelta = computeLearningGainDelta(signal, previousSignal);
+        recordAliLearningGain("verbal-reasoning", updateLearningGain("verbal-reasoning", previousGain, gainDelta));
       }
 
       trackEvent("mock_completed", { pathway: "gl", variant: "adaptive", score: totalScore });

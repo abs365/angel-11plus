@@ -88,4 +88,7 @@ export interface UserProgress {
   // ALI competency bridge (Phase ALI 1.3) — additive only, does not touch
   // `scores`/the Math.max ratchet. Keyed by ALI subject.
   aliCompetencySignal?: Partial<Record<string, import("./ali/missionSignal").AliCompetencySignal>>;
+  // ALI Learning Gain (Phase ALI 1.4) — internal only, not read by any UI
+  // in this phase. Keyed by ALI subject.
+  aliLearningGain?: Partial<Record<string, import("./ali/learningGain").LearningGainSnapshot>>;
 }

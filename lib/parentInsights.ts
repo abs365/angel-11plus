@@ -2,8 +2,57 @@ import type { UserProgress } from "@/types";
 import type { AnalyticsReport, SubjectAnalytics } from "@/types/analytics";
 import type { GamificationState } from "@/types/gamification";
 import type { ExamReadiness, FocusArea, ParentInsight, ParentReport } from "@/types/parent";
+import type { CompetencyParentSummary, CompetencySummaryItem } from "@/types/ali/parentSummary";
 import { XP_MILESTONES, BADGE_DEFINITIONS } from "./gamification";
 import { computeAdaptiveProfile } from "./adaptiveDifficulty";
+import { competencyLabel } from "./ali/labels";
+
+// ─── ALI competency-first summaries (Phase ALI 1.4) ────────────────────────────
+// "Only enhance subjects that currently have ALI support" — a subject only
+// counts as ALI-covered once it has a cached signal with at least one
+// attempted competency. Everything else falls through to the existing
+// percentage-first logic below, completely unchanged.
+
+function hasRealAliData(p: UserProgress, subject: string): boolean {
+  const signal = p.aliCompetencySignal?.[subject];
+  return !!signal && signal.attemptedCompetencies.length > 0;
+}
+
+function toSummaryItems(codes: string[]): CompetencySummaryItem[] {
+  return codes.map((code) => ({ code, label: competencyLabel(code) }));
+}
+
+/**
+ * Builds one competency-first summary per subject with real ALI data —
+ * Strengths / Improving / Focus Next / Recently Mastered, in plain,
+ * parent-friendly language (no mastery_state, no percentages, no
+ * competency codes). Replaces percentage-first messaging for these
+ * subjects; every other subject is untouched (§Fallback, ALI_PARENT_
+ * INTELLIGENCE.md).
+ */
+function buildCompetencySummaries(p: UserProgress, report: AnalyticsReport): CompetencyParentSummary[] {
+  const summaries: CompetencyParentSummary[] = [];
+  for (const [subject, signal] of Object.entries(p.aliCompetencySignal ?? {})) {
+    if (!signal || signal.attemptedCompetencies.length === 0) continue;
+
+    const subjectLabel = report.subjects.find((s) => s.subject === subject)?.label ?? subject;
+    const recentlyMasteredSet = new Set(signal.recentlyMasteredCompetencies);
+    const strengths = signal.masteredCompetencies.filter((c) => !recentlyMasteredSet.has(c));
+    const improving = signal.attemptedCompetencies.filter(
+      (c) => !signal.masteredCompetencies.includes(c) && !signal.weakCompetencies.includes(c)
+    );
+
+    summaries.push({
+      subject,
+      subjectLabel,
+      strengths: toSummaryItems(strengths),
+      improving: toSummaryItems(improving),
+      focusNext: toSummaryItems(signal.weakCompetencies),
+      recentlyMastered: toSummaryItems(signal.recentlyMasteredCompetencies),
+    });
+  }
+  return summaries;
+}
 
 // ─── Exam readiness ───────────────────────────────────────────────────────────
 
@@ -130,9 +179,14 @@ function buildParentInsights(
     });
   }
 
-  // Positive: strong subjects
-  if (report.strongSubjects.length > 0) {
-    const s = report.strongSubjects.slice(0, 2).join(" and ");
+  // Positive: strong subjects — excludes ALI-covered subjects (Phase ALI 1.4),
+  // which get a competency-first "Strengths" summary instead of this
+  // percentage-first framing. Non-ALI subjects: completely unchanged.
+  const strongNonAli = report.subjects.filter(
+    (s) => s.status === "strong" && s.subject !== "mock-test" && !hasRealAliData(p, s.subject)
+  );
+  if (strongNonAli.length > 0) {
+    const s = strongNonAli.slice(0, 2).map((x) => x.label).join(" and ");
     insights.push({
       id: "strong-subject",
       text: `Your child is performing above the 75% target in ${s}. This is solid exam-level territory — encourage them to maintain this standard.`,
@@ -149,9 +203,14 @@ function buildParentInsights(
     });
   }
 
-  // Attention: weak subjects
-  if (report.weakSubjects.length > 0) {
-    const w = report.weakSubjects[0];
+  // Attention: weak subjects — excludes ALI-covered subjects (Phase ALI 1.4),
+  // which get a competency-first "Focus Next" summary instead. Non-ALI
+  // subjects: completely unchanged.
+  const weakNonAli = report.subjects.filter(
+    (s) => s.status === "weak" && s.subject !== "mock-test" && !hasRealAliData(p, s.subject)
+  );
+  if (weakNonAli.length > 0) {
+    const w = weakNonAli[0].label;
     insights.push({
       id: "weak-subject",
       text: `${w} is currently below the 55% threshold. This is the single highest-impact area to focus on. Short, regular sessions in this subject will improve the score most quickly.`,
@@ -242,12 +301,14 @@ const SUBJECT_ADVICE: Record<string, { detail: string; href: string }> = {
   },
 };
 
-function buildFocusAreas(report: AnalyticsReport): FocusArea[] {
+function buildFocusAreas(report: AnalyticsReport, p: UserProgress): FocusArea[] {
   const areas: FocusArea[] = [];
 
-  // 1. Weak subjects first
+  // 1. Weak subjects first — excludes ALI-covered subjects (Phase ALI 1.4),
+  // which get a competency-first "Focus Next" summary instead. Non-ALI
+  // subjects: completely unchanged.
   const weakSubjects = report.subjects.filter(
-    (s) => s.status === "weak" && s.subject !== "mock-test"
+    (s) => s.status === "weak" && s.subject !== "mock-test" && !hasRealAliData(p, s.subject)
   );
   for (const s of weakSubjects.slice(0, 2)) {
     const advice = SUBJECT_ADVICE[s.label];
@@ -343,10 +404,11 @@ export function computeParentReport(
     subjects: report.subjects,
     skills: report.skills,
     parentInsights: buildParentInsights(p, report, readiness),
-    focusAreas: buildFocusAreas(report),
+    focusAreas: buildFocusAreas(report, p),
     earnedBadges,
     weeklyXP: getWeeklyXP(p),
     hasEnoughData: report.totalSessions >= 1,
     subjectConfidence: profile.subjectConfidence,
+    competencySummaries: buildCompetencySummaries(p, report),
   };
 }

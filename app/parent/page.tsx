@@ -27,6 +27,7 @@ import {
   Hash,
   FileText,
   Play,
+  Sparkles,
 } from "lucide-react";
 import { getProgress, getSelectedPathwayId } from "@/lib/progress";
 import { getMockResults } from "@/lib/mockProgress";
@@ -453,6 +454,62 @@ export default function ParentDashboardPage() {
                 </div>
               )}
             </section>
+
+            {/* Competency Summary (Phase ALI 1.4) — competency-first messaging
+                for subjects with real ALI data, in place of raw percentages. */}
+            {report.competencySummaries.map((summary) => (
+              <section key={summary.subject}>
+                <h2 className="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-3">
+                  {summary.subjectLabel} — How They're Doing
+                </h2>
+                <div className="space-y-2">
+                  {summary.recentlyMastered.length > 0 && (
+                    <div className="bg-white dark:bg-gray-900 rounded-xl p-4 flex gap-3">
+                      <Sparkles size={18} className="text-amber-500 shrink-0 mt-0.5" />
+                      <div>
+                        <p className="text-sm font-semibold text-gray-900 dark:text-gray-100 mb-0.5">Just mastered</p>
+                        <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
+                          {summary.recentlyMastered.map((i) => i.label).join(", ")} — great progress this session.
+                        </p>
+                      </div>
+                    </div>
+                  )}
+                  {summary.strengths.length > 0 && (
+                    <div className="bg-white dark:bg-gray-900 rounded-xl p-4 flex gap-3">
+                      <CheckCircle size={18} className="text-green-500 shrink-0 mt-0.5" />
+                      <div>
+                        <p className="text-sm font-semibold text-gray-900 dark:text-gray-100 mb-0.5">Strengths</p>
+                        <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
+                          Your child is confident with {summary.strengths.map((i) => i.label).join(", ")}.
+                        </p>
+                      </div>
+                    </div>
+                  )}
+                  {summary.improving.length > 0 && (
+                    <div className="bg-white dark:bg-gray-900 rounded-xl p-4 flex gap-3">
+                      <TrendingUp size={18} className="text-blue-500 shrink-0 mt-0.5" />
+                      <div>
+                        <p className="text-sm font-semibold text-gray-900 dark:text-gray-100 mb-0.5">Improving</p>
+                        <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
+                          Getting stronger with {summary.improving.map((i) => i.label).join(", ")} — keep up the regular practice.
+                        </p>
+                      </div>
+                    </div>
+                  )}
+                  {summary.focusNext.length > 0 && (
+                    <div className="bg-white dark:bg-gray-900 rounded-xl p-4 flex gap-3">
+                      <AlertCircle size={18} className="text-amber-500 shrink-0 mt-0.5" />
+                      <div>
+                        <p className="text-sm font-semibold text-gray-900 dark:text-gray-100 mb-0.5">Focus next</p>
+                        <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
+                          {summary.focusNext.map((i) => i.label).join(", ")} would benefit from a little extra practice.
+                        </p>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </section>
+            ))}
 
             {/* Parent Insights */}
             {report.parentInsights.length > 0 && (

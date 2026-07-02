@@ -37,11 +37,18 @@ export function deriveWeakCompetencies(
  * safe yet). `attemptedCompetencies` is the denominator Daily Missions uses
  * for a mastery-ratio-based urgency band (ALI_LEARNING_MODEL.md §4.2) — it
  * excludes competencies with zero attempted questions entirely.
+ *
+ * `previousSignal` (Phase ALI 1.4, optional) is the last cached signal for
+ * this subject, if any — used only to compute `recentlyMasteredCompetencies`
+ * as the set-difference against the new `masteredCompetencies` (competencies
+ * that became mastered as of this call). Passing it in keeps this function
+ * pure — no hidden state, no timestamp-window heuristics.
  */
 export function deriveCompetencySignal(
   bank: BankQuestion[],
   history: Map<string, StudentQuestionHistoryRow>,
-  subject: string
+  subject: string,
+  previousSignal?: AliCompetencySignal
 ): AliCompetencySignal {
   const byCompetency = new Map<CompetencyCode, { attempted: number; mastered: number }>();
   for (const q of bank) {
@@ -59,11 +66,15 @@ export function deriveCompetencySignal(
   );
   const weakCompetencies = [...deriveWeakCompetencies(bank, history)];
 
+  const previouslyMastered = new Set(previousSignal?.masteredCompetencies ?? []);
+  const recentlyMasteredCompetencies = masteredCompetencies.filter((c) => !previouslyMastered.has(c));
+
   return {
     subject,
     weakCompetencies,
     masteredCompetencies,
     attemptedCompetencies,
+    recentlyMasteredCompetencies,
     updatedAt: new Date().toISOString(),
   };
 }

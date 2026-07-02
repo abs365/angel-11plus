@@ -14,5 +14,10 @@ export interface AliCompetencySignal {
   weakCompetencies: string[];
   masteredCompetencies: string[];
   attemptedCompetencies: string[]; // denominator for mastery ratio — includes weak/learning/mastered, excludes 'new'
+  // Competencies that transitioned into `masteredCompetencies` as of THIS
+  // signal write, relative to the previously cached signal (Phase ALI 1.4).
+  // A subset of masteredCompetencies, not an additional category — used by
+  // Parent Insights' "Recently Mastered" section.
+  recentlyMasteredCompetencies: string[];
   updatedAt: string;
 }

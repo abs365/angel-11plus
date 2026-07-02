@@ -171,3 +171,21 @@ Permanent architectural history of ALI. Every entry below was a real decision ma
 **Rationale:** Keeps the mission-bridge write working identically whether or not Supabase is reachable (this sandbox's persistent network gap, Slice 1/Phase 1.1/1.2) — the mirror is updated via the exact same pure function regardless, so there's no behavioural difference between "mirror" and "re-fetch," only a resilience difference.
 **Date:** 2026-07-02
 **Implications:** `deriveCompetencySignal()` (`lib/ali/weakness.ts`) is called once, client-side, at mock completion — no additional Supabase read added to the mock-completion path.
+
+### Decision 29 — "Recently mastered" is a diff against the previous cached signal, not a time window
+**Decision:** `AliCompetencySignal` gained `recentlyMasteredCompetencies` — computed as the set-difference between the new mock's `masteredCompetencies` and the previously cached signal's, not "mastered within the last N days."
+**Rationale:** A diff against the last recorded state is exact and requires no new bookkeeping (no stored timestamps to compare against, no arbitrary window length to pick and later regret). It also composes naturally with how the signal is already written — once per completed mock — so "recently" precisely means "as of your most recent practice," which is the framing a parent actually cares about.
+**Date:** 2026-07-02
+**Implications:** `deriveCompetencySignal()` gained an optional `previousSignal` parameter (still pure — the caller supplies the previous state, no hidden lookups). A competency that oscillates (mastered → weak → mastered across mocks) will correctly re-appear in "Recently Mastered" each time it's re-achieved, which is the intended behaviour.
+
+### Decision 30 — Percentage-first insights are excluded per-subject, not replaced with new text
+**Decision:** For subjects with real ALI data, `buildParentInsights()`'s "strong-subject"/"weak-subject" entries and `buildFocusAreas()`'s weak-subject cards are **omitted entirely** rather than having their text rewritten to a competency-first version inline.
+**Rationale:** The competency-first replacement already exists as a structurally separate, richer UI section (`competencySummaries` → the parent page's new "How They're Doing" section, `ALI_PARENT_INTELLIGENCE.md` §1) — duplicating that information as inline text in the generic insights list would be redundant, not "replaced." Omitting the old entry and letting the new section carry that information is the more literal reading of "replace."
+**Date:** 2026-07-02
+**Implications:** Verified via regression check: for a student with no ALI data on any subject, `buildParentInsights()`/`buildFocusAreas()` output is byte-for-byte identical to the pre-Phase-1.4 formula. For a student with real VR data, the "strong-subject"/"weak-subject" insight simply doesn't mention Verbal Reasoning (or is omitted entirely if VR was the only qualifying subject) — the information isn't lost, it's relocated to the new section.
+
+### Decision 31 — Learning Gain formula is a symmetric weighted delta, not a one-directional "progress" score
+**Decision:** `computeLearningGainDelta()` can return a negative number — a mock where previously-mastered competencies turn weak subtracts from the score, it doesn't just add less.
+**Rationale:** "Measure improvement over time" only means something if it can also register decline. A purely non-negative "progress" score would silently hide a student who is genuinely regressing, which defeats the stated purpose and would make the eventual Readiness Shadow Model (the flagged future consumer, Decision 24) less trustworthy than the data it's built from.
+**Date:** 2026-07-02
+**Implications:** Weights (mastered +3, newly attempted +1, recovered-from-weak +1, newly weak −2) are illustrative starting values, not calibrated against real usage — same caveat as `ALI_LEARNING_MODEL.md` §3.1's readiness dimension weights. Revisit once real student data exists.

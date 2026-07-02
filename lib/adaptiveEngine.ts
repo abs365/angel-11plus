@@ -3,28 +3,7 @@ import type { AnalyticsReport, SubjectAnalytics } from "@/types/analytics";
 import type { AdaptiveState, AdaptiveTier, DailyMission, MissionItem } from "@/types/adaptive";
 import type { AliCompetencySignal } from "@/types/ali/missionSignal";
 import { getTopReplayItem } from "./replayEngine";
-
-// ─── ALI competency labels (Phase ALI 1.3) ────────────────────────────────────
-// Human-readable names for the competency codes ALI tags questions with
-// (QUESTION_AUTHORING_STANDARD.md §3). Presentation-only — falls back to the
-// raw code if a label is ever missing, never throws.
-
-const COMPETENCY_LABELS: Record<string, string> = {
-  "vr.analogies": "Word Analogies",
-  "vr.odd-one-out": "Odd One Out",
-  "vr.synonyms": "Synonyms",
-  "vr.antonyms": "Antonyms",
-  "vr.letter-codes": "Letter Codes",
-  "vr.number-codes": "Number Codes",
-  "vr.word-codes": "Word Codes",
-  "vr.hidden-words": "Hidden Words",
-  "vr.sequences": "Sequences",
-  "vr.compound-words": "Compound Words",
-};
-
-function competencyLabel(code: string): string {
-  return COMPETENCY_LABELS[code] ?? code;
-}
+import { competencyLabel } from "./ali/labels";
 
 // ─── Tier determination ───────────────────────────────────────────────────────
 

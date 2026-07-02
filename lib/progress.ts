@@ -104,6 +104,22 @@ export function recordAliCompetencySignal(
   });
 }
 
+/**
+ * Bridges an internal-only ALI Learning Gain snapshot into UserProgress
+ * (Phase ALI 1.4). Not read by any UI in this phase — see
+ * types/ali/learningGain.ts. Purely additive.
+ */
+export function recordAliLearningGain(
+  subject: string,
+  snapshot: import("@/types/ali/learningGain").LearningGainSnapshot
+): void {
+  const p = getProgress();
+  saveProgress({
+    ...p,
+    aliLearningGain: { ...p.aliLearningGain, [subject]: snapshot },
+  });
+}
+
 export function setSelectedPathway(id: string): void {
   const p = getProgress();
   saveProgress({ ...p, selectedPathwayId: id });
