@@ -1,0 +1,217 @@
+# Question Authoring Standard
+
+**Status:** Permanent standard, effective on approval. Governs every question written for Angel 11+ from this point forward — starting with the 52 Verbal Reasoning questions being hand-tagged for the Angel Learning Intelligence (ALI) first slice, and every question of any subject written after it.
+
+**Purpose:** A future contributor — human or otherwise — should be able to write a new question and have it be indistinguishable in quality, structure, and metadata completeness from one written today. This document is what makes that possible without requiring the original author's judgment to be re-derived each time.
+
+**Scope note:** Examples throughout are drawn from the existing Verbal Reasoning bank (`data/verbal-reasoning/*.ts`) because that's the first slice's real content. The metadata/writing/originality/copyright standards apply to every subject; the competency taxonomy (§3) and difficulty calibration (§4) are VR-specific here and should get their own subject-specific sections when Maths/Non-Verbal/Spatial/Numerical Reasoning are hand-tagged.
+
+---
+
+## 1. Metadata Definitions
+
+Every field a question must carry, what it means, and how to determine it. Fields marked **(required before import)** block a question from entering `ali_question_bank`; fields marked **(safe default, backfill later)** ship with a sensible default and don't block import.
+
+| Field | Definition | How to determine it |
+|---|---|---|
+| `id` | Stable, permanent identifier. Never reassigned, never reused after a question is retired. Format: `{subject-prefix}-{number}`, e.g. `vr-013`. **(required)** | Mechanical — next available number in sequence for the subject. Existing VR questions already have this (`vr-001`…`vr-052`); new questions continue the sequence. |
+| `subject` | Which subject this belongs to (`verbal-reasoning`, `non-verbal-reasoning`, `spatial-reasoning`, `numerical-reasoning`, `english`, `maths`, `vocabulary`, `writing`). **(required)** | Mechanical — determined by which bank the question is written for. |
+| `skill` | The fine-grained competency this question tests. **See §3 — this is NOT the same as the existing generic `SkillType` value on the question record, which is uniformly `"verbal-reasoning"` for every VR question and carries no useful granularity for adaptive selection.** **(required)** | Assign from the competency taxonomy in §3, not from `SkillType`. |
+| `pathway` | Which exam board(s) this question is valid for, as a set (e.g. `["gl"]`, or `["gl","cem","iseb"]` for genuinely pathway-general content). **(required)** | Default to the pathway you're authoring for. Only widen to multiple pathways if the question's format/style is genuinely board-agnostic (see §3 for VR — most Word Analogy/Synonym/Antonym content is board-general; some Letter/Number Code formats are more GL/CEM-specific). |
+| `content_difficulty` | `easy` / `medium` / `hard` / `challenge` — a proficiency-facing label describing how hard this content is, not a year-group label. **Not the same field as the app's existing `Difficulty` type** (`types/index.ts`), which uses year-group values (`year4-foundation`…`year6-exam`) for lessons/vocab/writing and is untouched by this standard. **(required)** | Use the rubric in §4. |
+| `question_type` | `multiple-choice` or `short-answer`. **(required)** | Mechanical — all current VR questions are short-answer with optional `alternatives` (accepted equivalent answers), not true multiple-choice with fixed options. |
+| `estimated_time_seconds` | Realistic time for a Year 5/6 candidate to read, think, and answer under exam conditions — used for mock pacing. **(required)** | Use the baseline table in §4.5; adjust up if the question requires an unusual amount of reading or a multi-step transformation. |
+| `explanation` | Teaches the underlying rule or relationship, not just the answer. See §5.3 for the writing standard. **(required)** | Author-written, reviewed for clarity. |
+| `hint` | Optional nudge toward method without revealing the answer. See §5.4. **(safe default: omit)** | Strongly recommended for `medium` and above; optional for `easy`. |
+| `confidence_weight` | Reserved field (default `1.00`) for how much this question's outcome should count toward a student's subject/skill confidence score, once confidence computation reads from `ali_question_bank` directly (not yet — see the implementation plan's §0.5.2/§0.5.3 bridge). **(safe default: 1.00)** | Leave at default unless there's a specific reason a question is more/less diagnostic than average (e.g. a question with a 50/50 guessable format is less diagnostic — lower its weight; a question that isolates one skill cleanly is more diagnostic — raise it). Not required for the first slice. |
+| `learning_objective` | Free-text curriculum tag describing what the question teaches, e.g. "identify part-to-whole relationships in word analogies." **(safe default: blank, backfill later)** | Optional for the first slice. Write it in plain, specific language a parent or tutor would understand — this is the field a future lesson-content author will search against. |
+| `revision_priority` | 1–5, content-authored importance independent of student performance. Default `3` (neutral). **(safe default: 3)** | Only deviate from 3 if a question tests a skill that recurs disproportionately across real 11+ papers (raise toward 5) or is a rare/edge-case format unlikely to appear often (lower toward 1). Don't use this field to express difficulty — that's `content_difficulty`'s job. |
+| `mastery_threshold` | How many distinct correct sessions are required before this specific question is considered mastered. Defaults come from the configurable `ali_mastery_defaults` table (by `content_difficulty`), not a hard-coded value — see the implementation plan §1.4/§2. **(safe default: difficulty-based default)** | Override upward only if the question's answer is easily guessable (see §9 Mastery Guidance) — a correct answer to a guessable question is weaker evidence of real mastery. |
+
+---
+
+## 2. Writing Standards
+
+1. **One skill per question.** A question shouldn't simultaneously test vocabulary *and* code-breaking — pick the competency (§3) and write cleanly to it. If a question naturally tests two things, that's a sign it should be split into two questions.
+2. **Exactly one unambiguous correct answer**, or an explicit, complete `alternatives` list covering every reasonable equivalent phrasing (see the existing pattern: `answer: "freezing", alternatives: ["icy", "frozen"]`). If you can imagine a reasonable student giving a correct-but-unlisted answer, either add it to `alternatives` or rewrite the question to remove the ambiguity.
+3. **Age-appropriate vocabulary and subject matter.** Written for a Year 5/6 candidate (typically age 9–11). Avoid subject matter requiring adult life experience (mortgages, workplace jargon) or niche specialist knowledge (obscure scientific terms) unless the question is explicitly a vocabulary-stretch item at `challenge` difficulty.
+4. **Cultural neutrality.** Avoid assuming a specific religious, regional (beyond general UK), or family-structure background. Animals, everyday objects, school life, and nature are the safest, most-used domains in the existing bank for good reason.
+5. **Consistent formatting within a category.** Blanks are always `___` (three underscores). Analogies always follow the `A is to B as C is to ___` structure. Codes always state the rule explicitly before asking the question (never expect the student to infer the rule itself unless "infer the rule" *is* the skill being tested — see §3's Letter Code entries, which always state the rule).
+6. **No trick questions.** Ambiguity, double negatives, or "gotcha" phrasing are not the same as difficulty. Difficulty should come from the reasoning required, not from confusing wording — a `challenge`-tier question should still be perfectly clear about what it's asking.
+7. **Marks field.** Currently always `1` in the existing bank (`marks: 1`) — keep this convention unless there's a specific reason (e.g. a multi-part question) to deviate, and flag any deviation for review since nothing downstream currently handles `marks > 1` differently.
+
+### 2.3 Explanation writing standard
+An explanation must:
+- Name the pattern or rule explicitly (e.g. "The relationship is: tool → its action" — from `vr-014`).
+- Show the working, not just assert the answer (e.g. `vr-023`: "D=4, O=15, G=7. Total: 4+15+7=26" — not just "the answer is 26").
+- Be transferable — a student reading it should be able to apply the same reasoning to a *different* question of the same competency, not just understand this one answer in isolation.
+- Avoid explanation text that only restates the question.
+
+### 2.4 Hint writing standard
+A hint must:
+- Point at *method*, never at the answer or a shortlist that narrows it to one option. Good: "Move each letter forward by 2 steps in the alphabet" (`vr-024`). Bad: "The answer starts with C."
+- Be omittable — a student who doesn't use the hint should still be able to solve the question from the question text and their general competency alone. The hint is scaffolding for a struggling student, not a required decoder.
+
+---
+
+## 3. Competency Definitions (Verbal Reasoning)
+
+**Important correction this standard makes to the schema plan:** the app's existing `SkillType` field on `ReasoningQuestion` is set uniformly to `"verbal-reasoning"` for all 52 questions in the current bank — it carries no distinction between an analogy question and a code-breaking question. The real differentiator already present in the data is the `category` field (e.g. `"Word Analogy"`, `"Letter Code"`, `"Hidden Words"`). **`ali_question_bank.skill` must be populated from this finer competency taxonomy, not from the existing coarse `SkillType` value** — otherwise weak-skill detection and the anti-repetition weak-skill override (implementation plan §3.2) cannot distinguish "weak at codes" from "weak at analogies," which defeats the point of tracking skill-level history at all.
+
+The following competency codes are derived directly from the `category` values already in use across `data/verbal-reasoning/*.ts`, normalized and consolidated where two category labels test the same underlying skill:
+
+| Competency code | Existing `category` value(s) it consolidates | What it tests | Common student error |
+|---|---|---|---|
+| `vr.analogies` | "Word Analogy" | Identifying the relationship between a word pair and applying the same relationship to a new pair (part-to-whole, cause-effect, creator-creation, tool-action, etc.) | Focusing on surface similarity (both are animals) instead of the actual relationship (young→adult) |
+| `vr.odd-one-out` | "Odd One Out" | Identifying the category shared by most items in a list and spotting the one that doesn't belong | Picking the item that's simply least familiar, rather than reasoning about the actual shared category |
+| `vr.synonyms` | "Synonyms" | Selecting the word closest in meaning from a set of options | Confusing "closest in meaning" with "sounds similar" or picking a plausible-but-not-closest option |
+| `vr.antonyms` | "Antonyms" | Selecting or producing the opposite of a given word | Producing a related-but-not-opposite word (e.g. "old" instead of "modern" for "ancient") |
+| `vr.letter-codes` | "Letter Code" | Applying a stated alphabet-shift rule (forward/backward N places) to encode or decode a word | Miscounting the shift distance, or shifting in the wrong direction |
+| `vr.number-codes` | "Number Codes" | Applying a stated letter-to-number mapping (usually A=1…Z=26) to sum or decode | Off-by-one errors in alphabet position counting |
+| `vr.word-codes` | "Word Codes" (anagrams, letter-addition, rearrangement) | Manipulating the letters of a word to find a different valid word | Producing a non-word, or missing that multiple valid answers exist (see §2.2's `alternatives` requirement — this competency generates the most multi-answer questions in the bank) |
+| `vr.hidden-words` | "Hidden Words" | Finding a valid word formed by consecutive letters within a longer word | Finding letters that aren't actually consecutive, or a word that isn't a recognized common word |
+| `vr.sequences` | "Letter Sequences", "Sequences" | Identifying the rule governing a sequence (of letters, words, or letter-pairs) and extending it | Assuming a simple +1 step pattern when the actual rule skips or alternates |
+| `vr.compound-words` | "Compound Words" | Finding a word that combines with several given words to form valid compound words | Finding a word that works with some but not all of the given words |
+
+**This table is the required mapping when hand-tagging the 52 existing VR questions** (§1.5 of the implementation plan): each question's existing `category` value maps directly to one `ali_question_bank.skill` competency code above — this part of tagging is mechanical, not a judgment call. The judgment call is `content_difficulty` (§4).
+
+**Extending this taxonomy:** when Non-Verbal, Spatial, or Numerical Reasoning are hand-tagged in a future slice, they need their own competency table here, built the same way — from whatever real category/type distinctions already exist in that subject's data files, not invented fresh.
+
+---
+
+## 4. Difficulty Definitions
+
+`content_difficulty` is about how hard the *reasoning* is, independent of question length or vocabulary rarity (vocabulary rarity is partly captured by competency choice — e.g. `vr.synonyms` at `challenge` should use genuinely rare tier-3 words, not just be a longer sentence).
+
+### 4.1 General rubric
+
+| Level | Reasoning steps | Guessability | Typical Y5/6 candidate experience |
+|---|---|---|---|
+| **Easy** | One direct step; the relationship/rule is stated or immediately obvious | Low value even if guessed (concept is simple enough that "guessing" mostly means "getting it") | Solvable in one read, high confidence |
+| **Medium** | One step, but requires holding 2+ pieces of information or a slightly less common relationship/rule | Moderate — a guess has a real but not high chance of being right | Solvable with focused reading, may need to re-read once |
+| **Hard** | Two steps, or one step applied to less familiar vocabulary/relationships | Low — wrong answers look plausible without doing the reasoning | Requires deliberate working-through, first instinct is sometimes wrong |
+| **Challenge** | Two+ steps, unusual/rare vocabulary, or a rule that must be inferred rather than applied | Very low — a guess is unlikely to land | Stretches even a strong candidate; this is scholarship-adjacent territory |
+
+### 4.2 Worked calibration by competency
+
+- **`vr.analogies`**: Easy = concrete, familiar relationship (`kitten:cat::puppy:dog`, `vr-001`). Medium = abstract relationship needing a beat of thought (`author:novel::composer:symphony`, `vr-016` — requires knowing what a composer creates). Hard/Challenge = relationship type that's less common in everyday reasoning (e.g. tool→the character who wields it, `vr-022`) combined with a less common target word.
+- **`vr.letter-codes`/`vr.number-codes`**: difficulty scales with shift distance, word length, and whether the rule must be derived from an example (`vr-003`: rule given via a worked example, `CAT=DBU`, then applied — this is harder than a rule stated directly, e.g. `vr-024`: "each letter shifts forward 2 places," even though both are technically one-step).
+- **`vr.word-codes`**: Easy = single unambiguous rearrangement. Medium/Hard = multiple valid answers exist (`vr-027`–`vr-030`) — the reasoning load is in generating candidates and checking they're real words, which is inherently harder than recognizing one fixed answer.
+- **`vr.sequences`**: Easy = simple skip-pattern (`vr-007`: every other letter). Hard/Challenge = compound rules (`vr-049`: one letter moves forward while the paired letter moves backward, simultaneously).
+- **`vr.hidden-words`**: difficulty scales with word length (3-letter hidden word is easier than 4+) and how "hidden" the word is within common letter clusters vs. spanning a less obvious boundary.
+
+### 4.3 A `challenge` question is not a badly-written question
+If a `challenge`-tier question needs an explanation longer than a `medium` one just to be understood, that's a writing-quality problem (§2), not evidence it's appropriately hard. Difficulty comes from the reasoning, not from obscurity of presentation.
+
+### 4.4 When in doubt between two levels
+Tag conservatively (the lower of the two) and let mastery evidence (§9) correct it over time via the `avg_success_rate` calibration-drift signal (implementation plan §3.4) — that field exists specifically so a mistagged question can be caught and re-reviewed once real student data exists, rather than needing to be perfectly right on first tagging.
+
+### 4.5 `estimated_time_seconds` baselines
+
+| Competency | Easy | Medium | Hard | Challenge |
+|---|---|---|---|---|
+| `vr.analogies` / `vr.odd-one-out` / `vr.synonyms` / `vr.antonyms` | 15–20s | 20–30s | 30–40s | 40–50s |
+| `vr.letter-codes` / `vr.number-codes` | 25–35s | 35–50s | 50–70s | 70–90s |
+| `vr.word-codes` / `vr.hidden-words` | 25–35s | 35–50s | 50–65s | 65–80s |
+| `vr.sequences` / `vr.compound-words` | 20–30s | 30–45s | 45–60s | 60–75s |
+
+Use the midpoint of the relevant range unless a specific question is unusually long to read or unusually terse.
+
+---
+
+## 5. UK English Guidance
+
+- **Spelling:** British spellings throughout — *colour*, *organise* (`-ise` preferred over `-ize` for consistency, though both are technically valid in UK English — pick `-ise` and stay consistent), *centre*, *travelled* (double consonant). Never use American spellings (*color*, *organize*, *center*, *traveled*).
+- **Vocabulary choices:** prefer UK-common vocabulary for everyday-object questions — *jumper* not *sweater*, *torch* not *flashlight*, *rubbish* not *garbage*, *trousers* not *pants*. For deliberate vocabulary-stretch questions (`vr.synonyms`/`vr.antonyms` at higher difficulty), Latinate/tier-3 words are fine and are not an Americanism concern either way.
+- **Currency and units:** £ (GBP) for any money-based scenario. Metric units (metres, kilograms, litres) as the primary system, matching the UK National Curriculum — imperial only where a question is deliberately testing imperial↔metric conversion as a maths skill, not in general VR/reasoning scenario-setting.
+- **Dates:** day/month/year format when a date appears in a question.
+- **Institutional/cultural references:** school, hospital, library, gallery, etc. as used in the existing bank are safely UK-neutral. Avoid US-specific institutions (e.g. "high school," "recess") — use "secondary school," "break time."
+
+---
+
+## 6. Originality Requirements
+
+- Every question must be **original phrasing** — even when testing a well-known relationship or pattern type, the specific words, scenario, and sentence structure must be freshly written, not adapted by light word-swapping from an existing published question.
+- Common-knowledge relationships (young animal → adult animal, tool → its use, creator → creation) are not proprietary to any publisher and are freely reusable as *relationship types* — what's protected is the specific expression of them (exact word pairs, exact phrasing), not the underlying pattern.
+- If a question is inspired by having seen a similar format in a past paper or prep book, the test is: **would someone familiar with that source recognize this as the same question?** If yes, rewrite with entirely different entities, wording, and if possible a different specific relationship within the same competency, until the answer is no.
+- Two questions within Angel's own bank should also not be near-duplicates of each other (same relationship, different word pair, e.g. two "young animal → adult animal" analogies) unless deliberately building a difficulty ladder within the same underlying pattern for pedagogical reasons — and if so, they should be tagged at different `content_difficulty` levels, not left as redundant duplicates at the same level.
+
+---
+
+## 7. Copyright Guidance
+
+- **Do not copy or closely paraphrase** questions from commercial 11+ preparation publishers (Bond 11+, CGP, GL Assessment sample/practice materials, Eleven Plus Exams and similar forums/sites), regardless of how the material was accessed. This applies to exact wording, close paraphrases, and directly-reused specific scenarios/word pairs from a source you recognize as coming from a named publisher.
+- **Relationship types and question formats are not copyrightable** — "word analogy," "hidden word," "letter code" are generic question formats used industry-wide and are fine to write original content for. What's protected is any given publisher's *specific expression* of a question in that format.
+- **When authoring from memory of a real exam/paper**, treat it the same as authoring from a commercial publisher — do not reproduce a remembered question's specific wording or word pair, even approximately.
+- **If genuinely unsure whether a planned question is too close to a known source**, don't ship it — pick a different scenario/word pair testing the same competency instead. Given how many valid word pairs exist for any relationship type (§3), there's no reason to risk a close call.
+- **Passages** (for English comprehension, not currently part of VR but relevant to future subjects under this standard): must be entirely original prose written for Angel, never excerpted or lightly adapted from published books, even out-of-copyright classics, unless explicitly commissioned as such and cleared separately — a "based on" adaptation is not sufficient.
+
+---
+
+## 8. Mastery Guidance
+
+Mastery (implementation plan §1.4) requires correct answers across `mastery_threshold` **distinct sessions**, not a single lucky answer — and one incorrect attempt after mastery is achieved demotes the question back to `learning`. This section is about how an author should set `mastery_threshold` per question, since the difficulty-based default (from the configurable `ali_mastery_defaults` table, §1) is a starting point, not always the right answer for a specific question.
+
+**Raise the threshold above the difficulty default when:**
+- The question has a small number of plausible answers, making a correct guess likely even without real understanding (e.g. a code question with an obvious "shift by 1" pattern that a student might luck into without grasping the general method).
+- The question's `alternatives` list is broad, meaning many superficially different responses count as correct, which can mask partial understanding.
+
+**Keep the difficulty default when:**
+- The answer space is effectively open-ended and a correct answer is strong evidence of real reasoning (most `vr.analogies`, `vr.word-codes`, `vr.hidden-words` questions — there's no meaningful way to guess `HARM` inside `CHARMING` without actually finding it).
+
+**Never lower the threshold below the difficulty default** — the defaults are already calibrated to be lenient (Easy/Medium = 2 sessions, Hard/Challenge = 3), and going lower would let a two-guess pattern get called "mastered."
+
+---
+
+## 9. Worked Examples
+
+**These are illustrative examples for training reviewers on how to apply this standard — not the production tagging pass for the 52-question bank, which remains a separately reviewed task per the approved decision that metadata generation is not automated.** Three existing questions are shown fully tagged as a demonstration of the process; the actual tagging of all 52 questions should be done by a reviewer working through §1–§4 systematically, question by question.
+
+### Example A — `vr-001`
+> "Kitten is to cat as puppy is to ___" → **dog**
+
+| Field | Value | Reasoning |
+|---|---|---|
+| `skill` | `vr.analogies` | category = "Word Analogy" → §3 mapping |
+| `content_difficulty` | `easy` | Concrete, familiar relationship, no ambiguity — matches §4.2's easy-analogy calibration exactly |
+| `estimated_time_seconds` | 18 | §4.5 easy-analogy range 15–20s, midpoint-ish, nothing unusual about length |
+| `pathway` | `["gl","cem","iseb"]` | Generic animal-relationship analogy, not board-specific format |
+| `mastery_threshold` | 2 (default) | Open-ended answer space, no guess risk — default is appropriate |
+
+### Example B — `vr-024`
+> "In a letter code, each letter shifts forward 2 places in the alphabet (A→C, B→D, C→E…). What does the word ACE become in this code?" → **CEG**
+
+| Field | Value | Reasoning |
+|---|---|---|
+| `skill` | `vr.letter-codes` | category = "Letter Code" |
+| `content_difficulty` | `medium` | Rule stated directly (not derived from example, unlike `vr-003`), but requires tracking 3 separate letter-shifts correctly — one step but multiple pieces of info, matching §4.1's medium row |
+| `estimated_time_seconds` | 40 | §4.5 letter-codes medium range 35–50s |
+| `pathway` | `["gl","cem"]` | Letter-shift code format is common to GL and CEM papers specifically |
+| `mastery_threshold` | 2 (default) | Not meaningfully guessable — default appropriate |
+
+### Example C — `vr-030`
+> "Add one letter to the word RAIN to make a new 5-letter word. What word can you make?" → **train** (alternatives: brain, grain, drain)
+
+| Field | Value | Reasoning |
+|---|---|---|
+| `skill` | `vr.word-codes` | category = "Word Codes" |
+| `content_difficulty` | `medium` | Multiple valid answers reduces individual difficulty per answer, but requires generating and checking candidates — per §4.2's word-codes calibration this sits at medium, not easy, specifically because of the generate-and-check reasoning load |
+| `estimated_time_seconds` | 40 | §4.5 word-codes medium range 35–50s |
+| `pathway` | `["gl","cem","iseb"]` | Generic format |
+| `mastery_threshold` | 2 (default) | Multiple valid answers actually makes a lucky guess *less* likely to be dismissed as non-understanding (unlike a narrow-answer code question) — default is fine, don't raise it just because `alternatives` exists; raise only when the *breadth* of alternatives is what creates guess risk (§8), which isn't the case here since generating any valid 5-letter word still requires real reasoning |
+
+---
+
+## 10. Review Checklist (per question, before import)
+
+- [ ] `id` assigned, follows sequence, never reused
+- [ ] `skill` assigned from the competency taxonomy (§3), not the generic `SkillType`
+- [ ] `content_difficulty` assigned using the rubric (§4), not gut feeling alone
+- [ ] `estimated_time_seconds` set from the baseline table (§4.5) or justified if outside it
+- [ ] Exactly one correct answer, or complete `alternatives` list (§2.2)
+- [ ] Explanation names the rule and shows working (§2.3)
+- [ ] Hint (if present) points at method, not answer (§2.4)
+- [ ] UK English spelling/vocabulary/units throughout (§5)
+- [ ] Checked against §6/§7 originality and copyright requirements
+- [ ] `mastery_threshold` left at default unless §8's raise-conditions apply
+- [ ] `pathway` set deliberately, not defaulted without thought

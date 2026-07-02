@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { ArrowLeft, ChevronRight, Clock, BookOpen, Trophy, Play } from "lucide-react";
+import { ArrowLeft, ChevronRight, Clock, BookOpen, Trophy, Play, Sparkles } from "lucide-react";
 import { getMockResults, getBestMockScoreForPathway } from "@/lib/mockProgress";
 import type { MockResult, MockPathwayId } from "@/types/mock";
 
@@ -110,6 +110,36 @@ export default function MocksPage() {
             These are original practice papers created by Angel 11+. They are not affiliated with or endorsed by GL Assessment, CEM, CSSE, ISEB or any school. All content is original exam-style practice.
           </p>
         </div>
+
+        {/* Adaptive Practice entry point — new, isolated from the mock system below (Angel Learning Intelligence, Slice 1) */}
+        <section className="space-y-3">
+          <h2 className="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">New: Adaptive Practice</h2>
+          <div className="rounded-2xl border border-blue-100 dark:border-blue-900 bg-blue-50 dark:bg-blue-950 p-5">
+            <div className="flex items-start justify-between mb-3">
+              <div className="flex items-center gap-2.5">
+                <span className="text-xs font-bold px-2.5 py-1 rounded-lg bg-blue-700 text-white flex items-center gap-1">
+                  <Sparkles size={12} />
+                  Beta
+                </span>
+                <h3 className="text-base font-bold text-gray-900 dark:text-gray-100">GL Adaptive Practice</h3>
+              </div>
+              <div className="flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400">
+                <Clock size={13} />
+                35 min
+              </div>
+            </div>
+            <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed mb-4">
+              Your Verbal Reasoning questions are chosen for you every time — no two mocks are identical, and your weak spots come back around intelligently.
+            </p>
+            <Link
+              href="/mocks/adaptive/gl"
+              className="inline-flex items-center gap-1.5 text-sm font-semibold px-4 py-2 rounded-xl bg-blue-700 hover:bg-blue-800 text-white transition-colors"
+            >
+              <Play size={14} />
+              Try Adaptive Practice
+            </Link>
+          </div>
+        </section>
 
         {/* Mock cards */}
         <section className="space-y-4">

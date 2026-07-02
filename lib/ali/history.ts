@@ -1,0 +1,195 @@
+import type { SupabaseClient } from "@supabase/supabase-js";
+import type { Database } from "@/types/supabase";
+import type { StudentQuestionHistoryRow, MasteryState } from "@/types/ali/history";
+import { applyAttemptOutcome } from "./mastery";
+
+type HistoryRow = Database["public"]["Tables"]["ali_student_question_history"]["Row"];
+
+function rowToHistory(row: HistoryRow): StudentQuestionHistoryRow {
+  return {
+    profileId: row.profile_id,
+    questionId: row.question_id,
+    source: row.source,
+    timesSeen: row.times_seen,
+    timesCorrect: row.times_correct,
+    distinctCorrectSessions: row.distinct_correct_sessions,
+    lastCorrectSessionId: row.last_correct_session_id,
+    lastPresentedAt: row.last_presented_at,
+    lastPresentedAtSequence: row.last_presented_at_sequence,
+    lastAttemptCorrect: row.last_attempt_correct,
+    secondLastAttemptCorrect: row.second_last_attempt_correct,
+    masteryState: row.mastery_state as MasteryState,
+  };
+}
+
+/** Ensures ali_student_adaptive_state exists for this profile, returns the current counter. */
+export async function ensureAdaptiveState(
+  supabase: SupabaseClient<Database>,
+  profileId: string
+): Promise<number> {
+  const { data, error } = await supabase
+    .from("ali_student_adaptive_state")
+    .select("questions_presented_count")
+    .eq("profile_id", profileId)
+    .maybeSingle();
+
+  if (error) {
+    console.warn("[ALI] ensureAdaptiveState select failed:", error.message);
+    return 0;
+  }
+  if (data) return data.questions_presented_count;
+
+  const { error: insertError } = await supabase
+    .from("ali_student_adaptive_state")
+    .insert({ profile_id: profileId, questions_presented_count: 0 });
+  if (insertError) {
+    console.warn("[ALI] ensureAdaptiveState insert failed:", insertError.message);
+  }
+  return 0;
+}
+
+/** Fetches all ALI history rows for a profile, keyed by question_id. */
+export async function fetchStudentHistory(
+  supabase: SupabaseClient<Database>,
+  profileId: string
+): Promise<Map<string, StudentQuestionHistoryRow>> {
+  const { data, error } = await supabase
+    .from("ali_student_question_history")
+    .select("*")
+    .eq("profile_id", profileId);
+
+  const map = new Map<string, StudentQuestionHistoryRow>();
+  if (error || !data) {
+    console.warn("[ALI] fetchStudentHistory failed:", error?.message);
+    return map;
+  }
+  for (const row of data) {
+    map.set(row.question_id, rowToHistory(row));
+  }
+  return map;
+}
+
+/**
+ * Records that `questionIds` were presented to `profileId` in a new mock.
+ * Called at mock start (not completion) so an abandoned mock still counts
+ * as recently seen for cooldown purposes (ADAPTIVE_ASSESSMENT_ENGINE_
+ * IMPLEMENTATION_PLAN.md §2.4). All questions in one mock share a single
+ * sequence stamp. Returns the new stamp for use by recordOutcome() calls
+ * during this mock (not currently needed there, but returned for callers
+ * that want it for logging/testing).
+ */
+export async function recordPresentation(
+  supabase: SupabaseClient<Database>,
+  profileId: string,
+  questionIds: string[]
+): Promise<number> {
+  if (questionIds.length === 0) return ensureAdaptiveState(supabase, profileId);
+
+  const current = await ensureAdaptiveState(supabase, profileId);
+  const newStamp = current + questionIds.length;
+
+  const { error: stateError } = await supabase
+    .from("ali_student_adaptive_state")
+    .update({ questions_presented_count: newStamp })
+    .eq("profile_id", profileId);
+  if (stateError) {
+    console.warn("[ALI] recordPresentation state update failed:", stateError.message);
+  }
+
+  const nowIso = new Date().toISOString();
+  const { error: historyError } = await supabase.from("ali_student_question_history").upsert(
+    questionIds.map((questionId) => ({
+      profile_id: profileId,
+      question_id: questionId,
+      source: "adaptive_mock",
+      last_presented_at: nowIso,
+      last_presented_at_sequence: newStamp,
+    })),
+    { onConflict: "profile_id,question_id" }
+  );
+  if (historyError) {
+    console.warn("[ALI] recordPresentation history upsert failed:", historyError.message);
+  }
+
+  return newStamp;
+}
+
+/**
+ * Records the outcome of one answered question — updates mastery evidence
+ * (lib/ali/mastery.ts) on the student's history row, and the global
+ * usage_count/avg_success_rate aggregate on ali_question_bank. Called
+ * immediately when a question is answered (matches the existing app's
+ * grade-immediately UX pattern, e.g. components/ReasoningSession.tsx).
+ */
+export async function recordOutcome(
+  supabase: SupabaseClient<Database>,
+  profileId: string,
+  questionId: string,
+  isCorrect: boolean,
+  sessionId: string,
+  masteryThreshold: number
+): Promise<void> {
+  const { data: existing, error: fetchError } = await supabase
+    .from("ali_student_question_history")
+    .select("*")
+    .eq("profile_id", profileId)
+    .eq("question_id", questionId)
+    .maybeSingle();
+
+  if (fetchError) {
+    console.warn("[ALI] recordOutcome fetch failed:", fetchError.message);
+    return;
+  }
+
+  const current = existing
+    ? rowToHistory(existing)
+    : ({
+        timesSeen: 0,
+        timesCorrect: 0,
+        distinctCorrectSessions: 0,
+        lastCorrectSessionId: null,
+        lastAttemptCorrect: null,
+        secondLastAttemptCorrect: null,
+        masteryState: "new" as MasteryState,
+      } as StudentQuestionHistoryRow);
+
+  const updated = applyAttemptOutcome(current, isCorrect, sessionId, masteryThreshold);
+
+  const { error: updateError } = await supabase
+    .from("ali_student_question_history")
+    .update({
+      times_seen: updated.timesSeen,
+      times_correct: updated.timesCorrect,
+      distinct_correct_sessions: updated.distinctCorrectSessions,
+      last_correct_session_id: updated.lastCorrectSessionId,
+      last_attempt_correct: updated.lastAttemptCorrect,
+      second_last_attempt_correct: updated.secondLastAttemptCorrect,
+      mastery_state: updated.masteryState,
+    })
+    .eq("profile_id", profileId)
+    .eq("question_id", questionId);
+  if (updateError) {
+    console.warn("[ALI] recordOutcome update failed:", updateError.message);
+  }
+
+  // Global calibration-drift signal (ADAPTIVE_ASSESSMENT_ENGINE_ARCHITECTURE.md §3.4)
+  // — informational only, not read by any selection logic. Best-effort, never
+  // blocks the mock flow.
+  const { data: bankRow, error: bankFetchError } = await supabase
+    .from("ali_question_bank")
+    .select("usage_count, avg_success_rate")
+    .eq("id", questionId)
+    .maybeSingle();
+  if (!bankFetchError && bankRow) {
+    const prevAvg = bankRow.avg_success_rate ?? 0;
+    const newUsageCount = bankRow.usage_count + 1;
+    const newAvg = (prevAvg * bankRow.usage_count + (isCorrect ? 100 : 0)) / newUsageCount;
+    const { error: bankUpdateError } = await supabase
+      .from("ali_question_bank")
+      .update({ usage_count: newUsageCount, avg_success_rate: Math.round(newAvg * 100) / 100 })
+      .eq("id", questionId);
+    if (bankUpdateError) {
+      console.warn("[ALI] recordOutcome bank stats update failed:", bankUpdateError.message);
+    }
+  }
+}

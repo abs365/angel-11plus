@@ -1,5 +1,18 @@
 export type Subject = "english" | "maths" | "vocabulary" | "writing" | "mock-test";
 
+/**
+ * Widened subject_type enum after migration 004 (ALI Decision 5). lesson_progress.subject
+ * in practice still only ever uses the original 5-value `Subject` subset above — this wider
+ * type exists because ali_question_bank.subject can also hold the 4 reasoning values.
+ */
+export type AliSubjectEnum = Subject
+  | "verbal-reasoning"
+  | "non-verbal-reasoning"
+  | "spatial-reasoning"
+  | "numerical-reasoning";
+
+export type ContentDifficultyEnum = "easy" | "medium" | "hard" | "challenge";
+
 export interface Database {
   public: {
     Tables: {
@@ -73,11 +86,135 @@ export interface Database {
         };
         Relationships: [];
       };
+      ali_question_bank: {
+        Row: {
+          id: string;
+          subject: AliSubjectEnum;
+          skill: string;
+          pathway: string[];
+          content_difficulty: ContentDifficultyEnum;
+          question_type: string;
+          estimated_time_seconds: number;
+          prompt: unknown;
+          explanation: string;
+          hint: string | null;
+          confidence_weight: number;
+          learning_objective: string | null;
+          revision_priority: number;
+          mastery_threshold: number;
+          usage_count: number;
+          avg_success_rate: number | null;
+          created_at: string;
+        };
+        Insert: {
+          id: string;
+          subject: AliSubjectEnum;
+          skill: string;
+          pathway: string[];
+          content_difficulty: ContentDifficultyEnum;
+          question_type?: string;
+          estimated_time_seconds?: number;
+          prompt: unknown;
+          explanation: string;
+          hint?: string | null;
+          confidence_weight?: number;
+          learning_objective?: string | null;
+          revision_priority?: number;
+          mastery_threshold: number;
+          usage_count?: number;
+          avg_success_rate?: number | null;
+          created_at?: string;
+        };
+        Update: {
+          usage_count?: number;
+          avg_success_rate?: number | null;
+        };
+        Relationships: [];
+      };
+      ali_mastery_defaults: {
+        Row: {
+          content_difficulty: ContentDifficultyEnum;
+          default_threshold: number;
+        };
+        Insert: {
+          content_difficulty: ContentDifficultyEnum;
+          default_threshold: number;
+        };
+        Update: {
+          default_threshold?: number;
+        };
+        Relationships: [];
+      };
+      ali_student_adaptive_state: {
+        Row: {
+          profile_id: string;
+          questions_presented_count: number;
+          updated_at: string;
+        };
+        Insert: {
+          profile_id: string;
+          questions_presented_count?: number;
+          updated_at?: string;
+        };
+        Update: {
+          questions_presented_count?: number;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
+      ali_student_question_history: {
+        Row: {
+          id: string;
+          profile_id: string;
+          question_id: string;
+          source: string;
+          times_seen: number;
+          times_correct: number;
+          distinct_correct_sessions: number;
+          last_correct_session_id: string | null;
+          last_presented_at: string;
+          last_presented_at_sequence: number;
+          last_attempt_correct: boolean | null;
+          second_last_attempt_correct: boolean | null;
+          mastery_state: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          profile_id: string;
+          question_id: string;
+          source?: string;
+          times_seen?: number;
+          times_correct?: number;
+          distinct_correct_sessions?: number;
+          last_correct_session_id?: string | null;
+          last_presented_at?: string;
+          last_presented_at_sequence: number;
+          last_attempt_correct?: boolean | null;
+          second_last_attempt_correct?: boolean | null;
+          mastery_state?: string;
+          updated_at?: string;
+        };
+        Update: {
+          times_seen?: number;
+          times_correct?: number;
+          distinct_correct_sessions?: number;
+          last_correct_session_id?: string | null;
+          last_presented_at?: string;
+          last_presented_at_sequence?: number;
+          last_attempt_correct?: boolean | null;
+          second_last_attempt_correct?: boolean | null;
+          mastery_state?: string;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
     };
     Views: Record<string, never>;
     Functions: Record<string, never>;
     Enums: {
-      subject_type: Subject;
+      subject_type: AliSubjectEnum;
+      content_difficulty: ContentDifficultyEnum;
     };
     CompositeTypes: Record<string, never>;
   };
