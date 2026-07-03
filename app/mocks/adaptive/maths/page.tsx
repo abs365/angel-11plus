@@ -7,6 +7,7 @@ import {
   Trophy, AlertCircle, Sparkles, Calculator,
 } from "lucide-react";
 import PremiumLoader from "@/components/PremiumLoader";
+import { withTimeout } from "@/lib/withTimeout";
 import { mathsSyntheticFixture } from "@/data/ali/mathsSyntheticFixture";
 import { getSupabaseClient } from "@/lib/supabase";
 import { ensureProfile } from "@/lib/supabaseProgress";
@@ -97,68 +98,73 @@ export default function AdaptiveMathsMockPage() {
     setMode("loading");
     setErrorMessage("");
 
-    const supabase = getSupabaseClient();
-    if (!supabase) {
-      setErrorMessage("Practice needs a connection that isn't available right now. Please try again shortly.");
+    try {
+      const supabase = getSupabaseClient();
+      if (!supabase) {
+        setErrorMessage("Practice needs a connection that isn't available right now. Please try again shortly.");
+        setMode("error");
+        return;
+      }
+
+      const profileId = await withTimeout(ensureProfile(), 10000, "your practice profile");
+      if (!profileId) {
+        setErrorMessage("We couldn't set up your practice profile. Please try again.");
+        setMode("error");
+        return;
+      }
+      profileIdRef.current = profileId;
+
+      let bank = await withTimeout(fetchQuestionBank(supabase, "maths", "gl"), 10000, "today's questions");
+      let synthetic = false;
+      if (bank.length === 0) {
+        bank = mathsSyntheticFixture;
+        synthetic = true;
+      }
+      setUsingSyntheticFixture(synthetic);
+
+      const history: Map<string, StudentQuestionHistoryRow> = synthetic
+        ? new Map()
+        : await withTimeout(fetchStudentHistory(supabase, profileId), 10000, "your progress");
+      const currentSequence = synthetic ? 0 : await withTimeout(ensureAdaptiveState(supabase, profileId), 10000, "your progress");
+
+      const progress = getProgress();
+      const report = computeAnalytics(progress);
+      const mathsSubject = report.subjects.find((s) => s.subject === "maths");
+      const tier: AdaptiveTier = mathsSubject ? computeSubjectConfidence(mathsSubject, progress).tier : "foundation";
+
+      const { questions: selected, trace } = buildAdaptiveSection(
+        bank,
+        history,
+        currentSequence,
+        tier,
+        SECTION.count,
+        SECTION.id
+      );
+      logSelectionTrace(trace);
+
+      bankRef.current = bank;
+      historyRef.current = new Map(history);
+
+      if (!synthetic && selected.length > 0) {
+        await withTimeout(recordPresentation(supabase, profileId, selected.map((q) => q.id)), 10000, "today's questions");
+      }
+
+      setBankQuestions(selected);
+      setQuestions(selected.map((q) => q.prompt as MathsQuestion));
+      setQuestionIdx(0);
+      setAnswers([]);
+      setInput("");
+      setAnswered(false);
+      setWasCorrect(false);
+      setSaved(false);
+      setTimeLeft(SECTION.minutes * 60);
+      setMode("section");
+      trackEvent("mock_started", { pathway: "maths", variant: "adaptive" });
+      setTimeout(() => inputRef.current?.focus(), 100);
+    } catch {
+      setErrorMessage("We couldn't prepare today's practice. Please try again.");
       setMode("error");
-      return;
     }
-
-    const profileId = await ensureProfile();
-    if (!profileId) {
-      setErrorMessage("We couldn't set up your practice profile. Please try again.");
-      setMode("error");
-      return;
-    }
-    profileIdRef.current = profileId;
-
-    let bank = await fetchQuestionBank(supabase, "maths", "gl");
-    let synthetic = false;
-    if (bank.length === 0) {
-      bank = mathsSyntheticFixture;
-      synthetic = true;
-    }
-    setUsingSyntheticFixture(synthetic);
-
-    const history: Map<string, StudentQuestionHistoryRow> = synthetic
-      ? new Map()
-      : await fetchStudentHistory(supabase, profileId);
-    const currentSequence = synthetic ? 0 : await ensureAdaptiveState(supabase, profileId);
-
-    const progress = getProgress();
-    const report = computeAnalytics(progress);
-    const mathsSubject = report.subjects.find((s) => s.subject === "maths");
-    const tier: AdaptiveTier = mathsSubject ? computeSubjectConfidence(mathsSubject, progress).tier : "foundation";
-
-    const { questions: selected, trace } = buildAdaptiveSection(
-      bank,
-      history,
-      currentSequence,
-      tier,
-      SECTION.count,
-      SECTION.id
-    );
-    logSelectionTrace(trace);
-
-    bankRef.current = bank;
-    historyRef.current = new Map(history);
-
-    if (!synthetic && selected.length > 0) {
-      await recordPresentation(supabase, profileId, selected.map((q) => q.id));
-    }
-
-    setBankQuestions(selected);
-    setQuestions(selected.map((q) => q.prompt as MathsQuestion));
-    setQuestionIdx(0);
-    setAnswers([]);
-    setInput("");
-    setAnswered(false);
-    setWasCorrect(false);
-    setSaved(false);
-    setTimeLeft(SECTION.minutes * 60);
-    setMode("section");
-    trackEvent("mock_started", { pathway: "maths", variant: "adaptive" });
-    setTimeout(() => inputRef.current?.focus(), 100);
   }
 
   const finishSection = useCallback(() => {
@@ -325,15 +331,30 @@ export default function AdaptiveMathsMockPage() {
   }
 
   if (mode === "loading") {
-    return <PremiumLoader message="Getting your questions ready…" icon={Calculator} />;
+    return (
+      <PremiumLoader
+        message="Getting your questions ready…"
+        progressMessages={["Choosing questions…", "Almost ready…"]}
+        icon={Calculator}
+      />
+    );
   }
 
   if (mode === "error") {
     return (
       <div className="min-h-screen bg-gray-50 dark:bg-gray-950 flex items-center justify-center px-4">
         <div className="text-center max-w-sm">
-          <p className="text-gray-700 dark:text-gray-300 mb-4">{errorMessage}</p>
-          <Link href="/mocks" className="text-blue-600 dark:text-blue-400 font-medium text-sm">Back to Mocks</Link>
+          <p className="text-gray-900 dark:text-gray-100 font-semibold mb-2">We couldn&apos;t prepare today&apos;s practice.</p>
+          <p className="text-gray-700 dark:text-gray-300 mb-5 text-sm">{errorMessage}</p>
+          <div className="flex items-center justify-center gap-4">
+            <button
+              onClick={loadAndStart}
+              className="bg-blue-700 text-white font-semibold text-sm px-4 py-2 rounded-xl hover:opacity-90 transition-opacity"
+            >
+              Try Again
+            </button>
+            <Link href="/mocks" className="text-blue-600 dark:text-blue-400 font-medium text-sm">Back to Practice</Link>
+          </div>
         </div>
       </div>
     );

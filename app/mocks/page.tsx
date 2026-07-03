@@ -96,7 +96,7 @@ export default function MocksPage() {
             <ArrowLeft size={20} />
           </Link>
           <div>
-            <h1 className="text-sm font-bold text-gray-900 dark:text-gray-100">Practice Mock Exams</h1>
+            <h1 className="text-sm font-bold text-gray-900 dark:text-gray-100">Practice &amp; Mock Exams</h1>
             <p className="text-xs text-gray-400 dark:text-gray-500">Original exam-style practice · Not official papers</p>
           </div>
         </div>
@@ -111,11 +111,24 @@ export default function MocksPage() {
           </p>
         </div>
 
-        {/* Recommended Practice — Angel UX V3: ALI is invisible here (ANGEL_UX_V3_STRATEGY.md §3).
+        {/* Phase 5B.2 — Practice Experience Stabilisation (PRACTICE_EXPERIENCE_REVIEW.md
+            Issue 4): a short, explicit explainer of the Personalised Practice /
+            Mock Exams distinction, so a parent or child never has to guess what
+            to click first. */}
+        <div className="rounded-2xl border border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-900 px-4 py-3.5">
+          <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed">
+            <strong className="text-gray-900 dark:text-gray-100">New here? Start with Personalised Practice</strong> — a short session that adapts to your level, perfect for daily learning. When you&apos;re ready to simulate the real thing under timed conditions, try a <strong className="text-gray-900 dark:text-gray-100">Mock Exam</strong>.
+          </p>
+        </div>
+
+        {/* Personalised Practice — Angel UX V3: ALI is invisible here (ANGEL_UX_V3_STRATEGY.md §3).
             Each card links to a practice route whose selection quietly adapts to the
             student; nothing on this page says "adaptive," "beta," or names the mechanism. */}
-        <section className="space-y-3">
-          <h2 className="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">Recommended Practice</h2>
+        <section id="practice" className="space-y-3 scroll-mt-20">
+          <div>
+            <h2 className="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">Personalised Practice</h2>
+            <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">Short, daily sessions. Questions adapt to you every time.</p>
+          </div>
           <div className="rounded-2xl border border-violet-100 dark:border-violet-900 bg-violet-50 dark:bg-violet-950 p-5">
             <div className="flex items-start justify-between mb-3">
               <div className="flex items-center gap-2.5">
@@ -222,8 +235,11 @@ export default function MocksPage() {
         </section>
 
         {/* Mock cards */}
-        <section className="space-y-4">
-          <h2 className="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">Choose a Mock</h2>
+        <section id="mock-exams" className="space-y-4 scroll-mt-20">
+          <div>
+            <h2 className="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">Mock Exams</h2>
+            <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">Full timed papers that simulate real exam conditions, section by section.</p>
+          </div>
           {MOCK_CARDS.map((card) => {
             const best = bestScores[card.pathway];
             return (

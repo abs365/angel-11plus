@@ -7,6 +7,7 @@ import {
   Trophy, AlertCircle, Sparkles, Puzzle,
 } from "lucide-react";
 import PremiumLoader from "@/components/PremiumLoader";
+import { withTimeout } from "@/lib/withTimeout";
 import { verbalReasoningQuestions } from "@/data/verbal-reasoning";
 import { nonVerbalReasoningQuestions } from "@/data/non-verbal-reasoning";
 import { numericalReasoningQuestions } from "@/data/numerical-reasoning";
@@ -120,84 +121,89 @@ export default function AdaptiveGlMockPage() {
     setMode("loading");
     setErrorMessage("");
 
-    const supabase = getSupabaseClient();
-    if (!supabase) {
-      setErrorMessage("Practice needs a connection that isn't available right now. Please try again shortly.");
+    try {
+      const supabase = getSupabaseClient();
+      if (!supabase) {
+        setErrorMessage("Practice needs a connection that isn't available right now. Please try again shortly.");
+        setMode("error");
+        return;
+      }
+
+      const profileId = await withTimeout(ensureProfile(), 10000, "your practice profile");
+      if (!profileId) {
+        setErrorMessage("We couldn't set up your practice profile. Please try again.");
+        setMode("error");
+        return;
+      }
+      profileIdRef.current = profileId;
+
+      let bank = await withTimeout(fetchQuestionBank(supabase, "verbal-reasoning", "gl"), 10000, "today's questions");
+      let synthetic = false;
+      if (bank.length === 0) {
+        // ali_question_bank has no hand-tagged rows yet (pre-migration or
+        // pre-import) — fall back to the synthetic dev fixture rather than
+        // failing outright. Never silently mistaken for real content: the
+        // banner below stays visible for the whole mock.
+        bank = vrSyntheticFixture;
+        synthetic = true;
+      }
+      setUsingSyntheticFixture(synthetic);
+
+      const history: Map<string, StudentQuestionHistoryRow> = synthetic
+        ? new Map()
+        : await withTimeout(fetchStudentHistory(supabase, profileId), 10000, "your progress");
+      const currentSequence = synthetic ? 0 : await withTimeout(ensureAdaptiveState(supabase, profileId), 10000, "your progress");
+
+      const progress = getProgress();
+      const report = computeAnalytics(progress);
+      const vrSubject = report.subjects.find((s) => s.subject === "verbal-reasoning");
+      const tier: AdaptiveTier = vrSubject ? computeSubjectConfidence(vrSubject, progress).tier : "foundation";
+
+      const { questions: selected, trace } = buildAdaptiveSection(
+        bank,
+        history,
+        currentSequence,
+        tier,
+        VR_SECTION.count,
+        VR_SECTION.id
+      );
+      logSelectionTrace(trace); // internal/debugging only — never rendered (Phase ALI 1.1)
+
+      vrBankRef.current = bank;
+      vrHistoryRef.current = new Map(history);
+
+      if (!synthetic && selected.length > 0) {
+        await withTimeout(recordPresentation(supabase, profileId, selected.map((q) => q.id)), 10000, "today's questions");
+      }
+
+      const runnerSections: RunnerSection[] = [
+        {
+          id: VR_SECTION.id,
+          name: VR_SECTION.name,
+          adaptive: true,
+          questions: selected.map((q) => q.prompt as ReasoningQuestion),
+          minutes: VR_SECTION.minutes,
+          bankQuestions: selected,
+        },
+        ...STATIC_SECTIONS.map((s) => ({
+          id: s.id,
+          name: s.name,
+          adaptive: false,
+          questions: s.questions.slice(s.offset, s.offset + s.count),
+          minutes: s.minutes,
+        })),
+      ];
+
+      setSections(runnerSections);
+      setSectionIdx(0);
+      setSectionResults([]);
+      setSaved(false);
+      trackEvent("mock_started", { pathway: "gl", variant: "adaptive" });
+      startSection(0, runnerSections);
+    } catch {
+      setErrorMessage("We couldn't prepare today's practice. Please try again.");
       setMode("error");
-      return;
     }
-
-    const profileId = await ensureProfile();
-    if (!profileId) {
-      setErrorMessage("We couldn't set up your practice profile. Please try again.");
-      setMode("error");
-      return;
-    }
-    profileIdRef.current = profileId;
-
-    let bank = await fetchQuestionBank(supabase, "verbal-reasoning", "gl");
-    let synthetic = false;
-    if (bank.length === 0) {
-      // ali_question_bank has no hand-tagged rows yet (pre-migration or
-      // pre-import) — fall back to the synthetic dev fixture rather than
-      // failing outright. Never silently mistaken for real content: the
-      // banner below stays visible for the whole mock.
-      bank = vrSyntheticFixture;
-      synthetic = true;
-    }
-    setUsingSyntheticFixture(synthetic);
-
-    const history: Map<string, StudentQuestionHistoryRow> = synthetic
-      ? new Map()
-      : await fetchStudentHistory(supabase, profileId);
-    const currentSequence = synthetic ? 0 : await ensureAdaptiveState(supabase, profileId);
-
-    const progress = getProgress();
-    const report = computeAnalytics(progress);
-    const vrSubject = report.subjects.find((s) => s.subject === "verbal-reasoning");
-    const tier: AdaptiveTier = vrSubject ? computeSubjectConfidence(vrSubject, progress).tier : "foundation";
-
-    const { questions: selected, trace } = buildAdaptiveSection(
-      bank,
-      history,
-      currentSequence,
-      tier,
-      VR_SECTION.count,
-      VR_SECTION.id
-    );
-    logSelectionTrace(trace); // internal/debugging only — never rendered (Phase ALI 1.1)
-
-    vrBankRef.current = bank;
-    vrHistoryRef.current = new Map(history);
-
-    if (!synthetic && selected.length > 0) {
-      await recordPresentation(supabase, profileId, selected.map((q) => q.id));
-    }
-
-    const runnerSections: RunnerSection[] = [
-      {
-        id: VR_SECTION.id,
-        name: VR_SECTION.name,
-        adaptive: true,
-        questions: selected.map((q) => q.prompt as ReasoningQuestion),
-        minutes: VR_SECTION.minutes,
-        bankQuestions: selected,
-      },
-      ...STATIC_SECTIONS.map((s) => ({
-        id: s.id,
-        name: s.name,
-        adaptive: false,
-        questions: s.questions.slice(s.offset, s.offset + s.count),
-        minutes: s.minutes,
-      })),
-    ];
-
-    setSections(runnerSections);
-    setSectionIdx(0);
-    setSectionResults([]);
-    setSaved(false);
-    trackEvent("mock_started", { pathway: "gl", variant: "adaptive" });
-    startSection(0, runnerSections);
   }
 
   function startSection(idx: number, sectionsList: RunnerSection[] = sections) {
@@ -452,15 +458,30 @@ export default function AdaptiveGlMockPage() {
   }
 
   if (mode === "loading") {
-    return <PremiumLoader message="Preparing your practice session…" icon={Puzzle} />;
+    return (
+      <PremiumLoader
+        message="Preparing your practice session…"
+        progressMessages={["Choosing questions…", "Almost ready…"]}
+        icon={Puzzle}
+      />
+    );
   }
 
   if (mode === "error") {
     return (
       <div className="min-h-screen bg-gray-50 dark:bg-gray-950 flex items-center justify-center px-4">
         <div className="text-center max-w-sm">
-          <p className="text-gray-700 dark:text-gray-300 mb-4">{errorMessage}</p>
-          <Link href="/mocks" className="text-violet-600 dark:text-violet-400 font-medium text-sm">Back to Mocks</Link>
+          <p className="text-gray-900 dark:text-gray-100 font-semibold mb-2">We couldn&apos;t prepare today&apos;s practice.</p>
+          <p className="text-gray-700 dark:text-gray-300 mb-5 text-sm">{errorMessage}</p>
+          <div className="flex items-center justify-center gap-4">
+            <button
+              onClick={loadAndStart}
+              className="bg-violet-700 text-white font-semibold text-sm px-4 py-2 rounded-xl hover:opacity-90 transition-opacity"
+            >
+              Try Again
+            </button>
+            <Link href="/mocks" className="text-violet-600 dark:text-violet-400 font-medium text-sm">Back to Practice</Link>
+          </div>
         </div>
       </div>
     );

@@ -8,6 +8,7 @@ import {
   Lightbulb, Trophy, AlertCircle, Sparkles, BookOpen,
 } from "lucide-react";
 import PremiumLoader from "@/components/PremiumLoader";
+import { withTimeout } from "@/lib/withTimeout";
 import { englishSyntheticFixture } from "@/data/ali/englishSyntheticFixture";
 import { getSupabaseClient } from "@/lib/supabase";
 import { ensureProfile } from "@/lib/supabaseProgress";
@@ -115,76 +116,81 @@ export default function AdaptiveEnglishMockPage() {
     setMode("loading");
     setErrorMessage("");
 
-    const supabase = getSupabaseClient();
-    if (!supabase) {
-      setErrorMessage("Practice needs a connection that isn't available right now. Please try again shortly.");
-      setMode("error");
-      return;
-    }
-
-    const profileId = await ensureProfile();
-    if (!profileId) {
-      setErrorMessage("We couldn't set up your practice profile. Please try again.");
-      setMode("error");
-      return;
-    }
-    profileIdRef.current = profileId;
-
-    let bank = await fetchQuestionBank(supabase, "english", "gl");
-    let synthetic = false;
-    if (bank.length === 0) {
-      bank = englishSyntheticFixture;
-      synthetic = true;
-    }
-    setUsingSyntheticFixture(synthetic);
-
-    const history: Map<string, StudentQuestionHistoryRow> = synthetic
-      ? new Map()
-      : await fetchStudentHistory(supabase, profileId);
-    const currentSequence = synthetic ? 0 : await ensureAdaptiveState(supabase, profileId);
-
-    const units = groupQuestionsByLearningUnit(bank);
-    const weakSkills = deriveWeakCompetencies(bank, history);
-    const { unit, questions: selected, trace } = selectLearningUnit(units, history, currentSequence, weakSkills);
-
-    // Learning Unit selection has no difficulty-tier target distribution
-    // (MockGenerationTrace's `confidenceInfluence` is a VR/Maths-specific
-    // concept — see lib/ali/learningUnit.ts) — logged directly here rather
-    // than forced into lib/ali/observability.ts's logSelectionTrace() shape.
-    if (typeof console !== "undefined") {
-      console.log(`[ALI][trace] unit=${unit?.id ?? "none"} questions=${trace.length}`);
-      for (const entry of trace) {
-        console.log(
-          `  ${entry.questionId} [${entry.competency}] ${entry.selectionReason}` +
-            (entry.replayReason ? ` — ${entry.replayReason}` : "")
-        );
+    try {
+      const supabase = getSupabaseClient();
+      if (!supabase) {
+        setErrorMessage("Practice needs a connection that isn't available right now. Please try again shortly.");
+        setMode("error");
+        return;
       }
-    }
 
-    if (!unit || selected.length === 0) {
-      setErrorMessage("No Reading Comprehension passages are available right now. Please try again shortly.");
+      const profileId = await withTimeout(ensureProfile(), 10000, "your practice profile");
+      if (!profileId) {
+        setErrorMessage("We couldn't set up your practice profile. Please try again.");
+        setMode("error");
+        return;
+      }
+      profileIdRef.current = profileId;
+
+      let bank = await withTimeout(fetchQuestionBank(supabase, "english", "gl"), 10000, "today's passage");
+      let synthetic = false;
+      if (bank.length === 0) {
+        bank = englishSyntheticFixture;
+        synthetic = true;
+      }
+      setUsingSyntheticFixture(synthetic);
+
+      const history: Map<string, StudentQuestionHistoryRow> = synthetic
+        ? new Map()
+        : await withTimeout(fetchStudentHistory(supabase, profileId), 10000, "your progress");
+      const currentSequence = synthetic ? 0 : await withTimeout(ensureAdaptiveState(supabase, profileId), 10000, "your progress");
+
+      const units = groupQuestionsByLearningUnit(bank);
+      const weakSkills = deriveWeakCompetencies(bank, history);
+      const { unit, questions: selected, trace } = selectLearningUnit(units, history, currentSequence, weakSkills);
+
+      // Learning Unit selection has no difficulty-tier target distribution
+      // (MockGenerationTrace's `confidenceInfluence` is a VR/Maths-specific
+      // concept — see lib/ali/learningUnit.ts) — logged directly here rather
+      // than forced into lib/ali/observability.ts's logSelectionTrace() shape.
+      if (typeof console !== "undefined") {
+        console.log(`[ALI][trace] unit=${unit?.id ?? "none"} questions=${trace.length}`);
+        for (const entry of trace) {
+          console.log(
+            `  ${entry.questionId} [${entry.competency}] ${entry.selectionReason}` +
+              (entry.replayReason ? ` — ${entry.replayReason}` : "")
+          );
+        }
+      }
+
+      if (!unit || selected.length === 0) {
+        setErrorMessage("No Reading Comprehension passages are available right now. Please try again shortly.");
+        setMode("error");
+        return;
+      }
+
+      bankRef.current = bank;
+      historyRef.current = new Map(history);
+
+      if (!synthetic) {
+        await withTimeout(recordPresentation(supabase, profileId, selected.map((q) => q.id)), 10000, "today's passage");
+      }
+
+      const withPrompts = selected.map((q) => ({ bankQuestion: q, prompt: q.prompt as EnglishComprehensionPrompt }));
+      const first = withPrompts[0].prompt;
+      setPassageTitle(first.passageTitle);
+      setPassageText(first.passageText);
+      setQuestions(withPrompts);
+      setAnswers({});
+      setShowHints({});
+      setResults([]);
+      setSaved(false);
+      setMode("section");
+      trackEvent("mock_started", { pathway: "english", variant: "adaptive" });
+    } catch {
+      setErrorMessage("We couldn't prepare today's practice. Please try again.");
       setMode("error");
-      return;
     }
-
-    bankRef.current = bank;
-    historyRef.current = new Map(history);
-
-    if (!synthetic) {
-      await recordPresentation(supabase, profileId, selected.map((q) => q.id));
-    }
-
-    const withPrompts = selected.map((q) => ({ bankQuestion: q, prompt: q.prompt as EnglishComprehensionPrompt }));
-    const first = withPrompts[0].prompt;
-    setPassageTitle(first.passageTitle);
-    setPassageText(first.passageText);
-    setQuestions(withPrompts);
-    setAnswers({});
-    setShowHints({});
-    setResults([]);
-    setSaved(false);
-    setMode("section");
-    trackEvent("mock_started", { pathway: "english", variant: "adaptive" });
   }
 
   function handleSubmit() {
@@ -316,15 +322,30 @@ export default function AdaptiveEnglishMockPage() {
   }
 
   if (mode === "loading") {
-    return <PremiumLoader message="Finding the perfect passage…" icon={BookOpen} />;
+    return (
+      <PremiumLoader
+        message="Finding the perfect passage…"
+        progressMessages={["Choosing questions…", "Almost ready…"]}
+        icon={BookOpen}
+      />
+    );
   }
 
   if (mode === "error") {
     return (
       <div className="min-h-screen bg-gray-50 dark:bg-gray-950 flex items-center justify-center px-4">
         <div className="text-center max-w-sm">
-          <p className="text-gray-700 dark:text-gray-300 mb-4">{errorMessage}</p>
-          <Link href="/mocks" className="text-purple-600 dark:text-purple-400 font-medium text-sm">Back to Mocks</Link>
+          <p className="text-gray-900 dark:text-gray-100 font-semibold mb-2">We couldn&apos;t prepare today&apos;s practice.</p>
+          <p className="text-gray-700 dark:text-gray-300 mb-5 text-sm">{errorMessage}</p>
+          <div className="flex items-center justify-center gap-4">
+            <button
+              onClick={loadAndStart}
+              className="bg-purple-700 text-white font-semibold text-sm px-4 py-2 rounded-xl hover:opacity-90 transition-opacity"
+            >
+              Try Again
+            </button>
+            <Link href="/mocks" className="text-purple-600 dark:text-purple-400 font-medium text-sm">Back to Practice</Link>
+          </div>
         </div>
       </div>
     );

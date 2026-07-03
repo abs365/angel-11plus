@@ -7,6 +7,7 @@ import {
   Trophy, AlertCircle, Sparkles, BookMarked,
 } from "lucide-react";
 import PremiumLoader from "@/components/PremiumLoader";
+import { withTimeout } from "@/lib/withTimeout";
 import { vocabularySyntheticFixture } from "@/data/ali/vocabularySyntheticFixture";
 import { getSupabaseClient } from "@/lib/supabase";
 import { ensureProfile } from "@/lib/supabaseProgress";
@@ -72,62 +73,67 @@ export default function AdaptiveVocabularyMockPage() {
     setMode("loading");
     setErrorMessage("");
 
-    const supabase = getSupabaseClient();
-    if (!supabase) {
-      setErrorMessage("Practice needs a connection that isn't available right now. Please try again shortly.");
+    try {
+      const supabase = getSupabaseClient();
+      if (!supabase) {
+        setErrorMessage("Practice needs a connection that isn't available right now. Please try again shortly.");
+        setMode("error");
+        return;
+      }
+
+      const profileId = await withTimeout(ensureProfile(), 10000, "your practice profile");
+      if (!profileId) {
+        setErrorMessage("We couldn't set up your practice profile. Please try again.");
+        setMode("error");
+        return;
+      }
+      profileIdRef.current = profileId;
+
+      let bank = await withTimeout(fetchQuestionBank(supabase, "vocabulary", "gl"), 10000, "today's word");
+      let synthetic = false;
+      if (bank.length === 0) {
+        bank = vocabularySyntheticFixture;
+        synthetic = true;
+      }
+      setUsingSyntheticFixture(synthetic);
+
+      const history: Map<string, StudentQuestionHistoryRow> = synthetic
+        ? new Map()
+        : await withTimeout(fetchStudentHistory(supabase, profileId), 10000, "your progress");
+      const currentSequence = synthetic ? 0 : await withTimeout(ensureAdaptiveState(supabase, profileId), 10000, "your progress");
+
+      const units = groupQuestionsByLearningUnit(bank);
+      const weakSkills = deriveWeakCompetencies(bank, history);
+      const { unit, questions: selectedQuestions } = selectLearningUnit(units, history, currentSequence, weakSkills);
+
+      if (!unit || selectedQuestions.length === 0) {
+        setErrorMessage("No Vocabulary practice is available right now. Please try again shortly.");
+        setMode("error");
+        return;
+      }
+
+      bankRef.current = bank;
+      historyRef.current = new Map(history);
+
+      if (!synthetic) {
+        await withTimeout(recordPresentation(supabase, profileId, selectedQuestions.map((q) => q.id)), 10000, "today's word");
+      }
+
+      const withPrompts = selectedQuestions.map((q) => ({ bankQuestion: q, prompt: q.prompt as VocabularyPrompt }));
+      setWord(withPrompts[0].prompt.word);
+      setItems(withPrompts);
+      setItemIdx(0);
+      setSelected(null);
+      setAnswered(false);
+      setResults([]);
+      resultsRef.current = [];
+      setSaved(false);
+      setMode("section");
+      trackEvent("mock_started", { pathway: "vocabulary", variant: "adaptive" });
+    } catch {
+      setErrorMessage("We couldn't prepare today's practice. Please try again.");
       setMode("error");
-      return;
     }
-
-    const profileId = await ensureProfile();
-    if (!profileId) {
-      setErrorMessage("We couldn't set up your practice profile. Please try again.");
-      setMode("error");
-      return;
-    }
-    profileIdRef.current = profileId;
-
-    let bank = await fetchQuestionBank(supabase, "vocabulary", "gl");
-    let synthetic = false;
-    if (bank.length === 0) {
-      bank = vocabularySyntheticFixture;
-      synthetic = true;
-    }
-    setUsingSyntheticFixture(synthetic);
-
-    const history: Map<string, StudentQuestionHistoryRow> = synthetic
-      ? new Map()
-      : await fetchStudentHistory(supabase, profileId);
-    const currentSequence = synthetic ? 0 : await ensureAdaptiveState(supabase, profileId);
-
-    const units = groupQuestionsByLearningUnit(bank);
-    const weakSkills = deriveWeakCompetencies(bank, history);
-    const { unit, questions: selectedQuestions } = selectLearningUnit(units, history, currentSequence, weakSkills);
-
-    if (!unit || selectedQuestions.length === 0) {
-      setErrorMessage("No Vocabulary practice is available right now. Please try again shortly.");
-      setMode("error");
-      return;
-    }
-
-    bankRef.current = bank;
-    historyRef.current = new Map(history);
-
-    if (!synthetic) {
-      await recordPresentation(supabase, profileId, selectedQuestions.map((q) => q.id));
-    }
-
-    const withPrompts = selectedQuestions.map((q) => ({ bankQuestion: q, prompt: q.prompt as VocabularyPrompt }));
-    setWord(withPrompts[0].prompt.word);
-    setItems(withPrompts);
-    setItemIdx(0);
-    setSelected(null);
-    setAnswered(false);
-    setResults([]);
-    resultsRef.current = [];
-    setSaved(false);
-    setMode("section");
-    trackEvent("mock_started", { pathway: "vocabulary", variant: "adaptive" });
   }
 
   function submitAnswer(option: string) {
@@ -257,15 +263,30 @@ export default function AdaptiveVocabularyMockPage() {
   }
 
   if (mode === "loading") {
-    return <PremiumLoader message="Picking today's word…" icon={BookMarked} />;
+    return (
+      <PremiumLoader
+        message="Picking today's word…"
+        progressMessages={["Choosing questions…", "Almost ready…"]}
+        icon={BookMarked}
+      />
+    );
   }
 
   if (mode === "error") {
     return (
       <div className="min-h-screen bg-gray-50 dark:bg-gray-950 flex items-center justify-center px-4">
         <div className="text-center max-w-sm">
-          <p className="text-gray-700 dark:text-gray-300 mb-4">{errorMessage}</p>
-          <Link href="/mocks" className="text-emerald-600 dark:text-emerald-400 font-medium text-sm">Back to Mocks</Link>
+          <p className="text-gray-900 dark:text-gray-100 font-semibold mb-2">We couldn&apos;t prepare today&apos;s practice.</p>
+          <p className="text-gray-700 dark:text-gray-300 mb-5 text-sm">{errorMessage}</p>
+          <div className="flex items-center justify-center gap-4">
+            <button
+              onClick={loadAndStart}
+              className="bg-emerald-700 text-white font-semibold text-sm px-4 py-2 rounded-xl hover:opacity-90 transition-opacity"
+            >
+              Try Again
+            </button>
+            <Link href="/mocks" className="text-emerald-600 dark:text-emerald-400 font-medium text-sm">Back to Practice</Link>
+          </div>
         </div>
       </div>
     );

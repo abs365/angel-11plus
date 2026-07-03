@@ -15,6 +15,7 @@ import {
   Users,
   MapPin,
   Target,
+  Trophy,
   Puzzle,
   HelpCircle,
   MessageSquare,
@@ -61,9 +62,15 @@ const navSections: NavSection[] = [
     ],
   },
   {
+    // Phase 5B.2 — "Practice" and "Mock Exams" are both shown, separately,
+    // because both are trusted UK educational terms parents actively look
+    // for (PRACTICE_NAVIGATION_RECOMMENDATION.md). Both point to /mocks,
+    // which is itself split into two clearly-headed sections; the anchors
+    // below land a click directly on the matching section.
     label: "Assessment",
     items: [
-      { href: "/mocks", label: "Practice", icon: Target },
+      { href: "/mocks#practice", label: "Practice", icon: Target },
+      { href: "/mocks#mock-exams", label: "Mock Exams", icon: Trophy },
       { href: "/pathways", label: "Exam Pathways", icon: MapPin },
     ],
   },
@@ -91,7 +98,8 @@ const mobileNavItems = [
 ];
 
 function SidebarLink({ item, pathname }: { item: NavItem; pathname: string }) {
-  const active = pathname === item.href || pathname.startsWith(item.href + "/");
+  const basePath = item.href.split("#")[0];
+  const active = pathname === basePath || pathname.startsWith(basePath + "/");
   return (
     <Link
       href={item.href}
