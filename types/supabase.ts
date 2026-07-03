@@ -104,6 +104,7 @@ export interface Database {
           mastery_threshold: number;
           usage_count: number;
           avg_success_rate: number | null;
+          learning_unit_id: string;
           created_at: string;
         };
         Insert: {
@@ -123,6 +124,7 @@ export interface Database {
           mastery_threshold: number;
           usage_count?: number;
           avg_success_rate?: number | null;
+          learning_unit_id: string;
           created_at?: string;
         };
         Update: {

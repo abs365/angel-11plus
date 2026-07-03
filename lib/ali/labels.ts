@@ -34,6 +34,12 @@ export const COMPETENCY_LABELS: Record<string, string> = {
   "maths.problem-solving": "Problem Solving",
   "maths.powers-roots": "Powers, Roots & Order of Operations",
   "maths.factors-multiples": "Factors, Multiples & Primes",
+
+  // Reading Comprehension (Phase ALI 2.1) — ENGLISH_COMPETENCY_FRAMEWORK.md §3.1.
+  // Only the two approved competencies — the other 8 stay on the roadmap
+  // until real content exists, so they have no label here yet either.
+  "english.inference": "Inference",
+  "english.vocabulary-in-context": "Vocabulary in Context",
 };
 
 export function competencyLabel(code: string): string {

@@ -1,5 +1,5 @@
 import type { ReasoningQuestion } from "@/types/reasoning";
-import type { MathsQuestion } from "@/types/index";
+import type { MathsQuestion, Question } from "@/types/index";
 import type { MockPathwayId } from "@/types/mock";
 
 /**
@@ -27,15 +27,31 @@ export type AliSubject =
   | "vocabulary"
   | "writing";
 
+/**
+ * Reading Comprehension's prompt shape — extends the app's existing
+ * `Question` (types/index.ts, used by data/lessons.ts) with the passage
+ * text/title, since a Learning Unit's questions are each self-contained
+ * (ALI_ENGLISH_IMPLEMENTATION_PLAN.md §2.1 — no separate passage-registry
+ * lookup, matching how ReasoningQuestion/MathsQuestion are also fully
+ * self-contained per question). `skill` is the app's legacy SkillType
+ * (e.g. "inference") for the §0.5.3 bridge write, NOT the fine-grained
+ * `english.*` competency code, which lives one level up on `BankQuestion.skill`
+ * — same split as MathsQuestion's `skill` field (Decision 32).
+ */
+export interface EnglishComprehensionPrompt extends Question {
+  passageTitle: string;
+  passageText: string;
+}
+
 export interface BankQuestion {
   id: string;
   subject: AliSubject;
   skill: CompetencyCode;
   pathway: MockPathwayId[];
   contentDifficulty: ContentDifficulty;
-  questionType: "multiple-choice" | "short-answer";
+  questionType: "multiple-choice" | "short-answer" | "open-response";
   estimatedTimeSeconds: number;
-  prompt: ReasoningQuestion | MathsQuestion;
+  prompt: ReasoningQuestion | MathsQuestion | EnglishComprehensionPrompt;
   explanation: string;
   hint?: string;
   confidenceWeight: number;
@@ -44,4 +60,13 @@ export interface BankQuestion {
   masteryThreshold: number;
   usageCount: number;
   avgSuccessRate: number | null;
+  /**
+   * Learning Unit id (ALI_DECISION_LOG.md Decision 36) — the schedulable,
+   * never-split unit of adaptive selection. Atomic subjects (VR, Maths) set
+   * this equal to their own `id` (a Learning Unit of exactly one question).
+   * Reading Comprehension sets this to the shared passage id, so every
+   * question belonging to one passage resolves to one Learning Unit.
+   * See lib/ali/learningUnit.ts.
+   */
+  learningUnitId: string;
 }

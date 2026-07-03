@@ -23,6 +23,7 @@ function rowToBankQuestion(row: BankRow): BankQuestion {
     masteryThreshold: row.mastery_threshold,
     usageCount: row.usage_count,
     avgSuccessRate: row.avg_success_rate,
+    learningUnitId: row.learning_unit_id,
   };
 }
 

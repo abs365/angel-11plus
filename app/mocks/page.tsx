@@ -166,6 +166,33 @@ export default function MocksPage() {
               Try Adaptive Practice
             </Link>
           </div>
+
+          {/* Phase ALI 2.1 — Reading Comprehension, the third ALI-covered subject */}
+          <div className="rounded-2xl border border-purple-100 dark:border-purple-900 bg-purple-50 dark:bg-purple-950 p-5">
+            <div className="flex items-start justify-between mb-3">
+              <div className="flex items-center gap-2.5">
+                <span className="text-xs font-bold px-2.5 py-1 rounded-lg bg-purple-700 text-white flex items-center gap-1">
+                  <Sparkles size={12} />
+                  Beta
+                </span>
+                <h3 className="text-base font-bold text-gray-900 dark:text-gray-100">Adaptive Reading Comprehension</h3>
+              </div>
+              <div className="flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400">
+                <Clock size={13} />
+                10-15 min
+              </div>
+            </div>
+            <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed mb-4">
+              A passage is chosen for you every time — never split apart — with your weak spots in inference and vocabulary coming back around intelligently.
+            </p>
+            <Link
+              href="/mocks/adaptive/english"
+              className="inline-flex items-center gap-1.5 text-sm font-semibold px-4 py-2 rounded-xl bg-purple-700 hover:bg-purple-800 text-white transition-colors"
+            >
+              <Play size={14} />
+              Try Adaptive Practice
+            </Link>
+          </div>
         </section>
 
         {/* Mock cards */}

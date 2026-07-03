@@ -43,6 +43,7 @@ function fixture(
     skill,
     pathway: ["gl"],
     contentDifficulty,
+    learningUnitId: id, // Learning Unit = Question for Maths (ALI_DECISION_LOG.md Decision 36)
     questionType: "short-answer",
     estimatedTimeSeconds: 45,
     prompt: {
