@@ -40,6 +40,13 @@ export const COMPETENCY_LABELS: Record<string, string> = {
   // until real content exists, so they have no label here yet either.
   "english.inference": "Inference",
   "english.vocabulary-in-context": "Vocabulary in Context",
+
+  // Vocabulary (Phase ALI 2.2) — VOCABULARY_COMPETENCY_FRAMEWORK.md §3.
+  // Only the 3 approved competencies — the other 7 stay on the roadmap
+  // until both real content AND a schema change exist for them.
+  "vocabulary.synonyms": "Synonyms",
+  "vocabulary.antonyms": "Antonyms",
+  "vocabulary.in-context": "Vocabulary in Context",
 };
 
 export function competencyLabel(code: string): string {

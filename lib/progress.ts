@@ -120,6 +120,20 @@ export function recordAliLearningGain(
   });
 }
 
+/**
+ * Bridges the internal-only Learning Profile (Foundation Completion, Part
+ * 3) into UserProgress. Not read by any UI yet — see
+ * types/ali/learningProfile.ts and LEARNING_PROFILE_MODEL.md. Purely
+ * additive, recomputed from data already bridged (aliCompetencySignal/
+ * aliLearningGain), not a new source of truth.
+ */
+export function recordAliLearningProfile(
+  profile: import("@/types/ali/learningProfile").LearningProfile
+): void {
+  const p = getProgress();
+  saveProgress({ ...p, aliLearningProfile: profile });
+}
+
 export function setSelectedPathway(id: string): void {
   const p = getProgress();
   saveProgress({ ...p, selectedPathwayId: id });

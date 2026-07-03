@@ -193,6 +193,33 @@ export default function MocksPage() {
               Try Adaptive Practice
             </Link>
           </div>
+
+          {/* Phase ALI 2.2 — Vocabulary, the fourth ALI-covered subject */}
+          <div className="rounded-2xl border border-teal-100 dark:border-teal-900 bg-teal-50 dark:bg-teal-950 p-5">
+            <div className="flex items-start justify-between mb-3">
+              <div className="flex items-center gap-2.5">
+                <span className="text-xs font-bold px-2.5 py-1 rounded-lg bg-teal-700 text-white flex items-center gap-1">
+                  <Sparkles size={12} />
+                  Beta
+                </span>
+                <h3 className="text-base font-bold text-gray-900 dark:text-gray-100">Adaptive Vocabulary Practice</h3>
+              </div>
+              <div className="flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400">
+                <Clock size={13} />
+                5-10 min
+              </div>
+            </div>
+            <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed mb-4">
+              A word is chosen for you every time — never split apart — with your weak spots in synonyms, antonyms and context coming back around intelligently.
+            </p>
+            <Link
+              href="/mocks/adaptive/vocabulary"
+              className="inline-flex items-center gap-1.5 text-sm font-semibold px-4 py-2 rounded-xl bg-teal-700 hover:bg-teal-800 text-white transition-colors"
+            >
+              <Play size={14} />
+              Try Adaptive Practice
+            </Link>
+          </div>
         </section>
 
         {/* Mock cards */}

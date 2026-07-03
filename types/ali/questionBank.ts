@@ -1,5 +1,5 @@
 import type { ReasoningQuestion } from "@/types/reasoning";
-import type { MathsQuestion, Question } from "@/types/index";
+import type { MathsQuestion, Question, SkillType } from "@/types/index";
 import type { MockPathwayId } from "@/types/mock";
 
 /**
@@ -43,6 +43,24 @@ export interface EnglishComprehensionPrompt extends Question {
   passageText: string;
 }
 
+/**
+ * Vocabulary's prompt shape (Phase ALI 2.2) — a genuine multiple-choice
+ * item, reshaping a real VocabWord's synonyms/antonyms/exampleSentence
+ * (VOCABULARY_COMPETENCY_FRAMEWORK.md §2) into an exact-match question.
+ * `skill` is the legacy SkillType ("vocabulary") for the bridge write, not
+ * the fine-grained `vocabulary.*` competency code — same split as
+ * MathsQuestion/EnglishComprehensionPrompt's `skill` field.
+ */
+export interface VocabularyPrompt {
+  id: string;
+  word: string;
+  question: string;
+  options: string[];
+  correctAnswer: string;
+  skill: SkillType;
+  marks: number;
+}
+
 export interface BankQuestion {
   id: string;
   subject: AliSubject;
@@ -51,7 +69,7 @@ export interface BankQuestion {
   contentDifficulty: ContentDifficulty;
   questionType: "multiple-choice" | "short-answer" | "open-response";
   estimatedTimeSeconds: number;
-  prompt: ReasoningQuestion | MathsQuestion | EnglishComprehensionPrompt;
+  prompt: ReasoningQuestion | MathsQuestion | EnglishComprehensionPrompt | VocabularyPrompt;
   explanation: string;
   hint?: string;
   confidenceWeight: number;

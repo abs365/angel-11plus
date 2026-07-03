@@ -16,7 +16,8 @@ import { groupQuestionsByLearningUnit, selectLearningUnit } from "@/lib/ali/lear
 import { deriveWeakCompetencies, deriveCompetencySignal } from "@/lib/ali/weakness";
 import { applyAttemptOutcome } from "@/lib/ali/mastery";
 import { computeLearningGainDelta, updateLearningGain } from "@/lib/ali/learningGain";
-import { getProgress, recordSkillResult, completeLesson, recordAliCompetencySignal, recordAliLearningGain } from "@/lib/progress";
+import { computeLearningProfile } from "@/lib/ali/learningProfile";
+import { getProgress, recordSkillResult, completeLesson, recordAliCompetencySignal, recordAliLearningGain, recordAliLearningProfile } from "@/lib/progress";
 import { trackEvent } from "@/lib/betaTracking";
 import type { BankQuestion, EnglishComprehensionPrompt } from "@/types/ali/questionBank";
 import type { StudentQuestionHistoryRow } from "@/types/ali/history";
@@ -245,6 +246,9 @@ export default function AdaptiveEnglishMockPage() {
 
       const gainDelta = computeLearningGainDelta(signal, previousSignal);
       recordAliLearningGain("english", updateLearningGain("english", previousGain, gainDelta));
+
+      const latestProgress = getProgress();
+      recordAliLearningProfile(computeLearningProfile(latestProgress.aliCompetencySignal ?? {}, latestProgress.aliLearningGain ?? {}));
     }
 
     trackEvent("mock_completed", { pathway: "english", variant: "adaptive", score });

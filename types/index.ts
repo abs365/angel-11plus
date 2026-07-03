@@ -91,4 +91,9 @@ export interface UserProgress {
   // ALI Learning Gain (Phase ALI 1.4) — internal only, not read by any UI
   // in this phase. Keyed by ALI subject.
   aliLearningGain?: Partial<Record<string, import("./ali/learningGain").LearningGainSnapshot>>;
+  // ALI Learning Profile (Foundation Completion, Part 3) — derived
+  // interpretation of the two signals above, not a new source of truth.
+  // Internal only, not read by any UI yet. Not subject-keyed (it's a
+  // cross-subject summary of the whole student, unlike the two above).
+  aliLearningProfile?: import("./ali/learningProfile").LearningProfile;
 }

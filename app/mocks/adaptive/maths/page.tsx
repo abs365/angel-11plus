@@ -16,7 +16,8 @@ import { logSelectionTrace } from "@/lib/ali/observability";
 import { applyAttemptOutcome } from "@/lib/ali/mastery";
 import { deriveCompetencySignal } from "@/lib/ali/weakness";
 import { computeLearningGainDelta, updateLearningGain } from "@/lib/ali/learningGain";
-import { getProgress, recordSkillResult, completeLesson, recordAliCompetencySignal, recordAliLearningGain } from "@/lib/progress";
+import { computeLearningProfile } from "@/lib/ali/learningProfile";
+import { getProgress, recordSkillResult, completeLesson, recordAliCompetencySignal, recordAliLearningGain, recordAliLearningProfile } from "@/lib/progress";
 import { computeAnalytics } from "@/lib/analytics";
 import { computeSubjectConfidence } from "@/lib/adaptiveDifficulty";
 import { trackEvent } from "@/lib/betaTracking";
@@ -205,6 +206,9 @@ export default function AdaptiveMathsMockPage() {
 
         const gainDelta = computeLearningGainDelta(signal, previousSignal);
         recordAliLearningGain("maths", updateLearningGain("maths", previousGain, gainDelta));
+
+        const latestProgress = getProgress();
+        recordAliLearningProfile(computeLearningProfile(latestProgress.aliCompetencySignal ?? {}, latestProgress.aliLearningGain ?? {}));
       }
 
       trackEvent("mock_completed", { pathway: "maths", variant: "adaptive", score });

@@ -19,7 +19,8 @@ import { logSelectionTrace } from "@/lib/ali/observability";
 import { applyAttemptOutcome } from "@/lib/ali/mastery";
 import { deriveCompetencySignal } from "@/lib/ali/weakness";
 import { computeLearningGainDelta, updateLearningGain } from "@/lib/ali/learningGain";
-import { getProgress, recordSkillResult, completeLesson, recordAliCompetencySignal, recordAliLearningGain } from "@/lib/progress";
+import { computeLearningProfile } from "@/lib/ali/learningProfile";
+import { getProgress, recordSkillResult, completeLesson, recordAliCompetencySignal, recordAliLearningGain, recordAliLearningProfile } from "@/lib/progress";
 import { computeAnalytics } from "@/lib/analytics";
 import { computeSubjectConfidence } from "@/lib/adaptiveDifficulty";
 import { saveAdaptiveMockResult } from "@/lib/adaptiveMockProgress";
@@ -301,6 +302,9 @@ export default function AdaptiveGlMockPage() {
 
         const gainDelta = computeLearningGainDelta(signal, previousSignal);
         recordAliLearningGain("verbal-reasoning", updateLearningGain("verbal-reasoning", previousGain, gainDelta));
+
+        const latestProgress = getProgress();
+        recordAliLearningProfile(computeLearningProfile(latestProgress.aliCompetencySignal ?? {}, latestProgress.aliLearningGain ?? {}));
       }
 
       trackEvent("mock_completed", { pathway: "gl", variant: "adaptive", score: totalScore });
