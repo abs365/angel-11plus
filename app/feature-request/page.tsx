@@ -10,6 +10,7 @@ export default function FeatureRequestPage() {
   const [why, setWhy] = useState("");
   const [submitted, setSubmitted] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [submitting, setSubmitting] = useState(false);
 
   function validate() {
     const e: Record<string, string> = {};
@@ -18,14 +19,20 @@ export default function FeatureRequestPage() {
     return e;
   }
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     const errs = validate();
     if (Object.keys(errs).length > 0) {
       setErrors(errs);
       return;
     }
-    saveFeatureRequest({ feature: feature.trim(), why: why.trim() });
+    setSubmitting(true);
+    const { error } = await saveFeatureRequest({ feature: feature.trim(), why: why.trim() });
+    setSubmitting(false);
+    if (error) {
+      setErrors({ why: error });
+      return;
+    }
     setSubmitted(true);
   }
 
@@ -101,13 +108,14 @@ export default function FeatureRequestPage() {
 
         <button
           type="submit"
-          className="w-full bg-amber-500 hover:bg-amber-600 text-white font-semibold py-3.5 rounded-xl text-sm transition-colors"
+          disabled={submitting}
+          className="w-full bg-amber-500 hover:bg-amber-600 text-white font-semibold py-3.5 rounded-xl text-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          Submit Request
+          {submitting ? "Submitting…" : "Submit Request"}
         </button>
 
         <p className="text-xs text-gray-400 dark:text-gray-500 text-center">
-          Feature requests are stored locally on this device during beta.
+          Feature requests are sent securely and reviewed by the founder.
         </p>
       </form>
     </SupportLayout>

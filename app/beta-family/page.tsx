@@ -16,6 +16,7 @@ export default function BetaFamilyPage() {
   const [contactPermission, setContactPermission] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [submitting, setSubmitting] = useState(false);
 
   function validate() {
     const e: Record<string, string> = {};
@@ -27,20 +28,26 @@ export default function BetaFamilyPage() {
     return e;
   }
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     const errs = validate();
     if (Object.keys(errs).length > 0) {
       setErrors(errs);
       return;
     }
-    saveBetaFamilyApplication({
+    setSubmitting(true);
+    const { error } = await saveBetaFamilyApplication({
       parentName: parentName.trim(),
       yearGroup,
       pathway,
       email: email.trim().toLowerCase(),
       contactPermission,
     });
+    setSubmitting(false);
+    if (error) {
+      setErrors({ email: error });
+      return;
+    }
     setSubmitted(true);
   }
 
@@ -204,9 +211,10 @@ export default function BetaFamilyPage() {
 
         <button
           type="submit"
-          className="w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3.5 rounded-xl text-sm transition-colors"
+          disabled={submitting}
+          className="w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3.5 rounded-xl text-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          Register as Beta Family
+          {submitting ? "Registering…" : "Register as Beta Family"}
         </button>
 
         <p className="text-xs text-gray-400 dark:text-gray-500 text-center leading-relaxed">

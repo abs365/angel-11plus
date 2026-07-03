@@ -1,6 +1,8 @@
 # Adaptive Assessment Engine — Architecture Proposal
 
-**Status:** DRAFT — architecture only. No code written, no schema created, no existing mock system touched. Awaiting review and explicit implementation approval.
+**Status: SUPERSEDED — this proposal was approved and implemented.** This document is preserved as a historical Blueprint-phase artifact, not a description of the current system. **For the current, accurate state of the adaptive engine (now called Angel Learning Intelligence / ALI), see `ALI_VERSION.md` — that document is kept up to date every phase; this one is not.**
+>
+> This status line was corrected during Phase 5A (2026-07-03) after an independent Foundation Audit found the original "DRAFT — no code written" line still in place despite Slice 1 having been built and committed the same day this document was originally drafted (2026-07-02) — a real documentation-drift risk this correction closes. The content below (§1 onward) is left otherwise unmodified as a record of the original design proposal.
 
 **Trigger:** Beta feedback from Angel highlighted that fixed, static mock papers are a structural ceiling — every student on a given pathway currently sees the exact same slice of the same static arrays (`app/mocks/[pathway]/page.tsx`, `MOCK_CONFIGS`). This proposes replacing that with a Master Question Bank + Mock Assembly Engine that dynamically composes a mock per student, per attempt.
 

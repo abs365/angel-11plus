@@ -17,8 +17,9 @@ export default function FeedbackPage() {
   const [message, setMessage] = useState("");
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState("");
+  const [submitting, setSubmitting] = useState(false);
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError("");
 
@@ -27,7 +28,14 @@ export default function FeedbackPage() {
       return;
     }
 
-    saveFeedback({ type, subject: subject.trim(), message: message.trim() });
+    setSubmitting(true);
+    const { error: submitError } = await saveFeedback({ type, subject: subject.trim(), message: message.trim() });
+    setSubmitting(false);
+
+    if (submitError) {
+      setError(submitError);
+      return;
+    }
     setSubmitted(true);
   }
 
@@ -137,13 +145,14 @@ export default function FeedbackPage() {
 
         <button
           type="submit"
-          className="w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3.5 rounded-xl text-sm transition-colors"
+          disabled={submitting}
+          className="w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3.5 rounded-xl text-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          Send Feedback
+          {submitting ? "Sending…" : "Send Feedback"}
         </button>
 
         <p className="text-xs text-gray-400 dark:text-gray-500 text-center">
-          Feedback is stored locally on this device during beta.
+          Feedback is sent securely and reviewed by the founder.
         </p>
       </form>
     </SupportLayout>

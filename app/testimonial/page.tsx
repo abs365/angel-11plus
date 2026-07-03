@@ -14,6 +14,7 @@ export default function TestimonialPage() {
   const [publishPermission, setPublishPermission] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [submitting, setSubmitting] = useState(false);
 
   function validate() {
     const e: Record<string, string> = {};
@@ -23,19 +24,25 @@ export default function TestimonialPage() {
     return e;
   }
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     const errs = validate();
     if (Object.keys(errs).length > 0) {
       setErrors(errs);
       return;
     }
-    saveTestimonial({
+    setSubmitting(true);
+    const { error } = await saveTestimonial({
       parentName: parentName.trim(),
       yearGroup,
       feedback: feedback.trim(),
       publishPermission,
     });
+    setSubmitting(false);
+    if (error) {
+      setErrors({ feedback: error });
+      return;
+    }
     setSubmitted(true);
   }
 
@@ -149,9 +156,10 @@ export default function TestimonialPage() {
 
         <button
           type="submit"
-          className="w-full bg-amber-500 hover:bg-amber-600 text-white font-semibold py-3.5 rounded-xl text-sm transition-colors"
+          disabled={submitting}
+          className="w-full bg-amber-500 hover:bg-amber-600 text-white font-semibold py-3.5 rounded-xl text-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          Submit Experience
+          {submitting ? "Submitting…" : "Submit Experience"}
         </button>
 
         <p className="text-xs text-gray-400 dark:text-gray-500 text-center">

@@ -229,7 +229,7 @@ export default function ParentDashboardPage() {
             <section className={`rounded-2xl p-5 ${readinessCfg.bgColor}`}>
               <div className="flex items-start justify-between mb-3">
                 <div>
-                  <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-0.5">
+                  <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-0.5">
                     Exam Readiness
                   </p>
                   <p className={`text-lg font-bold ${readinessCfg.textColor}`}>
@@ -240,13 +240,13 @@ export default function ParentDashboardPage() {
                   {readinessCfg.pct}%
                 </div>
               </div>
-              <div className="h-2 bg-white/60 rounded-full overflow-hidden mb-3">
+              <div className="h-2 bg-white/60 dark:bg-black/30 rounded-full overflow-hidden mb-3">
                 <div
                   className={`h-full rounded-full transition-all duration-700 ${readinessCfg.barColor}`}
                   style={{ width: `${readinessCfg.pct}%` }}
                 />
               </div>
-              <p className="text-sm text-gray-600">{readinessCfg.description}</p>
+              <p className="text-sm text-gray-600 dark:text-gray-300">{readinessCfg.description}</p>
             </section>
 
             {/* Subject Grid */}

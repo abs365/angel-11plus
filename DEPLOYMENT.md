@@ -38,61 +38,23 @@ Apply `OPENAI_API_KEY` to **Production** and **Preview** only. Writing AI feedba
 
 ## 2. Supabase Setup
 
-### Database Tables
+### Database Tables and Migrations
 
-Run these SQL statements in the Supabase SQL editor (supabase.com → Project → SQL editor):
+**Do not hand-copy schema SQL from this document** — a prior version of this section had drifted from the real schema (it described permissive `for all using (true)` RLS policies that don't match migration 001's actual `disable row level security` statements, and predated ALI/beta-submission tables entirely). **The `supabase/migrations/*.sql` files are the single source of truth.**
 
-```sql
--- Profiles: one row per anonymous device or authenticated user
-create table if not exists profiles (
-  id uuid primary key default gen_random_uuid(),
-  device_id text unique,
-  auth_user_id uuid unique references auth.users(id),
-  name text default 'Angel',
-  created_at timestamptz default now()
-);
+Run every file in `supabase/migrations/`, **in numeric order, each as its own separate SQL Editor execution** (not batched together — migration 004 uses `ALTER TYPE ... ADD VALUE`, which Postgres cannot use in the same transaction that adds it):
 
--- Lesson completions
-create table if not exists lesson_progress (
-  id uuid primary key default gen_random_uuid(),
-  profile_id uuid references profiles(id) on delete cascade,
-  lesson_id text not null,
-  subject text not null,
-  score integer not null,
-  xp_gained integer not null,
-  completed_at timestamptz default now()
-);
+| Migration | Adds |
+|---|---|
+| `001_initial_schema.sql` | `profiles`, `user_stats`, `lesson_progress` (RLS disabled — anonymous, device-based access) |
+| `002_add_auth_user_id.sql` | Links anonymous device profiles to Supabase Auth users |
+| `003_analytics_view.sql` | Read-only analytics views |
+| `004_ali_subject_enum.sql` – `007_ali_learning_unit.sql` | Angel Learning Intelligence (ALI) schema — see `ALI_PRODUCTION_ACTIVATION_CHECKLIST.md` for the detailed run order, confirmation queries, and rollback notes |
+| `008_admin_and_beta_submissions.sql` | Real Supabase-Auth-gated admin access (`is_admin`, `is_current_user_admin()`) + `feedback_submissions`/`bug_reports`/`feature_requests`/`beta_family_applications`/`testimonials` tables with RLS (public insert, admin-only select) |
 
--- Rolled-up stats (upserted after each session)
-create table if not exists user_stats (
-  profile_id uuid primary key references profiles(id) on delete cascade,
-  total_xp integer default 0,
-  streak integer default 0,
-  last_activity date,
-  updated_at timestamptz default now()
-);
-```
+**Bootstrapping the first admin (required for `/admin-beta` to work at all):** sign in once via the app's normal magic-link flow, then run one statement in the Supabase Dashboard SQL Editor — exact SQL is in `008_admin_and_beta_submissions.sql`'s closing comment. There is no self-service admin path by design.
 
-### Row-Level Security
-
-Enable RLS and add policies so users can only read/write their own data:
-
-```sql
-alter table profiles enable row level security;
-alter table lesson_progress enable row level security;
-alter table user_stats enable row level security;
-
--- Profiles: device-based access (anon key, no auth required)
-create policy "profiles_open" on profiles for all using (true) with check (true);
-
--- Lesson progress: open insert/read (scoped by profile_id in app code)
-create policy "lesson_progress_open" on lesson_progress for all using (true) with check (true);
-
--- User stats: open upsert/read
-create policy "user_stats_open" on user_stats for all using (true) with check (true);
-```
-
-> **Note:** These policies are permissive for the MVP. Before adding sensitive parent/payment data, tighten policies to `auth.uid()` checks.
+**As of this document's last update, migrations 004–008 have not been applied to any production Supabase project** — confirm current status against `ALI_VERSION.md`'s "Known gaps" section before assuming otherwise.
 
 ### Authentication: Redirect URLs
 

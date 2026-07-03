@@ -20,6 +20,7 @@ import { computeLearningProfile } from "@/lib/ali/learningProfile";
 import { getProgress, recordSkillResult, completeLesson, recordAliCompetencySignal, recordAliLearningGain, recordAliLearningProfile } from "@/lib/progress";
 import { computeAnalytics } from "@/lib/analytics";
 import { computeSubjectConfidence } from "@/lib/adaptiveDifficulty";
+import { formatTime } from "@/lib/formatTime";
 import { trackEvent } from "@/lib/betaTracking";
 import type { BankQuestion } from "@/types/ali/questionBank";
 import type { StudentQuestionHistoryRow } from "@/types/ali/history";
@@ -60,12 +61,6 @@ function checkAnswer(question: MathsQuestion, input: string): boolean {
     return Math.abs(userNum - correctNum) < 0.0001;
   }
   return userRaw.replace(/\s/g, "") === correctRaw.replace(/\s/g, "");
-}
-
-function formatTime(secs: number): string {
-  const m = Math.floor(secs / 60);
-  const s = secs % 60;
-  return `${m}:${s.toString().padStart(2, "0")}`;
 }
 
 type Mode = "intro" | "loading" | "error" | "section" | "results";

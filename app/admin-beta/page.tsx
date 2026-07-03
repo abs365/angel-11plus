@@ -4,12 +4,13 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import {
   Users, MessageSquare, Bug, Lightbulb, Star, Target,
-  BarChart2, Clock, Flame, Zap, Eye, EyeOff, Trash2, RefreshCw,
-  ChevronDown, ChevronUp,
+  BarChart2, Clock, Flame, Zap, Trash2, RefreshCw,
+  ChevronDown, ChevronUp, Mail, ArrowRight, ShieldAlert, LogOut,
 } from "lucide-react";
+import { useAuth } from "@/components/providers/AuthProvider";
 import {
-  getFeedback, getBugReports, getFeatureRequests,
-  getBetaFamilyApplications, getTestimonials,
+  fetchFeedback, fetchBugReports, fetchFeatureRequests,
+  fetchBetaFamilyApplications, fetchTestimonials, checkIsAdmin,
   type FeedbackEntry, type BugReport, type FeatureRequest,
   type BetaFamilyApplication, type Testimonial,
 } from "@/lib/feedback";
@@ -19,9 +20,17 @@ import { getProgress } from "@/lib/progress";
 import type { MockResult } from "@/types/mock";
 import type { UserProgress } from "@/types";
 
-// ─── PIN gate ────────────────────────────────────────────────────────────────
-
-const ADMIN_PIN = "angel2026";
+// Phase 5A — Enterprise Beta Readiness. The hardcoded client-side access
+// code previously defined here has been removed entirely — access is now
+// gated by real Supabase Authentication (magic-link, the same flow
+// app/login/page.tsx uses) plus a server-enforced admin check
+// (is_current_user_admin(), migration 008). The actual security boundary
+// is Postgres RLS on the 5 beta-submission tables, not this component —
+// even a modified/bypassed client would receive empty results from
+// Supabase for a non-admin session, not real data. There is no
+// self-service path to becoming an admin; a founder must run one SQL
+// statement in the Supabase Dashboard after signing in once (see
+// migration 008's bootstrap comment).
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
@@ -135,7 +144,6 @@ interface AdminData {
 function AdminDashboard({ data }: { data: AdminData }) {
   const { families, feedback, bugs, features, testimonials, events, mockResults, progress } = data;
 
-  // Pathway distribution
   const pathwayCounts: Record<string, number> = {};
   for (const f of families) {
     const p = f.pathway || "not-sure";
@@ -143,7 +151,6 @@ function AdminDashboard({ data }: { data: AdminData }) {
   }
   const maxPathwayCount = Math.max(...Object.values(pathwayCounts), 1);
 
-  // Subject usage from completed lessons
   const subjectCounts: Record<string, number> = {};
   for (const lesson of progress.completedLessons) {
     const s = subjectFromLessonId(lesson);
@@ -151,20 +158,11 @@ function AdminDashboard({ data }: { data: AdminData }) {
   }
   const maxSubjectCount = Math.max(...Object.values(subjectCounts), 1);
 
-  // Mock pathway distribution
   const mockPathwayCounts: Record<string, number> = {};
   for (const r of mockResults) {
     mockPathwayCounts[r.pathway] = (mockPathwayCounts[r.pathway] ?? 0) + 1;
   }
 
-  // Feature request frequency
-  const featureMap: Record<string, number> = {};
-  for (const f of features) {
-    const key = f.feature.toLowerCase().slice(0, 60);
-    featureMap[key] = (featureMap[key] ?? 0) + 1;
-  }
-
-  // Event counts
   const eventCounts: Record<string, number> = {};
   for (const e of events) {
     eventCounts[e.type] = (eventCounts[e.type] ?? 0) + 1;
@@ -175,7 +173,6 @@ function AdminDashboard({ data }: { data: AdminData }) {
   return (
     <div className="space-y-5">
 
-      {/* Overview stats */}
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
         <StatCard
           label="Beta Families" value={families.length}
@@ -211,10 +208,9 @@ function AdminDashboard({ data }: { data: AdminData }) {
         />
       </div>
 
-      {/* Usage summary row */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         <StatCard
-          label="Total Sessions" value={progress.completedLessons.length}
+          label="Total Sessions (this device)" value={progress.completedLessons.length}
           icon={<BarChart2 size={15} className="text-teal-600 dark:text-teal-400" />}
           color="bg-teal-50 dark:bg-teal-950"
         />
@@ -229,13 +225,12 @@ function AdminDashboard({ data }: { data: AdminData }) {
           color="bg-yellow-50 dark:bg-yellow-950"
         />
         <StatCard
-          label="Tracking Events" value={events.length}
+          label="Tracking Events (this device)" value={events.length}
           icon={<Clock size={15} className="text-gray-500 dark:text-gray-400" />}
           color="bg-gray-100 dark:bg-gray-800"
         />
       </div>
 
-      {/* Pathway distribution */}
       {(families.length > 0 || mockResults.length > 0) && (
         <Section title="Pathway Distribution">
           <div className="p-5 space-y-4">
@@ -277,7 +272,6 @@ function AdminDashboard({ data }: { data: AdminData }) {
         </Section>
       )}
 
-      {/* Subject usage */}
       {progress.completedLessons.length > 0 && (
         <Section title="Subject Usage (this device)">
           <div className="p-5 space-y-2.5">
@@ -288,13 +282,12 @@ function AdminDashboard({ data }: { data: AdminData }) {
         </Section>
       )}
 
-      {/* Beta families */}
       <Section title="Beta Family Registrations" count={families.length}>
         {families.length === 0 ? (
           <p className="px-5 py-4 text-sm text-gray-400 dark:text-gray-500">No registrations yet.</p>
         ) : (
           <div className="divide-y divide-gray-50 dark:divide-gray-800">
-            {[...families].reverse().map((f) => (
+            {families.map((f) => (
               <div key={f.id} className="px-5 py-3 flex items-start gap-3">
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 flex-wrap">
@@ -317,13 +310,12 @@ function AdminDashboard({ data }: { data: AdminData }) {
         )}
       </Section>
 
-      {/* Testimonials */}
       <Section title="Testimonials" count={testimonials.length}>
         {testimonials.length === 0 ? (
           <p className="px-5 py-4 text-sm text-gray-400 dark:text-gray-500">No testimonials yet. <Link href="/testimonial" className="text-purple-600 dark:text-purple-400 hover:underline">Submit one</Link>.</p>
         ) : (
           <div className="divide-y divide-gray-50 dark:divide-gray-800">
-            {[...testimonials].reverse().map((t) => (
+            {testimonials.map((t) => (
               <div key={t.id} className="px-5 py-4">
                 <div className="flex items-center gap-2 mb-1.5 flex-wrap">
                   <span className="text-sm font-semibold text-gray-900 dark:text-gray-100">{t.parentName}</span>
@@ -342,13 +334,12 @@ function AdminDashboard({ data }: { data: AdminData }) {
         )}
       </Section>
 
-      {/* Feedback */}
       <Section title="Feedback" count={feedback.length}>
         {feedback.length === 0 ? (
           <p className="px-5 py-4 text-sm text-gray-400 dark:text-gray-500">No feedback yet.</p>
         ) : (
           <div className="divide-y divide-gray-50 dark:divide-gray-800">
-            {[...feedback].reverse().slice(0, 20).map((f) => (
+            {feedback.slice(0, 20).map((f) => (
               <div key={f.id} className="px-5 py-3">
                 <div className="flex items-center gap-2 mb-1">
                   <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded uppercase ${
@@ -368,13 +359,12 @@ function AdminDashboard({ data }: { data: AdminData }) {
         )}
       </Section>
 
-      {/* Bug reports */}
       <Section title="Bug Reports" count={bugs.length}>
         {bugs.length === 0 ? (
           <p className="px-5 py-4 text-sm text-gray-400 dark:text-gray-500">No bug reports yet.</p>
         ) : (
           <div className="divide-y divide-gray-50 dark:divide-gray-800">
-            {[...bugs].reverse().slice(0, 20).map((b) => (
+            {bugs.slice(0, 20).map((b) => (
               <div key={b.id} className="px-5 py-3">
                 <div className="flex items-center gap-2 mb-1 flex-wrap">
                   <span className="text-xs font-semibold text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950 px-2 py-0.5 rounded">
@@ -390,13 +380,12 @@ function AdminDashboard({ data }: { data: AdminData }) {
         )}
       </Section>
 
-      {/* Feature requests */}
       <Section title="Feature Requests" count={features.length}>
         {features.length === 0 ? (
           <p className="px-5 py-4 text-sm text-gray-400 dark:text-gray-500">No feature requests yet.</p>
         ) : (
           <div className="divide-y divide-gray-50 dark:divide-gray-800">
-            {[...features].reverse().slice(0, 20).map((f) => (
+            {features.slice(0, 20).map((f) => (
               <div key={f.id} className="px-5 py-3">
                 <p className="text-sm font-semibold text-gray-900 dark:text-gray-100 mb-0.5">{f.feature}</p>
                 <p className="text-xs text-gray-500 dark:text-gray-400 leading-relaxed mb-1">{f.why}</p>
@@ -407,9 +396,8 @@ function AdminDashboard({ data }: { data: AdminData }) {
         )}
       </Section>
 
-      {/* Mock results */}
       {mockResults.length > 0 && (
-        <Section title="Mock Exam Results" count={mockResults.length}>
+        <Section title="Mock Exam Results (this device)" count={mockResults.length}>
           <div className="divide-y divide-gray-50 dark:divide-gray-800">
             {[...mockResults].reverse().slice(0, 10).map((r) => (
               <div key={r.id} className="px-5 py-3 flex items-center gap-3">
@@ -426,8 +414,7 @@ function AdminDashboard({ data }: { data: AdminData }) {
         </Section>
       )}
 
-      {/* Tracking events */}
-      <Section title="Usage Events (last 30)" count={events.length}>
+      <Section title="Usage Events, this device only (last 30)" count={events.length}>
         {events.length === 0 ? (
           <p className="px-5 py-4 text-sm text-gray-400 dark:text-gray-500">No events tracked yet.</p>
         ) : (
@@ -455,11 +442,113 @@ function AdminDashboard({ data }: { data: AdminData }) {
         )}
       </Section>
 
-      {/* Footer note */}
       <div className="bg-gray-50 dark:bg-gray-900 rounded-xl border border-gray-100 dark:border-gray-800 px-5 py-4">
         <p className="text-xs text-gray-400 dark:text-gray-500 leading-relaxed">
-          All data shown is from <strong>this device&apos;s localStorage</strong>. Family data from other devices will not appear until Supabase sync is enabled in Phase 4.
-          Data survives page refreshes but will be lost if localStorage is cleared.
+          Beta Families, Feedback, Bug Reports, Feature Requests and Testimonials are read from Supabase and reflect
+          submissions from <strong>every</strong> beta family, on any device — not just this one (Phase 5A). Mock
+          Exam Results, Subject Usage and Tracking Events above are still per-device only.
+        </p>
+      </div>
+    </div>
+  );
+}
+
+// ─── Sign-in gate ────────────────────────────────────────────────────────────
+
+type SignInState = "idle" | "sending" | "sent" | "error";
+
+function AdminSignIn() {
+  const { signInWithMagicLink } = useAuth();
+  const [email, setEmail] = useState("");
+  const [state, setState] = useState<SignInState>("idle");
+  const [errorMsg, setErrorMsg] = useState("");
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    if (!email.trim()) return;
+    setState("sending");
+    setErrorMsg("");
+    const { error } = await signInWithMagicLink(email.trim());
+    if (error) {
+      setState("error");
+      setErrorMsg(error);
+    } else {
+      setState("sent");
+    }
+  }
+
+  return (
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-950 flex items-center justify-center p-6">
+      <div className="w-full max-w-sm">
+        <div className="text-center mb-8">
+          <div className="w-14 h-14 rounded-2xl bg-purple-100 dark:bg-purple-900 flex items-center justify-center mx-auto mb-4">
+            <BarChart2 size={24} className="text-purple-600 dark:text-purple-400" />
+          </div>
+          <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100">Beta Admin</h1>
+          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Founder-only access — sign in required</p>
+        </div>
+
+        {state === "sent" ? (
+          <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-6 text-center">
+            <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed">
+              Check your email — we sent a magic link to <strong>{email}</strong>. Click it to sign in and return here.
+            </p>
+          </div>
+        ) : (
+          <form onSubmit={handleSubmit} className="space-y-3">
+            <div className="relative">
+              <Mail size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500" />
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => { setEmail(e.target.value); setState("idle"); }}
+                placeholder="you@example.com"
+                autoComplete="email"
+                autoFocus
+                required
+                className="w-full bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl pl-10 pr-4 py-3 text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-purple-400"
+              />
+            </div>
+            {state === "error" && <p className="text-xs text-red-500">{errorMsg}</p>}
+            <button
+              type="submit"
+              disabled={state === "sending" || !email.trim()}
+              className="w-full flex items-center justify-center gap-2 bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3 rounded-xl text-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {state === "sending" ? "Sending…" : (<>Send magic link <ArrowRight size={16} /></>)}
+            </button>
+          </form>
+        )}
+
+        <p className="text-xs text-gray-400 dark:text-gray-500 text-center mt-4">
+          <Link href="/dashboard" className="hover:underline">← Back to app</Link>
+        </p>
+      </div>
+    </div>
+  );
+}
+
+function NotAuthorized({ email, onSignOut }: { email: string | null; onSignOut: () => void }) {
+  return (
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-950 flex items-center justify-center p-6">
+      <div className="w-full max-w-sm text-center">
+        <div className="w-14 h-14 rounded-2xl bg-red-100 dark:bg-red-900 flex items-center justify-center mx-auto mb-4">
+          <ShieldAlert size={24} className="text-red-600 dark:text-red-400" />
+        </div>
+        <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100">Not authorised</h1>
+        <p className="text-sm text-gray-500 dark:text-gray-400 mt-2 leading-relaxed">
+          {email ? <>Signed in as <strong>{email}</strong>, but</> : "This account"} does not have admin access to
+          the beta dashboard.
+        </p>
+        <button
+          onClick={onSignOut}
+          className="mt-6 inline-flex items-center gap-1.5 text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200"
+        >
+          <LogOut size={14} />
+          Sign out
+        </button>
+        <p className="text-xs text-gray-400 dark:text-gray-500 mt-4">
+          <Link href="/dashboard" className="hover:underline">← Back to app</Link>
         </p>
       </div>
     </div>
@@ -468,21 +557,40 @@ function AdminDashboard({ data }: { data: AdminData }) {
 
 // ─── Page ────────────────────────────────────────────────────────────────────
 
+type AccessState = "checking" | "not-signed-in" | "not-admin" | "admin";
+
 export default function AdminBetaPage() {
-  const [pin, setPin] = useState("");
-  const [unlocked, setUnlocked] = useState(false);
-  const [pinError, setPinError] = useState(false);
-  const [showPin, setShowPin] = useState(false);
+  const { user, loading: authLoading, signOut } = useAuth();
+  const [access, setAccess] = useState<AccessState>("checking");
   const [data, setData] = useState<AdminData | null>(null);
   const [lastRefreshed, setLastRefreshed] = useState<Date | null>(null);
 
-  function loadData() {
+  useEffect(() => {
+    if (authLoading) return;
+    if (!user) {
+      setAccess("not-signed-in");
+      return;
+    }
+    checkIsAdmin().then((isAdmin) => {
+      setAccess(isAdmin ? "admin" : "not-admin");
+    });
+  }, [authLoading, user]);
+
+  useEffect(() => {
+    if (access === "admin") loadData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [access]);
+
+  async function loadData() {
+    const [families, feedback, bugs, features, testimonials] = await Promise.all([
+      fetchBetaFamilyApplications(),
+      fetchFeedback(),
+      fetchBugReports(),
+      fetchFeatureRequests(),
+      fetchTestimonials(),
+    ]);
     setData({
-      families: getBetaFamilyApplications(),
-      feedback: getFeedback(),
-      bugs: getBugReports(),
-      features: getFeatureRequests(),
-      testimonials: getTestimonials(),
+      families, feedback, bugs, features, testimonials,
       events: getBetaEvents(),
       mockResults: getMockResults(),
       progress: getProgress(),
@@ -490,80 +598,29 @@ export default function AdminBetaPage() {
     setLastRefreshed(new Date());
   }
 
-  function handleUnlock(e: React.FormEvent) {
-    e.preventDefault();
-    if (pin === ADMIN_PIN) {
-      setUnlocked(true);
-      setPinError(false);
-      loadData();
-    } else {
-      setPinError(true);
-    }
-  }
-
-  // PIN gate
-  if (!unlocked) {
+  if (authLoading || access === "checking") {
     return (
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-950 flex items-center justify-center p-6">
-        <div className="w-full max-w-sm">
-          <div className="text-center mb-8">
-            <div className="w-14 h-14 rounded-2xl bg-purple-100 dark:bg-purple-900 flex items-center justify-center mx-auto mb-4">
-              <BarChart2 size={24} className="text-purple-600 dark:text-purple-400" />
-            </div>
-            <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100">Beta Admin</h1>
-            <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Founder-only access</p>
-          </div>
-
-          <form onSubmit={handleUnlock} className="space-y-3">
-            <div className="relative">
-              <input
-                type={showPin ? "text" : "password"}
-                value={pin}
-                onChange={(e) => { setPin(e.target.value); setPinError(false); }}
-                placeholder="Enter access code"
-                autoComplete="current-password"
-                className={`w-full bg-white dark:bg-gray-900 border rounded-xl px-4 py-3 pr-10 text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-purple-400 ${
-                  pinError ? "border-red-400 dark:border-red-600" : "border-gray-200 dark:border-gray-700"
-                }`}
-              />
-              <button
-                type="button"
-                onClick={() => setShowPin((v) => !v)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
-              >
-                {showPin ? <EyeOff size={16} /> : <Eye size={16} />}
-              </button>
-            </div>
-            {pinError && <p className="text-xs text-red-500">Incorrect access code.</p>}
-            <button
-              type="submit"
-              className="w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3 rounded-xl text-sm transition-colors"
-            >
-              Enter Dashboard
-            </button>
-          </form>
-
-          <p className="text-xs text-gray-400 dark:text-gray-500 text-center mt-4">
-            <Link href="/dashboard" className="hover:underline">← Back to app</Link>
-          </p>
-        </div>
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-950 flex items-center justify-center">
+        <p className="text-sm text-gray-400 dark:text-gray-500">Checking access…</p>
       </div>
     );
   }
 
+  if (access === "not-signed-in") return <AdminSignIn />;
+  if (access === "not-admin") return <NotAuthorized email={user?.email ?? null} onSignOut={signOut} />;
+
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
-      {/* Header */}
       <header className="bg-white dark:bg-gray-900 border-b border-gray-100 dark:border-gray-800 sticky top-0 z-20">
         <div className="max-w-5xl mx-auto px-4 h-14 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <Link href="/dashboard" className="text-purple-700 dark:text-purple-400 font-bold text-base">
+          <div className="flex items-center gap-3 min-w-0">
+            <Link href="/dashboard" className="text-purple-700 dark:text-purple-400 font-bold text-base shrink-0">
               Angel 11+
             </Link>
-            <span className="text-gray-300 dark:text-gray-700">·</span>
-            <span className="text-sm font-semibold text-gray-900 dark:text-gray-100">Beta Observation Dashboard</span>
+            <span className="text-gray-300 dark:text-gray-700 shrink-0">·</span>
+            <span className="text-sm font-semibold text-gray-900 dark:text-gray-100 truncate">Beta Admin Dashboard</span>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 shrink-0">
             {lastRefreshed && (
               <span className="text-xs text-gray-400 dark:text-gray-500 hidden sm:block">
                 Updated {lastRefreshed.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" })}
@@ -578,7 +635,7 @@ export default function AdminBetaPage() {
             </button>
             <button
               onClick={() => {
-                if (confirm("Clear all tracking events? This cannot be undone.")) {
+                if (confirm("Clear this device's tracking events? This cannot be undone.")) {
                   clearBetaEvents();
                   loadData();
                 }
@@ -587,6 +644,13 @@ export default function AdminBetaPage() {
             >
               <Trash2 size={13} />
               Clear events
+            </button>
+            <button
+              onClick={signOut}
+              className="flex items-center gap-1.5 text-xs font-medium text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 px-3 py-1.5 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+            >
+              <LogOut size={13} />
+              Sign out
             </button>
           </div>
         </div>

@@ -23,6 +23,7 @@ import { computeLearningProfile } from "@/lib/ali/learningProfile";
 import { getProgress, recordSkillResult, completeLesson, recordAliCompetencySignal, recordAliLearningGain, recordAliLearningProfile } from "@/lib/progress";
 import { computeAnalytics } from "@/lib/analytics";
 import { computeSubjectConfidence } from "@/lib/adaptiveDifficulty";
+import { formatTime } from "@/lib/formatTime";
 import { saveAdaptiveMockResult } from "@/lib/adaptiveMockProgress";
 import { trackEvent } from "@/lib/betaTracking";
 import type { BankQuestion } from "@/types/ali/questionBank";
@@ -64,12 +65,6 @@ function checkAnswer(question: ReasoningQuestion, input: string): boolean {
     return question.alternatives.some((alt) => normalise(alt) === norm);
   }
   return false;
-}
-
-function formatTime(secs: number): string {
-  const m = Math.floor(secs / 60);
-  const s = secs % 60;
-  return `${m}:${s.toString().padStart(2, "0")}`;
 }
 
 // ─── Types ────────────────────────────────────────────────────────────────

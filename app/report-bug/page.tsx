@@ -46,6 +46,7 @@ export default function ReportBugPage() {
   const [description, setDescription] = useState("");
   const [submitted, setSubmitted] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [submitting, setSubmitting] = useState(false);
 
   function validate() {
     const e: Record<string, string> = {};
@@ -55,14 +56,20 @@ export default function ReportBugPage() {
     return e;
   }
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     const errs = validate();
     if (Object.keys(errs).length > 0) {
       setErrors(errs);
       return;
     }
-    saveBugReport({ page, issueType, description: description.trim() });
+    setSubmitting(true);
+    const { error } = await saveBugReport({ page, issueType, description: description.trim() });
+    setSubmitting(false);
+    if (error) {
+      setErrors({ description: error });
+      return;
+    }
     setSubmitted(true);
   }
 
@@ -162,13 +169,14 @@ export default function ReportBugPage() {
 
         <button
           type="submit"
-          className="w-full bg-red-500 hover:bg-red-600 text-white font-semibold py-3.5 rounded-xl text-sm transition-colors"
+          disabled={submitting}
+          className="w-full bg-red-500 hover:bg-red-600 text-white font-semibold py-3.5 rounded-xl text-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          Submit Bug Report
+          {submitting ? "Submitting…" : "Submit Bug Report"}
         </button>
 
         <p className="text-xs text-gray-400 dark:text-gray-500 text-center">
-          Bug reports are stored locally on this device during beta.
+          Bug reports are sent securely and reviewed by the founder.
         </p>
       </form>
     </SupportLayout>

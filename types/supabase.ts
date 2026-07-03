@@ -22,6 +22,7 @@ export interface Database {
           device_id: string;
           name: string;
           auth_user_id: string | null;
+          is_admin: boolean;
           created_at: string;
         };
         Insert: {
@@ -34,6 +35,9 @@ export interface Database {
         Update: {
           name?: string;
           auth_user_id?: string | null;
+          // is_admin deliberately omitted — migration 008 revokes UPDATE
+          // privilege on this column for authenticated/anon roles at the
+          // database level, so it is never a valid client-side write.
         };
         Relationships: [];
       };
@@ -211,9 +215,118 @@ export interface Database {
         };
         Relationships: [];
       };
+      feedback_submissions: {
+        Row: {
+          id: string;
+          profile_id: string | null;
+          type: "suggestion" | "positive" | "general";
+          subject: string;
+          message: string;
+          submitted_at: string;
+        };
+        Insert: {
+          id?: string;
+          profile_id?: string | null;
+          type: "suggestion" | "positive" | "general";
+          subject?: string;
+          message: string;
+          submitted_at?: string;
+        };
+        Update: Record<string, never>;
+        Relationships: [];
+      };
+      bug_reports: {
+        Row: {
+          id: string;
+          profile_id: string | null;
+          page: string;
+          issue_type: string;
+          description: string;
+          submitted_at: string;
+        };
+        Insert: {
+          id?: string;
+          profile_id?: string | null;
+          page: string;
+          issue_type: string;
+          description: string;
+          submitted_at?: string;
+        };
+        Update: Record<string, never>;
+        Relationships: [];
+      };
+      feature_requests: {
+        Row: {
+          id: string;
+          profile_id: string | null;
+          feature: string;
+          why: string;
+          submitted_at: string;
+        };
+        Insert: {
+          id?: string;
+          profile_id?: string | null;
+          feature: string;
+          why: string;
+          submitted_at?: string;
+        };
+        Update: Record<string, never>;
+        Relationships: [];
+      };
+      beta_family_applications: {
+        Row: {
+          id: string;
+          profile_id: string | null;
+          parent_name: string;
+          year_group: string;
+          pathway: string;
+          email: string;
+          contact_permission: boolean;
+          submitted_at: string;
+        };
+        Insert: {
+          id?: string;
+          profile_id?: string | null;
+          parent_name: string;
+          year_group: string;
+          pathway: string;
+          email: string;
+          contact_permission?: boolean;
+          submitted_at?: string;
+        };
+        Update: Record<string, never>;
+        Relationships: [];
+      };
+      testimonials: {
+        Row: {
+          id: string;
+          profile_id: string | null;
+          parent_name: string;
+          year_group: string;
+          feedback: string;
+          publish_permission: boolean;
+          submitted_at: string;
+        };
+        Insert: {
+          id?: string;
+          profile_id?: string | null;
+          parent_name: string;
+          year_group: string;
+          feedback: string;
+          publish_permission?: boolean;
+          submitted_at?: string;
+        };
+        Update: Record<string, never>;
+        Relationships: [];
+      };
     };
     Views: Record<string, never>;
-    Functions: Record<string, never>;
+    Functions: {
+      is_current_user_admin: {
+        Args: Record<string, never>;
+        Returns: boolean;
+      };
+    };
     Enums: {
       subject_type: AliSubjectEnum;
       content_difficulty: ContentDifficultyEnum;

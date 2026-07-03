@@ -56,50 +56,71 @@ One worksheet (spreadsheet or structured file — §5 covers format) per subject
 
 ---
 
-## 4. Required metadata fields (every subject)
+## 4. Vocabulary tagging (word + Learning Unit)
 
-Every row needs every one of these before it's ready for import — this table is the same across all three subjects; only the *values* differ per §1–§3 above.
+**Source content:** `data/vocabulary.ts` — 12 real words (`voc-001`–`voc-012`), each with real `synonyms[]`, `antonyms[]`, and `exampleSentence` fields.
+
+**Taxonomy to apply:** `VOCABULARY_COMPETENCY_FRAMEWORK.md` §3 — only the 3 approved competencies (`vocabulary.synonyms`, `vocabulary.antonyms`, `vocabulary.in-context`) are in scope. Unlike VR/English, there is no existing question to re-tag — this pass **authors new MCQ items** from each word's real fields (§4.1 covers exactly how), it does not just apply a mapping to something that already exists in question form.
+
+**Learning Unit — the one genuinely new judgement this subject requires:** every item generated from the same word shares one `learning_unit_id`, using the word's own id (e.g. `voc-001`'s synonym item, antonym item, and in-context item — up to 3 — all get `learning_unit_id: "voc-001"`). Same convention as English's passage grouping, applied to a word instead of a passage — reuses `lib/ali/learningUnit.ts` unchanged (Decision 42).
+
+**Item authoring, per `ALI_VOCABULARY_IMPLEMENTATION_PLAN.md` §1.3:**
+- `vocabulary.synonyms` item: "Which word is closest in meaning to '[word]'?" — correct answer from the real `synonyms[]` array; distractors must be genuinely wrong (not near-synonyms of the correct answer, not synonyms of unrelated tier2/tier3 words that could plausibly confuse rather than test).
+- `vocabulary.antonyms` item: "Which word means the opposite of '[word]'?" — correct answer from the real `antonyms[]` array.
+- `vocabulary.in-context` item: "Which sentence uses '[word]' correctly?" — correct answer is the word's own real `exampleSentence` (or a close paraphrase); distractors are other words' sentences with the target word substituted incorrectly (grammatically plausible but wrong usage, not nonsense).
+
+**Difficulty calibration:** no existing per-word difficulty signal beyond the app's legacy `difficulty` field (`advanced-year4`/`year5-core`/`year5-advanced`/`year6-exam`) and `category` (`tier2`/`tier3`/`literary`) — both are reasonable starting inputs for `content_difficulty`, but neither maps 1:1 (a `tier2` word can still produce a genuinely hard in-context item if the distractor sentences are subtle). Apply the general rubric (`QUESTION_AUTHORING_STANDARD.md` §4.1) per item, not just per word.
+
+**Distractor quality is the real authoring risk for this subject specifically** — unlike VR/Maths/English (where a wrong answer is usually unambiguous), a poorly-chosen MCQ distractor here can make an item unfairly easy (obviously wrong distractors) or unfairly hard (a distractor that's arguably also correct). The second-reader spot check (§6) should pay particular attention to this for Vocabulary.
+
+---
+
+## 5. Required metadata fields (every subject)
+
+Every row needs every one of these before it's ready for import — this table is the same across all four subjects; only the *values* differ per §1–§4 above.
 
 | Field | Source | Notes |
 |---|---|---|
-| `id` | Existing question id in the data file | Never invented — reuse `vr-0xx`/`mth-0xx`/`qa-0xx`/`eng-0xx-qN` exactly |
-| `subject` | Fixed per worksheet (`verbal-reasoning` / `maths` / `english`) | Already valid in `subject_type` post-migration 004 |
-| `skill` | This document's §1–§3 tagging pass | Fine-grained competency code, not the legacy `SkillType` |
+| `id` | Existing question id in the data file, or newly authored (Vocabulary only) | Never invented for VR/Maths/English — reuse `vr-0xx`/`mth-0xx`/`qa-0xx`/`eng-0xx-qN` exactly. Vocabulary items are new (§4) — use `voc-0xx-syn`/`-ant`/`-ctx` per word |
+| `subject` | Fixed per worksheet (`verbal-reasoning` / `maths` / `english` / `vocabulary`) | Already valid in `subject_type` — no migration needed for any of the four |
+| `skill` | This document's §1–§4 tagging pass | Fine-grained competency code, not the legacy `SkillType` |
 | `pathway` | `["gl"]` for all current content | No non-GL adaptive content exists yet for any subject |
 | `content_difficulty` | Tagging pass, per subject's calibration notes | `easy` / `medium` / `hard` / `challenge` |
-| `question_type` | `"multiple-choice"` (VR/Maths using them) or `"short-answer"` (VR/Maths free-numeric) / `"open-response"` (English) | Matches each subject's existing synthetic fixture convention |
-| `estimated_time_seconds` | Tagging pass, per subject's baseline table | VR: §4.5. English: no baseline table exists yet — estimate conservatively (90–150s given passage-reading time) until real timing data exists |
-| `prompt` | The question's existing full content, reshaped into jsonb | `ReasoningQuestion` / `MathsQuestion` / `EnglishComprehensionPrompt` shape respectively |
-| `explanation` | Existing `explanation`/`modelAnswer` field | Required, not nullable |
+| `question_type` | `"multiple-choice"` (VR/Maths/Vocabulary) or `"short-answer"` (VR/Maths free-numeric) / `"open-response"` (English) | Matches each subject's existing synthetic fixture convention |
+| `estimated_time_seconds` | Tagging pass, per subject's baseline table | VR: §4.5. English/Vocabulary: no baseline table exists yet — estimate conservatively (90–150s for English given passage-reading time; ~20–35s for Vocabulary MCQ items) until real timing data exists |
+| `prompt` | The question's existing full content, reshaped into jsonb | `ReasoningQuestion` / `MathsQuestion` / `EnglishComprehensionPrompt` / `VocabularyPrompt` shape respectively |
+| `explanation` | Existing `explanation`/`modelAnswer` field, or newly authored (Vocabulary) | Required, not nullable |
 | `hint` | Existing `hint` field, if present | Nullable |
 | `confidence_weight` | Default `1.00` unless a reviewer has a specific reason to override | Not used by any Slice-1-era logic yet — safe to leave at default |
 | `learning_objective` | Optional, leave blank unless a reviewer wants to add one | Not used by any current logic |
 | `revision_priority` | Default `3` unless a reviewer has a specific reason to override | 1–5 scale |
 | `mastery_threshold` | From `ali_mastery_defaults` by `content_difficulty` (2 for easy/medium, 3 for hard/challenge) unless a reviewer overrides per-question | Per-question override takes precedence over the config table (Decision 10) |
-| `learning_unit_id` | §1–§3 above | `= id` for VR/Maths; shared passage id for English |
+| `learning_unit_id` | §1–§4 above | `= id` for VR/Maths; shared passage id for English; shared word id for Vocabulary |
 | `usage_count` / `avg_success_rate` | Leave as `0` / `null` | Populated by real usage after import, never hand-set |
 
 ---
 
-## 5. Worksheet format
+## 6. Worksheet format
 
-A single spreadsheet (or CSV) per subject, one row per question, columns matching §4's table exactly (so the eventual import script in `ALI_SEEDING_PLAN.md` can map columns directly). `prompt`'s nested structure is the one field that can't be a flat spreadsheet cell — either a JSON-string column, or a small set of sub-columns (`prompt_question`, `prompt_answer`, `prompt_passageText`, etc.) that the import step assembles into the real jsonb shape. Either is acceptable; pick whichever is easier for the tagger to fill in by hand.
-
----
-
-## 6. Quality review steps
-
-1. **Self-check against the standard.** Before submitting a worksheet row as done, the tagger re-reads the relevant standard section (§1–§3 above) and confirms: one primary competency only (never multi-tagged), difficulty matches the calibration notes (not just a gut feeling), `estimated_time_seconds` is in the right ballpark for the competency.
-2. **Independent second-reader spot check.** A reviewer who did not do the original tagging checks a sample — not every row, but enough to catch systematic misunderstandings early: for a worksheet of 10–20 rows (English, or a VR/Maths sub-batch), check at least 5; for the full 52-row VR or 20-row Maths worksheet, check at least 10. The reviewer re-applies §1–§3's rules independently and flags any row where they'd have tagged differently.
-3. **Learning Unit check (English only).** Confirm every question sharing a passage has the identical `learning_unit_id`, and that no two different passages accidentally share one (a passage-linking bug here would let two unrelated passages' questions get shuffled together at selection time — the one failure mode Learning Units exist specifically to prevent).
-4. **Disagreement resolution.** Any row where the second reader disagrees gets discussed and re-tagged by consensus, not overruled unilaterally — if the two of you can't agree, that's a signal the taxonomy itself may need a §1–§3 refinement, not just a tagging fix (the same discipline that produced Decisions 13/33/38 in the first place).
+A single spreadsheet (or CSV) per subject, one row per question, columns matching §5's table exactly (so the eventual import script in `ALI_SEEDING_PLAN.md` can map columns directly). `prompt`'s nested structure is the one field that can't be a flat spreadsheet cell — either a JSON-string column, or a small set of sub-columns (`prompt_question`, `prompt_answer`, `prompt_passageText`, etc.) that the import step assembles into the real jsonb shape. Either is acceptable; pick whichever is easier for the tagger to fill in by hand.
 
 ---
 
-## 7. Sign-off process
+## 7. Quality review steps
 
-- [ ] Every row in the subject's worksheet has passed the self-check (§6.1).
-- [ ] The spot-check sample (§6.2) has been reviewed with zero unresolved disagreements.
-- [ ] (English only) The Learning Unit check (§6.3) is complete.
+1. **Self-check against the standard.** Before submitting a worksheet row as done, the tagger re-reads the relevant standard section (§1–§4 above) and confirms: one primary competency only (never multi-tagged), difficulty matches the calibration notes (not just a gut feeling), `estimated_time_seconds` is in the right ballpark for the competency.
+2. **Independent second-reader spot check.** A reviewer who did not do the original tagging checks a sample — not every row, but enough to catch systematic misunderstandings early: for a worksheet of 10–20 rows (English/Vocabulary, or a VR/Maths sub-batch), check at least 5; for the full 52-row VR or 20-row Maths worksheet, check at least 10. The reviewer re-applies §1–§4's rules independently and flags any row where they'd have tagged differently.
+3. **Learning Unit check (English and Vocabulary).** Confirm every question/item sharing a passage or word has the identical `learning_unit_id`, and that no two different passages/words accidentally share one (a linking bug here would let unrelated content get shuffled together at selection time — the one failure mode Learning Units exist specifically to prevent).
+4. **Distractor quality check (Vocabulary only, in addition to the above).** Per §4's authoring risk note — confirm each MCQ item's wrong options are genuinely wrong, not arguably-also-correct or absurdly-obviously-wrong.
+5. **Disagreement resolution.** Any row where the second reader disagrees gets discussed and re-tagged by consensus, not overruled unilaterally — if the two of you can't agree, that's a signal the taxonomy itself may need a §1–§4 refinement, not just a tagging fix (the same discipline that produced Decisions 13/33/38/43 in the first place).
+
+---
+
+## 8. Sign-off process
+
+- [ ] Every row in the subject's worksheet has passed the self-check (§7.1).
+- [ ] The spot-check sample (§7.2) has been reviewed with zero unresolved disagreements.
+- [ ] (English/Vocabulary) The Learning Unit check (§7.3) is complete.
+- [ ] (Vocabulary) The distractor quality check (§7.4) is complete.
 - [ ] The worksheet is committed or otherwise saved somewhere durable (not just a local unsaved file) before import.
-- [ ] Explicit written sign-off — a message or commit stating "VR / Maths / English worksheet approved for import" — before `ALI_SEEDING_PLAN.md`'s import step runs against it. No worksheet goes into `ali_question_bank` without this step; it's the same "approval before implementation" discipline this project has followed since the very first Blueprint→Validation→Implementation phase.
+- [ ] Explicit written sign-off — a message or commit stating "VR / Maths / English / Vocabulary worksheet approved for import" — before `ALI_SEEDING_PLAN.md`'s import step runs against it. No worksheet goes into `ali_question_bank` without this step; it's the same "approval before implementation" discipline this project has followed since the very first Blueprint→Validation→Implementation phase.

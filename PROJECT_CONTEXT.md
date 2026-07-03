@@ -1,7 +1,9 @@
 # Angel 11+ — Project Context
 
-> Last updated: May 2026  
-> Status: Production platform (Phase 8+)
+> Last updated: 2026-07-03 (Phase 5A — Enterprise Beta Readiness)  
+> Status: Pre-launch beta preparation. Core static platform (English/Maths/Vocabulary/Writing/Reasoning/Voice Reading/Parent Dashboard/PWA) is feature-complete and near launch-ready — see `ENTERPRISE_BETA_READINESS_REPORT.md` for the current independent readiness score. A separate adaptive-learning subsystem, Angel Learning Intelligence (ALI — §13 below), is architecturally complete across 4 subjects but runs entirely on synthetic dev fixtures pending production activation (`ALI_VERSION.md`).
+>
+> This document (and this status line specifically) should be kept current at the end of every phase that materially changes the platform — it was last found significantly stale (dated May 2026, no ALI mention at all) during the independent Foundation Audit that preceded this phase.
 
 ---
 
@@ -153,50 +155,46 @@ POST `/api/writing-feedback`
 
 ---
 
-## 9. Route Overview
+## 9. Route Overview (35 routes total, all confirmed present as of Phase 5A)
 
-| Route | Purpose | Auth required |
-|---|---|---|
-| `/` | Redirect to `/dashboard` | No |
-| `/dashboard` | Main hub, daily mission, XP | No (shows limited state) |
-| `/login` | Magic-link sign-in form | No |
-| `/english` | Lesson list with difficulty filter | No |
-| `/english/[id]` | Full lesson player (passage + questions) | No |
-| `/maths` | Mode selector + full session | No |
-| `/vocabulary` | Flashcard session + word browser | No |
-| `/writing` | Prompt picker + writing pad + AI feedback | No |
-| `/mock-test` | 45-minute timed exam (20 min English + 25 min Maths) | No |
-| `/progress` | Analytics, badges, skill radar | No |
+**Core learning:** `/dashboard` (main hub, daily mission, XP), `/english` + `/english/[id]` (lesson player with `PassagePlayer` voice reading — TTS listen + speech-recognition read-aloud scoring), `/maths`, `/vocabulary` (flashcard self-report), `/writing` (+ AI feedback via `/api/writing-feedback`), `/verbal-reasoning`, `/non-verbal-reasoning`, `/spatial-reasoning`, `/numerical-reasoning`, `/mock-test` (legacy combined timed exam), `/progress`.
 
-All routes work without sign-in. Auth unlocks cross-device progress sync.
+**ALI adaptive practice** (§13): `/mocks` (hub + all static pathway mocks), `/mocks/[pathway]`, `/mocks/adaptive/gl`, `/mocks/adaptive/maths`, `/mocks/adaptive/english`, `/mocks/adaptive/vocabulary`.
+
+**Parent:** `/parent` ("Parent Hub" in navigation — same route, not a separate feature).
+
+**Account & pathways:** `/login` (magic-link), `/pathways`.
+
+**Beta operations:** `/beta`, `/beta-family`, `/feedback`, `/report-bug`, `/feature-request`, `/testimonial` — all five now persist to Supabase (migration 008, Phase 5A), not localStorage-only. `/admin-beta` — founder-only dashboard, gated by real Supabase Authentication + a server-enforced admin flag (`is_current_user_admin()`), **not** the hardcoded PIN this route used before Phase 5A.
+
+**Support/legal:** `/contact`, `/privacy`, `/terms`, `/getting-started`.
+
+All routes work without sign-in except `/admin-beta`. Auth unlocks cross-device progress sync for everything else.
 
 ---
 
 ## 10. Content Library
 
-| Subject | Content | IDs |
+| Subject | Content | Notes |
 |---|---|---|
-| English | 3 graded comprehension passages | `eng-001`, `eng-002`, `eng-003` |
-| Maths Reasoning | ~24 multi-step word problems | `maths-reasoning` |
-| Maths Arithmetic | ~30 quick-fire arithmetic questions | `maths-arithmetic` |
-| Vocabulary | 50+ word flashcard set | `vocab-session` |
-| Writing | 4 prompts (narrative, descriptive, etc.) | `writing-wrt-001` through `writing-wrt-004` |
-| Mock Test | Combined 45-minute exam | `mock-test` |
+| English | 3 graded comprehension passages, 10 questions | `eng-001`–`eng-003`; also the ALI adaptive route's synthetic fixture (5 passages) pending real hand-tagging |
+| Maths | 20 real questions (reasoning + quick arithmetic) | Plus a 16-question ALI synthetic fixture |
+| Vocabulary | 12 real words (flashcard) | Plus a 12-item ALI synthetic fixture (5 fabricated words) for the separate adaptive MCQ mode |
+| Writing | 4 prompts (narrative, descriptive, persuasive) | AI feedback via OpenAI `gpt-4o-mini` |
+| Reasoning | ~50–90+ questions per discipline across Verbal/Non-Verbal/Spatial/Numerical | Modular `data/*-reasoning/` files |
+| Mock Test | Combined legacy 45-minute exam | `mock-test` |
 
-Content is static TypeScript files in `data/`. No CMS.
+Content is static TypeScript files in `data/`. No CMS. **ALI's adaptive question banks (`ali_question_bank`) are a separate, currently-empty layer** — every adaptive route falls back to a synthetic fixture until real hand-tagged content is seeded (`ALI_SEEDING_PLAN.md`).
 
 ---
 
-## 11. Future Roadmap
+## 11. Current Roadmap
 
-| Phase | Feature |
-|---|---|
-| Phase 9 | PWA + installable app (Service Worker, offline shell) |
-| Phase 10 | Parent dashboard (weekly reports, AI insights) |
-| Phase 11 | AI adaptive difficulty (automatic tier promotion) |
-| Phase 12 | Voice reading practice (ElevenLabs / Web Speech API) |
-| Phase 13 | Leaderboard + class system (child-safe usernames) |
-| Phase 14 | Subscription architecture (free / premium / family / school) |
+The items below are the ones actually remaining, per `ALI_VERSION.md` and `ENTERPRISE_BETA_READINESS_REPORT.md` — not a numbered phase list, since this document's prior phase numbering (9–14) was inaccurate (it listed PWA, Parent Dashboard, Adaptive Difficulty, and Voice Reading as unbuilt future work; all four are already shipped, see §9).
+
+1. **ALI production activation** — apply migrations, hand-tag real content for all 4 ALI subjects, seed it, run live validation (`ALI_OPERATIONS_MANUAL.md`).
+2. **Controlled beta with real families** — the actual next milestone once Phase 5A's remediation is verified (`ENTERPRISE_BETA_READINESS_REPORT.md`).
+3. **Longer-term, unscoped:** Writing as a 5th ALI subject, surfacing ALI's Cross-Subject Recommendations/Learning Profiles in a real UI, subscriptions/payments/App Store packaging (explicitly deferred, not part of any near-term plan).
 
 ---
 
@@ -207,3 +205,13 @@ Content is static TypeScript files in `data/`. No CMS.
 - **Pure analytics functions** — `computeAnalytics`, `computeAdaptiveState`, and `computeGamification` have no side effects and are easily unit-testable.
 - **Supabase optional** — the entire app functions without Supabase configured. This enables local development without any backend.
 - **iPad-first layout** — `max-w-2xl` containers, `py-4+` touch targets, no hover-only interactions, no fixed-height viewports that break on Safari.
+
+---
+
+## 13. Angel Learning Intelligence (ALI)
+
+A separate, subject-agnostic adaptive-learning subsystem (`lib/ali/*`, `types/ali/*`, `supabase/migrations/004`–`007`) — not part of this document's original architecture description above, and intentionally not duplicated here. **`ALI_VERSION.md` is the authoritative, currently-accurate description of what ALI does today** — read that file, not this section, for real detail. In short: 4 subjects (Verbal Reasoning, Mathematics, Reading Comprehension, Vocabulary) each get an adaptive practice mode under `/mocks/adaptive/*`, built on a shared, subject-agnostic selection/mastery/weak-competency engine proven not to require redesign for each new subject. Cross-Subject Recommendations and Learner Profiles exist as real, tested, internal-only code (not yet surfaced in any UI). As of this document's last update, ALI's production database migrations are unapplied and every subject runs on synthetic dev fixtures — `ALI_OPERATIONS_MANUAL.md` is the operational handbook for closing that gap.
+
+## 14. Beta Operations Data (Phase 5A)
+
+Feedback, Bug Reports, Feature Requests, Testimonials, and Beta Family Applications are persisted to Supabase (migration 008: `feedback_submissions`, `bug_reports`, `feature_requests`, `testimonials`, `beta_family_applications`), readable only by an authenticated admin (`is_current_user_admin()`, enforced by Postgres Row Level Security — not client-side gating). `/admin-beta` requires real Supabase Authentication sign-in; there is no self-service path to becoming an admin. See `ENTERPRISE_BETA_READINESS_REPORT.md` for the full security rationale.
