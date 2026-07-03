@@ -4,8 +4,9 @@ import { useState, useRef, useCallback, useEffect } from "react";
 import Link from "next/link";
 import {
   ArrowLeft, Clock, CheckCircle, XCircle, ChevronRight,
-  Trophy, AlertCircle, Sparkles,
+  Trophy, AlertCircle, Sparkles, Calculator,
 } from "lucide-react";
+import PremiumLoader from "@/components/PremiumLoader";
 import { mathsSyntheticFixture } from "@/data/ali/mathsSyntheticFixture";
 import { getSupabaseClient } from "@/lib/supabase";
 import { ensureProfile } from "@/lib/supabaseProgress";
@@ -39,7 +40,10 @@ import type { AdaptiveTier } from "@/types/adaptive";
 // this is a single-section adaptive practice session, isolated from the
 // existing app/maths/page.tsx experience (untouched by this phase).
 
-const SECTION = { id: "maths-adaptive", name: "Adaptive Maths Practice", minutes: 12, count: 10 };
+// Angel UX V3 — "Maths Practice" is the only name a student sees; ALI's
+// internal name (SECTION.id, "maths-adaptive") is unchanged and still used
+// for tracking/bridge writes below — this is a presentation-only rename.
+const SECTION = { id: "maths-adaptive", name: "Maths Practice", minutes: 12, count: 10 };
 const XP_REWARD = 80;
 
 // ─── Answer checking (numeric-aware, mirrors app/maths/page.tsx's pattern — duplicated by design, isolation) ─
@@ -95,7 +99,7 @@ export default function AdaptiveMathsMockPage() {
 
     const supabase = getSupabaseClient();
     if (!supabase) {
-      setErrorMessage("Adaptive practice needs a connection that isn't available right now. Please try again shortly.");
+      setErrorMessage("Practice needs a connection that isn't available right now. Please try again shortly.");
       setMode("error");
       return;
     }
@@ -271,20 +275,20 @@ export default function AdaptiveMathsMockPage() {
   if (mode === "intro") {
     return (
       <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
-        <header className="bg-emerald-700 text-white">
+        <header className="bg-blue-700 text-white">
           <div className="max-w-2xl mx-auto px-4 pt-4 pb-6">
-            <Link href="/mocks" className="flex items-center gap-1.5 text-white text-opacity-80 text-sm mb-4 hover:text-opacity-100 transition">
+            <Link href="/mocks" className="flex items-center gap-1.5 text-white/80 text-sm mb-4 hover:text-white transition">
               <ArrowLeft size={16} />
               Back to Mocks
             </Link>
             <div className="flex items-center gap-3 mb-2">
-              <span className="text-xs font-bold bg-white bg-opacity-20 px-2.5 py-1 rounded-lg flex items-center gap-1">
+              <span className="text-xs font-bold bg-white/20 px-2.5 py-1 rounded-lg flex items-center gap-1">
                 <Sparkles size={12} />
-                Adaptive · Beta
+                Personalised
               </span>
-              <h1 className="text-xl font-bold">Adaptive Maths Practice</h1>
+              <h1 className="text-xl font-bold">Maths Practice</h1>
             </div>
-            <p className="text-sm text-white text-opacity-80">
+            <p className="text-sm text-white/80">
               Your questions are chosen for you — harder as you improve, and your weak spots come back around.
             </p>
           </div>
@@ -304,16 +308,16 @@ export default function AdaptiveMathsMockPage() {
               <AlertCircle size={16} className="text-amber-500 shrink-0 mt-0.5" />
               <div className="text-xs text-amber-700 dark:text-amber-300 space-y-1 leading-relaxed">
                 <p className="font-semibold">Before you start</p>
-                <p>No two adaptive practice sessions are the same. This is original practice content.</p>
+                <p>No two practice sessions are the same. This is original practice content.</p>
               </div>
             </div>
           </div>
 
           <button
             onClick={loadAndStart}
-            className="w-full bg-emerald-700 text-white font-semibold py-4 rounded-2xl text-base transition-opacity hover:opacity-90"
+            className="w-full bg-blue-700 text-white font-semibold py-4 rounded-2xl text-base transition-opacity hover:opacity-90"
           >
-            Start Adaptive Practice
+            Start Practice
           </button>
         </main>
       </div>
@@ -321,11 +325,7 @@ export default function AdaptiveMathsMockPage() {
   }
 
   if (mode === "loading") {
-    return (
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-950 flex items-center justify-center">
-        <p className="text-gray-500 dark:text-gray-400 text-sm">Building your adaptive practice session…</p>
-      </div>
-    );
+    return <PremiumLoader message="Getting your questions ready…" icon={Calculator} />;
   }
 
   if (mode === "error") {
@@ -333,7 +333,7 @@ export default function AdaptiveMathsMockPage() {
       <div className="min-h-screen bg-gray-50 dark:bg-gray-950 flex items-center justify-center px-4">
         <div className="text-center max-w-sm">
           <p className="text-gray-700 dark:text-gray-300 mb-4">{errorMessage}</p>
-          <Link href="/mocks" className="text-emerald-600 dark:text-emerald-400 font-medium text-sm">Back to Mocks</Link>
+          <Link href="/mocks" className="text-blue-600 dark:text-blue-400 font-medium text-sm">Back to Mocks</Link>
         </div>
       </div>
     );
@@ -349,7 +349,7 @@ export default function AdaptiveMathsMockPage() {
           <div className="max-w-2xl mx-auto px-4 h-14 flex items-center gap-3">
             <span className="text-sm font-semibold text-gray-900 dark:text-gray-100 flex-1 flex items-center gap-1.5">
               {SECTION.name}
-              <Sparkles size={12} className="text-emerald-500" />
+              <Sparkles size={12} className="text-blue-500" />
             </span>
             <div className={`flex items-center gap-1 text-sm font-bold ${isLow ? "text-red-500" : "text-gray-700 dark:text-gray-300"}`}>
               <Clock size={15} />
@@ -357,13 +357,13 @@ export default function AdaptiveMathsMockPage() {
             </div>
           </div>
           <div className="h-1 bg-gray-100 dark:bg-gray-800">
-            <div className="h-1 transition-all duration-300 bg-emerald-700" style={{ width: `${progress}%` }} />
+            <div className="h-1 transition-all duration-300 bg-blue-700" style={{ width: `${progress}%` }} />
           </div>
         </header>
 
         {usingSyntheticFixture && (
           <div className="bg-amber-50 dark:bg-amber-950 text-amber-700 dark:text-amber-300 text-xs text-center py-1.5">
-            Sample practice data — real hand-tagged questions coming soon
+            Sample practice content — more questions coming soon
           </div>
         )}
 
@@ -409,14 +409,14 @@ export default function AdaptiveMathsMockPage() {
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && input.trim() && submitAnswer()}
                 placeholder="Type your answer…"
-                className="w-full rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 px-4 py-3.5 text-base text-gray-900 dark:text-gray-100 placeholder-gray-300 dark:placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-emerald-200 focus:border-emerald-300"
+                className="w-full rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 px-4 py-3.5 text-base text-gray-900 dark:text-gray-100 placeholder-gray-300 dark:placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-300"
               />
               <button
                 onClick={submitAnswer}
                 disabled={!input.trim()}
                 className={`w-full py-3.5 rounded-2xl font-semibold text-sm transition-all ${
                   input.trim()
-                    ? "bg-emerald-700 text-white hover:opacity-90"
+                    ? "bg-blue-700 text-white hover:opacity-90"
                     : "bg-gray-100 dark:bg-gray-800 text-gray-400 dark:text-gray-500 cursor-not-allowed"
                 }`}
               >
@@ -437,10 +437,10 @@ export default function AdaptiveMathsMockPage() {
 
     return (
       <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
-        <header className="bg-emerald-700 text-white">
+        <header className="bg-blue-700 text-white">
           <div className="max-w-2xl mx-auto px-4 pt-4 pb-6">
             <h1 className="text-lg font-bold mb-0.5">Practice Complete</h1>
-            <p className="text-sm text-white text-opacity-80">Adaptive Maths Practice</p>
+            <p className="text-sm text-white/80">{SECTION.name}</p>
           </div>
         </header>
 
@@ -466,7 +466,7 @@ export default function AdaptiveMathsMockPage() {
             </Link>
             <button
               onClick={loadAndStart}
-              className="bg-emerald-700 text-white font-semibold py-3.5 rounded-2xl text-sm hover:opacity-90 transition-opacity"
+              className="bg-blue-700 text-white font-semibold py-3.5 rounded-2xl text-sm hover:opacity-90 transition-opacity"
             >
               New Session
             </button>

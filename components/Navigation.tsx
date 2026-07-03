@@ -14,11 +14,8 @@ import {
   User,
   Users,
   MapPin,
-  Hash,
   Target,
   Puzzle,
-  Shapes,
-  Compass,
   HelpCircle,
   MessageSquare,
   Mail,
@@ -39,6 +36,12 @@ type NavSection = {
   items: NavItem[];
 };
 
+// Angel UX V3 (ANGEL_NAVIGATION_ARCHITECTURE.md §2) — Reasoning's four
+// disciplines collapse into one "Reasoning Hub" entry (app/reasoning/page.tsx)
+// rather than four peer-weighted links; "Exams" is renamed "Assessment" with
+// "Practice" replacing "Mock Tests" (less exam-anxiety framing for a 9-11
+// year old audience, and the more accurate word now that /mocks also hosts
+// ALI's practice modes). The four reasoning routes themselves are unchanged.
 const navSections: NavSection[] = [
   {
     label: "Learning",
@@ -54,16 +57,13 @@ const navSections: NavSection[] = [
   {
     label: "Reasoning",
     items: [
-      { href: "/verbal-reasoning", label: "Verbal Reasoning", icon: Puzzle },
-      { href: "/non-verbal-reasoning", label: "Non-Verbal", icon: Shapes },
-      { href: "/spatial-reasoning", label: "Spatial", icon: Compass },
-      { href: "/numerical-reasoning", label: "Numerical", icon: Hash },
+      { href: "/reasoning", label: "Reasoning Hub", icon: Puzzle },
     ],
   },
   {
-    label: "Exams",
+    label: "Assessment",
     items: [
-      { href: "/mocks", label: "Mock Tests", icon: Target },
+      { href: "/mocks", label: "Practice", icon: Target },
       { href: "/pathways", label: "Exam Pathways", icon: MapPin },
     ],
   },
@@ -73,7 +73,6 @@ const parentItem: NavItem = {
   href: "/parent",
   label: "Parent Hub",
   icon: Users,
-  badge: "Beta",
 };
 
 const supportItems: NavItem[] = [
@@ -87,7 +86,7 @@ const mobileNavItems = [
   { href: "/dashboard", label: "Home", icon: LayoutDashboard },
   { href: "/english", label: "English", icon: BookOpen },
   { href: "/maths", label: "Maths", icon: Calculator },
-  { href: "/mocks", label: "Exams", icon: Target },
+  { href: "/mocks", label: "Practice", icon: Target },
   { href: "/progress", label: "Progress", icon: BarChart2 },
 ];
 
@@ -155,10 +154,10 @@ export default function Navigation() {
             </div>
           ))}
 
-          {/* Parent Area — separated at bottom of nav list */}
+          {/* Family — Parent Hub, always separated from student learning items */}
           <div className="mt-3 pt-3 border-t border-gray-100 dark:border-gray-800">
             <p className="px-3 pb-1.5 text-[10px] font-bold uppercase tracking-widest text-gray-300 dark:text-gray-600">
-              Parent Area
+              Family
             </p>
             <SidebarLink item={parentItem} pathname={pathname} />
           </div>

@@ -13,9 +13,6 @@ import {
   Star,
   MapPin,
   Puzzle,
-  Shapes,
-  Compass,
-  Hash,
   Play,
   CheckCircle,
   Trophy,
@@ -92,40 +89,18 @@ const coreSubjects = [
   },
 ];
 
-const reasoningSubjects = [
-  {
-    href: "/verbal-reasoning",
-    title: "Verbal Reasoning",
-    description: "Word analogies, letter codes, hidden words & sequences.",
-    icon: Puzzle,
-    color: "violet" as const,
-    badge: "GL · CEM · ISEB",
-  },
-  {
-    href: "/non-verbal-reasoning",
-    title: "Non-Verbal Reasoning",
-    description: "Pattern grids, rotation, reflection & symbol sequences.",
-    icon: Shapes,
-    color: "cyan" as const,
-    badge: "GL · ISEB",
-  },
-  {
-    href: "/spatial-reasoning",
-    title: "Spatial Reasoning",
-    description: "Paper folding, 3D shapes, symmetry & compass directions.",
-    icon: Compass,
-    color: "teal" as const,
-    badge: "Independent",
-  },
-  {
-    href: "/numerical-reasoning",
-    title: "Numerical Reasoning",
-    description: "Number patterns, ratio, averages & data interpretation.",
-    icon: Hash,
-    color: "rose" as const,
-    badge: "CEM · GL · ISEB",
-  },
-];
+// Angel UX V3 — the 4 reasoning disciplines are no longer listed
+// individually on the dashboard (previously 4 more subject cards below the
+// 6 core ones — 10 cards on one screen). They collapse into one Reasoning
+// Hub card, mirroring the nav collapse (ANGEL_NAVIGATION_ARCHITECTURE.md §2).
+const reasoningHub = {
+  href: "/reasoning",
+  title: "Reasoning",
+  description: "Verbal, Non-Verbal, Spatial & Numerical — required for GL, CEM, ISEB and more.",
+  icon: Puzzle,
+  color: "violet" as const,
+  badge: "4 disciplines",
+};
 
 // ─── Mission priority styles ───────────────────────────────────────────────────
 
@@ -442,19 +417,9 @@ export default function DashboardPage() {
             ))}
           </div>
 
-          {/* Reasoning Skills */}
-          <div className="mt-7 mb-4">
-            <h3 className="text-gray-900 dark:text-gray-100 font-bold text-lg">
-              Reasoning Skills
-            </h3>
-            <p className="text-gray-400 dark:text-gray-500 text-sm mt-0.5">
-              Required for GL, CEM, ISEB and many independent school pathways
-            </p>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {reasoningSubjects.map((subject) => (
-              <SubjectCard key={subject.href} {...subject} />
-            ))}
+          {/* Reasoning Hub — one card, not four (Angel UX V3) */}
+          <div className="mt-7">
+            <SubjectCard {...reasoningHub} />
           </div>
         </section>
 

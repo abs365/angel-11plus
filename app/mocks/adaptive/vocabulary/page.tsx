@@ -4,8 +4,9 @@ import { useState, useRef } from "react";
 import Link from "next/link";
 import {
   ArrowLeft, CheckCircle, XCircle, ChevronRight,
-  Trophy, AlertCircle, Sparkles,
+  Trophy, AlertCircle, Sparkles, BookMarked,
 } from "lucide-react";
+import PremiumLoader from "@/components/PremiumLoader";
 import { vocabularySyntheticFixture } from "@/data/ali/vocabularySyntheticFixture";
 import { getSupabaseClient } from "@/lib/supabase";
 import { ensureProfile } from "@/lib/supabaseProgress";
@@ -73,7 +74,7 @@ export default function AdaptiveVocabularyMockPage() {
 
     const supabase = getSupabaseClient();
     if (!supabase) {
-      setErrorMessage("Adaptive practice needs a connection that isn't available right now. Please try again shortly.");
+      setErrorMessage("Practice needs a connection that isn't available right now. Please try again shortly.");
       setMode("error");
       return;
     }
@@ -210,20 +211,20 @@ export default function AdaptiveVocabularyMockPage() {
   if (mode === "intro") {
     return (
       <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
-        <header className="bg-teal-700 text-white">
+        <header className="bg-emerald-700 text-white">
           <div className="max-w-2xl mx-auto px-4 pt-4 pb-6">
-            <Link href="/mocks" className="flex items-center gap-1.5 text-white text-opacity-80 text-sm mb-4 hover:text-opacity-100 transition">
+            <Link href="/mocks" className="flex items-center gap-1.5 text-white/80 text-sm mb-4 hover:text-white transition">
               <ArrowLeft size={16} />
               Back to Mocks
             </Link>
             <div className="flex items-center gap-3 mb-2">
-              <span className="text-xs font-bold bg-white bg-opacity-20 px-2.5 py-1 rounded-lg flex items-center gap-1">
+              <span className="text-xs font-bold bg-white/20 px-2.5 py-1 rounded-lg flex items-center gap-1">
                 <Sparkles size={12} />
-                Adaptive · Beta
+                Personalised
               </span>
-              <h1 className="text-xl font-bold">Adaptive Vocabulary Practice</h1>
+              <h1 className="text-xl font-bold">Vocabulary Practice</h1>
             </div>
-            <p className="text-sm text-white text-opacity-80">
+            <p className="text-sm text-white/80">
               A word is chosen for you every time — your weak spots in synonyms, antonyms and context come back around intelligently.
             </p>
           </div>
@@ -246,9 +247,9 @@ export default function AdaptiveVocabularyMockPage() {
 
           <button
             onClick={loadAndStart}
-            className="w-full bg-teal-700 text-white font-semibold py-4 rounded-2xl text-base transition-opacity hover:opacity-90"
+            className="w-full bg-emerald-700 text-white font-semibold py-4 rounded-2xl text-base transition-opacity hover:opacity-90"
           >
-            Start Adaptive Practice
+            Start Practice
           </button>
         </main>
       </div>
@@ -256,11 +257,7 @@ export default function AdaptiveVocabularyMockPage() {
   }
 
   if (mode === "loading") {
-    return (
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-950 flex items-center justify-center">
-        <p className="text-gray-500 dark:text-gray-400 text-sm">Choosing your word…</p>
-      </div>
-    );
+    return <PremiumLoader message="Picking today's word…" icon={BookMarked} />;
   }
 
   if (mode === "error") {
@@ -268,7 +265,7 @@ export default function AdaptiveVocabularyMockPage() {
       <div className="min-h-screen bg-gray-50 dark:bg-gray-950 flex items-center justify-center px-4">
         <div className="text-center max-w-sm">
           <p className="text-gray-700 dark:text-gray-300 mb-4">{errorMessage}</p>
-          <Link href="/mocks" className="text-teal-600 dark:text-teal-400 font-medium text-sm">Back to Mocks</Link>
+          <Link href="/mocks" className="text-emerald-600 dark:text-emerald-400 font-medium text-sm">Back to Mocks</Link>
         </div>
       </div>
     );
@@ -282,17 +279,17 @@ export default function AdaptiveVocabularyMockPage() {
           <div className="max-w-2xl mx-auto px-4 h-14 flex items-center gap-3">
             <span className="text-sm font-semibold text-gray-900 dark:text-gray-100 flex-1 flex items-center gap-1.5">
               {word}
-              <Sparkles size={12} className="text-teal-500" />
+              <Sparkles size={12} className="text-emerald-500" />
             </span>
           </div>
           <div className="h-1 bg-gray-100 dark:bg-gray-800">
-            <div className="h-1 transition-all duration-300 bg-teal-700" style={{ width: `${progress}%` }} />
+            <div className="h-1 transition-all duration-300 bg-emerald-700" style={{ width: `${progress}%` }} />
           </div>
         </header>
 
         {usingSyntheticFixture && (
           <div className="bg-amber-50 dark:bg-amber-950 text-amber-700 dark:text-amber-300 text-xs text-center py-1.5">
-            Sample practice data — real hand-tagged words coming soon
+            Sample practice content — more words coming soon
           </div>
         )}
 
@@ -320,7 +317,7 @@ export default function AdaptiveVocabularyMockPage() {
                   key={option}
                   onClick={() => submitAnswer(option)}
                   disabled={answered}
-                  className={`text-left rounded-xl border px-4 py-3.5 text-sm font-medium transition-colors ${styling} ${!answered ? "hover:border-teal-300" : ""}`}
+                  className={`text-left rounded-xl border px-4 py-3.5 text-sm font-medium transition-colors ${styling} ${!answered ? "hover:border-emerald-300" : ""}`}
                 >
                   {option}
                 </button>
@@ -343,7 +340,7 @@ export default function AdaptiveVocabularyMockPage() {
               <p className="text-sm text-gray-600 dark:text-gray-400">{currentItem.bankQuestion.explanation}</p>
               <button
                 onClick={nextItem}
-                className="w-full mt-4 flex items-center justify-center gap-2 py-3 rounded-xl font-semibold text-sm transition-opacity hover:opacity-90 bg-teal-700 text-white"
+                className="w-full mt-4 flex items-center justify-center gap-2 py-3 rounded-xl font-semibold text-sm transition-opacity hover:opacity-90 bg-emerald-700 text-white"
               >
                 {itemIdx + 1 < items.length ? "Next Question" : "See Results"}
                 <ChevronRight size={16} />
@@ -362,10 +359,10 @@ export default function AdaptiveVocabularyMockPage() {
 
     return (
       <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
-        <header className="bg-teal-700 text-white">
+        <header className="bg-emerald-700 text-white">
           <div className="max-w-2xl mx-auto px-4 pt-4 pb-6">
             <h1 className="text-lg font-bold mb-0.5">Practice Complete</h1>
-            <p className="text-sm text-white text-opacity-80">Adaptive Vocabulary Practice — {word}</p>
+            <p className="text-sm text-white/80">Vocabulary Practice — {word}</p>
           </div>
         </header>
 
@@ -390,7 +387,7 @@ export default function AdaptiveVocabularyMockPage() {
             </Link>
             <button
               onClick={loadAndStart}
-              className="bg-teal-700 text-white font-semibold py-3.5 rounded-2xl text-sm hover:opacity-90 transition-opacity"
+              className="bg-emerald-700 text-white font-semibold py-3.5 rounded-2xl text-sm hover:opacity-90 transition-opacity"
             >
               New Session
             </button>

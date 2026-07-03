@@ -111,17 +111,19 @@ export default function MocksPage() {
           </p>
         </div>
 
-        {/* Adaptive Practice entry point — new, isolated from the mock system below (Angel Learning Intelligence, Slice 1) */}
+        {/* Recommended Practice — Angel UX V3: ALI is invisible here (ANGEL_UX_V3_STRATEGY.md §3).
+            Each card links to a practice route whose selection quietly adapts to the
+            student; nothing on this page says "adaptive," "beta," or names the mechanism. */}
         <section className="space-y-3">
-          <h2 className="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">New: Adaptive Practice</h2>
-          <div className="rounded-2xl border border-blue-100 dark:border-blue-900 bg-blue-50 dark:bg-blue-950 p-5">
+          <h2 className="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">Recommended Practice</h2>
+          <div className="rounded-2xl border border-violet-100 dark:border-violet-900 bg-violet-50 dark:bg-violet-950 p-5">
             <div className="flex items-start justify-between mb-3">
               <div className="flex items-center gap-2.5">
-                <span className="text-xs font-bold px-2.5 py-1 rounded-lg bg-blue-700 text-white flex items-center gap-1">
+                <span className="text-xs font-bold px-2.5 py-1 rounded-lg bg-violet-700 text-white flex items-center gap-1">
                   <Sparkles size={12} />
-                  Beta
+                  Personalised
                 </span>
-                <h3 className="text-base font-bold text-gray-900 dark:text-gray-100">GL Adaptive Practice</h3>
+                <h3 className="text-base font-bold text-gray-900 dark:text-gray-100">GL Verbal Reasoning</h3>
               </div>
               <div className="flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400">
                 <Clock size={13} />
@@ -129,26 +131,25 @@ export default function MocksPage() {
               </div>
             </div>
             <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed mb-4">
-              Your Verbal Reasoning questions are chosen for you every time — no two mocks are identical, and your weak spots come back around intelligently.
+              Your Verbal Reasoning questions are chosen for you every time — no two sessions are identical, and your weak spots come back around intelligently.
             </p>
             <Link
               href="/mocks/adaptive/gl"
-              className="inline-flex items-center gap-1.5 text-sm font-semibold px-4 py-2 rounded-xl bg-blue-700 hover:bg-blue-800 text-white transition-colors"
+              className="inline-flex items-center gap-1.5 text-sm font-semibold px-4 py-2 rounded-xl bg-violet-700 hover:bg-violet-800 text-white transition-colors"
             >
               <Play size={14} />
-              Try Adaptive Practice
+              Start Practice
             </Link>
           </div>
 
-          {/* Phase ALI 2.0 — Mathematics, the second ALI-covered subject */}
-          <div className="rounded-2xl border border-emerald-100 dark:border-emerald-900 bg-emerald-50 dark:bg-emerald-950 p-5">
+          <div className="rounded-2xl border border-blue-100 dark:border-blue-900 bg-blue-50 dark:bg-blue-950 p-5">
             <div className="flex items-start justify-between mb-3">
               <div className="flex items-center gap-2.5">
-                <span className="text-xs font-bold px-2.5 py-1 rounded-lg bg-emerald-700 text-white flex items-center gap-1">
+                <span className="text-xs font-bold px-2.5 py-1 rounded-lg bg-blue-700 text-white flex items-center gap-1">
                   <Sparkles size={12} />
-                  Beta
+                  Personalised
                 </span>
-                <h3 className="text-base font-bold text-gray-900 dark:text-gray-100">Adaptive Maths Practice</h3>
+                <h3 className="text-base font-bold text-gray-900 dark:text-gray-100">Maths Practice</h3>
               </div>
               <div className="flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400">
                 <Clock size={13} />
@@ -160,22 +161,21 @@ export default function MocksPage() {
             </p>
             <Link
               href="/mocks/adaptive/maths"
-              className="inline-flex items-center gap-1.5 text-sm font-semibold px-4 py-2 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white transition-colors"
+              className="inline-flex items-center gap-1.5 text-sm font-semibold px-4 py-2 rounded-xl bg-blue-700 hover:bg-blue-800 text-white transition-colors"
             >
               <Play size={14} />
-              Try Adaptive Practice
+              Start Practice
             </Link>
           </div>
 
-          {/* Phase ALI 2.1 — Reading Comprehension, the third ALI-covered subject */}
           <div className="rounded-2xl border border-purple-100 dark:border-purple-900 bg-purple-50 dark:bg-purple-950 p-5">
             <div className="flex items-start justify-between mb-3">
               <div className="flex items-center gap-2.5">
                 <span className="text-xs font-bold px-2.5 py-1 rounded-lg bg-purple-700 text-white flex items-center gap-1">
                   <Sparkles size={12} />
-                  Beta
+                  Personalised
                 </span>
-                <h3 className="text-base font-bold text-gray-900 dark:text-gray-100">Adaptive Reading Comprehension</h3>
+                <h3 className="text-base font-bold text-gray-900 dark:text-gray-100">Reading Practice</h3>
               </div>
               <div className="flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400">
                 <Clock size={13} />
@@ -190,19 +190,18 @@ export default function MocksPage() {
               className="inline-flex items-center gap-1.5 text-sm font-semibold px-4 py-2 rounded-xl bg-purple-700 hover:bg-purple-800 text-white transition-colors"
             >
               <Play size={14} />
-              Try Adaptive Practice
+              Start Practice
             </Link>
           </div>
 
-          {/* Phase ALI 2.2 — Vocabulary, the fourth ALI-covered subject */}
-          <div className="rounded-2xl border border-teal-100 dark:border-teal-900 bg-teal-50 dark:bg-teal-950 p-5">
+          <div className="rounded-2xl border border-emerald-100 dark:border-emerald-900 bg-emerald-50 dark:bg-emerald-950 p-5">
             <div className="flex items-start justify-between mb-3">
               <div className="flex items-center gap-2.5">
-                <span className="text-xs font-bold px-2.5 py-1 rounded-lg bg-teal-700 text-white flex items-center gap-1">
+                <span className="text-xs font-bold px-2.5 py-1 rounded-lg bg-emerald-700 text-white flex items-center gap-1">
                   <Sparkles size={12} />
-                  Beta
+                  Personalised
                 </span>
-                <h3 className="text-base font-bold text-gray-900 dark:text-gray-100">Adaptive Vocabulary Practice</h3>
+                <h3 className="text-base font-bold text-gray-900 dark:text-gray-100">Vocabulary Practice</h3>
               </div>
               <div className="flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400">
                 <Clock size={13} />
@@ -214,10 +213,10 @@ export default function MocksPage() {
             </p>
             <Link
               href="/mocks/adaptive/vocabulary"
-              className="inline-flex items-center gap-1.5 text-sm font-semibold px-4 py-2 rounded-xl bg-teal-700 hover:bg-teal-800 text-white transition-colors"
+              className="inline-flex items-center gap-1.5 text-sm font-semibold px-4 py-2 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white transition-colors"
             >
               <Play size={14} />
-              Try Adaptive Practice
+              Start Practice
             </Link>
           </div>
         </section>

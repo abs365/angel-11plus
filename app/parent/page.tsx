@@ -21,9 +21,9 @@ import {
   CheckCircle,
   Info,
   MapPin,
-  Brain,
-  Eye,
-  Box,
+  Puzzle,
+  Shapes,
+  Compass,
   Hash,
   FileText,
   Play,
@@ -50,9 +50,13 @@ const SUBJECT_ICONS: Record<string, React.ComponentType<{ size?: number; classNa
   vocabulary: BookMarked,
   writing: Pencil,
   "mock-test": ClipboardList,
-  "verbal-reasoning": Brain,
-  "non-verbal-reasoning": Eye,
-  "spatial-reasoning": Box,
+  // Aligned to the canonical subject identity table — ANGEL_DESIGN_LANGUAGE.md §2.
+  // This previously used Brain/Eye/Box, diverging from Navigation.tsx/dashboard's
+  // Puzzle/Shapes/Compass for the same three subjects — a real inconsistency,
+  // corrected here rather than left as a second, competing icon set.
+  "verbal-reasoning": Puzzle,
+  "non-verbal-reasoning": Shapes,
+  "spatial-reasoning": Compass,
   "numerical-reasoning": Hash,
 };
 
@@ -310,7 +314,7 @@ export default function ParentDashboardPage() {
                 {report.subjects
                   .filter((s) => ["verbal-reasoning", "non-verbal-reasoning", "spatial-reasoning", "numerical-reasoning"].includes(s.subject))
                   .map((s) => {
-                    const Icon = SUBJECT_ICONS[s.subject] ?? Brain;
+                    const Icon = SUBJECT_ICONS[s.subject] ?? Puzzle;
                     const colors = SUBJECT_COLORS[s.subject] ?? { bar: "bg-gray-500", bg: "bg-gray-50 dark:bg-gray-800", text: "text-gray-700 dark:text-gray-300" };
                     const sl = statusLabel(s.status);
                     return (

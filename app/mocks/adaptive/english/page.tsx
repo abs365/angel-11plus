@@ -5,8 +5,9 @@ import Link from "next/link";
 import dynamic from "next/dynamic";
 import {
   ArrowLeft, Clock, CheckCircle, ChevronDown, ChevronUp,
-  Lightbulb, Trophy, AlertCircle, Sparkles,
+  Lightbulb, Trophy, AlertCircle, Sparkles, BookOpen,
 } from "lucide-react";
+import PremiumLoader from "@/components/PremiumLoader";
 import { englishSyntheticFixture } from "@/data/ali/englishSyntheticFixture";
 import { getSupabaseClient } from "@/lib/supabase";
 import { ensureProfile } from "@/lib/supabaseProgress";
@@ -116,7 +117,7 @@ export default function AdaptiveEnglishMockPage() {
 
     const supabase = getSupabaseClient();
     if (!supabase) {
-      setErrorMessage("Adaptive practice needs a connection that isn't available right now. Please try again shortly.");
+      setErrorMessage("Practice needs a connection that isn't available right now. Please try again shortly.");
       setMode("error");
       return;
     }
@@ -267,18 +268,18 @@ export default function AdaptiveEnglishMockPage() {
       <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
         <header className="bg-purple-700 text-white">
           <div className="max-w-2xl mx-auto px-4 pt-4 pb-6">
-            <Link href="/mocks" className="flex items-center gap-1.5 text-white text-opacity-80 text-sm mb-4 hover:text-opacity-100 transition">
+            <Link href="/mocks" className="flex items-center gap-1.5 text-white/80 text-sm mb-4 hover:text-white transition">
               <ArrowLeft size={16} />
               Back to Mocks
             </Link>
             <div className="flex items-center gap-3 mb-2">
-              <span className="text-xs font-bold bg-white bg-opacity-20 px-2.5 py-1 rounded-lg flex items-center gap-1">
+              <span className="text-xs font-bold bg-white/20 px-2.5 py-1 rounded-lg flex items-center gap-1">
                 <Sparkles size={12} />
-                Adaptive · Beta
+                Personalised
               </span>
-              <h1 className="text-xl font-bold">Adaptive Reading Comprehension</h1>
+              <h1 className="text-xl font-bold">Reading Practice</h1>
             </div>
-            <p className="text-sm text-white text-opacity-80">
+            <p className="text-sm text-white/80">
               A passage is chosen for you every time — your weak spots in inference and vocabulary come back around intelligently.
             </p>
           </div>
@@ -307,7 +308,7 @@ export default function AdaptiveEnglishMockPage() {
             onClick={loadAndStart}
             className="w-full bg-purple-700 text-white font-semibold py-4 rounded-2xl text-base transition-opacity hover:opacity-90"
           >
-            Start Adaptive Practice
+            Start Practice
           </button>
         </main>
       </div>
@@ -315,11 +316,7 @@ export default function AdaptiveEnglishMockPage() {
   }
 
   if (mode === "loading") {
-    return (
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-950 flex items-center justify-center">
-        <p className="text-gray-500 dark:text-gray-400 text-sm">Choosing your passage…</p>
-      </div>
-    );
+    return <PremiumLoader message="Finding the perfect passage…" icon={BookOpen} />;
   }
 
   if (mode === "error") {
@@ -339,7 +336,7 @@ export default function AdaptiveEnglishMockPage() {
         <header className="bg-white dark:bg-gray-900 border-b border-gray-100 dark:border-gray-800 sticky top-0 z-20">
           <div className="max-w-2xl mx-auto px-4 h-14 flex items-center gap-3">
             <span className="text-sm font-semibold text-gray-900 dark:text-gray-100 flex-1 flex items-center gap-1.5">
-              Adaptive Reading Comprehension
+              Reading Practice
               <Sparkles size={12} className="text-purple-500" />
             </span>
           </div>
@@ -347,7 +344,7 @@ export default function AdaptiveEnglishMockPage() {
 
         {usingSyntheticFixture && (
           <div className="bg-amber-50 dark:bg-amber-950 text-amber-700 dark:text-amber-300 text-xs text-center py-1.5">
-            Sample practice data — real hand-tagged passages coming soon
+            Sample practice content — more passages coming soon
           </div>
         )}
 
@@ -452,7 +449,7 @@ export default function AdaptiveEnglishMockPage() {
         <header className="bg-purple-700 text-white">
           <div className="max-w-2xl mx-auto px-4 pt-4 pb-6">
             <h1 className="text-lg font-bold mb-0.5">Practice Complete</h1>
-            <p className="text-sm text-white text-opacity-80">Adaptive Reading Comprehension</p>
+            <p className="text-sm text-white/80">Reading Practice</p>
           </div>
         </header>
 
