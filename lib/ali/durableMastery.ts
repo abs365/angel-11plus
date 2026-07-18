@@ -78,3 +78,16 @@ export function evaluateDurableMastery(
 
   return true;
 }
+
+/**
+ * Work Package WP-12 — the exact filter Parent Reporting's `durablyMastered`
+ * field needs (AIW-001 §9): competency codes with a real, evaluated
+ * `durable: true` record. A separate, tiny pure function rather than
+ * inlining this filter at the call site, so the one real rule ("durable
+ * means durable: true, nothing else") lives in one place.
+ */
+export function filterDurablyMastered(
+  records: { competencyCode: string; durable: boolean }[]
+): string[] {
+  return records.filter((r) => r.durable).map((r) => r.competencyCode);
+}

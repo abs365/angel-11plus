@@ -6,6 +6,9 @@ import type { CompetencyParentSummary, CompetencySummaryItem } from "@/types/ali
 import { XP_MILESTONES, BADGE_DEFINITIONS } from "./gamification";
 import { computeAdaptiveProfile } from "./adaptiveDifficulty";
 import { competencyLabel } from "./ali/labels";
+import { filterDurablyMastered } from "./ali/durableMastery";
+import { generateExplanation } from "./ali/explainability";
+import type { RecommendationCandidate } from "@/types/ali/recommendationOrchestration";
 
 // ─── ALI competency-first summaries (Phase ALI 1.4) ────────────────────────────
 // "Only enhance subjects that currently have ALI support" — a subject only
@@ -384,7 +387,17 @@ function getWeeklySessions(p: UserProgress): number {
 export function computeParentReport(
   p: UserProgress,
   report: AnalyticsReport,
-  gamification: GamificationState
+  gamification: GamificationState,
+  // ─── Work Package WP-12 (Implementation Programme) — both optional and
+  // default to the honest "no real data source yet" state, so the one
+  // existing call site (app/parent/page.tsx) needs no change at all.
+  // Neither DurableMasteryRecord persistence nor a live
+  // RecommendationCandidate pipeline exists in the running app yet (WP-07/
+  // WP-09 built the pure logic, not the I/O) — these parameters exist so
+  // computeParentReport() is ready to receive real data the moment either
+  // does, without a further signature change.
+  durableMasteryRecords: { competencyCode: string; durable: boolean }[] = [],
+  topRecommendationCandidate?: RecommendationCandidate
 ): ParentReport {
   const profile = computeAdaptiveProfile(p, report);
   const readiness = getExamReadiness(p, report, profile.overallConfidence);
@@ -410,5 +423,12 @@ export function computeParentReport(
     hasEnoughData: report.totalSessions >= 1,
     subjectConfidence: profile.subjectConfidence,
     competencySummaries: buildCompetencySummaries(p, report),
+    durablyMastered: filterDurablyMastered(durableMasteryRecords),
+    recommendationExplanation: topRecommendationCandidate
+      ? generateExplanation(topRecommendationCandidate, "parent").text
+      : undefined,
+    // No real Wellbeing signal computation exists anywhere yet (AEP-005
+    // §13, WP-09's own honest scoping) — always null, never fabricated.
+    wellbeingSignal: null,
   };
 }
