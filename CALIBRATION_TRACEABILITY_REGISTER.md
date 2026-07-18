@@ -12,7 +12,7 @@
 |---|---|
 | **Constant name** | `GUESSABLE_CONFIDENCE_WEIGHT` |
 | **Current value** | `0.85` |
-| **Rationale** | Below this `confidence_weight`, a question is treated as guessable enough that repetition alone cannot justify High confidence (AEP-005 §6's "Low Confidence... easily guessable format" criterion). 0.85 was chosen as a conservative cutoff — closer to 1.00 (fully diagnostic) than to 0.50 (a coin-flip-guessable format) — without a real distribution of confidence_weight values across the live question bank to calibrate against yet. |
+| **Rationale** | Below this `confidence_weight`, evidence caps at **Low** confidence outright, regardless of how many times the mastery threshold is met (AEP-005 §6's "Low Confidence... easily guessable format" criterion) — corrected during WP-06 cross-verification; the original WP-05 implementation capped this case at Moderate, which would have let a guessable-format-only result incorrectly pass the WP-06 Mastery Validation gate. 0.85 was chosen as a conservative cutoff — closer to 1.00 (fully diagnostic) than to 0.50 (a coin-flip-guessable format) — without a real distribution of confidence_weight values across the live question bank to calibrate against yet. |
 | **Owner** | Founder + first implementation engineer, jointly (per `EAW-005` §4.1) |
 | **Validation status** | Provisional — not validated against real usage data |
 | **Review trigger** | Before Confidence Processing output is surfaced in any learner- or parent-facing feature (per `EAW-005` §4.1's original milestone: "before Confidence Processing ships to production") |

@@ -23,7 +23,7 @@ import type {
  * production"). This is that assignment being exercised, not skipped.
  */
 
-/** Below this confidenceWeight, a question is treated as guessable enough that no amount of repetition alone reaches High confidence (AEP-005 §6's "Low Confidence... low-confidence_weight (easily guessable) format" criterion). Provisional. */
+/** Below this confidenceWeight, a question is treated as guessable enough that evidence from it caps at Low confidence regardless of how many times the threshold is met (AEP-005 §6's "Low Confidence... low-confidence_weight (easily guessable) format" criterion places this case at Low outright, not Moderate). Provisional. */
 const GUESSABLE_CONFIDENCE_WEIGHT = 0.85;
 
 /** How far total distinct-correct-session evidence must exceed the bare mastery_threshold minimum before High confidence is warranted, absent transfer corroboration. Provisional — a real proxy for "evidence across time" (AEP-005 §7), not a per-day time gap, since no per-attempt timestamp log exists to compute that directly (the same honest limitation LEARNING_PROFILE_MODEL.md §1 already found for its Learning Consistency dimension). */
@@ -50,10 +50,15 @@ export function computeCompetencyConfidence(
   const avgConfidenceWeight =
     thresholdMet.reduce((sum, q) => sum + q.confidenceWeight, 0) / thresholdMet.length;
 
-  // A guessable-format question can never, on its own, support High
-  // confidence — no amount of repetition on a low-confidence_weight
-  // question substitutes for genuinely diagnostic evidence (AEP-005 §6).
-  if (avgConfidenceWeight < GUESSABLE_CONFIDENCE_WEIGHT) return "moderate";
+  // Per AEP-005 §6's own tier definitions, evidence from a low-
+  // confidence_weight (easily guessable) format belongs at Low confidence
+  // outright, not Moderate — meeting the mastery_threshold on a guessable
+  // question is not strong evidence just because the raw count is met.
+  // (Corrected during WP-06 cross-verification against the Mastery
+  // Validation gate — the original WP-05 implementation capped this case
+  // at "moderate," which would have let a guessable-format-only result
+  // pass the WP-06 gate; AEP-005 §6's own wording places it at Low.)
+  if (avgConfidenceWeight < GUESSABLE_CONFIDENCE_WEIGHT) return "low";
 
   const totalDistinctSessions = thresholdMet.reduce(
     (sum, q) => sum + q.distinctCorrectSessions,
