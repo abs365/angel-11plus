@@ -274,3 +274,126 @@ Same caveat as §9: these are training examples for reviewers, not the real hand
 **`qa-010`** ("LCM of 6 and 9") — `skill: maths.factors-multiples`, `content_difficulty: easy` (small numbers, a single well-known technique), `estimated_time_seconds: 25`, `pathway: ["gl","cem","iseb"]`.
 
 **`mth-009`** ("cylinder volume") — `skill: maths.geometry`, `content_difficulty: hard` (3D formula recall + three-factor multiplication + a given approximation for π to apply correctly), `estimated_time_seconds: 75`, `pathway: ["gl","iseb"]` (volume-of-3D-shapes is less universal across all four boards than basic arithmetic).
+
+---
+
+## 12. Competency Definitions — Non-Verbal Reasoning
+
+**Implements Work Package WP-01 (`IWP-001` §1), extending this standard to a domain named in `AEP-002_KNOWLEDGE_FRAMEWORK.md` §2.3 — the first competency taxonomy this domain has ever had, despite 40 real questions already existing in `data/non-verbal-reasoning/*.ts`.** Same discipline as §3/§11: the competency codes below are cited directly from AEP-002 §2.3, not re-derived — this section adds the difficulty calibration and timing baselines AEP-002 §2.3 explicitly flagged as not yet done.
+
+### 12.1 Competency taxonomy (6 competencies, cited from AEP-002 §2.3)
+
+| Competency code | Consolidates raw `category` value(s) | What it tests | Common student error |
+|---|---|---|---|
+| `nvr.pattern-completion` | Pattern Grids, Pattern Rules, Pattern Sequences | Inferring the rule governing a grid or sequence of shapes/symbols and applying it to find a missing element | Assuming the simplest visible pattern (e.g. a repeat) when the real rule is compound or two-dimensional |
+| `nvr.symbol-codes` | Symbol Codes, Symbol Sequences, Number Grids | Applying a stated or inferred symbol-to-value mapping | Treating visually similar symbols as equivalent, or missing that a code applies positionally rather than absolutely |
+| `nvr.rotation` | Rotation | Determining the result of rotating a shape or figure by a stated angle/direction | Confusing clockwise and anticlockwise, or applying the rotation around the wrong pivot point |
+| `nvr.reflection-symmetry` | Reflection, Symmetry | Determining the result of reflecting a figure, or identifying/completing a symmetric figure | Reflecting along the wrong axis, or treating near-symmetry as exact symmetry |
+| `nvr.shape-properties` | Shape Properties, Shape Counting | Identifying shared or differing properties across a set of figures (sides, angles, fills) | Counting a property inconsistently across figures presented at different sizes/orientations |
+| `nvr.3d-shapes` | Nets and 3D Shapes | Relating a 2D net to the 3D shape it folds into | Misjudging which faces become adjacent once folded |
+
+### 12.2 Worked calibration by competency (new — AEP-002 §2.3 explicitly flagged this as not yet done)
+
+- **`nvr.pattern-completion`**: Easy = a simple alternating or skip-repeat pattern (`nvr-014`: ● ● ○ repeating). Medium = an arithmetic growth pattern requiring a counting step (`nvr-016`: odd-number row growth; `nvr-021`: doubling). Hard = a compound or second-order rule (`nvr-023`: the *differences between terms* themselves increase by a fixed step — genuinely two reasoning layers, not one). Challenge = not yet represented in the real bank; would require a two-dimensional rule (varying by both row and column simultaneously) — flagged honestly as a real content gap, following the same "no real questions to calibrate against yet" precedent as §11.4's `maths.time`/`maths.statistics`.
+- **`nvr.symbol-codes`**: Easy = direct substitution into a single operation (`nvr-019`: sum three mapped values). Medium = substitution requiring mixed operations in one expression (`nvr-017`, `nvr-018`: combined add/subtract or multiply/divide). Hard = the mapping must be used to solve for an unknown via a stated consistency rule across a grid (`nvr-026`: row-sum-must-equal-12 grid) rather than simple lookup-and-compute. Challenge = not yet represented; would combine substitution with an algebra-like unknown appearing twice.
+- **`nvr.rotation`**: Easy = a single 90°/180° rotation from a cardinal starting direction (`nvr-027`, `nvr-030`). Medium = the same single rotation from an intercardinal starting direction, e.g. South-West (`nvr-028`). Hard = a compound rotation requiring net-angle calculation across two sequential turns (`nvr-039`), or an unusual angle requiring the anticlockwise/clockwise equivalence to be recognised (`nvr-040`: 270° clockwise = 90° anticlockwise). Challenge = not yet represented; would combine rotation with a second transformation (e.g. rotation then reflection).
+- **`nvr.reflection-symmetry`**: Easy = counting lines of symmetry on a common regular shape by direct recall (`nvr-031` square, `nvr-032` triangle). Medium = extrapolating the "regular polygon: symmetry lines = sides" pattern to a less familiar polygon (`nvr-033` octagon), or symmetry of a numeral (`nvr-036`). Hard = a question that breaks the "regular shape → has symmetry" assumption a student may have over-generalised from Medium-tier practice (`nvr-037`: F has *zero* lines; `nvr-038`: a slanted parallelogram has *zero*) — genuinely harder because the trap is conceptual, not computational. Challenge = not yet represented; would combine reflection and rotation reasoning about the same figure.
+- **`nvr.shape-properties`**: Easy = naming a shape directly from a short list of stated properties (`nvr-034`). Medium/Hard/Challenge = not yet represented in the real 40-question bank; this competency is the thinnest-populated of the six and any new authoring should prioritise it first among the six once WP-02 (hand-tagging) begins.
+- **`nvr.3d-shapes`**: only 1 real question exists in the NVR bank itself (net-folding is more heavily represented in Spatial Reasoning, §13) — calibration here is illustrative only, following the same "no real data to calibrate against yet" honesty as `maths.time` in §11.4.
+
+### 12.3 `estimated_time_seconds` baselines
+
+| Competency | Easy | Medium | Hard | Challenge |
+|---|---|---|---|---|
+| `nvr.pattern-completion` / `nvr.symbol-codes` | 20–30s | 30–45s | 45–65s | 65–85s |
+| `nvr.rotation` / `nvr.reflection-symmetry` | 15–25s | 25–35s | 35–50s | 50–70s |
+| `nvr.shape-properties` / `nvr.3d-shapes` | 20–30s | 30–45s | 45–60s | 60–75s |
+
+Baselines are extrapolated from the general rubric (§4.1) and the relative reasoning load already established for structurally similar Verbal Reasoning/Mathematics competencies (e.g. `nvr.rotation`'s single-step, low-guessability profile mirrors `vr.letter-codes`) — not independently timed against real students, and flagged as such, consistent with §4.5's own status as calibration guidance rather than measured fact.
+
+### 12.4 Worked example (illustrative only — not a production tagging pass, same caveat as §9/§11.5)
+
+**`nvr-023`** ("Find the next term: 2, 5, 10, 17, 26, ?") — `skill: nvr.pattern-completion`, `content_difficulty: hard` (the differences between terms form their own sequence — 3, 5, 7, 9, 11 — a genuine second layer of reasoning beyond spotting a single constant step), `estimated_time_seconds: 55`, `pathway: ["gl","cem"]` (NVR-format number-grid/pattern reasoning is a GL/CEM-specific paper component; not tested by CSSE at all, per AEP-002 §6 — this `pathway` value must never include `"csse"`).
+
+---
+
+## 13. Competency Definitions — Spatial Reasoning
+
+**Implements WP-01, extending this standard to the domain named in `AEP-002_KNOWLEDGE_FRAMEWORK.md` §2.4** (39 real questions in `data/spatial-reasoning/*.ts`, previously untaxonomised).
+
+### 13.1 Competency taxonomy (5 competencies, cited from AEP-002 §2.4)
+
+| Competency code | Consolidates raw `category` value(s) | What it tests | Common student error |
+|---|---|---|---|
+| `sr.paper-folding` | Paper Folding | Predicting the result of one or more folds (layers, hole-punch outcomes) | Forgetting that each fold multiplies existing layers rather than adding to them |
+| `sr.compass-grid-navigation` | Compass Directions, Grid Navigation | Tracking direction/position through a sequence of turns or grid moves | Confusing clockwise/anticlockwise turns — the same error family as `nvr.rotation` (AEP-002 §3/§10's cross-domain link) |
+| `sr.3d-visualisation` | 3D Shapes, 3D Visualisation, Nets and 3D Shapes | Mentally rotating or assembling a 3D figure from a 2D representation | Judging a 3D shape from its 2D silhouette without accounting for hidden/rotated faces |
+| `sr.rotation` | Rotation | Determining the result of rotating a 3D or perspective figure | Same underlying error family as `nvr.rotation` |
+| `sr.shape-properties-symmetry` | Shape Properties, Symmetry | Identifying spatial properties (faces, symmetry) of solid or 2D figures | Treating an asymmetric view as symmetric due to a misleading 2D projection |
+
+### 13.2 Worked calibration by competency
+
+- **`sr.paper-folding`**: Easy = single-fold layer count (`sr-013`). Medium = two folds with hole-punch reasoning (`sr-014`, `sr-020` — requires holding both the layer count *and* what happens when a hole passes through all of them). Hard = folding a strip into multiple accordion sections (`sr-015`, unusual fold geometry) or four sequential folds requiring the doubling pattern held across more steps (`sr-019`: 2⁴=16). Challenge = not yet represented; would require predicting hole *position*, not just count, after an asymmetric fold.
+- **`sr.compass-grid-navigation`**: Easy = a single named turn from a cardinal direction (`sr-023`). Medium = a turn from an intercardinal direction (`sr-027`) or a simple two-leg grid path with no direction reversal (`sr-026`). Hard = a multi-leg grid path requiring net displacement to be tracked across more than two legs (`sr-028`), or a path requiring Pythagorean distance reasoning rather than simple counting (`sr-024`). Challenge = not yet represented; would combine multi-leg navigation with a facing-direction change mid-route.
+- **`sr.3d-visualisation`**: Easy = counting faces/vertices of a common, familiar solid (`sr-021` prism, `sr-022`/`sr-036` cuboid). Medium = a less common solid whose property is genuinely counter-intuitive (`sr-017` tetrahedron; `sr-035` cone — "1 edge" surprises students expecting 0 or 2). Hard = applying Euler's formula to derive an unstated property rather than recalling it directly (`sr-018`). Challenge = not yet represented; would require reasoning about a compound or unfamiliar solid with no standard formula to fall back on.
+- **`sr.rotation`**: calibrated identically to `nvr.rotation` (§12.2) — same underlying skill, confirmed by AEP-002 §10 as a Strong shared-mechanism link, since the *error*, not only the skill, is shared.
+- **`sr.shape-properties-symmetry`**: Easy = counting symmetry lines of a regular polygon by direct recall (`sr-032`, `sr-034`). Medium = identifying a shape/letter with an exact stated symmetry count from several options, requiring elimination (`sr-033`). Hard = applying the interior-angle-sum rule to derive a value not directly given (`sr-037`: recall the 180° rule; `sr-038`: a genuine two-step calculation — total then divide by 5). Challenge = not yet represented; would combine multiple polygon properties in one question.
+
+### 13.3 `estimated_time_seconds` baselines
+
+| Competency | Easy | Medium | Hard | Challenge |
+|---|---|---|---|---|
+| `sr.paper-folding` | 20–30s | 30–45s | 45–65s | 65–85s |
+| `sr.compass-grid-navigation` | 20–30s | 30–45s | 45–65s | 65–85s |
+| `sr.3d-visualisation` / `sr.shape-properties-symmetry` | 20–30s | 30–45s | 45–60s | 60–80s |
+| `sr.rotation` | 15–25s | 25–35s | 35–50s | 50–70s |
+
+### 13.4 Worked example (illustrative only)
+
+**`sr-018`** ("square-based pyramid, 5 faces, 5 vertices, find edges via Euler's formula") — `skill: sr.3d-visualisation`, `content_difficulty: hard` (requires recalling and correctly applying F+V−E=2, then interpreting the result physically — two reasoning steps, not simple recall), `estimated_time_seconds: 55`, `pathway: ["gl","iseb"]` (Spatial Reasoning as a distinct component is not confirmed universal across all boards — per AEP-002 §6, this is flagged pending migration for CEM/GL region-specific confirmation, and must never include `"csse"`, which tests neither VR nor NVR/SR at all).
+
+---
+
+## 14. Competency Definitions — Mathematical Reasoning (`numreason`)
+
+**Implements WP-01, extending this standard to the domain named in `AEP-002_KNOWLEDGE_FRAMEWORK.md` §2.5.** Per `AEP-002_KNOWLEDGE_FRAMEWORK.md` §14 (Terminology Governance), this domain's internal subject key is `numreason`, but it must **never** be labelled "Numerical Reasoning" in any parent- or learner-facing surface — that term is reserved exclusively for referring to CEM's own combined Maths+NVR exam paper by name. This standard, and any future authoring against it, uses **"Mathematical Reasoning"** as the only public-facing label for this domain.
+
+### 14.1 Competency taxonomy (6 competencies, cited from AEP-002 §2.5)
+
+| Competency code | Consolidates raw `category` value(s) | What it tests | Common student error |
+|---|---|---|---|
+| `numreason.sequences-analogies` | Number Sequences, Number Analogies, Missing Numbers, Number Grids | Inferring a numeric rule from a sequence or pair-relationship and applying it | Assuming a constant-difference rule when the real rule is multiplicative, two-step, or requires holding more than one prior term (Fibonacci-style) |
+| `numreason.function-machines` | Function Machines | Applying or reversing a stated input→output operation chain | Applying operations in the stated order when reversing the machine requires the *inverse* order |
+| `numreason.data-statistics` | Data Interpretation, Mean and Average | Reading data from a table/chart and computing a summary statistic | Misreading which category a data point belongs to, or computing a sum instead of a mean; confusing mean/median/mode/range |
+| `numreason.money-measures` | Money and Measures | Applied arithmetic in money/measurement contexts | Unit-conversion slips (e.g. mixing pence and pounds, or cm/m/km) |
+| `numreason.percentages` | Percentages | Percentage-of-amount and reverse-percentage reasoning in a puzzle context | Confusing "percentage of" with "percentage increase/decrease" — shares this exact error family with `maths.percentages` (§11.2) |
+| `numreason.ratio-proportion` | Ratio and Proportion | Sharing/scaling in a stated ratio, in a puzzle context | Sharing by count of parts rather than by the stated ratio weighting — shares this error family with `maths.ratio-proportion` |
+
+### 14.2 Worked calibration by competency
+
+- **`numreason.sequences-analogies`**: Easy = a simple constant-difference sequence, including a gap-fill variant (`nr-014`, `nr-018`). Medium = a multiplicative/geometric sequence (`nr-015`, `nr-016`) or a recognisable named pattern (`nr-017`: square numbers). Hard = a sequence requiring two prior terms to be held in mind simultaneously (`nr-013`: Fibonacci) — a genuinely different, heavier working-memory demand than a single-term rule, consistent with AEP-001 §2.4's cognitive-load evidence. Challenge = not yet represented; would be a second-order-difference sequence, mirroring `nvr.pattern-completion`'s own Hard-tier gap (§12.2), a real, named content gap for this competency.
+- **`numreason.function-machines`**: Easy = not yet represented by a genuinely single-step example in the real bank (the simplest real questions are already two-step); this is flagged as a real, thin-Easy-tier gap. Medium = a two-step forward machine (`nr-019`, `nr-021`, `nr-022`). Hard = a two-step *reverse* machine, requiring the operations to be inverted **and** applied in reverse order (`nr-020`) — a materially harder skill than forward application, not simply "the same difficulty backwards." Challenge = not yet represented; would be a three-or-more-step reverse machine.
+- **`numreason.data-statistics`**: Easy = a direct mean of a short list (`nr-034`, `nr-041`) or direct mode-spotting (`nr-040`). Medium = a median requiring sorting first (`nr-036`), a pie-chart equal-sector angle (`nr-037`), or a reverse-mean calculation (total from a given mean, `nr-035`). Hard = a data-interpretation question requiring a fraction to be simplified from raw counts (`nr-038`) or a range calculation easily confused with another measure (`nr-039`). Challenge = not yet represented; would combine two statistical measures (e.g. mean *and* range) in one question.
+- **`numreason.money-measures`**: Easy = a direct multiply-then-subtract change calculation (`nr-030`). Medium = a unit-price scaling problem requiring an intermediate unit value to be found first (`nr-031`), or a fixed-plus-variable charge calculation (`nr-032`). Hard = a real-world scale/unit-conversion problem spanning two unit systems (`nr-033`: cm on a map → real km, a three-step conversion chain). Challenge = not yet represented; would combine multiple unit conversions in one question.
+- **`numreason.percentages`**: Easy = a direct percentage-of-amount with a clean number, including the direct-read special case where the total is 100 (`nr-023`, `nr-025`). Medium = a percentage-of-amount requiring the 10%-scaling technique on a less clean number (`nr-026`), or a percentage-off pricing problem requiring a second subtraction step (`nr-024`). **Hard/Challenge = a genuine, real content gap**: no reverse-percentage question (finding an original amount from a stated percentage change) exists anywhere in the current bank, despite this being a standard 11+ topic — flagged honestly here, the same discipline §11.4 already applied to `maths.time`/`maths.statistics`, and a natural candidate for WP-02's authoring pass to close.
+- **`numreason.ratio-proportion`**: Easy = a direct unitary-method ratio scaling with clean numbers (`nr-027`). Medium = sharing a total in a stated ratio, requiring "one part" to be found first (`nr-028`, `nr-029`). Hard/Challenge = not yet represented; would combine ratio-sharing with a further conversion step, or extend to a three-way ratio split — both real, named gaps for future authoring.
+
+### 14.3 `estimated_time_seconds` baselines
+
+| Competency | Easy | Medium | Hard | Challenge |
+|---|---|---|---|---|
+| `numreason.sequences-analogies` | 20–30s | 30–45s | 45–65s | 65–90s |
+| `numreason.function-machines` | 20–30s | 30–45s | 45–65s | 65–85s |
+| `numreason.data-statistics` | 25–35s | 35–50s | 50–70s | 70–90s |
+| `numreason.money-measures` | 25–35s | 35–50s | 50–70s | 70–90s |
+| `numreason.percentages` / `numreason.ratio-proportion` | 20–30s | 35–50s | 50–70s | 70–90s |
+
+### 14.4 Worked example (illustrative only)
+
+**`nr-020`** ("A function machine doubles the input and then subtracts 1. The output is 11. What was the input?") — `skill: numreason.function-machines`, `content_difficulty: hard` (requires inverting both operations *and* reversing their order — a materially different cognitive step from forward application, per §14.2), `estimated_time_seconds: 55`, `pathway: ["cem"]` (this puzzle-style content most directly supports CEM's combined "Numerical Reasoning" paper per AEP-002 §6 — note the `pathway` value here refers correctly to the *board's* paper by name in this citation context only, per AEP-002 §14's Terminology Governance; the domain itself must still never be labelled "Numerical Reasoning" in any parent- or learner-facing copy).
+
+---
+
+## 15. WP-01 Scope Note
+
+Per `IWP-001` §1, this work package extends the taxonomy, difficulty calibration, and timing baselines only — it does **not** perform the real hand-tagging pass on the 119 existing NVR/Spatial/Mathematical Reasoning questions (that is WP-02, a separate, human-owned authoring task per this standard's own standing "do not automate metadata generation" principle, Decision 3), and it does not touch `ali_question_bank`, any migration, or any application code. The worked examples in §12.4/§13.4/§14.4 are illustrative training material for reviewers, identical in status to §9 and §11.5 — not the production tagging pass.
