@@ -1,7 +1,8 @@
 "use client";
 
-import type { ButtonHTMLAttributes, ReactNode } from "react";
+import type { AnchorHTMLAttributes, ButtonHTMLAttributes, ReactNode } from "react";
 import { forwardRef } from "react";
+import Link from "next/link";
 import { cn } from "@/lib/cn";
 
 /**
@@ -101,3 +102,34 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button(
 });
 
 export default Button;
+
+interface ButtonLinkProps extends BaseButtonProps, AnchorHTMLAttributes<HTMLAnchorElement> {
+  href: string;
+}
+
+/**
+ * Sprint 3 (Admission Journey Experience) — a navigation-flavoured sibling
+ * to `Button`, added because the Quick Actions section needs real Next.js
+ * client-side routing (`next/link`), not a full page reload via
+ * `window.location`, and a `<button>` cannot legally nest inside an `<a>`.
+ * Reuses `VARIANT_CLASSES`/`SIZE_CLASSES` from `Button` directly — this is
+ * the same visual system, not a second button design.
+ */
+export function ButtonLink({ variant = "primary", size = "md", leftIcon, rightIcon, className, children, href, ...rest }: ButtonLinkProps) {
+  return (
+    <Link
+      href={href}
+      className={cn(
+        "inline-flex items-center justify-center font-semibold transition-colors active:scale-[0.98]",
+        SIZE_CLASSES[size],
+        VARIANT_CLASSES[variant],
+        className
+      )}
+      {...rest}
+    >
+      {leftIcon}
+      {children}
+      {rightIcon}
+    </Link>
+  );
+}

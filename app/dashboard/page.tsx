@@ -32,7 +32,9 @@ import NewBadgeBanner from "@/components/NewBadgeBanner";
 import InsightCard from "@/components/InsightCard";
 import { getPathwayById } from "@/lib/pathways";
 import { PremiumCard, MissionCard, StatCard, RecommendationCard } from "@/components/ui/Card";
-import { ProgressBar, ReadinessIndicator, Badge } from "@/components/ui/Progress";
+import { ProgressBar, ReadinessIndicator, Badge, StatusIndicator } from "@/components/ui/Progress";
+import { ButtonLink } from "@/components/ui/Button";
+import JourneyTimeline, { deriveActiveStageIndex } from "@/components/JourneyTimeline";
 import type { UserProgress } from "@/types";
 import type { AnalyticsReport } from "@/types/analytics";
 import type { DailyMission as DailyMissionData } from "@/types/adaptive";
@@ -130,6 +132,22 @@ const PRIORITY_LABEL: Record<string, string> = {
   review: "Maintain",
 };
 
+/**
+ * Sprint 3 (Admission Journey Experience) — "Expected outcome" copy, derived
+ * from `item.priority` (an existing, already-computed field — see
+ * lib/adaptiveEngine.ts's buildDailyMission()) rather than any new
+ * calculation. Fixed, honest, non-fabricated presentation text keyed on a
+ * value the recommendation engine already produced.
+ */
+const EXPECTED_OUTCOME: Record<string, string> = {
+  primary: "Directly strengthens your current focus area",
+  secondary: "Builds on today's momentum",
+  review: "Keeps a mastered skill sharp",
+};
+
+/** Sprint 3 — the Admission Hero's stage line reuses JourneyTimeline's own stage labels, not a second naming scheme. */
+const STAGE_NAMES = ["Starting", "Building Skills", "Strengthening", "Mock Ready", "Exam Ready"] as const;
+
 const pathwayIconBg: Record<string, string> = {
   blue: "bg-blue-100 dark:bg-blue-900",
   indigo: "bg-indigo-100 dark:bg-indigo-900",
@@ -163,23 +181,33 @@ function getEncouragingMessage(progress: UserProgress, weeklyGoal: WeeklyGoal | 
   return "Your admission journey starts here.";
 }
 
-// ─── Welcome — reuses PremiumCard (Sprint 1) instead of a bespoke gradient div ─
+// ─── Admission Hero — reuses PremiumCard (Sprint 1) instead of a bespoke
+// gradient div. Sprint 3 adds target school + admission stage to the
+// existing Welcome content; both are already-computed values (pathway,
+// hasEnoughData + examReadiness), not new calculations. ────────────────────
 
-function WelcomeMessage({
+function AdmissionHero({
   progress,
   weeklyGoal,
   milestoneProgress,
   nextMilestone,
+  pathway,
+  hasEnoughData,
+  readiness,
 }: {
   progress: UserProgress;
   weeklyGoal: WeeklyGoal | null;
   milestoneProgress: number;
   nextMilestone: XPMilestone | null;
+  pathway: Pathway | undefined;
+  hasEnoughData: boolean;
+  readiness: ParentReport["examReadiness"] | null;
 }) {
   const hour = new Date().getHours();
   const greeting = hour < 12 ? "Good morning" : hour < 17 ? "Good afternoon" : "Good evening";
   const level = Math.floor(progress.xp / 100) + 1;
   const message = getEncouragingMessage(progress, weeklyGoal);
+  const stageIndex = readiness ? deriveActiveStageIndex(hasEnoughData, readiness) : 0;
 
   return (
     <PremiumCard>
@@ -192,6 +220,18 @@ function WelcomeMessage({
           <Star size={13} className="text-yellow-300" />
           <span className="text-white text-sm font-bold">Level {level}</span>
         </div>
+      </div>
+
+      {/* Target school + admission stage — both real, already-computed values */}
+      <div className="flex items-center gap-2 flex-wrap mb-4">
+        <span className="inline-flex items-center gap-1.5 bg-white/10 rounded-lg px-2.5 py-1 text-xs text-purple-100">
+          <MapPin size={12} />
+          {pathway ? pathway.name : "No target school chosen yet"}
+        </span>
+        <span className="inline-flex items-center gap-1.5 bg-white/10 rounded-lg px-2.5 py-1 text-xs text-purple-100">
+          <Compass size={12} />
+          Stage: {STAGE_NAMES[stageIndex]}
+        </span>
       </div>
 
       <div className="flex items-center gap-4 mb-4">
@@ -291,13 +331,16 @@ export default function DashboardPage() {
     <PageLayout breadcrumbs={[{ label: "My Admission Journey" }]}>
       <div className="max-w-4xl mx-auto px-4 py-6 md:px-8 md:py-8 space-y-8">
 
-        {/* 1. Welcome message */}
+        {/* 1. Admission Hero */}
         {progress && (
-          <WelcomeMessage
+          <AdmissionHero
             progress={progress}
             weeklyGoal={weeklyGoal}
             milestoneProgress={milestoneProgress}
             nextMilestone={nextMilestone}
+            pathway={pathway}
+            hasEnoughData={report?.hasEnoughData ?? false}
+            readiness={parentReport?.examReadiness ?? null}
           />
         )}
 
@@ -340,6 +383,15 @@ export default function DashboardPage() {
           </Link>
         </section>
 
+        {/* 2b. Journey Timeline — presentation only; see components/JourneyTimeline.tsx
+             for the exact, honest mapping onto existing hasEnoughData/examReadiness. */}
+        <section>
+          <h2 className="text-gray-900 dark:text-gray-100 font-bold text-xl mb-4">Your Admissions Journey</h2>
+          <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 shadow-sm p-5">
+            <JourneyTimeline hasEnoughData={report?.hasEnoughData ?? false} readiness={parentReport?.examReadiness ?? "not-ready"} />
+          </div>
+        </section>
+
         {/* 3. Today's Admission Mission */}
         <section>
           <div className="flex items-center justify-between mb-3">
@@ -378,9 +430,13 @@ export default function DashboardPage() {
                         <span className="text-gray-900 dark:text-gray-100 font-semibold text-sm">{item.label}</span>
                       </div>
                       <p className="text-gray-400 dark:text-gray-500 text-xs leading-relaxed">{item.reason}</p>
-                      <div className="flex items-center gap-1 mt-1.5">
-                        <Clock size={10} className="text-gray-300 dark:text-gray-600" />
-                        <span className="text-gray-300 dark:text-gray-600 text-xs">~{item.estimatedMinutes} min</span>
+                      <div className="flex items-center gap-3 mt-1.5 flex-wrap">
+                        <div className="flex items-center gap-1">
+                          <Clock size={10} className="text-gray-300 dark:text-gray-600" />
+                          <span className="text-gray-300 dark:text-gray-600 text-xs">~{item.estimatedMinutes} min</span>
+                        </div>
+                        <span className="text-gray-300 dark:text-gray-600 text-xs">·</span>
+                        <span className="text-gray-400 dark:text-gray-500 text-xs italic">{EXPECTED_OUTCOME[item.priority]}</span>
                       </div>
                     </div>
                   </MissionCard>
@@ -414,13 +470,68 @@ export default function DashboardPage() {
           )}
         </section>
 
-        {/* 4. Readiness Snapshot — reuses computeParentReport()'s real
-             examReadiness/hasEnoughData exactly as Parent Hub does; honest
-             "not enough data yet" state when it doesn't. */}
+        {/* 4. Readiness Snapshot — every value below reuses an existing,
+             already-computed field (report.strongSubjects/weakSubjects,
+             progress.streak/weeklyGoal, gamification.nextMilestone,
+             parentReport.examReadiness). No new metric is introduced. */}
         <section>
           <h2 className="text-gray-900 dark:text-gray-100 font-bold text-xl mb-3">Readiness Snapshot</h2>
           {parentReport && parentReport.hasEnoughData ? (
-            <ReadinessIndicator readiness={parentReport.examReadiness} />
+            <div className="space-y-3">
+              <ReadinessIndicator readiness={parentReport.examReadiness} />
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-4">
+                  <p className="text-[10px] font-bold uppercase tracking-widest text-gray-300 dark:text-gray-600 mb-2">Current Strengths</p>
+                  {report && report.strongSubjects.length > 0 ? (
+                    <div className="flex flex-wrap gap-1.5">
+                      {report.strongSubjects.map((label) => (
+                        <StatusIndicator key={label} tone="success" label={label} />
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="text-xs text-gray-400 dark:text-gray-500">No standout strengths yet — every session helps build one.</p>
+                  )}
+                </div>
+                <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-4">
+                  <p className="text-[10px] font-bold uppercase tracking-widest text-gray-300 dark:text-gray-600 mb-2">Priority Improvement Areas</p>
+                  {report && report.weakSubjects.length > 0 ? (
+                    <div className="flex flex-wrap gap-1.5">
+                      {report.weakSubjects.map((label) => (
+                        <StatusIndicator key={label} tone="warning" label={label} />
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="text-xs text-gray-400 dark:text-gray-500">No priority areas flagged right now.</p>
+                  )}
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-4 flex items-center gap-3">
+                  <div className="w-9 h-9 rounded-xl bg-orange-50 dark:bg-orange-950 flex items-center justify-center shrink-0">
+                    <Flame size={16} className="text-orange-500" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">Momentum</p>
+                    <p className="text-xs text-gray-400 dark:text-gray-500">
+                      {progress?.streak ?? 0} day streak{weeklyGoal ? ` · ${weeklyGoal.sessions}/${weeklyGoal.target} sessions this week` : ""}
+                    </p>
+                  </div>
+                </div>
+                <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-4 flex items-center gap-3">
+                  <div className="w-9 h-9 rounded-xl bg-indigo-50 dark:bg-indigo-950 flex items-center justify-center shrink-0">
+                    <Star size={16} className="text-indigo-500" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">Next Milestone</p>
+                    <p className="text-xs text-gray-400 dark:text-gray-500">
+                      {nextMilestone ? `${nextMilestone.label} at ${nextMilestone.threshold} XP` : "Top rank reached"}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
           ) : (
             <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 px-4 py-5 flex items-center gap-3">
               <div className="w-10 h-10 bg-purple-50 dark:bg-purple-950 rounded-xl flex items-center justify-center shrink-0">
@@ -552,8 +663,26 @@ export default function DashboardPage() {
           )}
         </section>
 
-        {/* 8. Quick Access */}
+        {/* 8. Quick Actions — the four actions this sprint asks for explicitly,
+             each reusing an existing route; the fuller subject grid below is
+             kept as existing functionality, not replaced. */}
         <section>
+          <h2 className="text-gray-900 dark:text-gray-100 font-bold text-xl mb-3">Quick Actions</h2>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 mb-6">
+            <ButtonLink href={topMissionItem?.href ?? "/english"} variant="primary" size="sm" leftIcon={<Play size={14} />}>
+              Continue
+            </ButtonLink>
+            <ButtonLink href="/reasoning" variant="secondary" size="sm" leftIcon={<Puzzle size={14} />}>
+              Practise
+            </ButtonLink>
+            <ButtonLink href="/mocks" variant="secondary" size="sm" leftIcon={<Trophy size={14} />}>
+              Take a Mock
+            </ButtonLink>
+            <ButtonLink href="/progress" variant="outline" size="sm" leftIcon={<BarChart2 size={14} />}>
+              Review Progress
+            </ButtonLink>
+          </div>
+
           <div className="mb-4">
             <h2 className="text-gray-900 dark:text-gray-100 font-bold text-xl">Quick Access</h2>
             <p className="text-gray-400 dark:text-gray-500 text-sm mt-0.5">English · Maths · Vocabulary · Writing · Mock Centre</p>
