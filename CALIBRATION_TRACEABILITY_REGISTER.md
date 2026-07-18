@@ -76,4 +76,17 @@
 
 ---
 
+## Operational Event retention (WP-11, `lib/ali/operationalEvent.ts`)
+
+| Field | Value |
+|---|---|
+| **Constant name** | `RETENTION_WINDOW_DAYS` |
+| **Current value** | `60` days |
+| **Rationale** | Implements the retention strategy `EAW-ERR-HOTFIX-001`'s Engineering Action 2 required. Raw, learner-identified events are kept for near-term diagnostics within this window; beyond it, only learner-identifier-free monthly aggregates survive. 60 days ("weeks, not indefinitely," per the hotfix's own framing) was chosen without real data on how long raw per-event detail is actually useful. |
+| **Owner** | Founder + first implementation engineer, jointly |
+| **Validation status** | Provisional — not validated against real usage/storage-volume data |
+| **Review trigger** | Once real Operational Event volume exists to check retention cost/usefulness against |
+
+---
+
 *(Future provisional constants introduced by any subsequent work package should be appended here in the same format at the time they are implemented, not retroactively.)*
