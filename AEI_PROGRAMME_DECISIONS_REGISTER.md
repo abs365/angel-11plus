@@ -13,6 +13,13 @@
 | APD | Title | Wave | Established |
 |---|---|---|---|
 | — | No new Programme Decision issued. AEI-001 (Consistency Foundation) authorised and scoped entirely under existing `APD-033` (Engine Before Experience) and `APD-035` (Independent Educational Approval); see `AEI-001_CONSISTENCY_FOUNDATION_WORK_PACKAGE.md` §8. | AEI-001 | Authorised |
+| — | No new Programme Decision issued. AEI-002 authorised and scoped under existing `APD-033`/`APD-035` plus the Derived State Hierarchy (`APD-025`) and Tier 0 Wellbeing veto (`APD-042`/`044`) governing its Competency Presentation Strategy; see `AEI-002_CORE_LEARNER_EXPERIENCE_WORK_PACKAGE.md` §7. | AEI-002 | Authorised |
+
+---
+
+## Wave Definition Log
+
+`AEI-000_EXPERIENCE_IMPLEMENTATION_PROGRAMME_CHARTER.md` §9 originally mapped `AEI-002` to Wave X2 (Legacy Retirement). The Founder's `AEI-002` authorisation instead defined it as **Core Learner Experience** (Dashboard, Today's Mission, competency-centred presentation — the learner-facing half of what `AXT-004` called Wave X3, Competency Connection). Recorded here as a factual wave-definition change, not a constitutional decision: Legacy Retirement's content is not abandoned and remains outstanding for a future wave. See `AEI-002_CORE_LEARNER_EXPERIENCE_WORK_PACKAGE.md` §0.
 
 ---
 
