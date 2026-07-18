@@ -37,21 +37,31 @@ export function isMaintenanceReviewDue(lastPresentedAt: string, now: Date): bool
 }
 
 /**
- * Evaluates AEP-005 §10's three conditions for Durable Mastery. Condition 1
- * (currently `mastered`) is read from the existing, unmodified
- * `mastery_state` mechanism (lib/ali/mastery.ts) — a competency that failed
- * a Maintenance Review has already had its mastery_state revoked by that
- * same existing mechanism (an ordinary incorrect attempt, per Decision
- * 20/21) before this function is ever called, so a failed review does not
- * need separate handling here: condition 1 already fails naturally.
+ * Evaluates AEP-005 §10's three conditions for Durable Mastery.
+ *
+ * Condition 1 takes WP-06's `validated` output (lib/ali/masteryValidation.ts
+ * — mastery_threshold met AND Confidence tier >= Moderate), not the raw
+ * `mastery_state` string directly. This is a refinement made per Programme
+ * Decision APD-025 (Derived State Hierarchy): Durable Mastery is the
+ * strongest claim this whole architecture makes, and AEP-005 §9's own
+ * principle — that a threshold-met-but-weakly-evidenced result "must not be
+ * treated identically to a Moderate-or-above result for downstream
+ * purposes" — applies with the most force here, not least. Consuming raw
+ * `mastery_state` directly would let a Low-confidence mastery claim (e.g.
+ * threshold met entirely on a guessable-format question, DEF-001) feed the
+ * strongest claim in the system; consuming WP-06's `validated` boolean
+ * closes that gap. A competency that failed a Maintenance Review has
+ * already had its underlying mastery_state revoked by the existing,
+ * unmodified mechanism (Decision 20/21) before this function is ever
+ * called, so `validated` would already be false in that case too — no
+ * separate failure handling is needed here.
  */
 export function evaluateDurableMastery(
-  masteryState: string,
+  validated: boolean,
   maintenanceReviews: MaintenanceReviewRecord[],
   transferCorroboration: TransferCorroboration
 ): boolean {
-  const currentlyMastered = masteryState === "mastered";
-  if (!currentlyMastered) return false;
+  if (!validated) return false;
 
   const survivedGenuineGapReview = maintenanceReviews.some(
     (r) => r.correct && r.daysSinceLastEvidence >= MAINTENANCE_REVIEW_INTERVAL_DAYS

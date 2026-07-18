@@ -21,7 +21,13 @@ export interface TransferCorroboration {
 
 export interface DurableMasteryRecord {
   competencyCode: string;
-  masteryState: string;
+  /**
+   * WP-06's Mastery Validation gate output (lib/ali/masteryValidation.ts),
+   * not the raw mastery_state string — per Programme Decision APD-025's
+   * Derived State Hierarchy, Durable Mastery consumes the validated output
+   * of the preceding layer, not the unvalidated one it sits above.
+   */
+  validated: boolean;
   maintenanceReviews: MaintenanceReviewRecord[];
   transferCorroboration: TransferCorroboration;
   durable: boolean;
