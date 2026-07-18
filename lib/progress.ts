@@ -142,3 +142,44 @@ export function setSelectedPathway(id: string): void {
 export function getSelectedPathwayId(): string | undefined {
   return getProgress().selectedPathwayId;
 }
+
+/**
+ * Work Package WP-09 — target exam date validation (EAW-004 §2.1). Pure
+ * function so it's independently testable without touching localStorage:
+ * must not be in the past, must fall within a plausible ~24-month window
+ * for an 11+ entry-year exam. `now` is an explicit parameter for the same
+ * testability reason lib/ali/durableMastery.ts's isMaintenanceReviewDue()
+ * takes one.
+ */
+export function isPlausibleExamDate(dateIso: string, now: Date = new Date()): boolean {
+  const date = new Date(dateIso);
+  if (Number.isNaN(date.getTime())) return false;
+  if (date.getTime() < now.getTime()) return false;
+  const maxFuture = new Date(now);
+  maxFuture.setMonth(maxFuture.getMonth() + 24);
+  return date.getTime() <= maxFuture.getTime();
+}
+
+/**
+ * Sets the target exam date. Per EAW-004 §2.1: a family's own stated date
+ * is direct evidence and is never silently overridden — this function only
+ * rejects implausible values (§ above), it does not check against any
+ * pathway's public-record typical exam window.
+ */
+export function setTargetExamDate(dateIso: string): { success: boolean; error?: string } {
+  if (!isPlausibleExamDate(dateIso)) {
+    return { success: false, error: "That doesn't look like a valid upcoming exam date." };
+  }
+  const p = getProgress();
+  saveProgress({ ...p, targetExamDate: dateIso });
+  return { success: true };
+}
+
+export function getTargetExamDate(): string | undefined {
+  return getProgress().targetExamDate;
+}
+
+export function clearTargetExamDate(): void {
+  const p = getProgress();
+  saveProgress({ ...p, targetExamDate: undefined });
+}

@@ -67,11 +67,11 @@
 
 | Field | Value |
 |---|---|
-| **Constant name** | Examination-proximity weighting curve (`EAW-004` §4–§5, Recommendation Orchestration Tier 3) |
-| **Current value** | Not yet implemented |
-| **Rationale** | Deliberately gated on `target_exam_date` (added `EAW-004` §2.1) having accumulated real usage data first — calibrating a curve against no real behavioural data would repeat the same class of error the original EAW-D001 defect was |
+| **Constant name** | `EXAM_PROXIMITY_WINDOW_DAYS` (`lib/ali/recommendationOrchestration.ts`) — was "Examination-proximity weighting curve (EAW-004 §4-§5)," partially implemented at WP-09 |
+| **Current value** | `60` days |
+| **Rationale** | WP-09 implements the Tier 3 *mechanism* (a binary on/off reweighting window, promoting format-matching candidates within their existing tier) but deliberately does **not** implement the graduated *curve* EAW-004 §4-§5 describes — that remains gated on `target_exam_date` (WP-09's own `types/index.ts` field) accumulating real usage data first, exactly as this row previously stated. 60 days was chosen as a conservative "final stretch" window without real data on when exam-proximity should actually start influencing recommendations. |
 | **Owner** | Founder |
-| **Validation status** | Not implemented — blocked on a real data-collection prerequisite, not merely undecided |
+| **Validation status** | Provisional — mechanism implemented, graduated curve still not implemented, blocked on the same real-data prerequisite as before |
 | **Review trigger** | Once families have begun entering `target_exam_date` values in real usage |
 
 ---

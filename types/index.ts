@@ -84,6 +84,15 @@ export interface UserProgress {
   earnedBadgeIds?: string[];
   weeklyStats?: { weekStart: string; sessions: number };
   selectedPathwayId?: string;
+  /**
+   * Work Package WP-09 — target exam date (EAW-004 §2.1, Defect Correction
+   * EAW-D001). Parent/guardian-supplied, optional, never asked of the
+   * child. Powers Recommendation Orchestration's Tier 3 exam-proximity
+   * reweighting (lib/ali/recommendationOrchestration.ts) — absent by
+   * default, and Tier 3 simply does not activate when it's absent, per
+   * EAW-004 §2.1's explicit "behaviour when absent" specification.
+   */
+  targetExamDate?: string;
   mockResults?: import("./mock").MockResult[];
   // ALI competency bridge (Phase ALI 1.3) — additive only, does not touch
   // `scores`/the Math.max ratchet. Keyed by ALI subject.
