@@ -117,4 +117,19 @@ Per Programme Decision APD-041 (Competency Aggregation Governance): any rule con
 
 ---
 
+## Wellbeing Signal thresholds (WP-21A, `lib/ali/wellbeing.ts`)
+
+| Field | Value |
+|---|---|
+| **Constant name** | `COMPOUNDING_FAILURE_THRESHOLD` |
+| **Current value** | `3` consecutive incorrect attempts, same competency |
+| **Rationale** | The exact threshold `WP-21_WELLBEING_DESIGN.md` §6 Condition A named, chosen to require genuinely *compounding* evidence (Programme Decision APD-044 item 5) rather than firing on a single wrong answer — consistent with this signal's deliberate false-positive-over-false-negative bias (WP-21 §8), 3 was judged a reasonable minimum run-length without real data confirming it. |
+| **Owner** | Founder + first implementation engineer, jointly |
+| **Validation status** | Provisional — implemented, not validated against real usage data |
+| **Review trigger** | Once real multi-attempt session data exists to check whether 3 consecutive failures reliably corresponds to genuine strain versus ordinary desirable-difficulty struggle (AEP-001 §2.2-2.4) |
+
+**Educational Wellbeing Governance note (extending APD-041's format to this new category, per the same discipline):** `checkCompoundingFailure`, `checkMasteryReversalLowEngagement`, and `checkSessionAbandonmentPattern` (`lib/ali/wellbeing.ts`) are themselves competency-adjacent aggregation rules in the sense APD-041 defined, applied to a wellbeing rather than a mastery conclusion — **aggregation method:** "any qualifying condition fires the veto, evaluated independently, first-match-wins" (Condition A, then B, then C); **educational rationale:** WP-21 §6's three named conditions, each requiring compounding/dual-signal evidence per APD-044 item 5; **relationship to existing mastery rules:** consumes WP-08's `EducationalState` and the existing `aliLearningGain` signal, recomputes neither; **known limitations:** all three conditions are unvalidated, Condition C is permanently unevaluable until session-abandonment capture is built (explicitly out of WP-21A's own scope), and the "first-ever contact" exclusion in Condition A is a documented judgement call (`currentEducationalState !== "exploring"`), not a directly-specified rule; **calibration status:** provisional; **required validation evidence:** real multi-learner usage data checked against independent human judgement of whether each firing genuinely corresponded to a moment where easing off was the right call.
+
+---
+
 *(Future provisional constants introduced by any subsequent work package should be appended here in the same format at the time they are implemented, not retroactively.)*

@@ -15,8 +15,8 @@ export type ContentDifficultyEnum = "easy" | "medium" | "hard" | "challenge";
 
 /** Migration 010 (WP-16) — the first-ever DB representation of the Evidence Confidence Model (types/ali/confidence.ts, AEP-005 §6). */
 export type EvidenceConfidenceTierEnum = "high" | "moderate" | "low" | "insufficient";
-/** Migration 010 (WP-16) — matches types/ali/audit.ts's ConclusionType exactly. */
-export type ConclusionTypeEnum = "mastery" | "durable-mastery" | "recommendation" | "readiness-dimension";
+/** Migration 010 (WP-16), extended by migration 011 (WP-21A) — matches types/ali/audit.ts's ConclusionType exactly. */
+export type ConclusionTypeEnum = "mastery" | "durable-mastery" | "recommendation" | "readiness-dimension" | "wellbeing-veto";
 /** Migration 010 (WP-16) — matches types/ali/audit.ts's SupersedeReason exactly. */
 export type SupersedeReasonEnum = "new-evidence" | "defect-correction" | "programme-decision";
 

@@ -13,7 +13,9 @@ export type ConclusionType =
   | "mastery"
   | "durable-mastery"
   | "recommendation"
-  | "readiness-dimension";
+  | "readiness-dimension"
+  /** Migration 011 (WP-21A) — a Tier 0 pacing veto (WP-21_WELLBEING_DESIGN.md, WELLBEING_SIGNAL_CONTRACT.md). */
+  | "wellbeing-veto";
 
 export type SupersedeReason = "new-evidence" | "defect-correction" | "programme-decision";
 
