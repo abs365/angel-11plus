@@ -45,12 +45,12 @@
 
 | Field | Value |
 |---|---|
-| **Constant name** | Maintenance Review interval (AEP-004 §9.2) |
-| **Current value** | Not yet implemented — no Durable Mastery Processing work package has begun |
-| **Rationale** | Interim placeholder proposed at architecture time (`EAW-005` §4.1): on the order of 2–3 weeks, loosely consistent with spaced-retrieval literature ranges (AEP-001 §2.2) — explicitly not yet a real constant in any file |
-| **Owner** | Founder |
-| **Validation status** | Not implemented |
-| **Review trigger** | Before Durable Mastery Processing (`EAW-002` §8) is implemented — the work package that will actually need this value |
+| **Constant name** | `MAINTENANCE_REVIEW_INTERVAL_DAYS` (`lib/ali/durableMastery.ts`) — was "Maintenance Review interval (AEP-004 §9.2)," now implemented |
+| **Current value** | `14` days |
+| **Rationale** | Implemented at WP-07 (Durable Mastery Processing), the exact trigger this row's "review trigger" previously named. Set to the lower end of `EAW-005` §4.1's originally-proposed 2–3 week range, loosely consistent with spaced-retrieval literature ranges (AEP-001 §2.2) — chosen as a real, computable calendar gap against `ali_student_question_history.last_presented_at` (a genuine existing timestamp, not a new capture), rather than the question-count-based cooldown mechanism used for short-term spacing. |
+| **Owner** | Founder (implemented per the ownership `EAW-005` §4.1 assigned) |
+| **Validation status** | Provisional — implemented, not yet validated against real usage data |
+| **Review trigger** | Once real usage data exists on how often mastered competencies genuinely decay across a 14-day gap |
 
 | Field | Value |
 |---|---|
