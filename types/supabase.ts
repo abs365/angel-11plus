@@ -13,6 +13,13 @@ export type AliSubjectEnum = Subject
 
 export type ContentDifficultyEnum = "easy" | "medium" | "hard" | "challenge";
 
+/** Migration 010 (WP-16) — the first-ever DB representation of the Evidence Confidence Model (types/ali/confidence.ts, AEP-005 §6). */
+export type EvidenceConfidenceTierEnum = "high" | "moderate" | "low" | "insufficient";
+/** Migration 010 (WP-16) — matches types/ali/audit.ts's ConclusionType exactly. */
+export type ConclusionTypeEnum = "mastery" | "durable-mastery" | "recommendation" | "readiness-dimension";
+/** Migration 010 (WP-16) — matches types/ali/audit.ts's SupersedeReason exactly. */
+export type SupersedeReasonEnum = "new-evidence" | "defect-correction" | "programme-decision";
+
 export interface Database {
   public: {
     Tables: {
@@ -221,6 +228,101 @@ export interface Database {
         };
         Relationships: [];
       };
+      // ─── Migration 010 (WP-16, IWP-002) — Persistence Layer ───────────────
+      ali_durable_mastery: {
+        Row: {
+          profile_id: string;
+          competency_code: string;
+          validated: boolean;
+          maintenance_reviews: unknown; // jsonb — MaintenanceReviewRecord[] (types/ali/durableMastery.ts)
+          transfer_corroboration: unknown; // jsonb — TransferCorroboration (types/ali/durableMastery.ts)
+          durable: boolean;
+          updated_at: string;
+        };
+        Insert: {
+          profile_id: string;
+          competency_code: string;
+          validated?: boolean;
+          maintenance_reviews?: unknown;
+          transfer_corroboration?: unknown;
+          durable?: boolean;
+          updated_at?: string;
+        };
+        Update: {
+          validated?: boolean;
+          maintenance_reviews?: unknown;
+          transfer_corroboration?: unknown;
+          durable?: boolean;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
+      ali_educational_audit: {
+        Row: {
+          id: string;
+          conclusion_type: ConclusionTypeEnum;
+          learner_id: string;
+          competency_or_dimension: string;
+          confidence_tier_at_time: EvidenceConfidenceTierEnum;
+          concluded_at: string;
+          superseded_by: string | null;
+          supersede_reason: SupersedeReasonEnum | null;
+        };
+        Insert: {
+          id?: string;
+          conclusion_type: ConclusionTypeEnum;
+          learner_id: string;
+          competency_or_dimension: string;
+          confidence_tier_at_time: EvidenceConfidenceTierEnum;
+          concluded_at?: string;
+          superseded_by?: string | null;
+          supersede_reason?: SupersedeReasonEnum | null;
+        };
+        Update: {
+          // Append-only by convention (APD-029) — the only legitimate update
+          // is setting supersededBy/supersede_reason on a record once, never
+          // mutating any other field.
+          superseded_by?: string | null;
+          supersede_reason?: SupersedeReasonEnum | null;
+        };
+        Relationships: [];
+      };
+      ali_operational_events: {
+        Row: {
+          id: string;
+          event_type: string;
+          learner_id: string;
+          competency_code: string;
+          occurred_at: string;
+        };
+        Insert: {
+          id?: string;
+          event_type: string;
+          learner_id: string;
+          competency_code: string;
+          occurred_at?: string;
+        };
+        Update: Record<string, never>;
+        Relationships: [];
+      };
+      ali_operational_event_aggregates: {
+        Row: {
+          event_type: string;
+          competency_code: string;
+          time_bucket: string;
+          event_count: number;
+        };
+        Insert: {
+          event_type: string;
+          competency_code: string;
+          time_bucket: string;
+          event_count?: number;
+        };
+        Update: {
+          event_count?: number;
+        };
+        Relationships: [];
+      };
       feedback_submissions: {
         Row: {
           id: string;
@@ -336,6 +438,9 @@ export interface Database {
     Enums: {
       subject_type: AliSubjectEnum;
       content_difficulty: ContentDifficultyEnum;
+      evidence_confidence_tier: EvidenceConfidenceTierEnum;
+      conclusion_type: ConclusionTypeEnum;
+      supersede_reason: SupersedeReasonEnum;
     };
     CompositeTypes: Record<string, never>;
   };
