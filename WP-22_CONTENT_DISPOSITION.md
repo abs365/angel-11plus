@@ -1,7 +1,20 @@
 # WP-22: Pending Content Review & Disposition
 
-**Status:** Content review (human-owned), per `IWP-002_ENGINE_INTEGRATION_PROGRAMME.md` §1/§5. Prepares WP-02's 120-question tagging proposal and WP-15's 6 Probability questions for a genuine Founder disposition decision — this document does not itself approve, reject, or import anything.
-**Companion artifact:** `WP-22_PROPOSED_IMPORT.sql` — 112 ready-to-run (not yet run) `INSERT INTO ali_question_bank` statements, generated mechanically from the real content in `data/non-verbal-reasoning`, `data/spatial-reasoning`, `data/numerical-reasoning` plus WP-02's own per-competency disposition tables. **Not executed. Do not run until this document's decisions are made.**
+**Status:** Founder educational disposition RECORDED (below). SQL execution NOT YET AUTHORISED — per Programme Decision APD-052 (Import Authorisation Separation), an import-ready SQL artefact is not itself authority to execute an import; production authorisation and deployment verification remain outstanding.
+**Companion artifact:** `WP-22_PROPOSED_IMPORT.sql` — 112 ready-to-run (not yet run) `INSERT INTO ali_question_bank` statements, generated mechanically from the real content in `data/non-verbal-reasoning`, `data/spatial-reasoning`, `data/numerical-reasoning` plus WP-02's own per-competency disposition tables. **Not executed.**
+
+---
+
+## 0. Recorded Founder Educational Disposition
+
+Per the Founder's disposition instruction, recorded here as the canonical decision this document now reflects:
+
+1. **APPROVED** — the 112 reconciled WP-02 questions, for production authorisation (§3.1 below; authorisation itself, per APD-052, is a separate, still-outstanding step — see §7).
+2. **KEPT EXCLUDED** — all 8 ambiguous questions (§3.2), pending independent educational review. Not part of any approved import scope.
+3. **`sr.rotation` is recorded as non-operational** — zero approved production questions (its only tagged question, `sr-009`, is one of the 8 excluded items).
+4. **WP-02's top-level confidence summary is corrected** using the verified per-row counts — done directly in `WP-02_PROPOSED_METADATA.md`'s "Confidence Assessment (summary)" table and Review Summary (92/20/8, not the original 81/30/9), per Programme Decision APD-051 (Granular Evidence Precedence).
+5. **`confidence_weight = 1.00` is accepted only as a provisional, uncalibrated initial value** for all 112 rows — not a calibrated judgement, and not equivalent to a reviewed confidence_weight assignment.
+6. **`maths.probability` and all 6 WP-15 questions remain pending** a separate competency-adoption and curriculum-approval decision (§4) — not part of this disposition.
 
 ---
 
@@ -25,6 +38,8 @@ The Low-confidence counts for NVR and SR happen to match (4 and 2); the Mathemat
 
 **This does not change any row's actual disposition** — every question below is dispositioned from WP-02's per-row table entries, which are internally consistent with each other and with the Ambiguous Questions list. It is reported because a reviewer relying on WP-02's summary percentages alone would be working from a number that doesn't reconcile with the document's own detailed data — the same category of honestly-reported inconsistency WP-02 itself already surfaced once (the "sr.rotation has 1 question, not 3" correction against `AEP-002`/`QUESTION_AUTHORING_STANDARD.md`).
 
+**Corrected, per §0 item 4 / Programme Decision APD-051:** `WP-02_PROPOSED_METADATA.md`'s "Confidence Assessment (summary)" table and Review Summary now read 92/20/8 (76.7%/16.7%/6.7%), replacing the original 81/30/9. No per-question tag changed.
+
 ---
 
 ## 3. WP-02 disposition: Non-Verbal / Spatial / Mathematical Reasoning (120 questions)
@@ -40,7 +55,7 @@ Every High- or Medium-confidence row from WP-02's per-competency tables, with no
 | Mathematical Reasoning | `numreason.sequences-analogies` (11), `numreason.function-machines` (4), `numreason.data-statistics` (10), `numreason.money-measures` (5), `numreason.percentages` (5), `numreason.ratio-proportion` (4) | 39 of 41 |
 | **Total** | **17 competencies** | **112** |
 
-**`sr.rotation` gets zero rows this round.** Its only tagged question (`sr-009`) is one of the 8 held items below — meaning approving "everything ready" still leaves this competency completely empty. Worth the Founder's attention as its own decision, not just a side effect: either resolve `sr-009`'s placement now so this competency isn't empty, or explicitly accept `sr.rotation` stays unpopulated until new content is authored.
+**`sr.rotation` gets zero rows this round — recorded per §0 item 3 as non-operational**, not a gap left open by accident. Its only tagged question (`sr-009`) remains one of the 8 held items; this competency stays unpopulated until `sr-009`'s placement is independently resolved or new content is authored.
 
 ### 3.2 Held pending resolution — 8 questions
 
@@ -79,11 +94,20 @@ Confirmed by inspecting the real schema (`supabase/migrations/005_ali_question_b
 - `WP-22_PROPOSED_IMPORT.sql` is a plain SQL file, in the same "prepared, Founder-executed via the Supabase Dashboard SQL Editor" category as every other migration in this project — this sandbox has no live network path to the database, so it cannot be run from here regardless of approval status.
 - Each `INSERT` is `on conflict (id) do nothing` — safe to run even if some rows were already imported by an earlier, out-of-repo process this document has no visibility into.
 - `mastery_threshold` is derived from `ali_mastery_defaults` (easy/medium=2, hard/challenge=3, Decision 10) — not invented per-row.
-- `confidence_weight` is left at the schema default `1.00` for all 112 rows. **This is a real, deliberate omission, not an oversight:** WP-02 did not propose a per-question confidence_weight, and inventing one here would misattribute a new, uncredited judgement to a metadata-review work package. Practical consequence: none of these 112 questions will ever be treated as "guessable format" by `lib/ali/confidence.ts`'s `GUESSABLE_CONFIDENCE_WEIGHT` check until a real value is assigned in a future, separate authoring pass — flagged as an open item for whoever does that pass, not resolved here.
+- `confidence_weight` is left at the schema default `1.00` for all 112 rows. **Per §0 item 5, this is recorded as a provisional, uncalibrated initial value only — not a calibrated judgement.** WP-02 did not propose a per-question confidence_weight, and inventing one here would misattribute a new, uncredited judgement to a metadata-review work package. Practical consequence: none of these 112 questions will be treated as "guessable format" by `lib/ali/confidence.ts`'s `GUESSABLE_CONFIDENCE_WEIGHT` check until a real value is assigned in a future, separate authoring pass — flagged as an open item for whoever does that pass, not resolved here.
 - `pathway` is domain-wide per WP-02's own stated confidence: NVR/numreason `["gl","cem","iseb"]` (High for NVR, Medium domain-wide for numreason per WP-02's own note), SR `["gl","iseb"]` (High).
 
 ---
 
 ## 6. What this document authorises
 
-Nothing. `WP-22_PROPOSED_IMPORT.sql` is generated, verified against the real source data (112/112 rows accounted for, no excluded ID present, no duplicate ID, every competency's row count matches its expected included/excluded split), and not executed. The 8 held questions and the 2 WP-15 taxonomy/content decisions require explicit Founder disposition before any SQL in this package is run.
+The educational disposition in §0 (items 1-6) is recorded as the Founder's decision on the 112 vs. 8 question split, the `sr.rotation` non-operational status, the WP-02 summary correction, `confidence_weight`'s provisional status, and the WP-15/`maths.probability` deferral. **It does not authorise SQL execution.** Per Programme Decision APD-052 (Import Authorisation Separation), an import-ready artefact is not itself authority to execute an import — production import additionally requires recorded production authorisation and deployment verification, neither of which has occurred. `WP-22_PROPOSED_IMPORT.sql` remains generated, verified against real source data, and not executed.
+
+---
+
+## 7. Outstanding before production execution (APD-052)
+
+1. Recorded production authorisation (a distinct step from the educational disposition in §0) — not yet issued.
+2. Deployment verification — cannot be performed from this sandbox (no live network path to the database, the same standing limitation as every other migration in this project).
+
+Per Implementation Control: stop here. No SQL in `WP-22_PROPOSED_IMPORT.sql` is executed by this update.

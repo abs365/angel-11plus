@@ -3,8 +3,12 @@
 -- tables, cross-checked against real content in data/non-verbal-reasoning,
 -- data/spatial-reasoning, data/numerical-reasoning.
 --
--- STATUS: PROPOSED — NOT YET APPROVED. DO NOT RUN AGAINST PRODUCTION.
--- Awaiting Founder content-approval disposition per WP-22.
+-- STATUS: Educational disposition RECORDED (WP-22_CONTENT_DISPOSITION.md §0)
+-- — the 112 rows below are approved for production authorisation. SQL
+-- EXECUTION IS NOT YET AUTHORISED (Programme Decision APD-052, Import
+-- Authorisation Separation): an import-ready artefact is not itself
+-- authority to execute an import. DO NOT RUN AGAINST PRODUCTION until
+-- recorded production authorisation and deployment verification both occur.
 --
 -- 112 of 120 tagged questions included. 8 excluded pending resolution of a
 -- genuine competency-mapping or difficulty-tier ambiguity (WP-02's own

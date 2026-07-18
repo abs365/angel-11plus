@@ -253,12 +253,14 @@
 
 ## Confidence Assessment (summary)
 
+**Corrected 2026-07-18, per Programme Decision APD-051 (Granular Evidence Precedence) and `WP-22_CONTENT_DISPOSITION.md` §2.** The table below originally read 27/9/4 (NVR), 24/13/2 (SR), 30/8/3 (Math), totalling 81/30/9 — WP-22's review recounted every row directly from this document's own per-competency tables above and found those totals do not reconcile with this document's own detailed data, nor with the "Ambiguous Questions" section's own list of exactly 8 named IDs (not 9). Per APD-051, the verified item-level evidence takes precedence and the aggregate is corrected here; no individual question's difficulty/skill/confidence tag changes as a result — only this summary table's arithmetic.
+
 | Domain | High | Medium | Low | Total |
 |---|---|---|---|---|
-| Non-Verbal Reasoning | 27 | 9 | 4 | 40 |
-| Spatial Reasoning | 24 | 13 | 2 | 39 |
-| Mathematical Reasoning | 30 | 8 | 3 | 41 |
-| **Total** | **81 (67.5%)** | **30 (25%)** | **9 (7.5%)** | **120** |
+| Non-Verbal Reasoning | 31 | 5 | 4 | 40 |
+| Spatial Reasoning | 27 | 10 | 2 | 39 |
+| Mathematical Reasoning | 34 | 5 | 2 | 41 |
+| **Total** | **92 (76.7%)** | **20 (16.7%)** | **8 (6.7%)** | **120** |
 
 *(Mathematical Reasoning's High-confidence count reflects difficulty/competency confidence only — its pathway assignment is Medium domain-wide per the note above, so no `numreason` row is High-confidence on every field simultaneously; the table above states this explicitly per row rather than silently inflating the count.)*
 
@@ -266,7 +268,7 @@
 
 ## Review Summary
 
-The large majority of proposed tags (67.5% High) rest directly on calibration reasoning already published and reviewed in `QUESTION_AUTHORING_STANDARD.md` §12–§14 (WP-01) — these are the lowest-risk rows for a reviewer to confirm quickly. The Medium tier (25%) is concentrated in genuinely fresh calibration judgements not covered by a WP-01 worked example, and in Mathematical Reasoning's domain-wide pathway uncertainty. The Low tier (7.5%, 9 questions) is small but disproportionately important — 4 of the 9 are competency-mapping questions, not difficulty questions, meaning the taxonomy itself (not just individual tagging) may benefit from a small refinement once a human reviews them.
+The large majority of proposed tags (76.7% High, corrected — see Confidence Assessment above) rest directly on calibration reasoning already published and reviewed in `QUESTION_AUTHORING_STANDARD.md` §12–§14 (WP-01) — these are the lowest-risk rows for a reviewer to confirm quickly. The Medium tier (16.7%) is concentrated in genuinely fresh calibration judgements not covered by a WP-01 worked example, and in Mathematical Reasoning's domain-wide pathway uncertainty. The Low tier (6.7%, 8 questions) is small but disproportionately important — 5 of the 8 are competency-mapping questions, not difficulty questions, meaning the taxonomy itself (not just individual tagging) may benefit from a small refinement once a human reviews them.
 
 **Inconsistencies discovered in the existing question bank, worth reporting even though outside WP-02's own scope to fix:**
 - `sr.rotation` has only **1** real question (`sr-009`), not 3 as stated in `AEP-002_KNOWLEDGE_FRAMEWORK.md` §2.4 and `QUESTION_AUTHORING_STANDARD.md` §13.1 — verified by direct `grep` against the source files during this tagging pass. This is a minor citation error in frozen documents, not a defect requiring those documents to reopen, but is recorded here since it directly affects WP-02's own coverage numbers and should inform any future WP-01-style document revision.
