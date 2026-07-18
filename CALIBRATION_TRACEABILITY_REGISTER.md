@@ -89,4 +89,32 @@
 
 ---
 
+## Competency Aggregation Rules (WP-18, `lib/ali/persistence/educationalStateRuntime.ts`)
+
+Per Programme Decision APD-041 (Competency Aggregation Governance): any rule converting question-level evidence into a competency-level conclusion is recorded here with its aggregation method, educational rationale, relationship to existing mastery rules, known limitations, calibration status, and required validation evidence — distinct from the simple numeric constants elsewhere in this register, since these are *rules*, not thresholds.
+
+| Field | Value |
+|---|---|
+| **Rule name** | `deriveCompetencyMasteryState` |
+| **Aggregation method** | "Any question qualifies": a competency's mastery_state is `"mastered"` if any constituent question is `"mastered"`, else `"weak"` if any is `"weak"`, else `"learning"` if any has been attempted, else `"new"`. |
+| **Educational rationale** | Mirrors WP-06's `thresholdMet` check, which already uses the identical "any question meets its own threshold" principle at the individual-mastery-decision level — applying the same philosophy one level up (competency, not question) keeps the two closely related concepts internally consistent rather than introducing a second, different aggregation logic for a sibling decision. |
+| **Relationship to existing mastery rules** | Additive only — does not change `mastery_state`'s own per-question computation (`lib/ali/mastery.ts`, Decision 7/20/21, unmodified). This rule only summarises multiple already-correct per-question states into one label for Educational State Coordination (WP-08) to consume. |
+| **Known limitations** | An "any question mastered" rule can label a competency `"mastered"` even when only one of many constituent questions has individually reached that state — this is a deliberately lenient aggregation, not a strict one, and has not been checked against whether it produces the *felt* sense of competency mastery a parent or learner would recognise as accurate. |
+| **Calibration status** | Provisional — implemented, not validated against representative learner data. |
+| **Required validation evidence** | Real multi-question competency histories (once WP-02's proposed NVR/Spatial/Mathematical Reasoning tagging, or any multi-question competency, has real attempt data) checked against whether the "any question mastered" label matches an independent, human judgement of whether that competency is genuinely mastered. |
+
+| Field | Value |
+|---|---|
+| **Rule name** | `deriveReviewDue` |
+| **Aggregation method** | "Any question qualifies," at the same granularity as `deriveCompetencyMasteryState` above: a competency's Maintenance Review is due if any of its `mastered`-state questions individually satisfies WP-07's `isMaintenanceReviewDue()` (14-day calendar gap, itself already provisional — see this register's Durable Mastery entry). |
+| **Educational rationale** | Deliberately kept at the same "any" granularity as the mastery-state rule immediately above, rather than introducing a different aggregation philosophy (e.g. "majority" or "all") for a closely related concept — internal consistency between the two rules was prioritised over independently optimising each one. |
+| **Relationship to existing mastery rules** | Additive only — does not change `isMaintenanceReviewDue()`'s own per-question calendar-gap logic (WP-07, unmodified). Only decides, at competency level, whether *any* eligible question triggers the review. |
+| **Known limitations** | Compounds `isMaintenanceReviewDue()`'s own provisional 14-day interval with a second, also-provisional "any question" aggregation choice — two stacked provisional decisions, not independently validated from each other. A competency with many questions is more likely to have *some* question cross the 14-day gap at any given time than a competency with few, meaning review frequency is not currently normalised by competency size. |
+| **Calibration status** | Provisional — implemented, not validated against representative learner data. |
+| **Required validation evidence** | Real usage data showing how often this rule actually fires per competency size, checked against whether review frequency feels appropriately calibrated (not excessive for large competencies, not absent for small ones) once real multi-question competencies have attempt histories to observe. |
+
+**Per APD-041's explicit instruction, neither rule's implementation is altered by this documentation entry — both remain exactly as approved in WP-18 (commit `79f1e50`), provisional and unvalidated, pending the evidence described above.**
+
+---
+
 *(Future provisional constants introduced by any subsequent work package should be appended here in the same format at the time they are implemented, not retroactively.)*
