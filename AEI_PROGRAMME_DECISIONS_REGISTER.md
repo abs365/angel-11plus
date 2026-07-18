@@ -12,7 +12,7 @@
 
 | APD | Title | Wave | Established |
 |---|---|---|---|
-| *(none yet — AEI-001 not yet authorised)* | | | |
+| — | No new Programme Decision issued. AEI-001 (Consistency Foundation) authorised and scoped entirely under existing `APD-033` (Engine Before Experience) and `APD-035` (Independent Educational Approval); see `AEI-001_CONSISTENCY_FOUNDATION_WORK_PACKAGE.md` §8. | AEI-001 | Authorised |
 
 ---
 
