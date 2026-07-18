@@ -24,6 +24,8 @@ function rowToBankQuestion(row: BankRow): BankQuestion {
     usageCount: row.usage_count,
     avgSuccessRate: row.avg_success_rate,
     learningUnitId: row.learning_unit_id,
+    addressesMisconception: row.addresses_misconception ?? undefined,
+    transferLinks: row.transfer_links ?? undefined,
   };
 }
 

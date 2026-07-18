@@ -109,6 +109,10 @@ export interface Database {
           usage_count: number;
           avg_success_rate: number | null;
           learning_unit_id: string;
+          /** Optional — AEP-003_QUESTION_INTELLIGENCE_FRAMEWORK.md §4. Never NOT NULL by design. */
+          addresses_misconception: string | null;
+          /** Optional — AEP-003_QUESTION_INTELLIGENCE_FRAMEWORK.md §7. Never NOT NULL by design. */
+          transfer_links: string[] | null;
           created_at: string;
         };
         Insert: {
@@ -129,6 +133,8 @@ export interface Database {
           usage_count?: number;
           avg_success_rate?: number | null;
           learning_unit_id: string;
+          addresses_misconception?: string | null;
+          transfer_links?: string[] | null;
           created_at?: string;
         };
         Update: {

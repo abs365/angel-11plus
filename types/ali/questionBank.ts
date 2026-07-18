@@ -87,4 +87,19 @@ export interface BankQuestion {
    * See lib/ali/learningUnit.ts.
    */
   learningUnitId: string;
+  /**
+   * Optional link to a named misconception this question is designed to
+   * surface or correct (AEP-003_QUESTION_INTELLIGENCE_FRAMEWORK.md §4).
+   * Undefined for the large majority of questions — not every question
+   * targets a specific misconception, and this field is never required.
+   */
+  addressesMisconception?: string;
+  /**
+   * Optional related competency codes this question supports transfer
+   * reinforcement for (AEP-003_QUESTION_INTELLIGENCE_FRAMEWORK.md §7,
+   * AIW-001_EDUCATIONAL_DATA_MODEL.md §2's Knowledge Graph). Additive only —
+   * not read by any selection/recommendation logic yet (that is WP-09, not
+   * this work package).
+   */
+  transferLinks?: CompetencyCode[];
 }
