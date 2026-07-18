@@ -132,4 +132,24 @@ Per Programme Decision APD-041 (Competency Aggregation Governance): any rule con
 
 ---
 
+## Recommendation Orchestration Runtime Rules (WP-19, `lib/ali/persistence/recommendationRuntime.ts`)
+
+Per Programme Decision APD-041's format, extended (as WP-21A's entry above already did) to a rule converting existing conclusions into a new one — here, an `EducationalState` (WP-08) into a `RecommendationTrigger` (WP-09), and a real-data availability boundary into a candidate-emission decision.
+
+| Field | Value |
+|---|---|
+| **Rule name** | `deriveTriggerReason` |
+| **Aggregation method** | Direct, non-overlapping mapping: `"exploring"` → `never-attempted`; `"reviewing"` → `review-due`; `"building-knowledge"`/`"practising"`/`"reinforcing"`/`"rebuilding"` → `weak-competency-remediation`; `"mastered"`/`"durably-mastered"` → no trigger, no candidate emitted. |
+| **Educational rationale** | Each mapped state's own definition (`lib/ali/educationalState.ts`) already names the real condition the trigger describes — this is a labelling exercise over an existing conclusion, not a new educational judgement. Two of `RecommendationTrigger`'s five values (`cooldown-expired`, `mastery-event-on-linked-competency`) are never produced: the first needs a per-question cooldown signal not exposed at competency granularity, the second needs the Knowledge Graph WP-20 has not yet built. Deferred, not fabricated. |
+| **Relationship to existing mastery rules** | Additive only — consumes `computeEducationalState()`'s output (WP-08, unmodified) and produces a label for `orchestrateRecommendations()` (WP-09, unmodified) to consume. Recomputes nothing upstream. |
+| **Known limitations** | Collapses four distinct educational states (`building-knowledge`, `practising`, `reinforcing`, `rebuilding`) into one trigger value — real, ordered nuance between them (already preserved in `educationalState` on the same candidate) is not separately visible in `triggerReason` alone. A `mastered`/`durably-mastered` competency with no review due generates no candidate at all, which is a real scope decision (no honest trigger exists), not an oversight. |
+| **Calibration status** | Provisional — implemented, not validated against representative learner data or against whether the resulting trigger vocabulary reads correctly to Explainability's audiences. |
+| **Required validation evidence** | Real usage data checked against whether `weak-competency-remediation` firing across four different underlying states produces appropriately differentiated Explainability output (WP-10 already varies phrasing by `educationalState` directly, so this is a check on the full pipeline, not `deriveTriggerReason` in isolation). |
+
+**Known limitation, not a rule but a real data-availability boundary worth its own entry:** `fetchRecentAttemptSignalsForCompetency` approximates a chronologically-ordered, cross-question attempt sequence from `ali_student_question_history`'s `last_attempt_correct`/`second_last_attempt_correct`/`last_presented_at_sequence` fields, because no per-attempt log exists anywhere in this schema. The most recent attempt's position is exact; the one before it is approximated as `sequence - 1`, which can misorder attempts interleaved across multiple questions. `learningGainTrend` and `daysUntilExam` are accepted as optional caller-supplied inputs rather than derived here, since both remain genuinely client-local today (`types/ali/learningGain.ts`, `lib/progress.ts`'s `getTargetExamDate()`) with no Supabase-persisted history behind either — left undefined, both default to the same fails-open behaviour their own governing contracts already specify.
+
+**Per APD-041's explicit instruction, this documentation entry alters nothing in the WP-19 implementation itself.**
+
+---
+
 *(Future provisional constants introduced by any subsequent work package should be appended here in the same format at the time they are implemented, not retroactively.)*
