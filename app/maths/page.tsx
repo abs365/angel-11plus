@@ -17,6 +17,9 @@ import { mathsQuestions, quickArithmetic } from "@/data/maths";
 import { completeLesson, recordSkillResult, getProgress } from "@/lib/progress";
 import { computeAnalytics } from "@/lib/analytics";
 import { computeAdaptiveState } from "@/lib/adaptiveEngine";
+import SessionInfoBar from "@/components/SessionInfoBar";
+import { SUBJECT_ESTIMATED_MINUTES, SUBJECT_LEARNING_OBJECTIVE } from "@/lib/subjectMeta";
+import type { AnalyticsReport } from "@/types/analytics";
 
 type Mode = "menu" | "reasoning" | "arithmetic" | "done";
 
@@ -45,6 +48,7 @@ export default function MathsPage() {
   const [xpGained, setXpGained] = useState(0);
   const [score, setScore] = useState(0);
   const [recommendedMode, setRecommendedMode] = useState<"reasoning" | "arithmetic" | null>(null);
+  const [report, setReport] = useState<AnalyticsReport | null>(null);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   useEffect(() => {
@@ -52,6 +56,7 @@ export default function MathsPage() {
     const r = computeAnalytics(p);
     const adaptive = computeAdaptiveState(p, r);
     setRecommendedMode(adaptive.recommendedMathsMode);
+    setReport(r);
   }, []);
 
   const questions = mode === "arithmetic" ? quickArithmetic : mathsQuestions.filter((q) => q.id !== "mth-007");
@@ -219,7 +224,17 @@ export default function MathsPage() {
             </div>
           </div>
 
-          <div className="grid gap-4">
+          {/* Study Sessions info strip (Sprint 4) — only shown at the menu
+              (pre-session) state, never during an active question or the
+              results screen. */}
+          <SessionInfoBar
+            objective={SUBJECT_LEARNING_OBJECTIVE.maths!}
+            estimatedMinutes={SUBJECT_ESTIMATED_MINUTES.maths!}
+            skills={report?.skills.filter((s) => s.group === "maths")}
+            subjectAnalytics={report?.subjects.find((s) => s.subject === "maths")}
+          />
+
+          <div className="grid gap-4 mt-4">
             <button
               onClick={() => startMode("reasoning")}
               className="bg-white dark:bg-gray-900 rounded-2xl p-6 border border-gray-100 dark:border-gray-800 hover:border-blue-200 dark:hover:border-blue-700 hover:shadow-sm active:scale-[0.98] transition-all text-left group"

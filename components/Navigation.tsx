@@ -4,16 +4,12 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import {
   BookOpen,
-  Calculator,
-  Pencil,
-  BookMarked,
   BarChart2,
   Compass,
   LogIn,
   User,
   Users,
   MapPin,
-  Target,
   Trophy,
   Puzzle,
   HelpCircle,
@@ -63,12 +59,15 @@ const navSections: NavSection[] = [
     ],
   },
   {
+    // Sprint 4 (Learning Experience Transformation) — collapses English/
+    // Maths/Vocabulary/Writing into one "Learn" hub entry (app/learn/page.tsx),
+    // the exact same collapse-by-mental-model pattern Reasoning Hub already
+    // established (AXT-002 §2's standing Navigation Philosophy test). The
+    // four underlying routes are unchanged and remain directly reachable
+    // from the hub — nothing is removed, only how a learner arrives there.
     label: "Learn",
     items: [
-      { href: "/english", label: "English", icon: BookOpen },
-      { href: "/maths", label: "Maths", icon: Calculator },
-      { href: "/vocabulary", label: "Vocabulary", icon: BookMarked },
-      { href: "/writing", label: "Writing", icon: Pencil },
+      { href: "/learn", label: "Learn", icon: BookOpen },
     ],
   },
   {
@@ -110,8 +109,10 @@ const supportItems: NavItem[] = [
 
 const mobileNavItems = [
   { href: "/dashboard", label: "Journey", icon: Compass },
-  { href: "/english", label: "English", icon: BookOpen },
-  { href: "/maths", label: "Maths", icon: Calculator },
+  // Sprint 4 — "English"/"Maths" individual slots collapse into one "Learn"
+  // slot pointing to the new Learning Hub, matching the desktop nav's
+  // collapse; both underlying routes remain one tap away from the hub.
+  { href: "/learn", label: "Learn", icon: BookOpen },
   { href: "/mocks", label: "Mock Centre", icon: Trophy },
   { href: "/progress", label: "Progress", icon: BarChart2 },
 ];

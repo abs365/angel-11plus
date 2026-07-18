@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Pencil,
   Clock,
@@ -15,10 +15,14 @@ import {
 } from "lucide-react";
 import PageLayout from "@/components/PageLayout";
 import { writingPrompts } from "@/data/writing";
-import { completeLesson } from "@/lib/progress";
+import { completeLesson, getProgress } from "@/lib/progress";
+import { computeAnalytics } from "@/lib/analytics";
+import SessionInfoBar from "@/components/SessionInfoBar";
+import { SUBJECT_ESTIMATED_MINUTES, SUBJECT_LEARNING_OBJECTIVE } from "@/lib/subjectMeta";
 import dynamic from "next/dynamic";
 import type { WritingPrompt } from "@/types";
 import type { WritingFeedback as WritingFeedbackData } from "@/types/writing-feedback";
+import type { AnalyticsReport } from "@/types/analytics";
 
 const WritingFeedback = dynamic(() => import("@/components/WritingFeedback"), {
   loading: () => (
@@ -44,6 +48,11 @@ export default function WritingPage() {
   const [feedbackState, setFeedbackState] = useState<FeedbackState>("idle");
   const [feedback, setFeedback] = useState<WritingFeedbackData | null>(null);
   const [feedbackError, setFeedbackError] = useState<string | null>(null);
+  const [report, setReport] = useState<AnalyticsReport | null>(null);
+
+  useEffect(() => {
+    setReport(computeAnalytics(getProgress()));
+  }, []);
 
   const wordCount = writingText.trim().split(/\s+/).filter((w) => w.length > 0).length;
   const checkedCount = Object.values(checklist).filter(Boolean).length;
@@ -382,6 +391,17 @@ export default function WritingPage() {
             <h1 className="text-gray-900 dark:text-gray-100 font-bold text-2xl">Creative Writing</h1>
             <p className="text-gray-400 dark:text-gray-500 text-sm">Narrative · Descriptive · Persuasive</p>
           </div>
+        </div>
+
+        {/* Study Sessions info strip (Sprint 4) — prompt list (pre-session)
+            state only; Writing has no per-skill breakdown, so this shows
+            the honest whole-subject fallback rather than fabricating one. */}
+        <div className="mb-5">
+          <SessionInfoBar
+            objective={SUBJECT_LEARNING_OBJECTIVE.writing!}
+            estimatedMinutes={SUBJECT_ESTIMATED_MINUTES.writing!}
+            subjectAnalytics={report?.subjects.find((s) => s.subject === "writing")}
+          />
         </div>
 
         {/* Tip */}

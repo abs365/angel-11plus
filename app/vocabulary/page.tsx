@@ -4,7 +4,11 @@ import { useState, useEffect } from "react";
 import { BookMarked, Volume2, ChevronRight, CheckCircle, XCircle, Star } from "lucide-react";
 import PageLayout from "@/components/PageLayout";
 import { vocabWords } from "@/data/vocabulary";
-import { completeLesson } from "@/lib/progress";
+import { completeLesson, getProgress } from "@/lib/progress";
+import { computeAnalytics } from "@/lib/analytics";
+import SessionInfoBar from "@/components/SessionInfoBar";
+import { SUBJECT_ESTIMATED_MINUTES, SUBJECT_LEARNING_OBJECTIVE } from "@/lib/subjectMeta";
+import type { AnalyticsReport } from "@/types/analytics";
 
 type CardMode = "front" | "revealed";
 type QuizState = "browse" | "quiz" | "done";
@@ -18,10 +22,12 @@ export default function VocabularyPage() {
   const [sentenceSubmitted, setSentenceSubmitted] = useState(false);
   const [scores, setScores] = useState<Record<string, "knew" | "learning">>({});
   const [xpGained, setXpGained] = useState(0);
+  const [report, setReport] = useState<AnalyticsReport | null>(null);
 
   useEffect(() => {
     const dayIndex = Math.floor(Date.now() / 86400000) % vocabWords.length;
     setTodayWord(vocabWords[dayIndex]);
+    setReport(computeAnalytics(getProgress()));
   }, []);
 
   function startQuiz() {
@@ -284,6 +290,18 @@ export default function VocabularyPage() {
             <h1 className="text-gray-900 dark:text-gray-100 font-bold text-2xl">Vocabulary Builder</h1>
             <p className="text-gray-400 dark:text-gray-500 text-sm">Academic & literary word mastery</p>
           </div>
+        </div>
+
+        {/* Study Sessions info strip (Sprint 4) — browse (pre-session) state
+            only; Vocabulary has no per-skill breakdown (SkillAnalytics.group
+            covers english/maths/reasoning only), so this shows the honest
+            whole-subject fallback rather than fabricating one. */}
+        <div className="mb-5">
+          <SessionInfoBar
+            objective={SUBJECT_LEARNING_OBJECTIVE.vocabulary!}
+            estimatedMinutes={SUBJECT_ESTIMATED_MINUTES.vocabulary!}
+            subjectAnalytics={report?.subjects.find((s) => s.subject === "vocabulary")}
+          />
         </div>
 
         {/* Word of the day */}

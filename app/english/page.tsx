@@ -8,6 +8,9 @@ import { englishLessons } from "@/data/lessons";
 import { getProgress } from "@/lib/progress";
 import { computeAnalytics } from "@/lib/analytics";
 import { computeAdaptiveState } from "@/lib/adaptiveEngine";
+import SessionInfoBar from "@/components/SessionInfoBar";
+import { SUBJECT_ESTIMATED_MINUTES, SUBJECT_LEARNING_OBJECTIVE } from "@/lib/subjectMeta";
+import type { AnalyticsReport } from "@/types/analytics";
 
 const difficultyLabel: Record<string, string> = {
   "advanced-year4": "Year 4 Advanced",
@@ -28,12 +31,14 @@ const difficultyColor: Record<string, string> = {
 export default function EnglishPage() {
   const [selectedDifficulty, setSelectedDifficulty] = useState<string | null>(null);
   const [recommendedId, setRecommendedId] = useState<string | null>(null);
+  const [report, setReport] = useState<AnalyticsReport | null>(null);
 
   useEffect(() => {
     const p = getProgress();
     const r = computeAnalytics(p);
     const adaptive = computeAdaptiveState(p, r);
     setRecommendedId(adaptive.recommendedEnglishLesson);
+    setReport(r);
   }, []);
 
   const filtered = selectedDifficulty
@@ -54,6 +59,18 @@ export default function EnglishPage() {
             <h1 className="text-gray-900 dark:text-gray-100 font-bold text-2xl">English Comprehension</h1>
             <p className="text-gray-400 dark:text-gray-500 text-sm">Inference · Evidence · Atmosphere · Character</p>
           </div>
+        </div>
+
+        {/* Study Sessions info strip (Sprint 4) — objective, estimated time,
+            and real per-competency status ahead of the lesson list, never
+            shown once a lesson/quiz is in progress. */}
+        <div className="mt-4">
+          <SessionInfoBar
+            objective={SUBJECT_LEARNING_OBJECTIVE.english!}
+            estimatedMinutes={SUBJECT_ESTIMATED_MINUTES.english!}
+            skills={report?.skills.filter((s) => s.group === "english")}
+            subjectAnalytics={report?.subjects.find((s) => s.subject === "english")}
+          />
         </div>
 
         {/* Skills covered */}
