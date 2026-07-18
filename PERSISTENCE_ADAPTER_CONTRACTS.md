@@ -55,4 +55,16 @@
 
 ---
 
-*(Future persistence adapters, including WP-18's Educational State/Durable Mastery runtime wiring, should be documented here at the time they are built, in the same 5-field format.)*
+## `computeRealEducationalState` (`lib/ali/persistence/educationalStateRuntime.ts`, WP-18)
+
+| Field | Value |
+|---|---|
+| **Inputs** | Supabase client, `profileId`, `competencyCode`. Internally composes `fetchCompetencyStateEvidence` (private), `computeCompetencyConfidence` (WP-05, unmodified), `validateCompetencyMastery` (WP-06, unmodified), `fetchDurableMasteryRecord` (WP-17, unmodified), and `computeEducationalState` (WP-08, unmodified). |
+| **Outputs** | A single `EducationalState` label — the same 8-value type WP-08 already defines, never a new one. |
+| **Empty-state behaviour** | A competency with zero real questions or zero history rows produces `masteryState: "new"`, `reviewDue: false`, and an empty evidence array — which `computeCompetencyConfidence` correctly reads as `"insufficient"`, flowing through to `"exploring"`, the honest, evidence-driven default, not a fabricated state. |
+| **Failure semantics** | Every internal fetch follows the same never-throw, `console.warn`-and-fall-back convention as every other adapter in this file; a failed lookup degrades to the same empty-state behaviour above, not a distinct error path. |
+| **Domain invariants** | **Two genuinely new aggregation rules, not merely I/O, documented as such rather than smuggled in as implementation detail:** `deriveCompetencyMasteryState()` (a multi-question competency is "mastered" if *any* constituent question is, "weak" if any is, else "learning" if anything's been attempted, else "new" — the same any-question principle WP-06's `thresholdMet` already established) and `deriveReviewDue()` (a competency's Maintenance Review is due if *any* of its mastered questions individually qualifies per WP-07's `isMaintenanceReviewDue()`, kept at the same "any" granularity as the mastery-state rule for internal consistency). Neither rule was specified by any prior document — both were required because WP-08's `computeEducationalState()` operates at competency granularity while `mastery_state`/`last_presented_at` are stored per question, and no prior work package needed to bridge that gap. |
+
+---
+
+*(Future persistence adapters should be documented here at the time they are built, in the same 5-field format.)*
