@@ -19,4 +19,18 @@
 
 ---
 
-*(Future architectural refinements found via the Architectural Self-Consistency Review process should be appended below as REF-002, etc., following the same structure.)*
+## REF-002 — `RecommendationCandidate` extended with `confidenceTier`, `sourceCompetencyCode`, `triggerReason`
+
+| Field | Value |
+|---|---|
+| **Work package originally implemented in** | WP-09 (Recommendation Orchestration), commit `beb377d` |
+| **New principle prompting refinement** | Programme Decision APD-027's Engineering Note: "prepare for WP-10 by ensuring recommendation outputs expose sufficient structured information to support explanation generation... reasoning should be reusable rather than reconstructed" |
+| **Work package refinement made in** | WP-10 (Explainability Integration), before building the explanation generator itself |
+| **Why WP-09's original code was correct, not defective, when written** | `RecommendationCandidate` fully satisfied WP-09's own scope (Tier 0-3 ordering) at the time it was written — the gap was in what a *different, not-yet-started* work package (WP-10) would need from it, not in WP-09's own requirements. |
+| **What changed** | Three fields added: `confidenceTier` (WP-05 output, answers "what evidence"), `sourceCompetencyCode` (which competency transfer-based evidence came from), `triggerReason` (a fixed vocabulary answering "why now," per `EAW-002` §5). All three are additive to the type; `orchestrateRecommendations()`'s own tier logic required zero changes, since it already treated candidates as opaque records it orders, never inspects field-by-field. |
+| **Regression verification** | `tsc --noEmit` confirmed no existing caller breaks from the now-required fields (none exist yet — no live producer of `RecommendationCandidate` exists in the app). WP-09's own 12 verification scenarios were not re-run since the tier-ordering logic itself was untouched — only the type gained fields no existing test exercised. |
+| **Governance documentation updated** | This entry; no calibration constant was affected. |
+
+---
+
+*(Future architectural refinements found via the Architectural Self-Consistency Review process should be appended below as REF-003, etc., following the same structure.)*

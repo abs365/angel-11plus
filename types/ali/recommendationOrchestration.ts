@@ -1,4 +1,20 @@
 import type { EducationalState } from "@/types/ali/educationalState";
+import type { EvidenceConfidenceTier } from "@/types/ali/confidence";
+
+/**
+ * Why this candidate was generated now (`EAW-002` §5's "why is this
+ * recommendation being shown now" question) — a fixed, named vocabulary
+ * rather than free text, so WP-10's explanation generator can map each
+ * value to fixed phrasing per audience instead of parsing/reconstructing
+ * intent from a string. Extend this union, don't replace it, if a future
+ * work package introduces a genuinely new trigger type.
+ */
+export type RecommendationTrigger =
+  | "cooldown-expired"
+  | "review-due"
+  | "mastery-event-on-linked-competency"
+  | "never-attempted"
+  | "weak-competency-remediation";
 
 /**
  * Recommendation Orchestration (EAW-004_RECOMMENDATION_ENGINE_ARCHITECTURE.md
@@ -21,6 +37,18 @@ export interface RecommendationCandidate {
    * never defaulted to true or false, only left undefined when unknown.
    */
   matchesExamFormat?: boolean;
+
+  // ─── Fields added per Engineering Note, APD-027 — carried so WP-10's
+  // explainability layer can consume this candidate's own reasoning
+  // directly rather than reconstructing it. All three answer one of
+  // EAW-002 §5's three required Explainability questions. ───────────────
+
+  /** WP-05 output (lib/ali/confidence.ts) — "what evidence supports this," combined with `basis`/`relationshipStrength` above. Consumed, not recomputed, same discipline as `educationalState`. */
+  confidenceTier: EvidenceConfidenceTier;
+  /** For shared-mechanism/sequential-dependency candidates: which competency the supporting evidence actually came from (AIW-001 §8's `source_competency_code`). Undefined for direct-evidence candidates, which need no second competency to point to. */
+  sourceCompetencyCode?: string;
+  /** "Why is this recommendation being shown now" (EAW-002 §5) — the triggering event, not merely the resulting recommendation. */
+  triggerReason: RecommendationTrigger;
 }
 
 /**
