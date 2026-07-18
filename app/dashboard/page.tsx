@@ -14,12 +14,10 @@ import {
   MapPin,
   Puzzle,
   Play,
-  CheckCircle,
   Trophy,
-  Award,
   ChevronRight,
   Clock,
-  Sparkles,
+  Compass,
 } from "lucide-react";
 import PageLayout from "@/components/PageLayout";
 import SubjectCard from "@/components/SubjectCard";
@@ -28,16 +26,36 @@ import { migrateLocalProgressToSupabase } from "@/lib/migrateProgress";
 import { computeAnalytics } from "@/lib/analytics";
 import { computeAdaptiveState } from "@/lib/adaptiveEngine";
 import { computeGamification, BADGE_DEFINITIONS } from "@/lib/gamification";
-import InsightCard from "@/components/InsightCard";
+import { computeParentReport } from "@/lib/parentInsights";
+import { getBestMockScoreForPathway, getMockCountForPathway } from "@/lib/mockProgress";
 import NewBadgeBanner from "@/components/NewBadgeBanner";
+import InsightCard from "@/components/InsightCard";
 import { getPathwayById } from "@/lib/pathways";
+import { PremiumCard, MissionCard, StatCard, RecommendationCard } from "@/components/ui/Card";
+import { ProgressBar, ReadinessIndicator, Badge } from "@/components/ui/Progress";
 import type { UserProgress } from "@/types";
 import type { AnalyticsReport } from "@/types/analytics";
 import type { DailyMission as DailyMissionData } from "@/types/adaptive";
 import type { WeeklyGoal, XPMilestone } from "@/types/gamification";
 import type { Pathway } from "@/types/pathway";
+import type { ParentReport } from "@/types/parent";
+import type { MockPathwayId } from "@/types/mock";
 
-// ─── Subject data ─────────────────────────────────────────────────────────────
+/**
+ * Angel V2.0 Sprint 2 (Platform Shell) — "My Admission Journey" replaces
+ * the previous generic dashboard concept on this same route (/dashboard —
+ * routing compatibility preserved). Every data source below is reused
+ * unchanged from the prior dashboard: computeAnalytics(), computeAdaptiveState(),
+ * computeGamification(), getPathwayById()/getSelectedPathwayId() are called
+ * identically. computeParentReport() (already real, already used by
+ * app/parent/page.tsx) and lib/mockProgress.ts's real mock-history readers
+ * are the only two *newly reused* (not newly computed) data sources this
+ * page adds, for the Readiness Snapshot and Upcoming Mock Examinations
+ * sections respectively. No competency calculation, recommendation
+ * algorithm, or analytics formula is modified anywhere in this file.
+ */
+
+// ─── Subject data (unchanged from the prior dashboard) ────────────────────────
 
 const coreSubjects = [
   {
@@ -74,7 +92,7 @@ const coreSubjects = [
   },
   {
     href: "/mocks",
-    title: "Practice Mocks",
+    title: "Mock Centre",
     description: "Timed GL, CEM, CSSE & ISEB-style mock exams. Section by section.",
     icon: Target,
     color: "pink" as const,
@@ -89,26 +107,16 @@ const coreSubjects = [
   },
 ];
 
-// Angel UX V3 — the 4 reasoning disciplines are no longer listed
-// individually on the dashboard (previously 4 more subject cards below the
-// 6 core ones — 10 cards on one screen). They collapse into one Reasoning
-// Hub card, mirroring the nav collapse (ANGEL_NAVIGATION_ARCHITECTURE.md §2).
 const reasoningHub = {
   href: "/reasoning",
-  title: "Reasoning",
+  title: "Practice",
   description: "Verbal, Non-Verbal, Spatial & Numerical — required for GL, CEM, ISEB and more.",
   icon: Puzzle,
   color: "violet" as const,
   badge: "4 disciplines",
 };
 
-// ─── Mission priority styles ───────────────────────────────────────────────────
-
-const missionPriorityBorder: Record<string, string> = {
-  primary: "border-l-rose-400 dark:border-l-rose-600",
-  secondary: "border-l-amber-400 dark:border-l-amber-600",
-  review: "border-l-emerald-400 dark:border-l-emerald-600",
-};
+// ─── Mission priority styles (unchanged) ───────────────────────────────────────
 
 const missionPriorityChip: Record<string, string> = {
   primary: "bg-rose-100 dark:bg-rose-950 text-rose-600 dark:text-rose-400",
@@ -121,8 +129,6 @@ const PRIORITY_LABEL: Record<string, string> = {
   secondary: "Next",
   review: "Maintain",
 };
-
-// ─── Pathway accent ───────────────────────────────────────────────────────────
 
 const pathwayIconBg: Record<string, string> = {
   blue: "bg-blue-100 dark:bg-blue-900",
@@ -144,7 +150,7 @@ const pathwayIconText: Record<string, string> = {
   gray: "text-gray-600 dark:text-gray-400",
 };
 
-// ─── Encouraging message ──────────────────────────────────────────────────────
+const MOCK_PATHWAY_IDS: MockPathwayId[] = ["gl", "cem", "csse", "iseb"];
 
 function getEncouragingMessage(progress: UserProgress, weeklyGoal: WeeklyGoal | null): string {
   if (weeklyGoal?.isComplete) return "Weekly goal achieved — outstanding consistency.";
@@ -154,12 +160,12 @@ function getEncouragingMessage(progress: UserProgress, weeklyGoal: WeeklyGoal | 
   if (progress.completedLessons.length >= 20) return "You're building a strong foundation. Keep it up.";
   if (progress.completedLessons.length >= 5) return "Solid progress — you're on the right track.";
   if (progress.completedLessons.length >= 1) return "Welcome back. Let's make today count.";
-  return "Welcome to Angel 11+. Your journey starts here.";
+  return "Your admission journey starts here.";
 }
 
-// ─── Welcome Hero ─────────────────────────────────────────────────────────────
+// ─── Welcome — reuses PremiumCard (Sprint 1) instead of a bespoke gradient div ─
 
-function WelcomeHero({
+function WelcomeMessage({
   progress,
   weeklyGoal,
   milestoneProgress,
@@ -171,18 +177,16 @@ function WelcomeHero({
   nextMilestone: XPMilestone | null;
 }) {
   const hour = new Date().getHours();
-  const greeting =
-    hour < 12 ? "Good morning" : hour < 17 ? "Good afternoon" : "Good evening";
+  const greeting = hour < 12 ? "Good morning" : hour < 17 ? "Good afternoon" : "Good evening";
   const level = Math.floor(progress.xp / 100) + 1;
   const message = getEncouragingMessage(progress, weeklyGoal);
 
   return (
-    <div className="bg-gradient-to-br from-purple-600 via-purple-700 to-indigo-700 rounded-2xl px-6 py-5 shadow-lg shadow-purple-200 dark:shadow-purple-950">
-      {/* Name + Level */}
+    <PremiumCard>
       <div className="flex items-start justify-between mb-4">
         <div>
           <p className="text-purple-200 text-sm font-medium">{greeting}</p>
-          <h1 className="text-white font-bold text-2xl mt-0.5 leading-tight">Angel</h1>
+          <h1 className="text-white font-bold text-2xl mt-0.5 leading-tight">My Admission Journey</h1>
         </div>
         <div className="bg-white/15 rounded-xl px-3 py-1.5 flex items-center gap-1.5">
           <Star size={13} className="text-yellow-300" />
@@ -190,7 +194,6 @@ function WelcomeHero({
         </div>
       </div>
 
-      {/* Stats row */}
       <div className="flex items-center gap-4 mb-4">
         <div>
           <p className="text-white font-bold text-2xl leading-none">{progress.xp}</p>
@@ -206,14 +209,11 @@ function WelcomeHero({
         </div>
         <div className="h-8 w-px bg-white/20" />
         <div>
-          <p className="text-white font-bold text-2xl leading-none">
-            {progress.completedLessons.length}
-          </p>
+          <p className="text-white font-bold text-2xl leading-none">{progress.completedLessons.length}</p>
           <p className="text-purple-300 text-xs mt-1">Sessions</p>
         </div>
       </div>
 
-      {/* Milestone progress bar */}
       <div className="mb-4">
         <div className="flex justify-between text-xs text-purple-300 mb-1.5">
           <span>{progress.xp} XP</span>
@@ -231,16 +231,15 @@ function WelcomeHero({
         </div>
       </div>
 
-      {/* Encouraging message */}
       <div className="bg-white/10 rounded-xl px-4 py-2.5 flex gap-2.5 items-center">
-        <Sparkles size={14} className="text-yellow-300 shrink-0" />
+        <Compass size={14} className="text-yellow-300 shrink-0" />
         <p className="text-purple-100 text-sm font-medium leading-snug">{message}</p>
       </div>
-    </div>
+    </PremiumCard>
   );
 }
 
-// ─── Dashboard ────────────────────────────────────────────────────────────────
+// ─── My Admission Journey ───────────────────────────────────────────────────────
 
 export default function DashboardPage() {
   const [progress, setProgress] = useState<UserProgress | null>(null);
@@ -252,6 +251,7 @@ export default function DashboardPage() {
   const [milestoneProgress, setMilestoneProgress] = useState<number>(0);
   const [nextMilestone, setNextMilestone] = useState<XPMilestone | null>(null);
   const [pathway, setPathway] = useState<Pathway | undefined>();
+  const [parentReport, setParentReport] = useState<ParentReport | null>(null);
 
   useEffect(() => {
     const p = getProgress();
@@ -268,6 +268,9 @@ export default function DashboardPage() {
     setMilestoneProgress(gamification.milestoneProgress);
     setNextMilestone(gamification.nextMilestone);
     setPathway(getPathwayById(getSelectedPathwayId() ?? ""));
+    // Readiness Snapshot reuses computeParentReport() exactly as app/parent/page.tsx
+    // already does — same three real inputs, no new calculation.
+    setParentReport(computeParentReport(p, r, gamification));
     migrateLocalProgressToSupabase().catch(() => {});
   }, []);
 
@@ -279,14 +282,18 @@ export default function DashboardPage() {
   const earnedBadges = BADGE_DEFINITIONS.filter((b) => earnedBadgeIds.includes(b.id));
   const accentBg = pathway ? (pathwayIconBg[pathway.accentColor] ?? pathwayIconBg.purple) : pathwayIconBg.purple;
   const accentText = pathway ? (pathwayIconText[pathway.accentColor] ?? pathwayIconText.purple) : pathwayIconText.purple;
+  const topMissionItem = mission && mission.items.length > 0 ? mission.items[0] : null;
+  const mockSupported = pathway && MOCK_PATHWAY_IDS.includes(pathway.id as MockPathwayId);
+  const bestMockScore = mockSupported ? getBestMockScoreForPathway(pathway!.id as MockPathwayId) : null;
+  const mockAttempts = mockSupported ? getMockCountForPathway(pathway!.id as MockPathwayId) : 0;
 
   return (
-    <PageLayout>
+    <PageLayout breadcrumbs={[{ label: "My Admission Journey" }]}>
       <div className="max-w-4xl mx-auto px-4 py-6 md:px-8 md:py-8 space-y-8">
 
-        {/* 1. Welcome Hero */}
+        {/* 1. Welcome message */}
         {progress && (
-          <WelcomeHero
+          <WelcomeMessage
             progress={progress}
             weeklyGoal={weeklyGoal}
             milestoneProgress={milestoneProgress}
@@ -294,12 +301,46 @@ export default function DashboardPage() {
           />
         )}
 
-        {/* 2. New Badge Banner */}
         {newBadgeIds.length > 0 && (
           <NewBadgeBanner newlyEarnedIds={newBadgeIds} onDismiss={handleDismissBanner} />
         )}
 
-        {/* 3. Today's Mission */}
+        {/* 2. Target Schools — "pathway" already models which exam board/school
+             family a learner is targeting (AEP-002 §13); no new school data
+             model is introduced, only renamed framing. */}
+        <section>
+          <h2 className="text-gray-900 dark:text-gray-100 font-bold text-xl mb-3">Target Schools</h2>
+          <Link
+            href="/pathways"
+            className="flex items-center gap-4 bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 px-5 py-4 shadow-sm hover:shadow-md hover:border-purple-100 dark:hover:border-purple-900 active:scale-[0.98] transition-all group"
+          >
+            <div className={`w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 ${accentBg}`}>
+              <MapPin size={22} className={accentText} />
+            </div>
+            <div className="flex-1 min-w-0">
+              {pathway ? (
+                <>
+                  <p className="text-[10px] font-bold uppercase tracking-widest text-purple-400 dark:text-purple-500 mb-0.5">
+                    Current Target
+                  </p>
+                  <p className="text-gray-900 dark:text-gray-100 font-bold text-base leading-snug">{pathway.name}</p>
+                  <p className="text-gray-400 dark:text-gray-500 text-xs mt-0.5 line-clamp-1">{pathway.description}</p>
+                </>
+              ) : (
+                <>
+                  <p className="text-[10px] font-bold uppercase tracking-widest text-purple-400 dark:text-purple-500 mb-0.5">
+                    Get Started
+                  </p>
+                  <p className="text-gray-900 dark:text-gray-100 font-bold text-base leading-snug">Choose Your Target Schools</p>
+                  <p className="text-gray-400 dark:text-gray-500 text-xs mt-0.5">GL · CEM · CSSE · ISEB · Independent</p>
+                </>
+              )}
+            </div>
+            <ChevronRight size={18} className="text-gray-300 dark:text-gray-600 group-hover:text-purple-500 dark:group-hover:text-purple-400 transition-colors shrink-0" />
+          </Link>
+        </section>
+
+        {/* 3. Today's Admission Mission */}
         <section>
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-2.5">
@@ -307,13 +348,9 @@ export default function DashboardPage() {
                 <Target size={17} className="text-purple-600 dark:text-purple-400" />
               </div>
               <div>
-                <h2 className="text-gray-900 dark:text-gray-100 font-bold text-xl leading-tight">
-                  Today&apos;s Mission
-                </h2>
+                <h2 className="text-gray-900 dark:text-gray-100 font-bold text-xl leading-tight">Today&apos;s Admission Mission</h2>
                 {pathway && (
-                  <p className="text-xs text-purple-500 dark:text-purple-400 font-medium mt-0.5">
-                    {pathway.shortName} pathway
-                  </p>
+                  <p className="text-xs text-purple-500 dark:text-purple-400 font-medium mt-0.5">{pathway.shortName} pathway</p>
                 )}
               </div>
             </div>
@@ -327,50 +364,29 @@ export default function DashboardPage() {
 
           {mission && mission.items.length > 0 ? (
             <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 shadow-sm overflow-hidden">
-              {/* Mission items — an ordered list of prioritised actions (AEI-002:
-                  semantic <ol>/<li>, not just a visual "1/2/3" chip, so a
-                  screen reader announces "list, N items" / "item N of N";
-                  list-none preserves the exact prior visual appearance). */}
               <ol className="p-5 space-y-3 list-none">
                 {mission.items.map((item, i) => (
-                  <li
-                    key={item.id}
-                    className={`flex items-start gap-3.5 p-4 rounded-xl bg-gray-50 dark:bg-gray-800/60 border-l-4 ${missionPriorityBorder[item.priority]}`}
-                  >
+                  <MissionCard key={item.id} priority={item.priority}>
                     <div className="w-6 h-6 rounded-full bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 flex items-center justify-center shrink-0 mt-0.5 shadow-sm">
-                      <span className="text-[11px] font-bold text-gray-500 dark:text-gray-400">
-                        {i + 1}
-                      </span>
+                      <span className="text-[11px] font-bold text-gray-500 dark:text-gray-400">{i + 1}</span>
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 flex-wrap mb-1">
-                        <span
-                          className={`text-[10px] font-bold uppercase tracking-wide px-2 py-0.5 rounded-full ${missionPriorityChip[item.priority]}`}
-                        >
+                        <span className={`text-[10px] font-bold uppercase tracking-wide px-2 py-0.5 rounded-full ${missionPriorityChip[item.priority]}`}>
                           {PRIORITY_LABEL[item.priority]}
                         </span>
-                        <span className="text-gray-900 dark:text-gray-100 font-semibold text-sm">
-                          {item.label}
-                        </span>
+                        <span className="text-gray-900 dark:text-gray-100 font-semibold text-sm">{item.label}</span>
                       </div>
-                      <p className="text-gray-400 dark:text-gray-500 text-xs leading-relaxed">
-                        {item.reason}
-                      </p>
+                      <p className="text-gray-400 dark:text-gray-500 text-xs leading-relaxed">{item.reason}</p>
                       <div className="flex items-center gap-1 mt-1.5">
                         <Clock size={10} className="text-gray-300 dark:text-gray-600" />
-                        <span className="text-gray-300 dark:text-gray-600 text-xs">
-                          ~{item.estimatedMinutes} min
-                        </span>
+                        <span className="text-gray-300 dark:text-gray-600 text-xs">~{item.estimatedMinutes} min</span>
                       </div>
                     </div>
-                  </li>
+                  </MissionCard>
                 ))}
               </ol>
-
-              {/* Divider */}
               <div className="h-px bg-gray-100 dark:bg-gray-800 mx-5" />
-
-              {/* Single CTA */}
               <div className="p-5">
                 <Link
                   href={mission.items[0].href}
@@ -382,21 +398,15 @@ export default function DashboardPage() {
               </div>
             </div>
           ) : (
-            /* Empty state — first visit */
             <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 shadow-sm p-8 text-center">
               <div className="w-16 h-16 bg-purple-50 dark:bg-purple-950 rounded-2xl flex items-center justify-center mx-auto mb-4">
                 <Target size={30} className="text-purple-400 dark:text-purple-600" />
               </div>
-              <p className="text-gray-900 dark:text-gray-100 font-bold text-base mb-1.5">
-                Start your first session
-              </p>
+              <p className="text-gray-900 dark:text-gray-100 font-bold text-base mb-1.5">Start your first session</p>
               <p className="text-gray-400 dark:text-gray-500 text-sm leading-relaxed mb-5 max-w-xs mx-auto">
-                Complete any practice to unlock your personalised daily mission
+                Complete any practice to unlock your personalised admission mission
               </p>
-              <Link
-                href="/english"
-                className="inline-flex items-center gap-2 bg-purple-600 hover:bg-purple-700 active:scale-[0.98] text-white rounded-xl px-5 py-2.5 font-semibold text-sm transition-all"
-              >
+              <Link href="/english" className="inline-flex items-center gap-2 bg-purple-600 hover:bg-purple-700 active:scale-[0.98] text-white rounded-xl px-5 py-2.5 font-semibold text-sm transition-all">
                 <Play size={14} />
                 Start Learning
               </Link>
@@ -404,227 +414,163 @@ export default function DashboardPage() {
           )}
         </section>
 
-        {/* 4. Continue Learning — Core Subjects */}
+        {/* 4. Readiness Snapshot — reuses computeParentReport()'s real
+             examReadiness/hasEnoughData exactly as Parent Hub does; honest
+             "not enough data yet" state when it doesn't. */}
+        <section>
+          <h2 className="text-gray-900 dark:text-gray-100 font-bold text-xl mb-3">Readiness Snapshot</h2>
+          {parentReport && parentReport.hasEnoughData ? (
+            <ReadinessIndicator readiness={parentReport.examReadiness} />
+          ) : (
+            <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 px-4 py-5 flex items-center gap-3">
+              <div className="w-10 h-10 bg-purple-50 dark:bg-purple-950 rounded-xl flex items-center justify-center shrink-0">
+                <BarChart2 size={18} className="text-purple-300 dark:text-purple-700" />
+              </div>
+              <div>
+                <p className="text-gray-700 dark:text-gray-300 font-semibold text-sm">Not enough data yet</p>
+                <p className="text-gray-400 dark:text-gray-500 text-xs mt-0.5">Complete a few more sessions to unlock your readiness snapshot</p>
+              </div>
+            </div>
+          )}
+        </section>
+
+        {/* 5. Recommended Next Step — spotlights the same top-priority mission
+             item above via RecommendationCard, the same real reason text,
+             not a second recommendation computation. */}
+        {topMissionItem && (
+          <section>
+            <h2 className="text-gray-900 dark:text-gray-100 font-bold text-xl mb-3">Recommended Next Step</h2>
+            <RecommendationCard icon={Target} title={topMissionItem.label} reason={topMissionItem.reason} color="purple" />
+          </section>
+        )}
+
+        {/* 6. Recent Progress */}
+        {progress && (
+          <section>
+            <h2 className="text-gray-900 dark:text-gray-100 font-bold text-xl mb-3">Recent Progress</h2>
+
+            <div className="grid grid-cols-3 gap-3 mb-3">
+              <StatCard icon={Flame} value={progress.streak} label="Day streak" color="orange" />
+              <StatCard icon={Trophy} value={progress.completedLessons.length} label="Sessions" color="amber" />
+              <StatCard icon={Star} value={progress.xp} label="Total XP" color="purple" />
+            </div>
+
+            {weeklyGoal && (
+              <div className="mb-3">
+                <ProgressBar
+                  percent={(weeklyGoal.sessions / weeklyGoal.target) * 100}
+                  color={weeklyGoal.isComplete ? "emerald" : "purple"}
+                  label="Weekly goal progress"
+                />
+                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1.5">
+                  {weeklyGoal.isComplete ? "Weekly goal complete — great work!" : `${weeklyGoal.sessions} of ${weeklyGoal.target} sessions this week`}
+                </p>
+              </div>
+            )}
+
+            {earnedBadges.length > 0 ? (
+              <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-4">
+                <p className="text-[10px] font-bold uppercase tracking-widest text-gray-300 dark:text-gray-600 mb-3">Badges Earned</p>
+                <div className="flex flex-wrap gap-2">
+                  {earnedBadges.slice(0, 6).map((badge) => (
+                    <Badge key={badge.id} label={badge.name} />
+                  ))}
+                  {earnedBadges.length > 6 && (
+                    <Link href="/progress" className="flex items-center gap-1 bg-gray-50 dark:bg-gray-800 text-gray-500 dark:text-gray-400 px-3 py-1.5 rounded-full text-xs font-medium border border-gray-100 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                      +{earnedBadges.length - 6} more
+                    </Link>
+                  )}
+                </div>
+              </div>
+            ) : (
+              <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 px-4 py-5 flex items-center gap-3">
+                <div className="w-10 h-10 bg-purple-50 dark:bg-purple-950 rounded-xl flex items-center justify-center shrink-0">
+                  <Trophy size={18} className="text-purple-300 dark:text-purple-700" />
+                </div>
+                <div>
+                  <p className="text-gray-700 dark:text-gray-300 font-semibold text-sm">Badges unlock as you learn</p>
+                  <p className="text-gray-400 dark:text-gray-500 text-xs mt-0.5">Complete sessions to earn your first badge</p>
+                </div>
+              </div>
+            )}
+
+            {/* Learning Insights — existing functionality (previously its own
+                section), carried forward unchanged inside Recent Progress
+                rather than dropped, per "existing functionality continues to
+                operate unchanged." */}
+            {report && report.hasEnoughData && report.insights.length > 0 && (
+              <div className="mt-3">
+                <div className="flex items-center justify-between mb-2">
+                  <p className="text-[10px] font-bold uppercase tracking-widest text-gray-300 dark:text-gray-600">Learning Insights</p>
+                  <Link href="/progress" className="text-purple-600 dark:text-purple-400 text-xs font-medium hover:underline">
+                    Full report →
+                  </Link>
+                </div>
+                <div className="flex flex-col gap-2">
+                  {report.insights.slice(0, 2).map((insight) => (
+                    <InsightCard key={insight.id} insight={insight} compact />
+                  ))}
+                </div>
+              </div>
+            )}
+          </section>
+        )}
+
+        {/* 7. Upcoming Mock Examinations — honestly framed as "available," not
+             "scheduled": no real mock-scheduling concept exists anywhere in
+             this codebase, and this sprint does not invent one. */}
+        <section>
+          <h2 className="text-gray-900 dark:text-gray-100 font-bold text-xl mb-3">Mock Examinations Available</h2>
+          {pathway && mockSupported ? (
+            <Link
+              href="/mocks"
+              className="flex items-center gap-4 bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 px-5 py-4 shadow-sm hover:shadow-md active:scale-[0.98] transition-all group"
+            >
+              <div className="w-12 h-12 rounded-2xl bg-pink-100 dark:bg-pink-900 flex items-center justify-center shrink-0">
+                <Trophy size={22} className="text-pink-600 dark:text-pink-400" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-gray-900 dark:text-gray-100 font-bold text-base leading-snug">{pathway.name} Mock Exam</p>
+                <p className="text-gray-400 dark:text-gray-500 text-xs mt-0.5">
+                  {mockAttempts > 0 ? `${mockAttempts} attempt${mockAttempts === 1 ? "" : "s"} · Best score ${bestMockScore}%` : "Not attempted yet"}
+                </p>
+              </div>
+              <ChevronRight size={18} className="text-gray-300 dark:text-gray-600 group-hover:text-purple-500 dark:group-hover:text-purple-400 transition-colors shrink-0" />
+            </Link>
+          ) : (
+            <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 px-4 py-5 flex items-center gap-3">
+              <div className="w-10 h-10 bg-pink-50 dark:bg-pink-950 rounded-xl flex items-center justify-center shrink-0">
+                <Trophy size={18} className="text-pink-300 dark:text-pink-700" />
+              </div>
+              <div>
+                <p className="text-gray-700 dark:text-gray-300 font-semibold text-sm">
+                  {pathway ? "No mock exam yet for this pathway" : "Choose target schools to see available mocks"}
+                </p>
+                <p className="text-gray-400 dark:text-gray-500 text-xs mt-0.5">Visit the Mock Centre to see what&apos;s available</p>
+              </div>
+            </div>
+          )}
+        </section>
+
+        {/* 8. Quick Access */}
         <section>
           <div className="mb-4">
-            <h2 className="text-gray-900 dark:text-gray-100 font-bold text-xl">
-              Continue Learning
-            </h2>
-            <p className="text-gray-400 dark:text-gray-500 text-sm mt-0.5">
-              English · Maths · Vocabulary · Writing · Mocks
-            </p>
+            <h2 className="text-gray-900 dark:text-gray-100 font-bold text-xl">Quick Access</h2>
+            <p className="text-gray-400 dark:text-gray-500 text-sm mt-0.5">English · Maths · Vocabulary · Writing · Mock Centre</p>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {coreSubjects.map((subject) => (
               <SubjectCard key={subject.href} {...subject} />
             ))}
           </div>
-
-          {/* Reasoning Hub — one card, not four (Angel UX V3) */}
           <div className="mt-7">
             <SubjectCard {...reasoningHub} />
           </div>
         </section>
 
-        {/* 5. Achievements */}
-        {progress && (
-          <section>
-            <h2 className="text-gray-900 dark:text-gray-100 font-bold text-xl mb-3">
-              Achievements
-            </h2>
-
-            {/* Coloured stat cards */}
-            <div className="grid grid-cols-3 gap-3 mb-3">
-              <div className="bg-orange-50 dark:bg-orange-950 rounded-2xl border border-orange-100 dark:border-orange-900 p-4 text-center">
-                <Flame size={24} className="text-orange-500 mx-auto mb-2" />
-                <p className="text-orange-900 dark:text-orange-100 font-bold text-2xl leading-none">
-                  {progress.streak}
-                </p>
-                <p className="text-orange-400 dark:text-orange-500 text-[11px] mt-1.5 font-medium">
-                  Day streak
-                </p>
-              </div>
-              <div className="bg-amber-50 dark:bg-amber-950 rounded-2xl border border-amber-100 dark:border-amber-900 p-4 text-center">
-                <Trophy size={24} className="text-amber-500 mx-auto mb-2" />
-                <p className="text-amber-900 dark:text-amber-100 font-bold text-2xl leading-none">
-                  {progress.completedLessons.length}
-                </p>
-                <p className="text-amber-400 dark:text-amber-500 text-[11px] mt-1.5 font-medium">
-                  Sessions
-                </p>
-              </div>
-              <div className="bg-purple-50 dark:bg-purple-950 rounded-2xl border border-purple-100 dark:border-purple-900 p-4 text-center">
-                <Star size={24} className="text-purple-500 mx-auto mb-2" />
-                <p className="text-purple-900 dark:text-purple-100 font-bold text-2xl leading-none">
-                  {progress.xp}
-                </p>
-                <p className="text-purple-400 dark:text-purple-500 text-[11px] mt-1.5 font-medium">
-                  Total XP
-                </p>
-              </div>
-            </div>
-
-            {/* Weekly goal */}
-            {weeklyGoal && (
-              <div
-                className={`flex items-center gap-3 rounded-xl px-4 py-3.5 border mb-3 ${
-                  weeklyGoal.isComplete
-                    ? "bg-emerald-50 dark:bg-emerald-950 border-emerald-100 dark:border-emerald-900"
-                    : "bg-white dark:bg-gray-900 border-gray-100 dark:border-gray-800"
-                }`}
-              >
-                {weeklyGoal.isComplete ? (
-                  <CheckCircle size={20} className="text-emerald-500 shrink-0" />
-                ) : (
-                  <div className="flex gap-1.5 shrink-0">
-                    {Array.from({ length: weeklyGoal.target }).map((_, i) => (
-                      <div
-                        key={i}
-                        className={`w-3 h-3 rounded-full transition-colors ${
-                          i < weeklyGoal.sessions
-                            ? "bg-indigo-400 dark:bg-indigo-500"
-                            : "bg-gray-200 dark:bg-gray-700"
-                        }`}
-                      />
-                    ))}
-                  </div>
-                )}
-                <p
-                  className={`text-sm font-medium leading-snug ${
-                    weeklyGoal.isComplete
-                      ? "text-emerald-700 dark:text-emerald-400"
-                      : "text-gray-600 dark:text-gray-400"
-                  }`}
-                >
-                  {weeklyGoal.isComplete
-                    ? "Weekly goal complete — great work!"
-                    : `${weeklyGoal.sessions} of ${weeklyGoal.target} sessions this week`}
-                </p>
-              </div>
-            )}
-
-            {/* Earned badges */}
-            {earnedBadges.length > 0 && (
-              <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-4">
-                <p className="text-[10px] font-bold uppercase tracking-widest text-gray-300 dark:text-gray-600 mb-3">
-                  Badges Earned
-                </p>
-                <div className="flex flex-wrap gap-2">
-                  {earnedBadges.slice(0, 6).map((badge) => (
-                    <div
-                      key={badge.id}
-                      className="flex items-center gap-1.5 bg-purple-50 dark:bg-purple-950 text-purple-700 dark:text-purple-300 px-3 py-1.5 rounded-full text-xs font-medium border border-purple-100 dark:border-purple-900"
-                    >
-                      <Award size={11} />
-                      {badge.name}
-                    </div>
-                  ))}
-                  {earnedBadges.length > 6 && (
-                    <Link
-                      href="/progress"
-                      className="flex items-center gap-1 bg-gray-50 dark:bg-gray-800 text-gray-500 dark:text-gray-400 px-3 py-1.5 rounded-full text-xs font-medium border border-gray-100 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
-                    >
-                      +{earnedBadges.length - 6} more
-                    </Link>
-                  )}
-                </div>
-              </div>
-            )}
-
-            {/* No badges yet */}
-            {earnedBadges.length === 0 && (
-              <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 px-4 py-5 flex items-center gap-3">
-                <div className="w-10 h-10 bg-purple-50 dark:bg-purple-950 rounded-xl flex items-center justify-center shrink-0">
-                  <Award size={18} className="text-purple-300 dark:text-purple-700" />
-                </div>
-                <div>
-                  <p className="text-gray-700 dark:text-gray-300 font-semibold text-sm">
-                    Badges unlock as you learn
-                  </p>
-                  <p className="text-gray-400 dark:text-gray-500 text-xs mt-0.5">
-                    Complete sessions to earn your first badge
-                  </p>
-                </div>
-              </div>
-            )}
-          </section>
-        )}
-
-        {/* 6. Your Pathway */}
-        <section>
-          <h2 className="text-gray-900 dark:text-gray-100 font-bold text-xl mb-3">
-            Your Pathway
-          </h2>
-          <Link
-            href="/pathways"
-            className="flex items-center gap-4 bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 px-5 py-4 shadow-sm hover:shadow-md hover:border-purple-100 dark:hover:border-purple-900 active:scale-[0.98] transition-all group"
-          >
-            <div
-              className={`w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 ${accentBg}`}
-            >
-              <MapPin size={22} className={accentText} />
-            </div>
-            <div className="flex-1 min-w-0">
-              {pathway ? (
-                <>
-                  <p className="text-[10px] font-bold uppercase tracking-widest text-purple-400 dark:text-purple-500 mb-0.5">
-                    Current Pathway
-                  </p>
-                  <p className="text-gray-900 dark:text-gray-100 font-bold text-base leading-snug">
-                    {pathway.name}
-                  </p>
-                  <p className="text-gray-400 dark:text-gray-500 text-xs mt-0.5 line-clamp-1">
-                    {pathway.description}
-                  </p>
-                </>
-              ) : (
-                <>
-                  <p className="text-[10px] font-bold uppercase tracking-widest text-purple-400 dark:text-purple-500 mb-0.5">
-                    Get Started
-                  </p>
-                  <p className="text-gray-900 dark:text-gray-100 font-bold text-base leading-snug">
-                    Choose Your 11+ Pathway
-                  </p>
-                  <p className="text-gray-400 dark:text-gray-500 text-xs mt-0.5">
-                    GL · CEM · CSSE · ISEB · Independent
-                  </p>
-                </>
-              )}
-            </div>
-            <ChevronRight
-              size={18}
-              className="text-gray-300 dark:text-gray-600 group-hover:text-purple-500 dark:group-hover:text-purple-400 transition-colors shrink-0"
-            />
-          </Link>
-        </section>
-
-        {/* 7. Learning Insights */}
-        {report && report.hasEnoughData && report.insights.length > 0 && (
-          <section>
-            <div className="flex items-center justify-between mb-3">
-              <h2 className="text-gray-900 dark:text-gray-100 font-bold text-xl">
-                Learning Insights
-              </h2>
-              <Link
-                href="/progress"
-                className="text-purple-600 dark:text-purple-400 text-xs font-medium hover:underline"
-              >
-                Full report →
-              </Link>
-            </div>
-            <div className="flex flex-col gap-2">
-              {report.insights.slice(0, 2).map((insight) => (
-                <InsightCard key={insight.id} insight={insight} compact />
-              ))}
-            </div>
-          </section>
-        )}
-
-        {/* 8. About + disclaimer */}
+        {/* 9. About + disclaimer */}
         <div className="bg-white dark:bg-gray-900 rounded-2xl p-5 border border-gray-100 dark:border-gray-800">
-          <p className="text-gray-500 dark:text-gray-400 text-xs font-semibold uppercase tracking-wide mb-2">
-            About Angel 11+
-          </p>
+          <p className="text-gray-500 dark:text-gray-400 text-xs font-semibold uppercase tracking-wide mb-2">About Angel 11+</p>
           <p className="text-gray-700 dark:text-gray-300 text-sm leading-relaxed mb-2">
             Original exam-style practice for UK 11+ preparation across English, Maths, Reasoning, Writing and Vocabulary.
           </p>

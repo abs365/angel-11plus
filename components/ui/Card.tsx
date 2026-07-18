@@ -18,7 +18,7 @@ import { cn } from "@/lib/cn";
  */
 
 interface CardBaseProps {
-  children: ReactNode;
+  children?: ReactNode;
   className?: string;
 }
 

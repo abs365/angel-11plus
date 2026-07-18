@@ -8,9 +8,8 @@ import {
   Pencil,
   BookMarked,
   BarChart2,
-  LayoutDashboard,
+  Compass,
   LogIn,
-  LogOut,
   User,
   Users,
   MapPin,
@@ -21,9 +20,11 @@ import {
   MessageSquare,
   Mail,
   Sparkles,
+  Crown,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { useAuth } from "@/components/providers/AuthProvider";
+import UserMenu from "@/components/ui/UserMenu";
 
 type NavItem = {
   href: string;
@@ -37,41 +38,51 @@ type NavSection = {
   items: NavItem[];
 };
 
-// Angel UX V3 (ANGEL_NAVIGATION_ARCHITECTURE.md §2) — Reasoning's four
-// disciplines collapse into one "Reasoning Hub" entry (app/reasoning/page.tsx)
-// rather than four peer-weighted links; "Exams" is renamed "Assessment" with
-// "Practice" replacing "Mock Tests" (less exam-anxiety framing for a 9-11
-// year old audience, and the more accurate word now that /mocks also hosts
-// ALI's practice modes). The four reasoning routes themselves are unchanged.
+// Angel V2.0 Sprint 2 (Platform Shell) — navigation restructured to
+// communicate a learner/admission journey rather than a flat page list, per
+// this sprint's own preferred structure: My Admission Journey / Learn /
+// Practice / Mock Centre / Target Schools / Progress / Parent Hub /
+// Angel Plus. Every existing route is retained unchanged (routing
+// compatibility) — only labels and grouping changed. "Home" and "My
+// Admission Journey" are treated as one destination (the same
+// /dashboard route, now presenting the My Admission Journey experience),
+// not two separate entries, since nothing in this sprint specifies
+// distinct content for a second "Home" page. "Reasoning Hub" is renamed
+// "Practice" (its four underlying routes are unchanged); the Assessment
+// section's two /mocks anchors collapse into one "Mock Centre" entry,
+// since My Admission Journey's own "Upcoming Mock Examinations" section
+// now carries the practice-vs-mock-exam distinction contextually rather
+// than needing two separate nav anchors; "Exam Pathways" is renamed
+// "Target Schools" (Pathway data already models "which schools/exam
+// boards you're targeting" — AEP-002 §13 — no new data model introduced).
 const navSections: NavSection[] = [
   {
-    label: "Learning",
+    label: "Journey",
     items: [
-      { href: "/dashboard", label: "Home", icon: LayoutDashboard },
+      { href: "/dashboard", label: "My Admission Journey", icon: Compass },
+    ],
+  },
+  {
+    label: "Learn",
+    items: [
       { href: "/english", label: "English", icon: BookOpen },
       { href: "/maths", label: "Maths", icon: Calculator },
       { href: "/vocabulary", label: "Vocabulary", icon: BookMarked },
       { href: "/writing", label: "Writing", icon: Pencil },
+    ],
+  },
+  {
+    label: "Practice",
+    items: [
+      { href: "/reasoning", label: "Practice", icon: Puzzle },
+      { href: "/mocks", label: "Mock Centre", icon: Trophy },
+      { href: "/pathways", label: "Target Schools", icon: MapPin },
+    ],
+  },
+  {
+    label: "",
+    items: [
       { href: "/progress", label: "Progress", icon: BarChart2 },
-    ],
-  },
-  {
-    label: "Reasoning",
-    items: [
-      { href: "/reasoning", label: "Reasoning Hub", icon: Puzzle },
-    ],
-  },
-  {
-    // Phase 5B.2 — "Practice" and "Mock Exams" are both shown, separately,
-    // because both are trusted UK educational terms parents actively look
-    // for (PRACTICE_NAVIGATION_RECOMMENDATION.md). Both point to /mocks,
-    // which is itself split into two clearly-headed sections; the anchors
-    // below land a click directly on the matching section.
-    label: "Assessment",
-    items: [
-      { href: "/mocks#practice", label: "Practice", icon: Target },
-      { href: "/mocks#mock-exams", label: "Mock Exams", icon: Trophy },
-      { href: "/pathways", label: "Exam Pathways", icon: MapPin },
     ],
   },
 ];
@@ -82,6 +93,14 @@ const parentItem: NavItem = {
   icon: Users,
 };
 
+/** Angel Plus — an honest, unwired "coming soon" destination (app/angel-plus/page.tsx). No premium tier, billing, or new business logic exists anywhere in this codebase; this sprint does not introduce any (per its own "Do NOT introduce new business logic" instruction). */
+const angelPlusItem: NavItem = {
+  href: "/angel-plus",
+  label: "Angel Plus",
+  icon: Crown,
+  badge: "Soon",
+};
+
 const supportItems: NavItem[] = [
   { href: "/getting-started", label: "Getting Started", icon: HelpCircle },
   { href: "/feedback", label: "Send Feedback", icon: MessageSquare },
@@ -90,10 +109,10 @@ const supportItems: NavItem[] = [
 ];
 
 const mobileNavItems = [
-  { href: "/dashboard", label: "Home", icon: LayoutDashboard },
+  { href: "/dashboard", label: "Journey", icon: Compass },
   { href: "/english", label: "English", icon: BookOpen },
   { href: "/maths", label: "Maths", icon: Calculator },
-  { href: "/mocks", label: "Practice", icon: Target },
+  { href: "/mocks", label: "Mock Centre", icon: Trophy },
   { href: "/progress", label: "Progress", icon: BarChart2 },
 ];
 
@@ -148,12 +167,14 @@ export default function Navigation() {
         <div className="flex flex-col flex-1 overflow-y-auto">
           {navSections.map((section, idx) => (
             <div
-              key={section.label}
+              key={section.label || `section-${idx}`}
               className={idx > 0 ? "mt-1 pt-2 border-t border-gray-100 dark:border-gray-800" : ""}
             >
-              <p className="px-3 pt-2 pb-1.5 text-[10px] font-bold uppercase tracking-widest text-gray-300 dark:text-gray-600">
-                {section.label}
-              </p>
+              {section.label && (
+                <p className="px-3 pt-2 pb-1.5 text-[10px] font-bold uppercase tracking-widest text-gray-300 dark:text-gray-600">
+                  {section.label}
+                </p>
+              )}
               <div className="flex flex-col gap-0.5">
                 {section.items.map((item) => (
                   <SidebarLink key={item.href} item={item} pathname={pathname} />
@@ -162,12 +183,15 @@ export default function Navigation() {
             </div>
           ))}
 
-          {/* Family — Parent Hub, always separated from student learning items */}
+          {/* Family — Parent Hub + Angel Plus, always separated from student learning items */}
           <div className="mt-3 pt-3 border-t border-gray-100 dark:border-gray-800">
             <p className="px-3 pb-1.5 text-[10px] font-bold uppercase tracking-widest text-gray-300 dark:text-gray-600">
               Family
             </p>
-            <SidebarLink item={parentItem} pathname={pathname} />
+            <div className="flex flex-col gap-0.5">
+              <SidebarLink item={parentItem} pathname={pathname} />
+              <SidebarLink item={angelPlusItem} pathname={pathname} />
+            </div>
           </div>
 
           {/* Support — beta & help links */}
@@ -183,35 +207,13 @@ export default function Navigation() {
           </div>
         </div>
 
-        {/* User auth — pinned at very bottom */}
+        {/* User auth — pinned at very bottom. Sprint 2: extracted into the
+            reusable UserMenu component (components/ui/UserMenu.tsx) — same
+            markup and behaviour, not a new pattern. */}
         <div className="mt-4 pt-4 border-t border-gray-100 dark:border-gray-800">
-          {!loading && user ? (
-            <div className="px-3 py-1">
-              <div className="flex items-center gap-2 mb-2">
-                <div className="w-7 h-7 rounded-full bg-purple-100 dark:bg-purple-900 flex items-center justify-center shrink-0">
-                  <User size={14} className="text-purple-600 dark:text-purple-300" />
-                </div>
-                <p className="text-xs text-gray-600 dark:text-gray-400 font-medium truncate flex-1">{user.email}</p>
-              </div>
-              <button
-                onClick={handleSignOut}
-                className="flex items-center gap-2 w-full text-xs text-gray-400 dark:text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 py-1.5 px-1 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
-              >
-                <LogOut size={13} />
-                Sign out
-              </button>
-            </div>
-          ) : (
-            <div className="px-3 py-1">
-              <Link
-                href="/login"
-                className="flex items-center gap-2 w-full text-xs text-purple-600 dark:text-purple-400 font-medium py-1.5 px-2 rounded-lg hover:bg-purple-50 dark:hover:bg-purple-950 transition-colors"
-              >
-                <LogIn size={13} />
-                Sign in to sync progress
-              </Link>
-              <p className="text-xs text-gray-300 dark:text-gray-600 mt-1 px-2">Powered by Angel Digital</p>
-            </div>
+          <UserMenu email={user?.email} loading={loading} onSignOut={handleSignOut} />
+          {!loading && !user && (
+            <p className="text-xs text-gray-300 dark:text-gray-600 mt-1 px-2">Powered by Angel Digital</p>
           )}
         </div>
       </nav>
