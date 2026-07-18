@@ -2,8 +2,9 @@ import type { UserProgress } from "@/types";
 import type { AnalyticsReport, SubjectAnalytics } from "@/types/analytics";
 import type { AdaptiveState, AdaptiveTier, DailyMission, MissionItem } from "@/types/adaptive";
 import type { AliCompetencySignal } from "@/types/ali/missionSignal";
-import { getTopReplayItem } from "./replayEngine";
+import { buildReplayQueue } from "./replayEngine";
 import { competencyLabel } from "./ali/labels";
+import { getEligibleSubjectKeys } from "./ali/pathwayEligibility";
 
 // ─── Tier determination ───────────────────────────────────────────────────────
 
@@ -288,6 +289,24 @@ function buildDailyMission(
     };
   }
 
+  // ─── Pathway Eligibility Filter (WP-04, Stage 0 — EAW-002 §4) ───────────────
+  // Runs before every candidate is generated, per the mandatory Stage 0
+  // sequencing correction (EAW-D002): a subject the learner's selected
+  // pathway does not test is excluded here, structurally, before urgency
+  // ranking, review-subject selection, or replay-item generation ever see
+  // it — never merely de-prioritised afterward. `eligibleReport` is what
+  // every downstream candidate source in this function reads from `report.
+  // subjects` — `report` itself (totalSessions, the mock-test nudge) is
+  // untouched, since those are pathway-independent facts, not subject
+  // recommendations.
+  const eligibleSubjectKeys = getEligibleSubjectKeys(p.selectedPathwayId);
+  const eligibleReport: AnalyticsReport = {
+    ...report,
+    subjects: report.subjects.filter(
+      (s) => s.subject === "mock-test" || eligibleSubjectKeys.has(s.subject)
+    ),
+  };
+
   // Find the weakest skill per subject for richer reason text
   const weakSkillBySubject = new Map<string, string>();
   for (const skill of report.skills) {
@@ -303,7 +322,7 @@ function buildDailyMission(
     }
   }
 
-  const nonMock = report.subjects.filter((s) => s.subject !== "mock-test");
+  const nonMock = eligibleReport.subjects.filter((s) => s.subject !== "mock-test");
   const sorted = [...nonMock].sort(
     (a, b) => urgency(b, p.aliCompetencySignal?.[b.subject]) - urgency(a, p.aliCompetencySignal?.[a.subject])
   );
@@ -335,7 +354,7 @@ function buildDailyMission(
   }
 
   // Review — a strong subject to maintain (different from primary + secondary)
-  const reviewSubject = report.subjects.find(
+  const reviewSubject = eligibleReport.subjects.find(
     (s) =>
       s.status === "strong" &&
       s.subject !== "mock-test" &&
@@ -352,8 +371,17 @@ function buildDailyMission(
     items.push(buildItem(reviewSubject, tier, "review", 2));
   }
 
-  // Replay item — surface the most urgent weak skill if it targets a new subject
-  const topReplay = getTopReplayItem(p, report);
+  // Replay item — surface the most urgent weak skill if it targets a new subject.
+  // Built directly from buildReplayQueue() (not getTopReplayItem(), which
+  // returns the single top item unfiltered) so the Pathway Eligibility
+  // Filter can be applied to the full queue before the top item is chosen —
+  // report.skills (unlike report.subjects) has its own separate subject
+  // mapping inside replayEngine.ts's SKILL_SUBJECT table, so filtering
+  // eligibleReport.subjects alone would not have gated this candidate source.
+  const eligibleReplayQueue = buildReplayQueue(p, report).filter((item) =>
+    eligibleSubjectKeys.has(item.subject)
+  );
+  const topReplay = eligibleReplayQueue.length > 0 ? eligibleReplayQueue[0] : null;
   if (topReplay && items.length < 3) {
     const alreadyCovered = items.some((i) => i.subject === topReplay.subject);
     if (!alreadyCovered) {
