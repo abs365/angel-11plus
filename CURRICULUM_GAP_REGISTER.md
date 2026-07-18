@@ -34,4 +34,16 @@
 
 ---
 
-*(Future gaps discovered during AEP-003 onward, or during any subsequent educational audit, should be appended below as GAP-003, etc., following the same structure.)*
+## GAP-003 — No Baseline/Diagnostic Assessment Exists
+
+**Discovered:** 2026-07-18, WP-13 (Implementation Programme), confirming with code-level evidence what `AEP-004_LEARNING_JOURNEY_FRAMEWORK.md` §4 had only flagged as an apparent gap.
+
+**Description:** No baseline or diagnostic assessment exists anywhere in the codebase. `app/page.tsx` redirects straight to `/dashboard`; `app/getting-started/page.tsx` is a static, passive parent-facing guide, not an interactive assessment. A new learner's first captured signal is their pathway choice alone — every competency confidence band starts at "insufficient" with nothing to seed it sooner.
+
+**Consequence if left unaddressed:** Daily Mission and every other recommendation surface run on zero learner-specific evidence for as long as it takes organic practice to accumulate it — correct behaviour given the evidence that exists, but slower to become genuinely personalised than it could be.
+
+**Status:** Open. A full design exists (`WP-13_BASELINE_ASSESSMENT_FINDINGS.md`) — format, framing, journey placement, data model (reuses existing `ali_student_question_history`, no new schema). Explicitly not built as part of WP-13 — the actual new route/flow is a materially larger, product-surface-visible undertaking than this Implementation Programme's other work packages so far, and is recommended as its own future work package, not yet numbered in `IWP-001`.
+
+---
+
+*(Future gaps discovered during AEP-003 onward, or during any subsequent educational audit, should be appended below as GAP-004, etc., following the same structure.)*
