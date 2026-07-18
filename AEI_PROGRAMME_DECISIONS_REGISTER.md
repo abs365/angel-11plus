@@ -14,6 +14,7 @@
 |---|---|---|---|
 | — | No new Programme Decision issued. AEI-001 (Consistency Foundation) authorised and scoped entirely under existing `APD-033` (Engine Before Experience) and `APD-035` (Independent Educational Approval); see `AEI-001_CONSISTENCY_FOUNDATION_WORK_PACKAGE.md` §8. | AEI-001 | Authorised |
 | — | No new Programme Decision issued. AEI-002 authorised and scoped under existing `APD-033`/`APD-035` plus the Derived State Hierarchy (`APD-025`) and Tier 0 Wellbeing veto (`APD-042`/`044`) governing its Competency Presentation Strategy; see `AEI-002_CORE_LEARNER_EXPERIENCE_WORK_PACKAGE.md` §7. | AEI-002 | Authorised |
+| — | No new Programme Decision issued. AEI-003 work package produced, but its own Runtime Dependency Matrix finds `AXT-004` §6's Wave X3 entry gate **not met** (WP-19 learner-facing release not authorised; WP-21A live audit persistence unconfirmed; WP-22 production authorisation outstanding per `APD-052`; WP-23's production diagnostic unresolved). No runtime-backed Explainability/Wellbeing implementation is authorised as a result. See `AEI-003_COMPETENCY_CONNECTION_WORK_PACKAGE.md` §2. | AEI-003 | Work package produced; **implementation gated, not authorised** |
 
 ---
 
