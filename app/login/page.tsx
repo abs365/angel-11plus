@@ -2,8 +2,9 @@
 
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { BookOpen, Mail, ArrowRight, CheckCircle, AlertCircle } from "lucide-react";
+import { BookOpen, Mail, ArrowRight, CheckCircle } from "lucide-react";
 import { useAuth } from "@/components/providers/AuthProvider";
+import ErrorState from "@/components/ErrorState";
 
 type State = "idle" | "sending" | "sent" | "error";
 
@@ -174,17 +175,13 @@ export default function LoginPage() {
                       autoComplete="email"
                       autoFocus
                       required
+                      aria-describedby={state === "error" ? "login-error" : undefined}
                       className="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl pl-10 pr-4 py-3.5 text-sm text-gray-800 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-transparent transition-all"
                     />
                   </div>
                 </div>
 
-                {state === "error" && (
-                  <div className="flex items-start gap-2 bg-red-50 dark:bg-red-950 border border-red-100 dark:border-red-900 rounded-xl px-4 py-3">
-                    <AlertCircle size={15} className="text-red-500 mt-0.5 shrink-0" />
-                    <p className="text-red-600 dark:text-red-400 text-sm">{errorMsg}</p>
-                  </div>
-                )}
+                {state === "error" && <ErrorState variant="banner" id="login-error" message={errorMsg} />}
 
                 <button
                   type="submit"

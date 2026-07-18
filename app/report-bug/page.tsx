@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Bug, CheckCircle } from "lucide-react";
 import SupportLayout from "@/components/SupportLayout";
+import ErrorState from "@/components/ErrorState";
 import { saveBugReport } from "@/lib/feedback";
 
 const PAGES = [
@@ -120,12 +121,13 @@ export default function ReportBugPage() {
             id="page"
             value={page}
             onChange={(e) => { setPage(e.target.value); setErrors((p) => ({ ...p, page: "" })); }}
+            aria-describedby={errors.page ? "page-error" : undefined}
             className="w-full bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl px-4 py-3 text-sm text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-red-400 focus:border-transparent appearance-none"
           >
             <option value="">Select a page…</option>
             {PAGES.map((p) => <option key={p} value={p}>{p}</option>)}
           </select>
-          {errors.page && <p className="text-xs text-red-500 mt-1">{errors.page}</p>}
+          <ErrorState id="page-error" message={errors.page} />
         </div>
 
         {/* Issue type */}
@@ -137,12 +139,13 @@ export default function ReportBugPage() {
             id="issueType"
             value={issueType}
             onChange={(e) => { setIssueType(e.target.value); setErrors((p) => ({ ...p, issueType: "" })); }}
+            aria-describedby={errors.issueType ? "issueType-error" : undefined}
             className="w-full bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl px-4 py-3 text-sm text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-red-400 focus:border-transparent appearance-none"
           >
             <option value="">Select issue type…</option>
             {ISSUE_TYPES.map((t) => <option key={t} value={t}>{t}</option>)}
           </select>
-          {errors.issueType && <p className="text-xs text-red-500 mt-1">{errors.issueType}</p>}
+          <ErrorState id="issueType-error" message={errors.issueType} />
         </div>
 
         {/* Description */}
@@ -156,9 +159,10 @@ export default function ReportBugPage() {
             onChange={(e) => { setDescription(e.target.value); setErrors((p) => ({ ...p, description: "" })); }}
             placeholder="Describe what you did, what you expected to happen, and what actually happened…"
             rows={5}
+            aria-describedby={errors.description ? "description-error" : undefined}
             className="w-full bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl px-4 py-3 text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-600 resize-none focus:outline-none focus:ring-2 focus:ring-red-400 focus:border-transparent"
           />
-          {errors.description && <p className="text-xs text-red-500 mt-1">{errors.description}</p>}
+          <ErrorState id="description-error" message={errors.description} />
         </div>
 
         <div className="bg-gray-50 dark:bg-gray-900 border border-gray-100 dark:border-gray-800 rounded-xl px-4 py-3">

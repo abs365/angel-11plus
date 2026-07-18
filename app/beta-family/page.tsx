@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Star, CheckCircle, Users } from "lucide-react";
 import SupportLayout from "@/components/SupportLayout";
+import ErrorState from "@/components/ErrorState";
 import { saveBetaFamilyApplication } from "@/lib/feedback";
 import { PATHWAYS } from "@/lib/pathways";
 
@@ -132,9 +133,10 @@ export default function BetaFamilyPage() {
             onChange={(e) => { setParentName(e.target.value); setErrors((p) => ({ ...p, parentName: "" })); }}
             placeholder="First name is fine"
             autoComplete="name"
+            aria-describedby={errors.parentName ? "parentName-error" : undefined}
             className="w-full bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl px-4 py-3 text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-transparent"
           />
-          {errors.parentName && <p className="text-xs text-red-500 mt-1">{errors.parentName}</p>}
+          <ErrorState id="parentName-error" message={errors.parentName} />
         </div>
 
         {/* Year group */}
@@ -146,12 +148,13 @@ export default function BetaFamilyPage() {
             id="yearGroup"
             value={yearGroup}
             onChange={(e) => { setYearGroup(e.target.value); setErrors((p) => ({ ...p, yearGroup: "" })); }}
+            aria-describedby={errors.yearGroup ? "yearGroup-error" : undefined}
             className="w-full bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl px-4 py-3 text-sm text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-transparent appearance-none"
           >
             <option value="">Select year group…</option>
             {YEAR_GROUPS.map((y) => <option key={y} value={y}>{y}</option>)}
           </select>
-          {errors.yearGroup && <p className="text-xs text-red-500 mt-1">{errors.yearGroup}</p>}
+          <ErrorState id="yearGroup-error" message={errors.yearGroup} />
         </div>
 
         {/* Pathway */}
@@ -163,6 +166,7 @@ export default function BetaFamilyPage() {
             id="pathway"
             value={pathway}
             onChange={(e) => { setPathway(e.target.value); setErrors((p) => ({ ...p, pathway: "" })); }}
+            aria-describedby={errors.pathway ? "pathway-error" : undefined}
             className="w-full bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl px-4 py-3 text-sm text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-transparent appearance-none"
           >
             <option value="">Select pathway…</option>
@@ -170,7 +174,7 @@ export default function BetaFamilyPage() {
               <option key={p.id} value={p.id}>{p.name}</option>
             ))}
           </select>
-          {errors.pathway && <p className="text-xs text-red-500 mt-1">{errors.pathway}</p>}
+          <ErrorState id="pathway-error" message={errors.pathway} />
         </div>
 
         {/* Email */}
@@ -185,10 +189,11 @@ export default function BetaFamilyPage() {
             onChange={(e) => { setEmail(e.target.value); setErrors((p) => ({ ...p, email: "" })); }}
             placeholder="your@email.com"
             autoComplete="email"
+            aria-describedby={errors.email ? "email-error" : undefined}
             className="w-full bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl px-4 py-3 text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-transparent"
           />
           <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">We&apos;ll use this to follow up on your beta registration only.</p>
-          {errors.email && <p className="text-xs text-red-500 mt-1">{errors.email}</p>}
+          <ErrorState id="email-error" message={errors.email} />
         </div>
 
         {/* Permission */}
@@ -199,6 +204,7 @@ export default function BetaFamilyPage() {
                 type="checkbox"
                 checked={contactPermission}
                 onChange={(e) => { setContactPermission(e.target.checked); setErrors((p) => ({ ...p, contactPermission: "" })); }}
+                aria-describedby={errors.contactPermission ? "contactPermission-error" : undefined}
                 className="w-4 h-4 rounded border-gray-300 dark:border-gray-600 text-purple-600 focus:ring-purple-500"
               />
             </div>
@@ -206,7 +212,7 @@ export default function BetaFamilyPage() {
               I give permission for Angel Digital to contact me at the email address above about my beta family registration and Angel 11+ updates.
             </span>
           </label>
-          {errors.contactPermission && <p className="text-xs text-red-500 mt-1">{errors.contactPermission}</p>}
+          <ErrorState id="contactPermission-error" message={errors.contactPermission} />
         </div>
 
         <button

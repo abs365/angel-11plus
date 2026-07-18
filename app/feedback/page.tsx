@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { MessageSquare, CheckCircle, ThumbsUp, Lightbulb, HelpCircle } from "lucide-react";
 import SupportLayout from "@/components/SupportLayout";
+import ErrorState from "@/components/ErrorState";
 import { saveFeedback, type FeedbackType } from "@/lib/feedback";
 
 const TYPES: { id: FeedbackType; label: string; icon: typeof MessageSquare; desc: string }[] = [
@@ -138,9 +139,10 @@ export default function FeedbackPage() {
             onChange={(e) => setMessage(e.target.value)}
             placeholder="Share your thoughts, ideas or experience…"
             rows={5}
+            aria-describedby={error ? "message-error" : undefined}
             className="w-full bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl px-4 py-3 text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-600 resize-none focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-transparent"
           />
-          {error && <p className="text-xs text-red-500 mt-1">{error}</p>}
+          <ErrorState id="message-error" message={error} />
         </div>
 
         <button

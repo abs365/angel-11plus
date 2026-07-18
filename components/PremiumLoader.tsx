@@ -24,6 +24,11 @@ interface PremiumLoaderProps {
  * always describe the outcome the student is waiting for, never the
  * internal mechanism producing it — never say "adaptive," "learning unit,"
  * or "competency" here (ANGEL_UX_V3_STRATEGY.md §3).
+ *
+ * AEI-001 (Consistency Foundation) — the rotating message carries
+ * aria-live="polite"/aria-atomic="true" so a screen-reader user hears each
+ * update, not just the first message. Accessibility-only addition; visual
+ * appearance and timing are unchanged.
  */
 export default function PremiumLoader({ message, progressMessages, icon: Icon = Sparkles }: PremiumLoaderProps) {
   const allMessages = [message, ...(progressMessages ?? [])];
@@ -43,7 +48,13 @@ export default function PremiumLoader({ message, progressMessages, icon: Icon = 
         <div className="w-16 h-16 rounded-3xl bg-purple-100 dark:bg-purple-950 flex items-center justify-center animate-pulse">
           <Icon size={28} className="text-purple-500 dark:text-purple-400" />
         </div>
-        <p className="text-gray-600 dark:text-gray-300 text-sm font-medium">{allMessages[step]}</p>
+        <p
+          className="text-gray-600 dark:text-gray-300 text-sm font-medium"
+          aria-live="polite"
+          aria-atomic="true"
+        >
+          {allMessages[step]}
+        </p>
         <div className="flex gap-1.5">
           <span className="w-1.5 h-1.5 rounded-full bg-purple-400 dark:bg-purple-500 animate-bounce [animation-delay:-0.3s]" />
           <span className="w-1.5 h-1.5 rounded-full bg-purple-400 dark:bg-purple-500 animate-bounce [animation-delay:-0.15s]" />

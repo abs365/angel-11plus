@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Star, CheckCircle } from "lucide-react";
 import SupportLayout from "@/components/SupportLayout";
+import ErrorState from "@/components/ErrorState";
 import { saveTestimonial } from "@/lib/feedback";
 
 const YEAR_GROUPS = ["Year 3", "Year 4", "Year 5", "Year 6", "Year 7", "Prefer not to say"];
@@ -96,9 +97,10 @@ export default function TestimonialPage() {
             onChange={(e) => { setParentName(e.target.value); setErrors((p) => ({ ...p, parentName: "" })); }}
             placeholder="e.g. Sarah"
             autoComplete="given-name"
+            aria-describedby={errors.parentName ? "parentName-error" : undefined}
             className="w-full bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl px-4 py-3 text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-amber-400 focus:border-transparent"
           />
-          {errors.parentName && <p className="text-xs text-red-500 mt-1">{errors.parentName}</p>}
+          <ErrorState id="parentName-error" message={errors.parentName} />
         </div>
 
         <div>
@@ -109,12 +111,13 @@ export default function TestimonialPage() {
             id="yearGroup"
             value={yearGroup}
             onChange={(e) => { setYearGroup(e.target.value); setErrors((p) => ({ ...p, yearGroup: "" })); }}
+            aria-describedby={errors.yearGroup ? "yearGroup-error" : undefined}
             className="w-full bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl px-4 py-3 text-sm text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-amber-400 focus:border-transparent appearance-none"
           >
             <option value="">Select year group…</option>
             {YEAR_GROUPS.map((y) => <option key={y} value={y}>{y}</option>)}
           </select>
-          {errors.yearGroup && <p className="text-xs text-red-500 mt-1">{errors.yearGroup}</p>}
+          <ErrorState id="yearGroup-error" message={errors.yearGroup} />
         </div>
 
         <div>
@@ -127,12 +130,11 @@ export default function TestimonialPage() {
             onChange={(e) => { setFeedback(e.target.value); setErrors((p) => ({ ...p, feedback: "" })); }}
             placeholder="Tell us how Angel 11+ has helped your child, what you liked, and what you thought of the experience…"
             rows={5}
+            aria-describedby={errors.feedback ? "feedback-error" : undefined}
             className="w-full bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl px-4 py-3 text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-600 resize-none focus:outline-none focus:ring-2 focus:ring-amber-400 focus:border-transparent"
           />
           <div className="flex items-center justify-between mt-1">
-            {errors.feedback
-              ? <p className="text-xs text-red-500">{errors.feedback}</p>
-              : <span />}
+            {errors.feedback ? <ErrorState id="feedback-error" message={errors.feedback} /> : <span />}
             <p className="text-xs text-gray-400 dark:text-gray-500">{feedback.length} chars</p>
           </div>
         </div>

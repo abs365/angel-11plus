@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Lightbulb, CheckCircle } from "lucide-react";
 import SupportLayout from "@/components/SupportLayout";
+import ErrorState from "@/components/ErrorState";
 import { saveFeatureRequest } from "@/lib/feedback";
 
 export default function FeatureRequestPage() {
@@ -85,9 +86,10 @@ export default function FeatureRequestPage() {
             onChange={(e) => { setFeature(e.target.value); setErrors((p) => ({ ...p, feature: "" })); }}
             placeholder="e.g. Email weekly progress report to parents, Printable vocabulary lists, Harder reasoning questions…"
             rows={3}
+            aria-describedby={errors.feature ? "feature-error" : undefined}
             className="w-full bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl px-4 py-3 text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-600 resize-none focus:outline-none focus:ring-2 focus:ring-amber-400 focus:border-transparent"
           />
-          {errors.feature && <p className="text-xs text-red-500 mt-1">{errors.feature}</p>}
+          <ErrorState id="feature-error" message={errors.feature} />
         </div>
 
         {/* Why */}
@@ -101,9 +103,10 @@ export default function FeatureRequestPage() {
             onChange={(e) => { setWhy(e.target.value); setErrors((p) => ({ ...p, why: "" })); }}
             placeholder="Help us understand the problem you're trying to solve…"
             rows={4}
+            aria-describedby={errors.why ? "why-error" : undefined}
             className="w-full bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl px-4 py-3 text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-600 resize-none focus:outline-none focus:ring-2 focus:ring-amber-400 focus:border-transparent"
           />
-          {errors.why && <p className="text-xs text-red-500 mt-1">{errors.why}</p>}
+          <ErrorState id="why-error" message={errors.why} />
         </div>
 
         <button
