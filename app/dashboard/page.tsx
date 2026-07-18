@@ -327,10 +327,13 @@ export default function DashboardPage() {
 
           {mission && mission.items.length > 0 ? (
             <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 shadow-sm overflow-hidden">
-              {/* Mission items */}
-              <div className="p-5 space-y-3">
+              {/* Mission items — an ordered list of prioritised actions (AEI-002:
+                  semantic <ol>/<li>, not just a visual "1/2/3" chip, so a
+                  screen reader announces "list, N items" / "item N of N";
+                  list-none preserves the exact prior visual appearance). */}
+              <ol className="p-5 space-y-3 list-none">
                 {mission.items.map((item, i) => (
-                  <div
+                  <li
                     key={item.id}
                     className={`flex items-start gap-3.5 p-4 rounded-xl bg-gray-50 dark:bg-gray-800/60 border-l-4 ${missionPriorityBorder[item.priority]}`}
                   >
@@ -360,9 +363,9 @@ export default function DashboardPage() {
                         </span>
                       </div>
                     </div>
-                  </div>
+                  </li>
                 ))}
-              </div>
+              </ol>
 
               {/* Divider */}
               <div className="h-px bg-gray-100 dark:bg-gray-800 mx-5" />

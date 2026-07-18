@@ -8,6 +8,12 @@ interface NewBadgeBannerProps {
   onDismiss: () => void;
 }
 
+/**
+ * AEI-002 (Core Learner Experience) — carries role="status" so a
+ * screen-reader user is told about a new achievement without needing to
+ * notice the visual banner. Accessibility-only addition; appearance
+ * unchanged.
+ */
 export default function NewBadgeBanner({ newlyEarnedIds, onDismiss }: NewBadgeBannerProps) {
   if (newlyEarnedIds.length === 0) return null;
 
@@ -22,7 +28,10 @@ export default function NewBadgeBanner({ newlyEarnedIds, onDismiss }: NewBadgeBa
       : `${newlyEarnedIds.length} new achievements unlocked`;
 
   return (
-    <div className="mt-4 bg-indigo-50 dark:bg-indigo-950 border border-indigo-100 dark:border-indigo-900 rounded-2xl px-4 py-3.5 flex items-center gap-3">
+    <div
+      role="status"
+      className="mt-4 bg-indigo-50 dark:bg-indigo-950 border border-indigo-100 dark:border-indigo-900 rounded-2xl px-4 py-3.5 flex items-center gap-3"
+    >
       <div className="shrink-0 w-8 h-8 bg-indigo-100 dark:bg-indigo-900 rounded-lg flex items-center justify-center">
         <Award size={15} className="text-indigo-600 dark:text-indigo-400" />
       </div>
