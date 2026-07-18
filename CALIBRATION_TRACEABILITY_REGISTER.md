@@ -28,6 +28,19 @@
 
 ---
 
+## Educational State Coordination threshold (WP-08, `lib/ali/educationalState.ts`)
+
+| Field | Value |
+|---|---|
+| **Constant name** | `APPROACHING_THRESHOLD_RATIO` |
+| **Current value** | `0.5` (fraction of `mastery_threshold` progress) |
+| **Rationale** | Distinguishes "Building Knowledge" from "Practising" within the Confidence "low" tier — a distinction EAW-004 §3 names qualitatively but does not itself quantify. Computed from real, already-captured data (`distinct_correct_sessions / mastery_threshold`, taking the closest-to-threshold question in the competency), not a new capture. 0.5 (halfway) was chosen as the simplest defensible midpoint without real data on where this distinction actually matters to a learner's experienced journey. |
+| **Owner** | Founder + first implementation engineer, jointly |
+| **Validation status** | Provisional — not validated against real usage data |
+| **Review trigger** | Once Educational State labels are used to drive a real, observable difference in recommendation behaviour (Recommendation Orchestration, a future work package) — before then, the distinction has no behavioural consequence to validate against |
+
+---
+
 ## Pre-existing, same category (Decision 10, predates this Implementation Programme — registered here for completeness now that formal traceability exists)
 
 | Field | Value |
