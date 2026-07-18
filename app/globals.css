@@ -29,6 +29,47 @@
   /* Semantic */
   --border: #e5e7eb;
   --border-subtle: #f3f4f6;
+
+  /* ── Sprint 1 (Angel V2.0 Enterprise UI Foundation) — semantic role tokens.
+     Every value below is an existing colour already in production use
+     (DESIGN_SYSTEM.md §2 / ANGEL_DESIGN_LANGUAGE.md §2/§5) reassigned to a
+     named enterprise role, per Reuse Before Rebuild — no new colour is
+     introduced. Primary/secondary reuse the brand purple/indigo pair;
+     success/warning/error/info reuse the existing semantic-state palette
+     (emerald/amber/rose→red/sky) already governing badges, alerts and
+     mission-priority chips across the product. */
+  --color-primary: #9333ea;       /* purple-600 — existing brand primary */
+  --color-primary-hover: #7e22ce; /* purple-700 */
+  --color-secondary: #4f46e5;     /* indigo-600 — existing secondary */
+  --color-secondary-hover: #4338ca; /* indigo-700 */
+  --color-success: #047857;       /* emerald-700, NOT -600 — see WCAG correction below */
+  --color-warning: #b45309;       /* amber-700, NOT -600 — see WCAG correction below */
+  --color-error: #dc2626;         /* red-600 — existing error state (report-bug, validation); verified 4.83:1, compliant as-is */
+  --color-info: #0369a1;          /* sky-700, NOT -600 — see WCAG correction below */
+
+  /* WCAG correction (Sprint 1): DESIGN_SYSTEM.md §4's existing "Success
+     Button" spec (bg-emerald-600, white text) was checked by direct
+     contrast-ratio calculation during this sprint's verification and found
+     to be 3.77:1 — below the 4.5:1 AA threshold for normal text. This
+     token uses emerald-700 (6.1:1, verified) instead for any future
+     solid-fill-plus-white-text success surface. This does not touch the
+     many existing light-background usages (bg-emerald-50 + text-emerald-600
+     or -700, e.g. StatusIndicator, ReadinessIndicator, InsightCard's colour
+     map) — that pairing was already compliant and is unaffected.
+     DESIGN_SYSTEM.md §4's "Warning Button" spec (bg-amber-600, white text)
+     had the same problem, worse: 3.19:1. Corrected to amber-700 here for
+     the same reason and by the same method. The existing "info states
+     (reserved)" sky-600 token (never yet used against white text anywhere
+     in production, since no info surface has shipped) was also checked
+     pre-emptively and found to be 4.10:1 — corrected to sky-700 (5.93:1)
+     before any consumer ever used it, rather than after. Primary (purple),
+     secondary (indigo), and error (red) were all verified compliant at
+     their existing -600 shade and needed no change. */
+
+  /* Text hierarchy — named aliases over the existing foreground scale, no new values */
+  --text-primary: var(--foreground);
+  --text-secondary: var(--foreground-muted);
+  --text-tertiary: var(--foreground-subtle);
 }
 
 /* ── Design tokens — dark mode ───────────────────────────────────────────────── */
@@ -51,6 +92,17 @@
     /* Semantic */
     --border: #27273f;
     --border-subtle: #1e1e36;
+
+    /* Sprint 1 semantic roles — existing dark-mode equivalents already used
+       throughout (dark: variants of the same Tailwind colour families). */
+    --color-primary: #c084fc;        /* purple-400 */
+    --color-primary-hover: #a855f7;  /* purple-500 */
+    --color-secondary: #818cf8;      /* indigo-400 */
+    --color-secondary-hover: #6366f1; /* indigo-500 */
+    --color-success: #34d399;        /* emerald-400 */
+    --color-warning: #fbbf24;        /* amber-400 */
+    --color-error: #f87171;          /* red-400 */
+    --color-info: #38bdf8;           /* sky-400 */
   }
 }
 
@@ -59,6 +111,22 @@
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-surface: var(--surface);
+  --color-primary-DEFAULT: var(--color-primary);
+  --color-secondary-DEFAULT: var(--color-secondary);
+  --color-success-DEFAULT: var(--color-success);
+  --color-warning-DEFAULT: var(--color-warning);
+  --color-error-DEFAULT: var(--color-error);
+  --color-info-DEFAULT: var(--color-info);
+}
+
+/* ── Sprint 1 — Motion tokens ─────────────────────────────────────────────────
+   Reusing the exact existing timing values (DESIGN_SYSTEM.md §7,
+   ANGEL_DESIGN_LANGUAGE.md §6) — not new durations, named for reuse in code
+   (components/ui/*) instead of being re-typed as literal strings per file. */
+:root {
+  --motion-fast: 150ms;   /* nav item active state */
+  --motion-base: 200ms;   /* card hover, button interaction */
+  --motion-slow: 700ms;   /* progress/XP bar fill */
 }
 
 /* ── Global resets ────────────────────────────────────────────────────────────── */
