@@ -90,8 +90,14 @@ const EXPECTED_OUTCOME: Record<string, string> = {
   review: "Keeps a mastered skill sharp",
 };
 
-/** Sprint 3 — the Admission Hero's stage line reuses JourneyTimeline's own stage labels, not a second naming scheme. */
-const STAGE_NAMES = ["Starting", "Building Skills", "Strengthening", "Mock Ready", "Exam Ready"] as const;
+/**
+ * Sprint 3 — the Admission Hero's stage line reuses JourneyTimeline's own
+ * stage labels, not a second naming scheme. EEP-003: updated to match
+ * JourneyTimeline.tsx's own relabelled STAGES exactly (Building
+ * Foundations / Building Skills / Developing Confidence / Admission
+ * Ready) — same five positions, same derivation, calmer wording only.
+ */
+const STAGE_NAMES = ["Starting", "Building Foundations", "Building Skills", "Developing Confidence", "Admission Ready"] as const;
 
 const pathwayIconBg: Record<string, string> = {
   blue: "bg-blue-100 dark:bg-blue-900",
@@ -115,9 +121,18 @@ const pathwayIconText: Record<string, string> = {
 
 const MOCK_PATHWAY_IDS: MockPathwayId[] = ["gl", "cem", "csse", "iseb"];
 
+/**
+ * EEP-003 (Calm Progress & Premium Educational Identity) — the streak>=14
+ * branch previously read "Fourteen days strong," leading with a raw
+ * streak count; reworded to lead with confidence/preparation instead, per
+ * this sprint's "reduce emphasis on... Streaks; increase emphasis on...
+ * Confidence" instruction. Same trigger conditions and real signals
+ * (progress.streak, weeklyGoal, completedLessons.length) throughout —
+ * wording only.
+ */
 function getEncouragingMessage(progress: UserProgress, weeklyGoal: WeeklyGoal | null): string {
   if (weeklyGoal?.isComplete) return "Weekly goal achieved — outstanding consistency.";
-  if (progress.streak >= 14) return "Fourteen days strong. You're building unstoppable habits.";
+  if (progress.streak >= 14) return "Your consistency is building real, lasting confidence.";
   if (progress.streak >= 7) return "A full week of practice. Real habits are forming.";
   if (progress.streak >= 3) return "Great consistency this week — keep going.";
   if (progress.completedLessons.length >= 20) return "You're building a strong foundation. Keep it up.";
@@ -156,28 +171,34 @@ function AdmissionHero({
 
   return (
     <PremiumCard>
-      <div className="flex items-start justify-between mb-3">
-        <p className="text-purple-200 text-sm font-medium">{greeting}</p>
-        <div className="bg-white/15 rounded-xl px-3 py-1.5 flex items-center gap-1.5 shrink-0">
-          <Star size={13} className="text-yellow-300" />
-          <span className="text-white text-sm font-bold">Level {level}</span>
-        </div>
-      </div>
+      {/* EEP-003 — the "Level X" pill-and-icon badge previously sat in its
+          own header row, the most game-badge-like element on the
+          homepage. Per "reduce unnecessary badge-like presentation" and
+          "reposition [XP/levels/streaks] rather than making them the
+          primary focus," it's kept (never removed) but moved down into
+          the plain-text stat line below, alongside XP/streak/sessions,
+          so the header row now carries only the greeting. */}
+      <p className="text-purple-200 text-sm font-medium mb-4">{greeting}</p>
 
-      <p className="text-white font-bold text-xl leading-snug mb-4">{message}</p>
+      <p className="text-white font-bold text-2xl leading-snug mb-5">{message}</p>
 
-      <div className="flex items-center gap-2 flex-wrap mb-4">
+      <div className="flex items-center gap-2 flex-wrap mb-5">
         <span className="inline-flex items-center gap-1.5 bg-white/10 rounded-lg px-2.5 py-1 text-xs text-purple-100">
           <MapPin size={12} />
           {pathway ? pathway.name : "No target school chosen yet"}
         </span>
         <span className="inline-flex items-center gap-1.5 bg-white/10 rounded-lg px-2.5 py-1 text-xs text-purple-100">
           <Compass size={12} />
-          Stage: {STAGE_NAMES[stageIndex]}
+          {STAGE_NAMES[stageIndex]}
         </span>
       </div>
 
-      <div className="flex items-center gap-3 text-purple-200 text-xs pt-3 border-t border-white/10">
+      <div className="flex items-center gap-3 text-purple-200 text-xs pt-4 border-t border-white/10">
+        <span className="flex items-center gap-1">
+          <Star size={11} className="text-yellow-300" />
+          Level {level}
+        </span>
+        <span className="text-white/30">·</span>
         <span>{progress.xp} XP</span>
         <span className="text-white/30">·</span>
         <span className="flex items-center gap-1">

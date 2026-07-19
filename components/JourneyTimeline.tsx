@@ -11,16 +11,26 @@ import { cn } from "@/lib/cn";
  * getExamReadiness()/READINESS_CONFIG) — nothing new is calculated here.
  *
  * Mapping, stated explicitly rather than left implicit:
- *   Starting          ← !hasEnoughData (a real, existing "not enough
- *                        evidence yet" state, not this sprint's invention)
- *   Building Skills    ← hasEnoughData && examReadiness === "not-ready"
- *   Strengthening      ← examReadiness === "building"
- *   Mock Ready         ← examReadiness === "nearly-ready"
- *   Exam Ready         ← examReadiness === "exam-ready"
+ *   Starting              ← !hasEnoughData (a real, existing "not enough
+ *                            evidence yet" state, not this sprint's invention)
+ *   Building Foundations  ← hasEnoughData && examReadiness === "not-ready"
+ *   Building Skills       ← examReadiness === "building"
+ *   Developing Confidence ← examReadiness === "nearly-ready"
+ *   Admission Ready       ← examReadiness === "exam-ready"
  * This is a five-position *label* over four existing enum values plus one
  * existing boolean — a renaming for presentation, not a fifth real state.
+ *
+ * EEP-003 (Calm Progress & Premium Educational Identity) — relabelled
+ * positions 1-4 from "Building Skills / Strengthening / Mock Ready / Exam
+ * Ready" to this sprint's preferred calm, confidence-building terminology
+ * ("prefer Building Foundations / Building Skills / Developing Confidence
+ * / Admission Ready rather than numerical-only language"). deriveActiveStageIndex
+ * itself is unchanged — same four enum values, same boolean, same mapping
+ * logic — only the display strings differ, everywhere this component is
+ * used (Dashboard's Hero chip, /progress's Progress Journey, /parent's
+ * Progress Story).
  */
-const STAGES = ["Starting", "Building Skills", "Strengthening", "Mock Ready", "Exam Ready"] as const;
+const STAGES = ["Starting", "Building Foundations", "Building Skills", "Developing Confidence", "Admission Ready"] as const;
 
 export function deriveActiveStageIndex(hasEnoughData: boolean, readiness: ExamReadiness): number {
   if (!hasEnoughData) return 0;

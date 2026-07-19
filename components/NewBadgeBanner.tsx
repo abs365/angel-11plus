@@ -22,10 +22,14 @@ export default function NewBadgeBanner({ newlyEarnedIds, onDismiss }: NewBadgeBa
     .filter(Boolean);
 
   const names = badges.map((b) => b!.name).join(" · ");
+  // EEP-003 (Calm Progress & Premium Educational Identity) — "unlocked"
+  // read as video-game-mechanic language; reworded to "earned," a calmer
+  // word for the same real event (still fires under the same condition,
+  // still links to /progress, still dismissible the same way).
   const label =
     newlyEarnedIds.length === 1
-      ? "New achievement unlocked"
-      : `${newlyEarnedIds.length} new achievements unlocked`;
+      ? "New achievement earned"
+      : `${newlyEarnedIds.length} new achievements earned`;
 
   return (
     <div
