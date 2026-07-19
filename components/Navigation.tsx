@@ -34,37 +34,32 @@ type NavSection = {
   items: NavItem[];
 };
 
-// Angel V2.0 Sprint 2 (Platform Shell) — navigation restructured to
-// communicate a learner/admission journey rather than a flat page list, per
-// this sprint's own preferred structure: My Admission Journey / Learn /
-// Practice / Mock Centre / Target Schools / Progress / Parent Hub /
-// Angel Plus. Every existing route is retained unchanged (routing
-// compatibility) — only labels and grouping changed. "Home" and "My
-// Admission Journey" are treated as one destination (the same
-// /dashboard route, now presenting the My Admission Journey experience),
-// not two separate entries, since nothing in this sprint specifies
-// distinct content for a second "Home" page. "Reasoning Hub" is renamed
-// "Practice" (its four underlying routes are unchanged); the Assessment
-// section's two /mocks anchors collapse into one "Mock Centre" entry,
-// since My Admission Journey's own "Upcoming Mock Examinations" section
-// now carries the practice-vs-mock-exam distinction contextually rather
-// than needing two separate nav anchors; "Exam Pathways" is renamed
-// "Target Schools" (Pathway data already models "which schools/exam
-// boards you're targeting" — AEP-002 §13 — no new data model introduced).
+// EEP-001 (Navigation Excellence) — the primary sidebar hierarchy.
+// Sprint-by-sprint rationale for how each label/grouping was chosen lives
+// in git history (Sprints 2/4/5/7); this comment describes the current,
+// settled structure only, per this refinement sprint's own "review all
+// navigation items" objective. Four labelled primary sections — Journey
+// (overview + progress tracking), Learn, Practice (practice, mocks,
+// school intelligence) — followed by Family and Support. Every route is
+// unchanged; only grouping and labels are in scope here.
+//
+// EEP-001 change: "Progress" moves out of its own unlabelled section
+// (previously an orphaned single-item group with no header, a real
+// grouping inconsistency) into Journey, alongside My Admission Journey —
+// both are "where am I in this journey" destinations. "Target Schools" is
+// renamed "School Intelligence" to match the label this same destination
+// already uses everywhere else it's referenced (the /pathways page's own
+// H1 since Sprint 7, and Sprint 9's Angel Plus journey grid) — the nav
+// was the one remaining place still using the older Sprint 2 label.
 const navSections: NavSection[] = [
   {
     label: "Journey",
     items: [
       { href: "/dashboard", label: "My Admission Journey", icon: Compass },
+      { href: "/progress", label: "Progress", icon: BarChart2 },
     ],
   },
   {
-    // Sprint 4 (Learning Experience Transformation) — collapses English/
-    // Maths/Vocabulary/Writing into one "Learn" hub entry (app/learn/page.tsx),
-    // the exact same collapse-by-mental-model pattern Reasoning Hub already
-    // established (AXT-002 §2's standing Navigation Philosophy test). The
-    // four underlying routes are unchanged and remain directly reachable
-    // from the hub — nothing is removed, only how a learner arrives there.
     label: "Learn",
     items: [
       { href: "/learn", label: "Learn", icon: BookOpen },
@@ -75,13 +70,7 @@ const navSections: NavSection[] = [
     items: [
       { href: "/reasoning", label: "Practice", icon: Puzzle },
       { href: "/mocks", label: "Mock Centre", icon: Trophy },
-      { href: "/pathways", label: "Target Schools", icon: MapPin },
-    ],
-  },
-  {
-    label: "",
-    items: [
-      { href: "/progress", label: "Progress", icon: BarChart2 },
+      { href: "/pathways", label: "School Intelligence", icon: MapPin },
     ],
   },
 ];
@@ -166,13 +155,21 @@ export default function Navigation() {
 
         {/* Sectioned nav */}
         <div className="flex flex-col flex-1 overflow-y-auto">
+          {/* EEP-001 — every group divider below (primary sections after
+              the first, Family, Support) now shares one consistent
+              mt-2 pt-3 rhythm; previously these three ad-hoc values
+              (mt-1/pt-2, mt-3/pt-3, mt-2/pt-2) gave otherwise-identical
+              group separators a subtly uneven vertical rhythm. The
+              account footer below keeps its own, deliberately larger gap
+              (mt-4 pt-4) since it closes a different tier — the pinned
+              account area, not another nav group. */}
           {navSections.map((section, idx) => (
             <div
               key={section.label || `section-${idx}`}
-              className={idx > 0 ? "mt-1 pt-2 border-t border-gray-100 dark:border-gray-800" : ""}
+              className={idx > 0 ? "mt-2 pt-3 border-t border-gray-100 dark:border-gray-800" : ""}
             >
               {section.label && (
-                <p className="px-3 pt-2 pb-1.5 text-[10px] font-bold uppercase tracking-widest text-gray-300 dark:text-gray-600">
+                <p className="px-3 pb-1.5 text-[10px] font-bold uppercase tracking-widest text-gray-300 dark:text-gray-600">
                   {section.label}
                 </p>
               )}
@@ -185,7 +182,7 @@ export default function Navigation() {
           ))}
 
           {/* Family — Parent Hub + Angel Plus, always separated from student learning items */}
-          <div className="mt-3 pt-3 border-t border-gray-100 dark:border-gray-800">
+          <div className="mt-2 pt-3 border-t border-gray-100 dark:border-gray-800">
             <p className="px-3 pb-1.5 text-[10px] font-bold uppercase tracking-widest text-gray-300 dark:text-gray-600">
               Family
             </p>
@@ -196,7 +193,7 @@ export default function Navigation() {
           </div>
 
           {/* Support — beta & help links */}
-          <div className="mt-2 pt-2 border-t border-gray-100 dark:border-gray-800">
+          <div className="mt-2 pt-3 border-t border-gray-100 dark:border-gray-800">
             <p className="px-3 pb-1.5 text-[10px] font-bold uppercase tracking-widest text-gray-300 dark:text-gray-600">
               Support
             </p>
@@ -228,11 +225,15 @@ export default function Navigation() {
               <Link
                 key={href}
                 href={href}
-                className={`flex flex-col items-center gap-0.5 px-2 py-1.5 rounded-lg min-w-[52px] transition-colors ${
-                  active ? "text-purple-700" : "text-gray-400"
+                /* EEP-001 — active tabs now get the same subtle background
+                   pill the desktop sidebar already uses for its active
+                   item, instead of a colour-only change, so "where am I"
+                   reads at a glance on mobile too. */
+                className={`flex flex-col items-center gap-0.5 px-2 py-1.5 rounded-xl min-w-[52px] transition-colors ${
+                  active ? "bg-purple-50 dark:bg-purple-950 text-purple-700 dark:text-purple-300" : "text-gray-400"
                 }`}
               >
-                <Icon size={20} className={active ? "text-purple-600" : "text-gray-400"} />
+                <Icon size={20} className={active ? "text-purple-600 dark:text-purple-400" : "text-gray-400"} />
                 <span className="text-[10px] font-medium">{label}</span>
               </Link>
             );
@@ -240,8 +241,8 @@ export default function Navigation() {
           {/* Parent / login */}
           <Link
             href={user ? "/parent" : "/login"}
-            className={`flex flex-col items-center gap-0.5 px-2 py-1.5 rounded-lg min-w-[52px] transition-colors ${
-              pathname === "/parent" || pathname === "/login" ? "text-purple-700" : "text-gray-400"
+            className={`flex flex-col items-center gap-0.5 px-2 py-1.5 rounded-xl min-w-[52px] transition-colors ${
+              pathname === "/parent" || pathname === "/login" ? "bg-purple-50 dark:bg-purple-950 text-purple-700 dark:text-purple-300" : "text-gray-400"
             }`}
           >
             {user ? (

@@ -348,11 +348,16 @@ export default function DashboardPage() {
           <NewBadgeBanner newlyEarnedIds={newBadgeIds} onDismiss={handleDismissBanner} />
         )}
 
-        {/* 2. Target Schools — "pathway" already models which exam board/school
-             family a learner is targeting (AEP-002 §13); no new school data
-             model is introduced, only renamed framing. */}
+        {/* 2. School Intelligence — "pathway" already models which exam
+             board/school family a learner is targeting (AEP-002 §13); no
+             new school data model is introduced, only renamed framing.
+             EEP-001 (Navigation Excellence): renamed from "Target Schools"
+             to match the nav item and the /pathways page's own H1 (both
+             already "School Intelligence" since Sprint 7) — this dashboard
+             heading was the one remaining place still using the older
+             label. */}
         <section>
-          <h2 className="text-gray-900 dark:text-gray-100 font-bold text-xl mb-3">Target Schools</h2>
+          <h2 className="text-gray-900 dark:text-gray-100 font-bold text-xl mb-3">School Intelligence</h2>
           <Link
             href="/pathways"
             className="flex items-center gap-4 bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 px-5 py-4 shadow-sm hover:shadow-md hover:border-purple-100 dark:hover:border-purple-900 active:scale-[0.98] transition-all group"
@@ -374,7 +379,7 @@ export default function DashboardPage() {
                   <p className="text-[10px] font-bold uppercase tracking-widest text-purple-400 dark:text-purple-500 mb-0.5">
                     Get Started
                   </p>
-                  <p className="text-gray-900 dark:text-gray-100 font-bold text-base leading-snug">Choose Your Target Schools</p>
+                  <p className="text-gray-900 dark:text-gray-100 font-bold text-base leading-snug">Choose Your Pathway</p>
                   <p className="text-gray-400 dark:text-gray-500 text-xs mt-0.5">GL · CEM · CSSE · ISEB · Independent</p>
                 </>
               )}

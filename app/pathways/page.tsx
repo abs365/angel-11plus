@@ -24,8 +24,9 @@ import type { ParentReport } from "@/types/parent";
 
 /**
  * Angel V2.0 Sprint 7 (School Intelligence Experience) — this is the
- * existing "Target Schools" nav entry (components/Navigation.tsx already
- * points here). No separate "school" entity exists anywhere in this
+ * existing "School Intelligence" nav entry (components/Navigation.tsx
+ * already points here; renamed from "Target Schools" in EEP-001). No
+ * separate "school" entity exists anywhere in this
  * codebase — only a Pathway (exam board format: GL/CEM/CSSE/ISEB/
  * Independent/Core Foundation/Not Sure), per lib/pathways.ts's own data
  * model. The Target School Overview below is built entirely from that
@@ -86,7 +87,7 @@ export default function PathwaysPage() {
     : [];
 
   return (
-    <PageLayout breadcrumbs={[{ label: "My Admission Journey", href: "/dashboard" }, { label: "Target Schools" }]}>
+    <PageLayout breadcrumbs={[{ label: "My Admission Journey", href: "/dashboard" }, { label: "School Intelligence" }]}>
       <main className="max-w-2xl mx-auto px-4 pb-16 pt-6 md:pt-8">
         {/* Intro */}
         <div className="mb-6">
