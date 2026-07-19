@@ -3,26 +3,55 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft, MapPin } from "lucide-react";
-import PathwayCard from "@/components/PathwayCard";
-import { PATHWAYS } from "@/lib/pathways";
+import { MapPin, Target, CheckCircle } from "lucide-react";
+import PageLayout from "@/components/PageLayout";
+import PathwayCard, { PATHWAY_COLOR_MAP } from "@/components/PathwayCard";
+import { ReadinessIndicator } from "@/components/ui/Progress";
+import { PATHWAYS, getPathwayById } from "@/lib/pathways";
+import { getEligibleSubjectKeys } from "@/lib/ali/pathwayEligibility";
+import type { SubjectKey } from "@/types/analytics";
 import {
   getSelectedPathwayId,
   setSelectedPathway,
   getTargetExamDate,
   setTargetExamDate,
+  getProgress,
 } from "@/lib/progress";
+import { computeAnalytics } from "@/lib/analytics";
+import { computeGamification } from "@/lib/gamification";
+import { computeParentReport, READINESS_CONFIG } from "@/lib/parentInsights";
+import type { ParentReport } from "@/types/parent";
 
+/**
+ * Angel V2.0 Sprint 7 (School Intelligence Experience) — this is the
+ * existing "Target Schools" nav entry (components/Navigation.tsx already
+ * points here). No separate "school" entity exists anywhere in this
+ * codebase — only a Pathway (exam board format: GL/CEM/CSSE/ISEB/
+ * Independent/Core Foundation/Not Sure), per lib/pathways.ts's own data
+ * model. The Target School Overview below is built entirely from that
+ * real pathway data plus real, already-computed learner reports
+ * (computeParentReport, getEligibleSubjectKeys) — never a fabricated
+ * school name or invented readiness metric. This sprint enriches the
+ * existing selector page in place (same precedent as Sprints 5/6) rather
+ * than creating a second, competing route; the selector itself (cards,
+ * exam-date form) is functionally unchanged.
+ */
 export default function PathwaysPage() {
   const router = useRouter();
   const [selected, setSelected] = useState<string | undefined>();
   const [examDate, setExamDate] = useState("");
   const [examDateError, setExamDateError] = useState<string | undefined>();
   const [examDateSaved, setExamDateSaved] = useState(false);
+  const [parentReport, setParentReport] = useState<ParentReport | null>(null);
 
   useEffect(() => {
     setSelected(getSelectedPathwayId());
     setExamDate(getTargetExamDate() ?? "");
+
+    const p = getProgress();
+    const r = computeAnalytics(p);
+    const gamification = computeGamification(p);
+    setParentReport(computeParentReport(p, r, gamification));
   }, []);
 
   function handleSelect(id: string) {
@@ -43,38 +72,159 @@ export default function PathwaysPage() {
     setExamDateSaved(true);
   }
 
-  return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
-      {/* Header */}
-      <header className="bg-white dark:bg-gray-900 border-b border-gray-100 dark:border-gray-800 sticky top-0 z-20">
-        <div className="max-w-2xl mx-auto px-4 h-14 flex items-center gap-3">
-          <Link
-            href="/dashboard"
-            className="flex items-center gap-1.5 text-gray-500 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 text-sm font-medium transition-colors"
-          >
-            <ArrowLeft size={16} />
-            Dashboard
-          </Link>
-          <span className="text-gray-200 dark:text-gray-700 mx-1">/</span>
-          <span className="text-sm font-semibold text-gray-900 dark:text-gray-100">Choose Your Pathway</span>
-        </div>
-      </header>
+  const targetPathway = selected ? getPathwayById(selected) : undefined;
+  const colors = targetPathway ? PATHWAY_COLOR_MAP[targetPathway.accentColor] ?? PATHWAY_COLOR_MAP.gray : undefined;
 
-      <main className="max-w-2xl mx-auto px-4 pb-16 pt-6">
+  // Preparation Priorities — reuses computeParentReport()'s existing
+  // focusAreas exactly as built (no new prioritisation), filtered to the
+  // competencies this pathway actually assesses via the real Stage-0
+  // eligibility filter the recommendation engine itself uses
+  // (lib/ali/pathwayEligibility.ts, unmodified).
+  const eligibleKeys = targetPathway ? getEligibleSubjectKeys(targetPathway.id) : undefined;
+  const pathwayFocusAreas = parentReport && eligibleKeys
+    ? parentReport.focusAreas.filter((area) => eligibleKeys.has(area.href.replace("/", "") as SubjectKey))
+    : [];
+
+  return (
+    <PageLayout breadcrumbs={[{ label: "My Admission Journey", href: "/dashboard" }, { label: "Target Schools" }]}>
+      <main className="max-w-2xl mx-auto px-4 pb-16 pt-6 md:pt-8">
         {/* Intro */}
-        <div className="mb-6 flex items-start gap-3">
+        <div className="mb-6">
+          <h1 className="text-gray-900 dark:text-gray-100 font-bold text-2xl mb-1">School Intelligence</h1>
+          <p className="text-sm text-gray-500 dark:text-gray-400 leading-relaxed max-w-lg">
+            Your target exam pathway, what it assesses, and how today&apos;s preparation connects to it.
+          </p>
+        </div>
+
+        {/* Target School Overview (Sprint 7) */}
+        {targetPathway && colors ? (
+          <div className={`rounded-2xl border-2 ${colors.border} bg-white dark:bg-gray-900 p-5 mb-8 space-y-5`}>
+            <div className="flex items-start justify-between gap-3">
+              <div>
+                <div className="flex items-center gap-2 flex-wrap mb-1">
+                  <h2 className="text-lg font-bold text-gray-900 dark:text-gray-100">{targetPathway.name}</h2>
+                  <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${colors.badge}`}>
+                    {targetPathway.badge}
+                  </span>
+                </div>
+                <p className="text-xs text-gray-400 dark:text-gray-500">Your current target pathway</p>
+              </div>
+              <CheckCircle size={20} className={`shrink-0 mt-0.5 ${colors.check}`} />
+            </div>
+
+            {/* Assessment pathway */}
+            <div>
+              <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 dark:text-gray-500 mb-1.5">
+                Assessment Pathway
+              </p>
+              <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">{targetPathway.examFormatNotes}</p>
+            </div>
+
+            {/* Relevant competencies */}
+            <div>
+              <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 dark:text-gray-500 mb-1.5">
+                Relevant Competencies
+              </p>
+              <div className="flex flex-wrap gap-1.5">
+                {targetPathway.subjects.map((s) => (
+                  <span
+                    key={s}
+                    className={`text-xs font-medium px-2.5 py-1 rounded-full ${colors.bg} text-gray-700 dark:text-gray-300`}
+                  >
+                    {s}
+                  </span>
+                ))}
+              </div>
+            </div>
+
+            {/* Current readiness — reuses the exact same ReadinessIndicator
+                and computeParentReport().examReadiness as the Dashboard;
+                never a second readiness calculation. */}
+            {parentReport && parentReport.hasEnoughData ? (
+              <div>
+                <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 dark:text-gray-500 mb-1.5">
+                  Current Readiness
+                </p>
+                <ReadinessIndicator readiness={parentReport.examReadiness} />
+              </div>
+            ) : (
+              <div>
+                <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 dark:text-gray-500 mb-1.5">
+                  Current Readiness
+                </p>
+                <p className="text-sm text-gray-400 dark:text-gray-500">
+                  Not enough practice sessions yet to show a readiness signal — this will appear once you&apos;ve completed a few sessions.
+                </p>
+              </div>
+            )}
+
+            {/* Preparation priorities */}
+            <div>
+              <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 dark:text-gray-500 mb-1.5">
+                Preparation Priorities
+              </p>
+              {pathwayFocusAreas.length > 0 ? (
+                <div className="flex flex-col gap-2">
+                  {pathwayFocusAreas.map((area) => (
+                    <Link
+                      key={area.label}
+                      href={area.href}
+                      className="flex items-center justify-between gap-3 bg-gray-50 dark:bg-gray-800 rounded-xl px-3.5 py-2.5 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                    >
+                      <div className="min-w-0">
+                        <p className="text-sm font-semibold text-gray-800 dark:text-gray-100">{area.label}</p>
+                        <p className="text-xs text-gray-500 dark:text-gray-400 leading-relaxed">{area.detail}</p>
+                      </div>
+                      <span className="text-[10px] font-semibold text-gray-400 dark:text-gray-500 shrink-0">{area.frequency}</span>
+                    </Link>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-sm text-gray-400 dark:text-gray-500">
+                  No pathway-specific priority areas right now — keep up your regular practice.
+                </p>
+              )}
+            </div>
+
+            {/* Admission guidance — reuses this pathway's own real
+                description plus the real readiness-band description
+                (READINESS_CONFIG, unmodified); never a generated
+                recommendation. */}
+            <div className="bg-gray-50 dark:bg-gray-800 rounded-xl p-4">
+              <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 dark:text-gray-500 mb-1.5">
+                Admission Guidance
+              </p>
+              <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
+                {targetPathway.description}
+                {parentReport?.hasEnoughData && (
+                  <> {READINESS_CONFIG[parentReport.examReadiness].description}</>
+                )}
+              </p>
+            </div>
+          </div>
+        ) : (
+          <div className="rounded-2xl border border-dashed border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 p-6 mb-8 text-center">
+            <Target size={22} className="text-gray-300 dark:text-gray-600 mx-auto mb-2" />
+            <p className="text-sm font-semibold text-gray-600 dark:text-gray-300 mb-1">No target pathway selected yet</p>
+            <p className="text-xs text-gray-400 dark:text-gray-500 max-w-sm mx-auto leading-relaxed">
+              Choose the exam pathway that matches your target school below to see its School Intelligence overview.
+            </p>
+          </div>
+        )}
+
+        {/* Pathway selector — unchanged functionality */}
+        <div className="mb-4 flex items-start gap-3">
           <div className="w-10 h-10 rounded-2xl bg-purple-100 dark:bg-purple-900 flex items-center justify-center shrink-0">
             <MapPin size={18} className="text-purple-600 dark:text-purple-400" />
           </div>
           <div>
-            <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100">Your 11+ Pathway</h1>
+            <h2 className="text-lg font-bold text-gray-900 dark:text-gray-100">Choose Your Pathway</h2>
             <p className="text-sm text-gray-500 dark:text-gray-400 mt-0.5 leading-relaxed">
               Select the exam pathway that matches your target school. This helps us tailor your practice sessions. You can change it at any time.
             </p>
           </div>
         </div>
 
-        {/* Pathway cards */}
         <div className="flex flex-col gap-4">
           {PATHWAYS.map((pathway) => (
             <PathwayCard
@@ -126,6 +276,6 @@ export default function PathwaysPage() {
           Angel 11+ provides original exam-style practice content and is not affiliated with or endorsed by GL Assessment, CEM, CSSE, ISEB, or any school or exam board.
         </p>
       </main>
-    </div>
+    </PageLayout>
   );
 }

@@ -3,7 +3,8 @@
 import { CheckCircle } from "lucide-react";
 import type { Pathway } from "@/types/pathway";
 
-const COLOR_MAP: Record<
+/** Exported (Sprint 7 — School Intelligence Experience) so the Target School Overview reuses the exact same accent-colour treatment as this card, rather than a second, parallel colour map. */
+export const PATHWAY_COLOR_MAP: Record<
   string,
   { badge: string; border: string; check: string; bg: string }
 > = {
@@ -58,7 +59,7 @@ interface Props {
 }
 
 export default function PathwayCard({ pathway, selected, onSelect }: Props) {
-  const colors = COLOR_MAP[pathway.accentColor] ?? COLOR_MAP.gray;
+  const colors = PATHWAY_COLOR_MAP[pathway.accentColor] ?? PATHWAY_COLOR_MAP.gray;
 
   return (
     <button
