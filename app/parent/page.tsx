@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import {
-  ArrowLeft,
   BookOpen,
   Calculator,
   BookMarked,
@@ -28,6 +27,7 @@ import {
   FileText,
   Play,
   Sparkles,
+  Flag,
 } from "lucide-react";
 import { getProgress, getSelectedPathwayId } from "@/lib/progress";
 import { getMockResults } from "@/lib/mockProgress";
@@ -36,10 +36,14 @@ import { computeAnalytics } from "@/lib/analytics";
 import { computeGamification, BADGE_DEFINITIONS } from "@/lib/gamification";
 import { computeParentReport, READINESS_CONFIG } from "@/lib/parentInsights";
 import { getPathwayById } from "@/lib/pathways";
+import { getEligibleSubjectKeys } from "@/lib/ali/pathwayEligibility";
+import PageLayout from "@/components/PageLayout";
+import JourneyTimeline from "@/components/JourneyTimeline";
 import type { ParentReport } from "@/types/parent";
-import type { SubjectAnalytics } from "@/types/analytics";
+import type { SubjectAnalytics, SubjectKey } from "@/types/analytics";
 import type { SubjectConfidence } from "@/types/adaptiveDifficulty";
 import type { Pathway } from "@/types/pathway";
+import type { XPMilestone } from "@/types/gamification";
 import DifficultyBadge from "@/components/DifficultyBadge";
 
 // ─── Subject icon map ────────────────────────────────────────────────────────
@@ -129,6 +133,7 @@ export default function ParentDashboardPage() {
   const [report, setReport] = useState<ParentReport | null>(null);
   const [pathway, setPathway] = useState<Pathway | undefined>();
   const [mockResults, setMockResults] = useState<MockResult[]>([]);
+  const [nextMilestone, setNextMilestone] = useState<XPMilestone | null>(null);
 
   useEffect(() => {
     const p = getProgress();
@@ -137,36 +142,141 @@ export default function ParentDashboardPage() {
     setReport(computeParentReport(p, analytics, gamification));
     setPathway(getPathwayById(getSelectedPathwayId() ?? ""));
     setMockResults(getMockResults());
+    setNextMilestone(gamification.nextMilestone);
   }, []);
 
   if (!report) return null;
 
   const readinessCfg = READINESS_CONFIG[report.examReadiness];
 
+  // Sprint 8 (Parent Experience Transformation) — Parent Overview /
+  // School Context data, all reused: strengths and priority areas come
+  // directly from report.subjects/focusAreas (unchanged), and the
+  // pathway-eligible subset reuses the exact same Stage-0 eligibility
+  // filter Sprint 7's School Intelligence Hub uses (lib/ali/
+  // pathwayEligibility.ts, unmodified) — no new prioritisation logic.
+  const strongSubjects = report.subjects.filter((s) => s.status === "strong" && s.subject !== "mock-test");
+  const eligibleKeys = pathway ? getEligibleSubjectKeys(pathway.id) : undefined;
+  const pathwayFocusAreas = eligibleKeys
+    ? report.focusAreas.filter((area) => eligibleKeys.has(area.href.replace("/", "") as SubjectKey))
+    : [];
+  const groupedInsights = {
+    positive: report.parentInsights.filter((i) => i.type === "positive"),
+    attention: report.parentInsights.filter((i) => i.type === "attention"),
+    action: report.parentInsights.filter((i) => i.type === "action"),
+  };
+
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
-      {/* Header */}
-      <header className="bg-white dark:bg-gray-900 border-b border-gray-100 dark:border-gray-800 sticky top-0 z-20">
-        <div className="max-w-2xl mx-auto px-4 h-14 flex items-center justify-between">
-          <Link
-            href="/dashboard"
-            className="flex items-center gap-1.5 text-gray-500 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 text-sm font-medium transition-colors"
-          >
-            <ArrowLeft size={16} />
-            Student App
-          </Link>
-          <span className="text-sm font-semibold text-gray-900 dark:text-gray-100">Parent Dashboard</span>
+    <PageLayout breadcrumbs={[{ label: "My Admission Journey", href: "/dashboard" }, { label: "Parent Hub" }]}>
+      <main className="max-w-2xl mx-auto px-4 pb-12 pt-6 md:pt-8">
+        <div className="mb-1 flex items-center justify-between">
+          <h1 className="text-gray-900 dark:text-gray-100 font-bold text-2xl">Parent Hub</h1>
           <span className="text-xs text-purple-600 dark:text-purple-300 font-semibold bg-purple-50 dark:bg-purple-950 px-2 py-1 rounded-full">
             Beta
           </span>
         </div>
-      </header>
+        <p className="text-gray-400 dark:text-gray-500 text-sm mb-6">
+          A clear picture of how your child is progressing, and what to focus on next.
+        </p>
 
-      <main className="max-w-2xl mx-auto px-4 pb-12">
         {!report.hasEnoughData ? (
           <EmptyState />
         ) : (
-          <div className="space-y-5 pt-5">
+          <div className="space-y-5">
+
+            {/* Parent Overview (Sprint 8) — the answer to "how is my child
+                progressing, should I be concerned, what should we focus on
+                this week" in one place, built entirely from existing
+                computeParentReport() outputs. Readiness reuses the exact
+                same READINESS_CONFIG band already used elsewhere; nothing
+                here is a new calculation. */}
+            <section className={`rounded-2xl p-5 ${readinessCfg.bgColor}`}>
+              <div className="flex items-start justify-between mb-3">
+                <div>
+                  <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-0.5">
+                    Current Readiness
+                  </p>
+                  <p className={`text-lg font-bold ${readinessCfg.textColor}`}>
+                    {readinessCfg.label}
+                  </p>
+                </div>
+                <div className={`text-2xl font-black ${readinessCfg.textColor}`}>
+                  {readinessCfg.pct}%
+                </div>
+              </div>
+              <div className="h-2 bg-white/60 dark:bg-black/30 rounded-full overflow-hidden mb-3">
+                <div
+                  className={`h-full rounded-full transition-all duration-700 ${readinessCfg.barColor}`}
+                  style={{ width: `${readinessCfg.pct}%` }}
+                />
+              </div>
+              <p className="text-sm text-gray-600 dark:text-gray-300 mb-4">{readinessCfg.description}</p>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-4 border-t border-white/50 dark:border-black/20">
+                <div>
+                  <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1">Weekly Progress</p>
+                  <p className="text-sm text-gray-700 dark:text-gray-300">
+                    {report.weeklySessions} session{report.weeklySessions === 1 ? "" : "s"} · {report.weeklyXP} XP this week
+                  </p>
+                </div>
+                <div>
+                  <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1">Strengths</p>
+                  <p className="text-sm text-gray-700 dark:text-gray-300">
+                    {strongSubjects.length > 0
+                      ? strongSubjects.map((s) => s.label).join(", ")
+                      : "Still building — no strong subjects identified yet."}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1">Priority Improvement Areas</p>
+                  <p className="text-sm text-gray-700 dark:text-gray-300">
+                    {report.focusAreas.length > 0
+                      ? report.focusAreas.map((a) => a.label).join(", ")
+                      : "No priority areas identified yet."}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1">Next Recommended Focus</p>
+                  {report.focusAreas[0] ? (
+                    <Link href={report.focusAreas[0].href} className="text-sm font-semibold text-purple-700 dark:text-purple-300 hover:underline">
+                      {report.focusAreas[0].label} →
+                    </Link>
+                  ) : (
+                    <p className="text-sm text-gray-700 dark:text-gray-300">Keep up regular practice across subjects.</p>
+                  )}
+                </div>
+              </div>
+            </section>
+
+            {/* Progress Story (Sprint 8) — replaces isolated charts with a
+                narrative: where the learner started, current position, and
+                next milestone. JourneyTimeline is Sprint 3's existing,
+                unmodified presentational stepper (deriveActiveStageIndex),
+                and nextMilestone is computeGamification()'s existing,
+                unmodified output — no new evidence is computed here. */}
+            <section className="bg-white dark:bg-gray-900 rounded-2xl p-5 border border-gray-100 dark:border-gray-800">
+              <h2 className="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-4">
+                Progress Story
+              </h2>
+              <JourneyTimeline hasEnoughData={report.hasEnoughData} readiness={report.examReadiness} />
+              <div className="mt-5 pt-4 border-t border-gray-50 dark:border-gray-800 space-y-2 text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
+                <p>
+                  <span className="font-semibold text-gray-800 dark:text-gray-100">Started:</span>{" "}
+                  {report.totalSessions} session{report.totalSessions === 1 ? "" : "s"} completed so far, {report.overallScore > 0 ? `averaging ${report.overallScore}%` : "building an initial picture"}.
+                </p>
+                <p>
+                  <span className="font-semibold text-gray-800 dark:text-gray-100">Current position:</span>{" "}
+                  {readinessCfg.label} — {readinessCfg.description}
+                </p>
+                <p className="flex items-start gap-1.5">
+                  <Flag size={13} className="text-purple-500 shrink-0 mt-0.5" />
+                  <span>
+                    <span className="font-semibold text-gray-800 dark:text-gray-100">Next milestone:</span>{" "}
+                    {nextMilestone ? `${nextMilestone.label} (${nextMilestone.threshold} XP)` : "All current milestones reached — more are on the way."}
+                  </span>
+                </p>
+              </div>
+            </section>
 
             {/* Overview stats */}
             <section>
@@ -198,7 +308,10 @@ export default function ParentDashboardPage() {
               </div>
             </section>
 
-            {/* Learning Pathway */}
+            {/* Learning Pathway / School Context (Sprint 8) — connects
+                current progress to the selected pathway using the same
+                real eligibility filter as Sprint 7's School Intelligence
+                Hub; never a school-specific prediction. */}
             <section>
               <h2 className="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-3">
                 Learning Pathway
@@ -217,6 +330,11 @@ export default function ParentDashboardPage() {
                       <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5 leading-relaxed">
                         {pathway.subjects.join(" · ")}
                       </p>
+                      {pathwayFocusAreas.length > 0 && (
+                        <p className="text-xs text-purple-600 dark:text-purple-400 mt-1 font-medium">
+                          {pathwayFocusAreas.length} of your priority area{pathwayFocusAreas.length === 1 ? "" : "s"} relate{pathwayFocusAreas.length === 1 ? "s" : ""} directly to this pathway
+                        </p>
+                      )}
                     </>
                   ) : (
                     <>
@@ -227,30 +345,6 @@ export default function ParentDashboardPage() {
                 </div>
                 <ChevronRight size={16} className="text-gray-300 dark:text-gray-600 shrink-0" />
               </Link>
-            </section>
-
-            {/* Exam Readiness */}
-            <section className={`rounded-2xl p-5 ${readinessCfg.bgColor}`}>
-              <div className="flex items-start justify-between mb-3">
-                <div>
-                  <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-0.5">
-                    Exam Readiness
-                  </p>
-                  <p className={`text-lg font-bold ${readinessCfg.textColor}`}>
-                    {readinessCfg.label}
-                  </p>
-                </div>
-                <div className={`text-2xl font-black ${readinessCfg.textColor}`}>
-                  {readinessCfg.pct}%
-                </div>
-              </div>
-              <div className="h-2 bg-white/60 dark:bg-black/30 rounded-full overflow-hidden mb-3">
-                <div
-                  className={`h-full rounded-full transition-all duration-700 ${readinessCfg.barColor}`}
-                  style={{ width: `${readinessCfg.pct}%` }}
-                />
-              </div>
-              <p className="text-sm text-gray-600 dark:text-gray-300">{readinessCfg.description}</p>
             </section>
 
             {/* Subject Grid */}
@@ -515,19 +609,58 @@ export default function ParentDashboardPage() {
               </section>
             ))}
 
-            {/* Parent Insights */}
+            {/* Weekly Guidance (Sprint 8) — the existing Parent Insights
+                data (report.parentInsights, unchanged), presented in a
+                clearer grouped format instead of one flat list, so a
+                parent can scan "what's going well" separately from "what
+                needs a decision". No new guidance text is generated —
+                every string here is the same insight.text this section
+                always rendered. */}
             {report.parentInsights.length > 0 && (
               <section>
                 <h2 className="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-3">
-                  Parent Insights
+                  Weekly Guidance
                 </h2>
-                <div className="space-y-2">
-                  {report.parentInsights.map((insight) => (
-                    <div key={insight.id} className="bg-white dark:bg-gray-900 rounded-xl p-4 flex gap-3">
-                      <InsightIcon type={insight.type} />
-                      <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed">{insight.text}</p>
+                <div className="space-y-4">
+                  {groupedInsights.positive.length > 0 && (
+                    <div>
+                      <p className="text-xs font-semibold text-green-700 dark:text-green-400 mb-2">Doing Well</p>
+                      <div className="space-y-2">
+                        {groupedInsights.positive.map((insight) => (
+                          <div key={insight.id} className="bg-white dark:bg-gray-900 rounded-xl p-4 flex gap-3">
+                            <InsightIcon type={insight.type} />
+                            <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed">{insight.text}</p>
+                          </div>
+                        ))}
+                      </div>
                     </div>
-                  ))}
+                  )}
+                  {groupedInsights.attention.length > 0 && (
+                    <div>
+                      <p className="text-xs font-semibold text-amber-700 dark:text-amber-400 mb-2">Needs Attention</p>
+                      <div className="space-y-2">
+                        {groupedInsights.attention.map((insight) => (
+                          <div key={insight.id} className="bg-white dark:bg-gray-900 rounded-xl p-4 flex gap-3">
+                            <InsightIcon type={insight.type} />
+                            <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed">{insight.text}</p>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                  {groupedInsights.action.length > 0 && (
+                    <div>
+                      <p className="text-xs font-semibold text-blue-700 dark:text-blue-400 mb-2">Suggested Actions</p>
+                      <div className="space-y-2">
+                        {groupedInsights.action.map((insight) => (
+                          <div key={insight.id} className="bg-white dark:bg-gray-900 rounded-xl p-4 flex gap-3">
+                            <InsightIcon type={insight.type} />
+                            <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed">{insight.text}</p>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                 </div>
               </section>
             )}
@@ -536,7 +669,7 @@ export default function ParentDashboardPage() {
             {report.focusAreas.length > 0 && (
               <section>
                 <h2 className="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-3">
-                  Recommended Focus
+                  Priority Improvement Areas
                 </h2>
                 <div className="space-y-2">
                   {report.focusAreas.map((area) => (
@@ -643,7 +776,7 @@ export default function ParentDashboardPage() {
           </div>
         )}
       </main>
-    </div>
+    </PageLayout>
   );
 }
 
