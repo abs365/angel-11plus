@@ -78,6 +78,11 @@ const SUBJECT_COLORS: Record<string, { bar: string; bg: string; text: string }> 
 
 // ─── Status label ────────────────────────────────────────────────────────────
 
+// EEP-004 (Supportive Feedback Experience) — "weak" unified to "Focus
+// area" to match components/SubjectBreakdown.tsx and
+// components/WritingFeedback.tsx (all three previously said "Needs
+// work" independently); reads as forward-looking rather than
+// deficit-framed, without concealing that this is the weakest tier.
 function statusLabel(s: SubjectAnalytics["status"]): {
   text: string;
   className: string;
@@ -88,7 +93,7 @@ function statusLabel(s: SubjectAnalytics["status"]): {
     case "developing":
       return { text: "Developing", className: "bg-amber-100 dark:bg-amber-900 text-amber-700 dark:text-amber-300" };
     case "weak":
-      return { text: "Needs work", className: "bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-300" };
+      return { text: "Focus area", className: "bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-300" };
     case "not-started":
       return { text: "Not started", className: "bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400" };
   }
@@ -637,7 +642,12 @@ export default function ParentDashboardPage() {
                   )}
                   {groupedInsights.attention.length > 0 && (
                     <div>
-                      <p className="text-xs font-semibold text-amber-700 dark:text-amber-400 mb-2">Needs Attention</p>
+                      {/* EEP-004 — "Needs Attention" carried an urgency/
+                          alarm connotation on a parent-facing surface;
+                          reworded to "Areas to Support," calmer and
+                          equally clear without concealing that these
+                          items warrant notice. */}
+                      <p className="text-xs font-semibold text-amber-700 dark:text-amber-400 mb-2">Areas to Support</p>
                       <div className="space-y-2">
                         {groupedInsights.attention.map((insight) => (
                           <div key={insight.id} className="bg-white dark:bg-gray-900 rounded-xl p-4 flex gap-3">

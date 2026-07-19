@@ -9,12 +9,16 @@ interface ScoreConfig {
   badgeClass: string;
 }
 
+// EEP-004 (Supportive Feedback Experience) — lowest tier unified to
+// "Focus area" to match app/parent/page.tsx and
+// components/SubjectBreakdown.tsx (all three previously said "Needs
+// work" independently). Score and thresholds unchanged.
 function scoreConfig(score: number): ScoreConfig {
   if (score >= 85) return { label: "Exam-ready", barColor: "bg-emerald-500", badgeClass: "bg-emerald-100 dark:bg-emerald-900 text-emerald-700 dark:text-emerald-300" };
   if (score >= 70) return { label: "Strong", barColor: "bg-green-400", badgeClass: "bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300" };
   if (score >= 55) return { label: "Developing", barColor: "bg-amber-400", badgeClass: "bg-amber-100 dark:bg-amber-900 text-amber-700 dark:text-amber-300" };
   if (score >= 40) return { label: "Foundation", barColor: "bg-orange-400", badgeClass: "bg-orange-100 dark:bg-orange-900 text-orange-700 dark:text-orange-300" };
-  return { label: "Needs work", barColor: "bg-red-400", badgeClass: "bg-red-100 dark:bg-red-900 text-red-600 dark:text-red-300" };
+  return { label: "Focus area", barColor: "bg-red-400", badgeClass: "bg-red-100 dark:bg-red-900 text-red-600 dark:text-red-300" };
 }
 
 interface WritingFeedbackProps {

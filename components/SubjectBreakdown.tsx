@@ -25,10 +25,17 @@ const statusColor = {
   "not-started": "bg-gray-100 dark:bg-gray-800 text-gray-400 dark:text-gray-500",
 };
 
+// EEP-004 (Supportive Feedback Experience) — "weak" was independently
+// labelled "Needs work" here, in app/parent/page.tsx's own statusLabel(),
+// and in WritingFeedback.tsx's scoreConfig(); unified to "Focus area"
+// across all three so the same real status reads identically everywhere
+// it appears, and reads as forward-looking rather than deficit-framed.
+// Colour/position already convey this is the weakest tier — the word
+// itself no longer needs to.
 const statusLabel = {
   strong: "Strong",
   developing: "Developing",
-  weak: "Needs work",
+  weak: "Focus area",
   "not-started": "Not started",
 };
 
