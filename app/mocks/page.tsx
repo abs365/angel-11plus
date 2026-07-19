@@ -52,9 +52,9 @@ const MOCK_CARDS: {
     pathway: "csse",
     name: "CSSE",
     badge: "CSSE",
-    description: "CSSE-style practice with an English & Language section and a Mathematics section. This is original practice content, not an official CSSE paper.",
-    totalMinutes: 40,
-    sections: ["English & Language", "Mathematics"],
+    description: "CSSE-style Mathematics practice, timed like the real exam. This is original practice content, not an official CSSE paper. English & Language practice is coming soon.",
+    totalMinutes: 20,
+    sections: ["Mathematics", "English & Language (coming soon)"],
     bg: "bg-purple-50 dark:bg-purple-950",
     border: "border-purple-100 dark:border-purple-900",
     badgeBg: "bg-purple-600",
@@ -140,8 +140,11 @@ export default function MocksPage() {
                 35 min
               </div>
             </div>
-            <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed mb-4">
-              Your Verbal Reasoning questions are chosen for you every time — no two sessions are identical, and your weak spots come back around intelligently.
+            <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed mb-1">
+              Verbal Reasoning questions matched to your practice level.
+            </p>
+            <p className="text-xs text-amber-700 dark:text-amber-400 leading-relaxed mb-4">
+              Currently a small sample set while we build out the full question bank.
             </p>
             <Link
               href="/mocks/adaptive/gl"
@@ -166,8 +169,11 @@ export default function MocksPage() {
                 12 min
               </div>
             </div>
-            <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed mb-4">
-              Your Maths questions are chosen for you every time — no two sessions are identical, and your weak spots come back around intelligently.
+            <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed mb-1">
+              Maths questions matched to your practice level.
+            </p>
+            <p className="text-xs text-amber-700 dark:text-amber-400 leading-relaxed mb-4">
+              Currently a small sample set while we build out the full question bank.
             </p>
             <Link
               href="/mocks/adaptive/maths"
@@ -192,8 +198,11 @@ export default function MocksPage() {
                 10-15 min
               </div>
             </div>
-            <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed mb-4">
-              A passage is chosen for you every time — never split apart — with your weak spots in inference and vocabulary coming back around intelligently.
+            <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed mb-1">
+              One passage at a time, with every question that belongs to it — never split apart.
+            </p>
+            <p className="text-xs text-amber-700 dark:text-amber-400 leading-relaxed mb-4">
+              Currently a small sample set while we build out the full question bank.
             </p>
             <Link
               href="/mocks/adaptive/english"
@@ -218,8 +227,11 @@ export default function MocksPage() {
                 5-10 min
               </div>
             </div>
-            <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed mb-4">
-              A word is chosen for you every time — never split apart — with your weak spots in synonyms, antonyms and context coming back around intelligently.
+            <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed mb-1">
+              One word at a time, with every question that belongs to it — synonyms, antonyms and usage in context.
+            </p>
+            <p className="text-xs text-amber-700 dark:text-amber-400 leading-relaxed mb-4">
+              Currently a small sample set while we build out the full question bank.
             </p>
             <Link
               href="/mocks/adaptive/vocabulary"

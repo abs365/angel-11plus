@@ -407,7 +407,7 @@ export default function AdaptiveGlMockPage() {
               <h1 className="text-xl font-bold">GL Verbal Reasoning</h1>
             </div>
             <p className="text-sm text-white/80">
-              Your Verbal Reasoning questions are chosen for you — harder as you improve, and your weak spots come back around.
+              Verbal Reasoning questions matched to your practice level.
             </p>
           </div>
         </header>
@@ -441,7 +441,8 @@ export default function AdaptiveGlMockPage() {
               <AlertCircle size={16} className="text-amber-500 shrink-0 mt-0.5" />
               <div className="text-xs text-amber-700 dark:text-amber-300 space-y-1 leading-relaxed">
                 <p className="font-semibold">Before you start</p>
-                <p>Section 1 adapts to you — no two sessions are the same. Sections 2–4 are standard timed practice. This is original practice content and is not affiliated with GL Assessment.</p>
+                <p>Section 1 selects questions matched to your level. Sections 2–4 are standard timed practice. This is original practice content and is not affiliated with GL Assessment.</p>
+                <p>Section 1&apos;s question bank is currently a small sample set while we build out the full one — you may see the same questions again across sessions.</p>
               </div>
             </div>
           </div>
@@ -515,7 +516,7 @@ export default function AdaptiveGlMockPage() {
 
         {usingSyntheticFixture && currentSection.adaptive && (
           <div className="bg-amber-50 dark:bg-amber-950 text-amber-700 dark:text-amber-300 text-xs text-center py-1.5">
-            Sample practice content — more questions coming soon
+            Sample practice questions — not yet your full personalised set
           </div>
         )}
 

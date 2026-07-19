@@ -231,7 +231,7 @@ export default function AdaptiveVocabularyMockPage() {
               <h1 className="text-xl font-bold">Vocabulary Practice</h1>
             </div>
             <p className="text-sm text-white/80">
-              A word is chosen for you every time — your weak spots in synonyms, antonyms and context come back around intelligently.
+              A word matched to your practice level, with every question that belongs to it.
             </p>
           </div>
         </header>
@@ -247,6 +247,7 @@ export default function AdaptiveVocabularyMockPage() {
               <div className="text-xs text-amber-700 dark:text-amber-300 space-y-1 leading-relaxed">
                 <p className="font-semibold">Before you start</p>
                 <p>This is separate from the Vocabulary flashcards — a quick multiple-choice practice session instead.</p>
+                <p>Our word bank is currently a small sample set while we build out the full one — you may see the same word again across sessions.</p>
               </div>
             </div>
           </div>
@@ -310,7 +311,7 @@ export default function AdaptiveVocabularyMockPage() {
 
         {usingSyntheticFixture && (
           <div className="bg-amber-50 dark:bg-amber-950 text-amber-700 dark:text-amber-300 text-xs text-center py-1.5">
-            Sample practice content — more words coming soon
+            Sample word — not yet your full personalised set
           </div>
         )}
 

@@ -80,3 +80,29 @@ export function getEligibleSubjectKeys(pathwayId: string | undefined): Set<Subje
 export function getKnownPathwayIds(): string[] {
   return PATHWAYS.map((p) => p.id);
 }
+
+/**
+ * AEP-001 integrity guard — throws at module-load time if a mock or
+ * practice route wires a content bank to a pathway that PATHWAY_SUBJECT_KEYS
+ * does not authorise for it. This is the mechanism named in AEP-001 §Phase 4
+ * ("a pathway cannot load a subject bank not authorised for that pathway").
+ *
+ * Deliberately opt-in, called explicitly per section being wired up — not
+ * auto-applied to every existing MOCK_CONFIGS entry. GL/CEM/ISEB's mock
+ * sections have pre-existing subject mismatches (documented in
+ * AXP-001_ACADEMIC_ASSESSMENT_REPORT.md §6.2) that are out of scope for this
+ * corrective pass (CSSE only, per the AEP-001 authorisation). Retroactively
+ * enforcing this guard against their untouched config would break live,
+ * unrelated pathway content — exactly what AEP-001's Protected Areas
+ * section prohibits. New/corrected wiring should call this; old,
+ * out-of-scope wiring is left alone and tracked for future correction.
+ */
+export function assertSubjectAuthorisedForPathway(pathwayId: string, subject: SubjectKey): void {
+  const eligible = getEligibleSubjectKeys(pathwayId);
+  if (!eligible.has(subject)) {
+    throw new Error(
+      `Integrity guard: subject "${subject}" is not authorised for pathway "${pathwayId}". ` +
+        `Check PATHWAY_SUBJECT_KEYS in lib/ali/pathwayEligibility.ts.`
+    );
+  }
+}

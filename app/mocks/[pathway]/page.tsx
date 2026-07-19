@@ -11,24 +11,49 @@ import { verbalReasoningQuestions } from "@/data/verbal-reasoning";
 import { nonVerbalReasoningQuestions } from "@/data/non-verbal-reasoning";
 import { spatialReasoningQuestions } from "@/data/spatial-reasoning";
 import { numericalReasoningQuestions } from "@/data/numerical-reasoning";
+import { mathsQuestions, quickArithmetic } from "@/data/maths";
 import { saveMockResult, getBestMockScoreForPathway, getMockCountForPathway } from "@/lib/mockProgress";
 import { completeLesson } from "@/lib/progress";
 import { trackEvent } from "@/lib/betaTracking";
 import { MOCK_SUGGESTED_PREPARATION, MOCK_ADMISSION_RELEVANCE } from "@/lib/mockMeta";
+import { assertSubjectAuthorisedForPathway } from "@/lib/ali/pathwayEligibility";
 import type { MockPathwayId, MockSectionResult } from "@/types/mock";
 import type { ReasoningQuestion } from "@/types/reasoning";
+import type { MathsQuestion } from "@/types";
 
 // ─── Config ───────────────────────────────────────────────────────────────────
 
-type BankKey = "vr" | "nvr" | "sr" | "nr";
+type BankKey = "vr" | "nvr" | "sr" | "nr" | "maths";
 
-interface SectionConfig {
+// AEP-001 Phase 3/4 — a section is either real, playable content, or an
+// honestly-labelled placeholder for content that doesn't exist yet. The
+// quiz-flow logic only ever iterates AvailableSectionConfig entries
+// (see `availableSections` below); ComingSoonSectionConfig entries are
+// shown on the intro screen for transparency and nowhere else — this is
+// what makes "incomplete mocks cannot be labelled complete" (AEP-001
+// Phase 4) a type-level guarantee rather than a convention to remember.
+interface AvailableSectionConfig {
   id: string;
   name: string;
+  status?: "available";
   bank: BankKey;
   count: number;
   offset: number;
   minutes: number;
+}
+
+interface ComingSoonSectionConfig {
+  id: string;
+  name: string;
+  status: "comingSoon";
+  minutes: number; // planned length, shown on the intro screen only
+  reason: string;
+}
+
+type SectionConfig = AvailableSectionConfig | ComingSoonSectionConfig;
+
+function isAvailableSection(s: SectionConfig): s is AvailableSectionConfig {
+  return s.status !== "comingSoon";
 }
 
 interface MockConfig {
@@ -80,12 +105,28 @@ const MOCK_CONFIGS: Record<MockPathwayId, MockConfig> = {
     badge: "CSSE",
     color: "purple",
     headerBg: "bg-purple-600",
-    description: "CSSE-style practice with an English & Language section and a Mathematics section.",
-    totalMinutes: 40,
+    // AEP-001 Phase 3 correction — this section previously drew "English &
+    // Language" from the Verbal Reasoning bank and "Mathematics" from the
+    // Numerical Reasoning bank, even though CSSE's own pathway description
+    // (lib/pathways.ts) states its real exam is "English (comprehension +
+    // writing) and Maths — no separate reasoning paper." Mathematics now
+    // draws from the real data/maths.ts bank. English & Language is marked
+    // comingSoon rather than filled with reasoning content or a too-thin
+    // 10-question passage bank, per AXP-001_ACADEMIC_ASSESSMENT_REPORT.md §6.2
+    // and the explicit AEP-001 instruction not to "build a fake full mock
+    // from insufficient content."
+    description: "CSSE-style Mathematics practice, timed like the real exam. English & Language practice is being expanded and will join this mock soon.",
+    totalMinutes: 20,
     xpReward: 90,
     sections: [
-      { id: "csse-eng", name: "English & Language", bank: "vr", count: 15, offset: 0, minutes: 20 },
-      { id: "csse-maths", name: "Mathematics", bank: "nr", count: 15, offset: 0, minutes: 20 },
+      { id: "csse-maths", name: "Mathematics", bank: "maths", count: 15, offset: 0, minutes: 20 },
+      {
+        id: "csse-eng",
+        name: "English & Language",
+        status: "comingSoon",
+        minutes: 20,
+        reason: "We don't yet have enough original English comprehension and writing content to honestly represent a full CSSE English paper. This section will appear here once that content is ready.",
+      },
     ],
   },
   iseb: {
@@ -106,12 +147,55 @@ const MOCK_CONFIGS: Record<MockPathwayId, MockConfig> = {
   },
 };
 
+// AEP-001 Phase 3 — adapts the real Maths bank into the shape this file's
+// existing rendering/answer-checking already understands, so no change is
+// needed to any protected engine (lib/adaptiveMockBuilder.ts, lib/ali/*) or
+// to the shared answer-checking logic below, which already handles numeric
+// equivalence via parseFloat. Mechanical, one-directional mapping only.
+function mathsToReasoningShape(q: MathsQuestion): ReasoningQuestion {
+  return {
+    id: q.id,
+    question: q.question,
+    answer: String(q.answer),
+    explanation: q.workingSteps?.length
+      ? q.workingSteps.join(" → ")
+      : "Review this working with your parent or tutor.",
+    skill: q.skill,
+    category: "Mathematics",
+    marks: q.marks,
+  };
+}
+
+const mathsAsReasoningShape: ReasoningQuestion[] = [...mathsQuestions, ...quickArithmetic].map(mathsToReasoningShape);
+
 const BANKS: Record<BankKey, ReasoningQuestion[]> = {
   vr: verbalReasoningQuestions,
   nvr: nonVerbalReasoningQuestions,
   sr: spatialReasoningQuestions,
   nr: numericalReasoningQuestions,
+  maths: mathsAsReasoningShape,
 };
+
+// AEP-001 Phase 4 integrity guard — fails loudly at module load if CSSE's
+// Mathematics section is ever miswired to a subject PATHWAY_SUBJECT_KEYS
+// doesn't authorise for CSSE, instead of silently shipping a mismatch like
+// the one this correction fixes. See lib/ali/pathwayEligibility.ts for why
+// this is not applied retroactively to GL/CEM/ISEB's existing sections.
+assertSubjectAuthorisedForPathway("csse", "maths");
+
+// AEP-001 Phase 4 — "empty banks fail safely and honestly": a section
+// marked available must never point at an empty bank, which would
+// otherwise render a silent blank screen (no question ever satisfies
+// `mode === "section" && currentQuestion`) instead of a visible failure.
+for (const [pathwayId, cfg] of Object.entries(MOCK_CONFIGS)) {
+  for (const s of cfg.sections) {
+    if (isAvailableSection(s) && BANKS[s.bank].length === 0) {
+      throw new Error(
+        `Integrity guard: pathway "${pathwayId}" section "${s.id}" is marked available but its bank ("${s.bank}") is empty.`
+      );
+    }
+  }
+}
 
 // ─── Answer checking ──────────────────────────────────────────────────────────
 
@@ -155,6 +239,10 @@ export default function MockPage({
 
   const pathwayId = pathway as MockPathwayId;
   const config = MOCK_CONFIGS[pathwayId];
+  // AEP-001 Phase 3/4 — the quiz flow (timer, sections, results) only ever
+  // drives off real, playable content. comingSoon entries stay visible on
+  // the intro screen (below) but are never entered, timed or counted.
+  const availableSections = config ? config.sections.filter(isAvailableSection) : [];
 
   const [mode, setMode] = useState<Mode>("intro");
   const [sectionIdx, setSectionIdx] = useState(0);
@@ -191,7 +279,7 @@ export default function MockPage({
     );
   }
 
-  const currentSection = config.sections[sectionIdx];
+  const currentSection = availableSections[sectionIdx];
   const sectionQuestions = currentSection
     ? BANKS[currentSection.bank].slice(currentSection.offset, currentSection.offset + currentSection.count)
     : [];
@@ -302,7 +390,7 @@ export default function MockPage({
   }
 
   function nextSection() {
-    if (sectionIdx + 1 < config.sections.length) {
+    if (sectionIdx + 1 < availableSections.length) {
       setSectionIdx((prev) => prev + 1);
       startSection();
     } else {
@@ -364,15 +452,30 @@ export default function MockPage({
             </div>
             <div className="space-y-2">
               <p className="text-sm font-semibold text-gray-700 dark:text-gray-300">Skills Assessed</p>
+              {/* AEP-001 Phase 3/4 — shows every section this pathway's real
+                  exam covers, honestly distinguishing what's playable today
+                  from what's still being built. Never silently drops a
+                  comingSoon section from view. */}
               {config.sections.map((s, i) => (
                 <div key={s.id} className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
                   <span className="w-5 h-5 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center text-xs font-bold text-gray-500 dark:text-gray-400">
                     {i + 1}
                   </span>
                   <span className="flex-1">{s.name}</span>
-                  <span className="text-xs text-gray-400 dark:text-gray-500">{s.count} questions · {s.minutes} min</span>
+                  {isAvailableSection(s) ? (
+                    <span className="text-xs text-gray-400 dark:text-gray-500">{s.count} questions · {s.minutes} min</span>
+                  ) : (
+                    <span className="text-xs font-semibold text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-950 px-2 py-0.5 rounded-full">
+                      Coming soon
+                    </span>
+                  )}
                 </div>
               ))}
+              {config.sections.some((s) => !isAvailableSection(s)) && (
+                <p className="text-xs text-gray-400 dark:text-gray-500 pt-1">
+                  {(config.sections.find((s) => !isAvailableSection(s)) as ComingSoonSectionConfig | undefined)?.reason}
+                </p>
+              )}
             </div>
           </div>
 
@@ -432,7 +535,7 @@ export default function MockPage({
             <span className="text-sm font-semibold text-gray-900 dark:text-gray-100 flex-1">
               {currentSection.name}
               <span className="text-xs text-gray-400 dark:text-gray-500 ml-2 font-normal">
-                Section {sectionIdx + 1}/{config.sections.length}
+                Section {sectionIdx + 1}/{availableSections.length}
               </span>
             </span>
             <div className={`flex items-center gap-1 text-sm font-bold ${isLow ? "text-red-500" : "text-gray-700 dark:text-gray-300"}`}>
@@ -521,7 +624,7 @@ export default function MockPage({
   // BETWEEN SECTIONS
   if (mode === "between") {
     const lastResult = sectionResults[sectionResults.length - 1];
-    const isLastSection = sectionIdx + 1 >= config.sections.length;
+    const isLastSection = sectionIdx + 1 >= availableSections.length;
 
     return (
       <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
@@ -571,7 +674,7 @@ export default function MockPage({
               </>
             ) : (
               <>
-                Continue to {config.sections[sectionIdx + 1]?.name}
+                Continue to {availableSections[sectionIdx + 1]?.name}
                 <ChevronRight size={18} />
               </>
             )}

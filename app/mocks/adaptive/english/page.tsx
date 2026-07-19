@@ -286,7 +286,7 @@ export default function AdaptiveEnglishMockPage() {
               <h1 className="text-xl font-bold">Reading Practice</h1>
             </div>
             <p className="text-sm text-white/80">
-              A passage is chosen for you every time — your weak spots in inference and vocabulary come back around intelligently.
+              A passage matched to your practice level, with every question that belongs to it.
             </p>
           </div>
         </header>
@@ -306,6 +306,7 @@ export default function AdaptiveEnglishMockPage() {
               <div className="text-xs text-amber-700 dark:text-amber-300 space-y-1 leading-relaxed">
                 <p className="font-semibold">Before you start</p>
                 <p>Your answers are compared to a model answer to check for full marks. Read the model answer afterwards to see what to improve.</p>
+                <p>Our passage bank is currently a small sample set while we build out the full one — you may see the same passage again across sessions.</p>
               </div>
             </div>
           </div>
@@ -365,7 +366,7 @@ export default function AdaptiveEnglishMockPage() {
 
         {usingSyntheticFixture && (
           <div className="bg-amber-50 dark:bg-amber-950 text-amber-700 dark:text-amber-300 text-xs text-center py-1.5">
-            Sample practice content — more passages coming soon
+            Sample passage — not yet your full personalised set
           </div>
         )}
 
