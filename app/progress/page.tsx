@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Link from "next/link";
 import {
   BarChart2,
   Flame,
@@ -12,10 +13,13 @@ import {
   Award,
 } from "lucide-react";
 import PageLayout from "@/components/PageLayout";
-import { getProgress, saveProgress } from "@/lib/progress";
+import { getProgress, saveProgress, getSelectedPathwayId } from "@/lib/progress";
 import { englishLessons } from "@/data/lessons";
 import { computeAnalytics } from "@/lib/analytics";
 import { computeGamification, BADGE_DEFINITIONS } from "@/lib/gamification";
+import { computeParentReport, READINESS_CONFIG } from "@/lib/parentInsights";
+import { getPathwayById } from "@/lib/pathways";
+import JourneyTimeline from "@/components/JourneyTimeline";
 import InsightCard from "@/components/InsightCard";
 import { SubjectBar, SkillBar } from "@/components/SubjectBreakdown";
 import BadgeCard from "@/components/BadgeCard";
@@ -25,6 +29,8 @@ import type { UserProgress } from "@/types";
 import type { AnalyticsReport } from "@/types/analytics";
 import type { GamificationState } from "@/types/gamification";
 import type { AdaptiveProfile } from "@/types/adaptiveDifficulty";
+import type { ParentReport } from "@/types/parent";
+import type { Pathway } from "@/types/pathway";
 
 const lessonNames: Record<string, string> = {
   "eng-001": "The Lighthouse Mystery",
@@ -49,14 +55,23 @@ export default function ProgressPage() {
   const [report, setReport] = useState<AnalyticsReport | null>(null);
   const [gamification, setGamification] = useState<GamificationState | null>(null);
   const [adaptiveProfile, setAdaptiveProfile] = useState<AdaptiveProfile | null>(null);
+  const [parentReport, setParentReport] = useState<ParentReport | null>(null);
+  const [pathway, setPathway] = useState<Pathway | undefined>();
 
   useEffect(() => {
     const p = getProgress();
     const r = computeAnalytics(p);
+    const gam = computeGamification(p);
     setProgress(p);
     setReport(r);
-    setGamification(computeGamification(p));
+    setGamification(gam);
     setAdaptiveProfile(computeAdaptiveProfile(p, r));
+    // Progress Journey / Admission Context (Sprint 10) — reuses
+    // computeParentReport() exactly as Dashboard/Parent Hub already do,
+    // purely to read its existing examReadiness/hasEnoughData output; no
+    // new calculation is introduced on this page.
+    setParentReport(computeParentReport(p, r, gam));
+    setPathway(getPathwayById(getSelectedPathwayId() ?? ""));
   }, []);
 
   function resetProgress() {
@@ -103,6 +118,18 @@ export default function ProgressPage() {
           </button>
         </div>
 
+        {/* Progress Overview (Sprint 10) — one narrative line summarising
+            existing report outputs, ahead of the detailed cards below. */}
+        <p className="text-gray-500 dark:text-gray-400 text-sm mb-6 leading-relaxed">
+          {report && report.hasEnoughData ? (
+            <>
+              You&apos;ve completed <strong className="text-gray-700 dark:text-gray-300">{report.totalSessions}</strong> session{report.totalSessions === 1 ? "" : "s"}, averaging <strong className="text-gray-700 dark:text-gray-300">{report.overallScore}%</strong> — here&apos;s the story so far.
+            </>
+          ) : (
+            "Complete a few sessions to start building your progress story."
+          )}
+        </p>
+
         {/* Level card */}
         <div className="bg-gradient-to-br from-indigo-600 to-purple-600 rounded-2xl p-6 text-white mb-5">
           <div className="flex items-center justify-between mb-4">
@@ -133,6 +160,37 @@ export default function ProgressPage() {
             </div>
           </div>
         </div>
+
+        {/* Progress Journey (Sprint 10) — replaces isolated charts with a
+            narrative: reuses Sprint 3's JourneyTimeline (deriveActiveStageIndex,
+            unmodified) for where the learner started/is now, and the existing
+            XP Milestone bar directly below it for rank progression. No
+            historical data is invented — hasEnoughData/examReadiness/
+            nextMilestone are all existing, already-computed outputs. */}
+        {parentReport && gamification && (
+          <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-5 mb-5">
+            <h2 className="text-gray-900 dark:text-gray-100 font-semibold mb-4">Progress Journey</h2>
+            <JourneyTimeline hasEnoughData={parentReport.hasEnoughData} readiness={parentReport.examReadiness} />
+            <div className="mt-5 pt-4 border-t border-gray-50 dark:border-gray-800 space-y-1.5 text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
+              <p>
+                <span className="font-semibold text-gray-800 dark:text-gray-100">Started:</span>{" "}
+                {report && report.totalSessions > 0
+                  ? `${report.totalSessions} session${report.totalSessions === 1 ? "" : "s"} completed so far.`
+                  : "Not started yet."}
+              </p>
+              <p>
+                <span className="font-semibold text-gray-800 dark:text-gray-100">Current position:</span>{" "}
+                {READINESS_CONFIG[parentReport.examReadiness].label} — {READINESS_CONFIG[parentReport.examReadiness].description}
+              </p>
+              <p>
+                <span className="font-semibold text-gray-800 dark:text-gray-100">Next milestone:</span>{" "}
+                {gamification.nextMilestone
+                  ? `${gamification.nextMilestone.label} (${gamification.nextMilestone.threshold} XP)`
+                  : "Maximum rank reached — more milestones are on the way."}
+              </p>
+            </div>
+          </div>
+        )}
 
         {/* XP Milestone bar */}
         {gamification && (
@@ -306,6 +364,20 @@ export default function ProgressPage() {
               </div>
             </div>
 
+            {/* Competency Progress (Sprint 10) — a shared heading over the
+                two existing competency sections below (Learning Confidence,
+                Skill Analysis), presenting them as one connected picture
+                rather than two isolated charts. Neither section's own data
+                or calculation changes. */}
+            {((adaptiveProfile && adaptiveProfile.subjectConfidence.some((c) => c.score > 0)) || report.skills.length > 0) && (
+              <div className="mb-1">
+                <h2 className="text-gray-900 dark:text-gray-100 font-bold text-lg">Competency Progress</h2>
+                <p className="text-gray-400 dark:text-gray-500 text-xs mt-0.5 mb-3">
+                  How confident and accurate your child is becoming, by subject and skill.
+                </p>
+              </div>
+            )}
+
             {/* Learning confidence */}
             {adaptiveProfile && adaptiveProfile.subjectConfidence.some((c) => c.score > 0) && (
               <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-5 mb-4">
@@ -411,6 +483,39 @@ export default function ProgressPage() {
                     </div>
                   </div>
                 )}
+              </div>
+            )}
+
+            {/* Admission Context (Sprint 10) — explains how progress
+                connects to the selected pathway using only existing
+                pathway/readiness outputs (getSelectedPathwayId/
+                getPathwayById, computeParentReport's examReadiness); links
+                to the existing School Intelligence Hub (Sprint 7) rather
+                than duplicating it. */}
+            {parentReport && (
+              <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-5 mb-4">
+                <h2 className="text-gray-900 dark:text-gray-100 font-semibold mb-1">Admission Context</h2>
+                <p className="text-gray-400 dark:text-gray-500 text-xs mb-3">How this connects to your target school</p>
+                {pathway ? (
+                  <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed mb-3">
+                    You&apos;re preparing for the <strong className="text-gray-800 dark:text-gray-100">{pathway.name}</strong> pathway.
+                    {parentReport.hasEnoughData && <> {READINESS_CONFIG[parentReport.examReadiness].description}</>}
+                  </p>
+                ) : (
+                  <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed mb-3">
+                    No target pathway selected yet —{" "}
+                    <Link href="/pathways" className="text-purple-600 dark:text-purple-400 font-medium hover:underline">
+                      choose one
+                    </Link>{" "}
+                    to see how your progress connects to its assessment format.
+                  </p>
+                )}
+                <Link
+                  href="/pathways"
+                  className="inline-flex items-center gap-1.5 text-xs font-semibold text-purple-600 dark:text-purple-400 bg-purple-50 dark:bg-purple-950 px-3 py-1.5 rounded-lg hover:bg-purple-100 dark:hover:bg-purple-900 transition-colors"
+                >
+                  View School Intelligence →
+                </Link>
               </div>
             )}
 
