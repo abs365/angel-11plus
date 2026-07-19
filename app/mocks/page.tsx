@@ -2,8 +2,11 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { ArrowLeft, ChevronRight, Clock, BookOpen, Trophy, Play, Sparkles } from "lucide-react";
+import { ChevronRight, Clock, BookOpen, Trophy, Play, Sparkles } from "lucide-react";
+import PageLayout from "@/components/PageLayout";
+import { StatusIndicator } from "@/components/ui/Progress";
 import { getMockResults, getBestMockScoreForPathway } from "@/lib/mockProgress";
+import { MOCK_SUGGESTED_PREPARATION } from "@/lib/mockMeta";
 import type { MockResult, MockPathwayId } from "@/types/mock";
 
 const MOCK_CARDS: {
@@ -89,20 +92,14 @@ export default function MocksPage() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
-      <header className="bg-white dark:bg-gray-900 border-b border-gray-100 dark:border-gray-800 sticky top-0 z-20">
-        <div className="max-w-2xl mx-auto px-4 h-14 flex items-center gap-3">
-          <Link href="/dashboard" className="text-gray-400 dark:text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 transition-colors">
-            <ArrowLeft size={20} />
-          </Link>
-          <div>
-            <h1 className="text-sm font-bold text-gray-900 dark:text-gray-100">Practice &amp; Mock Exams</h1>
-            <p className="text-xs text-gray-400 dark:text-gray-500">Original exam-style practice · Not official papers</p>
-          </div>
+    <PageLayout breadcrumbs={[{ label: "My Admission Journey", href: "/dashboard" }, { label: "Mock Centre" }]}>
+      <div className="max-w-2xl mx-auto px-4 pb-16 pt-6 md:pt-8 space-y-6">
+        <div className="mb-1">
+          <h1 className="text-gray-900 dark:text-gray-100 font-bold text-2xl mb-1">Mock Centre</h1>
+          <p className="text-gray-400 dark:text-gray-500 text-sm">
+            Realistic, timed practice papers — the closest rehearsal for exam-day conditions.
+          </p>
         </div>
-      </header>
-
-      <main className="max-w-2xl mx-auto px-4 pb-16 pt-5 space-y-6">
 
         {/* Disclaimer */}
         <div className="bg-amber-50 dark:bg-amber-950 border border-amber-100 dark:border-amber-900 rounded-xl px-4 py-3">
@@ -254,24 +251,41 @@ export default function MocksPage() {
                     </span>
                     <h3 className="text-base font-bold text-gray-900 dark:text-gray-100">{card.name}</h3>
                   </div>
-                  <div className="flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400">
-                    <Clock size={13} />
-                    {card.totalMinutes} min
+                  <div className="flex items-center gap-2">
+                    {/* Examination Status (Sprint 6) — this data model only
+                        persists completed attempts (lib/mockProgress.ts),
+                        so only "Available"/"Completed" can be shown
+                        honestly; there is no persisted "In Progress" state
+                        to derive from, and none is invented here. */}
+                    <StatusIndicator tone={best !== undefined ? "success" : "neutral"} label={best !== undefined ? "Completed" : "Available"} />
+                    <div className="flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400">
+                      <Clock size={13} />
+                      {card.totalMinutes} min
+                    </div>
                   </div>
                 </div>
 
                 <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed mb-3">{card.description}</p>
 
-                <div className="flex flex-wrap gap-1.5 mb-4">
-                  {card.sections.map((s) => (
-                    <span
-                      key={s}
-                      className="text-xs bg-white/70 dark:bg-gray-900/70 text-gray-600 dark:text-gray-400 px-2.5 py-1 rounded-full border border-white/80 dark:border-gray-800"
-                    >
-                      {s}
-                    </span>
-                  ))}
+                <div className="mb-3">
+                  <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 dark:text-gray-500 mb-1.5">Skills Assessed</p>
+                  <div className="flex flex-wrap gap-1.5">
+                    {card.sections.map((s) => (
+                      <span
+                        key={s}
+                        className="text-xs bg-white/70 dark:bg-gray-900/70 text-gray-600 dark:text-gray-400 px-2.5 py-1 rounded-full border border-white/80 dark:border-gray-800"
+                      >
+                        {s}
+                      </span>
+                    ))}
+                  </div>
                 </div>
+
+                {/* Preparation guidance (Sprint 6) — static copy, lib/mockMeta.ts */}
+                <p className="text-xs text-gray-500 dark:text-gray-400 leading-relaxed mb-4">
+                  <span className="font-semibold text-gray-600 dark:text-gray-300">Before you start:</span>{" "}
+                  {MOCK_SUGGESTED_PREPARATION[card.pathway]}
+                </p>
 
                 <div className="flex items-center justify-between">
                   {best !== undefined ? (
@@ -339,8 +353,7 @@ export default function MocksPage() {
             <li>• Aim to complete at least one mock per subject pathway before your exam</li>
           </ul>
         </section>
-
-      </main>
-    </div>
+      </div>
+    </PageLayout>
   );
 }

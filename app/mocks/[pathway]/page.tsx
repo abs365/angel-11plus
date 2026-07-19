@@ -11,9 +11,10 @@ import { verbalReasoningQuestions } from "@/data/verbal-reasoning";
 import { nonVerbalReasoningQuestions } from "@/data/non-verbal-reasoning";
 import { spatialReasoningQuestions } from "@/data/spatial-reasoning";
 import { numericalReasoningQuestions } from "@/data/numerical-reasoning";
-import { saveMockResult } from "@/lib/mockProgress";
+import { saveMockResult, getBestMockScoreForPathway, getMockCountForPathway } from "@/lib/mockProgress";
 import { completeLesson } from "@/lib/progress";
 import { trackEvent } from "@/lib/betaTracking";
+import { MOCK_SUGGESTED_PREPARATION, MOCK_ADMISSION_RELEVANCE } from "@/lib/mockMeta";
 import type { MockPathwayId, MockSectionResult } from "@/types/mock";
 import type { ReasoningQuestion } from "@/types/reasoning";
 
@@ -165,8 +166,19 @@ export default function MockPage({
   const [sectionResults, setSectionResults] = useState<MockSectionResult[]>([]);
   const [timeLeft, setTimeLeft] = useState(0);
   const [saved, setSaved] = useState(false);
+  const [priorAttempts, setPriorAttempts] = useState<{ count: number; best: number | null } | null>(null);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+
+  // Examination Status / prior-attempt context (Sprint 6) — reuses
+  // lib/mockProgress.ts's existing, unmodified functions; presentational
+  // only, computed once on mount for the Pre-Exam Experience banner.
+  useEffect(() => {
+    setPriorAttempts({
+      count: getMockCountForPathway(pathwayId),
+      best: getBestMockScoreForPathway(pathwayId),
+    });
+  }, [pathwayId]);
 
   if (!config) {
     return (
@@ -330,6 +342,20 @@ export default function MockPage({
         </header>
 
         <main className="max-w-2xl mx-auto px-4 py-6 space-y-5">
+          {/* Examination Status / prior attempts (Sprint 6) — real, reused
+              data from lib/mockProgress.ts; shown only once loaded to avoid
+              a flash of "not attempted" before the real state resolves. */}
+          {priorAttempts && (
+            <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 px-4 py-3 flex items-center gap-2.5">
+              <Trophy size={15} className="text-amber-500 shrink-0" />
+              <p className="text-sm text-gray-600 dark:text-gray-400">
+                {priorAttempts.count > 0
+                  ? <>You&apos;ve taken this mock {priorAttempts.count} time{priorAttempts.count === 1 ? "" : "s"} · best score <strong className="text-gray-800 dark:text-gray-100">{priorAttempts.best}%</strong></>
+                  : "You haven't attempted this mock yet — a good first rehearsal for exam day."}
+              </p>
+            </div>
+          )}
+
           {/* Info */}
           <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-5 space-y-4">
             <div className="flex items-center gap-3">
@@ -337,7 +363,7 @@ export default function MockPage({
               <span className="text-sm text-gray-700 dark:text-gray-300">Total time: <strong>{config.totalMinutes} minutes</strong></span>
             </div>
             <div className="space-y-2">
-              <p className="text-sm font-semibold text-gray-700 dark:text-gray-300">Sections</p>
+              <p className="text-sm font-semibold text-gray-700 dark:text-gray-300">Skills Assessed</p>
               {config.sections.map((s, i) => (
                 <div key={s.id} className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
                   <span className="w-5 h-5 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center text-xs font-bold text-gray-500 dark:text-gray-400">
@@ -347,6 +373,19 @@ export default function MockPage({
                   <span className="text-xs text-gray-400 dark:text-gray-500">{s.count} questions · {s.minutes} min</span>
                 </div>
               ))}
+            </div>
+          </div>
+
+          {/* Why this mock / preparation guidance (Sprint 6) — static copy,
+              lib/mockMeta.ts; presentation only, no scoring logic involved. */}
+          <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-5 space-y-3">
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-wide text-gray-400 dark:text-gray-500 mb-1">Why this matters</p>
+              <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">{MOCK_ADMISSION_RELEVANCE[pathwayId]}</p>
+            </div>
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-wide text-gray-400 dark:text-gray-500 mb-1">Suggested preparation</p>
+              <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">{MOCK_SUGGESTED_PREPARATION[pathwayId]}</p>
             </div>
           </div>
 
@@ -361,6 +400,10 @@ export default function MockPage({
               </div>
             </div>
           </div>
+
+          <p className="text-center text-sm text-gray-400 dark:text-gray-500">
+            Take your time reading each question — you&apos;re prepared for this.
+          </p>
 
           <button
             onClick={() => {
@@ -499,6 +542,9 @@ export default function MockPage({
             <p className="text-gray-500 dark:text-gray-400 text-sm">
               {lastResult?.correct ?? 0} correct out of {lastResult?.total ?? 0} questions
             </p>
+            <p className="text-gray-400 dark:text-gray-500 text-xs mt-2">
+              {isLastSection ? "One more step — let's see your full result." : "Nice work — take a breath before the next section."}
+            </p>
           </div>
 
           {/* Section summary */}
@@ -552,6 +598,13 @@ export default function MockPage({
         </header>
 
         <main className="max-w-2xl mx-auto px-4 -mt-3 pb-12 space-y-5">
+          {/* Post-Exam Entry (Sprint 6) — one honest, reused-data line
+              framing the transition into the existing results below;
+              pct/grade are already computed above, nothing new here. */}
+          <p className="text-center text-xs text-gray-400 dark:text-gray-500 -mb-2">
+            Every mock builds real exam-day readiness — here&apos;s how this one went.
+          </p>
+
           {/* Score card */}
           <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-6 text-center shadow-sm">
             <div className={`text-5xl font-black mb-1 ${pct >= 75 ? "text-green-600" : pct >= 55 ? "text-amber-600" : "text-red-500"}`}>
