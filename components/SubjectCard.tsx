@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { LucideIcon } from "lucide-react";
 import { ChevronRight } from "lucide-react";
+import { CompetencyIndicator } from "@/components/ui/Progress";
 
 interface SubjectCardProps {
   href: string;
@@ -9,6 +10,10 @@ interface SubjectCardProps {
   icon: LucideIcon;
   color: "purple" | "blue" | "green" | "orange" | "pink" | "indigo" | "violet" | "teal" | "cyan" | "rose";
   badge?: string;
+  /** Sprint 5 (Practice Experience) — "Competency Focus": the real, already-computed skill this activity strengthens (label + accuracy). Optional and additive — existing callers (Dashboard's Quick Access grid) that don't pass it are unaffected. Never computed here. */
+  competency?: { label: string; percent: number };
+  /** Sprint 5 — "Progress Through Practice": one line of real, already-computed subject-level progress (e.g. "3 sessions · 72% average"). Presentation only, never a new calculation. */
+  progressNote?: string;
 }
 
 const colorMap = {
@@ -131,6 +136,8 @@ export default function SubjectCard({
   icon: Icon,
   color,
   badge,
+  competency,
+  progressNote,
 }: SubjectCardProps) {
   const c = colorMap[color];
   return (
@@ -154,6 +161,14 @@ export default function SubjectCard({
           </div>
           <h3 className={`${c.title} font-bold text-base mb-1.5 leading-snug`}>{title}</h3>
           <p className={`${c.desc} text-sm leading-relaxed`}>{description}</p>
+          {competency && (
+            <div className="mt-4">
+              <CompetencyIndicator competencyLabel={competency.label} percent={competency.percent} />
+              {progressNote && (
+                <p className={`${c.desc} text-xs mt-1.5`}>{progressNote}</p>
+              )}
+            </div>
+          )}
           <div className="flex justify-end mt-4">
             <ChevronRight size={16} className={`${c.arrow} transition-colors`} />
           </div>

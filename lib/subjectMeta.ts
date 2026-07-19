@@ -16,6 +16,13 @@ export const SUBJECT_ESTIMATED_MINUTES: Partial<Record<SubjectKey, number>> = {
   maths: 20,
   vocabulary: 10,
   writing: 30,
+  // Sprint 5 (Practice Experience) — identical to lib/adaptiveEngine.ts's
+  // own SUBJECT_MINUTES for these four keys (15 each), duplicated here for
+  // the same reason as above: this sprint never touches that file.
+  "verbal-reasoning": 15,
+  "non-verbal-reasoning": 15,
+  "spatial-reasoning": 15,
+  "numerical-reasoning": 15,
 };
 
 export const SUBJECT_LEARNING_OBJECTIVE: Partial<Record<SubjectKey, string>> = {
@@ -23,4 +30,31 @@ export const SUBJECT_LEARNING_OBJECTIVE: Partial<Record<SubjectKey, string>> = {
   maths: "Strengthen problem-solving, fractions, algebra and timed arithmetic accuracy.",
   vocabulary: "Grow Tier 2 & 3 word knowledge through definitions, synonyms and everyday use.",
   writing: "Develop narrative, descriptive and persuasive technique using structured checklists.",
+  "verbal-reasoning": "Build technique for word analogies, letter codes, hidden words and sequences.",
+  "non-verbal-reasoning": "Develop pattern recognition across rotation, reflection and symbol sequences.",
+  "spatial-reasoning": "Strengthen 3D visualisation through paper folding, symmetry and compass directions.",
+  "numerical-reasoning": "Sharpen number-pattern recognition, ratio and data-interpretation technique.",
+};
+
+/**
+ * Sprint 5 (Practice Experience & Competency Journey) — Practice Sessions'
+ * "Suggested preparation" and "Expected benefit" fields. Scoped to the four
+ * reasoning subjects only (English/Maths/Vocabulary/Writing already got
+ * their own Study Sessions treatment in Sprint 4). Presentation copy only,
+ * same convention as SUBJECT_LEARNING_OBJECTIVE above — never a
+ * calculation, and no adaptive-engine reason text is invented or
+ * duplicated here.
+ */
+export const SUBJECT_SUGGESTED_PREPARATION: Partial<Record<SubjectKey, string>> = {
+  "verbal-reasoning": "Keep a pen and rough paper nearby for working through letter and word patterns.",
+  "non-verbal-reasoning": "Find a quiet space — spotting the pattern rule needs a few uninterrupted minutes per question.",
+  "spatial-reasoning": "Have scrap paper ready to sketch folds and rotations if it helps you visualise.",
+  "numerical-reasoning": "Keep rough paper handy for working out number patterns and ratios step by step.",
+};
+
+export const SUBJECT_EXPECTED_BENEFIT: Partial<Record<SubjectKey, string>> = {
+  "verbal-reasoning": "Tested by GL, CEM and ISEB — this is one of the highest-value sections to keep sharp.",
+  "non-verbal-reasoning": "Tested by GL and ISEB — strong pattern recognition transfers directly into exam speed.",
+  "spatial-reasoning": "Builds 3D thinking used across several exam boards' reasoning papers.",
+  "numerical-reasoning": "A core CEM skill that also reinforces the number-pattern work in Maths.",
 };

@@ -1,12 +1,21 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { CheckCircle, XCircle, Star, RefreshCw, ChevronDown, ChevronUp, Lightbulb } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import PageLayout from "@/components/PageLayout";
-import { completeLesson, recordSkillResult } from "@/lib/progress";
+import { completeLesson, recordSkillResult, getProgress } from "@/lib/progress";
+import { computeAnalytics } from "@/lib/analytics";
+import SessionInfoBar from "@/components/SessionInfoBar";
+import {
+  SUBJECT_ESTIMATED_MINUTES,
+  SUBJECT_LEARNING_OBJECTIVE,
+  SUBJECT_SUGGESTED_PREPARATION,
+  SUBJECT_EXPECTED_BENEFIT,
+} from "@/lib/subjectMeta";
 import type { ReasoningQuestion } from "@/types/reasoning";
 import type { SkillType } from "@/types";
+import type { AnalyticsReport, SubjectKey } from "@/types/analytics";
 
 // ─── Theme colours ────────────────────────────────────────────────────────────
 
@@ -132,7 +141,13 @@ export default function ReasoningSession({
   const [showHint, setShowHint] = useState<Record<string, boolean>>({});
   const [xpGained, setXpGained] = useState(0);
   const [score, setScore] = useState(0);
+  const [report, setReport] = useState<AnalyticsReport | null>(null);
 
+  useEffect(() => {
+    setReport(computeAnalytics(getProgress()));
+  }, []);
+
+  const subjectKeyTyped = subjectKey as SubjectKey;
   const current = questions[currentIndex];
   const isChecked = checked[current?.id] !== undefined;
   const isCorrect = checked[current?.id] === true;
@@ -260,6 +275,20 @@ export default function ReasoningSession({
               <h1 className="text-gray-900 dark:text-gray-100 font-bold text-2xl">{subjectName}</h1>
               <p className="text-gray-400 dark:text-gray-500 text-sm">{description}</p>
             </div>
+          </div>
+
+          {/* Practice Sessions info strip (Sprint 5) — pre-session (menu)
+              state only, shared by all four reasoning subjects since they
+              all render through this one component. */}
+          <div className="mb-4">
+            <SessionInfoBar
+              objective={SUBJECT_LEARNING_OBJECTIVE[subjectKeyTyped] ?? description}
+              estimatedMinutes={SUBJECT_ESTIMATED_MINUTES[subjectKeyTyped] ?? 15}
+              skills={report?.skills.filter((s) => s.skill === skillType)}
+              subjectAnalytics={report?.subjects.find((s) => s.subject === subjectKeyTyped)}
+              preparation={SUBJECT_SUGGESTED_PREPARATION[subjectKeyTyped]}
+              expectedBenefit={SUBJECT_EXPECTED_BENEFIT[subjectKeyTyped]}
+            />
           </div>
 
           <button

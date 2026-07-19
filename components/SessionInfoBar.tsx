@@ -16,13 +16,17 @@ import type { SkillAnalytics, SubjectAnalytics } from "@/types/analytics";
 interface SessionInfoBarProps {
   objective: string;
   estimatedMinutes: number;
-  /** Real SkillAnalytics for this subject's group, where one exists (English/Maths only, per types/analytics.ts's own SkillAnalytics.group union) — omitted, never fabricated, for subjects without a granular skill breakdown (Vocabulary/Writing). */
+  /** Real SkillAnalytics for this subject's group, where one exists (English/Maths/reasoning only, per types/analytics.ts's own SkillAnalytics.group union) — omitted, never fabricated, for subjects without a granular skill breakdown (Vocabulary/Writing). */
   skills?: SkillAnalytics[];
   /** The subject's own real, already-computed analytics row — used for an honest progress signal (avgScore where attempted, an honest "not started" state otherwise). Never a new metric. */
   subjectAnalytics?: SubjectAnalytics;
+  /** Sprint 5 (Practice Experience) — "Suggested preparation" text (lib/subjectMeta.ts's SUBJECT_SUGGESTED_PREPARATION). Presentation copy only; omitted where a subject has none defined. */
+  preparation?: string;
+  /** Sprint 5 — "Expected benefit" text (lib/subjectMeta.ts's SUBJECT_EXPECTED_BENEFIT). Presentation copy only; omitted where a subject has none defined. */
+  expectedBenefit?: string;
 }
 
-export default function SessionInfoBar({ objective, estimatedMinutes, skills, subjectAnalytics }: SessionInfoBarProps) {
+export default function SessionInfoBar({ objective, estimatedMinutes, skills, subjectAnalytics, preparation, expectedBenefit }: SessionInfoBarProps) {
   return (
     <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-4 mb-5">
       <div className="flex items-start gap-2 mb-3">
@@ -64,6 +68,21 @@ export default function SessionInfoBar({ objective, estimatedMinutes, skills, su
             {subjectAnalytics.attempts > 0 ? "Whole-subject practice — no individual skill breakdown yet." : "Not started yet."}
           </p>
         )
+      )}
+
+      {(preparation || expectedBenefit) && (
+        <div className="mt-3 pt-3 border-t border-gray-100 dark:border-gray-800 flex flex-col gap-1.5">
+          {preparation && (
+            <p className="text-xs text-gray-500 dark:text-gray-400">
+              <span className="font-semibold text-gray-600 dark:text-gray-300">Before you start:</span> {preparation}
+            </p>
+          )}
+          {expectedBenefit && (
+            <p className="text-xs text-gray-500 dark:text-gray-400">
+              <span className="font-semibold text-gray-600 dark:text-gray-300">Why it matters:</span> {expectedBenefit}
+            </p>
+          )}
+        </div>
       )}
     </div>
   );
