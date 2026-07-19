@@ -12,7 +12,9 @@
 - **File Size:** 114,474 bytes
 - **SHA-256 Checksum:** `1b146894b402351633e4f973717f322a1265bf3651d3d9aabf8b3a2f06d208ad`
 - **Verification Status:** Verified — downloaded directly from csse.org.uk (HTTP 200), valid PDF (magic bytes `%PDF`), extracted text opens "csse 2021 continuous writing MAIN 22-7-21 ... The Consortium of Sel[ective Schools in Essex]," confirming identity and source.
-- **Review Status:** Under Review
-- **Reviewer:** Not yet assigned — pending Founder/human review
+- **Review Status:** Accepted
+- **Reviewer:** Founder
+- **Acceptance Reference:** FG-001
+- **Acceptance Date:** 2026-07-19
 - **Copyright / Licensing Status:** Published by CSSE for free public download via csse.org.uk. No explicit redistribution licence is stated on the source page. Retained under `knowledge/KNOWLEDGE_GOVERNANCE.md` §6 for internal educational analysis only; must not be reproduced in learner-facing content without further confirmation of permitted use.
 - **Notes:** Companion document to CSSE-008 (English comprehension paper, same entry year). No year-specific mark scheme was published separately for this component — see CSSE-002 for the generic Continuous Writing sample mark scheme.

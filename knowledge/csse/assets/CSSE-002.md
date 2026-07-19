@@ -12,7 +12,9 @@
 - **File Size:** 260,557 bytes
 - **SHA-256 Checksum:** `7e387b7af48dfdc4174cf98c581109addc5eb81490be329b4d2cc0dc077a2efe`
 - **Verification Status:** Verified — downloaded directly from csse.org.uk (HTTP 200), valid PDF (magic bytes `%PDF`), extracted text opens with "Ideas Vocabulary (incl. spelling) Grammar Structure Punctuation Band 4 11+ English Continuous Writing: Sample M[ark Scheme]," confirming identity and source.
-- **Review Status:** Under Review
-- **Reviewer:** Not yet assigned — pending Founder/human review
+- **Review Status:** Accepted
+- **Reviewer:** Founder
+- **Acceptance Reference:** FG-001
+- **Acceptance Date:** 2026-07-19
 - **Copyright / Licensing Status:** Published by CSSE for free public download via csse.org.uk. No explicit redistribution licence is stated on the source page. Retained under `knowledge/KNOWLEDGE_GOVERNANCE.md` §6 for internal educational analysis only; must not be reproduced in learner-facing content without further confirmation of permitted use.
 - **Notes:** A generic/illustrative marking-band exemplar for the Continuous Writing component, not tied to a specific entry year — distinct from the year-specific English marking schemes (CSSE-005, CSSE-010, CSSE-015), which cover the comprehension paper only.

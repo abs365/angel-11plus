@@ -12,7 +12,9 @@
 - **File Size:** 306,096 bytes
 - **SHA-256 Checksum:** `77f4407a3f719435f28dab9e1a8f787fa0c0e0616c8f4092c6fbf64868b50352`
 - **Verification Status:** Verified — downloaded directly from csse.org.uk (HTTP 200), valid PDF (magic bytes `%PDF`), extracted text opens "Maths 2021 Main paper (2022 intake) ... The Consortium of Selective Schools in Essex MATHEM[ATICS]," confirming identity and source.
-- **Review Status:** Under Review
-- **Reviewer:** Not yet assigned — pending Founder/human review
+- **Review Status:** Accepted
+- **Reviewer:** Founder
+- **Acceptance Reference:** FG-001
+- **Acceptance Date:** 2026-07-19
 - **Copyright / Licensing Status:** Published by CSSE for free public download via csse.org.uk. No explicit redistribution licence is stated on the source page. Retained under `knowledge/KNOWLEDGE_GOVERNANCE.md` §6 for internal educational analysis only; must not be reproduced in learner-facing content without further confirmation of permitted use.
 - **Notes:** Corresponding mark scheme is CSSE-012.

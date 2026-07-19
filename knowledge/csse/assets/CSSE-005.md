@@ -12,7 +12,9 @@
 - **File Size:** 70,777 bytes
 - **SHA-256 Checksum:** `a8ce633db0b0162b608d28671f4b60cff2b15956654f31d96d32460947624fd6`
 - **Verification Status:** Verified — downloaded directly from csse.org.uk (HTTP 200), valid PDF (magic bytes `%PDF`), extracted text opens "ENGLISH Main marking 2022 17-1-23 ... ENGLISH PAPER MAIN TEST," confirming identity and source.
-- **Review Status:** Under Review
-- **Reviewer:** Not yet assigned — pending Founder/human review
+- **Review Status:** Accepted
+- **Reviewer:** Founder
+- **Acceptance Reference:** FG-001
+- **Acceptance Date:** 2026-07-19
 - **Copyright / Licensing Status:** Published by CSSE for free public download via csse.org.uk. No explicit redistribution licence is stated on the source page. Retained under `knowledge/KNOWLEDGE_GOVERNANCE.md` §6 for internal educational analysis only; must not be reproduced in learner-facing content without further confirmation of permitted use.
 - **Notes:** Corresponding question paper is CSSE-003.
