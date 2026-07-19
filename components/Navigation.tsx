@@ -92,7 +92,7 @@ const parentItem: NavItem = {
   icon: Users,
 };
 
-/** Angel Plus — an honest, unwired "coming soon" destination (app/angel-plus/page.tsx). No premium tier, billing, or new business logic exists anywhere in this codebase; this sprint does not introduce any (per its own "Do NOT introduce new business logic" instruction). */
+/** Angel Plus — Sprint 9 (Angel Plus Value Experience) built out app/angel-plus/page.tsx into a real Value Overview of the existing free journey; the "Soon" badge remains accurate because the Angel Plus tier itself still has no premium features, billing, or business logic anywhere in this codebase — that page says so honestly rather than fabricating a feature list. */
 const angelPlusItem: NavItem = {
   href: "/angel-plus",
   label: "Angel Plus",
