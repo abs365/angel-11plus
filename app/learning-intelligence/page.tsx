@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { Brain, MapPin } from "lucide-react";
+import { Brain, MapPin, ArrowRight } from "lucide-react";
 import PageLayout from "@/components/PageLayout";
 import { getSelectedPathwayId } from "@/lib/progress";
 import { getPathwayById } from "@/lib/pathways";
@@ -86,6 +86,19 @@ export default function LearningIntelligencePage() {
 
         {profile && profile.pathwayEligible && (
           <div className="space-y-8 mt-6">
+            <Link
+              href="/learning-intelligence/practice"
+              className="flex items-center justify-between gap-3 bg-purple-600 hover:bg-purple-700 text-white rounded-2xl px-5 py-4 transition-colors"
+            >
+              <div>
+                <p className="text-sm font-bold">Practice now</p>
+                <p className="text-xs text-purple-100 mt-0.5">
+                  Complete a Reading Comprehension, Mathematics or Continuous Writing activity to update this profile.
+                </p>
+              </div>
+              <ArrowRight size={18} className="shrink-0" />
+            </Link>
+
             {!profile.hasAnyContent && (
               <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 px-4 py-4">
                 <p className="text-gray-700 dark:text-gray-300 font-semibold text-sm">No evidence recorded yet</p>

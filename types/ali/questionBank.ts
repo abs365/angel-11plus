@@ -1,5 +1,5 @@
 import type { ReasoningQuestion } from "@/types/reasoning";
-import type { MathsQuestion, Question, SkillType } from "@/types/index";
+import type { MathsQuestion, Question, SkillType, WritingPrompt } from "@/types/index";
 import type { MockPathwayId } from "@/types/mock";
 
 /**
@@ -69,7 +69,12 @@ export interface BankQuestion {
   contentDifficulty: ContentDifficulty;
   questionType: "multiple-choice" | "short-answer" | "open-response";
   estimatedTimeSeconds: number;
-  prompt: ReasoningQuestion | MathsQuestion | EnglishComprehensionPrompt | VocabularyPrompt;
+  /**
+   * WritingPrompt added for Capability 3 Wave 2 (Continuous Writing practice)
+   * — additive only, same pattern as every other subject's prompt shape
+   * already in this union.
+   */
+  prompt: ReasoningQuestion | MathsQuestion | EnglishComprehensionPrompt | VocabularyPrompt | WritingPrompt;
   explanation: string;
   hint?: string;
   confidenceWeight: number;

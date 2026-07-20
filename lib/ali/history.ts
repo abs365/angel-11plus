@@ -77,11 +77,19 @@ export async function fetchStudentHistory(
  * sequence stamp. Returns the new stamp for use by recordOutcome() calls
  * during this mock (not currently needed there, but returned for callers
  * that want it for logging/testing).
+ *
+ * `source` defaults to `"adaptive_mock"` — every existing caller's exact
+ * prior behaviour is unchanged. Capability 3 Wave 2 (Practice Experience)
+ * is the first caller to pass `"practice_experience"`, reusing this
+ * function rather than duplicating it, per `ali_student_question_history`'s
+ * own design intent (migration 006: `source` is a plain, open string
+ * "so new ALI consumers can write here later without a migration").
  */
 export async function recordPresentation(
   supabase: SupabaseClient<Database>,
   profileId: string,
-  questionIds: string[]
+  questionIds: string[],
+  source: string = "adaptive_mock"
 ): Promise<number> {
   if (questionIds.length === 0) return ensureAdaptiveState(supabase, profileId);
 
@@ -101,7 +109,7 @@ export async function recordPresentation(
     questionIds.map((questionId) => ({
       profile_id: profileId,
       question_id: questionId,
-      source: "adaptive_mock",
+      source,
       last_presented_at: nowIso,
       last_presented_at_sequence: newStamp,
     })),
