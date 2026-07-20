@@ -180,9 +180,12 @@ export default function ParentDashboardPage() {
             Beta
           </span>
         </div>
-        <p className="text-gray-400 dark:text-gray-500 text-sm mb-6">
+        <p className="text-gray-400 dark:text-gray-500 text-sm mb-1">
           A clear picture of how your child is progressing, and what to focus on next.
         </p>
+        <Link href="/learning-intelligence/parent" className="text-xs font-semibold text-purple-600 dark:text-purple-400 inline-block mb-6">
+          CSSE Learning Intelligence Parent Dashboard →
+        </Link>
 
         {!report.hasEnoughData ? (
           <EmptyState />

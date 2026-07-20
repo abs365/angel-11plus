@@ -6,20 +6,25 @@ import { Brain, MapPin, ArrowRight } from "lucide-react";
 import PageLayout from "@/components/PageLayout";
 import { getSelectedPathwayId } from "@/lib/progress";
 import { getPathwayById } from "@/lib/pathways";
+import { getSupabaseClient } from "@/lib/supabase";
 import { fetchLearnerIntelligenceProfile } from "@/lib/learningEngine/profile";
+import { fetchRecentActivity, type RecentActivityItem } from "@/lib/learningEngine/activity";
 import { CompetencyProfile } from "@/components/learningEngine/CompetencyProfile";
 import { EvidenceProfile } from "@/components/learningEngine/EvidenceProfile";
 import { DiagnosticOverview } from "@/components/learningEngine/DiagnosticOverview";
 import { ReadinessSummary } from "@/components/learningEngine/ReadinessSummary";
 import { RecommendationSummary } from "@/components/learningEngine/RecommendationSummary";
+import { RecentActivity } from "@/components/learningEngine/RecentActivity";
 import type { LearnerIntelligenceProfile } from "@/lib/learningEngine/types";
 import type { Pathway } from "@/types/pathway";
 
 /**
- * Feature 1 — Learner Dashboard (Capability 3, Wave 1). Composes the other
- * five features (Competency Profile, Evidence Profile, Diagnostic
- * Overview, Learning Readiness Summary, Recommendation Summary) into one
- * page, per docs/intelligence/LEARNING_ENGINE_V1.md.
+ * Feature 1 — Learner Dashboard (Capability 3, Wave 1; enhanced Wave 3 with
+ * Recent Learning Activity). Composes Competency Profile, Evidence Profile,
+ * Diagnostic Overview (Coverage Gaps live in its own "Not Yet Evidenced"
+ * section — not duplicated into a separate component), Learning Readiness,
+ * Recommendation Summary, and Recent Learning Activity into one page, per
+ * docs/intelligence/LEARNING_ENGINE_V1.md.
  *
  * CSSE-scoped only. Every value rendered on this page comes from
  * fetchLearnerIntelligenceProfile() — a real Supabase read against the
@@ -33,12 +38,19 @@ import type { Pathway } from "@/types/pathway";
 export default function LearningIntelligencePage() {
   const [profile, setProfile] = useState<LearnerIntelligenceProfile | null | undefined>(undefined);
   const [pathway, setPathway] = useState<Pathway | undefined>();
+  const [recentActivity, setRecentActivity] = useState<RecentActivityItem[]>([]);
 
   useEffect(() => {
     const pathwayId = getSelectedPathwayId();
     setPathway(getPathwayById(pathwayId ?? ""));
     fetchLearnerIntelligenceProfile(pathwayId ?? undefined)
-      .then(setProfile)
+      .then((p) => {
+        setProfile(p);
+        const supabase = getSupabaseClient();
+        if (p?.pathwayEligible && supabase) {
+          fetchRecentActivity(supabase, p.profileId).then(setRecentActivity).catch(() => setRecentActivity([]));
+        }
+      })
       .catch(() => setProfile(null));
   }, []);
 
@@ -99,6 +111,18 @@ export default function LearningIntelligencePage() {
               <ArrowRight size={18} className="shrink-0" />
             </Link>
 
+            <div className="flex items-center gap-4 flex-wrap text-xs font-semibold">
+              <Link href="/learning-intelligence/recommendations" className="text-purple-600 dark:text-purple-400">
+                Recommendation Centre →
+              </Link>
+              <Link href="/learning-intelligence/timeline" className="text-purple-600 dark:text-purple-400">
+                Progress Timeline →
+              </Link>
+              <Link href="/learning-intelligence/parent" className="text-purple-600 dark:text-purple-400">
+                Parent Dashboard →
+              </Link>
+            </div>
+
             {!profile.hasAnyContent && (
               <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 px-4 py-4">
                 <p className="text-gray-700 dark:text-gray-300 font-semibold text-sm">No evidence recorded yet</p>
@@ -121,7 +145,7 @@ export default function LearningIntelligencePage() {
             </section>
 
             <section>
-              <h2 className="text-gray-900 dark:text-gray-100 font-bold text-lg mb-3">Diagnostic Overview</h2>
+              <h2 className="text-gray-900 dark:text-gray-100 font-bold text-lg mb-3">Diagnostic Overview &amp; Coverage Gaps</h2>
               <DiagnosticOverview findings={profile.diagnostics} />
             </section>
 
@@ -133,6 +157,11 @@ export default function LearningIntelligencePage() {
             <section>
               <h2 className="text-gray-900 dark:text-gray-100 font-bold text-lg mb-3">Recommendations</h2>
               <RecommendationSummary recommendations={profile.recommendations} />
+            </section>
+
+            <section>
+              <h2 className="text-gray-900 dark:text-gray-100 font-bold text-lg mb-3">Recent Learning Activity</h2>
+              <RecentActivity items={recentActivity} />
             </section>
           </div>
         )}
