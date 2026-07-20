@@ -8,7 +8,6 @@ import {
   ChevronDown,
   ChevronUp,
   Lightbulb,
-  Star,
 } from "lucide-react";
 import dynamic from "next/dynamic";
 import PageLayout from "@/components/PageLayout";
@@ -81,7 +80,6 @@ export default function EnglishLessonPage({ params }: Props) {
   const [showHints, setShowHints] = useState<Record<string, boolean>>({});
   const [showModel, setShowModel] = useState<Record<string, boolean>>({});
   const [submitted, setSubmitted] = useState(false);
-  const [xpGained, setXpGained] = useState(0);
 
   if (!lesson) {
     return (
@@ -104,7 +102,6 @@ export default function EnglishLessonPage({ params }: Props) {
     const score = totalMarks > 0 ? Math.round((earnedMarks / totalMarks) * 100) : 0;
     const xp = Math.max(10, Math.round((earnedMarks / Math.max(totalMarks, 1)) * 50) + 10);
     completeLesson(lesson!.id, score, xp);
-    setXpGained(xp);
     setSubmitted(true);
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
@@ -121,10 +118,6 @@ export default function EnglishLessonPage({ params }: Props) {
             <p className="text-gray-500 dark:text-gray-400">
               You answered {answeredCount} of {lesson.questions.length} questions
             </p>
-            <div className="inline-flex items-center gap-2 bg-purple-50 dark:bg-purple-950 text-purple-700 dark:text-purple-300 px-4 py-2 rounded-full mt-3 font-semibold">
-              <Star size={16} className="text-purple-500" />
-              +{xpGained} XP earned
-            </div>
           </div>
 
           <div className="bg-amber-50 dark:bg-amber-950 border border-amber-100 dark:border-amber-900 rounded-2xl p-5 mb-6">

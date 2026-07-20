@@ -9,7 +9,6 @@ import {
   ArrowLeft,
   Timer,
   CheckCircle,
-  Star,
   Sparkles,
   AlertCircle,
 } from "lucide-react";
@@ -44,7 +43,6 @@ export default function WritingPage() {
   const [selectedPrompt, setSelectedPrompt] = useState<WritingPrompt | null>(null);
   const [writingText, setWritingText] = useState("");
   const [checklist, setChecklist] = useState<Record<string, boolean>>({});
-  const [xpGained, setXpGained] = useState(0);
   const [feedbackState, setFeedbackState] = useState<FeedbackState>("idle");
   const [feedback, setFeedback] = useState<WritingFeedbackData | null>(null);
   const [feedbackError, setFeedbackError] = useState<string | null>(null);
@@ -72,7 +70,6 @@ export default function WritingPage() {
     const xp = Math.min(wordCount * 0.5 + checkedCount * 5 + 20, 100);
     const score = Math.round((checkedCount / selectedPrompt.checklist.length) * 100);
     completeLesson(`writing-${selectedPrompt.id}`, score, Math.round(xp));
-    setXpGained(Math.round(xp));
     setState("done");
   }
 
@@ -130,10 +127,6 @@ export default function WritingPage() {
             <p className="text-gray-500 dark:text-gray-400 text-sm">
               {wordCount} words · {checkedCount}/{selectedPrompt.checklist.length} checklist items
             </p>
-            <div className="inline-flex items-center gap-2 bg-orange-50 dark:bg-orange-950 text-orange-700 dark:text-orange-300 px-4 py-2 rounded-full font-semibold mt-3 text-sm">
-              <Star size={15} className="text-orange-500" />
-              +{xpGained} XP earned
-            </div>
           </div>
 
           {/* Written piece */}

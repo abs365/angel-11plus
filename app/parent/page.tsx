@@ -8,12 +8,10 @@ import {
   BookMarked,
   Pencil,
   ClipboardList,
-  Flame,
   Trophy,
   Target,
   TrendingUp,
   Clock,
-  Zap,
   ChevronRight,
   Star,
   AlertCircle,
@@ -224,7 +222,7 @@ export default function ParentDashboardPage() {
                 <div>
                   <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1">Weekly Progress</p>
                   <p className="text-sm text-gray-700 dark:text-gray-300">
-                    {report.weeklySessions} session{report.weeklySessions === 1 ? "" : "s"} · {report.weeklyXP} XP this week
+                    {report.weeklySessions} session{report.weeklySessions === 1 ? "" : "s"} this week
                   </p>
                 </div>
                 <div>
@@ -280,7 +278,7 @@ export default function ParentDashboardPage() {
                   <Flag size={13} className="text-purple-500 shrink-0 mt-0.5" />
                   <span>
                     <span className="font-semibold text-gray-800 dark:text-gray-100">Next milestone:</span>{" "}
-                    {nextMilestone ? `${nextMilestone.label} (${nextMilestone.threshold} XP)` : "All current milestones reached — more are on the way."}
+                    {nextMilestone ? nextMilestone.label : "All current milestones reached — more are on the way."}
                   </span>
                 </p>
               </div>
@@ -288,16 +286,11 @@ export default function ParentDashboardPage() {
 
             {/* Overview stats */}
             <section>
-              <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+              <div className="grid grid-cols-3 gap-3">
                 <StatCard
                   label="Total Sessions"
                   value={String(report.totalSessions)}
                   icon={<Target size={16} className="text-purple-500" />}
-                />
-                <StatCard
-                  label="Current Streak"
-                  value={`${report.streak}d`}
-                  icon={<Flame size={16} className="text-orange-500" />}
                 />
                 <StatCard
                   label="Overall Score"
@@ -716,28 +709,9 @@ export default function ParentDashboardPage() {
                 This Week
               </h2>
               <div className="bg-white dark:bg-gray-900 rounded-2xl p-5">
-                <div className="grid grid-cols-3 gap-4 mb-4">
-                  <div className="text-center">
-                    <p className="text-2xl font-black text-gray-900 dark:text-gray-100">{report.weeklySessions}</p>
-                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">Sessions</p>
-                  </div>
-                  <div className="text-center border-x border-gray-100 dark:border-gray-800">
-                    <p className="text-2xl font-black text-gray-900 dark:text-gray-100">{report.weeklyXP}</p>
-                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">XP earned</p>
-                  </div>
-                  <div className="text-center">
-                    <p className="text-2xl font-black text-gray-900 dark:text-gray-100">{report.streak}d</p>
-                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">Streak</p>
-                  </div>
-                </div>
-                <div className="pt-4 border-t border-gray-50 dark:border-gray-800 flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <Zap size={14} className="text-indigo-500" />
-                    <span className="text-sm text-gray-600 dark:text-gray-400">
-                      Rank: <span className="font-semibold text-gray-900 dark:text-gray-100">{report.rank}</span>
-                    </span>
-                  </div>
-                  <span className="text-sm text-gray-500 dark:text-gray-400">{report.xp} XP total</span>
+                <div className="text-center">
+                  <p className="text-2xl font-black text-gray-900 dark:text-gray-100">{report.weeklySessions}</p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">Sessions this week</p>
                 </div>
               </div>
             </section>

@@ -121,6 +121,9 @@ export default function LearningIntelligencePage() {
               <Link href="/learning-intelligence/parent" className="text-purple-600 dark:text-purple-400">
                 Parent Dashboard →
               </Link>
+              <Link href="/learning-intelligence/mock-exam" className="text-purple-600 dark:text-purple-400">
+                CSSE mock exam →
+              </Link>
             </div>
 
             {!profile.hasAnyContent && (

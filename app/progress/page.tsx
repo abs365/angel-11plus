@@ -4,7 +4,6 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import {
   BarChart2,
-  Flame,
   Star,
   CheckCircle,
   Target,
@@ -90,8 +89,6 @@ export default function ProgressPage() {
 
   if (!progress) return null;
 
-  const level = Math.floor(progress.xp / 100) + 1;
-  const xpInLevel = progress.xp % 100;
   const totalPossible = 16;
   const completionPct = Math.round((progress.completedLessons.length / totalPossible) * 100);
 
@@ -130,37 +127,6 @@ export default function ProgressPage() {
           )}
         </p>
 
-        {/* Level card */}
-        <div className="bg-gradient-to-br from-indigo-600 to-purple-600 rounded-2xl p-6 text-white mb-5">
-          <div className="flex items-center justify-between mb-4">
-            <div>
-              <p className="text-indigo-200 text-xs font-semibold uppercase tracking-wide mb-1">
-                Current Level
-              </p>
-              <p className="text-4xl font-bold">{level}</p>
-            </div>
-            <div className="text-right">
-              <p className="text-indigo-200 text-xs font-semibold uppercase tracking-wide mb-1">
-                Total XP
-              </p>
-              <p className="text-4xl font-bold">{progress.xp}</p>
-            </div>
-          </div>
-
-          <div>
-            <div className="flex justify-between text-xs text-indigo-200 mb-1.5">
-              <span>Level {level}</span>
-              <span>{xpInLevel}/100 XP to next level</span>
-            </div>
-            <div className="h-2.5 bg-indigo-700 rounded-full overflow-hidden">
-              <div
-                className="h-full bg-white rounded-full transition-all duration-500"
-                style={{ width: `${xpInLevel}%` }}
-              />
-            </div>
-          </div>
-        </div>
-
         {/* Progress Journey (Sprint 10) — replaces isolated charts with a
             narrative: reuses Sprint 3's JourneyTimeline (deriveActiveStageIndex,
             unmodified) for where the learner started/is now, and the existing
@@ -185,62 +151,15 @@ export default function ProgressPage() {
               <p>
                 <span className="font-semibold text-gray-800 dark:text-gray-100">Next milestone:</span>{" "}
                 {gamification.nextMilestone
-                  ? `${gamification.nextMilestone.label} (${gamification.nextMilestone.threshold} XP)`
+                  ? gamification.nextMilestone.label
                   : "Maximum rank reached — more milestones are on the way."}
               </p>
             </div>
           </div>
         )}
 
-        {/* XP Milestone bar */}
-        {gamification && (
-          <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-5 mb-5">
-            <div className="flex items-center justify-between mb-3">
-              <div>
-                <p className="text-gray-400 dark:text-gray-500 text-xs font-semibold uppercase tracking-wide mb-0.5">
-                  Current rank
-                </p>
-                <p className="text-gray-900 dark:text-gray-100 font-bold text-lg leading-tight">
-                  {gamification.currentMilestone.label}
-                </p>
-              </div>
-              {gamification.nextMilestone ? (
-                <div className="text-right">
-                  <p className="text-gray-400 dark:text-gray-500 text-xs mb-0.5">Next rank</p>
-                  <p className="text-gray-600 dark:text-gray-400 font-semibold text-sm">
-                    {gamification.nextMilestone.label}
-                  </p>
-                </div>
-              ) : (
-                <span className="bg-indigo-100 dark:bg-indigo-900 text-indigo-600 dark:text-indigo-400 text-xs font-bold px-2.5 py-1 rounded-full">
-                  Maximum rank
-                </span>
-              )}
-            </div>
-            <div className="h-2 bg-gray-100 dark:bg-gray-800 rounded-full overflow-hidden">
-              <div
-                className="h-full bg-indigo-500 rounded-full transition-all duration-700"
-                style={{ width: `${gamification.milestoneProgress}%` }}
-              />
-            </div>
-            {gamification.nextMilestone && (
-              <p className="text-gray-400 dark:text-gray-500 text-xs mt-2">
-                {progress!.xp} / {gamification.nextMilestone.threshold} XP
-                {" · "}
-                {gamification.nextMilestone.threshold - progress!.xp} XP to{" "}
-                {gamification.nextMilestone.label}
-              </p>
-            )}
-          </div>
-        )}
-
         {/* Stats grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
-          <div className="bg-white dark:bg-gray-900 rounded-2xl p-4 border border-gray-100 dark:border-gray-800 text-center">
-            <Flame size={20} className="text-orange-500 mx-auto mb-2" />
-            <p className="text-gray-900 dark:text-gray-100 font-bold text-2xl">{progress.streak}</p>
-            <p className="text-gray-400 dark:text-gray-500 text-xs mt-0.5">Day Streak</p>
-          </div>
+        <div className="grid grid-cols-3 gap-3 mb-6">
           <div className="bg-white dark:bg-gray-900 rounded-2xl p-4 border border-gray-100 dark:border-gray-800 text-center">
             <CheckCircle size={20} className="text-green-500 mx-auto mb-2" />
             <p className="text-gray-900 dark:text-gray-100 font-bold text-2xl">{progress.completedLessons.length}</p>
@@ -298,7 +217,7 @@ export default function ProgressPage() {
           <div className="bg-white dark:bg-gray-900 rounded-2xl border border-dashed border-gray-200 dark:border-gray-700 p-8 text-center mb-5">
             <Star size={24} className="text-gray-200 dark:text-gray-700 mx-auto mb-3" />
             <p className="text-gray-400 dark:text-gray-500 font-medium mb-1">No sessions completed yet</p>
-            <p className="text-gray-300 dark:text-gray-600 text-sm">Start with English or Maths to earn XP</p>
+            <p className="text-gray-300 dark:text-gray-600 text-sm">Start with English or Maths to begin your progress story</p>
           </div>
         )}
 

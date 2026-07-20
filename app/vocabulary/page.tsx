@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { BookMarked, Volume2, ChevronRight, CheckCircle, XCircle, Star } from "lucide-react";
+import { BookMarked, Volume2, ChevronRight, CheckCircle, XCircle } from "lucide-react";
 import PageLayout from "@/components/PageLayout";
 import { vocabWords } from "@/data/vocabulary";
 import { completeLesson, getProgress } from "@/lib/progress";
@@ -21,7 +21,6 @@ export default function VocabularyPage() {
   const [sentenceInput, setSentenceInput] = useState("");
   const [sentenceSubmitted, setSentenceSubmitted] = useState(false);
   const [scores, setScores] = useState<Record<string, "knew" | "learning">>({});
-  const [xpGained, setXpGained] = useState(0);
   const [report, setReport] = useState<AnalyticsReport | null>(null);
 
   useEffect(() => {
@@ -44,7 +43,6 @@ export default function VocabularyPage() {
     if (quizIndex + 1 >= vocabWords.length) {
       const knew = Object.values({ ...scores, [vocabWords[quizIndex].id]: result }).filter((v) => v === "knew").length;
       const xp = knew * 8 + 5;
-      setXpGained(xp);
       completeLesson("vocab-session", Math.round((knew / vocabWords.length) * 100), xp);
       setState("done");
     } else {
@@ -70,13 +68,9 @@ export default function VocabularyPage() {
             <CheckCircle size={32} className="text-green-600 dark:text-green-400" />
           </div>
           <h1 className="text-gray-900 dark:text-gray-100 font-bold text-2xl mb-2">Vocab Session Done!</h1>
-          <p className="text-gray-500 dark:text-gray-400 mb-2">
+          <p className="text-gray-500 dark:text-gray-400 mb-8">
             {knewCount} of {vocabWords.length} words known
           </p>
-          <div className="inline-flex items-center gap-2 bg-green-50 dark:bg-green-950 text-green-700 dark:text-green-300 px-4 py-2 rounded-full font-semibold mb-8">
-            <Star size={16} className="text-green-500" />
-            +{xpGained} XP earned
-          </div>
 
           <div className="bg-white dark:bg-gray-900 rounded-2xl p-5 border border-gray-100 dark:border-gray-800 text-left mb-6">
             <p className="text-gray-500 dark:text-gray-400 text-xs font-semibold uppercase tracking-wide mb-3">
@@ -305,7 +299,7 @@ export default function VocabularyPage() {
         </div>
 
         {/* Word of the day */}
-        <div className="bg-gradient-to-br from-green-600 to-emerald-500 rounded-2xl p-6 text-white mb-5">
+        <div className="bg-emerald-600 dark:bg-emerald-700 rounded-2xl p-6 text-white mb-5">
           <p className="text-green-100 text-xs font-semibold uppercase tracking-wide mb-2">
             Word of the Day
           </p>

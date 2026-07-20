@@ -86,6 +86,67 @@ function StatCard({
   );
 }
 
+// ─── Learning Engine Coverage (Capability 3, Wave 4 — Founder Operations)
+// A real, read-only verification utility: how much of Assessment Brain
+// V1's 27 Question Types actually have content authored in
+// ali_question_bank today, cross-DB-instance (not "this device only" like
+// the sections below), reusing Wave 1's own read pattern unchanged. No
+// new educational logic — just a count. ─────────────────────────────────
+
+function LearningEngineCoverage() {
+  const [state, setState] = useState<"loading" | "ready" | "no-table" | "error">("loading");
+  const [withContent, setWithContent] = useState(0);
+  const [total, setTotal] = useState(0);
+
+  useEffect(() => {
+    (async () => {
+      const { getSupabaseClient } = await import("@/lib/supabase");
+      const { ALL_QUESTION_TYPE_IDS } = await import("@/lib/learningEngine/assessmentBrainMap");
+      setTotal(ALL_QUESTION_TYPE_IDS.length);
+
+      const supabase = getSupabaseClient();
+      if (!supabase) return setState("error");
+
+      const { data, error } = await supabase
+        .from("ali_question_bank")
+        .select("skill")
+        .in("skill", ALL_QUESTION_TYPE_IDS)
+        .contains("pathway", ["csse"]);
+
+      if (error) {
+        // PGRST205 = table not found in schema cache — the honest, expected
+        // state until migrations 004-013 are applied (see
+        // CAP4_LAUNCH_ACCEPTANCE_PACK.md), not a bug to hide.
+        return setState(error.code === "PGRST205" ? "no-table" : "error");
+      }
+      setWithContent(new Set((data ?? []).map((r) => r.skill)).size);
+      setState("ready");
+    })();
+  }, []);
+
+  return (
+    <Section title="Learning Engine Coverage (CSSE, all devices)">
+      <div className="px-5 py-4">
+        {state === "loading" && <p className="text-sm text-gray-400 dark:text-gray-500">Checking…</p>}
+        {state === "no-table" && (
+          <p className="text-sm text-gray-500 dark:text-gray-400">
+            <code className="text-xs bg-gray-100 dark:bg-gray-800 px-1.5 py-0.5 rounded">ali_question_bank</code> does not
+            exist yet in this database — migrations 004-013 have not been applied. This is the expected, honest state,
+            not an error to fix here.
+          </p>
+        )}
+        {state === "error" && <p className="text-sm text-gray-400 dark:text-gray-500">Could not check right now.</p>}
+        {state === "ready" && (
+          <p className="text-sm text-gray-700 dark:text-gray-300">
+            <span className="font-bold">{withContent}</span> of <span className="font-bold">{total}</span> Assessment
+            Brain V1 Question Types have real content authored, across every learner, in the live database.
+          </p>
+        )}
+      </div>
+    </Section>
+  );
+}
+
 // ─── Collapsible section ──────────────────────────────────────────────────────
 
 function Section({ title, count, children }: { title: string; count?: number; children: React.ReactNode }) {
@@ -413,6 +474,8 @@ function AdminDashboard({ data }: { data: AdminData }) {
           </div>
         </Section>
       )}
+
+      <LearningEngineCoverage />
 
       <Section title="Usage Events, this device only (last 30)" count={events.length}>
         {events.length === 0 ? (

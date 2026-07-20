@@ -6,7 +6,6 @@ import {
   Timer,
   CheckCircle,
   XCircle,
-  Star,
   AlertCircle,
 } from "lucide-react";
 import PageLayout from "@/components/PageLayout";
@@ -30,7 +29,6 @@ export default function MockTestPage() {
   const [mathsChecked, setMathsChecked] = useState<Record<string, boolean>>({});
   const [englishScore, setEnglishScore] = useState(0);
   const [mathsScore, setMathsScore] = useState(0);
-  const [totalXP, setTotalXP] = useState(0);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const stopTimer = useCallback(() => {
@@ -80,7 +78,6 @@ export default function MockTestPage() {
   useEffect(() => {
     if (testState === "results") {
       const xp = Math.round((englishScore + mathsScore) / 2 / 10) * 10 + 30;
-      setTotalXP(xp);
       completeLesson("mock-test", Math.round((englishScore + mathsScore) / 2), xp);
     }
   }, [testState, englishScore, mathsScore]);
@@ -184,11 +181,7 @@ export default function MockTestPage() {
             )}
           </div>
           <h1 className="text-gray-900 font-bold text-2xl mb-2">Mock Test Complete!</h1>
-          <p className="text-gray-500 mb-1">Overall score: {overall}%</p>
-          <div className="inline-flex items-center gap-2 bg-pink-50 text-pink-700 px-4 py-2 rounded-full font-semibold mb-8">
-            <Star size={16} className="text-pink-500" />
-            +{totalXP} XP earned
-          </div>
+          <p className="text-gray-500 mb-8">Overall score: {overall}%</p>
 
           <div className="grid grid-cols-2 gap-4 mb-8">
             <div className="bg-white rounded-2xl p-5 border border-gray-100">

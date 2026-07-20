@@ -5,7 +5,7 @@ import Link from "next/link";
 import dynamic from "next/dynamic";
 import {
   ArrowLeft, Clock, CheckCircle, ChevronDown, ChevronUp,
-  Lightbulb, Trophy, AlertCircle, Sparkles, BookOpen,
+  Lightbulb, AlertCircle, Sparkles, BookOpen,
 } from "lucide-react";
 import PremiumLoader from "@/components/PremiumLoader";
 import { withTimeout } from "@/lib/withTimeout";
@@ -481,10 +481,6 @@ export default function AdaptiveEnglishMockPage() {
               {pct}%
             </div>
             <p className="text-sm text-gray-400 dark:text-gray-500">{earnedMarks} of {totalMarks} marks</p>
-            <div className="mt-4 flex items-center justify-center gap-1.5 text-sm text-amber-600 font-semibold">
-              <Trophy size={15} />
-              XP earned
-            </div>
           </div>
 
           <div className="bg-amber-50 dark:bg-amber-950 border border-amber-100 dark:border-amber-900 rounded-2xl p-5">

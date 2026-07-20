@@ -73,7 +73,7 @@ export default function PracticeSessionPage({ params }: { params: Promise<{ area
           <InfoCard>
             <p className="text-sm text-gray-500 dark:text-gray-400">Unknown practice area.</p>
             <Link href="/learning-intelligence/practice" className="text-xs font-semibold text-purple-600 dark:text-purple-400 mt-2 inline-block">
-              Back to Practice
+              Back to practice
             </Link>
           </InfoCard>
         </div>
@@ -240,7 +240,7 @@ export default function PracticeSessionPage({ params }: { params: Promise<{ area
                 onClick={loadAndStart}
                 className="mt-4 bg-purple-600 hover:bg-purple-700 text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-colors"
               >
-                Start Practice
+                Start practice
               </button>
             </InfoCard>
           </div>
@@ -254,10 +254,10 @@ export default function PracticeSessionPage({ params }: { params: Promise<{ area
             <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">{errorMessage}</p>
             <div className="flex items-center justify-center gap-4 mt-4">
               <button onClick={loadAndStart} className="text-xs font-semibold text-purple-600 dark:text-purple-400 inline-flex items-center gap-1">
-                <RotateCcw size={14} /> Try Again
+                <RotateCcw size={14} /> Try again
               </button>
               <Link href="/learning-intelligence/practice" className="text-xs font-semibold text-gray-500 dark:text-gray-400">
-                Back to Practice
+                Back to practice
               </Link>
             </div>
           </InfoCard>
@@ -318,7 +318,7 @@ export default function PracticeSessionPage({ params }: { params: Promise<{ area
             <InfoCard className="text-center">
               <CheckCircle2 size={28} className="text-emerald-500 mx-auto mb-2" />
               <p className="text-lg font-bold text-gray-900 dark:text-gray-100">
-                Practice Complete — {correctCount} of {activities.length} correct
+                Practice complete — {correctCount} of {activities.length} correct
               </p>
             </InfoCard>
 
@@ -496,7 +496,7 @@ function WritingActivity({
           disabled={wordCount < 10}
           className="mt-4 bg-purple-600 hover:bg-purple-700 disabled:opacity-40 text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-colors"
         >
-          Submit for Feedback
+          Submit for feedback
         </button>
       )}
       {feedbackError && <p className="text-xs text-red-500 mt-2">{feedbackError}</p>}
@@ -520,7 +520,7 @@ function WritingActivity({
             onClick={onNext}
             className="bg-purple-600 hover:bg-purple-700 text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-colors inline-flex items-center gap-1.5"
           >
-            {isLast ? "See Updated Profile" : "Next"} <ArrowRight size={14} />
+            {isLast ? "See updated profile" : "Next"} <ArrowRight size={14} />
           </button>
         </div>
       )}
@@ -562,7 +562,7 @@ function SubmitOrNext({
         onClick={onNext}
         className="bg-purple-600 hover:bg-purple-700 text-white text-sm font-semibold px-4 py-2 rounded-xl transition-colors inline-flex items-center gap-1.5"
       >
-        {isLast ? "See Updated Profile" : "Next"} <ArrowRight size={14} />
+        {isLast ? "See updated profile" : "Next"} <ArrowRight size={14} />
       </button>
     </div>
   );

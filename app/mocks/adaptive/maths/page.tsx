@@ -4,7 +4,7 @@ import { useState, useRef, useCallback, useEffect } from "react";
 import Link from "next/link";
 import {
   ArrowLeft, Clock, CheckCircle, XCircle, ChevronRight,
-  Trophy, AlertCircle, Sparkles, Calculator,
+  AlertCircle, Sparkles, Calculator,
 } from "lucide-react";
 import PremiumLoader from "@/components/PremiumLoader";
 import { withTimeout } from "@/lib/withTimeout";
@@ -472,10 +472,6 @@ export default function AdaptiveMathsMockPage() {
             </div>
             <p className="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-0.5">{grade}</p>
             <p className="text-sm text-gray-400 dark:text-gray-500">{correct} of {answers.length} questions correct</p>
-            <div className="mt-4 flex items-center justify-center gap-1.5 text-sm text-amber-600 font-semibold">
-              <Trophy size={15} />
-              XP earned
-            </div>
           </div>
 
           <div className="grid grid-cols-2 gap-3">

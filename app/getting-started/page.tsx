@@ -88,7 +88,7 @@ const STEPS = [
           Check it at any time — no sign-in required for local data.
         </p>
         <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed mb-3">
-          You&apos;ll see: session count, streak, average scores per subject, exam readiness estimate, and insights flagging areas that need attention.
+          You&apos;ll see: session count, average scores per subject, exam readiness estimate, and insights flagging areas that need attention.
         </p>
         <Link
           href="/parent"
@@ -147,7 +147,7 @@ const STEPS = [
 
 const TIPS = [
   "20–30 minutes daily is more effective than long infrequent sessions",
-  "Celebrate streaks — the gamification system rewards consistency",
+  "Celebrate consistency — regular short sessions build lasting confidence",
   "Review the Parent Dashboard weekly, not daily — look for trends",
   "Use mock exams to build time awareness, not just accuracy",
   "Vocabulary flashcards work well as a car or bedtime activity",

@@ -715,10 +715,6 @@ export default function MockPage({
             </div>
             <p className="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-0.5">{grade}</p>
             <p className="text-sm text-gray-400 dark:text-gray-500">{totalCorrect} of {totalQs} questions correct</p>
-            <div className="mt-4 flex items-center justify-center gap-1.5 text-sm text-amber-600 font-semibold">
-              <Trophy size={15} />
-              +{config.xpReward} XP earned
-            </div>
           </div>
 
           {/* Per-section breakdown */}

@@ -9,7 +9,6 @@ import {
   ChevronDown,
   ChevronUp,
   Sparkles,
-  Star,
   RefreshCw,
 } from "lucide-react";
 import PageLayout from "@/components/PageLayout";
@@ -45,7 +44,6 @@ export default function MathsPage() {
   const [checked, setChecked] = useState<Record<string, boolean | null>>({});
   const [showWorking, setShowWorking] = useState<Record<string, boolean>>({});
   const [timeLeft, setTimeLeft] = useState(0);
-  const [xpGained, setXpGained] = useState(0);
   const [score, setScore] = useState(0);
   const [recommendedMode, setRecommendedMode] = useState<"reasoning" | "arithmetic" | null>(null);
   const [report, setReport] = useState<AnalyticsReport | null>(null);
@@ -72,7 +70,6 @@ export default function MathsPage() {
     const pct = Math.round((correct / questions.length) * 100);
     const xp = correct * 15 + 10;
     setScore(pct);
-    setXpGained(xp);
     completeLesson(`maths-${mode}`, pct, xp);
     setMode("done");
   }, [stopTimer, checked, questions.length, mode]);
@@ -150,10 +147,6 @@ export default function MathsPage() {
             <p className="text-gray-500 dark:text-gray-400">
               {correctCount} of {questions.length} correct — {score}%
             </p>
-            <div className="inline-flex items-center gap-2 bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-blue-300 px-4 py-2 rounded-full mt-3 font-semibold">
-              <Star size={16} className="text-blue-500 dark:text-blue-400" />
-              +{xpGained} XP earned
-            </div>
           </div>
 
           {/* Review */}

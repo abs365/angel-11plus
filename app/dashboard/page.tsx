@@ -6,8 +6,6 @@ import {
   BookOpen,
   Target,
   BarChart2,
-  Flame,
-  Star,
   MapPin,
   Puzzle,
   Play,
@@ -141,14 +139,11 @@ function getEncouragingMessage(progress: UserProgress, weeklyGoal: WeeklyGoal | 
   return "Your admission journey starts here.";
 }
 
-// ─── Admission Hero — reuses PremiumCard (Sprint 1). EEP-002: the
-// coaching message is now the hero's primary line (moved above the
-// pathway/stage chips and the stat line, per this sprint's "place
-// today's purpose above XP"); the XP/streak/session numbers are now one
-// small, de-emphasised line instead of three large stat blocks, and the
-// XP milestone progress bar is removed from the hero entirely (it
-// duplicated /progress's own Progress Journey milestone narrative,
-// Sprint 10) — same real values throughout, no new calculation. ───────
+// ─── Admission Hero — reuses PremiumCard (Sprint 1). Product Experience
+// Standard V1 Correction 2 removes the Level/XP/streak stat line entirely
+// (previously de-emphasised into one small line per EEP-002/003 — this
+// Wave removes it, not just repositions it). The session count alone
+// remains: it's a plain completion count, not a gamification score. ───
 
 function AdmissionHero({
   progress,
@@ -165,19 +160,11 @@ function AdmissionHero({
 }) {
   const hour = new Date().getHours();
   const greeting = hour < 12 ? "Good morning" : hour < 17 ? "Good afternoon" : "Good evening";
-  const level = Math.floor(progress.xp / 100) + 1;
   const message = getEncouragingMessage(progress, weeklyGoal);
   const stageIndex = readiness ? deriveActiveStageIndex(hasEnoughData, readiness) : 0;
 
   return (
     <PremiumCard>
-      {/* EEP-003 — the "Level X" pill-and-icon badge previously sat in its
-          own header row, the most game-badge-like element on the
-          homepage. Per "reduce unnecessary badge-like presentation" and
-          "reposition [XP/levels/streaks] rather than making them the
-          primary focus," it's kept (never removed) but moved down into
-          the plain-text stat line below, alongside XP/streak/sessions,
-          so the header row now carries only the greeting. */}
       <p className="text-purple-200 text-sm font-medium mb-4">{greeting}</p>
 
       <p className="text-white font-bold text-2xl leading-snug mb-5">{message}</p>
@@ -194,18 +181,6 @@ function AdmissionHero({
       </div>
 
       <div className="flex items-center gap-3 text-purple-200 text-xs pt-4 border-t border-white/10">
-        <span className="flex items-center gap-1">
-          <Star size={11} className="text-yellow-300" />
-          Level {level}
-        </span>
-        <span className="text-white/30">·</span>
-        <span>{progress.xp} XP</span>
-        <span className="text-white/30">·</span>
-        <span className="flex items-center gap-1">
-          <Flame size={12} className="text-orange-300" />
-          {progress.streak}d streak
-        </span>
-        <span className="text-white/30">·</span>
         <span>{progress.completedLessons.length} sessions</span>
       </div>
     </PremiumCard>
@@ -520,7 +495,10 @@ export default function DashboardPage() {
         <section>
           <h2 className="text-gray-900 dark:text-gray-100 font-bold text-xl mb-3">Continue Learning</h2>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
-            <ButtonLink href={topMissionItem?.href ?? "/english"} variant="primary" size="sm" leftIcon={<Play size={14} />}>
+            {/* Product Experience Standard V1 §6 — one primary CTA per page;
+                "Start Today's Mission" above is the page's primary action,
+                so this shortcut is secondary, not a second solid-purple CTA. */}
+            <ButtonLink href={topMissionItem?.href ?? "/english"} variant="secondary" size="sm" leftIcon={<Play size={14} />}>
               Continue
             </ButtonLink>
             <ButtonLink href="/learn" variant="secondary" size="sm" leftIcon={<BookOpen size={14} />}>

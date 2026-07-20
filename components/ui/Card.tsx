@@ -181,12 +181,17 @@ export function RecommendationCard({ icon: Icon, title, reason, color = "purple"
   );
 }
 
-/** Premium card — the existing Hero card treatment (Dashboard's WelcomeHero gradient), reusable for any future premium/hero moment. */
+/**
+ * Premium card — the Hero card treatment, reusable for any premium/hero
+ * moment. Flat fill per Product Experience Standard V1 Correction 1 (no
+ * gradient anywhere in the product, including this previously-gradiented
+ * card) — was `bg-gradient-to-br from-purple-600 via-purple-700 to-indigo-700`.
+ */
 export function PremiumCard({ children, className }: CardBaseProps) {
   return (
     <div
       className={cn(
-        "bg-gradient-to-br from-purple-600 via-purple-700 to-indigo-700 rounded-2xl px-6 py-5 shadow-lg text-white",
+        "bg-purple-600 dark:bg-purple-700 rounded-2xl px-6 py-5 shadow-lg text-white",
         className
       )}
     >
