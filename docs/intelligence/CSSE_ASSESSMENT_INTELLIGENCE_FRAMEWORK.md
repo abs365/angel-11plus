@@ -2,7 +2,7 @@
 
 **Angel 11+, Version 3.0 Academic Excellence Programme**
 **Work Package:** AEP-002 — CSSE Assessment Intelligence Framework
-**Status:** Complete. Evidence-based structural description only — no learner features, no application code, no teaching recommendations.
+**Status:** Complete. Evidence-based structural description only — no learner features, no application code, no teaching recommendations. Corrected under CAP-1.1 (Assessment Brain Consolidation, 2026-07-20) — see Section 11, Correction Log.
 
 ---
 
@@ -82,11 +82,11 @@ Each entry below is a discrete observation with its evidentiary basis, confidenc
 
 ---
 
-**Observation 3: Mathematics is a single 60-minute, 60-mark, 12-question paper; calculators prohibited; marking is exact-match only.**
+**Observation 3: Mathematics is a single 60-minute, 60-mark paper (20 numbered questions in 2023, 21 in 2021 and 2022, most with lettered sub-parts); calculators prohibited; marking is exact-match only.** *[Corrected under CAP-1.1, 2026-07-20 — see Correction Log]*
 - Supporting Assets: CSSE-006, CSSE-007, CSSE-011, CSSE-012, CSSE-016, CSSE-017
 - Confidence Rating: HIGH
-- Evidence References: identical "60 minutes"/"Total 60 marks"/"calculators... NOT permitted" wording across all three years' papers and mark schemes
-- Known Limitations: None material — this is the most consistently and directly evidenced pattern in the entire evidence base (identical wording, 3/3 years).
+- Evidence References: identical "60 minutes"/"Total 60 marks"/"calculators... NOT permitted" wording across all three years' papers and mark schemes; each paper's own "END OF TEST (You should have completed N questions.)" line — CSSE-006 states 20, CSSE-011 and CSSE-016 each state 21
+- Known Limitations: The question count is not itself stable year to year (20 in 2023, 21 in 2021/2022) — this framework does not speculate on the reason for the one-question difference. Timing, total marks, and calculator/marking policy remain the most consistently and directly evidenced pattern in the entire evidence base (identical wording, 3/3 years).
 
 ---
 
@@ -146,11 +146,11 @@ Each entry below is a discrete observation with its evidentiary basis, confidenc
 
 ---
 
-**Observation 11: Mathematics content, within a single paper, spans multiple distinct mathematical domains (arithmetic, algebraic/symbolic reasoning, geometric/spatial reasoning, word problems, number theory).**
-- Supporting Assets: CSSE-006
-- Confidence Rating: MEDIUM
-- Evidence References: direct question content observed in CSSE-006 (2023 paper) spanning calculation, shape-identification, symbolic equations, elapsed-time word problems, and prime-number properties
-- Known Limitations: Full question-by-question content review was performed only for the 2023 paper within this framework; the 2021 and 2022 papers were not read to the same question-level depth, so this observation is confirmed for one of the three years and not yet cross-verified against the other two.
+**Observation 11: Mathematics content, within a single paper, spans multiple distinct mathematical domains (arithmetic, algebraic/symbolic reasoning, geometric/spatial reasoning, word problems, number theory), consistently across all three years.** *[Upgraded under CAP-1.1, 2026-07-20 — see Correction Log]*
+- Supporting Assets: CSSE-006, CSSE-011, CSSE-016
+- Confidence Rating: HIGH
+- Evidence References: direct question-by-question content observed in CSSE-006 (2023), CSSE-011 (2022), and CSSE-016 (2021), each independently spanning calculation, shape/angle identification, symbolic equations, elapsed-time and other multi-step word problems, and number-theory reasoning (prime/square-number properties) — full detail in `CSSE_QUESTION_INTELLIGENCE_FRAMEWORK.md` (AEP-004)
+- Known Limitations: None material. Full question-by-question content review was originally performed only for the 2023 paper (CSSE-006); AEP-004's subsequent close reading extended that same depth of review to CSSE-011 (2022) and CSSE-016 (2021), confirming the same five domains recur in all three years. The prior "one of three years" limitation is resolved and removed from this observation.
 
 ---
 
@@ -159,6 +159,14 @@ Each entry below is a discrete observation with its evidentiary basis, confidenc
 - Confidence Rating: MEDIUM
 - Evidence References: CSSE-001, "please note that these are tests based at a similar level but are not of the same format as the 11+ papers"
 - Known Limitations: Single-source (Level B) claim about a comparison this evidence base cannot itself verify (no commercial practice material is present in this Knowledge Domain to compare against). The claim is plausible given the distinctive, non-generic Applied Reasoning task types (Observation 5), but that is a corroborating pattern, not independent confirmation of the claim itself.
+
+---
+
+**Observation 13: The 2023 Continuous Writing paper introduces an explicit Content/SPAG marks split not present on the 2021 or 2022 papers.** *[Added under CAP-1.1, 2026-07-20 — see Correction Log]*
+- Supporting Assets: CSSE-004 (2023); CSSE-009 (2022); CSSE-014 (2021)
+- Confidence Rating: MEDIUM
+- Evidence References: CSSE-004's marker scoring box states "Content Max 15 marks / SPAG Max 5 marks" against its 20-mark total; CSSE-009 and CSSE-014 each show only an undifferentiated "1st marker's score / 2nd marker's score" box against their 15-mark totals, with no named sub-components
+- Known Limitations: This narrows, but does not resolve, Observation 10's gap — no Accepted asset explains how CSSE-002's five-criterion rubric (Ideas/Vocabulary/Grammar/Structure/Punctuation) maps onto the Content/SPAG two-way split. It shows *that* a two-component scoring structure exists in the most recent year, not *how* the rubric produces it. Observed in one year only (2023); this framework does not assume the split existed informally in earlier years without being printed on the marker box, nor that it will persist in future years.
 
 ## 6. Evidence Confidence
 
@@ -180,8 +188,9 @@ Carried forward unchanged from `KA-001_KNOWLEDGE_ACQUISITION_REPORT.md` and `KA-
 Additional limitations surfaced during this framework's own analysis, not previously documented:
 
 - The 2022 English combined mark total (Comprehension + Applied Reasoning) could not be reliably extracted from CSSE-010 by this framework's text-extraction tooling (Observation 4) — a tooling gap in this specific analysis pass, not necessarily an absence of the information in the source PDF.
-- Mathematics question-content analysis (Observation 11) was performed to full depth for only one of the three available years (2023); the 2021 and 2022 papers were consulted for structural facts (timing, marks, calculator policy) but not read question-by-question in this pass.
 - This framework covers only three entry years (2021–2023). Every observation describing a "pattern" across years is a pattern across exactly three data points, and is rated accordingly (Section 6) — no claim in this framework should be read as covering CSSE's assessment design beyond what three consecutive years can show.
+
+*Resolved under CAP-1.1 (2026-07-20):* Mathematics question-content analysis (Observation 11) was originally performed to full depth for only one of the three available years (2023); AEP-004's subsequent close reading extended full question-by-question review to all three years (see Correction Log). This limitation no longer applies and is retained here, struck through in effect, only for audit continuity.
 
 ## 8. Evidence Traceability Matrix
 
@@ -189,7 +198,7 @@ Additional limitations surfaced during this framework's own analysis, not previo
 |---|---|
 | 1. Two-test structure, weighting, standardisation, re-mark policy, minimum score | CSSE-001 |
 | 2. English three-section, 70-minute single sitting | CSSE-001, CSSE-003, CSSE-004, CSSE-008, CSSE-009, CSSE-013, CSSE-014 |
-| 3. Mathematics single 60-min/60-mark/12-question paper, no calculator, exact-match marking | CSSE-006, CSSE-007, CSSE-011, CSSE-012, CSSE-016, CSSE-017 |
+| 3. Mathematics single 60-min/60-mark paper (20-21 questions), no calculator, exact-match marking | CSSE-006, CSSE-007, CSSE-011, CSSE-012, CSSE-016, CSSE-017 |
 | 4. Comprehension+Reasoning combined total varies (45 vs 40; 2022 unresolved) | CSSE-003, CSSE-005, CSSE-013, CSSE-015 |
 | 5. Applied Reasoning genre stable, mechanic varies | CSSE-003, CSSE-008, CSSE-013 |
 | 6. Comprehension passages are narrative fiction in all 3 years | CSSE-005, CSSE-010, CSSE-015 |
@@ -197,8 +206,9 @@ Additional limitations surfaced during this framework's own analysis, not previo
 | 8. Continuous Writing: 2 prompts, minimum-length instruction, varying topics | CSSE-004, CSSE-009, CSSE-014 |
 | 9. Continuous Writing numeric marks vary (15/15/20) | CSSE-004, CSSE-009, CSSE-014 |
 | 10. Rubric-vs-numeric-total gap in Continuous Writing marking | CSSE-002, CSSE-004, CSSE-009, CSSE-014 |
-| 11. Mathematics spans multiple domains within one paper | CSSE-006 |
+| 11. Mathematics spans multiple domains within one paper (confirmed 3/3 years) | CSSE-006, CSSE-011, CSSE-016 |
 | 12. CSSE's own format-distinctiveness claim | CSSE-001 |
+| 13. Continuous Writing Content/SPAG split introduced in 2023 | CSSE-004, CSSE-009, CSSE-014 |
 
 Every one of the 17 Accepted assets is cited by at least one observation above (CSSE-001 through CSSE-017 all appear in the matrix).
 
@@ -218,8 +228,22 @@ Every observation in Section 5 is restricted to describing what the Accepted evi
 
 This framework is **sufficient to support AEP-003**, understood as the next stage of architecture/design work building on this Intelligence Framework, subject to the conditions already attached by `FG-001_FOUNDER_ACCEPTANCE.md` §8 and the limitations in Section 7 above being carried forward without dilution — in particular:
 
-- Any AEP-003 work touching Continuous Writing must treat Observation 10's rubric-vs-numeric-total gap as unresolved, not assume a conversion method.
-- Any AEP-003 work touching Applied Reasoning must not assume a specific recurring task mechanic (Observation 5).
-- Any AEP-003 work drawing a "typical CSSE Mathematics paper" characterisation should note Observation 11 is confirmed in depth for one of three years only.
+- Any work touching Continuous Writing must treat Observation 10's rubric-vs-numeric-total gap as unresolved, not assume a conversion method — Observation 13's Content/SPAG split (added under CAP-1.1) narrows but does not close this gap.
+- Any work touching Applied Reasoning must not assume a specific recurring task mechanic (Observation 5).
+- Observation 11 ("typical CSSE Mathematics paper" characterisation) is now confirmed in depth across all three years (upgraded under CAP-1.1) and may be relied on with HIGH confidence.
 
 Within those conditions, the evidence base is well-structured, internally consistent where multiple years overlap, and traceable in full — every observation above is sourced to specific Asset IDs, and every Asset ID is used by at least one observation.
+
+## 11. Correction Log
+
+Records every change made to this framework's own content after its original completion (2026-07-19), per this repository's governance standard that Accepted Intelligence Frameworks be corrected transparently rather than silently edited.
+
+| Date | Correcting Work Package | Field Changed | Previous Value | Corrected Value | Evidence Source |
+|---|---|---|---|---|---|
+| 2026-07-20 | CAP-1.1 (Assessment Brain Consolidation) | Observation 3 — Mathematics question count | "12-question paper" | "20 numbered questions in 2023, 21 in 2021 and 2022" | Direct primary-source verification during AEP-004: CSSE-006/011/016's own "END OF TEST (You should have completed N questions.)" statements |
+| 2026-07-20 | CAP-1.1 | Observation 11 — Confidence Rating and Known Limitations | MEDIUM; "confirmed for one of three years only" | HIGH; limitation resolved | AEP-004's full question-by-question review of CSSE-011 (2022) and CSSE-016 (2021), extending the depth of review AEP-002 originally gave only to CSSE-006 (2023) |
+| 2026-07-20 | CAP-1.1 | New Observation 13 added — Continuous Writing Content/SPAG split | (did not exist) | Added, Confidence MEDIUM | Direct primary-source reading of CSSE-004's marker scoring box during AEP-004, cross-checked against CSSE-009/CSSE-014 |
+| 2026-07-20 | CAP-1.1 | Section 7 — Evidence Limitations | Listed "2021/2022 papers not read question-by-question" as an open limitation | Marked resolved, retained for audit continuity | Same as Observation 11 correction above |
+| 2026-07-20 | CAP-1.1 | Section 8 — Evidence Traceability Matrix | Rows 3 and 11 cited question count / CSSE-006 only | Row 3 wording corrected; Row 11 extended to CSSE-011, CSSE-016; Row 13 added | Consequential updates matching the corrections above |
+
+No other content in this framework was altered. Sections 1, 2, 4, and Observations 1, 2, 4–10, 12 are unchanged from the original 2026-07-19 version.
