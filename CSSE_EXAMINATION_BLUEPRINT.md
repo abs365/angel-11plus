@@ -2,6 +2,7 @@
 
 **Work Package:** ANGEL-CSSE-001 (CSSE Examination Research Programme) — Deliverable 1
 **Status:** Documentation only. No implementation. Consolidates an existing frozen source (`docs/intelligence/ASSESSMENT_BRAIN_V1.md`) with new, independently-sourced 2026 research. One material correction is identified and logged (Section 5) — not silently applied to the frozen document.
+**Retained, cited by `docs/intelligence/EDUCATIONAL_INTELLIGENCE_ENGINE_V1.md`** (ANGEL-CSSE-002A) as factual/exam-content reference material — not superseded, not duplicative of that document's engine-mechanics scope.
 
 ---
 

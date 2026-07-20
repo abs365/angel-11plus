@@ -2,6 +2,7 @@
 
 **Work Package:** ANGEL-CSSE-001 — Deliverable 2
 **Status:** Documentation only. Reconciliation, not replacement — every competency named below is one of Assessment Brain V1's existing 13, frozen 2026-07-20. No new competency is created by this document.
+**Retained, cited by `docs/intelligence/EDUCATIONAL_INTELLIGENCE_ENGINE_V1.md`** (ANGEL-CSSE-002A) — the Topic layer defined here is a content-mapping input to that document's Section 11 data model, not superseded by it.
 
 **Naming note, added after this document's first draft:** this file was originally saved as `CSSE_COMPETENCY_FRAMEWORK.md` at the repository root, which collides in name (though not in path or content) with the real, pre-existing, 243-line `docs/intelligence/CSSE_COMPETENCY_FRAMEWORK.md` — AEP-003's actual competency framework, the one Assessment Brain V1 §3 itself cites as its source. That is the authoritative document; this one was renamed to `CSSE_COMPETENCY_TOPIC_MAPPING.md` to remove the collision. This file does not replace, restate, or compete with AEP-003's document — it adds one new layer (Topics) beneath the competencies AEP-003 already defined, exactly as described below.
 

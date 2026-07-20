@@ -2,6 +2,7 @@
 
 **Work Package:** ANGEL-CSSE-001 — Deliverable 3
 **Status:** Schema only. Documentation only. **Does not classify any individual historical exam question**, for the reasons stated in Section 1 — this is a deliberate, disclosed scope limit, not an omission.
+**Retained, cited by `docs/intelligence/EDUCATIONAL_INTELLIGENCE_ENGINE_V1.md`** (ANGEL-CSSE-002A) — that document's Section 6 (Cognitive Classification) and Section 11 (Data Model) extend this schema; this document is not superseded.
 
 ---
 
