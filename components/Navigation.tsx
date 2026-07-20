@@ -17,6 +17,7 @@ import {
   Mail,
   Sparkles,
   Crown,
+  Brain,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { useAuth } from "@/components/providers/AuthProvider";
@@ -57,6 +58,7 @@ const navSections: NavSection[] = [
     items: [
       { href: "/dashboard", label: "My Admission Journey", icon: Compass },
       { href: "/progress", label: "Progress", icon: BarChart2 },
+      { href: "/learning-intelligence", label: "Learning Intelligence", icon: Brain },
     ],
   },
   {

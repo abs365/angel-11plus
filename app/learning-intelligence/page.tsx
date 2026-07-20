@@ -1,0 +1,129 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import Link from "next/link";
+import { Brain, MapPin } from "lucide-react";
+import PageLayout from "@/components/PageLayout";
+import { getSelectedPathwayId } from "@/lib/progress";
+import { getPathwayById } from "@/lib/pathways";
+import { fetchLearnerIntelligenceProfile } from "@/lib/learningEngine/profile";
+import { CompetencyProfile } from "@/components/learningEngine/CompetencyProfile";
+import { EvidenceProfile } from "@/components/learningEngine/EvidenceProfile";
+import { DiagnosticOverview } from "@/components/learningEngine/DiagnosticOverview";
+import { ReadinessSummary } from "@/components/learningEngine/ReadinessSummary";
+import { RecommendationSummary } from "@/components/learningEngine/RecommendationSummary";
+import type { LearnerIntelligenceProfile } from "@/lib/learningEngine/types";
+import type { Pathway } from "@/types/pathway";
+
+/**
+ * Feature 1 — Learner Dashboard (Capability 3, Wave 1). Composes the other
+ * five features (Competency Profile, Evidence Profile, Diagnostic
+ * Overview, Learning Readiness Summary, Recommendation Summary) into one
+ * page, per docs/intelligence/LEARNING_ENGINE_V1.md.
+ *
+ * CSSE-scoped only. Every value rendered on this page comes from
+ * fetchLearnerIntelligenceProfile() — a real Supabase read against the
+ * existing ali_question_bank/ali_student_question_history tables, keyed on
+ * the new Assessment Brain V1 Question Type IDs. No value on this page is
+ * hardcoded, randomised, or a placeholder: today, in production, this
+ * reads as "no evidence yet" everywhere, honestly, because no content has
+ * been authored/tagged against the new CSSE taxonomy — see the CAP-3 Wave
+ * 1 evidence package for the full explanation of why, and what unblocks it.
+ */
+export default function LearningIntelligencePage() {
+  const [profile, setProfile] = useState<LearnerIntelligenceProfile | null | undefined>(undefined);
+  const [pathway, setPathway] = useState<Pathway | undefined>();
+
+  useEffect(() => {
+    const pathwayId = getSelectedPathwayId();
+    setPathway(getPathwayById(pathwayId ?? ""));
+    fetchLearnerIntelligenceProfile(pathwayId ?? undefined)
+      .then(setProfile)
+      .catch(() => setProfile(null));
+  }, []);
+
+  return (
+    <PageLayout breadcrumbs={[{ label: "Learning Intelligence" }]}>
+      <div className="max-w-3xl mx-auto px-4 py-6 md:px-8 md:py-8">
+        <div className="flex items-center gap-3 mb-2">
+          <div className="bg-purple-100 dark:bg-purple-900 p-3 rounded-2xl">
+            <Brain size={22} className="text-purple-600 dark:text-purple-400" />
+          </div>
+          <div>
+            <h1 className="text-gray-900 dark:text-gray-100 font-bold text-2xl">Learning Intelligence</h1>
+            <p className="text-gray-400 dark:text-gray-500 text-sm">CSSE competency evidence, diagnostics and readiness</p>
+          </div>
+        </div>
+
+        {profile === undefined && (
+          <p className="text-sm text-gray-400 dark:text-gray-500 mt-6">Loading…</p>
+        )}
+
+        {profile === null && (
+          <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-6 mt-6 text-center">
+            <p className="text-sm text-gray-500 dark:text-gray-400">Learning Intelligence isn&apos;t available right now.</p>
+          </div>
+        )}
+
+        {profile && !profile.pathwayEligible && (
+          <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-6 mt-6 flex items-start gap-3">
+            <MapPin size={18} className="text-purple-400 mt-0.5 shrink-0" />
+            <div>
+              <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">
+                Learning Intelligence is available for the CSSE pathway
+              </p>
+              <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">
+                {pathway ? `Your current pathway is ${pathway.name}.` : "Choose CSSE as your target pathway to see this."}{" "}
+                It is built entirely from CSSE&apos;s own official exam evidence (Assessment Brain V1), so it does not
+                yet apply to GL, CEM, ISEB, or Independent preparation.
+              </p>
+              <Link href="/pathways" className="inline-block text-xs font-semibold text-purple-600 dark:text-purple-400 mt-3">
+                Review School Intelligence →
+              </Link>
+            </div>
+          </div>
+        )}
+
+        {profile && profile.pathwayEligible && (
+          <div className="space-y-8 mt-6">
+            {!profile.hasAnyContent && (
+              <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 px-4 py-4">
+                <p className="text-gray-700 dark:text-gray-300 font-semibold text-sm">No evidence recorded yet</p>
+                <p className="text-gray-400 dark:text-gray-500 text-xs mt-1 leading-relaxed">
+                  Every competency below is shown honestly as &quot;Not Yet Observed.&quot; This isn&apos;t an error —
+                  Angel&apos;s own content bank does not yet have any practice questions authored against CSSE&apos;s
+                  official competency structure, so there is genuinely nothing to report yet.
+                </p>
+              </div>
+            )}
+
+            <section>
+              <h2 className="text-gray-900 dark:text-gray-100 font-bold text-lg mb-3">Competency Profile</h2>
+              <CompetencyProfile competencies={profile.competencies} />
+            </section>
+
+            <section>
+              <h2 className="text-gray-900 dark:text-gray-100 font-bold text-lg mb-3">Evidence Profile</h2>
+              <EvidenceProfile competencies={profile.competencies} />
+            </section>
+
+            <section>
+              <h2 className="text-gray-900 dark:text-gray-100 font-bold text-lg mb-3">Diagnostic Overview</h2>
+              <DiagnosticOverview findings={profile.diagnostics} />
+            </section>
+
+            <section>
+              <h2 className="text-gray-900 dark:text-gray-100 font-bold text-lg mb-3">Learning Readiness</h2>
+              <ReadinessSummary readiness={profile.readiness} />
+            </section>
+
+            <section>
+              <h2 className="text-gray-900 dark:text-gray-100 font-bold text-lg mb-3">Recommendations</h2>
+              <RecommendationSummary recommendations={profile.recommendations} />
+            </section>
+          </div>
+        )}
+      </div>
+    </PageLayout>
+  );
+}
