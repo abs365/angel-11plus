@@ -29,7 +29,7 @@ Learning Engine V1 already has a mastery construct: **"Mastered Skills"** (§4) 
 | **Skill** | MR-01 (Arithmetic Calculation), MR-06 (Precision Under Exact-Match), WC-01 (Sustained Composition), WC-02 (Multi-Dimensional Writing Quality) | Procedural execution — correctly *performing* a defined operation or sustained output, not primarily interpretive. |
 | **Reasoning** | RC-02 (Inference), RC-04 (Sequential Ordering), AR-01 (Pattern Inference), MR-02 (Algebraic/Symbolic), MR-03 (Geometric/Spatial), MR-04 (Multi-Step Word-Problem) | Multi-step, inferential, or transfer-dependent — the learner must combine information or apply a rule to a new case, not just recall or execute. |
 
-This is an **additive classification tag on existing competencies**, exactly like the Topic layer added in `CSSE_COMPETENCY_FRAMEWORK.md` — it does not change any Evidence Signal, Evidence Tier, or Diagnostic category logic. "Knowledge mastery" for a learner is simply the existing Mastered-Skills/Diagnostic logic (§4), filtered to the Knowledge-class competencies; likewise for Skill and Reasoning. No new computation, no new evidence requirement.
+This is an **additive classification tag on existing competencies**, exactly like the Topic layer added in `CSSE_COMPETENCY_TOPIC_MAPPING.md` — it does not change any Evidence Signal, Evidence Tier, or Diagnostic category logic. "Knowledge mastery" for a learner is simply the existing Mastered-Skills/Diagnostic logic (§4), filtered to the Knowledge-class competencies; likewise for Skill and Reasoning. No new computation, no new evidence requirement.
 
 ### 2.4 Speed — genuinely new, groundable in real existing data, requires formal extension
 

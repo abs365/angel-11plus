@@ -1,13 +1,15 @@
-# CSSE Competency Framework
+# CSSE Competency-to-Topic Mapping
 
 **Work Package:** ANGEL-CSSE-001 — Deliverable 2
 **Status:** Documentation only. Reconciliation, not replacement — every competency named below is one of Assessment Brain V1's existing 13, frozen 2026-07-20. No new competency is created by this document.
+
+**Naming note, added after this document's first draft:** this file was originally saved as `CSSE_COMPETENCY_FRAMEWORK.md` at the repository root, which collides in name (though not in path or content) with the real, pre-existing, 243-line `docs/intelligence/CSSE_COMPETENCY_FRAMEWORK.md` — AEP-003's actual competency framework, the one Assessment Brain V1 §3 itself cites as its source. That is the authoritative document; this one was renamed to `CSSE_COMPETENCY_TOPIC_MAPPING.md` to remove the collision. This file does not replace, restate, or compete with AEP-003's document — it adds one new layer (Topics) beneath the competencies AEP-003 already defined, exactly as described below.
 
 ---
 
 ## 1. Why this document does not define a second competency taxonomy
 
-`docs/intelligence/ASSESSMENT_BRAIN_V1.md` already defines a complete, evidence-graded competency structure for CSSE — 4 domains, 13 competencies, each with a confidence rating, an Evidence Maturity Classification (EMC-1 to EMC-4), and citations back to the 17 real exam-paper/marking-scheme assets it was built from. That document is **frozen**: any new competency taxonomy built independently of it would create exactly the kind of parallel, non-reconciled model this programme has already identified as a real architectural risk elsewhere (two separate adaptive-practice engines doing the same job — see `ANGEL_V1_PRODUCT_EXPERIENCE_IMPLEMENTATION_AUDIT.md` Section 2, finding on Learning Report vs. legacy ALI).
+`docs/intelligence/ASSESSMENT_BRAIN_V1.md` §3 (itself consolidating `docs/intelligence/CSSE_COMPETENCY_FRAMEWORK.md`, AEP-003's original, unaltered by this document) already defines a complete, evidence-graded competency structure for CSSE — 4 domains, 13 competencies, each with a confidence rating, an Evidence Maturity Classification (EMC-1 to EMC-4), and citations back to the 17 real exam-paper/marking-scheme assets it was built from. That document is **frozen**: any new competency taxonomy built independently of it would create exactly the kind of parallel, non-reconciled model this programme has already identified as a real architectural risk elsewhere (two separate adaptive-practice engines doing the same job — see `ANGEL_V1_PRODUCT_EXPERIENCE_IMPLEMENTATION_AUDIT.md` Section 2, finding on Learning Report vs. legacy ALI).
 
 This work package's brief asks for a finer-grained breakdown than Assessment Brain V1's 13 competencies provide (e.g. separate Reading/Vocabulary/Inference/Language analysis; separate Grammar/Spelling/Punctuation; ten named Maths topics). That granularity is real and useful — but it describes **curriculum content areas**, not **assessed, evidence-graded competencies**. This document adds that content layer explicitly *beneath* the existing competency layer, mapping every requested item to the competency that already, evidentially, covers it — rather than inventing new competencies that would have no exam-paper evidence behind them (a direct violation of Assessment Brain V1's own Principle basis and of Learning Engine V1's Principle 7, "No Invented Constructs").
 

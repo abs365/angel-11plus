@@ -32,7 +32,7 @@ Comprehension+Reasoning combined section total varies year to year (45 vs 40 mar
 
 **Mathematics** — a single 60-minute, 60-mark paper: **20 numbered questions in 2023, 21 in 2021 and 2022**, most with lettered sub-parts (Observation 3, HIGH) — calculators prohibited, marking is exact-match only with no partial/method credit described in any mark scheme. Content spans arithmetic, algebraic/symbolic reasoning, geometric/spatial reasoning, multi-step word problems, and number theory, confirmed consistently across all three available years (Observation 11, HIGH).
 
-**Full detail** — all 13 Assessment Observations with their individual confidence ratings and Asset ID citations, the complete 13-competency structure, and the complete 27-Question-Type catalogue — lives in `ASSESSMENT_BRAIN_V1.md` itself; this section is a summary extract, not a replacement. See Deliverable 2 (`CSSE_COMPETENCY_FRAMEWORK.md`) and Deliverable 3 (`CSSE_QUESTION_TAXONOMY.md`) for how this work package treats that material.
+**Full detail** — all 13 Assessment Observations with their individual confidence ratings and Asset ID citations, the complete 13-competency structure, and the complete 27-Question-Type catalogue — lives in `ASSESSMENT_BRAIN_V1.md` itself; this section is a summary extract, not a replacement. See Deliverable 2 (`CSSE_COMPETENCY_TOPIC_MAPPING.md`) and Deliverable 3 (`CSSE_QUESTION_TAXONOMY.md`) for how this work package treats that material.
 
 ## 3. New research (public sources, gathered 2026-07-20)
 

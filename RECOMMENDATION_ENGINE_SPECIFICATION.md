@@ -31,7 +31,7 @@ This is the same architectural finding already raised in `ANGEL_V1_PRODUCT_EXPER
 
 ## 4. "Linked competencies"
 
-**System A:** already real and exact — every `Recommendation` object carries a single `competencyId` (`lib/learningEngine/types.ts`), traceable through `CSSE_COMPETENCY_FRAMEWORK.md`'s reconciliation table to a real exam-evidenced competency.
+**System A:** already real and exact — every `Recommendation` object carries a single `competencyId` (`lib/learningEngine/types.ts`), traceable through `CSSE_COMPETENCY_TOPIC_MAPPING.md`'s reconciliation table to a real exam-evidenced competency.
 
 **System B:** linked by subject (`english`/`maths`/etc.), not by competency — coarser, since System B predates Learning Engine V1 and was never re-platformed onto the competency model.
 

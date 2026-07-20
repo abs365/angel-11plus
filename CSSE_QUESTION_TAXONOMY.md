@@ -27,7 +27,7 @@ The work package asks for a taxonomy that classifies every historical CSSE quest
 | Year | The exam year a real historical question is drawn from, **or** `null`/`"original"` for Angel's own content | Content authoring; must be `null` for any non-licensed original question, never a fabricated year |
 | Paper | Which paper the question belongs to (`English`, `Mathematics`) | Content authoring |
 | Question Type ID | Foreign key to Assessment Brain V1's 27 Question Types (e.g. `QT-MR-04`) — **not** a free-text "Topic" field, to avoid re-inventing a second, un-reconciled taxonomy alongside the one that already exists | Assessment Brain V1 §9 |
-| Topic | Foreign key to `CSSE_COMPETENCY_FRAMEWORK.md`'s Topic layer (Deliverable 2) — the curriculum content area, distinct from Question Type | This document's Deliverable 2 |
+| Topic | Foreign key to `CSSE_COMPETENCY_TOPIC_MAPPING.md`'s Topic layer (Deliverable 2) — the curriculum content area, distinct from Question Type | This document's Deliverable 2 |
 | Competency ID | Foreign key to Assessment Brain V1's 13 Competencies — derived from Question Type ID, not set independently (a Question Type has exactly one Primary Competency, per Assessment Brain V1 §9's Cross Reference Matrix) | Assessment Brain V1 §9 |
 | Difficulty | Content-authoring-time judgement (`easy` / `medium` / `hard` / `challenge`) — already a real, live field (`content_difficulty` enum, migration `005_ali_question_bank.sql`) | Content authoring |
 | Expected time (seconds) | Already a real, live field (`estimated_time_seconds`, migration `005`) | Content authoring, informed by the paper-level timing in `CSSE_EXAMINATION_BLUEPRINT.md` where a real per-section time budget exists |
