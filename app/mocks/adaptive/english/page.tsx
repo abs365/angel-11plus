@@ -345,7 +345,7 @@ export default function AdaptiveEnglishMockPage() {
             >
               Try Again
             </button>
-            <Link href="/mocks" className="text-purple-600 dark:text-purple-400 font-medium text-sm">Back to Practice</Link>
+            <Link href="/mocks" className="text-purple-600 dark:text-purple-400 font-medium text-sm">Back to practice</Link>
           </div>
         </div>
       </div>

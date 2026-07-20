@@ -14,7 +14,7 @@ export default function SupportFooter() {
           Contact
         </Link>
         <Link href="/beta" className="text-xs text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors">
-          Beta Info
+          About Angel 11+
         </Link>
         <span className="text-xs text-gray-300 dark:text-gray-700">© 2026 Angel Digital</span>
       </div>

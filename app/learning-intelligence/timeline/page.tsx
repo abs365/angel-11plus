@@ -50,7 +50,7 @@ export default function ProgressTimelinePage() {
   }, []);
 
   return (
-    <PageLayout breadcrumbs={[{ label: "Learning Intelligence", href: "/learning-intelligence" }, { label: "Progress Timeline" }]}>
+    <PageLayout breadcrumbs={[{ label: "Learning Report", href: "/learning-intelligence" }, { label: "Progress Timeline" }]}>
       <div className="max-w-3xl mx-auto px-4 py-6 md:px-8 md:py-8">
         <div className="flex items-center gap-3 mb-2">
           <div className="bg-purple-100 dark:bg-purple-900 p-3 rounded-2xl">

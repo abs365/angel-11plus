@@ -441,7 +441,7 @@ export default function ProgressPage() {
             {/* Learning insights */}
             {report.insights.length > 0 && (
               <div className="mb-4">
-                <h2 className="text-gray-900 dark:text-gray-100 font-semibold mb-3">Learning Intelligence</h2>
+                <h2 className="text-gray-900 dark:text-gray-100 font-semibold mb-3">Learning Insights</h2>
                 <div className="flex flex-col gap-3">
                   {report.insights.slice(0, 4).map((insight) => (
                     <InsightCard key={insight.id} insight={insight} />

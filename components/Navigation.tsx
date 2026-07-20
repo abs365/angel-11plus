@@ -58,7 +58,11 @@ const navSections: NavSection[] = [
     items: [
       { href: "/dashboard", label: "My Admission Journey", icon: Compass },
       { href: "/progress", label: "Progress", icon: BarChart2 },
-      { href: "/learning-intelligence", label: "Learning Intelligence", icon: Brain },
+      // Product Experience Standard V1 §7 — "Learning Intelligence" used the
+      // word this platform's own calm-tone rule forbids showing to users;
+      // route/component names are unchanged, only this label and the
+      // matching page copy were renamed.
+      { href: "/learning-intelligence", label: "Learning Report", icon: Brain },
     ],
   },
   {

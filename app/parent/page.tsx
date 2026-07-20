@@ -172,17 +172,14 @@ export default function ParentDashboardPage() {
   return (
     <PageLayout breadcrumbs={[{ label: "My Admission Journey", href: "/dashboard" }, { label: "Parent Hub" }]}>
       <main className="max-w-2xl mx-auto px-4 pb-12 pt-6 md:pt-8">
-        <div className="mb-1 flex items-center justify-between">
+        <div className="mb-1">
           <h1 className="text-gray-900 dark:text-gray-100 font-bold text-2xl">Parent Hub</h1>
-          <span className="text-xs text-purple-600 dark:text-purple-300 font-semibold bg-purple-50 dark:bg-purple-950 px-2 py-1 rounded-full">
-            Beta
-          </span>
         </div>
         <p className="text-gray-400 dark:text-gray-500 text-sm mb-1">
           A clear picture of how your child is progressing, and what to focus on next.
         </p>
         <Link href="/learning-intelligence/parent" className="text-xs font-semibold text-purple-600 dark:text-purple-400 inline-block mb-6">
-          CSSE Learning Intelligence Parent Dashboard →
+          CSSE learning report for parents →
         </Link>
 
         {!report.hasEnoughData ? (
@@ -739,16 +736,18 @@ export default function ParentDashboardPage() {
               </section>
             )}
 
-            {/* Beta feedback */}
+            {/* More on the way — Product Experience Standard V1 §7: "Beta"
+                is one of the words this platform never shows a parent;
+                reworded to describe what's coming, not the release stage. */}
             <section className="bg-purple-50 dark:bg-purple-950 rounded-2xl p-5">
               <div className="flex items-start gap-3">
                 <div className="w-8 h-8 rounded-full bg-purple-100 dark:bg-purple-900 flex items-center justify-center shrink-0">
                   <Trophy size={15} className="text-purple-600 dark:text-purple-400" />
                 </div>
                 <div>
-                  <p className="text-sm font-semibold text-purple-900 dark:text-purple-100 mb-1">Parent Dashboard — Beta</p>
+                  <p className="text-sm font-semibold text-purple-900 dark:text-purple-100 mb-1">More on the way</p>
                   <p className="text-xs text-purple-700 dark:text-purple-300 leading-relaxed">
-                    This dashboard is in beta. We&apos;re adding more detailed reporting, email summaries, and exam countdown features soon.
+                    We&apos;re adding more detailed reporting, email summaries, and exam countdown features soon.
                     Your feedback helps shape what we build next.
                   </p>
                 </div>

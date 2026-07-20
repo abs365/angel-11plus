@@ -24,7 +24,7 @@ export default function ContactPage() {
           Contact & Support
         </h1>
         <p className="text-base text-gray-500 dark:text-gray-400 leading-relaxed">
-          We&apos;re in beta and we read everything. The fastest way to get help or share feedback is email.
+          We read everything. The fastest way to get help or share feedback is email.
         </p>
       </div>
 
@@ -48,12 +48,12 @@ export default function ContactPage() {
 
           <div className="flex items-center gap-2 text-xs text-gray-400 dark:text-gray-500 mb-4">
             <Clock size={13} />
-            <span>Beta response time: within 48 hours, usually sooner</span>
+            <span>Response time: within 48 hours, usually sooner</span>
           </div>
 
           <div className="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400 bg-amber-50 dark:bg-amber-950 border border-amber-100 dark:border-amber-900 rounded-xl px-3 py-2.5">
             <Sparkles size={13} className="text-amber-500 shrink-0" />
-            We are in beta. Your message goes directly to the founder.
+            Your message goes directly to the founder.
           </div>
         </div>
       </section>

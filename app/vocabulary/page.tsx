@@ -67,7 +67,7 @@ export default function VocabularyPage() {
           <div className="inline-flex items-center justify-center w-16 h-16 bg-green-100 dark:bg-green-900 rounded-full mb-4">
             <CheckCircle size={32} className="text-green-600 dark:text-green-400" />
           </div>
-          <h1 className="text-gray-900 dark:text-gray-100 font-bold text-2xl mb-2">Vocab Session Done!</h1>
+          <h1 className="text-gray-900 dark:text-gray-100 font-bold text-2xl mb-2">Vocabulary session complete</h1>
           <p className="text-gray-500 dark:text-gray-400 mb-8">
             {knewCount} of {vocabWords.length} words known
           </p>
@@ -97,13 +97,13 @@ export default function VocabularyPage() {
               onClick={() => setState("browse")}
               className="flex-1 bg-green-600 text-white rounded-xl py-3.5 font-semibold text-sm hover:bg-green-700 transition-colors"
             >
-              Back to Vocabulary
+              Back to vocabulary
             </button>
             <button
               onClick={startQuiz}
               className="flex-1 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-xl py-3.5 font-semibold text-sm hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
             >
-              Try Again
+              Try again
             </button>
           </div>
         </div>
@@ -227,7 +227,7 @@ export default function VocabularyPage() {
                         disabled={!sentenceInput.trim()}
                         className="w-full bg-green-600 text-white rounded-lg py-2.5 text-sm font-semibold hover:bg-green-700 disabled:opacity-40 transition-colors"
                       >
-                        Submit Sentence
+                        Submit sentence
                       </button>
                     </div>
                   ) : (
@@ -315,7 +315,7 @@ export default function VocabularyPage() {
           onClick={startQuiz}
           className="w-full bg-green-600 text-white rounded-xl py-4 font-semibold text-base hover:bg-green-700 transition-colors flex items-center justify-center gap-2 mb-6"
         >
-          Start Flashcard Session
+          Start flashcard session
           <ChevronRight size={18} />
         </button>
 

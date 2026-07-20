@@ -426,7 +426,7 @@ export default function DashboardPage() {
               )}
 
               <ButtonLink href="/progress" variant="outline" size="sm" className="w-full justify-center">
-                View Full Progress →
+                View full progress →
               </ButtonLink>
             </div>
           ) : (
@@ -508,7 +508,7 @@ export default function DashboardPage() {
               Practise
             </ButtonLink>
             <ButtonLink href="/mocks" variant="outline" size="sm" leftIcon={<Trophy size={14} />}>
-              Take a Mock
+              Take a mock
             </ButtonLink>
           </div>
         </section>

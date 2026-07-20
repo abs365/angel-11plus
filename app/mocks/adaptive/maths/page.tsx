@@ -353,7 +353,7 @@ export default function AdaptiveMathsMockPage() {
             >
               Try Again
             </button>
-            <Link href="/mocks" className="text-blue-600 dark:text-blue-400 font-medium text-sm">Back to Practice</Link>
+            <Link href="/mocks" className="text-blue-600 dark:text-blue-400 font-medium text-sm">Back to practice</Link>
           </div>
         </div>
       </div>

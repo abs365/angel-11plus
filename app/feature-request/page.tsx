@@ -46,7 +46,7 @@ export default function FeatureRequestPage() {
           </div>
           <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-2">Request received!</h1>
           <p className="text-gray-500 dark:text-gray-400 text-sm max-w-xs leading-relaxed">
-            Feature requests from beta families directly influence our roadmap. Thank you for sharing this.
+            Feature requests from families like yours directly influence our roadmap. Thank you for sharing this.
           </p>
           <button
             onClick={() => { setSubmitted(false); setFeature(""); setWhy(""); setErrors({}); }}
@@ -69,7 +69,7 @@ export default function FeatureRequestPage() {
           Feature Request
         </h1>
         <p className="text-base text-gray-500 dark:text-gray-400 leading-relaxed">
-          What would make Angel 11+ more useful for your family? Beta family requests go straight to the top of the roadmap.
+          What would make Angel 11+ more useful for your family? Your requests go straight to the top of the roadmap.
         </p>
       </div>
 

@@ -28,12 +28,12 @@ const AREA_ICON: Record<string, typeof BookOpen> = {
 export default function PracticeAreaSelectorPage() {
   return (
     <PageLayout
-      breadcrumbs={[{ label: "Learning Intelligence", href: "/learning-intelligence" }, { label: "Practice" }]}
+      breadcrumbs={[{ label: "Learning Report", href: "/learning-intelligence" }, { label: "Practice" }]}
     >
       <div className="max-w-3xl mx-auto px-4 py-6 md:px-8 md:py-8">
         <h1 className="text-gray-900 dark:text-gray-100 font-bold text-2xl">Choose a Practice Area</h1>
         <p className="text-gray-400 dark:text-gray-500 text-sm mt-1">
-          Each activity you complete updates your Competency Profile, Evidence Profile, Readiness and Recommendations.
+          Each activity you complete updates your Skills Profile, Evidence Profile, Readiness and Recommendations.
         </p>
 
         <div className="grid gap-3 mt-6">
@@ -61,10 +61,9 @@ export default function PracticeAreaSelectorPage() {
             <div className="min-w-0">
               <p className="text-sm font-semibold text-gray-700 dark:text-gray-300">Vocabulary — not available here</p>
               <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5 leading-relaxed">
-                Assessment Brain V1 does not define a Vocabulary competency (it was evidence-checked and deliberately
-                not created as its own domain), so Vocabulary practice cannot yet connect to your Learning Engine
-                profile. Vocabulary practice is still available from the main Learn hub — it just won&apos;t appear
-                on this dashboard.
+                Vocabulary isn&apos;t part of this skills structure yet, so Vocabulary practice cannot yet connect to
+                your learning report. Vocabulary practice is still available from the main Learn hub — it just won&apos;t
+                appear on this dashboard.
               </p>
             </div>
           </InfoCard>

@@ -1,10 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Link from "next/link";
 import { ChevronRight, Clock, BookOpen, Trophy, Play, Sparkles } from "lucide-react";
 import PageLayout from "@/components/PageLayout";
 import { StatusIndicator } from "@/components/ui/Progress";
+import { ButtonLink } from "@/components/ui/Button";
 import { getMockResults, getBestMockScoreForPathway } from "@/lib/mockProgress";
 import { MOCK_SUGGESTED_PREPARATION } from "@/lib/mockMeta";
 import type { MockResult, MockPathwayId } from "@/types/mock";
@@ -20,7 +20,6 @@ const MOCK_CARDS: {
   border: string;
   badgeBg: string;
   badgeText: string;
-  btnBg: string;
 }[] = [
   {
     pathway: "gl",
@@ -33,20 +32,18 @@ const MOCK_CARDS: {
     border: "border-blue-100 dark:border-blue-900",
     badgeBg: "bg-blue-600",
     badgeText: "text-white",
-    btnBg: "bg-blue-600 hover:bg-blue-700 text-white",
   },
   {
     pathway: "cem",
     name: "CEM",
     badge: "CEM",
-    description: "Practice covering the two core CEM sections: Verbal Reasoning and Numerical Reasoning, styled to reflect the CEM adaptive format.",
+    description: "Practice covering the two core CEM sections: Verbal Reasoning and Numerical Reasoning, styled to reflect the CEM exam format.",
     totalMinutes: 30,
     sections: ["Verbal Reasoning", "Numerical Reasoning"],
     bg: "bg-indigo-50 dark:bg-indigo-950",
     border: "border-indigo-100 dark:border-indigo-900",
     badgeBg: "bg-indigo-600",
     badgeText: "text-white",
-    btnBg: "bg-indigo-600 hover:bg-indigo-700 text-white",
   },
   {
     pathway: "csse",
@@ -59,7 +56,6 @@ const MOCK_CARDS: {
     border: "border-purple-100 dark:border-purple-900",
     badgeBg: "bg-purple-600",
     badgeText: "text-white",
-    btnBg: "bg-purple-600 hover:bg-purple-700 text-white",
   },
   {
     pathway: "iseb",
@@ -72,7 +68,6 @@ const MOCK_CARDS: {
     border: "border-emerald-100 dark:border-emerald-900",
     badgeBg: "bg-emerald-600",
     badgeText: "text-white",
-    btnBg: "bg-emerald-600 hover:bg-emerald-700 text-white",
   },
 ];
 
@@ -146,13 +141,9 @@ export default function MocksPage() {
             <p className="text-xs text-amber-700 dark:text-amber-400 leading-relaxed mb-4">
               Currently a small sample set while we build out the full question bank.
             </p>
-            <Link
-              href="/mocks/adaptive/gl"
-              className="inline-flex items-center gap-1.5 text-sm font-semibold px-4 py-2 rounded-xl bg-violet-700 hover:bg-violet-800 text-white transition-colors"
-            >
-              <Play size={14} />
-              Start Practice
-            </Link>
+            <ButtonLink href="/mocks/adaptive/gl" variant="outline" size="sm" leftIcon={<Play size={14} />}>
+              Start practice
+            </ButtonLink>
           </div>
 
           <div className="rounded-2xl border border-blue-100 dark:border-blue-900 bg-blue-50 dark:bg-blue-950 p-5">
@@ -175,13 +166,9 @@ export default function MocksPage() {
             <p className="text-xs text-amber-700 dark:text-amber-400 leading-relaxed mb-4">
               Currently a small sample set while we build out the full question bank.
             </p>
-            <Link
-              href="/mocks/adaptive/maths"
-              className="inline-flex items-center gap-1.5 text-sm font-semibold px-4 py-2 rounded-xl bg-blue-700 hover:bg-blue-800 text-white transition-colors"
-            >
-              <Play size={14} />
-              Start Practice
-            </Link>
+            <ButtonLink href="/mocks/adaptive/maths" variant="outline" size="sm" leftIcon={<Play size={14} />}>
+              Start practice
+            </ButtonLink>
           </div>
 
           <div className="rounded-2xl border border-purple-100 dark:border-purple-900 bg-purple-50 dark:bg-purple-950 p-5">
@@ -204,13 +191,9 @@ export default function MocksPage() {
             <p className="text-xs text-amber-700 dark:text-amber-400 leading-relaxed mb-4">
               Currently a small sample set while we build out the full question bank.
             </p>
-            <Link
-              href="/mocks/adaptive/english"
-              className="inline-flex items-center gap-1.5 text-sm font-semibold px-4 py-2 rounded-xl bg-purple-700 hover:bg-purple-800 text-white transition-colors"
-            >
-              <Play size={14} />
-              Start Practice
-            </Link>
+            <ButtonLink href="/mocks/adaptive/english" variant="outline" size="sm" leftIcon={<Play size={14} />}>
+              Start practice
+            </ButtonLink>
           </div>
 
           <div className="rounded-2xl border border-emerald-100 dark:border-emerald-900 bg-emerald-50 dark:bg-emerald-950 p-5">
@@ -233,13 +216,9 @@ export default function MocksPage() {
             <p className="text-xs text-amber-700 dark:text-amber-400 leading-relaxed mb-4">
               Currently a small sample set while we build out the full question bank.
             </p>
-            <Link
-              href="/mocks/adaptive/vocabulary"
-              className="inline-flex items-center gap-1.5 text-sm font-semibold px-4 py-2 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white transition-colors"
-            >
-              <Play size={14} />
-              Start Practice
-            </Link>
+            <ButtonLink href="/mocks/adaptive/vocabulary" variant="outline" size="sm" leftIcon={<Play size={14} />}>
+              Start practice
+            </ButtonLink>
           </div>
         </section>
 
@@ -308,13 +287,9 @@ export default function MocksPage() {
                   ) : (
                     <span className="text-xs text-gray-400 dark:text-gray-500">Not attempted yet</span>
                   )}
-                  <Link
-                    href={`/mocks/${card.pathway}`}
-                    className={`flex items-center gap-1.5 text-sm font-semibold px-4 py-2 rounded-xl transition-colors ${card.btnBg}`}
-                  >
-                    <Play size={14} />
-                    Start Mock
-                  </Link>
+                  <ButtonLink href={`/mocks/${card.pathway}`} variant="outline" size="sm" leftIcon={<Play size={14} />}>
+                    Start mock
+                  </ButtonLink>
                 </div>
               </div>
             );

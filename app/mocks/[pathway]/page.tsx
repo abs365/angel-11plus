@@ -273,7 +273,7 @@ export default function MockPage({
       <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-950">
         <div className="text-center">
           <p className="text-gray-500 dark:text-gray-400 mb-4">Mock not found.</p>
-          <Link href="/mocks" className="text-blue-600 dark:text-blue-400 font-medium">Back to Mocks</Link>
+          <Link href="/mocks" className="text-blue-600 dark:text-blue-400 font-medium">Back to mocks</Link>
         </div>
       </div>
     );

@@ -76,7 +76,7 @@ export default function LearningHubPage() {
               </p>
             </div>
             <ButtonLink href={learnMissionItem.href} variant="primary" size="sm" leftIcon={<Play size={13} />}>
-              Continue Learning
+              Continue learning
             </ButtonLink>
           </div>
         )}

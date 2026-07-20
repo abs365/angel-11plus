@@ -106,7 +106,7 @@ export default function ReportBugPage() {
           Report a Bug
         </h1>
         <p className="text-base text-gray-500 dark:text-gray-400 leading-relaxed">
-          Found something broken? Tell us. We fix beta bugs fast.
+          Found something broken? Tell us. We fix bugs fast.
         </p>
       </div>
 

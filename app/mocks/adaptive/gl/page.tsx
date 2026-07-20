@@ -481,7 +481,7 @@ export default function AdaptiveGlMockPage() {
             >
               Try Again
             </button>
-            <Link href="/mocks" className="text-violet-600 dark:text-violet-400 font-medium text-sm">Back to Practice</Link>
+            <Link href="/mocks" className="text-violet-600 dark:text-violet-400 font-medium text-sm">Back to practice</Link>
           </div>
         </div>
       </div>

@@ -55,15 +55,15 @@ export default function LearningIntelligencePage() {
   }, []);
 
   return (
-    <PageLayout breadcrumbs={[{ label: "Learning Intelligence" }]}>
+    <PageLayout breadcrumbs={[{ label: "Learning Report" }]}>
       <div className="max-w-3xl mx-auto px-4 py-6 md:px-8 md:py-8">
         <div className="flex items-center gap-3 mb-2">
           <div className="bg-purple-100 dark:bg-purple-900 p-3 rounded-2xl">
             <Brain size={22} className="text-purple-600 dark:text-purple-400" />
           </div>
           <div>
-            <h1 className="text-gray-900 dark:text-gray-100 font-bold text-2xl">Learning Intelligence</h1>
-            <p className="text-gray-400 dark:text-gray-500 text-sm">CSSE competency evidence, diagnostics and readiness</p>
+            <h1 className="text-gray-900 dark:text-gray-100 font-bold text-2xl">Learning Report</h1>
+            <p className="text-gray-400 dark:text-gray-500 text-sm">CSSE skills evidence, diagnostics and readiness</p>
           </div>
         </div>
 
@@ -73,7 +73,7 @@ export default function LearningIntelligencePage() {
 
         {profile === null && (
           <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-6 mt-6 text-center">
-            <p className="text-sm text-gray-500 dark:text-gray-400">Learning Intelligence isn&apos;t available right now.</p>
+            <p className="text-sm text-gray-500 dark:text-gray-400">Your learning report isn&apos;t available right now.</p>
           </div>
         )}
 
@@ -82,7 +82,7 @@ export default function LearningIntelligencePage() {
             <MapPin size={18} className="text-purple-400 mt-0.5 shrink-0" />
             <div>
               <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">
-                Learning Intelligence is available for the CSSE pathway
+                Your learning report is available for the CSSE pathway
               </p>
               <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">
                 {pathway ? `Your current pathway is ${pathway.name}.` : "Choose CSSE as your target pathway to see this."}{" "}
@@ -130,15 +130,15 @@ export default function LearningIntelligencePage() {
               <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 px-4 py-4">
                 <p className="text-gray-700 dark:text-gray-300 font-semibold text-sm">No evidence recorded yet</p>
                 <p className="text-gray-400 dark:text-gray-500 text-xs mt-1 leading-relaxed">
-                  Every competency below is shown honestly as &quot;Not Yet Observed.&quot; This isn&apos;t an error —
+                  Every skill below is shown honestly as &quot;Not Yet Observed.&quot; This isn&apos;t an error —
                   Angel&apos;s own content bank does not yet have any practice questions authored against CSSE&apos;s
-                  official competency structure, so there is genuinely nothing to report yet.
+                  official skills structure, so there is genuinely nothing to report yet.
                 </p>
               </div>
             )}
 
             <section>
-              <h2 className="text-gray-900 dark:text-gray-100 font-bold text-lg mb-3">Competency Profile</h2>
+              <h2 className="text-gray-900 dark:text-gray-100 font-bold text-lg mb-3">Skills Profile</h2>
               <CompetencyProfile competencies={profile.competencies} />
             </section>
 

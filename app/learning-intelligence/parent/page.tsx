@@ -54,7 +54,7 @@ export default function ParentDashboardPage() {
   const totalCount = profile?.competencies.length ?? 0;
 
   return (
-    <PageLayout breadcrumbs={[{ label: "Learning Intelligence", href: "/learning-intelligence" }, { label: "Parent Dashboard" }]}>
+    <PageLayout breadcrumbs={[{ label: "Learning Report", href: "/learning-intelligence" }, { label: "Parent Dashboard" }]}>
       <div className="max-w-3xl mx-auto px-4 py-6 md:px-8 md:py-8">
         <div className="flex items-center gap-3 mb-2">
           <div className="bg-purple-100 dark:bg-purple-900 p-3 rounded-2xl">
@@ -95,7 +95,7 @@ export default function ParentDashboardPage() {
                 <p className="text-sm text-gray-700 dark:text-gray-300">
                   {evidencedCount === 0
                     ? "No practice evidence recorded yet — this fills in as your child completes practice activities."
-                    : `${evidencedCount} of ${totalCount} CSSE competencies now have some recorded evidence.`}
+                    : `${evidencedCount} of ${totalCount} CSSE skills now have some recorded evidence.`}
                 </p>
                 <Link href="/learning-intelligence/practice" className="inline-block text-xs font-semibold text-purple-600 dark:text-purple-400 mt-2">
                   See practice areas →
@@ -104,7 +104,7 @@ export default function ParentDashboardPage() {
             </section>
 
             <section>
-              <h2 className="text-gray-900 dark:text-gray-100 font-bold text-lg mb-3">Competency Summary</h2>
+              <h2 className="text-gray-900 dark:text-gray-100 font-bold text-lg mb-3">Skills Summary</h2>
               <CompetencySummary competencies={profile.competencies} />
             </section>
 

@@ -9,10 +9,13 @@ import type {
 // ─── Badge definitions ────────────────────────────────────────────────────────
 
 export const BADGE_DEFINITIONS: BadgeDefinition[] = [
-  // Streak
+  // Streak — ids and trigger thresholds (computeEarnedIds below) are
+  // unchanged; only the user-visible name/description were reworded per
+  // Product Experience Standard V1 Correction 2 (no visible "Streak"
+  // wording on learner/parent screens).
   {
     id: "streak-3",
-    name: "3-Day Streak",
+    name: "Three Days Strong",
     description: "Three consecutive days of practice",
     category: "streak",
     iconName: "Flame",
@@ -20,7 +23,7 @@ export const BADGE_DEFINITIONS: BadgeDefinition[] = [
   },
   {
     id: "streak-7",
-    name: "Week Warrior",
+    name: "One Week Steady",
     description: "Seven days without missing a session",
     category: "streak",
     iconName: "Flame",
@@ -28,7 +31,7 @@ export const BADGE_DEFINITIONS: BadgeDefinition[] = [
   },
   {
     id: "streak-14",
-    name: "Fortnight Focus",
+    name: "Two Weeks Consistent",
     description: "Fourteen days of consistent daily practice",
     category: "streak",
     iconName: "Flame",
@@ -111,11 +114,14 @@ export const BADGE_DEFINITIONS: BadgeDefinition[] = [
     color: "pink",
   },
 
-  // Milestone
+  // Milestone — ids and xp thresholds (computeEarnedIds below) are
+  // unchanged; only the user-visible description was reworded per
+  // Product Experience Standard V1 Correction 2 (no visible "XP" wording
+  // on learner/parent screens).
   {
     id: "xp-100",
     name: "First Steps",
-    description: "Earned 100 XP",
+    description: "Reached your first practice milestone",
     category: "milestone",
     iconName: "Zap",
     color: "indigo",
@@ -123,7 +129,7 @@ export const BADGE_DEFINITIONS: BadgeDefinition[] = [
   {
     id: "xp-500",
     name: "Dedicated Learner",
-    description: "Earned 500 XP",
+    description: "Reached a strong practice milestone",
     category: "milestone",
     iconName: "Zap",
     color: "indigo",
@@ -131,7 +137,7 @@ export const BADGE_DEFINITIONS: BadgeDefinition[] = [
   {
     id: "xp-1000",
     name: "Excellence",
-    description: "Earned 1,000 XP",
+    description: "Reached an outstanding practice milestone",
     category: "milestone",
     iconName: "Trophy",
     color: "indigo",

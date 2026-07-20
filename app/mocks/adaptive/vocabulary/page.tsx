@@ -286,7 +286,7 @@ export default function AdaptiveVocabularyMockPage() {
             >
               Try Again
             </button>
-            <Link href="/mocks" className="text-emerald-600 dark:text-emerald-400 font-medium text-sm">Back to Practice</Link>
+            <Link href="/mocks" className="text-emerald-600 dark:text-emerald-400 font-medium text-sm">Back to practice</Link>
           </div>
         </div>
       </div>

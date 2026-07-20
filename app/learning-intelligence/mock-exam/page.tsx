@@ -212,7 +212,7 @@ export default function MockExamPage() {
   const seconds = timeLeftSeconds % 60;
 
   return (
-    <PageLayout breadcrumbs={[{ label: "Learning Intelligence", href: "/learning-intelligence" }, { label: "Mock exam" }]}>
+    <PageLayout breadcrumbs={[{ label: "Learning Report", href: "/learning-intelligence" }, { label: "Mock exam" }]}>
       <div className="max-w-3xl mx-auto px-4 py-6 md:px-8 md:py-8">
         {mode === "intro" && (
           <div>
@@ -223,8 +223,8 @@ export default function MockExamPage() {
             </p>
             <InfoCard className="mt-6">
               <p className="text-sm text-gray-700 dark:text-gray-300">
-                Answers aren&apos;t marked as you go — this is a real exam condition. Once you submit, your Learning
-                Intelligence profile updates with everything you attempted.
+                Answers aren&apos;t marked as you go — this is a real exam condition. Once you submit, your learning
+                report updates with everything you attempted.
               </p>
               <button
                 onClick={loadAndStart}
@@ -324,7 +324,7 @@ export default function MockExamPage() {
             {profile && profile.pathwayEligible && (
               <div className="space-y-8 mt-6">
                 <section>
-                  <h2 className="text-gray-900 dark:text-gray-100 font-bold text-lg mb-3">Updated competency profile</h2>
+                  <h2 className="text-gray-900 dark:text-gray-100 font-bold text-lg mb-3">Updated skills profile</h2>
                   <CompetencyProfile competencies={profile.competencies} />
                 </section>
                 <section>
@@ -339,7 +339,7 @@ export default function MockExamPage() {
             )}
 
             <Link href="/learning-intelligence" className="text-xs font-semibold text-purple-600 dark:text-purple-400 mt-8 inline-block">
-              Full Learning Intelligence dashboard →
+              Full learning report →
             </Link>
           </div>
         )}

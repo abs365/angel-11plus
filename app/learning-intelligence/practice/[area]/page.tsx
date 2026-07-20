@@ -68,7 +68,7 @@ export default function PracticeSessionPage({ params }: { params: Promise<{ area
 
   if (!area) {
     return (
-      <PageLayout breadcrumbs={[{ label: "Learning Intelligence", href: "/learning-intelligence" }, { label: "Practice" }]}>
+      <PageLayout breadcrumbs={[{ label: "Learning Report", href: "/learning-intelligence" }, { label: "Practice" }]}>
         <div className="max-w-3xl mx-auto px-4 py-6 md:px-8 md:py-8">
           <InfoCard>
             <p className="text-sm text-gray-500 dark:text-gray-400">Unknown practice area.</p>
@@ -225,7 +225,7 @@ export default function PracticeSessionPage({ params }: { params: Promise<{ area
   }
 
   return (
-    <PageLayout breadcrumbs={[{ label: "Learning Intelligence", href: "/learning-intelligence" }, { label: "Practice", href: "/learning-intelligence/practice" }, { label: area.label }]}>
+    <PageLayout breadcrumbs={[{ label: "Learning Report", href: "/learning-intelligence" }, { label: "Practice", href: "/learning-intelligence/practice" }, { label: area.label }]}>
       <div className="max-w-3xl mx-auto px-4 py-6 md:px-8 md:py-8">
         {mode === "intro" && (
           <div>
@@ -233,8 +233,8 @@ export default function PracticeSessionPage({ params }: { params: Promise<{ area
             <p className="text-gray-400 dark:text-gray-500 text-sm mt-1">{area.description}</p>
             <InfoCard className="mt-6">
               <p className="text-sm text-gray-700 dark:text-gray-300">
-                Every question you answer here updates your Competency Profile, Evidence Profile, Readiness and
-                Recommendations on your Learning Intelligence dashboard.
+                Every question you answer here updates your Skills Profile, Evidence Profile, Readiness and
+                Recommendations on your learning report.
               </p>
               <button
                 onClick={loadAndStart}
@@ -331,7 +331,7 @@ export default function PracticeSessionPage({ params }: { params: Promise<{ area
             {profile && profile.pathwayEligible && (
               <div className="space-y-8 mt-6">
                 <section>
-                  <h2 className="text-gray-900 dark:text-gray-100 font-bold text-lg mb-3">Updated Competency Profile</h2>
+                  <h2 className="text-gray-900 dark:text-gray-100 font-bold text-lg mb-3">Updated Skills Profile</h2>
                   <CompetencyProfile competencies={profile.competencies} />
                 </section>
                 <section>
@@ -358,7 +358,7 @@ export default function PracticeSessionPage({ params }: { params: Promise<{ area
                 Practice another area
               </Link>
               <Link href="/learning-intelligence" className="text-xs font-semibold text-gray-500 dark:text-gray-400">
-                Full Learning Intelligence dashboard →
+                Full learning report →
               </Link>
             </div>
           </div>
