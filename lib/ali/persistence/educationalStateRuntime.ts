@@ -74,15 +74,25 @@ export function deriveReviewDue(
   return masteredQuestionLastPresentedAt.some((ts) => isMaintenanceReviewDue(ts, now));
 }
 
+/**
+ * Defect correction (Sprint 1, ANGEL-CSSE-002A integration): accepts the
+ * caller-resolved list of skill values (Question Type IDs for CSSE
+ * competencies; a single-element `[competencyCode]` for the older ALI
+ * system) rather than assuming `skill === competencyCode` — see
+ * competencyEvidence.ts's identical correction for the full rationale. No
+ * real caller existed before this fix (confirmed by repo-wide search).
+ */
 async function fetchCompetencyStateEvidence(
   supabase: SupabaseClient<Database>,
   profileId: string,
-  competencyCode: string
+  skillCodes: string[]
 ): Promise<{ evidence: EducationalStateQuestionEvidence[]; masteryState: string; reviewDue: boolean }> {
+  if (skillCodes.length === 0) return { evidence: [], masteryState: "new", reviewDue: false };
+
   const { data: questions, error: questionsError } = await supabase
     .from("ali_question_bank")
     .select("id, mastery_threshold, confidence_weight")
-    .eq("skill", competencyCode);
+    .in("skill", skillCodes);
 
   if (questionsError || !questions || questions.length === 0) {
     if (questionsError) console.warn("[ALI] fetchCompetencyStateEvidence (question lookup) failed:", questionsError.message);
@@ -136,12 +146,13 @@ async function fetchCompetencyStateEvidence(
 export async function computeRealEducationalState(
   supabase: SupabaseClient<Database>,
   profileId: string,
-  competencyCode: string
+  competencyCode: string,
+  skillCodes: string[] = [competencyCode]
 ): Promise<EducationalState> {
   const { evidence, masteryState, reviewDue } = await fetchCompetencyStateEvidence(
     supabase,
     profileId,
-    competencyCode
+    skillCodes
   );
 
   const confidenceInput = { competencyCode, questions: evidence };

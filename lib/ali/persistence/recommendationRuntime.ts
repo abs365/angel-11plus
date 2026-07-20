@@ -202,7 +202,7 @@ export async function computeRealRecommendationOrchestration(
     const triggerReason = deriveTriggerReason(educationalState);
     if (!triggerReason) continue; // Judgement call 3 — mastered/durably-mastered, no honest trigger.
 
-    const evidence = await fetchCompetencyEvidence(supabase, profileId, competencyCode);
+    const evidence = await fetchCompetencyEvidence(supabase, profileId, [competencyCode]);
     const confidenceTier = computeCompetencyConfidence({ competencyCode, questions: evidence });
 
     const candidate: RecommendationCandidate = {

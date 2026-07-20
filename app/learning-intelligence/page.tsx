@@ -9,6 +9,8 @@ import { getPathwayById } from "@/lib/pathways";
 import { getSupabaseClient } from "@/lib/supabase";
 import { fetchLearnerIntelligenceProfile } from "@/lib/learningEngine/profile";
 import { fetchRecentActivity, type RecentActivityItem } from "@/lib/learningEngine/activity";
+import { getEducationalIntelligence } from "@/lib/learningEngine/educationalIntelligenceService";
+import { ALL_COMPETENCY_IDS } from "@/lib/learningEngine/assessmentBrainMap";
 import { CompetencyProfile } from "@/components/learningEngine/CompetencyProfile";
 import { EvidenceProfile } from "@/components/learningEngine/EvidenceProfile";
 import { DiagnosticOverview } from "@/components/learningEngine/DiagnosticOverview";
@@ -39,6 +41,7 @@ export default function LearningIntelligencePage() {
   const [profile, setProfile] = useState<LearnerIntelligenceProfile | null | undefined>(undefined);
   const [pathway, setPathway] = useState<Pathway | undefined>();
   const [recentActivity, setRecentActivity] = useState<RecentActivityItem[]>([]);
+  const [durableCompetencyIds, setDurableCompetencyIds] = useState<Set<string>>(new Set());
 
   useEffect(() => {
     const pathwayId = getSelectedPathwayId();
@@ -49,6 +52,22 @@ export default function LearningIntelligencePage() {
         const supabase = getSupabaseClient();
         if (p?.pathwayEligible && supabase) {
           fetchRecentActivity(supabase, p.profileId).then(setRecentActivity).catch(() => setRecentActivity([]));
+
+          // Deliverable 6 — real Educational Intelligence Engine data
+          // (Durable Mastery) surfaced on the existing Skills Profile
+          // section, reusing this dashboard rather than a new screen.
+          // Per-competency, independent of the rest of this page's own
+          // read path (fetchLearnerIntelligenceProfile), so a failure here
+          // never blocks the page's existing content from rendering.
+          Promise.all(
+            ALL_COMPETENCY_IDS.map((id) =>
+              getEducationalIntelligence(supabase, p.profileId, id)
+                .then((snapshot) => (snapshot.durableMastery.durable ? id : null))
+                .catch(() => null)
+            )
+          ).then((results) => {
+            setDurableCompetencyIds(new Set(results.filter((id) => id !== null) as string[]));
+          });
         }
       })
       .catch(() => setProfile(null));
@@ -139,7 +158,7 @@ export default function LearningIntelligencePage() {
 
             <section>
               <h2 className="text-gray-900 dark:text-gray-100 font-bold text-lg mb-3">Skills Profile</h2>
-              <CompetencyProfile competencies={profile.competencies} />
+              <CompetencyProfile competencies={profile.competencies} durableCompetencyIds={durableCompetencyIds} />
             </section>
 
             <section>

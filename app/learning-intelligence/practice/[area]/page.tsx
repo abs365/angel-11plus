@@ -12,6 +12,13 @@ import { fetchQuestionBank } from "@/lib/ali/questionBank";
 import { recordPresentation, recordOutcome } from "@/lib/ali/history";
 import { completeLesson, recordSkillResult, getSelectedPathwayId, setSelectedPathway } from "@/lib/progress";
 import { fetchLearnerIntelligenceProfile } from "@/lib/learningEngine/profile";
+import { QUESTION_TYPE_PRIMARY_COMPETENCY } from "@/lib/learningEngine/assessmentBrainMap";
+import {
+  getEducationalIntelligence,
+  processEvidenceForCompetency,
+  type EducationalIntelligenceSnapshot,
+} from "@/lib/learningEngine/educationalIntelligenceService";
+import type { CompetencyId, QuestionTypeId } from "@/lib/learningEngine/types";
 import {
   getPracticeArea,
   checkMathsAnswer,
@@ -65,6 +72,10 @@ export default function PracticeSessionPage({ params }: { params: Promise<{ area
   const profileIdRef = useRef<string>("");
   const sessionIdRef = useRef<string>(`practice-${areaId}-${Date.now()}`);
   const supabaseRef = useRef<ReturnType<typeof getSupabaseClient>>(null);
+  // Pre-SESSION Educational Intelligence snapshots (Deliverable 7 fix —
+  // see recordAndAdvance()'s docstring below for why these must be
+  // captured before recordPresentation() runs, not inside recordAndAdvance).
+  const preSessionSnapshotsRef = useRef<Map<CompetencyId, EducationalIntelligenceSnapshot>>(new Map());
 
   if (!area) {
     return (
@@ -107,6 +118,31 @@ export default function PracticeSessionPage({ params }: { params: Promise<{ area
         );
       }
 
+      // Capture each competency's Educational Intelligence snapshot BEFORE
+      // recordPresentation() below touches last_presented_at for every
+      // question in this session. last_presented_at is also the real
+      // signal a Maintenance Review's calendar gap is computed from
+      // (lib/ali/durableMastery.ts's isMaintenanceReviewDue) — capturing
+      // the pre-attempt snapshot later, inside recordAndAdvance(), would
+      // read a last_presented_at this same session's own load step had
+      // already reset to "now" moments earlier, permanently hiding any
+      // genuine review-due gap. Reusing this cached snapshot for each
+      // competency's first answer this session, instead of a fresh read
+      // taken after recordPresentation, is what makes a real Maintenance
+      // Review detectable at all through this page.
+      const competencyIdsThisSession = new Set(
+        tagged
+          .map((q) => QUESTION_TYPE_PRIMARY_COMPETENCY[q.skill as QuestionTypeId])
+          .filter((id): id is CompetencyId => Boolean(id))
+      );
+      preSessionSnapshotsRef.current = new Map(
+        await Promise.all(
+          Array.from(competencyIdsThisSession).map(
+            async (id) => [id, await getEducationalIntelligence(supabase, profileId, id)] as const
+          )
+        )
+      );
+
       await withTimeout(
         recordPresentation(supabase, profileId, tagged.map((q) => q.id), "practice_experience"),
         10000,
@@ -141,7 +177,32 @@ export default function PracticeSessionPage({ params }: { params: Promise<{ area
 
     const supabase = supabaseRef.current;
     if (supabase && profileIdRef.current) {
-      recordOutcome(
+      // Educational Intelligence evidence pipeline (Permanent Engineering
+      // Rule 1 — no feature may bypass the Engine). The pre-attempt
+      // snapshot must reflect state from BEFORE this attempt's evidence is
+      // written, so processEvidenceForCompetency() can detect a genuine
+      // Maintenance Review event. For a competency's first answer this
+      // session, that is the snapshot loadAndStart() captured before
+      // recordPresentation() touched last_presented_at (see its comment);
+      // for any later answer in the same competency this session, a fresh
+      // read is correct (no session-start reset has intervened since).
+      // recordOutcome() is awaited, not fire-and-forget, so it cannot race
+      // the post-attempt read inside processEvidenceForCompetency().
+      const competencyId = QUESTION_TYPE_PRIMARY_COMPETENCY[current.skill as QuestionTypeId];
+      let preAttemptSnapshot: EducationalIntelligenceSnapshot | null = null;
+      if (competencyId) {
+        const cached = preSessionSnapshotsRef.current.get(competencyId);
+        if (cached) {
+          preAttemptSnapshot = cached;
+          preSessionSnapshotsRef.current.delete(competencyId);
+        } else {
+          preAttemptSnapshot = await getEducationalIntelligence(supabase, profileIdRef.current, competencyId).catch(
+            () => null
+          );
+        }
+      }
+
+      await recordOutcome(
         supabase,
         profileIdRef.current,
         current.id,
@@ -149,6 +210,16 @@ export default function PracticeSessionPage({ params }: { params: Promise<{ area
         sessionIdRef.current,
         current.masteryThreshold
       ).catch(() => {});
+
+      if (competencyId && preAttemptSnapshot) {
+        processEvidenceForCompetency(
+          supabase,
+          profileIdRef.current,
+          competencyId,
+          preAttemptSnapshot,
+          isCorrect
+        ).catch(() => {});
+      }
     }
     // Legacy bridge — keeps existing Dashboard/Parent Hub XP & skill
     // displays consistent with this new activity, same convention the

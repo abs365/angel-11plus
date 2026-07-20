@@ -18,6 +18,21 @@ import type { QuestionEvidenceInput } from "@/types/ali/confidence";
  * does not model foreign-table Relationships. Two simple queries merged in
  * JS is easier to verify correct and consistent with this codebase's own
  * established pattern, at the cost of one extra round-trip.
+ *
+ * Defect correction (Sprint 1, ANGEL-CSSE-002A Educational Intelligence
+ * Engine V1 integration): this module originally queried
+ * `ali_question_bank` with `.eq("skill", competencyCode)`, correct for the
+ * older ALI system where a question's `skill` column is itself the
+ * competency (e.g. `"vr.analogies"`). For the CSSE/Assessment Brain V1
+ * system, `skill` stores a Question Type ID (e.g. `"QT-MR-04"`), and a
+ * competency maps to *multiple* Question Type IDs
+ * (assessmentBrainMap.ts's QUESTION_TYPE_PRIMARY_COMPETENCY) — a single
+ * `.eq()` on the competency code would silently match zero rows for every
+ * CSSE competency. Corrected by accepting the caller-resolved list of
+ * skill values to match, never assuming skill === competency. No real
+ * caller existed anywhere in the app before this correction (confirmed by
+ * repo-wide search), so this is a zero-regression-risk fix, not a redesign
+ * of working behaviour.
  */
 interface QuestionMeta {
   id: string;
@@ -61,12 +76,14 @@ export function mergeQuestionsWithHistory(
 export async function fetchCompetencyEvidence(
   supabase: SupabaseClient<Database>,
   profileId: string,
-  competencyCode: string
+  skillCodes: string[]
 ): Promise<QuestionEvidenceInput[]> {
+  if (skillCodes.length === 0) return [];
+
   const { data: questions, error: questionsError } = await supabase
     .from("ali_question_bank")
     .select("id, mastery_threshold, confidence_weight")
-    .eq("skill", competencyCode);
+    .in("skill", skillCodes);
 
   if (questionsError || !questions || questions.length === 0) {
     if (questionsError) console.warn("[ALI] fetchCompetencyEvidence (question lookup) failed:", questionsError.message);
