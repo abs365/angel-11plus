@@ -19,6 +19,14 @@ export interface PracticeAreaConfig {
   label: string;
   subject: AliSubject;
   description: string;
+  /**
+   * Sprint 3 (ANGEL-CSSE-002A, Personalised Practice) — the target number of
+   * activities generatePersonalisedSession() (lib/learningEngine/
+   * sessionGenerator.ts) selects for this area. Not a guarantee: with today's
+   * small real content set, selectQuestions()'s own fallback-shortfall
+   * bucket may honestly return fewer.
+   */
+  sessionSize: number;
 }
 
 export const PRACTICE_AREAS: PracticeAreaConfig[] = [
@@ -27,18 +35,21 @@ export const PRACTICE_AREAS: PracticeAreaConfig[] = [
     label: "Reading Comprehension",
     subject: "english",
     description: "Answer real comprehension questions and see which competencies they evidence.",
+    sessionSize: 8,
   },
   {
     id: "mathematics",
     label: "Mathematics",
     subject: "maths",
     description: "Work through real Maths questions across arithmetic, algebra, geometry and more.",
+    sessionSize: 8,
   },
   {
     id: "continuous-writing",
     label: "Continuous Writing",
     subject: "writing",
     description: "Write a full response to a real prompt and receive feedback.",
+    sessionSize: 2,
   },
 ];
 

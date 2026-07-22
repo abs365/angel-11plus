@@ -1,0 +1,171 @@
+import type { SupabaseClient } from "@supabase/supabase-js";
+import type { Database } from "@/types/supabase";
+import type { BankQuestion } from "@/types/ali/questionBank";
+import type { CompetencyId, QuestionTypeId } from "./types";
+import { fetchQuestionBank } from "@/lib/ali/questionBank";
+import { fetchStudentHistory, ensureAdaptiveState } from "@/lib/ali/history";
+import { selectQuestions } from "@/lib/ali/selection";
+import { generateExplanation } from "@/lib/ali/explainability";
+import { getTargetExamDate } from "@/lib/progress";
+import { getRecommendations } from "./educationalIntelligenceService";
+import { QUESTION_TYPE_PRIMARY_COMPETENCY, getQuestionTypesForCompetency } from "./assessmentBrainMap";
+import { getPracticeArea, type PracticeAreaId } from "./practiceContent";
+
+/**
+ * Personalised Session Generation (Sprint 3, ANGEL-CSSE-002A). Single entry
+ * point replacing static "fetch every tagged question" selection in
+ * app/learning-intelligence/practice/[area]/page.tsx.
+ *
+ * Founder Decision (recorded here, not re-litigated per sprint): competency
+ * ranking below uses ONLY Educational State, Evidence Confidence, review
+ * history, and examination relevance — exactly what getRecommendations()
+ * already computes. Cross-competency prerequisite ranking is intentionally
+ * excluded: LEARNING_ENGINE_V1.md explicitly and repeatedly forbids
+ * asserting cross-competency prerequisite/developmental relationships
+ * ("no asset in this evidence base could support such a claim"), and the one
+ * schema field that could carry it (BankQuestion.transferLinks) is
+ * unpopulated in every real seeded row. Reconsider only after a separately-
+ * approved, evidence-backed dependency model exists.
+ *
+ * Reuses lib/ali/selection.ts's selectQuestions() completely unmodified —
+ * the real, tested cooldown/weak-skill-override/mastered-resurface engine
+ * already built for the old ALI/GL adaptive mocks. The only new work is
+ * feeding it a CSSE-correct priority signal (getRecommendations(), already
+ * fixed for Question-Type-ID resolution in Sprint 2) instead of the coarse,
+ * old-model-only deriveWeakCompetencies() signal that engine was built with.
+ */
+
+/** Capped at 1 review-due competency per session — a disclosed judgement
+ * call, not a limitation of the underlying signal — so a genuine review
+ * doesn't crowd out every other priority in a small session. */
+const REVIEW_SLOT_CAP = 1;
+
+export interface SessionActivity {
+  question: BankQuestion;
+  /** Plain-English, learner-facing reason this activity was selected (Deliverable 5 — Explainable Session Planning). Never a raw competency/tier code. */
+  explanation: string;
+}
+
+export interface PersonalisedSession {
+  activities: SessionActivity[];
+  /** Parent/learner-facing overview of why today's session looks like this — reuses the same "parent" audience explanation Sprint 2 already wired for the Parent Dashboard, not new copy. */
+  summary: string;
+}
+
+function daysUntilFromTargetExamDate(now: Date): number | null {
+  const targetIso = getTargetExamDate();
+  if (!targetIso) return null;
+  const diffMs = new Date(targetIso).getTime() - now.getTime();
+  return Math.round(diffMs / (1000 * 60 * 60 * 24));
+}
+
+/** Plain, honest captions for selection reasons that have no corresponding
+ * RecommendationCandidate (mastered/durably-mastered competencies are
+ * deliberately excluded from getRecommendations()'s output — Sprint 2's
+ * judgement call 3 — so there is no candidate to generate real Engine text
+ * from for these buckets). Never invents a confidence/evidence claim. */
+function fallbackExplanation(reason: string): string {
+  switch (reason) {
+    case "unseen":
+      return "New practice, building your first evidence here.";
+    case "eligible-seen":
+      return "A question you've worked on before, for more practice.";
+    case "mastered-resurface":
+      return "A quick refresher on something you've already mastered.";
+    default:
+      return "Extra practice to round out today's session.";
+  }
+}
+
+export async function generatePersonalisedSession(
+  supabase: SupabaseClient<Database>,
+  profileId: string,
+  areaId: PracticeAreaId,
+  now: Date = new Date()
+): Promise<PersonalisedSession> {
+  const area = getPracticeArea(areaId);
+  if (!area) {
+    return { activities: [], summary: "Unknown practice area." };
+  }
+
+  const bank = await fetchQuestionBank(supabase, area.subject, "csse");
+  const tagged = bank.filter((q) => q.skill.startsWith("QT-"));
+  if (tagged.length === 0) {
+    return {
+      activities: [],
+      summary:
+        "No practice content is available for this area yet — the illustrative content set (migration 013) has not been applied to this database.",
+    };
+  }
+
+  const competencyIds = new Set(
+    tagged
+      .map((q) => QUESTION_TYPE_PRIMARY_COMPETENCY[q.skill as QuestionTypeId])
+      .filter((id): id is CompetencyId => Boolean(id))
+  );
+
+  const daysUntilExam = daysUntilFromTargetExamDate(now);
+  const result = await getRecommendations(supabase, profileId, Array.from(competencyIds), now, daysUntilExam);
+
+  const reviewDue = result.ordered.filter((c) => c.triggerReason === "review-due").slice(0, REVIEW_SLOT_CAP);
+  const priority = result.ordered.filter((c) => c.triggerReason !== "review-due");
+
+  const history = await fetchStudentHistory(supabase, profileId);
+  const currentSequence = await ensureAdaptiveState(supabase, profileId);
+
+  // Review Scheduling (Deliverable 3) — resolve a real, calendar-overdue
+  // "review-due" candidate into an actual previously-mastered question,
+  // reserved ahead of the general selection pool below. If no mastered
+  // question exists yet for that competency, the candidate is simply
+  // dropped here — never fabricated into a review activity that isn't real.
+  const reviewActivities: SessionActivity[] = [];
+  const reservedIds = new Set<string>();
+  for (const candidate of reviewDue) {
+    const skillCodes = getQuestionTypesForCompetency(candidate.competencyCode as CompetencyId);
+    const masteredCandidates = tagged
+      .filter((q) => skillCodes.includes(q.skill as QuestionTypeId) && history.get(q.id)?.masteryState === "mastered")
+      .sort((a, b) => {
+        const aTime = new Date(history.get(a.id)!.lastPresentedAt).getTime();
+        const bTime = new Date(history.get(b.id)!.lastPresentedAt).getTime();
+        return aTime - bTime; // oldest (most overdue) first
+      });
+    const question = masteredCandidates[0];
+    if (!question) continue;
+
+    reservedIds.add(question.id);
+    reviewActivities.push({
+      question,
+      explanation: generateExplanation(candidate, "learner").text,
+    });
+  }
+
+  // Competency Prioritisation -> question selection (Deliverables 1, 2, 4).
+  // getRecommendations() already excludes mastered/durably-mastered
+  // competencies (no honest trigger to recommend them), so `priority` is
+  // simply "every competency the Engine currently flags," in its
+  // already-computed rank order.
+  const weakSkills = new Set<QuestionTypeId>(
+    priority.flatMap((c) => getQuestionTypesForCompetency(c.competencyCode as CompetencyId))
+  );
+  const remainingSlots = Math.max(0, area.sessionSize - reviewActivities.length);
+  const candidatePool = tagged.filter((q) => !reservedIds.has(q.id));
+  const selection = selectQuestions(candidatePool, history, currentSequence, weakSkills, remainingSlots);
+
+  const candidateByCompetency = new Map(priority.map((c) => [c.competencyCode, c] as const));
+  const priorityActivities: SessionActivity[] = selection.questions.map((question) => {
+    const trace = selection.trace.find((t) => t.questionId === question.id);
+    const competencyId = QUESTION_TYPE_PRIMARY_COMPETENCY[question.skill as QuestionTypeId];
+    const candidate = competencyId ? candidateByCompetency.get(competencyId) : undefined;
+    const explanation = candidate
+      ? generateExplanation(candidate, "learner").text
+      : fallbackExplanation(trace?.selectionReason ?? "fallback-shortfall");
+    return { question, explanation };
+  });
+
+  const topCandidate = result.ordered[0];
+  const summary = topCandidate
+    ? generateExplanation(topCandidate, "parent").text
+    : "Today's session is a general practice mix across this area.";
+
+  return { activities: [...reviewActivities, ...priorityActivities], summary };
+}

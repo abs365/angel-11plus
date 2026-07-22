@@ -8,11 +8,11 @@ import { InfoCard } from "@/components/ui/Card";
 import { getSupabaseClient } from "@/lib/supabase";
 import { ensureProfile } from "@/lib/supabaseProgress";
 import { withTimeout } from "@/lib/withTimeout";
-import { fetchQuestionBank } from "@/lib/ali/questionBank";
 import { recordPresentation, recordOutcome } from "@/lib/ali/history";
 import { completeLesson, recordSkillResult, getSelectedPathwayId, setSelectedPathway } from "@/lib/progress";
 import { fetchLearnerIntelligenceProfile } from "@/lib/learningEngine/profile";
 import { QUESTION_TYPE_PRIMARY_COMPETENCY } from "@/lib/learningEngine/assessmentBrainMap";
+import { generatePersonalisedSession } from "@/lib/learningEngine/sessionGenerator";
 import {
   getEducationalIntelligence,
   processEvidenceForCompetency,
@@ -68,6 +68,11 @@ export default function PracticeSessionPage({ params }: { params: Promise<{ area
   const [checkedItems, setCheckedItems] = useState<Set<string>>(new Set());
   const [correctCount, setCorrectCount] = useState(0);
   const [profile, setProfile] = useState<LearnerIntelligenceProfile | null | undefined>(undefined);
+  // Sprint 3 (ANGEL-CSSE-002A, Personalised Practice) — per-activity learner
+  // explanations and the session-level parent/learner summary, both from
+  // generatePersonalisedSession(). Keyed by question id.
+  const [activityExplanations, setActivityExplanations] = useState<Map<string, string>>(new Map());
+  const [sessionSummary, setSessionSummary] = useState("");
 
   const profileIdRef = useRef<string>("");
   const sessionIdRef = useRef<string>(`practice-${areaId}-${Date.now()}`);
@@ -109,14 +114,19 @@ export default function PracticeSessionPage({ params }: { params: Promise<{ area
       // /pathways already lets a learner change their selected pathway.
       if (getSelectedPathwayId() !== "csse") setSelectedPathway("csse");
 
-      const bank = await withTimeout(fetchQuestionBank(supabase, area!.subject, "csse"), 10000, "today's activities");
-      const tagged = bank.filter((q) => q.skill.startsWith("QT-"));
+      const session = await withTimeout(
+        generatePersonalisedSession(supabase, profileId, area!.id, new Date()),
+        10000,
+        "today's activities"
+      );
+      const tagged = session.activities.map((a) => a.question);
 
       if (tagged.length === 0) {
-        throw new Error(
-          "No practice content is available for this area yet — the illustrative content set (migration 013) has not been applied to this database."
-        );
+        throw new Error(session.summary);
       }
+
+      setActivityExplanations(new Map(session.activities.map((a) => [a.question.id, a.explanation])));
+      setSessionSummary(session.summary);
 
       // Capture each competency's Educational Intelligence snapshot BEFORE
       // recordPresentation() below touches last_presented_at for every
@@ -317,17 +327,22 @@ export default function PracticeSessionPage({ params }: { params: Promise<{ area
           </div>
         )}
 
-        {mode === "loading" && <p className="text-sm text-gray-400 dark:text-gray-500 mt-6">Preparing your practice…</p>}
+        {mode === "loading" && (
+          <p className="text-sm text-gray-400 dark:text-gray-500 mt-6" aria-live="polite">Preparing your practice…</p>
+        )}
 
         {mode === "error" && (
           <InfoCard className="mt-6 text-center">
             <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">We couldn&apos;t prepare this practice session</p>
             <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">{errorMessage}</p>
             <div className="flex items-center justify-center gap-4 mt-4">
-              <button onClick={loadAndStart} className="text-xs font-semibold text-purple-600 dark:text-purple-400 inline-flex items-center gap-1">
+              <button
+                onClick={loadAndStart}
+                className="min-h-[44px] inline-flex items-center gap-1 text-xs font-semibold text-purple-600 dark:text-purple-400 px-2"
+              >
                 <RotateCcw size={14} /> Try again
               </button>
-              <Link href="/learning-intelligence/practice" className="text-xs font-semibold text-gray-500 dark:text-gray-400">
+              <Link href="/learning-intelligence/practice" className="min-h-[44px] inline-flex items-center text-xs font-semibold text-gray-500 dark:text-gray-400 px-2">
                 Back to practice
               </Link>
             </div>
@@ -339,6 +354,18 @@ export default function PracticeSessionPage({ params }: { params: Promise<{ area
             <p className="text-xs text-gray-400 dark:text-gray-500">
               Question {index + 1} of {activities.length} · {current.skill}
             </p>
+
+            {index === 0 && sessionSummary && (
+              <InfoCard className="mt-2 mb-4">
+                <p className="text-xs text-gray-600 dark:text-gray-400">{sessionSummary}</p>
+              </InfoCard>
+            )}
+
+            {activityExplanations.get(current.id) && (
+              <p className="text-xs text-purple-600 dark:text-purple-400 mt-2 mb-3">
+                {activityExplanations.get(current.id)}
+              </p>
+            )}
 
             {area.id === "reading-comprehension" && (
               <ReadingActivity
@@ -424,13 +451,25 @@ export default function PracticeSessionPage({ params }: { params: Promise<{ area
               </div>
             )}
 
-            <div className="flex items-center gap-4 mt-8">
-              <Link href="/learning-intelligence/practice" className="text-xs font-semibold text-purple-600 dark:text-purple-400">
-                Practice another area
+            {/* WP4D (FD-022) — one clear primary next step, matching the
+                stated sequence Practice -> Results -> Parent Insight ->
+                Revision -> Practice. The other two exits are real and kept,
+                but visually secondary so they don't compete with it. */}
+            <div className="mt-8">
+              <Link
+                href="/learning-intelligence/parent"
+                className="inline-block bg-purple-600 hover:bg-purple-700 text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-colors"
+              >
+                See Parent Dashboard →
               </Link>
-              <Link href="/learning-intelligence" className="text-xs font-semibold text-gray-500 dark:text-gray-400">
-                Full learning report →
-              </Link>
+              <div className="flex items-center gap-4 flex-wrap mt-3">
+                <Link href="/learning-intelligence/practice" className="text-xs font-semibold text-gray-500 dark:text-gray-400">
+                  Practice another area
+                </Link>
+                <Link href="/learning-intelligence" className="text-xs font-semibold text-gray-500 dark:text-gray-400">
+                  Full learning report →
+                </Link>
+              </div>
             </div>
           </div>
         )}
