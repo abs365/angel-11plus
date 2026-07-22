@@ -98,3 +98,45 @@ export async function fetchCurrentAuditRecord(
     supersedeReason: data.supersede_reason,
   };
 }
+
+/**
+ * Sprint 2 (ANGEL-CSSE-002A) — the read-side this table never had. Every
+ * Higher-Evidence-Required conclusion ever reached for a learner (mastery,
+ * durable-mastery, wellbeing-veto), newest first, including superseded
+ * records — a superseded record is still a real historical event (e.g. a
+ * mastery later reinforced by durable mastery), not a mistake to hide. This
+ * is the Educational Timeline's data source: the closest real thing this
+ * schema has to LEARNING_ENGINE_V1.md §3.6's Historical Progress, per the
+ * Architecture Closure Review's own finding that this table was built for
+ * exactly that purpose.
+ */
+export async function fetchEducationalMilestones(
+  supabase: SupabaseClient<Database>,
+  learnerId: string,
+  /**
+   * Sprint 4 (ANGEL-CSSE-002A, Parent Intelligence) — optional lower bound
+   * on `concluded_at` (ISO timestamp), e.g. for a "this week" report.
+   * Omitted by every pre-Sprint-4 caller, so their behaviour is unchanged.
+   */
+  sinceIso?: string
+): Promise<EducationalAuditRecord[]> {
+  let query = supabase.from("ali_educational_audit").select("*").eq("learner_id", learnerId);
+  if (sinceIso) query = query.gte("concluded_at", sinceIso);
+  const { data, error } = await query.order("concluded_at", { ascending: false });
+
+  if (error || !data) {
+    if (error) console.warn("[ALI] fetchEducationalMilestones failed:", error.message);
+    return [];
+  }
+
+  return data.map((row) => ({
+    id: row.id,
+    conclusionType: row.conclusion_type,
+    learnerId: row.learner_id,
+    competencyOrDimension: row.competency_or_dimension,
+    confidenceTierAtTime: row.confidence_tier_at_time,
+    concludedAt: row.concluded_at,
+    supersededBy: row.superseded_by,
+    supersedeReason: row.supersede_reason,
+  }));
+}
