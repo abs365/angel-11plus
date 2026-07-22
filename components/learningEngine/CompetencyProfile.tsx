@@ -22,6 +22,12 @@ import type { CompetencyStatus } from "@/lib/learningEngine/types";
  * plain "mastered" (validated once) that no prior surface displayed.
  * Callers that do not pass it (e.g. the Practice results screen) render
  * exactly as before.
+ *
+ * Sprint 4 Completion Package (WP4A) — the raw CompetencyId ("RC-01") that
+ * used to render under the name is removed. Earlier sprints treated "codes
+ * visible to the learner, hidden from the parent" as a deliberate design
+ * axis; FD-019's "Plain English throughout" supersedes that split for this
+ * shared component, so the code is gone for every caller, not toggled.
  */
 export function CompetencyProfile({
   competencies,
@@ -49,7 +55,6 @@ export function CompetencyProfile({
                   <InfoCard key={id} className="flex items-center justify-between gap-3 flex-wrap">
                     <div className="min-w-0">
                       <p className="text-sm font-semibold text-gray-900 dark:text-gray-100 truncate">{meta.name}</p>
-                      <p className="text-[11px] text-gray-400 dark:text-gray-500">{id}</p>
                     </div>
                     <div className="flex items-center gap-3 flex-wrap">
                       {durableCompetencyIds?.has(id) && (

@@ -87,7 +87,7 @@ export default function LearningIntelligencePage() {
         </div>
 
         {profile === undefined && (
-          <p className="text-sm text-gray-400 dark:text-gray-500 mt-6">Loading…</p>
+          <p className="text-sm text-gray-400 dark:text-gray-500 mt-6" aria-live="polite">Loading…</p>
         )}
 
         {profile === null && (
@@ -130,6 +130,18 @@ export default function LearningIntelligencePage() {
               <ArrowRight size={18} className="shrink-0" />
             </Link>
 
+            {/* WP5D — captioned, since Parent Dashboard is the start of the
+                admissions journey (Learning -> Evidence -> Admissions
+                Readiness -> ... ); the other links stay a flat secondary row. */}
+            <div>
+              <Link href="/learning-intelligence/parent" className="text-sm font-semibold text-purple-600 dark:text-purple-400">
+                Parent Dashboard →
+              </Link>
+              <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">
+                See this same evidence from a parent&apos;s view, including Admissions Readiness.
+              </p>
+            </div>
+
             <div className="flex items-center gap-4 flex-wrap text-xs font-semibold">
               <Link href="/learning-intelligence/recommendations" className="text-purple-600 dark:text-purple-400">
                 Recommendation Centre →
@@ -137,8 +149,11 @@ export default function LearningIntelligencePage() {
               <Link href="/learning-intelligence/timeline" className="text-purple-600 dark:text-purple-400">
                 Progress Timeline →
               </Link>
-              <Link href="/learning-intelligence/parent" className="text-purple-600 dark:text-purple-400">
-                Parent Dashboard →
+              <Link href="/learning-intelligence/parent/weekly-report" className="text-purple-600 dark:text-purple-400">
+                Weekly Report →
+              </Link>
+              <Link href="/learning-intelligence/parent/revision-planner" className="text-purple-600 dark:text-purple-400">
+                Revision Planner →
               </Link>
               <Link href="/learning-intelligence/mock-exam" className="text-purple-600 dark:text-purple-400">
                 CSSE mock exam →
@@ -183,7 +198,7 @@ export default function LearningIntelligencePage() {
 
             <section>
               <h2 className="text-gray-900 dark:text-gray-100 font-bold text-lg mb-3">Recent Learning Activity</h2>
-              <RecentActivity items={recentActivity} />
+              <RecentActivity items={recentActivity} plainLanguage />
             </section>
           </div>
         )}

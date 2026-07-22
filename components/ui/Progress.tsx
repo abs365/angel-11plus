@@ -72,6 +72,15 @@ export function CompetencyIndicator({ competencyLabel, percent, color }: Compete
 /**
  * Readiness Indicator — the Parent Hub's exam-readiness band, reusing
  * READINESS_CONFIG directly (unmodified) rather than redefining bands here.
+ *
+ * Founder Review Gate fix (Quick Win #3): READINESS_CONFIG's `pct` (15/40/
+ * 70/100) is a fixed value per band, not a measured score — the BAND itself
+ * (not-ready/building/nearly-ready/exam-ready) is real, computed from real
+ * evidence (getExamReadiness()'s session/score/mock/confidence thresholds),
+ * but the specific number was never a percentage of anything. No longer
+ * rendered as text, since a number implies a precision that isn't there;
+ * `pct` is still used to size the bar fill as a purely qualitative "which
+ * of four stages" indicator, never labelled with a numeral.
  */
 interface ReadinessIndicatorProps {
   readiness: ExamReadiness;
@@ -83,7 +92,6 @@ export function ReadinessIndicator({ readiness }: ReadinessIndicatorProps) {
     <div className={cn("rounded-xl p-4", config.bgColor)}>
       <div className="flex items-center justify-between mb-1.5">
         <span className={cn("text-sm font-semibold", config.textColor)}>{config.label}</span>
-        <span className={cn("text-sm font-bold", config.textColor)}>{config.pct}%</span>
       </div>
       <div className="bg-white/60 dark:bg-black/20 rounded-full h-2 overflow-hidden mb-2">
         <div className={cn("h-full rounded-full transition-all duration-700", config.barColor)} style={{ width: `${config.pct}%` }} />

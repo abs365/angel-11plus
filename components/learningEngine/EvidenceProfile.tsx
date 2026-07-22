@@ -13,6 +13,16 @@ import type { CompetencyStatus } from "@/lib/learningEngine/types";
  * yet" with "learner hasn't tried" would misrepresent which one applies
  * (a real, current-state distinction, not a hypothetical).
  */
+/**
+ * WP5G (Sprint 5 Completion Package, Finding #2) — each card previously
+ * rendered the raw QuestionTypeId ("QT-RC-01"); the WP4A comment here had
+ * claimed this was already fixed via QUESTION_TYPE_PRIMARY_COMPETENCY, but
+ * that import was only ever used to compute the header count, never to
+ * resolve a per-card label. Cards are now labelled with the owning
+ * competency's real name via QUESTION_TYPE_PRIMARY_COMPETENCY/COMPETENCIES
+ * — several sibling cards sharing one label is expected and honest (distinct
+ * content items testing the same named skill), not a display bug.
+ */
 export function EvidenceProfile({ competencies }: { competencies: CompetencyStatus[] }) {
   const allExposures = competencies.flatMap((c) => c.mappedQuestionTypes);
   const totalQuestionTypes = Object.keys(QUESTION_TYPE_PRIMARY_COMPETENCY).length;
@@ -44,14 +54,18 @@ export function EvidenceProfile({ competencies }: { competencies: CompetencyStat
           <div key={component}>
             <p className="text-xs font-bold uppercase tracking-wide text-gray-400 dark:text-gray-500 mb-2">{component}</p>
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-              {exposures.map((e) => (
-                <InfoCard key={e.questionTypeId} className="py-2.5 px-3">
-                  <p className="text-xs font-semibold text-gray-800 dark:text-gray-200">{e.questionTypeId}</p>
-                  <p className="text-[11px] text-gray-400 dark:text-gray-500 mt-0.5">
-                    {e.contentExists ? `${e.timesSeen} attempt${e.timesSeen === 1 ? "" : "s"}` : "No content yet"}
-                  </p>
-                </InfoCard>
-              ))}
+              {exposures.map((e) => {
+                const owningCompetencyId = QUESTION_TYPE_PRIMARY_COMPETENCY[e.questionTypeId];
+                const label = owningCompetencyId ? COMPETENCIES[owningCompetencyId].name : e.questionTypeId;
+                return (
+                  <InfoCard key={e.questionTypeId} className="py-2.5 px-3">
+                    <p className="text-xs font-semibold text-gray-800 dark:text-gray-200">{label}</p>
+                    <p className="text-[11px] text-gray-400 dark:text-gray-500 mt-0.5">
+                      {e.contentExists ? `${e.timesSeen} attempt${e.timesSeen === 1 ? "" : "s"}` : "No content yet"}
+                    </p>
+                  </InfoCard>
+                );
+              })}
             </div>
           </div>
         );

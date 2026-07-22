@@ -1,5 +1,6 @@
 import { Dumbbell, Layers, RotateCcw, ArrowUpRight, RefreshCw } from "lucide-react";
 import { RecommendationCard } from "@/components/ui/Card";
+import { COMPETENCIES } from "@/lib/learningEngine/assessmentBrainMap";
 import type { Recommendation, RecommendationCategory } from "@/lib/learningEngine/types";
 
 /**
@@ -45,7 +46,7 @@ export function RecommendationSummary({ recommendations }: { recommendations: Re
           <RecommendationCard
             key={`${r.category}-${r.competencyId}`}
             icon={CATEGORY_ICON[r.category]}
-            title={`${r.category} · ${r.competencyId}`}
+            title={`${r.category} · ${COMPETENCIES[r.competencyId].name}`}
             reason={r.reason}
             color={CATEGORY_COLOR[r.category]}
           />

@@ -47,6 +47,27 @@ export const COMPETENCY_LABELS: Record<string, string> = {
   "vocabulary.synonyms": "Synonyms",
   "vocabulary.antonyms": "Antonyms",
   "vocabulary.in-context": "Vocabulary in Context",
+
+  // CSSE / Assessment Brain V1 (ANGEL-CSSE-002A Sprint 2) — the 13
+  // CompetencyIds from lib/learningEngine/assessmentBrainMap.ts's
+  // COMPETENCIES map, names copied verbatim (not reworded) so this shared
+  // label lookup and the CSSE dashboard/parent page never disagree on
+  // wording. Without these, lib/ali/explainability.ts's parentText() would
+  // leak a raw code (e.g. "RC-01") into parent-facing text for every CSSE
+  // competency, via this function's raw-code fallback.
+  "RC-01": "Literal Retrieval from Narrative Text",
+  "RC-02": "Inference and Justified Interpretation",
+  "RC-03": "Word/Phrase Meaning-in-Context Explanation",
+  "RC-04": "Sequential Ordering of Textual Information",
+  "AR-01": "Letter-Code Pattern Inference and Application",
+  "MR-01": "Arithmetic Calculation",
+  "MR-02": "Algebraic / Symbolic Problem-Solving",
+  "MR-03": "Geometric and Spatial Reasoning",
+  "MR-04": "Multi-Step Word-Problem Interpretation",
+  "MR-05": "Number Properties and Number Theory",
+  "MR-06": "Precision Under Exact-Match Conditions",
+  "WC-01": "Sustained Original Composition",
+  "WC-02": "Multi-Dimensional Writing Quality",
 };
 
 export function competencyLabel(code: string): string {

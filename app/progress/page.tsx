@@ -175,9 +175,15 @@ export default function ProgressPage() {
             <p className="text-gray-900 dark:text-gray-100 font-bold text-2xl">
               {Object.values(progress.scores).filter((s) => s >= 80).length}
             </p>
-            <p className="text-gray-400 dark:text-gray-500 text-xs mt-0.5">80%+ scores</p>
+            <p className="text-gray-400 dark:text-gray-500 text-xs mt-0.5">Strong scores</p>
           </div>
         </div>
+        {/* Sprint 4 Completion Package (WP4A) — Coverage's denominator (16)
+            was previously unexplained; this reuses the same real values
+            already computed above, no new calculation. */}
+        <p className="text-gray-400 dark:text-gray-500 text-xs mb-6 -mt-3">
+          Coverage: {progress.completedLessons.length} of {totalPossible} available lessons completed.
+        </p>
 
         {/* Completed lessons */}
         {progress.completedLessons.length > 0 ? (
