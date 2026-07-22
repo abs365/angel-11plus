@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { Clock, CheckCircle2 } from "lucide-react";
+import { Clock, CheckCircle2, RotateCcw } from "lucide-react";
 import PageLayout from "@/components/PageLayout";
 import { InfoCard } from "@/components/ui/Card";
 import { getSupabaseClient } from "@/lib/supabase";
@@ -12,6 +12,14 @@ import { fetchQuestionBank } from "@/lib/ali/questionBank";
 import { recordPresentation, recordOutcome } from "@/lib/ali/history";
 import { completeLesson, recordSkillResult, getSelectedPathwayId, setSelectedPathway } from "@/lib/progress";
 import { fetchLearnerIntelligenceProfile } from "@/lib/learningEngine/profile";
+import { saveMockResult } from "@/lib/mockProgress";
+import { QUESTION_TYPE_PRIMARY_COMPETENCY } from "@/lib/learningEngine/assessmentBrainMap";
+import {
+  getEducationalIntelligence,
+  processEvidenceForCompetency,
+  type EducationalIntelligenceSnapshot,
+} from "@/lib/learningEngine/educationalIntelligenceService";
+import type { CompetencyId, QuestionTypeId } from "@/lib/learningEngine/types";
 import { checkMathsAnswer, scoreEnglishAnswer, WRITING_CORRECTNESS_THRESHOLD } from "@/lib/learningEngine/practiceContent";
 import { CompetencyProfile } from "@/components/learningEngine/CompetencyProfile";
 import { ReadinessSummary } from "@/components/learningEngine/ReadinessSummary";
@@ -20,6 +28,7 @@ import type { BankQuestion } from "@/types/ali/questionBank";
 import type { LearnerIntelligenceProfile } from "@/lib/learningEngine/types";
 import type { EnglishComprehensionPrompt } from "@/types/ali/questionBank";
 import type { MathsQuestion } from "@/types/index";
+import type { MockResult, MockSectionResult } from "@/types/mock";
 
 type Mode = "intro" | "loading" | "error" | "exam" | "submitting" | "results";
 
@@ -56,6 +65,14 @@ export default function MockExamPage() {
   const sessionIdRef = useRef<string>("");
   const supabaseRef = useRef<ReturnType<typeof getSupabaseClient>>(null);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  // Total allocated exam time (WP5G, Finding #1) — captured at start so
+  // submitExam() can derive a real elapsed duration for saveMockResult(),
+  // the same way the timer itself counts down from this value.
+  const totalSecondsRef = useRef<number>(0);
+  // Pre-SESSION Educational Intelligence snapshots (Sprint 2, mirroring the
+  // Practice page's identical pattern) — captured before recordPresentation()
+  // below resets last_presented_at, which Maintenance Review detection reads.
+  const preSessionSnapshotsRef = useRef<Map<CompetencyId, EducationalIntelligenceSnapshot>>(new Map());
 
   useEffect(() => {
     return () => {
@@ -91,6 +108,23 @@ export default function MockExamPage() {
       }
 
       const totalSeconds = tagged.reduce((sum, q) => sum + q.estimatedTimeSeconds, 0);
+      totalSecondsRef.current = totalSeconds;
+
+      // Same pre-session snapshot capture as the Practice page — must run
+      // before recordPresentation() resets last_presented_at, or a genuine
+      // Maintenance Review gap would be permanently invisible to this sitting.
+      const competencyIdsThisExam = new Set(
+        tagged
+          .map((q) => QUESTION_TYPE_PRIMARY_COMPETENCY[q.skill as QuestionTypeId])
+          .filter((id): id is CompetencyId => Boolean(id))
+      );
+      preSessionSnapshotsRef.current = new Map(
+        await Promise.all(
+          Array.from(competencyIdsThisExam).map(
+            async (id) => [id, await getEducationalIntelligence(supabase, profileId, id)] as const
+          )
+        )
+      );
 
       await withTimeout(
         recordPresentation(supabase, profileId, tagged.map((q) => q.id), "mock_exam"),
@@ -131,6 +165,10 @@ export default function MockExamPage() {
 
     const supabase = supabaseRef.current;
     let correct = 0;
+    // Finding #1 (WP5G) — real per-subject tallies, built from the same
+    // isCorrect this loop already computes, so Mock Readiness can read a
+    // real MockResult for this sitting instead of never receiving one.
+    const bySubject: Record<string, { correct: number; total: number }> = {};
 
     for (const activity of activities) {
       const answer = answers[activity.id] ?? "";
@@ -176,6 +214,10 @@ export default function MockExamPage() {
       }
 
       if (isCorrect) correct++;
+      const subjectTally = bySubject[activity.subject] ?? { correct: 0, total: 0 };
+      subjectTally.total += 1;
+      if (isCorrect) subjectTally.correct += 1;
+      bySubject[activity.subject] = subjectTally;
 
       if (supabase && profileIdRef.current) {
         await recordOutcome(
@@ -186,6 +228,34 @@ export default function MockExamPage() {
           sessionIdRef.current,
           activity.masteryThreshold
         ).catch(() => {});
+
+        // Educational Intelligence evidence pipeline (Permanent Engineering
+        // Rule 1) — same sequencing as the Practice page's recordAndAdvance():
+        // consume this competency's cached pre-session snapshot on its first
+        // answer this sitting, otherwise read fresh (no session-start reset
+        // has intervened since).
+        const competencyId = QUESTION_TYPE_PRIMARY_COMPETENCY[activity.skill as QuestionTypeId];
+        if (competencyId) {
+          const cached = preSessionSnapshotsRef.current.get(competencyId);
+          let preAttemptSnapshot: EducationalIntelligenceSnapshot | null = null;
+          if (cached) {
+            preAttemptSnapshot = cached;
+            preSessionSnapshotsRef.current.delete(competencyId);
+          } else {
+            preAttemptSnapshot = await getEducationalIntelligence(supabase, profileIdRef.current, competencyId).catch(
+              () => null
+            );
+          }
+          if (preAttemptSnapshot) {
+            await processEvidenceForCompetency(
+              supabase,
+              profileIdRef.current,
+              competencyId,
+              preAttemptSnapshot,
+              isCorrect
+            ).catch(() => {});
+          }
+        }
       }
       try {
         recordSkillResult(legacySkill as Parameters<typeof recordSkillResult>[0], isCorrect);
@@ -201,6 +271,35 @@ export default function MockExamPage() {
       completeLesson("csse-mock-exam", score, xp);
     } catch {
       /* legacy bridge best-effort */
+    }
+
+    // Finding #1 (WP5G) — the real Educational Intelligence CSSE Mock Exam
+    // never wrote to lib/mockProgress.ts, so Mock Readiness's
+    // mockAttemptCount silently stayed at zero for every sitting of this
+    // flow. Recorded here from the same real per-item outcomes above — no
+    // new scoring logic, just the one missing write this flow was missing.
+    const sectionResults: MockSectionResult[] = Object.entries(bySubject).map(([subject, tally]) => ({
+      sectionId: subject,
+      sectionName: subject.charAt(0).toUpperCase() + subject.slice(1),
+      bank: subject,
+      correct: tally.correct,
+      total: tally.total,
+      score: tally.total > 0 ? Math.round((tally.correct / tally.total) * 100) : 0,
+    }));
+    const elapsedSeconds = Math.max(0, totalSecondsRef.current - timeLeftSeconds);
+    const mockResult: MockResult = {
+      id: sessionIdRef.current || `csse-mock-${Date.now()}`,
+      pathway: "csse",
+      pathwayName: "CSSE Mock Exam",
+      date: new Date().toISOString(),
+      totalScore: score,
+      sectionResults,
+      durationMinutes: Math.round(elapsedSeconds / 60),
+    };
+    try {
+      saveMockResult(mockResult);
+    } catch {
+      /* localStorage best-effort, same discipline as every other client-side write in this flow */
     }
 
     setMode("results");
@@ -236,17 +335,22 @@ export default function MockExamPage() {
           </div>
         )}
 
-        {mode === "loading" && <p className="text-sm text-gray-400 dark:text-gray-500 mt-6">Preparing your exam…</p>}
+        {mode === "loading" && (
+          <p className="text-sm text-gray-400 dark:text-gray-500 mt-6" aria-live="polite">Preparing your exam…</p>
+        )}
 
         {mode === "error" && (
           <InfoCard className="mt-6 text-center">
             <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">We couldn&apos;t prepare this exam</p>
             <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">{errorMessage}</p>
             <div className="flex items-center justify-center gap-4 mt-4">
-              <button onClick={loadAndStart} className="text-xs font-semibold text-purple-600 dark:text-purple-400">
-                Try again
+              <button
+                onClick={loadAndStart}
+                className="min-h-[44px] inline-flex items-center gap-1 text-xs font-semibold text-purple-600 dark:text-purple-400 px-2"
+              >
+                <RotateCcw size={14} /> Try again
               </button>
-              <Link href="/learning-intelligence" className="text-xs font-semibold text-gray-500 dark:text-gray-400">
+              <Link href="/learning-intelligence" className="min-h-[44px] inline-flex items-center text-xs font-semibold text-gray-500 dark:text-gray-400 px-2">
                 Back to dashboard
               </Link>
             </div>
@@ -304,7 +408,9 @@ export default function MockExamPage() {
           </div>
         )}
 
-        {mode === "submitting" && <p className="text-sm text-gray-400 dark:text-gray-500 mt-6">Marking your exam…</p>}
+        {mode === "submitting" && (
+          <p className="text-sm text-gray-400 dark:text-gray-500 mt-6" aria-live="polite">Marking your exam…</p>
+        )}
 
         {mode === "results" && (
           <div>
@@ -338,9 +444,22 @@ export default function MockExamPage() {
               </div>
             )}
 
-            <Link href="/learning-intelligence" className="text-xs font-semibold text-purple-600 dark:text-purple-400 mt-8 inline-block">
-              Full learning report →
-            </Link>
+            {/* WP4D (FD-022) — one clear primary next step, matching the
+                stated sequence Practice -> Results -> Parent Insight ->
+                Revision -> Practice. */}
+            <div className="mt-8">
+              <Link
+                href="/learning-intelligence/parent"
+                className="inline-block bg-purple-600 hover:bg-purple-700 text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-colors"
+              >
+                See Parent Dashboard →
+              </Link>
+              <div className="mt-3">
+                <Link href="/learning-intelligence" className="text-xs font-semibold text-gray-500 dark:text-gray-400">
+                  Full learning report →
+                </Link>
+              </div>
+            </div>
           </div>
         )}
       </div>
