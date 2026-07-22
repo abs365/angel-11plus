@@ -300,7 +300,66 @@ All Phase 2A / 2B / 2C features are preserved:
 | 2A | Core content + adaptive engine | Complete |
 | 2B | Analytics, replay, gamification, parent dashboard | Complete |
 | 2C | Content expansion (172 questions), mock system (GL/CEM/CSSE/ISEB) | Complete |
-| 2D-A | Design system, navigation, dashboard, subject cards, icon system | **Active** |
-| 2D-B | Dark mode full implementation, English page redesign | Planned |
-| 2E | Authentication, Supabase full sync, student profiles | Planned |
-| 2F | Subscriptions, premium tier, tutor dashboard | Planned |
+| 2D-A | Design system, navigation, dashboard, subject cards, icon system | Complete |
+| 2D-A.1 | Dashboard & navigation transformation (layout, mission, achievements, pathway) | Complete |
+| 2D-A.2 | Visual excellence: hero, mission card, subject card, achievements, empty states, micro-interactions | **Next** |
+| 2D-B | Full dark mode across all pages (dashboard, learning, reasoning, mocks, parent, pathways) | Planned |
+| 2E | Beta launch readiness: feedback, bug report, onboarding, privacy, terms, contact, parent getting started | Planned |
+| 3 | Early families: first 10–50 families, feedback loops, engagement, retention, testimonials | Planned |
+
+### Out of Scope (not planned)
+Subscriptions, payments, tutor tools, App Store packaging, push notifications, and major new features are deferred until after Phase 3 succeeds.
+
+### Phase 2D-A.2 Scope
+
+Visual polish only — no new functionality.
+
+1. **Hero card**: tighter stat layout, milestone progress bar (current → next XP milestone), smoother gradient
+2. **Mission card**: cleaner numbered item design, stronger priority visual language, better empty state
+3. **Subject card**: icon container sizing consistency, hover state refinement, title/description hierarchy
+4. **Achievement card**: badge chips polish, weekly goal dots sizing, stat card icon/number alignment
+5. **Empty states**: all empty/loading states get illustrations or iconography — no blank boxes
+6. **Visual consistency**: spacing, border-radius, shadow, and typography audit across dashboard
+7. **Micro-interactions**: card press feedback (`active:scale`), XP bar animation, badge reveal
+8. **Mobile/iPad**: touch target audit, padding on small screens, bottom nav active indicator
+
+### Phase 2D-B Scope
+
+Full dark mode, using `DESIGN_SYSTEM.md` colour tokens:
+
+- Dashboard (done via CSS vars — needs `dark:` class audit)
+- English, Maths, Vocabulary, Writing pages
+- Verbal, Non-Verbal, Spatial, Numerical Reasoning pages
+- Mock exam runner and results pages
+- Parent Hub and parent insights
+- Pathways page
+
+### Phase 2E Scope
+
+Beta launch readiness — trust, onboarding, and legal:
+
+- `/feedback` — student/parent feedback form
+- `/bug-report` — in-app bug reporting
+- `/feature-request` — feature idea submission
+- `/beta` — beta onboarding page (what to expect, how to give feedback)
+- `/parents/getting-started` — parent guide (what the platform covers, how to use it)
+- `/privacy` — privacy policy (COPPA-aware, UK GDPR)
+- `/terms` — terms of service
+- `/contact` — contact page
+
+Beta identity elements: beta badge in nav, "early access" messaging, feedback prompts.
+
+### Phase 3 Scope
+
+Early families and product validation:
+
+- Support first 10, then 25, then 50 families through direct outreach
+- Structured feedback collection (what works, what's missing, what feels off)
+- Engagement tracking (sessions per week, subjects used, dropout points)
+- Retention signals (streak maintenance, return visits)
+- Testimonial collection from satisfied parents
+- Rapid iteration based on real usage patterns
+
+Success criteria: Parents trust it. Children enjoy using it. The platform feels premium and professional.
+
+Subscription and launch strategy evaluated after Phase 3.
