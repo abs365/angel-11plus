@@ -100,15 +100,28 @@ interface RecentAttemptHistoryRow {
   last_presented_at_sequence: number;
 }
 
+/**
+ * Sprint 2 (ANGEL-CSSE-002A) defect correction: originally queried
+ * `ali_question_bank` with `.eq("skill", competencyCode)` — correct for the
+ * older ALI system where `skill` IS the competency, wrong for CSSE where
+ * `skill` stores a Question Type ID that maps many-to-one to a competency
+ * (assessmentBrainMap.ts's QUESTION_TYPE_PRIMARY_COMPETENCY). Same defect
+ * class as competencyEvidence.ts/educationalStateRuntime.ts's Sprint 1
+ * corrections — this file was written using the same then-uncorrected
+ * assumption and never revisited, since it had zero real callers. Fixed by
+ * accepting the caller-resolved skillCodes to match, mirroring the
+ * established pattern exactly.
+ */
 async function fetchRecentAttemptSignalsForCompetency(
   supabase: SupabaseClient<Database>,
   profileId: string,
-  competencyCode: string
+  competencyCode: string,
+  skillCodes: string[]
 ): Promise<RecentAttemptSignal[]> {
   const { data: questions, error: questionsError } = await supabase
     .from("ali_question_bank")
     .select("id")
-    .eq("skill", competencyCode);
+    .in("skill", skillCodes);
 
   if (questionsError || !questions || questions.length === 0) {
     if (questionsError) {
@@ -192,17 +205,25 @@ export async function computeRealRecommendationOrchestration(
   daysUntilExam: number | null = null,
   learningGainTrendByCompetency: Partial<
     Record<string, "positive" | "flat" | "negative">
-  > = {}
+  > = {},
+  /**
+   * Sprint 2 (ANGEL-CSSE-002A) defect correction — see
+   * fetchRecentAttemptSignalsForCompetency's docstring below. Defaults to
+   * "skill IS the competency" (old ALI system, unchanged behaviour); CSSE
+   * callers pass assessmentBrainMap.ts's getQuestionTypesForCompetency.
+   */
+  resolveSkillCodes: (competencyCode: string) => string[] = (code) => [code]
 ): Promise<RecommendationRuntimeResult> {
   const candidates: RecommendationCandidate[] = [];
   const wellbeingResults = new Map<string, WellbeingSignalResult>();
 
   for (const competencyCode of competencyCodes) {
-    const educationalState = await computeRealEducationalState(supabase, profileId, competencyCode);
+    const skillCodes = resolveSkillCodes(competencyCode);
+    const educationalState = await computeRealEducationalState(supabase, profileId, competencyCode, skillCodes);
     const triggerReason = deriveTriggerReason(educationalState);
     if (!triggerReason) continue; // Judgement call 3 — mastered/durably-mastered, no honest trigger.
 
-    const evidence = await fetchCompetencyEvidence(supabase, profileId, [competencyCode]);
+    const evidence = await fetchCompetencyEvidence(supabase, profileId, skillCodes);
     const confidenceTier = computeCompetencyConfidence({ competencyCode, questions: evidence });
 
     const candidate: RecommendationCandidate = {
@@ -217,7 +238,8 @@ export async function computeRealRecommendationOrchestration(
     const recentAttempts = await fetchRecentAttemptSignalsForCompetency(
       supabase,
       profileId,
-      competencyCode
+      competencyCode,
+      skillCodes
     );
     const wellbeingInput: WellbeingSignalInput = {
       learnerId: profileId,

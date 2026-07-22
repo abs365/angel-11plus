@@ -6,6 +6,10 @@ import { fetchCompetencyEvidence } from "@/lib/ali/persistence/competencyEvidenc
 import { computeRealEducationalState } from "@/lib/ali/persistence/educationalStateRuntime";
 import { fetchDurableMasteryRecord, saveDurableMasteryRecord } from "@/lib/ali/persistence/durableMasteryStore";
 import { fetchCurrentAuditRecord, insertAuditRecord, supersedeStoredAuditRecord } from "@/lib/ali/persistence/auditStore";
+import {
+  computeRealRecommendationOrchestration,
+  type RecommendationRuntimeResult,
+} from "@/lib/ali/persistence/recommendationRuntime";
 import { computeCompetencyConfidence } from "@/lib/ali/confidence";
 import { validateCompetencyMastery } from "@/lib/ali/masteryValidation";
 import { evaluateDurableMastery } from "@/lib/ali/durableMastery";
@@ -270,4 +274,43 @@ async function recordAuditIfNewlyHigherEvidence(
   if (insertedId && previous) {
     await supersedeStoredAuditRecord(supabase, previous.id, insertedId, "new-evidence");
   }
+}
+
+/**
+ * Recommendation Model, made real for CSSE (Sprint 2, ANGEL-CSSE-002A
+ * Deliverable 3 — EDUCATIONAL_INTELLIGENCE_ENGINE_V1.md Section 8.3). The
+ * single entry point for Recommendation Orchestration + Explainability, per
+ * Permanent Engineering Rule 1 — nothing in app/ or components/ should call
+ * lib/ali/persistence/recommendationRuntime.ts directly. Wraps
+ * computeRealRecommendationOrchestration() (WP-19, unmodified other than
+ * this sprint's CSSE skill-resolution fix) with
+ * getQuestionTypesForCompetency() as the resolver, exactly like every other
+ * function in this file resolves a competency to its Question Type IDs
+ * before touching real evidence.
+ *
+ * daysUntilExam defaults to null (Tier 3 exam-proximity reweighting stays
+ * inactive, per recommendationRuntime.ts's documented fail-open behaviour)
+ * but callers may now pass a real value — Sprint 3 (ANGEL-CSSE-002A,
+ * Personalised Practice) is the first real caller, computing it from
+ * lib/progress.ts's getTargetExamDate(). learningGainTrend remains at its
+ * fail-open default ({}) — still genuinely unavailable from any Supabase
+ * table (recommendationRuntime.ts's judgement call 4), unchanged from
+ * Sprint 2.
+ */
+export async function getRecommendations(
+  supabase: SupabaseClient<Database>,
+  profileId: string,
+  competencyIds: CompetencyId[],
+  now: Date = new Date(),
+  daysUntilExam: number | null = null
+): Promise<RecommendationRuntimeResult> {
+  return computeRealRecommendationOrchestration(
+    supabase,
+    profileId,
+    competencyIds,
+    now,
+    daysUntilExam,
+    {},
+    (competencyId) => getQuestionTypesForCompetency(competencyId as CompetencyId)
+  );
 }
