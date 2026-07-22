@@ -337,6 +337,15 @@ export default function ReasoningSession({
   return (
     <PageLayout>
       <div className="max-w-2xl mx-auto px-4 py-6 md:px-8 md:py-8">
+        {/* ARC-001A — this state had no heading at all (confirmed via a live
+            accessibility-tree read during ARC-001 certification), unlike the
+            menu (`subjectName`) and done ("Session Complete!") states above.
+            Visually hidden since the existing visible "← {subjectName}" back
+            button + progress counter already carry this sighted-user context
+            — an extra visible heading here would be redundant, not
+            clarifying. Purely additive: no state-machine, scoring, question,
+            or completion logic below is touched. */}
+        <h1 className="sr-only">{subjectName} Practice</h1>
         {/* Progress bar */}
         <div className="flex items-center gap-3 mb-6">
           <button
