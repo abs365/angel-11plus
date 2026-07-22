@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { ClipboardList, MapPin } from "lucide-react";
 import PageLayout from "@/components/PageLayout";
 import { InfoCard } from "@/components/ui/Card";
@@ -38,7 +39,7 @@ export default function RecommendationCentrePage() {
           </div>
         </div>
 
-        {profile === undefined && <p className="text-sm text-gray-400 dark:text-gray-500 mt-6">Loading…</p>}
+        {profile === undefined && <p className="text-sm text-gray-400 dark:text-gray-500 mt-6" aria-live="polite">Loading…</p>}
 
         {profile === null && (
           <InfoCard className="mt-6 text-center">
@@ -56,6 +57,13 @@ export default function RecommendationCentrePage() {
         {profile && profile.pathwayEligible && (
           <div className="mt-6">
             <RecommendationSummary recommendations={profile.recommendations} />
+            {/* WP4D (FD-022) — one clear primary next step; this page had none before. */}
+            <Link
+              href="/learning-intelligence/practice"
+              className="inline-block bg-purple-600 hover:bg-purple-700 text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-colors mt-6"
+            >
+              Practice now →
+            </Link>
           </div>
         )}
       </div>
