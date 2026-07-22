@@ -9,7 +9,7 @@ import { getProgress } from "@/lib/progress";
 import { computeAnalytics } from "@/lib/analytics";
 import { computeAdaptiveState } from "@/lib/adaptiveEngine";
 import SessionInfoBar from "@/components/SessionInfoBar";
-import { SUBJECT_ESTIMATED_MINUTES, SUBJECT_LEARNING_OBJECTIVE } from "@/lib/subjectMeta";
+import { SUBJECT_ESTIMATED_MINUTES, SUBJECT_LEARNING_OBJECTIVE, SUBJECT_EXPECTED_BENEFIT } from "@/lib/subjectMeta";
 import type { AnalyticsReport } from "@/types/analytics";
 
 const difficultyLabel: Record<string, string> = {
@@ -53,7 +53,7 @@ export default function EnglishPage() {
         {/* Header */}
         <div className="flex items-center gap-3 mb-2">
           <div className="bg-purple-100 dark:bg-purple-900 p-3 rounded-2xl">
-            <BookOpen size={22} className="text-purple-600 dark:text-purple-400" />
+            <BookOpen size={22} aria-hidden="true" className="text-purple-600 dark:text-purple-400" />
           </div>
           <div>
             <h1 className="text-gray-900 dark:text-gray-100 font-bold text-2xl">English Comprehension</h1>
@@ -70,6 +70,7 @@ export default function EnglishPage() {
             estimatedMinutes={SUBJECT_ESTIMATED_MINUTES.english!}
             skills={report?.skills.filter((s) => s.group === "english")}
             subjectAnalytics={report?.subjects.find((s) => s.subject === "english")}
+            expectedBenefit={SUBJECT_EXPECTED_BENEFIT.english}
           />
         </div>
 
@@ -95,7 +96,7 @@ export default function EnglishPage() {
           <div className="flex flex-wrap gap-2">
             <button
               onClick={() => setSelectedDifficulty(null)}
-              className={`px-3 py-1.5 rounded-full text-sm font-medium transition-colors ${
+              className={`px-3 py-1.5 rounded-full text-sm font-medium transition-colors motion-reduce:transition-none ${
                 !selectedDifficulty
                   ? "bg-purple-600 text-white"
                   : "bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700"
@@ -107,7 +108,7 @@ export default function EnglishPage() {
               <button
                 key={d}
                 onClick={() => setSelectedDifficulty(d === selectedDifficulty ? null : d)}
-                className={`px-3 py-1.5 rounded-full text-sm font-medium transition-colors ${
+                className={`px-3 py-1.5 rounded-full text-sm font-medium transition-colors motion-reduce:transition-none ${
                   selectedDifficulty === d
                     ? "bg-purple-600 text-white"
                     : "bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700"
@@ -125,7 +126,7 @@ export default function EnglishPage() {
             <Link
               key={lesson.id}
               href={`/english/${lesson.id}`}
-              className="block bg-white dark:bg-gray-900 rounded-2xl p-5 border border-gray-100 dark:border-gray-800 hover:border-purple-200 dark:hover:border-purple-800 hover:shadow-sm active:scale-[0.98] transition-all group"
+              className="block bg-white dark:bg-gray-900 rounded-2xl p-5 border border-gray-100 dark:border-gray-800 hover:border-purple-200 dark:hover:border-purple-800 hover:shadow-sm active:scale-[0.98] transition-all motion-reduce:transition-none group"
             >
               <div className="flex items-start justify-between">
                 <div className="flex-1 min-w-0">
@@ -134,11 +135,11 @@ export default function EnglishPage() {
                       {difficultyLabel[lesson.difficulty]}
                     </span>
                     <span className="text-xs text-gray-400 dark:text-gray-500 flex items-center gap-1">
-                      <Clock size={11} />
+                      <Clock size={11} aria-hidden="true" />
                       {lesson.estimatedMinutes} min
                     </span>
                   </div>
-                  <h3 className="text-gray-900 dark:text-gray-100 font-semibold text-base mb-1 group-hover:text-purple-700 dark:group-hover:text-purple-300 transition-colors">
+                  <h3 className="text-gray-900 dark:text-gray-100 font-semibold text-base mb-1 group-hover:text-purple-700 dark:group-hover:text-purple-300 transition-colors motion-reduce:transition-none">
                     {lesson.title}
                   </h3>
                   <p className="text-gray-400 dark:text-gray-500 text-sm">
@@ -149,16 +150,16 @@ export default function EnglishPage() {
                 <div className="flex items-center gap-2 ml-3">
                   {lesson.id === recommendedId ? (
                     <span className="bg-purple-100 dark:bg-purple-900 text-purple-600 dark:text-purple-400 text-xs font-semibold px-2 py-0.5 rounded-full flex items-center gap-1">
-                      <Sparkles size={10} />
+                      <Sparkles size={10} aria-hidden="true" />
                       Recommended
                     </span>
                   ) : !recommendedId && i === 0 ? (
                     <span className="bg-amber-100 dark:bg-amber-900 text-amber-600 dark:text-amber-400 text-xs font-semibold px-2 py-0.5 rounded-full flex items-center gap-1">
-                      <Star size={10} />
+                      <Star size={10} aria-hidden="true" />
                       New
                     </span>
                   ) : null}
-                  <ChevronRight size={18} className="text-gray-300 dark:text-gray-600 group-hover:text-purple-500 dark:group-hover:text-purple-400 transition-colors" />
+                  <ChevronRight size={18} aria-hidden="true" className="text-gray-300 dark:text-gray-600 group-hover:text-purple-500 dark:group-hover:text-purple-400 transition-colors motion-reduce:transition-none" />
                 </div>
               </div>
             </Link>
@@ -167,7 +168,7 @@ export default function EnglishPage() {
 
         {/* Coming soon */}
         <div className="mt-3 bg-gray-50 dark:bg-gray-800 rounded-2xl p-5 border border-dashed border-gray-200 dark:border-gray-700 flex items-center gap-3">
-          <Lock size={16} className="text-gray-300 dark:text-gray-600" />
+          <Lock size={16} aria-hidden="true" className="text-gray-300 dark:text-gray-600" />
           <p className="text-gray-400 dark:text-gray-500 text-sm">More passages coming soon — mock test and advanced Year 6 content</p>
         </div>
       </div>

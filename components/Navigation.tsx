@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import {
@@ -7,7 +8,6 @@ import {
   BarChart2,
   Compass,
   LogIn,
-  User,
   Users,
   MapPin,
   Trophy,
@@ -18,10 +18,14 @@ import {
   Sparkles,
   Crown,
   Brain,
+  ChevronDown,
+  MoreHorizontal,
+  X,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { useAuth } from "@/components/providers/AuthProvider";
 import UserMenu from "@/components/ui/UserMenu";
+import { cn } from "@/lib/cn";
 
 type NavItem = {
   href: string;
@@ -35,68 +39,48 @@ type NavSection = {
   items: NavItem[];
 };
 
-// EEP-001 (Navigation Excellence) — the primary sidebar hierarchy.
-// Sprint-by-sprint rationale for how each label/grouping was chosen lives
-// in git history (Sprints 2/4/5/7); this comment describes the current,
-// settled structure only, per this refinement sprint's own "review all
-// navigation items" objective. Four labelled primary sections — Journey
-// (overview + progress tracking), Learn, Practice (practice, mocks,
-// school intelligence) — followed by Family and Support. Every route is
-// unchanged; only grouping and labels are in scope here.
-//
-// EEP-001 change: "Progress" moves out of its own unlabelled section
-// (previously an orphaned single-item group with no header, a real
-// grouping inconsistency) into Journey, alongside My Admission Journey —
-// both are "where am I in this journey" destinations. "Target Schools" is
-// renamed "School Intelligence" to match the label this same destination
-// already uses everywhere else it's referenced (the /pathways page's own
-// H1 since Sprint 7, and Sprint 9's Angel Plus journey grid) — the nav
-// was the one remaining place still using the older Sprint 2 label.
-const navSections: NavSection[] = [
-  {
-    label: "Journey",
-    items: [
-      { href: "/dashboard", label: "My Admission Journey", icon: Compass },
-      { href: "/progress", label: "Progress", icon: BarChart2 },
-      // Product Experience Standard V1 §7 — "Learning Intelligence" used the
-      // word this platform's own calm-tone rule forbids showing to users;
-      // route/component names are unchanged, only this label and the
-      // matching page copy were renamed.
-      { href: "/learning-intelligence", label: "Learning Report", icon: Brain },
-    ],
-  },
-  {
-    label: "Learn",
-    items: [
-      { href: "/learn", label: "Learn", icon: BookOpen },
-    ],
-  },
-  {
-    label: "Practice",
-    items: [
-      { href: "/reasoning", label: "Practice", icon: Puzzle },
-      { href: "/mocks", label: "Mock Centre", icon: Trophy },
-      { href: "/pathways", label: "School Intelligence", icon: MapPin },
-    ],
-  },
+/**
+ * AN-101 (Learning Navigation) — the approved Angel Next information
+ * architecture. Every route below is unchanged from the pre-AN-101
+ * navigation; only grouping, labelling and presentation are in scope here.
+ *
+ * "Today" is the single entry for /dashboard. AN-101 discovery found the
+ * previously-planned architecture implied a second, separate "My Admission
+ * Journey" destination — no such route exists. Per Founder decision: the
+ * admissions journey remains a core concept *within* /dashboard's content,
+ * not a duplicate navigation entry. A future dedicated Journey route may be
+ * introduced later if it offers functionality genuinely distinct from the
+ * dashboard — that is a decision for a future work package, not this one.
+ */
+const primaryItems: NavItem[] = [
+  { href: "/dashboard", label: "Today", icon: Compass },
+  { href: "/learn", label: "Learn", icon: BookOpen },
+  { href: "/reasoning", label: "Practice", icon: Puzzle },
+  { href: "/mocks", label: "Mock Centre", icon: Trophy },
 ];
 
-// FD-020 (Sprint 4 Completion Package, WP4B) — /learning-intelligence/parent
-// is the single, unified Parent Dashboard for every pathway (the former
-// standalone /parent now redirects here, see next.config.ts). Content is
-// pathway-specific inside the page, not a second destination.
-const parentItem: NavItem = {
-  href: "/learning-intelligence/parent",
-  label: "Parent Dashboard",
-  icon: Users,
+const journeySection: NavSection = {
+  label: "Journey",
+  items: [
+    { href: "/progress", label: "Progress", icon: BarChart2 },
+    // Product Experience Standard V1 §7 — "Learning Intelligence" used a
+    // word this platform's calm-tone rule forbids showing to users;
+    // route/component names are unchanged, only this label reads plainly.
+    { href: "/learning-intelligence", label: "Learning Report", icon: Brain },
+    { href: "/pathways", label: "School Intelligence", icon: MapPin },
+  ],
 };
 
-/** Angel Plus — Sprint 9 (Angel Plus Value Experience) built out app/angel-plus/page.tsx into a real Value Overview of the existing free journey; the "Soon" badge remains accurate because the Angel Plus tier itself still has no premium features, billing, or business logic anywhere in this codebase — that page says so honestly rather than fabricating a feature list. */
-const angelPlusItem: NavItem = {
-  href: "/angel-plus",
-  label: "Angel Plus",
-  icon: Crown,
-  badge: "Soon",
+const familySection: NavSection = {
+  label: "Family",
+  items: [
+    // FD-020 (Sprint 4 Completion Package, WP4B) — /learning-intelligence/parent
+    // is the single, unified Parent Dashboard for every pathway.
+    { href: "/learning-intelligence/parent", label: "Parent Dashboard", icon: Users },
+    // Angel Plus tier has no premium features, billing or business logic
+    // anywhere in this codebase — the "Soon" badge is honest, not a fabricated feature list.
+    { href: "/angel-plus", label: "Angel Plus", icon: Crown, badge: "Soon" },
+  ],
 };
 
 const supportItems: NavItem[] = [
@@ -106,40 +90,255 @@ const supportItems: NavItem[] = [
   { href: "/contact", label: "Contact", icon: Mail },
 ];
 
-const mobileNavItems = [
-  { href: "/dashboard", label: "Journey", icon: Compass },
-  // Sprint 4 — "English"/"Maths" individual slots collapse into one "Learn"
-  // slot pointing to the new Learning Hub, matching the desktop nav's
-  // collapse; both underlying routes remain one tap away from the hub.
-  { href: "/learn", label: "Learn", icon: BookOpen },
-  { href: "/mocks", label: "Mock Centre", icon: Trophy },
-  { href: "/progress", label: "Progress", icon: BarChart2 },
-];
+function isActive(pathname: string, href: string): boolean {
+  const basePath = href.split("#")[0];
+  return pathname === basePath || pathname.startsWith(basePath + "/");
+}
 
-function SidebarLink({ item, pathname }: { item: NavItem; pathname: string }) {
-  const basePath = item.href.split("#")[0];
-  const active = pathname === basePath || pathname.startsWith(basePath + "/");
+/**
+ * A single navigation destination. Renders identically inside the desktop
+ * sidebar and the mobile "More" drawer — one definition, not two hand-kept-
+ * in-sync copies (AN-101 discovery found the pre-existing desktop/mobile nav
+ * arrays had exactly that problem).
+ *
+ * `collapsed` (tablet icon-rail, 768–1023px) keeps the label in the
+ * accessibility tree at all times via the sr-only/not-sr-only toggle below —
+ * true `display:none` would remove a screen reader's only copy of the
+ * destination's name at that width, which a plain responsive-hidden span
+ * would have done.
+ */
+function SidebarLink({
+  item,
+  pathname,
+  collapsed = false,
+}: {
+  item: NavItem;
+  pathname: string;
+  collapsed?: boolean;
+}) {
+  const active = isActive(pathname, item.href);
   return (
     <Link
       href={item.href}
-      className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-150 ${
+      aria-current={active ? "page" : undefined}
+      title={collapsed ? item.label : undefined}
+      className={cn(
+        "flex items-center gap-3 h-[var(--nav-item-height)] px-3 rounded-[var(--nav-radius)] text-sm transition-colors motion-reduce:transition-none",
+        collapsed && "md:justify-center md:px-0",
         active
-          ? "bg-purple-50 dark:bg-purple-950 text-purple-700 dark:text-purple-300"
-          : "text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-gray-800 dark:hover:text-gray-200"
-      }`}
+          ? "font-semibold"
+          : "font-medium text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-gray-800 dark:hover:text-gray-200"
+      )}
+      style={
+        active
+          ? { backgroundColor: "var(--nav-accent-soft-bg)", color: "var(--nav-accent-soft-text)" }
+          : undefined
+      }
     >
       <item.icon
-        size={17}
-        className={active ? "text-purple-600 dark:text-purple-400" : "text-gray-400 dark:text-gray-500"}
+        aria-hidden="true"
+        className={cn(
+          "w-[var(--nav-icon-size)] h-[var(--nav-icon-size)] shrink-0",
+          !active && "text-gray-400 dark:text-gray-500"
+        )}
+        style={active ? { color: "var(--nav-accent-soft-text)" } : undefined}
       />
-      <span className="flex-1">{item.label}</span>
+      <span className={cn("flex-1", collapsed && "md:sr-only lg:not-sr-only")}>{item.label}</span>
       {item.badge && (
-        <span className="text-[9px] font-semibold bg-purple-100 dark:bg-purple-900 text-purple-500 dark:text-purple-300 px-1.5 py-0.5 rounded-full leading-none">
+        <span
+          className={cn(
+            "text-[10px] font-semibold bg-indigo-100 dark:bg-indigo-900 text-indigo-600 dark:text-indigo-300 px-1.5 py-0.5 rounded-full leading-none",
+            collapsed && "hidden lg:inline-block"
+          )}
+        >
           {item.badge}
         </span>
       )}
-      {active && <span className="w-1.5 h-1.5 rounded-full bg-purple-500 dark:bg-purple-400 shrink-0" />}
     </Link>
+  );
+}
+
+function SectionGroup({
+  section,
+  pathname,
+  collapsed = false,
+  bordered = true,
+}: {
+  section: NavSection;
+  pathname: string;
+  collapsed?: boolean;
+  bordered?: boolean;
+}) {
+  return (
+    <div
+      role="group"
+      aria-label={section.label}
+      className={bordered ? "mt-2 pt-3 border-t border-gray-100 dark:border-gray-800" : ""}
+    >
+      <p
+        className={cn(
+          "px-3 pb-1.5 text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400",
+          collapsed && "hidden lg:block"
+        )}
+      >
+        {section.label}
+      </p>
+      <div className="flex flex-col gap-0.5">
+        {section.items.map((item) => (
+          <SidebarLink key={item.href} item={item} pathname={pathname} collapsed={collapsed} />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/**
+ * Help and support — Step 3's approved consolidation of four permanently-
+ * visible links into one calm, collapsed-by-default entry. Uses the native
+ * <details>/<summary> disclosure rather than hand-built expand/collapse
+ * state: it is keyboard-operable (Enter/Space on the focused summary),
+ * self-announcing to screen readers ("button, collapsed"/"expanded" —
+ * no manual ARIA needed), and requires no new dependency or custom logic —
+ * Reuse Before Rebuild extended to a native HTML primitive instead of a
+ * hand-rolled one.
+ */
+function HelpSupportDisclosure({ pathname, collapsed = false }: { pathname: string; collapsed?: boolean }) {
+  return (
+    <details className="group/details mt-2 pt-3 border-t border-gray-100 dark:border-gray-800">
+      <summary
+        className={cn(
+          "flex items-center gap-3 h-[var(--nav-item-height)] px-3 rounded-[var(--nav-radius)] text-sm font-medium text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-gray-800 dark:hover:text-gray-200 transition-colors motion-reduce:transition-none cursor-pointer list-none [&::-webkit-details-marker]:hidden",
+          collapsed && "md:justify-center md:px-0"
+        )}
+        title={collapsed ? "Help and support" : undefined}
+      >
+        <HelpCircle aria-hidden="true" className="w-[var(--nav-icon-size)] h-[var(--nav-icon-size)] shrink-0 text-gray-400 dark:text-gray-500" />
+        <span className={cn("flex-1", collapsed && "md:sr-only lg:not-sr-only")}>Help and support</span>
+        <ChevronDown
+          aria-hidden="true"
+          size={15}
+          className={cn(
+            "shrink-0 text-gray-400 dark:text-gray-500 transition-transform motion-reduce:transition-none group-open/details:rotate-180",
+            collapsed && "hidden lg:block"
+          )}
+        />
+      </summary>
+      <div className={cn("flex flex-col gap-0.5 mt-0.5", !collapsed && "pl-1")}>
+        {supportItems.map((item) => (
+          <SidebarLink key={item.href} item={item} pathname={pathname} collapsed={collapsed} />
+        ))}
+      </div>
+    </details>
+  );
+}
+
+/**
+ * Mobile "More" drawer — reaches every destination the 4-tab bottom bar
+ * can't fit (Journey, Family, Help and support, Account). Step 6/7 require
+ * real keyboard open/close/escape behaviour, background-scroll prevention
+ * and focus restoration for whatever opens it — implemented directly
+ * (useState + a scoped keydown/focus-trap listener) rather than via
+ * components/ui/Popover.tsx, which is an anchored dropdown, not a full-
+ * height modal sheet; the escape-to-close mechanism below is deliberately
+ * the same shape as Popover's own (Reuse Before Rebuild extended to pattern,
+ * not just code, where the component itself doesn't fit).
+ */
+function MobileMoreDrawer({
+  open,
+  onClose,
+  pathname,
+  triggerRef,
+}: {
+  open: boolean;
+  onClose: () => void;
+  pathname: string;
+  triggerRef: React.RefObject<HTMLButtonElement | null>;
+}) {
+  const panelRef = useRef<HTMLDivElement>(null);
+  const closeButtonRef = useRef<HTMLButtonElement>(null);
+  const { user, signOut, loading } = useAuth();
+  const router = useRouter();
+
+  async function handleSignOut() {
+    await signOut();
+    onClose();
+    router.push("/dashboard");
+  }
+
+  useEffect(() => {
+    if (!open) return;
+
+    const previousOverflow = document.body.style.overflow;
+    const triggerEl = triggerRef.current;
+    document.body.style.overflow = "hidden";
+    closeButtonRef.current?.focus();
+
+    function handleKeyDown(e: KeyboardEvent) {
+      if (e.key === "Escape") {
+        onClose();
+        return;
+      }
+      if (e.key !== "Tab" || !panelRef.current) return;
+      const focusable = panelRef.current.querySelectorAll<HTMLElement>(
+        'a[href], button:not([disabled])'
+      );
+      if (focusable.length === 0) return;
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault();
+        first.focus();
+      }
+    }
+
+    document.addEventListener("keydown", handleKeyDown);
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      document.removeEventListener("keydown", handleKeyDown);
+      triggerEl?.focus();
+    };
+  }, [open, onClose, triggerRef]);
+
+  if (!open) return null;
+
+  return (
+    <div className="md:hidden fixed inset-0 z-50">
+      <button
+        aria-label="Close navigation"
+        onClick={onClose}
+        className="absolute inset-0 w-full h-full bg-black/40"
+      />
+      <div
+        ref={panelRef}
+        role="dialog"
+        aria-modal="true"
+        aria-label="More navigation"
+        className="absolute bottom-0 left-0 right-0 max-h-[80vh] overflow-y-auto bg-white dark:bg-gray-950 rounded-t-2xl border-t border-gray-100 dark:border-gray-800 px-3 pt-3 pb-[calc(1rem+env(safe-area-inset-bottom))]"
+      >
+        <div className="flex items-center justify-between px-2 pb-2">
+          <span className="text-sm font-semibold text-gray-900 dark:text-gray-100">More</span>
+          <button
+            ref={closeButtonRef}
+            onClick={onClose}
+            aria-label="Close"
+            className="w-9 h-9 flex items-center justify-center rounded-full text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors motion-reduce:transition-none"
+          >
+            <X size={18} aria-hidden="true" />
+          </button>
+        </div>
+
+        <SectionGroup section={journeySection} pathname={pathname} bordered={false} />
+        <SectionGroup section={familySection} pathname={pathname} />
+        <HelpSupportDisclosure pathname={pathname} />
+
+        <div className="mt-2 pt-3 border-t border-gray-100 dark:border-gray-800">
+          <UserMenu email={user?.email} loading={loading} onSignOut={handleSignOut} />
+        </div>
+      </div>
+    </div>
   );
 }
 
@@ -147,6 +346,8 @@ export default function Navigation() {
   const pathname = usePathname();
   const router = useRouter();
   const { user, signOut, loading } = useAuth();
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const moreTabRef = useRef<HTMLButtonElement>(null);
 
   async function handleSignOut() {
     await signOut();
@@ -155,117 +356,126 @@ export default function Navigation() {
 
   return (
     <>
-      {/* Desktop / Tablet sidebar */}
-      <nav className="hidden md:flex flex-col w-64 min-h-screen bg-white dark:bg-gray-950 border-r border-gray-100 dark:border-gray-800 px-3 py-6 fixed left-0 top-0 z-40">
+      {/* Desktop / tablet sidebar. 768–1023px: icon-only collapsed rail
+          (--nav-width-collapsed). 1024px+: full labelled sidebar
+          (--nav-width). PageLayout's content offset uses the matching
+          responsive pair so the two never drift out of sync again. */}
+      <nav
+        aria-label="Learning navigation"
+        className="hidden md:flex flex-col w-[var(--nav-width-collapsed)] lg:w-[var(--nav-width)] min-h-screen bg-white dark:bg-gray-950 border-r border-gray-100 dark:border-gray-800 px-3 py-6 fixed left-0 top-0 z-40"
+      >
         {/* Brand */}
-        <div className="mb-5 px-3">
-          <h1 className="text-xl font-bold text-purple-700 dark:text-purple-400">Angel 11+</h1>
-          <p className="text-xs text-gray-400 dark:text-gray-600 mt-0.5">Smart UK 11+ Prep</p>
+        <div className="mb-5 px-3 md:px-0 lg:px-3 md:text-center lg:text-left">
+          {/* AN-108 — wordmark moved from purple to the muted-indigo educational accent. */}
+          <h1 className="text-xl font-bold text-indigo-700 dark:text-indigo-400">
+            {/* The full name stays in the accessibility tree at every width
+                (sr-only visually hides, it never removes) — "A11+" below is
+                purely a visual abbreviation for the collapsed rail, not a
+                second accessible name. */}
+            <span className="md:sr-only lg:not-sr-only">Angel 11+</span>
+            <span className="hidden md:inline lg:hidden" aria-hidden="true">A11+</span>
+          </h1>
+          <p className="text-xs text-gray-400 dark:text-gray-600 mt-0.5 md:sr-only lg:not-sr-only">
+            Smart UK 11+ Prep
+          </p>
         </div>
 
-        {/* Sectioned nav */}
         <div className="flex flex-col flex-1 overflow-y-auto">
-          {/* EEP-001 — every group divider below (primary sections after
-              the first, Family, Support) now shares one consistent
-              mt-2 pt-3 rhythm; previously these three ad-hoc values
-              (mt-1/pt-2, mt-3/pt-3, mt-2/pt-2) gave otherwise-identical
-              group separators a subtly uneven vertical rhythm. The
-              account footer below keeps its own, deliberately larger gap
-              (mt-4 pt-4) since it closes a different tier — the pinned
-              account area, not another nav group. */}
-          {navSections.map((section, idx) => (
-            <div
-              key={section.label || `section-${idx}`}
-              className={idx > 0 ? "mt-2 pt-3 border-t border-gray-100 dark:border-gray-800" : ""}
-            >
-              {section.label && (
-                <p className="px-3 pb-1.5 text-[10px] font-bold uppercase tracking-widest text-gray-300 dark:text-gray-600">
-                  {section.label}
-                </p>
-              )}
-              <div className="flex flex-col gap-0.5">
-                {section.items.map((item) => (
-                  <SidebarLink key={item.href} item={item} pathname={pathname} />
-                ))}
-              </div>
-            </div>
-          ))}
-
-          {/* Family — Parent Hub + Angel Plus, always separated from student learning items */}
-          <div className="mt-2 pt-3 border-t border-gray-100 dark:border-gray-800">
-            <p className="px-3 pb-1.5 text-[10px] font-bold uppercase tracking-widest text-gray-300 dark:text-gray-600">
-              Family
-            </p>
+          {/* Primary — the four daily learning actions, unlabelled and first,
+              so they read as the obvious default rather than one section
+              among equals. */}
+          <div role="group" aria-label="Primary">
             <div className="flex flex-col gap-0.5">
-              <SidebarLink item={parentItem} pathname={pathname} />
-              <SidebarLink item={angelPlusItem} pathname={pathname} />
-            </div>
-          </div>
-
-          {/* Support — beta & help links */}
-          <div className="mt-2 pt-3 border-t border-gray-100 dark:border-gray-800">
-            <p className="px-3 pb-1.5 text-[10px] font-bold uppercase tracking-widest text-gray-300 dark:text-gray-600">
-              Support
-            </p>
-            <div className="flex flex-col gap-0.5">
-              {supportItems.map((item) => (
-                <SidebarLink key={item.href} item={item} pathname={pathname} />
+              {primaryItems.map((item) => (
+                <SidebarLink key={item.href} item={item} pathname={pathname} collapsed />
               ))}
             </div>
           </div>
+
+          <SectionGroup section={journeySection} pathname={pathname} collapsed />
+          <SectionGroup section={familySection} pathname={pathname} collapsed />
+          <HelpSupportDisclosure pathname={pathname} collapsed />
         </div>
 
-        {/* User auth — pinned at very bottom. Sprint 2: extracted into the
-            reusable UserMenu component (components/ui/UserMenu.tsx) — same
-            markup and behaviour, not a new pattern. */}
+        {/* Account — pinned at the very bottom. UserMenu unchanged
+            behaviourally; AN-101 only adjusts the surrounding treatment. */}
         <div className="mt-4 pt-4 border-t border-gray-100 dark:border-gray-800">
-          <UserMenu email={user?.email} loading={loading} onSignOut={handleSignOut} />
-          {!loading && !user && (
-            <p className="text-xs text-gray-300 dark:text-gray-600 mt-1 px-2">Powered by Angel Digital</p>
-          )}
+          <div className="md:hidden lg:block">
+            <UserMenu email={user?.email} loading={loading} onSignOut={handleSignOut} />
+          </div>
+          {/* Collapsed rail — a compact icon-only affordance instead of the
+              full email/sign-out block, which has no room at this width. */}
+          <div className="hidden md:flex lg:hidden justify-center">
+            {!loading && user ? (
+              <button
+                onClick={handleSignOut}
+                title={`Signed in as ${user.email}. Sign out`}
+                aria-label={`Signed in as ${user.email}. Sign out`}
+                className="w-9 h-9 rounded-full bg-indigo-100 dark:bg-indigo-900 flex items-center justify-center text-indigo-600 dark:text-indigo-300 text-xs font-semibold hover:bg-indigo-200 dark:hover:bg-indigo-800 transition-colors motion-reduce:transition-none"
+              >
+                {user.email?.[0]?.toUpperCase() ?? "?"}
+              </button>
+            ) : (
+              !loading && (
+                <Link
+                  href="/login"
+                  title="Sign in"
+                  aria-label="Sign in"
+                  className="w-9 h-9 rounded-full flex items-center justify-center text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-950 transition-colors motion-reduce:transition-none"
+                >
+                  <LogIn size={16} aria-hidden="true" />
+                </Link>
+              )
+            )}
+          </div>
         </div>
       </nav>
 
-      {/* Mobile bottom nav */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white dark:bg-gray-950 border-t border-gray-100 dark:border-gray-800 px-1 pb-safe">
+      {/* Mobile bottom nav — the four primary daily actions plus "More" for
+          everything else. Parent Dashboard and Account moved into the More
+          drawer: Step 3's own rule is that family/support capabilities
+          shouldn't compete visually with the child's immediate learning
+          actions, so the 4 fixed tabs stay purely about today's practice. */}
+      <nav
+        aria-label="Mobile navigation"
+        className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white dark:bg-gray-950 border-t border-gray-100 dark:border-gray-800 px-1 pb-safe"
+      >
         <div className="flex justify-around items-center h-16">
-          {mobileNavItems.map(({ href, label, icon: Icon }) => {
-            const active = pathname === href || pathname.startsWith(href + "/");
+          {primaryItems.map(({ href, label, icon: Icon }) => {
+            const active = isActive(pathname, href);
             return (
               <Link
                 key={href}
                 href={href}
-                /* EEP-001 — active tabs now get the same subtle background
-                   pill the desktop sidebar already uses for its active
-                   item, instead of a colour-only change, so "where am I"
-                   reads at a glance on mobile too. */
-                className={`flex flex-col items-center gap-0.5 px-2 py-1.5 rounded-xl min-w-[52px] transition-colors ${
-                  active ? "bg-purple-50 dark:bg-purple-950 text-purple-700 dark:text-purple-300" : "text-gray-400"
-                }`}
+                aria-current={active ? "page" : undefined}
+                className={cn(
+                  "flex flex-col items-center gap-0.5 px-2 py-1.5 rounded-xl min-w-[52px] transition-colors motion-reduce:transition-none",
+                  active ? "font-semibold" : "text-gray-400"
+                )}
+                style={active ? { backgroundColor: "var(--nav-accent-soft-bg)", color: "var(--nav-accent-soft-text)" } : undefined}
               >
-                <Icon size={20} className={active ? "text-purple-600 dark:text-purple-400" : "text-gray-400"} />
+                <Icon size={20} aria-hidden="true" className={active ? undefined : "text-gray-400"} style={active ? { color: "var(--nav-accent-soft-text)" } : undefined} />
                 <span className="text-[10px] font-medium">{label}</span>
               </Link>
             );
           })}
-          {/* Parent / login — repointed to the CSSE Parent Dashboard, same as the desktop sidebar (Quick Win #4) */}
-          <Link
-            href={user ? "/learning-intelligence/parent" : "/login"}
-            className={`flex flex-col items-center gap-0.5 px-2 py-1.5 rounded-xl min-w-[52px] transition-colors ${
-              pathname === "/learning-intelligence/parent" || pathname === "/login" ? "bg-purple-50 dark:bg-purple-950 text-purple-700 dark:text-purple-300" : "text-gray-400"
-            }`}
+          <button
+            ref={moreTabRef}
+            onClick={() => setDrawerOpen(true)}
+            aria-expanded={drawerOpen}
+            aria-haspopup="dialog"
+            aria-controls="mobile-more-drawer"
+            className="flex flex-col items-center gap-0.5 px-2 py-1.5 rounded-xl min-w-[52px] text-gray-400 transition-colors motion-reduce:transition-none"
           >
-            {user ? (
-              <div className="w-5 h-5 rounded-full bg-purple-100 flex items-center justify-center">
-                <User size={12} className="text-purple-600" />
-              </div>
-            ) : (
-              <LogIn size={20} />
-            )}
-            <span className="text-[10px] font-medium">{user ? "Parent" : "Login"}</span>
-          </Link>
+            <MoreHorizontal size={20} aria-hidden="true" />
+            <span className="text-[10px] font-medium">More</span>
+          </button>
         </div>
       </nav>
+
+      <div id="mobile-more-drawer">
+        <MobileMoreDrawer open={drawerOpen} onClose={() => setDrawerOpen(false)} pathname={pathname} triggerRef={moreTabRef} />
+      </div>
     </>
   );
 }

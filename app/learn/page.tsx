@@ -9,7 +9,7 @@ import { computeAnalytics } from "@/lib/analytics";
 import { computeAdaptiveState } from "@/lib/adaptiveEngine";
 import { ProgressBar } from "@/components/ui/Progress";
 import { ButtonLink } from "@/components/ui/Button";
-import { SUBJECT_ESTIMATED_MINUTES, SUBJECT_LEARNING_OBJECTIVE } from "@/lib/subjectMeta";
+import { SUBJECT_ESTIMATED_MINUTES, SUBJECT_HUB_DESCRIPTION } from "@/lib/subjectMeta";
 import type { AnalyticsReport, SubjectKey } from "@/types/analytics";
 import type { DailyMission } from "@/types/adaptive";
 
@@ -23,6 +23,15 @@ import type { DailyMission } from "@/types/adaptive";
  * computeAnalytics() and computeAdaptiveState() are called exactly as
  * they already are on the Dashboard/English/Maths pages; no new
  * calculation is introduced anywhere in this file.
+ *
+ * AN-103 (Premium Learning Hub Experience) — presentation-only pass, scoped
+ * to this page alone per Founder decision: Founder-approved subject
+ * descriptions (lib/subjectMeta.ts's new SUBJECT_HUB_DESCRIPTION, additive,
+ * not a change to the SUBJECT_LEARNING_OBJECTIVE the English/Maths/
+ * Vocabulary/Writing pages still read unchanged), reduced-motion coverage
+ * matching AN-101/AN-102, and the breadcrumb's "My Admission Journey" label
+ * updated to "Today" to match AN-102's Dashboard relabel. No educational
+ * logic, schema, recommendation, or assessment logic touched.
  */
 
 const SUBJECTS: {
@@ -56,7 +65,7 @@ export default function LearningHubPage() {
   );
 
   return (
-    <PageLayout breadcrumbs={[{ label: "My Admission Journey", href: "/dashboard" }, { label: "Learn" }]}>
+    <PageLayout breadcrumbs={[{ label: "Today", href: "/dashboard" }, { label: "Learn" }]}>
       <div className="max-w-3xl mx-auto px-4 py-6 md:px-8 md:py-8">
         <div className="mb-6">
           <h1 className="text-gray-900 dark:text-gray-100 font-bold text-2xl mb-1.5">Learning Hub</h1>
@@ -66,16 +75,24 @@ export default function LearningHubPage() {
         </div>
 
         {/* Quick Resume — reuses the same real Daily Mission output the
-            Dashboard already renders, not a second recommendation. */}
+            Dashboard already renders, not a second recommendation.
+            AN-108: hub-chrome strip (not subject-specific) moved from purple
+            to the muted-indigo educational accent. */}
         {learnMissionItem && (
-          <div className="bg-purple-50 dark:bg-purple-950 border border-purple-100 dark:border-purple-900 rounded-2xl p-4 mb-6 flex items-center justify-between gap-3 flex-wrap">
+          <div className="bg-indigo-50 dark:bg-indigo-950 border border-indigo-100 dark:border-indigo-900 rounded-2xl p-4 mb-6 flex items-center justify-between gap-3 flex-wrap">
             <div className="flex items-center gap-2.5 min-w-0">
-              <Compass size={16} className="text-purple-500 shrink-0" />
-              <p className="text-sm text-purple-800 dark:text-purple-200 min-w-0 truncate">
+              <Compass size={16} aria-hidden="true" className="text-indigo-500 shrink-0" />
+              <p className="text-sm text-indigo-800 dark:text-indigo-200 min-w-0 truncate">
                 Continue where you left off: <span className="font-semibold">{learnMissionItem.label}</span>
               </p>
             </div>
-            <ButtonLink href={learnMissionItem.href} variant="primary" size="sm" leftIcon={<Play size={13} />}>
+            <ButtonLink
+              href={learnMissionItem.href}
+              variant="primary"
+              size="sm"
+              leftIcon={<Play size={13} aria-hidden="true" />}
+              className="motion-reduce:transition-none"
+            >
               Continue learning
             </ButtonLink>
           </div>
@@ -93,16 +110,16 @@ export default function LearningHubPage() {
               <Link
                 key={subject.key}
                 href={subject.href}
-                className="block bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 shadow-sm p-4 hover:shadow-md active:scale-[0.98] transition-all group"
+                className="block bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 shadow-sm p-4 hover:shadow-md active:scale-[0.98] transition-all motion-reduce:transition-none group"
               >
                 <div className="flex items-start gap-3.5 mb-3">
                   <div className={`p-3 rounded-2xl shrink-0 ${subject.iconBg}`}>
-                    <Icon size={20} className={subject.color} />
+                    <Icon size={20} aria-hidden="true" className={subject.color} />
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="font-bold text-base text-gray-900 dark:text-gray-100">{subject.label}</p>
                     <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5 leading-relaxed">
-                      {SUBJECT_LEARNING_OBJECTIVE[subject.key]}
+                      {SUBJECT_HUB_DESCRIPTION[subject.key]}
                     </p>
                   </div>
                   <span className="text-xs text-gray-300 dark:text-gray-600 shrink-0">~{SUBJECT_ESTIMATED_MINUTES[subject.key]} min</span>

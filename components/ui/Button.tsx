@@ -19,9 +19,17 @@ import { cn } from "@/lib/cn";
 export type ButtonVariant = "primary" | "secondary" | "outline" | "ghost" | "danger";
 export type ButtonSize = "sm" | "md" | "lg";
 
+/**
+ * AN-108 (Visual Identity Refinement) — "primary" recoloured from purple to
+ * a deep forest green (Founder's explicit "Primary actions: deep forest
+ * green," "calm confidence rather than excitement" direction). Verified
+ * 5.02:1 (green-700/white, light) and 7.13:1 (green-800/white — the shade
+ * used on the Hero's PremiumCard, see Card.tsx) — both comfortably AA. No
+ * other variant touched.
+ */
 const VARIANT_CLASSES: Record<ButtonVariant, string> = {
   primary:
-    "bg-purple-600 hover:bg-purple-700 dark:bg-purple-700 dark:hover:bg-purple-600 text-white shadow-sm",
+    "bg-green-700 hover:bg-green-800 dark:bg-green-700 dark:hover:bg-green-600 text-white shadow-sm",
   secondary:
     "bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300",
   outline:

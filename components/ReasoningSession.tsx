@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useCallback, useEffect } from "react";
-import { CheckCircle, XCircle, Star, RefreshCw, ChevronDown, ChevronUp, Lightbulb } from "lucide-react";
+import { CheckCircle, XCircle, RefreshCw, ChevronDown, ChevronUp, Lightbulb } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import PageLayout from "@/components/PageLayout";
 import { completeLesson, recordSkillResult, getProgress } from "@/lib/progress";
@@ -18,7 +18,22 @@ import type { SkillType } from "@/types";
 import type { AnalyticsReport, SubjectKey } from "@/types/analytics";
 
 // ─── Theme colours ────────────────────────────────────────────────────────────
-
+//
+// AN-107 (Practice Experience Implementation) — `button` darkened from
+// `-600 hover:-700` to `-700 hover:-800` for all four themes, verified live
+// in a real browser (not estimated): white text on every theme's previous
+// `-600` fill measured below the 4.5:1 AA threshold for normal text —
+// cyan/teal as low as ~2.9:1 with the button's prior `text-white/80`
+// treatment, and even solid white only reached 3.62–3.74:1 for cyan/teal,
+// still failing. `-700` is the only shade that passes 4.5:1 with solid
+// white across all four themes (measured 5.36–7.10:1). This is the same
+// class of correction this codebase already made once (Sprint 1's
+// --color-success emerald-600→700) and again for Vocabulary's Word of the
+// Day card (AN-105) — applied here for the first time to violet/cyan/teal/
+// rose. `bar` (in-session progress fill) and `xpBadge` are unchanged in
+// colour; `xpBadge` itself is no longer used in markup (see the done
+// screen below) but the token is left defined here in case a future
+// package wants the same treatment for something else.
 const THEME = {
   violet: {
     header: "bg-violet-100 dark:bg-violet-900",
@@ -29,7 +44,7 @@ const THEME = {
     skillsTitle: "text-violet-700 dark:text-violet-300",
     skillsBadge: "bg-violet-100 text-violet-700 dark:bg-violet-900 dark:text-violet-300",
     bar: "bg-violet-500",
-    button: "bg-violet-600 hover:bg-violet-700",
+    button: "bg-violet-700 hover:bg-violet-800",
     working: "bg-violet-50 dark:bg-violet-950",
     workingText: "text-violet-600 dark:text-violet-400",
     back: "text-gray-400 hover:text-gray-700 dark:text-gray-500 dark:hover:text-gray-300",
@@ -44,7 +59,7 @@ const THEME = {
     skillsTitle: "text-cyan-700 dark:text-cyan-300",
     skillsBadge: "bg-cyan-100 text-cyan-700 dark:bg-cyan-900 dark:text-cyan-300",
     bar: "bg-cyan-500",
-    button: "bg-cyan-600 hover:bg-cyan-700",
+    button: "bg-cyan-700 hover:bg-cyan-800",
     working: "bg-cyan-50 dark:bg-cyan-950",
     workingText: "text-cyan-600 dark:text-cyan-400",
     back: "text-gray-400 hover:text-gray-700 dark:text-gray-500 dark:hover:text-gray-300",
@@ -59,7 +74,7 @@ const THEME = {
     skillsTitle: "text-teal-700 dark:text-teal-300",
     skillsBadge: "bg-teal-100 text-teal-700 dark:bg-teal-900 dark:text-teal-300",
     bar: "bg-teal-500",
-    button: "bg-teal-600 hover:bg-teal-700",
+    button: "bg-teal-700 hover:bg-teal-800",
     working: "bg-teal-50 dark:bg-teal-950",
     workingText: "text-teal-600 dark:text-teal-400",
     back: "text-gray-400 hover:text-gray-700 dark:text-gray-500 dark:hover:text-gray-300",
@@ -74,7 +89,7 @@ const THEME = {
     skillsTitle: "text-rose-700 dark:text-rose-300",
     skillsBadge: "bg-rose-100 text-rose-700 dark:bg-rose-900 dark:text-rose-300",
     bar: "bg-rose-500",
-    button: "bg-rose-600 hover:bg-rose-700",
+    button: "bg-rose-700 hover:bg-rose-800",
     working: "bg-rose-50 dark:bg-rose-950",
     workingText: "text-rose-600 dark:text-rose-400",
     back: "text-gray-400 hover:text-gray-700 dark:text-gray-500 dark:hover:text-gray-300",
@@ -101,6 +116,24 @@ function isAnswerCorrect(userRaw: string, question: ReasoningQuestion): boolean 
     return question.alternatives.some((alt) => normalise(alt) === user);
   }
   return false;
+}
+
+/**
+ * AN-107 (Practice Experience Implementation) — Founder decision 2:
+ * "Remove visible XP messaging. Replace with educationally meaningful
+ * progress messaging." Keyed on `score`, the same real, already-computed
+ * percentage the line above this message already shows — no new
+ * calculation, same presentation-only convention as Dashboard's
+ * getEncouragingMessage(). `completeLesson()`'s xp argument and the
+ * `xpGained` state are unchanged (Founder decision 2's own instruction not
+ * to remove internal XP systems still required elsewhere) — only the
+ * visible badge is replaced.
+ */
+function getPracticeCompletionMessage(score: number): string {
+  if (score >= 80) return "Excellent work — this is exam-ready practice.";
+  if (score >= 60) return "Solid progress — a little more practice will make this really strong.";
+  if (score >= 40) return "Good effort — the explanations below will help this stick.";
+  return "Every attempt here is real progress — the explanations below show exactly why.";
 }
 
 // ─── Props ────────────────────────────────────────────────────────────────────
@@ -139,7 +172,6 @@ export default function ReasoningSession({
   const [checked, setChecked] = useState<Record<string, boolean | null>>({});
   const [showExplanation, setShowExplanation] = useState<Record<string, boolean>>({});
   const [showHint, setShowHint] = useState<Record<string, boolean>>({});
-  const [xpGained, setXpGained] = useState(0);
   const [score, setScore] = useState(0);
   const [report, setReport] = useState<AnalyticsReport | null>(null);
 
@@ -164,9 +196,12 @@ export default function ReasoningSession({
   const finishSession = useCallback(() => {
     const correctCount = Object.values(checked).filter(Boolean).length;
     const pct = Math.round((correctCount / questions.length) * 100);
+    // AN-107 — the xp calculation and its persistence via completeLesson()
+    // are unchanged (Founder decision 2: preserve internal XP systems);
+    // only the xpGained *state* was removed, since nothing renders it now
+    // that the visible XP badge is gone.
     const xp = correctCount * 12 + 10;
     setScore(pct);
-    setXpGained(xp);
     completeLesson(subjectKey, pct, xp);
     setMode("done");
   }, [checked, questions.length, subjectKey]);
@@ -194,16 +229,15 @@ export default function ReasoningSession({
         <div className="max-w-2xl mx-auto px-4 py-10 md:px-8">
           <div className="text-center mb-8">
             <div className={`inline-flex items-center justify-center w-16 h-16 ${t.header} rounded-full mb-4`}>
-              <CheckCircle size={32} className={t.icon} />
+              <CheckCircle size={32} aria-hidden="true" className={t.icon} />
             </div>
             <h1 className="text-gray-900 dark:text-gray-100 font-bold text-2xl mb-2">Session Complete!</h1>
             <p className="text-gray-500 dark:text-gray-400">
               {correctCount} of {questions.length} correct — {score}%
             </p>
-            <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-full mt-3 font-semibold ${t.xpBadge}`}>
-              <Star size={16} className={t.icon} />
-              +{xpGained} XP earned
-            </div>
+            <p className="text-gray-700 dark:text-gray-300 font-semibold mt-3">
+              {getPracticeCompletionMessage(score)}
+            </p>
           </div>
 
           <div className="flex flex-col gap-3 mb-6">
@@ -223,9 +257,9 @@ export default function ReasoningSession({
                   <p className="text-gray-800 dark:text-gray-100 text-sm font-medium mb-2 whitespace-pre-line">{q.question}</p>
                   <div className="flex items-start gap-2">
                     {wasCorrect === true ? (
-                      <CheckCircle size={14} className="text-green-500 mt-0.5 shrink-0" />
+                      <CheckCircle size={14} aria-hidden="true" className="text-green-500 mt-0.5 shrink-0" />
                     ) : wasCorrect === false ? (
-                      <XCircle size={14} className="text-red-400 mt-0.5 shrink-0" />
+                      <XCircle size={14} aria-hidden="true" className="text-red-400 mt-0.5 shrink-0" />
                     ) : null}
                     <div className="flex-1">
                       <p className="text-gray-500 dark:text-gray-400 text-xs">
@@ -245,15 +279,15 @@ export default function ReasoningSession({
           <div className="flex gap-3">
             <button
               onClick={() => setMode("menu")}
-              className={`flex-1 text-white rounded-xl py-3.5 font-semibold text-sm transition-colors ${t.button}`}
+              className={`flex-1 text-white rounded-xl py-3.5 font-semibold text-sm transition-colors motion-reduce:transition-none ${t.button}`}
             >
               Back to {subjectName}
             </button>
             <button
               onClick={startSession}
-              className="flex items-center gap-2 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-xl py-3.5 px-4 font-semibold text-sm hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+              className="flex items-center gap-2 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-xl py-3.5 px-4 font-semibold text-sm hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors motion-reduce:transition-none"
             >
-              <RefreshCw size={14} />
+              <RefreshCw size={14} aria-hidden="true" />
               Again
             </button>
           </div>
@@ -269,7 +303,7 @@ export default function ReasoningSession({
         <div className="max-w-2xl mx-auto px-4 py-6 md:px-8 md:py-8">
           <div className="flex items-center gap-3 mb-6">
             <div className={`${t.header} p-3 rounded-2xl`}>
-              <Icon size={22} className={t.icon} />
+              <Icon size={22} aria-hidden="true" className={t.icon} />
             </div>
             <div>
               <h1 className="text-gray-900 dark:text-gray-100 font-bold text-2xl">{subjectName}</h1>
@@ -293,18 +327,22 @@ export default function ReasoningSession({
 
           <button
             onClick={startSession}
-            className={`w-full text-white rounded-2xl p-6 text-left transition-all ${t.button}`}
+            className={`w-full text-white rounded-2xl p-6 text-left transition-all motion-reduce:transition-none ${t.button}`}
           >
             <div className="flex items-center justify-between mb-3">
               <div className={`bg-white/20 p-2.5 rounded-xl`}>
-                <Icon size={20} className="text-white" />
+                <Icon size={20} aria-hidden="true" className="text-white" />
               </div>
               <span className="bg-white/20 text-white text-xs font-semibold px-2.5 py-1 rounded-full">
                 {questions.length} questions
               </span>
             </div>
             <h3 className="text-white font-bold text-lg mb-1">Start Practice Session</h3>
-            <p className="text-white/80 text-sm">
+            {/* AN-107: text-white/80 measured (live, real browser) at
+                ~2.9:1 on the cyan/teal themes' prior -600 fill — solid
+                text-white on the new -700 fill passes 4.5:1+ on every
+                theme (see THEME's own comment above). */}
+            <p className="text-white text-sm">
               Work through {questions.length} original exam-style questions. Automatic marking with full explanations.
             </p>
           </button>
@@ -350,13 +388,25 @@ export default function ReasoningSession({
         <div className="flex items-center gap-3 mb-6">
           <button
             onClick={() => setMode("menu")}
-            className={`text-sm transition-colors ${t.back}`}
+            className={`text-sm transition-colors motion-reduce:transition-none ${t.back}`}
           >
             ← {subjectName}
           </button>
-          <div className="flex-1 bg-gray-100 dark:bg-gray-800 rounded-full h-2">
+          {/* AN-107: kept as its own markup (this component's `bar` colour
+              varies per theme — violet/cyan/teal/rose — none matching the
+              shared ProgressBar component's purple/emerald/amber palette,
+              the same constraint AN-105 documented for Maths/Vocabulary/
+              Writing); only real ARIA progress semantics were added. */}
+          <div
+            role="progressbar"
+            aria-valuenow={Math.round(((currentIndex + 1) / questions.length) * 100)}
+            aria-valuemin={0}
+            aria-valuemax={100}
+            aria-label="Question progress"
+            className="flex-1 bg-gray-100 dark:bg-gray-800 rounded-full h-2"
+          >
             <div
-              className={`h-full rounded-full transition-all ${t.bar}`}
+              className={`h-full rounded-full transition-all motion-reduce:transition-none ${t.bar}`}
               style={{ width: `${((currentIndex + 1) / questions.length) * 100}%` }}
             />
           </div>
@@ -383,9 +433,9 @@ export default function ReasoningSession({
             {current.hint && !isChecked && (
               <button
                 onClick={() => setShowHint((p) => ({ ...p, [current.id]: !p[current.id] }))}
-                className="flex items-center gap-1.5 text-xs text-amber-600 hover:text-amber-800 font-medium mb-3 transition-colors"
+                className="flex items-center gap-1.5 text-xs text-amber-600 hover:text-amber-800 font-medium mb-3 transition-colors motion-reduce:transition-none"
               >
-                <Lightbulb size={13} />
+                <Lightbulb size={13} aria-hidden="true" />
                 {showHint[current.id] ? "Hide hint" : "Show hint"}
               </button>
             )}
@@ -409,7 +459,7 @@ export default function ReasoningSession({
               }}
               placeholder="Your answer..."
               disabled={isChecked}
-              className={`w-full rounded-xl px-4 py-3.5 text-base font-medium focus:outline-none focus:ring-2 transition-all ${
+              className={`w-full rounded-xl px-4 py-3.5 text-base font-medium focus:outline-none focus:ring-2 transition-all motion-reduce:transition-none ${
                 isChecked
                   ? isCorrect
                     ? "bg-green-50 dark:bg-green-950 border-2 border-green-400 dark:border-green-600 text-green-700 dark:text-green-300"
@@ -421,9 +471,9 @@ export default function ReasoningSession({
             {isChecked && (
               <div className={`mt-3 rounded-xl p-3 flex items-start gap-2 ${isCorrect ? "bg-green-50 dark:bg-green-950" : "bg-red-50 dark:bg-red-950"}`}>
                 {isCorrect ? (
-                  <CheckCircle size={16} className="text-green-500 mt-0.5 shrink-0" />
+                  <CheckCircle size={16} aria-hidden="true" className="text-green-500 mt-0.5 shrink-0" />
                 ) : (
-                  <XCircle size={16} className="text-red-400 mt-0.5 shrink-0" />
+                  <XCircle size={16} aria-hidden="true" className="text-red-400 mt-0.5 shrink-0" />
                 )}
                 <p className={`text-sm font-medium ${isCorrect ? "text-green-700 dark:text-green-300" : "text-red-600 dark:text-red-400"}`}>
                   {isCorrect ? "Correct!" : `Incorrect — answer: ${current.answer}`}
@@ -434,9 +484,9 @@ export default function ReasoningSession({
             {isChecked && (
               <button
                 onClick={() => setShowExplanation((p) => ({ ...p, [current.id]: !p[current.id] }))}
-                className={`mt-3 flex items-center gap-1.5 text-xs font-medium transition-colors ${t.workingText} hover:opacity-80`}
+                className={`mt-3 flex items-center gap-1.5 text-xs font-medium transition-colors motion-reduce:transition-none ${t.workingText} hover:opacity-80`}
               >
-                {showExplanation[current.id] ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+                {showExplanation[current.id] ? <ChevronUp size={14} aria-hidden="true" /> : <ChevronDown size={14} aria-hidden="true" />}
                 {showExplanation[current.id] ? "Hide" : "Show"} explanation
               </button>
             )}
@@ -455,14 +505,14 @@ export default function ReasoningSession({
             <button
               onClick={checkAnswer}
               disabled={!(answers[current?.id] ?? "").trim()}
-              className={`flex-1 text-white rounded-xl py-4 font-semibold text-base disabled:opacity-40 transition-colors ${t.button}`}
+              className={`flex-1 text-white rounded-xl py-4 font-semibold text-base disabled:opacity-40 transition-colors motion-reduce:transition-none ${t.button}`}
             >
               Check Answer
             </button>
           ) : (
             <button
               onClick={next}
-              className={`flex-1 text-white rounded-xl py-4 font-semibold text-base transition-colors ${t.button}`}
+              className={`flex-1 text-white rounded-xl py-4 font-semibold text-base transition-colors motion-reduce:transition-none ${t.button}`}
             >
               {currentIndex + 1 >= questions.length ? "Finish" : "Next Question →"}
             </button>

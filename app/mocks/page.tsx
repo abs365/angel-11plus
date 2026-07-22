@@ -30,8 +30,14 @@ const MOCK_CARDS: {
     sections: ["Verbal Reasoning", "Non-Verbal Reasoning", "Numerical Reasoning", "Vocabulary Challenge"],
     bg: "bg-blue-50 dark:bg-blue-950",
     border: "border-blue-100 dark:border-blue-900",
-    badgeBg: "bg-blue-600",
-    badgeText: "text-white",
+    // ARC-001A — solid bg-{colour}-600 + white text (the same "obsolete
+    // dominant... bright blue" treatment flagged app-wide) softened to the
+    // tinted-badge pattern already established elsewhere (e.g. the
+    // "Recommended" badge on the English/Maths subject pages) — the hue
+    // itself (one per exam board: GL/CEM/CSSE/ISEB) is preserved, since it's
+    // genuine assessment-identity differentiation, not dominant chrome.
+    badgeBg: "bg-blue-100 dark:bg-blue-900",
+    badgeText: "text-blue-700 dark:text-blue-300",
   },
   {
     pathway: "cem",
@@ -42,8 +48,8 @@ const MOCK_CARDS: {
     sections: ["Verbal Reasoning", "Numerical Reasoning"],
     bg: "bg-indigo-50 dark:bg-indigo-950",
     border: "border-indigo-100 dark:border-indigo-900",
-    badgeBg: "bg-indigo-600",
-    badgeText: "text-white",
+    badgeBg: "bg-indigo-100 dark:bg-indigo-900",
+    badgeText: "text-indigo-700 dark:text-indigo-300",
   },
   {
     pathway: "csse",
@@ -54,8 +60,8 @@ const MOCK_CARDS: {
     sections: ["Mathematics", "English & Language (coming soon)"],
     bg: "bg-purple-50 dark:bg-purple-950",
     border: "border-purple-100 dark:border-purple-900",
-    badgeBg: "bg-purple-600",
-    badgeText: "text-white",
+    badgeBg: "bg-purple-100 dark:bg-purple-900",
+    badgeText: "text-purple-700 dark:text-purple-300",
   },
   {
     pathway: "iseb",
@@ -66,8 +72,8 @@ const MOCK_CARDS: {
     sections: ["Verbal Reasoning", "Non-Verbal Reasoning", "Spatial Reasoning", "Numerical Reasoning"],
     bg: "bg-emerald-50 dark:bg-emerald-950",
     border: "border-emerald-100 dark:border-emerald-900",
-    badgeBg: "bg-emerald-600",
-    badgeText: "text-white",
+    badgeBg: "bg-emerald-100 dark:bg-emerald-900",
+    badgeText: "text-emerald-700 dark:text-emerald-300",
   },
 ];
 
@@ -87,7 +93,10 @@ export default function MocksPage() {
   }, []);
 
   return (
-    <PageLayout breadcrumbs={[{ label: "My Admission Journey", href: "/dashboard" }, { label: "Mock Centre" }]}>
+    // ARC-001A — "My Admission Journey" predates AN-101's "Today" nav
+    // relabel (the same stale label AN-107 already fixed on the Practice
+    // hub's breadcrumb); every other primary destination reads "Today".
+    <PageLayout breadcrumbs={[{ label: "Today", href: "/dashboard" }, { label: "Mock Centre" }]}>
       <div className="max-w-2xl mx-auto px-4 pb-16 pt-6 md:pt-8 space-y-6">
         <div className="mb-1">
           <h1 className="text-gray-900 dark:text-gray-100 font-bold text-2xl mb-1">Mock Centre</h1>
@@ -124,7 +133,7 @@ export default function MocksPage() {
           <div className="rounded-2xl border border-violet-100 dark:border-violet-900 bg-violet-50 dark:bg-violet-950 p-5">
             <div className="flex items-start justify-between mb-3">
               <div className="flex items-center gap-2.5">
-                <span className="text-xs font-bold px-2.5 py-1 rounded-lg bg-violet-700 text-white flex items-center gap-1">
+                <span className="text-xs font-bold px-2.5 py-1 rounded-lg bg-violet-100 dark:bg-violet-900 text-violet-700 dark:text-violet-300 flex items-center gap-1">
                   <Sparkles size={12} />
                   Personalised
                 </span>
@@ -149,7 +158,7 @@ export default function MocksPage() {
           <div className="rounded-2xl border border-blue-100 dark:border-blue-900 bg-blue-50 dark:bg-blue-950 p-5">
             <div className="flex items-start justify-between mb-3">
               <div className="flex items-center gap-2.5">
-                <span className="text-xs font-bold px-2.5 py-1 rounded-lg bg-blue-700 text-white flex items-center gap-1">
+                <span className="text-xs font-bold px-2.5 py-1 rounded-lg bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 flex items-center gap-1">
                   <Sparkles size={12} />
                   Personalised
                 </span>
@@ -174,7 +183,7 @@ export default function MocksPage() {
           <div className="rounded-2xl border border-purple-100 dark:border-purple-900 bg-purple-50 dark:bg-purple-950 p-5">
             <div className="flex items-start justify-between mb-3">
               <div className="flex items-center gap-2.5">
-                <span className="text-xs font-bold px-2.5 py-1 rounded-lg bg-purple-700 text-white flex items-center gap-1">
+                <span className="text-xs font-bold px-2.5 py-1 rounded-lg bg-purple-100 dark:bg-purple-900 text-purple-700 dark:text-purple-300 flex items-center gap-1">
                   <Sparkles size={12} />
                   Personalised
                 </span>
@@ -199,7 +208,7 @@ export default function MocksPage() {
           <div className="rounded-2xl border border-emerald-100 dark:border-emerald-900 bg-emerald-50 dark:bg-emerald-950 p-5">
             <div className="flex items-start justify-between mb-3">
               <div className="flex items-center gap-2.5">
-                <span className="text-xs font-bold px-2.5 py-1 rounded-lg bg-emerald-700 text-white flex items-center gap-1">
+                <span className="text-xs font-bold px-2.5 py-1 rounded-lg bg-emerald-100 dark:bg-emerald-900 text-emerald-700 dark:text-emerald-300 flex items-center gap-1">
                   <Sparkles size={12} />
                   Personalised
                 </span>

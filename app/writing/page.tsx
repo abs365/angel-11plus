@@ -17,7 +17,7 @@ import { writingPrompts } from "@/data/writing";
 import { completeLesson, getProgress } from "@/lib/progress";
 import { computeAnalytics } from "@/lib/analytics";
 import SessionInfoBar from "@/components/SessionInfoBar";
-import { SUBJECT_ESTIMATED_MINUTES, SUBJECT_LEARNING_OBJECTIVE } from "@/lib/subjectMeta";
+import { SUBJECT_ESTIMATED_MINUTES, SUBJECT_LEARNING_OBJECTIVE, SUBJECT_EXPECTED_BENEFIT } from "@/lib/subjectMeta";
 import dynamic from "next/dynamic";
 import type { WritingPrompt } from "@/types";
 import type { WritingFeedback as WritingFeedbackData } from "@/types/writing-feedback";
@@ -121,7 +121,7 @@ export default function WritingPage() {
           {/* Header */}
           <div className="text-center mb-6">
             <div className="inline-flex items-center justify-center w-14 h-14 bg-orange-100 dark:bg-orange-900 rounded-full mb-3">
-              <CheckCircle size={28} className="text-orange-600 dark:text-orange-400" />
+              <CheckCircle size={28} aria-hidden="true" className="text-orange-600 dark:text-orange-400" />
             </div>
             <h1 className="text-gray-900 dark:text-gray-100 font-bold text-2xl mb-1">Writing Submitted</h1>
             <p className="text-gray-500 dark:text-gray-400 text-sm">
@@ -152,7 +152,7 @@ export default function WritingPage() {
               {selectedPrompt.checklist.map((item) => (
                 <div key={item} className="flex items-center gap-2.5">
                   {checklist[item] ? (
-                    <CheckCircle size={15} className="text-green-500 shrink-0" />
+                    <CheckCircle size={15} aria-hidden="true" className="text-green-500 shrink-0" />
                   ) : (
                     <div className="w-3.5 h-3.5 rounded-full border-2 border-gray-200 dark:border-gray-700 shrink-0" />
                   )}
@@ -168,9 +168,9 @@ export default function WritingPage() {
           {feedbackState === "idle" && (
             <button
               onClick={requestAIFeedback}
-              className="w-full mb-5 flex items-center justify-center gap-2.5 bg-indigo-600 text-white rounded-xl py-4 font-semibold text-sm hover:bg-indigo-700 transition-colors"
+              className="w-full mb-5 flex items-center justify-center gap-2.5 bg-indigo-600 text-white rounded-xl py-4 font-semibold text-sm hover:bg-indigo-700 transition-colors motion-reduce:transition-none"
             >
-              <Sparkles size={16} />
+              <Sparkles size={16} aria-hidden="true" />
               Get Angel Smart Feedback
             </button>
           )}
@@ -203,13 +203,13 @@ export default function WritingPage() {
 
           {feedbackState === "error" && feedbackError && (
             <div className="mb-5 bg-red-50 dark:bg-red-950 border border-red-100 dark:border-red-900 rounded-xl px-4 py-3.5 flex items-start gap-2.5">
-              <AlertCircle size={15} className="text-red-400 mt-0.5 shrink-0" />
+              <AlertCircle size={15} aria-hidden="true" className="text-red-400 mt-0.5 shrink-0" />
               <div className="flex-1">
                 <p className="text-red-600 dark:text-red-400 text-sm">{feedbackError}</p>
               </div>
               <button
                 onClick={requestAIFeedback}
-                className="text-red-500 text-xs font-semibold hover:text-red-700 transition-colors shrink-0"
+                className="text-red-500 text-xs font-semibold hover:text-red-700 transition-colors motion-reduce:transition-none shrink-0"
               >
                 Retry
               </button>
@@ -226,13 +226,13 @@ export default function WritingPage() {
           <div className="flex gap-3">
             <button
               onClick={() => setState("list")}
-              className="flex-1 bg-orange-600 text-white rounded-xl py-3.5 font-semibold text-sm hover:bg-orange-700 transition-colors"
+              className="flex-1 bg-orange-600 text-white rounded-xl py-3.5 font-semibold text-sm hover:bg-orange-700 transition-colors motion-reduce:transition-none"
             >
               Back to Writing
             </button>
             <button
               onClick={() => startPrompt(selectedPrompt)}
-              className="flex-1 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-xl py-3.5 font-semibold text-sm hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+              className="flex-1 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-xl py-3.5 font-semibold text-sm hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors motion-reduce:transition-none"
             >
               Try Again
             </button>
@@ -251,15 +251,15 @@ export default function WritingPage() {
           <div className="flex items-center justify-between mb-5">
             <button
               onClick={() => setState("list")}
-              className="flex items-center gap-1.5 text-gray-400 dark:text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 text-sm transition-colors"
+              className="flex items-center gap-1.5 text-gray-400 dark:text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 text-sm transition-colors motion-reduce:transition-none"
             >
-              <ArrowLeft size={16} />
+              <ArrowLeft size={16} aria-hidden="true" />
               Writing
             </button>
             <div className="flex items-center gap-3">
               <span className="text-gray-400 dark:text-gray-500 text-sm">{wordCount} words</span>
               <div className="flex items-center gap-1.5 text-orange-600 text-sm font-medium">
-                <Timer size={15} />
+                <Timer size={15} aria-hidden="true" />
                 {selectedPrompt.timeMinutes} min task
               </div>
             </div>
@@ -274,7 +274,7 @@ export default function WritingPage() {
                 {selectedPrompt.type}
               </span>
               <span className="text-orange-600 text-xs flex items-center gap-1">
-                <Clock size={11} />
+                <Clock size={11} aria-hidden="true" />
                 {selectedPrompt.timeMinutes} minutes
               </span>
             </div>
@@ -314,9 +314,21 @@ export default function WritingPage() {
                 <p className="text-xs text-gray-500 dark:text-gray-400 font-semibold uppercase tracking-wide mb-3">
                   Checklist ({checkedCount}/{selectedPrompt.checklist.length})
                 </p>
-                <div className="w-full bg-gray-100 dark:bg-gray-800 rounded-full h-1.5 mb-3">
+                {/* AN-105: kept as its own markup rather than adopting the
+                    shared ProgressBar — its colour prop doesn't support
+                    orange, this subject's colour throughout (prompt type
+                    chips, timer, buttons); only real ARIA progress
+                    semantics were added, colour and calculation unchanged. */}
+                <div
+                  role="progressbar"
+                  aria-valuenow={Math.round((checkedCount / selectedPrompt.checklist.length) * 100)}
+                  aria-valuemin={0}
+                  aria-valuemax={100}
+                  aria-label="Checklist progress"
+                  className="w-full bg-gray-100 dark:bg-gray-800 rounded-full h-1.5 mb-3"
+                >
                   <div
-                    className="bg-orange-400 h-full rounded-full transition-all"
+                    className="bg-orange-400 h-full rounded-full transition-all motion-reduce:transition-none"
                     style={{
                       width: `${(checkedCount / selectedPrompt.checklist.length) * 100}%`,
                     }}
@@ -327,18 +339,20 @@ export default function WritingPage() {
                     <button
                       key={item}
                       onClick={() => toggleCheck(item)}
+                      aria-pressed={checklist[item]}
                       className="flex items-start gap-2.5 text-left group"
                     >
                       {checklist[item] ? (
-                        <CheckSquare size={16} className="text-orange-500 mt-0.5 shrink-0" />
+                        <CheckSquare size={16} aria-hidden="true" className="text-orange-500 mt-0.5 shrink-0" />
                       ) : (
                         <Square
                           size={16}
-                          className="text-gray-300 dark:text-gray-600 mt-0.5 shrink-0 group-hover:text-gray-400 dark:group-hover:text-gray-500 transition-colors"
+                          aria-hidden="true"
+                          className="text-gray-300 dark:text-gray-600 mt-0.5 shrink-0 group-hover:text-gray-400 dark:group-hover:text-gray-500 transition-colors motion-reduce:transition-none"
                         />
                       )}
                       <span
-                        className={`text-xs leading-snug transition-colors ${
+                        className={`text-xs leading-snug transition-colors motion-reduce:transition-none ${
                           checklist[item]
                             ? "text-gray-700 dark:text-gray-300 line-through"
                             : "text-gray-500 dark:text-gray-400"
@@ -357,7 +371,7 @@ export default function WritingPage() {
           <button
             onClick={handleSubmit}
             disabled={wordCount < 20}
-            className="mt-5 w-full bg-orange-600 text-white rounded-xl py-4 font-semibold text-base hover:bg-orange-700 disabled:opacity-40 transition-colors"
+            className="mt-5 w-full bg-orange-600 text-white rounded-xl py-4 font-semibold text-base hover:bg-orange-700 disabled:opacity-40 transition-colors motion-reduce:transition-none"
           >
             Submit Writing
           </button>
@@ -378,7 +392,7 @@ export default function WritingPage() {
         {/* Header */}
         <div className="flex items-center gap-3 mb-5">
           <div className="bg-orange-100 dark:bg-orange-900 p-3 rounded-2xl">
-            <Pencil size={22} className="text-orange-600 dark:text-orange-400" />
+            <Pencil size={22} aria-hidden="true" className="text-orange-600 dark:text-orange-400" />
           </div>
           <div>
             <h1 className="text-gray-900 dark:text-gray-100 font-bold text-2xl">Creative Writing</h1>
@@ -394,6 +408,7 @@ export default function WritingPage() {
             objective={SUBJECT_LEARNING_OBJECTIVE.writing!}
             estimatedMinutes={SUBJECT_ESTIMATED_MINUTES.writing!}
             subjectAnalytics={report?.subjects.find((s) => s.subject === "writing")}
+            expectedBenefit={SUBJECT_EXPECTED_BENEFIT.writing}
           />
         </div>
 
@@ -408,7 +423,7 @@ export default function WritingPage() {
 
         {/* Smart coaching note */}
         <div className="flex items-center gap-2.5 bg-indigo-50 dark:bg-indigo-950 border border-indigo-100 dark:border-indigo-900 rounded-xl px-4 py-3 mb-5">
-          <Sparkles size={14} className="text-indigo-500 shrink-0" />
+          <Sparkles size={14} aria-hidden="true" className="text-indigo-500 shrink-0" />
           <p className="text-indigo-700 dark:text-indigo-300 text-sm">
             After submitting, you can request{" "}
             <strong>Angel Smart Feedback</strong> — tailored analysis of your technique, strengths, and
@@ -422,7 +437,7 @@ export default function WritingPage() {
             <button
               key={prompt.id}
               onClick={() => startPrompt(prompt)}
-              className="bg-white dark:bg-gray-900 rounded-2xl p-5 border border-gray-100 dark:border-gray-800 hover:border-orange-200 dark:hover:border-orange-700 hover:shadow-sm active:scale-[0.98] transition-all text-left group"
+              className="bg-white dark:bg-gray-900 rounded-2xl p-5 border border-gray-100 dark:border-gray-800 hover:border-orange-200 dark:hover:border-orange-700 hover:shadow-sm active:scale-[0.98] transition-all motion-reduce:transition-none text-left group"
             >
               <div className="flex items-start justify-between mb-3">
                 <div className="flex items-center gap-2">
@@ -432,13 +447,13 @@ export default function WritingPage() {
                     {prompt.type}
                   </span>
                   <span className="text-xs text-gray-400 dark:text-gray-500 flex items-center gap-1">
-                    <Clock size={11} />
+                    <Clock size={11} aria-hidden="true" />
                     {prompt.timeMinutes} min
                   </span>
                 </div>
                 <span className="text-gray-300 dark:text-gray-600 text-xs">{prompt.checklist.length} point checklist</span>
               </div>
-              <h3 className="text-gray-900 dark:text-gray-100 font-semibold text-base mb-2 group-hover:text-orange-700 dark:group-hover:text-orange-300 transition-colors">
+              <h3 className="text-gray-900 dark:text-gray-100 font-semibold text-base mb-2 group-hover:text-orange-700 dark:group-hover:text-orange-300 transition-colors motion-reduce:transition-none">
                 {prompt.title}
               </h3>
               <p className="text-gray-400 dark:text-gray-500 text-sm leading-snug line-clamp-2">

@@ -13,6 +13,8 @@ import {
   ChevronRight,
   Clock,
   Compass,
+  TrendingUp,
+  Pencil,
 } from "lucide-react";
 import PageLayout from "@/components/PageLayout";
 import { getProgress, markBadgesSeen, getSelectedPathwayId } from "@/lib/progress";
@@ -20,7 +22,7 @@ import { migrateLocalProgressToSupabase } from "@/lib/migrateProgress";
 import { computeAnalytics } from "@/lib/analytics";
 import { computeAdaptiveState } from "@/lib/adaptiveEngine";
 import { computeGamification } from "@/lib/gamification";
-import { computeParentReport } from "@/lib/parentInsights";
+import { computeParentReport, READINESS_CONFIG } from "@/lib/parentInsights";
 import { getBestMockScoreForPathway, getMockCountForPathway } from "@/lib/mockProgress";
 import NewBadgeBanner from "@/components/NewBadgeBanner";
 import InsightCard from "@/components/InsightCard";
@@ -143,7 +145,46 @@ function getEncouragingMessage(progress: UserProgress, weeklyGoal: WeeklyGoal | 
 // Standard V1 Correction 2 removes the Level/XP/streak stat line entirely
 // (previously de-emphasised into one small line per EEP-002/003 — this
 // Wave removes it, not just repositions it). The session count alone
-// remains: it's a plain completion count, not a gamification score. ───
+// remains: it's a plain completion count, not a gamification score.
+//
+// AN-102 (Premium Dashboard Experience) — the Hero must answer "how is my
+// child doing / what's today's focus / how confident are we" within five
+// seconds. Three additions, all reusing already-computed data, no new
+// calculation:
+//   - A third chip surfaces READINESS_CONFIG's own label (the same real,
+//     evidence-based band Progress Snapshot already shows via
+//     ReadinessIndicator below) — "confidence" was previously only visible
+//     after scrolling past Today's Mission.
+//   - A "Focus today" line names the mission's own #1 item — previously
+//     only visible inside the Mission card itself.
+//   - text-purple-200 → text-purple-100 for the greeting line: measured at
+//     ~3.95:1 against the card's purple-600 fill, below the 4.5:1 AA
+//     threshold for normal text (purple-100 measures ~4.56:1) — the same
+//     class of correction as Sprint 1's own logged success/warning/info
+//     WCAG fixes, found and fixed here rather than left for a later audit.
+// ───────────────────────────────────────────────────────────────────────
+
+const CHILD_NAME_KEY = "angel_child_name";
+
+/**
+ * No mechanism anywhere in this product currently captures a real child's
+ * name (`profiles.name` exists in the schema but is always the literal
+ * default "Angel", written once, never read back — verified in
+ * lib/supabaseProgress.ts before writing this). Rather than fabricate a
+ * name or invent a new schema-backed profile feature (outside this work
+ * package's "Dashboard only" scope, and no migration is permitted), this
+ * is a minimal, local-only, fully optional and fully reversible affordance
+ * — the same tier of mechanism getSelectedPathwayId() already uses. It is
+ * a deliberate, disclosed interpretation of Step 3's "child's name"
+ * requirement, not a claim that this is how the product will store names
+ * long-term; flagged for Founder review in the AN-102 report.
+ */
+function saveChildName(next: string): string | null {
+  const trimmed = next.trim().slice(0, 40);
+  if (!trimmed) return null;
+  localStorage.setItem(CHILD_NAME_KEY, trimmed);
+  return trimmed;
+}
 
 function AdmissionHero({
   progress,
@@ -151,36 +192,117 @@ function AdmissionHero({
   pathway,
   hasEnoughData,
   readiness,
+  focusLabel,
+  childName,
+  onSaveChildName,
 }: {
   progress: UserProgress;
   weeklyGoal: WeeklyGoal | null;
   pathway: Pathway | undefined;
   hasEnoughData: boolean;
   readiness: ParentReport["examReadiness"] | null;
+  focusLabel: string | null;
+  childName: string | null;
+  onSaveChildName: (name: string) => void;
 }) {
   const hour = new Date().getHours();
   const greeting = hour < 12 ? "Good morning" : hour < 17 ? "Good afternoon" : "Good evening";
   const message = getEncouragingMessage(progress, weeklyGoal);
   const stageIndex = readiness ? deriveActiveStageIndex(hasEnoughData, readiness) : 0;
+  const confidenceLabel = READINESS_CONFIG[readiness ?? "not-ready"].label;
+
+  const [editingName, setEditingName] = useState(false);
+  const [nameDraft, setNameDraft] = useState("");
+
+  function handleNameSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    onSaveChildName(nameDraft);
+    setEditingName(false);
+    setNameDraft("");
+  }
 
   return (
     <PremiumCard>
-      <p className="text-purple-200 text-sm font-medium mb-4">{greeting}</p>
+      {/* AN-108 — Hero text-purple-100 → text-green-100, matching PremiumCard's
+          new green-800 fill (see Card.tsx). Same solid-tint pattern as before
+          (not opacity-blended, per the AN-107 lesson on unreliable alpha contrast). */}
+      <div className="flex items-start justify-between gap-3 mb-4">
+        <p className="text-green-100 text-sm font-medium">
+          {greeting}
+          {childName ? `, ${childName}` : ""}
+        </p>
+        {!editingName && (
+          <button
+            type="button"
+            onClick={() => {
+              setNameDraft(childName ?? "");
+              setEditingName(true);
+            }}
+            className="flex items-center gap-1 text-green-100 hover:text-white text-xs font-medium shrink-0 py-1 transition-colors motion-reduce:transition-none"
+          >
+            <Pencil size={11} aria-hidden="true" />
+            {childName ? "Edit" : "Add your child's name"}
+          </button>
+        )}
+      </div>
 
-      <p className="text-white font-bold text-2xl leading-snug mb-5">{message}</p>
+      {editingName && (
+        <form onSubmit={handleNameSubmit} className="flex items-center gap-2 mb-4">
+          <label htmlFor="child-name-input" className="sr-only">
+            Child&apos;s name
+          </label>
+          <input
+            id="child-name-input"
+            type="text"
+            autoFocus
+            value={nameDraft}
+            onChange={(e) => setNameDraft(e.target.value)}
+            placeholder="e.g. Priya"
+            className="flex-1 min-w-0 bg-white/10 placeholder-green-100 text-white text-sm rounded-lg px-3 py-2 border border-white/20 focus-visible:outline-2 focus-visible:outline-white focus-visible:outline-offset-2"
+          />
+          <button
+            type="submit"
+            className="text-xs font-semibold bg-white text-green-800 rounded-lg px-3 py-2 hover:bg-green-50 transition-colors motion-reduce:transition-none"
+          >
+            Save
+          </button>
+          <button
+            type="button"
+            onClick={() => setEditingName(false)}
+            className="text-xs font-medium text-green-100 hover:text-white px-2 py-2 transition-colors motion-reduce:transition-none"
+          >
+            Cancel
+          </button>
+        </form>
+      )}
 
+      <p className="text-white font-bold text-2xl leading-snug mb-6">{message}</p>
+
+      {/* AN-108 — pills moved to rounded-full (was rounded-lg) with slightly
+          more generous padding, a calmer/softer shape than the previous
+          blocky corners; same three chips, no information removed. */}
       <div className="flex items-center gap-2 flex-wrap mb-5">
-        <span className="inline-flex items-center gap-1.5 bg-white/10 rounded-lg px-2.5 py-1 text-xs text-purple-100">
-          <MapPin size={12} />
+        <span className="inline-flex items-center gap-1.5 bg-white/10 rounded-full px-3 py-1.5 text-xs text-green-100">
+          <MapPin size={12} aria-hidden="true" />
           {pathway ? pathway.name : "No target school chosen yet"}
         </span>
-        <span className="inline-flex items-center gap-1.5 bg-white/10 rounded-lg px-2.5 py-1 text-xs text-purple-100">
-          <Compass size={12} />
+        <span className="inline-flex items-center gap-1.5 bg-white/10 rounded-full px-3 py-1.5 text-xs text-green-100">
+          <Compass size={12} aria-hidden="true" />
           {STAGE_NAMES[stageIndex]}
+        </span>
+        <span className="inline-flex items-center gap-1.5 bg-white/10 rounded-full px-3 py-1.5 text-xs text-green-100">
+          <TrendingUp size={12} aria-hidden="true" />
+          {confidenceLabel}
         </span>
       </div>
 
-      <div className="flex items-center gap-3 text-purple-200 text-xs pt-4 border-t border-white/10">
+      {focusLabel && (
+        <p className="text-green-100 text-sm mb-6">
+          Focus today — <span className="text-white font-medium">{focusLabel}</span>
+        </p>
+      )}
+
+      <div className="flex items-center gap-3 text-green-100 text-xs pt-4 border-t border-white/10">
         <span>{progress.completedLessons.length} sessions</span>
       </div>
     </PremiumCard>
@@ -197,6 +319,7 @@ export default function DashboardPage() {
   const [newBadgeIds, setNewBadgeIds] = useState<string[]>([]);
   const [pathway, setPathway] = useState<Pathway | undefined>();
   const [parentReport, setParentReport] = useState<ParentReport | null>(null);
+  const [childName, setChildName] = useState<string | null>(null);
 
   useEffect(() => {
     const p = getProgress();
@@ -213,12 +336,21 @@ export default function DashboardPage() {
     // Readiness Snapshot reuses computeParentReport() exactly as app/parent/page.tsx
     // already does — same three real inputs, no new calculation.
     setParentReport(computeParentReport(p, r, gamification));
+    // AN-102 — read alongside everything else already loaded here, rather
+    // than a second effect, so this doesn't add a new instance of this
+    // file's existing (pre-AN-102) set-state-in-effect pattern.
+    setChildName(localStorage.getItem(CHILD_NAME_KEY));
     migrateLocalProgressToSupabase().catch(() => {});
   }, []);
 
   function handleDismissBanner() {
     markBadgesSeen(newBadgeIds);
     setNewBadgeIds([]);
+  }
+
+  function handleSaveChildName(name: string) {
+    const saved = saveChildName(name);
+    if (saved) setChildName(saved);
   }
 
   const accentBg = pathway ? (pathwayIconBg[pathway.accentColor] ?? pathwayIconBg.purple) : pathwayIconBg.purple;
@@ -232,6 +364,14 @@ export default function DashboardPage() {
     <PageLayout breadcrumbs={[{ label: "My Admission Journey" }]}>
       <div className="max-w-4xl mx-auto px-4 py-6 md:px-8 md:py-8 space-y-8">
 
+        {/* AN-102 — this page had no <h1> anywhere in its render tree
+            (Breadcrumbs renders a <span>, not a heading), so every visible
+            <h2> below was skipping a level. The Hero's own message is
+            dynamic/motivational copy, not a stable page title, so a
+            visually-hidden, stable heading carries the real document
+            structure instead of changing the Hero's design. */}
+        <h1 className="sr-only">Today</h1>
+
         {/* 1. Admission Hero */}
         {progress && (
           <AdmissionHero
@@ -240,6 +380,9 @@ export default function DashboardPage() {
             pathway={pathway}
             hasEnoughData={report?.hasEnoughData ?? false}
             readiness={parentReport?.examReadiness ?? null}
+            focusLabel={topMissionItem?.label ?? null}
+            childName={childName}
+            onSaveChildName={handleSaveChildName}
           />
         )}
 
@@ -262,7 +405,7 @@ export default function DashboardPage() {
              still available on /progress (Sprint 10's Progress Journey). */}
         <Link
           href="/pathways"
-          className="flex items-center gap-3 bg-white dark:bg-gray-900 rounded-xl border border-gray-100 dark:border-gray-800 px-4 py-3 hover:shadow-sm hover:border-purple-100 dark:hover:border-purple-900 active:scale-[0.98] transition-all group"
+          className="flex items-center gap-3 bg-white dark:bg-gray-900 rounded-xl border border-gray-100 dark:border-gray-800 px-4 py-3 hover:shadow-sm hover:border-indigo-100 dark:hover:border-indigo-900 active:scale-[0.98] transition-all motion-reduce:transition-none group"
         >
           <div className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 ${accentBg}`}>
             <MapPin size={17} className={accentText} />
@@ -275,7 +418,7 @@ export default function DashboardPage() {
               {pathway ? "Tap to review School Intelligence" : "GL · CEM · CSSE · ISEB · Independent"}
             </p>
           </div>
-          <ChevronRight size={16} className="text-gray-300 dark:text-gray-600 group-hover:text-purple-500 dark:group-hover:text-purple-400 transition-colors shrink-0" />
+          <ChevronRight size={16} aria-hidden="true" className="text-gray-300 dark:text-gray-600 group-hover:text-indigo-500 dark:group-hover:text-indigo-400 transition-colors motion-reduce:transition-none shrink-0" />
         </Link>
 
         {/* 3. Today's Admission Mission — EEP-002: this is now the
@@ -290,13 +433,13 @@ export default function DashboardPage() {
         <section>
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-2.5">
-              <div className="w-9 h-9 rounded-xl bg-purple-100 dark:bg-purple-900 flex items-center justify-center shrink-0">
-                <Target size={17} className="text-purple-600 dark:text-purple-400" />
+              <div className="w-9 h-9 rounded-xl bg-indigo-100 dark:bg-indigo-900 flex items-center justify-center shrink-0">
+                <Target size={17} className="text-indigo-600 dark:text-indigo-400" />
               </div>
               <div>
                 <h2 className="text-gray-900 dark:text-gray-100 font-bold text-xl leading-tight">Today&apos;s Admission Mission</h2>
                 {pathway && (
-                  <p className="text-xs text-purple-500 dark:text-purple-400 font-medium mt-0.5">{pathway.shortName} pathway</p>
+                  <p className="text-xs text-indigo-500 dark:text-indigo-400 font-medium mt-0.5">{pathway.shortName} pathway</p>
                 )}
               </div>
             </div>
@@ -323,14 +466,14 @@ export default function DashboardPage() {
                         </span>
                         <span className="text-gray-900 dark:text-gray-100 font-semibold text-sm">{item.label}</span>
                       </div>
-                      <p className="text-gray-400 dark:text-gray-500 text-xs leading-relaxed">{item.reason}</p>
+                      <p className="text-gray-500 dark:text-gray-400 text-xs leading-relaxed">{item.reason}</p>
                       <div className="flex items-center gap-3 mt-1.5 flex-wrap">
                         <div className="flex items-center gap-1">
                           <Clock size={10} className="text-gray-300 dark:text-gray-600" />
-                          <span className="text-gray-300 dark:text-gray-600 text-xs">~{item.estimatedMinutes} min</span>
+                          <span className="text-gray-400 dark:text-gray-500 text-xs">~{item.estimatedMinutes} min</span>
                         </div>
                         <span className="text-gray-300 dark:text-gray-600 text-xs">·</span>
-                        <span className="text-gray-400 dark:text-gray-500 text-xs italic">{EXPECTED_OUTCOME[item.priority]}</span>
+                        <span className="text-gray-500 dark:text-gray-400 text-xs italic">{EXPECTED_OUTCOME[item.priority]}</span>
                       </div>
                     </div>
                   </MissionCard>
@@ -340,24 +483,32 @@ export default function DashboardPage() {
               <div className="p-5">
                 <Link
                   href={mission.items[0].href}
-                  className="flex items-center justify-center gap-2.5 w-full bg-purple-600 hover:bg-purple-700 active:scale-[0.98] dark:bg-purple-700 dark:hover:bg-purple-600 text-white rounded-xl py-3.5 font-semibold text-sm transition-all shadow-sm shadow-purple-200 dark:shadow-purple-950"
+                  className="flex items-center justify-center gap-2.5 w-full bg-green-700 hover:bg-green-800 active:scale-[0.98] dark:bg-green-700 dark:hover:bg-green-600 text-white rounded-xl py-3.5 font-semibold text-sm transition-all motion-reduce:transition-none shadow-sm shadow-green-200 dark:shadow-green-950"
                 >
-                  <Play size={16} />
+                  <Play size={16} aria-hidden="true" />
                   Start Today&apos;s Mission
                 </Link>
+                {/* AN-102 — answers "what happens after today's work" at the
+                    exact point a parent/child decides to start, using only
+                    real, already-true product behaviour (progress and the
+                    Learning Report already update after every session) —
+                    not a new promise or calculation. */}
+                <p className="text-gray-400 dark:text-gray-500 text-xs text-center mt-3">
+                  Your Progress and Learning Report update automatically once you finish.
+                </p>
               </div>
             </div>
           ) : (
             <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 shadow-sm p-8 text-center">
-              <div className="w-16 h-16 bg-purple-50 dark:bg-purple-950 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                <Target size={30} className="text-purple-400 dark:text-purple-600" />
+              <div className="w-16 h-16 bg-indigo-50 dark:bg-indigo-950 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                <Target size={30} className="text-indigo-400 dark:text-indigo-600" />
               </div>
               <p className="text-gray-900 dark:text-gray-100 font-bold text-base mb-1.5">Start your first session</p>
               <p className="text-gray-400 dark:text-gray-500 text-sm leading-relaxed mb-5 max-w-xs mx-auto">
                 Complete any practice to unlock your personalised admission mission
               </p>
-              <Link href="/english" className="inline-flex items-center gap-2 bg-purple-600 hover:bg-purple-700 active:scale-[0.98] text-white rounded-xl px-5 py-2.5 font-semibold text-sm transition-all">
-                <Play size={14} />
+              <Link href="/english" className="inline-flex items-center gap-2 bg-green-700 hover:bg-green-800 active:scale-[0.98] text-white rounded-xl px-5 py-2.5 font-semibold text-sm transition-all motion-reduce:transition-none">
+                <Play size={14} aria-hidden="true" />
                 Start Learning
               </Link>
             </div>
@@ -384,23 +535,26 @@ export default function DashboardPage() {
               <ReadinessIndicator readiness={parentReport.examReadiness} />
 
               {report && (report.strongSubjects.length > 0 || report.weakSubjects.length > 0) && (
-                <div className="flex flex-wrap items-center gap-1.5 text-xs">
-                  {report.strongSubjects.length > 0 && (
-                    <>
-                      <span className="text-gray-400 dark:text-gray-500 font-medium">Strong:</span>
-                      {report.strongSubjects.map((label) => (
-                        <StatusIndicator key={label} tone="success" label={label} />
-                      ))}
-                    </>
-                  )}
-                  {report.weakSubjects.length > 0 && (
-                    <>
-                      <span className="text-gray-400 dark:text-gray-500 font-medium ml-1">Focus:</span>
-                      {report.weakSubjects.map((label) => (
-                        <StatusIndicator key={label} tone="warning" label={label} />
-                      ))}
-                    </>
-                  )}
+                <div>
+                  {/* AN-102 — one narrative lead-in instead of two bare
+                      "Strong:"/"Focus:" labels sitting beside a chip row;
+                      same two already-computed lists (report.strongSubjects/
+                      weakSubjects), no new calculation. */}
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mb-1.5">
+                    {report.strongSubjects.length > 0 && report.weakSubjects.length > 0
+                      ? "Doing well, and where to focus next:"
+                      : report.strongSubjects.length > 0
+                        ? "Doing well in:"
+                        : "Worth focusing on next:"}
+                  </p>
+                  <div className="flex flex-wrap items-center gap-1.5">
+                    {report.strongSubjects.map((label) => (
+                      <StatusIndicator key={label} tone="success" label={label} />
+                    ))}
+                    {report.weakSubjects.map((label) => (
+                      <StatusIndicator key={label} tone="warning" label={label} />
+                    ))}
+                  </div>
                 </div>
               )}
 
@@ -431,8 +585,8 @@ export default function DashboardPage() {
             </div>
           ) : (
             <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 px-4 py-5 flex items-center gap-3">
-              <div className="w-10 h-10 bg-purple-50 dark:bg-purple-950 rounded-xl flex items-center justify-center shrink-0">
-                <BarChart2 size={18} className="text-purple-300 dark:text-purple-700" />
+              <div className="w-10 h-10 bg-indigo-50 dark:bg-indigo-950 rounded-xl flex items-center justify-center shrink-0">
+                <BarChart2 size={18} className="text-indigo-300 dark:text-indigo-700" />
               </div>
               <div>
                 <p className="text-gray-700 dark:text-gray-300 font-semibold text-sm">Not enough data yet</p>
@@ -453,7 +607,7 @@ export default function DashboardPage() {
           {pathway && mockSupported ? (
             <Link
               href="/mocks"
-              className="flex items-center gap-4 bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 px-5 py-4 shadow-sm hover:shadow-md active:scale-[0.98] transition-all group"
+              className="flex items-center gap-4 bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 px-5 py-4 shadow-sm hover:shadow-md active:scale-[0.98] transition-all motion-reduce:transition-none group"
             >
               <div className="w-12 h-12 rounded-2xl bg-pink-100 dark:bg-pink-900 flex items-center justify-center shrink-0">
                 <Trophy size={22} className="text-pink-600 dark:text-pink-400" />
@@ -464,7 +618,7 @@ export default function DashboardPage() {
                   {mockAttempts > 0 ? `${mockAttempts} attempt${mockAttempts === 1 ? "" : "s"} · Best score ${bestMockScore}%` : "Not attempted yet"}
                 </p>
               </div>
-              <ChevronRight size={18} className="text-gray-300 dark:text-gray-600 group-hover:text-purple-500 dark:group-hover:text-purple-400 transition-colors shrink-0" />
+              <ChevronRight size={18} aria-hidden="true" className="text-gray-300 dark:text-gray-600 group-hover:text-indigo-500 dark:group-hover:text-indigo-400 transition-colors motion-reduce:transition-none shrink-0" />
             </Link>
           ) : (
             <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 px-4 py-5 flex items-center gap-3">

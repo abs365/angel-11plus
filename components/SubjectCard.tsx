@@ -142,8 +142,14 @@ export default function SubjectCard({
   const c = colorMap[color];
   return (
     <Link href={href} className="block group">
+      {/* AN-108 — hover elevation softened (was shadow-xl + -translate-y-1)
+          to match Card.tsx's SchoolCard treatment, per the Founder's
+          "restrained shadows... avoid a high-energy or gaming appearance"
+          direction. Per-subject colour identity (c.bg/border/hover/etc.) is
+          unchanged — that differentiation system is out of this package's
+          scope, only the motion/elevation weight is toned down. */}
       <div
-        className={`${c.bg} ${c.border} ${c.hover} border shadow-sm rounded-2xl overflow-hidden transition-all duration-200 group-hover:shadow-xl group-hover:-translate-y-1 group-active:scale-[0.98] cursor-pointer`}
+        className={`${c.bg} ${c.border} ${c.hover} border shadow-sm rounded-2xl overflow-hidden transition-all motion-reduce:transition-none duration-200 group-hover:shadow-md group-hover:-translate-y-0.5 group-active:scale-[0.98] cursor-pointer`}
       >
         {/* Colour identity strip */}
         <div className={`h-1.5 ${c.strip}`} />
@@ -151,7 +157,7 @@ export default function SubjectCard({
         <div className="p-6">
           <div className="flex items-start justify-between mb-5">
             <div className={`${c.icon} p-4 rounded-2xl shrink-0`}>
-              <Icon size={24} />
+              <Icon size={24} aria-hidden="true" />
             </div>
             {badge && (
               <span className={`${c.badge} text-xs font-semibold px-2.5 py-1 rounded-full mt-1`}>
@@ -170,7 +176,7 @@ export default function SubjectCard({
             </div>
           )}
           <div className="flex justify-end mt-4">
-            <ChevronRight size={16} className={`${c.arrow} transition-colors`} />
+            <ChevronRight size={16} aria-hidden="true" className={`${c.arrow} transition-colors motion-reduce:transition-none`} />
           </div>
         </div>
       </div>

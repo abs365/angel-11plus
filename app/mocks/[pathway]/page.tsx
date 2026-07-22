@@ -68,13 +68,20 @@ interface MockConfig {
   sections: SectionConfig[];
 }
 
+// ARC-001A — every headerBg below darkened one shade (-600 → -700), the
+// same "obsolete dominant... bright blue" softening applied everywhere else
+// this release (Hero, Practice buttons, subject-page CTAs): calmer, higher-
+// contrast, same exam-board differentiation (GL/CEM/CSSE/ISEB each keep
+// their own hue — genuine assessment-identity meaning, preserved). This is
+// the single source for the header bar, primary button, progress fill and
+// completion icon circle below (8 usage sites, all styling-only).
 const MOCK_CONFIGS: Record<MockPathwayId, MockConfig> = {
   gl: {
     name: "GL Assessment",
     pathwayName: "GL Assessment Practice Mock",
     badge: "GL",
     color: "blue",
-    headerBg: "bg-blue-600",
+    headerBg: "bg-blue-700",
     description: "Four timed sections matching the GL Assessment format.",
     totalMinutes: 35,
     xpReward: 100,
@@ -90,7 +97,7 @@ const MOCK_CONFIGS: Record<MockPathwayId, MockConfig> = {
     pathwayName: "CEM Practice Mock",
     badge: "CEM",
     color: "indigo",
-    headerBg: "bg-indigo-600",
+    headerBg: "bg-indigo-700",
     description: "Two core sections covering the CEM Verbal and Numerical format.",
     totalMinutes: 30,
     xpReward: 80,
@@ -104,7 +111,7 @@ const MOCK_CONFIGS: Record<MockPathwayId, MockConfig> = {
     pathwayName: "CSSE Practice Mock",
     badge: "CSSE",
     color: "purple",
-    headerBg: "bg-purple-600",
+    headerBg: "bg-purple-700",
     // AEP-001 Phase 3 correction — this section previously drew "English &
     // Language" from the Verbal Reasoning bank and "Mathematics" from the
     // Numerical Reasoning bank, even though CSSE's own pathway description
@@ -134,7 +141,7 @@ const MOCK_CONFIGS: Record<MockPathwayId, MockConfig> = {
     pathwayName: "ISEB Pre-Test Practice Mock",
     badge: "ISEB",
     color: "emerald",
-    headerBg: "bg-emerald-600",
+    headerBg: "bg-emerald-700",
     description: "Four reasoning sections matching the ISEB Pre-Test structure.",
     totalMinutes: 40,
     xpReward: 110,
@@ -273,7 +280,8 @@ export default function MockPage({
       <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-950">
         <div className="text-center">
           <p className="text-gray-500 dark:text-gray-400 mb-4">Mock not found.</p>
-          <Link href="/mocks" className="text-blue-600 dark:text-blue-400 font-medium">Back to mocks</Link>
+          {/* ARC-001A — this "not found" link isn't pathway-specific (it renders regardless of which pathway 404'd), so it's generic chrome, not assessment identity — moved to the muted-indigo accent used app-wide. */}
+          <Link href="/mocks" className="text-indigo-600 dark:text-indigo-400 font-medium">Back to mocks</Link>
         </div>
       </div>
     );
@@ -601,7 +609,14 @@ export default function MockPage({
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && input.trim() && submitAnswer()}
                 placeholder="Type your answer…"
-                className="w-full rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 px-4 py-3.5 text-base text-gray-900 dark:text-gray-100 placeholder-gray-300 dark:placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-300"
+                // ARC-001A — this input sets focus:outline-none, so this
+                // manual ring is its ONLY focus indicator (the app's global
+                // plum :focus-visible outline never reaches it) — recoloured
+                // to match that same restrained-plum focus system (#8b5a7c,
+                // see globals.css) rather than left on a generic leftover
+                // blue, not just for consistency but to keep it a real,
+                // deliberate focus treatment rather than an accidental one.
+                className="w-full rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 px-4 py-3.5 text-base text-gray-900 dark:text-gray-100 placeholder-gray-300 dark:placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-[#8b5a7c]/30 focus:border-[#8b5a7c]"
               />
               <button
                 onClick={submitAnswer}

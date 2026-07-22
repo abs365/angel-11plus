@@ -13,6 +13,7 @@ import dynamic from "next/dynamic";
 import PageLayout from "@/components/PageLayout";
 import { englishLessons } from "@/data/lessons";
 import { completeLesson } from "@/lib/progress";
+import { ProgressBar } from "@/components/ui/Progress";
 
 const PassagePlayer = dynamic(() => import("@/components/PassagePlayer"), { ssr: false });
 
@@ -112,7 +113,7 @@ export default function EnglishLessonPage({ params }: Props) {
         <div className="max-w-2xl mx-auto px-4 py-12 md:px-8">
           <div className="text-center mb-8">
             <div className="inline-flex items-center justify-center w-16 h-16 bg-purple-100 dark:bg-purple-900 rounded-full mb-4">
-              <CheckCircle size={32} className="text-purple-600 dark:text-purple-400" />
+              <CheckCircle size={32} aria-hidden="true" className="text-purple-600 dark:text-purple-400" />
             </div>
             <h1 className="text-gray-900 dark:text-gray-100 font-bold text-2xl mb-2">Lesson Complete!</h1>
             <p className="text-gray-500 dark:text-gray-400">
@@ -157,7 +158,7 @@ export default function EnglishLessonPage({ params }: Props) {
           <div className="flex gap-3 mt-6">
             <button
               onClick={() => router.push("/english")}
-              className="flex-1 bg-purple-600 text-white rounded-xl py-3.5 font-semibold text-sm hover:bg-purple-700 transition-colors"
+              className="flex-1 bg-purple-600 text-white rounded-xl py-3.5 font-semibold text-sm hover:bg-purple-700 transition-colors motion-reduce:transition-none"
             >
               Back to English
             </button>
@@ -168,7 +169,7 @@ export default function EnglishLessonPage({ params }: Props) {
                 setShowHints({});
                 setShowModel({});
               }}
-              className="flex-1 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-xl py-3.5 font-semibold text-sm hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+              className="flex-1 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-xl py-3.5 font-semibold text-sm hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors motion-reduce:transition-none"
             >
               Try Again
             </button>
@@ -184,9 +185,9 @@ export default function EnglishLessonPage({ params }: Props) {
         {/* Back button */}
         <button
           onClick={() => router.push("/english")}
-          className="flex items-center gap-1.5 text-gray-400 dark:text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 text-sm mb-5 transition-colors"
+          className="flex items-center gap-1.5 text-gray-400 dark:text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 text-sm mb-5 transition-colors motion-reduce:transition-none"
         >
-          <ArrowLeft size={16} />
+          <ArrowLeft size={16} aria-hidden="true" />
           English
         </button>
 
@@ -243,7 +244,7 @@ export default function EnglishLessonPage({ params }: Props) {
                 }
                 placeholder="Write your answer here..."
                 rows={4}
-                className="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl px-4 py-3 text-sm text-gray-800 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-600 resize-none focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-transparent transition-all"
+                className="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl px-4 py-3 text-sm text-gray-800 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-600 resize-none focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-transparent transition-all motion-reduce:transition-none"
               />
 
               {/* Hint toggle button */}
@@ -253,11 +254,12 @@ export default function EnglishLessonPage({ params }: Props) {
                     onClick={() =>
                       setShowHints((prev) => ({ ...prev, [q.id]: !prev[q.id] }))
                     }
-                    className="flex items-center gap-1.5 text-xs text-amber-600 bg-amber-50 dark:bg-amber-950 hover:bg-amber-100 dark:hover:bg-amber-900 px-3 py-1.5 rounded-lg transition-colors font-medium"
+                    aria-expanded={!!showHints[q.id]}
+                    className="flex items-center gap-1.5 text-xs text-amber-600 bg-amber-50 dark:bg-amber-950 hover:bg-amber-100 dark:hover:bg-amber-900 px-3 py-1.5 rounded-lg transition-colors motion-reduce:transition-none font-medium"
                   >
-                    <Lightbulb size={12} />
+                    <Lightbulb size={12} aria-hidden="true" />
                     {showHints[q.id] ? "Hide hint" : "Show hint"}
-                    {showHints[q.id] ? <ChevronUp size={12} /> : <ChevronDown size={12} />}
+                    {showHints[q.id] ? <ChevronUp size={12} aria-hidden="true" /> : <ChevronDown size={12} aria-hidden="true" />}
                   </button>
                 )}
               </div>
@@ -277,12 +279,17 @@ export default function EnglishLessonPage({ params }: Props) {
             <p className="text-sm text-gray-400 dark:text-gray-500">
               {answeredCount} of {lesson.questions.length} answered
             </p>
-            <div className="flex-1 mx-4 bg-gray-100 dark:bg-gray-800 rounded-full h-1.5">
-              <div
-                className="bg-purple-500 h-full rounded-full transition-all"
-                style={{
-                  width: `${(answeredCount / lesson.questions.length) * 100}%`,
-                }}
+            {/* AN-105: adopted the shared ProgressBar (colour="purple",
+                already an exact match for this bar's previous bg-purple-500
+                fill — no colour change) in place of a hand-rolled div.
+                Real accessibility gain: role="progressbar" + aria-valuenow/
+                min/max, none of which the previous markup had. Same
+                percentage calculation, unchanged. */}
+            <div className="flex-1 mx-4">
+              <ProgressBar
+                percent={(answeredCount / lesson.questions.length) * 100}
+                color="purple"
+                label="Questions answered"
               />
             </div>
           </div>
@@ -290,7 +297,7 @@ export default function EnglishLessonPage({ params }: Props) {
           <button
             onClick={handleSubmit}
             disabled={answeredCount === 0}
-            className="w-full bg-purple-600 text-white rounded-xl py-4 font-semibold text-base hover:bg-purple-700 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+            className="w-full bg-purple-600 text-white rounded-xl py-4 font-semibold text-base hover:bg-purple-700 disabled:opacity-40 disabled:cursor-not-allowed transition-colors motion-reduce:transition-none"
           >
             Submit Answers
           </button>

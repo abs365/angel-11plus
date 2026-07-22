@@ -30,7 +30,7 @@ export default function SessionInfoBar({ objective, estimatedMinutes, skills, su
   return (
     <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-4 mb-5">
       <div className="flex items-start gap-2 mb-3">
-        <TargetIcon size={14} className="text-purple-400 dark:text-purple-500 mt-0.5 shrink-0" />
+        <TargetIcon size={14} className="text-indigo-400 dark:text-indigo-500 mt-0.5 shrink-0" />
         <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">{objective}</p>
       </div>
 

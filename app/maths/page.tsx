@@ -17,7 +17,7 @@ import { completeLesson, recordSkillResult, getProgress } from "@/lib/progress";
 import { computeAnalytics } from "@/lib/analytics";
 import { computeAdaptiveState } from "@/lib/adaptiveEngine";
 import SessionInfoBar from "@/components/SessionInfoBar";
-import { SUBJECT_ESTIMATED_MINUTES, SUBJECT_LEARNING_OBJECTIVE } from "@/lib/subjectMeta";
+import { SUBJECT_ESTIMATED_MINUTES, SUBJECT_LEARNING_OBJECTIVE, SUBJECT_EXPECTED_BENEFIT } from "@/lib/subjectMeta";
 import type { AnalyticsReport } from "@/types/analytics";
 
 type Mode = "menu" | "reasoning" | "arithmetic" | "done";
@@ -141,7 +141,7 @@ export default function MathsPage() {
         <div className="max-w-2xl mx-auto px-4 py-12 md:px-8">
           <div className="text-center mb-8">
             <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-100 dark:bg-blue-900 rounded-full mb-4">
-              <CheckCircle size={32} className="text-blue-600 dark:text-blue-400" />
+              <CheckCircle size={32} aria-hidden="true" className="text-blue-600 dark:text-blue-400" />
             </div>
             <h1 className="text-gray-900 dark:text-gray-100 font-bold text-2xl mb-2">Session Complete!</h1>
             <p className="text-gray-500 dark:text-gray-400">
@@ -167,9 +167,9 @@ export default function MathsPage() {
                   <p className="text-gray-800 dark:text-gray-100 text-sm font-medium mb-2">{q.question}</p>
                   <div className="flex items-center gap-2">
                     {wasCorrect === true ? (
-                      <CheckCircle size={14} className="text-green-500" />
+                      <CheckCircle size={14} aria-hidden="true" className="text-green-500" />
                     ) : wasCorrect === false ? (
-                      <XCircle size={14} className="text-red-400" />
+                      <XCircle size={14} aria-hidden="true" className="text-red-400" />
                     ) : null}
                     <p className="text-gray-500 dark:text-gray-400 text-xs">
                       Answer: <strong className="text-gray-800 dark:text-gray-100">{q.answer}</strong>
@@ -186,15 +186,15 @@ export default function MathsPage() {
           <div className="flex gap-3">
             <button
               onClick={reset}
-              className="flex-1 bg-blue-600 text-white rounded-xl py-3.5 font-semibold text-sm hover:bg-blue-700 transition-colors"
+              className="flex-1 bg-blue-600 text-white rounded-xl py-3.5 font-semibold text-sm hover:bg-blue-700 transition-colors motion-reduce:transition-none"
             >
               Back to Maths
             </button>
             <button
               onClick={() => startMode(mode === "done" ? "reasoning" : (mode as "reasoning" | "arithmetic"))}
-              className="flex items-center gap-2 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-xl py-3.5 px-4 font-semibold text-sm hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+              className="flex items-center gap-2 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-xl py-3.5 px-4 font-semibold text-sm hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors motion-reduce:transition-none"
             >
-              <RefreshCw size={14} />
+              <RefreshCw size={14} aria-hidden="true" />
               Again
             </button>
           </div>
@@ -209,7 +209,7 @@ export default function MathsPage() {
         <div className="max-w-2xl mx-auto px-4 py-6 md:px-8 md:py-8">
           <div className="flex items-center gap-3 mb-6">
             <div className="bg-blue-100 dark:bg-blue-900 p-3 rounded-2xl">
-              <Calculator size={22} className="text-blue-600 dark:text-blue-400" />
+              <Calculator size={22} aria-hidden="true" className="text-blue-600 dark:text-blue-400" />
             </div>
             <div>
               <h1 className="text-gray-900 dark:text-gray-100 font-bold text-2xl">Maths Reasoning</h1>
@@ -225,21 +225,22 @@ export default function MathsPage() {
             estimatedMinutes={SUBJECT_ESTIMATED_MINUTES.maths!}
             skills={report?.skills.filter((s) => s.group === "maths")}
             subjectAnalytics={report?.subjects.find((s) => s.subject === "maths")}
+            expectedBenefit={SUBJECT_EXPECTED_BENEFIT.maths}
           />
 
           <div className="grid gap-4 mt-4">
             <button
               onClick={() => startMode("reasoning")}
-              className="bg-white dark:bg-gray-900 rounded-2xl p-6 border border-gray-100 dark:border-gray-800 hover:border-blue-200 dark:hover:border-blue-700 hover:shadow-sm active:scale-[0.98] transition-all text-left group"
+              className="bg-white dark:bg-gray-900 rounded-2xl p-6 border border-gray-100 dark:border-gray-800 hover:border-blue-200 dark:hover:border-blue-700 hover:shadow-sm active:scale-[0.98] transition-all motion-reduce:transition-none text-left group"
             >
               <div className="flex items-center justify-between mb-3">
                 <div className="bg-blue-100 dark:bg-blue-900 p-2.5 rounded-xl">
-                  <Calculator size={20} className="text-blue-600 dark:text-blue-400" />
+                  <Calculator size={20} aria-hidden="true" className="text-blue-600 dark:text-blue-400" />
                 </div>
                 <div className="flex items-center gap-2">
                   {recommendedMode === "reasoning" && (
                     <span className="bg-purple-100 dark:bg-purple-900 text-purple-600 dark:text-purple-400 text-xs font-semibold px-2.5 py-1 rounded-full flex items-center gap-1">
-                      <Sparkles size={10} />
+                      <Sparkles size={10} aria-hidden="true" />
                       Recommended
                     </span>
                   )}
@@ -248,7 +249,7 @@ export default function MathsPage() {
                   </span>
                 </div>
               </div>
-              <h3 className="text-gray-900 dark:text-gray-100 font-semibold text-lg mb-1 group-hover:text-blue-700 dark:group-hover:text-blue-300 transition-colors">
+              <h3 className="text-gray-900 dark:text-gray-100 font-semibold text-lg mb-1 group-hover:text-blue-700 dark:group-hover:text-blue-300 transition-colors motion-reduce:transition-none">
                 Reasoning Problems
               </h3>
               <p className="text-gray-400 dark:text-gray-500 text-sm">
@@ -258,16 +259,16 @@ export default function MathsPage() {
 
             <button
               onClick={() => startMode("arithmetic")}
-              className="bg-white dark:bg-gray-900 rounded-2xl p-6 border border-gray-100 dark:border-gray-800 hover:border-orange-200 dark:hover:border-orange-700 hover:shadow-sm active:scale-[0.98] transition-all text-left group"
+              className="bg-white dark:bg-gray-900 rounded-2xl p-6 border border-gray-100 dark:border-gray-800 hover:border-orange-200 dark:hover:border-orange-700 hover:shadow-sm active:scale-[0.98] transition-all motion-reduce:transition-none text-left group"
             >
               <div className="flex items-center justify-between mb-3">
                 <div className="bg-orange-100 dark:bg-orange-900 p-2.5 rounded-xl">
-                  <Timer size={20} className="text-orange-600 dark:text-orange-400" />
+                  <Timer size={20} aria-hidden="true" className="text-orange-600 dark:text-orange-400" />
                 </div>
                 <div className="flex items-center gap-2">
                   {recommendedMode === "arithmetic" && (
                     <span className="bg-purple-100 dark:bg-purple-900 text-purple-600 dark:text-purple-400 text-xs font-semibold px-2.5 py-1 rounded-full flex items-center gap-1">
-                      <Sparkles size={10} />
+                      <Sparkles size={10} aria-hidden="true" />
                       Recommended
                     </span>
                   )}
@@ -276,7 +277,7 @@ export default function MathsPage() {
                   </span>
                 </div>
               </div>
-              <h3 className="text-gray-900 dark:text-gray-100 font-semibold text-lg mb-1 group-hover:text-orange-700 dark:group-hover:text-orange-300 transition-colors">
+              <h3 className="text-gray-900 dark:text-gray-100 font-semibold text-lg mb-1 group-hover:text-orange-700 dark:group-hover:text-orange-300 transition-colors motion-reduce:transition-none">
                 Speed Arithmetic
               </h3>
               <p className="text-gray-400 dark:text-gray-500 text-sm">
@@ -314,13 +315,28 @@ export default function MathsPage() {
         <div className="flex items-center gap-3 mb-6">
           <button
             onClick={reset}
-            className="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 text-sm transition-colors"
+            className="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 text-sm transition-colors motion-reduce:transition-none"
           >
             ← Maths
           </button>
-          <div className="flex-1 bg-gray-100 dark:bg-gray-800 rounded-full h-2">
+          {/* AN-105: kept as its own markup rather than adopting the shared
+              ProgressBar component — that component's colour prop only
+              supports purple/emerald/amber, not the blue this subject uses
+              throughout (menu cards, focus ring, buttons); forcing an
+              unsupported shade in would change Maths's established visual
+              identity, which Step 3 explicitly says to preserve. Same real
+              percentage, unchanged — only real ARIA progress semantics
+              added, which this markup never had. */}
+          <div
+            role="progressbar"
+            aria-valuenow={Math.round(((currentIndex + 1) / questions.length) * 100)}
+            aria-valuemin={0}
+            aria-valuemax={100}
+            aria-label="Question progress"
+            className="flex-1 bg-gray-100 dark:bg-gray-800 rounded-full h-2"
+          >
             <div
-              className="bg-blue-500 h-full rounded-full transition-all"
+              className="bg-blue-500 h-full rounded-full transition-all motion-reduce:transition-none"
               style={{ width: `${((currentIndex + 1) / questions.length) * 100}%` }}
             />
           </div>
@@ -335,7 +351,7 @@ export default function MathsPage() {
                 ? "bg-red-100 dark:bg-red-900 text-red-600 dark:text-red-400"
                 : "bg-orange-100 dark:bg-orange-900 text-orange-600 dark:text-orange-400"
             }`}>
-              <Timer size={14} />
+              <Timer size={14} aria-hidden="true" />
               {timeLeft}s
             </div>
           )}
@@ -369,7 +385,7 @@ export default function MathsPage() {
               }}
               placeholder="Your answer..."
               disabled={isChecked}
-              className={`w-full rounded-xl px-4 py-3.5 text-base font-medium focus:outline-none focus:ring-2 transition-all ${
+              className={`w-full rounded-xl px-4 py-3.5 text-base font-medium focus:outline-none focus:ring-2 transition-all motion-reduce:transition-none ${
                 isChecked
                   ? isCorrect
                     ? "bg-green-50 dark:bg-green-950 border-2 border-green-400 dark:border-green-600 text-green-700 dark:text-green-300"
@@ -383,9 +399,9 @@ export default function MathsPage() {
                 isCorrect ? "bg-green-50 dark:bg-green-950" : "bg-red-50 dark:bg-red-950"
               }`}>
                 {isCorrect ? (
-                  <CheckCircle size={16} className="text-green-500 mt-0.5 shrink-0" />
+                  <CheckCircle size={16} aria-hidden="true" className="text-green-500 mt-0.5 shrink-0" />
                 ) : (
-                  <XCircle size={16} className="text-red-400 mt-0.5 shrink-0" />
+                  <XCircle size={16} aria-hidden="true" className="text-red-400 mt-0.5 shrink-0" />
                 )}
                 <p className={`text-sm font-medium ${isCorrect ? "text-green-700 dark:text-green-300" : "text-red-600 dark:text-red-400"}`}>
                   {isCorrect
@@ -399,9 +415,10 @@ export default function MathsPage() {
             {mode === "reasoning" && isChecked && current.workingSteps && (
               <button
                 onClick={() => setShowWorking((p) => ({ ...p, [current.id]: !p[current.id] }))}
-                className="mt-3 flex items-center gap-1.5 text-xs text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-200 font-medium transition-colors"
+                aria-expanded={!!showWorking[current.id]}
+                className="mt-3 flex items-center gap-1.5 text-xs text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-200 font-medium transition-colors motion-reduce:transition-none"
               >
-                {showWorking[current.id] ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+                {showWorking[current.id] ? <ChevronUp size={14} aria-hidden="true" /> : <ChevronDown size={14} aria-hidden="true" />}
                 {showWorking[current.id] ? "Hide" : "Show"} working
               </button>
             )}
@@ -428,14 +445,14 @@ export default function MathsPage() {
             <button
               onClick={checkAnswer}
               disabled={!(answers[current?.id] ?? "").trim()}
-              className="flex-1 bg-blue-600 text-white rounded-xl py-4 font-semibold text-base hover:bg-blue-700 disabled:opacity-40 transition-colors"
+              className="flex-1 bg-blue-600 text-white rounded-xl py-4 font-semibold text-base hover:bg-blue-700 disabled:opacity-40 transition-colors motion-reduce:transition-none"
             >
               Check Answer
             </button>
           ) : (
             <button
               onClick={next}
-              className="flex-1 bg-blue-600 text-white rounded-xl py-4 font-semibold text-base hover:bg-blue-700 transition-colors"
+              className="flex-1 bg-blue-600 text-white rounded-xl py-4 font-semibold text-base hover:bg-blue-700 transition-colors motion-reduce:transition-none"
             >
               {currentIndex + 1 >= questions.length ? "Finish" : "Next Question →"}
             </button>

@@ -14,12 +14,16 @@ interface InsightCardProps {
 }
 
 const colorMap = {
+  // AN-108 — "purple" is this map's fallback default (`?? colorMap.purple`
+  // below) for an unmatched insight colour, so it's the same "purple as
+  // dominant default" pattern corrected elsewhere in the card/button/
+  // progress system — now renders the muted-indigo educational accent.
   purple: {
-    bg: "bg-purple-50 dark:bg-purple-950",
-    border: "border-purple-100 dark:border-purple-900",
-    icon: "bg-purple-100 dark:bg-purple-900 text-purple-600 dark:text-purple-300",
-    title: "text-purple-900 dark:text-purple-100",
-    body: "text-purple-700 dark:text-purple-300",
+    bg: "bg-indigo-50 dark:bg-indigo-950",
+    border: "border-indigo-100 dark:border-indigo-900",
+    icon: "bg-indigo-100 dark:bg-indigo-900 text-indigo-600 dark:text-indigo-300",
+    title: "text-indigo-900 dark:text-indigo-100",
+    body: "text-indigo-700 dark:text-indigo-300",
   },
   green: {
     bg: "bg-emerald-50 dark:bg-emerald-950",

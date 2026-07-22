@@ -1,8 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Link from "next/link";
-import { ArrowLeft, Puzzle, Shapes, Compass, Hash, Play } from "lucide-react";
+import { Puzzle, Shapes, Compass, Hash, Play } from "lucide-react";
 import PageLayout from "@/components/PageLayout";
 import SubjectCard from "@/components/SubjectCard";
 import { ButtonLink } from "@/components/ui/Button";
@@ -90,16 +89,12 @@ export default function ReasoningHubPage() {
   );
 
   return (
-    <PageLayout>
+    <PageLayout breadcrumbs={[{ label: "Today", href: "/dashboard" }, { label: "Practice" }]}>
       <div className="max-w-3xl mx-auto px-4 py-6 md:px-8 md:py-8">
-        <Link
-          href="/dashboard"
-          className="flex items-center gap-1.5 text-gray-400 dark:text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 text-sm mb-5 transition-colors"
-        >
-          <ArrowLeft size={16} />
-          Home
-        </Link>
-
+        {/* AN-107: the manual "← Home" back-link is replaced with the same
+            breadcrumbs prop Dashboard/Learning Hub already use — consistent
+            navigation pattern, and "Home" predated AN-101's "Today" nav
+            relabel. */}
         <div className="mb-6">
           <h1 className="text-gray-900 dark:text-gray-100 font-bold text-2xl mb-2">Practice</h1>
           <p className="text-gray-500 dark:text-gray-400 text-sm leading-relaxed max-w-lg">
@@ -109,14 +104,15 @@ export default function ReasoningHubPage() {
           </p>
         </div>
 
+        {/* AN-108: hub-chrome strip (not subject-specific) moved from purple to the muted-indigo educational accent. */}
         {practiceMissionItem && (
-          <div className="bg-purple-50 dark:bg-purple-950 border border-purple-100 dark:border-purple-900 rounded-2xl p-4 mb-6 flex items-center justify-between gap-3 flex-wrap">
+          <div className="bg-indigo-50 dark:bg-indigo-950 border border-indigo-100 dark:border-indigo-900 rounded-2xl p-4 mb-6 flex items-center justify-between gap-3 flex-wrap">
             <div className="min-w-0">
-              <p className="text-sm text-purple-800 dark:text-purple-200 min-w-0">
+              <p className="text-sm text-indigo-800 dark:text-indigo-200 min-w-0">
                 Continue where you left off: <span className="font-semibold">{practiceMissionItem.label}</span>
               </p>
             </div>
-            <ButtonLink href={practiceMissionItem.href} variant="primary" size="sm" leftIcon={<Play size={13} />}>
+            <ButtonLink href={practiceMissionItem.href} variant="primary" size="sm" leftIcon={<Play size={13} aria-hidden="true" />}>
               Continue Practice
             </ButtonLink>
           </div>

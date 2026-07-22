@@ -37,10 +37,19 @@ interface StatCardProps extends CardBaseProps {
   color?: "orange" | "amber" | "purple" | "emerald" | "indigo";
 }
 
+/**
+ * AN-108 — `color`'s default ("purple") is `StatCard`'s generic, no-specific-
+ * meaning fallback (used whenever a caller doesn't name a subject/semantic
+ * colour), so it's exactly the kind of "purple as dominant default" the
+ * Founder's colour system calls out — the "purple" key now renders the
+ * muted-indigo educational accent instead. The key name is left as-is to
+ * avoid a churny rename across every call site; only its rendered class
+ * changes.
+ */
 const STAT_COLOR_CLASSES: Record<NonNullable<StatCardProps["color"]>, string> = {
   orange: "bg-orange-50 dark:bg-orange-950 border-orange-100 dark:border-orange-900 text-orange-500",
   amber: "bg-amber-50 dark:bg-amber-950 border-amber-100 dark:border-amber-900 text-amber-500",
-  purple: "bg-purple-50 dark:bg-purple-950 border-purple-100 dark:border-purple-900 text-purple-500",
+  purple: "bg-indigo-50 dark:bg-indigo-950 border-indigo-100 dark:border-indigo-900 text-indigo-500",
   emerald: "bg-emerald-50 dark:bg-emerald-950 border-emerald-100 dark:border-emerald-900 text-emerald-500",
   indigo: "bg-indigo-50 dark:bg-indigo-950 border-indigo-100 dark:border-indigo-900 text-indigo-500",
 };
@@ -103,7 +112,9 @@ export function ProgressCard({ title, percent, complete = false, children, class
         <div
           className={cn(
             "h-full rounded-full transition-all duration-700",
-            complete ? "bg-emerald-500" : "bg-purple-500"
+            // AN-108 — in-progress fill moved from purple to the muted-indigo
+            // educational accent, matching Progress.tsx's ProgressBar (same reasoning).
+            complete ? "bg-emerald-500" : "bg-indigo-500"
           )}
           style={{ width: `${Math.max(0, Math.min(100, percent))}%` }}
         />
@@ -127,7 +138,10 @@ export function SchoolCard(props: SchoolCardProps) {
   const { href, name, description, badge, icon: Icon, color } = props;
   return (
     <Link href={href} className="block group">
-      <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 shadow-sm p-5 transition-all duration-200 group-hover:shadow-lg group-hover:-translate-y-0.5 group-active:scale-[0.98]">
+      {/* AN-108 — hover lift/shadow jump softened (was shadow-lg + -translate-y-0.5,
+          already the calmest treatment in the card system; kept as the reference
+          "restrained" elevation the other primary cards are checked against). */}
+      <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 shadow-sm p-5 transition-all motion-reduce:transition-none duration-200 group-hover:shadow-md group-hover:-translate-y-0.5 group-active:scale-[0.98]">
         <div className="flex items-start justify-between mb-3">
           <div className={cn("p-3 rounded-2xl", color)}>
             <Icon size={22} />
@@ -152,8 +166,10 @@ interface RecommendationCardProps extends CardBaseProps {
   color?: "purple" | "emerald" | "blue" | "amber";
 }
 
+// AN-108 — same default-fallback reasoning as STAT_COLOR_CLASSES above: the
+// "purple" key now renders the muted-indigo educational accent.
 const RECOMMENDATION_COLOR: Record<NonNullable<RecommendationCardProps["color"]>, string> = {
-  purple: "bg-purple-50 dark:bg-purple-950 border-purple-100 dark:border-purple-900 text-purple-600 dark:text-purple-300",
+  purple: "bg-indigo-50 dark:bg-indigo-950 border-indigo-100 dark:border-indigo-900 text-indigo-600 dark:text-indigo-300",
   emerald: "bg-emerald-50 dark:bg-emerald-950 border-emerald-100 dark:border-emerald-900 text-emerald-600 dark:text-emerald-300",
   blue: "bg-blue-50 dark:bg-blue-950 border-blue-100 dark:border-blue-900 text-blue-600 dark:text-blue-300",
   amber: "bg-amber-50 dark:bg-amber-950 border-amber-100 dark:border-amber-900 text-amber-600 dark:text-amber-300",
@@ -186,12 +202,22 @@ export function RecommendationCard({ icon: Icon, title, reason, color = "purple"
  * moment. Flat fill per Product Experience Standard V1 Correction 1 (no
  * gradient anywhere in the product, including this previously-gradiented
  * card) — was `bg-gradient-to-br from-purple-600 via-purple-700 to-indigo-700`.
+ *
+ * AN-108 (Visual Identity Refinement) — recoloured from saturated purple-600
+ * to a deep forest green, per the Founder's explicit "the current saturated
+ * purple Hero should NOT remain... move toward a calmer educational
+ * aesthetic... reassuring rather than dramatic" direction. green-800 is
+ * deliberately deeper than Button.tsx's green-700 primary-action shade —
+ * verified 7.13:1 (white text), a full point higher than the button's own
+ * 5.02:1, and the darker/less energetic fill reads calmer for a moment this
+ * size, distinct from an actionable button. Structure (flat fill, no
+ * gradient, shadow-lg) is otherwise unchanged.
  */
 export function PremiumCard({ children, className }: CardBaseProps) {
   return (
     <div
       className={cn(
-        "bg-purple-600 dark:bg-purple-700 rounded-2xl px-6 py-5 shadow-lg text-white",
+        "bg-green-800 dark:bg-green-700 rounded-2xl px-6 py-5 shadow-lg text-white",
         className
       )}
     >

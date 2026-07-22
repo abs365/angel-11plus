@@ -25,6 +25,25 @@ export const SUBJECT_ESTIMATED_MINUTES: Partial<Record<SubjectKey, number>> = {
   "numerical-reasoning": 15,
 };
 
+/**
+ * AN-103 (Premium Learning Hub Experience) — Founder-approved subject
+ * descriptions for the Learning Hub's own card list only. Deliberately a
+ * separate export from SUBJECT_LEARNING_OBJECTIVE below, not a
+ * replacement of it: SUBJECT_LEARNING_OBJECTIVE is also read by
+ * SessionInfoBar on each subject's own landing page
+ * (app/english/page.tsx etc.), and AN-103's Founder decision is explicit
+ * that those four pages are not to be redesigned — changing the shared
+ * constant would have changed their displayed copy too, even without
+ * touching their files. Text reproduced verbatim from the Founder
+ * decision, not paraphrased.
+ */
+export const SUBJECT_HUB_DESCRIPTION: Partial<Record<SubjectKey, string>> = {
+  english: "Builds the reading, comprehension and communication skills needed to succeed across the entire 11+ examination.",
+  maths: "Develops mathematical reasoning, accuracy and confidence required for selective school entrance assessments.",
+  vocabulary: "Expands word knowledge to improve comprehension, verbal reasoning and confident written expression.",
+  writing: "Strengthens organisation, creativity and written communication so ideas can be expressed clearly and effectively.",
+};
+
 export const SUBJECT_LEARNING_OBJECTIVE: Partial<Record<SubjectKey, string>> = {
   english: "Build inference and evidence-based comprehension skills through original exam-style passages.",
   maths: "Strengthen problem-solving, fractions, algebra and timed arithmetic accuracy.",
@@ -57,4 +76,15 @@ export const SUBJECT_EXPECTED_BENEFIT: Partial<Record<SubjectKey, string>> = {
   "non-verbal-reasoning": "Tested by GL and ISEB — strong pattern recognition transfers directly into exam speed.",
   "spatial-reasoning": "Builds 3D thinking used across several exam boards' reasoning papers.",
   "numerical-reasoning": "A core CEM skill that also reinforces the number-pattern work in Maths.",
+  // AN-105 (Subject Learning Experience — Accessibility and Consistency) —
+  // Founder-approved "why this session matters" copy for the four core
+  // subjects, reproduced verbatim. Added to this existing map (not a new
+  // constant) because SessionInfoBar's expectedBenefit prop already exists
+  // for exactly this purpose — it was simply never populated for these
+  // four keys. Purely additive: the four reasoning-subject entries above
+  // are untouched.
+  english: "This session strengthens the reading and comprehension skills used to understand passages, interpret meaning and answer accurately.",
+  maths: "This session develops the reasoning, accuracy and problem-solving skills needed to handle increasingly challenging mathematical questions.",
+  vocabulary: "This session builds the word knowledge needed to understand unfamiliar language, interpret questions and express ideas confidently.",
+  writing: "This session develops the structure, clarity and expression needed to communicate ideas effectively in written responses.",
 };
