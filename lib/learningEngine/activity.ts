@@ -38,7 +38,13 @@ export interface RecentActivityItem {
 export async function fetchRecentActivity(
   supabase: SupabaseClient<Database>,
   profileId: string,
-  limit = 10
+  limit = 10,
+  /**
+   * Sprint 4 (ANGEL-CSSE-002A, Parent Intelligence) — optional lower bound
+   * on `updated_at` (ISO timestamp), e.g. for a "this week" report. Omitted
+   * by every pre-Sprint-4 caller, so their behaviour is unchanged.
+   */
+  sinceIso?: string
 ): Promise<RecentActivityItem[]> {
   const { data: questions, error: questionsError } = await supabase
     .from("ali_question_bank")
@@ -55,14 +61,14 @@ export async function fetchRecentActivity(
   const questionIds = (questions ?? []).map((q) => q.id);
   if (questionIds.length === 0) return [];
 
-  const { data: history, error: historyError } = await supabase
+  let query = supabase
     .from("ali_student_question_history")
     .select("question_id, times_seen, last_attempt_correct, updated_at")
     .eq("profile_id", profileId)
     .in("question_id", questionIds)
-    .gt("times_seen", 0)
-    .order("updated_at", { ascending: false })
-    .limit(limit);
+    .gt("times_seen", 0);
+  if (sinceIso) query = query.gte("updated_at", sinceIso);
+  const { data: history, error: historyError } = await query.order("updated_at", { ascending: false }).limit(limit);
 
   if (historyError) {
     console.warn("[LearningEngine] fetchRecentActivity (history lookup) failed:", historyError.message);
