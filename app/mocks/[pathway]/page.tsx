@@ -789,7 +789,7 @@ export default function MockPage({
           </div>
 
           <Link
-            href="/parent"
+            href="/learning-intelligence/parent"
             className="block text-center text-sm text-gray-400 dark:text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 transition-colors py-2"
           >
             View full report in Parent Dashboard

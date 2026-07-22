@@ -227,7 +227,7 @@ export default function BetaPage() {
           {[
             { step: "1", title: "Choose a pathway", desc: "Select the exam format that matches your target school.", href: "/pathways", cta: "Choose Pathway" },
             { step: "2", title: "Start practising", desc: "Work through English, Maths, Vocabulary, Writing and Reasoning sessions.", href: "/dashboard", cta: "Open Dashboard" },
-            { step: "3", title: "Track your progress", desc: "Parents can view the progress dashboard and mock exam results at any time.", href: "/parent", cta: "Parent Dashboard" },
+            { step: "3", title: "Track your progress", desc: "Parents can view the progress dashboard and mock exam results at any time.", href: "/learning-intelligence/parent", cta: "Parent Dashboard" },
           ].map((item) => (
             <div key={item.step} className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-4 flex items-start gap-4">
               <div className="w-8 h-8 rounded-full bg-purple-600 text-white text-sm font-bold flex items-center justify-center shrink-0">

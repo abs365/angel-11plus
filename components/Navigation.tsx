@@ -81,9 +81,13 @@ const navSections: NavSection[] = [
   },
 ];
 
+// FD-020 (Sprint 4 Completion Package, WP4B) — /learning-intelligence/parent
+// is the single, unified Parent Dashboard for every pathway (the former
+// standalone /parent now redirects here, see next.config.ts). Content is
+// pathway-specific inside the page, not a second destination.
 const parentItem: NavItem = {
-  href: "/parent",
-  label: "Parent Hub",
+  href: "/learning-intelligence/parent",
+  label: "Parent Dashboard",
   icon: Users,
 };
 
@@ -244,11 +248,11 @@ export default function Navigation() {
               </Link>
             );
           })}
-          {/* Parent / login */}
+          {/* Parent / login — repointed to the CSSE Parent Dashboard, same as the desktop sidebar (Quick Win #4) */}
           <Link
-            href={user ? "/parent" : "/login"}
+            href={user ? "/learning-intelligence/parent" : "/login"}
             className={`flex flex-col items-center gap-0.5 px-2 py-1.5 rounded-xl min-w-[52px] transition-colors ${
-              pathname === "/parent" || pathname === "/login" ? "bg-purple-50 dark:bg-purple-950 text-purple-700 dark:text-purple-300" : "text-gray-400"
+              pathname === "/learning-intelligence/parent" || pathname === "/login" ? "bg-purple-50 dark:bg-purple-950 text-purple-700 dark:text-purple-300" : "text-gray-400"
             }`}
           >
             {user ? (

@@ -91,7 +91,7 @@ const STEPS = [
           You&apos;ll see: session count, average scores per subject, exam readiness estimate, and insights flagging areas that need attention.
         </p>
         <Link
-          href="/parent"
+          href="/learning-intelligence/parent"
           className="inline-flex items-center gap-1.5 text-sm text-purple-600 dark:text-purple-400 font-semibold hover:underline"
         >
           Open Parent Dashboard <ChevronRight size={14} />
@@ -155,7 +155,7 @@ const TIPS = [
 
 export default function GettingStartedPage() {
   return (
-    <SupportLayout backHref="/parent" backLabel="Parent Dashboard">
+    <SupportLayout backHref="/learning-intelligence/parent" backLabel="Parent Dashboard">
       {/* Header */}
       <div className="mb-8">
         <div className="w-12 h-12 rounded-2xl bg-purple-100 dark:bg-purple-900 flex items-center justify-center mb-4">

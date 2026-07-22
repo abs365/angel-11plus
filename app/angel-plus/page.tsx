@@ -49,8 +49,8 @@ const JOURNEY_LINKS = [
     color: "bg-blue-50 dark:bg-blue-950 text-blue-600 dark:text-blue-300",
   },
   {
-    href: "/parent",
-    name: "Parent Hub",
+    href: "/learning-intelligence/parent",
+    name: "Parent Dashboard",
     description: "Readiness, weekly guidance and a clear progress story, written for parents rather than raw data.",
     badge: "Free",
     icon: Users,
@@ -70,7 +70,7 @@ const AVAILABLE_TODAY = [
   "Personalised, adaptive practice across every core subject",
   "Full timed mock exams for GL, CEM, CSSE and ISEB",
   "Real, evidence-based competency and readiness tracking",
-  "A dedicated Parent Hub with weekly guidance and a progress story",
+  "A dedicated Parent Dashboard with weekly guidance and a progress story",
   "School Intelligence for your chosen exam pathway",
   "Smart Writing Feedback on every submitted piece",
 ];
