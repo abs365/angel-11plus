@@ -168,4 +168,42 @@ Full SQL is in the files themselves rather than duplicated here — both are sho
 
 ---
 
-Migration 019 is live in production. Migration 020 remains unapplied, per Section 11's sequencing risk — not touched by this gate. Not committed to git. ED-001 remains open until Work Package 8's full live verification (Gates 5-7) passes; Phase 3.1 remains paused until then, per standing instruction.
+**Gate 4 (revised) — Committed and Deployed.**
+- Commit `e1150f0146bff803be14045f63b7f213b3b9f6ba` — "fix: establish secure learner identity and profile ownership" — 18 files, scoped to exactly: anonymous authenticated learner identity, profile ownership correction, legacy profile claim integration, and the already-reviewed Phase 3 application integration. Migration 020 and all Phase 2C identity-registration files deliberately excluded (020 is being reworked per the evidence-table RLS finding below; Phase 2C was never part of this approval).
+- Pre-commit: `tsc --noEmit` clean, full lint run across all 12 changed/new files (one genuine new finding — a React Compiler memoization-skip in `app/maths/page.tsx`'s `finishSession`, caused by this diff — fixed by removing the manual `useCallback` wrapper, re-verified clean; every other lint item confirmed pre-existing via `git diff`, unrelated to this change), both test suites pass, `next build` succeeds (48 routes), full diff secret-scanned (clean — only prose references to the role name `service_role`, never a key value).
+- Pushed to `origin/main`: `bc00f99..e1150f0`.
+- Vercel production deployment `dpl_DmTv847DEREEFJUiePLrWvgGvxbW`, created 2026-07-23 12:49:07 BST (11:49:07 UTC), status **Ready**, aliased to `https://angel-11plus.vercel.app` (the production domain) — confirmed via `git rev-parse origin/main`/`HEAD` both resolving to `e1150f0`, with no intervening commits.
+
+**Gate 5 — Fresh Learner Identity Verification (identity/profile ownership scope only): PASSED, all 8 checks, against the real deployed application.**
+
+**Disclosure (test-preparation error, not a production defect)**: to obtain a genuinely fresh browser identity, the existing test browser's `angel11plus_device_id` and Supabase auth-token localStorage keys were backed up to a page-scoped JS variable before clearing them, intending to restore afterward. The subsequent page navigation (needed to trigger the real app's bootstrap flow) reset that in-page JS state before the values were read back out, so the original 25-character `device_id` could not be restored. Consequences, precisely: no production database rows were changed, deleted, or modified by this — only this one browser's local pointer to its previous identity was lost. No learner profile was deleted. The browser was subsequently, intentionally treated as a fresh-identity test environment for the remainder of Gate 5, per Founder instruction. Legacy continuity verification (i.e., whether an existing device can still resume its old profile) is Gate 6, using a separately controlled device_id, not this browser.
+
+**Results, against `https://angel-11plus.vercel.app` (commit `e1150f0`), Supabase project `agxunwcdatosrmzhhuxj`:**
+
+| # | Check | Result |
+|---|---|---|
+| 1 | Anonymous sign-in succeeds | ✅ Real session created via the app's own `AuthProvider` bootstrap (no manual client construction) |
+| 2 | Browser receives an authenticated session | ✅ `role: "authenticated"`, `aud: "authenticated"`, `is_anonymous: true`, confirmed by reading the app's own persisted session from localStorage |
+| 3 | One new profile is created | ✅ `profiles` row `a3c1b503-687b-4db2-91bd-51efd915b756` created automatically by the deployed app's `ensureProfile()`/`onAuthStateChange` flow — no manual insert |
+| 4 | `profiles.auth_user_id` matches `auth.uid()` | ✅ Both equal `6d377363-f15d-43dc-b575-07ad78ecc863`, confirmed via direct SQL query |
+| 5 | Owner can select and update | ✅ Both HTTP 200, using the real session's own access/refresh token |
+| 6 | Cross-identity denial | ✅ A second, independently signed-in anonymous identity got 0 rows on SELECT and 0 rows affected on UPDATE (RLS silently filtered); confirmed at the DB level the owner's data was unchanged afterward |
+| 7 | `claim_legacy_profile` role behaviour | ✅ Session-less `anon` call: HTTP 401, `42501 permission denied`. Authenticated call: HTTP 200, no error (null data — no-op, no matching legacy device row, as expected for a made-up id) |
+| 8 | No duplicate profile | ✅ Total `profiles` count went 5→6 (exactly +1); exactly 1 row matches the new `auth_user_id` |
+
+**Gate 5: CLOSED.**
+
+**Gate 6 — Controlled Legacy Profile Continuity: PASSED.**
+
+Since no real family device_id may be used for this test, a clearly-synthetic legacy profile fixture was created directly via SQL to simulate a pre-auth device: `device_id = 'gate6-synthetic-legacy-device-id'`, `name = 'GATE6_TEST_LEGACY_PROFILE_DO_NOT_USE'`, `auth_user_id` left `NULL` — exactly the shape of a genuine pre-correction legacy row.
+
+- A fresh anonymous identity (`27571cfb-31bb-41ba-bee6-c814b241897d`) called `claim_legacy_profile` with that exact `device_id` — succeeded, returning the fixture's real id, no error.
+- A follow-up `SELECT` confirmed the fixture's `auth_user_id` was genuinely updated to match this claimant.
+- A **second**, independently signed-in identity (`34cfdf6b-37ff-4425-8f8f-08cf802d4d18`) then attempted to claim the **same, now-already-owned** `device_id` — got `null` back, no error: an already-claimed legacy row cannot be re-claimed by anyone else, confirmed live.
+- The synthetic fixture row was deleted immediately afterward (`DELETE ... WHERE id = 'c5fbd30c-b966-4f29-b023-7abcbd9bf844'`, confirmed via `RETURNING id`) — production left clean, no lingering test data.
+
+**Not cleaned up (disclosed, not deleted without being asked)**: the handful of anonymous test auth identities created across Gate 5/6 verification (including the one now-real `profiles` row from Gate 5, `a3c1b503-687b-4db2-91bd-51efd915b756`) remain in `auth.users`/`profiles` — harmless, isolated, no connection to any real family's data, available for inspection or cleanup on request.
+
+**Gate 6: CLOSED.**
+
+Migration 019 is live in production. Migration 020 is being reworked (see the evidence/content-table RLS finding above) — not committed, not applied. ED-001's identity/ownership scope (Gates 1-6) is now fully verified live against the real deployed application; Phase 3.1 (evidence chain) verification remains paused until the evidence-table RLS defect is corrected, per standing instruction — Gate 7 is not to be described as failed while that defect is known and unresolved.
