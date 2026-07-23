@@ -357,6 +357,13 @@ export default function AdaptiveGlMockPage() {
           lastAttemptCorrect: null,
           secondLastAttemptCorrect: null,
           masteryState: "new" as const,
+          lastAttemptTimeSeconds: null,
+          lastAttemptSkipped: null,
+          lastAttemptAnswerChanged: null,
+          lastAttemptFirstAnswer: null,
+          lastAttemptFinalAnswer: null,
+          lastAttemptConfidenceRating: null,
+          lastAttemptWorkingShown: null,
         };
         const updated = applyAttemptOutcome(current, correct, sessionIdRef.current, bankQuestion.masteryThreshold);
         vrHistoryRef.current.set(bankQuestion.id, { ...current, ...updated });

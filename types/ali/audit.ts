@@ -29,4 +29,11 @@ export interface EducationalAuditRecord {
   /** Id of the record that superseded this one, or null while this record is still the current conclusion. */
   supersededBy: string | null;
   supersedeReason: SupersedeReason | null;
+  /**
+   * Migration 015 — what was concluded, for conclusion types where
+   * confidenceTierAtTime alone doesn't capture it. Null for mastery/
+   * durable-mastery/wellbeing-veto (the conclusion_type itself carries the
+   * meaning there); a ReadinessBand string for 'readiness-dimension'.
+   */
+  conclusionValue: string | null;
 }

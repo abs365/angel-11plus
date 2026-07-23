@@ -166,6 +166,9 @@ export default function AdaptiveVocabularyMockPage() {
       timesSeen: 0, timesCorrect: 0, distinctCorrectSessions: 0, lastCorrectSessionId: null,
       lastPresentedAt: new Date().toISOString(), lastPresentedAtSequence: 0,
       lastAttemptCorrect: null, secondLastAttemptCorrect: null, masteryState: "new" as const,
+      lastAttemptTimeSeconds: null, lastAttemptSkipped: null, lastAttemptAnswerChanged: null,
+      lastAttemptFirstAnswer: null, lastAttemptFinalAnswer: null, lastAttemptConfidenceRating: null,
+      lastAttemptWorkingShown: null,
     };
     const updated = applyAttemptOutcome(current, isCorrect, sessionIdRef.current, currentItem.bankQuestion.masteryThreshold);
     historyRef.current.set(currentItem.bankQuestion.id, { ...current, ...updated });

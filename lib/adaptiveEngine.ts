@@ -6,6 +6,30 @@ import { buildReplayQueue } from "./replayEngine";
 import { competencyLabel } from "./ali/labels";
 import { getEligibleSubjectKeys } from "./ali/pathwayEligibility";
 
+/**
+ * Known, undocumented-until-now parallel-system finding (Educational
+ * Intelligence Foundation, Phase 2A gap review, 2026-07-23): this module
+ * already filters WHICH subjects it recommends by pathway
+ * (getEligibleSubjectKeys, ./ali/pathwayEligibility.ts) — a CSSE learner is
+ * correctly never pointed at Verbal/Non-Verbal/Spatial Reasoning here.
+ * What it does NOT do is share any EVIDENCE with the newer, CSSE-specific
+ * Educational Intelligence Engine (lib/learningEngine/*, lib/ali/*): this
+ * module reads/writes `lib/progress.ts`'s localStorage-backed
+ * UserProgress/AnalyticsReport (synced to the separate `user_stats`/
+ * `lesson_progress` tables), never `ali_student_question_history`. A CSSE
+ * learner practising via the /english, /maths, /vocabulary, /writing,
+ * /reasoning pages (this module's real callers) generates real practice
+ * activity that the Educational Intelligence Engine never sees — no
+ * competency evidence, no Readiness change, no Recommendation update.
+ * Only /learning-intelligence/* and /mocks/[pathway] currently feed the
+ * Engine (`lib/ali/history.ts`'s recordOutcome()). Not fixed here: closing
+ * this gap means either rewiring these legacy pages' completion handlers
+ * to also write real competency evidence, or a navigation change routing
+ * CSSE learners to the newer surfaces instead — both are page/interface
+ * changes outside this Foundation-only work package's approved scope.
+ * Flagged for a separate, explicit decision rather than silently patched.
+ */
+
 // ─── Tier determination ───────────────────────────────────────────────────────
 
 function tierFromSubject(subject: SubjectAnalytics): AdaptiveTier {

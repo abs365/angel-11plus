@@ -34,6 +34,8 @@ export function createAuditRecord(params: {
   competencyOrDimension: string;
   confidenceTierAtTime: EvidenceConfidenceTier;
   concludedAt: string;
+  /** Migration 015 — required for 'readiness-dimension' (the ReadinessBand reached), null/omitted for other conclusion types. */
+  conclusionValue?: string | null;
 }): EducationalAuditRecord {
   return {
     id: params.id,
@@ -44,6 +46,7 @@ export function createAuditRecord(params: {
     concludedAt: params.concludedAt,
     supersededBy: null,
     supersedeReason: null,
+    conclusionValue: params.conclusionValue ?? null,
   };
 }
 

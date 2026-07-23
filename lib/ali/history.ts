@@ -1,6 +1,6 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Database } from "@/types/supabase";
-import type { StudentQuestionHistoryRow, MasteryState } from "@/types/ali/history";
+import type { AttemptEvidenceFacts, MasteryState, StudentQuestionHistoryRow } from "@/types/ali/history";
 import { applyAttemptOutcome } from "./mastery";
 
 type HistoryRow = Database["public"]["Tables"]["ali_student_question_history"]["Row"];
@@ -19,6 +19,13 @@ function rowToHistory(row: HistoryRow): StudentQuestionHistoryRow {
     lastAttemptCorrect: row.last_attempt_correct,
     secondLastAttemptCorrect: row.second_last_attempt_correct,
     masteryState: row.mastery_state as MasteryState,
+    lastAttemptTimeSeconds: row.last_attempt_time_seconds,
+    lastAttemptSkipped: row.last_attempt_skipped,
+    lastAttemptAnswerChanged: row.last_attempt_answer_changed,
+    lastAttemptFirstAnswer: row.last_attempt_first_answer,
+    lastAttemptFinalAnswer: row.last_attempt_final_answer,
+    lastAttemptConfidenceRating: row.last_attempt_confidence_rating,
+    lastAttemptWorkingShown: row.last_attempt_working_shown,
   };
 }
 
@@ -123,11 +130,38 @@ export async function recordPresentation(
 }
 
 /**
+ * Evidence Capture Layer (migration 015) — pure, no I/O, independently
+ * testable. Only includes a DB column key when this call actually
+ * supplied that fact, so an omitted fact leaves whatever was previously
+ * stored untouched rather than overwriting it with a false null. Never
+ * fabricates a value for a fact the caller didn't collect.
+ */
+export function buildEvidenceUpdateColumns(evidenceFacts?: AttemptEvidenceFacts): Record<string, unknown> {
+  const evidenceColumns: Record<string, unknown> = {};
+  if (evidenceFacts?.timeTakenSeconds !== undefined) evidenceColumns.last_attempt_time_seconds = evidenceFacts.timeTakenSeconds;
+  if (evidenceFacts?.skipped !== undefined) evidenceColumns.last_attempt_skipped = evidenceFacts.skipped;
+  if (evidenceFacts?.answerChanged !== undefined) evidenceColumns.last_attempt_answer_changed = evidenceFacts.answerChanged;
+  if (evidenceFacts?.firstAnswer !== undefined) evidenceColumns.last_attempt_first_answer = evidenceFacts.firstAnswer;
+  if (evidenceFacts?.finalAnswer !== undefined) evidenceColumns.last_attempt_final_answer = evidenceFacts.finalAnswer;
+  if (evidenceFacts?.confidenceRating !== undefined) evidenceColumns.last_attempt_confidence_rating = evidenceFacts.confidenceRating;
+  if (evidenceFacts?.workingShown !== undefined) evidenceColumns.last_attempt_working_shown = evidenceFacts.workingShown;
+  return evidenceColumns;
+}
+
+/**
  * Records the outcome of one answered question — updates mastery evidence
  * (lib/ali/mastery.ts) on the student's history row, and the global
  * usage_count/avg_success_rate aggregate on ali_question_bank. Called
  * immediately when a question is answered (matches the existing app's
  * grade-immediately UX pattern, e.g. components/ReasoningSession.tsx).
+ *
+ * `evidenceFacts` (migration 015, Phase 2B, Evidence Capture Layer) is
+ * optional and additive — every existing caller omits it and behaves
+ * exactly as before (all six new columns stay null). A caller that does
+ * collect any of these directly-observable facts (time taken, skipped,
+ * answer changed, first/final answer, confidence rating, working shown)
+ * may pass them; only the fields actually supplied are written, so a
+ * caller providing one fact never overwrites another with a false null.
  */
 export async function recordOutcome(
   supabase: SupabaseClient<Database>,
@@ -135,7 +169,8 @@ export async function recordOutcome(
   questionId: string,
   isCorrect: boolean,
   sessionId: string,
-  masteryThreshold: number
+  masteryThreshold: number,
+  evidenceFacts?: AttemptEvidenceFacts
 ): Promise<void> {
   const { data: existing, error: fetchError } = await supabase
     .from("ali_student_question_history")
@@ -159,9 +194,17 @@ export async function recordOutcome(
         lastAttemptCorrect: null,
         secondLastAttemptCorrect: null,
         masteryState: "new" as MasteryState,
+        lastAttemptTimeSeconds: null,
+        lastAttemptSkipped: null,
+        lastAttemptAnswerChanged: null,
+        lastAttemptFirstAnswer: null,
+        lastAttemptFinalAnswer: null,
+        lastAttemptConfidenceRating: null,
+        lastAttemptWorkingShown: null,
       } as StudentQuestionHistoryRow);
 
   const updated = applyAttemptOutcome(current, isCorrect, sessionId, masteryThreshold);
+  const evidenceColumns = buildEvidenceUpdateColumns(evidenceFacts);
 
   const { error: updateError } = await supabase
     .from("ali_student_question_history")
@@ -173,6 +216,7 @@ export async function recordOutcome(
       last_attempt_correct: updated.lastAttemptCorrect,
       second_last_attempt_correct: updated.secondLastAttemptCorrect,
       mastery_state: updated.masteryState,
+      ...evidenceColumns,
     })
     .eq("profile_id", profileId)
     .eq("question_id", questionId);

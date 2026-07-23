@@ -197,6 +197,16 @@ export interface Database {
           second_last_attempt_correct: boolean | null;
           mastery_state: string;
           updated_at: string;
+          // Migration 015 (Phase 2B, Evidence Capture Layer) — directly
+          // observable per-attempt facts, most-recent-attempt only, same
+          // shape convention as last_attempt_correct. All optional.
+          last_attempt_time_seconds: number | null;
+          last_attempt_skipped: boolean | null;
+          last_attempt_answer_changed: boolean | null;
+          last_attempt_first_answer: string | null;
+          last_attempt_final_answer: string | null;
+          last_attempt_confidence_rating: number | null;
+          last_attempt_working_shown: boolean | null;
         };
         Insert: {
           id?: string;
@@ -213,6 +223,13 @@ export interface Database {
           second_last_attempt_correct?: boolean | null;
           mastery_state?: string;
           updated_at?: string;
+          last_attempt_time_seconds?: number | null;
+          last_attempt_skipped?: boolean | null;
+          last_attempt_answer_changed?: boolean | null;
+          last_attempt_first_answer?: string | null;
+          last_attempt_final_answer?: string | null;
+          last_attempt_confidence_rating?: number | null;
+          last_attempt_working_shown?: boolean | null;
         };
         Update: {
           times_seen?: number;
@@ -225,6 +242,13 @@ export interface Database {
           second_last_attempt_correct?: boolean | null;
           mastery_state?: string;
           updated_at?: string;
+          last_attempt_time_seconds?: number | null;
+          last_attempt_skipped?: boolean | null;
+          last_attempt_answer_changed?: boolean | null;
+          last_attempt_first_answer?: string | null;
+          last_attempt_final_answer?: string | null;
+          last_attempt_confidence_rating?: number | null;
+          last_attempt_working_shown?: boolean | null;
         };
         Relationships: [];
       };
@@ -267,6 +291,10 @@ export interface Database {
           concluded_at: string;
           superseded_by: string | null;
           supersede_reason: SupersedeReasonEnum | null;
+          // Migration 015 — what was concluded, for conclusion_types (e.g.
+          // 'readiness-dimension') where confidence_tier_at_time alone
+          // doesn't capture the value reached (e.g. a ReadinessBand).
+          conclusion_value: string | null;
         };
         Insert: {
           id?: string;
@@ -277,6 +305,7 @@ export interface Database {
           concluded_at?: string;
           superseded_by?: string | null;
           supersede_reason?: SupersedeReasonEnum | null;
+          conclusion_value?: string | null;
         };
         Update: {
           // Append-only by convention (APD-029) — the only legitimate update

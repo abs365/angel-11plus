@@ -27,6 +27,7 @@ export async function insertAuditRecord(
       competency_or_dimension: record.competencyOrDimension,
       confidence_tier_at_time: record.confidenceTierAtTime,
       concluded_at: record.concludedAt,
+      conclusion_value: record.conclusionValue,
     })
     .select("id")
     .single();
@@ -96,6 +97,7 @@ export async function fetchCurrentAuditRecord(
     concludedAt: data.concluded_at,
     supersededBy: data.superseded_by,
     supersedeReason: data.supersede_reason,
+    conclusionValue: data.conclusion_value,
   };
 }
 
@@ -138,5 +140,6 @@ export async function fetchEducationalMilestones(
     concludedAt: row.concluded_at,
     supersededBy: row.superseded_by,
     supersedeReason: row.supersede_reason,
+    conclusionValue: row.conclusion_value,
   }));
 }
