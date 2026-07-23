@@ -23,7 +23,7 @@ import { computeAnalytics } from "@/lib/analytics";
 import { computeAdaptiveState } from "@/lib/adaptiveEngine";
 import { computeGamification } from "@/lib/gamification";
 import { computeParentReport, READINESS_CONFIG } from "@/lib/parentInsights";
-import { getBestMockScoreForPathway, getMockCountForPathway } from "@/lib/mockProgress";
+import { getMockResults, bestScoreForPathway, countForPathway } from "@/lib/mockProgress";
 import NewBadgeBanner from "@/components/NewBadgeBanner";
 import InsightCard from "@/components/InsightCard";
 import { getPathwayById } from "@/lib/pathways";
@@ -37,7 +37,7 @@ import type { DailyMission as DailyMissionData } from "@/types/adaptive";
 import type { WeeklyGoal } from "@/types/gamification";
 import type { Pathway } from "@/types/pathway";
 import type { ParentReport } from "@/types/parent";
-import type { MockPathwayId } from "@/types/mock";
+import type { MockPathwayId, MockResult } from "@/types/mock";
 
 /**
  * Angel V2.1 EEP-002 (Homepage Excellence) — the homepage is no longer a
@@ -320,6 +320,7 @@ export default function DashboardPage() {
   const [pathway, setPathway] = useState<Pathway | undefined>();
   const [parentReport, setParentReport] = useState<ParentReport | null>(null);
   const [childName, setChildName] = useState<string | null>(null);
+  const [mockResults, setMockResults] = useState<MockResult[]>([]);
 
   useEffect(() => {
     const p = getProgress();
@@ -340,6 +341,9 @@ export default function DashboardPage() {
     // than a second effect, so this doesn't add a new instance of this
     // file's existing (pre-AN-102) set-state-in-effect pattern.
     setChildName(localStorage.getItem(CHILD_NAME_KEY));
+    // Increment 4 — one read, derived per-pathway below via the pure
+    // bestScoreForPathway()/countForPathway() helpers, same idiom.
+    getMockResults().then(setMockResults);
     migrateLocalProgressToSupabase().catch(() => {});
   }, []);
 
@@ -357,8 +361,8 @@ export default function DashboardPage() {
   const accentText = pathway ? (pathwayIconText[pathway.accentColor] ?? pathwayIconText.purple) : pathwayIconText.purple;
   const topMissionItem = mission && mission.items.length > 0 ? mission.items[0] : null;
   const mockSupported = pathway && MOCK_PATHWAY_IDS.includes(pathway.id as MockPathwayId);
-  const bestMockScore = mockSupported ? getBestMockScoreForPathway(pathway!.id as MockPathwayId) : null;
-  const mockAttempts = mockSupported ? getMockCountForPathway(pathway!.id as MockPathwayId) : 0;
+  const bestMockScore = mockSupported ? bestScoreForPathway(mockResults, pathway!.id as MockPathwayId) : null;
+  const mockAttempts = mockSupported ? countForPathway(mockResults, pathway!.id as MockPathwayId) : 0;
 
   return (
     <PageLayout breadcrumbs={[{ label: "My Admission Journey" }]}>

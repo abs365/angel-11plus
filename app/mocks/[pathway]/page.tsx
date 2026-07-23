@@ -12,7 +12,7 @@ import { nonVerbalReasoningQuestions } from "@/data/non-verbal-reasoning";
 import { spatialReasoningQuestions } from "@/data/spatial-reasoning";
 import { numericalReasoningQuestions } from "@/data/numerical-reasoning";
 import { mathsQuestions, quickArithmetic } from "@/data/maths";
-import { saveMockResult, getBestMockScoreForPathway, getMockCountForPathway } from "@/lib/mockProgress";
+import { saveMockResult, getMockResults, bestScoreForPathway, countForPathway } from "@/lib/mockProgress";
 import { completeLesson } from "@/lib/progress";
 import { trackEvent } from "@/lib/betaTracking";
 import { MOCK_SUGGESTED_PREPARATION, MOCK_ADMISSION_RELEVANCE } from "@/lib/mockMeta";
@@ -269,9 +269,14 @@ export default function MockPage({
   // lib/mockProgress.ts's existing, unmodified functions; presentational
   // only, computed once on mount for the Pre-Exam Experience banner.
   useEffect(() => {
-    setPriorAttempts({
-      count: getMockCountForPathway(pathwayId),
-      best: getBestMockScoreForPathway(pathwayId),
+    // Increment 4 — one read, two pure in-memory derivations, instead of
+    // two separate reads (each re-fetching and re-filtering the same
+    // underlying results) for count and best score.
+    getMockResults().then((results) => {
+      setPriorAttempts({
+        count: countForPathway(results, pathwayId),
+        best: bestScoreForPathway(results, pathwayId),
+      });
     });
   }, [pathwayId]);
 

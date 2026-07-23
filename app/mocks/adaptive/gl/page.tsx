@@ -26,12 +26,12 @@ import { getProgress, recordSkillResult, completeLesson, recordAliCompetencySign
 import { computeAnalytics } from "@/lib/analytics";
 import { computeSubjectConfidence } from "@/lib/adaptiveDifficulty";
 import { formatTime } from "@/lib/formatTime";
-import { saveAdaptiveMockResult } from "@/lib/adaptiveMockProgress";
+import { startMockAttempt, completeMockAttempt } from "@/lib/mockProgress";
 import { trackEvent } from "@/lib/betaTracking";
 import type { BankQuestion } from "@/types/ali/questionBank";
 import type { StudentQuestionHistoryRow } from "@/types/ali/history";
 import type { ReasoningQuestion } from "@/types/reasoning";
-import type { AdaptiveMockSectionResult, AdaptiveMockResult } from "@/types/mock";
+import type { MockSectionResult, MockResult } from "@/types/mock";
 import type { AdaptiveTier } from "@/types/adaptive";
 
 // ─── Config — GL sections only. VR is the sole adaptive section this slice; ─
@@ -96,14 +96,20 @@ export default function AdaptiveGlMockPage() {
   const [answered, setAnswered] = useState(false);
   const [wasCorrect, setWasCorrect] = useState(false);
   const [sectionAnswers, setSectionAnswers] = useState<boolean[]>([]);
-  const [sectionResults, setSectionResults] = useState<AdaptiveMockSectionResult[]>([]);
+  const [sectionResults, setSectionResults] = useState<MockSectionResult[]>([]);
   const [timeLeft, setTimeLeft] = useState(0);
   const [saved, setSaved] = useState(false);
 
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const profileIdRef = useRef<string | null>(null);
-  const sessionIdRef = useRef<string>(`adaptive-gl-${Date.now()}`);
+  // Phase 4 Sprint 1, Increment 3 — the one canonical Attempt ID for the
+  // whole mock lifecycle. Set once loadAndStart() succeeds (startMockAttempt
+  // issues it), then reused unchanged as: the sessionId passed to
+  // recordOutcome()/applyAttemptOutcome() (Question History + Durable
+  // Mastery), and the completed MockResult's id (Mock Attempt Ledger). No
+  // second identifier exists anywhere in this file.
+  const sessionIdRef = useRef<string | null>(null);
   // Local mirror of the VR bank/history, kept in sync as questions are
   // answered (Phase ALI 1.3) — lets the Daily Mission bridge write
   // (recordAliCompetencySignal, below) compute a fresh competency signal
@@ -198,6 +204,7 @@ export default function AdaptiveGlMockPage() {
       setSectionIdx(0);
       setSectionResults([]);
       setSaved(false);
+      sessionIdRef.current = startMockAttempt("gl", "GL Verbal Reasoning Practice");
       trackEvent("mock_started", { pathway: "gl", variant: "adaptive" });
       startSection(0, runnerSections);
     } catch {
@@ -226,7 +233,7 @@ export default function AdaptiveGlMockPage() {
     const total = sectionAnswers.length;
     const score = total > 0 ? Math.round((correct / total) * 100) : 0;
 
-    const result: AdaptiveMockSectionResult = {
+    const result: MockSectionResult = {
       sectionId: currentSection.id,
       sectionName: currentSection.name,
       bank: currentSection.adaptive ? "vr" : currentSection.id,
@@ -267,8 +274,8 @@ export default function AdaptiveGlMockPage() {
       const totalQuestions = sectionResults.reduce((s, r) => s + r.total, 0);
       const totalScore = totalQuestions > 0 ? Math.round((totalCorrect / totalQuestions) * 100) : 0;
 
-      const result: AdaptiveMockResult = {
-        id: `gl-adaptive-${Date.now()}`,
+      const result: MockResult = {
+        id: sessionIdRef.current ?? `adaptive-gl-${Date.now()}`,
         pathway: "gl",
         pathwayName: "GL Verbal Reasoning Practice",
         date: new Date().toISOString(),
@@ -276,7 +283,7 @@ export default function AdaptiveGlMockPage() {
         sectionResults,
         durationMinutes: TOTAL_MINUTES,
       };
-      saveAdaptiveMockResult(result);
+      completeMockAttempt(result);
 
       // Bridge: subject-level score feeds computeSubjectConfidence() for the
       // *next* adaptive mock's tier, and Parent Insights via computeParentReport().
@@ -327,13 +334,17 @@ export default function AdaptiveGlMockPage() {
       const bankQuestion = currentSection.bankQuestions?.[questionIdx];
       const supabase = getSupabaseClient();
       const profileId = profileIdRef.current;
+      // Always set by this point — loadAndStart() assigns it before any
+      // question can be answered. The fallback only guards TypeScript's
+      // nullability, never expected to be exercised at runtime.
+      const sessionId = sessionIdRef.current ?? `adaptive-gl-${Date.now()}`;
       if (bankQuestion && supabase && profileId && !usingSyntheticFixture) {
         recordOutcome(
           supabase,
           profileId,
           bankQuestion.id,
           correct,
-          sessionIdRef.current,
+          sessionId,
           bankQuestion.masteryThreshold
         ).catch(() => {});
       }
@@ -365,7 +376,7 @@ export default function AdaptiveGlMockPage() {
           lastAttemptConfidenceRating: null,
           lastAttemptWorkingShown: null,
         };
-        const updated = applyAttemptOutcome(current, correct, sessionIdRef.current, bankQuestion.masteryThreshold);
+        const updated = applyAttemptOutcome(current, correct, sessionId, bankQuestion.masteryThreshold);
         vrHistoryRef.current.set(bankQuestion.id, { ...current, ...updated });
       }
 

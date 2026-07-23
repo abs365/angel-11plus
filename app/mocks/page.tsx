@@ -5,7 +5,7 @@ import { ChevronRight, Clock, BookOpen, Trophy, Play, Sparkles } from "lucide-re
 import PageLayout from "@/components/PageLayout";
 import { StatusIndicator } from "@/components/ui/Progress";
 import { ButtonLink } from "@/components/ui/Button";
-import { getMockResults, getBestMockScoreForPathway } from "@/lib/mockProgress";
+import { getMockResults, bestScoreForPathway } from "@/lib/mockProgress";
 import { MOCK_SUGGESTED_PREPARATION } from "@/lib/mockMeta";
 import type { MockResult, MockPathwayId } from "@/types/mock";
 
@@ -82,13 +82,17 @@ export default function MocksPage() {
   const [bestScores, setBestScores] = useState<Partial<Record<MockPathwayId, number>>>({});
 
   useEffect(() => {
-    const results = getMockResults();
-    setRecentResults(results.slice(-3).reverse());
-    setBestScores({
-      gl: getBestMockScoreForPathway("gl") ?? undefined,
-      cem: getBestMockScoreForPathway("cem") ?? undefined,
-      csse: getBestMockScoreForPathway("csse") ?? undefined,
-      iseb: getBestMockScoreForPathway("iseb") ?? undefined,
+    getMockResults().then((results) => {
+      setRecentResults(results.slice(-3).reverse());
+      // Increment 4 — one read, four pure in-memory derivations, instead of
+      // four separate getBestMockScoreForPathway() reads each re-fetching
+      // and re-filtering the same underlying results.
+      setBestScores({
+        gl: bestScoreForPathway(results, "gl") ?? undefined,
+        cem: bestScoreForPathway(results, "cem") ?? undefined,
+        csse: bestScoreForPathway(results, "csse") ?? undefined,
+        iseb: bestScoreForPathway(results, "iseb") ?? undefined,
+      });
     });
   }, []);
 

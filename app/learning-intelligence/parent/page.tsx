@@ -32,7 +32,7 @@ export default function ParentDashboardPage() {
 
   useEffect(() => {
     setIsCsse(getSelectedPathwayId() === "csse");
-    setMockResults(getMockResults());
+    getMockResults().then(setMockResults);
   }, []);
 
   return (

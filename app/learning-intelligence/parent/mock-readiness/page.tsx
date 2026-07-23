@@ -52,7 +52,7 @@ export default function MockReadinessPage() {
     setPathwayEligible(eligible);
     if (!eligible) return;
 
-    setMockResults(getMockResults());
+    getMockResults().then(setMockResults);
 
     fetchLearnerIntelligenceProfile(pathwayId ?? undefined)
       .then((p) => {

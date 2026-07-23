@@ -655,7 +655,7 @@ export default function AdminBetaPage() {
     setData({
       families, feedback, bugs, features, testimonials,
       events: getBetaEvents(),
-      mockResults: getMockResults(),
+      mockResults: await getMockResults(),
       progress: getProgress(),
     });
     setLastRefreshed(new Date());

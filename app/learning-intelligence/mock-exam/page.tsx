@@ -9,11 +9,13 @@ import { getSupabaseClient } from "@/lib/supabase";
 import { ensureProfile } from "@/lib/supabaseProgress";
 import { withTimeout } from "@/lib/withTimeout";
 import { fetchQuestionBank } from "@/lib/ali/questionBank";
-import { recordPresentation, recordOutcome } from "@/lib/ali/history";
+import { recordPresentation, recordOutcome, fetchStudentHistory } from "@/lib/ali/history";
 import { completeLesson, recordSkillResult, getSelectedPathwayId, setSelectedPathway } from "@/lib/progress";
 import { fetchLearnerIntelligenceProfile } from "@/lib/learningEngine/profile";
+import { recordReadinessSnapshot } from "@/lib/learningEngine/learningHistory";
 import { saveMockResult } from "@/lib/mockProgress";
 import { QUESTION_TYPE_PRIMARY_COMPETENCY } from "@/lib/learningEngine/assessmentBrainMap";
+import { buildAdaptivePaper, type AdaptivePaperSubject } from "@/lib/learningEngine/adaptiveMockPaperBuilder";
 import {
   getEducationalIntelligence,
   processEvidenceForCompetency,
@@ -31,6 +33,22 @@ import type { MathsQuestion } from "@/types/index";
 import type { MockResult, MockSectionResult } from "@/types/mock";
 
 type Mode = "intro" | "loading" | "error" | "exam" | "submitting" | "results";
+type ExamMode = "standard" | "adaptive";
+
+/**
+ * Sprint 2, Increment 2 — the one, disclosed content-volume policy the
+ * Adaptive Paper Builder needs from a caller (ADAPTIVE_MOCK_INTELLIGENCE_
+ * SPECIFICATION_V1.md §11 named this an open item for this increment to
+ * resolve). Not a scoring model and not an Educational Intelligence
+ * threshold — a plain content-volume ratio, applied identically regardless
+ * of subject or evidence: roughly half of whatever real tagged content
+ * exists for a subject, floored at 1 if any exists at all, so a subject
+ * with real content is never silently dropped from an adaptive paper.
+ */
+function adaptiveTargetCount(available: number): number {
+  if (available === 0) return 0;
+  return Math.max(1, Math.ceil(available / 2));
+}
 
 /**
  * CSSE Mock Exam (Capability 3, Wave 4). Timed, exam-condition version of
@@ -38,12 +56,23 @@ type Mode = "intro" | "loading" | "error" | "exam" | "submitting" | "results";
  * question immediate feedback — a genuine exam condition, matching this
  * mission's "Timed mock exams / Submission / Evidence recording /
  * Learning Engine updates / Learner feedback" sequence, in that order),
- * covering every currently-tagged CSSE activity across all three areas in
- * one sitting (Reading Comprehension + Mathematics + Continuous Writing —
- * mirroring Assessment Brain V1's real English+Maths two-test structure,
- * §2). Reuses Wave 2's real content (migration 013), real graders, and
- * real recordPresentation/recordOutcome persistence unchanged — no new
- * educational logic, per this Wave's rule.
+ * across all three areas in one sitting (Reading Comprehension +
+ * Mathematics + Continuous Writing — mirroring Assessment Brain V1's real
+ * English+Maths two-test structure, §2). Reuses Wave 2's real content
+ * (migration 013), real graders, and real recordPresentation/recordOutcome
+ * persistence unchanged — no new educational logic, per this Wave's rule.
+ *
+ * Sprint 2, Increment 2 added a Standard/Adaptive mode selector
+ * (ADAPTIVE_MOCK_INTELLIGENCE_SPECIFICATION_V1.md). Standard (the default)
+ * is unchanged from Wave 4 — every currently-tagged activity, one sitting.
+ * Adaptive routes the same tagged content through the pure
+ * buildAdaptivePaper() (lib/learningEngine/adaptiveMockPaperBuilder.ts) to
+ * select a smaller, evidence-weighted subset *before* the exam starts —
+ * every line below that point (timing, rendering, grading, the evidence
+ * pipeline, the Mock Attempt Ledger, the results profile) is the identical
+ * code path for both modes, operating on whichever `activities` array was
+ * selected. No second exam runtime, no second scoring model, no second
+ * persistence path exists anywhere in this file.
  *
  * Writing's grading requires a real LLM call (/api/writing-feedback) which
  * cannot happen mid-timer without the learner waiting on a network call
@@ -53,6 +82,7 @@ type Mode = "intro" | "loading" | "error" | "exam" | "submitting" | "results";
  */
 export default function MockExamPage() {
   const [mode, setMode] = useState<Mode>("intro");
+  const [examMode, setExamMode] = useState<ExamMode>("standard");
   const [errorMessage, setErrorMessage] = useState("");
   const [activities, setActivities] = useState<BankQuestion[]>([]);
   const [index, setIndex] = useState(0);
@@ -63,6 +93,11 @@ export default function MockExamPage() {
 
   const profileIdRef = useRef<string>("");
   const sessionIdRef = useRef<string>("");
+  // Captures which mode this sitting actually ran under, at load time — the
+  // same "capture at start, read at submit" discipline totalSecondsRef
+  // already uses, so a later examMode selector change can never retroactively
+  // relabel an in-progress or just-completed sitting.
+  const sittingModeRef = useRef<ExamMode>("standard");
   const supabaseRef = useRef<ReturnType<typeof getSupabaseClient>>(null);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   // Total allocated exam time (WP5G, Finding #1) — captured at start so
@@ -99,7 +134,12 @@ export default function MockExamPage() {
         withTimeout(fetchQuestionBank(supabase, "maths", "csse"), 10000, "Maths questions"),
         withTimeout(fetchQuestionBank(supabase, "writing", "csse"), 10000, "the writing task"),
       ]);
-      const tagged = [...english, ...maths, ...writing].filter((q) => q.skill.startsWith("QT-"));
+      const taggedBySubject: Record<AdaptivePaperSubject, BankQuestion[]> = {
+        english: english.filter((q) => q.skill.startsWith("QT-")),
+        maths: maths.filter((q) => q.skill.startsWith("QT-")),
+        writing: writing.filter((q) => q.skill.startsWith("QT-")),
+      };
+      const tagged = [...taggedBySubject.english, ...taggedBySubject.maths, ...taggedBySubject.writing];
 
       if (tagged.length === 0) {
         throw new Error(
@@ -107,14 +147,40 @@ export default function MockExamPage() {
         );
       }
 
-      const totalSeconds = tagged.reduce((sum, q) => sum + q.estimatedTimeSeconds, 0);
+      sittingModeRef.current = examMode;
+      let selectedActivities: BankQuestion[] = tagged;
+
+      if (examMode === "adaptive") {
+        // Same real inputs Educational Intelligence already computes —
+        // nothing here recalculates a tier, a score, or a readiness band.
+        const [adaptiveProfile, history] = await Promise.all([
+          fetchLearnerIntelligenceProfile("csse"),
+          withTimeout(fetchStudentHistory(supabase, profileId), 10000, "your practice history"),
+        ]);
+        if (!adaptiveProfile || !adaptiveProfile.pathwayEligible) {
+          throw new Error("Your Educational Intelligence profile isn't available right now — try Standard mode, or try Adaptive again shortly.");
+        }
+        const built = buildAdaptivePaper(
+          taggedBySubject,
+          adaptiveProfile,
+          history,
+          {
+            english: adaptiveTargetCount(taggedBySubject.english.length),
+            maths: adaptiveTargetCount(taggedBySubject.maths.length),
+            writing: adaptiveTargetCount(taggedBySubject.writing.length),
+          }
+        );
+        selectedActivities = built.activities;
+      }
+
+      const totalSeconds = selectedActivities.reduce((sum, q) => sum + q.estimatedTimeSeconds, 0);
       totalSecondsRef.current = totalSeconds;
 
       // Same pre-session snapshot capture as the Practice page — must run
       // before recordPresentation() resets last_presented_at, or a genuine
       // Maintenance Review gap would be permanently invisible to this sitting.
       const competencyIdsThisExam = new Set(
-        tagged
+        selectedActivities
           .map((q) => QUESTION_TYPE_PRIMARY_COMPETENCY[q.skill as QuestionTypeId])
           .filter((id): id is CompetencyId => Boolean(id))
       );
@@ -127,12 +193,12 @@ export default function MockExamPage() {
       );
 
       await withTimeout(
-        recordPresentation(supabase, profileId, tagged.map((q) => q.id), "mock_exam"),
+        recordPresentation(supabase, profileId, selectedActivities.map((q) => q.id), "mock_exam"),
         10000,
         "starting your exam"
       );
 
-      setActivities(tagged);
+      setActivities(selectedActivities);
       setIndex(0);
       setAnswers({});
       setCorrectCount(0);
@@ -290,7 +356,7 @@ export default function MockExamPage() {
     const mockResult: MockResult = {
       id: sessionIdRef.current || `csse-mock-${Date.now()}`,
       pathway: "csse",
-      pathwayName: "CSSE Mock Exam",
+      pathwayName: sittingModeRef.current === "adaptive" ? "CSSE Adaptive Mock Exam" : "CSSE Mock Exam",
       date: new Date().toISOString(),
       totalScore: score,
       sectionResults,
@@ -303,7 +369,24 @@ export default function MockExamPage() {
     }
 
     setMode("results");
-    fetchLearnerIntelligenceProfile("csse").then(setProfile).catch(() => setProfile(null));
+    // IG-001 (Sprint 2, Increment 3) — the correct integration point is here,
+    // after every question's Educational Audit write above has completed:
+    // Readiness is a whole-profile concept (13 competencies), not a
+    // per-question one, so it is a session-end hook, exactly like
+    // recordLegacyPracticeSessionCompletion() (lib/learningEngine/
+    // legacyPracticeEvidence.ts:160) and practice/[area]/page.tsx's
+    // identical call — same function, same real `readiness` field this
+    // page already fetches for the results screen below, no second fetch
+    // and no new calculation. Standard and Adaptive share this one call
+    // site unconditionally, so both follow the identical lifecycle (Task 3).
+    fetchLearnerIntelligenceProfile("csse")
+      .then((p) => {
+        setProfile(p);
+        if (p && p.pathwayEligible && supabase) {
+          recordReadinessSnapshot(supabase, p.profileId, p.readiness).catch(() => {});
+        }
+      })
+      .catch(() => setProfile(null));
   }
 
   const current = activities[index];
@@ -317,9 +400,39 @@ export default function MockExamPage() {
           <div>
             <h1 className="text-gray-900 dark:text-gray-100 font-bold text-2xl">CSSE Mock Exam</h1>
             <p className="text-gray-400 dark:text-gray-500 text-sm mt-1">
-              A single timed sitting covering Reading Comprehension, Mathematics and Continuous Writing — every
-              currently tagged CSSE activity, one after another, with no feedback until you finish.
+              A single timed sitting covering Reading Comprehension, Mathematics and Continuous Writing.
             </p>
+
+            {/* Sprint 2, Increment 2 — Standard/Adaptive mode selector.
+                Standard is the default (Task 2); switching modes only
+                changes which real, already-tagged content gets selected
+                before the exam starts — everything after that (timing,
+                grading, evidence, the Mock Attempt Ledger, Educational
+                Intelligence) is the exact same code path either way. */}
+            <div className="mt-5 inline-flex rounded-xl border border-gray-200 dark:border-gray-700 p-1 bg-gray-50 dark:bg-gray-900">
+              <button
+                onClick={() => setExamMode("standard")}
+                className={`px-4 py-2 text-sm font-semibold rounded-lg transition-colors ${
+                  examMode === "standard" ? "bg-purple-600 text-white" : "text-gray-500 dark:text-gray-400"
+                }`}
+              >
+                Standard
+              </button>
+              <button
+                onClick={() => setExamMode("adaptive")}
+                className={`px-4 py-2 text-sm font-semibold rounded-lg transition-colors ${
+                  examMode === "adaptive" ? "bg-purple-600 text-white" : "text-gray-500 dark:text-gray-400"
+                }`}
+              >
+                Adaptive
+              </button>
+            </div>
+            <p className="text-xs text-gray-400 dark:text-gray-500 mt-2">
+              {examMode === "standard"
+                ? "Every currently tagged CSSE activity, one after another, with no feedback until you finish."
+                : "A shorter sitting drawn from the same real content, weighted toward the areas your recorded evidence says need it most. Coverage is still limited today, so not every area may be represented."}
+            </p>
+
             <InfoCard className="mt-6">
               <p className="text-sm text-gray-700 dark:text-gray-300">
                 Answers aren&apos;t marked as you go — this is a real exam condition. Once you submit, your learning
@@ -418,6 +531,9 @@ export default function MockExamPage() {
               <CheckCircle2 size={28} className="text-emerald-500 mx-auto mb-2" />
               <p className="text-lg font-bold text-gray-900 dark:text-gray-100">
                 Exam complete — {correctCount} of {activities.length} correct
+              </p>
+              <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">
+                {sittingModeRef.current === "adaptive" ? "Adaptive sitting" : "Standard sitting"}
               </p>
             </InfoCard>
 
