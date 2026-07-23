@@ -106,6 +106,23 @@ const MOCK_CONFIGS: Record<MockPathwayId, MockConfig> = {
       { id: "cem-nr", name: "Numerical Reasoning", bank: "nr", count: 12, offset: 0, minutes: 15 },
     ],
   },
+  // ⚠ DEPRECATED LEGACY IMPLEMENTATION (Sprint 3, Increment 4 — EI-001
+  // consolidation). This entry is retained unmodified, per explicit
+  // instruction, and remains directly reachable at /mocks/csse — it is no
+  // longer linked from Mock Centre or Dashboard (app/mocks/page.tsx now
+  // routes the CSSE card to /learning-intelligence/mock-exam instead).
+  // Do not extend, redesign, or add Educational Intelligence integration to
+  // this entry — it predates that architecture and does not participate in
+  // it (zero recordPresentation/recordOutcome/processEvidenceForCompetency
+  // calls anywhere in this file). Its Mathematics content (data/maths.ts)
+  // is fully reachable elsewhere (app/maths/page.tsx, same bank), so no
+  // unique educational content is lost by its retirement once formally
+  // approved. See EI-001's Experience Integrity Assessment (Sprint 3,
+  // Increment 3) for the full audit, and this same increment's Legacy
+  // Behaviour Preservation Report for interaction patterns (immediate
+  // per-question feedback, section-by-section timed structure) worth
+  // considering for a future Educational Intelligence Mock enhancement
+  // before this entry is ever deleted.
   csse: {
     name: "CSSE",
     pathwayName: "CSSE Practice Mock",

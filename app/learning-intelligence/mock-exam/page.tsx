@@ -26,6 +26,7 @@ import { checkMathsAnswer, scoreEnglishAnswer, WRITING_CORRECTNESS_THRESHOLD } f
 import { CompetencyProfile } from "@/components/learningEngine/CompetencyProfile";
 import { ReadinessSummary } from "@/components/learningEngine/ReadinessSummary";
 import { RecommendationSummary } from "@/components/learningEngine/RecommendationSummary";
+import { HistoricalContextPanel } from "@/components/parent/HistoricalContextPanel";
 import type { BankQuestion } from "@/types/ali/questionBank";
 import type { LearnerIntelligenceProfile } from "@/lib/learningEngine/types";
 import type { EnglishComprehensionPrompt } from "@/types/ali/questionBank";
@@ -536,6 +537,18 @@ export default function MockExamPage() {
                 {sittingModeRef.current === "adaptive" ? "Adaptive sitting" : "Standard sitting"}
               </p>
             </InfoCard>
+
+            {/* Sprint 3, Increment 1 (ADMISSIONS_INTELLIGENCE_V1_DESIGN.md §6,
+                Founder-reclassified backlog item, now closed) — the one real
+                admissions fact, shown beside this sitting's own score, never
+                blended into it (its own section, not nested inside the score
+                card above or the profile sections below — the component's
+                own governing rule). Unconditional on `profile` resolving,
+                since HistoricalContextPanel takes no props and depends on
+                nothing this page fetches. */}
+            <div className="mt-6">
+              <HistoricalContextPanel />
+            </div>
 
             {profile === undefined && <p className="text-sm text-gray-400 dark:text-gray-500 mt-6">Updating your profile…</p>}
             {profile === null && (

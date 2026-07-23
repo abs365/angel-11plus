@@ -52,12 +52,17 @@ const MOCK_CARDS: {
     badgeText: "text-indigo-700 dark:text-indigo-300",
   },
   {
+    // Sprint 3, Increment 4 (EI-001 consolidation) — this card now points at
+    // the real Educational Intelligence Mock (app/learning-intelligence/
+    // mock-exam), not the legacy app/mocks/[pathway] CSSE entry — see the
+    // href override and the description/sections/prep-copy below, all
+    // updated to describe the destination this card actually reaches.
     pathway: "csse",
     name: "CSSE",
     badge: "CSSE",
-    description: "CSSE-style Mathematics practice, timed like the real exam. This is original practice content, not an official CSSE paper. English & Language practice is coming soon.",
-    totalMinutes: 20,
-    sections: ["Mathematics", "English & Language (coming soon)"],
+    description: "Timed CSSE-style mock exam covering Reading Comprehension, Mathematics and Continuous Writing — real, evidence-generating content, in a Standard full sitting or a shorter Adaptive paper weighted to your recorded evidence.",
+    totalMinutes: 0,
+    sections: ["English Comprehension", "Mathematics", "Continuous Writing"],
     bg: "bg-purple-50 dark:bg-purple-950",
     border: "border-purple-100 dark:border-purple-900",
     badgeBg: "bg-purple-100 dark:bg-purple-900",
@@ -264,7 +269,12 @@ export default function MocksPage() {
                     <StatusIndicator tone={best !== undefined ? "success" : "neutral"} label={best !== undefined ? "Completed" : "Available"} />
                     <div className="flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400">
                       <Clock size={13} />
-                      {card.totalMinutes} min
+                      {/* Sprint 3, Increment 4 — CSSE's real timing now
+                          depends on Standard vs Adaptive mode and how much
+                          real content is tagged, so a single fixed minute
+                          count would no longer be honest (unlike GL/CEM/
+                          ISEB's genuinely fixed papers, unchanged below). */}
+                      {card.pathway === "csse" ? "Varies by mode" : `${card.totalMinutes} min`}
                     </div>
                   </div>
                 </div>
@@ -285,10 +295,18 @@ export default function MocksPage() {
                   </div>
                 </div>
 
-                {/* Preparation guidance (Sprint 6) — static copy, lib/mockMeta.ts */}
+                {/* Preparation guidance (Sprint 6) — static copy, lib/mockMeta.ts.
+                    CSSE is shown its own inline copy instead (Sprint 3,
+                    Increment 4): MOCK_SUGGESTED_PREPARATION.csse still
+                    describes the legacy app/mocks/[pathway] experience,
+                    which app/mocks/[pathway]/page.tsx itself still reads
+                    unchanged (preserved, not modified) — this card no longer
+                    points there, so it must not read that same string. */}
                 <p className="text-xs text-gray-500 dark:text-gray-400 leading-relaxed mb-4">
                   <span className="font-semibold text-gray-600 dark:text-gray-300">Before you start:</span>{" "}
-                  {MOCK_SUGGESTED_PREPARATION[card.pathway]}
+                  {card.pathway === "csse"
+                    ? "Choose Standard for the full sitting, or Adaptive for a shorter paper weighted to your recorded evidence. Either way, this updates your real skills profile and readiness."
+                    : MOCK_SUGGESTED_PREPARATION[card.pathway]}
                 </p>
 
                 <div className="flex items-center justify-between">
@@ -300,7 +318,17 @@ export default function MocksPage() {
                   ) : (
                     <span className="text-xs text-gray-400 dark:text-gray-500">Not attempted yet</span>
                   )}
-                  <ButtonLink href={`/mocks/${card.pathway}`} variant="outline" size="sm" leftIcon={<Play size={14} />}>
+                  {/* Sprint 3, Increment 4 (EI-001 consolidation) — CSSE now
+                      routes to the real Educational Intelligence Mock;
+                      GL/CEM/ISEB are unchanged, still their own /mocks/{id}
+                      route (no Educational-Intelligence-equivalent exists
+                      for them yet). */}
+                  <ButtonLink
+                    href={card.pathway === "csse" ? "/learning-intelligence/mock-exam" : `/mocks/${card.pathway}`}
+                    variant="outline"
+                    size="sm"
+                    leftIcon={<Play size={14} />}
+                  >
                     Start mock
                   </ButtonLink>
                 </div>

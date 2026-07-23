@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { CalendarDays, ClipboardList, HelpCircle, GraduationCap } from "lucide-react";
+import { CalendarDays, ClipboardList, HelpCircle, GraduationCap, Route } from "lucide-react";
 import { InfoCard } from "@/components/ui/Card";
 import { getSelectedPathwayId } from "@/lib/progress";
 import { getSupabaseClient } from "@/lib/supabase";
@@ -131,6 +131,12 @@ export function CssePathwayParentContent() {
               above remains the one primary action. */}
           <Link href="/learning-intelligence/parent/admissions-readiness" className="text-xs font-semibold text-gray-500 dark:text-gray-400 inline-flex items-center gap-1">
             <GraduationCap size={13} /> Admissions Readiness →
+          </Link>
+          {/* Sprint 3, Increment 5 — a third secondary link, same visual
+              weight as the two above so it doesn't compete with Revision
+              Planner's one primary action (WP4D, unchanged). */}
+          <Link href="/learning-intelligence/parent/journey" className="text-xs font-semibold text-gray-500 dark:text-gray-400 inline-flex items-center gap-1">
+            <Route size={13} /> Your Learning Journey →
           </Link>
         </div>
         {/* WP5D — one-line reason this is the journey's next step. */}

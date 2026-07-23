@@ -158,6 +158,12 @@ export default function LearningIntelligencePage() {
               <Link href="/learning-intelligence/mock-exam" className="text-purple-600 dark:text-purple-400">
                 CSSE mock exam →
               </Link>
+              {/* Sprint 3, Increment 5 — same row, same weight as every
+                  link above; explains how they all connect rather than
+                  adding a new destination of its own. */}
+              <Link href="/learning-intelligence/parent/journey" className="text-purple-600 dark:text-purple-400">
+                How this all fits together →
+              </Link>
             </div>
 
             {!profile.hasAnyContent && (
