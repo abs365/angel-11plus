@@ -11,6 +11,7 @@ import {
 import type { User, Session } from "@supabase/supabase-js";
 import { getSupabaseClient } from "@/lib/supabase";
 import { getDeviceId, ensureProfile } from "@/lib/supabaseProgress";
+import { ensureLearnerSession } from "@/lib/learnerIdentity";
 
 interface AuthContextValue {
   user: User | null;
@@ -33,34 +34,39 @@ export function useAuth() {
 }
 
 /**
- * After a user signs in, link their auth user ID to the existing device profile.
- * This preserves all XP, scores and completed lessons accumulated anonymously.
+ * After a user signs in (anonymously or via magic link), link their auth
+ * user ID to an existing unowned device profile. Preserves all XP, scores
+ * and completed lessons accumulated before real auth existed.
+ *
+ * ED-001 correction (2026-07-23): this now calls `claim_legacy_profile()`,
+ * a narrowly-scoped SECURITY DEFINER function (migration 019), instead of
+ * a raw client-side `.update()`. The previous approach relied entirely on
+ * RLS to enforce "never claim an already-owned row" — under the new
+ * `auth.uid() = auth_user_id` ownership policy, that raw update could
+ * never succeed at all (an unowned row has `auth_user_id IS NULL`, and
+ * `auth.uid() = NULL` is never true), which is exactly why the claim path
+ * needs its own explicit, narrowly-scoped mechanism rather than being
+ * expressible as a normal ownership policy. `ensureProfile()` also calls
+ * the same RPC directly — this is best-effort duplicate coverage for the
+ * auth-state-change path, not a second, different claim mechanism.
  */
 async function linkAuthToDeviceProfile(authUserId: string): Promise<void> {
   const supabase = getSupabaseClient();
   if (!supabase) return;
 
-  const deviceId = getDeviceId();
-  if (!deviceId) return;
-
-  // Check if there's already a profile for this auth user
   const { data: existing } = await supabase
     .from("profiles")
     .select("id")
     .eq("auth_user_id", authUserId)
     .maybeSingle();
-
   if (existing) return; // Already linked — nothing to do
 
-  // Find the device profile and link auth user to it
-  const { error } = await supabase
-    .from("profiles")
-    .update({ auth_user_id: authUserId })
-    .eq("device_id", deviceId)
-    .is("auth_user_id", null);
+  const deviceId = getDeviceId();
+  if (!deviceId) return;
 
+  const { error } = await supabase.rpc("claim_legacy_profile", { p_device_id: deviceId });
   if (error) {
-    console.warn("[Auth] Failed to link auth user to device profile:", error.message);
+    console.warn("[Auth] claim_legacy_profile failed:", error.message);
   }
 }
 
@@ -78,7 +84,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       return;
     }
 
-    // Load existing session on mount
+    // Load existing session on mount. If none exists, bootstrap a real,
+    // verifiable anonymous Supabase Auth identity (ED-001 correction) —
+    // this is the one place that decision gets made; every other module
+    // that needs a learner id calls ensureLearnerSession()/ensureProfile()
+    // rather than deciding this for itself.
     supabase.auth.getSession().then(({ data }) => {
       setSession(data.session);
       setUser(data.session?.user ?? null);
@@ -88,6 +98,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         // Ensure profile exists and is linked — fire and forget
         ensureProfile().catch(() => {});
         linkAuthToDeviceProfile(data.session.user.id).catch(() => {});
+      } else {
+        ensureLearnerSession().catch(() => {});
       }
     });
 

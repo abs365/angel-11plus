@@ -25,6 +25,7 @@ import {
   CSSE_ADMISSIONS_CONTEXT_RELEVANCE,
   CSSE_ADMISSIONS_CONTEXT_DISCLAIMER,
 } from "@/lib/learningEngine/admissionsContext";
+import { resolveBankEvidenceContext } from "@/lib/learningEngine/legacyPracticeEvidence";
 
 type AuditRow = Database["public"]["Tables"]["ali_educational_audit"]["Row"];
 
@@ -303,6 +304,31 @@ async function run() {
       !JSON.stringify(context.componentReadiness).includes("303") && context.admissionsFact.fact.includes("303"),
       "fetchAdmissionsIntelligenceContext: the 303 fact stays inside admissionsFact, never blended into readiness evidence"
     );
+  }
+
+  // ─── resolveBankEvidenceContext (Step 2, legacy practice evidence) ────
+  {
+    const untagged = resolveBankEvidenceContext(null);
+    assert(untagged.found === false, "resolveBankEvidenceContext: null bank row => not found (untagged question)");
+
+    const undefinedRow = resolveBankEvidenceContext(undefined);
+    assert(undefinedRow.found === false, "resolveBankEvidenceContext: undefined bank row => not found");
+
+    // A real, mapped Question Type (e.g. from migration 013's tagged content).
+    const mapped = resolveBankEvidenceContext({ skill: "QT-MR-01", mastery_threshold: 2 });
+    assert(mapped.found === true, "resolveBankEvidenceContext: real bank row => found");
+    if (mapped.found) {
+      assert(mapped.masteryThreshold === 2, "resolveBankEvidenceContext: masteryThreshold comes from the real bank row, not a default");
+      assert(mapped.competencyId !== undefined, "resolveBankEvidenceContext: a real Question Type resolves to a real competency");
+    }
+
+    // A skill code with no Assessment Brain mapping (e.g. non-CSSE content)
+    // must never invent a competency — undefined is the honest answer.
+    const unmapped = resolveBankEvidenceContext({ skill: "vr.analogies", mastery_threshold: 2 });
+    assert(unmapped.found === true, "resolveBankEvidenceContext: unmapped skill is still a real bank row => found");
+    if (unmapped.found) {
+      assert(unmapped.competencyId === undefined, "resolveBankEvidenceContext: unmapped skill => competencyId undefined, never invented");
+    }
   }
 
   console.log(`\n${failures === 0 ? "ALL TESTS PASSED" : `${failures} TEST(S) FAILED`}`);

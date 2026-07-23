@@ -463,6 +463,10 @@ export interface Database {
         Args: Record<string, never>;
         Returns: boolean;
       };
+      claim_legacy_profile: {
+        Args: { p_device_id: string };
+        Returns: string | null;
+      };
     };
     Enums: {
       subject_type: AliSubjectEnum;

@@ -1,14 +1,18 @@
 "use client";
 
 import { getSupabaseClient } from "./supabase";
+import { ensureLearnerSession } from "./learnerIdentity";
 import type { Subject } from "@/types/supabase";
 import type { UserProgress } from "@/types";
 
 const DEVICE_ID_KEY = "angel11plus_device_id";
 
 // ----------------------------------------------------------------
-// Device identity — stable anonymous ID per browser/device.
-// Stored in localStorage. Linked to a Supabase profile row.
+// Device identity — stable per browser/device, retained as continuity
+// metadata only (ARCH-001 / ED-001 correction, 2026-07-23). No longer the
+// security ownership mechanism — see lib/learnerIdentity.ts and
+// ensureProfile() below. Kept so a returning device can be matched to a
+// legacy, not-yet-claimed profile (claim_legacy_profile(), migration 019).
 // ----------------------------------------------------------------
 
 export function getDeviceId(): string {
@@ -22,57 +26,65 @@ export function getDeviceId(): string {
 }
 
 // ----------------------------------------------------------------
-// Resolve the profile ID for the current session.
-// Authenticated users: looked up by auth_user_id.
-// Anonymous users: looked up / created by device_id.
-// ----------------------------------------------------------------
-
-async function resolveProfileId(): Promise<string | null> {
-  const supabase = getSupabaseClient();
-  if (!supabase) return null;
-
-  // Check if there's an authenticated session
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (user) {
-    // Authenticated — look up by auth_user_id first
-    const { data } = await supabase
-      .from("profiles")
-      .select("id")
-      .eq("auth_user_id", user.id)
-      .maybeSingle();
-    if (data) return data.id;
-  }
-
-  // Fall back to device profile
-  return ensureProfile();
-}
-
-// ----------------------------------------------------------------
-// Ensure a profile row exists for this device.
-// Safe to call repeatedly — uses upsert on device_id.
+// Ensure a profile row exists for the current, real, authenticated
+// learner identity (ED-001 permanent correction). Never creates a profile
+// without a real auth.uid() — device_id alone is no longer sufficient to
+// mint one. Safe to call repeatedly: looks up the existing profile for
+// this auth user first, then tries to claim an unowned legacy device
+// profile (migration 019's claim_legacy_profile(), a narrowly-scoped
+// SECURITY DEFINER function — see that migration for the security
+// reasoning), and only creates a brand-new row if neither exists.
+//
+// Returns null on any failure (never throws), logging a clear warning at
+// the exact step that failed — the established convention every other
+// lib/ali/*, lib/supabaseProgress.ts function already follows in this
+// codebase, not a new error-handling shape callers would need to adapt to.
 // ----------------------------------------------------------------
 
 export async function ensureProfile(name = "Angel"): Promise<string | null> {
   const supabase = getSupabaseClient();
   if (!supabase) return null;
 
-  const deviceId = getDeviceId();
-  if (!deviceId) return null;
+  const authUserId = await ensureLearnerSession();
+  if (!authUserId) {
+    console.warn("[Supabase] ensureProfile failed: no authenticated learner session available");
+    return null;
+  }
 
-  const { data, error } = await supabase
+  const { data: existing, error: lookupError } = await supabase
     .from("profiles")
-    .upsert({ device_id: deviceId, name }, { onConflict: "device_id" })
+    .select("id")
+    .eq("auth_user_id", authUserId)
+    .maybeSingle();
+  if (lookupError) {
+    console.warn("[Supabase] ensureProfile lookup failed:", lookupError.message);
+    return null;
+  }
+  if (existing) return existing.id;
+
+  const deviceId = getDeviceId();
+  if (deviceId) {
+    const { data: claimedId, error: claimError } = await supabase.rpc("claim_legacy_profile", {
+      p_device_id: deviceId,
+    });
+    if (claimError) {
+      console.warn("[Supabase] claim_legacy_profile failed:", claimError.message);
+    } else if (claimedId) {
+      return claimedId;
+    }
+  }
+
+  const { data: created, error: insertError } = await supabase
+    .from("profiles")
+    .insert({ auth_user_id: authUserId, device_id: deviceId || crypto.randomUUID(), name })
     .select("id")
     .single();
 
-  if (error) {
-    console.warn("[Supabase] ensureProfile failed:", error.message);
+  if (insertError) {
+    console.warn("[Supabase] ensureProfile insert failed:", insertError.message);
     return null;
   }
-  return data.id;
+  return created.id;
 }
 
 // ----------------------------------------------------------------
@@ -90,7 +102,7 @@ export async function syncLessonComplete(
   const supabase = getSupabaseClient();
   if (!supabase) return;
 
-  const profileId = await resolveProfileId();
+  const profileId = await ensureProfile();
   if (!profileId) return;
 
   const { error: lessonError } = await supabase
@@ -132,7 +144,7 @@ export async function syncFullProgress(progress: UserProgress): Promise<void> {
   const supabase = getSupabaseClient();
   if (!supabase) return;
 
-  const profileId = await resolveProfileId();
+  const profileId = await ensureProfile();
   if (!profileId) return;
 
   const { error } = await supabase

@@ -13,6 +13,7 @@ import dynamic from "next/dynamic";
 import PageLayout from "@/components/PageLayout";
 import { englishLessons } from "@/data/lessons";
 import { completeLesson } from "@/lib/progress";
+import { recordLegacyPracticeEvidence, recordLegacyPracticeSessionCompletion } from "@/lib/learningEngine/legacyPracticeEvidence";
 import { ProgressBar } from "@/components/ui/Progress";
 
 const PassagePlayer = dynamic(() => import("@/components/PassagePlayer"), { ssr: false });
@@ -81,6 +82,7 @@ export default function EnglishLessonPage({ params }: Props) {
   const [showHints, setShowHints] = useState<Record<string, boolean>>({});
   const [showModel, setShowModel] = useState<Record<string, boolean>>({});
   const [submitted, setSubmitted] = useState(false);
+  const [evidenceSessionId] = useState<string>(() => crypto.randomUUID());
 
   if (!lesson) {
     return (
@@ -103,6 +105,27 @@ export default function EnglishLessonPage({ params }: Props) {
     const score = totalMarks > 0 ? Math.round((earnedMarks / totalMarks) * 100) : 0;
     const xp = Math.max(10, Math.round((earnedMarks / Math.max(totalMarks, 1)) * 50) + 10);
     completeLesson(lesson!.id, score, xp);
+
+    // Integration Correction — Educational Intelligence Engine evidence,
+    // one call per question in this lesson. "Correct" reuses the exact
+    // same full-marks threshold app/learning-intelligence/practice/[area]
+    // already uses for Reading Comprehension (earned === q.marks), not a
+    // new threshold invented for this page.
+    for (const q of lesson!.questions) {
+      const earned = scoreAnswer(answers[q.id] ?? "", q.modelAnswer, q.marks);
+      recordLegacyPracticeEvidence({
+        questionId: q.id,
+        isCorrect: earned === q.marks,
+        sessionId: evidenceSessionId,
+        source: "legacy_english_practice",
+        evidenceFacts: { finalAnswer: answers[q.id] },
+      }).catch(() => {});
+    }
+
+    // Phase 3.0, WP3 (Learning History) — best-effort, fire-and-forget,
+    // reuses the already-tested Readiness snapshot pipeline unchanged.
+    recordLegacyPracticeSessionCompletion().catch(() => {});
+
     setSubmitted(true);
     window.scrollTo({ top: 0, behavior: "smooth" });
   }

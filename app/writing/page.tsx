@@ -16,6 +16,8 @@ import PageLayout from "@/components/PageLayout";
 import { writingPrompts } from "@/data/writing";
 import { completeLesson, getProgress } from "@/lib/progress";
 import { computeAnalytics } from "@/lib/analytics";
+import { recordLegacyPracticeEvidence, recordLegacyPracticeSessionCompletion } from "@/lib/learningEngine/legacyPracticeEvidence";
+import { WRITING_CORRECTNESS_THRESHOLD } from "@/lib/learningEngine/practiceContent";
 import SessionInfoBar from "@/components/SessionInfoBar";
 import { SUBJECT_ESTIMATED_MINUTES, SUBJECT_LEARNING_OBJECTIVE, SUBJECT_EXPECTED_BENEFIT } from "@/lib/subjectMeta";
 import dynamic from "next/dynamic";
@@ -47,6 +49,7 @@ export default function WritingPage() {
   const [feedback, setFeedback] = useState<WritingFeedbackData | null>(null);
   const [feedbackError, setFeedbackError] = useState<string | null>(null);
   const [report, setReport] = useState<AnalyticsReport | null>(null);
+  const [evidenceSessionId] = useState<string>(() => crypto.randomUUID());
 
   useEffect(() => {
     setReport(computeAnalytics(getProgress()));
@@ -103,6 +106,28 @@ export default function WritingPage() {
 
       setFeedback(data as WritingFeedbackData);
       setFeedbackState("ready");
+
+      // Integration Correction — Educational Intelligence Engine evidence.
+      // Writing has no per-question right/wrong answer (Discovery
+      // finding), so this only fires when a real objective correctness
+      // signal actually exists: the same AI-scored feedback
+      // app/learning-intelligence/practice/continuous-writing already
+      // uses, at the exact same threshold (WRITING_CORRECTNESS_THRESHOLD)
+      // — never the self-ticked checklist alone. If a learner never
+      // requests AI feedback, no evidence is recorded for this prompt,
+      // which is a real content-interaction gap, not a fabricated result.
+      const writingFeedback = data as WritingFeedbackData;
+      recordLegacyPracticeEvidence({
+        questionId: selectedPrompt.id,
+        isCorrect: writingFeedback.overallScore >= WRITING_CORRECTNESS_THRESHOLD,
+        sessionId: evidenceSessionId,
+        source: "legacy_writing_practice",
+        evidenceFacts: { finalAnswer: writingText },
+      }).catch(() => {});
+      // Phase 3.0, WP3 (Learning History) — only reached when real
+      // evidence was just written above (never on the checklist-only
+      // handleSubmit() path, which has no objective correctness signal).
+      recordLegacyPracticeSessionCompletion().catch(() => {});
     } catch {
       setFeedbackError("Could not reach the server. Please check your connection.");
       setFeedbackState("error");

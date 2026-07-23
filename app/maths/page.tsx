@@ -16,6 +16,7 @@ import { mathsQuestions, quickArithmetic } from "@/data/maths";
 import { completeLesson, recordSkillResult, getProgress } from "@/lib/progress";
 import { computeAnalytics } from "@/lib/analytics";
 import { computeAdaptiveState } from "@/lib/adaptiveEngine";
+import { recordLegacyPracticeEvidence, recordLegacyPracticeSessionCompletion } from "@/lib/learningEngine/legacyPracticeEvidence";
 import SessionInfoBar from "@/components/SessionInfoBar";
 import { SUBJECT_ESTIMATED_MINUTES, SUBJECT_LEARNING_OBJECTIVE, SUBJECT_EXPECTED_BENEFIT } from "@/lib/subjectMeta";
 import type { AnalyticsReport } from "@/types/analytics";
@@ -48,6 +49,12 @@ export default function MathsPage() {
   const [recommendedMode, setRecommendedMode] = useState<"reasoning" | "arithmetic" | null>(null);
   const [report, setReport] = useState<AnalyticsReport | null>(null);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  // Integration Correction (Step 2, Educational Intelligence Foundation) —
+  // one session id per page visit, lazily generated so it's evaluated
+  // exactly once (React purity rule), used only to group this page's
+  // answers for Educational Intelligence evidence; unrelated to any
+  // existing progress/XP state above.
+  const [evidenceSessionId] = useState<string>(() => crypto.randomUUID());
 
   useEffect(() => {
     const p = getProgress();
@@ -64,15 +71,18 @@ export default function MathsPage() {
     if (timerRef.current) clearInterval(timerRef.current);
   }, []);
 
-  const finishSession = useCallback(() => {
+  const finishSession = () => {
     stopTimer();
     const correct = Object.values(checked).filter(Boolean).length;
     const pct = Math.round((correct / questions.length) * 100);
     const xp = correct * 15 + 10;
     setScore(pct);
     completeLesson(`maths-${mode}`, pct, xp);
+    // Phase 3.0, WP3 (Learning History) — best-effort, fire-and-forget,
+    // reuses the already-tested Readiness snapshot pipeline unchanged.
+    recordLegacyPracticeSessionCompletion().catch(() => {});
     setMode("done");
-  }, [stopTimer, checked, questions.length, mode]);
+  };
 
   useEffect(() => {
     if (mode === "arithmetic") {
@@ -119,6 +129,19 @@ export default function MathsPage() {
 
     setChecked((prev) => ({ ...prev, [current.id]: isCorrect }));
     recordSkillResult(current.skill, isCorrect);
+
+    // Integration Correction — Educational Intelligence Engine evidence.
+    // Fire-and-forget, best-effort: no-ops honestly (never fabricates
+    // success) when this question isn't a real ali_question_bank row yet,
+    // or when no profile can be resolved. Never blocks or alters this
+    // page's own existing correctness logic or UI.
+    recordLegacyPracticeEvidence({
+      questionId: current.id,
+      isCorrect,
+      sessionId: evidenceSessionId,
+      source: "legacy_maths_practice",
+      evidenceFacts: { finalAnswer: answers[current.id] },
+    }).catch(() => {});
   }
 
   function next() {

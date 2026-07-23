@@ -6,6 +6,7 @@ import PageLayout from "@/components/PageLayout";
 import { vocabWords } from "@/data/vocabulary";
 import { completeLesson, getProgress } from "@/lib/progress";
 import { computeAnalytics } from "@/lib/analytics";
+import { recordLegacyPracticeEvidence, recordLegacyPracticeSessionCompletion } from "@/lib/learningEngine/legacyPracticeEvidence";
 import SessionInfoBar from "@/components/SessionInfoBar";
 import { SUBJECT_ESTIMATED_MINUTES, SUBJECT_LEARNING_OBJECTIVE, SUBJECT_EXPECTED_BENEFIT } from "@/lib/subjectMeta";
 import type { AnalyticsReport } from "@/types/analytics";
@@ -22,6 +23,7 @@ export default function VocabularyPage() {
   const [sentenceSubmitted, setSentenceSubmitted] = useState(false);
   const [scores, setScores] = useState<Record<string, "knew" | "learning">>({});
   const [report, setReport] = useState<AnalyticsReport | null>(null);
+  const [evidenceSessionId] = useState<string>(() => crypto.randomUUID());
 
   useEffect(() => {
     const dayIndex = Math.floor(Date.now() / 86400000) % vocabWords.length;
@@ -40,10 +42,28 @@ export default function VocabularyPage() {
 
   function markWord(result: "knew" | "learning") {
     setScores((prev) => ({ ...prev, [vocabWords[quizIndex].id]: result }));
+
+    // Integration Correction — Educational Intelligence Engine evidence.
+    // "knew"/"learning" is a self-report, not an objective correctness
+    // check, but it is the exact same signal this page's own score
+    // computation below already treats as correct/incorrect (knew counts,
+    // learning doesn't) — reused, not reinterpreted. No vocabulary
+    // question is tagged into ali_question_bank yet (Discovery finding),
+    // so this honestly no-ops today; wiring is real and ready once tagged.
+    recordLegacyPracticeEvidence({
+      questionId: vocabWords[quizIndex].id,
+      isCorrect: result === "knew",
+      sessionId: evidenceSessionId,
+      source: "legacy_vocabulary_practice",
+    }).catch(() => {});
+
     if (quizIndex + 1 >= vocabWords.length) {
       const knew = Object.values({ ...scores, [vocabWords[quizIndex].id]: result }).filter((v) => v === "knew").length;
       const xp = knew * 8 + 5;
       completeLesson("vocab-session", Math.round((knew / vocabWords.length) * 100), xp);
+      // Phase 3.0, WP3 (Learning History) — best-effort, fire-and-forget,
+      // reuses the already-tested Readiness snapshot pipeline unchanged.
+      recordLegacyPracticeSessionCompletion().catch(() => {});
       setState("done");
     } else {
       setQuizIndex((i) => i + 1);

@@ -11,6 +11,7 @@ import { withTimeout } from "@/lib/withTimeout";
 import { recordPresentation, recordOutcome } from "@/lib/ali/history";
 import { completeLesson, recordSkillResult, getSelectedPathwayId, setSelectedPathway } from "@/lib/progress";
 import { fetchLearnerIntelligenceProfile } from "@/lib/learningEngine/profile";
+import { recordReadinessSnapshot } from "@/lib/learningEngine/learningHistory";
 import { QUESTION_TYPE_PRIMARY_COMPETENCY } from "@/lib/learningEngine/assessmentBrainMap";
 import { generatePersonalisedSession } from "@/lib/learningEngine/sessionGenerator";
 import {
@@ -302,7 +303,16 @@ export default function PracticeSessionPage({ params }: { params: Promise<{ area
     }
 
     setMode("results");
-    fetchLearnerIntelligenceProfile("csse").then(setProfile).catch(() => setProfile(null));
+    fetchLearnerIntelligenceProfile("csse")
+      .then((fetchedProfile) => {
+        setProfile(fetchedProfile);
+        // Phase 3.0, WP3 (Learning History) — reuses the profile this call
+        // already fetched; no second fetch, no new computation. Best-effort.
+        if (fetchedProfile && fetchedProfile.pathwayEligible && supabaseRef.current) {
+          recordReadinessSnapshot(supabaseRef.current, fetchedProfile.profileId, fetchedProfile.readiness).catch(() => {});
+        }
+      })
+      .catch(() => setProfile(null));
   }
 
   return (
