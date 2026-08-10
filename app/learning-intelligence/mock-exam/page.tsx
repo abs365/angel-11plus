@@ -404,6 +404,29 @@ export default function MockExamPage() {
               A single timed sitting covering Reading Comprehension, Mathematics and Continuous Writing.
             </p>
 
+            {/* Angel Assessment Transformation Programme 001, Release 0 —
+                Decision AEP4-D18. The Assessment Excellence Programme found
+                this mock's current question pool and timing do not yet
+                represent an authentic CSSE sitting (real CSSE structure is
+                two separate timed papers, not one combined countdown), and
+                that a capable learner can complete it in minutes. This
+                notice must stay until Waves 1 and 2 of the Transformation
+                Roadmap (content depth, then real paper/section timing) are
+                both complete — do not remove it as a "quick win" ahead of
+                that work actually landing. */}
+            <InfoCard className="mt-4 border-amber-200 dark:border-amber-900 bg-amber-50 dark:bg-amber-950/40">
+              <p className="text-sm font-semibold text-amber-800 dark:text-amber-300">
+                This mock is still being expanded
+              </p>
+              <p className="text-xs text-amber-700 dark:text-amber-400 mt-1 leading-relaxed">
+                Today&apos;s question set and timing don&apos;t yet fully match a real CSSE sitting — the real exam is
+                two separate timed papers (English, then Mathematics), and this mock currently runs on a smaller,
+                illustrative set of questions. Completing it quickly, or scoring well, isn&apos;t a reliable sign of
+                how ready your child is for the real test. We&apos;re actively expanding the question bank and
+                rebuilding the timing to match the real exam.
+              </p>
+            </InfoCard>
+
             {/* Sprint 2, Increment 2 — Standard/Adaptive mode selector.
                 Standard is the default (Task 2); switching modes only
                 changes which real, already-tagged content gets selected
@@ -436,8 +459,8 @@ export default function MockExamPage() {
 
             <InfoCard className="mt-6">
               <p className="text-sm text-gray-700 dark:text-gray-300">
-                Answers aren&apos;t marked as you go — this is a real exam condition. Once you submit, your learning
-                report updates with everything you attempted.
+                Answers aren&apos;t marked as you go, matching the real exam&apos;s no-feedback-until-the-end format.
+                Once you submit, your learning report updates with everything you attempted.
               </p>
               <button
                 onClick={loadAndStart}
@@ -535,6 +558,13 @@ export default function MockExamPage() {
               </p>
               <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">
                 {sittingModeRef.current === "adaptive" ? "Adaptive sitting" : "Standard sitting"}
+              </p>
+              {/* AEP4-D18 — same reminder as the intro screen, restated here
+                  because a results screen is exactly where a parent is most
+                  likely to over-read a score as a readiness signal. */}
+              <p className="text-xs text-amber-700 dark:text-amber-400 mt-3">
+                Today&apos;s content and timing are still being expanded to match a real CSSE sitting — treat this
+                as practice, not a finished readiness check.
               </p>
             </InfoCard>
 
