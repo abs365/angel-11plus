@@ -280,8 +280,38 @@ function buildDailyMission(
   mathsTier: AdaptiveTier,
   p: UserProgress
 ): DailyMission {
-  // Brand-new user — fixed starter mission
+  // Brand-new user — fixed starter mission.
+  //
+  // New Angel Legacy Experience Audit finding: this branch was previously
+  // unconditional, pointing every brand-new user — including a CSSE-pathway
+  // family, on their very first visit — at the old, superseded /english
+  // (Lighthouse Mystery-era passages) and /maths pages, with reason text
+  // that misleadingly asserted "Essex CSSE style passages" for content that
+  // predates the Assessment Transformation and generates zero Educational
+  // Intelligence evidence (see this file's own header comment). Corrected
+  // to route a CSSE learner's first mission to the real, new
+  // /learning-intelligence/learn destination instead. Every other pathway's
+  // starter mission is byte-for-byte unchanged.
   if (report.totalSessions === 0) {
+    if (p.selectedPathwayId === "csse") {
+      return {
+        items: [
+          {
+            id: "mission-0",
+            subject: "maths",
+            label: "Start your first lesson",
+            href: "/learning-intelligence/learn",
+            reason: "A real, evidence-led CSSE lesson — the best place to begin.",
+            tier: "foundation",
+            priority: "primary",
+            estimatedMinutes: 15,
+          },
+        ],
+        totalMinutes: 15,
+        focusArea: "Getting started",
+        tagline: "Complete your first lesson to generate your personalised analysis.",
+      };
+    }
     return {
       items: [
         {

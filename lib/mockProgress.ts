@@ -83,16 +83,28 @@ export function isFounderValidationResult(result: MockResult): boolean {
 }
 
 /**
+ * New Angel Legacy Experience Audit — a completion of the deprecated
+ * app/mocks/[pathway]/page.tsx CSSE entry (unlinked from every current CSSE
+ * surface, but still reachable at /mocks/csse via a stale link or bookmark).
+ * It has no Educational Intelligence integration and must never be
+ * presented as real Assessment Transformation evidence.
+ */
+export function isLegacyCsseMockResult(result: MockResult): boolean {
+  return result.source === "legacy-csse-mock";
+}
+
+/**
  * The single shared read path every mock-history/best-score/readiness
  * consumer already goes through — filtering Founder Validation attempts
- * out here (rather than at each of the ~4 separate call sites that
- * display or aggregate MockResult[]) is the smallest correct isolation
- * mechanism: every existing and future consumer is protected with zero
- * additional filtering logic of its own.
+ * (and, per the same reasoning, legacy CSSE mock attempts) out here
+ * (rather than at each of the ~4 separate call sites that display or
+ * aggregate MockResult[]) is the smallest correct isolation mechanism:
+ * every existing and future consumer is protected with zero additional
+ * filtering logic of its own.
  */
 export async function getMockResults(): Promise<MockResult[]> {
   const all = getProgress().mockResults ?? [];
-  return all.filter((r) => !isFounderValidationResult(r));
+  return all.filter((r) => !isFounderValidationResult(r) && !isLegacyCsseMockResult(r));
 }
 
 export async function getLastMockResult(): Promise<MockResult | null> {

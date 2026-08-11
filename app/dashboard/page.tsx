@@ -511,7 +511,15 @@ export default function DashboardPage() {
               <p className="text-gray-400 dark:text-gray-500 text-sm leading-relaxed mb-5 max-w-xs mx-auto">
                 Complete any practice to unlock your personalised admission mission
               </p>
-              <Link href="/english" className="inline-flex items-center gap-2 bg-green-700 hover:bg-green-800 active:scale-[0.98] text-white rounded-xl px-5 py-2.5 font-semibold text-sm transition-all motion-reduce:transition-none">
+              {/* New Angel Legacy Experience Audit: this first-run empty
+                  state (no evidence yet, so no Daily Mission items) must not
+                  send a CSSE-pathway learner into the old, superseded
+                  /english lesson hub — the same branching Navigation.tsx
+                  already applies to the top nav's own Learn link. */}
+              <Link
+                href={getSelectedPathwayId() === "csse" ? "/learning-intelligence/learn" : "/english"}
+                className="inline-flex items-center gap-2 bg-green-700 hover:bg-green-800 active:scale-[0.98] text-white rounded-xl px-5 py-2.5 font-semibold text-sm transition-all motion-reduce:transition-none"
+              >
                 <Play size={14} aria-hidden="true" />
                 Start Learning
               </Link>

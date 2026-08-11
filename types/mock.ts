@@ -32,8 +32,19 @@ export interface MockResult {
    * learner attempt). Only the Founder Validation Assessment route sets
    * "founder-validation"; every learner-facing read of MockResult[] must
    * exclude it (see lib/mockProgress.ts's isFounderValidationResult()).
+   *
+   * "legacy-csse-mock" (New Angel Legacy Experience Audit) — the deprecated
+   * app/mocks/[pathway]/page.tsx CSSE entry (data/maths.ts, no Educational
+   * Intelligence integration, unlinked from every current CSSE surface but
+   * still reachable at /mocks/csse) sets this so a stray completion, from
+   * an old bookmark or deep link, cannot silently count as real Assessment
+   * Transformation evidence in Mock History or the CSSE best-score/
+   * readiness signal. GL/CEM/ISEB completions through the same shared route
+   * are unaffected — for those pathways this route remains their one real,
+   * current mock experience. See lib/mockProgress.ts's
+   * isLegacyCsseMockResult().
    */
-  source?: "learner" | "founder-validation";
+  source?: "learner" | "founder-validation" | "legacy-csse-mock";
 }
 
 /**

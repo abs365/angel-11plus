@@ -378,6 +378,11 @@ export default function MockPage({
         totalScore,
         sectionResults,
         durationMinutes: config.totalMinutes,
+        // New Angel Legacy Experience Audit: this deprecated CSSE entry must
+        // never silently count as real Assessment Transformation evidence.
+        // GL/CEM/ISEB are untagged (unaffected) — this route remains their
+        // real, current mock.
+        ...(pathwayId === "csse" ? { source: "legacy-csse-mock" as const } : {}),
       };
       saveMockResult(result);
       completeLesson("mock-test", totalScore, config.xpReward);
