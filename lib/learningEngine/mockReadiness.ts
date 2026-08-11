@@ -1,4 +1,10 @@
+import type { SupabaseClient } from "@supabase/supabase-js";
+import type { Database } from "@/types/supabase";
 import type { RecommendationTrigger } from "@/types/ali/recommendationOrchestration";
+import { fetchLearnerIntelligenceProfile } from "./profile";
+import { getRecommendations } from "./educationalIntelligenceService";
+import { ALL_COMPETENCY_IDS } from "./assessmentBrainMap";
+import { getMockResults } from "@/lib/mockProgress";
 
 /**
  * Mock Readiness Intelligence (Sprint 5, WP5C). "Help parents understand
@@ -72,4 +78,54 @@ export function assessMockReadiness(input: MockReadinessInput): MockReadinessAss
       "Evidence is reasonably broad and there's no single area needing focused attention right now. A mock would add real, broad evidence under exam conditions.",
     nextAction: { label: "Start a mock exam →", href: "/learning-intelligence/mock-exam" },
   };
+}
+
+/**
+ * Mock Centre Experience Transformation — the readiness verdict plus the
+ * one real input (`hasAnyEvidence`) needed to tell apart the two genuinely
+ * different situations `assessMockReadiness()` both label "practice-first"
+ * (no evidence at all, vs. evidence exists but a specific gap is known) —
+ * both real, both already computed by the unmodified function; this just
+ * carries the one extra real fact needed to display them as the Founder's
+ * two distinct card states ("Building foundations" / "Keep practising")
+ * without adding a fourth verdict to the categorical dispatch itself.
+ */
+export interface CsseMockReadiness {
+  assessment: MockReadinessAssessment;
+  hasAnyEvidence: boolean;
+}
+
+/**
+ * Mock Centre Experience Transformation — the exact fetch-and-compute
+ * sequence CssePathwayParentContent.tsx already performs inline (real
+ * Learning Engine profile, real Recommendation Engine, real mock history),
+ * extracted here so the Mock Centre can surface the same real readiness
+ * verdict without a second, competing implementation. Returns null for a
+ * non-CSSE pathway or when no client/profile is available — the Mock
+ * Centre must render no readiness card at all in that case, never a
+ * fabricated one (MOCK_READINESS_CAPABILITY_ASSESSMENT.md).
+ */
+export async function computeCsseMockReadiness(
+  supabase: SupabaseClient<Database>,
+  pathwayId: string | undefined
+): Promise<CsseMockReadiness | null> {
+  if (pathwayId !== "csse") return null;
+
+  const profile = await fetchLearnerIntelligenceProfile(pathwayId);
+  if (!profile || !profile.pathwayEligible) return null;
+
+  const [recommendations, mockResults] = await Promise.all([
+    getRecommendations(supabase, profile.profileId, ALL_COMPETENCY_IDS).catch(() => null),
+    getMockResults().catch(() => []),
+  ]);
+
+  const topTriggerReason = recommendations?.ordered[0]?.triggerReason ?? null;
+
+  const assessment = assessMockReadiness({
+    hasAnyEvidence: profile.hasAnyEvidence,
+    mockAttemptCount: mockResults.length,
+    topTriggerReason,
+  });
+
+  return { assessment, hasAnyEvidence: profile.hasAnyEvidence };
 }

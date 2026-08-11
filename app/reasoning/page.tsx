@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Puzzle, Shapes, Compass, Hash, Play } from "lucide-react";
+import { Puzzle, Shapes, Compass, Hash, Play, Sparkles, Clock } from "lucide-react";
 import PageLayout from "@/components/PageLayout";
 import SubjectCard from "@/components/SubjectCard";
 import { ButtonLink } from "@/components/ui/Button";
@@ -66,6 +66,67 @@ const reasoningSubjects: {
     color: "rose",
     badge: "CEM · GL · ISEB",
     skillType: "numerical-reasoning",
+  },
+];
+
+/**
+ * Mock Centre Experience Transformation — relocated from app/mocks/page.tsx.
+ * Real, GL-pathway content (fetchQuestionBank(..., "gl") in each of the four
+ * runners below, confirmed by direct source read) that was previously the
+ * first thing every pathway's "Mock" nav click reached, including CSSE
+ * families. This is its correct home: the existing, unchanged Practise hub
+ * for the pathway it actually belongs to. The four routes themselves are
+ * completely unchanged (NEW_ANGEL_LEGACY_EXPERIENCE_AUDIT.md §4).
+ */
+const personalisedPracticeCards: {
+  href: string;
+  title: string;
+  description: string;
+  minutes: string;
+  bg: string;
+  border: string;
+  badgeBg: string;
+  badgeText: string;
+}[] = [
+  {
+    href: "/mocks/adaptive/gl",
+    title: "GL Verbal Reasoning",
+    description: "Verbal Reasoning questions matched to your practice level.",
+    minutes: "35 min",
+    bg: "bg-violet-50 dark:bg-violet-950",
+    border: "border-violet-100 dark:border-violet-900",
+    badgeBg: "bg-violet-100 dark:bg-violet-900",
+    badgeText: "text-violet-700 dark:text-violet-300",
+  },
+  {
+    href: "/mocks/adaptive/maths",
+    title: "Maths Practice",
+    description: "Maths questions matched to your practice level.",
+    minutes: "12 min",
+    bg: "bg-blue-50 dark:bg-blue-950",
+    border: "border-blue-100 dark:border-blue-900",
+    badgeBg: "bg-blue-100 dark:bg-blue-900",
+    badgeText: "text-blue-700 dark:text-blue-300",
+  },
+  {
+    href: "/mocks/adaptive/english",
+    title: "Reading Practice",
+    description: "One passage at a time, with every question that belongs to it.",
+    minutes: "10-15 min",
+    bg: "bg-purple-50 dark:bg-purple-950",
+    border: "border-purple-100 dark:border-purple-900",
+    badgeBg: "bg-purple-100 dark:bg-purple-900",
+    badgeText: "text-purple-700 dark:text-purple-300",
+  },
+  {
+    href: "/mocks/adaptive/vocabulary",
+    title: "Vocabulary Practice",
+    description: "One word at a time: synonyms, antonyms and usage in context.",
+    minutes: "5-10 min",
+    bg: "bg-emerald-50 dark:bg-emerald-950",
+    border: "border-emerald-100 dark:border-emerald-900",
+    badgeBg: "bg-emerald-100 dark:bg-emerald-900",
+    badgeText: "text-emerald-700 dark:text-emerald-300",
   },
 ];
 
@@ -142,6 +203,37 @@ export default function ReasoningHubPage() {
               />
             );
           })}
+        </div>
+
+        <div className="mt-8 space-y-3">
+          <div>
+            <h2 className="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">Personalised Practice</h2>
+            <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">Short, daily sessions. Questions adapt to you every time.</p>
+          </div>
+          {personalisedPracticeCards.map((card) => (
+            <div key={card.href} className={`rounded-2xl border ${card.bg} ${card.border} p-5`}>
+              <div className="flex items-start justify-between mb-3">
+                <div className="flex items-center gap-2.5">
+                  <span className={`text-xs font-bold px-2.5 py-1 rounded-lg ${card.badgeBg} ${card.badgeText} flex items-center gap-1`}>
+                    <Sparkles size={12} />
+                    Personalised
+                  </span>
+                  <h3 className="text-base font-bold text-gray-900 dark:text-gray-100">{card.title}</h3>
+                </div>
+                <div className="flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400">
+                  <Clock size={13} />
+                  {card.minutes}
+                </div>
+              </div>
+              <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed mb-1">{card.description}</p>
+              <p className="text-xs text-amber-700 dark:text-amber-400 leading-relaxed mb-4">
+                Currently a small sample set while we build out the full question bank.
+              </p>
+              <ButtonLink href={card.href} variant="outline" size="sm" leftIcon={<Play size={14} />}>
+                Start practice
+              </ButtonLink>
+            </div>
+          ))}
         </div>
       </div>
     </PageLayout>
