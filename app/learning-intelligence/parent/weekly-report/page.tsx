@@ -90,7 +90,7 @@ export default function WeeklyLearningReportPage() {
           </div>
           <div>
             <h1 className="text-gray-900 dark:text-gray-100 font-bold text-2xl">Weekly Learning Report</h1>
-            <p className="text-gray-400 dark:text-gray-500 text-sm">The last 7 days — what improved, what changed, what&apos;s next</p>
+            <p className="text-gray-400 dark:text-gray-500 text-sm">The last 7 days: what improved, what changed, what&apos;s next</p>
           </div>
         </div>
 

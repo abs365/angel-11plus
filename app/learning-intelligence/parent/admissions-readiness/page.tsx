@@ -82,7 +82,7 @@ export default function AdmissionsReadinessPage() {
           <div>
             <h1 className="text-gray-900 dark:text-gray-100 font-bold text-2xl">Admissions Readiness</h1>
             <p className="text-gray-400 dark:text-gray-500 text-sm">
-              What real evidence shows so far — not a prediction of the outcome
+              What real evidence shows so far. Not a prediction of the outcome
             </p>
           </div>
         </div>
@@ -116,7 +116,7 @@ export default function AdmissionsReadinessPage() {
             <section>
               <h2 className="text-gray-900 dark:text-gray-100 font-bold text-lg mb-1">Educational Readiness</h2>
               <p className="text-xs text-gray-400 dark:text-gray-500 mb-3">
-                How well-evidenced each part of CSSE&apos;s exam is, area by area — never a single blended score.
+                How well-evidenced each part of CSSE&apos;s exam is, area by area. Never a single blended score.
               </p>
               <ReadinessSummary readiness={profile.readiness} />
               {/* Sprint 5 (WP5B) — secondary link; the page's one primary
@@ -164,7 +164,7 @@ export default function AdmissionsReadinessPage() {
 
             <p className="text-xs text-gray-400 dark:text-gray-500 leading-relaxed">
               Angel does not predict admissions outcomes, offer likelihood, or how your child compares to other
-              applicants — only what real evidence exists, and CSSE&apos;s own published facts, shown separately.
+              applicants. It only shows what real evidence exists, and CSSE&apos;s own published facts, shown separately.
             </p>
           </div>
         )}

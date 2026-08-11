@@ -146,7 +146,7 @@ export default function MockReadinessPage() {
                   <p className="text-sm text-gray-700 dark:text-gray-300">{assessment.explanation}</p>
                   <p className="text-[11px] text-gray-400 dark:text-gray-500 mt-2">
                     {mostRecentMock
-                      ? `${mockResults.length} mock${mockResults.length === 1 ? "" : "s"} attempted so far — most recently on ${new Date(mostRecentMock.date).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })}.`
+                      ? `${mockResults.length} mock${mockResults.length === 1 ? "" : "s"} attempted so far, most recently on ${new Date(mostRecentMock.date).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })}.`
                       : "No mocks attempted yet."}
                   </p>
                 </div>
@@ -187,7 +187,7 @@ export default function MockReadinessPage() {
             </section>
 
             <p className="text-xs text-gray-400 dark:text-gray-500 leading-relaxed">
-              This reflects real, recorded evidence only — it is not a prediction of how your child would score, and
+              This reflects real, recorded evidence only. It is not a prediction of how your child would score, and
               there is no fixed rule about how often to sit a mock. It changes as new evidence comes in.
             </p>
           </div>

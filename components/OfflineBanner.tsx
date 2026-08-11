@@ -30,7 +30,7 @@ export default function OfflineBanner() {
       className="fixed top-0 left-0 right-0 z-50 flex items-center gap-2.5 bg-amber-500 text-white px-4 py-2.5 text-sm font-medium shadow-md"
     >
       <WifiOff size={15} className="shrink-0" aria-hidden="true" />
-      <span>You&apos;re offline — learning continues with saved lessons.</span>
+      <span>You&apos;re offline. Learning continues with saved lessons.</span>
     </div>
   );
 }

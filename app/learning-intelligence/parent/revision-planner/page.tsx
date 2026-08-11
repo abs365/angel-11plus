@@ -75,7 +75,7 @@ export default function RevisionPlannerPage() {
 
         {pathwayEligible && plan && plan.items.length === 0 && (
           <InfoCard className="mt-6 text-center">
-            <p className="text-sm text-gray-500 dark:text-gray-400">Nothing to prioritise right now — check back as your child completes more practice.</p>
+            <p className="text-sm text-gray-500 dark:text-gray-400">Nothing to prioritise right now. Check back as your child completes more practice.</p>
           </InfoCard>
         )}
 

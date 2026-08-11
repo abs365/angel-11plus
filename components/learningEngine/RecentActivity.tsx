@@ -33,7 +33,7 @@ export function RecentActivity({ items, plainLanguage = false }: { items: Recent
   if (items.length === 0) {
     return (
       <p className="text-sm text-gray-400 dark:text-gray-500 italic">
-        No practice activity recorded yet — this fills in as you complete practice sessions.
+        No practice activity recorded yet. This fills in as you complete practice sessions.
       </p>
     );
   }

@@ -59,10 +59,10 @@ export default function PracticeAreaSelectorPage() {
               <HelpCircle size={20} className="text-gray-400 dark:text-gray-500" />
             </div>
             <div className="min-w-0">
-              <p className="text-sm font-semibold text-gray-700 dark:text-gray-300">Vocabulary — not available here</p>
+              <p className="text-sm font-semibold text-gray-700 dark:text-gray-300">Vocabulary: not available here</p>
               <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5 leading-relaxed">
                 Vocabulary isn&apos;t part of this skills structure yet, so Vocabulary practice cannot yet connect to
-                your learning report. Vocabulary practice is still available from the main Learn hub — it just won&apos;t
+                your learning report. Vocabulary practice is still available from the main Learn hub, it just won&apos;t
                 appear on this dashboard.
               </p>
             </div>

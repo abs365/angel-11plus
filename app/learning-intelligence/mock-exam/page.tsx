@@ -152,7 +152,7 @@ export default function MockExamPage() {
 
       if (tagged.length === 0) {
         throw new Error(
-          "No mock exam content is available yet — the illustrative content set (migration 013) has not been applied to this database."
+          "No mock exam content is available yet. The illustrative content set (migration 013) has not been applied to this database."
         );
       }
 
@@ -167,7 +167,7 @@ export default function MockExamPage() {
           withTimeout(fetchStudentHistory(supabase, profileId), 10000, "your practice history"),
         ]);
         if (!adaptiveProfile || !adaptiveProfile.pathwayEligible) {
-          throw new Error("Your Educational Intelligence profile isn't available right now — try Standard mode, or try Adaptive again shortly.");
+          throw new Error("Your Educational Intelligence profile isn't available right now. Try Standard mode, or try Adaptive again shortly.");
         }
         const built = buildAdaptivePaper(
           taggedBySubject,
@@ -429,7 +429,7 @@ export default function MockExamPage() {
                 This mock is still being expanded
               </p>
               <p className="text-xs text-amber-700 dark:text-amber-400 mt-1 leading-relaxed">
-                Today&apos;s question set and timing don&apos;t yet fully match a real CSSE sitting — the real exam is
+                Today&apos;s question set and timing don&apos;t yet fully match a real CSSE sitting. The real exam is
                 two separate timed papers (English, then Mathematics), and this mock currently runs on a smaller,
                 illustrative set of questions. Completing it quickly, or scoring well, isn&apos;t a reliable sign of
                 how ready your child is for the real test. We&apos;re actively expanding the question bank and
@@ -564,7 +564,7 @@ export default function MockExamPage() {
             <InfoCard className="text-center">
               <CheckCircle2 size={28} className="text-emerald-500 mx-auto mb-2" />
               <p className="text-lg font-bold text-gray-900 dark:text-gray-100">
-                Exam complete — {correctCount} of {activities.length} correct
+                Exam complete: {correctCount} of {activities.length} correct
               </p>
               <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">
                 {sittingModeRef.current === "adaptive" ? "Adaptive sitting" : "Standard sitting"}
@@ -573,7 +573,7 @@ export default function MockExamPage() {
                   because a results screen is exactly where a parent is most
                   likely to over-read a score as a readiness signal. */}
               <p className="text-xs text-amber-700 dark:text-amber-400 mt-3">
-                Today&apos;s content and timing are still being expanded to match a real CSSE sitting — treat this
+                Today&apos;s content and timing are still being expanded to match a real CSSE sitting. Treat this
                 as practice, not a finished readiness check.
               </p>
             </InfoCard>

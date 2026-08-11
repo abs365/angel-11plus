@@ -33,7 +33,7 @@ export function RecommendationSummary({ recommendations }: { recommendations: Re
   if (recommendations.length === 0) {
     return (
       <p className="text-sm text-gray-400 dark:text-gray-500 italic">
-        No recommendations yet — these are generated once there is recorded evidence to respond to.
+        No recommendations yet. These are generated once there is recorded evidence to respond to.
       </p>
     );
   }

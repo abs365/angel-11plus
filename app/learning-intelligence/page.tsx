@@ -170,7 +170,7 @@ export default function LearningIntelligencePage() {
               <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 px-4 py-4">
                 <p className="text-gray-700 dark:text-gray-300 font-semibold text-sm">No evidence recorded yet</p>
                 <p className="text-gray-400 dark:text-gray-500 text-xs mt-1 leading-relaxed">
-                  Every skill below is shown honestly as &quot;Not Yet Observed.&quot; This isn&apos;t an error —
+                  Every skill below is shown honestly as &quot;Not Yet Observed.&quot; This isn&apos;t an error.
                   Angel&apos;s own content bank does not yet have any practice questions authored against CSSE&apos;s
                   official skills structure, so there is genuinely nothing to report yet.
                 </p>

@@ -21,7 +21,7 @@ function milestoneText(record: EducationalAuditRecord): string {
   const label = competencyLabel(record.competencyOrDimension);
   switch (record.conclusionType) {
     case "durable-mastery":
-      return `Durably mastered ${label} — still solid even after a break`;
+      return `Durably mastered ${label}, still solid even after a break`;
     case "mastery":
       return `Mastered ${label}`;
     case "wellbeing-veto":
@@ -49,7 +49,7 @@ export function EducationalTimeline({ milestones }: { milestones: EducationalAud
   if (milestones.length === 0) {
     return (
       <p className="text-sm text-gray-400 dark:text-gray-500 italic">
-        No milestones recorded yet — this fills in as mastery is reached and confirmed.
+        No milestones recorded yet. This fills in as mastery is reached and confirmed.
       </p>
     );
   }

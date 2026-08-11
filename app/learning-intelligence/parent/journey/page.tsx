@@ -42,7 +42,7 @@ const STAGES: Stage[] = [
     icon: PenLine,
     name: "Practice",
     whatHappened: "Short, focused sessions on one skill at a time, with feedback straight after each answer.",
-    whyItMatters: "Every answer becomes real, recorded evidence — the same evidence every other stage below reads from.",
+    whyItMatters: "Every answer becomes real, recorded evidence. It's the same evidence every other stage below reads from.",
     whatsNext: "Educational Insights update automatically as soon as you finish a session.",
     href: "/learning-intelligence/practice",
     linkLabel: "Go to Practice",
@@ -52,8 +52,8 @@ const STAGES: Stage[] = [
   {
     icon: Trophy,
     name: "Mock Examination",
-    whatHappened: "A timed, real exam-condition sitting — Standard (the full paper) or Adaptive (a shorter paper weighted to your recorded evidence). No feedback until you submit, just like exam day.",
-    whyItMatters: "The exact same evidence pipeline as Practice, gathered under real conditions — not a separate, disconnected score.",
+    whatHappened: "A timed, real exam-condition sitting: Standard (the full paper) or Adaptive (a shorter paper weighted to your recorded evidence). No feedback until you submit, just like exam day.",
+    whyItMatters: "The exact same evidence pipeline as Practice, gathered under real conditions. It's not a separate, disconnected score.",
     whatsNext: "Results feed straight into Educational Insights and Readiness below, plus a Historical Context comparison against CSSE's own published admissions facts.",
     href: "/learning-intelligence/mock-exam",
     linkLabel: "Go to Mock Examination",
@@ -64,7 +64,7 @@ const STAGES: Stage[] = [
     icon: Brain,
     name: "Educational Insights",
     whatHappened: "Your child's real skills profile: which competencies have evidence, how much, and what it shows.",
-    whyItMatters: "This is the one place every stage's evidence is shown together — nothing here is estimated or invented.",
+    whyItMatters: "This is the one place every stage's evidence is shown together. Nothing here is estimated or invented.",
     whatsNext: "Readiness turns this same evidence into an honest, area-by-area picture of exam preparedness.",
     href: "/learning-intelligence",
     linkLabel: "Go to Educational Insights",
@@ -74,8 +74,8 @@ const STAGES: Stage[] = [
   {
     icon: Target,
     name: "Readiness",
-    whatHappened: "A four-band picture — Well Evidenced, Partially Evidenced, or Not Yet Evidenced — for each part of the real exam.",
-    whyItMatters: "Never a single predicted score or a percentage chance — just an honest, evidence-only account of how well-covered each area is right now.",
+    whatHappened: "A four-band picture for each part of the real exam: Well Evidenced, Partially Evidenced, or Not Yet Evidenced.",
+    whyItMatters: "Never a single predicted score or a percentage chance. Just an honest, evidence-only account of how well-covered each area is right now.",
     whatsNext: "Recommendations point at exactly which of these areas is most worth attention next.",
     href: "/learning-intelligence/parent",
     linkLabel: "See Readiness on the Parent Dashboard",
@@ -86,7 +86,7 @@ const STAGES: Stage[] = [
     icon: ClipboardList,
     name: "Recommendations",
     whatHappened: "A ranked, explained list of what's most worth focusing on next.",
-    whyItMatters: "Every suggestion traces back to real evidence — never a guess, never a fixed script.",
+    whyItMatters: "Every suggestion traces back to real evidence. Never a guess, never a fixed script.",
     whatsNext: "Revision Planning turns this same ranked list into a concrete plan for the week.",
     href: "/learning-intelligence/recommendations",
     linkLabel: "Go to Recommendations",
@@ -98,7 +98,7 @@ const STAGES: Stage[] = [
     name: "Revision Planning",
     whatHappened: "This week's priorities, with a time estimate and the same evidence-based reasoning as Recommendations.",
     whyItMatters: "Turns \"what to focus on\" into \"what to actually do this week,\" without inventing anything new.",
-    whatsNext: "Completing a plan item is Practice again — the loop closes here and starts over.",
+    whatsNext: "Completing a plan item is Practice again. The loop closes here and starts over.",
     href: "/learning-intelligence/parent/revision-planner",
     linkLabel: "Go to Revision Planning",
     iconBg: "bg-rose-100 dark:bg-rose-900",
@@ -108,8 +108,8 @@ const STAGES: Stage[] = [
     icon: GraduationCap,
     name: "Admissions Readiness",
     whatHappened: "The same Readiness and Evidence Coverage picture, placed beside the one real, published CSSE admissions fact this platform holds.",
-    whyItMatters: "Context about the real exam, kept clearly separate from your child's own evidence — never blended into a prediction.",
-    whatsNext: "Optional — worth checking in on occasionally, not a step you need every week.",
+    whyItMatters: "Context about the real exam, kept clearly separate from your child's own evidence. Never blended into a prediction.",
+    whatsNext: "Optional. Worth checking in on occasionally, not a step you need every week.",
     href: "/learning-intelligence/parent/admissions-readiness",
     linkLabel: "Go to Admissions Readiness",
     iconBg: "bg-indigo-100 dark:bg-indigo-900",
@@ -139,10 +139,10 @@ export default function EducationalJourneyPage() {
 
         <InfoCard className="mt-5">
           <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed">
-            Every part of Angel below reads from the same real evidence — nothing is calculated twice, and nothing
+            Every part of Angel below reads from the same real evidence. Nothing is calculated twice, and nothing
             shown to you is invented. The natural order is: <strong>Practice or a Mock Exam</strong>, which updates{" "}
             <strong>Educational Insights</strong> and <strong>Readiness</strong>, which drive{" "}
-            <strong>Recommendations</strong> and a <strong>Revision Plan</strong> — with{" "}
+            <strong>Recommendations</strong> and a <strong>Revision Plan</strong>, with{" "}
             <strong>Admissions Readiness</strong> available whenever it&apos;s useful, never a required step.
           </p>
         </InfoCard>
@@ -187,7 +187,7 @@ export default function EducationalJourneyPage() {
         </div>
 
         <p className="text-xs text-gray-400 dark:text-gray-500 leading-relaxed mt-6 text-center px-4">
-          This page only explains how the pieces fit together — every fact and every number lives on the real pages
+          This page only explains how the pieces fit together. Every fact and every number lives on the real pages
           linked above, and nothing here is calculated separately from them.
         </p>
       </div>

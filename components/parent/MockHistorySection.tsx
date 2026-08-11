@@ -90,7 +90,7 @@ export function MockHistorySection({ mockResults }: { mockResults: MockResult[] 
           {mockResults.length > 0 && mockResults[mockResults.length - 1].sectionResults.length > 0 && (
             <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 overflow-hidden">
               <div className="px-4 py-3 border-b border-gray-50 dark:border-gray-800">
-                <p className="text-sm font-semibold text-gray-800 dark:text-gray-100">Last Mock — Section Breakdown</p>
+                <p className="text-sm font-semibold text-gray-800 dark:text-gray-100">Last Mock: Section Breakdown</p>
               </div>
               <div className="p-4 space-y-3">
                 {mockResults[mockResults.length - 1].sectionResults.map((s) => (

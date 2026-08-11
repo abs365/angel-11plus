@@ -106,7 +106,7 @@ export default function ProgressTimelinePage() {
             </section>
 
             <p className="text-[11px] text-gray-400 dark:text-gray-500 leading-relaxed">
-              Milestones above are real, dated events — mastery and durable mastery, as the Engine reaches them. What
+              Milestones above are real, dated events: mastery and durable mastery, as the Engine reaches them. What
               Angel doesn&apos;t yet show is a continuous trend of how your Evidence Tier moved between those
               moments.
             </p>

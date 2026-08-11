@@ -64,3 +64,15 @@ No document defines this phrase directly; the closest binding precedent is `ANGE
 ## 8. What this document does not do
 
 Per this Wave's own rule ("no new educational models, no new competencies, no new recommendation logic, consume only Assessment Brain V1/Learning Engine V1/Product Experience Standard V1"): nothing here touches educational content, scoring, or recommendation logic. This is a visual/product-experience standard only.
+
+## 9. Copy punctuation (Founder Writing Standard, logged per Section 4's discipline)
+
+**Founder correction**, identified via production screenshots and a full interactive review of the Mathematics Reference Vertical: dash punctuation (em dash `—` and en dash `–`) had spread through learner-facing feedback, instructions, empty states, and explanatory copy as a stylistic device connecting clauses, for example "Not quite yet, let's look again" was previously written with a dash instead of a full stop. This is corrected as follows, binding for all learner- and parent-facing copy from this point on:
+
+- Angel uses natural, professional British English.
+- Em dashes and en dashes must not be used as stylistic sentence punctuation, or to connect clauses, explanations, feedback, or instructions. Rewrite the sentence naturally instead, using full stops, commas, semicolons, conjunctions, or separate sentences, whichever reads most naturally for a child. Do not mechanically substitute a comma for every dash. Some sentences read better split into two, others with a colon, others with "and", "so", or "but".
+- Standard grammatical uses of an en dash remain permitted where genuinely appropriate, such as numeric ranges (for example `768–1023px`), date ranges, and scorelines.
+- This is not a ban on the mathematical minus sign (a distinct character from a dash, for example `1000 − 473`), hyphens within legitimate compound words (for example "evidence-led"), or UI directional arrows. An `ArrowRight` icon after a CTA, or a text arrow character used as a link affordance, both remain exactly as they are.
+- Short worked-step mathematical notation, for example "Ones: 7 + 6 = 13, then write 3 and carry 1" written with an arrow between the sum and the instruction in a lesson's worked example, is treated as mathematical shorthand rather than prose, and is unaffected by this rule. It was never a sentence connector, and rewriting every worked step as a full sentence would make step-by-step workings harder to scan, not easier.
+
+Applies to every active, learner- or parent-facing screen (Learn, Practise, Mock, Parent Dashboard, Progress, Family Choice, and any Founder Validation surface that may become a production learner experience). Does not apply to code comments, internal documentation, or this document itself.

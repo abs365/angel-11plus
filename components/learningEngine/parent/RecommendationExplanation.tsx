@@ -28,7 +28,7 @@ export function RecommendationExplanation({
   if (visible.length === 0) {
     return (
       <p className="text-sm text-gray-400 dark:text-gray-500 italic">
-        Nothing to suggest right now — check back as your child completes more practice.
+        Nothing to suggest right now. Check back as your child completes more practice.
       </p>
     );
   }

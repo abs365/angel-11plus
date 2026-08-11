@@ -32,7 +32,7 @@ export function CompetencySummary({ competencies }: { competencies: CompetencySt
             )}
             {notYet > 0 && (
               <p className="text-[11px] text-gray-400 dark:text-gray-500 mt-1">
-                {notYet} of {statuses.length} area{statuses.length === 1 ? "" : "s"} in this section not yet evidenced — a coverage gap, not a concern.
+                {notYet} of {statuses.length} area{statuses.length === 1 ? "" : "s"} in this section not yet evidenced. That&apos;s a coverage gap, not a concern.
               </p>
             )}
           </InfoCard>

@@ -276,7 +276,7 @@ export default function FamilyChoicePilotPage() {
       <div className="max-w-3xl mx-auto px-4 py-6 md:px-8 md:py-8">
         <h1 className="text-gray-900 dark:text-gray-100 font-bold text-2xl">Family Choice Pilot</h1>
         <p className="text-gray-400 dark:text-gray-500 text-sm mt-1">
-          A controlled, single-competency pilot: Angel keeps recommending from real evidence — you can also choose{" "}
+          A controlled, single-competency pilot: Angel keeps recommending from real evidence, and you can also choose{" "}
           {PILOT_LABEL} as an active focus, and see both, side by side.
         </p>
 
@@ -325,7 +325,7 @@ export default function FamilyChoicePilotPage() {
                 <p className="text-sm text-gray-700 dark:text-gray-300">{angelView.topExplanation}</p>
               ) : (
                 <p className="text-sm text-gray-500 dark:text-gray-400">
-                  No specific priority right now — every Mathematics competency is either mastered or has no evidence
+                  No specific priority right now. Every Mathematics competency is either mastered or has no evidence
                   yet.
                 </p>
               )}
@@ -336,7 +336,7 @@ export default function FamilyChoicePilotPage() {
               </p>
               {angelView.vetoedCompetencyCodes.includes(PILOT_COMPETENCY) && (
                 <p className="text-xs text-amber-600 dark:text-amber-400 mt-2 flex items-center gap-1.5">
-                  <ShieldAlert size={13} /> Wellbeing pacing is currently active for {PILOT_LABEL} — extra push-practice
+                  <ShieldAlert size={13} /> Wellbeing pacing is currently active for {PILOT_LABEL}. Extra push-practice
                   is paused regardless of any choice below.
                 </p>
               )}
@@ -364,7 +364,7 @@ export default function FamilyChoicePilotPage() {
               ) : (
                 <>
                   <p className="text-sm text-gray-500 dark:text-gray-400">
-                    No focus chosen — practice sessions follow Angel&apos;s recommendation only.
+                    No focus chosen. Practice sessions follow Angel&apos;s recommendation only.
                   </p>
                   <button
                     onClick={chooseFocus}
@@ -397,8 +397,8 @@ export default function FamilyChoicePilotPage() {
                   {familyFocusInfo.applied
                     ? `Your chosen focus (${familyFocusInfo.label}) is active in this session, alongside Angel's own evidence-led selection.`
                     : familyFocusInfo.wellbeingPaused
-                    ? `Your chosen focus (${familyFocusInfo.label}) is currently paused by wellbeing pacing — this session follows Angel's own selection only.`
-                    : `Your chosen focus (${familyFocusInfo.label}) had no eligible questions to add this session — Angel's own selection is shown.`}
+                    ? `Your chosen focus (${familyFocusInfo.label}) is currently paused by wellbeing pacing. This session follows Angel's own selection only.`
+                    : `Your chosen focus (${familyFocusInfo.label}) had no eligible questions to add this session. Angel's own selection is shown.`}
                 </p>
               </InfoCard>
             )}
@@ -454,7 +454,7 @@ export default function FamilyChoicePilotPage() {
             <InfoCard className="text-center">
               <CheckCircle2 size={28} className="text-emerald-500 mx-auto mb-2" />
               <p className="text-lg font-bold text-gray-900 dark:text-gray-100">
-                Session complete — {correctCount} of {activities.length} correct
+                Session complete: {correctCount} of {activities.length} correct
               </p>
             </InfoCard>
             <InfoCard>

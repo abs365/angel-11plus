@@ -107,29 +107,29 @@ export function CssePathwayParentContent() {
   const atAGlanceAnswers = {
     improving:
       weekMilestoneCount === undefined ? "Checking…" : weekMilestoneCount > 0
-        ? `Yes — ${weekMilestoneCount} milestone${weekMilestoneCount === 1 ? "" : "s"} reached this week.`
-        : "No new milestones this week yet — that's normal early on, and it fills in as practice continues.",
+        ? `Yes, ${weekMilestoneCount} milestone${weekMilestoneCount === 1 ? "" : "s"} reached this week.`
+        : "No new milestones this week yet. That's normal early on, and it fills in as practice continues.",
     thisWeek: topCandidateLabel ? (
       <>
-        Focus on <span className="font-medium">{topCandidateLabel}</span> — see the{" "}
+        Focus on <span className="font-medium">{topCandidateLabel}</span>. See the{" "}
         <Link href="/learning-intelligence/parent/revision-planner" className="text-purple-600 dark:text-purple-400 font-semibold">
           Revision Planner
         </Link>{" "}
         for this week&apos;s full plan.
       </>
     ) : (
-      "Nothing specific yet — check back once your child has completed some practice."
+      "Nothing specific yet. Check back once your child has completed some practice."
     ),
-    whyRecommended: topParentReason ?? "No specific recommendation yet — this fills in once there's evidence to respond to.",
+    whyRecommended: topParentReason ?? "No specific recommendation yet. This fills in once there's evidence to respond to.",
     concern:
       recommendations === undefined
         ? "Checking…"
         : (recommendations?.vetoedCompetencyCodes.length ?? 0) > 0
-        ? "Angel noticed signs your child may benefit from a lighter few days — no action needed, just something worth knowing."
+        ? "Angel noticed signs your child may benefit from a lighter few days. No action needed, just something worth knowing."
         : "No signs of concern in recent evidence.",
     outcome: (
       <>
-        Angel doesn&apos;t produce a single predicted score — see{" "}
+        Angel doesn&apos;t produce a single predicted score. See{" "}
         <span className="font-medium">Readiness Summary</span> below for what to expect, area by area, based on real evidence.
       </>
     ),
@@ -273,7 +273,7 @@ export function CssePathwayParentContent() {
             <InfoCard>
               <p className="text-sm text-gray-700 dark:text-gray-300">
                 {evidencedCount === 0
-                  ? "No practice evidence recorded yet — this fills in as your child completes practice activities."
+                  ? "No practice evidence recorded yet. This fills in as your child completes practice activities."
                   : `${evidencedCount} of ${totalCount} CSSE skills now have some recorded evidence.`}
               </p>
               <Link href="/learning-intelligence/practice" className="inline-block text-xs font-semibold text-purple-600 dark:text-purple-400 mt-2">
@@ -316,7 +316,7 @@ export function CssePathwayParentContent() {
               <div>
                 <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">How Angel decides what to recommend</p>
                 <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 leading-relaxed">
-                  Every suggestion here comes from what your child has actually done in practice — real evidence of what
+                  Every suggestion here comes from what your child has actually done in practice, real evidence of what
                   they can do confidently and what still needs work, never a fixed script. It updates as new evidence
                   comes in, and always explains why a particular skill was chosen.
                 </p>

@@ -40,7 +40,7 @@ function observedEvidence(record: EducationalAuditRecord): string {
     case "mastery":
       return `On ${formatDate(record.concludedAt)}, your child's evidence in ${label} was strong enough to confirm mastery.`;
     case "durable-mastery":
-      return `On ${formatDate(record.concludedAt)}, ${label} was checked again after a genuine gap — and still held.`;
+      return `On ${formatDate(record.concludedAt)}, ${label} was checked again after a genuine gap, and still held.`;
     case "wellbeing-veto":
       return `On ${formatDate(record.concludedAt)}, Angel noticed signs of strain around ${label} and paused practice there.`;
     case "recommendation":
@@ -52,7 +52,7 @@ function observedEvidence(record: EducationalAuditRecord): string {
 function educationalInterpretation(conclusionType: ConclusionType): string {
   switch (conclusionType) {
     case "mastery":
-      return "This means Angel now trusts this is a skill your child can rely on — not a one-off correct answer, but a real, repeated pattern.";
+      return "This means Angel now trusts this is a skill your child can rely on. It's not a one-off correct answer, but a real, repeated pattern.";
     case "durable-mastery":
       return "This is the strongest evidence Angel produces: the skill survived a real time gap, not just the sessions where it was first learned.";
     case "wellbeing-veto":
@@ -66,11 +66,11 @@ function educationalInterpretation(conclusionType: ConclusionType): string {
 function recommendedNextAction(conclusionType: ConclusionType): string {
   switch (conclusionType) {
     case "mastery":
-      return "No action needed — Angel will check back in after a natural gap to confirm this stays solid.";
+      return "No action needed. Angel will check back in after a natural gap to confirm this stays solid.";
     case "durable-mastery":
-      return "No action needed — this is now considered durably held.";
+      return "No action needed. This is now considered durably held.";
     case "wellbeing-veto":
-      return "No action needed — Angel already adjusted the pace here.";
+      return "No action needed. Angel already adjusted the pace here.";
     case "recommendation":
     case "readiness-dimension":
       return "See Recommended Next Action above for what's current right now.";
@@ -94,7 +94,7 @@ export function ReadinessEvidenceTimeline({ milestones }: { milestones: Educatio
   if (milestones.length === 0) {
     return (
       <p className="text-sm text-gray-400 dark:text-gray-500 italic">
-        No readiness milestones recorded yet — this fills in as your child&apos;s evidence grows.
+        No readiness milestones recorded yet. This fills in as your child&apos;s evidence grows.
       </p>
     );
   }

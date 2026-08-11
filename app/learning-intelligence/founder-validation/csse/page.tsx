@@ -114,7 +114,7 @@ export default function FounderValidationCsseAssessment() {
 
       if (selectedActivities.length === 0) {
         throw new Error(
-          "No Founder Validation content is available yet — migration 021 " +
+          "No Founder Validation content is available yet. Migration 021 " +
           "(supabase/migrations/021_founder_validation_csse_assessment.sql) has not been applied " +
           "to this database yet. Apply it via Supabase Dashboard > SQL Editor, then try again."
         );
@@ -299,7 +299,7 @@ export default function FounderValidationCsseAssessment() {
     <PageLayout
       breadcrumbs={[
         { label: "Learning Report", href: "/learning-intelligence" },
-        { label: "Founder Validation — CSSE" },
+        { label: "Founder Validation: CSSE" },
       ]}
     >
       <div className="max-w-3xl mx-auto px-4 py-6 md:px-8 md:py-8">
@@ -308,7 +308,7 @@ export default function FounderValidationCsseAssessment() {
             <ShieldAlert size={18} className="text-red-600 dark:text-red-400 mt-0.5 shrink-0" />
             <div>
               <p className="text-sm font-bold text-red-800 dark:text-red-300">
-                CSSE Assessment Transformation — Founder Validation
+                CSSE Assessment Transformation: Founder Validation
               </p>
               <p className="text-xs text-red-700 dark:text-red-400 mt-1 leading-relaxed">
                 Not yet released to learners. This is a controlled, non-production slice (11 original items) built
@@ -331,13 +331,13 @@ export default function FounderValidationCsseAssessment() {
             <InfoCard className="mt-4">
               <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">What this is and isn&apos;t</p>
               <ul className="text-xs text-gray-600 dark:text-gray-400 mt-2 space-y-1.5 list-disc list-inside">
-                <li>Every item is original Angel content, traceable to specific official CSSE past-paper evidence — see the Evidence view on the results screen.</li>
+                <li>Every item is original Angel content, traceable to specific official CSSE past-paper evidence. See the Evidence view on the results screen.</li>
                 <li>
-                  Timing is <strong>not</strong> a claim of exact exam equivalence — it is a scaled, evidence-informed
+                  Timing is <strong>not</strong> a claim of exact exam equivalence. It is a scaled, evidence-informed
                   estimate for this smaller slice (11 items, not a full paper). Approximation disclosed, not hidden.
                 </li>
-                <li>Difficulty labels are educational judgements, not empirical CSSE measurements — no facility-rate data exists for any Angel content today.</li>
-                <li>Applied Reasoning is not included — that evidence gate remains deferred.</li>
+                <li>Difficulty labels are educational judgements, not empirical CSSE measurements. No facility-rate data exists for any Angel content today.</li>
+                <li>Applied Reasoning is not included. That evidence gate remains deferred.</li>
                 <li>
                   Completing this writes real evidence-pipeline and Mock Attempt Ledger data under your current
                   profile, the same as a real Mock sitting would.
@@ -454,10 +454,10 @@ export default function FounderValidationCsseAssessment() {
             <InfoCard className="text-center">
               <CheckCircle2 size={28} className="text-emerald-500 mx-auto mb-2" />
               <p className="text-lg font-bold text-gray-900 dark:text-gray-100">
-                Assessment complete — {correctCount} of {activities.length} correct
+                Assessment complete: {correctCount} of {activities.length} correct
               </p>
               <p className="text-xs text-gray-400 dark:text-gray-500 mt-2">
-                Not a production readiness measurement — this is a Founder Validation sitting only.
+                Not a production readiness measurement. This is a Founder Validation sitting only.
               </p>
             </InfoCard>
 

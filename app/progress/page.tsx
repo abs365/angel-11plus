@@ -120,7 +120,7 @@ export default function ProgressPage() {
         <p className="text-gray-500 dark:text-gray-400 text-sm mb-6 leading-relaxed">
           {report && report.hasEnoughData ? (
             <>
-              You&apos;ve completed <strong className="text-gray-700 dark:text-gray-300">{report.totalSessions}</strong> session{report.totalSessions === 1 ? "" : "s"}, averaging <strong className="text-gray-700 dark:text-gray-300">{report.overallScore}%</strong> — here&apos;s the story so far.
+              You&apos;ve completed <strong className="text-gray-700 dark:text-gray-300">{report.totalSessions}</strong> session{report.totalSessions === 1 ? "" : "s"}, averaging <strong className="text-gray-700 dark:text-gray-300">{report.overallScore}%</strong>. Here&apos;s the story so far.
             </>
           ) : (
             "Complete a few sessions to start building your progress story."
@@ -146,13 +146,13 @@ export default function ProgressPage() {
               </p>
               <p>
                 <span className="font-semibold text-gray-800 dark:text-gray-100">Current position:</span>{" "}
-                {READINESS_CONFIG[parentReport.examReadiness].label} — {READINESS_CONFIG[parentReport.examReadiness].description}
+                {READINESS_CONFIG[parentReport.examReadiness].label}: {READINESS_CONFIG[parentReport.examReadiness].description}
               </p>
               <p>
                 <span className="font-semibold text-gray-800 dark:text-gray-100">Next milestone:</span>{" "}
                 {gamification.nextMilestone
                   ? gamification.nextMilestone.label
-                  : "Maximum rank reached — more milestones are on the way."}
+                  : "Maximum rank reached. More milestones are on the way."}
               </p>
             </div>
           </div>
@@ -357,7 +357,7 @@ export default function ProgressPage() {
                 <div className="mb-4">
                   <h2 className="text-gray-900 dark:text-gray-100 font-semibold">Skill Analysis</h2>
                   <p className="text-gray-400 dark:text-gray-500 text-xs mt-0.5">
-                    Based on your answers so far — weakest skills shown first
+                    Based on your answers so far, weakest skills shown first
                   </p>
                 </div>
 
@@ -428,7 +428,7 @@ export default function ProgressPage() {
                   </p>
                 ) : (
                   <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed mb-3">
-                    No target pathway selected yet —{" "}
+                    No target pathway selected yet.{" "}
                     <Link href="/pathways" className="text-purple-600 dark:text-purple-400 font-medium hover:underline">
                       choose one
                     </Link>{" "}

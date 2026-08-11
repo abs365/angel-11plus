@@ -91,7 +91,7 @@ const GUIDED_KNOWN_MISCONCEPTIONS: KnownMisconception[] = [
     // (ones 2+9=11->"1", tens 5+7=12->"2", hundreds 6+2="8") = 821.
     wrongAnswer: 821,
     explanation:
-      "It looks like each column may have been added on its own, without carrying the extra ten into the next column — 2 + 9 makes 11, and that extra ten has to move into the tens column, not disappear.",
+      "It looks like each column may have been added on its own, without carrying the extra ten into the next column. 2 + 9 makes 11, and that extra ten has to move into the tens column, not disappear.",
   },
 ];
 const INDEPENDENT_KNOWN_MISCONCEPTIONS: KnownMisconception[] = [
@@ -101,7 +101,7 @@ const INDEPENDENT_KNOWN_MISCONCEPTIONS: KnownMisconception[] = [
     // |3-8|=5) = 565 — the classic across-zero borrowing misconception.
     wrongAnswer: 565,
     explanation:
-      "It looks like the smaller digit may have been taken away from the larger one in each column, rather than borrowing properly — especially tricky here because the tens column is a zero.",
+      "It looks like the smaller digit may have been taken away from the larger one in each column, rather than borrowing properly. That's especially tricky here because the tens column is a zero.",
   },
   {
     // 604 - 278 (the "fresh opportunity" item): the same digit-difference
@@ -132,9 +132,9 @@ const PLACE_LABELS = ["Th", "H", "T", "O"] as const;
 const REGROUP_STEPS: { caption: string; values: [string, string, string, string]; changed: number[] }[] = [
   { caption: "Start: 1000 is 1 thousand.", values: ["1", "0", "0", "0"], changed: [] },
   { caption: "The 1 thousand becomes 10 hundreds.", values: ["0", "10", "0", "0"], changed: [0, 1] },
-  { caption: "One hundred becomes 10 tens — 9 hundreds are left behind.", values: ["0", "9", "10", "0"], changed: [1, 2] },
+  { caption: "One hundred becomes 10 tens. 9 hundreds are left behind.", values: ["0", "9", "10", "0"], changed: [1, 2] },
   {
-    caption: "One ten becomes 10 ones — 9 tens are left behind. Now there are enough ones to subtract 3 from.",
+    caption: "One ten becomes 10 ones. 9 tens are left behind. Now there are enough ones to subtract 3 from.",
     values: ["0", "9", "9", "10"],
     changed: [2, 3],
   },
@@ -155,7 +155,7 @@ function progressionLabel(
     return { label: "Learning", description: "Working through the lesson." };
   }
   if (checkStage === "guided") {
-    return { label: "Ready to practise", description: "The guided step is done — next is trying one alone." };
+    return { label: "Ready to practise", description: "The guided step is done. Next is trying one alone." };
   }
   if (checkStage === "not-started") {
     // Real prior evidence exists — reflect it honestly using the same
@@ -172,18 +172,18 @@ function realEvidenceLabel(
 ): { label: string; description: string } {
   switch (educationalState) {
     case "rebuilding":
-      return { label: "Not yet understood", description: "This needs another look — let's go through it again." };
+      return { label: "Not yet understood", description: "This needs another look. Let's go through it again." };
     case "practising":
     case "reinforcing":
     case "building-knowledge":
-      return { label: "Developing", description: "Real progress — more practice will build this up further." };
+      return { label: "Developing", description: "Real progress. More practice will build this up further." };
     case "mastered":
     case "durably-mastered":
-      return { label: "Consistent", description: "This is solid — well done." };
+      return { label: "Consistent", description: "This is solid. Well done." };
     case "reviewing":
-      return { label: "Maintenance needed", description: "This was solid before — a quick check-in will confirm it still is." };
+      return { label: "Maintenance needed", description: "This was solid before. A quick check-in will confirm it still is." };
     default:
-      return { label: "Ready to practise", description: "One real attempt recorded — more evidence builds the picture." };
+      return { label: "Ready to practise", description: "One real attempt recorded. More evidence builds the picture." };
   }
 }
 
@@ -236,7 +236,7 @@ export default function MathematicsArithmeticLessonPage() {
 
       if (!guided || !independent) {
         throw new Error(
-          "This lesson's practice questions aren't available yet — migration 023 " +
+          "This lesson's practice questions aren't available yet. Migration 023 " +
           "(supabase/migrations/023_mathematics_learn_arithmetic_content.sql) has not been applied " +
           "to this database yet. Apply it via Supabase Dashboard > SQL Editor, then try again."
         );
@@ -498,14 +498,14 @@ export default function MathematicsArithmeticLessonPage() {
             <section>
               <h2 className="text-gray-900 dark:text-gray-100 font-bold text-lg mb-2">What&apos;s going on?</h2>
               <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed">
-                Every digit in a number has a place value — ones, tens, hundreds, and so on. When you add or
+                Every digit in a number has a place value: ones, tens, hundreds, and so on. When you add or
                 subtract big numbers, you work one column at a time, starting from the ones column on the right.
               </p>
               <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed mt-2">
-                Sometimes a column adds up to 10 or more — when that happens, you <strong>carry</strong> the extra
-                ten into the next column. Sometimes you need to subtract a bigger digit from a smaller one — when
+                Sometimes a column adds up to 10 or more. When that happens, you <strong>carry</strong> the extra
+                ten into the next column. Sometimes you need to subtract a bigger digit from a smaller one. When
                 that happens, you <strong>borrow</strong>{" "}a ten from the next column. Carrying and borrowing
-                aren&apos;t tricks — they&apos;re just keeping track of place value properly.
+                aren&apos;t tricks. They&apos;re just keeping track of place value properly.
               </p>
             </section>
 
@@ -516,7 +516,7 @@ export default function MathematicsArithmeticLessonPage() {
                 <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1.5">Addition</p>
                 <ol className="text-sm text-gray-700 dark:text-gray-300 list-decimal list-inside space-y-1">
                   <li>Line up the ones, tens and hundreds columns.</li>
-                  <li>Add the ones column first — if it&apos;s 10 or more, write the last digit and carry the rest.</li>
+                  <li>Add the ones column first. If it&apos;s 10 or more, write the last digit and carry the rest.</li>
                   <li>Add the tens column, including anything carried. Carry again if needed.</li>
                   <li>Keep going, column by column.</li>
                 </ol>
@@ -525,7 +525,7 @@ export default function MathematicsArithmeticLessonPage() {
                 <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1.5">Subtraction</p>
                 <ol className="text-sm text-gray-700 dark:text-gray-300 list-decimal list-inside space-y-1">
                   <li>Line up the columns the same way.</li>
-                  <li>Subtract the ones column — if the top digit is smaller, borrow a ten from the next column.</li>
+                  <li>Subtract the ones column. If the top digit is smaller, borrow a ten from the next column.</li>
                   <li>Subtract the tens column, borrowing again if needed.</li>
                   <li>Keep going until every column is subtracted.</li>
                 </ol>
@@ -540,15 +540,16 @@ export default function MathematicsArithmeticLessonPage() {
                 <ul className="text-sm text-gray-600 dark:text-gray-400 mt-1.5 space-y-0.5">
                   <li>Ones: 7 + 6 = 13 → write 3, carry 1</li>
                   <li>Tens: 4 + 5 + 1 = 10 → write 0, carry 1</li>
-                  <li>Hundreds: 8 + 3 + 1 = 12 → write 12</li>
+                  <li>Hundreds: 8 + 3 + 1 = 12 → write 2, carry 1</li>
+                  <li>Thousands: nothing else to add, so write the carried 1</li>
                 </ul>
                 <p className="text-sm font-bold text-emerald-600 mt-1.5">Answer: 1203</p>
               </InfoCard>
               <InfoCard className="mt-2">
-                <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">1000 − 473 <span className="font-normal text-gray-400">(the trickiest kind — borrowing across zeros)</span></p>
+                <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">1000 − 473 <span className="font-normal text-gray-400">(the trickiest kind: borrowing across zeros)</span></p>
 
                 <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed mt-2">
-                  The ones column needs to subtract 3, but it&apos;s a 0 — and the tens and hundreds columns are 0
+                  The ones column needs to subtract 3, but it&apos;s a 0. The tens and hundreds columns are 0
                   too, so there&apos;s nothing to borrow until we reach the thousands column. Watch what happens when
                   we regroup it:
                 </p>
@@ -576,7 +577,7 @@ export default function MathematicsArithmeticLessonPage() {
                   ))}
                 </div>
                 <p className="text-xs text-gray-500 dark:text-gray-400 mt-2.5 text-center italic">
-                  Every step still adds up to exactly 1000 — nothing is gained or lost, just moved to a more useful place.
+                  Every step still adds up to exactly 1000. Nothing is gained or lost, just moved to a more useful place.
                 </p>
 
                 <ul className="text-sm text-gray-600 dark:text-gray-400 mt-3 space-y-0.5">
@@ -586,7 +587,7 @@ export default function MathematicsArithmeticLessonPage() {
                 </ul>
                 <p className="text-sm font-bold text-emerald-600 mt-1.5">Answer: 527</p>
                 <p className="text-xs text-gray-500 dark:text-gray-400 mt-1.5">
-                  <strong>Check it:</strong> 527 + 473 = 1000 ✓ — adding the answer back to what was subtracted
+                  <strong>Check it:</strong> 527 + 473 = 1000 ✓. Adding the answer back to what was subtracted
                   should always give you back the number you started with.
                 </p>
               </InfoCard>
@@ -610,7 +611,7 @@ export default function MathematicsArithmeticLessonPage() {
                     )}
                     {hintsShown >= 2 && (
                       <p className="text-xs text-indigo-600 dark:text-indigo-400 flex items-start gap-1.5">
-                        <Lightbulb size={13} className="mt-0.5 shrink-0" /> That&apos;s 11 — write the 1, carry the 1 to the tens column.
+                        <Lightbulb size={13} className="mt-0.5 shrink-0" /> That&apos;s 11, so write the 1 and carry the 1 to the tens column.
                       </p>
                     )}
                     {hintsShown >= 3 && (
@@ -651,12 +652,12 @@ export default function MathematicsArithmeticLessonPage() {
                 {guidedAttempt1 && !guidedAttempt1.correct && (
                   <div className="mt-3 pt-3 border-t border-gray-100 dark:border-gray-800">
                     <p className="text-sm font-semibold text-amber-600 dark:text-amber-500 inline-flex items-center gap-1.5">
-                      <XCircle size={16} /> Not quite yet — let&apos;s look again.
+                      <XCircle size={16} /> Not quite yet. Let&apos;s look again.
                     </p>
                     <p className="text-xs text-gray-600 dark:text-gray-400 mt-1.5 flex items-start gap-1.5">
                       <Lightbulb size={13} className="mt-0.5 shrink-0 text-indigo-500" />
                       {classifyWrongAnswer(guidedAttempt1.answer, GUIDED_KNOWN_MISCONCEPTIONS) ??
-                        "Go back to the ones column and work through each column one at a time — remember to carry if a column adds to 10 or more."}
+                        "Go back to the ones column and work through each column one at a time. Remember to carry if a column adds to 10 or more."}
                     </p>
                   </div>
                 )}
@@ -720,9 +721,9 @@ export default function MathematicsArithmeticLessonPage() {
                 {guidedLadderStage === "resolved" && (
                   <p className="mt-3 inline-flex items-center gap-1.5 text-sm font-semibold">
                     {(guidedAttempt3 ?? guidedAttempt2 ?? guidedAttempt1)?.correct ? (
-                      <><CheckCircle2 size={16} className="text-emerald-500" /> Correct — 931</>
+                      <><CheckCircle2 size={16} className="text-emerald-500" /> Correct: 931</>
                     ) : (
-                      <><XCircle size={16} className="text-amber-500" /> That&apos;s alright — you&apos;ve seen the full method now.</>
+                      <><XCircle size={16} className="text-amber-500" /> That&apos;s alright. You&apos;ve seen the full method now.</>
                     )}
                   </p>
                 )}
@@ -737,7 +738,7 @@ export default function MathematicsArithmeticLessonPage() {
                   <AlertTriangle size={16} className="text-amber-500 mt-0.5 shrink-0" />
                   <ul className="text-sm text-gray-700 dark:text-gray-300 space-y-2">
                     <li><strong>Forgetting to carry.</strong> If a column adds to 10 or more, that extra ten has to go somewhere.</li>
-                    <li><strong>Borrowing from a zero without continuing the chain.</strong> If the column you want to borrow from is a zero, keep going left until you find one with something to give — every column along the way changes too.</li>
+                    <li><strong>Borrowing from a zero without continuing the chain.</strong> If the column you want to borrow from is a zero, keep going left until you find one with something to give. Every column along the way changes too.</li>
                   </ul>
                 </InfoCard>
               </section>
@@ -774,12 +775,12 @@ export default function MathematicsArithmeticLessonPage() {
                   {independentAttempt1 && !independentAttempt1.correct && (
                     <div className="mt-3 pt-3 border-t border-gray-100 dark:border-gray-800">
                       <p className="text-sm font-semibold text-amber-600 dark:text-amber-500 inline-flex items-center gap-1.5">
-                        <XCircle size={16} /> Not quite yet — have another look.
+                        <XCircle size={16} /> Not quite yet. Have another look.
                       </p>
                       <p className="text-xs text-gray-600 dark:text-gray-400 mt-1.5 flex items-start gap-1.5">
                         <Lightbulb size={13} className="mt-0.5 shrink-0 text-indigo-500" />
                         {classifyWrongAnswer(independentAttempt1.answer, INDEPENDENT_KNOWN_MISCONCEPTIONS) ??
-                          "Think about which column needs to borrow, and where that borrow can actually come from — try again."}
+                          "Think about which column needs to borrow, and where that borrow can actually come from. Try again."}
                       </p>
                     </div>
                   )}
@@ -825,7 +826,7 @@ export default function MathematicsArithmeticLessonPage() {
                   {independentLadderStage === "remediation" && !independentRetryItem && (
                     <div className="mt-3 pt-3 border-t border-gray-100 dark:border-gray-800">
                       <p className="text-xs text-gray-500 dark:text-gray-400">
-                        The next practice question for this isn&apos;t available yet — head to Practice when you&apos;re ready to try more like this.
+                        The next practice question for this isn&apos;t available yet. Head to Practice when you&apos;re ready to try more like this.
                       </p>
                       <button
                         onClick={() => {
@@ -866,9 +867,9 @@ export default function MathematicsArithmeticLessonPage() {
                       {independentFreshAttempt && (
                         <p className="mt-3 inline-flex items-center gap-1.5 text-sm font-semibold">
                           {independentFreshAttempt.correct ? (
-                            <><CheckCircle2 size={16} className="text-emerald-500" /> Correct — 326. That&apos;s genuine evidence you&apos;ve got it.</>
+                            <><CheckCircle2 size={16} className="text-emerald-500" /> Correct: 326. That&apos;s genuine evidence you&apos;ve got it.</>
                           ) : (
-                            <><XCircle size={16} className="text-amber-500" /> Not quite — the answer is 326. That&apos;s alright — this is real evidence either way.</>
+                            <><XCircle size={16} className="text-amber-500" /> Not quite. The answer is 326. That&apos;s alright, this is real evidence either way.</>
                           )}
                         </p>
                       )}
@@ -877,7 +878,7 @@ export default function MathematicsArithmeticLessonPage() {
 
                   {independentLadderStage === "resolved" && (independentAttempt1?.correct || independentAttempt2?.correct) && (
                     <p className="mt-3 inline-flex items-center gap-1.5 text-sm font-semibold">
-                      <CheckCircle2 size={16} className="text-emerald-500" /> Correct — 435
+                      <CheckCircle2 size={16} className="text-emerald-500" /> Correct: 435
                     </p>
                   )}
                 </InfoCard>
@@ -891,7 +892,7 @@ export default function MathematicsArithmeticLessonPage() {
                   <h2 className="text-gray-900 dark:text-gray-100 font-bold text-lg mb-2">Where this shows up in the exam</h2>
                   <InfoCard>
                     <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed">
-                      This exact type of question — a straightforward calculation with no story attached — is
+                      This exact type of question, a straightforward calculation with no story attached, is
                       usually one of the very first questions on a real 11+ maths paper. Getting comfortable with
                       carrying and borrowing means you can answer it quickly and confidently, leaving more time for
                       the harder questions later in the paper.

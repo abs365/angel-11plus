@@ -24,7 +24,7 @@ export default function CsseLearnPage() {
         <h1 className="text-gray-900 dark:text-gray-100 font-bold text-2xl">Learn</h1>
         <p className="text-gray-500 dark:text-gray-400 text-sm mt-2 leading-relaxed">
           Angel&apos;s CSSE Learn experience is being rebuilt one real lesson at a time, around genuine
-          evidence-led preparation content. One Mathematics lesson is ready today — the rest of the curriculum
+          evidence-led preparation content. One Mathematics lesson is ready today. The rest of the curriculum
           isn&apos;t yet, and we&apos;d rather show you that plainly than fill this page with content that isn&apos;t
           genuinely CSSE preparation.
         </p>
@@ -38,7 +38,7 @@ export default function CsseLearnPage() {
               <div className="min-w-0 flex-1">
                 <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">Mathematics: Adding and Subtracting Big Numbers</p>
                 <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">
-                  A real lesson — understand the method, try it with support, then try it alone.
+                  A real lesson: understand the method, try it with support, then try it alone.
                 </p>
               </div>
               <ArrowRight size={16} className="text-gray-300 dark:text-gray-600 shrink-0" />

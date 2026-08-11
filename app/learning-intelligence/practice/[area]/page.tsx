@@ -426,7 +426,7 @@ export default function PracticeSessionPage({ params }: { params: Promise<{ area
             <InfoCard className="text-center">
               <CheckCircle2 size={28} className="text-emerald-500 mx-auto mb-2" />
               <p className="text-lg font-bold text-gray-900 dark:text-gray-100">
-                Practice complete — {correctCount} of {activities.length} correct
+                Practice complete: {correctCount} of {activities.length} correct
               </p>
             </InfoCard>
 
@@ -632,7 +632,7 @@ function WritingActivity({
             <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">Overall score: {feedback.overallScore}/100</p>
           </div>
           <p className="text-[11px] text-gray-400 dark:text-gray-500">
-            AI-generated general writing-quality guidance — not a CSSE (or any exam board&apos;s) official or validated mark.
+            AI-generated general writing-quality guidance, not a CSSE (or any exam board&apos;s) official or validated mark.
           </p>
           <div className="text-xs text-gray-600 dark:text-gray-400 bg-gray-50 dark:bg-gray-800 rounded-xl p-3 space-y-2">
             <p><strong>Strengths:</strong> {feedback.strengths.join(" · ")}</p>

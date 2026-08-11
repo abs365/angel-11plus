@@ -42,7 +42,7 @@ export function EvidenceComposition({ competencies }: { competencies: Competency
         ))}
       </div>
       <p className="text-[11px] text-gray-400 dark:text-gray-500 mt-3 leading-relaxed">
-        This is today&apos;s snapshot, not a trend over time — Angel does not yet keep a history of how this changes
+        This is today&apos;s snapshot, not a trend over time. Angel does not yet keep a history of how this changes
         week to week, so we&apos;re not showing a growth line until that can be shown honestly.
       </p>
     </InfoCard>
