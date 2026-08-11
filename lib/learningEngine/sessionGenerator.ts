@@ -6,6 +6,7 @@ import { fetchQuestionBank } from "@/lib/ali/questionBank";
 import { fetchStudentHistory, ensureAdaptiveState } from "@/lib/ali/history";
 import { selectQuestions } from "@/lib/ali/selection";
 import { generateExplanation } from "@/lib/ali/explainability";
+import { competencyLabel } from "@/lib/ali/labels";
 import { getTargetExamDate } from "@/lib/progress";
 import { getRecommendations } from "./educationalIntelligenceService";
 import { QUESTION_TYPE_PRIMARY_COMPETENCY, getQuestionTypesForCompetency } from "./assessmentBrainMap";
@@ -33,6 +34,30 @@ import { getPracticeArea, type PracticeAreaId } from "./practiceContent";
  * feeding it a CSSE-correct priority signal (getRecommendations(), already
  * fixed for Question-Type-ID resolution in Sprint 2) instead of the coarse,
  * old-model-only deriveWeakCompetencies() signal that engine was built with.
+ *
+ * Family Choice Pilot (controlled implementation increment) — the
+ * `familyFocusCompetencyId` parameter is the choice-injection point
+ * ASSESSMENT_TO_LEARNING_CLOSED_LOOP_DESIGN.md identified. It is optional
+ * and additive: every existing caller (the live Practice pages) omits it
+ * and this function behaves exactly as before, byte-for-byte. When a
+ * caller does pass one (today, only the isolated
+ * app/learning-intelligence/founder-validation/family-choice route), its
+ * Question Types are unioned into the same `weakSkills` set
+ * selectQuestions() already accepts from Angel's own evidence-based
+ * `priority` — never replacing it, never generating a fabricated
+ * RecommendationCandidate, never touching result.ordered/explanations
+ * (Angel's own recommendation stays exactly what it already was). Two
+ * honesty constraints, both real:
+ *   1. Wellbeing-veto-aware — if `result.vetoedCompetencyCodes` (computed
+ *      by the unmodified Tier 0 mechanism, WP-21A) already contains the
+ *      chosen competency, this function refuses to inject it. The
+ *      wellbeing veto is the one mechanism this pilot must never be able
+ *      to bypass, by design, with no override path of any kind.
+ *   2. Area-scoped — if the chosen competency has no Question Types
+ *      tagged in this practice area's content, injection is a harmless
+ *      no-op (weakSkills.add() on codes that never appear in `tagged`),
+ *      and `familyFocus.applied` reports `false` honestly rather than
+ *      claiming an effect that couldn't happen.
  */
 
 /** Capped at 1 review-due competency per session — a disclosed judgement
@@ -46,10 +71,22 @@ export interface SessionActivity {
   explanation: string;
 }
 
+/** Family Choice Pilot — honest report of what happened with a caller-supplied familyFocusCompetencyId, never a claim of effect that didn't occur. */
+export interface FamilyFocusSessionInfo {
+  competencyId: CompetencyId;
+  label: string;
+  /** True only when the competency was both un-vetoed AND relevant to this area's content, and was actually unioned into weakSkills this session. */
+  applied: boolean;
+  /** True when injection was withheld specifically because Tier 0 (WP-21A) currently vetoes this competency — the wellbeing veto is authoritative and was not bypassed. */
+  wellbeingPaused: boolean;
+}
+
 export interface PersonalisedSession {
   activities: SessionActivity[];
-  /** Parent/learner-facing overview of why today's session looks like this — reuses the same "parent" audience explanation Sprint 2 already wired for the Parent Dashboard, not new copy. */
+  /** Parent/learner-facing overview of why today's session looks like this — reuses the same "parent" audience explanation Sprint 2 already wired for the Parent Dashboard, not new copy. Always describes Angel's own recommendation; never overwritten by a family choice. */
   summary: string;
+  /** Present only when a caller passed familyFocusCompetencyId. Coexists with `summary` (Angel's own view) — never merges or overwrites it. */
+  familyFocus?: FamilyFocusSessionInfo;
 }
 
 function daysUntilFromTargetExamDate(now: Date): number | null {
@@ -81,7 +118,8 @@ export async function generatePersonalisedSession(
   supabase: SupabaseClient<Database>,
   profileId: string,
   areaId: PracticeAreaId,
-  now: Date = new Date()
+  now: Date = new Date(),
+  familyFocusCompetencyId?: CompetencyId
 ): Promise<PersonalisedSession> {
   const area = getPracticeArea(areaId);
   if (!area) {
@@ -147,6 +185,27 @@ export async function generatePersonalisedSession(
   const weakSkills = new Set<QuestionTypeId>(
     priority.flatMap((c) => getQuestionTypesForCompetency(c.competencyCode as CompetencyId))
   );
+
+  // Family Choice Pilot — choice-injection point (see this module's
+  // docstring). Computed after `weakSkills` so a family's choice is
+  // additive, never a substitute for Angel's own evidence-based signal.
+  let familyFocus: FamilyFocusSessionInfo | undefined;
+  if (familyFocusCompetencyId) {
+    const vetoed = result.vetoedCompetencyCodes.includes(familyFocusCompetencyId);
+    const focusSkillCodes = getQuestionTypesForCompetency(familyFocusCompetencyId);
+    const relevantToThisArea = focusSkillCodes.some((qt) => tagged.some((q) => q.skill === qt));
+    const applied = !vetoed && relevantToThisArea;
+    if (applied) {
+      for (const qt of focusSkillCodes) weakSkills.add(qt);
+    }
+    familyFocus = {
+      competencyId: familyFocusCompetencyId,
+      label: competencyLabel(familyFocusCompetencyId),
+      applied,
+      wellbeingPaused: vetoed,
+    };
+  }
+
   const remainingSlots = Math.max(0, area.sessionSize - reviewActivities.length);
   const candidatePool = tagged.filter((q) => !reservedIds.has(q.id));
   const selection = selectQuestions(candidatePool, history, currentSequence, weakSkills, remainingSlots);
@@ -167,5 +226,5 @@ export async function generatePersonalisedSession(
     ? generateExplanation(topCandidate, "parent").text
     : "Today's session is a general practice mix across this area.";
 
-  return { activities: [...reviewActivities, ...priorityActivities], summary };
+  return { activities: [...reviewActivities, ...priorityActivities], summary, familyFocus };
 }

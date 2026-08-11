@@ -631,6 +631,9 @@ function WritingActivity({
             )}
             <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">Overall score: {feedback.overallScore}/100</p>
           </div>
+          <p className="text-[11px] text-gray-400 dark:text-gray-500">
+            AI-generated general writing-quality guidance — not a CSSE (or any exam board&apos;s) official or validated mark.
+          </p>
           <div className="text-xs text-gray-600 dark:text-gray-400 bg-gray-50 dark:bg-gray-800 rounded-xl p-3 space-y-2">
             <p><strong>Strengths:</strong> {feedback.strengths.join(" · ")}</p>
             <p><strong>Areas to improve:</strong> {feedback.areasToImprove.join(" · ")}</p>

@@ -281,6 +281,35 @@ export interface Database {
         };
         Relationships: [];
       };
+      ali_family_focus_selection: {
+        Row: {
+          profile_id: string;
+          competency_code: string;
+          source: string;
+          active: boolean;
+          selected_at: string;
+          removed_at: string | null;
+          updated_at: string;
+        };
+        Insert: {
+          profile_id: string;
+          competency_code: string;
+          source?: string;
+          active?: boolean;
+          selected_at?: string;
+          removed_at?: string | null;
+          updated_at?: string;
+        };
+        Update: {
+          competency_code?: string;
+          source?: string;
+          active?: boolean;
+          selected_at?: string;
+          removed_at?: string | null;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
       ali_educational_audit: {
         Row: {
           id: string;
