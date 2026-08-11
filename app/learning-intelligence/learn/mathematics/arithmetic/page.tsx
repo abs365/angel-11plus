@@ -241,13 +241,14 @@ export default function MathematicsArithmeticLessonPage() {
           "to this database yet. Apply it via Supabase Dashboard > SQL Editor, then try again."
         );
       }
-      if (!independentRetry) {
-        throw new Error(
-          "This lesson's Independent Check remediation isn't available yet — migration 025 " +
-          "(supabase/migrations/025_mathematics_independent_check_retry_item.sql) has not been applied " +
-          "to this database yet. Apply it via Supabase Dashboard > SQL Editor, then try again."
-        );
-      }
+      // Deliberately not a hard failure: migration 025 (the Independent
+      // Check's "fresh opportunity" item) is only needed if a learner gets
+      // the Independent Check wrong twice — most of the lesson, including
+      // the Guided Attempt ladder and a correct-first-try Independent
+      // Check, works fully without it. Failing the whole lesson load over a
+      // remediation-path dependency would be a worse regression than a
+      // graceful fallback at the one stage that actually needs it (see the
+      // "remediation" stage rendering below).
       setGuidedItem(guided);
       setIndependentItem(independent);
       setIndependentRetryItem(independentRetry);
@@ -821,7 +822,23 @@ export default function MathematicsArithmeticLessonPage() {
                   )}
 
                   {/* Fresh opportunity: a genuinely different problem, not a repeat of the numbers just shown. */}
-                  {(independentLadderStage === "remediation" || independentFreshAttempt) && (
+                  {independentLadderStage === "remediation" && !independentRetryItem && (
+                    <div className="mt-3 pt-3 border-t border-gray-100 dark:border-gray-800">
+                      <p className="text-xs text-gray-500 dark:text-gray-400">
+                        The next practice question for this isn&apos;t available yet — head to Practice when you&apos;re ready to try more like this.
+                      </p>
+                      <button
+                        onClick={() => {
+                          setIndependentLadderStage("resolved");
+                          setCheckStage("independent");
+                        }}
+                        className="mt-3 bg-purple-600 hover:bg-purple-700 text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-colors"
+                      >
+                        Continue
+                      </button>
+                    </div>
+                  )}
+                  {(independentRetryItem && independentLadderStage === "remediation") || independentFreshAttempt ? (
                     <div className="mt-3 pt-3 border-t border-gray-100 dark:border-gray-800">
                       <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1.5">
                         Now try a different one on your own
@@ -856,7 +873,7 @@ export default function MathematicsArithmeticLessonPage() {
                         </p>
                       )}
                     </div>
-                  )}
+                  ) : null}
 
                   {independentLadderStage === "resolved" && (independentAttempt1?.correct || independentAttempt2?.correct) && (
                     <p className="mt-3 inline-flex items-center gap-1.5 text-sm font-semibold">
