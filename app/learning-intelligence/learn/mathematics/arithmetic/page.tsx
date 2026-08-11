@@ -56,6 +56,21 @@ type CheckStage = "not-started" | "guided" | "independent" | "done";
 type GuidedLadderStage = "attempt-1" | "attempt-2" | "attempt-3" | "resolved";
 
 /**
+ * Independent Check Remediation (Founder Visual Review Remediation §2-3) —
+ * an Independent Check no longer reveals the answer on the first wrong
+ * attempt. attempt-1 wrong -> honest diagnostic, no answer shown, a genuine
+ * retry (attempt-2, still unaided, still "independent" tier — no help has
+ * been given yet). attempt-2 wrong -> misunderstanding persists -> full
+ * worked resolution shown, then a FRESH, different problem
+ * (learn-mth-arith-independent-retry, migration 025) tests genuine
+ * transfer — not a repeat of the same numbers just demonstrated. Every real
+ * attempt in this ladder is genuinely unaided and recorded as
+ * supportTier "independent"; only the worked-resolution display itself is
+ * "help," and no evidence is written for it.
+ */
+type IndependentLadderStage = "attempt-1" | "attempt-2" | "remediation" | "resolved";
+
+/**
  * Deliberately NOT a general mistake-classification system — a coded
  * misconception taxonomy remains explicitly not-yet-approved
  * (EDUCATIONAL_INTELLIGENCE_ENGINE_V1.md §11) and nothing here is persisted
@@ -88,6 +103,14 @@ const INDEPENDENT_KNOWN_MISCONCEPTIONS: KnownMisconception[] = [
     explanation:
       "It looks like the smaller digit may have been taken away from the larger one in each column, rather than borrowing properly — especially tricky here because the tens column is a zero.",
   },
+  {
+    // 604 - 278 (the "fresh opportunity" item): the same digit-difference
+    // misconception applied to this problem (hundreds 6-2=4, tens |0-7|=7,
+    // ones |4-8|=4) = 474.
+    wrongAnswer: 474,
+    explanation:
+      "It looks like the smaller digit may have been taken away from the larger one in each column again, rather than borrowing properly through the zero.",
+  },
 ];
 
 function classifyWrongAnswer(userAnswer: string, patterns: KnownMisconception[]): string | null {
@@ -95,6 +118,27 @@ function classifyWrongAnswer(userAnswer: string, patterns: KnownMisconception[])
   if (Number.isNaN(parsed)) return null;
   return patterns.find((p) => p.wrongAnswer === parsed)?.explanation ?? null;
 }
+
+/**
+ * Founder Visual Review Remediation §5-6 — a static, non-animated,
+ * progressive place-value regrouping sequence for 1000 - 473's borrowing,
+ * replacing a five-paragraph prose explanation. Each step shows the real
+ * intermediate place-value state (hand-verified: 1 thousand = 10 hundreds =
+ * 9 hundreds + 10 tens = 9 hundreds + 9 tens + 10 ones, every step still
+ * totalling 1000), with the column(s) that just changed highlighted —
+ * "changed" indices are into [Thousands, Hundreds, Tens, Ones].
+ */
+const PLACE_LABELS = ["Th", "H", "T", "O"] as const;
+const REGROUP_STEPS: { caption: string; values: [string, string, string, string]; changed: number[] }[] = [
+  { caption: "Start: 1000 is 1 thousand.", values: ["1", "0", "0", "0"], changed: [] },
+  { caption: "The 1 thousand becomes 10 hundreds.", values: ["0", "10", "0", "0"], changed: [0, 1] },
+  { caption: "One hundred becomes 10 tens — 9 hundreds are left behind.", values: ["0", "9", "10", "0"], changed: [1, 2] },
+  {
+    caption: "One ten becomes 10 ones — 9 tens are left behind. Now there are enough ones to subtract 3 from.",
+    values: ["0", "9", "9", "10"],
+    changed: [2, 3],
+  },
+];
 
 function progressionLabel(
   checkStage: CheckStage,
@@ -148,6 +192,7 @@ export default function MathematicsArithmeticLessonPage() {
   const [errorMessage, setErrorMessage] = useState("");
   const [guidedItem, setGuidedItem] = useState<BankQuestion | null>(null);
   const [independentItem, setIndependentItem] = useState<BankQuestion | null>(null);
+  const [independentRetryItem, setIndependentRetryItem] = useState<BankQuestion | null>(null);
   const [educationalState, setEducationalState] = useState<EducationalIntelligenceSnapshot["educationalState"] | undefined>(undefined);
 
   const [checkStage, setCheckStage] = useState<CheckStage>("not-started");
@@ -159,8 +204,11 @@ export default function MathematicsArithmeticLessonPage() {
   const [guidedAttempt2, setGuidedAttempt2] = useState<{ answer: string; correct: boolean } | null>(null);
   const [guidedAttempt3, setGuidedAttempt3] = useState<{ answer: string; correct: boolean } | null>(null);
   const [independentAnswer, setIndependentAnswer] = useState("");
-  const [independentSubmitted, setIndependentSubmitted] = useState(false);
-  const [independentCorrect, setIndependentCorrect] = useState<boolean | null>(null);
+  const [independentLadderStage, setIndependentLadderStage] = useState<IndependentLadderStage>("attempt-1");
+  const [independentAttempt1, setIndependentAttempt1] = useState<{ answer: string; correct: boolean } | null>(null);
+  const [independentAttempt2, setIndependentAttempt2] = useState<{ answer: string; correct: boolean } | null>(null);
+  const [independentFreshAnswer, setIndependentFreshAnswer] = useState("");
+  const [independentFreshAttempt, setIndependentFreshAttempt] = useState<{ answer: string; correct: boolean } | null>(null);
 
   const profileIdRef = useRef<string>("");
   const supabaseRef = useRef<ReturnType<typeof getSupabaseClient>>(null);
@@ -184,6 +232,7 @@ export default function MathematicsArithmeticLessonPage() {
       const maths = await withTimeout(fetchQuestionBank(supabase, "maths", "csse"), 10000, "this lesson's questions");
       const guided = maths.find((q) => q.id === "learn-mth-arith-guided") ?? null;
       const independent = maths.find((q) => q.id === "learn-mth-arith-independent") ?? null;
+      const independentRetry = maths.find((q) => q.id === "learn-mth-arith-independent-retry") ?? null;
 
       if (!guided || !independent) {
         throw new Error(
@@ -192,8 +241,16 @@ export default function MathematicsArithmeticLessonPage() {
           "to this database yet. Apply it via Supabase Dashboard > SQL Editor, then try again."
         );
       }
+      if (!independentRetry) {
+        throw new Error(
+          "This lesson's Independent Check remediation isn't available yet — migration 025 " +
+          "(supabase/migrations/025_mathematics_independent_check_retry_item.sql) has not been applied " +
+          "to this database yet. Apply it via Supabase Dashboard > SQL Editor, then try again."
+        );
+      }
       setGuidedItem(guided);
       setIndependentItem(independent);
+      setIndependentRetryItem(independentRetry);
 
       const snapshot = await getEducationalIntelligence(supabase, profileId, COMPETENCY_ID);
       setEducationalState(snapshot.educationalState);
@@ -300,50 +357,98 @@ export default function MathematicsArithmeticLessonPage() {
     setGuidedAnswer("");
   }
 
-  async function submitIndependent() {
-    if (!independentItem) return;
-    const q = independentItem.prompt as MathsQuestion;
-    const isCorrect = checkMathsAnswer(independentAnswer, String(q.answer));
-    setIndependentCorrect(isCorrect);
-    setIndependentSubmitted(true);
-
+  /**
+   * Records one real Independent Check outcome. Every attempt in this
+   * ladder — the original item's first try, its retry, and the fresh
+   * transfer item — is genuinely unaided (no worked solution has been
+   * shown at the point any of them is submitted), so all are recorded with
+   * the default supportTier "independent". `presentedNow` controls whether
+   * recordPresentation() fires — true only the first time a given question
+   * id is shown this lesson visit (the original item's first attempt; the
+   * fresh item's only attempt), matching the same discipline as the Guided
+   * ladder's recordGuidedAttempt().
+   */
+  async function recordIndependentAttempt(item: BankQuestion, isCorrect: boolean, presentedNow: boolean) {
     const supabase = supabaseRef.current;
-    if (supabase && profileIdRef.current) {
-      // Fresh pre-attempt snapshot — the guided attempt above may have
-      // already changed the real Educational State, so re-read rather than
-      // reuse the lesson-start snapshot (same discipline the Practice runner
-      // uses for a second answer in the same competency within one session).
-      const preAttempt = await getEducationalIntelligence(supabase, profileIdRef.current, COMPETENCY_ID).catch(() => null);
+    if (!supabase || !profileIdRef.current) return;
 
+    if (presentedNow) {
       await withTimeout(
-        recordPresentation(supabase, profileIdRef.current, [independentItem.id], "learning_independent"),
+        recordPresentation(supabase, profileIdRef.current, [item.id], "learning_independent"),
         10000,
         "saving your progress"
       ).catch(() => {});
-      await recordOutcome(
+    }
+    // Fresh pre-attempt snapshot for every real attempt — Educational State
+    // may have changed since the lesson-start snapshot (same discipline the
+    // Practice runner uses for a second answer in one session).
+    const preAttempt = await getEducationalIntelligence(supabase, profileIdRef.current, COMPETENCY_ID).catch(() => null);
+    await recordOutcome(
+      supabase,
+      profileIdRef.current,
+      item.id,
+      isCorrect,
+      sessionIdRef.current,
+      item.masteryThreshold
+    ).catch(() => {});
+    if (preAttempt) {
+      const updated = await processEvidenceForCompetency(
         supabase,
         profileIdRef.current,
-        independentItem.id,
-        isCorrect,
-        sessionIdRef.current,
-        independentItem.masteryThreshold
-      ).catch(() => {});
-
-      if (preAttempt) {
-        const updated = await processEvidenceForCompetency(
-          supabase,
-          profileIdRef.current,
-          COMPETENCY_ID,
-          preAttempt,
-          isCorrect
-        ).catch(() => null);
-        if (updated) setEducationalState(updated.educationalState);
-      }
+        COMPETENCY_ID,
+        preAttempt,
+        isCorrect
+      ).catch(() => null);
+      if (updated) setEducationalState(updated.educationalState);
     }
+  }
+
+  async function submitIndependentAttempt1() {
+    if (!independentItem) return;
+    const q = independentItem.prompt as MathsQuestion;
+    const isCorrect = checkMathsAnswer(independentAnswer, String(q.answer));
+    setIndependentAttempt1({ answer: independentAnswer, correct: isCorrect });
+    await recordIndependentAttempt(independentItem, isCorrect, true);
+    if (isCorrect) {
+      setIndependentLadderStage("resolved");
+      setCheckStage("independent");
+    } else {
+      setIndependentLadderStage("attempt-2");
+    }
+    setIndependentAnswer("");
+  }
+
+  async function submitIndependentAttempt2() {
+    if (!independentItem) return;
+    const q = independentItem.prompt as MathsQuestion;
+    const isCorrect = checkMathsAnswer(independentAnswer, String(q.answer));
+    setIndependentAttempt2({ answer: independentAnswer, correct: isCorrect });
+    await recordIndependentAttempt(independentItem, isCorrect, false);
+    if (isCorrect) {
+      setIndependentLadderStage("resolved");
+      setCheckStage("independent");
+    } else {
+      setIndependentLadderStage("remediation");
+    }
+    setIndependentAnswer("");
+  }
+
+  async function submitIndependentFresh() {
+    if (!independentRetryItem) return;
+    const q = independentRetryItem.prompt as MathsQuestion;
+    const isCorrect = checkMathsAnswer(independentFreshAnswer, String(q.answer));
+    setIndependentFreshAttempt({ answer: independentFreshAnswer, correct: isCorrect });
+    await recordIndependentAttempt(independentRetryItem, isCorrect, true);
+    // Bounded ladder: resolves regardless of outcome — no infinite loop.
+    setIndependentLadderStage("resolved");
     setCheckStage("independent");
+    setIndependentFreshAnswer("");
   }
 
   const progression = progressionLabel(checkStage, educationalState);
+  const independentResolved = independentLadderStage === "resolved";
+  const independentUltimatelyCorrect =
+    independentAttempt1?.correct || independentAttempt2?.correct || independentFreshAttempt?.correct || false;
 
   return (
     <PageLayout breadcrumbs={[{ label: "Learn", href: "/learning-intelligence/learn" }, { label: "Adding and Subtracting Big Numbers" }]}>
@@ -442,57 +547,38 @@ export default function MathematicsArithmeticLessonPage() {
                 <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">1000 − 473 <span className="font-normal text-gray-400">(the trickiest kind — borrowing across zeros)</span></p>
 
                 <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed mt-2">
-                  <strong>Why borrowing is needed here:</strong> look at the ones column — 0 − 3. You can&apos;t take
-                  3 away from 0, so the ones column needs to borrow a ten from somewhere.
-                </p>
-                <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed mt-2">
-                  <strong>Why you can&apos;t just borrow from the next column:</strong> the tens column is also a
-                  zero — there&apos;s nothing there to give. The hundreds column is a zero too. The only column with
-                  anything in it is the thousands column, so the borrow has to travel all the way there.
-                </p>
-                <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed mt-2">
-                  <strong>Where the value actually comes from:</strong> the thousands column holds a 1, worth 1000.
-                  Regroup that 1000 as 900 + 90 + 10 — the same total value, just split so every column that needs
-                  to borrow has something to borrow from.
+                  The ones column needs to subtract 3, but it&apos;s a 0 — and the tens and hundreds columns are 0
+                  too, so there&apos;s nothing to borrow until we reach the thousands column. Watch what happens when
+                  we regroup it:
                 </p>
 
-                <div className="overflow-x-auto mt-3">
-                  <table className="text-sm text-center border-collapse w-full">
-                    <thead>
-                      <tr className="text-xs text-gray-500 dark:text-gray-400">
-                        <th className="p-1.5"></th>
-                        <th className="p-1.5">Thousands</th>
-                        <th className="p-1.5">Hundreds</th>
-                        <th className="p-1.5">Tens</th>
-                        <th className="p-1.5">Ones</th>
-                      </tr>
-                    </thead>
-                    <tbody className="text-gray-800 dark:text-gray-200">
-                      <tr className="border-t border-gray-200 dark:border-gray-700">
-                        <td className="p-1.5 text-xs text-gray-500 dark:text-gray-400 text-left">Before borrowing</td>
-                        <td className="p-1.5">1</td><td className="p-1.5">0</td><td className="p-1.5">0</td><td className="p-1.5">0</td>
-                      </tr>
-                      <tr className="border-t border-gray-200 dark:border-gray-700 font-semibold">
-                        <td className="p-1.5 text-xs text-gray-500 dark:text-gray-400 text-left">After borrowing</td>
-                        <td className="p-1.5">0</td><td className="p-1.5">9</td><td className="p-1.5">9</td><td className="p-1.5">10</td>
-                      </tr>
-                    </tbody>
-                  </table>
+                <div className="mt-3 space-y-2.5">
+                  {REGROUP_STEPS.map((step, i) => (
+                    <div key={i}>
+                      <div className="grid grid-cols-4 gap-1.5 text-center">
+                        {step.values.map((v, colIdx) => (
+                          <div
+                            key={colIdx}
+                            className={`rounded-lg py-2 text-sm font-semibold ${
+                              step.changed.includes(colIdx)
+                                ? "bg-indigo-100 dark:bg-indigo-900/40 text-indigo-700 dark:text-indigo-300 ring-1 ring-indigo-300 dark:ring-indigo-700"
+                                : "bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-400"
+                            }`}
+                          >
+                            <div className="text-[10px] font-normal uppercase tracking-wide opacity-70">{PLACE_LABELS[colIdx]}</div>
+                            {v}
+                          </div>
+                        ))}
+                      </div>
+                      <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 text-center">{step.caption}</p>
+                    </div>
+                  ))}
                 </div>
-
-                <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed mt-3">
-                  <strong>Why every zero changes:</strong> the single 1 from the thousands column passes down through
-                  each zero column in turn. Each one it passes through keeps a 9 and sends the rest further along,
-                  until the ones column receives a full extra ten — that&apos;s why it&apos;s the only column that
-                  becomes 10, not 9.
-                </p>
-                <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed mt-2">
-                  <strong>The place value hasn&apos;t changed:</strong> the 9 in the hundreds column still means 900.
-                  The 9 in the tens column still means 90. The 10 in the ones column means the ones place is
-                  temporarily holding ten ones — enough to subtract 3 from.
+                <p className="text-xs text-gray-500 dark:text-gray-400 mt-2.5 text-center italic">
+                  Every step still adds up to exactly 1000 — nothing is gained or lost, just moved to a more useful place.
                 </p>
 
-                <ul className="text-sm text-gray-600 dark:text-gray-400 mt-2 space-y-0.5">
+                <ul className="text-sm text-gray-600 dark:text-gray-400 mt-3 space-y-0.5">
                   <li>Ones: 10 − 3 = 7</li>
                   <li>Tens: 9 − 7 = 2</li>
                   <li>Hundreds: 9 − 4 = 5</li>
@@ -656,7 +742,7 @@ export default function MathematicsArithmeticLessonPage() {
               </section>
             )}
 
-            {/* INDEPENDENT CHECK */}
+            {/* INDEPENDENT CHECK — bounded remediation ladder, see MATHEMATICS_REFERENCE_VERTICAL_FINAL_REFINEMENT_REPORT.md */}
             {guidedSubmitted && (
               <section>
                 <h2 className="text-gray-900 dark:text-gray-100 font-bold text-lg mb-2">Now try one alone</h2>
@@ -664,45 +750,125 @@ export default function MathematicsArithmeticLessonPage() {
                   <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">
                     {independentItem ? (independentItem.prompt as MathsQuestion).question : "…"}
                   </p>
-                  <input
-                    value={independentAnswer}
-                    onChange={(e) => setIndependentAnswer(e.target.value)}
-                    disabled={independentSubmitted}
-                    className="w-full mt-3 text-sm rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-3"
-                    placeholder="Your answer…"
-                  />
-                  {!independentSubmitted ? (
-                    <button
-                      onClick={() => void submitIndependent()}
-                      disabled={!independentAnswer.trim()}
-                      className="mt-3 bg-purple-600 hover:bg-purple-700 disabled:opacity-40 text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-colors"
-                    >
-                      Submit
-                    </button>
-                  ) : (
-                    <div className="mt-3">
-                      <p className="inline-flex items-center gap-1.5 text-sm font-semibold">
-                        {independentCorrect ? (
-                          <><CheckCircle2 size={16} className="text-emerald-500" /> Correct — 435</>
-                        ) : (
-                          <><XCircle size={16} className="text-amber-500" /> Not quite — the answer is 435</>
-                        )}
+
+                  {independentLadderStage === "attempt-1" && (
+                    <>
+                      <input
+                        value={independentAnswer}
+                        onChange={(e) => setIndependentAnswer(e.target.value)}
+                        className="w-full mt-3 text-sm rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-3"
+                        placeholder="Your answer…"
+                      />
+                      <button
+                        onClick={() => void submitIndependentAttempt1()}
+                        disabled={!independentAnswer.trim()}
+                        className="mt-3 bg-purple-600 hover:bg-purple-700 disabled:opacity-40 text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-colors"
+                      >
+                        Submit
+                      </button>
+                    </>
+                  )}
+
+                  {/* First wrong attempt: no answer revealed — an honest diagnostic and a genuine, still-unaided retry. */}
+                  {independentAttempt1 && !independentAttempt1.correct && (
+                    <div className="mt-3 pt-3 border-t border-gray-100 dark:border-gray-800">
+                      <p className="text-sm font-semibold text-amber-600 dark:text-amber-500 inline-flex items-center gap-1.5">
+                        <XCircle size={16} /> Not quite yet — have another look.
                       </p>
-                      {!independentCorrect && (
-                        <p className="text-xs text-gray-500 dark:text-gray-400 mt-1.5 flex items-start gap-1.5">
-                          <Lightbulb size={13} className="mt-0.5 shrink-0 text-indigo-500" />
-                          {classifyWrongAnswer(independentAnswer, INDEPENDENT_KNOWN_MISCONCEPTIONS) ??
-                            "Have a go working through it column by column, and check where borrowing across the zero happens."}
+                      <p className="text-xs text-gray-600 dark:text-gray-400 mt-1.5 flex items-start gap-1.5">
+                        <Lightbulb size={13} className="mt-0.5 shrink-0 text-indigo-500" />
+                        {classifyWrongAnswer(independentAttempt1.answer, INDEPENDENT_KNOWN_MISCONCEPTIONS) ??
+                          "Think about which column needs to borrow, and where that borrow can actually come from — try again."}
+                      </p>
+                    </div>
+                  )}
+
+                  {independentLadderStage === "attempt-2" && (
+                    <>
+                      <input
+                        value={independentAnswer}
+                        onChange={(e) => setIndependentAnswer(e.target.value)}
+                        className="w-full mt-3 text-sm rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-3"
+                        placeholder="Try again…"
+                      />
+                      <button
+                        onClick={() => void submitIndependentAttempt2()}
+                        disabled={!independentAnswer.trim()}
+                        className="mt-3 bg-purple-600 hover:bg-purple-700 disabled:opacity-40 text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-colors"
+                      >
+                        Submit
+                      </button>
+                    </>
+                  )}
+
+                  {/* Second wrong attempt: misunderstanding persists — full worked resolution, no more guessing on this exact problem. */}
+                  {independentAttempt2 && !independentAttempt2.correct && (
+                    <div className="mt-3 pt-3 border-t border-gray-100 dark:border-gray-800">
+                      <p className="text-sm font-semibold text-amber-600 dark:text-amber-500 inline-flex items-center gap-1.5">
+                        <XCircle size={16} /> Let&apos;s work through this one together.
+                      </p>
+                      <p className="text-xs text-gray-600 dark:text-gray-400 mt-1.5">
+                        {classifyWrongAnswer(independentAttempt2.answer, INDEPENDENT_KNOWN_MISCONCEPTIONS) ??
+                          "Here's the full method, one column at a time:"}
+                      </p>
+                      <ul className="text-sm text-gray-700 dark:text-gray-300 mt-2 space-y-0.5">
+                        <li>Ones: 3 − 8 needs borrowing; tens is 0, so the borrow travels to the hundreds column</li>
+                        <li>After borrowing: hundreds 8, tens 9, ones 13</li>
+                        <li>Ones: 13 − 8 = 5. Tens: 9 − 6 = 3. Hundreds: 8 − 4 = 4</li>
+                      </ul>
+                      <p className="text-sm font-bold text-emerald-600 mt-1.5">Answer: 435</p>
+                    </div>
+                  )}
+
+                  {/* Fresh opportunity: a genuinely different problem, not a repeat of the numbers just shown. */}
+                  {(independentLadderStage === "remediation" || independentFreshAttempt) && (
+                    <div className="mt-3 pt-3 border-t border-gray-100 dark:border-gray-800">
+                      <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1.5">
+                        Now try a different one on your own
+                      </p>
+                      <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">
+                        {independentRetryItem ? (independentRetryItem.prompt as MathsQuestion).question : "…"}
+                      </p>
+                      {independentLadderStage === "remediation" && (
+                        <>
+                          <input
+                            value={independentFreshAnswer}
+                            onChange={(e) => setIndependentFreshAnswer(e.target.value)}
+                            className="w-full mt-3 text-sm rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-3"
+                            placeholder="Your answer…"
+                          />
+                          <button
+                            onClick={() => void submitIndependentFresh()}
+                            disabled={!independentFreshAnswer.trim()}
+                            className="mt-3 bg-purple-600 hover:bg-purple-700 disabled:opacity-40 text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-colors"
+                          >
+                            Submit
+                          </button>
+                        </>
+                      )}
+                      {independentFreshAttempt && (
+                        <p className="mt-3 inline-flex items-center gap-1.5 text-sm font-semibold">
+                          {independentFreshAttempt.correct ? (
+                            <><CheckCircle2 size={16} className="text-emerald-500" /> Correct — 326. That&apos;s genuine evidence you&apos;ve got it.</>
+                          ) : (
+                            <><XCircle size={16} className="text-amber-500" /> Not quite — the answer is 326. That&apos;s alright — this is real evidence either way.</>
+                          )}
                         </p>
                       )}
                     </div>
+                  )}
+
+                  {independentLadderStage === "resolved" && (independentAttempt1?.correct || independentAttempt2?.correct) && (
+                    <p className="mt-3 inline-flex items-center gap-1.5 text-sm font-semibold">
+                      <CheckCircle2 size={16} className="text-emerald-500" /> Correct — 435
+                    </p>
                   )}
                 </InfoCard>
               </section>
             )}
 
             {/* EXAM APPLICATION + NEXT STEP */}
-            {independentSubmitted && (
+            {independentResolved && (
               <>
                 <section>
                   <h2 className="text-gray-900 dark:text-gray-100 font-bold text-lg mb-2">Where this shows up in the exam</h2>
@@ -718,7 +884,7 @@ export default function MathematicsArithmeticLessonPage() {
 
                 <section>
                   <h2 className="text-gray-900 dark:text-gray-100 font-bold text-lg mb-2">What&apos;s next?</h2>
-                  {independentCorrect ? (
+                  {independentUltimatelyCorrect ? (
                     <Link
                       href="/learning-intelligence/practice/mathematics"
                       className="inline-flex items-center gap-1.5 bg-purple-600 hover:bg-purple-700 text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-colors"
@@ -726,24 +892,17 @@ export default function MathematicsArithmeticLessonPage() {
                       You&apos;re ready to practise this properly <ArrowRight size={14} />
                     </Link>
                   ) : (
-                    <button
-                      onClick={() => {
-                        setCheckStage("not-started");
-                        setGuidedSubmitted(false);
-                        setGuidedAnswer("");
-                        setGuidedLadderStage("attempt-1");
-                        setGuidedAttempt1(null);
-                        setGuidedAttempt2(null);
-                        setGuidedAttempt3(null);
-                        setHintsShown(0);
-                        setIndependentSubmitted(false);
-                        setIndependentAnswer("");
-                        setIndependentCorrect(null);
-                      }}
+                    // Evidence-derived, specific next action (Founder Visual Review
+                    // Remediation §7) — Angel now has real evidence this learner
+                    // struggled specifically with borrowing across zero, so Practice
+                    // (which surfaces this same competency from real evidence) is a
+                    // more honest destination than a blanket full-lesson reset.
+                    <Link
+                      href="/learning-intelligence/practice/mathematics"
                       className="inline-flex items-center gap-1.5 bg-purple-600 hover:bg-purple-700 text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-colors"
                     >
-                      Let&apos;s go through this again <ArrowRight size={14} />
-                    </button>
+                      Practise borrowing across zero again <ArrowRight size={14} />
+                    </Link>
                   )}
                   <div className="mt-3">
                     <Link href="/learning-intelligence" className="text-xs font-semibold text-gray-500 dark:text-gray-400">
