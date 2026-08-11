@@ -185,6 +185,18 @@ export function CssePathwayParentContent() {
                 <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 leading-relaxed">
                   {topParentReason ?? "This fills in once there's evidence to respond to."}
                 </p>
+                {/* Mathematics Reference Vertical — a real, working lesson
+                    now exists for MR-01 specifically; link to it directly
+                    rather than only the general Revision Planner, reusing
+                    the recommendation data this card already computed. */}
+                {topCandidate?.competencyCode === "MR-01" && (
+                  <Link
+                    href="/learning-intelligence/learn/mathematics/arithmetic"
+                    className="inline-block text-xs font-semibold text-purple-600 dark:text-purple-400 mt-2"
+                  >
+                    Start this lesson →
+                  </Link>
+                )}
               </div>
             </InfoCard>
           </section>

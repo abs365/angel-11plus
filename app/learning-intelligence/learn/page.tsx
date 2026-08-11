@@ -1,19 +1,18 @@
 "use client";
 
 import Link from "next/link";
-import { BookOpen, ArrowRight, Brain } from "lucide-react";
+import { BookOpen, ArrowRight, Brain, Calculator } from "lucide-react";
 import PageLayout from "@/components/PageLayout";
 import { InfoCard } from "@/components/ui/Card";
 
 /**
  * New Learner Experience Migration — the CSSE-pathway "Learn" destination.
- * Per NEW_LEARN_MODEL.md, this is a deliberate, disclosed honest interim
- * state, not the target Learn experience: real, evidence-led CSSE Learn
- * content does not exist yet, and the governing instruction explicitly
- * forbids inventing it or reintroducing the old, non-CSSE-evidence-authentic
- * lesson content ("The Lighthouse Mystery" and its siblings) that the old
- * /learn hub still serves. This page links only to what is genuinely real
- * and working today — the CSSE Practice area and the Learning Report.
+ * Per NEW_LEARN_MODEL.md, this was launched as a deliberate, disclosed
+ * honest interim state, since real evidence-led CSSE Learn content did not
+ * exist yet. The Mathematics Reference Vertical (see
+ * knowledge/.../mathematics-reference-vertical/) adds the first genuine
+ * lesson — real teaching content, evidence-cited, mathematically verified —
+ * without claiming the rest of the curriculum is ready, which it is not.
  *
  * Non-CSSE-pathway learners never reach this page — Navigation.tsx routes
  * them to the unchanged /learn hub instead.
@@ -24,12 +23,28 @@ export default function CsseLearnPage() {
       <div className="max-w-2xl mx-auto px-4 py-6 md:px-8 md:py-8">
         <h1 className="text-gray-900 dark:text-gray-100 font-bold text-2xl">Learn</h1>
         <p className="text-gray-500 dark:text-gray-400 text-sm mt-2 leading-relaxed">
-          Angel&apos;s CSSE Learn experience is being rebuilt around real, evidence-led preparation content — so
-          it&apos;s honest about what it teaches and why. It isn&apos;t ready yet, and we&apos;d rather show you that
-          plainly than fill this page with content that isn&apos;t genuinely CSSE preparation.
+          Angel&apos;s CSSE Learn experience is being rebuilt one real lesson at a time, around genuine
+          evidence-led preparation content. One Mathematics lesson is ready today — the rest of the curriculum
+          isn&apos;t yet, and we&apos;d rather show you that plainly than fill this page with content that isn&apos;t
+          genuinely CSSE preparation.
         </p>
 
         <div className="grid gap-3 mt-6">
+          <Link href="/learning-intelligence/learn/mathematics/arithmetic">
+            <InfoCard className="flex items-center gap-4 hover:border-purple-300 dark:hover:border-purple-700 transition-colors border-purple-200 dark:border-purple-800">
+              <div className="bg-purple-100 dark:bg-purple-900 p-3 rounded-2xl shrink-0">
+                <Calculator size={20} className="text-purple-600 dark:text-purple-400" />
+              </div>
+              <div className="min-w-0 flex-1">
+                <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">Mathematics: Adding and Subtracting Big Numbers</p>
+                <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">
+                  A real lesson — understand the method, try it with support, then try it alone.
+                </p>
+              </div>
+              <ArrowRight size={16} className="text-gray-300 dark:text-gray-600 shrink-0" />
+            </InfoCard>
+          </Link>
+
           <Link href="/learning-intelligence/practice">
             <InfoCard className="flex items-center gap-4 hover:border-purple-300 dark:hover:border-purple-700 transition-colors">
               <div className="bg-purple-100 dark:bg-purple-900 p-3 rounded-2xl shrink-0">
