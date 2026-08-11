@@ -45,13 +45,32 @@ function progressionLabel(
   checkStage: CheckStage,
   educationalState: EducationalIntelligenceSnapshot["educationalState"] | undefined
 ): { label: string; description: string } {
-  if (checkStage === "not-started") {
+  // Struggling-Learner Activation Test finding: a returning learner with
+  // real prior evidence (from an earlier session, or from this competency's
+  // practice elsewhere) must see that real state immediately, not a
+  // hardcoded "Learning" that ignores what Angel already knows. Only a
+  // genuinely fresh learner (educationalState undefined/"exploring", i.e.
+  // no real evidence exists yet) sees "Learning" before their first attempt
+  // in this session.
+  if (checkStage === "not-started" && (educationalState === undefined || educationalState === "exploring")) {
     return { label: "Learning", description: "Working through the lesson." };
   }
   if (checkStage === "guided") {
     return { label: "Ready to practise", description: "The guided step is done — next is trying one alone." };
   }
-  // An independent attempt has been made — defer to the real Educational Intelligence Engine.
+  if (checkStage === "not-started") {
+    // Real prior evidence exists — reflect it honestly using the same
+    // mapping the post-Independent-Check branch below uses, rather than
+    // inventing a second set of labels.
+    return realEvidenceLabel(educationalState);
+  }
+  // An independent attempt has been made this session — defer to the real Educational Intelligence Engine.
+  return realEvidenceLabel(educationalState);
+}
+
+function realEvidenceLabel(
+  educationalState: EducationalIntelligenceSnapshot["educationalState"] | undefined
+): { label: string; description: string } {
   switch (educationalState) {
     case "rebuilding":
       return { label: "Not yet understood", description: "This needs another look — let's go through it again." };
@@ -265,7 +284,7 @@ export default function MathematicsArithmeticLessonPage() {
               <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed mt-2">
                 Sometimes a column adds up to 10 or more — when that happens, you <strong>carry</strong> the extra
                 ten into the next column. Sometimes you need to subtract a bigger digit from a smaller one — when
-                that happens, you <strong>borrow</strong> a ten from the next column. Carrying and borrowing
+                that happens, you <strong>borrow</strong>{" "}a ten from the next column. Carrying and borrowing
                 aren&apos;t tricks — they&apos;re just keeping track of place value properly.
               </p>
             </section>
