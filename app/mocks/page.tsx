@@ -77,19 +77,51 @@ function readinessDisplay(readiness: CsseMockReadiness): { label: string; tone: 
 
 function LegacyMockCard({ card, best }: { card: (typeof MOCK_CARDS)[number]; best: number | undefined }) {
   return (
-    <div className={`rounded-2xl border p-5 ${card.bg} ${card.border}`}>
+    <SimpleMockCard
+      badge={card.badge}
+      name={card.name}
+      bg={card.bg}
+      border={card.border}
+      badgeBg={card.badgeBg}
+      badgeText={card.badgeText}
+      minutesLabel={`${card.totalMinutes} min`}
+      description={MOCK_SUGGESTED_PREPARATION[card.pathway]}
+      href={`/mocks/${card.pathway}`}
+      best={best}
+    />
+  );
+}
+
+/**
+ * Generalised card, shared by the legacy GL/CEM/ISEB cards and the one
+ * no-pathway-selected CSSE entry below — same visual weight as the other
+ * three in that specific view (mandate §16: "preserve all pathway
+ * capabilities" applies even when Angel doesn't yet know which pathway to
+ * prioritise). The pathway-prioritised "Full CSSE Mock" card (used when
+ * CSSE is the learner's own selected pathway) is deliberately its own,
+ * richer treatment — not this component — since it is the primary card in
+ * that case, not one of several equal options.
+ */
+function SimpleMockCard({
+  badge, name, bg, border, badgeBg, badgeText, minutesLabel, description, href, best,
+}: {
+  badge: string; name: string; bg: string; border: string; badgeBg: string; badgeText: string;
+  minutesLabel: string; description: string; href: string; best: number | undefined;
+}) {
+  return (
+    <div className={`rounded-2xl border p-5 ${bg} ${border}`}>
       <div className="flex items-start justify-between mb-2">
         <div className="flex items-center gap-2.5">
-          <span className={`text-xs font-bold px-2.5 py-1 rounded-lg ${card.badgeBg} ${card.badgeText}`}>{card.badge}</span>
-          <h3 className="text-base font-bold text-gray-900 dark:text-gray-100">{card.name}</h3>
+          <span className={`text-xs font-bold px-2.5 py-1 rounded-lg ${badgeBg} ${badgeText}`}>{badge}</span>
+          <h3 className="text-base font-bold text-gray-900 dark:text-gray-100">{name}</h3>
         </div>
         <StatusIndicator tone={best !== undefined ? "success" : "neutral"} label={best !== undefined ? "Completed" : "Available"} />
       </div>
       <div className="flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400 mb-2">
         <Clock size={13} />
-        {card.totalMinutes} min
+        {minutesLabel}
       </div>
-      <p className="text-xs text-gray-500 dark:text-gray-400 leading-relaxed mb-3">{MOCK_SUGGESTED_PREPARATION[card.pathway]}</p>
+      <p className="text-xs text-gray-500 dark:text-gray-400 leading-relaxed mb-3">{description}</p>
       <div className="flex items-center justify-between">
         {best !== undefined ? (
           <span className="text-xs text-gray-500 dark:text-gray-400">
@@ -98,7 +130,7 @@ function LegacyMockCard({ card, best }: { card: (typeof MOCK_CARDS)[number]; bes
         ) : (
           <span className="text-xs text-gray-400 dark:text-gray-500">Not attempted yet</span>
         )}
-        <ButtonLink href={`/mocks/${card.pathway}`} variant="outline" size="sm" leftIcon={<Play size={14} />}>
+        <ButtonLink href={href} variant="outline" size="sm" leftIcon={<Play size={14} />}>
           Start mock
         </ButtonLink>
       </div>
@@ -223,6 +255,18 @@ export default function MocksPage() {
           ) : (
             // No pathway selected — every pathway shown with equal weight, honestly (MOCK_CENTRE_INFORMATION_ARCHITECTURE.md).
             <div className="space-y-3">
+              <SimpleMockCard
+                badge="CSSE"
+                name="Full CSSE Mock"
+                bg="bg-purple-50 dark:bg-purple-950"
+                border="border-purple-100 dark:border-purple-900"
+                badgeBg="bg-purple-100 dark:bg-purple-900"
+                badgeText="text-purple-700 dark:text-purple-300"
+                minutesLabel="Varies by mode"
+                description="Choose Standard for the full sitting, or Adaptive for a shorter paper weighted to your recorded evidence."
+                href="/learning-intelligence/mock-exam"
+                best={bestScores.csse}
+              />
               {MOCK_CARDS.map((card) => (
                 <LegacyMockCard key={card.pathway} card={card} best={bestScores[card.pathway]} />
               ))}
