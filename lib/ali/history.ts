@@ -26,6 +26,8 @@ function rowToHistory(row: HistoryRow): StudentQuestionHistoryRow {
     lastAttemptFinalAnswer: row.last_attempt_final_answer,
     lastAttemptConfidenceRating: row.last_attempt_confidence_rating,
     lastAttemptWorkingShown: row.last_attempt_working_shown,
+    firstSource: row.first_source,
+    lastAttemptSupportTier: row.last_attempt_support_tier,
   };
 }
 
@@ -126,7 +128,51 @@ export async function recordPresentation(
     console.warn("[ALI] recordPresentation history upsert failed:", historyError.message);
   }
 
+  // Evidence Provenance (migration 024, EVIDENCE_PROVENANCE_REMEDIATION_
+  // REPORT.md): write-once first_source, deliberately a separate best-effort
+  // call from the upsert above, so a database that has not yet applied
+  // migration 024 never blocks the core presentation write every mock/
+  // practice/lesson caller depends on.
+  await recordFirstSourceIfUnset(supabase, profileId, questionIds, source);
+
   return newStamp;
+}
+
+/**
+ * Sets first_source only on rows that don't already have one — the one
+ * write-once fact this table did not previously have a place for. A later
+ * presentation in a different context (e.g. this Mathematics lesson's
+ * dedicated item later drawn into an ordinary Practice session) still
+ * correctly overwrites `source` (its designed "most recent context"
+ * meaning, migration 006 Decision 8) but can never overwrite `first_source`.
+ * Best-effort: a query failure (including migration 024 not yet applied,
+ * where the column doesn't exist) is logged and swallowed, never blocking
+ * recordPresentation's real, pre-existing evidence write above.
+ */
+async function recordFirstSourceIfUnset(
+  supabase: SupabaseClient<Database>,
+  profileId: string,
+  questionIds: string[],
+  source: string
+): Promise<void> {
+  const { data, error } = await supabase
+    .from("ali_student_question_history")
+    .select("question_id, first_source")
+    .eq("profile_id", profileId)
+    .in("question_id", questionIds);
+  if (error || !data) return;
+
+  const unsetIds = data.filter((row) => !row.first_source).map((row) => row.question_id);
+  if (unsetIds.length === 0) return;
+
+  const { error: updateError } = await supabase
+    .from("ali_student_question_history")
+    .update({ first_source: source })
+    .eq("profile_id", profileId)
+    .in("question_id", unsetIds);
+  if (updateError) {
+    console.warn("[ALI] recordPresentation first_source write failed:", updateError.message);
+  }
 }
 
 /**
@@ -162,6 +208,15 @@ export function buildEvidenceUpdateColumns(evidenceFacts?: AttemptEvidenceFacts)
  * answer changed, first/final answer, confidence rating, working shown)
  * may pass them; only the fields actually supplied are written, so a
  * caller providing one fact never overwrites another with a false null.
+ *
+ * `supportTier` (migration 024, Mathematics Reference Vertical Remediation
+ * Gate) — defaults to "independent", the exact prior behaviour for every
+ * existing caller (mocks, ordinary Practice, Founder Validation, Family
+ * Choice). A caller implementing a guided-remediation ladder (e.g. the
+ * Mathematics lesson's Guided Attempt) may pass "supported" for an outcome
+ * reached only after scaffolding/hints beyond the standard first try — see
+ * lib/ali/mastery.ts's applyAttemptOutcome() for how this changes mastery
+ * accounting, and GUIDED_LEARNING_REMEDIATION_REPORT.md for the full design.
  */
 export async function recordOutcome(
   supabase: SupabaseClient<Database>,
@@ -170,7 +225,8 @@ export async function recordOutcome(
   isCorrect: boolean,
   sessionId: string,
   masteryThreshold: number,
-  evidenceFacts?: AttemptEvidenceFacts
+  evidenceFacts?: AttemptEvidenceFacts,
+  supportTier: "independent" | "supported" = "independent"
 ): Promise<void> {
   const { data: existing, error: fetchError } = await supabase
     .from("ali_student_question_history")
@@ -201,9 +257,11 @@ export async function recordOutcome(
         lastAttemptFinalAnswer: null,
         lastAttemptConfidenceRating: null,
         lastAttemptWorkingShown: null,
+        firstSource: null,
+        lastAttemptSupportTier: null,
       } as StudentQuestionHistoryRow);
 
-  const updated = applyAttemptOutcome(current, isCorrect, sessionId, masteryThreshold);
+  const updated = applyAttemptOutcome(current, isCorrect, sessionId, masteryThreshold, supportTier);
   const evidenceColumns = buildEvidenceUpdateColumns(evidenceFacts);
 
   const { error: updateError } = await supabase
@@ -222,6 +280,19 @@ export async function recordOutcome(
     .eq("question_id", questionId);
   if (updateError) {
     console.warn("[ALI] recordOutcome update failed:", updateError.message);
+  }
+
+  // Guided Learning Remediation (migration 024): separate best-effort write,
+  // same reasoning as first_source above — never lets a database that has
+  // not yet applied migration 024 block the core mastery update this
+  // function's every existing caller depends on.
+  const { error: supportTierError } = await supabase
+    .from("ali_student_question_history")
+    .update({ last_attempt_support_tier: supportTier })
+    .eq("profile_id", profileId)
+    .eq("question_id", questionId);
+  if (supportTierError) {
+    console.warn("[ALI] recordOutcome support-tier write failed:", supportTierError.message);
   }
 
   // Global calibration-drift signal (ADAPTIVE_ASSESSMENT_ENGINE_ARCHITECTURE.md §3.4)

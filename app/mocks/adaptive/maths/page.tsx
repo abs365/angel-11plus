@@ -263,6 +263,8 @@ export default function AdaptiveMathsMockPage() {
         lastAttemptFinalAnswer: null,
         lastAttemptConfidenceRating: null,
         lastAttemptWorkingShown: null,
+        firstSource: null,
+        lastAttemptSupportTier: null,
       };
       const updated = applyAttemptOutcome(current, correct, sessionIdRef.current, bankQuestion.masteryThreshold);
       historyRef.current.set(bankQuestion.id, { ...current, ...updated });

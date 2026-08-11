@@ -21,6 +21,10 @@ export interface StudentQuestionHistoryRow {
   lastAttemptFinalAnswer: string | null;
   lastAttemptConfidenceRating: number | null;
   lastAttemptWorkingShown: boolean | null;
+  /** Migration 024 — write-once, set only when previously null. See lib/ali/history.ts's recordPresentation(). */
+  firstSource: string | null;
+  /** Migration 024 — "independent" | "supported" | null (older rows, pre-migration). See lib/ali/mastery.ts's applyAttemptOutcome(). */
+  lastAttemptSupportTier: string | null;
 }
 
 /**

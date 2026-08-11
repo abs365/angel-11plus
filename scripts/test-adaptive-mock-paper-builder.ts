@@ -120,6 +120,8 @@ function historyRow(questionId: string, timesSeen: number): StudentQuestionHisto
     lastAttemptFinalAnswer: null,
     lastAttemptConfidenceRating: null,
     lastAttemptWorkingShown: null,
+    firstSource: null,
+    lastAttemptSupportTier: null,
   };
 }
 

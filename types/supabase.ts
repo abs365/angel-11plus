@@ -207,6 +207,9 @@ export interface Database {
           last_attempt_final_answer: string | null;
           last_attempt_confidence_rating: number | null;
           last_attempt_working_shown: boolean | null;
+          // Migration 024 (Mathematics Reference Vertical Remediation Gate)
+          first_source: string | null;
+          last_attempt_support_tier: string | null;
         };
         Insert: {
           id?: string;
@@ -230,6 +233,8 @@ export interface Database {
           last_attempt_final_answer?: string | null;
           last_attempt_confidence_rating?: number | null;
           last_attempt_working_shown?: boolean | null;
+          first_source?: string | null;
+          last_attempt_support_tier?: string | null;
         };
         Update: {
           times_seen?: number;
@@ -249,6 +254,8 @@ export interface Database {
           last_attempt_final_answer?: string | null;
           last_attempt_confidence_rating?: number | null;
           last_attempt_working_shown?: boolean | null;
+          first_source?: string | null;
+          last_attempt_support_tier?: string | null;
         };
         Relationships: [];
       };

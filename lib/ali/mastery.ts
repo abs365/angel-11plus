@@ -27,21 +27,36 @@ type MutableHistoryFields = Pick<
  *   - `learning`: seen at least once, neither mastered nor weak.
  *   - `new`: never seen (not reachable from this function — call site only
  *     invokes this after a real attempt).
+ *
+ * `supportTier` (Mathematics Reference Vertical Remediation Gate §4,
+ * migration 024) — defaults to "independent", the exact prior behaviour for
+ * every existing caller. A "supported" outcome (correct only after guided
+ * remediation/scaffolding, e.g. the Mathematics lesson's Guided Attempt
+ * ladder) is real, truthful attempt evidence — timesSeen/timesCorrect/
+ * lastAttemptCorrect always update — but must not, by itself, advance
+ * distinct-session mastery progress or newly reach "mastered": a correct
+ * answer received with help is not equivalent to first-attempt independent
+ * evidence (GUIDED_LEARNING_REMEDIATION_REPORT.md). A supported wrong answer
+ * still contributes to the "weak" signal — genuine difficulty is genuine
+ * difficulty regardless of support tier. A supported correct answer neither
+ * advances nor revokes an already-"mastered" state; it is orthogonal to it.
  */
 export function applyAttemptOutcome(
   current: MutableHistoryFields,
   isCorrect: boolean,
   sessionId: string,
-  masteryThreshold: number
+  masteryThreshold: number,
+  supportTier: "independent" | "supported" = "independent"
 ): MutableHistoryFields {
   const timesSeen = current.timesSeen + 1;
   const timesCorrect = current.timesCorrect + (isCorrect ? 1 : 0);
 
+  const countsTowardMastery = isCorrect && supportTier === "independent";
   const distinctCorrectSessions =
-    isCorrect && current.lastCorrectSessionId !== sessionId
+    countsTowardMastery && current.lastCorrectSessionId !== sessionId
       ? current.distinctCorrectSessions + 1
       : current.distinctCorrectSessions;
-  const lastCorrectSessionId = isCorrect ? sessionId : current.lastCorrectSessionId;
+  const lastCorrectSessionId = countsTowardMastery ? sessionId : current.lastCorrectSessionId;
 
   const secondLastAttemptCorrect = current.lastAttemptCorrect;
   const lastAttemptCorrect = isCorrect;
@@ -49,10 +64,15 @@ export function applyAttemptOutcome(
   const lastTwoBothIncorrect = secondLastAttemptCorrect === false && lastAttemptCorrect === false;
 
   let masteryState: MasteryState;
-  if (distinctCorrectSessions >= masteryThreshold && lastAttemptCorrect) {
+  if (supportTier === "independent" && distinctCorrectSessions >= masteryThreshold && lastAttemptCorrect) {
     masteryState = "mastered";
   } else if (lastTwoBothIncorrect) {
     masteryState = "weak";
+  } else if (supportTier === "supported" && isCorrect) {
+    // Correct-with-help: real evidence an attempt happened, but not enough
+    // on its own to move mastery state forward — leaves whatever state
+    // already existed (neither newly "mastered" nor demoted from it).
+    masteryState = current.masteryState;
   } else {
     masteryState = "learning";
   }
