@@ -422,25 +422,14 @@ function buildDailyMission(
     }
   }
 
-  // Mock test nudge — after 5+ sessions if not yet attempted
-  const mockSubject = report.subjects.find((s) => s.subject === "mock-test");
-  if (
-    items.length < 4 &&
-    report.totalSessions >= 5 &&
-    mockSubject?.status === "not-started"
-  ) {
-    items.push({
-      id: "mission-mock",
-      subject: "mock-test",
-      label: "Full Mock Test",
-      href: "/mock-test",
-      reason:
-        "You have enough practice to attempt a timed 11+ mock — this reveals real timing gaps.",
-      tier: "advanced",
-      priority: "secondary",
-      estimatedMinutes: 45,
-    });
-  }
+  // New Learner Experience Migration — the "/mock-test" nudge previously
+  // recommended here has been retired (LEGACY_CONTENT_RETIREMENT_REGISTER.md
+  // §5): that route hardcodes "The Lighthouse Mystery", explicitly named by
+  // the Founder as content that must not be reintroduced into the active
+  // learner journey. The /mock-test route itself is left un-deleted; this
+  // was its only recommendation-engine reachability path. Real, evidence-led
+  // mock recommendations are already handled separately by
+  // lib/learningEngine/mockReadiness.ts for the CSSE pathway.
 
   const totalMinutes = items.reduce((sum, item) => sum + item.estimatedMinutes, 0);
 

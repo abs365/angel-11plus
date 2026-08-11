@@ -109,6 +109,13 @@ export default function MockExamPage() {
   // Practice page's identical pattern) — captured before recordPresentation()
   // below resets last_presented_at, which Maintenance Review detection reads.
   const preSessionSnapshotsRef = useRef<Map<CompetencyId, EducationalIntelligenceSnapshot>>(new Map());
+  // Duplicate-key defect fix (New Learner Experience Migration) — submitExam()
+  // is wired to fire from two independent triggers (the countdown timer and
+  // the manual submit button) with no mutual exclusion, the same defect
+  // confirmed on the Founder Validation route. This ref-based guard makes a
+  // second invocation a no-op, fixing the underlying identity problem rather
+  // than only the resulting React key warning.
+  const submittedRef = useRef(false);
 
   useEffect(() => {
     return () => {
@@ -127,6 +134,7 @@ export default function MockExamPage() {
       if (!profileId) throw new Error("no profile");
       profileIdRef.current = profileId;
       sessionIdRef.current = `mock-exam-${Date.now()}`;
+      submittedRef.current = false;
 
       if (getSelectedPathwayId() !== "csse") setSelectedPathway("csse");
 
@@ -227,6 +235,8 @@ export default function MockExamPage() {
   }
 
   async function submitExam() {
+    if (submittedRef.current) return;
+    submittedRef.current = true;
     if (timerRef.current) clearInterval(timerRef.current);
     setMode("submitting");
 

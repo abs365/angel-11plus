@@ -25,6 +25,15 @@ export interface MockResult {
   totalScore: number;
   sectionResults: MockSectionResult[];
   durationMinutes: number;
+  /**
+   * Founder Validation Isolation (New Learner Experience Migration).
+   * Optional and additive — absent means "learner" (every pre-existing
+   * stored record has no source field and must keep meaning a real
+   * learner attempt). Only the Founder Validation Assessment route sets
+   * "founder-validation"; every learner-facing read of MockResult[] must
+   * exclude it (see lib/mockProgress.ts's isFounderValidationResult()).
+   */
+  source?: "learner" | "founder-validation";
 }
 
 /**

@@ -67,8 +67,32 @@ export function saveMockResult(result: MockResult): void {
   saveProgress({ ...p, mockResults: [...existing, result] });
 }
 
+/**
+ * Founder Validation Isolation — checks both the real, current field
+ * (`source`) and, for records saved before this field existed, the
+ * consistent `founder-validation-` id prefix every Founder Validation
+ * attempt has always used. This is a read-time reclassification, not a
+ * data migration: no stored record is rewritten or deleted, so existing
+ * evidence is preserved exactly, per the governing instruction's "do not
+ * delete legitimate historical evidence without analysis." No real
+ * learner mock attempt has ever produced an id with this prefix, so this
+ * cannot misclassify a genuine attempt.
+ */
+export function isFounderValidationResult(result: MockResult): boolean {
+  return result.source === "founder-validation" || result.id.startsWith("founder-validation-");
+}
+
+/**
+ * The single shared read path every mock-history/best-score/readiness
+ * consumer already goes through — filtering Founder Validation attempts
+ * out here (rather than at each of the ~4 separate call sites that
+ * display or aggregate MockResult[]) is the smallest correct isolation
+ * mechanism: every existing and future consumer is protected with zero
+ * additional filtering logic of its own.
+ */
 export async function getMockResults(): Promise<MockResult[]> {
-  return getProgress().mockResults ?? [];
+  const all = getProgress().mockResults ?? [];
+  return all.filter((r) => !isFounderValidationResult(r));
 }
 
 export async function getLastMockResult(): Promise<MockResult | null> {

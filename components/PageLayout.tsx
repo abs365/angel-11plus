@@ -19,12 +19,11 @@ export default function PageLayout({ children, breadcrumbs }: PageLayoutProps) {
   return (
     <div className="min-h-screen bg-[var(--background)]">
       <Navigation />
-      {/* Main content — offset to match Navigation's responsive width
-          (AN-101: collapsed icon rail 768–1023px, full sidebar 1024px+).
-          Both this offset and Navigation's own width now read from the
-          same --nav-width-collapsed / --nav-width tokens instead of two
-          independently hardcoded values. */}
-      <main className="md:ml-[var(--nav-width-collapsed)] lg:ml-[var(--nav-width)] pb-nav-safe md:pb-0 min-h-screen flex flex-col">
+      {/* Main content — offset to clear Navigation's fixed top bar (desktop/
+          tablet, New Learner Experience Migration) and bottom bar (mobile).
+          Both this offset and Navigation's own height read from the same
+          --topbar-height token so they never drift out of sync. */}
+      <main className="md:pt-[var(--topbar-height)] pb-nav-safe md:pb-0 min-h-screen flex flex-col">
         <Header breadcrumbs={breadcrumbs} />
         <div className="flex-1">{children}</div>
         <SupportFooter />

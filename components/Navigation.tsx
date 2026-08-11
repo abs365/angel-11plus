@@ -26,6 +26,7 @@ import type { LucideIcon } from "lucide-react";
 import { useAuth } from "@/components/providers/AuthProvider";
 import UserMenu from "@/components/ui/UserMenu";
 import { cn } from "@/lib/cn";
+import { getSelectedPathwayId } from "@/lib/progress";
 
 type NavItem = {
   href: string;
@@ -40,29 +41,60 @@ type NavSection = {
 };
 
 /**
- * AN-101 (Learning Navigation) — the approved Angel Next information
- * architecture. Every route below is unchanged from the pre-AN-101
- * navigation; only grouping, labelling and presentation are in scope here.
+ * New Learner Experience Migration — top navigation. Replaces the AN-101
+ * permanent left sidebar (see NEW_ANGEL_INFORMATION_ARCHITECTURE.md). Five
+ * primary items now, not four: Progress is promoted from the old "Journey"
+ * group to a primary top-level destination, matching the governing
+ * instruction's named top nav (Today/Learn/Practise/Mock/Progress).
  *
- * "Today" is the single entry for /dashboard. AN-101 discovery found the
- * previously-planned architecture implied a second, separate "My Admission
- * Journey" destination — no such route exists. Per Founder decision: the
- * admissions journey remains a core concept *within* /dashboard's content,
- * not a duplicate navigation entry. A future dedicated Journey route may be
- * introduced later if it offers functionality genuinely distinct from the
- * dashboard — that is a decision for a future work package, not this one.
+ * "Today" is the single entry for /dashboard — unchanged reasoning from
+ * AN-101 (no separate "My Admission Journey" route exists; the admissions
+ * journey stays a concept within /dashboard's content).
+ *
+ * Learn/Practise are pathway-branching (see useCssePathway() below): a CSSE-
+ * pathway learner is routed to the new evidence-safe destinations; every
+ * other pathway continues to reach the existing /learn and /reasoning hubs
+ * completely unchanged — see LEGACY_CONTENT_RETIREMENT_REGISTER.md §4 for
+ * why this is deliberately conservative rather than a wholesale retirement.
  */
-const primaryItems: NavItem[] = [
-  { href: "/dashboard", label: "Today", icon: Compass },
-  { href: "/learn", label: "Learn", icon: BookOpen },
-  { href: "/reasoning", label: "Practice", icon: Puzzle },
-  { href: "/mocks", label: "Mock Centre", icon: Trophy },
-];
+const CSSE_LEARN_HREF = "/learning-intelligence/learn";
+const CSSE_PRACTISE_HREF = "/learning-intelligence/practice";
+
+function primaryItemsFor(isCsse: boolean): NavItem[] {
+  return [
+    { href: "/dashboard", label: "Today", icon: Compass },
+    { href: isCsse ? CSSE_LEARN_HREF : "/learn", label: "Learn", icon: BookOpen },
+    { href: isCsse ? CSSE_PRACTISE_HREF : "/reasoning", label: "Practise", icon: Puzzle },
+    { href: "/mocks", label: "Mock", icon: Trophy },
+    { href: "/progress", label: "Progress", icon: BarChart2 },
+  ];
+}
+
+/**
+ * SSR-safe pathway read (New Learner Experience Migration). getSelectedPathwayId()
+ * reads localStorage, which is unavailable during server rendering — reading
+ * it directly during render would make the server-rendered Learn/Practise
+ * hrefs disagree with the client's real value on first paint. Defaulting to
+ * `false` (non-CSSE, i.e. today's unchanged /learn and /reasoning hrefs) for
+ * the server render and the client's first render keeps both identical;
+ * the real value is applied one client-only render later, the standard-safe
+ * pattern for this class of hydration mismatch.
+ */
+function useCssePathway(): boolean {
+  const [isCsse, setIsCsse] = useState(false);
+  useEffect(() => {
+    // Deferred via a resolved microtask, matching this codebase's established
+    // pattern for a post-mount external-value read (e.g. CssePathwayParentContent's
+    // getSelectedPathwayId() usage) — avoids a synchronous setState directly in
+    // the effect body.
+    Promise.resolve().then(() => setIsCsse(getSelectedPathwayId() === "csse"));
+  }, []);
+  return isCsse;
+}
 
 const journeySection: NavSection = {
   label: "Journey",
   items: [
-    { href: "/progress", label: "Progress", icon: BarChart2 },
     // Product Experience Standard V1 §7 — "Learning Intelligence" used a
     // word this platform's calm-tone rule forbids showing to users;
     // route/component names are unchanged, only this label reads plainly.
@@ -342,12 +374,110 @@ function MobileMoreDrawer({
   );
 }
 
+/**
+ * Desktop/tablet top-bar destination — New Learner Experience Migration's
+ * replacement for the collapsed-rail SidebarLink usage. Larger type and a
+ * taller click target than the old sidebar rows, per the governing
+ * instruction's typography/touch-target direction.
+ */
+function TopBarLink({ item, pathname }: { item: NavItem; pathname: string }) {
+  const active = isActive(pathname, item.href);
+  return (
+    <Link
+      href={item.href}
+      aria-current={active ? "page" : undefined}
+      className={cn(
+        "flex items-center gap-2 h-11 px-3.5 rounded-xl text-[15px] transition-colors motion-reduce:transition-none",
+        active
+          ? "font-semibold"
+          : "font-medium text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-gray-800 dark:hover:text-gray-200"
+      )}
+      style={
+        active
+          ? { backgroundColor: "var(--nav-accent-soft-bg)", color: "var(--nav-accent-soft-text)" }
+          : undefined
+      }
+    >
+      <item.icon
+        aria-hidden="true"
+        size={19}
+        className={cn("shrink-0", !active && "text-gray-400 dark:text-gray-500")}
+        style={active ? { color: "var(--nav-accent-soft-text)" } : undefined}
+      />
+      <span>{item.label}</span>
+      {item.badge && (
+        <span className="text-[10px] font-semibold bg-indigo-100 dark:bg-indigo-900 text-indigo-600 dark:text-indigo-300 px-1.5 py-0.5 rounded-full leading-none">
+          {item.badge}
+        </span>
+      )}
+    </Link>
+  );
+}
+
+/**
+ * Overflow menu — School Intelligence, Angel Plus, Help/support. Kept
+ * reachable but deliberately not competing visually with the 5 primary
+ * daily-journey items, per the governing instruction's explicit direction.
+ */
+function MoreMenu({ pathname }: { pathname: string }) {
+  const [open, setOpen] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
+  const buttonRef = useRef<HTMLButtonElement>(null);
+
+  useEffect(() => {
+    if (!open) return;
+    function handleClick(e: MouseEvent) {
+      if (menuRef.current?.contains(e.target as Node) || buttonRef.current?.contains(e.target as Node)) return;
+      setOpen(false);
+    }
+    function handleKeyDown(e: KeyboardEvent) {
+      if (e.key === "Escape") setOpen(false);
+    }
+    document.addEventListener("mousedown", handleClick);
+    document.addEventListener("keydown", handleKeyDown);
+    return () => {
+      document.removeEventListener("mousedown", handleClick);
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [open]);
+
+  const allItems = [...journeySection.items, ...familySection.items.filter((i) => i.href !== "/learning-intelligence/parent"), ...supportItems];
+
+  return (
+    <div className="relative">
+      <button
+        ref={buttonRef}
+        onClick={() => setOpen((o) => !o)}
+        aria-expanded={open}
+        aria-haspopup="menu"
+        className="flex items-center gap-1.5 h-11 px-3 rounded-xl text-sm font-medium text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-gray-800 dark:hover:text-gray-200 transition-colors motion-reduce:transition-none"
+      >
+        More
+        <ChevronDown aria-hidden="true" size={15} className={cn("transition-transform motion-reduce:transition-none", open && "rotate-180")} />
+      </button>
+      {open && (
+        <div
+          ref={menuRef}
+          role="menu"
+          className="absolute right-0 top-full mt-1 w-56 bg-white dark:bg-gray-950 rounded-2xl border border-gray-100 dark:border-gray-800 shadow-lg p-1.5 z-50"
+        >
+          {allItems.map((item) => (
+            <SidebarLink key={item.href} item={item} pathname={pathname} />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 export default function Navigation() {
   const pathname = usePathname();
   const router = useRouter();
   const { user, signOut, loading } = useAuth();
   const [drawerOpen, setDrawerOpen] = useState(false);
   const moreTabRef = useRef<HTMLButtonElement>(null);
+  const isCsse = useCssePathway();
+  const primaryItems = primaryItemsFor(isCsse);
 
   async function handleSignOut() {
     await signOut();
@@ -356,86 +486,78 @@ export default function Navigation() {
 
   return (
     <>
-      {/* Desktop / tablet sidebar. 768–1023px: icon-only collapsed rail
-          (--nav-width-collapsed). 1024px+: full labelled sidebar
-          (--nav-width). PageLayout's content offset uses the matching
-          responsive pair so the two never drift out of sync again. */}
+      {/* Desktop/tablet top bar — New Learner Experience Migration's
+          replacement for the permanent left sidebar. Reclaims the ~256px of
+          horizontal width the sidebar previously consumed on every page. */}
       <nav
         aria-label="Learning navigation"
-        className="hidden md:flex flex-col w-[var(--nav-width-collapsed)] lg:w-[var(--nav-width)] min-h-screen bg-white dark:bg-gray-950 border-r border-gray-100 dark:border-gray-800 px-3 py-6 fixed left-0 top-0 z-40"
+        className="hidden md:flex items-center h-[var(--topbar-height)] w-full bg-white dark:bg-gray-950 border-b border-gray-100 dark:border-gray-800 px-4 lg:px-6 fixed left-0 top-0 z-40 gap-2 lg:gap-4"
       >
         {/* Brand */}
-        <div className="mb-5 px-3 md:px-0 lg:px-3 md:text-center lg:text-left">
-          {/* AN-108 — wordmark moved from purple to the muted-indigo educational accent. */}
+        <Link href="/dashboard" className="flex items-center gap-2 shrink-0 mr-1 lg:mr-2">
           <h1 className="text-xl font-bold text-indigo-700 dark:text-indigo-400">
-            {/* The full name stays in the accessibility tree at every width
-                (sr-only visually hides, it never removes) — "A11+" below is
-                purely a visual abbreviation for the collapsed rail, not a
-                second accessible name. */}
-            <span className="md:sr-only lg:not-sr-only">Angel 11+</span>
-            <span className="hidden md:inline lg:hidden" aria-hidden="true">A11+</span>
+            <span className="lg:hidden" aria-hidden="true">A11+</span>
+            <span className="hidden lg:inline">Angel 11+</span>
           </h1>
-          <p className="text-xs text-gray-400 dark:text-gray-600 mt-0.5 md:sr-only lg:not-sr-only">
-            Smart UK 11+ Prep
-          </p>
+        </Link>
+
+        {/* Primary — the 5 daily-journey destinations */}
+        <div role="group" aria-label="Primary" className="flex items-center gap-1 flex-1 min-w-0 overflow-x-auto">
+          {primaryItems.map((item) => (
+            <TopBarLink key={item.href} item={item} pathname={pathname} />
+          ))}
         </div>
 
-        <div className="flex flex-col flex-1 overflow-y-auto">
-          {/* Primary — the four daily learning actions, unlabelled and first,
-              so they read as the obvious default rather than one section
-              among equals. */}
-          <div role="group" aria-label="Primary">
-            <div className="flex flex-col gap-0.5">
-              {primaryItems.map((item) => (
-                <SidebarLink key={item.href} item={item} pathname={pathname} collapsed />
-              ))}
-            </div>
-          </div>
+        {/* Parent access — clearly available, not buried, per governing instruction */}
+        <Link
+          href="/learning-intelligence/parent"
+          className="hidden lg:flex items-center gap-1.5 h-11 px-3.5 rounded-xl text-sm font-medium text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-gray-800 dark:hover:text-gray-200 transition-colors motion-reduce:transition-none shrink-0"
+        >
+          <Users size={18} aria-hidden="true" />
+          Parent Dashboard
+        </Link>
+        <Link
+          href="/learning-intelligence/parent"
+          aria-label="Parent Dashboard"
+          title="Parent Dashboard"
+          className="lg:hidden flex items-center justify-center w-10 h-10 rounded-xl text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors motion-reduce:transition-none shrink-0"
+        >
+          <Users size={18} aria-hidden="true" />
+        </Link>
 
-          <SectionGroup section={journeySection} pathname={pathname} collapsed />
-          <SectionGroup section={familySection} pathname={pathname} collapsed />
-          <HelpSupportDisclosure pathname={pathname} collapsed />
-        </div>
+        <MoreMenu pathname={pathname} />
 
-        {/* Account — pinned at the very bottom. UserMenu unchanged
-            behaviourally; AN-101 only adjusts the surrounding treatment. */}
-        <div className="mt-4 pt-4 border-t border-gray-100 dark:border-gray-800">
-          <div className="md:hidden lg:block">
-            <UserMenu email={user?.email} loading={loading} onSignOut={handleSignOut} />
-          </div>
-          {/* Collapsed rail — a compact icon-only affordance instead of the
-              full email/sign-out block, which has no room at this width. */}
-          <div className="hidden md:flex lg:hidden justify-center">
-            {!loading && user ? (
-              <button
-                onClick={handleSignOut}
-                title={`Signed in as ${user.email}. Sign out`}
-                aria-label={`Signed in as ${user.email}. Sign out`}
-                className="w-9 h-9 rounded-full bg-indigo-100 dark:bg-indigo-900 flex items-center justify-center text-indigo-600 dark:text-indigo-300 text-xs font-semibold hover:bg-indigo-200 dark:hover:bg-indigo-800 transition-colors motion-reduce:transition-none"
+        {/* Account — right edge */}
+        <div className="shrink-0 pl-2 ml-1 border-l border-gray-100 dark:border-gray-800">
+          {!loading && user ? (
+            <button
+              onClick={handleSignOut}
+              title={`Signed in as ${user.email}. Sign out`}
+              aria-label={`Signed in as ${user.email}. Sign out`}
+              className="w-10 h-10 rounded-full bg-indigo-100 dark:bg-indigo-900 flex items-center justify-center text-indigo-600 dark:text-indigo-300 text-sm font-semibold hover:bg-indigo-200 dark:hover:bg-indigo-800 transition-colors motion-reduce:transition-none"
+            >
+              {user.email?.[0]?.toUpperCase() ?? "?"}
+            </button>
+          ) : (
+            !loading && (
+              <Link
+                href="/login"
+                title="Sign in"
+                aria-label="Sign in"
+                className="w-10 h-10 rounded-full flex items-center justify-center text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-950 transition-colors motion-reduce:transition-none"
               >
-                {user.email?.[0]?.toUpperCase() ?? "?"}
-              </button>
-            ) : (
-              !loading && (
-                <Link
-                  href="/login"
-                  title="Sign in"
-                  aria-label="Sign in"
-                  className="w-9 h-9 rounded-full flex items-center justify-center text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-950 transition-colors motion-reduce:transition-none"
-                >
-                  <LogIn size={16} aria-hidden="true" />
-                </Link>
-              )
-            )}
-          </div>
+                <LogIn size={18} aria-hidden="true" />
+              </Link>
+            )
+          )}
         </div>
       </nav>
 
-      {/* Mobile bottom nav — the four primary daily actions plus "More" for
-          everything else. Parent Dashboard and Account moved into the More
-          drawer: Step 3's own rule is that family/support capabilities
-          shouldn't compete visually with the child's immediate learning
-          actions, so the 4 fixed tabs stay purely about today's practice. */}
+      {/* Mobile bottom nav — the five primary daily actions plus "More" for
+          everything else. Parent Dashboard and Account remain in the More
+          drawer at this width: family/support capabilities shouldn't
+          compete visually with the child's immediate learning actions, so
+          the fixed tabs stay purely about today's practice. */}
       <nav
         aria-label="Mobile navigation"
         className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white dark:bg-gray-950 border-t border-gray-100 dark:border-gray-800 px-1 pb-safe"

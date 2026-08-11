@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { CalendarDays, ClipboardList, HelpCircle, GraduationCap, Route } from "lucide-react";
+import { CalendarDays, ClipboardList, HelpCircle, GraduationCap, Route, ChevronDown, Target, Sparkles } from "lucide-react";
 import { InfoCard } from "@/components/ui/Card";
 import { getSelectedPathwayId } from "@/lib/progress";
 import { getSupabaseClient } from "@/lib/supabase";
@@ -11,6 +11,8 @@ import { fetchRecentActivity, type RecentActivityItem } from "@/lib/learningEngi
 import { fetchEducationalMilestones } from "@/lib/ali/persistence/auditStore";
 import { getRecommendations } from "@/lib/learningEngine/educationalIntelligenceService";
 import { COMPETENCIES, ALL_COMPETENCY_IDS } from "@/lib/learningEngine/assessmentBrainMap";
+import { getMockResults } from "@/lib/mockProgress";
+import { assessMockReadiness, type MockReadinessAssessment } from "@/lib/learningEngine/mockReadiness";
 import { CompetencySummary } from "@/components/learningEngine/parent/CompetencySummary";
 import { EvidenceComposition } from "@/components/learningEngine/parent/EvidenceComposition";
 import { RecommendationExplanation } from "@/components/learningEngine/parent/RecommendationExplanation";
@@ -40,6 +42,12 @@ export function CssePathwayParentContent() {
   const [recommendations, setRecommendations] = useState<RecommendationRuntimeResult | null | undefined>(undefined);
   const [weekActivityCount, setWeekActivityCount] = useState<number | undefined>(undefined);
   const [weekMilestoneCount, setWeekMilestoneCount] = useState<number | undefined>(undefined);
+  const [mockAttemptCount, setMockAttemptCount] = useState<number | undefined>(undefined);
+  // New Learner Experience Migration (Parent Dashboard Simplification) —
+  // progressive disclosure: the dense, always-rendered section list below
+  // is now opt-in, not the first thing a parent sees. Nothing here is
+  // deleted or recomputed differently — see PARENT_DASHBOARD_SIMPLIFICATION_SPEC.md.
+  const [showDetails, setShowDetails] = useState(false);
 
   useEffect(() => {
     const pathwayId = getSelectedPathwayId();
@@ -61,6 +69,9 @@ export function CssePathwayParentContent() {
             .then((items) => setWeekMilestoneCount(items.length))
             .catch(() => setWeekMilestoneCount(0));
         }
+        getMockResults()
+          .then((results) => setMockAttemptCount(results.length))
+          .catch(() => setMockAttemptCount(0));
       })
       .catch(() => setProfile(null));
   }, []);
@@ -72,6 +83,20 @@ export function CssePathwayParentContent() {
     ? recommendations?.explanations.get(topCandidate.competencyCode)?.find((e) => e.audience === "parent")?.text
     : undefined;
   const topCandidateLabel = topCandidate ? COMPETENCIES[topCandidate.competencyCode as keyof typeof COMPETENCIES]?.name : undefined;
+
+  // New Learner Experience Migration — Mock Readiness, surfaced on the first
+  // screen per the governing instruction. Reuses assessMockReadiness()
+  // (lib/learningEngine/mockReadiness.ts) completely unmodified — a
+  // categorical, evidence-based verdict, never a fabricated percentage. All
+  // three inputs are real data this component already computes/fetches.
+  const mockReadiness: MockReadinessAssessment | undefined =
+    profile === undefined || recommendations === undefined || mockAttemptCount === undefined
+      ? undefined
+      : assessMockReadiness({
+          hasAnyEvidence: profile?.hasAnyEvidence ?? false,
+          mockAttemptCount,
+          topTriggerReason: topCandidate?.triggerReason ?? null,
+        });
 
   // WP4C (Parent Trust) — every answer below is read from data this
   // component already fetches for the sections further down the page; no
@@ -112,39 +137,6 @@ export function CssePathwayParentContent() {
 
   return (
     <>
-      {/* WP4D (FD-022) — one clear primary next step. Revision Planner is
-          the stated next stage (Practice -> Results -> Parent Insight ->
-          Revision -> Practice); Weekly Report is real and kept, but
-          visually secondary so the two don't compete. */}
-      <div className="mb-6">
-        <Link
-          href="/learning-intelligence/parent/revision-planner"
-          className="inline-flex items-center gap-1.5 bg-purple-600 hover:bg-purple-700 text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-colors"
-        >
-          <ClipboardList size={14} /> See This Week&apos;s Revision Plan →
-        </Link>
-        <div className="mt-2 flex items-center gap-4 flex-wrap">
-          <Link href="/learning-intelligence/parent/weekly-report" className="text-xs font-semibold text-gray-500 dark:text-gray-400 inline-flex items-center gap-1">
-            <CalendarDays size={13} /> Weekly Report →
-          </Link>
-          {/* Sprint 5 (WP5A) — secondary link per Design §8; Revision Planner
-              above remains the one primary action. */}
-          <Link href="/learning-intelligence/parent/admissions-readiness" className="text-xs font-semibold text-gray-500 dark:text-gray-400 inline-flex items-center gap-1">
-            <GraduationCap size={13} /> Admissions Readiness →
-          </Link>
-          {/* Sprint 3, Increment 5 — a third secondary link, same visual
-              weight as the two above so it doesn't compete with Revision
-              Planner's one primary action (WP4D, unchanged). */}
-          <Link href="/learning-intelligence/parent/journey" className="text-xs font-semibold text-gray-500 dark:text-gray-400 inline-flex items-center gap-1">
-            <Route size={13} /> Your Learning Journey →
-          </Link>
-        </div>
-        {/* WP5D — one-line reason this is the journey's next step. */}
-        <p className="text-[11px] text-gray-400 dark:text-gray-500 mt-1">
-          Admissions Readiness relates this same evidence to CSSE&apos;s own published admissions facts.
-        </p>
-      </div>
-
       {profile === undefined && <p className="text-sm text-gray-400 dark:text-gray-500" aria-live="polite">Loading…</p>}
 
       {profile === null && (
@@ -165,7 +157,101 @@ export function CssePathwayParentContent() {
       )}
 
       {profile && profile.pathwayEligible && (
-        <div className="space-y-8">
+        <div className="space-y-6">
+          {/* New Learner Experience Migration — first screen, four questions
+              a parent actually has, understandable within ~10 seconds. See
+              PARENT_DASHBOARD_SIMPLIFICATION_SPEC.md. Every value here is
+              read from data already computed above; nothing new is fetched
+              or calculated for this section. */}
+          <section>
+            <h2 className="text-gray-500 dark:text-gray-400 font-semibold text-xs uppercase tracking-wide mb-2">
+              How is my child doing?
+            </h2>
+            <InfoCard>
+              <p className="text-sm text-gray-700 dark:text-gray-300">{atAGlanceAnswers.improving}</p>
+            </InfoCard>
+          </section>
+
+          <section>
+            <h2 className="text-gray-500 dark:text-gray-400 font-semibold text-xs uppercase tracking-wide mb-2">
+              What needs attention?
+            </h2>
+            <InfoCard className="flex items-start gap-3">
+              <Sparkles size={16} className="text-purple-500 mt-0.5 shrink-0" />
+              <div className="min-w-0">
+                <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">
+                  {topCandidateLabel ? <>Angel recommends: {topCandidateLabel}</> : "No specific focus yet"}
+                </p>
+                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 leading-relaxed">
+                  {topParentReason ?? "This fills in once there's evidence to respond to."}
+                </p>
+              </div>
+            </InfoCard>
+          </section>
+
+          <section>
+            <h2 className="text-gray-500 dark:text-gray-400 font-semibold text-xs uppercase tracking-wide mb-2">
+              What should they do next?
+            </h2>
+            <Link
+              href="/learning-intelligence/parent/revision-planner"
+              className="inline-flex items-center gap-1.5 bg-purple-600 hover:bg-purple-700 text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-colors"
+            >
+              <ClipboardList size={14} /> See This Week&apos;s Revision Plan →
+            </Link>
+          </section>
+
+          <section>
+            <h2 className="text-gray-500 dark:text-gray-400 font-semibold text-xs uppercase tracking-wide mb-2">
+              Are they ready for a mock?
+            </h2>
+            <InfoCard className="flex items-start gap-3">
+              <Target size={16} className="text-indigo-500 mt-0.5 shrink-0" />
+              <div className="min-w-0 flex-1">
+                {mockReadiness === undefined ? (
+                  <p className="text-sm text-gray-400 dark:text-gray-500" aria-live="polite">Checking…</p>
+                ) : (
+                  <>
+                    <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">
+                      {{
+                        "practice-first": "Keep preparing",
+                        "first-mock-valuable": "A first mock would be valuable",
+                        "mock-valuable": "A mock would be valuable",
+                      }[mockReadiness.verdict]}
+                    </p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 leading-relaxed">{mockReadiness.explanation}</p>
+                    <Link href={mockReadiness.nextAction.href} className="inline-block text-xs font-semibold text-purple-600 dark:text-purple-400 mt-2">
+                      {mockReadiness.nextAction.label}
+                    </Link>
+                  </>
+                )}
+              </div>
+            </InfoCard>
+          </section>
+
+          {/* Secondary links — progressive disclosure. Nothing below is
+              deleted; it's opt-in rather than always-rendered. */}
+          <div className="flex items-center gap-4 flex-wrap pt-1">
+            <button
+              onClick={() => setShowDetails((v) => !v)}
+              className="inline-flex items-center gap-1 text-xs font-semibold text-purple-600 dark:text-purple-400"
+            >
+              {showDetails ? "Hide detailed progress" : "View detailed progress"}
+              <ChevronDown size={13} className={showDetails ? "rotate-180 transition-transform" : "transition-transform"} />
+            </button>
+            <Link href="/learning-intelligence/parent/weekly-report" className="text-xs font-semibold text-gray-500 dark:text-gray-400 inline-flex items-center gap-1">
+              <CalendarDays size={13} /> Weekly Report →
+            </Link>
+            <Link href="/learning-intelligence/parent/admissions-readiness" className="text-xs font-semibold text-gray-500 dark:text-gray-400 inline-flex items-center gap-1">
+              <GraduationCap size={13} /> School/Admissions Readiness →
+            </Link>
+            <Link href="/learning-intelligence/parent/journey" className="text-xs font-semibold text-gray-500 dark:text-gray-400 inline-flex items-center gap-1">
+              <Route size={13} /> Learning history →
+            </Link>
+          </div>
+
+          {showDetails && (
+        <div className="space-y-8 pt-4 border-t border-gray-100 dark:border-gray-800">
           <section>
             <AtAGlancePanel answers={atAGlanceAnswers} />
           </section>
@@ -262,6 +348,8 @@ export function CssePathwayParentContent() {
             <h2 className="text-gray-900 dark:text-gray-100 font-bold text-lg mb-3">Recent Activity</h2>
             <RecentActivity items={recentActivity} plainLanguage />
           </section>
+        </div>
+          )}
         </div>
       )}
     </>

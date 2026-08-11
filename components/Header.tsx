@@ -36,7 +36,11 @@ export default function Header({ breadcrumbs }: HeaderProps) {
   }
 
   return (
-    <header className="sticky top-0 z-30 bg-white/90 dark:bg-gray-950/90 backdrop-blur border-b border-gray-100 dark:border-gray-800">
+    // New Learner Experience Migration — sticks below the fixed top nav bar
+    // (md:top-[var(--topbar-height)]), not the viewport top, so it never
+    // scrolls under Navigation's z-40 bar. Mobile has no fixed top bar, so
+    // top-0 is correct there.
+    <header className="sticky top-0 md:top-[var(--topbar-height)] z-30 bg-white/90 dark:bg-gray-950/90 backdrop-blur border-b border-gray-100 dark:border-gray-800">
       <div className="flex items-center gap-3 px-4 md:px-8 py-3">
         <div className="flex-1 min-w-0">
           {breadcrumbs && breadcrumbs.length > 0 ? (

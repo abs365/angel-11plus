@@ -154,11 +154,16 @@
    source; both now read from --nav-width. */
 :root {
   /* Layout */
-  --nav-width: 16rem;          /* 256px — the existing sidebar width, named */
-  --nav-width-collapsed: 4.5rem; /* new: tablet icon-rail width (AN-101 Step 6) */
+  --nav-width: 16rem;          /* 256px — retained: still used by the mobile "More" drawer's SidebarLink rows */
+  --nav-width-collapsed: 4.5rem; /* retained for the same reason; no longer used for the desktop sidebar (New Learner Experience Migration replaced it with a top bar) */
   --nav-item-height: 2.75rem;  /* 44px — matches globals.css's own existing button/a min-height rule below */
-  --nav-icon-size: 17px;       /* the existing desktop sidebar icon size */
+  --nav-icon-size: 17px;       /* mobile drawer icon size */
   --nav-radius: 0.75rem;       /* rounded-xl — the existing nav-item radius */
+  /* New Learner Experience Migration — the top bar's own height. PageLayout's
+     content padding-top reads from this same token so the two never drift
+     out of sync, the same discipline --nav-width previously enforced for
+     the sidebar it replaced. */
+  --topbar-height: 4rem;       /* 64px */
 
   /* Brand accent — AN-108: nav wayfinding (the active-item pill) is
      conceptually the "educational accent," not a primary-action button, so
@@ -185,6 +190,17 @@
   -webkit-tap-highlight-color: transparent;
 }
 
+/* New Learner Experience Migration — typography/readability foundation.
+   Every Tailwind text-* utility across this app is rem-based, so a single,
+   modest root font-size increase scales headings, body copy and spacing
+   together, coherently and proportionally, rather than each page's
+   individually hardcoded text-sm/text-xs classes needing separate,
+   inconsistent, high-regression-risk edits. ~6% over the 16px browser
+   default — a deliberate, disclosed "increase, don't oversize" choice. */
+html {
+  font-size: 17px;
+}
+
 body {
   background: var(--background);
   color: var(--foreground);
@@ -192,6 +208,7 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
+  line-height: 1.5;
 }
 
 /* ── Touch-friendly base targets ─────────────────────────────────────────────── */
