@@ -48,6 +48,14 @@ Direct reading of the final implementation confirms no call from this vertical r
 
 ---
 
+## 8. Production deployment and verification
+
+Committed (`f3eb049cd7f10c688bb8652319a153581d409996`), pushed, and deployed to Vercel — reached `● Ready`, correctly aliased to `https://angel-11plus.vercel.app`. Verified directly against the live production domain, not inferred from the deployment status alone:
+
+- `curl` confirms `/learning-intelligence/learn/mathematics/arithmetic` (200) and `/learning-intelligence/learn` (200, containing the exact string "Adding and Subtracting Big Numbers") are genuinely served.
+- Real browser testing against production: clean console (no errors) on both routes; clicking "Start the lesson" correctly reproduces the same honest, graceful migration-023-missing error message seen in dev — the deployed code behaves identically to the verified dev build, not a different artifact.
+- Regression check: `/mocks`, `/dashboard`, `/learning-intelligence/practice/mathematics`, and `/mocks/adaptive/gl` (a GL-pathway route, confirming non-CSSE pathways are unaffected) all return 200 on production.
+
 ## Summary
 
 | Check | Result |
@@ -57,7 +65,9 @@ Direct reading of the final implementation confirms no call from this vertical r
 | Build | PASS |
 | Mathematical correctness | PASS (hand-verified) |
 | Area selection re-verified with fresh evidence | PASS |
-| Real browser testing (intro, error state, Parent Dashboard conditional) | PASS |
+| Real browser testing, dev (intro, error state, Parent Dashboard conditional) | PASS |
+| Real browser testing, production | PASS |
 | Full interactive evidence flow | NOT YET VERIFIED — blocked on migration 023 (external dependency, disclosed) |
 | No second evidence system | PASS (code-inspection confirmed) |
 | No Mock Readiness contamination | PASS (code-inspection confirmed) |
+| Production deployment | PASS — commit `f3eb049cd7f10c688bb8652319a153581d409996`, `https://angel-11plus.vercel.app/` |
