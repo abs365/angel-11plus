@@ -66,7 +66,13 @@ export function getPracticeArea(id: string): PracticeAreaConfig | undefined {
  * used by app/mocks/adaptive/maths/page.tsx for the exact same function.
  */
 function normalizeNumeric(raw: string): number | null {
-  const cleaned = raw.trim().replace(/[£$,]/g, "").replace(/\s+/g, "");
+  // "°" added (Educational Increment 004 production closure fix) — a
+  // learner typing the bare, correct number for a degree-answer item
+  // (e.g. "95" for "95°") must not be marked wrong for omitting a symbol
+  // with no natural keyboard equivalent. Same rationale as "£$," already
+  // being stripped: a unit marker in the stored answer must not become a
+  // precision requirement on the learner's typed response.
+  const cleaned = raw.trim().replace(/[£$,°]/g, "").replace(/\s+/g, "");
   const num = Number(cleaned);
   return Number.isFinite(num) && cleaned !== "" ? num : null;
 }
