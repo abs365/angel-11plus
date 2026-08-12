@@ -494,6 +494,7 @@ export default function MathematicsPercentagesLessonPage() {
                       onChange={(e) => setGuidedAnswer(e.target.value)}
                       className="w-full mt-3 text-sm rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-3"
                       placeholder="Try again…"
+                      aria-label="Try again"
                     />
                     <button
                       onClick={() => void submitGuidedAttempt2()}
@@ -616,6 +617,7 @@ export default function MathematicsPercentagesLessonPage() {
                         onChange={(e) => setIndependentAnswer(e.target.value)}
                         className="w-full mt-3 text-sm rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-3"
                         placeholder="Try again…"
+                        aria-label="Try again"
                       />
                       <button
                         onClick={() => void submitIndependentAttempt2()}
