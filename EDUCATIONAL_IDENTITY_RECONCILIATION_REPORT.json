@@ -1,0 +1,1598 @@
+{
+  "totalScanned": 218,
+  "bySourceFile": {
+    "data/lessons.ts": 10,
+    "data/maths.ts": 20,
+    "data/vocabulary.ts": 12,
+    "data/writing.ts": 4,
+    "data/verbal-reasoning/*": 52,
+    "data/non-verbal-reasoning/*": 40,
+    "data/spatial-reasoning/*": 39,
+    "data/numerical-reasoning/*": 41
+  },
+  "byStatus": {
+    "already-registered": 18,
+    "newly-registered": 11,
+    "requires-review": 189
+  },
+  "identityCoverage": {
+    "registered": 29,
+    "total": 218,
+    "percentage": 13.3
+  },
+  "classificationCoverage": {
+    "evidenceSupported": 29,
+    "total": 218,
+    "percentage": 13.3
+  },
+  "uniquenessIssues": [],
+  "batchValidationIssues": [],
+  "reconciled": [
+    {
+      "id": "eng-001-q1",
+      "sourceFile": "data/lessons.ts",
+      "subject": "english",
+      "status": "newly-registered",
+      "skill": "QT-RC-05",
+      "competencyId": "RC-02",
+      "reason": "Open interpretive question requiring evidence ('use evidence from the text') to support a judgement about atmosphere — same shape as eng-002-q1 (already tagged QT-RC-05, competency RC-02): asks what something reveals, supported by cited evidence, not a single quoted phrase's effect."
+    },
+    {
+      "id": "eng-001-q2",
+      "sourceFile": "data/lessons.ts",
+      "subject": "english",
+      "status": "already-registered",
+      "skill": "QT-RC-03",
+      "competencyId": "RC-03"
+    },
+    {
+      "id": "eng-001-q3",
+      "sourceFile": "data/lessons.ts",
+      "subject": "english",
+      "status": "already-registered",
+      "skill": "QT-RC-10",
+      "competencyId": "RC-02"
+    },
+    {
+      "id": "eng-001-q4",
+      "sourceFile": "data/lessons.ts",
+      "subject": "english",
+      "status": "newly-registered",
+      "skill": "QT-RC-10",
+      "competencyId": "RC-02",
+      "reason": "Asks 'why did the writer choose X, what effect does this create' about a specific stylistic choice (entry brevity) — same shape as eng-001-q3 (already tagged QT-RC-10, competency RC-02): an explicit effect-of-technique question, not a general evidence-based inference."
+    },
+    {
+      "id": "eng-002-q1",
+      "sourceFile": "data/lessons.ts",
+      "subject": "english",
+      "status": "already-registered",
+      "skill": "QT-RC-05",
+      "competencyId": "RC-02"
+    },
+    {
+      "id": "eng-002-q2",
+      "sourceFile": "data/lessons.ts",
+      "subject": "english",
+      "status": "requires-review",
+      "reason": "Source: 'Look at the three types of silence Leo collects. What do these tell us about his home life?' (marks: 3). QT-RC-05 (Quotation-and-Explanation) rejected: that Question Type's own already-tagged examples (eng-002-q1, eng-002-q3) each centre on ONE specific quoted phrase the student explains; this question instead references three items already enumerated in the question itself and asks the student to synthesise across all three — a different task shape, not a quotation-and-explanation. QT-RC-08 (List-N-Items Extraction) rejected: that Question Type means finding/listing N items FROM the text; here the three items are already given in the question, and the actual task is inferring their combined significance, not extracting them. Neither candidate's definition is met without stretching it — marked for educational review rather than forced into either."
+    },
+    {
+      "id": "eng-002-q3",
+      "sourceFile": "data/lessons.ts",
+      "subject": "english",
+      "status": "already-registered",
+      "skill": "QT-RC-05",
+      "competencyId": "RC-02"
+    },
+    {
+      "id": "eng-003-q1",
+      "sourceFile": "data/lessons.ts",
+      "subject": "english",
+      "status": "newly-registered",
+      "skill": "QT-RC-05",
+      "competencyId": "RC-02",
+      "reason": "Gives a direct quotation ('no longer recognises the young man...') and asks for its meaning plus what has changed — Quotation-and-Explanation, matching eng-002-q1's tagged pattern (QT-RC-05, competency RC-02). Not QT-RC-03 (Word/Phrase Meaning): the quoted unit is a full clause with follow-on interpretation, not a single word/phrase gloss."
+    },
+    {
+      "id": "eng-003-q2",
+      "sourceFile": "data/lessons.ts",
+      "subject": "english",
+      "status": "requires-review",
+      "reason": "Source: \"Why does Thomas compare the sound of the guns to 'weather — threatening but distant, like a storm that may or may not arrive'? What does this tell us about life in the trenches?\" (marks: 3). On re-examination this sits genuinely between two already-used Question Types with comparable strength on each side: QT-RC-10 (Effect-of-Language Interpretation, per eng-001-q3's 'what effect/what technique' framing) and QT-RC-05 (Quotation-and-Explanation, per eng-002-q3's 'what does this simile tell us' framing) — this question's phrasing ('why does he compare... what does this tell us') plausibly matches either precedent equally well, and the original report's own disclosed reasoning already flagged this as a judgement call rather than a clean match. Per the instruction not to describe an ambiguous classification as certain, this is moved to educational review instead of being resolved by preference."
+    },
+    {
+      "id": "eng-003-q3",
+      "sourceFile": "data/lessons.ts",
+      "subject": "english",
+      "status": "already-registered",
+      "skill": "QT-RC-08",
+      "competencyId": "RC-01"
+    },
+    {
+      "id": "mth-001",
+      "sourceFile": "data/maths.ts",
+      "subject": "maths",
+      "status": "already-registered",
+      "skill": "QT-MR-10",
+      "competencyId": "MR-04"
+    },
+    {
+      "id": "mth-002",
+      "sourceFile": "data/maths.ts",
+      "subject": "maths",
+      "status": "already-registered",
+      "skill": "QT-MR-01",
+      "competencyId": "MR-01"
+    },
+    {
+      "id": "mth-003",
+      "sourceFile": "data/maths.ts",
+      "subject": "maths",
+      "status": "already-registered",
+      "skill": "QT-MR-07",
+      "competencyId": "MR-03"
+    },
+    {
+      "id": "mth-004",
+      "sourceFile": "data/maths.ts",
+      "subject": "maths",
+      "status": "already-registered",
+      "skill": "QT-MR-01",
+      "competencyId": "MR-01"
+    },
+    {
+      "id": "mth-005",
+      "sourceFile": "data/maths.ts",
+      "subject": "maths",
+      "status": "already-registered",
+      "skill": "QT-MR-13",
+      "competencyId": "MR-04"
+    },
+    {
+      "id": "mth-006",
+      "sourceFile": "data/maths.ts",
+      "subject": "maths",
+      "status": "already-registered",
+      "skill": "QT-MR-05",
+      "competencyId": "MR-02"
+    },
+    {
+      "id": "mth-007b",
+      "sourceFile": "data/maths.ts",
+      "subject": "maths",
+      "status": "already-registered",
+      "skill": "QT-MR-04",
+      "competencyId": "MR-04"
+    },
+    {
+      "id": "mth-008",
+      "sourceFile": "data/maths.ts",
+      "subject": "maths",
+      "status": "already-registered",
+      "skill": "QT-MR-01",
+      "competencyId": "MR-01"
+    },
+    {
+      "id": "mth-009",
+      "sourceFile": "data/maths.ts",
+      "subject": "maths",
+      "status": "already-registered",
+      "skill": "QT-MR-07",
+      "competencyId": "MR-03"
+    },
+    {
+      "id": "mth-010",
+      "sourceFile": "data/maths.ts",
+      "subject": "maths",
+      "status": "already-registered",
+      "skill": "QT-MR-04",
+      "competencyId": "MR-04"
+    },
+    {
+      "id": "qa-001",
+      "sourceFile": "data/maths.ts",
+      "subject": "maths",
+      "status": "newly-registered",
+      "skill": "QT-MR-01",
+      "competencyId": "MR-01",
+      "reason": "Direct arithmetic computation (847 + 356) — same shape as mth-002/mth-008/qa-008, already tagged QT-MR-01, competency MR-01."
+    },
+    {
+      "id": "qa-002",
+      "sourceFile": "data/maths.ts",
+      "subject": "maths",
+      "status": "newly-registered",
+      "skill": "QT-MR-01",
+      "competencyId": "MR-01",
+      "reason": "Direct arithmetic computation (1000 - 473) — QT-MR-01, competency MR-01."
+    },
+    {
+      "id": "qa-003",
+      "sourceFile": "data/maths.ts",
+      "subject": "maths",
+      "status": "newly-registered",
+      "skill": "QT-MR-01",
+      "competencyId": "MR-01",
+      "reason": "Direct arithmetic computation (24 x 35) — QT-MR-01, competency MR-01."
+    },
+    {
+      "id": "qa-004",
+      "sourceFile": "data/maths.ts",
+      "subject": "maths",
+      "status": "newly-registered",
+      "skill": "QT-MR-01",
+      "competencyId": "MR-01",
+      "reason": "Direct arithmetic computation (756 / 9) — QT-MR-01, competency MR-01."
+    },
+    {
+      "id": "qa-005",
+      "sourceFile": "data/maths.ts",
+      "subject": "maths",
+      "status": "newly-registered",
+      "skill": "QT-MR-01",
+      "competencyId": "MR-01",
+      "reason": "Direct arithmetic computation (12.5 x 8) — QT-MR-01, competency MR-01."
+    },
+    {
+      "id": "qa-006",
+      "sourceFile": "data/maths.ts",
+      "subject": "maths",
+      "status": "newly-registered",
+      "skill": "QT-MR-01",
+      "competencyId": "MR-01",
+      "reason": "Fraction-of-quantity calculation (3/4 of 240). Reuses mth-004's own disclosed precedent exactly: fractions fold into Assessment Brain's Arithmetic Calculation domain since no dedicated fractions Question Type exists — QT-MR-01, competency MR-01."
+    },
+    {
+      "id": "qa-007",
+      "sourceFile": "data/maths.ts",
+      "subject": "maths",
+      "status": "newly-registered",
+      "skill": "QT-MR-04",
+      "competencyId": "MR-04",
+      "reason": "Percentage-of-a-number calculation (15% of 60). Unlike fractions, Assessment Brain has a dedicated Question Type for this (QT-MR-04, Percentage/Proportional Change) — matches mth-010's precedent exactly, not QT-MR-01."
+    },
+    {
+      "id": "qa-008",
+      "sourceFile": "data/maths.ts",
+      "subject": "maths",
+      "status": "already-registered",
+      "skill": "QT-MR-01",
+      "competencyId": "MR-01"
+    },
+    {
+      "id": "qa-009",
+      "sourceFile": "data/maths.ts",
+      "subject": "maths",
+      "status": "newly-registered",
+      "skill": "QT-MR-01",
+      "competencyId": "MR-01",
+      "reason": "Direct arithmetic computation (2^3 x 5) — same shape as mth-002's power calculation, QT-MR-01, competency MR-01."
+    },
+    {
+      "id": "qa-010",
+      "sourceFile": "data/maths.ts",
+      "subject": "maths",
+      "status": "already-registered",
+      "skill": "QT-MR-11",
+      "competencyId": "MR-05"
+    },
+    {
+      "id": "voc-001",
+      "sourceFile": "data/vocabulary.ts",
+      "subject": "vocabulary",
+      "status": "requires-review",
+      "reason": "Source: standalone vocabulary flashcard (word: \"trepidation\" — definition, synonyms, antonyms, example sentence; no reading passage). QT-RC-03 (Word/Phrase Meaning Explanation) and QT-RC-04 (Synonym Substitution List) are both explicitly categorised 'Comprehension' in Assessment Brain V1 §9 — i.e. they test a word's meaning IN THE CONTEXT of a specific reading passage, which this standalone flashcard format does not have. None of Assessment Brain V1's 27 Question Types describe a passage-free lexical item test. Vocabulary self-assessment ('knew it'/'still learning', as this page already records) is a self-report, not an objective correctness signal, and is not treated as one here either."
+    },
+    {
+      "id": "voc-002",
+      "sourceFile": "data/vocabulary.ts",
+      "subject": "vocabulary",
+      "status": "requires-review",
+      "reason": "Source: standalone vocabulary flashcard (word: \"melancholy\" — definition, synonyms, antonyms, example sentence; no reading passage). QT-RC-03 (Word/Phrase Meaning Explanation) and QT-RC-04 (Synonym Substitution List) are both explicitly categorised 'Comprehension' in Assessment Brain V1 §9 — i.e. they test a word's meaning IN THE CONTEXT of a specific reading passage, which this standalone flashcard format does not have. None of Assessment Brain V1's 27 Question Types describe a passage-free lexical item test. Vocabulary self-assessment ('knew it'/'still learning', as this page already records) is a self-report, not an objective correctness signal, and is not treated as one here either."
+    },
+    {
+      "id": "voc-003",
+      "sourceFile": "data/vocabulary.ts",
+      "subject": "vocabulary",
+      "status": "requires-review",
+      "reason": "Source: standalone vocabulary flashcard (word: \"resolute\" — definition, synonyms, antonyms, example sentence; no reading passage). QT-RC-03 (Word/Phrase Meaning Explanation) and QT-RC-04 (Synonym Substitution List) are both explicitly categorised 'Comprehension' in Assessment Brain V1 §9 — i.e. they test a word's meaning IN THE CONTEXT of a specific reading passage, which this standalone flashcard format does not have. None of Assessment Brain V1's 27 Question Types describe a passage-free lexical item test. Vocabulary self-assessment ('knew it'/'still learning', as this page already records) is a self-report, not an objective correctness signal, and is not treated as one here either."
+    },
+    {
+      "id": "voc-004",
+      "sourceFile": "data/vocabulary.ts",
+      "subject": "vocabulary",
+      "status": "requires-review",
+      "reason": "Source: standalone vocabulary flashcard (word: \"turbulent\" — definition, synonyms, antonyms, example sentence; no reading passage). QT-RC-03 (Word/Phrase Meaning Explanation) and QT-RC-04 (Synonym Substitution List) are both explicitly categorised 'Comprehension' in Assessment Brain V1 §9 — i.e. they test a word's meaning IN THE CONTEXT of a specific reading passage, which this standalone flashcard format does not have. None of Assessment Brain V1's 27 Question Types describe a passage-free lexical item test. Vocabulary self-assessment ('knew it'/'still learning', as this page already records) is a self-report, not an objective correctness signal, and is not treated as one here either."
+    },
+    {
+      "id": "voc-005",
+      "sourceFile": "data/vocabulary.ts",
+      "subject": "vocabulary",
+      "status": "requires-review",
+      "reason": "Source: standalone vocabulary flashcard (word: \"indomitable\" — definition, synonyms, antonyms, example sentence; no reading passage). QT-RC-03 (Word/Phrase Meaning Explanation) and QT-RC-04 (Synonym Substitution List) are both explicitly categorised 'Comprehension' in Assessment Brain V1 §9 — i.e. they test a word's meaning IN THE CONTEXT of a specific reading passage, which this standalone flashcard format does not have. None of Assessment Brain V1's 27 Question Types describe a passage-free lexical item test. Vocabulary self-assessment ('knew it'/'still learning', as this page already records) is a self-report, not an objective correctness signal, and is not treated as one here either."
+    },
+    {
+      "id": "voc-006",
+      "sourceFile": "data/vocabulary.ts",
+      "subject": "vocabulary",
+      "status": "requires-review",
+      "reason": "Source: standalone vocabulary flashcard (word: \"desolate\" — definition, synonyms, antonyms, example sentence; no reading passage). QT-RC-03 (Word/Phrase Meaning Explanation) and QT-RC-04 (Synonym Substitution List) are both explicitly categorised 'Comprehension' in Assessment Brain V1 §9 — i.e. they test a word's meaning IN THE CONTEXT of a specific reading passage, which this standalone flashcard format does not have. None of Assessment Brain V1's 27 Question Types describe a passage-free lexical item test. Vocabulary self-assessment ('knew it'/'still learning', as this page already records) is a self-report, not an objective correctness signal, and is not treated as one here either."
+    },
+    {
+      "id": "voc-007",
+      "sourceFile": "data/vocabulary.ts",
+      "subject": "vocabulary",
+      "status": "requires-review",
+      "reason": "Source: standalone vocabulary flashcard (word: \"meticulous\" — definition, synonyms, antonyms, example sentence; no reading passage). QT-RC-03 (Word/Phrase Meaning Explanation) and QT-RC-04 (Synonym Substitution List) are both explicitly categorised 'Comprehension' in Assessment Brain V1 §9 — i.e. they test a word's meaning IN THE CONTEXT of a specific reading passage, which this standalone flashcard format does not have. None of Assessment Brain V1's 27 Question Types describe a passage-free lexical item test. Vocabulary self-assessment ('knew it'/'still learning', as this page already records) is a self-report, not an objective correctness signal, and is not treated as one here either."
+    },
+    {
+      "id": "voc-008",
+      "sourceFile": "data/vocabulary.ts",
+      "subject": "vocabulary",
+      "status": "requires-review",
+      "reason": "Source: standalone vocabulary flashcard (word: \"enigmatic\" — definition, synonyms, antonyms, example sentence; no reading passage). QT-RC-03 (Word/Phrase Meaning Explanation) and QT-RC-04 (Synonym Substitution List) are both explicitly categorised 'Comprehension' in Assessment Brain V1 §9 — i.e. they test a word's meaning IN THE CONTEXT of a specific reading passage, which this standalone flashcard format does not have. None of Assessment Brain V1's 27 Question Types describe a passage-free lexical item test. Vocabulary self-assessment ('knew it'/'still learning', as this page already records) is a self-report, not an objective correctness signal, and is not treated as one here either."
+    },
+    {
+      "id": "voc-009",
+      "sourceFile": "data/vocabulary.ts",
+      "subject": "vocabulary",
+      "status": "requires-review",
+      "reason": "Source: standalone vocabulary flashcard (word: \"luminous\" — definition, synonyms, antonyms, example sentence; no reading passage). QT-RC-03 (Word/Phrase Meaning Explanation) and QT-RC-04 (Synonym Substitution List) are both explicitly categorised 'Comprehension' in Assessment Brain V1 §9 — i.e. they test a word's meaning IN THE CONTEXT of a specific reading passage, which this standalone flashcard format does not have. None of Assessment Brain V1's 27 Question Types describe a passage-free lexical item test. Vocabulary self-assessment ('knew it'/'still learning', as this page already records) is a self-report, not an objective correctness signal, and is not treated as one here either."
+    },
+    {
+      "id": "voc-010",
+      "sourceFile": "data/vocabulary.ts",
+      "subject": "vocabulary",
+      "status": "requires-review",
+      "reason": "Source: standalone vocabulary flashcard (word: \"tenacious\" — definition, synonyms, antonyms, example sentence; no reading passage). QT-RC-03 (Word/Phrase Meaning Explanation) and QT-RC-04 (Synonym Substitution List) are both explicitly categorised 'Comprehension' in Assessment Brain V1 §9 — i.e. they test a word's meaning IN THE CONTEXT of a specific reading passage, which this standalone flashcard format does not have. None of Assessment Brain V1's 27 Question Types describe a passage-free lexical item test. Vocabulary self-assessment ('knew it'/'still learning', as this page already records) is a self-report, not an objective correctness signal, and is not treated as one here either."
+    },
+    {
+      "id": "voc-011",
+      "sourceFile": "data/vocabulary.ts",
+      "subject": "vocabulary",
+      "status": "requires-review",
+      "reason": "Source: standalone vocabulary flashcard (word: \"austere\" — definition, synonyms, antonyms, example sentence; no reading passage). QT-RC-03 (Word/Phrase Meaning Explanation) and QT-RC-04 (Synonym Substitution List) are both explicitly categorised 'Comprehension' in Assessment Brain V1 §9 — i.e. they test a word's meaning IN THE CONTEXT of a specific reading passage, which this standalone flashcard format does not have. None of Assessment Brain V1's 27 Question Types describe a passage-free lexical item test. Vocabulary self-assessment ('knew it'/'still learning', as this page already records) is a self-report, not an objective correctness signal, and is not treated as one here either."
+    },
+    {
+      "id": "voc-012",
+      "sourceFile": "data/vocabulary.ts",
+      "subject": "vocabulary",
+      "status": "requires-review",
+      "reason": "Source: standalone vocabulary flashcard (word: \"ephemeral\" — definition, synonyms, antonyms, example sentence; no reading passage). QT-RC-03 (Word/Phrase Meaning Explanation) and QT-RC-04 (Synonym Substitution List) are both explicitly categorised 'Comprehension' in Assessment Brain V1 §9 — i.e. they test a word's meaning IN THE CONTEXT of a specific reading passage, which this standalone flashcard format does not have. None of Assessment Brain V1's 27 Question Types describe a passage-free lexical item test. Vocabulary self-assessment ('knew it'/'still learning', as this page already records) is a self-report, not an objective correctness signal, and is not treated as one here either."
+    },
+    {
+      "id": "wrt-001",
+      "sourceFile": "data/writing.ts",
+      "subject": "writing",
+      "status": "requires-review",
+      "reason": "Source: narrative story-opening prompt ('The Empty House', type: 'narrative'). Assessment Brain V1's Continuous Writing catalogue has exactly two Question Types: QT-WC-01a (Reflective/Discursive Prompt — opinion/argument/personal reflection, not narrative) and QT-WC-01b (Picture-Stimulus Narrative — requires a picture stimulus, which this prompt does not have, per migration 013's own disclosed finding that none of Angel's 4 writing prompts use one). A text-only narrative prompt fits neither definition without misrepresenting it."
+    },
+    {
+      "id": "wrt-002",
+      "sourceFile": "data/writing.ts",
+      "subject": "writing",
+      "status": "requires-review",
+      "reason": "Source: pure descriptive prompt ('The Last Explorer', type: 'descriptive', 'Focus entirely on description'). Not reflective/discursive (QT-WC-01a) and not a picture-stimulus narrative (QT-WC-01b, and has no picture stimulus regardless) — description is a third genre Assessment Brain V1's 2-type Continuous Writing catalogue does not cover."
+    },
+    {
+      "id": "wrt-003",
+      "sourceFile": "data/writing.ts",
+      "subject": "writing",
+      "status": "already-registered",
+      "skill": "QT-WC-01a",
+      "competencyId": "WC-01"
+    },
+    {
+      "id": "wrt-004",
+      "sourceFile": "data/writing.ts",
+      "subject": "writing",
+      "status": "requires-review",
+      "reason": "Source: narrative story-opening prompt ('The Storm', type: 'narrative', text-only, no picture stimulus). Same reasoning as wrt-001 — fits neither of the two real Continuous Writing Question Types."
+    },
+    {
+      "id": "vr-001",
+      "sourceFile": "data/verbal-reasoning/*",
+      "subject": "verbal-reasoning",
+      "status": "requires-review",
+      "reason": "Assessment Brain V1 defines competencies/Question Types only for CSSE's own tested domains (English, Maths, Writing, Vocabulary) — it has no competency or Question Type coverage for Verbal/Non-Verbal/Spatial/Numerical Reasoning at all, since CSSE does not test these (ASSESSMENT_BRAIN_V1.md §2, §11). No evidence-supported QT-* mapping is possible under the current Assessment Brain V1 scope; not force-mapped, not given CSSE pathway relevance."
+    },
+    {
+      "id": "vr-002",
+      "sourceFile": "data/verbal-reasoning/*",
+      "subject": "verbal-reasoning",
+      "status": "requires-review",
+      "reason": "Assessment Brain V1 defines competencies/Question Types only for CSSE's own tested domains (English, Maths, Writing, Vocabulary) — it has no competency or Question Type coverage for Verbal/Non-Verbal/Spatial/Numerical Reasoning at all, since CSSE does not test these (ASSESSMENT_BRAIN_V1.md §2, §11). No evidence-supported QT-* mapping is possible under the current Assessment Brain V1 scope; not force-mapped, not given CSSE pathway relevance."
+    },
+    {
+      "id": "vr-003",
+      "sourceFile": "data/verbal-reasoning/*",
+      "subject": "verbal-reasoning",
+      "status": "requires-review",
+      "reason": "Assessment Brain V1 defines competencies/Question Types only for CSSE's own tested domains (English, Maths, Writing, Vocabulary) — it has no competency or Question Type coverage for Verbal/Non-Verbal/Spatial/Numerical Reasoning at all, since CSSE does not test these (ASSESSMENT_BRAIN_V1.md §2, §11). No evidence-supported QT-* mapping is possible under the current Assessment Brain V1 scope; not force-mapped, not given CSSE pathway relevance."
+    },
+    {
+      "id": "vr-004",
+      "sourceFile": "data/verbal-reasoning/*",
+      "subject": "verbal-reasoning",
+      "status": "requires-review",
+      "reason": "Assessment Brain V1 defines competencies/Question Types only for CSSE's own tested domains (English, Maths, Writing, Vocabulary) — it has no competency or Question Type coverage for Verbal/Non-Verbal/Spatial/Numerical Reasoning at all, since CSSE does not test these (ASSESSMENT_BRAIN_V1.md §2, §11). No evidence-supported QT-* mapping is possible under the current Assessment Brain V1 scope; not force-mapped, not given CSSE pathway relevance."
+    },
+    {
+      "id": "vr-005",
+      "sourceFile": "data/verbal-reasoning/*",
+      "subject": "verbal-reasoning",
+      "status": "requires-review",
+      "reason": "Assessment Brain V1 defines competencies/Question Types only for CSSE's own tested domains (English, Maths, Writing, Vocabulary) — it has no competency or Question Type coverage for Verbal/Non-Verbal/Spatial/Numerical Reasoning at all, since CSSE does not test these (ASSESSMENT_BRAIN_V1.md §2, §11). No evidence-supported QT-* mapping is possible under the current Assessment Brain V1 scope; not force-mapped, not given CSSE pathway relevance."
+    },
+    {
+      "id": "vr-006",
+      "sourceFile": "data/verbal-reasoning/*",
+      "subject": "verbal-reasoning",
+      "status": "requires-review",
+      "reason": "Assessment Brain V1 defines competencies/Question Types only for CSSE's own tested domains (English, Maths, Writing, Vocabulary) — it has no competency or Question Type coverage for Verbal/Non-Verbal/Spatial/Numerical Reasoning at all, since CSSE does not test these (ASSESSMENT_BRAIN_V1.md §2, §11). No evidence-supported QT-* mapping is possible under the current Assessment Brain V1 scope; not force-mapped, not given CSSE pathway relevance."
+    },
+    {
+      "id": "vr-007",
+      "sourceFile": "data/verbal-reasoning/*",
+      "subject": "verbal-reasoning",
+      "status": "requires-review",
+      "reason": "Assessment Brain V1 defines competencies/Question Types only for CSSE's own tested domains (English, Maths, Writing, Vocabulary) — it has no competency or Question Type coverage for Verbal/Non-Verbal/Spatial/Numerical Reasoning at all, since CSSE does not test these (ASSESSMENT_BRAIN_V1.md §2, §11). No evidence-supported QT-* mapping is possible under the current Assessment Brain V1 scope; not force-mapped, not given CSSE pathway relevance."
+    },
+    {
+      "id": "vr-008",
+      "sourceFile": "data/verbal-reasoning/*",
+      "subject": "verbal-reasoning",
+      "status": "requires-review",
+      "reason": "Assessment Brain V1 defines competencies/Question Types only for CSSE's own tested domains (English, Maths, Writing, Vocabulary) — it has no competency or Question Type coverage for Verbal/Non-Verbal/Spatial/Numerical Reasoning at all, since CSSE does not test these (ASSESSMENT_BRAIN_V1.md §2, §11). No evidence-supported QT-* mapping is possible under the current Assessment Brain V1 scope; not force-mapped, not given CSSE pathway relevance."
+    },
+    {
+      "id": "vr-009",
+      "sourceFile": "data/verbal-reasoning/*",
+      "subject": "verbal-reasoning",
+      "status": "requires-review",
+      "reason": "Assessment Brain V1 defines competencies/Question Types only for CSSE's own tested domains (English, Maths, Writing, Vocabulary) — it has no competency or Question Type coverage for Verbal/Non-Verbal/Spatial/Numerical Reasoning at all, since CSSE does not test these (ASSESSMENT_BRAIN_V1.md §2, §11). No evidence-supported QT-* mapping is possible under the current Assessment Brain V1 scope; not force-mapped, not given CSSE pathway relevance."
+    },
+    {
+      "id": "vr-010",
+      "sourceFile": "data/verbal-reasoning/*",
+      "subject": "verbal-reasoning",
+      "status": "requires-review",
+      "reason": "Assessment Brain V1 defines competencies/Question Types only for CSSE's own tested domains (English, Maths, Writing, Vocabulary) — it has no competency or Question Type coverage for Verbal/Non-Verbal/Spatial/Numerical Reasoning at all, since CSSE does not test these (ASSESSMENT_BRAIN_V1.md §2, §11). No evidence-supported QT-* mapping is possible under the current Assessment Brain V1 scope; not force-mapped, not given CSSE pathway relevance."
+    },
+    {
+      "id": "vr-011",
+      "sourceFile": "data/verbal-reasoning/*",
+      "subject": "verbal-reasoning",
+      "status": "requires-review",
+      "reason": "Assessment Brain V1 defines competencies/Question Types only for CSSE's own tested domains (English, Maths, Writing, Vocabulary) — it has no competency or Question Type coverage for Verbal/Non-Verbal/Spatial/Numerical Reasoning at all, since CSSE does not test these (ASSESSMENT_BRAIN_V1.md §2, §11). No evidence-supported QT-* mapping is possible under the current Assessment Brain V1 scope; not force-mapped, not given CSSE pathway relevance."
+    },
+    {
+      "id": "vr-012",
+      "sourceFile": "data/verbal-reasoning/*",
+      "subject": "verbal-reasoning",
+      "status": "requires-review",
+      "reason": "Assessment Brain V1 defines competencies/Question Types only for CSSE's own tested domains (English, Maths, Writing, Vocabulary) — it has no competency or Question Type coverage for Verbal/Non-Verbal/Spatial/Numerical Reasoning at all, since CSSE does not test these (ASSESSMENT_BRAIN_V1.md §2, §11). No evidence-supported QT-* mapping is possible under the current Assessment Brain V1 scope; not force-mapped, not given CSSE pathway relevance."
+    },
+    {
+      "id": "vr-013",
+      "sourceFile": "data/verbal-reasoning/*",
+      "subject": "verbal-reasoning",
+      "status": "requires-review",
+      "reason": "Assessment Brain V1 defines competencies/Question Types only for CSSE's own tested domains (English, Maths, Writing, Vocabulary) — it has no competency or Question Type coverage for Verbal/Non-Verbal/Spatial/Numerical Reasoning at all, since CSSE does not test these (ASSESSMENT_BRAIN_V1.md §2, §11). No evidence-supported QT-* mapping is possible under the current Assessment Brain V1 scope; not force-mapped, not given CSSE pathway relevance."
+    },
+    {
+      "id": "vr-014",
+      "sourceFile": "data/verbal-reasoning/*",
+      "subject": "verbal-reasoning",
+      "status": "requires-review",
+      "reason": "Assessment Brain V1 defines competencies/Question Types only for CSSE's own tested domains (English, Maths, Writing, Vocabulary) — it has no competency or Question Type coverage for Verbal/Non-Verbal/Spatial/Numerical Reasoning at all, since CSSE does not test these (ASSESSMENT_BRAIN_V1.md §2, §11). No evidence-supported QT-* mapping is possible under the current Assessment Brain V1 scope; not force-mapped, not given CSSE pathway relevance."
+    },
+    {
+      "id": "vr-015",
+      "sourceFile": "data/verbal-reasoning/*",
+      "subject": "verbal-reasoning",
+      "status": "requires-review",
+      "reason": "Assessment Brain V1 defines competencies/Question Types only for CSSE's own tested domains (English, Maths, Writing, Vocabulary) — it has no competency or Question Type coverage for Verbal/Non-Verbal/Spatial/Numerical Reasoning at all, since CSSE does not test these (ASSESSMENT_BRAIN_V1.md §2, §11). No evidence-supported QT-* mapping is possible under the current Assessment Brain V1 scope; not force-mapped, not given CSSE pathway relevance."
+    },
+    {
+      "id": "vr-016",
+      "sourceFile": "data/verbal-reasoning/*",
+      "subject": "verbal-reasoning",
+      "status": "requires-review",
+      "reason": "Assessment Brain V1 defines competencies/Question Types only for CSSE's own tested domains (English, Maths, Writing, Vocabulary) — it has no competency or Question Type coverage for Verbal/Non-Verbal/Spatial/Numerical Reasoning at all, since CSSE does not test these (ASSESSMENT_BRAIN_V1.md §2, §11). No evidence-supported QT-* mapping is possible under the current Assessment Brain V1 scope; not force-mapped, not given CSSE pathway relevance."
+    },
+    {
+      "id": "vr-017",
+      "sourceFile": "data/verbal-reasoning/*",
+      "subject": "verbal-reasoning",
+      "status": "requires-review",
+      "reason": "Assessment Brain V1 defines competencies/Question Types only for CSSE's own tested domains (English, Maths, Writing, Vocabulary) — it has no competency or Question Type coverage for Verbal/Non-Verbal/Spatial/Numerical Reasoning at all, since CSSE does not test these (ASSESSMENT_BRAIN_V1.md §2, §11). No evidence-supported QT-* mapping is possible under the current Assessment Brain V1 scope; not force-mapped, not given CSSE pathway relevance."
+    },
+    {
+      "id": "vr-018",
+      "sourceFile": "data/verbal-reasoning/*",
+      "subject": "verbal-reasoning",
+      "status": "requires-review",
+      "reason": "Assessment Brain V1 defines competencies/Question Types only for CSSE's own tested domains (English, Maths, Writing, Vocabulary) — it has no competency or Question Type coverage for Verbal/Non-Verbal/Spatial/Numerical Reasoning at all, since CSSE does not test these (ASSESSMENT_BRAIN_V1.md §2, §11). No evidence-supported QT-* mapping is possible under the current Assessment Brain V1 scope; not force-mapped, not given CSSE pathway relevance."
+    },
+    {
+      "id": "vr-019",
+      "sourceFile": "data/verbal-reasoning/*",
+      "subject": "verbal-reasoning",
+      "status": "requires-review",
+      "reason": "Assessment Brain V1 defines competencies/Question Types only for CSSE's own tested domains (English, Maths, Writing, Vocabulary) — it has no competency or Question Type coverage for Verbal/Non-Verbal/Spatial/Numerical Reasoning at all, since CSSE does not test these (ASSESSMENT_BRAIN_V1.md §2, §11). No evidence-supported QT-* mapping is possible under the current Assessment Brain V1 scope; not force-mapped, not given CSSE pathway relevance."
+    },
+    {
+      "id": "vr-020",
+      "sourceFile": "data/verbal-reasoning/*",
+      "subject": "verbal-reasoning",
+      "status": "requires-review",
+      "reason": "Assessment Brain V1 defines competencies/Question Types only for CSSE's own tested domains (English, Maths, Writing, Vocabulary) — it has no competency or Question Type coverage for Verbal/Non-Verbal/Spatial/Numerical Reasoning at all, since CSSE does not test these (ASSESSMENT_BRAIN_V1.md §2, §11). No evidence-supported QT-* mapping is possible under the current Assessment Brain V1 scope; not force-mapped, not given CSSE pathway relevance."
+    },
+    {
+      "id": "vr-021",
+      "sourceFile": "data/verbal-reasoning/*",
+      "subject": "verbal-reasoning",
+      "status": "requires-review",
+      "reason": "Assessment Brain V1 defines competencies/Question Types only for CSSE's own tested domains (English, Maths, Writing, Vocabulary) — it has no competency or Question Type coverage for Verbal/Non-Verbal/Spatial/Numerical Reasoning at all, since CSSE does not test these (ASSESSMENT_BRAIN_V1.md §2, §11). No evidence-supported QT-* mapping is possible under the current Assessment Brain V1 scope; not force-mapped, not given CSSE pathway relevance."
+    },
+    {
+      "id": "vr-022",
+      "sourceFile": "data/verbal-reasoning/*",
+      "subject": "verbal-reasoning",
+      "status": "requires-review",
+      "reason": "Assessment Brain V1 defines competencies/Question Types only for CSSE's own tested domains (English, Maths, Writing, Vocabulary) — it has no competency or Question Type coverage for Verbal/Non-Verbal/Spatial/Numerical Reasoning at all, since CSSE does not test these (ASSESSMENT_BRAIN_V1.md §2, §11). No evidence-supported QT-* mapping is possible under the current Assessment Brain V1 scope; not force-mapped, not given CSSE pathway relevance."
+    },
+    {
+      "id": "vr-023",
+      "sourceFile": "data/verbal-reasoning/*",
+      "subject": "verbal-reasoning",
+      "status": "requires-review",
+      "reason": "Assessment Brain V1 defines competencies/Question Types only for CSSE's own tested domains (English, Maths, Writing, Vocabulary) — it has no competency or Question Type coverage for Verbal/Non-Verbal/Spatial/Numerical Reasoning at all, since CSSE does not test these (ASSESSMENT_BRAIN_V1.md §2, §11). No evidence-supported QT-* mapping is possible under the current Assessment Brain V1 scope; not force-mapped, not given CSSE pathway relevance."
+    },
+    {
+      "id": "vr-024",
+      "sourceFile": "data/verbal-reasoning/*",
+      "subject": "verbal-reasoning",
+      "status": "requires-review",
+      "reason": "Assessment Brain V1 defines competencies/Question Types only for CSSE's own tested domains (English, Maths, Writing, Vocabulary) — it has no competency or Question Type coverage for Verbal/Non-Verbal/Spatial/Numerical Reasoning at all, since CSSE does not test these (ASSESSMENT_BRAIN_V1.md §2, §11). No evidence-supported QT-* mapping is possible under the current Assessment Brain V1 scope; not force-mapped, not given CSSE pathway relevance."
+    },
+    {
+      "id": "vr-025",
+      "sourceFile": "data/verbal-reasoning/*",
+      "subject": "verbal-reasoning",
+      "status": "requires-review",
+      "reason": "Assessment Brain V1 defines competencies/Question Types only for CSSE's own tested domains (English, Maths, Writing, Vocabulary) — it has no competency or Question Type coverage for Verbal/Non-Verbal/Spatial/Numerical Reasoning at all, since CSSE does not test these (ASSESSMENT_BRAIN_V1.md §2, §11). No evidence-supported QT-* mapping is possible under the current Assessment Brain V1 scope; not force-mapped, not given CSSE pathway relevance."
+    },
+    {
+      "id": "vr-026",
+      "sourceFile": "data/verbal-reasoning/*",
+      "subject": "verbal-reasoning",
+      "status": "requires-review",
+      "reason": "Assessment Brain V1 defines competencies/Question Types only for CSSE's own tested domains (English, Maths, Writing, Vocabulary) — it has no competency or Question Type coverage for Verbal/Non-Verbal/Spatial/Numerical Reasoning at all, since CSSE does not test these (ASSESSMENT_BRAIN_V1.md §2, §11). No evidence-supported QT-* mapping is possible under the current Assessment Brain V1 scope; not force-mapped, not given CSSE pathway relevance."
+    },
+    {
+      "id": "vr-027",
+      "sourceFile": "data/verbal-reasoning/*",
+      "subject": "verbal-reasoning",
+      "status": "requires-review",
+      "reason": "Assessment Brain V1 defines competencies/Question Types only for CSSE's own tested domains (English, Maths, Writing, Vocabulary) — it has no competency or Question Type coverage for Verbal/Non-Verbal/Spatial/Numerical Reasoning at all, since CSSE does not test these (ASSESSMENT_BRAIN_V1.md §2, §11). No evidence-supported QT-* mapping is possible under the current Assessment Brain V1 scope; not force-mapped, not given CSSE pathway relevance."
+    },
+    {
+      "id": "vr-028",
+      "sourceFile": "data/verbal-reasoning/*",
+      "subject": "verbal-reasoning",
+      "status": "requires-review",
+      "reason": "Assessment Brain V1 defines competencies/Question Types only for CSSE's own tested domains (English, Maths, Writing, Vocabulary) — it has no competency or Question Type coverage for Verbal/Non-Verbal/Spatial/Numerical Reasoning at all, since CSSE does not test these (ASSESSMENT_BRAIN_V1.md §2, §11). No evidence-supported QT-* mapping is possible under the current Assessment Brain V1 scope; not force-mapped, not given CSSE pathway relevance."
+    },
+    {
+      "id": "vr-029",
+      "sourceFile": "data/verbal-reasoning/*",
+      "subject": "verbal-reasoning",
+      "status": "requires-review",
+      "reason": "Assessment Brain V1 defines competencies/Question Types only for CSSE's own tested domains (English, Maths, Writing, Vocabulary) — it has no competency or Question Type coverage for Verbal/Non-Verbal/Spatial/Numerical Reasoning at all, since CSSE does not test these (ASSESSMENT_BRAIN_V1.md §2, §11). No evidence-supported QT-* mapping is possible under the current Assessment Brain V1 scope; not force-mapped, not given CSSE pathway relevance."
+    },
+    {
+      "id": "vr-030",
+      "sourceFile": "data/verbal-reasoning/*",
+      "subject": "verbal-reasoning",
+      "status": "requires-review",
+      "reason": "Assessment Brain V1 defines competencies/Question Types only for CSSE's own tested domains (English, Maths, Writing, Vocabulary) — it has no competency or Question Type coverage for Verbal/Non-Verbal/Spatial/Numerical Reasoning at all, since CSSE does not test these (ASSESSMENT_BRAIN_V1.md §2, §11). No evidence-supported QT-* mapping is possible under the current Assessment Brain V1 scope; not force-mapped, not given CSSE pathway relevance."
+    },
+    {
+      "id": "vr-031",
+      "sourceFile": "data/verbal-reasoning/*",
+      "subject": "verbal-reasoning",
+      "status": "requires-review",
+      "reason": "Assessment Brain V1 defines competencies/Question Types only for CSSE's own tested domains (English, Maths, Writing, Vocabulary) — it has no competency or Question Type coverage for Verbal/Non-Verbal/Spatial/Numerical Reasoning at all, since CSSE does not test these (ASSESSMENT_BRAIN_V1.md §2, §11). No evidence-supported QT-* mapping is possible under the current Assessment Brain V1 scope; not force-mapped, not given CSSE pathway relevance."
+    },
+    {
+      "id": "vr-032",
+      "sourceFile": "data/verbal-reasoning/*",
+      "subject": "verbal-reasoning",
+      "status": "requires-review",
+      "reason": "Assessment Brain V1 defines competencies/Question Types only for CSSE's own tested domains (English, Maths, Writing, Vocabulary) — it has no competency or Question Type coverage for Verbal/Non-Verbal/Spatial/Numerical Reasoning at all, since CSSE does not test these (ASSESSMENT_BRAIN_V1.md §2, §11). No evidence-supported QT-* mapping is possible under the current Assessment Brain V1 scope; not force-mapped, not given CSSE pathway relevance."
+    },
+    {
+      "id": "vr-033",
+      "sourceFile": "data/verbal-reasoning/*",
+      "subject": "verbal-reasoning",
+      "status": "requires-review",
+      "reason": "Assessment Brain V1 defines competencies/Question Types only for CSSE's own tested domains (English, Maths, Writing, Vocabulary) — it has no competency or Question Type coverage for Verbal/Non-Verbal/Spatial/Numerical Reasoning at all, since CSSE does not test these (ASSESSMENT_BRAIN_V1.md §2, §11). No evidence-supported QT-* mapping is possible under the current Assessment Brain V1 scope; not force-mapped, not given CSSE pathway relevance."
+    },
+    {
+      "id": "vr-034",
+      "sourceFile": "data/verbal-reasoning/*",
+      "subject": "verbal-reasoning",
+      "status": "requires-review",
+      "reason": "Assessment Brain V1 defines competencies/Question Types only for CSSE's own tested domains (English, Maths, Writing, Vocabulary) — it has no competency or Question Type coverage for Verbal/Non-Verbal/Spatial/Numerical Reasoning at all, since CSSE does not test these (ASSESSMENT_BRAIN_V1.md §2, §11). No evidence-supported QT-* mapping is possible under the current Assessment Brain V1 scope; not force-mapped, not given CSSE pathway relevance."
+    },
+    {
+      "id": "vr-035",
+      "sourceFile": "data/verbal-reasoning/*",
+      "subject": "verbal-reasoning",
+      "status": "requires-review",
+      "reason": "Assessment Brain V1 defines competencies/Question Types only for CSSE's own tested domains (English, Maths, Writing, Vocabulary) — it has no competency or Question Type coverage for Verbal/Non-Verbal/Spatial/Numerical Reasoning at all, since CSSE does not test these (ASSESSMENT_BRAIN_V1.md §2, §11). No evidence-supported QT-* mapping is possible under the current Assessment Brain V1 scope; not force-mapped, not given CSSE pathway relevance."
+    },
+    {
+      "id": "vr-036",
+      "sourceFile": "data/verbal-reasoning/*",
+      "subject": "verbal-reasoning",
+      "status": "requires-review",
+      "reason": "Assessment Brain V1 defines competencies/Question Types only for CSSE's own tested domains (English, Maths, Writing, Vocabulary) — it has no competency or Question Type coverage for Verbal/Non-Verbal/Spatial/Numerical Reasoning at all, since CSSE does not test these (ASSESSMENT_BRAIN_V1.md §2, §11). No evidence-supported QT-* mapping is possible under the current Assessment Brain V1 scope; not force-mapped, not given CSSE pathway relevance."
+    },
+    {
+      "id": "vr-037",
+      "sourceFile": "data/verbal-reasoning/*",
+      "subject": "verbal-reasoning",
+      "status": "requires-review",
+      "reason": "Assessment Brain V1 defines competencies/Question Types only for CSSE's own tested domains (English, Maths, Writing, Vocabulary) — it has no competency or Question Type coverage for Verbal/Non-Verbal/Spatial/Numerical Reasoning at all, since CSSE does not test these (ASSESSMENT_BRAIN_V1.md §2, §11). No evidence-supported QT-* mapping is possible under the current Assessment Brain V1 scope; not force-mapped, not given CSSE pathway relevance."
+    },
+    {
+      "id": "vr-038",
+      "sourceFile": "data/verbal-reasoning/*",
+      "subject": "verbal-reasoning",
+      "status": "requires-review",
+      "reason": "Assessment Brain V1 defines competencies/Question Types only for CSSE's own tested domains (English, Maths, Writing, Vocabulary) — it has no competency or Question Type coverage for Verbal/Non-Verbal/Spatial/Numerical Reasoning at all, since CSSE does not test these (ASSESSMENT_BRAIN_V1.md §2, §11). No evidence-supported QT-* mapping is possible under the current Assessment Brain V1 scope; not force-mapped, not given CSSE pathway relevance."
+    },
+    {
+      "id": "vr-039",
+      "sourceFile": "data/verbal-reasoning/*",
+      "subject": "verbal-reasoning",
+      "status": "requires-review",
+      "reason": "Assessment Brain V1 defines competencies/Question Types only for CSSE's own tested domains (English, Maths, Writing, Vocabulary) — it has no competency or Question Type coverage for Verbal/Non-Verbal/Spatial/Numerical Reasoning at all, since CSSE does not test these (ASSESSMENT_BRAIN_V1.md §2, §11). No evidence-supported QT-* mapping is possible under the current Assessment Brain V1 scope; not force-mapped, not given CSSE pathway relevance."
+    },
+    {
+      "id": "vr-040",
+      "sourceFile": "data/verbal-reasoning/*",
+      "subject": "verbal-reasoning",
+      "status": "requires-review",
+      "reason": "Assessment Brain V1 defines competencies/Question Types only for CSSE's own tested domains (English, Maths, Writing, Vocabulary) — it has no competency or Question Type coverage for Verbal/Non-Verbal/Spatial/Numerical Reasoning at all, since CSSE does not test these (ASSESSMENT_BRAIN_V1.md §2, §11). No evidence-supported QT-* mapping is possible under the current Assessment Brain V1 scope; not force-mapped, not given CSSE pathway relevance."
+    },
+    {
+      "id": "vr-041",
+      "sourceFile": "data/verbal-reasoning/*",
+      "subject": "verbal-reasoning",
+      "status": "requires-review",
+      "reason": "Assessment Brain V1 defines competencies/Question Types only for CSSE's own tested domains (English, Maths, Writing, Vocabulary) — it has no competency or Question Type coverage for Verbal/Non-Verbal/Spatial/Numerical Reasoning at all, since CSSE does not test these (ASSESSMENT_BRAIN_V1.md §2, §11). No evidence-supported QT-* mapping is possible under the current Assessment Brain V1 scope; not force-mapped, not given CSSE pathway relevance."
+    },
+    {
+      "id": "vr-042",
+      "sourceFile": "data/verbal-reasoning/*",
+      "subject": "verbal-reasoning",
+      "status": "requires-review",
+      "reason": "Assessment Brain V1 defines competencies/Question Types only for CSSE's own tested domains (English, Maths, Writing, Vocabulary) — it has no competency or Question Type coverage for Verbal/Non-Verbal/Spatial/Numerical Reasoning at all, since CSSE does not test these (ASSESSMENT_BRAIN_V1.md §2, §11). No evidence-supported QT-* mapping is possible under the current Assessment Brain V1 scope; not force-mapped, not given CSSE pathway relevance."
+    },
+    {
+      "id": "vr-043",
+      "sourceFile": "data/verbal-reasoning/*",
+      "subject": "verbal-reasoning",
+      "status": "requires-review",
+      "reason": "Assessment Brain V1 defines competencies/Question Types only for CSSE's own tested domains (English, Maths, Writing, Vocabulary) — it has no competency or Question Type coverage for Verbal/Non-Verbal/Spatial/Numerical Reasoning at all, since CSSE does not test these (ASSESSMENT_BRAIN_V1.md §2, §11). No evidence-supported QT-* mapping is possible under the current Assessment Brain V1 scope; not force-mapped, not given CSSE pathway relevance."
+    },
+    {
+      "id": "vr-044",
+      "sourceFile": "data/verbal-reasoning/*",
+      "subject": "verbal-reasoning",
+      "status": "requires-review",
+      "reason": "Assessment Brain V1 defines competencies/Question Types only for CSSE's own tested domains (English, Maths, Writing, Vocabulary) — it has no competency or Question Type coverage for Verbal/Non-Verbal/Spatial/Numerical Reasoning at all, since CSSE does not test these (ASSESSMENT_BRAIN_V1.md §2, §11). No evidence-supported QT-* mapping is possible under the current Assessment Brain V1 scope; not force-mapped, not given CSSE pathway relevance."
+    },
+    {
+      "id": "vr-045",
+      "sourceFile": "data/verbal-reasoning/*",
+      "subject": "verbal-reasoning",
+      "status": "requires-review",
+      "reason": "Assessment Brain V1 defines competencies/Question Types only for CSSE's own tested domains (English, Maths, Writing, Vocabulary) — it has no competency or Question Type coverage for Verbal/Non-Verbal/Spatial/Numerical Reasoning at all, since CSSE does not test these (ASSESSMENT_BRAIN_V1.md §2, §11). No evidence-supported QT-* mapping is possible under the current Assessment Brain V1 scope; not force-mapped, not given CSSE pathway relevance."
+    },
+    {
+      "id": "vr-046",
+      "sourceFile": "data/verbal-reasoning/*",
+      "subject": "verbal-reasoning",
+      "status": "requires-review",
+      "reason": "Assessment Brain V1 defines competencies/Question Types only for CSSE's own tested domains (English, Maths, Writing, Vocabulary) — it has no competency or Question Type coverage for Verbal/Non-Verbal/Spatial/Numerical Reasoning at all, since CSSE does not test these (ASSESSMENT_BRAIN_V1.md §2, §11). No evidence-supported QT-* mapping is possible under the current Assessment Brain V1 scope; not force-mapped, not given CSSE pathway relevance."
+    },
+    {
+      "id": "vr-047",
+      "sourceFile": "data/verbal-reasoning/*",
+      "subject": "verbal-reasoning",
+      "status": "requires-review",
+      "reason": "Assessment Brain V1 defines competencies/Question Types only for CSSE's own tested domains (English, Maths, Writing, Vocabulary) — it has no competency or Question Type coverage for Verbal/Non-Verbal/Spatial/Numerical Reasoning at all, since CSSE does not test these (ASSESSMENT_BRAIN_V1.md §2, §11). No evidence-supported QT-* mapping is possible under the current Assessment Brain V1 scope; not force-mapped, not given CSSE pathway relevance."
+    },
+    {
+      "id": "vr-048",
+      "sourceFile": "data/verbal-reasoning/*",
+      "subject": "verbal-reasoning",
+      "status": "requires-review",
+      "reason": "Assessment Brain V1 defines competencies/Question Types only for CSSE's own tested domains (English, Maths, Writing, Vocabulary) — it has no competency or Question Type coverage for Verbal/Non-Verbal/Spatial/Numerical Reasoning at all, since CSSE does not test these (ASSESSMENT_BRAIN_V1.md §2, §11). No evidence-supported QT-* mapping is possible under the current Assessment Brain V1 scope; not force-mapped, not given CSSE pathway relevance."
+    },
+    {
+      "id": "vr-049",
+      "sourceFile": "data/verbal-reasoning/*",
+      "subject": "verbal-reasoning",
+      "status": "requires-review",
+      "reason": "Assessment Brain V1 defines competencies/Question Types only for CSSE's own tested domains (English, Maths, Writing, Vocabulary) — it has no competency or Question Type coverage for Verbal/Non-Verbal/Spatial/Numerical Reasoning at all, since CSSE does not test these (ASSESSMENT_BRAIN_V1.md §2, §11). No evidence-supported QT-* mapping is possible under the current Assessment Brain V1 scope; not force-mapped, not given CSSE pathway relevance."
+    },
+    {
+      "id": "vr-050",
+      "sourceFile": "data/verbal-reasoning/*",
+      "subject": "verbal-reasoning",
+      "status": "requires-review",
+      "reason": "Assessment Brain V1 defines competencies/Question Types only for CSSE's own tested domains (English, Maths, Writing, Vocabulary) — it has no competency or Question Type coverage for Verbal/Non-Verbal/Spatial/Numerical Reasoning at all, since CSSE does not test these (ASSESSMENT_BRAIN_V1.md §2, §11). No evidence-supported QT-* mapping is possible under the current Assessment Brain V1 scope; not force-mapped, not given CSSE pathway relevance."
+    },
+    {
+      "id": "vr-051",
+      "sourceFile": "data/verbal-reasoning/*",
+      "subject": "verbal-reasoning",
+      "status": "requires-review",
+      "reason": "Assessment Brain V1 defines competencies/Question Types only for CSSE's own tested domains (English, Maths, Writing, Vocabulary) — it has no competency or Question Type coverage for Verbal/Non-Verbal/Spatial/Numerical Reasoning at all, since CSSE does not test these (ASSESSMENT_BRAIN_V1.md §2, §11). No evidence-supported QT-* mapping is possible under the current Assessment Brain V1 scope; not force-mapped, not given CSSE pathway relevance."
+    },
+    {
+      "id": "vr-052",
+      "sourceFile": "data/verbal-reasoning/*",
+      "subject": "verbal-reasoning",
+      "status": "requires-review",
+      "reason": "Assessment Brain V1 defines competencies/Question Types only for CSSE's own tested domains (English, Maths, Writing, Vocabulary) — it has no competency or Question Type coverage for Verbal/Non-Verbal/Spatial/Numerical Reasoning at all, since CSSE does not test these (ASSESSMENT_BRAIN_V1.md §2, §11). No evidence-supported QT-* mapping is possible under the current Assessment Brain V1 scope; not force-mapped, not given CSSE pathway relevance."
+    },
+    {
+      "id": "nvr-001",
+      "sourceFile": "data/non-verbal-reasoning/*",
+      "subject": "non-verbal-reasoning",
+      "status": "requires-review",
+      "reason": "Assessment Brain V1 defines competencies/Question Types only for CSSE's own tested domains (English, Maths, Writing, Vocabulary) — it has no competency or Question Type coverage for Verbal/Non-Verbal/Spatial/Numerical Reasoning at all, since CSSE does not test these (ASSESSMENT_BRAIN_V1.md §2, §11). No evidence-supported QT-* mapping is possible under the current Assessment Brain V1 scope; not force-mapped, not given CSSE pathway relevance."
+    },
+    {
+      "id": "nvr-002",
+      "sourceFile": "data/non-verbal-reasoning/*",
+      "subject": "non-verbal-reasoning",
+      "status": "requires-review",
+      "reason": "Assessment Brain V1 defines competencies/Question Types only for CSSE's own tested domains (English, Maths, Writing, Vocabulary) — it has no competency or Question Type coverage for Verbal/Non-Verbal/Spatial/Numerical Reasoning at all, since CSSE does not test these (ASSESSMENT_BRAIN_V1.md §2, §11). No evidence-supported QT-* mapping is possible under the current Assessment Brain V1 scope; not force-mapped, not given CSSE pathway relevance."
+    },
+    {
+      "id": "nvr-003",
+      "sourceFile": "data/non-verbal-reasoning/*",
+      "subject": "non-verbal-reasoning",
+      "status": "requires-review",
+      "reason": "Assessment Brain V1 defines competencies/Question Types only for CSSE's own tested domains (English, Maths, Writing, Vocabulary) — it has no competency or Question Type coverage for Verbal/Non-Verbal/Spatial/Numerical Reasoning at all, since CSSE does not test these (ASSESSMENT_BRAIN_V1.md §2, §11). No evidence-supported QT-* mapping is possible under the current Assessment Brain V1 scope; not force-mapped, not given CSSE pathway relevance."
+    },
+    {
+      "id": "nvr-004",
+      "sourceFile": "data/non-verbal-reasoning/*",
+      "subject": "non-verbal-reasoning",
+      "status": "requires-review",
+      "reason": "Assessment Brain V1 defines competencies/Question Types only for CSSE's own tested domains (English, Maths, Writing, Vocabulary) — it has no competency or Question Type coverage for Verbal/Non-Verbal/Spatial/Numerical Reasoning at all, since CSSE does not test these (ASSESSMENT_BRAIN_V1.md §2, §11). No evidence-supported QT-* mapping is possible under the current Assessment Brain V1 scope; not force-mapped, not given CSSE pathway relevance."
+    },
+    {
+      "id": "nvr-005",
+      "sourceFile": "data/non-verbal-reasoning/*",
+      "subject": "non-verbal-reasoning",
+      "status": "requires-review",
+      "reason": "Assessment Brain V1 defines competencies/Question Types only for CSSE's own tested domains (English, Maths, Writing, Vocabulary) — it has no competency or Question Type coverage for Verbal/Non-Verbal/Spatial/Numerical Reasoning at all, since CSSE does not test these (ASSESSMENT_BRAIN_V1.md §2, §11). No evidence-supported QT-* mapping is possible under the current Assessment Brain V1 scope; not force-mapped, not given CSSE pathway relevance."
+    },
+    {
+      "id": "nvr-006",
+      "sourceFile": "data/non-verbal-reasoning/*",
+      "subject": "non-verbal-reasoning",
+      "status": "requires-review",
+      "reason": "Assessment Brain V1 defines competencies/Question Types only for CSSE's own tested domains (English, Maths, Writing, Vocabulary) — it has no competency or Question Type coverage for Verbal/Non-Verbal/Spatial/Numerical Reasoning at all, since CSSE does not test these (ASSESSMENT_BRAIN_V1.md §2, §11). No evidence-supported QT-* mapping is possible under the current Assessment Brain V1 scope; not force-mapped, not given CSSE pathway relevance."
+    },
+    {
+      "id": "nvr-007",
+      "sourceFile": "data/non-verbal-reasoning/*",
+      "subject": "non-verbal-reasoning",
+      "status": "requires-review",
+      "reason": "Assessment Brain V1 defines competencies/Question Types only for CSSE's own tested domains (English, Maths, Writing, Vocabulary) — it has no competency or Question Type coverage for Verbal/Non-Verbal/Spatial/Numerical Reasoning at all, since CSSE does not test these (ASSESSMENT_BRAIN_V1.md §2, §11). No evidence-supported QT-* mapping is possible under the current Assessment Brain V1 scope; not force-mapped, not given CSSE pathway relevance."
+    },
+    {
+      "id": "nvr-008",
+      "sourceFile": "data/non-verbal-reasoning/*",
+      "subject": "non-verbal-reasoning",
+      "status": "requires-review",
+      "reason": "Assessment Brain V1 defines competencies/Question Types only for CSSE's own tested domains (English, Maths, Writing, Vocabulary) — it has no competency or Question Type coverage for Verbal/Non-Verbal/Spatial/Numerical Reasoning at all, since CSSE does not test these (ASSESSMENT_BRAIN_V1.md §2, §11). No evidence-supported QT-* mapping is possible under the current Assessment Brain V1 scope; not force-mapped, not given CSSE pathway relevance."
+    },
+    {
+      "id": "nvr-009",
+      "sourceFile": "data/non-verbal-reasoning/*",
+      "subject": "non-verbal-reasoning",
+      "status": "requires-review",
+      "reason": "Assessment Brain V1 defines competencies/Question Types only for CSSE's own tested domains (English, Maths, Writing, Vocabulary) — it has no competency or Question Type coverage for Verbal/Non-Verbal/Spatial/Numerical Reasoning at all, since CSSE does not test these (ASSESSMENT_BRAIN_V1.md §2, §11). No evidence-supported QT-* mapping is possible under the current Assessment Brain V1 scope; not force-mapped, not given CSSE pathway relevance."
+    },
+    {
+      "id": "nvr-010",
+      "sourceFile": "data/non-verbal-reasoning/*",
+      "subject": "non-verbal-reasoning",
+      "status": "requires-review",
+      "reason": "Assessment Brain V1 defines competencies/Question Types only for CSSE's own tested domains (English, Maths, Writing, Vocabulary) — it has no competency or Question Type coverage for Verbal/Non-Verbal/Spatial/Numerical Reasoning at all, since CSSE does not test these (ASSESSMENT_BRAIN_V1.md §2, §11). No evidence-supported QT-* mapping is possible under the current Assessment Brain V1 scope; not force-mapped, not given CSSE pathway relevance."
+    },
+    {
+      "id": "nvr-011",
+      "sourceFile": "data/non-verbal-reasoning/*",
+      "subject": "non-verbal-reasoning",
+      "status": "requires-review",
+      "reason": "Assessment Brain V1 defines competencies/Question Types only for CSSE's own tested domains (English, Maths, Writing, Vocabulary) — it has no competency or Question Type coverage for Verbal/Non-Verbal/Spatial/Numerical Reasoning at all, since CSSE does not test these (ASSESSMENT_BRAIN_V1.md §2, §11). No evidence-supported QT-* mapping is possible under the current Assessment Brain V1 scope; not force-mapped, not given CSSE pathway relevance."
+    },
+    {
+      "id": "nvr-012",
+      "sourceFile": "data/non-verbal-reasoning/*",
+      "subject": "non-verbal-reasoning",
+      "status": "requires-review",
+      "reason": "Assessment Brain V1 defines competencies/Question Types only for CSSE's own tested domains (English, Maths, Writing, Vocabulary) — it has no competency or Question Type coverage for Verbal/Non-Verbal/Spatial/Numerical Reasoning at all, since CSSE does not test these (ASSESSMENT_BRAIN_V1.md §2, §11). No evidence-supported QT-* mapping is possible under the current Assessment Brain V1 scope; not force-mapped, not given CSSE pathway relevance."
+    },
+    {
+      "id": "nvr-013",
+      "sourceFile": "data/non-verbal-reasoning/*",
+      "subject": "non-verbal-reasoning",
+      "status": "requires-review",
+      "reason": "Assessment Brain V1 defines competencies/Question Types only for CSSE's own tested domains (English, Maths, Writing, Vocabulary) — it has no competency or Question Type coverage for Verbal/Non-Verbal/Spatial/Numerical Reasoning at all, since CSSE does not test these (ASSESSMENT_BRAIN_V1.md §2, §11). No evidence-supported QT-* mapping is possible under the current Assessment Brain V1 scope; not force-mapped, not given CSSE pathway relevance."
+    },
+    {
+      "id": "nvr-014",
+      "sourceFile": "data/non-verbal-reasoning/*",
+      "subject": "non-verbal-reasoning",
+      "status": "requires-review",
+      "reason": "Assessment Brain V1 defines competencies/Question Types only for CSSE's own tested domains (English, Maths, Writing, Vocabulary) — it has no competency or Question Type coverage for Verbal/Non-Verbal/Spatial/Numerical Reasoning at all, since CSSE does not test these (ASSESSMENT_BRAIN_V1.md §2, §11). No evidence-supported QT-* mapping is possible under the current Assessment Brain V1 scope; not force-mapped, not given CSSE pathway relevance."
+    },
+    {
+      "id": "nvr-015",
+      "sourceFile": "data/non-verbal-reasoning/*",
+      "subject": "non-verbal-reasoning",
+      "status": "requires-review",
+      "reason": "Assessment Brain V1 defines competencies/Question Types only for CSSE's own tested domains (English, Maths, Writing, Vocabulary) — it has no competency or Question Type coverage for Verbal/Non-Verbal/Spatial/Numerical Reasoning at all, since CSSE does not test these (ASSESSMENT_BRAIN_V1.md §2, §11). No evidence-supported QT-* mapping is possible under the current Assessment Brain V1 scope; not force-mapped, not given CSSE pathway relevance."
+    },
+    {
+      "id": "nvr-016",
+      "sourceFile": "data/non-verbal-reasoning/*",
+      "subject": "non-verbal-reasoning",
+      "status": "requires-review",
+      "reason": "Assessment Brain V1 defines competencies/Question Types only for CSSE's own tested domains (English, Maths, Writing, Vocabulary) — it has no competency or Question Type coverage for Verbal/Non-Verbal/Spatial/Numerical Reasoning at all, since CSSE does not test these (ASSESSMENT_BRAIN_V1.md §2, §11). No evidence-supported QT-* mapping is possible under the current Assessment Brain V1 scope; not force-mapped, not given CSSE pathway relevance."
+    },
+    {
+      "id": "nvr-017",
+      "sourceFile": "data/non-verbal-reasoning/*",
+      "subject": "non-verbal-reasoning",
+      "status": "requires-review",
+      "reason": "Assessment Brain V1 defines competencies/Question Types only for CSSE's own tested domains (English, Maths, Writing, Vocabulary) — it has no competency or Question Type coverage for Verbal/Non-Verbal/Spatial/Numerical Reasoning at all, since CSSE does not test these (ASSESSMENT_BRAIN_V1.md §2, §11). No evidence-supported QT-* mapping is possible under the current Assessment Brain V1 scope; not force-mapped, not given CSSE pathway relevance."
+    },
+    {
+      "id": "nvr-018",
+      "sourceFile": "data/non-verbal-reasoning/*",
+      "subject": "non-verbal-reasoning",
+      "status": "requires-review",
+      "reason": "Assessment Brain V1 defines competencies/Question Types only for CSSE's own tested domains (English, Maths, Writing, Vocabulary) — it has no competency or Question Type coverage for Verbal/Non-Verbal/Spatial/Numerical Reasoning at all, since CSSE does not test these (ASSESSMENT_BRAIN_V1.md §2, §11). No evidence-supported QT-* mapping is possible under the current Assessment Brain V1 scope; not force-mapped, not given CSSE pathway relevance."
+    },
+    {
+      "id": "nvr-019",
+      "sourceFile": "data/non-verbal-reasoning/*",
+      "subject": "non-verbal-reasoning",
+      "status": "requires-review",
+      "reason": "Assessment Brain V1 defines competencies/Question Types only for CSSE's own tested domains (English, Maths, Writing, Vocabulary) — it has no competency or Question Type coverage for Verbal/Non-Verbal/Spatial/Numerical Reasoning at all, since CSSE does not test these (ASSESSMENT_BRAIN_V1.md §2, §11). No evidence-supported QT-* mapping is possible under the current Assessment Brain V1 scope; not force-mapped, not given CSSE pathway relevance."
+    },
+    {
+      "id": "nvr-020",
+      "sourceFile": "data/non-verbal-reasoning/*",
+      "subject": "non-verbal-reasoning",
+      "status": "requires-review",
+      "reason": "Assessment Brain V1 defines competencies/Question Types only for CSSE's own tested domains (English, Maths, Writing, Vocabulary) — it has no competency or Question Type coverage for Verbal/Non-Verbal/Spatial/Numerical Reasoning at all, since CSSE does not test these (ASSESSMENT_BRAIN_V1.md §2, §11). No evidence-supported QT-* mapping is possible under the current Assessment Brain V1 scope; not force-mapped, not given CSSE pathway relevance."
+    },
+    {
+      "id": "nvr-021",
+      "sourceFile": "data/non-verbal-reasoning/*",
+      "subject": "non-verbal-reasoning",
+      "status": "requires-review",
+      "reason": "Assessment Brain V1 defines competencies/Question Types only for CSSE's own tested domains (English, Maths, Writing, Vocabulary) — it has no competency or Question Type coverage for Verbal/Non-Verbal/Spatial/Numerical Reasoning at all, since CSSE does not test these (ASSESSMENT_BRAIN_V1.md §2, §11). No evidence-supported QT-* mapping is possible under the current Assessment Brain V1 scope; not force-mapped, not given CSSE pathway relevance."
+    },
+    {
+      "id": "nvr-022",
+      "sourceFile": "data/non-verbal-reasoning/*",
+      "subject": "non-verbal-reasoning",
+      "status": "requires-review",
+      "reason": "Assessment Brain V1 defines competencies/Question Types only for CSSE's own tested domains (English, Maths, Writing, Vocabulary) — it has no competency or Question Type coverage for Verbal/Non-Verbal/Spatial/Numerical Reasoning at all, since CSSE does not test these (ASSESSMENT_BRAIN_V1.md §2, §11). No evidence-supported QT-* mapping is possible under the current Assessment Brain V1 scope; not force-mapped, not given CSSE pathway relevance."
+    },
+    {
+      "id": "nvr-023",
+      "sourceFile": "data/non-verbal-reasoning/*",
+      "subject": "non-verbal-reasoning",
+      "status": "requires-review",
+      "reason": "Assessment Brain V1 defines competencies/Question Types only for CSSE's own tested domains (English, Maths, Writing, Vocabulary) — it has no competency or Question Type coverage for Verbal/Non-Verbal/Spatial/Numerical Reasoning at all, since CSSE does not test these (ASSESSMENT_BRAIN_V1.md §2, §11). No evidence-supported QT-* mapping is possible under the current Assessment Brain V1 scope; not force-mapped, not given CSSE pathway relevance."
+    },
+    {
+      "id": "nvr-024",
+      "sourceFile": "data/non-verbal-reasoning/*",
+      "subject": "non-verbal-reasoning",
+      "status": "requires-review",
+      "reason": "Assessment Brain V1 defines competencies/Question Types only for CSSE's own tested domains (English, Maths, Writing, Vocabulary) — it has no competency or Question Type coverage for Verbal/Non-Verbal/Spatial/Numerical Reasoning at all, since CSSE does not test these (ASSESSMENT_BRAIN_V1.md §2, §11). No evidence-supported QT-* mapping is possible under the current Assessment Brain V1 scope; not force-mapped, not given CSSE pathway relevance."
+    },
+    {
+      "id": "nvr-025",
+      "sourceFile": "data/non-verbal-reasoning/*",
+      "subject": "non-verbal-reasoning",
+      "status": "requires-review",
+      "reason": "Assessment Brain V1 defines competencies/Question Types only for CSSE's own tested domains (English, Maths, Writing, Vocabulary) — it has no competency or Question Type coverage for Verbal/Non-Verbal/Spatial/Numerical Reasoning at all, since CSSE does not test these (ASSESSMENT_BRAIN_V1.md §2, §11). No evidence-supported QT-* mapping is possible under the current Assessment Brain V1 scope; not force-mapped, not given CSSE pathway relevance."
+    },
+    {
+      "id": "nvr-026",
+      "sourceFile": "data/non-verbal-reasoning/*",
+      "subject": "non-verbal-reasoning",
+      "status": "requires-review",
+      "reason": "Assessment Brain V1 defines competencies/Question Types only for CSSE's own tested domains (English, Maths, Writing, Vocabulary) — it has no competency or Question Type coverage for Verbal/Non-Verbal/Spatial/Numerical Reasoning at all, since CSSE does not test these (ASSESSMENT_BRAIN_V1.md §2, §11). No evidence-supported QT-* mapping is possible under the current Assessment Brain V1 scope; not force-mapped, not given CSSE pathway relevance."
+    },
+    {
+      "id": "nvr-027",
+      "sourceFile": "data/non-verbal-reasoning/*",
+      "subject": "non-verbal-reasoning",
+      "status": "requires-review",
+      "reason": "Assessment Brain V1 defines competencies/Question Types only for CSSE's own tested domains (English, Maths, Writing, Vocabulary) — it has no competency or Question Type coverage for Verbal/Non-Verbal/Spatial/Numerical Reasoning at all, since CSSE does not test these (ASSESSMENT_BRAIN_V1.md §2, §11). No evidence-supported QT-* mapping is possible under the current Assessment Brain V1 scope; not force-mapped, not given CSSE pathway relevance."
+    },
+    {
+      "id": "nvr-028",
+      "sourceFile": "data/non-verbal-reasoning/*",
+      "subject": "non-verbal-reasoning",
+      "status": "requires-review",
+      "reason": "Assessment Brain V1 defines competencies/Question Types only for CSSE's own tested domains (English, Maths, Writing, Vocabulary) — it has no competency or Question Type coverage for Verbal/Non-Verbal/Spatial/Numerical Reasoning at all, since CSSE does not test these (ASSESSMENT_BRAIN_V1.md §2, §11). No evidence-supported QT-* mapping is possible under the current Assessment Brain V1 scope; not force-mapped, not given CSSE pathway relevance."
+    },
+    {
+      "id": "nvr-029",
+      "sourceFile": "data/non-verbal-reasoning/*",
+      "subject": "non-verbal-reasoning",
+      "status": "requires-review",
+      "reason": "Assessment Brain V1 defines competencies/Question Types only for CSSE's own tested domains (English, Maths, Writing, Vocabulary) — it has no competency or Question Type coverage for Verbal/Non-Verbal/Spatial/Numerical Reasoning at all, since CSSE does not test these (ASSESSMENT_BRAIN_V1.md §2, §11). No evidence-supported QT-* mapping is possible under the current Assessment Brain V1 scope; not force-mapped, not given CSSE pathway relevance."
+    },
+    {
+      "id": "nvr-030",
+      "sourceFile": "data/non-verbal-reasoning/*",
+      "subject": "non-verbal-reasoning",
+      "status": "requires-review",
+      "reason": "Assessment Brain V1 defines competencies/Question Types only for CSSE's own tested domains (English, Maths, Writing, Vocabulary) — it has no competency or Question Type coverage for Verbal/Non-Verbal/Spatial/Numerical Reasoning at all, since CSSE does not test these (ASSESSMENT_BRAIN_V1.md §2, §11). No evidence-supported QT-* mapping is possible under the current Assessment Brain V1 scope; not force-mapped, not given CSSE pathway relevance."
+    },
+    {
+      "id": "nvr-031",
+      "sourceFile": "data/non-verbal-reasoning/*",
+      "subject": "non-verbal-reasoning",
+      "status": "requires-review",
+      "reason": "Assessment Brain V1 defines competencies/Question Types only for CSSE's own tested domains (English, Maths, Writing, Vocabulary) — it has no competency or Question Type coverage for Verbal/Non-Verbal/Spatial/Numerical Reasoning at all, since CSSE does not test these (ASSESSMENT_BRAIN_V1.md §2, §11). No evidence-supported QT-* mapping is possible under the current Assessment Brain V1 scope; not force-mapped, not given CSSE pathway relevance."
+    },
+    {
+      "id": "nvr-032",
+      "sourceFile": "data/non-verbal-reasoning/*",
+      "subject": "non-verbal-reasoning",
+      "status": "requires-review",
+      "reason": "Assessment Brain V1 defines competencies/Question Types only for CSSE's own tested domains (English, Maths, Writing, Vocabulary) — it has no competency or Question Type coverage for Verbal/Non-Verbal/Spatial/Numerical Reasoning at all, since CSSE does not test these (ASSESSMENT_BRAIN_V1.md §2, §11). No evidence-supported QT-* mapping is possible under the current Assessment Brain V1 scope; not force-mapped, not given CSSE pathway relevance."
+    },
+    {
+      "id": "nvr-033",
+      "sourceFile": "data/non-verbal-reasoning/*",
+      "subject": "non-verbal-reasoning",
+      "status": "requires-review",
+      "reason": "Assessment Brain V1 defines competencies/Question Types only for CSSE's own tested domains (English, Maths, Writing, Vocabulary) — it has no competency or Question Type coverage for Verbal/Non-Verbal/Spatial/Numerical Reasoning at all, since CSSE does not test these (ASSESSMENT_BRAIN_V1.md §2, §11). No evidence-supported QT-* mapping is possible under the current Assessment Brain V1 scope; not force-mapped, not given CSSE pathway relevance."
+    },
+    {
+      "id": "nvr-034",
+      "sourceFile": "data/non-verbal-reasoning/*",
+      "subject": "non-verbal-reasoning",
+      "status": "requires-review",
+      "reason": "Assessment Brain V1 defines competencies/Question Types only for CSSE's own tested domains (English, Maths, Writing, Vocabulary) — it has no competency or Question Type coverage for Verbal/Non-Verbal/Spatial/Numerical Reasoning at all, since CSSE does not test these (ASSESSMENT_BRAIN_V1.md §2, §11). No evidence-supported QT-* mapping is possible under the current Assessment Brain V1 scope; not force-mapped, not given CSSE pathway relevance."
+    },
+    {
+      "id": "nvr-035",
+      "sourceFile": "data/non-verbal-reasoning/*",
+      "subject": "non-verbal-reasoning",
+      "status": "requires-review",
+      "reason": "Assessment Brain V1 defines competencies/Question Types only for CSSE's own tested domains (English, Maths, Writing, Vocabulary) — it has no competency or Question Type coverage for Verbal/Non-Verbal/Spatial/Numerical Reasoning at all, since CSSE does not test these (ASSESSMENT_BRAIN_V1.md §2, §11). No evidence-supported QT-* mapping is possible under the current Assessment Brain V1 scope; not force-mapped, not given CSSE pathway relevance."
+    },
+    {
+      "id": "nvr-036",
+      "sourceFile": "data/non-verbal-reasoning/*",
+      "subject": "non-verbal-reasoning",
+      "status": "requires-review",
+      "reason": "Assessment Brain V1 defines competencies/Question Types only for CSSE's own tested domains (English, Maths, Writing, Vocabulary) — it has no competency or Question Type coverage for Verbal/Non-Verbal/Spatial/Numerical Reasoning at all, since CSSE does not test these (ASSESSMENT_BRAIN_V1.md §2, §11). No evidence-supported QT-* mapping is possible under the current Assessment Brain V1 scope; not force-mapped, not given CSSE pathway relevance."
+    },
+    {
+      "id": "nvr-037",
+      "sourceFile": "data/non-verbal-reasoning/*",
+      "subject": "non-verbal-reasoning",
+      "status": "requires-review",
+      "reason": "Assessment Brain V1 defines competencies/Question Types only for CSSE's own tested domains (English, Maths, Writing, Vocabulary) — it has no competency or Question Type coverage for Verbal/Non-Verbal/Spatial/Numerical Reasoning at all, since CSSE does not test these (ASSESSMENT_BRAIN_V1.md §2, §11). No evidence-supported QT-* mapping is possible under the current Assessment Brain V1 scope; not force-mapped, not given CSSE pathway relevance."
+    },
+    {
+      "id": "nvr-038",
+      "sourceFile": "data/non-verbal-reasoning/*",
+      "subject": "non-verbal-reasoning",
+      "status": "requires-review",
+      "reason": "Assessment Brain V1 defines competencies/Question Types only for CSSE's own tested domains (English, Maths, Writing, Vocabulary) — it has no competency or Question Type coverage for Verbal/Non-Verbal/Spatial/Numerical Reasoning at all, since CSSE does not test these (ASSESSMENT_BRAIN_V1.md §2, §11). No evidence-supported QT-* mapping is possible under the current Assessment Brain V1 scope; not force-mapped, not given CSSE pathway relevance."
+    },
+    {
+      "id": "nvr-039",
+      "sourceFile": "data/non-verbal-reasoning/*",
+      "subject": "non-verbal-reasoning",
+      "status": "requires-review",
+      "reason": "Assessment Brain V1 defines competencies/Question Types only for CSSE's own tested domains (English, Maths, Writing, Vocabulary) — it has no competency or Question Type coverage for Verbal/Non-Verbal/Spatial/Numerical Reasoning at all, since CSSE does not test these (ASSESSMENT_BRAIN_V1.md §2, §11). No evidence-supported QT-* mapping is possible under the current Assessment Brain V1 scope; not force-mapped, not given CSSE pathway relevance."
+    },
+    {
+      "id": "nvr-040",
+      "sourceFile": "data/non-verbal-reasoning/*",
+      "subject": "non-verbal-reasoning",
+      "status": "requires-review",
+      "reason": "Assessment Brain V1 defines competencies/Question Types only for CSSE's own tested domains (English, Maths, Writing, Vocabulary) — it has no competency or Question Type coverage for Verbal/Non-Verbal/Spatial/Numerical Reasoning at all, since CSSE does not test these (ASSESSMENT_BRAIN_V1.md §2, §11). No evidence-supported QT-* mapping is possible under the current Assessment Brain V1 scope; not force-mapped, not given CSSE pathway relevance."
+    },
+    {
+      "id": "sr-001",
+      "sourceFile": "data/spatial-reasoning/*",
+      "subject": "spatial-reasoning",
+      "status": "requires-review",
+      "reason": "Assessment Brain V1 defines competencies/Question Types only for CSSE's own tested domains (English, Maths, Writing, Vocabulary) — it has no competency or Question Type coverage for Verbal/Non-Verbal/Spatial/Numerical Reasoning at all, since CSSE does not test these (ASSESSMENT_BRAIN_V1.md §2, §11). No evidence-supported QT-* mapping is possible under the current Assessment Brain V1 scope; not force-mapped, not given CSSE pathway relevance."
+    },
+    {
+      "id": "sr-002",
+      "sourceFile": "data/spatial-reasoning/*",
+      "subject": "spatial-reasoning",
+      "status": "requires-review",
+      "reason": "Assessment Brain V1 defines competencies/Question Types only for CSSE's own tested domains (English, Maths, Writing, Vocabulary) — it has no competency or Question Type coverage for Verbal/Non-Verbal/Spatial/Numerical Reasoning at all, since CSSE does not test these (ASSESSMENT_BRAIN_V1.md §2, §11). No evidence-supported QT-* mapping is possible under the current Assessment Brain V1 scope; not force-mapped, not given CSSE pathway relevance."
+    },
+    {
+      "id": "sr-003",
+      "sourceFile": "data/spatial-reasoning/*",
+      "subject": "spatial-reasoning",
+      "status": "requires-review",
+      "reason": "Assessment Brain V1 defines competencies/Question Types only for CSSE's own tested domains (English, Maths, Writing, Vocabulary) — it has no competency or Question Type coverage for Verbal/Non-Verbal/Spatial/Numerical Reasoning at all, since CSSE does not test these (ASSESSMENT_BRAIN_V1.md §2, §11). No evidence-supported QT-* mapping is possible under the current Assessment Brain V1 scope; not force-mapped, not given CSSE pathway relevance."
+    },
+    {
+      "id": "sr-004",
+      "sourceFile": "data/spatial-reasoning/*",
+      "subject": "spatial-reasoning",
+      "status": "requires-review",
+      "reason": "Assessment Brain V1 defines competencies/Question Types only for CSSE's own tested domains (English, Maths, Writing, Vocabulary) — it has no competency or Question Type coverage for Verbal/Non-Verbal/Spatial/Numerical Reasoning at all, since CSSE does not test these (ASSESSMENT_BRAIN_V1.md §2, §11). No evidence-supported QT-* mapping is possible under the current Assessment Brain V1 scope; not force-mapped, not given CSSE pathway relevance."
+    },
+    {
+      "id": "sr-005",
+      "sourceFile": "data/spatial-reasoning/*",
+      "subject": "spatial-reasoning",
+      "status": "requires-review",
+      "reason": "Assessment Brain V1 defines competencies/Question Types only for CSSE's own tested domains (English, Maths, Writing, Vocabulary) — it has no competency or Question Type coverage for Verbal/Non-Verbal/Spatial/Numerical Reasoning at all, since CSSE does not test these (ASSESSMENT_BRAIN_V1.md §2, §11). No evidence-supported QT-* mapping is possible under the current Assessment Brain V1 scope; not force-mapped, not given CSSE pathway relevance."
+    },
+    {
+      "id": "sr-006",
+      "sourceFile": "data/spatial-reasoning/*",
+      "subject": "spatial-reasoning",
+      "status": "requires-review",
+      "reason": "Assessment Brain V1 defines competencies/Question Types only for CSSE's own tested domains (English, Maths, Writing, Vocabulary) — it has no competency or Question Type coverage for Verbal/Non-Verbal/Spatial/Numerical Reasoning at all, since CSSE does not test these (ASSESSMENT_BRAIN_V1.md §2, §11). No evidence-supported QT-* mapping is possible under the current Assessment Brain V1 scope; not force-mapped, not given CSSE pathway relevance."
+    },
+    {
+      "id": "sr-007",
+      "sourceFile": "data/spatial-reasoning/*",
+      "subject": "spatial-reasoning",
+      "status": "requires-review",
+      "reason": "Assessment Brain V1 defines competencies/Question Types only for CSSE's own tested domains (English, Maths, Writing, Vocabulary) — it has no competency or Question Type coverage for Verbal/Non-Verbal/Spatial/Numerical Reasoning at all, since CSSE does not test these (ASSESSMENT_BRAIN_V1.md §2, §11). No evidence-supported QT-* mapping is possible under the current Assessment Brain V1 scope; not force-mapped, not given CSSE pathway relevance."
+    },
+    {
+      "id": "sr-008",
+      "sourceFile": "data/spatial-reasoning/*",
+      "subject": "spatial-reasoning",
+      "status": "requires-review",
+      "reason": "Assessment Brain V1 defines competencies/Question Types only for CSSE's own tested domains (English, Maths, Writing, Vocabulary) — it has no competency or Question Type coverage for Verbal/Non-Verbal/Spatial/Numerical Reasoning at all, since CSSE does not test these (ASSESSMENT_BRAIN_V1.md §2, §11). No evidence-supported QT-* mapping is possible under the current Assessment Brain V1 scope; not force-mapped, not given CSSE pathway relevance."
+    },
+    {
+      "id": "sr-009",
+      "sourceFile": "data/spatial-reasoning/*",
+      "subject": "spatial-reasoning",
+      "status": "requires-review",
+      "reason": "Assessment Brain V1 defines competencies/Question Types only for CSSE's own tested domains (English, Maths, Writing, Vocabulary) — it has no competency or Question Type coverage for Verbal/Non-Verbal/Spatial/Numerical Reasoning at all, since CSSE does not test these (ASSESSMENT_BRAIN_V1.md §2, §11). No evidence-supported QT-* mapping is possible under the current Assessment Brain V1 scope; not force-mapped, not given CSSE pathway relevance."
+    },
+    {
+      "id": "sr-010",
+      "sourceFile": "data/spatial-reasoning/*",
+      "subject": "spatial-reasoning",
+      "status": "requires-review",
+      "reason": "Assessment Brain V1 defines competencies/Question Types only for CSSE's own tested domains (English, Maths, Writing, Vocabulary) — it has no competency or Question Type coverage for Verbal/Non-Verbal/Spatial/Numerical Reasoning at all, since CSSE does not test these (ASSESSMENT_BRAIN_V1.md §2, §11). No evidence-supported QT-* mapping is possible under the current Assessment Brain V1 scope; not force-mapped, not given CSSE pathway relevance."
+    },
+    {
+      "id": "sr-011",
+      "sourceFile": "data/spatial-reasoning/*",
+      "subject": "spatial-reasoning",
+      "status": "requires-review",
+      "reason": "Assessment Brain V1 defines competencies/Question Types only for CSSE's own tested domains (English, Maths, Writing, Vocabulary) — it has no competency or Question Type coverage for Verbal/Non-Verbal/Spatial/Numerical Reasoning at all, since CSSE does not test these (ASSESSMENT_BRAIN_V1.md §2, §11). No evidence-supported QT-* mapping is possible under the current Assessment Brain V1 scope; not force-mapped, not given CSSE pathway relevance."
+    },
+    {
+      "id": "sr-012",
+      "sourceFile": "data/spatial-reasoning/*",
+      "subject": "spatial-reasoning",
+      "status": "requires-review",
+      "reason": "Assessment Brain V1 defines competencies/Question Types only for CSSE's own tested domains (English, Maths, Writing, Vocabulary) — it has no competency or Question Type coverage for Verbal/Non-Verbal/Spatial/Numerical Reasoning at all, since CSSE does not test these (ASSESSMENT_BRAIN_V1.md §2, §11). No evidence-supported QT-* mapping is possible under the current Assessment Brain V1 scope; not force-mapped, not given CSSE pathway relevance."
+    },
+    {
+      "id": "sr-013",
+      "sourceFile": "data/spatial-reasoning/*",
+      "subject": "spatial-reasoning",
+      "status": "requires-review",
+      "reason": "Assessment Brain V1 defines competencies/Question Types only for CSSE's own tested domains (English, Maths, Writing, Vocabulary) — it has no competency or Question Type coverage for Verbal/Non-Verbal/Spatial/Numerical Reasoning at all, since CSSE does not test these (ASSESSMENT_BRAIN_V1.md §2, §11). No evidence-supported QT-* mapping is possible under the current Assessment Brain V1 scope; not force-mapped, not given CSSE pathway relevance."
+    },
+    {
+      "id": "sr-014",
+      "sourceFile": "data/spatial-reasoning/*",
+      "subject": "spatial-reasoning",
+      "status": "requires-review",
+      "reason": "Assessment Brain V1 defines competencies/Question Types only for CSSE's own tested domains (English, Maths, Writing, Vocabulary) — it has no competency or Question Type coverage for Verbal/Non-Verbal/Spatial/Numerical Reasoning at all, since CSSE does not test these (ASSESSMENT_BRAIN_V1.md §2, §11). No evidence-supported QT-* mapping is possible under the current Assessment Brain V1 scope; not force-mapped, not given CSSE pathway relevance."
+    },
+    {
+      "id": "sr-015",
+      "sourceFile": "data/spatial-reasoning/*",
+      "subject": "spatial-reasoning",
+      "status": "requires-review",
+      "reason": "Assessment Brain V1 defines competencies/Question Types only for CSSE's own tested domains (English, Maths, Writing, Vocabulary) — it has no competency or Question Type coverage for Verbal/Non-Verbal/Spatial/Numerical Reasoning at all, since CSSE does not test these (ASSESSMENT_BRAIN_V1.md §2, §11). No evidence-supported QT-* mapping is possible under the current Assessment Brain V1 scope; not force-mapped, not given CSSE pathway relevance."
+    },
+    {
+      "id": "sr-016",
+      "sourceFile": "data/spatial-reasoning/*",
+      "subject": "spatial-reasoning",
+      "status": "requires-review",
+      "reason": "Assessment Brain V1 defines competencies/Question Types only for CSSE's own tested domains (English, Maths, Writing, Vocabulary) — it has no competency or Question Type coverage for Verbal/Non-Verbal/Spatial/Numerical Reasoning at all, since CSSE does not test these (ASSESSMENT_BRAIN_V1.md §2, §11). No evidence-supported QT-* mapping is possible under the current Assessment Brain V1 scope; not force-mapped, not given CSSE pathway relevance."
+    },
+    {
+      "id": "sr-017",
+      "sourceFile": "data/spatial-reasoning/*",
+      "subject": "spatial-reasoning",
+      "status": "requires-review",
+      "reason": "Assessment Brain V1 defines competencies/Question Types only for CSSE's own tested domains (English, Maths, Writing, Vocabulary) — it has no competency or Question Type coverage for Verbal/Non-Verbal/Spatial/Numerical Reasoning at all, since CSSE does not test these (ASSESSMENT_BRAIN_V1.md §2, §11). No evidence-supported QT-* mapping is possible under the current Assessment Brain V1 scope; not force-mapped, not given CSSE pathway relevance."
+    },
+    {
+      "id": "sr-018",
+      "sourceFile": "data/spatial-reasoning/*",
+      "subject": "spatial-reasoning",
+      "status": "requires-review",
+      "reason": "Assessment Brain V1 defines competencies/Question Types only for CSSE's own tested domains (English, Maths, Writing, Vocabulary) — it has no competency or Question Type coverage for Verbal/Non-Verbal/Spatial/Numerical Reasoning at all, since CSSE does not test these (ASSESSMENT_BRAIN_V1.md §2, §11). No evidence-supported QT-* mapping is possible under the current Assessment Brain V1 scope; not force-mapped, not given CSSE pathway relevance."
+    },
+    {
+      "id": "sr-019",
+      "sourceFile": "data/spatial-reasoning/*",
+      "subject": "spatial-reasoning",
+      "status": "requires-review",
+      "reason": "Assessment Brain V1 defines competencies/Question Types only for CSSE's own tested domains (English, Maths, Writing, Vocabulary) — it has no competency or Question Type coverage for Verbal/Non-Verbal/Spatial/Numerical Reasoning at all, since CSSE does not test these (ASSESSMENT_BRAIN_V1.md §2, §11). No evidence-supported QT-* mapping is possible under the current Assessment Brain V1 scope; not force-mapped, not given CSSE pathway relevance."
+    },
+    {
+      "id": "sr-020",
+      "sourceFile": "data/spatial-reasoning/*",
+      "subject": "spatial-reasoning",
+      "status": "requires-review",
+      "reason": "Assessment Brain V1 defines competencies/Question Types only for CSSE's own tested domains (English, Maths, Writing, Vocabulary) — it has no competency or Question Type coverage for Verbal/Non-Verbal/Spatial/Numerical Reasoning at all, since CSSE does not test these (ASSESSMENT_BRAIN_V1.md §2, §11). No evidence-supported QT-* mapping is possible under the current Assessment Brain V1 scope; not force-mapped, not given CSSE pathway relevance."
+    },
+    {
+      "id": "sr-021",
+      "sourceFile": "data/spatial-reasoning/*",
+      "subject": "spatial-reasoning",
+      "status": "requires-review",
+      "reason": "Assessment Brain V1 defines competencies/Question Types only for CSSE's own tested domains (English, Maths, Writing, Vocabulary) — it has no competency or Question Type coverage for Verbal/Non-Verbal/Spatial/Numerical Reasoning at all, since CSSE does not test these (ASSESSMENT_BRAIN_V1.md §2, §11). No evidence-supported QT-* mapping is possible under the current Assessment Brain V1 scope; not force-mapped, not given CSSE pathway relevance."
+    },
+    {
+      "id": "sr-022",
+      "sourceFile": "data/spatial-reasoning/*",
+      "subject": "spatial-reasoning",
+      "status": "requires-review",
+      "reason": "Assessment Brain V1 defines competencies/Question Types only for CSSE's own tested domains (English, Maths, Writing, Vocabulary) — it has no competency or Question Type coverage for Verbal/Non-Verbal/Spatial/Numerical Reasoning at all, since CSSE does not test these (ASSESSMENT_BRAIN_V1.md §2, §11). No evidence-supported QT-* mapping is possible under the current Assessment Brain V1 scope; not force-mapped, not given CSSE pathway relevance."
+    },
+    {
+      "id": "sr-023",
+      "sourceFile": "data/spatial-reasoning/*",
+      "subject": "spatial-reasoning",
+      "status": "requires-review",
+      "reason": "Assessment Brain V1 defines competencies/Question Types only for CSSE's own tested domains (English, Maths, Writing, Vocabulary) — it has no competency or Question Type coverage for Verbal/Non-Verbal/Spatial/Numerical Reasoning at all, since CSSE does not test these (ASSESSMENT_BRAIN_V1.md §2, §11). No evidence-supported QT-* mapping is possible under the current Assessment Brain V1 scope; not force-mapped, not given CSSE pathway relevance."
+    },
+    {
+      "id": "sr-024",
+      "sourceFile": "data/spatial-reasoning/*",
+      "subject": "spatial-reasoning",
+      "status": "requires-review",
+      "reason": "Assessment Brain V1 defines competencies/Question Types only for CSSE's own tested domains (English, Maths, Writing, Vocabulary) — it has no competency or Question Type coverage for Verbal/Non-Verbal/Spatial/Numerical Reasoning at all, since CSSE does not test these (ASSESSMENT_BRAIN_V1.md §2, §11). No evidence-supported QT-* mapping is possible under the current Assessment Brain V1 scope; not force-mapped, not given CSSE pathway relevance."
+    },
+    {
+      "id": "sr-025",
+      "sourceFile": "data/spatial-reasoning/*",
+      "subject": "spatial-reasoning",
+      "status": "requires-review",
+      "reason": "Assessment Brain V1 defines competencies/Question Types only for CSSE's own tested domains (English, Maths, Writing, Vocabulary) — it has no competency or Question Type coverage for Verbal/Non-Verbal/Spatial/Numerical Reasoning at all, since CSSE does not test these (ASSESSMENT_BRAIN_V1.md §2, §11). No evidence-supported QT-* mapping is possible under the current Assessment Brain V1 scope; not force-mapped, not given CSSE pathway relevance."
+    },
+    {
+      "id": "sr-026",
+      "sourceFile": "data/spatial-reasoning/*",
+      "subject": "spatial-reasoning",
+      "status": "requires-review",
+      "reason": "Assessment Brain V1 defines competencies/Question Types only for CSSE's own tested domains (English, Maths, Writing, Vocabulary) — it has no competency or Question Type coverage for Verbal/Non-Verbal/Spatial/Numerical Reasoning at all, since CSSE does not test these (ASSESSMENT_BRAIN_V1.md §2, §11). No evidence-supported QT-* mapping is possible under the current Assessment Brain V1 scope; not force-mapped, not given CSSE pathway relevance."
+    },
+    {
+      "id": "sr-027",
+      "sourceFile": "data/spatial-reasoning/*",
+      "subject": "spatial-reasoning",
+      "status": "requires-review",
+      "reason": "Assessment Brain V1 defines competencies/Question Types only for CSSE's own tested domains (English, Maths, Writing, Vocabulary) — it has no competency or Question Type coverage for Verbal/Non-Verbal/Spatial/Numerical Reasoning at all, since CSSE does not test these (ASSESSMENT_BRAIN_V1.md §2, §11). No evidence-supported QT-* mapping is possible under the current Assessment Brain V1 scope; not force-mapped, not given CSSE pathway relevance."
+    },
+    {
+      "id": "sr-028",
+      "sourceFile": "data/spatial-reasoning/*",
+      "subject": "spatial-reasoning",
+      "status": "requires-review",
+      "reason": "Assessment Brain V1 defines competencies/Question Types only for CSSE's own tested domains (English, Maths, Writing, Vocabulary) — it has no competency or Question Type coverage for Verbal/Non-Verbal/Spatial/Numerical Reasoning at all, since CSSE does not test these (ASSESSMENT_BRAIN_V1.md §2, §11). No evidence-supported QT-* mapping is possible under the current Assessment Brain V1 scope; not force-mapped, not given CSSE pathway relevance."
+    },
+    {
+      "id": "sr-029",
+      "sourceFile": "data/spatial-reasoning/*",
+      "subject": "spatial-reasoning",
+      "status": "requires-review",
+      "reason": "Assessment Brain V1 defines competencies/Question Types only for CSSE's own tested domains (English, Maths, Writing, Vocabulary) — it has no competency or Question Type coverage for Verbal/Non-Verbal/Spatial/Numerical Reasoning at all, since CSSE does not test these (ASSESSMENT_BRAIN_V1.md §2, §11). No evidence-supported QT-* mapping is possible under the current Assessment Brain V1 scope; not force-mapped, not given CSSE pathway relevance."
+    },
+    {
+      "id": "sr-030",
+      "sourceFile": "data/spatial-reasoning/*",
+      "subject": "spatial-reasoning",
+      "status": "requires-review",
+      "reason": "Assessment Brain V1 defines competencies/Question Types only for CSSE's own tested domains (English, Maths, Writing, Vocabulary) — it has no competency or Question Type coverage for Verbal/Non-Verbal/Spatial/Numerical Reasoning at all, since CSSE does not test these (ASSESSMENT_BRAIN_V1.md §2, §11). No evidence-supported QT-* mapping is possible under the current Assessment Brain V1 scope; not force-mapped, not given CSSE pathway relevance."
+    },
+    {
+      "id": "sr-031",
+      "sourceFile": "data/spatial-reasoning/*",
+      "subject": "spatial-reasoning",
+      "status": "requires-review",
+      "reason": "Assessment Brain V1 defines competencies/Question Types only for CSSE's own tested domains (English, Maths, Writing, Vocabulary) — it has no competency or Question Type coverage for Verbal/Non-Verbal/Spatial/Numerical Reasoning at all, since CSSE does not test these (ASSESSMENT_BRAIN_V1.md §2, §11). No evidence-supported QT-* mapping is possible under the current Assessment Brain V1 scope; not force-mapped, not given CSSE pathway relevance."
+    },
+    {
+      "id": "sr-032",
+      "sourceFile": "data/spatial-reasoning/*",
+      "subject": "spatial-reasoning",
+      "status": "requires-review",
+      "reason": "Assessment Brain V1 defines competencies/Question Types only for CSSE's own tested domains (English, Maths, Writing, Vocabulary) — it has no competency or Question Type coverage for Verbal/Non-Verbal/Spatial/Numerical Reasoning at all, since CSSE does not test these (ASSESSMENT_BRAIN_V1.md §2, §11). No evidence-supported QT-* mapping is possible under the current Assessment Brain V1 scope; not force-mapped, not given CSSE pathway relevance."
+    },
+    {
+      "id": "sr-033",
+      "sourceFile": "data/spatial-reasoning/*",
+      "subject": "spatial-reasoning",
+      "status": "requires-review",
+      "reason": "Assessment Brain V1 defines competencies/Question Types only for CSSE's own tested domains (English, Maths, Writing, Vocabulary) — it has no competency or Question Type coverage for Verbal/Non-Verbal/Spatial/Numerical Reasoning at all, since CSSE does not test these (ASSESSMENT_BRAIN_V1.md §2, §11). No evidence-supported QT-* mapping is possible under the current Assessment Brain V1 scope; not force-mapped, not given CSSE pathway relevance."
+    },
+    {
+      "id": "sr-034",
+      "sourceFile": "data/spatial-reasoning/*",
+      "subject": "spatial-reasoning",
+      "status": "requires-review",
+      "reason": "Assessment Brain V1 defines competencies/Question Types only for CSSE's own tested domains (English, Maths, Writing, Vocabulary) — it has no competency or Question Type coverage for Verbal/Non-Verbal/Spatial/Numerical Reasoning at all, since CSSE does not test these (ASSESSMENT_BRAIN_V1.md §2, §11). No evidence-supported QT-* mapping is possible under the current Assessment Brain V1 scope; not force-mapped, not given CSSE pathway relevance."
+    },
+    {
+      "id": "sr-035",
+      "sourceFile": "data/spatial-reasoning/*",
+      "subject": "spatial-reasoning",
+      "status": "requires-review",
+      "reason": "Assessment Brain V1 defines competencies/Question Types only for CSSE's own tested domains (English, Maths, Writing, Vocabulary) — it has no competency or Question Type coverage for Verbal/Non-Verbal/Spatial/Numerical Reasoning at all, since CSSE does not test these (ASSESSMENT_BRAIN_V1.md §2, §11). No evidence-supported QT-* mapping is possible under the current Assessment Brain V1 scope; not force-mapped, not given CSSE pathway relevance."
+    },
+    {
+      "id": "sr-036",
+      "sourceFile": "data/spatial-reasoning/*",
+      "subject": "spatial-reasoning",
+      "status": "requires-review",
+      "reason": "Assessment Brain V1 defines competencies/Question Types only for CSSE's own tested domains (English, Maths, Writing, Vocabulary) — it has no competency or Question Type coverage for Verbal/Non-Verbal/Spatial/Numerical Reasoning at all, since CSSE does not test these (ASSESSMENT_BRAIN_V1.md §2, §11). No evidence-supported QT-* mapping is possible under the current Assessment Brain V1 scope; not force-mapped, not given CSSE pathway relevance."
+    },
+    {
+      "id": "sr-037",
+      "sourceFile": "data/spatial-reasoning/*",
+      "subject": "spatial-reasoning",
+      "status": "requires-review",
+      "reason": "Assessment Brain V1 defines competencies/Question Types only for CSSE's own tested domains (English, Maths, Writing, Vocabulary) — it has no competency or Question Type coverage for Verbal/Non-Verbal/Spatial/Numerical Reasoning at all, since CSSE does not test these (ASSESSMENT_BRAIN_V1.md §2, §11). No evidence-supported QT-* mapping is possible under the current Assessment Brain V1 scope; not force-mapped, not given CSSE pathway relevance."
+    },
+    {
+      "id": "sr-038",
+      "sourceFile": "data/spatial-reasoning/*",
+      "subject": "spatial-reasoning",
+      "status": "requires-review",
+      "reason": "Assessment Brain V1 defines competencies/Question Types only for CSSE's own tested domains (English, Maths, Writing, Vocabulary) — it has no competency or Question Type coverage for Verbal/Non-Verbal/Spatial/Numerical Reasoning at all, since CSSE does not test these (ASSESSMENT_BRAIN_V1.md §2, §11). No evidence-supported QT-* mapping is possible under the current Assessment Brain V1 scope; not force-mapped, not given CSSE pathway relevance."
+    },
+    {
+      "id": "sr-039",
+      "sourceFile": "data/spatial-reasoning/*",
+      "subject": "spatial-reasoning",
+      "status": "requires-review",
+      "reason": "Assessment Brain V1 defines competencies/Question Types only for CSSE's own tested domains (English, Maths, Writing, Vocabulary) — it has no competency or Question Type coverage for Verbal/Non-Verbal/Spatial/Numerical Reasoning at all, since CSSE does not test these (ASSESSMENT_BRAIN_V1.md §2, §11). No evidence-supported QT-* mapping is possible under the current Assessment Brain V1 scope; not force-mapped, not given CSSE pathway relevance."
+    },
+    {
+      "id": "nr-001",
+      "sourceFile": "data/numerical-reasoning/*",
+      "subject": "numerical-reasoning",
+      "status": "requires-review",
+      "reason": "Assessment Brain V1 defines competencies/Question Types only for CSSE's own tested domains (English, Maths, Writing, Vocabulary) — it has no competency or Question Type coverage for Verbal/Non-Verbal/Spatial/Numerical Reasoning at all, since CSSE does not test these (ASSESSMENT_BRAIN_V1.md §2, §11). No evidence-supported QT-* mapping is possible under the current Assessment Brain V1 scope; not force-mapped, not given CSSE pathway relevance."
+    },
+    {
+      "id": "nr-002",
+      "sourceFile": "data/numerical-reasoning/*",
+      "subject": "numerical-reasoning",
+      "status": "requires-review",
+      "reason": "Assessment Brain V1 defines competencies/Question Types only for CSSE's own tested domains (English, Maths, Writing, Vocabulary) — it has no competency or Question Type coverage for Verbal/Non-Verbal/Spatial/Numerical Reasoning at all, since CSSE does not test these (ASSESSMENT_BRAIN_V1.md §2, §11). No evidence-supported QT-* mapping is possible under the current Assessment Brain V1 scope; not force-mapped, not given CSSE pathway relevance."
+    },
+    {
+      "id": "nr-003",
+      "sourceFile": "data/numerical-reasoning/*",
+      "subject": "numerical-reasoning",
+      "status": "requires-review",
+      "reason": "Assessment Brain V1 defines competencies/Question Types only for CSSE's own tested domains (English, Maths, Writing, Vocabulary) — it has no competency or Question Type coverage for Verbal/Non-Verbal/Spatial/Numerical Reasoning at all, since CSSE does not test these (ASSESSMENT_BRAIN_V1.md §2, §11). No evidence-supported QT-* mapping is possible under the current Assessment Brain V1 scope; not force-mapped, not given CSSE pathway relevance."
+    },
+    {
+      "id": "nr-004",
+      "sourceFile": "data/numerical-reasoning/*",
+      "subject": "numerical-reasoning",
+      "status": "requires-review",
+      "reason": "Assessment Brain V1 defines competencies/Question Types only for CSSE's own tested domains (English, Maths, Writing, Vocabulary) — it has no competency or Question Type coverage for Verbal/Non-Verbal/Spatial/Numerical Reasoning at all, since CSSE does not test these (ASSESSMENT_BRAIN_V1.md §2, §11). No evidence-supported QT-* mapping is possible under the current Assessment Brain V1 scope; not force-mapped, not given CSSE pathway relevance."
+    },
+    {
+      "id": "nr-005",
+      "sourceFile": "data/numerical-reasoning/*",
+      "subject": "numerical-reasoning",
+      "status": "requires-review",
+      "reason": "Assessment Brain V1 defines competencies/Question Types only for CSSE's own tested domains (English, Maths, Writing, Vocabulary) — it has no competency or Question Type coverage for Verbal/Non-Verbal/Spatial/Numerical Reasoning at all, since CSSE does not test these (ASSESSMENT_BRAIN_V1.md §2, §11). No evidence-supported QT-* mapping is possible under the current Assessment Brain V1 scope; not force-mapped, not given CSSE pathway relevance."
+    },
+    {
+      "id": "nr-006",
+      "sourceFile": "data/numerical-reasoning/*",
+      "subject": "numerical-reasoning",
+      "status": "requires-review",
+      "reason": "Assessment Brain V1 defines competencies/Question Types only for CSSE's own tested domains (English, Maths, Writing, Vocabulary) — it has no competency or Question Type coverage for Verbal/Non-Verbal/Spatial/Numerical Reasoning at all, since CSSE does not test these (ASSESSMENT_BRAIN_V1.md §2, §11). No evidence-supported QT-* mapping is possible under the current Assessment Brain V1 scope; not force-mapped, not given CSSE pathway relevance."
+    },
+    {
+      "id": "nr-007",
+      "sourceFile": "data/numerical-reasoning/*",
+      "subject": "numerical-reasoning",
+      "status": "requires-review",
+      "reason": "Assessment Brain V1 defines competencies/Question Types only for CSSE's own tested domains (English, Maths, Writing, Vocabulary) — it has no competency or Question Type coverage for Verbal/Non-Verbal/Spatial/Numerical Reasoning at all, since CSSE does not test these (ASSESSMENT_BRAIN_V1.md §2, §11). No evidence-supported QT-* mapping is possible under the current Assessment Brain V1 scope; not force-mapped, not given CSSE pathway relevance."
+    },
+    {
+      "id": "nr-008",
+      "sourceFile": "data/numerical-reasoning/*",
+      "subject": "numerical-reasoning",
+      "status": "requires-review",
+      "reason": "Assessment Brain V1 defines competencies/Question Types only for CSSE's own tested domains (English, Maths, Writing, Vocabulary) — it has no competency or Question Type coverage for Verbal/Non-Verbal/Spatial/Numerical Reasoning at all, since CSSE does not test these (ASSESSMENT_BRAIN_V1.md §2, §11). No evidence-supported QT-* mapping is possible under the current Assessment Brain V1 scope; not force-mapped, not given CSSE pathway relevance."
+    },
+    {
+      "id": "nr-009",
+      "sourceFile": "data/numerical-reasoning/*",
+      "subject": "numerical-reasoning",
+      "status": "requires-review",
+      "reason": "Assessment Brain V1 defines competencies/Question Types only for CSSE's own tested domains (English, Maths, Writing, Vocabulary) — it has no competency or Question Type coverage for Verbal/Non-Verbal/Spatial/Numerical Reasoning at all, since CSSE does not test these (ASSESSMENT_BRAIN_V1.md §2, §11). No evidence-supported QT-* mapping is possible under the current Assessment Brain V1 scope; not force-mapped, not given CSSE pathway relevance."
+    },
+    {
+      "id": "nr-010",
+      "sourceFile": "data/numerical-reasoning/*",
+      "subject": "numerical-reasoning",
+      "status": "requires-review",
+      "reason": "Assessment Brain V1 defines competencies/Question Types only for CSSE's own tested domains (English, Maths, Writing, Vocabulary) — it has no competency or Question Type coverage for Verbal/Non-Verbal/Spatial/Numerical Reasoning at all, since CSSE does not test these (ASSESSMENT_BRAIN_V1.md §2, §11). No evidence-supported QT-* mapping is possible under the current Assessment Brain V1 scope; not force-mapped, not given CSSE pathway relevance."
+    },
+    {
+      "id": "nr-011",
+      "sourceFile": "data/numerical-reasoning/*",
+      "subject": "numerical-reasoning",
+      "status": "requires-review",
+      "reason": "Assessment Brain V1 defines competencies/Question Types only for CSSE's own tested domains (English, Maths, Writing, Vocabulary) — it has no competency or Question Type coverage for Verbal/Non-Verbal/Spatial/Numerical Reasoning at all, since CSSE does not test these (ASSESSMENT_BRAIN_V1.md §2, §11). No evidence-supported QT-* mapping is possible under the current Assessment Brain V1 scope; not force-mapped, not given CSSE pathway relevance."
+    },
+    {
+      "id": "nr-012",
+      "sourceFile": "data/numerical-reasoning/*",
+      "subject": "numerical-reasoning",
+      "status": "requires-review",
+      "reason": "Assessment Brain V1 defines competencies/Question Types only for CSSE's own tested domains (English, Maths, Writing, Vocabulary) — it has no competency or Question Type coverage for Verbal/Non-Verbal/Spatial/Numerical Reasoning at all, since CSSE does not test these (ASSESSMENT_BRAIN_V1.md §2, §11). No evidence-supported QT-* mapping is possible under the current Assessment Brain V1 scope; not force-mapped, not given CSSE pathway relevance."
+    },
+    {
+      "id": "nr-013",
+      "sourceFile": "data/numerical-reasoning/*",
+      "subject": "numerical-reasoning",
+      "status": "requires-review",
+      "reason": "Assessment Brain V1 defines competencies/Question Types only for CSSE's own tested domains (English, Maths, Writing, Vocabulary) — it has no competency or Question Type coverage for Verbal/Non-Verbal/Spatial/Numerical Reasoning at all, since CSSE does not test these (ASSESSMENT_BRAIN_V1.md §2, §11). No evidence-supported QT-* mapping is possible under the current Assessment Brain V1 scope; not force-mapped, not given CSSE pathway relevance."
+    },
+    {
+      "id": "nr-014",
+      "sourceFile": "data/numerical-reasoning/*",
+      "subject": "numerical-reasoning",
+      "status": "requires-review",
+      "reason": "Assessment Brain V1 defines competencies/Question Types only for CSSE's own tested domains (English, Maths, Writing, Vocabulary) — it has no competency or Question Type coverage for Verbal/Non-Verbal/Spatial/Numerical Reasoning at all, since CSSE does not test these (ASSESSMENT_BRAIN_V1.md §2, §11). No evidence-supported QT-* mapping is possible under the current Assessment Brain V1 scope; not force-mapped, not given CSSE pathway relevance."
+    },
+    {
+      "id": "nr-015",
+      "sourceFile": "data/numerical-reasoning/*",
+      "subject": "numerical-reasoning",
+      "status": "requires-review",
+      "reason": "Assessment Brain V1 defines competencies/Question Types only for CSSE's own tested domains (English, Maths, Writing, Vocabulary) — it has no competency or Question Type coverage for Verbal/Non-Verbal/Spatial/Numerical Reasoning at all, since CSSE does not test these (ASSESSMENT_BRAIN_V1.md §2, §11). No evidence-supported QT-* mapping is possible under the current Assessment Brain V1 scope; not force-mapped, not given CSSE pathway relevance."
+    },
+    {
+      "id": "nr-016",
+      "sourceFile": "data/numerical-reasoning/*",
+      "subject": "numerical-reasoning",
+      "status": "requires-review",
+      "reason": "Assessment Brain V1 defines competencies/Question Types only for CSSE's own tested domains (English, Maths, Writing, Vocabulary) — it has no competency or Question Type coverage for Verbal/Non-Verbal/Spatial/Numerical Reasoning at all, since CSSE does not test these (ASSESSMENT_BRAIN_V1.md §2, §11). No evidence-supported QT-* mapping is possible under the current Assessment Brain V1 scope; not force-mapped, not given CSSE pathway relevance."
+    },
+    {
+      "id": "nr-017",
+      "sourceFile": "data/numerical-reasoning/*",
+      "subject": "numerical-reasoning",
+      "status": "requires-review",
+      "reason": "Assessment Brain V1 defines competencies/Question Types only for CSSE's own tested domains (English, Maths, Writing, Vocabulary) — it has no competency or Question Type coverage for Verbal/Non-Verbal/Spatial/Numerical Reasoning at all, since CSSE does not test these (ASSESSMENT_BRAIN_V1.md §2, §11). No evidence-supported QT-* mapping is possible under the current Assessment Brain V1 scope; not force-mapped, not given CSSE pathway relevance."
+    },
+    {
+      "id": "nr-018",
+      "sourceFile": "data/numerical-reasoning/*",
+      "subject": "numerical-reasoning",
+      "status": "requires-review",
+      "reason": "Assessment Brain V1 defines competencies/Question Types only for CSSE's own tested domains (English, Maths, Writing, Vocabulary) — it has no competency or Question Type coverage for Verbal/Non-Verbal/Spatial/Numerical Reasoning at all, since CSSE does not test these (ASSESSMENT_BRAIN_V1.md §2, §11). No evidence-supported QT-* mapping is possible under the current Assessment Brain V1 scope; not force-mapped, not given CSSE pathway relevance."
+    },
+    {
+      "id": "nr-019",
+      "sourceFile": "data/numerical-reasoning/*",
+      "subject": "numerical-reasoning",
+      "status": "requires-review",
+      "reason": "Assessment Brain V1 defines competencies/Question Types only for CSSE's own tested domains (English, Maths, Writing, Vocabulary) — it has no competency or Question Type coverage for Verbal/Non-Verbal/Spatial/Numerical Reasoning at all, since CSSE does not test these (ASSESSMENT_BRAIN_V1.md §2, §11). No evidence-supported QT-* mapping is possible under the current Assessment Brain V1 scope; not force-mapped, not given CSSE pathway relevance."
+    },
+    {
+      "id": "nr-020",
+      "sourceFile": "data/numerical-reasoning/*",
+      "subject": "numerical-reasoning",
+      "status": "requires-review",
+      "reason": "Assessment Brain V1 defines competencies/Question Types only for CSSE's own tested domains (English, Maths, Writing, Vocabulary) — it has no competency or Question Type coverage for Verbal/Non-Verbal/Spatial/Numerical Reasoning at all, since CSSE does not test these (ASSESSMENT_BRAIN_V1.md §2, §11). No evidence-supported QT-* mapping is possible under the current Assessment Brain V1 scope; not force-mapped, not given CSSE pathway relevance."
+    },
+    {
+      "id": "nr-021",
+      "sourceFile": "data/numerical-reasoning/*",
+      "subject": "numerical-reasoning",
+      "status": "requires-review",
+      "reason": "Assessment Brain V1 defines competencies/Question Types only for CSSE's own tested domains (English, Maths, Writing, Vocabulary) — it has no competency or Question Type coverage for Verbal/Non-Verbal/Spatial/Numerical Reasoning at all, since CSSE does not test these (ASSESSMENT_BRAIN_V1.md §2, §11). No evidence-supported QT-* mapping is possible under the current Assessment Brain V1 scope; not force-mapped, not given CSSE pathway relevance."
+    },
+    {
+      "id": "nr-022",
+      "sourceFile": "data/numerical-reasoning/*",
+      "subject": "numerical-reasoning",
+      "status": "requires-review",
+      "reason": "Assessment Brain V1 defines competencies/Question Types only for CSSE's own tested domains (English, Maths, Writing, Vocabulary) — it has no competency or Question Type coverage for Verbal/Non-Verbal/Spatial/Numerical Reasoning at all, since CSSE does not test these (ASSESSMENT_BRAIN_V1.md §2, §11). No evidence-supported QT-* mapping is possible under the current Assessment Brain V1 scope; not force-mapped, not given CSSE pathway relevance."
+    },
+    {
+      "id": "nr-023",
+      "sourceFile": "data/numerical-reasoning/*",
+      "subject": "numerical-reasoning",
+      "status": "requires-review",
+      "reason": "Assessment Brain V1 defines competencies/Question Types only for CSSE's own tested domains (English, Maths, Writing, Vocabulary) — it has no competency or Question Type coverage for Verbal/Non-Verbal/Spatial/Numerical Reasoning at all, since CSSE does not test these (ASSESSMENT_BRAIN_V1.md §2, §11). No evidence-supported QT-* mapping is possible under the current Assessment Brain V1 scope; not force-mapped, not given CSSE pathway relevance."
+    },
+    {
+      "id": "nr-024",
+      "sourceFile": "data/numerical-reasoning/*",
+      "subject": "numerical-reasoning",
+      "status": "requires-review",
+      "reason": "Assessment Brain V1 defines competencies/Question Types only for CSSE's own tested domains (English, Maths, Writing, Vocabulary) — it has no competency or Question Type coverage for Verbal/Non-Verbal/Spatial/Numerical Reasoning at all, since CSSE does not test these (ASSESSMENT_BRAIN_V1.md §2, §11). No evidence-supported QT-* mapping is possible under the current Assessment Brain V1 scope; not force-mapped, not given CSSE pathway relevance."
+    },
+    {
+      "id": "nr-025",
+      "sourceFile": "data/numerical-reasoning/*",
+      "subject": "numerical-reasoning",
+      "status": "requires-review",
+      "reason": "Assessment Brain V1 defines competencies/Question Types only for CSSE's own tested domains (English, Maths, Writing, Vocabulary) — it has no competency or Question Type coverage for Verbal/Non-Verbal/Spatial/Numerical Reasoning at all, since CSSE does not test these (ASSESSMENT_BRAIN_V1.md §2, §11). No evidence-supported QT-* mapping is possible under the current Assessment Brain V1 scope; not force-mapped, not given CSSE pathway relevance."
+    },
+    {
+      "id": "nr-026",
+      "sourceFile": "data/numerical-reasoning/*",
+      "subject": "numerical-reasoning",
+      "status": "requires-review",
+      "reason": "Assessment Brain V1 defines competencies/Question Types only for CSSE's own tested domains (English, Maths, Writing, Vocabulary) — it has no competency or Question Type coverage for Verbal/Non-Verbal/Spatial/Numerical Reasoning at all, since CSSE does not test these (ASSESSMENT_BRAIN_V1.md §2, §11). No evidence-supported QT-* mapping is possible under the current Assessment Brain V1 scope; not force-mapped, not given CSSE pathway relevance."
+    },
+    {
+      "id": "nr-027",
+      "sourceFile": "data/numerical-reasoning/*",
+      "subject": "numerical-reasoning",
+      "status": "requires-review",
+      "reason": "Assessment Brain V1 defines competencies/Question Types only for CSSE's own tested domains (English, Maths, Writing, Vocabulary) — it has no competency or Question Type coverage for Verbal/Non-Verbal/Spatial/Numerical Reasoning at all, since CSSE does not test these (ASSESSMENT_BRAIN_V1.md §2, §11). No evidence-supported QT-* mapping is possible under the current Assessment Brain V1 scope; not force-mapped, not given CSSE pathway relevance."
+    },
+    {
+      "id": "nr-028",
+      "sourceFile": "data/numerical-reasoning/*",
+      "subject": "numerical-reasoning",
+      "status": "requires-review",
+      "reason": "Assessment Brain V1 defines competencies/Question Types only for CSSE's own tested domains (English, Maths, Writing, Vocabulary) — it has no competency or Question Type coverage for Verbal/Non-Verbal/Spatial/Numerical Reasoning at all, since CSSE does not test these (ASSESSMENT_BRAIN_V1.md §2, §11). No evidence-supported QT-* mapping is possible under the current Assessment Brain V1 scope; not force-mapped, not given CSSE pathway relevance."
+    },
+    {
+      "id": "nr-029",
+      "sourceFile": "data/numerical-reasoning/*",
+      "subject": "numerical-reasoning",
+      "status": "requires-review",
+      "reason": "Assessment Brain V1 defines competencies/Question Types only for CSSE's own tested domains (English, Maths, Writing, Vocabulary) — it has no competency or Question Type coverage for Verbal/Non-Verbal/Spatial/Numerical Reasoning at all, since CSSE does not test these (ASSESSMENT_BRAIN_V1.md §2, §11). No evidence-supported QT-* mapping is possible under the current Assessment Brain V1 scope; not force-mapped, not given CSSE pathway relevance."
+    },
+    {
+      "id": "nr-030",
+      "sourceFile": "data/numerical-reasoning/*",
+      "subject": "numerical-reasoning",
+      "status": "requires-review",
+      "reason": "Assessment Brain V1 defines competencies/Question Types only for CSSE's own tested domains (English, Maths, Writing, Vocabulary) — it has no competency or Question Type coverage for Verbal/Non-Verbal/Spatial/Numerical Reasoning at all, since CSSE does not test these (ASSESSMENT_BRAIN_V1.md §2, §11). No evidence-supported QT-* mapping is possible under the current Assessment Brain V1 scope; not force-mapped, not given CSSE pathway relevance."
+    },
+    {
+      "id": "nr-031",
+      "sourceFile": "data/numerical-reasoning/*",
+      "subject": "numerical-reasoning",
+      "status": "requires-review",
+      "reason": "Assessment Brain V1 defines competencies/Question Types only for CSSE's own tested domains (English, Maths, Writing, Vocabulary) — it has no competency or Question Type coverage for Verbal/Non-Verbal/Spatial/Numerical Reasoning at all, since CSSE does not test these (ASSESSMENT_BRAIN_V1.md §2, §11). No evidence-supported QT-* mapping is possible under the current Assessment Brain V1 scope; not force-mapped, not given CSSE pathway relevance."
+    },
+    {
+      "id": "nr-032",
+      "sourceFile": "data/numerical-reasoning/*",
+      "subject": "numerical-reasoning",
+      "status": "requires-review",
+      "reason": "Assessment Brain V1 defines competencies/Question Types only for CSSE's own tested domains (English, Maths, Writing, Vocabulary) — it has no competency or Question Type coverage for Verbal/Non-Verbal/Spatial/Numerical Reasoning at all, since CSSE does not test these (ASSESSMENT_BRAIN_V1.md §2, §11). No evidence-supported QT-* mapping is possible under the current Assessment Brain V1 scope; not force-mapped, not given CSSE pathway relevance."
+    },
+    {
+      "id": "nr-033",
+      "sourceFile": "data/numerical-reasoning/*",
+      "subject": "numerical-reasoning",
+      "status": "requires-review",
+      "reason": "Assessment Brain V1 defines competencies/Question Types only for CSSE's own tested domains (English, Maths, Writing, Vocabulary) — it has no competency or Question Type coverage for Verbal/Non-Verbal/Spatial/Numerical Reasoning at all, since CSSE does not test these (ASSESSMENT_BRAIN_V1.md §2, §11). No evidence-supported QT-* mapping is possible under the current Assessment Brain V1 scope; not force-mapped, not given CSSE pathway relevance."
+    },
+    {
+      "id": "nr-034",
+      "sourceFile": "data/numerical-reasoning/*",
+      "subject": "numerical-reasoning",
+      "status": "requires-review",
+      "reason": "Assessment Brain V1 defines competencies/Question Types only for CSSE's own tested domains (English, Maths, Writing, Vocabulary) — it has no competency or Question Type coverage for Verbal/Non-Verbal/Spatial/Numerical Reasoning at all, since CSSE does not test these (ASSESSMENT_BRAIN_V1.md §2, §11). No evidence-supported QT-* mapping is possible under the current Assessment Brain V1 scope; not force-mapped, not given CSSE pathway relevance."
+    },
+    {
+      "id": "nr-035",
+      "sourceFile": "data/numerical-reasoning/*",
+      "subject": "numerical-reasoning",
+      "status": "requires-review",
+      "reason": "Assessment Brain V1 defines competencies/Question Types only for CSSE's own tested domains (English, Maths, Writing, Vocabulary) — it has no competency or Question Type coverage for Verbal/Non-Verbal/Spatial/Numerical Reasoning at all, since CSSE does not test these (ASSESSMENT_BRAIN_V1.md §2, §11). No evidence-supported QT-* mapping is possible under the current Assessment Brain V1 scope; not force-mapped, not given CSSE pathway relevance."
+    },
+    {
+      "id": "nr-036",
+      "sourceFile": "data/numerical-reasoning/*",
+      "subject": "numerical-reasoning",
+      "status": "requires-review",
+      "reason": "Assessment Brain V1 defines competencies/Question Types only for CSSE's own tested domains (English, Maths, Writing, Vocabulary) — it has no competency or Question Type coverage for Verbal/Non-Verbal/Spatial/Numerical Reasoning at all, since CSSE does not test these (ASSESSMENT_BRAIN_V1.md §2, §11). No evidence-supported QT-* mapping is possible under the current Assessment Brain V1 scope; not force-mapped, not given CSSE pathway relevance."
+    },
+    {
+      "id": "nr-037",
+      "sourceFile": "data/numerical-reasoning/*",
+      "subject": "numerical-reasoning",
+      "status": "requires-review",
+      "reason": "Assessment Brain V1 defines competencies/Question Types only for CSSE's own tested domains (English, Maths, Writing, Vocabulary) — it has no competency or Question Type coverage for Verbal/Non-Verbal/Spatial/Numerical Reasoning at all, since CSSE does not test these (ASSESSMENT_BRAIN_V1.md §2, §11). No evidence-supported QT-* mapping is possible under the current Assessment Brain V1 scope; not force-mapped, not given CSSE pathway relevance."
+    },
+    {
+      "id": "nr-038",
+      "sourceFile": "data/numerical-reasoning/*",
+      "subject": "numerical-reasoning",
+      "status": "requires-review",
+      "reason": "Assessment Brain V1 defines competencies/Question Types only for CSSE's own tested domains (English, Maths, Writing, Vocabulary) — it has no competency or Question Type coverage for Verbal/Non-Verbal/Spatial/Numerical Reasoning at all, since CSSE does not test these (ASSESSMENT_BRAIN_V1.md §2, §11). No evidence-supported QT-* mapping is possible under the current Assessment Brain V1 scope; not force-mapped, not given CSSE pathway relevance."
+    },
+    {
+      "id": "nr-039",
+      "sourceFile": "data/numerical-reasoning/*",
+      "subject": "numerical-reasoning",
+      "status": "requires-review",
+      "reason": "Assessment Brain V1 defines competencies/Question Types only for CSSE's own tested domains (English, Maths, Writing, Vocabulary) — it has no competency or Question Type coverage for Verbal/Non-Verbal/Spatial/Numerical Reasoning at all, since CSSE does not test these (ASSESSMENT_BRAIN_V1.md §2, §11). No evidence-supported QT-* mapping is possible under the current Assessment Brain V1 scope; not force-mapped, not given CSSE pathway relevance."
+    },
+    {
+      "id": "nr-040",
+      "sourceFile": "data/numerical-reasoning/*",
+      "subject": "numerical-reasoning",
+      "status": "requires-review",
+      "reason": "Assessment Brain V1 defines competencies/Question Types only for CSSE's own tested domains (English, Maths, Writing, Vocabulary) — it has no competency or Question Type coverage for Verbal/Non-Verbal/Spatial/Numerical Reasoning at all, since CSSE does not test these (ASSESSMENT_BRAIN_V1.md §2, §11). No evidence-supported QT-* mapping is possible under the current Assessment Brain V1 scope; not force-mapped, not given CSSE pathway relevance."
+    },
+    {
+      "id": "nr-041",
+      "sourceFile": "data/numerical-reasoning/*",
+      "subject": "numerical-reasoning",
+      "status": "requires-review",
+      "reason": "Assessment Brain V1 defines competencies/Question Types only for CSSE's own tested domains (English, Maths, Writing, Vocabulary) — it has no competency or Question Type coverage for Verbal/Non-Verbal/Spatial/Numerical Reasoning at all, since CSSE does not test these (ASSESSMENT_BRAIN_V1.md §2, §11). No evidence-supported QT-* mapping is possible under the current Assessment Brain V1 scope; not force-mapped, not given CSSE pathway relevance."
+    }
+  ]
+}
