@@ -89,6 +89,54 @@ export interface PersonalisedSession {
   familyFocus?: FamilyFocusSessionInfo;
 }
 
+/**
+ * Family-aware Practice selection (Educational Increment 004 §12). A pure
+ * post-processing pass over selectQuestions()'s own output — deliberately
+ * NOT a change to lib/ali/selection.ts's cooldown/weak-skill-override
+ * engine itself (real, previously tested, reused unmodified from the old
+ * ALI/GL adaptive mocks; too risky to touch for a diversity concern that
+ * only matters for the small minority of rows that carry a familyId at
+ * all — every row before migration 030 has none).
+ *
+ * Keeps at most one item per family within a single session; when a
+ * family is over-represented, swaps the extra item(s) for any
+ * not-yet-selected candidate from a different family. If no such
+ * candidate exists (small pool, or every alternative already selected),
+ * the repeat is left in place rather than forced — this is a genuine
+ * diversity preference, not a hard constraint that could make a session
+ * impossible to fill. Distinct from cross-session item-level cooldown
+ * (lib/ali/selection.ts), which this does not touch or duplicate.
+ */
+export function reduceFamilyClustering(
+  selected: BankQuestion[],
+  candidatePool: BankQuestion[]
+): BankQuestion[] {
+  const familyCounts = new Map<string, number>();
+  for (const q of selected) {
+    if (!q.familyId) continue;
+    familyCounts.set(q.familyId, (familyCounts.get(q.familyId) ?? 0) + 1);
+  }
+  const overRepresented = [...familyCounts.entries()].filter(([, count]) => count > 1);
+  if (overRepresented.length === 0) return selected;
+
+  const selectedIds = new Set(selected.map((q) => q.id));
+  const result = [...selected];
+
+  for (const [familyId, count] of overRepresented) {
+    let excess = count - 1; // keep exactly one representative per family, swap the rest
+    for (let i = result.length - 1; i >= 0 && excess > 0; i--) {
+      if (result[i].familyId !== familyId) continue;
+      const replacement = candidatePool.find((c) => !selectedIds.has(c.id) && c.familyId !== familyId);
+      if (!replacement) continue; // no distinct-family alternative available; leave the repeat
+      selectedIds.delete(result[i].id);
+      selectedIds.add(replacement.id);
+      result[i] = replacement;
+      excess--;
+    }
+  }
+  return result;
+}
+
 function daysUntilFromTargetExamDate(now: Date): number | null {
   const targetIso = getTargetExamDate();
   if (!targetIso) return null;
@@ -209,9 +257,10 @@ export async function generatePersonalisedSession(
   const remainingSlots = Math.max(0, area.sessionSize - reviewActivities.length);
   const candidatePool = tagged.filter((q) => !reservedIds.has(q.id));
   const selection = selectQuestions(candidatePool, history, currentSequence, weakSkills, remainingSlots);
+  const diversifiedQuestions = reduceFamilyClustering(selection.questions, candidatePool);
 
   const candidateByCompetency = new Map(priority.map((c) => [c.competencyCode, c] as const));
-  const priorityActivities: SessionActivity[] = selection.questions.map((question) => {
+  const priorityActivities: SessionActivity[] = diversifiedQuestions.map((question) => {
     const trace = selection.trace.find((t) => t.questionId === question.id);
     const competencyId = QUESTION_TYPE_PRIMARY_COMPETENCY[question.skill as QuestionTypeId];
     const candidate = competencyId ? candidateByCompetency.get(competencyId) : undefined;

@@ -107,4 +107,9 @@ export interface BankQuestion {
    * this work package).
    */
   transferLinks?: CompetencyCode[];
+  /** Migration 030/031 (Content Scale Gate). Undefined for any row that predates migration 030. */
+  familyId?: string;
+  provenance?: string;
+  eligibilityStatus?: string;
+  active?: boolean;
 }

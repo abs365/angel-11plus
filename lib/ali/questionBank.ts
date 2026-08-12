@@ -26,6 +26,10 @@ function rowToBankQuestion(row: BankRow): BankQuestion {
     learningUnitId: row.learning_unit_id,
     addressesMisconception: row.addresses_misconception ?? undefined,
     transferLinks: row.transfer_links ?? undefined,
+    familyId: row.family_id ?? undefined,
+    provenance: row.provenance ?? undefined,
+    eligibilityStatus: row.eligibility_status,
+    active: row.active,
   };
 }
 
@@ -33,6 +37,21 @@ function rowToBankQuestion(row: BankRow): BankQuestion {
  * Fetches the ALI question bank filtered to a subject + pathway. Used by
  * lib/adaptiveMockBuilder.ts to get the candidate pool for a section before
  * calling lib/ali/selection.ts's selectQuestions().
+ *
+ * Retirement/provenance enforcement (Educational Increment 004 §13):
+ * excludes active=false and provenance="evidence_only" — both filtered in
+ * application code, not via a Postgrest .neq(), because provenance is
+ * nullable on every one of the 52 rows that predate migration 030/031 and
+ * SQL's `x != 'evidence_only'` evaluates to NULL (excluding, not including)
+ * for a NULL column; filtering here keeps that large majority correctly
+ * included. Deliberately NOT filtering on eligibility_status: per
+ * RELEASE_1_ASSESSMENT_ELIGIBILITY_MODEL.md, "Provisional Content" is not
+ * technically Practice Eligible, but literally enforcing that today would
+ * remove the 46 pre-Increment-003 rows (all still "provisional", including
+ * the Founder-verified Mathematics Reference Vertical Lessons 1-2) from
+ * Practice entirely — a severe, undisclosed regression, not a gap closure.
+ * Recorded as a genuine open question for the Founder rather than silently
+ * implemented either way.
  */
 export async function fetchQuestionBank(
   supabase: SupabaseClient<Database>,
@@ -50,7 +69,9 @@ export async function fetchQuestionBank(
     return [];
   }
 
-  return data.map(rowToBankQuestion);
+  return data
+    .map(rowToBankQuestion)
+    .filter((q) => q.active !== false && q.provenance !== "evidence_only");
 }
 
 /**
