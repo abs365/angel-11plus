@@ -11,6 +11,7 @@ import { getTargetExamDate } from "@/lib/progress";
 import { getRecommendations } from "./educationalIntelligenceService";
 import { QUESTION_TYPE_PRIMARY_COMPETENCY, getQuestionTypesForCompetency } from "./assessmentBrainMap";
 import { getPracticeArea, type PracticeAreaId } from "./practiceContent";
+import { classifyRetrievalStage, computeFamilyExposure, type FamilyExposure } from "@/lib/ali/exposureIntelligence";
 
 /**
  * Personalised Session Generation (Sprint 3, ANGEL-CSSE-002A). Single entry
@@ -137,6 +138,46 @@ export function reduceFamilyClustering(
   return result;
 }
 
+/**
+ * Anti-memorisation selection, spaced-retrieval-aware (Educational
+ * Increment 006 Part 14). A second, independent additive swap pass after
+ * reduceFamilyClustering() — deliberately kept separate rather than
+ * merged into one function, so each pass's own behaviour stays testable
+ * in isolation. Swaps a MASTERY_MAINTENANCE family (recently confirmed
+ * secure, correctly deprioritised) for a NEW, IMMEDIATE_REMEDIATION, or
+ * due SPACED_RETRIEVAL alternative when one exists and isn't already
+ * selected — never a hard exclusion (a securely-mastered family can
+ * still appear if no better alternative exists), matching the
+ * directive's explicit "do not permanently suppress" instruction.
+ */
+export function applyRetrievalPriority(
+  selected: BankQuestion[],
+  candidatePool: BankQuestion[],
+  exposureByFamily: Map<string, FamilyExposure>,
+  now: Date = new Date()
+): BankQuestion[] {
+  const stageOf = (q: BankQuestion): ReturnType<typeof classifyRetrievalStage> =>
+    classifyRetrievalStage(q.familyId ? exposureByFamily.get(q.familyId) : undefined, now);
+
+  const selectedIds = new Set(selected.map((q) => q.id));
+  const result = [...selected];
+
+  for (let i = 0; i < result.length; i++) {
+    if (stageOf(result[i]) !== "MASTERY_MAINTENANCE") continue;
+    const replacement = candidatePool.find((c) => {
+      if (selectedIds.has(c.id)) return false;
+      const stage = stageOf(c);
+      return stage === "NEW" || stage === "IMMEDIATE_REMEDIATION" || stage === "SPACED_RETRIEVAL";
+    });
+    if (!replacement) continue; // no due/unseen alternative available; leave the maintenance item in place
+    selectedIds.delete(result[i].id);
+    selectedIds.add(replacement.id);
+    result[i] = replacement;
+  }
+
+  return result;
+}
+
 function daysUntilFromTargetExamDate(now: Date): number | null {
   const targetIso = getTargetExamDate();
   if (!targetIso) return null;
@@ -258,9 +299,14 @@ export async function generatePersonalisedSession(
   const candidatePool = tagged.filter((q) => !reservedIds.has(q.id));
   const selection = selectQuestions(candidatePool, history, currentSequence, weakSkills, remainingSlots);
   const diversifiedQuestions = reduceFamilyClustering(selection.questions, candidatePool);
+  // Exposure intelligence / spaced retrieval (Educational Increment 006
+  // Parts 12-14) — computed from the same real history this function
+  // already fetched; no second history read, no parallel learner model.
+  const familyExposure = computeFamilyExposure(candidatePool, history);
+  const retrievalPrioritisedQuestions = applyRetrievalPriority(diversifiedQuestions, candidatePool, familyExposure, now);
 
   const candidateByCompetency = new Map(priority.map((c) => [c.competencyCode, c] as const));
-  const priorityActivities: SessionActivity[] = diversifiedQuestions.map((question) => {
+  const priorityActivities: SessionActivity[] = retrievalPrioritisedQuestions.map((question) => {
     const trace = selection.trace.find((t) => t.questionId === question.id);
     const competencyId = QUESTION_TYPE_PRIMARY_COMPETENCY[question.skill as QuestionTypeId];
     const candidate = competencyId ? candidateByCompetency.get(competencyId) : undefined;
