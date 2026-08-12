@@ -57,7 +57,7 @@ export default function PathwaySwitcher() {
   const realPathways = getRealPathways();
   const current = isRealPathway(currentId) ? realPathways.find((p) => p.id === currentId) : undefined;
 
-  function handlePick(pathway: Pathway) {
+  async function handlePick(pathway: Pathway) {
     setOpen(false);
     if (pathway.id === current?.id) return;
     if (current) {
@@ -67,7 +67,12 @@ export default function PathwaySwitcher() {
       return;
     }
     // No real pathway active yet — nothing to lose, apply immediately.
-    switchActivePathway(pathway.id as RealPathwayId);
+    // Awaited (capped at 1.5s inside switchActivePathway): a fire-and-forget
+    // write here raced the reload below and always lost, confirmed directly
+    // against the database — the client-side switch succeeded every time
+    // but the server row never updated, since page unload aborts an
+    // in-flight fetch.
+    await switchActivePathway(pathway.id as RealPathwayId);
     // Full reload, not router.push: Navigation.tsx's own useCssePathway()
     // reads the pathway once on mount only (empty deps) since it is a
     // persistent layout component that never remounts on a client-side
@@ -78,9 +83,9 @@ export default function PathwaySwitcher() {
     window.location.href = "/dashboard";
   }
 
-  function handleConfirmSwitch() {
+  async function handleConfirmSwitch() {
     if (!confirmTarget) return;
-    switchActivePathway(confirmTarget.id as RealPathwayId);
+    await switchActivePathway(confirmTarget.id as RealPathwayId);
     window.location.href = "/dashboard";
   }
 

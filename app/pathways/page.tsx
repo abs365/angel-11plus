@@ -76,10 +76,13 @@ export default function PathwaysPage() {
     applySelection(id);
   }
 
-  function applySelection(id: string) {
+  async function applySelection(id: string) {
     setSelected(id);
     if (isRealPathway(id)) {
-      switchActivePathway(id as RealPathwayId);
+      // Awaited (capped at 1.5s inside switchActivePathway): a fire-and-
+      // forget write here raced the reload below and always lost, confirmed
+      // directly against the database (see PathwaySwitcher.tsx).
+      await switchActivePathway(id as RealPathwayId);
     } else {
       setSelectedPathway(id);
     }
