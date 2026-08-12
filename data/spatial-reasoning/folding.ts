@@ -23,7 +23,7 @@ export const srFoldingQuestions: ReasoningQuestion[] = [
     id: "sr-015",
     question: "A strip of paper with 5 equal sections is folded accordion-style so all sections stack on top of each other. How many layers are there?",
     answer: "5",
-    explanation: "Folding 5 sections so they all stack gives 5 layers — each section becomes one layer.",
+    explanation: "Folding 5 sections so they all stack gives 5 layers: each section becomes one layer.",
     category: "Paper Folding",
     skill: "spatial-reasoning",
     marks: 1,

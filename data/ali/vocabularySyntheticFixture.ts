@@ -67,21 +67,21 @@ export const vocabularySyntheticFixture: BankQuestion[] = [
   item("audacious", "syn", "vocabulary.synonyms", "easy",
     "Which word is closest in meaning to 'audacious'?",
     ["bold", "timid", "quiet", "careful"], "bold",
-    "'Audacious' means willing to take bold risks — 'bold' is the closest match."),
+    "'Audacious' means willing to take bold risks: 'bold' is the closest match."),
   item("audacious", "ant", "vocabulary.antonyms", "easy",
     "Which word means the opposite of 'audacious'?",
     ["daring", "timid", "reckless", "confident"], "timid",
-    "'Audacious' means boldly daring — 'timid' (fearful, hesitant) is its opposite."),
+    "'Audacious' means boldly daring: 'timid' (fearful, hesitant) is its opposite."),
 
   // Word: candid (medium) — synonyms + antonyms + in-context
   item("candid", "syn", "vocabulary.synonyms", "medium",
     "Which word is closest in meaning to 'candid'?",
     ["honest", "secretive", "formal", "elaborate"], "honest",
-    "'Candid' means truthful and straightforward — 'honest' is the closest match."),
+    "'Candid' means truthful and straightforward: 'honest' is the closest match."),
   item("candid", "ant", "vocabulary.antonyms", "medium",
     "Which word means the opposite of 'candid'?",
     ["frank", "evasive", "blunt", "direct"], "evasive",
-    "'Candid' means openly truthful — 'evasive' (avoiding giving a direct answer) is its opposite."),
+    "'Candid' means openly truthful: 'evasive' (avoiding giving a direct answer) is its opposite."),
   item("candid", "ctx", "vocabulary.in-context", "medium",
     "Which sentence uses 'candid' correctly?",
     [
@@ -91,23 +91,23 @@ export const vocabularySyntheticFixture: BankQuestion[] = [
       "The soup was candid and warm.",
     ],
     "Her candid answer left no doubt about how she really felt.",
-    "'Candid' describes honest, direct communication — only the first sentence uses it as this kind of adjective correctly."),
+    "'Candid' describes honest, direct communication: only the first sentence uses it as this kind of adjective correctly."),
 
   // Word: diligent (medium) — synonyms + antonyms
   item("diligent", "syn", "vocabulary.synonyms", "medium",
     "Which word is closest in meaning to 'diligent'?",
     ["hardworking", "lazy", "careless", "distracted"], "hardworking",
-    "'Diligent' means showing careful, persistent effort — 'hardworking' is the closest match."),
+    "'Diligent' means showing careful, persistent effort: 'hardworking' is the closest match."),
   item("diligent", "ant", "vocabulary.antonyms", "medium",
     "Which word means the opposite of 'diligent'?",
     ["industrious", "negligent", "thorough", "attentive"], "negligent",
-    "'Diligent' means careful and persistent — 'negligent' (careless, failing to take proper care) is its opposite."),
+    "'Diligent' means careful and persistent: 'negligent' (careless, failing to take proper care) is its opposite."),
 
   // Word: frugal (hard) — synonyms + in-context
   item("frugal", "syn", "vocabulary.synonyms", "hard",
     "Which word is closest in meaning to 'frugal'?",
     ["thrifty", "wasteful", "generous", "extravagant"], "thrifty",
-    "'Frugal' means economical and careful with money or resources — 'thrifty' is the closest match."),
+    "'Frugal' means economical and careful with money or resources: 'thrifty' is the closest match."),
   item("frugal", "ctx", "vocabulary.in-context", "hard",
     "Which sentence uses 'frugal' correctly?",
     [
@@ -117,17 +117,17 @@ export const vocabularySyntheticFixture: BankQuestion[] = [
       "The frugal music echoed through the hall.",
     ],
     "Her frugal habits meant she saved a little from every pay cheque.",
-    "'Frugal' describes careful, economical use of money or resources — only the first sentence uses it correctly."),
+    "'Frugal' describes careful, economical use of money or resources: only the first sentence uses it correctly."),
 
   // Word: gregarious (challenge) — synonyms + antonyms + in-context
   item("gregarious", "syn", "vocabulary.synonyms", "challenge",
     "Which word is closest in meaning to 'gregarious'?",
     ["sociable", "withdrawn", "hostile", "indifferent"], "sociable",
-    "'Gregarious' means fond of company and enjoying being with others — 'sociable' is the closest match."),
+    "'Gregarious' means fond of company and enjoying being with others: 'sociable' is the closest match."),
   item("gregarious", "ant", "vocabulary.antonyms", "challenge",
     "Which word means the opposite of 'gregarious'?",
     ["outgoing", "reserved", "friendly", "talkative"], "reserved",
-    "'Gregarious' means sociable and outgoing — 'reserved' (reluctant to socialise or share) is its opposite."),
+    "'Gregarious' means sociable and outgoing: 'reserved' (reluctant to socialise or share) is its opposite."),
   item("gregarious", "ctx", "vocabulary.in-context", "challenge",
     "Which sentence uses 'gregarious' correctly?",
     [
@@ -137,5 +137,5 @@ export const vocabularySyntheticFixture: BankQuestion[] = [
       "The gregarious painting hung above the fireplace.",
     ],
     "His gregarious nature meant he made friends within minutes of arriving anywhere.",
-    "'Gregarious' describes an outgoing, sociable personality — only the first sentence uses it correctly."),
+    "'Gregarious' describes an outgoing, sociable personality: only the first sentence uses it correctly."),
 ];

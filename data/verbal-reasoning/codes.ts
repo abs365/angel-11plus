@@ -69,7 +69,7 @@ export const verbalCodeQuestions: ReasoningQuestion[] = [
     question: "Two words in this list are anagrams of each other. Which two? TEAM, LEAN, MATE, GOAL, FLEA",
     answer: "TEAM and MATE",
     alternatives: ["team and mate", "mate and team", "MATE and TEAM"],
-    explanation: "TEAM (T,E,A,M) and MATE (M,A,T,E) contain exactly the same letters — they are anagrams of each other.",
+    explanation: "TEAM (T,E,A,M) and MATE (M,A,T,E) contain exactly the same letters: they are anagrams of each other.",
     category: "Word Codes",
     skill: "verbal-reasoning",
     marks: 1,

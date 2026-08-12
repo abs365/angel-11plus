@@ -54,7 +54,7 @@ export const nonVerbalReasoningBase: ReasoningQuestion[] = [
     id: "nvr-006",
     question: "Which shape is the odd one out: square, rectangle, rhombus, triangle, parallelogram?",
     answer: "triangle",
-    explanation: "A square, rectangle, rhombus and parallelogram all have 4 sides (they are quadrilaterals). A triangle has only 3 sides — it is the odd one out.",
+    explanation: "A square, rectangle, rhombus and parallelogram all have 4 sides (they are quadrilaterals). A triangle has only 3 sides: it is the odd one out.",
     category: "Shape Properties",
     skill: "non-verbal-reasoning",
     marks: 1,

@@ -81,7 +81,7 @@ export const mathsQuestions: MathsQuestion[] = [
       "For first term > 100: 4n - 3 > 100",
       "4n > 103, n > 25.75",
       "So n = 26: 4(26) - 3 = 104 - 3 = 101 ✓",
-      "The 26th term is 101 — the first term greater than 100"
+      "The 26th term is 101: the first term greater than 100"
     ]
   },
   {

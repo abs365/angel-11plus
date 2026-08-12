@@ -72,14 +72,14 @@ export const vrSyntheticFixture: BankQuestion[] = [
   fixture("synthetic-vr-008", "vr.letter-codes", "challenge", "In a code, each letter is replaced by the letter that many places later, where the number of places equals that letter's position in the alphabet mod 5. Given this, what does JAM become?", "KCS", "J is 10th letter, 10 mod 5 = 5 → J+5=O... (illustrative synthetic example, not a real authored question).", 3),
 
   // vr.hidden-words
-  fixture("synthetic-vr-009", "vr.hidden-words", "easy", "Find the 3-letter word hidden inside GARDEN.", "gar", "GAR appears consecutively at the start of GARden — illustrative synthetic example.", 2),
-  fixture("synthetic-vr-010", "vr.hidden-words", "medium", "Find the 4-letter word hidden inside SCARLET.", "carl", "CARL appears consecutively inside sCARLet — illustrative synthetic example.", 2),
-  fixture("synthetic-vr-011", "vr.hidden-words", "hard", "Find the 5-letter word hidden inside THRASHING.", "rashi", "Illustrative synthetic example — not a real dictionary word, used for fixture variety only.", 3),
-  fixture("synthetic-vr-012", "vr.hidden-words", "challenge", "Find two different hidden words inside CARTHORSE, one at the start and one at the end.", "cart / horse", "CART at the start, HORSE at the end — illustrative synthetic example.", 3),
+  fixture("synthetic-vr-009", "vr.hidden-words", "easy", "Find the 3-letter word hidden inside GARDEN.", "gar", "GAR appears consecutively at the start of GARden: illustrative synthetic example.", 2),
+  fixture("synthetic-vr-010", "vr.hidden-words", "medium", "Find the 4-letter word hidden inside SCARLET.", "carl", "CARL appears consecutively inside sCARLet: illustrative synthetic example.", 2),
+  fixture("synthetic-vr-011", "vr.hidden-words", "hard", "Find the 5-letter word hidden inside THRASHING.", "rashi", "Illustrative synthetic example, not a real dictionary word, used for fixture variety only.", 3),
+  fixture("synthetic-vr-012", "vr.hidden-words", "challenge", "Find two different hidden words inside CARTHORSE, one at the start and one at the end.", "cart / horse", "CART at the start, HORSE at the end: illustrative synthetic example.", 3),
 
   // vr.sequences
   fixture("synthetic-vr-013", "vr.sequences", "easy", "What comes next: B, D, F, H, ?", "J", "Every other letter of the alphabet, skipping one each time.", 2),
   fixture("synthetic-vr-014", "vr.sequences", "medium", "What comes next: TWO, FOUR, SIX, ?", "EIGHT", "Even numbers written as words, increasing by 2 each time.", 2),
   fixture("synthetic-vr-015", "vr.sequences", "hard", "What comes next: AZ, CY, EX, ?", "GW", "First letter moves forward 2 places (A,C,E,G); second letter moves backward 1 place (Z,Y,X,W).", 3),
-  fixture("synthetic-vr-016", "vr.sequences", "challenge", "What comes next: 2, 6, 12, 20, ?", "30", "Differences increase by 2 each time (4,6,8,10) — n(n+1) pattern.", 3),
+  fixture("synthetic-vr-016", "vr.sequences", "challenge", "What comes next: 2, 6, 12, 20, ?", "30", "Differences increase by 2 each time (4,6,8,10): n(n+1) pattern.", 3),
 ];

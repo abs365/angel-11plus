@@ -6,7 +6,7 @@
  * the build/lint step when it finds one.
  *
  * WHAT IT CHECKS
- *   Every .ts/.tsx file under app/, components/ and lib/, line by line,
+ *   Every .ts/.tsx file under app/, components/, lib/ and data/, line by line,
  *   after stripping // line comments, /* block comments and {/* JSX
  *   comments *​/ — a dash inside a comment is developer documentation, not
  *   rendered copy, and is never flagged. Also scans the fixed list in
@@ -75,7 +75,7 @@ import { join, extname, relative } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const ROOT = join(fileURLToPath(import.meta.url), "..", "..");
-const SCAN_DIRS = ["app", "components", "lib"];
+const SCAN_DIRS = ["app", "components", "lib", "data"];
 const EXTENSIONS = new Set([".ts", ".tsx"]);
 
 /**
@@ -98,6 +98,7 @@ const STATIC_FILES = ["public/offline.html", "public/manifest.json"];
 const INTERNAL_ONLY_FILES = new Set([
   "app/admin-beta/page.tsx", // Founder-only operations console, gated by RLS + admin check
   "app/learning-intelligence/founder-validation/csse/page.tsx", // "Not learner-facing" — own header comment + own on-page copy
+  "data/founderValidation/csseFounderValidationEvidence.ts", // Sole consumer is the file above; question-authoring audit trail (Question Type codes, originality/difficulty rationale), never rendered as learner-facing prose
 ]);
 
 const DASH_CHARS = "—–"; // — and –

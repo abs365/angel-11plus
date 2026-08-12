@@ -96,7 +96,7 @@ export const nvrPatternQuestions: ReasoningQuestion[] = [
   },
   {
     id: "nvr-023",
-    question: "Find the next term: 2, 5, 10, 17, 26, ?\n(The differences between terms are 3, 5, 7, 9… — consecutive odd numbers.)",
+    question: "Find the next term: 2, 5, 10, 17, 26, ?\n(The differences between terms are 3, 5, 7, 9…, consecutive odd numbers.)",
     answer: "37",
     explanation: "The differences between terms increase by 2 each time: +3, +5, +7, +9, +11. So 26 + 11 = 37.",
     category: "Pattern Rules",

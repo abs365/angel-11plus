@@ -117,7 +117,7 @@ export const vocabWords: VocabWord[] = [
     definition: "Lasting for a very short time; transitory.",
     synonyms: ["transient", "fleeting", "momentary", "brief", "short-lived"],
     antonyms: ["permanent", "enduring", "lasting", "eternal"],
-    exampleSentence: "The beauty of the autumn leaves is ephemeral — within a week, the branches were bare.",
+    exampleSentence: "The beauty of the autumn leaves is ephemeral: within a week, the branches were bare.",
     difficulty: "year6-exam",
     category: "tier3"
   }
