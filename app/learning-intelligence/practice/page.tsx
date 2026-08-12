@@ -41,9 +41,9 @@ export default function PracticeAreaSelectorPage() {
             const Icon = AREA_ICON[area.id];
             return (
               <Link key={area.id} href={`/learning-intelligence/practice/${area.id}`}>
-                <InfoCard className="flex items-center gap-4 hover:border-purple-300 dark:hover:border-purple-700 transition-colors">
-                  <div className="bg-purple-100 dark:bg-purple-900 p-3 rounded-2xl shrink-0">
-                    <Icon size={20} className="text-purple-600 dark:text-purple-400" />
+                <InfoCard className="flex items-center gap-4 hover:border-sky-300 dark:hover:border-sky-700 transition-colors">
+                  <div className="bg-sky-100 dark:bg-sky-900 p-3 rounded-2xl shrink-0">
+                    <Icon size={20} className="text-sky-700 dark:text-sky-400" />
                   </div>
                   <div className="min-w-0">
                     <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">{area.label}</p>

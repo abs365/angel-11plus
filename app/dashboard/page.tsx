@@ -63,12 +63,22 @@ import type { MockPathwayId, MockResult } from "@/types/mock";
  * the Learn/Practice/Mock Centre hub pages themselves).
  */
 
-// ─── Mission priority styles (unchanged) ───────────────────────────────────────
+// ─── Mission priority styles ────────────────────────────────────────────────
+// Final Visual Refinement (Section 4) — priority is now read primarily from
+// position/numbering/typography, with colour reduced to one small dot per
+// item rather than a saturated uppercase pill. See Card.tsx's MISSION_STYLE
+// for the matching card-surface/border half of this same change.
 
-const missionPriorityChip: Record<string, string> = {
-  primary: "bg-rose-100 dark:bg-rose-950 text-rose-600 dark:text-rose-400",
-  secondary: "bg-amber-100 dark:bg-amber-950 text-amber-700 dark:text-amber-400",
-  review: "bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-400",
+const MISSION_ACCENT_DOT: Record<string, string> = {
+  primary: "bg-amber-500",
+  secondary: "bg-sky-500",
+  review: "bg-emerald-500",
+};
+
+const MISSION_LABEL_TYPE: Record<string, string> = {
+  primary: "text-gray-900 dark:text-gray-100 font-bold text-base",
+  secondary: "text-gray-900 dark:text-gray-100 font-semibold text-sm",
+  review: "text-gray-600 dark:text-gray-400 font-medium text-sm",
 };
 
 const PRIORITY_LABEL: Record<string, string> = {
@@ -239,7 +249,7 @@ function AdmissionHero({
               setNameDraft(childName ?? "");
               setEditingName(true);
             }}
-            className="flex items-center gap-1 text-gray-400 dark:text-gray-500 hover:text-purple-600 dark:hover:text-purple-400 text-xs font-medium shrink-0 py-1 transition-colors motion-reduce:transition-none"
+            className="flex items-center gap-1 text-gray-400 dark:text-gray-500 hover:text-sky-700 dark:hover:text-sky-400 text-xs font-medium shrink-0 py-1 transition-colors motion-reduce:transition-none"
           >
             <Pencil size={11} aria-hidden="true" />
             {childName ? "Edit" : "Add your child's name"}
@@ -259,11 +269,11 @@ function AdmissionHero({
             value={nameDraft}
             onChange={(e) => setNameDraft(e.target.value)}
             placeholder="e.g. Priya"
-            className="flex-1 min-w-0 bg-gray-50 dark:bg-gray-800 placeholder-gray-400 dark:placeholder-gray-600 text-gray-900 dark:text-gray-100 text-sm rounded-lg px-3 py-2 border border-gray-200 dark:border-gray-700 focus-visible:outline-2 focus-visible:outline-purple-500 focus-visible:outline-offset-2"
+            className="flex-1 min-w-0 bg-gray-50 dark:bg-gray-800 placeholder-gray-400 dark:placeholder-gray-600 text-gray-900 dark:text-gray-100 text-sm rounded-lg px-3 py-2 border border-gray-200 dark:border-gray-700 focus-visible:outline-2 focus-visible:outline-sky-600 focus-visible:outline-offset-2"
           />
           <button
             type="submit"
-            className="text-xs font-semibold bg-purple-600 text-white rounded-lg px-3 py-2 hover:bg-purple-700 transition-colors motion-reduce:transition-none"
+            className="text-xs font-semibold bg-sky-700 text-white rounded-lg px-3 py-2 hover:bg-sky-800 transition-colors motion-reduce:transition-none"
           >
             Save
           </button>
@@ -279,16 +289,22 @@ function AdmissionHero({
 
       <p className="text-gray-900 dark:text-gray-100 font-bold text-2xl leading-snug mb-6">{message}</p>
 
+      {/* Final Visual Refinement (Section 5) — these three chips are
+          metadata, not brand actions or interactive controls: the text
+          itself already communicates meaning, so a saturated purple pill
+          repeated three times in a row added colour volume without adding
+          information, and crowded the Hero's real content (greeting,
+          message, focus line). Neutral pills now, no colour asked of them. */}
       <div className="flex items-center gap-2 flex-wrap mb-5">
-        <span className="inline-flex items-center gap-1.5 bg-purple-50 dark:bg-purple-950 rounded-full px-3 py-1.5 text-xs text-purple-700 dark:text-purple-300">
+        <span className="inline-flex items-center gap-1.5 bg-gray-50 dark:bg-gray-800 rounded-full px-3 py-1.5 text-xs text-gray-600 dark:text-gray-400">
           <MapPin size={12} aria-hidden="true" />
           {pathway ? pathway.name : "No target school chosen yet"}
         </span>
-        <span className="inline-flex items-center gap-1.5 bg-purple-50 dark:bg-purple-950 rounded-full px-3 py-1.5 text-xs text-purple-700 dark:text-purple-300">
+        <span className="inline-flex items-center gap-1.5 bg-gray-50 dark:bg-gray-800 rounded-full px-3 py-1.5 text-xs text-gray-600 dark:text-gray-400">
           <Compass size={12} aria-hidden="true" />
           {STAGE_NAMES[stageIndex]}
         </span>
-        <span className="inline-flex items-center gap-1.5 bg-purple-50 dark:bg-purple-950 rounded-full px-3 py-1.5 text-xs text-purple-700 dark:text-purple-300">
+        <span className="inline-flex items-center gap-1.5 bg-gray-50 dark:bg-gray-800 rounded-full px-3 py-1.5 text-xs text-gray-600 dark:text-gray-400">
           <TrendingUp size={12} aria-hidden="true" />
           {confidenceLabel}
         </span>
@@ -407,7 +423,7 @@ export default function DashboardPage() {
              still available on /progress (Sprint 10's Progress Journey). */}
         <Link
           href="/pathways"
-          className="flex items-center gap-3 bg-white dark:bg-gray-900 rounded-xl border border-gray-100 dark:border-gray-800 px-4 py-3 hover:shadow-sm hover:border-indigo-100 dark:hover:border-indigo-900 active:scale-[0.98] transition-all motion-reduce:transition-none group"
+          className="flex items-center gap-3 bg-white dark:bg-gray-900 rounded-xl border border-gray-100 dark:border-gray-800 px-4 py-3 hover:shadow-sm hover:border-sky-100 dark:hover:border-sky-900 active:scale-[0.98] transition-all motion-reduce:transition-none group"
         >
           <div className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 ${accentBg}`}>
             <MapPin size={17} className={accentText} />
@@ -420,7 +436,7 @@ export default function DashboardPage() {
               {pathway ? "Tap to review School Intelligence" : "GL · CEM · CSSE · ISEB · Independent"}
             </p>
           </div>
-          <ChevronRight size={16} aria-hidden="true" className="text-gray-300 dark:text-gray-600 group-hover:text-indigo-500 dark:group-hover:text-indigo-400 transition-colors motion-reduce:transition-none shrink-0" />
+          <ChevronRight size={16} aria-hidden="true" className="text-gray-300 dark:text-gray-600 group-hover:text-sky-600 dark:group-hover:text-sky-400 transition-colors motion-reduce:transition-none shrink-0" />
         </Link>
 
         {/* 3. Today's Admission Mission — EEP-002: this is now the
@@ -435,13 +451,13 @@ export default function DashboardPage() {
         <section>
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-2.5">
-              <div className="w-9 h-9 rounded-xl bg-indigo-100 dark:bg-indigo-900 flex items-center justify-center shrink-0">
-                <Target size={17} className="text-indigo-600 dark:text-indigo-400" />
+              <div className="w-9 h-9 rounded-xl bg-sky-100 dark:bg-sky-900 flex items-center justify-center shrink-0">
+                <Target size={17} className="text-sky-700 dark:text-sky-400" />
               </div>
               <div>
                 <h2 className="text-gray-900 dark:text-gray-100 font-bold text-xl leading-tight">Today&apos;s Admission Mission</h2>
                 {pathway && (
-                  <p className="text-xs text-indigo-500 dark:text-indigo-400 font-medium mt-0.5">{pathway.shortName} pathway</p>
+                  <p className="text-xs text-sky-700 dark:text-sky-400 font-medium mt-0.5">{pathway.shortName} pathway</p>
                 )}
               </div>
             </div>
@@ -462,12 +478,13 @@ export default function DashboardPage() {
                       <span className="text-[11px] font-bold text-gray-500 dark:text-gray-400">{i + 1}</span>
                     </div>
                     <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 flex-wrap mb-1">
-                        <span className={`text-[10px] font-bold uppercase tracking-wide px-2 py-0.5 rounded-full ${missionPriorityChip[item.priority]}`}>
+                      <div className="flex items-center gap-1.5 mb-1">
+                        <span aria-hidden="true" className={`w-1.5 h-1.5 rounded-full shrink-0 ${MISSION_ACCENT_DOT[item.priority]}`} />
+                        <span className="text-[10px] font-bold uppercase tracking-wide text-gray-400 dark:text-gray-500">
                           {PRIORITY_LABEL[item.priority]}
                         </span>
-                        <span className="text-gray-900 dark:text-gray-100 font-semibold text-sm">{item.label}</span>
                       </div>
+                      <p className={`leading-snug mb-1 ${MISSION_LABEL_TYPE[item.priority]}`}>{item.label}</p>
                       <p className="text-gray-500 dark:text-gray-400 text-xs leading-relaxed">{item.reason}</p>
                       <div className="flex items-center gap-3 mt-1.5 flex-wrap">
                         <div className="flex items-center gap-1">
@@ -502,8 +519,8 @@ export default function DashboardPage() {
             </div>
           ) : (
             <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 shadow-sm p-8 text-center">
-              <div className="w-16 h-16 bg-indigo-50 dark:bg-indigo-950 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                <Target size={30} className="text-indigo-400 dark:text-indigo-600" />
+              <div className="w-16 h-16 bg-sky-50 dark:bg-sky-950 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                <Target size={30} className="text-sky-400 dark:text-sky-600" />
               </div>
               <p className="text-gray-900 dark:text-gray-100 font-bold text-base mb-1.5">Start your first session</p>
               <p className="text-gray-400 dark:text-gray-500 text-sm leading-relaxed mb-5 max-w-xs mx-auto">
@@ -595,8 +612,8 @@ export default function DashboardPage() {
             </div>
           ) : (
             <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 px-4 py-5 flex items-center gap-3">
-              <div className="w-10 h-10 bg-indigo-50 dark:bg-indigo-950 rounded-xl flex items-center justify-center shrink-0">
-                <BarChart2 size={18} className="text-indigo-300 dark:text-indigo-700" />
+              <div className="w-10 h-10 bg-sky-50 dark:bg-sky-950 rounded-xl flex items-center justify-center shrink-0">
+                <BarChart2 size={18} className="text-sky-300 dark:text-sky-700" />
               </div>
               <div>
                 <p className="text-gray-700 dark:text-gray-300 font-semibold text-sm">Not enough data yet</p>
@@ -628,7 +645,7 @@ export default function DashboardPage() {
                   {mockAttempts > 0 ? `${mockAttempts} attempt${mockAttempts === 1 ? "" : "s"} · Best score ${bestMockScore}%` : "Not attempted yet"}
                 </p>
               </div>
-              <ChevronRight size={18} aria-hidden="true" className="text-gray-300 dark:text-gray-600 group-hover:text-indigo-500 dark:group-hover:text-indigo-400 transition-colors motion-reduce:transition-none shrink-0" />
+              <ChevronRight size={18} aria-hidden="true" className="text-gray-300 dark:text-gray-600 group-hover:text-sky-600 dark:group-hover:text-sky-400 transition-colors motion-reduce:transition-none shrink-0" />
             </Link>
           ) : (
             <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 px-4 py-5 flex items-center gap-3">

@@ -321,7 +321,7 @@ function buildDailyMission(
           label: "English Comprehension",
           href: "/english",
           reason:
-            "Start here — inference and close reading are at the heart of 11+. Essex CSSE style passages.",
+            "Start here. Inference and close reading are at the heart of 11+. Essex CSSE style passages.",
           tier: "foundation",
           priority: "primary",
           estimatedMinutes: 20,

@@ -32,6 +32,10 @@ export default function CsseLearnPage() {
         <div className="grid gap-3 mt-6">
           <Link href="/learning-intelligence/learn/mathematics/arithmetic">
             <InfoCard className="flex items-center gap-4 hover:border-purple-300 dark:hover:border-purple-700 transition-colors border-purple-200 dark:border-purple-800">
+              {/* Final Visual Refinement — the one genuinely ready lesson on
+                  this page keeps the brand accent, distinguishing it from
+                  the two supporting links below rather than all three
+                  sharing the same default purple. */}
               <div className="bg-purple-100 dark:bg-purple-900 p-3 rounded-2xl shrink-0">
                 <Calculator size={20} className="text-purple-600 dark:text-purple-400" />
               </div>
@@ -46,9 +50,9 @@ export default function CsseLearnPage() {
           </Link>
 
           <Link href="/learning-intelligence/practice">
-            <InfoCard className="flex items-center gap-4 hover:border-purple-300 dark:hover:border-purple-700 transition-colors">
-              <div className="bg-purple-100 dark:bg-purple-900 p-3 rounded-2xl shrink-0">
-                <BookOpen size={20} className="text-purple-600 dark:text-purple-400" />
+            <InfoCard className="flex items-center gap-4 hover:border-sky-300 dark:hover:border-sky-700 transition-colors">
+              <div className="bg-sky-100 dark:bg-sky-900 p-3 rounded-2xl shrink-0">
+                <BookOpen size={20} className="text-sky-700 dark:text-sky-400" />
               </div>
               <div className="min-w-0 flex-1">
                 <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">Start Practice instead</p>
@@ -62,9 +66,9 @@ export default function CsseLearnPage() {
           </Link>
 
           <Link href="/learning-intelligence">
-            <InfoCard className="flex items-center gap-4 hover:border-purple-300 dark:hover:border-purple-700 transition-colors">
-              <div className="bg-indigo-100 dark:bg-indigo-900 p-3 rounded-2xl shrink-0">
-                <Brain size={20} className="text-indigo-600 dark:text-indigo-400" />
+            <InfoCard className="flex items-center gap-4 hover:border-gray-300 dark:hover:border-gray-600 transition-colors">
+              <div className="bg-gray-100 dark:bg-gray-800 p-3 rounded-2xl shrink-0">
+                <Brain size={20} className="text-gray-500 dark:text-gray-400" />
               </div>
               <div className="min-w-0 flex-1">
                 <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">See your Learning Report</p>

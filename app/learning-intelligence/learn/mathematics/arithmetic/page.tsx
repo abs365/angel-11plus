@@ -475,7 +475,7 @@ export default function MathematicsArithmeticLessonPage() {
           <InfoCard className="text-center">
             <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">We couldn&apos;t load this lesson</p>
             <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">{errorMessage}</p>
-            <button onClick={() => void loadLesson()} className="mt-4 text-xs font-semibold text-purple-600 dark:text-purple-400">
+            <button onClick={() => void loadLesson()} className="mt-4 text-xs font-semibold text-sky-700 dark:text-sky-400">
               Try again
             </button>
           </InfoCard>

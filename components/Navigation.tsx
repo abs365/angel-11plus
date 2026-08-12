@@ -180,7 +180,7 @@ function SidebarLink({
       {item.badge && (
         <span
           className={cn(
-            "text-[10px] font-semibold bg-indigo-100 dark:bg-indigo-900 text-indigo-600 dark:text-indigo-300 px-1.5 py-0.5 rounded-full leading-none",
+            "text-[10px] font-semibold bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400 px-1.5 py-0.5 rounded-full leading-none",
             collapsed && "hidden lg:inline-block"
           )}
         >
@@ -413,7 +413,7 @@ function TopBarLink({ item, pathname }: { item: NavItem; pathname: string }) {
       />
       <span>{item.label}</span>
       {item.badge && (
-        <span className="text-[10px] font-semibold bg-indigo-100 dark:bg-indigo-900 text-indigo-600 dark:text-indigo-300 px-1.5 py-0.5 rounded-full leading-none">
+        <span className="text-[10px] font-semibold bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400 px-1.5 py-0.5 rounded-full leading-none">
           {item.badge}
         </span>
       )}
@@ -500,12 +500,21 @@ export default function Navigation() {
         aria-label="Learning navigation"
         className="hidden md:flex items-center h-[var(--topbar-height)] w-full bg-white dark:bg-gray-950 border-b border-gray-100 dark:border-gray-800 px-4 lg:px-6 fixed left-0 top-0 z-40 gap-2 lg:gap-4"
       >
-        {/* Brand */}
+        {/* Brand — Final Visual Refinement: this is navigation chrome, not
+            page content, so it must never be an <h1>. It was one before
+            this pass, which meant every page had two level-1 headings (this
+            plus the page's own real h1) — a genuine accessibility defect,
+            not a false positive. A <span> inside the brand <Link> carries
+            the same accessible name (via the link's text content) without
+            asserting a document-structure claim it doesn't own. Colour
+            corrected from indigo (the navigation/wayfinding accent) to
+            purple — the brand mark is Angel's identity, not a nav state,
+            per the Founder's "PURPLE = Angel brand identity" direction. */}
         <Link href="/dashboard" className="flex items-center gap-2 shrink-0 mr-1 lg:mr-2">
-          <h1 className="text-xl font-bold text-indigo-700 dark:text-indigo-400">
+          <span className="text-xl font-bold text-purple-700 dark:text-purple-400">
             <span className="lg:hidden" aria-hidden="true">A11+</span>
             <span className="hidden lg:inline">Angel 11+</span>
-          </h1>
+          </span>
         </Link>
 
         {/* Primary — the 5 daily-journey destinations */}
@@ -548,7 +557,7 @@ export default function Navigation() {
               onClick={handleSignOut}
               title={`Signed in as ${user.email}. Sign out`}
               aria-label={`Signed in as ${user.email}. Sign out`}
-              className="w-10 h-10 rounded-full bg-indigo-100 dark:bg-indigo-900 flex items-center justify-center text-indigo-600 dark:text-indigo-300 text-sm font-semibold hover:bg-indigo-200 dark:hover:bg-indigo-800 transition-colors motion-reduce:transition-none"
+              className="w-10 h-10 rounded-full bg-sky-100 dark:bg-sky-900 flex items-center justify-center text-sky-700 dark:text-sky-300 text-sm font-semibold hover:bg-sky-200 dark:hover:bg-sky-800 transition-colors motion-reduce:transition-none"
             >
               {user.email?.[0]?.toUpperCase() ?? "?"}
             </button>
@@ -558,7 +567,7 @@ export default function Navigation() {
                 href="/login"
                 title="Sign in"
                 aria-label="Sign in"
-                className="w-10 h-10 rounded-full flex items-center justify-center text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-950 transition-colors motion-reduce:transition-none"
+                className="w-10 h-10 rounded-full flex items-center justify-center text-sky-700 dark:text-sky-400 hover:bg-sky-50 dark:hover:bg-sky-950 transition-colors motion-reduce:transition-none"
               >
                 <LogIn size={18} aria-hidden="true" />
               </Link>

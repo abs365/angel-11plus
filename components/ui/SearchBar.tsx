@@ -9,6 +9,12 @@ import { useState } from "react";
  * not yet implemented"). No search index, no query logic, and no fabricated
  * results exist anywhere in this codebase — this component honestly says
  * so on focus rather than pretending to search and silently doing nothing.
+ *
+ * Final Visual Refinement (Section 6) — a saturated purple focus ring and
+ * a text-editing cursor both signalled "this is a live, working control,"
+ * which is not honest for something that cannot search. Focus ring and
+ * cursor are now neutral, matching the field's genuinely inactive state
+ * rather than competing for attention with the learner's actual mission.
  */
 export default function SearchBar() {
   const [focused, setFocused] = useState(false);
@@ -27,7 +33,7 @@ export default function SearchBar() {
         onBlur={() => setFocused(false)}
         aria-describedby="search-coming-soon"
         readOnly
-        className="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl pl-9 pr-3 py-2 text-sm text-gray-700 dark:text-gray-300 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-transparent cursor-text"
+        className="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl pl-9 pr-3 py-2 text-sm text-gray-700 dark:text-gray-300 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-300 dark:focus:ring-gray-600 focus:border-transparent cursor-default"
       />
       {focused && (
         <p id="search-coming-soon" role="status" className="absolute mt-1.5 text-xs text-gray-400 dark:text-gray-500 bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 rounded-lg px-3 py-1.5 shadow-sm">

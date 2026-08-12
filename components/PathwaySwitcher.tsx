@@ -123,7 +123,7 @@ export default function PathwaySwitcher() {
               className="w-full flex items-center justify-between gap-2 px-2.5 py-2 rounded-xl text-sm text-left text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
             >
               <span>{pathway.name}</span>
-              {pathway.id === current?.id && <span aria-hidden="true" className="text-purple-600 dark:text-purple-400 shrink-0">✓</span>}
+              {pathway.id === current?.id && <span aria-hidden="true" className="text-sky-600 dark:text-sky-400 shrink-0">✓</span>}
             </button>
           ))}
         </div>

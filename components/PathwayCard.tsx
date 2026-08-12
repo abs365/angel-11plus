@@ -120,7 +120,7 @@ export default function PathwayCard({ pathway, selected, onSelect }: Props) {
             Selected pathway
           </span>
         ) : (
-          <span className="text-xs font-semibold text-purple-600 dark:text-purple-400">
+          <span className="text-xs font-semibold text-sky-700 dark:text-sky-400">
             Select this pathway →
           </span>
         )}

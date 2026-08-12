@@ -66,8 +66,8 @@ export default function JourneyTimeline({ hasEnoughData, readiness }: JourneyTim
                 aria-current={current ? "step" : undefined}
                 className={cn(
                   "w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold border-2 transition-colors shrink-0",
-                  complete && "bg-purple-600 border-purple-600 text-white",
-                  current && "bg-white dark:bg-gray-900 border-purple-600 text-purple-600 dark:text-purple-400",
+                  complete && "bg-sky-600 border-sky-600 text-white",
+                  current && "bg-white dark:bg-gray-900 border-sky-600 text-sky-700 dark:text-sky-400",
                   !complete && !current && "bg-gray-100 dark:bg-gray-800 border-gray-200 dark:border-gray-700 text-gray-400 dark:text-gray-500"
                 )}
               >
@@ -76,7 +76,7 @@ export default function JourneyTimeline({ hasEnoughData, readiness }: JourneyTim
               <span
                 className={cn(
                   "text-[10px] font-semibold text-center leading-tight",
-                  current ? "text-purple-600 dark:text-purple-400" : "text-gray-400 dark:text-gray-500"
+                  current ? "text-sky-700 dark:text-sky-400" : "text-gray-400 dark:text-gray-500"
                 )}
               >
                 {stage}
@@ -86,7 +86,7 @@ export default function JourneyTimeline({ hasEnoughData, readiness }: JourneyTim
               <div
                 className={cn(
                   "h-0.5 flex-1 mx-1 mb-4 rounded-full transition-colors",
-                  i < activeIndex ? "bg-purple-600" : "bg-gray-200 dark:bg-gray-700"
+                  i < activeIndex ? "bg-sky-600" : "bg-gray-200 dark:bg-gray-700"
                 )}
               />
             )}

@@ -430,7 +430,7 @@ export default function ProgressPage() {
                 ) : (
                   <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed mb-3">
                     No target pathway selected yet.{" "}
-                    <Link href="/pathways" className="text-purple-600 dark:text-purple-400 font-medium hover:underline">
+                    <Link href="/pathways" className="text-sky-700 dark:text-sky-400 font-medium hover:underline">
                       choose one
                     </Link>{" "}
                     to see how your progress connects to its assessment format.
@@ -438,7 +438,7 @@ export default function ProgressPage() {
                 )}
                 <Link
                   href="/pathways"
-                  className="inline-flex items-center gap-1.5 text-xs font-semibold text-purple-600 dark:text-purple-400 bg-purple-50 dark:bg-purple-950 px-3 py-1.5 rounded-lg hover:bg-purple-100 dark:hover:bg-purple-900 transition-colors"
+                  className="inline-flex items-center gap-1.5 text-xs font-semibold text-sky-700 dark:text-sky-400 bg-sky-50 dark:bg-sky-950 px-3 py-1.5 rounded-lg hover:bg-sky-100 dark:hover:bg-sky-900 transition-colors"
                 >
                   View School Intelligence →
                 </Link>

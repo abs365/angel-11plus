@@ -122,7 +122,7 @@ export default function BetaPage() {
     <SupportLayout backHref="/dashboard" backLabel="Student App">
       {/* Hero */}
       <section className="text-center mb-12">
-        <div className="inline-flex items-center gap-2 bg-purple-50 dark:bg-purple-950 text-purple-600 dark:text-purple-300 text-xs font-semibold px-3 py-1.5 rounded-full mb-5">
+        <div className="inline-flex items-center gap-2 bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-400 text-xs font-semibold px-3 py-1.5 rounded-full mb-5">
           <Sparkles size={12} />
           Beta: First 50 Families
         </div>
@@ -150,7 +150,7 @@ export default function BetaPage() {
           </Link>
           <Link
             href="/beta-family"
-            className="inline-flex items-center gap-2 bg-white dark:bg-gray-900 border border-purple-200 dark:border-purple-800 text-purple-600 dark:text-purple-400 font-semibold px-6 py-3 rounded-2xl text-sm hover:bg-purple-50 dark:hover:bg-purple-950 transition-colors"
+            className="inline-flex items-center gap-2 bg-white dark:bg-gray-900 border border-sky-200 dark:border-sky-800 text-sky-700 dark:text-sky-400 font-semibold px-6 py-3 rounded-2xl text-sm hover:bg-sky-50 dark:hover:bg-sky-950 transition-colors"
           >
             <Star size={15} />
             Join as Beta Family
@@ -164,8 +164,8 @@ export default function BetaPage() {
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           {FEATURES.map(({ icon: Icon, label, desc }) => (
             <div key={label} className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-4 flex items-start gap-3">
-              <div className="w-9 h-9 rounded-xl bg-purple-50 dark:bg-purple-950 flex items-center justify-center shrink-0">
-                <Icon size={17} className="text-purple-600 dark:text-purple-400" />
+              <div className="w-9 h-9 rounded-xl bg-sky-50 dark:bg-sky-950 flex items-center justify-center shrink-0">
+                <Icon size={17} className="text-sky-700 dark:text-sky-400" />
               </div>
               <div>
                 <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">{label}</p>
@@ -218,7 +218,7 @@ export default function BetaPage() {
         <div className="mt-3 text-center">
           <Link
             href="/pathways"
-            className="text-sm text-purple-600 dark:text-purple-400 font-semibold hover:underline"
+            className="text-sm text-sky-700 dark:text-sky-400 font-semibold hover:underline"
           >
             Compare all pathways →
           </Link>
@@ -227,15 +227,15 @@ export default function BetaPage() {
 
       {/* Beta status */}
       <section className="mb-12">
-        <div className="bg-purple-50 dark:bg-purple-950 rounded-2xl border border-purple-100 dark:border-purple-900 p-6">
+        <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-6">
           <div className="flex items-start gap-3 mb-3">
-            <Sparkles size={18} className="text-purple-600 dark:text-purple-400 shrink-0 mt-0.5" />
-            <h2 className="text-base font-bold text-purple-900 dark:text-purple-100">Beta status</h2>
+            <Sparkles size={18} className="text-gray-400 dark:text-gray-500 shrink-0 mt-0.5" />
+            <h2 className="text-base font-bold text-gray-900 dark:text-gray-100">Beta status</h2>
           </div>
-          <p className="text-sm text-purple-700 dark:text-purple-300 leading-relaxed mb-3">
+          <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed mb-3">
             Angel 11+ is currently in beta with our first families. The platform is fully functional and safe to use, but we are still improving it based on real family feedback.
           </p>
-          <p className="text-sm text-purple-700 dark:text-purple-300 leading-relaxed mb-4">
+          <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed mb-4">
             As a beta family you get: early access, free beta period, and your feedback shapes what we build next.
           </p>
           <Link
@@ -258,7 +258,7 @@ export default function BetaPage() {
             { step: "3", title: "Track your progress", desc: "Parents can view the progress dashboard and mock exam results at any time.", href: "/learning-intelligence/parent", cta: "Parent Dashboard" },
           ].map((item) => (
             <div key={item.step} className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-4 flex items-start gap-4">
-              <div className="w-8 h-8 rounded-full bg-purple-600 text-white text-sm font-bold flex items-center justify-center shrink-0">
+              <div className="w-8 h-8 rounded-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 text-sm font-bold flex items-center justify-center shrink-0">
                 {item.step}
               </div>
               <div className="flex-1 min-w-0">
@@ -266,7 +266,7 @@ export default function BetaPage() {
                 <p className="text-xs text-gray-500 dark:text-gray-400 leading-relaxed mb-2">{item.desc}</p>
                 <Link
                   href={item.href}
-                  className="text-xs text-purple-600 dark:text-purple-400 font-semibold hover:underline"
+                  className="text-xs text-sky-700 dark:text-sky-400 font-semibold hover:underline"
                 >
                   {item.cta} →
                 </Link>
@@ -302,8 +302,8 @@ function ExistingFamilyBetaPage({ pathway }: { pathway: Pathway }) {
 
       <section className="mb-6">
         <div className="rounded-2xl border border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-900 p-5 flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-purple-50 dark:bg-purple-950 flex items-center justify-center shrink-0">
-            <MapPin size={18} className="text-purple-600 dark:text-purple-400" />
+          <div className="w-10 h-10 rounded-xl bg-sky-50 dark:bg-sky-950 flex items-center justify-center shrink-0">
+            <MapPin size={18} className="text-sky-700 dark:text-sky-400" />
           </div>
           <div className="flex-1 min-w-0">
             <p className="text-xs text-gray-400 dark:text-gray-500 font-semibold uppercase tracking-wide">Preparing for</p>
@@ -311,7 +311,7 @@ function ExistingFamilyBetaPage({ pathway }: { pathway: Pathway }) {
           </div>
           <Link
             href="/pathways"
-            className="text-xs font-semibold text-purple-600 dark:text-purple-400 hover:underline shrink-0"
+            className="text-xs font-semibold text-sky-700 dark:text-sky-400 hover:underline shrink-0"
           >
             Compare pathways
           </Link>

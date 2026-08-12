@@ -38,20 +38,20 @@ interface StatCardProps extends CardBaseProps {
 }
 
 /**
- * AN-108 — `color`'s default ("purple") is `StatCard`'s generic, no-specific-
- * meaning fallback (used whenever a caller doesn't name a subject/semantic
- * colour), so it's exactly the kind of "purple as dominant default" the
- * Founder's colour system calls out — the "purple" key now renders the
- * muted-indigo educational accent instead. The key name is left as-is to
- * avoid a churny rename across every call site; only its rendered class
- * changes.
+ * `color`'s default ("purple") is `StatCard`'s generic, no-specific-meaning
+ * fallback (used whenever a caller doesn't name a subject/semantic colour).
+ * Final Visual Refinement: moved from the muted-indigo educational accent
+ * to the restrained learner blue (sky) — indigo reads close enough to
+ * purple to compete with brand rather than stay a calm, distinct
+ * "routine interaction" colour. The key names are left as-is to avoid a
+ * churny rename across every call site; only the rendered classes change.
  */
 const STAT_COLOR_CLASSES: Record<NonNullable<StatCardProps["color"]>, string> = {
   orange: "bg-orange-50 dark:bg-orange-950 border-orange-100 dark:border-orange-900 text-orange-500",
   amber: "bg-amber-50 dark:bg-amber-950 border-amber-100 dark:border-amber-900 text-amber-500",
-  purple: "bg-indigo-50 dark:bg-indigo-950 border-indigo-100 dark:border-indigo-900 text-indigo-500",
+  purple: "bg-sky-50 dark:bg-sky-950 border-sky-100 dark:border-sky-900 text-sky-600",
   emerald: "bg-emerald-50 dark:bg-emerald-950 border-emerald-100 dark:border-emerald-900 text-emerald-500",
-  indigo: "bg-indigo-50 dark:bg-indigo-950 border-indigo-100 dark:border-indigo-900 text-indigo-500",
+  indigo: "bg-sky-50 dark:bg-sky-950 border-sky-100 dark:border-sky-900 text-sky-600",
 };
 
 /** Statistics card — a single number with a label and icon (XP, streak, sessions, accuracy). No CTA, per the existing Achievement/stat card convention. */
@@ -70,10 +70,24 @@ interface MissionCardProps extends CardBaseProps {
   priority: "primary" | "secondary" | "review";
 }
 
-const MISSION_BORDER: Record<MissionCardProps["priority"], string> = {
-  primary: "border-l-rose-400 dark:border-l-rose-600",
-  secondary: "border-l-amber-400 dark:border-l-amber-600",
-  review: "border-l-emerald-400 dark:border-l-emerald-600",
+/**
+ * Final Visual Refinement (Section 4) — priority must be legible from
+ * position, numbering and typography first; colour is now the last,
+ * lightest signal, not a competing pill fill. Remapped to the Founder's
+ * own five-role palette instead of an arbitrary rose/amber/emerald trio:
+ * FOCUS is amber ("attention/developing" — the area that genuinely needs
+ * work today), NEXT is the restrained learner blue ("informational/what's
+ * next"), MAINTAIN is emerald only because reviewing an already-mastered
+ * skill is genuine positive evidence, not a default. Surface and border
+ * weight now do most of the differentiation: FOCUS sits on a raised white
+ * card with a full-strength accent border; NEXT and MAINTAIN sit on the
+ * quieter neutral surface with a thinner, softer border, MAINTAIN quietest
+ * of all — so the three cards read as a hierarchy, not three competitors.
+ */
+const MISSION_STYLE: Record<MissionCardProps["priority"], string> = {
+  primary: "bg-white dark:bg-gray-900 border-l-4 border-l-amber-400 dark:border-l-amber-500 shadow-sm",
+  secondary: "bg-gray-50 dark:bg-gray-800/60 border-l-4 border-l-sky-300 dark:border-l-sky-700",
+  review: "bg-gray-50/70 dark:bg-gray-800/40 border-l-2 border-l-emerald-300 dark:border-l-emerald-800",
 };
 
 /** Mission card — "here's what to do right now," left-border priority accent, per the existing Session/Mission card convention (Dashboard's Today's Mission, AEI-002). */
@@ -81,8 +95,8 @@ export function MissionCard({ priority, children, className }: MissionCardProps)
   return (
     <div
       className={cn(
-        "flex items-start gap-3.5 p-4 rounded-xl bg-gray-50 dark:bg-gray-800/60 border-l-4",
-        MISSION_BORDER[priority],
+        "flex items-start gap-3.5 p-4 rounded-xl",
+        MISSION_STYLE[priority],
         className
       )}
     >
@@ -112,9 +126,9 @@ export function ProgressCard({ title, percent, complete = false, children, class
         <div
           className={cn(
             "h-full rounded-full transition-all duration-700",
-            // AN-108 — in-progress fill moved from purple to the muted-indigo
-            // educational accent, matching Progress.tsx's ProgressBar (same reasoning).
-            complete ? "bg-emerald-500" : "bg-indigo-500"
+            // Final Visual Refinement — in-progress fill is the restrained
+            // learner blue (sky), matching Progress.tsx's ProgressBar (same reasoning).
+            complete ? "bg-emerald-500" : "bg-sky-600"
           )}
           style={{ width: `${Math.max(0, Math.min(100, percent))}%` }}
         />
@@ -166,8 +180,14 @@ interface RecommendationCardProps extends CardBaseProps {
   color?: "purple" | "emerald" | "blue" | "amber";
 }
 
-// AN-108 — same default-fallback reasoning as STAT_COLOR_CLASSES above: the
-// "purple" key now renders the muted-indigo educational accent.
+// Unlike STAT_COLOR_CLASSES/BAR_COLOR/Badge above, this map's "purple" and
+// "blue" keys are both live, genuinely distinct entries in the same
+// 5-category legend (RecommendationSummary.tsx's CATEGORY_COLOR: Practice
+// and Review already use "blue", Consolidation uses "purple") — not a
+// generic unlabelled default competing with brand purple. Collapsing both
+// to the same sky value would erase a real distinction the legend depends
+// on, so "purple" keeps its pre-existing muted-indigo value here rather
+// than following the sky migration applied above.
 const RECOMMENDATION_COLOR: Record<NonNullable<RecommendationCardProps["color"]>, string> = {
   purple: "bg-indigo-50 dark:bg-indigo-950 border-indigo-100 dark:border-indigo-900 text-indigo-600 dark:text-indigo-300",
   emerald: "bg-emerald-50 dark:bg-emerald-950 border-emerald-100 dark:border-emerald-900 text-emerald-600 dark:text-emerald-300",

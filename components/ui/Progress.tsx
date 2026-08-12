@@ -19,13 +19,15 @@ interface ProgressBarProps {
   label?: string;
 }
 
-// AN-108 — "purple" is this component's default (unlabelled) fill, used
-// wherever a caller doesn't request a specific subject/semantic colour — the
-// exact "purple as dominant default" pattern the Founder's colour system
-// calls out. Renders the muted-indigo educational accent now; the prop key
-// is left as "purple" to avoid a churny rename across every call site.
+// "purple" is this component's default (unlabelled) fill, used wherever a
+// caller doesn't request a specific subject/semantic colour. Final Visual
+// Refinement: moved from the muted-indigo educational accent to the
+// restrained learner blue (sky) — indigo sits close enough to purple to
+// read as a second brand colour rather than the calm, distinct "routine
+// interaction" blue the Founder asked for. The prop key is left as
+// "purple" to avoid a churny rename across every call site.
 const BAR_COLOR: Record<NonNullable<ProgressBarProps["color"]>, string> = {
-  purple: "bg-indigo-500",
+  purple: "bg-sky-600",
   emerald: "bg-emerald-500",
   amber: "bg-amber-500",
 };
@@ -125,10 +127,10 @@ export function StatusIndicator({ tone, label }: { tone: StatusTone; label: stri
   );
 }
 
-/** Badge — the existing earned-badge pill treatment (Dashboard's Achievements section), reusable anywhere a named achievement needs the same visual language. AN-108: purple → muted-indigo educational accent. */
+/** Badge — the existing earned-badge pill treatment (Dashboard's Achievements section), reusable anywhere a named achievement needs the same visual language. Final Visual Refinement: indigo → restrained learner blue (sky), same reasoning as BAR_COLOR above. */
 export function Badge({ label, icon }: { label: string; icon?: React.ReactNode }) {
   return (
-    <span className="flex items-center gap-1.5 bg-indigo-50 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300 px-3 py-1.5 rounded-full text-xs font-medium border border-indigo-100 dark:border-indigo-900">
+    <span className="flex items-center gap-1.5 bg-sky-50 dark:bg-sky-950 text-sky-700 dark:text-sky-300 px-3 py-1.5 rounded-full text-xs font-medium border border-sky-100 dark:border-sky-900">
       {icon}
       {label}
     </span>

@@ -248,8 +248,8 @@ export default function PathwaysPage() {
 
         {/* Pathway selector — unchanged functionality */}
         <div className="mb-4 flex items-start gap-3">
-          <div className="w-10 h-10 rounded-2xl bg-purple-100 dark:bg-purple-900 flex items-center justify-center shrink-0">
-            <MapPin size={18} className="text-purple-600 dark:text-purple-400" />
+          <div className="w-10 h-10 rounded-2xl bg-sky-100 dark:bg-sky-900 flex items-center justify-center shrink-0">
+            <MapPin size={18} className="text-sky-700 dark:text-sky-400" />
           </div>
           <div>
             <h2 className="text-lg font-bold text-gray-900 dark:text-gray-100">Choose Your Pathway</h2>
@@ -292,7 +292,7 @@ export default function PathwaysPage() {
               type="button"
               onClick={handleExamDateSave}
               disabled={!examDate}
-              className="text-sm font-semibold text-purple-600 dark:text-purple-400 px-3 py-2 rounded-lg border border-purple-200 dark:border-purple-800 hover:bg-purple-50 dark:hover:bg-purple-950 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+              className="text-sm font-semibold text-sky-700 dark:text-sky-400 px-3 py-2 rounded-lg border border-sky-200 dark:border-sky-800 hover:bg-sky-50 dark:hover:bg-sky-950 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
             >
               Save
             </button>

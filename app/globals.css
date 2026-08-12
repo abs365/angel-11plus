@@ -58,6 +58,20 @@
   --color-error: #dc2626;         /* red-600 — existing error state (report-bug, validation); verified 4.83:1, compliant as-is */
   --color-info: #0369a1;          /* sky-700, NOT -600 — see WCAG correction below */
 
+  /* ── Final Visual Refinement — restrained learner blue ──────────────────
+     The Founder asked for a calm, non-competing blue for routine learner
+     navigation/interaction (selected nav, informational icons, focus
+     rings, selected controls), distinct from purple brand identity, and
+     explicitly to reuse an existing accessible blue rather than invent a
+     new one. --color-info (sky-700/sky-400, already WCAG-checked above)
+     is exactly that colour — it has simply never been used for this role
+     before now, since no "info surface" had shipped. Aliased under its own
+     name here so call sites read as "learner interaction," not "an info
+     banner," even though the underlying value is intentionally the same
+     token — one accessible blue, not two competing ones. */
+  --color-learner-blue: var(--color-info);
+  --color-learner-blue-hover: #075985; /* sky-800 — one step darker, for hover/active parity with the primary/secondary hover tokens above */
+
   /* WCAG correction (Sprint 1): DESIGN_SYSTEM.md §4's existing "Success
      Button" spec (bg-emerald-600, white text) was checked by direct
      contrast-ratio calculation during this sprint's verification and found
@@ -115,6 +129,9 @@
     --color-warning: #fbbf24;        /* amber-400 */
     --color-error: #f87171;          /* red-400 */
     --color-info: #38bdf8;           /* sky-400 */
+
+    --color-learner-blue: var(--color-info);
+    --color-learner-blue-hover: #7dd3fc; /* sky-300 — one step lighter, dark-mode hover parity */
   }
 }
 
@@ -129,6 +146,7 @@
   --color-warning-DEFAULT: var(--color-warning);
   --color-error-DEFAULT: var(--color-error);
   --color-info-DEFAULT: var(--color-info);
+  --color-learner-blue-DEFAULT: var(--color-learner-blue);
 }
 
 /* ── Sprint 1 — Motion tokens ─────────────────────────────────────────────────
@@ -168,22 +186,27 @@
      the sidebar it replaced. */
   --topbar-height: 4rem;       /* 64px */
 
-  /* Brand accent — AN-108: nav wayfinding (the active-item pill) is
-     conceptually the "educational accent," not a primary-action button, so
-     it now reads from --color-secondary (muted indigo) rather than
-     --color-primary (forest green) — decoupling "where you are" from "the
-     button you'd press," per the Founder's three-tier palette. --nav-accent
-     itself is currently unused for rendering (kept for any future consumer);
-     --nav-accent-soft-* are the values actually applied. */
-  --nav-accent: var(--color-secondary);
-  --nav-accent-soft-bg: #eef2ff;   /* indigo-50 — AN-108, was purple-50 */
-  --nav-accent-soft-text: #4338ca; /* indigo-700 — AN-108, was purple-700 */
+  /* Brand accent — nav wayfinding (the active-item pill) is "selected
+     navigation," one of the Founder's own named learner-blue roles (Final
+     Visual Refinement, Section 2) — not a primary-action button and not
+     brand identity, so it decouples "where you are" from "the button
+     you'd press" (a primary CTA) and from "this is Angel" (the logo).
+     Previously read --color-secondary (indigo), which sits close enough
+     to purple on the wheel to read as a second brand colour rather than a
+     calm, distinct navigation colour — moved to the same restrained blue
+     as the rest of the learner-interaction role, so wayfinding and brand
+     are visually distinguishable at a glance, not just by name.
+     --nav-accent itself is currently unused for rendering (kept for any
+     future consumer); --nav-accent-soft-* are the values actually applied. */
+  --nav-accent: var(--color-learner-blue);
+  --nav-accent-soft-bg: #f0f9ff;   /* sky-50 */
+  --nav-accent-soft-text: #0369a1; /* sky-700 */
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --nav-accent-soft-bg: #1e1b4b;   /* indigo-950 — AN-108, was purple-950 */
-    --nav-accent-soft-text: #a5b4fc; /* indigo-300 — AN-108, was purple-300 */
+    --nav-accent-soft-bg: #082f49;   /* sky-950 */
+    --nav-accent-soft-text: #7dd3fc; /* sky-300 */
   }
 }
 
