@@ -155,6 +155,10 @@ export interface Database {
           eligibility_status: ContentEligibilityStatus;
           content_version: number;
           active: boolean;
+          /** Migration 035. Null on any row not yet classified. */
+          transfer_class: "ROUTINE" | "NEAR_TRANSFER" | "FAR_TRANSFER" | "MIXED_TRANSFER" | null;
+          /** Migration 035. Competency codes supporting (not primary to) this item. */
+          supporting_competencies: string[] | null;
         };
         Insert: {
           id: string;
@@ -182,6 +186,8 @@ export interface Database {
           eligibility_status?: ContentEligibilityStatus;
           content_version?: number;
           active?: boolean;
+          transfer_class?: "ROUTINE" | "NEAR_TRANSFER" | "FAR_TRANSFER" | "MIXED_TRANSFER" | null;
+          supporting_competencies?: string[] | null;
         };
         Update: {
           usage_count?: number;
