@@ -22,6 +22,7 @@ export default function SearchBar() {
       <input
         type="search"
         placeholder="Search Angel 11+…"
+        aria-label="Search Angel 11+"
         onFocus={() => setFocused(true)}
         onBlur={() => setFocused(false)}
         aria-describedby="search-coming-soon"

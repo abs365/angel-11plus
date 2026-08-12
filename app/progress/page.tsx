@@ -110,8 +110,9 @@ export default function ProgressPage() {
             onClick={resetProgress}
             className="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
             title="Reset progress"
+            aria-label="Reset progress"
           >
-            <RefreshCw size={16} />
+            <RefreshCw size={16} aria-hidden="true" />
           </button>
         </div>
 

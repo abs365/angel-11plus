@@ -637,6 +637,7 @@ export default function MathematicsArithmeticLessonPage() {
                       onChange={(e) => setGuidedAnswer(e.target.value)}
                       className="w-full mt-3 text-sm rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-3"
                       placeholder="Your answer…"
+                      aria-label="Your answer"
                     />
                     <button
                       onClick={() => void submitGuidedAttempt1()}
@@ -760,6 +761,7 @@ export default function MathematicsArithmeticLessonPage() {
                         onChange={(e) => setIndependentAnswer(e.target.value)}
                         className="w-full mt-3 text-sm rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-3"
                         placeholder="Your answer…"
+                        aria-label="Your answer"
                       />
                       <button
                         onClick={() => void submitIndependentAttempt1()}
@@ -854,6 +856,7 @@ export default function MathematicsArithmeticLessonPage() {
                             onChange={(e) => setIndependentFreshAnswer(e.target.value)}
                             className="w-full mt-3 text-sm rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-3"
                             placeholder="Your answer…"
+                            aria-label="Your answer"
                           />
                           <button
                             onClick={() => void submitIndependentFresh()}
