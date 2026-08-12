@@ -22,64 +22,39 @@ import type { BankQuestion } from "@/types/ali/questionBank";
 import type { MathsQuestion } from "@/types/index";
 
 /**
- * Mathematics Learn -> Practise Reference Vertical — "Adding and Subtracting
- * Big Numbers" (MR-01, QT-MR-01). Full teaching content and design rationale
- * in knowledge/.../mathematics-reference-vertical/MATHEMATICS_LEARNING_DESIGN.md.
+ * Mathematics Learning Sequence Expansion (Educational Increment 002) —
+ * "Finding a Percentage of a Number" (MR-04, QT-MR-04). Full teaching
+ * content, evidence basis and selection rationale in
+ * knowledge/.../mathematics-reference-vertical/MATHEMATICS_LESSON_002_*.md.
  *
- * No architecture terms (MR-01, QT-MR-01, EMC-4, "educational state") are
- * shown to the learner anywhere below — only in code comments, for internal
- * traceability. The progression labels shown to the family
- * (Learning / Ready to practise / Not yet understood / Developing /
- * Consistent / Maintenance needed) are a plain-language translation of the
- * real, unmodified Educational Intelligence Engine's educationalState —
- * see MATHEMATICS_PROGRESSION_AND_MASTERY_MODEL.md for the exact mapping.
- * "Learning" and the pre-Independent-Check half of "Ready to practise" are
- * local lesson-navigation state only, never written as evidence.
+ * Deliberately the same structure as Lesson 001
+ * (app/learning-intelligence/learn/mathematics/arithmetic/page.tsx):
+ * concept -> method -> worked examples -> guided attempt (bounded 3-attempt
+ * ladder) -> common mistakes -> independent check (bounded remediation
+ * ladder + fresh transfer) -> exam application -> next step. Reusing the
+ * proven pattern per the governing instruction's own "reuse the successful
+ * Mathematics Reference Vertical architecture" — not re-derived, and not
+ * forced where it wouldn't fit (this lesson has no compound-answer or
+ * cross-zero-borrowing equivalent, so there is no visual regrouping section
+ * here, unlike Lesson 001's place-value regroup steps).
+ *
+ * No architecture terms (MR-04, QT-MR-04, EMC-4) are shown to the learner
+ * anywhere below — only in code comments, for internal traceability.
  */
 
-const COMPETENCY_ID = "MR-01" as const;
+const COMPETENCY_ID = "MR-04" as const;
 
 type Mode = "intro" | "loading" | "error" | "lesson";
 type CheckStage = "not-started" | "guided" | "independent" | "done";
-
-/**
- * Guided Learning Remediation (Mathematics Reference Vertical Remediation
- * Gate §1, GUIDED_LEARNING_REMEDIATION_REPORT.md) — a bounded, 3-attempt
- * support ladder rather than an immediate advance or an infinite retry loop:
- *   attempt 1 wrong  -> targeted hint (or honest generic nudge), retry
- *   attempt 2 wrong  -> full worked resolution shown, one bounded
- *                       supported retry
- *   attempt 3        -> proceeds regardless of outcome (no infinite loop)
- * `supportTier` recorded for each real attempt: attempt 1 is "independent"
- * (a first, unaided try); attempts 2 and 3 are "supported" (they only
- * happen after remediation was shown) — see lib/ali/mastery.ts.
- */
 type GuidedLadderStage = "attempt-1" | "attempt-2" | "attempt-3" | "resolved";
-
-/**
- * Independent Check Remediation (Founder Visual Review Remediation §2-3) —
- * an Independent Check no longer reveals the answer on the first wrong
- * attempt. attempt-1 wrong -> honest diagnostic, no answer shown, a genuine
- * retry (attempt-2, still unaided, still "independent" tier — no help has
- * been given yet). attempt-2 wrong -> misunderstanding persists -> full
- * worked resolution shown, then a FRESH, different problem
- * (learn-mth-arith-independent-retry, migration 025) tests genuine
- * transfer — not a repeat of the same numbers just demonstrated. Every real
- * attempt in this ladder is genuinely unaided and recorded as
- * supportTier "independent"; only the worked-resolution display itself is
- * "help," and no evidence is written for it.
- */
 type IndependentLadderStage = "attempt-1" | "attempt-2" | "remediation" | "resolved";
 
 /**
- * Deliberately NOT a general mistake-classification system — a coded
- * misconception taxonomy remains explicitly not-yet-approved
- * (EDUCATIONAL_INTELLIGENCE_ENGINE_V1.md §11) and nothing here is persisted
- * as evidence. This is two fixed, hand-verified, deterministic wrong answers
- * for these two specific fixed problems, used only to decide the ephemeral
- * UI feedback text shown to the learner (Remediation Gate §3: "if the
- * evidence only proves the answer is incorrect, do not pretend Angel knows
- * why"). Any wrong answer that doesn't exactly match returns null, and the
+ * Deterministic, hand-verified wrong-answer lookup for these two specific
+ * fixed problems only — same discipline as Lesson 001's own
+ * classifyWrongAnswer(), see MATHEMATICS_LESSON_002_MISCONCEPTION_MAP.md
+ * for the full KNOWN MISCONCEPTION PATTERN vs NON-DIAGNOSTIC distinction.
+ * Any wrong answer that doesn't exactly match returns null and the
  * feedback stays honestly generic.
  */
 interface KnownMisconception {
@@ -88,29 +63,18 @@ interface KnownMisconception {
 }
 const GUIDED_KNOWN_MISCONCEPTIONS: KnownMisconception[] = [
   {
-    // 652 + 279: summing each column independently without ever carrying
-    // (ones 2+9=11->"1", tens 5+7=12->"2", hundreds 6+2="8") = 821.
-    wrongAnswer: 821,
+    // 15% of 80: found 10% (8) and stopped, never adding the extra 5%.
+    wrongAnswer: 8,
     explanation:
-      "It looks like each column may have been added on its own, without carrying the extra ten into the next column. 2 + 9 makes 11, and that extra ten has to move into the tens column, not disappear.",
+      "It looks like 10% may have been found, but the lesson doesn't stop there. 15% needs the extra 5% added on too.",
   },
 ];
 const INDEPENDENT_KNOWN_MISCONCEPTIONS: KnownMisconception[] = [
   {
-    // 903 - 468: subtracting the smaller digit from the larger one in each
-    // column regardless of position (hundreds 9-4=5, tens |0-6|=6, ones
-    // |3-8|=5) = 565 — the classic across-zero borrowing misconception.
-    wrongAnswer: 565,
+    // 20% of 90: found 10% (9) and left it there instead of doubling.
+    wrongAnswer: 9,
     explanation:
-      "It looks like the smaller digit may have been taken away from the larger one in each column, rather than borrowing properly. That's especially tricky here because the tens column is a zero.",
-  },
-  {
-    // 604 - 278 (the "fresh opportunity" item): the same digit-difference
-    // misconception applied to this problem (hundreds 6-2=4, tens |0-7|=7,
-    // ones |4-8|=4) = 474.
-    wrongAnswer: 474,
-    explanation:
-      "It looks like the smaller digit may have been taken away from the larger one in each column again, rather than borrowing properly through the zero.",
+      "It looks like 10% may have been found, but the answer needs doubling to reach 20%, not left as 10%.",
   },
 ];
 
@@ -120,55 +84,20 @@ function classifyWrongAnswer(userAnswer: string, patterns: KnownMisconception[])
   return patterns.find((p) => p.wrongAnswer === parsed)?.explanation ?? null;
 }
 
-/**
- * Founder Visual Review Remediation §5-6 — a static, non-animated,
- * progressive place-value regrouping sequence for 1000 - 473's borrowing,
- * replacing a five-paragraph prose explanation. Each step shows the real
- * intermediate place-value state (hand-verified: 1 thousand = 10 hundreds =
- * 9 hundreds + 10 tens = 9 hundreds + 9 tens + 10 ones, every step still
- * totalling 1000), with the column(s) that just changed highlighted —
- * "changed" indices are into [Thousands, Hundreds, Tens, Ones].
- */
-const PLACE_LABELS = ["Th", "H", "T", "O"] as const;
-const REGROUP_STEPS: { caption: string; values: [string, string, string, string]; changed: number[] }[] = [
-  { caption: "Start: 1000 is 1 thousand.", values: ["1", "0", "0", "0"], changed: [] },
-  { caption: "The 1 thousand becomes 10 hundreds.", values: ["0", "10", "0", "0"], changed: [0, 1] },
-  { caption: "One hundred becomes 10 tens. 9 hundreds are left behind.", values: ["0", "9", "10", "0"], changed: [1, 2] },
-  {
-    caption: "One ten becomes 10 ones. 9 tens are left behind. Now there are enough ones to subtract 3 from.",
-    values: ["0", "9", "9", "10"],
-    changed: [2, 3],
-  },
-];
-
 function progressionLabel(
   checkStage: CheckStage,
   educationalState: EducationalIntelligenceSnapshot["educationalState"] | undefined
 ): { label: string; description: string } {
-  // Struggling-Learner Activation Test finding: a returning learner with
-  // real prior evidence (from an earlier session, or from this competency's
-  // practice elsewhere) must see that real state immediately, not a
-  // hardcoded "Learning" that ignores what Angel already knows. Only a
-  // genuinely fresh learner (educationalState undefined/"exploring", i.e.
-  // no real evidence exists yet) sees "Learning" before their first attempt
-  // in this session.
   if (checkStage === "not-started" && (educationalState === undefined || educationalState === "exploring")) {
     return { label: "Learning", description: "Working through the lesson." };
   }
   if (checkStage === "guided") {
     return { label: "Ready to practise", description: "The guided step is done. Next is trying one alone." };
   }
-  if (checkStage === "not-started") {
-    // Real prior evidence exists — reflect it honestly using the same
-    // mapping the post-Independent-Check branch below uses, rather than
-    // inventing a second set of labels.
-    return realEvidenceLabel(educationalState);
-  }
-  // An independent attempt has been made this session — defer to the real Educational Intelligence Engine.
   return realEvidenceLabel(educationalState);
 }
 
-export default function MathematicsArithmeticLessonPage() {
+export default function MathematicsPercentagesLessonPage() {
   const [mode, setMode] = useState<Mode>("intro");
   const [errorMessage, setErrorMessage] = useState("");
   const [guidedItem, setGuidedItem] = useState<BankQuestion | null>(null);
@@ -206,30 +135,22 @@ export default function MathematicsArithmeticLessonPage() {
       const profileId = await withTimeout(ensureProfile(), 10000, "your profile");
       if (!profileId) throw new Error("no profile");
       profileIdRef.current = profileId;
-      sessionIdRef.current = `learn-mth-arithmetic-${Date.now()}`;
+      sessionIdRef.current = `learn-mth-percentages-${Date.now()}`;
 
       if (getSelectedPathwayId() !== "csse") setSelectedPathway("csse");
 
       const maths = await withTimeout(fetchQuestionBank(supabase, "maths", "csse"), 10000, "this lesson's questions");
-      const guided = maths.find((q) => q.id === "learn-mth-arith-guided") ?? null;
-      const independent = maths.find((q) => q.id === "learn-mth-arith-independent") ?? null;
-      const independentRetry = maths.find((q) => q.id === "learn-mth-arith-independent-retry") ?? null;
+      const guided = maths.find((q) => q.id === "learn-mth-pct-guided") ?? null;
+      const independent = maths.find((q) => q.id === "learn-mth-pct-independent") ?? null;
+      const independentRetry = maths.find((q) => q.id === "learn-mth-pct-independent-retry") ?? null;
 
       if (!guided || !independent) {
         throw new Error(
-          "This lesson's practice questions aren't available yet. Migration 023 " +
-          "(supabase/migrations/023_mathematics_learn_arithmetic_content.sql) has not been applied " +
+          "This lesson's practice questions aren't available yet. Migration 029 " +
+          "(supabase/migrations/029_mathematics_percentages_lesson_content.sql) has not been applied " +
           "to this database yet. Apply it via Supabase Dashboard > SQL Editor, then try again."
         );
       }
-      // Deliberately not a hard failure: migration 025 (the Independent
-      // Check's "fresh opportunity" item) is only needed if a learner gets
-      // the Independent Check wrong twice — most of the lesson, including
-      // the Guided Attempt ladder and a correct-first-try Independent
-      // Check, works fully without it. Failing the whole lesson load over a
-      // remediation-path dependency would be a worse regression than a
-      // graceful fallback at the one stage that actually needs it (see the
-      // "remediation" stage rendering below).
       setGuidedItem(guided);
       setIndependentItem(independent);
       setIndependentRetryItem(independentRetry);
@@ -245,15 +166,6 @@ export default function MathematicsArithmeticLessonPage() {
     }
   }
 
-  /**
-   * Records one real guided-attempt outcome. `attemptNumber` 1 is the
-   * learner's genuine first, unaided try (supportTier "independent");
-   * attempts 2 and 3 only happen after remediation was shown (supportTier
-   * "supported") — see GUIDED_LEARNING_REMEDIATION_REPORT.md. recordPresentation
-   * is only called on attempt 1 — retries within the same guided encounter
-   * are additional attempts at an already-presented question, not a new
-   * presentation.
-   */
   async function recordGuidedAttempt(attemptNumber: 1 | 2 | 3, isCorrect: boolean) {
     if (!guidedItem) return;
     const supabase = supabaseRef.current;
@@ -277,11 +189,6 @@ export default function MathematicsArithmeticLessonPage() {
       undefined,
       supportTier
     ).catch(() => {});
-    // Guided evidence still feeds the real Educational Intelligence Engine —
-    // per MATHEMATICS_PROGRESSION_AND_MASTERY_MODEL.md §3, it is tagged
-    // distinctly (source: "learning_guided", supportTier) but not suppressed.
-    // A supported-correct outcome does not, by itself, advance mastery
-    // evidence the way independent evidence does (lib/ali/mastery.ts).
     if (preAttemptSnapshotRef.current) {
       await processEvidenceForCompetency(
         supabase,
@@ -331,25 +238,12 @@ export default function MathematicsArithmeticLessonPage() {
     const isCorrect = checkMathsAnswer(guidedAnswer, String(q.answer));
     setGuidedAttempt3({ answer: guidedAnswer, correct: isCorrect });
     await recordGuidedAttempt(3, isCorrect);
-    // Bounded ladder: attempt 3 always resolves and advances, whether
-    // correct or not — no infinite retry loop (Remediation Gate §1).
     setGuidedLadderStage("resolved");
     setGuidedSubmitted(true);
     setCheckStage("guided");
     setGuidedAnswer("");
   }
 
-  /**
-   * Records one real Independent Check outcome. Every attempt in this
-   * ladder — the original item's first try, its retry, and the fresh
-   * transfer item — is genuinely unaided (no worked solution has been
-   * shown at the point any of them is submitted), so all are recorded with
-   * the default supportTier "independent". `presentedNow` controls whether
-   * recordPresentation() fires — true only the first time a given question
-   * id is shown this lesson visit (the original item's first attempt; the
-   * fresh item's only attempt), matching the same discipline as the Guided
-   * ladder's recordGuidedAttempt().
-   */
   async function recordIndependentAttempt(item: BankQuestion, isCorrect: boolean, presentedNow: boolean) {
     const supabase = supabaseRef.current;
     if (!supabase || !profileIdRef.current) return;
@@ -361,9 +255,6 @@ export default function MathematicsArithmeticLessonPage() {
         "saving your progress"
       ).catch(() => {});
     }
-    // Fresh pre-attempt snapshot for every real attempt — Educational State
-    // may have changed since the lesson-start snapshot (same discipline the
-    // Practice runner uses for a second answer in one session).
     const preAttempt = await getEducationalIntelligence(supabase, profileIdRef.current, COMPETENCY_ID).catch(() => null);
     await recordOutcome(
       supabase,
@@ -421,7 +312,6 @@ export default function MathematicsArithmeticLessonPage() {
     const isCorrect = checkMathsAnswer(independentFreshAnswer, String(q.answer));
     setIndependentFreshAttempt({ answer: independentFreshAnswer, correct: isCorrect });
     await recordIndependentAttempt(independentRetryItem, isCorrect, true);
-    // Bounded ladder: resolves regardless of outcome — no infinite loop.
     setIndependentLadderStage("resolved");
     setCheckStage("independent");
     setIndependentFreshAnswer("");
@@ -433,11 +323,11 @@ export default function MathematicsArithmeticLessonPage() {
     independentAttempt1?.correct || independentAttempt2?.correct || independentFreshAttempt?.correct || false;
 
   return (
-    <PageLayout breadcrumbs={[{ label: "Learn", href: "/learning-intelligence/learn" }, { label: "Adding and Subtracting Big Numbers" }]}>
+    <PageLayout breadcrumbs={[{ label: "Learn", href: "/learning-intelligence/learn" }, { label: "Finding a Percentage of a Number" }]}>
       <div className="max-w-2xl mx-auto px-4 py-6 md:px-8 md:py-8">
         {mode === "intro" && (
           <InfoCard>
-            <h1 className="text-gray-900 dark:text-gray-100 font-bold text-2xl">Adding and Subtracting Big Numbers</h1>
+            <h1 className="text-gray-900 dark:text-gray-100 font-bold text-2xl">Finding a Percentage of a Number</h1>
             <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">
               A real lesson: understand the method, try it with support, then try it alone.
             </p>
@@ -465,10 +355,10 @@ export default function MathematicsArithmeticLessonPage() {
         {mode === "lesson" && (
           <div className="space-y-6">
             <div className="flex items-center justify-between">
-              <h1 className="text-gray-900 dark:text-gray-100 font-bold text-2xl">Adding and Subtracting Big Numbers</h1>
+              <h1 className="text-gray-900 dark:text-gray-100 font-bold text-2xl">Finding a Percentage of a Number</h1>
             </div>
             <InfoCard className="flex items-center gap-3">
-              <Target size={16} className="text-indigo-500 shrink-0" />
+              <Target size={16} className="text-sky-600 shrink-0" />
               <div>
                 <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">{progression.label}</p>
                 <p className="text-xs text-gray-500 dark:text-gray-400">{progression.description}</p>
@@ -479,14 +369,16 @@ export default function MathematicsArithmeticLessonPage() {
             <section>
               <h2 className="text-gray-900 dark:text-gray-100 font-bold text-lg mb-2">What&apos;s going on?</h2>
               <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed">
-                Every digit in a number has a place value: ones, tens, hundreds, and so on. When you add or
-                subtract big numbers, you work one column at a time, starting from the ones column on the right.
+                A percentage is a way of describing a part of something out of 100. 15% means 15 out of every 100.
               </p>
               <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed mt-2">
-                Sometimes a column adds up to 10 or more. When that happens, you <strong>carry</strong> the extra
-                ten into the next column. Sometimes you need to subtract a bigger digit from a smaller one. When
-                that happens, you <strong>borrow</strong>{" "}a ten from the next column. Carrying and borrowing
-                aren&apos;t tricks. They&apos;re just keeping track of place value properly.
+                The easiest way to find a percentage of a number is to start with 10%. Finding 10% of a number is
+                simple: just divide by 10. Once you know 10%, you can build up almost any percentage you need. 20%
+                is double 10%. 5% is half of 10%. 15% is 10% plus 5%.
+              </p>
+              <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed mt-2">
+                You almost never need to work out a percentage in one big step. Building it from 10% pieces is
+                faster and much less likely to go wrong.
               </p>
             </section>
 
@@ -494,21 +386,11 @@ export default function MathematicsArithmeticLessonPage() {
             <section>
               <h2 className="text-gray-900 dark:text-gray-100 font-bold text-lg mb-2">The method</h2>
               <InfoCard>
-                <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1.5">Addition</p>
                 <ol className="text-sm text-gray-700 dark:text-gray-300 list-decimal list-inside space-y-1">
-                  <li>Line up the ones, tens and hundreds columns.</li>
-                  <li>Add the ones column first. If it&apos;s 10 or more, write the last digit and carry the rest.</li>
-                  <li>Add the tens column, including anything carried. Carry again if needed.</li>
-                  <li>Keep going, column by column.</li>
-                </ol>
-              </InfoCard>
-              <InfoCard className="mt-2">
-                <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1.5">Subtraction</p>
-                <ol className="text-sm text-gray-700 dark:text-gray-300 list-decimal list-inside space-y-1">
-                  <li>Line up the columns the same way.</li>
-                  <li>Subtract the ones column. If the top digit is smaller, borrow a ten from the next column.</li>
-                  <li>Subtract the tens column, borrowing again if needed.</li>
-                  <li>Keep going until every column is subtracted.</li>
+                  <li>Find 10% of the quantity by dividing by 10.</li>
+                  <li>Work out what multiple of 10% you actually need (20% is double 10%, 30% is triple 10%, and so on).</li>
+                  <li>If the target percentage includes a 5, find 5% by halving your 10% value, then add it on.</li>
+                  <li>Add the pieces together to get the final answer.</li>
                 </ol>
               </InfoCard>
             </section>
@@ -517,64 +399,27 @@ export default function MathematicsArithmeticLessonPage() {
             <section>
               <h2 className="text-gray-900 dark:text-gray-100 font-bold text-lg mb-2">Worked examples</h2>
               <InfoCard>
-                <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">847 + 356</p>
+                <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">15% of 60</p>
                 <ul className="text-sm text-gray-600 dark:text-gray-400 mt-1.5 space-y-0.5">
-                  <li>Ones: 7 + 6 = 13 → write 3, carry 1</li>
-                  <li>Tens: 4 + 5 + 1 = 10 → write 0, carry 1</li>
-                  <li>Hundreds: 8 + 3 + 1 = 12 → write 2, carry 1</li>
-                  <li>Thousands: nothing else to add, so write the carried 1</li>
+                  <li>10% of 60 = 6</li>
+                  <li>5% of 60 = half of 6 = 3</li>
+                  <li>15% = 10% + 5% = 6 + 3</li>
                 </ul>
-                <p className="text-sm font-bold text-emerald-600 mt-1.5">Answer: 1203</p>
+                <p className="text-sm font-bold text-emerald-600 mt-1.5">Answer: 9</p>
               </InfoCard>
               <InfoCard className="mt-2">
-                <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">1000 − 473 <span className="font-normal text-gray-400">(the trickiest kind: borrowing across zeros)</span></p>
-
-                <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed mt-2">
-                  The ones column needs to subtract 3, but it&apos;s a 0. The tens and hundreds columns are 0
-                  too, so there&apos;s nothing to borrow until we reach the thousands column. Watch what happens when
-                  we regroup it:
-                </p>
-
-                <div className="mt-3 space-y-2.5">
-                  {REGROUP_STEPS.map((step, i) => (
-                    <div key={i}>
-                      <div className="grid grid-cols-4 gap-1.5 text-center">
-                        {step.values.map((v, colIdx) => (
-                          <div
-                            key={colIdx}
-                            className={`rounded-lg py-2 text-sm font-semibold ${
-                              step.changed.includes(colIdx)
-                                ? "bg-indigo-100 dark:bg-indigo-900/40 text-indigo-700 dark:text-indigo-300 ring-1 ring-indigo-300 dark:ring-indigo-700"
-                                : "bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-400"
-                            }`}
-                          >
-                            <div className="text-[10px] font-normal uppercase tracking-wide opacity-70">{PLACE_LABELS[colIdx]}</div>
-                            {v}
-                          </div>
-                        ))}
-                      </div>
-                      <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 text-center">{step.caption}</p>
-                    </div>
-                  ))}
-                </div>
-                <p className="text-xs text-gray-500 dark:text-gray-400 mt-2.5 text-center italic">
-                  Every step still adds up to exactly 1000. Nothing is gained or lost, just moved to a more useful place.
-                </p>
-
-                <ul className="text-sm text-gray-600 dark:text-gray-400 mt-3 space-y-0.5">
-                  <li>Ones: 10 − 3 = 7</li>
-                  <li>Tens: 9 − 7 = 2</li>
-                  <li>Hundreds: 9 − 4 = 5</li>
+                <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">35% of 140 <span className="font-normal text-gray-400">(a bigger quantity, three pieces to build)</span></p>
+                <ul className="text-sm text-gray-600 dark:text-gray-400 mt-1.5 space-y-0.5">
+                  <li>10% of 140 = 14</li>
+                  <li>30% = 3 × 14 = 42</li>
+                  <li>5% of 140 = half of 14 = 7</li>
+                  <li>35% = 30% + 5% = 42 + 7</li>
                 </ul>
-                <p className="text-sm font-bold text-emerald-600 mt-1.5">Answer: 527</p>
-                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1.5">
-                  <strong>Check it:</strong> 527 + 473 = 1000 ✓. Adding the answer back to what was subtracted
-                  should always give you back the number you started with.
-                </p>
+                <p className="text-sm font-bold text-emerald-600 mt-1.5">Answer: 49</p>
               </InfoCard>
             </section>
 
-            {/* GUIDED ATTEMPT — bounded support ladder, see GUIDED_LEARNING_REMEDIATION_REPORT.md */}
+            {/* GUIDED ATTEMPT */}
             <section>
               <h2 className="text-gray-900 dark:text-gray-100 font-bold text-lg mb-2">Try one with help</h2>
               <InfoCard>
@@ -582,22 +427,21 @@ export default function MathematicsArithmeticLessonPage() {
                   {guidedItem ? (guidedItem.prompt as MathsQuestion).question : "…"}
                 </p>
 
-                {/* Attempt 1: voluntary generic hints remain available on request. */}
                 {hintsShown > 0 && (
                   <div className="mt-2 space-y-1.5">
                     {hintsShown >= 1 && (
-                      <p className="text-xs text-indigo-600 dark:text-indigo-400 flex items-start gap-1.5">
-                        <Lightbulb size={13} className="mt-0.5 shrink-0" /> Start with the ones column. What&apos;s 2 + 9?
+                      <p className="text-xs text-sky-700 dark:text-sky-400 flex items-start gap-1.5">
+                        <Lightbulb size={13} className="mt-0.5 shrink-0" /> Start by finding 10% of 80. What&apos;s 80 ÷ 10?
                       </p>
                     )}
                     {hintsShown >= 2 && (
-                      <p className="text-xs text-indigo-600 dark:text-indigo-400 flex items-start gap-1.5">
-                        <Lightbulb size={13} className="mt-0.5 shrink-0" /> That&apos;s 11, so write the 1 and carry the 1 to the tens column.
+                      <p className="text-xs text-sky-700 dark:text-sky-400 flex items-start gap-1.5">
+                        <Lightbulb size={13} className="mt-0.5 shrink-0" /> That&apos;s 8. Now find 5%, which is half of that 10% value. What&apos;s half of 8?
                       </p>
                     )}
                     {hintsShown >= 3 && (
-                      <p className="text-xs text-indigo-600 dark:text-indigo-400 flex items-start gap-1.5">
-                        <Lightbulb size={13} className="mt-0.5 shrink-0" /> Now the tens column: 5 + 7, plus the 1 you carried.
+                      <p className="text-xs text-sky-700 dark:text-sky-400 flex items-start gap-1.5">
+                        <Lightbulb size={13} className="mt-0.5 shrink-0" /> That&apos;s 4. Now add the 10% piece and the 5% piece together to make 15%.
                       </p>
                     )}
                   </div>
@@ -605,7 +449,7 @@ export default function MathematicsArithmeticLessonPage() {
                 {guidedLadderStage === "attempt-1" && hintsShown < 3 && (
                   <button
                     onClick={() => setHintsShown((h) => h + 1)}
-                    className="mt-2 text-xs font-semibold text-indigo-600 dark:text-indigo-400"
+                    className="mt-2 text-xs font-semibold text-sky-700 dark:text-sky-400"
                   >
                     Need a hint?
                   </button>
@@ -630,16 +474,15 @@ export default function MathematicsArithmeticLessonPage() {
                   </>
                 )}
 
-                {/* Attempt 1 was wrong: targeted feedback (or an honest generic nudge — never a fabricated diagnosis), then a real retry. */}
                 {guidedAttempt1 && !guidedAttempt1.correct && (
                   <div className="mt-3 pt-3 border-t border-gray-100 dark:border-gray-800">
                     <p className="text-sm font-semibold text-amber-600 dark:text-amber-500 inline-flex items-center gap-1.5">
                       <XCircle size={16} /> Not quite yet. Let&apos;s look again.
                     </p>
                     <p className="text-xs text-gray-600 dark:text-gray-400 mt-1.5 flex items-start gap-1.5">
-                      <Lightbulb size={13} className="mt-0.5 shrink-0 text-indigo-500" />
+                      <Lightbulb size={13} className="mt-0.5 shrink-0 text-sky-600" />
                       {classifyWrongAnswer(guidedAttempt1.answer, GUIDED_KNOWN_MISCONCEPTIONS) ??
-                        "Go back to the ones column and work through each column one at a time. Remember to carry if a column adds to 10 or more."}
+                        "Go back to the 10% step and check each piece before adding them together."}
                     </p>
                   </div>
                 )}
@@ -662,7 +505,6 @@ export default function MathematicsArithmeticLessonPage() {
                   </>
                 )}
 
-                {/* Attempt 2 was also wrong: full worked resolution, then one bounded supported retry. */}
                 {guidedAttempt2 && !guidedAttempt2.correct && (
                   <div className="mt-3 pt-3 border-t border-gray-100 dark:border-gray-800">
                     <p className="text-sm font-semibold text-amber-600 dark:text-amber-500 inline-flex items-center gap-1.5">
@@ -670,14 +512,14 @@ export default function MathematicsArithmeticLessonPage() {
                     </p>
                     <p className="text-xs text-gray-600 dark:text-gray-400 mt-1.5">
                       {classifyWrongAnswer(guidedAttempt2.answer, GUIDED_KNOWN_MISCONCEPTIONS) ??
-                        "Here's the full method, one column at a time:"}
+                        "Here's the full method, one piece at a time:"}
                     </p>
                     <ul className="text-sm text-gray-700 dark:text-gray-300 mt-2 space-y-0.5">
-                      <li>Ones: 2 + 9 = 11 → write 1, carry 1</li>
-                      <li>Tens: 5 + 7 = 12, plus the 1 carried = 13 → write 3, carry 1</li>
-                      <li>Hundreds: 6 + 2 = 8, plus the 1 carried = 9</li>
+                      <li>10% of 80 = 8</li>
+                      <li>5% of 80 = half of 8 = 4</li>
+                      <li>15% = 10% + 5% = 8 + 4</li>
                     </ul>
-                    <p className="text-sm font-bold text-emerald-600 mt-1.5">Answer: 931</p>
+                    <p className="text-sm font-bold text-emerald-600 mt-1.5">Answer: 12</p>
                     <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">Now that you&apos;ve seen how it works, try typing the answer yourself.</p>
                   </div>
                 )}
@@ -703,7 +545,7 @@ export default function MathematicsArithmeticLessonPage() {
                 {guidedLadderStage === "resolved" && (
                   <p className="mt-3 inline-flex items-center gap-1.5 text-sm font-semibold">
                     {(guidedAttempt3 ?? guidedAttempt2 ?? guidedAttempt1)?.correct ? (
-                      <><CheckCircle2 size={16} className="text-emerald-500" /> Correct: 931</>
+                      <><CheckCircle2 size={16} className="text-emerald-500" /> Correct: 12</>
                     ) : (
                       <><XCircle size={16} className="text-amber-500" /> That&apos;s alright. You&apos;ve seen the full method now.</>
                     )}
@@ -719,14 +561,14 @@ export default function MathematicsArithmeticLessonPage() {
                 <InfoCard className="flex items-start gap-3">
                   <AlertTriangle size={16} className="text-amber-500 mt-0.5 shrink-0" />
                   <ul className="text-sm text-gray-700 dark:text-gray-300 space-y-2">
-                    <li><strong>Forgetting to carry.</strong> If a column adds to 10 or more, that extra ten has to go somewhere.</li>
-                    <li><strong>Borrowing from a zero without continuing the chain.</strong> If the column you want to borrow from is a zero, keep going left until you find one with something to give. Every column along the way changes too.</li>
+                    <li><strong>Stopping after finding 10%.</strong> 10% is a stepping stone, not usually the final answer. Always check whether the percentage you need actually equals 10%, or whether there&apos;s more building to do.</li>
+                    <li><strong>Building the wrong multiple.</strong> If you need 20%, that&apos;s 10% doubled, not 10% plus 10 more. Double-check which multiple you actually need before adding anything on.</li>
                   </ul>
                 </InfoCard>
               </section>
             )}
 
-            {/* INDEPENDENT CHECK — bounded remediation ladder, see MATHEMATICS_REFERENCE_VERTICAL_FINAL_REFINEMENT_REPORT.md */}
+            {/* INDEPENDENT CHECK */}
             {guidedSubmitted && (
               <section>
                 <h2 className="text-gray-900 dark:text-gray-100 font-bold text-lg mb-2">Now try one alone</h2>
@@ -754,16 +596,15 @@ export default function MathematicsArithmeticLessonPage() {
                     </>
                   )}
 
-                  {/* First wrong attempt: no answer revealed — an honest diagnostic and a genuine, still-unaided retry. */}
                   {independentAttempt1 && !independentAttempt1.correct && (
                     <div className="mt-3 pt-3 border-t border-gray-100 dark:border-gray-800">
                       <p className="text-sm font-semibold text-amber-600 dark:text-amber-500 inline-flex items-center gap-1.5">
                         <XCircle size={16} /> Not quite yet. Have another look.
                       </p>
                       <p className="text-xs text-gray-600 dark:text-gray-400 mt-1.5 flex items-start gap-1.5">
-                        <Lightbulb size={13} className="mt-0.5 shrink-0 text-indigo-500" />
+                        <Lightbulb size={13} className="mt-0.5 shrink-0 text-sky-600" />
                         {classifyWrongAnswer(independentAttempt1.answer, INDEPENDENT_KNOWN_MISCONCEPTIONS) ??
-                          "Think about which column needs to borrow, and where that borrow can actually come from. Try again."}
+                          "Think about what multiple of 10% you actually need, and make sure every piece gets added in. Try again."}
                       </p>
                     </div>
                   )}
@@ -786,7 +627,6 @@ export default function MathematicsArithmeticLessonPage() {
                     </>
                   )}
 
-                  {/* Second wrong attempt: misunderstanding persists — full worked resolution, no more guessing on this exact problem. */}
                   {independentAttempt2 && !independentAttempt2.correct && (
                     <div className="mt-3 pt-3 border-t border-gray-100 dark:border-gray-800">
                       <p className="text-sm font-semibold text-amber-600 dark:text-amber-500 inline-flex items-center gap-1.5">
@@ -794,18 +634,16 @@ export default function MathematicsArithmeticLessonPage() {
                       </p>
                       <p className="text-xs text-gray-600 dark:text-gray-400 mt-1.5">
                         {classifyWrongAnswer(independentAttempt2.answer, INDEPENDENT_KNOWN_MISCONCEPTIONS) ??
-                          "Here's the full method, one column at a time:"}
+                          "Here's the full method, one piece at a time:"}
                       </p>
                       <ul className="text-sm text-gray-700 dark:text-gray-300 mt-2 space-y-0.5">
-                        <li>Ones: 3 − 8 needs borrowing; tens is 0, so the borrow travels to the hundreds column</li>
-                        <li>After borrowing: hundreds 8, tens 9, ones 13</li>
-                        <li>Ones: 13 − 8 = 5. Tens: 9 − 6 = 3. Hundreds: 8 − 4 = 4</li>
+                        <li>10% of 90 = 9</li>
+                        <li>20% = 10% doubled = 9 × 2</li>
                       </ul>
-                      <p className="text-sm font-bold text-emerald-600 mt-1.5">Answer: 435</p>
+                      <p className="text-sm font-bold text-emerald-600 mt-1.5">Answer: 18</p>
                     </div>
                   )}
 
-                  {/* Fresh opportunity: a genuinely different problem, not a repeat of the numbers just shown. */}
                   {independentLadderStage === "remediation" && !independentRetryItem && (
                     <div className="mt-3 pt-3 border-t border-gray-100 dark:border-gray-800">
                       <p className="text-xs text-gray-500 dark:text-gray-400">
@@ -851,9 +689,9 @@ export default function MathematicsArithmeticLessonPage() {
                       {independentFreshAttempt && (
                         <p className="mt-3 inline-flex items-center gap-1.5 text-sm font-semibold">
                           {independentFreshAttempt.correct ? (
-                            <><CheckCircle2 size={16} className="text-emerald-500" /> Correct: 326. That&apos;s genuine evidence you&apos;ve got it.</>
+                            <><CheckCircle2 size={16} className="text-emerald-500" /> Correct: 21. That&apos;s genuine evidence you&apos;ve got it.</>
                           ) : (
-                            <><XCircle size={16} className="text-amber-500" /> Not quite. The answer is 326. That&apos;s alright, this is real evidence either way.</>
+                            <><XCircle size={16} className="text-amber-500" /> Not quite. The answer is 21. That&apos;s alright, this is real evidence either way.</>
                           )}
                         </p>
                       )}
@@ -862,7 +700,7 @@ export default function MathematicsArithmeticLessonPage() {
 
                   {independentLadderStage === "resolved" && (independentAttempt1?.correct || independentAttempt2?.correct) && (
                     <p className="mt-3 inline-flex items-center gap-1.5 text-sm font-semibold">
-                      <CheckCircle2 size={16} className="text-emerald-500" /> Correct: 435
+                      <CheckCircle2 size={16} className="text-emerald-500" /> Correct: 18
                     </p>
                   )}
                 </InfoCard>
@@ -876,10 +714,10 @@ export default function MathematicsArithmeticLessonPage() {
                   <h2 className="text-gray-900 dark:text-gray-100 font-bold text-lg mb-2">Where this shows up in the exam</h2>
                   <InfoCard>
                     <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed">
-                      This exact type of question, a straightforward calculation with no story attached, is
-                      usually one of the very first questions on a real 11+ maths paper. Getting comfortable with
-                      carrying and borrowing means you can answer it quickly and confidently, leaving more time for
-                      the harder questions later in the paper.
+                      Percentage questions like this appear regularly on 11+ maths papers, sometimes asking for a
+                      percentage of a quantity directly, and sometimes the other way round: telling you two numbers
+                      and asking what percentage one is of the other. This lesson covers finding a percentage of a
+                      quantity. Once that&apos;s solid, the reverse version becomes much easier to tackle too.
                     </p>
                   </InfoCard>
                 </section>
@@ -894,16 +732,11 @@ export default function MathematicsArithmeticLessonPage() {
                       You&apos;re ready to practise this properly <ArrowRight size={14} />
                     </Link>
                   ) : (
-                    // Evidence-derived, specific next action (Founder Visual Review
-                    // Remediation §7) — Angel now has real evidence this learner
-                    // struggled specifically with borrowing across zero, so Practice
-                    // (which surfaces this same competency from real evidence) is a
-                    // more honest destination than a blanket full-lesson reset.
                     <Link
                       href="/learning-intelligence/practice/mathematics"
                       className="inline-flex items-center gap-1.5 bg-purple-600 hover:bg-purple-700 text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-colors"
                     >
-                      Practise borrowing across zero again <ArrowRight size={14} />
+                      Practise percentages again <ArrowRight size={14} />
                     </Link>
                   )}
                   <div className="mt-3">
