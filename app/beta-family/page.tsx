@@ -68,7 +68,7 @@ export default function BetaFamilyPage() {
           <div className="bg-purple-50 dark:bg-purple-950 rounded-2xl border border-purple-100 dark:border-purple-900 p-5 max-w-sm text-left">
             <p className="text-sm font-semibold text-purple-900 dark:text-purple-100 mb-2">While you wait…</p>
             <ul className="space-y-1.5 text-xs text-purple-700 dark:text-purple-300 leading-relaxed">
-              <li>• Start practising now — the full platform is available immediately</li>
+              <li>• Start practising now: the full platform is available immediately</li>
               <li>• Choose a pathway to personalise your experience</li>
               <li>• Progress is saved on this device automatically</li>
             </ul>
@@ -106,9 +106,9 @@ export default function BetaFamilyPage() {
         </div>
         <ul className="space-y-1.5">
           {[
-            "Full platform access — all subjects, pathways and mock exams",
-            "Free beta period — no charges while we are in beta",
-            "Direct line to the founder — your feedback is always read",
+            "Full platform access: all subjects, pathways and mock exams",
+            "Free beta period: no charges while we are in beta",
+            "Direct line to the founder: your feedback is always read",
             "Priority onboarding for future paid features",
           ].map((item) => (
             <li key={item} className="flex items-start gap-2">

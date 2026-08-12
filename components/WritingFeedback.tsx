@@ -118,7 +118,7 @@ export default function WritingFeedback({ feedback }: WritingFeedbackProps) {
           <Lightbulb size={15} className="text-indigo-500 dark:text-indigo-400 mt-0.5 shrink-0" />
           <div>
             <p className="text-indigo-700 dark:text-indigo-300 text-xs font-semibold uppercase tracking-wide mb-1">
-              Tutor Tip — apply this next time
+              Tutor Tip: apply this next time
             </p>
             <p className="text-indigo-900 dark:text-indigo-100 text-sm leading-relaxed font-medium">
               {feedback.tutorTip}

@@ -37,7 +37,7 @@ export const CSSE_ADMISSIONS_CONTEXT_FACT =
 
 /** Why this is shown at all, alongside the Engine's own evidence. */
 export const CSSE_ADMISSIONS_CONTEXT_RELEVANCE =
-  "This is shown because it's the one real, published fact about how CSSE itself admits students — useful context " +
+  "This is shown because it's the one real, published fact about how CSSE itself admits students. Useful context " +
   "alongside your child's own recorded evidence, not part of it.";
 
 /** What it explicitly does not mean — kept separate so it can't be skimmed past. */

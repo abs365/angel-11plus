@@ -154,7 +154,7 @@ export default function PathwaysPage() {
                   Current Readiness
                 </p>
                 <p className="text-sm text-gray-400 dark:text-gray-500">
-                  Not enough practice sessions yet to show a readiness signal — this will appear once you&apos;ve completed a few sessions.
+                  Not enough practice sessions yet to show a readiness signal. This will appear once you&apos;ve completed a few sessions.
                 </p>
               </div>
             )}
@@ -182,7 +182,7 @@ export default function PathwaysPage() {
                 </div>
               ) : (
                 <p className="text-sm text-gray-400 dark:text-gray-500">
-                  No pathway-specific priority areas right now — keep up your regular practice.
+                  No pathway-specific priority areas right now. Keep up your regular practice.
                 </p>
               )}
             </div>
@@ -243,7 +243,7 @@ export default function PathwaysPage() {
             Know your exam date? (optional)
           </h2>
           <p className="text-xs text-gray-500 dark:text-gray-400 leading-relaxed mb-3">
-            If you already know the date, adding it helps us fine-tune practice as it gets closer. Not sure yet? Skip this — you can add it any time.
+            If you already know the date, adding it helps us fine-tune practice as it gets closer. Not sure yet? Skip this: you can add it any time.
           </p>
           <div className="flex flex-wrap items-center gap-2">
             <input

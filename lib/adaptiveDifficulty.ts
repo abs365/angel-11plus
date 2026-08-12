@@ -18,19 +18,19 @@ export const TIER_CONFIG: Record<
   },
   developing: {
     label: "Developing",
-    description: "Good progress — working towards exam-ready standard.",
+    description: "Good progress. Working towards exam-ready standard.",
     bgClass: "bg-blue-100",
     textClass: "text-blue-600",
   },
   advanced: {
     label: "Advanced",
-    description: "Above exam standard — focus on precision and consistency.",
+    description: "Above exam standard. Focus on precision and consistency.",
     bgClass: "bg-purple-100",
     textClass: "text-purple-700",
   },
   challenge: {
     label: "Challenge",
-    description: "Scholarship-level performance — push for near-perfection.",
+    description: "Scholarship-level performance. Push for near-perfection.",
     bgClass: "bg-rose-100",
     textClass: "text-rose-600",
   },

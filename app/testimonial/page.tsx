@@ -61,7 +61,7 @@ export default function TestimonialPage() {
           {publishPermission && (
             <div className="bg-amber-50 dark:bg-amber-950 border border-amber-100 dark:border-amber-900 rounded-xl px-4 py-3 max-w-xs">
               <p className="text-xs text-amber-700 dark:text-amber-300 leading-relaxed">
-                We may share your kind words on our website — we&apos;ll never use your surname or child&apos;s name.
+                We may share your kind words on our website. We&apos;ll never use your surname or child&apos;s name.
               </p>
             </div>
           )}
@@ -150,10 +150,10 @@ export default function TestimonialPage() {
               />
             </div>
             <span className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed">
-              I am happy for Angel 11+ to share an edited version of my feedback on the website (first name only — no surnames or child details).
+              I am happy for Angel 11+ to share an edited version of my feedback on the website (first name only, no surnames or child details).
             </span>
           </label>
-          <p className="text-xs text-gray-400 dark:text-gray-500 mt-1.5 ml-7">Optional — we&apos;ll never publish without this permission.</p>
+          <p className="text-xs text-gray-400 dark:text-gray-500 mt-1.5 ml-7">Optional. We&apos;ll never publish without this permission.</p>
         </div>
 
         <button

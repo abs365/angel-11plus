@@ -43,7 +43,7 @@ const PATHWAYS = [
     name: "CSSE (Essex)",
     shortName: "CSSE",
     badge: "Essex",
-    desc: "Essex grammar schools — extended written responses and maths.",
+    desc: "Essex grammar schools: extended written responses and maths.",
     color: "text-purple-600 dark:text-purple-400",
     bg: "bg-purple-50 dark:bg-purple-950",
     border: "border-purple-100 dark:border-purple-900",
@@ -73,7 +73,7 @@ const PATHWAYS = [
     name: "Independent / Bespoke",
     shortName: "Bespoke",
     badge: "Custom",
-    desc: "For schools with their own entrance papers — flexible preparation.",
+    desc: "For schools with their own entrance papers: flexible preparation.",
     color: "text-amber-600 dark:text-amber-400",
     bg: "bg-amber-50 dark:bg-amber-950",
     border: "border-amber-100 dark:border-amber-900",
@@ -96,14 +96,14 @@ export default function BetaPage() {
       <section className="text-center mb-12">
         <div className="inline-flex items-center gap-2 bg-purple-50 dark:bg-purple-950 text-purple-600 dark:text-purple-300 text-xs font-semibold px-3 py-1.5 rounded-full mb-5">
           <Sparkles size={12} />
-          Beta — First 50 Families
+          Beta: First 50 Families
         </div>
         <h1 className="text-3xl sm:text-4xl font-black text-gray-900 dark:text-gray-100 mb-4 leading-tight">
           The smarter way to prepare<br className="hidden sm:block" /> for the 11+
         </h1>
         <p className="text-base text-gray-500 dark:text-gray-400 max-w-xl mx-auto leading-relaxed mb-8">
           Angel 11+ is a UK 11+ preparation platform built for Year 4–6 children.
-          Daily practice, timed mocks, adaptive difficulty and a parent dashboard — in one place.
+          Daily practice, timed mocks, adaptive difficulty and a parent dashboard, all in one place.
         </p>
         <div className="flex flex-wrap gap-3 justify-center">
           <Link
@@ -155,7 +155,7 @@ export default function BetaPage() {
           <ul className="space-y-2.5">
             {[
               "Children in Year 4, 5 or 6 preparing for selective school entry",
-              "Families targeting grammar schools — GL, CEM, CSSE or ISEB format",
+              "Families targeting grammar schools: GL, CEM, CSSE or ISEB format",
               "Parents who want to see weekly progress without spreadsheets",
               "Students who want to practise at their own pace, on any device",
             ].map((item) => (
@@ -205,7 +205,7 @@ export default function BetaPage() {
             <h2 className="text-base font-bold text-purple-900 dark:text-purple-100">Beta status</h2>
           </div>
           <p className="text-sm text-purple-700 dark:text-purple-300 leading-relaxed mb-3">
-            Angel 11+ is currently in beta with our first families. The platform is fully functional and safe to use — but we are still improving it based on real family feedback.
+            Angel 11+ is currently in beta with our first families. The platform is fully functional and safe to use, but we are still improving it based on real family feedback.
           </p>
           <p className="text-sm text-purple-700 dark:text-purple-300 leading-relaxed mb-4">
             As a beta family you get: early access, free beta period, and your feedback shapes what we build next.

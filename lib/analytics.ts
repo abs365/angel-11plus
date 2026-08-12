@@ -274,7 +274,7 @@ function generateInsights(
       id: id(),
       type: "streak",
       title: `${p.streak}-day streak`,
-      body: "Consistency beats intensity. Keep your daily practice going — it adds up faster than you think.",
+      body: "Consistency beats intensity. Keep your daily practice going. It adds up faster than you think.",
       color: "orange",
       priority: 15,
     });
@@ -300,7 +300,7 @@ function generateInsights(
       id: id(),
       type: "strength",
       title: `${s.label} is a strength`,
-      body: `You're averaging ${s.avgScore}% in ${s.label.toLowerCase()}. This is exam-ready territory. Push for consistency — don't let this slip.`,
+      body: `You're averaging ${s.avgScore}% in ${s.label.toLowerCase()}. This is exam-ready territory. Push for consistency, don't let this slip.`,
       color: "green",
       priority: 8,
     });
@@ -313,11 +313,11 @@ function generateInsights(
       english:
         "Focus on quoting directly from the text in your answers. Every inference point needs a piece of evidence beside it.",
       maths:
-        "Work through the Reasoning Problems mode carefully — use the step-by-step working to understand where your method is breaking down.",
+        "Work through the Reasoning Problems mode carefully. Use the step-by-step working to understand where your method is breaking down.",
       vocabulary:
         "Do one vocabulary flashcard session daily. The key is reviewing the words you marked 'still learning' each time.",
       writing:
-        "Use the checklist actively — tick each item as you write, not after. This builds structured thinking under time pressure.",
+        "Use the checklist actively: tick each item as you write, not after. This builds structured thinking under time pressure.",
       "mock-test":
         "Focus on the section where you lost most marks. Timed practice is the best way to build exam speed.",
     };
@@ -336,8 +336,8 @@ function generateInsights(
     const ws = weakSkills[0];
     const skillAdvice: Partial<Record<SkillType, string>> = {
       inference: "Always explain WHY something is suggested, not just WHAT. Use the phrase 'This suggests...' to structure your thinking.",
-      fractions: "Find a common denominator before doing anything else. Write it out — don't try to do it in your head.",
-      "word-problem": "Read word problems twice. On the second read, underline the question — then decide the operation before you calculate.",
+      fractions: "Find a common denominator before doing anything else. Write it out; don't try to do it in your head.",
+      "word-problem": "Read word problems twice. On the second read, underline the question, then decide the operation before you calculate.",
       atmosphere: "Use at least two language techniques in your atmosphere answers: a quote, the technique name, and its effect on the reader.",
       evidence: "Quotes must be exact, short (3–5 words is ideal), and directly relevant to the question. Don't quote whole sentences.",
       pattern: "Write out the first few terms of the sequence. Look at the gap between terms before trying the formula.",

@@ -171,7 +171,7 @@ function buildParentInsights(
   if (p.streak >= 7) {
     insights.push({
       id: "streak-great",
-      text: `Your child has maintained a ${p.streak}-day practice streak — this level of consistency is one of the strongest predictors of exam performance.`,
+      text: `Your child has maintained a ${p.streak}-day practice streak. This level of consistency is one of the strongest predictors of exam performance.`,
       type: "positive",
     });
   } else if (p.streak >= 3) {
@@ -192,7 +192,7 @@ function buildParentInsights(
     const s = strongNonAli.slice(0, 2).map((x) => x.label).join(" and ");
     insights.push({
       id: "strong-subject",
-      text: `Your child is performing above the 75% target in ${s}. This is solid exam-level territory — encourage them to maintain this standard.`,
+      text: `Your child is performing above the 75% target in ${s}. This is solid exam-level territory. Encourage them to maintain this standard.`,
       type: "positive",
     });
   }
@@ -201,7 +201,7 @@ function buildParentInsights(
   if (score >= 70 && sessions >= 5) {
     insights.push({
       id: "overall-strong",
-      text: `Overall, your child is averaging ${score}% across all subjects they have attempted — ahead of the typical preparatory benchmark at this stage.`,
+      text: `Overall, your child is averaging ${score}% across all subjects they have attempted, ahead of the typical preparatory benchmark at this stage.`,
       type: "positive",
     });
   }
@@ -226,7 +226,7 @@ function buildParentInsights(
   if (!mockDone && sessions >= 6) {
     insights.push({
       id: "no-mock",
-      text: `Your child hasn't attempted a timed practice mock yet. A full mock exam reveals timing and pressure weaknesses that topic practice alone doesn't show — it's an important next step. Visit the Mocks section to start one.`,
+      text: `Your child hasn't attempted a timed practice mock yet. A full mock exam reveals timing and pressure weaknesses that topic practice alone doesn't show. It's an important next step. Visit the Mocks section to start one.`,
       type: "attention",
     });
   }
@@ -255,7 +255,7 @@ function buildParentInsights(
   if (score < 50 && sessions >= 4) {
     insights.push({
       id: "score-low",
-      text: `Your child's average score is ${score}% — aim to get this above 60% before the exam. Encourage them to use the step-by-step worked answers to understand where marks are being lost.`,
+      text: `Your child's average score is ${score}%. Aim to get this above 60% before the exam. Encourage them to use the step-by-step worked answers to understand where marks are being lost.`,
       type: "action",
     });
   }
@@ -271,7 +271,7 @@ const SUBJECT_ADVICE: Record<string, { detail: string; href: string }> = {
     href: "/english",
   },
   Maths: {
-    detail: "Work through Reasoning Problems first — use the step-by-step breakdowns to find where the method breaks down.",
+    detail: "Work through Reasoning Problems first. Use the step-by-step breakdowns to find where the method breaks down.",
     href: "/maths",
   },
   Vocabulary: {
@@ -287,11 +287,11 @@ const SUBJECT_ADVICE: Record<string, { detail: string; href: string }> = {
     href: "/mocks",
   },
   "Verbal Reasoning": {
-    detail: "Encourage your child to work through letter codes and word analogies slowly — accuracy matters more than speed at this stage.",
+    detail: "Encourage your child to work through letter codes and word analogies slowly. Accuracy matters more than speed at this stage.",
     href: "/verbal-reasoning",
   },
   "Non-Verbal Reasoning": {
-    detail: "Look for the rule before answering each pattern question — rotation, reflection or counting. Identifying the rule first prevents errors.",
+    detail: "Look for the rule before answering each pattern question: rotation, reflection or counting. Identifying the rule first prevents errors.",
     href: "/non-verbal-reasoning",
   },
   "Spatial Reasoning": {

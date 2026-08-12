@@ -101,7 +101,7 @@ export default function AngelPlusPage() {
             Your Preparation Journey Today
           </h2>
           <p className="text-sm text-gray-400 dark:text-gray-500 mb-4 leading-relaxed">
-            Angel Plus builds on this journey — it never replaces or hides any part of it.
+            Angel Plus builds on this journey. It never replaces or hides any part of it.
           </p>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {JOURNEY_LINKS.map((item) => (
@@ -131,7 +131,7 @@ export default function AngelPlusPage() {
               <StatusIndicator tone="neutral" label="Available with Angel Plus" />
             </div>
             <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed mb-3">
-              Angel Plus hasn&apos;t been built or priced yet — there is nothing to describe honestly beyond this. When it does arrive, it will only ever add to the journey above; nothing you already use will move behind it.
+              Angel Plus hasn&apos;t been built or priced yet. There is nothing to describe honestly beyond this. When it does arrive, it will only ever add to the journey above; nothing you already use will move behind it.
             </p>
             <p className="text-sm text-gray-500 dark:text-gray-400 leading-relaxed mb-4">
               If there&apos;s something that would genuinely help your family&apos;s preparation, we&apos;d like to know before we build anything.

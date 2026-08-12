@@ -52,17 +52,17 @@ function learnerText(candidate: RecommendationCandidate): string {
     case "building-knowledge":
       return "Let's try something new!";
     case "practising":
-      return "Keep going — you're getting the hang of this!";
+      return "Keep going, you're getting the hang of this!";
     case "reinforcing":
-      return "You're getting really good at this — let's keep it up!";
+      return "You're getting really good at this. Let's keep it up!";
     case "mastered":
-      return "You've got this one down — nice work!";
+      return "You've got this one down. Nice work!";
     case "durably-mastered":
-      return "You've really mastered this — amazing!";
+      return "You've really mastered this. Amazing!";
     case "reviewing":
       return "Let's check you've still got this!";
     case "rebuilding":
-      return "Let's practise this again — you'll get there!";
+      return "Let's practise this again. You'll get there!";
   }
 }
 
@@ -98,11 +98,11 @@ function parentText(candidate: RecommendationCandidate): string {
   // never phrased with the same certainty as direct evidence.
   if (candidate.basis !== "direct-evidence" && candidate.sourceCompetencyCode) {
     const sourceLabel = competencyLabel(candidate.sourceCompetencyCode);
-    return `Your child ${confidenceClause} — we're suggesting this because it connects to their progress in ${sourceLabel}.`;
+    return `Your child ${confidenceClause}. We're suggesting this because it connects to their progress in ${sourceLabel}.`;
   }
 
   if (candidate.triggerReason === "review-due") {
-    return `Your child ${confidenceClause} — we're checking back in to make sure it's still solid.`;
+    return `Your child ${confidenceClause}. We're checking back in to make sure it's still solid.`;
   }
 
   return `Your child ${confidenceClause}.`;

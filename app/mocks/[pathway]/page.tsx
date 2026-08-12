@@ -474,7 +474,7 @@ export default function MockPage({
               <p className="text-sm text-gray-600 dark:text-gray-400">
                 {priorAttempts.count > 0
                   ? <>You&apos;ve taken this mock {priorAttempts.count} time{priorAttempts.count === 1 ? "" : "s"} · best score <strong className="text-gray-800 dark:text-gray-100">{priorAttempts.best}%</strong></>
-                  : "You haven't attempted this mock yet — a good first rehearsal for exam day."}
+                  : "You haven't attempted this mock yet. A good first rehearsal for exam day."}
               </p>
             </div>
           )}
@@ -533,14 +533,14 @@ export default function MockPage({
               <AlertCircle size={16} className="text-amber-500 shrink-0 mt-0.5" />
               <div className="text-xs text-amber-700 dark:text-amber-300 space-y-1 leading-relaxed">
                 <p className="font-semibold">Before you start</p>
-                <p>Each section is timed separately. Type your answer and press Enter or tap Submit. Answers are not case-sensitive. Work through sections in order — you cannot go back.</p>
+                <p>Each section is timed separately. Type your answer and press Enter or tap Submit. Answers are not case-sensitive. Work through sections in order: you cannot go back.</p>
                 <p className="mt-1 font-medium">This is original practice content and is not affiliated with {config.badge}.</p>
               </div>
             </div>
           </div>
 
           <p className="text-center text-sm text-gray-400 dark:text-gray-500">
-            Take your time reading each question — you&apos;re prepared for this.
+            Take your time reading each question. You&apos;re prepared for this.
           </p>
 
           <button
@@ -612,7 +612,7 @@ export default function MockPage({
                 )}
                 <div className="flex-1">
                   <p className={`text-sm font-semibold mb-1 ${wasCorrect ? "text-green-700 dark:text-green-300" : "text-red-600 dark:text-red-400"}`}>
-                    {wasCorrect ? "Correct!" : `Incorrect — answer: ${currentQuestion.answer}`}
+                    {wasCorrect ? "Correct!" : `Incorrect. Answer: ${currentQuestion.answer}`}
                   </p>
                   <p className="text-xs text-gray-600 dark:text-gray-400 leading-relaxed">{currentQuestion.explanation}</p>
                 </div>
@@ -688,7 +688,7 @@ export default function MockPage({
               {lastResult?.correct ?? 0} correct out of {lastResult?.total ?? 0} questions
             </p>
             <p className="text-gray-400 dark:text-gray-500 text-xs mt-2">
-              {isLastSection ? "One more step — let's see your full result." : "Nice work — take a breath before the next section."}
+              {isLastSection ? "One more step. Let's see your full result." : "Nice work. Take a breath before the next section."}
             </p>
           </div>
 
@@ -747,7 +747,7 @@ export default function MockPage({
               framing the transition into the existing results below;
               pct/grade are already computed above, nothing new here. */}
           <p className="text-center text-xs text-gray-400 dark:text-gray-500 -mb-2">
-            Every mock builds real exam-day readiness — here&apos;s how this one went.
+            Every mock builds real exam-day readiness. Here&apos;s how this one went.
           </p>
 
           {/* Score card */}

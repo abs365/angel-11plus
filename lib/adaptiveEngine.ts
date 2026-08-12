@@ -126,37 +126,37 @@ function reasonText(
   weakSkillLabel?: string
 ): string {
   if (priority === "review") {
-    return `You're strong here — a quick session keeps your ${subject.label.toLowerCase()} score exam-ready.`;
+    return `You're strong here. A quick session keeps your ${subject.label.toLowerCase()} score exam-ready.`;
   }
 
   if (subject.status === "not-started") {
     const copy: Record<string, string> = {
-      english: "Comprehension is tested in every 11+ pathway — start building your reading technique.",
-      maths: "Maths reasoning accounts for a large share of 11+ marks — don't leave it untouched.",
+      english: "Comprehension is tested in every 11+ pathway. Start building your reading technique.",
+      maths: "Maths reasoning accounts for a large share of 11+ marks, so don't leave it untouched.",
       vocabulary: "Strong vocabulary lifts both your English and Writing scores at once.",
-      writing: "Creative writing is a scored 11+ component — start with a structured prompt.",
+      writing: "Creative writing is a scored 11+ component. Start with a structured prompt.",
       "mock-test": "Timed practice reveals timing gaps that topic work alone cannot show.",
-      "verbal-reasoning": "Verbal Reasoning appears in GL, CEM and ISEB — start building your word pattern technique.",
-      "non-verbal-reasoning": "Non-Verbal Reasoning is tested in GL and ISEB — practice pattern recognition now.",
-      "spatial-reasoning": "Spatial Reasoning tests 3D thinking and symmetry — build this skill with focused practice.",
-      "numerical-reasoning": "Numerical Reasoning combines number patterns and data — an essential CEM skill.",
+      "verbal-reasoning": "Verbal Reasoning appears in GL, CEM and ISEB. Start building your word pattern technique.",
+      "non-verbal-reasoning": "Non-Verbal Reasoning is tested in GL and ISEB. Practice pattern recognition now.",
+      "spatial-reasoning": "Spatial Reasoning tests 3D thinking and symmetry. Build this skill with focused practice.",
+      "numerical-reasoning": "Numerical Reasoning combines number patterns and data, an essential CEM skill.",
     };
-    return copy[subject.subject] ?? "You haven't tried this section yet — now is a good time.";
+    return copy[subject.subject] ?? "You haven't tried this section yet. Now is a good time.";
   }
 
   if (subject.status === "weak") {
     const copy: Record<string, string> = {
-      english: `Your English average is ${subject.avgScore}% — quote evidence more precisely and answer each mark point directly.`,
-      maths: `Your Maths average is ${subject.avgScore}% — write out your working step-by-step to find where marks are lost.`,
-      vocabulary: `Your vocabulary score is ${subject.avgScore}% — revisit the words you marked as uncertain each session.`,
-      writing: `Your writing average is ${subject.avgScore}% — use the checklist actively as you write, not afterwards.`,
-      "mock-test": `Your mock average is ${subject.avgScore}% — identify which section cost you most marks and focus there.`,
-      "verbal-reasoning": `Your Verbal Reasoning score is ${subject.avgScore}% — work on letter codes and word analogies before moving on.`,
-      "non-verbal-reasoning": `Your Non-Verbal Reasoning score is ${subject.avgScore}% — slow down and identify the rule before answering.`,
-      "spatial-reasoning": `Your Spatial Reasoning score is ${subject.avgScore}% — practise folding and rotation on paper before attempting digital questions.`,
-      "numerical-reasoning": `Your Numerical Reasoning score is ${subject.avgScore}% — identify the mathematical relationship in each question before calculating.`,
+      english: `Your English average is ${subject.avgScore}%. Quote evidence more precisely and answer each mark point directly.`,
+      maths: `Your Maths average is ${subject.avgScore}%. Write out your working step-by-step to find where marks are lost.`,
+      vocabulary: `Your vocabulary score is ${subject.avgScore}%. Revisit the words you marked as uncertain each session.`,
+      writing: `Your writing average is ${subject.avgScore}%. Use the checklist actively as you write, not afterwards.`,
+      "mock-test": `Your mock average is ${subject.avgScore}%. Identify which section cost you most marks and focus there.`,
+      "verbal-reasoning": `Your Verbal Reasoning score is ${subject.avgScore}%. Work on letter codes and word analogies before moving on.`,
+      "non-verbal-reasoning": `Your Non-Verbal Reasoning score is ${subject.avgScore}%. Slow down and identify the rule before answering.`,
+      "spatial-reasoning": `Your Spatial Reasoning score is ${subject.avgScore}%. Practise folding and rotation on paper before attempting digital questions.`,
+      "numerical-reasoning": `Your Numerical Reasoning score is ${subject.avgScore}%. Identify the mathematical relationship in each question before calculating.`,
     };
-    const base = copy[subject.subject] ?? `Your ${subject.label.toLowerCase()} score (${subject.avgScore}%) has room to grow — focused practice here pays off.`;
+    const base = copy[subject.subject] ?? `Your ${subject.label.toLowerCase()} score (${subject.avgScore}%) has room to grow. Focused practice here pays off.`;
     return weakSkillLabel
       ? `${base} Weakest skill: ${weakSkillLabel.toLowerCase()}.`
       : base;
@@ -164,17 +164,17 @@ function reasonText(
 
   // developing
   const copy: Record<string, string> = {
-    english: `You're averaging ${subject.avgScore}% in English — more precise evidence and technique will push this above 75%.`,
-    maths: `You're averaging ${subject.avgScore}% in Maths — stronger method-writing will push you into exam-ready territory.`,
-    vocabulary: `Your vocabulary score is ${subject.avgScore}% — consistent daily review closes this gap quickly.`,
-    writing: `Your writing is at ${subject.avgScore}% — vary your sentence openers and technique use to improve further.`,
-    "mock-test": `You scored ${subject.avgScore}% on your mock — identify the weaker section and focus there next sitting.`,
-    "verbal-reasoning": `You're at ${subject.avgScore}% in Verbal Reasoning — more practice with letter codes will push this above 75%.`,
-    "non-verbal-reasoning": `Your Non-Verbal Reasoning is at ${subject.avgScore}% — consistency with pattern rules will lift this quickly.`,
-    "spatial-reasoning": `Your Spatial Reasoning is at ${subject.avgScore}% — visualise each fold or rotation before answering.`,
-    "numerical-reasoning": `Your Numerical Reasoning is at ${subject.avgScore}% — writing out each step clearly will improve your accuracy.`,
+    english: `You're averaging ${subject.avgScore}% in English. More precise evidence and technique will push this above 75%.`,
+    maths: `You're averaging ${subject.avgScore}% in Maths. Stronger method-writing will push you into exam-ready territory.`,
+    vocabulary: `Your vocabulary score is ${subject.avgScore}%. Consistent daily review closes this gap quickly.`,
+    writing: `Your writing is at ${subject.avgScore}%. Vary your sentence openers and technique use to improve further.`,
+    "mock-test": `You scored ${subject.avgScore}% on your mock. Identify the weaker section and focus there next sitting.`,
+    "verbal-reasoning": `You're at ${subject.avgScore}% in Verbal Reasoning. More practice with letter codes will push this above 75%.`,
+    "non-verbal-reasoning": `Your Non-Verbal Reasoning is at ${subject.avgScore}%. Consistency with pattern rules will lift this quickly.`,
+    "spatial-reasoning": `Your Spatial Reasoning is at ${subject.avgScore}%. Visualise each fold or rotation before answering.`,
+    "numerical-reasoning": `Your Numerical Reasoning is at ${subject.avgScore}%. Writing out each step clearly will improve your accuracy.`,
   };
-  return copy[subject.subject] ?? `You're at ${subject.avgScore}% — consistency will bring this above 75%.`;
+  return copy[subject.subject] ?? `You're at ${subject.avgScore}%. Consistency will bring this above 75%.`;
 }
 
 /**
@@ -192,7 +192,7 @@ function reasonText(
 function aliReasonText(subjectLabel: string, signal: AliCompetencySignal): string {
   const names = signal.weakCompetencies.map(competencyLabel);
   const list = names.length === 1 ? names[0] : `${names.slice(0, -1).join(", ")} and ${names[names.length - 1]}`;
-  return `${list} need${names.length === 1 ? "s" : ""} reinforcement in ${subjectLabel} — focused practice here will lift the whole subject fastest.`;
+  return `${list} need${names.length === 1 ? "s" : ""} reinforcement in ${subjectLabel}. Focused practice here will lift the whole subject fastest.`;
 }
 
 function buildItem(
@@ -301,7 +301,7 @@ function buildDailyMission(
             subject: "maths",
             label: "Start your first lesson",
             href: "/learning-intelligence/learn",
-            reason: "A real, evidence-led CSSE lesson — the best place to begin.",
+            reason: "A real, evidence-led CSSE lesson. The best place to begin.",
             tier: "foundation",
             priority: "primary",
             estimatedMinutes: 15,
@@ -471,15 +471,15 @@ function buildDailyMission(
     if (primary.status === "weak") {
       focusArea = `Fix your ${primary.label.toLowerCase()}`;
       tagline =
-        "Targeted work on your weakest area — this is where exam marks are won or lost.";
+        "Targeted work on your weakest area. This is where exam marks are won or lost.";
     } else if (primary.status === "not-started") {
       focusArea = `Explore ${primary.label.toLowerCase()}`;
       tagline =
-        "Broaden your practice — 11+ tests every subject, and gaps cost marks on the day.";
+        "Broaden your practice. 11+ tests every subject, and gaps cost marks on the day.";
     } else if (primary.status === "developing") {
       focusArea = `Lift your ${primary.label.toLowerCase()}`;
       tagline =
-        "You're close to the target — focused practice now will push you into exam-ready territory.";
+        "You're close to the target. Focused practice now will push you into exam-ready territory.";
     } else {
       focusArea = "Maintain your standard";
       tagline = "Keep your strongest areas sharp while building the others.";

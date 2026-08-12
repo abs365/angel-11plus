@@ -132,7 +132,7 @@ export async function generatePersonalisedSession(
     return {
       activities: [],
       summary:
-        "No practice content is available for this area yet — the illustrative content set (migration 013) has not been applied to this database.",
+        "No practice content is available for this area yet. The illustrative content set (migration 013) has not been applied to this database.",
     };
   }
 

@@ -131,7 +131,7 @@ export function computeCrossSubjectRecommendations(
         sourceSubject,
         relationshipType: edge.relationshipType,
         confidence: "high",
-        reason: `Mastering ${competencyLabel(edge.fromCompetency)} suggests real readiness to try ${competencyLabel(edge.toCompetency)} — worth exploring.`,
+        reason: `Mastering ${competencyLabel(edge.fromCompetency)} suggests real readiness to try ${competencyLabel(edge.toCompetency)}. Worth exploring.`,
       });
     } else if (edge.relationshipType === "sequential-dependency" && sourceState === "weak") {
       recommendations.push({
@@ -141,7 +141,7 @@ export function computeCrossSubjectRecommendations(
         sourceSubject,
         relationshipType: edge.relationshipType,
         confidence: "moderate",
-        reason: `Building ${competencyLabel(edge.fromCompetency)} may help with ${competencyLabel(edge.toCompetency)} — this is a suggestion, not a diagnosis of that competency itself.`,
+        reason: `Building ${competencyLabel(edge.fromCompetency)} may help with ${competencyLabel(edge.toCompetency)}. This is a suggestion, not a diagnosis of that competency itself.`,
       });
     }
   }

@@ -28,7 +28,7 @@ const STEPS = [
           Angel 11+ supports GL Assessment, CEM, CSSE (Essex), ISEB Pre-Test, Core Foundation and Independent Bespoke.
         </p>
         <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed mb-3">
-          If you&apos;re not sure which applies, check with the school directly or select <strong>Not Sure Yet</strong> — you can change it any time.
+          If you&apos;re not sure which applies, check with the school directly or select <strong>Not Sure Yet</strong>. You can change it any time.
         </p>
         <Link
           href="/pathways"
@@ -47,11 +47,11 @@ const STEPS = [
     content: (
       <>
         <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed mb-3">
-          The dashboard shows your child daily missions — short, focused practice tasks across English, Maths, Vocabulary, Writing and Reasoning.
+          The dashboard shows your child daily missions: short, focused practice tasks across English, Maths, Vocabulary, Writing and Reasoning.
           Each session takes 5–15 minutes.
         </p>
         <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed mb-3">
-          The difficulty adapts over time — harder when your child is confident, gentler when they need consolidation.
+          The difficulty adapts over time: harder when your child is confident, gentler when they need consolidation.
         </p>
         <ul className="space-y-1.5 mb-3">
           {[
@@ -85,7 +85,7 @@ const STEPS = [
       <>
         <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed mb-3">
           The Parent Dashboard shows an at-a-glance view of how your child is progressing across every subject.
-          Check it at any time — no sign-in required for local data.
+          Check it at any time. No sign-in required for local data.
         </p>
         <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed mb-3">
           You&apos;ll see: session count, average scores per subject, exam readiness estimate, and insights flagging areas that need attention.
@@ -147,8 +147,8 @@ const STEPS = [
 
 const TIPS = [
   "20–30 minutes daily is more effective than long infrequent sessions",
-  "Celebrate consistency — regular short sessions build lasting confidence",
-  "Review the Parent Dashboard weekly, not daily — look for trends",
+  "Celebrate consistency: regular short sessions build lasting confidence",
+  "Review the Parent Dashboard weekly, not daily. Look for trends",
   "Use mock exams to build time awareness, not just accuracy",
   "Vocabulary flashcards work well as a car or bedtime activity",
 ];

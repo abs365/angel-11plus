@@ -27,7 +27,7 @@ export function computeRecommendations(competencies: CompetencyStatus[], finding
     recs.push({
       category: "Practice",
       competencyId: id,
-      reason: `${named(id)} shows a positive but thin pattern of evidence — more practice would help establish it more broadly.`,
+      reason: `${named(id)} shows a positive but thin pattern of evidence. More practice would help establish it more broadly.`,
     });
 
     // Consolidation is the ET-2-specific case within Emerging Skills: demonstrated,
@@ -36,7 +36,7 @@ export function computeRecommendations(competencies: CompetencyStatus[], finding
       recs.push({
         category: "Consolidation",
         competencyId: id,
-        reason: `${named(id)} is demonstrated within one question format only — broadening to this competency's other mapped formats would strengthen it.`,
+        reason: `${named(id)} is demonstrated within one question format only. Broadening to this competency's other mapped formats would strengthen it.`,
       });
     }
   }
@@ -45,7 +45,7 @@ export function computeRecommendations(competencies: CompetencyStatus[], finding
     recs.push({
       category: "Revision",
       competencyId: id,
-      reason: `${named(id)}'s evidence indicates this competency's demands are not yet being met — revisiting it directly is indicated.`,
+      reason: `${named(id)}'s evidence indicates this competency's demands are not yet being met. Revisiting it directly is indicated.`,
     });
   }
 
@@ -53,7 +53,7 @@ export function computeRecommendations(competencies: CompetencyStatus[], finding
     recs.push({
       category: "Extension",
       competencyId: id,
-      reason: `${named(id)} has reached this model's evidence ceiling — attention could reasonably move elsewhere.`,
+      reason: `${named(id)} has reached this model's evidence ceiling. Attention could reasonably move elsewhere.`,
     });
   }
 

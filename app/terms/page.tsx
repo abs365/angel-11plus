@@ -48,7 +48,7 @@ export default function TermsPage() {
           </ul>
         </Section>
 
-        <Section title="4. Original content — not affiliated with exam boards">
+        <Section title="4. Original content: not affiliated with exam boards">
           <p className="font-semibold text-amber-700 dark:text-amber-400 mb-2">Important disclaimer</p>
           <p>All questions, passages, writing prompts, vocabulary, mock exams and other content on Angel 11+ are <strong>original content</strong> created by Angel Digital. This platform is:</p>
           <ul className="mt-2 space-y-1.5 text-sm text-gray-600 dark:text-gray-400">
@@ -71,7 +71,7 @@ export default function TermsPage() {
         </Section>
 
         <Section title="6. Intellectual property">
-          <p>All content on Angel 11+ — including questions, passages, explanations, design and software — is the intellectual property of Angel Digital. You may not reproduce any content without prior written consent.</p>
+          <p>All content on Angel 11+, including questions, passages, explanations, design and software, is the intellectual property of Angel Digital. You may not reproduce any content without prior written consent.</p>
         </Section>
 
         <Section title="7. No warranties">

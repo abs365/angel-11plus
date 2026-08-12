@@ -66,14 +66,14 @@ export const SUBJECT_LEARNING_OBJECTIVE: Partial<Record<SubjectKey, string>> = {
  */
 export const SUBJECT_SUGGESTED_PREPARATION: Partial<Record<SubjectKey, string>> = {
   "verbal-reasoning": "Keep a pen and rough paper nearby for working through letter and word patterns.",
-  "non-verbal-reasoning": "Find a quiet space — spotting the pattern rule needs a few uninterrupted minutes per question.",
+  "non-verbal-reasoning": "Find a quiet space. Spotting the pattern rule needs a few uninterrupted minutes per question.",
   "spatial-reasoning": "Have scrap paper ready to sketch folds and rotations if it helps you visualise.",
   "numerical-reasoning": "Keep rough paper handy for working out number patterns and ratios step by step.",
 };
 
 export const SUBJECT_EXPECTED_BENEFIT: Partial<Record<SubjectKey, string>> = {
-  "verbal-reasoning": "Tested by GL, CEM and ISEB — this is one of the highest-value sections to keep sharp.",
-  "non-verbal-reasoning": "Tested by GL and ISEB — strong pattern recognition transfers directly into exam speed.",
+  "verbal-reasoning": "Tested by GL, CEM and ISEB. This is one of the highest-value sections to keep sharp.",
+  "non-verbal-reasoning": "Tested by GL and ISEB. Strong pattern recognition transfers directly into exam speed.",
   "spatial-reasoning": "Builds 3D thinking used across several exam boards' reasoning papers.",
   "numerical-reasoning": "A core CEM skill that also reinforces the number-pattern work in Maths.",
   // AN-105 (Subject Learning Experience — Accessibility and Consistency) —

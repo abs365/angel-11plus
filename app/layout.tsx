@@ -9,7 +9,7 @@ export const metadata: Metadata = {
   metadataBase: new URL(APP_URL),
 
   title: {
-    default: "Angel 11+ — Smart UK 11+ Preparation",
+    default: "Angel 11+: Smart UK 11+ Preparation",
     template: "%s | Angel 11+",
   },
   description:
@@ -27,7 +27,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     siteName: "Angel 11+",
-    title: "Angel 11+ — Smart UK 11+ Preparation",
+    title: "Angel 11+: Smart UK 11+ Preparation",
     description:
       "Original exam-style practice for UK 11+ preparation. Adaptive learning across English, Maths, Reasoning, Writing and Reading Fluency.",
     url: APP_URL,
@@ -37,7 +37,7 @@ export const metadata: Metadata = {
 
   twitter: {
     card: "summary",
-    title: "Angel 11+ — Smart UK 11+ Preparation",
+    title: "Angel 11+: Smart UK 11+ Preparation",
     description:
       "Original exam-style 11+ practice for GL, CEM, CSSE, ISEB and Independent pathways. Adaptive learning, Smart Feedback.",
     // images: ["/og-image.png"],  // uncomment when brand asset exists

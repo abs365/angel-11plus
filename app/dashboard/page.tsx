@@ -131,12 +131,12 @@ const MOCK_PATHWAY_IDS: MockPathwayId[] = ["gl", "cem", "csse", "iseb"];
  * wording only.
  */
 function getEncouragingMessage(progress: UserProgress, weeklyGoal: WeeklyGoal | null): string {
-  if (weeklyGoal?.isComplete) return "Weekly goal achieved — outstanding consistency.";
+  if (weeklyGoal?.isComplete) return "Weekly goal achieved. Outstanding consistency.";
   if (progress.streak >= 14) return "Your consistency is building real, lasting confidence.";
   if (progress.streak >= 7) return "A full week of practice. Real habits are forming.";
-  if (progress.streak >= 3) return "Great consistency this week — keep going.";
+  if (progress.streak >= 3) return "Great consistency this week. Keep going.";
   if (progress.completedLessons.length >= 20) return "You're building a strong foundation. Keep it up.";
-  if (progress.completedLessons.length >= 5) return "Solid progress — you're on the right track.";
+  if (progress.completedLessons.length >= 5) return "Solid progress. You're on the right track.";
   if (progress.completedLessons.length >= 1) return "Welcome back. Let's make today count.";
   return "Your admission journey starts here.";
 }
@@ -298,7 +298,7 @@ function AdmissionHero({
 
       {focusLabel && (
         <p className="text-green-100 text-sm mb-6">
-          Focus today — <span className="text-white font-medium">{focusLabel}</span>
+          Focus today: <span className="text-white font-medium">{focusLabel}</span>
         </p>
       )}
 
@@ -578,7 +578,7 @@ export default function DashboardPage() {
                     label="Weekly goal progress"
                   />
                   <p className="text-xs text-gray-500 dark:text-gray-400 mt-1.5">
-                    {weeklyGoal.isComplete ? "Weekly goal complete — great work!" : `${weeklyGoal.sessions} of ${weeklyGoal.target} sessions this week`}
+                    {weeklyGoal.isComplete ? "Weekly goal complete. Great work!" : `${weeklyGoal.sessions} of ${weeklyGoal.target} sessions this week`}
                   </p>
                 </div>
               )}

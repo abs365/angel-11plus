@@ -25,7 +25,7 @@ export default function GlobalError({ error, reset }: Props) {
           Something went wrong
         </h1>
         <p className="text-gray-500 text-sm leading-relaxed mb-7">
-          Don&apos;t worry — your progress is safe. Try refreshing the page and
+          Don&apos;t worry, your progress is safe. Try refreshing the page and
           everything should be back to normal.
         </p>
 

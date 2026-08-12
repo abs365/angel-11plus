@@ -91,9 +91,9 @@ export default function PrivacyPage() {
         <Section title="7. Third party services">
           <p>During beta, Angel 11+ may use the following services:</p>
           <ul className="mt-2 space-y-1.5 text-sm text-gray-600 dark:text-gray-400">
-            <li>• <strong>Supabase</strong> — cloud database and authentication (optional sync only)</li>
-            <li>• <strong>OpenAI</strong> — AI-powered writing feedback (writing sessions only; no personal data sent)</li>
-            <li>• <strong>Vercel</strong> — platform hosting</li>
+            <li>• <strong>Supabase</strong>: cloud database and authentication (optional sync only)</li>
+            <li>• <strong>OpenAI</strong>: AI-powered writing feedback (writing sessions only; no personal data sent)</li>
+            <li>• <strong>Vercel</strong>: platform hosting</li>
           </ul>
           <p className="mt-3">We do not use Google Analytics, Facebook Pixel, or any advertising trackers.</p>
         </Section>

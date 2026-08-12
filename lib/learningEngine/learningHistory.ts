@@ -131,7 +131,7 @@ export function computeWhatChanged(previousBand: ReadinessBand | null, currentBa
     return { changed: false, message: "This is the first time evidence has been recorded for this area." };
   }
   if (previousBand === currentBand) {
-    return { changed: false, message: `No change since the last check — still ${currentBand}.` };
+    return { changed: false, message: `No change since the last check. Still ${currentBand}.` };
   }
   return { changed: true, message: `This has moved from ${previousBand} to ${currentBand} since the last check.` };
 }

@@ -167,7 +167,7 @@ export default function ReportBugPage() {
 
         <div className="bg-gray-50 dark:bg-gray-900 border border-gray-100 dark:border-gray-800 rounded-xl px-4 py-3">
           <p className="text-xs text-gray-400 dark:text-gray-500 leading-relaxed">
-            Tip: if possible, note your device and browser (e.g. iPad, Safari) — it helps us reproduce the issue faster.
+            Tip: if possible, note your device and browser (e.g. iPad, Safari). It helps us reproduce the issue faster.
           </p>
         </div>
 
