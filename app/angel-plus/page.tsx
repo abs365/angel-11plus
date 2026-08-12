@@ -103,15 +103,20 @@ export default function AngelPlusPage() {
     <PageLayout breadcrumbs={[{ label: "My Admission Journey", href: "/dashboard" }, { label: "Angel Plus" }]}>
       <div className="max-w-3xl mx-auto px-4 py-6 md:px-8 md:py-8">
 
-        {/* Hero */}
+        {/* Hero — New Angel Visual System: PremiumCard is a light surface
+            with a soft purple accent, matching every other card in the
+            product; distinctive weight for this "premium" moment comes
+            from hierarchy (icon, heading, shadow), not a saturated colour
+            fill (Section 7: "communicate value through hierarchy and
+            content, not colour volume"). */}
         <PremiumCard className="mb-8">
           <div className="flex items-start gap-4">
-            <div className="w-12 h-12 rounded-2xl bg-white/15 flex items-center justify-center shrink-0">
-              <Crown size={24} />
+            <div className="w-12 h-12 rounded-2xl bg-purple-50 dark:bg-purple-950 flex items-center justify-center shrink-0">
+              <Crown size={24} className="text-purple-600 dark:text-purple-400" />
             </div>
             <div>
-              <h1 className="text-xl font-bold mb-1.5">Angel Plus</h1>
-              <p className="text-purple-100 text-sm leading-relaxed">
+              <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-1.5">Angel Plus</h1>
+              <p className="text-gray-500 dark:text-gray-400 text-sm leading-relaxed">
                 An honest look at what your family already has access to today, and what we mean when we talk about &ldquo;more&rdquo; in future.
               </p>
             </div>

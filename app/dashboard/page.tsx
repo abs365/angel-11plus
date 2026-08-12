@@ -223,11 +223,12 @@ function AdmissionHero({
 
   return (
     <PremiumCard>
-      {/* AN-108 — Hero text-purple-100 → text-green-100, matching PremiumCard's
-          new green-800 fill (see Card.tsx). Same solid-tint pattern as before
-          (not opacity-blended, per the AN-107 lesson on unreliable alpha contrast). */}
+      {/* New Angel Visual System — PremiumCard is now a light surface
+          (Card.tsx), so its contents read dark-on-light with a soft purple
+          accent, matching every other card in the product, instead of the
+          previous white/light-tint-on-solid-colour treatment. */}
       <div className="flex items-start justify-between gap-3 mb-4">
-        <p className="text-green-100 text-sm font-medium">
+        <p className="text-gray-500 dark:text-gray-400 text-sm font-medium">
           {greeting}
           {childName ? `, ${childName}` : ""}
         </p>
@@ -238,7 +239,7 @@ function AdmissionHero({
               setNameDraft(childName ?? "");
               setEditingName(true);
             }}
-            className="flex items-center gap-1 text-green-100 hover:text-white text-xs font-medium shrink-0 py-1 transition-colors motion-reduce:transition-none"
+            className="flex items-center gap-1 text-gray-400 dark:text-gray-500 hover:text-purple-600 dark:hover:text-purple-400 text-xs font-medium shrink-0 py-1 transition-colors motion-reduce:transition-none"
           >
             <Pencil size={11} aria-hidden="true" />
             {childName ? "Edit" : "Add your child's name"}
@@ -258,51 +259,48 @@ function AdmissionHero({
             value={nameDraft}
             onChange={(e) => setNameDraft(e.target.value)}
             placeholder="e.g. Priya"
-            className="flex-1 min-w-0 bg-white/10 placeholder-green-100 text-white text-sm rounded-lg px-3 py-2 border border-white/20 focus-visible:outline-2 focus-visible:outline-white focus-visible:outline-offset-2"
+            className="flex-1 min-w-0 bg-gray-50 dark:bg-gray-800 placeholder-gray-400 dark:placeholder-gray-600 text-gray-900 dark:text-gray-100 text-sm rounded-lg px-3 py-2 border border-gray-200 dark:border-gray-700 focus-visible:outline-2 focus-visible:outline-purple-500 focus-visible:outline-offset-2"
           />
           <button
             type="submit"
-            className="text-xs font-semibold bg-white text-green-800 rounded-lg px-3 py-2 hover:bg-green-50 transition-colors motion-reduce:transition-none"
+            className="text-xs font-semibold bg-purple-600 text-white rounded-lg px-3 py-2 hover:bg-purple-700 transition-colors motion-reduce:transition-none"
           >
             Save
           </button>
           <button
             type="button"
             onClick={() => setEditingName(false)}
-            className="text-xs font-medium text-green-100 hover:text-white px-2 py-2 transition-colors motion-reduce:transition-none"
+            className="text-xs font-medium text-gray-400 dark:text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 px-2 py-2 transition-colors motion-reduce:transition-none"
           >
             Cancel
           </button>
         </form>
       )}
 
-      <p className="text-white font-bold text-2xl leading-snug mb-6">{message}</p>
+      <p className="text-gray-900 dark:text-gray-100 font-bold text-2xl leading-snug mb-6">{message}</p>
 
-      {/* AN-108 — pills moved to rounded-full (was rounded-lg) with slightly
-          more generous padding, a calmer/softer shape than the previous
-          blocky corners; same three chips, no information removed. */}
       <div className="flex items-center gap-2 flex-wrap mb-5">
-        <span className="inline-flex items-center gap-1.5 bg-white/10 rounded-full px-3 py-1.5 text-xs text-green-100">
+        <span className="inline-flex items-center gap-1.5 bg-purple-50 dark:bg-purple-950 rounded-full px-3 py-1.5 text-xs text-purple-700 dark:text-purple-300">
           <MapPin size={12} aria-hidden="true" />
           {pathway ? pathway.name : "No target school chosen yet"}
         </span>
-        <span className="inline-flex items-center gap-1.5 bg-white/10 rounded-full px-3 py-1.5 text-xs text-green-100">
+        <span className="inline-flex items-center gap-1.5 bg-purple-50 dark:bg-purple-950 rounded-full px-3 py-1.5 text-xs text-purple-700 dark:text-purple-300">
           <Compass size={12} aria-hidden="true" />
           {STAGE_NAMES[stageIndex]}
         </span>
-        <span className="inline-flex items-center gap-1.5 bg-white/10 rounded-full px-3 py-1.5 text-xs text-green-100">
+        <span className="inline-flex items-center gap-1.5 bg-purple-50 dark:bg-purple-950 rounded-full px-3 py-1.5 text-xs text-purple-700 dark:text-purple-300">
           <TrendingUp size={12} aria-hidden="true" />
           {confidenceLabel}
         </span>
       </div>
 
       {focusLabel && (
-        <p className="text-green-100 text-sm mb-6">
-          Focus today: <span className="text-white font-medium">{focusLabel}</span>
+        <p className="text-gray-500 dark:text-gray-400 text-sm mb-6">
+          Focus today: <span className="text-gray-900 dark:text-gray-100 font-medium">{focusLabel}</span>
         </p>
       )}
 
-      <div className="flex items-center gap-3 text-green-100 text-xs pt-4 border-t border-white/10">
+      <div className="flex items-center gap-3 text-gray-400 dark:text-gray-500 text-xs pt-4 border-t border-gray-100 dark:border-gray-800">
         <span>{progress.completedLessons.length} sessions</span>
       </div>
     </PremiumCard>
@@ -487,7 +485,7 @@ export default function DashboardPage() {
               <div className="p-5">
                 <Link
                   href={mission.items[0].href}
-                  className="flex items-center justify-center gap-2.5 w-full bg-green-700 hover:bg-green-800 active:scale-[0.98] dark:bg-green-700 dark:hover:bg-green-600 text-white rounded-xl py-3.5 font-semibold text-sm transition-all motion-reduce:transition-none shadow-sm shadow-green-200 dark:shadow-green-950"
+                  className="flex items-center justify-center gap-2.5 w-full bg-purple-600 hover:bg-purple-700 active:scale-[0.98] dark:bg-purple-600 dark:hover:bg-purple-500 text-white rounded-xl py-3.5 font-semibold text-sm transition-all motion-reduce:transition-none shadow-sm shadow-purple-200 dark:shadow-purple-950"
                 >
                   <Play size={16} aria-hidden="true" />
                   Start Today&apos;s Mission
@@ -518,7 +516,7 @@ export default function DashboardPage() {
                   already applies to the top nav's own Learn link. */}
               <Link
                 href={getSelectedPathwayId() === "csse" ? "/learning-intelligence/learn" : "/english"}
-                className="inline-flex items-center gap-2 bg-green-700 hover:bg-green-800 active:scale-[0.98] text-white rounded-xl px-5 py-2.5 font-semibold text-sm transition-all motion-reduce:transition-none"
+                className="inline-flex items-center gap-2 bg-purple-600 hover:bg-purple-700 active:scale-[0.98] text-white rounded-xl px-5 py-2.5 font-semibold text-sm transition-all motion-reduce:transition-none"
               >
                 <Play size={14} aria-hidden="true" />
                 Start Learning

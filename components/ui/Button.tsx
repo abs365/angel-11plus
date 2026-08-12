@@ -20,16 +20,20 @@ export type ButtonVariant = "primary" | "secondary" | "outline" | "ghost" | "dan
 export type ButtonSize = "sm" | "md" | "lg";
 
 /**
- * AN-108 (Visual Identity Refinement) — "primary" recoloured from purple to
- * a deep forest green (Founder's explicit "Primary actions: deep forest
- * green," "calm confidence rather than excitement" direction). Verified
- * 5.02:1 (green-700/white, light) and 7.13:1 (green-800/white — the shade
- * used on the Hero's PremiumCard, see Card.tsx) — both comfortably AA. No
- * other variant touched.
+ * New Angel Visual System (colour remediation): AN-108 had recoloured
+ * "primary" from purple to a deep forest green. That left this component
+ * as the one outlier against the rest of the product, which had already
+ * settled on purple-600 as its de facto primary-action colour everywhere
+ * else (PathwaySwitcher, Beta, Testimonial, Mock Centre, and more) — the
+ * actual root cause of the "visually isolated" saturated-colour patches
+ * the Founder flagged. Restored to purple-600, matching every other
+ * primary CTA already in the product and the Founder's explicit "PRIMARY
+ * BRAND: Angel purple" direction. purple-600 against white is ~5.5:1,
+ * comfortably AA for normal text; used as the base shade in both modes.
  */
 const VARIANT_CLASSES: Record<ButtonVariant, string> = {
   primary:
-    "bg-green-700 hover:bg-green-800 dark:bg-green-700 dark:hover:bg-green-600 text-white shadow-sm",
+    "bg-purple-600 hover:bg-purple-700 dark:bg-purple-600 dark:hover:bg-purple-500 text-white shadow-sm",
   secondary:
     "bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300",
   outline:

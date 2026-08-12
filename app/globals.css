@@ -33,21 +33,24 @@
   --border: #e5e7eb;
   --border-subtle: #f3f4f6;
 
-  /* ── Sprint 1 (Angel V2.0 Enterprise UI Foundation) — semantic role tokens.
-     AN-108: --color-primary reassigned from purple to a deep forest green
-     (Founder's explicit "Primary actions: deep forest green" direction) —
-     verified 5.02:1 (white text, light mode) / see dark-mode note below.
-     --color-secondary (muted indigo) was already correct per the Founder's
-     "Educational accents: muted indigo" direction and is unchanged; this
-     package is what finally makes it visible — most chrome previously
-     reached for hardcoded purple-* Tailwind classes instead of this token,
-     which is corrected component-by-component alongside this change (see
-     Button.tsx, Card.tsx, Navigation.tsx, Header.tsx, Progress.tsx).
-     success/warning/error/info are unchanged — emerald-700/amber-700 already
-     read as "natural green"/"soft amber" per the Founder's target palette,
-     and are WCAG-verified (see original correction note below). */
-  --color-primary: #15803d;       /* green-700 — AN-108, was purple-600 (#9333ea) */
-  --color-primary-hover: #166534; /* green-800 — AN-108, was purple-700 */
+  /* ── New Angel Visual System (colour remediation) — semantic role tokens.
+     AN-108 had reassigned --color-primary from purple to a deep forest
+     green. That left this token (and the small number of components that
+     actually read it) inconsistent with the much larger number of
+     components across the product that never adopted it and kept their
+     own hardcoded purple-600/700 — the real root cause of the "visually
+     isolated" saturated-green surfaces the Founder flagged (Dashboard
+     Hero, Angel Plus Hero, primary buttons). Restored to purple, matching
+     the Founder's explicit "PRIMARY BRAND: Angel purple" direction and
+     what most of the product already does today.
+     --color-secondary (muted indigo) is unchanged — it plays the
+     "contextual/wayfinding" role (nav active-state), not brand-primary.
+     success/warning/error/info are unchanged — emerald-700/amber-700
+     already read as "natural green"/"soft amber," reserved for genuine
+     success/attention states per the Founder's "green must primarily
+     communicate genuine success" direction, not brand identity. */
+  --color-primary: #9333ea;       /* purple-600 — restored, was green-700 (#15803d) */
+  --color-primary-hover: #7e22ce; /* purple-700 — restored, was green-800 (#166534) */
   --color-secondary: #4f46e5;     /* indigo-600 — existing secondary, unchanged */
   --color-secondary-hover: #4338ca; /* indigo-700 */
   --color-success: #047857;       /* emerald-700, NOT -600 — see WCAG correction below */
@@ -102,10 +105,10 @@
     --border: #27273f;
     --border-subtle: #1e1e36;
 
-    /* Sprint 1 semantic roles — AN-108: --color-primary reassigned to green
-       (dark-mode equivalent of the light-mode forest-green change above). */
-    --color-primary: #4ade80;        /* green-400 — AN-108, was purple-400 */
-    --color-primary-hover: #22c55e;  /* green-500 — AN-108, was purple-500 */
+    /* New Angel Visual System — dark-mode equivalent of the light-mode
+       restoration above. */
+    --color-primary: #a855f7;        /* purple-500 — restored, was green-400 */
+    --color-primary-hover: #9333ea;  /* purple-600 — restored, was green-500 */
     --color-secondary: #818cf8;      /* indigo-400 */
     --color-secondary-hover: #6366f1; /* indigo-500 */
     --color-success: #34d399;        /* emerald-400 */

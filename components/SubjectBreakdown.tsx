@@ -55,7 +55,7 @@ export function SubjectBar({ subject: s }: SubjectBarProps) {
       <div className="flex-1">
         <div className="flex items-center justify-between mb-1">
           <span className="text-xs text-gray-400 dark:text-gray-500">
-            {notStarted ? "–" : `${s.avgScore}% avg`}
+            {notStarted ? "No score yet" : `${s.avgScore}% avg`}
           </span>
           <span
             className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${statusColor[s.status]}`}

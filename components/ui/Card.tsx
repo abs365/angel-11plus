@@ -199,25 +199,24 @@ export function RecommendationCard({ icon: Icon, title, reason, color = "purple"
 
 /**
  * Premium card — the Hero card treatment, reusable for any premium/hero
- * moment. Flat fill per Product Experience Standard V1 Correction 1 (no
- * gradient anywhere in the product, including this previously-gradiented
- * card) — was `bg-gradient-to-br from-purple-600 via-purple-700 to-indigo-700`.
- *
- * AN-108 (Visual Identity Refinement) — recoloured from saturated purple-600
- * to a deep forest green, per the Founder's explicit "the current saturated
- * purple Hero should NOT remain... move toward a calmer educational
- * aesthetic... reassuring rather than dramatic" direction. green-800 is
- * deliberately deeper than Button.tsx's green-700 primary-action shade —
- * verified 7.13:1 (white text), a full point higher than the button's own
- * 5.02:1, and the darker/less energetic fill reads calmer for a moment this
- * size, distinct from an actionable button. Structure (flat fill, no
- * gradient, shadow-lg) is otherwise unchanged.
+ * moment. New Angel Visual System (colour remediation): the previous
+ * saturated purple-600/700 gradient, and later the AN-108 solid green-800
+ * fill, both made this card read as visually isolated from the rest of the
+ * product — a large saturated colour block competing with, rather than
+ * belonging to, the surrounding white/neutral surfaces. Per the Founder's
+ * explicit "PRIMARY SURFACES: white and restrained warm/light neutral
+ * surfaces... communicate value through hierarchy and content, not colour
+ * volume" direction: this card is now a light surface with a soft purple
+ * accent border, matching the canonical surface/brand-accent roles used
+ * everywhere else in the product, rather than a full-bleed colour fill.
+ * Callers supply their own text colours (dark-on-light now, not
+ * white-on-dark) — see app/dashboard/page.tsx and app/angel-plus/page.tsx.
  */
 export function PremiumCard({ children, className }: CardBaseProps) {
   return (
     <div
       className={cn(
-        "bg-green-800 dark:bg-green-700 rounded-2xl px-6 py-5 shadow-lg text-white",
+        "bg-white dark:bg-gray-900 border border-purple-100 dark:border-purple-900 rounded-2xl px-6 py-5 shadow-lg",
         className
       )}
     >
