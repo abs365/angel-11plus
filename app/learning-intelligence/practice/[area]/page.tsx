@@ -73,7 +73,6 @@ export default function PracticeSessionPage({ params }: { params: Promise<{ area
   // explanations and the session-level parent/learner summary, both from
   // generatePersonalisedSession(). Keyed by question id.
   const [activityExplanations, setActivityExplanations] = useState<Map<string, string>>(new Map());
-  const [sessionSummary, setSessionSummary] = useState("");
 
   const profileIdRef = useRef<string>("");
   const sessionIdRef = useRef<string>(`practice-${areaId}-${Date.now()}`);
@@ -127,7 +126,6 @@ export default function PracticeSessionPage({ params }: { params: Promise<{ area
       }
 
       setActivityExplanations(new Map(session.activities.map((a) => [a.question.id, a.explanation])));
-      setSessionSummary(session.summary);
 
       // Capture each competency's Educational Intelligence snapshot BEFORE
       // recordPresentation() below touches last_presented_at for every
@@ -362,14 +360,8 @@ export default function PracticeSessionPage({ params }: { params: Promise<{ area
         {mode === "session" && current && (
           <div>
             <p className="text-xs text-gray-400 dark:text-gray-500">
-              Question {index + 1} of {activities.length} · {current.skill}
+              Question {index + 1} of {activities.length}
             </p>
-
-            {index === 0 && sessionSummary && (
-              <InfoCard className="mt-2 mb-4">
-                <p className="text-xs text-gray-600 dark:text-gray-400">{sessionSummary}</p>
-              </InfoCard>
-            )}
 
             {activityExplanations.get(current.id) && (
               <p className="text-xs text-purple-600 dark:text-purple-400 mt-2 mb-3">
@@ -461,23 +453,27 @@ export default function PracticeSessionPage({ params }: { params: Promise<{ area
               </div>
             )}
 
-            {/* WP4D (FD-022) — one clear primary next step, matching the
-                stated sequence Practice -> Results -> Parent Insight ->
-                Revision -> Practice. The other two exits are real and kept,
-                but visually secondary so they don't compete with it. */}
+            {/* The child's own next step is the primary action here, not a
+                parent-facing destination — a student journey shouldn't end
+                by handing the child off to their parent's dashboard. Parent
+                Dashboard and the full report stay real, one tap away, just
+                visually secondary. */}
             <div className="mt-8">
               <Link
-                href="/learning-intelligence/parent"
+                href="/learning-intelligence/practice"
                 className="inline-block bg-purple-600 hover:bg-purple-700 text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-colors"
               >
-                See Parent Dashboard →
+                Keep practising →
               </Link>
               <div className="flex items-center gap-4 flex-wrap mt-3">
-                <Link href="/learning-intelligence/practice" className="text-xs font-semibold text-gray-500 dark:text-gray-400">
-                  Practice another area
+                <Link href="/dashboard" className="text-xs font-semibold text-gray-500 dark:text-gray-400">
+                  Back to Today
                 </Link>
                 <Link href="/learning-intelligence" className="text-xs font-semibold text-gray-500 dark:text-gray-400">
                   Full learning report →
+                </Link>
+                <Link href="/learning-intelligence/parent" className="text-xs font-semibold text-gray-500 dark:text-gray-400">
+                  Parent Dashboard →
                 </Link>
               </div>
             </div>
