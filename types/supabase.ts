@@ -31,6 +31,11 @@ export interface Database {
           auth_user_id: string | null;
           is_admin: boolean;
           created_at: string;
+          // Active Pathway Context (migration 026) — mirrors lib/progress.ts's
+          // client-side selectedPathwayId. Nullable: migration not yet applied,
+          // or no pathway chosen yet.
+          selected_pathway_id: string | null;
+          pathway_selected_at: string | null;
         };
         Insert: {
           id?: string;
@@ -38,6 +43,8 @@ export interface Database {
           name?: string;
           auth_user_id?: string | null;
           created_at?: string;
+          selected_pathway_id?: string | null;
+          pathway_selected_at?: string | null;
         };
         Update: {
           name?: string;
@@ -45,6 +52,8 @@ export interface Database {
           // is_admin deliberately omitted — migration 008 revokes UPDATE
           // privilege on this column for authenticated/anon roles at the
           // database level, so it is never a valid client-side write.
+          selected_pathway_id?: string | null;
+          pathway_selected_at?: string | null;
         };
         Relationships: [];
       };

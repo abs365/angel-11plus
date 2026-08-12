@@ -165,6 +165,32 @@ export async function syncFullProgress(progress: UserProgress): Promise<void> {
 }
 
 // ----------------------------------------------------------------
+// Mirror the active pathway (lib/progress.ts's selectedPathwayId, the
+// authoritative source) onto the profiles row, so it has a real database
+// record for verification (Active Pathway Context, migration 026). Best
+// effort: if the migration has not been applied yet, this fails silently
+// like every other sync in this file, and the app keeps working from
+// localStorage exactly as it does today.
+// ----------------------------------------------------------------
+
+export async function syncSelectedPathway(pathwayId: string): Promise<void> {
+  const supabase = getSupabaseClient();
+  if (!supabase) return;
+
+  const profileId = await ensureProfile();
+  if (!profileId) return;
+
+  const { error } = await supabase
+    .from("profiles")
+    .update({ selected_pathway_id: pathwayId, pathway_selected_at: new Date().toISOString() })
+    .eq("id", profileId);
+
+  if (error) {
+    console.warn("[Supabase] syncSelectedPathway failed:", error.message);
+  }
+}
+
+// ----------------------------------------------------------------
 // Derive subject from a lesson ID string.
 // ----------------------------------------------------------------
 

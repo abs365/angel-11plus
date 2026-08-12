@@ -25,6 +25,7 @@ import {
 import type { LucideIcon } from "lucide-react";
 import { useAuth } from "@/components/providers/AuthProvider";
 import UserMenu from "@/components/ui/UserMenu";
+import PathwaySwitcher from "@/components/PathwaySwitcher";
 import { cn } from "@/lib/cn";
 import { getSelectedPathwayId } from "@/lib/progress";
 
@@ -362,6 +363,12 @@ function MobileMoreDrawer({
           </button>
         </div>
 
+        {/* Active Pathway Context — discoverable on mobile too (Section 19),
+            without crowding the fixed bottom-tab bar. */}
+        <div className="px-1 pb-2 mb-1 border-b border-gray-100 dark:border-gray-800">
+          <PathwaySwitcher />
+        </div>
+
         <SectionGroup section={journeySection} pathname={pathname} bordered={false} />
         <SectionGroup section={familySection} pathname={pathname} />
         <HelpSupportDisclosure pathname={pathname} />
@@ -506,6 +513,13 @@ export default function Navigation() {
           {primaryItems.map((item) => (
             <TopBarLink key={item.href} item={item} pathname={pathname} />
           ))}
+        </div>
+
+        {/* Active Pathway Context — compact target switcher, not a
+            catalogue; sits alongside the 5 primary items, never replacing
+            them or restoring a permanent sidebar (Section 5). */}
+        <div className="hidden md:block shrink-0">
+          <PathwaySwitcher />
         </div>
 
         {/* Parent access — clearly available, not buried, per governing instruction */}

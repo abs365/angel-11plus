@@ -82,6 +82,37 @@ export function getKnownPathwayIds(): string[] {
 }
 
 /**
+ * Active Pathway Context (Founder directive, root cause section): the
+ * shared resolver that never existed. Four independent call sites
+ * (lib/adaptiveEngine.ts buildItem(), lib/parentInsights.ts
+ * buildFocusAreas(), app/dashboard/page.tsx's Continue Learning row,
+ * app/angel-plus/page.tsx's JOURNEY_LINKS) each hardcoded a legacy
+ * `/${subject}` href with no pathway branch, because nothing existed to
+ * call instead. This is that one function, added where
+ * getEligibleSubjectKeys() (the eligibility half of the same problem)
+ * already lives.
+ *
+ * Vocabulary has no dedicated CSSE practice area (Assessment Brain V1
+ * defines no Vocabulary competency, per lib/learningEngine/
+ * practiceContent.ts's own documented reason) so it falls back to the
+ * Learn hub, matching that page's own existing learner-facing copy.
+ */
+const CSSE_PRACTICE_AREA_BY_SUBJECT: Partial<Record<SubjectKey, "reading-comprehension" | "mathematics" | "continuous-writing">> = {
+  english: "reading-comprehension",
+  maths: "mathematics",
+  writing: "continuous-writing",
+};
+
+export function resolveSubjectHref(subject: string, pathwayId: string | undefined): string {
+  if (pathwayId === "csse") {
+    const area = CSSE_PRACTICE_AREA_BY_SUBJECT[subject as SubjectKey];
+    return area ? `/learning-intelligence/practice/${area}` : "/learning-intelligence/learn";
+  }
+  if (subject === "mock-test") return "/mocks";
+  return `/${subject}`;
+}
+
+/**
  * AEP-001 integrity guard — throws at module-load time if a mock or
  * practice route wires a content bank to a pathway that PATHWAY_SUBJECT_KEYS
  * does not authorise for it. This is the mechanism named in AEP-001 §Phase 4

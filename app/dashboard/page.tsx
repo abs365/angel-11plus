@@ -667,10 +667,20 @@ export default function DashboardPage() {
             <ButtonLink href={topMissionItem?.href ?? "/english"} variant="secondary" size="sm" leftIcon={<Play size={14} />}>
               Continue
             </ButtonLink>
-            <ButtonLink href="/learn" variant="secondary" size="sm" leftIcon={<BookOpen size={14} />}>
+            <ButtonLink
+              href={getSelectedPathwayId() === "csse" ? "/learning-intelligence/learn" : "/learn"}
+              variant="secondary"
+              size="sm"
+              leftIcon={<BookOpen size={14} />}
+            >
               Learn
             </ButtonLink>
-            <ButtonLink href="/reasoning" variant="secondary" size="sm" leftIcon={<Puzzle size={14} />}>
+            <ButtonLink
+              href={getSelectedPathwayId() === "csse" ? "/learning-intelligence/practice" : "/reasoning"}
+              variant="secondary"
+              size="sm"
+              leftIcon={<Puzzle size={14} />}
+            >
               Practise
             </ButtonLink>
             <ButtonLink href="/mocks" variant="outline" size="sm" leftIcon={<Trophy size={14} />}>

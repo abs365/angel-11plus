@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import {
   BookOpen,
@@ -16,6 +17,8 @@ import {
   Star,
 } from "lucide-react";
 import SupportLayout from "@/components/SupportLayout";
+import { getActivePathway } from "@/lib/activePathway";
+import type { Pathway } from "@/types/pathway";
 
 const PATHWAYS = [
   {
@@ -89,7 +92,32 @@ const FEATURES = [
   { icon: Users, label: "Parent Dashboard", desc: "Readiness scores, insights and mock results" },
 ];
 
+/**
+ * Active Pathway Context (Section 11-13): this page previously showed the
+ * same full marketing/pathway-catalogue/beta-status content to every
+ * visitor, reachable from every authenticated page's footer ("About Angel
+ * 11+"). For a family who has already chosen a real pathway, that
+ * catalogue is the "colour riot" the Founder flagged, and it repeatedly
+ * re-sells a platform they already use. For a genuine new prospect who
+ * has not chosen yet, the same content is real, still-needed onboarding
+ * information (Section 18) — that case is deliberately left unchanged.
+ */
 export default function BetaPage() {
+  const [activePathway, setActivePathway] = useState<Pathway | null | undefined>(undefined);
+
+  useEffect(() => {
+    Promise.resolve().then(() => setActivePathway(getActivePathway() ?? null));
+  }, []);
+
+  // Avoid a flash of the full catalogue before the client-only pathway
+  // read resolves, and avoid a hydration mismatch (server always renders
+  // "unknown yet"), matching Navigation.tsx's own established pattern.
+  if (activePathway === undefined) return null;
+
+  if (activePathway) {
+    return <ExistingFamilyBetaPage pathway={activePathway} />;
+  }
+
   return (
     <SupportLayout backHref="/dashboard" backLabel="Student App">
       {/* Hero */}
@@ -249,6 +277,77 @@ export default function BetaPage() {
       </section>
 
       {/* Disclaimer */}
+      <p className="text-xs text-gray-400 dark:text-gray-500 text-center leading-relaxed">
+        Angel 11+ provides original exam-style practice content and is not affiliated with or endorsed by GL Assessment, CEM, CSSE, ISEB or any school or exam board.
+      </p>
+    </SupportLayout>
+  );
+}
+
+/**
+ * Compact "About" view for a family who already has a real target
+ * pathway. No six-card catalogue, no repeated "choose a pathway" CTA
+ * (Section 11), restrained colour (Section 12): one neutral card naming
+ * the target, one small Beta note, links out to /pathways and /dashboard.
+ */
+function ExistingFamilyBetaPage({ pathway }: { pathway: Pathway }) {
+  return (
+    <SupportLayout backHref="/dashboard" backLabel="Student App">
+      <section className="mb-8">
+        <h1 className="text-2xl font-black text-gray-900 dark:text-gray-100 mb-1">About Angel 11+</h1>
+        <p className="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">
+          Original exam-style practice for UK 11+ preparation, built for Year 4 to 6 children.
+        </p>
+      </section>
+
+      <section className="mb-6">
+        <div className="rounded-2xl border border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-900 p-5 flex items-center gap-3">
+          <div className="w-10 h-10 rounded-xl bg-purple-50 dark:bg-purple-950 flex items-center justify-center shrink-0">
+            <MapPin size={18} className="text-purple-600 dark:text-purple-400" />
+          </div>
+          <div className="flex-1 min-w-0">
+            <p className="text-xs text-gray-400 dark:text-gray-500 font-semibold uppercase tracking-wide">Preparing for</p>
+            <p className="text-sm font-bold text-gray-900 dark:text-gray-100">{pathway.name}</p>
+          </div>
+          <Link
+            href="/pathways"
+            className="text-xs font-semibold text-purple-600 dark:text-purple-400 hover:underline shrink-0"
+          >
+            Compare pathways
+          </Link>
+        </div>
+      </section>
+
+      <section className="mb-8">
+        <div className="rounded-xl border border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-900 p-4 flex items-start gap-3">
+          <Sparkles size={16} className="text-gray-400 dark:text-gray-500 shrink-0 mt-0.5" />
+          <div>
+            <p className="text-sm font-semibold text-gray-700 dark:text-gray-300">Beta Programme</p>
+            <p className="text-xs text-gray-500 dark:text-gray-400 leading-relaxed mt-0.5">
+              You&apos;re helping us improve Angel 11+ during our first families&apos; beta. The platform is fully
+              functional and safe to use.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <div className="flex flex-wrap gap-3 mb-8">
+        <Link
+          href="/dashboard"
+          className="inline-flex items-center gap-2 bg-purple-600 hover:bg-purple-700 text-white font-semibold px-5 py-2.5 rounded-xl text-sm transition-colors"
+        >
+          Continue to Dashboard
+          <ArrowRight size={14} />
+        </Link>
+        <Link
+          href="/learning-intelligence/parent"
+          className="inline-flex items-center gap-2 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 font-semibold px-5 py-2.5 rounded-xl text-sm hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+        >
+          <Users size={14} />
+          Parent Dashboard
+        </Link>
+      </div>
+
       <p className="text-xs text-gray-400 dark:text-gray-500 text-center leading-relaxed">
         Angel 11+ provides original exam-style practice content and is not affiliated with or endorsed by GL Assessment, CEM, CSSE, ISEB or any school or exam board.
       </p>

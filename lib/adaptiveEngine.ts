@@ -4,7 +4,7 @@ import type { AdaptiveState, AdaptiveTier, DailyMission, MissionItem } from "@/t
 import type { AliCompetencySignal } from "@/types/ali/missionSignal";
 import { buildReplayQueue } from "./replayEngine";
 import { competencyLabel } from "./ali/labels";
-import { getEligibleSubjectKeys } from "./ali/pathwayEligibility";
+import { getEligibleSubjectKeys, resolveSubjectHref } from "./ali/pathwayEligibility";
 
 /**
  * Known, undocumented-until-now parallel-system finding (Educational
@@ -200,6 +200,7 @@ function buildItem(
   tier: AdaptiveTier,
   priority: "primary" | "secondary" | "review",
   index: number,
+  pathwayId: string | undefined,
   weakSkillLabel?: string,
   aliSignal?: AliCompetencySignal
 ): MissionItem {
@@ -217,7 +218,7 @@ function buildItem(
       priority === "review"
         ? `Review ${SUBJECT_LABELS[subject.subject]}`
         : SUBJECT_LABELS[subject.subject],
-    href: `/${subject.subject}`,
+    href: resolveSubjectHref(subject.subject, pathwayId),
     reason,
     tier,
     priority,
@@ -392,7 +393,7 @@ function buildDailyMission(
         : primary.subject === "maths"
         ? mathsTier
         : tierFromSubject(primary);
-    items.push(buildItem(primary, tier, "primary", 0, weakSkillBySubject.get(primary.subject), p.aliCompetencySignal?.[primary.subject]));
+    items.push(buildItem(primary, tier, "primary", 0, p.selectedPathwayId, weakSkillBySubject.get(primary.subject), p.aliCompetencySignal?.[primary.subject]));
   }
 
   // Secondary — second-most urgent (only if meaningfully urgent)
@@ -404,7 +405,7 @@ function buildDailyMission(
         : secondary.subject === "maths"
         ? mathsTier
         : tierFromSubject(secondary);
-    items.push(buildItem(secondary, tier, "secondary", 1, weakSkillBySubject.get(secondary.subject), p.aliCompetencySignal?.[secondary.subject]));
+    items.push(buildItem(secondary, tier, "secondary", 1, p.selectedPathwayId, weakSkillBySubject.get(secondary.subject), p.aliCompetencySignal?.[secondary.subject]));
   }
 
   // Review — a strong subject to maintain (different from primary + secondary)
@@ -422,7 +423,7 @@ function buildDailyMission(
         : reviewSubject.subject === "maths"
         ? mathsTier
         : tierFromSubject(reviewSubject);
-    items.push(buildItem(reviewSubject, tier, "review", 2));
+    items.push(buildItem(reviewSubject, tier, "review", 2, p.selectedPathwayId));
   }
 
   // Replay item — surface the most urgent weak skill if it targets a new subject.
@@ -443,7 +444,7 @@ function buildDailyMission(
         id: "mission-replay",
         subject: topReplay.subject,
         label: `Revise: ${topReplay.skillLabel}`,
-        href: topReplay.href,
+        href: resolveSubjectHref(topReplay.subject, p.selectedPathwayId),
         reason: topReplay.reason,
         tier: "foundation",
         priority: "secondary",

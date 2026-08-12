@@ -8,6 +8,7 @@ import { computeAdaptiveProfile } from "./adaptiveDifficulty";
 import { competencyLabel } from "./ali/labels";
 import { filterDurablyMastered } from "./ali/durableMastery";
 import { generateExplanation } from "./ali/explainability";
+import { getEligibleSubjectKeys, resolveSubjectHref } from "./ali/pathwayEligibility";
 import type { RecommendationCandidate } from "@/types/ali/recommendationOrchestration";
 
 // ─── ALI competency-first summaries (Phase ALI 1.4) ────────────────────────────
@@ -307,10 +308,20 @@ const SUBJECT_ADVICE: Record<string, { detail: string; href: string }> = {
 function buildFocusAreas(report: AnalyticsReport, p: UserProgress): FocusArea[] {
   const areas: FocusArea[] = [];
 
+  // Active Pathway Context: the eligibility filter buildDailyMission()
+  // already applies (getEligibleSubjectKeys) was never applied here, so a
+  // CSSE parent could see focus-area advice for a subject CSSE does not
+  // test (e.g. Verbal Reasoning). Applied here for the first time, same
+  // function, same pattern as lib/adaptiveEngine.ts.
+  const eligibleKeys = getEligibleSubjectKeys(p.selectedPathwayId);
+  const eligibleSubjects = report.subjects.filter(
+    (s) => s.subject === "mock-test" || eligibleKeys.has(s.subject)
+  );
+
   // 1. Weak subjects first — excludes ALI-covered subjects (Phase ALI 1.4),
   // which get a competency-first "Focus Next" summary instead. Non-ALI
   // subjects: completely unchanged.
-  const weakSubjects = report.subjects.filter(
+  const weakSubjects = eligibleSubjects.filter(
     (s) => s.status === "weak" && s.subject !== "mock-test" && !hasRealAliData(p, s.subject)
   );
   for (const s of weakSubjects.slice(0, 2)) {
@@ -318,7 +329,7 @@ function buildFocusAreas(report: AnalyticsReport, p: UserProgress): FocusArea[] 
     if (advice) {
       areas.push({
         label: s.label,
-        href: advice.href,
+        href: resolveSubjectHref(s.subject, p.selectedPathwayId),
         detail: advice.detail,
         frequency: "Daily",
       });
@@ -326,7 +337,7 @@ function buildFocusAreas(report: AnalyticsReport, p: UserProgress): FocusArea[] 
   }
 
   // 2. Not-started core subjects
-  const notStarted = report.subjects.filter(
+  const notStarted = eligibleSubjects.filter(
     (s) => s.status === "not-started" && s.subject !== "mock-test"
   );
   for (const s of notStarted.slice(0, 2)) {
@@ -335,7 +346,7 @@ function buildFocusAreas(report: AnalyticsReport, p: UserProgress): FocusArea[] 
     if (advice) {
       areas.push({
         label: s.label,
-        href: advice.href,
+        href: resolveSubjectHref(s.subject, p.selectedPathwayId),
         detail: advice.detail,
         frequency: "This week",
       });
@@ -343,12 +354,12 @@ function buildFocusAreas(report: AnalyticsReport, p: UserProgress): FocusArea[] 
   }
 
   // 3. Mock test if not done and sessions >= 4
-  const hasMock = report.subjects.find((s) => s.subject === "mock-test");
+  const hasMock = eligibleSubjects.find((s) => s.subject === "mock-test");
   if (hasMock?.status === "not-started" && report.totalSessions >= 4 && areas.length < 3) {
     const advice = SUBJECT_ADVICE["Mock Test"];
     areas.push({
       label: "Mock Test",
-      href: advice.href,
+      href: resolveSubjectHref("mock-test", p.selectedPathwayId),
       detail: advice.detail,
       frequency: "Once a fortnight",
     });
@@ -356,7 +367,7 @@ function buildFocusAreas(report: AnalyticsReport, p: UserProgress): FocusArea[] 
 
   // 4. Developing subjects as filler
   if (areas.length < 2) {
-    const developing = report.subjects.filter(
+    const developing = eligibleSubjects.filter(
       (s) => s.status === "developing" && s.subject !== "mock-test"
     );
     for (const s of developing) {
@@ -365,7 +376,7 @@ function buildFocusAreas(report: AnalyticsReport, p: UserProgress): FocusArea[] 
       if (advice && !areas.find((a) => a.label === s.label)) {
         areas.push({
           label: s.label,
-          href: advice.href,
+          href: resolveSubjectHref(s.subject, p.selectedPathwayId),
           detail: advice.detail,
           frequency: "2–3× per week",
         });

@@ -1,15 +1,17 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { MapPin, Target, CheckCircle } from "lucide-react";
 import PageLayout from "@/components/PageLayout";
 import PathwayCard, { PATHWAY_COLOR_MAP } from "@/components/PathwayCard";
+import PathwaySwitchConfirmDialog from "@/components/PathwaySwitchConfirmDialog";
 import { ReadinessIndicator } from "@/components/ui/Progress";
 import { PATHWAYS, getPathwayById } from "@/lib/pathways";
 import { getEligibleSubjectKeys } from "@/lib/ali/pathwayEligibility";
+import { isRealPathway, switchActivePathway, type RealPathwayId } from "@/lib/activePathway";
 import type { SubjectKey } from "@/types/analytics";
+import type { Pathway } from "@/types/pathway";
 import {
   getSelectedPathwayId,
   setSelectedPathway,
@@ -38,12 +40,12 @@ import type { ParentReport } from "@/types/parent";
  * exam-date form) is functionally unchanged.
  */
 export default function PathwaysPage() {
-  const router = useRouter();
   const [selected, setSelected] = useState<string | undefined>();
   const [examDate, setExamDate] = useState("");
   const [examDateError, setExamDateError] = useState<string | undefined>();
   const [examDateSaved, setExamDateSaved] = useState(false);
   const [parentReport, setParentReport] = useState<ParentReport | null>(null);
+  const [confirmTarget, setConfirmTarget] = useState<Pathway | null>(null);
 
   useEffect(() => {
     setSelected(getSelectedPathwayId());
@@ -55,10 +57,38 @@ export default function PathwaysPage() {
     setParentReport(computeParentReport(p, r, gamification));
   }, []);
 
+  /**
+   * Active Pathway Context (Section 6): a switch away from an existing
+   * real pathway to a different real pathway must be deliberate, not a
+   * single click. Picking Core Foundation/Not Sure, or a first choice with
+   * no real pathway active yet, applies immediately — there is nothing to
+   * lose either way.
+   */
   function handleSelect(id: string) {
+    const isRealSwitch = isRealPathway(selected) && isRealPathway(id) && id !== selected;
+    if (isRealSwitch) {
+      const target = getPathwayById(id);
+      if (target) {
+        setConfirmTarget(target);
+        return;
+      }
+    }
+    applySelection(id);
+  }
+
+  function applySelection(id: string) {
     setSelected(id);
-    setSelectedPathway(id);
-    router.push("/dashboard");
+    if (isRealPathway(id)) {
+      switchActivePathway(id as RealPathwayId);
+    } else {
+      setSelectedPathway(id);
+    }
+    // Full reload, not router.push: Navigation.tsx's useCssePathway() reads
+    // the pathway once on mount only, since it is a persistent layout
+    // component that never remounts on a client-side route change. A soft
+    // push leaves Learn/Practise nav links stale until the next full
+    // reload (confirmed by direct testing, same fix as PathwaySwitcher).
+    window.location.href = "/dashboard";
   }
 
   function handleExamDateSave() {
@@ -277,6 +307,18 @@ export default function PathwaysPage() {
           Angel 11+ provides original exam-style practice content and is not affiliated with or endorsed by GL Assessment, CEM, CSSE, ISEB, or any school or exam board.
         </p>
       </main>
+
+      {confirmTarget && targetPathway && (
+        <PathwaySwitchConfirmDialog
+          from={targetPathway}
+          to={confirmTarget}
+          onCancel={() => setConfirmTarget(null)}
+          onConfirm={() => {
+            applySelection(confirmTarget.id);
+            setConfirmTarget(null);
+          }}
+        />
+      )}
     </PageLayout>
   );
 }

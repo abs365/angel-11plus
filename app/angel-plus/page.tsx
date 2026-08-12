@@ -1,8 +1,10 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { Crown, BookOpen, Puzzle, Trophy, Users, MapPin, CheckCircle, MessageSquare } from "lucide-react";
 import PageLayout from "@/components/PageLayout";
 import { PremiumCard, InfoCard, SchoolCard } from "@/components/ui/Card";
+import { getSelectedPathwayId } from "@/lib/progress";
 import { StatusIndicator } from "@/components/ui/Progress";
 import { ButtonLink } from "@/components/ui/Button";
 
@@ -23,9 +25,27 @@ import { ButtonLink } from "@/components/ui/Button";
  * paywall that does not exist.
  */
 
-const JOURNEY_LINKS = [
+/**
+ * Active Pathway Context: these two cards previously hardcoded the legacy
+ * /learn and /reasoning hubs unconditionally, the same defect class found
+ * in lib/adaptiveEngine.ts and lib/parentInsights.ts. Deferred-effect read
+ * (not a direct getSelectedPathwayId() call during render), matching
+ * components/Navigation.tsx's useCssePathway() — this page is rendered
+ * unconditionally, so a synchronous localStorage read here would disagree
+ * with the server-rendered first paint.
+ */
+function useCssePathway(): boolean {
+  const [isCsse, setIsCsse] = useState(false);
+  useEffect(() => {
+    Promise.resolve().then(() => setIsCsse(getSelectedPathwayId() === "csse"));
+  }, []);
+  return isCsse;
+}
+
+function journeyLinksFor(isCsse: boolean) {
+  return [
   {
-    href: "/learn",
+    href: isCsse ? "/learning-intelligence/learn" : "/learn",
     name: "Learning Hub",
     description: "Guided practice across English, Maths, Vocabulary and Writing, with real progress tracked as you go.",
     badge: "Free",
@@ -33,7 +53,7 @@ const JOURNEY_LINKS = [
     color: "bg-purple-50 dark:bg-purple-950 text-purple-600 dark:text-purple-300",
   },
   {
-    href: "/reasoning",
+    href: isCsse ? "/learning-intelligence/practice" : "/reasoning",
     name: "Practice",
     description: "Verbal, Non-Verbal, Spatial and Numerical Reasoning, each connected to the competency it strengthens.",
     badge: "Free",
@@ -64,7 +84,8 @@ const JOURNEY_LINKS = [
     icon: MapPin,
     color: "bg-amber-50 dark:bg-amber-950 text-amber-600 dark:text-amber-300",
   },
-];
+  ];
+}
 
 const AVAILABLE_TODAY = [
   "Personalised, adaptive practice across every core subject",
@@ -76,6 +97,8 @@ const AVAILABLE_TODAY = [
 ];
 
 export default function AngelPlusPage() {
+  const isCsse = useCssePathway();
+  const journeyLinks = journeyLinksFor(isCsse);
   return (
     <PageLayout breadcrumbs={[{ label: "My Admission Journey", href: "/dashboard" }, { label: "Angel Plus" }]}>
       <div className="max-w-3xl mx-auto px-4 py-6 md:px-8 md:py-8">
@@ -104,7 +127,7 @@ export default function AngelPlusPage() {
             Angel Plus builds on this journey. It never replaces or hides any part of it.
           </p>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {JOURNEY_LINKS.map((item) => (
+            {journeyLinks.map((item) => (
               <SchoolCard key={item.href} {...item} />
             ))}
           </div>
