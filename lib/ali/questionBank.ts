@@ -52,3 +52,39 @@ export async function fetchQuestionBank(
 
   return data.map(rowToBankQuestion);
 }
+
+/**
+ * Mock firewall (Educational Increment 003, ANGEL_CONTENT_SCALE_GATE_V1.md
+ * §16). fetchQuestionBank() above returns every row matching subject+
+ * pathway regardless of eligibility_status — correct for Practice, which
+ * has never enforced eligibility and is out of this firewall's scope
+ * (retrofitting it would risk regressing the already-verified Mathematics
+ * Reference Vertical and general Practice pool). Mock must not make that
+ * same assumption: a row existing in the bank is not the same claim as a
+ * row being fit for an authenticated mock. As of this migration, zero rows
+ * (old or new) carry "mock_eligible" — by design, since no item has yet
+ * had the independent review + pool-balance check
+ * RELEASE_1_ASSESSMENT_ELIGIBILITY_MODEL.md's Mock Eligible gate requires.
+ * Callers must treat an empty result as "insufficient validated Mock
+ * content," never as an error to silently fall back past.
+ */
+export async function fetchMockEligibleQuestionBank(
+  supabase: SupabaseClient<Database>,
+  subject: AliSubject,
+  pathway: MockPathwayId
+): Promise<BankQuestion[]> {
+  const { data, error } = await supabase
+    .from("ali_question_bank")
+    .select("*")
+    .eq("subject", subject)
+    .contains("pathway", [pathway])
+    .eq("eligibility_status", "mock_eligible")
+    .eq("active", true);
+
+  if (error || !data) {
+    console.warn("[ALI] fetchMockEligibleQuestionBank failed:", error?.message);
+    return [];
+  }
+
+  return data.map(rowToBankQuestion);
+}

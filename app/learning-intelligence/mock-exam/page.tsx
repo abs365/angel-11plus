@@ -8,7 +8,7 @@ import { InfoCard } from "@/components/ui/Card";
 import { getSupabaseClient } from "@/lib/supabase";
 import { ensureProfile } from "@/lib/supabaseProgress";
 import { withTimeout } from "@/lib/withTimeout";
-import { fetchQuestionBank } from "@/lib/ali/questionBank";
+import { fetchMockEligibleQuestionBank } from "@/lib/ali/questionBank";
 import { recordPresentation, recordOutcome, fetchStudentHistory } from "@/lib/ali/history";
 import { completeLesson, recordSkillResult, getSelectedPathwayId, setSelectedPathway } from "@/lib/progress";
 import { fetchLearnerIntelligenceProfile } from "@/lib/learningEngine/profile";
@@ -138,10 +138,15 @@ export default function MockExamPage() {
 
       if (getSelectedPathwayId() !== "csse") setSelectedPathway("csse");
 
+      // Mock firewall (Educational Increment 003) — Mock must never select
+      // content merely because it exists in ali_question_bank. Only rows
+      // explicitly marked eligibility_status = "mock_eligible" are
+      // selectable here; Practice's own fetchQuestionBank() (no eligibility
+      // filter) is deliberately not reused for this call.
       const [english, maths, writing] = await Promise.all([
-        withTimeout(fetchQuestionBank(supabase, "english", "csse"), 10000, "English questions"),
-        withTimeout(fetchQuestionBank(supabase, "maths", "csse"), 10000, "Maths questions"),
-        withTimeout(fetchQuestionBank(supabase, "writing", "csse"), 10000, "the writing task"),
+        withTimeout(fetchMockEligibleQuestionBank(supabase, "english", "csse"), 10000, "English questions"),
+        withTimeout(fetchMockEligibleQuestionBank(supabase, "maths", "csse"), 10000, "Maths questions"),
+        withTimeout(fetchMockEligibleQuestionBank(supabase, "writing", "csse"), 10000, "the writing task"),
       ]);
       const taggedBySubject: Record<AdaptivePaperSubject, BankQuestion[]> = {
         english: english.filter((q) => q.skill.startsWith("QT-")),
@@ -152,7 +157,7 @@ export default function MockExamPage() {
 
       if (tagged.length === 0) {
         throw new Error(
-          "No mock exam content is available yet. The illustrative content set (migration 013) has not been applied to this database."
+          "There isn't enough independently validated content for a mock exam yet. Angel would rather tell you that plainly than assemble a mock from content that hasn't been through full review. Practice is unaffected, since it uses a wider, real, evidence-tagged content set."
         );
       }
 

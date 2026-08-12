@@ -13,6 +13,23 @@ export type AliSubjectEnum = Subject
 
 export type ContentDifficultyEnum = "easy" | "medium" | "hard" | "challenge";
 
+/** Migration 030 — Content Scale Gate minimum lifecycle fields. Governance model: RELEASE_1_ASSESSMENT_ELIGIBILITY_MODEL.md. Not enforced on Practice (existing 46 rows predate this field and are not retroactively promoted); enforced on Mock (only "mock_eligible" rows are selectable there — see lib/ali/questionBank.ts's fetchMockEligibleQuestionBank). */
+export type ContentEligibilityStatus =
+  | "provisional"
+  | "practice_eligible"
+  | "authentic_assessment_candidate"
+  | "independently_validated"
+  | "mock_eligible";
+
+/** Migration 030 — Content Scale Gate provenance field (ANGEL_CONTENT_SCALE_GATE_V1.md §1). */
+export type ContentProvenance =
+  | "angel_original"
+  | "generated_original"
+  | "licensed"
+  | "public_domain"
+  | "authorised_import"
+  | "evidence_only";
+
 /** Migration 010 (WP-16) — the first-ever DB representation of the Evidence Confidence Model (types/ali/confidence.ts, AEP-005 §6). */
 export type EvidenceConfidenceTierEnum = "high" | "moderate" | "low" | "insufficient";
 /** Migration 010 (WP-16), extended by migration 011 (WP-21A) — matches types/ali/audit.ts's ConclusionType exactly. */
@@ -130,6 +147,14 @@ export interface Database {
           /** Optional — AEP-003_QUESTION_INTELLIGENCE_FRAMEWORK.md §7. Never NOT NULL by design. */
           transfer_links: string[] | null;
           created_at: string;
+          /** Migration 030. Null on every row that predates it — unknown history, not guessed. */
+          family_id: string | null;
+          /** Migration 030. Null on every row that predates it. */
+          provenance: ContentProvenance | null;
+          /** Migration 030. Defaults to "provisional" for pre-existing rows — describes their real, already-documented status, not a promotion. */
+          eligibility_status: ContentEligibilityStatus;
+          content_version: number;
+          active: boolean;
         };
         Insert: {
           id: string;
@@ -152,6 +177,11 @@ export interface Database {
           addresses_misconception?: string | null;
           transfer_links?: string[] | null;
           created_at?: string;
+          family_id?: string | null;
+          provenance?: ContentProvenance | null;
+          eligibility_status?: ContentEligibilityStatus;
+          content_version?: number;
+          active?: boolean;
         };
         Update: {
           usage_count?: number;
