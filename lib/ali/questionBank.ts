@@ -33,25 +33,39 @@ function rowToBankQuestion(row: BankRow): BankQuestion {
   };
 }
 
+/** Practice eligibility (Educational Increment 005 Part A). A row must be
+ * at this status or higher to be considered "learner-ready," per
+ * RELEASE_1_ASSESSMENT_ELIGIBILITY_MODEL.md's own status ordering.
+ * "provisional" is deliberately excluded, closing the gap Increment 004
+ * disclosed and left open — audited first (migration 033), not applied
+ * blindly: 40 of the 46 pre-Increment-003 rows carry a disclosed,
+ * non-forced Question Type/competency mapping and were promoted; 6
+ * (mth-003/004/005/006/007b, wrt-003) have the migration's own inline
+ * comment admitting a forced fit, judgement call, or scoring-mechanism
+ * irregularity (RELEASE_1_GAP_ANALYSIS.md §4) and remain "provisional",
+ * quarantined from Practice until remediated. */
+const PRACTICE_ELIGIBLE_STATUSES = new Set([
+  "practice_eligible",
+  "authentic_assessment_candidate",
+  "independently_validated",
+  "mock_eligible",
+]);
+
 /**
  * Fetches the ALI question bank filtered to a subject + pathway. Used by
  * lib/adaptiveMockBuilder.ts to get the candidate pool for a section before
  * calling lib/ali/selection.ts's selectQuestions().
  *
- * Retirement/provenance enforcement (Educational Increment 004 §13):
- * excludes active=false and provenance="evidence_only" — both filtered in
- * application code, not via a Postgrest .neq(), because provenance is
- * nullable on every one of the 52 rows that predate migration 030/031 and
- * SQL's `x != 'evidence_only'` evaluates to NULL (excluding, not including)
- * for a NULL column; filtering here keeps that large majority correctly
- * included. Deliberately NOT filtering on eligibility_status: per
- * RELEASE_1_ASSESSMENT_ELIGIBILITY_MODEL.md, "Provisional Content" is not
- * technically Practice Eligible, but literally enforcing that today would
- * remove the 46 pre-Increment-003 rows (all still "provisional", including
- * the Founder-verified Mathematics Reference Vertical Lessons 1-2) from
- * Practice entirely — a severe, undisclosed regression, not a gap closure.
- * Recorded as a genuine open question for the Founder rather than silently
- * implemented either way.
+ * Retirement/provenance/eligibility enforcement (Educational Increment 004
+ * §13, Increment 005 Part A): excludes active=false, provenance=
+ * "evidence_only", and eligibility_status="provisional" — all filtered in
+ * application code, not via a Postgrest .neq(), because provenance/
+ * eligibility_status default differently across the bank's history and
+ * SQL's `x != 'y'` evaluates to NULL (excluding, not including) for a NULL
+ * column; filtering here is correct regardless of which rows have which
+ * value set. A row with no eligibility_status at all (should not occur —
+ * the column has a NOT NULL default — but handled defensively) is treated
+ * as not yet eligible, not silently admitted.
  */
 export async function fetchQuestionBank(
   supabase: SupabaseClient<Database>,
@@ -71,7 +85,13 @@ export async function fetchQuestionBank(
 
   return data
     .map(rowToBankQuestion)
-    .filter((q) => q.active !== false && q.provenance !== "evidence_only");
+    .filter(
+      (q) =>
+        q.active !== false &&
+        q.provenance !== "evidence_only" &&
+        !!q.eligibilityStatus &&
+        PRACTICE_ELIGIBLE_STATUSES.has(q.eligibilityStatus)
+    );
 }
 
 /**
