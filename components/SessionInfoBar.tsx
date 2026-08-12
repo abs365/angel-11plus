@@ -65,7 +65,7 @@ export default function SessionInfoBar({ objective, estimatedMinutes, skills, su
       ) : (
         subjectAnalytics && (
           <p className="text-xs text-gray-400 dark:text-gray-500">
-            {subjectAnalytics.attempts > 0 ? "Whole-subject practice — no individual skill breakdown yet." : "Not started yet."}
+            {subjectAnalytics.attempts > 0 ? "Whole-subject practice. No individual skill breakdown yet." : "Not started yet."}
           </p>
         )
       )}

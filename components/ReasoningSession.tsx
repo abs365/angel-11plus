@@ -130,10 +130,10 @@ function isAnswerCorrect(userRaw: string, question: ReasoningQuestion): boolean 
  * visible badge is replaced.
  */
 function getPracticeCompletionMessage(score: number): string {
-  if (score >= 80) return "Excellent work — this is exam-ready practice.";
-  if (score >= 60) return "Solid progress — a little more practice will make this really strong.";
-  if (score >= 40) return "Good effort — the explanations below will help this stick.";
-  return "Every attempt here is real progress — the explanations below show exactly why.";
+  if (score >= 80) return "Excellent work. This is exam-ready practice.";
+  if (score >= 60) return "Solid progress. A little more practice will make this really strong.";
+  if (score >= 40) return "Good effort. The explanations below will help this stick.";
+  return "Every attempt here is real progress. The explanations below show exactly why.";
 }
 
 // ─── Props ────────────────────────────────────────────────────────────────────
@@ -233,7 +233,7 @@ export default function ReasoningSession({
             </div>
             <h1 className="text-gray-900 dark:text-gray-100 font-bold text-2xl mb-2">Session Complete!</h1>
             <p className="text-gray-500 dark:text-gray-400">
-              {correctCount} of {questions.length} correct — {score}%
+              {correctCount} of {questions.length} correct ({score}%)
             </p>
             <p className="text-gray-700 dark:text-gray-300 font-semibold mt-3">
               {getPracticeCompletionMessage(score)}
@@ -476,7 +476,7 @@ export default function ReasoningSession({
                   <XCircle size={16} aria-hidden="true" className="text-red-400 mt-0.5 shrink-0" />
                 )}
                 <p className={`text-sm font-medium ${isCorrect ? "text-green-700 dark:text-green-300" : "text-red-600 dark:text-red-400"}`}>
-                  {isCorrect ? "Correct!" : `Incorrect — answer: ${current.answer}`}
+                  {isCorrect ? "Correct!" : `Incorrect. Answer: ${current.answer}`}
                 </p>
               </div>
             )}

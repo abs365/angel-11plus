@@ -124,7 +124,7 @@ export default function MockTestPage() {
                   <ClipboardList size={16} className="text-purple-600" />
                 </div>
                 <div>
-                  <p className="text-gray-800 font-medium text-sm">Section 1 — English Comprehension</p>
+                  <p className="text-gray-800 font-medium text-sm">Section 1: English Comprehension</p>
                   <p className="text-gray-400 text-sm">Passage + {mockEnglishLesson.questions.length} inference questions · 20 minutes</p>
                 </div>
               </div>
@@ -133,7 +133,7 @@ export default function MockTestPage() {
                   <ClipboardList size={16} className="text-blue-600" />
                 </div>
                 <div>
-                  <p className="text-gray-800 font-medium text-sm">Section 2 — Maths Reasoning</p>
+                  <p className="text-gray-800 font-medium text-sm">Section 2: Maths Reasoning</p>
                   <p className="text-gray-400 text-sm">{mockMathsQuestions.length} problem-solving questions · 25 minutes</p>
                 </div>
               </div>
@@ -145,7 +145,7 @@ export default function MockTestPage() {
             <div>
               <p className="text-amber-800 font-medium text-sm mb-1">Before you start</p>
               <ul className="text-amber-700 text-sm space-y-1 list-disc list-inside">
-                <li>Find a quiet space — no distractions</li>
+                <li>Find a quiet space with no distractions</li>
                 <li>No calculator for maths</li>
                 <li>The timer will auto-advance between sections</li>
                 <li>Total time: 45 minutes</li>
@@ -216,10 +216,10 @@ export default function MockTestPage() {
               Feedback
             </p>
             {overall >= 80 && (
-              <p className="text-gray-700 text-sm">Excellent performance — you are working at a high 11+ standard. Keep pushing for consistency.</p>
+              <p className="text-gray-700 text-sm">Excellent performance. You are working at a high 11+ standard. Keep pushing for consistency.</p>
             )}
             {overall >= 60 && overall < 80 && (
-              <p className="text-gray-700 text-sm">Good solid performance. Focus on the weaker section — review model answers and practise more in that area.</p>
+              <p className="text-gray-700 text-sm">Good solid performance. Focus on the weaker section: review model answers and practise more in that area.</p>
             )}
             {overall < 60 && (
               <p className="text-gray-700 text-sm">This is a learning experience. Review the model answers, identify the gaps, and work through the subject modules before your next mock.</p>
@@ -260,7 +260,7 @@ export default function MockTestPage() {
         <div className="max-w-2xl mx-auto px-4 py-6 md:px-8">
           {/* Timer bar */}
           <div className="flex items-center justify-between mb-4 bg-white rounded-xl px-4 py-2.5 border border-gray-100">
-            <p className="text-gray-600 text-sm font-medium">Section 1 — English</p>
+            <p className="text-gray-600 text-sm font-medium">Section 1: English</p>
             <div className={`flex items-center gap-1.5 font-bold text-sm px-3 py-1 rounded-full ${
               timeWarning ? "bg-red-100 text-red-600" : "bg-purple-100 text-purple-700"
             }`}>
@@ -318,7 +318,7 @@ export default function MockTestPage() {
         <div className="max-w-2xl mx-auto px-4 py-6 md:px-8">
           {/* Timer bar */}
           <div className="flex items-center justify-between mb-4 bg-white rounded-xl px-4 py-2.5 border border-gray-100">
-            <p className="text-gray-600 text-sm font-medium">Section 2 — Maths</p>
+            <p className="text-gray-600 text-sm font-medium">Section 2: Maths</p>
             <div className={`flex items-center gap-1.5 font-bold text-sm px-3 py-1 rounded-full ${
               timeWarning ? "bg-red-100 text-red-600" : "bg-blue-100 text-blue-700"
             }`}>

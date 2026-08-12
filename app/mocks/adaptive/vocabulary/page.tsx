@@ -241,7 +241,7 @@ export default function AdaptiveVocabularyMockPage() {
 
         <main className="max-w-2xl mx-auto px-4 py-6 space-y-5">
           <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-5 space-y-4">
-            <p className="text-sm text-gray-600 dark:text-gray-400">One word, with every question that belongs to it — synonyms, antonyms and usage in context, never split apart.</p>
+            <p className="text-sm text-gray-600 dark:text-gray-400">One word, with every question that belongs to it: synonyms, antonyms and usage in context, never split apart.</p>
           </div>
 
           <div className="bg-amber-50 dark:bg-amber-950 border border-amber-100 dark:border-amber-900 rounded-xl p-4">
@@ -249,8 +249,8 @@ export default function AdaptiveVocabularyMockPage() {
               <AlertCircle size={16} className="text-amber-500 shrink-0 mt-0.5" />
               <div className="text-xs text-amber-700 dark:text-amber-300 space-y-1 leading-relaxed">
                 <p className="font-semibold">Before you start</p>
-                <p>This is separate from the Vocabulary flashcards — a quick multiple-choice practice session instead.</p>
-                <p>Our word bank is currently a small sample set while we build out the full one — you may see the same word again across sessions.</p>
+                <p>This is separate from the Vocabulary flashcards: a quick multiple-choice practice session instead.</p>
+                <p>Our word bank is currently a small sample set while we build out the full one, so you may see the same word again across sessions.</p>
               </div>
             </div>
           </div>
@@ -314,7 +314,7 @@ export default function AdaptiveVocabularyMockPage() {
 
         {usingSyntheticFixture && (
           <div className="bg-amber-50 dark:bg-amber-950 text-amber-700 dark:text-amber-300 text-xs text-center py-1.5">
-            Sample word — not yet your full personalised set
+            Sample word: not yet your full personalised set
           </div>
         )}
 
@@ -359,7 +359,7 @@ export default function AdaptiveVocabularyMockPage() {
                   <XCircle size={18} className="text-red-400 shrink-0 mt-0.5" />
                 )}
                 <p className={`text-sm font-semibold ${selected === currentItem.prompt.correctAnswer ? "text-green-700 dark:text-green-300" : "text-red-600 dark:text-red-400"}`}>
-                  {selected === currentItem.prompt.correctAnswer ? "Correct!" : `Incorrect — the answer is "${currentItem.prompt.correctAnswer}"`}
+                  {selected === currentItem.prompt.correctAnswer ? "Correct!" : `Incorrect. The answer is "${currentItem.prompt.correctAnswer}"`}
                 </p>
               </div>
               <p className="text-sm text-gray-600 dark:text-gray-400">{currentItem.bankQuestion.explanation}</p>
@@ -387,7 +387,7 @@ export default function AdaptiveVocabularyMockPage() {
         <header className="bg-emerald-700 text-white">
           <div className="max-w-2xl mx-auto px-4 pt-4 pb-6">
             <h1 className="text-lg font-bold mb-0.5">Practice Complete</h1>
-            <p className="text-sm text-white/80">Vocabulary Practice — {word}</p>
+            <p className="text-sm text-white/80">Vocabulary Practice: {word}</p>
           </div>
         </header>
 

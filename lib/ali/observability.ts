@@ -24,7 +24,7 @@ export function logSelectionTrace(trace: MockGenerationTrace): void {
     console.log(
       `  ${entry.questionId} [${entry.competency}/${entry.difficultyTier}] ${entry.selectionReason}` +
         ` cooldown(distance=${entry.cooldownStatus.distance ?? "never-seen"}, threshold=${entry.cooldownStatus.threshold}, eligible=${entry.cooldownStatus.eligible})` +
-        (entry.replayReason ? ` — ${entry.replayReason}` : "")
+        (entry.replayReason ? ` (${entry.replayReason})` : "")
     );
   }
 

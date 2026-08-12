@@ -193,7 +193,7 @@ export function selectQuestions(
       cooldownStatus: cooldown,
       weakSkillOverride: weakOverride,
       replayReason: weakOverride
-        ? `Competency "${q.skill}" is currently weak — resurfaced ahead of its normal cooldown for remediation.`
+        ? `Competency "${q.skill}" is currently weak. Resurfaced ahead of its normal cooldown for remediation.`
         : null,
     };
   });

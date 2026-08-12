@@ -315,7 +315,7 @@ export default function AdaptiveMathsMockPage() {
               <Clock size={18} className="text-gray-400 dark:text-gray-500" />
               <span className="text-sm text-gray-700 dark:text-gray-300">Time: <strong>{SECTION.minutes} minutes</strong></span>
             </div>
-            <p className="text-sm text-gray-600 dark:text-gray-400">{SECTION.count} questions across arithmetic, fractions, percentages, geometry and more — matched to your level.</p>
+            <p className="text-sm text-gray-600 dark:text-gray-400">{SECTION.count} questions across arithmetic, fractions, percentages, geometry and more, matched to your level.</p>
           </div>
 
           <div className="bg-amber-50 dark:bg-amber-950 border border-amber-100 dark:border-amber-900 rounded-xl p-4">
@@ -323,7 +323,7 @@ export default function AdaptiveMathsMockPage() {
               <AlertCircle size={16} className="text-amber-500 shrink-0 mt-0.5" />
               <div className="text-xs text-amber-700 dark:text-amber-300 space-y-1 leading-relaxed">
                 <p className="font-semibold">Before you start</p>
-                <p>This is original practice content. The question bank is currently a small sample set while we build out the full one — you may see the same questions again across sessions.</p>
+                <p>This is original practice content. The question bank is currently a small sample set while we build out the full one, so you may see the same questions again across sessions.</p>
               </div>
             </div>
           </div>
@@ -393,7 +393,7 @@ export default function AdaptiveMathsMockPage() {
 
         {usingSyntheticFixture && (
           <div className="bg-amber-50 dark:bg-amber-950 text-amber-700 dark:text-amber-300 text-xs text-center py-1.5">
-            Sample practice questions — not yet your full personalised set
+            Sample practice questions: not yet your full personalised set
           </div>
         )}
 
@@ -417,7 +417,7 @@ export default function AdaptiveMathsMockPage() {
                   <XCircle size={18} className="text-red-400 shrink-0 mt-0.5" />
                 )}
                 <p className={`text-sm font-semibold ${wasCorrect ? "text-green-700 dark:text-green-300" : "text-red-600 dark:text-red-400"}`}>
-                  {wasCorrect ? "Correct!" : `Incorrect — answer: ${currentQuestion.answer}`}
+                  {wasCorrect ? "Correct!" : `Incorrect. Answer: ${currentQuestion.answer}`}
                 </p>
               </div>
               <button

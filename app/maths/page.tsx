@@ -168,7 +168,7 @@ export default function MathsPage() {
             </div>
             <h1 className="text-gray-900 dark:text-gray-100 font-bold text-2xl mb-2">Session Complete!</h1>
             <p className="text-gray-500 dark:text-gray-400">
-              {correctCount} of {questions.length} correct — {score}%
+              {correctCount} of {questions.length} correct ({score}%)
             </p>
           </div>
 
@@ -304,7 +304,7 @@ export default function MathsPage() {
                 Speed Arithmetic
               </h3>
               <p className="text-gray-400 dark:text-gray-500 text-sm">
-                10 arithmetic questions. Race against the clock — 60 seconds. No calculator.
+                10 arithmetic questions. Race against the clock: 60 seconds. No calculator.
               </p>
             </button>
           </div>
@@ -429,7 +429,7 @@ export default function MathsPage() {
                 <p className={`text-sm font-medium ${isCorrect ? "text-green-700 dark:text-green-300" : "text-red-600 dark:text-red-400"}`}>
                   {isCorrect
                     ? "Correct!"
-                    : `Incorrect — answer: ${current.answer}`}
+                    : `Incorrect. Answer: ${current.answer}`}
                 </p>
               </div>
             )}

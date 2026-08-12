@@ -102,8 +102,8 @@ export default function VocabularyPage() {
                 const word = vocabWords.find((w) => w.id === id);
                 return word ? (
                   <div key={id} className="flex items-center gap-2 py-2 border-b border-gray-50 dark:border-gray-800 last:border-0">
-                    <span className="text-gray-800 dark:text-gray-100 font-medium text-sm">{word.word}</span>
-                    <span className="text-gray-400 dark:text-gray-500 text-sm">— {word.definition}</span>
+                    <span className="text-gray-800 dark:text-gray-100 font-medium text-sm">{word.word}:</span>
+                    <span className="text-gray-400 dark:text-gray-500 text-sm">{word.definition}</span>
                   </div>
                 ) : null;
               })}

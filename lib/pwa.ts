@@ -42,7 +42,7 @@ export function registerSW(): void {
       // to a backgrounded tab after a deploy where skipWaiting was NOT yet in
       // place — old SW build).  Show the toast so they can still update.
       if (reg.waiting && hadController) {
-        console.log('[PWA] Found waiting SW on load — dispatching update event.');
+        console.log('[PWA] Found waiting SW on load. Dispatching update event.');
         window.dispatchEvent(
           new CustomEvent('sw-update-available', { detail: reg })
         );

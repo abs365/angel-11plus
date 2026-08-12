@@ -169,7 +169,7 @@ export default function EnglishPage() {
         {/* Coming soon */}
         <div className="mt-3 bg-gray-50 dark:bg-gray-800 rounded-2xl p-5 border border-dashed border-gray-200 dark:border-gray-700 flex items-center gap-3">
           <Lock size={16} aria-hidden="true" className="text-gray-300 dark:text-gray-600" />
-          <p className="text-gray-400 dark:text-gray-500 text-sm">More passages coming soon — mock test and advanced Year 6 content</p>
+          <p className="text-gray-400 dark:text-gray-500 text-sm">More passages coming soon: mock test and advanced Year 6 content</p>
         </div>
       </div>
     </PageLayout>

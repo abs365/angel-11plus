@@ -169,10 +169,10 @@ export function LegacyPathwayParentContent() {
   const atAGlanceAnswers = {
     improving: groupedInsights.positive[0]
       ? groupedInsights.positive[0].text
-      : "Not yet a clear signal — that's normal in the first few sessions, and it fills in with more practice.",
+      : "Not yet a clear signal. That's normal in the first few sessions, and it fills in with more practice.",
     thisWeek: report.focusAreas[0] ? (
       <>
-        Focus on <span className="font-medium">{report.focusAreas[0].label}</span> — see Priority Improvement Areas below.
+        Focus on <span className="font-medium">{report.focusAreas[0].label}</span>, see Priority Improvement Areas below.
       </>
     ) : (
       "Keep up regular practice across subjects."
@@ -181,7 +181,7 @@ export function LegacyPathwayParentContent() {
     concern: groupedInsights.attention[0] ? groupedInsights.attention[0].text : "No signs of concern in recent evidence.",
     outcome: (
       <>
-        <span className="font-medium">{readinessCfg.label}</span> — {readinessCfg.description}
+        <span className="font-medium">{readinessCfg.label}</span>: {readinessCfg.description}
       </>
     ),
   };
@@ -234,7 +234,7 @@ export function LegacyPathwayParentContent() {
             <p className="text-sm text-gray-700 dark:text-gray-300">
               {strongSubjects.length > 0
                 ? strongSubjects.map((s) => s.label).join(", ")
-                : "Still building — no strong subjects identified yet."}
+                : "Still building. No strong subjects identified yet."}
             </p>
           </div>
           <div>
@@ -270,13 +270,13 @@ export function LegacyPathwayParentContent() {
           </p>
           <p>
             <span className="font-semibold text-gray-800 dark:text-gray-100">Current position:</span>{" "}
-            {readinessCfg.label} — {readinessCfg.description}
+            {readinessCfg.label}: {readinessCfg.description}
           </p>
           <p className="flex items-start gap-1.5">
             <Flag size={13} className="text-purple-500 shrink-0 mt-0.5" />
             <span>
               <span className="font-semibold text-gray-800 dark:text-gray-100">Next milestone:</span>{" "}
-              {nextMilestone ? nextMilestone.label : "All current milestones reached — more are on the way."}
+              {nextMilestone ? nextMilestone.label : "All current milestones reached. More are on the way."}
             </span>
           </p>
         </div>
@@ -287,7 +287,7 @@ export function LegacyPathwayParentContent() {
           <StatCard label="Total Sessions" value={String(report.totalSessions)} icon={<Target size={16} className="text-purple-500" />} />
           <StatCard
             label="Overall Score"
-            value={report.overallScore > 0 ? `${report.overallScore}%` : "—"}
+            value={report.overallScore > 0 ? `${report.overallScore}%` : "N/A"}
             icon={<TrendingUp size={16} className="text-blue-500" />}
           />
           <StatCard
@@ -413,7 +413,7 @@ export function LegacyPathwayParentContent() {
       {report.competencySummaries.map((summary) => (
         <section key={summary.subject}>
           <h2 className="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-3">
-            {summary.subjectLabel} — How They&apos;re Doing
+            {summary.subjectLabel}: How They&apos;re Doing
           </h2>
           <div className="space-y-2">
             {summary.recentlyMastered.length > 0 && (
@@ -422,7 +422,7 @@ export function LegacyPathwayParentContent() {
                 <div>
                   <p className="text-sm font-semibold text-gray-900 dark:text-gray-100 mb-0.5">Just mastered</p>
                   <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
-                    {summary.recentlyMastered.map((i) => i.label).join(", ")} — great progress this session.
+                    {summary.recentlyMastered.map((i) => i.label).join(", ")}. Great progress this session.
                   </p>
                 </div>
               </div>
@@ -444,7 +444,7 @@ export function LegacyPathwayParentContent() {
                 <div>
                   <p className="text-sm font-semibold text-gray-900 dark:text-gray-100 mb-0.5">Improving</p>
                   <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
-                    Getting stronger with {summary.improving.map((i) => i.label).join(", ")} — keep up the regular practice.
+                    Getting stronger with {summary.improving.map((i) => i.label).join(", ")}. Keep up the regular practice.
                   </p>
                 </div>
               </div>
@@ -525,8 +525,8 @@ export function LegacyPathwayParentContent() {
         <div>
           <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">How this guidance works</p>
           <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 leading-relaxed">
-            These suggestions come from your child&apos;s real session history — scores, streaks and which subjects
-            they&apos;ve tried — compared against typical preparation milestones. It updates after every session.
+            These suggestions come from your child&apos;s real session history: scores, streaks and which subjects
+            they&apos;ve tried, compared against typical preparation milestones. It updates after every session.
           </p>
         </div>
       </InfoCard>

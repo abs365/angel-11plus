@@ -1,6 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import type { WritingFeedbackRequest, WritingFeedback } from "@/types/writing-feedback";
 
+// copy-guard-ignore-start: this is an instruction TO the AI model, never
+// rendered verbatim to a learner or parent — it is deliberately allowed to
+// name the prohibited characters so the model knows what to avoid
+// producing in its OWN output. Real learner-facing text (this route's
+// NextResponse error strings) stays outside this suppressed span.
 const SYSTEM_PROMPT = `You are a supportive writing coach giving 10–11 year olds general, craft-focused feedback on a practice piece of writing.
 
 You are NOT a CSSE (or any other exam board) examiner, and your feedback is NOT a validated or calibrated CSSE mark — do not claim, imply, or reference any specific exam board's marking standard, examiners, or grading criteria anywhere in your response. Give feedback on general writing craft only:
@@ -29,6 +34,8 @@ overallScore (0–100) is a general writing-quality estimate only — it is not 
 If writing is very short (under 60 words), note this in areas to improve.
 If writing appears off-topic, note this.
 
+Writing style rule: never use an em dash (—) or en dash (–) as sentence punctuation anywhere in your response. Write natural sentences using full stops, commas, semicolons or colons instead.
+
 Return ONLY valid JSON with no markdown, no preamble, no explanation outside the object:
 {
   "strengths": [string, string],
@@ -41,6 +48,19 @@ Return ONLY valid JSON with no markdown, no preamble, no explanation outside the
   "tutorTip": string,
   "overallScore": number
 }`;
+// copy-guard-ignore-end
+
+/**
+ * Runtime Copy Quality Guard for AI-generated feedback: replaces an em/en
+ * dash used as prose punctuation (surrounded by whitespace, e.g. "strong —
+ * but rushed") with a comma. Deliberately leaves a dash with no surrounding
+ * whitespace untouched (e.g. "10–15", a numeric range this model has no
+ * reason to produce here, but preserved on the same principle as the
+ * static guard in scripts/copy-quality-guard.mjs, for consistency).
+ */
+function stripDashPunctuation(text: string): string {
+  return text.replace(/\s+[—–]\s+/g, ", "); // copy-guard-ignore-line: this line's dash characters are the regex pattern being matched, not prose
+}
 
 function buildUserMessage(body: WritingFeedbackRequest): string {
   const checklist =
@@ -140,6 +160,18 @@ export async function POST(request: NextRequest) {
 
   // Clamp score to valid range
   feedback.overallScore = Math.max(0, Math.min(100, Math.round(feedback.overallScore ?? 0)));
+
+  // Copy Quality Guard (runtime): the system prompt instructs the model not
+  // to use em/en dash punctuation, but an LLM cannot be guaranteed to
+  // comply, so every AI-generated field is swept as a safety net before it
+  // reaches a learner. `suggestedUpgrade.original` is deliberately excluded:
+  // it must stay a verbatim quote of the student's own writing, dash and
+  // all, per this route's own "take ONE short excerpt... verbatim" instruction.
+  feedback.strengths = feedback.strengths.map(stripDashPunctuation) as [string, string];
+  feedback.areasToImprove = feedback.areasToImprove.map(stripDashPunctuation);
+  feedback.suggestedUpgrade.improved = stripDashPunctuation(feedback.suggestedUpgrade.improved);
+  feedback.suggestedUpgrade.explanation = stripDashPunctuation(feedback.suggestedUpgrade.explanation);
+  feedback.tutorTip = stripDashPunctuation(feedback.tutorTip);
 
   return NextResponse.json(feedback);
 }

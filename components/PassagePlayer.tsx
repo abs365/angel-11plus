@@ -303,16 +303,16 @@ export default function PassagePlayer({ passage }: Props) {
                 : "text-red-500 dark:text-red-400"
               }
             />
-            <Stat value={String(result.wpm || "—")} label="WPM" />
+            <Stat value={String(result.wpm || "N/A")} label="WPM" />
             <Stat value={`${result.wordsMatched}/${result.wordsTotal}`} label="Words" />
             <p className="text-xs text-gray-500 dark:text-gray-400 leading-snug flex-1 min-w-[120px]">
               {result.accuracy >= 90
                 ? "Excellent reading fluency."
                 : result.accuracy >= 75
-                ? "Good — a second read-through will sharpen this."
+                ? "Good. A second read-through will sharpen this."
                 : result.accuracy >= 55
-                ? "Keep practising — read slowly and clearly."
-                : "Try again — speak clearly and follow the text."}
+                ? "Keep practising. Read slowly and clearly."
+                : "Try again. Speak clearly and follow the text."}
             </p>
           </div>
           <button

@@ -462,7 +462,7 @@ export default function AdaptiveGlMockPage() {
               <div className="text-xs text-amber-700 dark:text-amber-300 space-y-1 leading-relaxed">
                 <p className="font-semibold">Before you start</p>
                 <p>Section 1 selects questions matched to your level. Sections 2–4 are standard timed practice. This is original practice content and is not affiliated with GL Assessment.</p>
-                <p>Section 1&apos;s question bank is currently a small sample set while we build out the full one — you may see the same questions again across sessions.</p>
+                <p>Section 1&apos;s question bank is currently a small sample set while we build out the full one, so you may see the same questions again across sessions.</p>
               </div>
             </div>
           </div>
@@ -536,7 +536,7 @@ export default function AdaptiveGlMockPage() {
 
         {usingSyntheticFixture && currentSection.adaptive && (
           <div className="bg-amber-50 dark:bg-amber-950 text-amber-700 dark:text-amber-300 text-xs text-center py-1.5">
-            Sample practice questions — not yet your full personalised set
+            Sample practice questions: not yet your full personalised set
           </div>
         )}
 
@@ -564,7 +564,7 @@ export default function AdaptiveGlMockPage() {
                 )}
                 <div className="flex-1">
                   <p className={`text-sm font-semibold mb-1 ${wasCorrect ? "text-green-700 dark:text-green-300" : "text-red-600 dark:text-red-400"}`}>
-                    {wasCorrect ? "Correct!" : `Incorrect — answer: ${currentQuestion.answer}`}
+                    {wasCorrect ? "Correct!" : `Incorrect. Answer: ${currentQuestion.answer}`}
                   </p>
                   <p className="text-xs text-gray-600 dark:text-gray-400 leading-relaxed">{currentQuestion.explanation}</p>
                 </div>

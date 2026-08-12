@@ -157,7 +157,7 @@ export default function WritingPage() {
           {/* Written piece */}
           <div className="bg-white dark:bg-gray-900 rounded-2xl p-5 border border-gray-100 dark:border-gray-800 mb-4">
             <p className="text-xs text-gray-400 dark:text-gray-500 font-semibold uppercase tracking-wide mb-3">
-              Your Response — {selectedPrompt.title}
+              Your Response: {selectedPrompt.title}
             </p>
             <div>
               {writingText.split("\n").map((para, i) => (
@@ -451,7 +451,7 @@ export default function WritingPage() {
           <Sparkles size={14} aria-hidden="true" className="text-indigo-500 shrink-0" />
           <p className="text-indigo-700 dark:text-indigo-300 text-sm">
             After submitting, you can request{" "}
-            <strong>Angel Smart Feedback</strong> — tailored analysis of your technique, strengths, and
+            <strong>Angel Smart Feedback</strong>: tailored analysis of your technique, strengths, and
             one specific improvement.
           </p>
         </div>

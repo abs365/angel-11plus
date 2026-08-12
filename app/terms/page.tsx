@@ -35,7 +35,7 @@ export default function TermsPage() {
             <li>• Features may change without notice</li>
             <li>• The platform may experience downtime or errors</li>
             <li>• Content is provided as-is and we make no guarantees of completeness</li>
-            <li>• Beta access may be free or subsidised — pricing for public launch will be communicated separately</li>
+            <li>• Beta access may be free or subsidised; pricing for public launch will be communicated separately</li>
           </ul>
         </Section>
 

@@ -160,7 +160,7 @@ export default function ReasoningHubPage() {
           <h1 className="text-gray-900 dark:text-gray-100 font-bold text-2xl mb-2">Practice</h1>
           <p className="text-gray-500 dark:text-gray-400 text-sm leading-relaxed max-w-lg">
             Reasoning skills are tested across nearly every UK selective school entrance exam. Each discipline below
-            strengthens a specific competency and adapts to your level as you practise — consistent practice here
+            strengthens a specific competency and adapts to your level as you practise. Consistent practice here
             contributes directly to admission readiness.
           </p>
         </div>

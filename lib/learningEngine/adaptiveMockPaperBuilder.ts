@@ -127,14 +127,14 @@ function rank(c: AnnotatedCandidate): number {
 
 function reasonFor(c: AnnotatedCandidate): string {
   if (c.priorityTier === "unmapped") {
-    return "No Assessment Brain competency mapping resolved for this question's skill code — included only to help fill this subject's target, never prioritised.";
+    return "No Assessment Brain competency mapping resolved for this question's skill code. Included only to help fill this subject's target, never prioritised.";
   }
   if (c.priorityTier === "priority") {
-    return `Prioritised — "${c.competencyId}" is a recorded development area, low-confidence area, or not-yet-evidenced competency.`;
+    return `Prioritised: "${c.competencyId}" is a recorded development area, low-confidence area, or not-yet-evidenced competency.`;
   }
   return c.everSeen
-    ? "Standard-priority competency, previously seen — included to fill the remaining target after priority and unseen candidates."
-    : "Standard-priority competency, not yet seen — included to fill the remaining target.";
+    ? "Standard-priority competency, previously seen. Included to fill the remaining target after priority and unseen candidates."
+    : "Standard-priority competency, not yet seen. Included to fill the remaining target.";
 }
 
 function selectForSubject(
@@ -182,7 +182,7 @@ function validateSelection(
     passed: allFromRealBank,
     detail: allFromRealBank
       ? "Every selected question is drawn from the real, fetched question bank."
-      : "A selected question was not found in the fetched bank — selection integrity violated.",
+      : "A selected question was not found in the fetched bank. Selection integrity violated.",
   });
 
   // Spec §4.3 — a subject with real candidates and a non-zero target must be represented.

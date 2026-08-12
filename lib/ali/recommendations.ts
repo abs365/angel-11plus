@@ -22,7 +22,7 @@ export const COMPETENCY_RELATIONSHIPS: CompetencyRelationship[] = [
     toSubject: "verbal-reasoning",
     relationshipType: "shared-mechanism",
     strength: "strong",
-    rationale: "Both test the same underlying skill — recognising close word-meaning relationships — just via different formats (MCQ word-pair vs. flashcard-style word).",
+    rationale: "Both test the same underlying skill (recognising close word-meaning relationships), just via different formats (MCQ word-pair vs. flashcard-style word).",
   },
   {
     fromCompetency: "vocabulary.antonyms",
@@ -38,7 +38,7 @@ export const COMPETENCY_RELATIONSHIPS: CompetencyRelationship[] = [
     toSubject: "english",
     relationshipType: "shared-mechanism",
     strength: "strong",
-    rationale: "Both test recognising a word's correct meaning/usage — Vocabulary via a standalone sentence, English via a passage — the underlying skill (contextual word comprehension) is the same.",
+    rationale: "Both test recognising a word's correct meaning/usage (Vocabulary via a standalone sentence, English via a passage); the underlying skill, contextual word comprehension, is the same.",
   },
   {
     fromCompetency: "maths.fractions",
@@ -46,7 +46,7 @@ export const COMPETENCY_RELATIONSHIPS: CompetencyRelationship[] = [
     toSubject: "numerical-reasoning",
     relationshipType: "shared-mechanism",
     strength: "moderate",
-    rationale: "Real curriculum relationship (both require proportional reasoning) but numerical-reasoning has no ALI competency taxonomy or question bank yet — this edge is dormant (cannot fire, §below) until that subject is ALI-covered. Kept in the graph now so it's ready the moment it is, per the expansion strategy already documented in ALI_CROSS_SUBJECT_INTELLIGENCE.md §5.",
+    rationale: "Real curriculum relationship (both require proportional reasoning), but numerical-reasoning has no ALI competency taxonomy or question bank yet, so this edge is dormant (cannot fire, §below) until that subject is ALI-covered. Kept in the graph now so it's ready the moment it is, per the expansion strategy already documented in ALI_CROSS_SUBJECT_INTELLIGENCE.md §5.",
   },
   {
     fromCompetency: "vr.sequences",
@@ -54,7 +54,7 @@ export const COMPETENCY_RELATIONSHIPS: CompetencyRelationship[] = [
     toSubject: "english",
     relationshipType: "shared-mechanism",
     strength: "weak",
-    rationale: "Both draw on multi-step logical pattern-recognition, but the domains (abstract letter/number sequences vs. narrative inference) are different enough that this should be a low-confidence link, not a strong one — deliberately weak so it never fires a live recommendation (§below), flagged here explicitly so it isn't mistaken for an oversight.",
+    rationale: "Both draw on multi-step logical pattern-recognition, but the domains (abstract letter/number sequences vs. narrative inference) are different enough that this should be a low-confidence link, not a strong one. Deliberately weak so it never fires a live recommendation (§below); flagged here explicitly so it isn't mistaken for an oversight.",
   },
   {
     fromCompetency: "english.vocabulary-in-context",
@@ -62,7 +62,7 @@ export const COMPETENCY_RELATIONSHIPS: CompetencyRelationship[] = [
     toSubject: "vocabulary",
     relationshipType: "sequential-dependency",
     strength: "strong",
-    rationale: "A student weak at recognising word meaning within a passage may benefit from focused, standalone word-in-context practice as a prerequisite-building activity — the reverse direction from the shared-mechanism edges above, and the one live example of the 'moderate confidence, weak source' recommendation tier.",
+    rationale: "A student weak at recognising word meaning within a passage may benefit from focused, standalone word-in-context practice as a prerequisite-building activity. This is the reverse direction from the shared-mechanism edges above, and the one live example of the 'moderate confidence, weak source' recommendation tier.",
   },
 ];
 

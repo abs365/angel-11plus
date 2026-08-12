@@ -1,7 +1,7 @@
 {
   "name": "Angel 11+ Prep",
   "short_name": "Angel 11+",
-  "description": "Premium 11+ selective school preparation — English, Maths, Vocabulary, Writing",
+  "description": "Premium 11+ selective school preparation: English, Maths, Vocabulary, Writing",
   "id": "/dashboard",
   "start_url": "/dashboard",
   "scope": "/",

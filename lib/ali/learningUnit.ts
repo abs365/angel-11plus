@@ -192,7 +192,7 @@ export function selectLearningUnit(
       },
       weakSkillOverride: isWeakQuestion,
       replayReason: isWeakQuestion
-        ? `Competency "${q.skill}" is currently weak — this Learning Unit was chosen ahead of its normal cooldown for remediation.`
+        ? `Competency "${q.skill}" is currently weak. This Learning Unit was chosen ahead of its normal cooldown for remediation.`
         : null,
     };
   });

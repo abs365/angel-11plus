@@ -158,7 +158,7 @@ export default function AdaptiveEnglishMockPage() {
         for (const entry of trace) {
           console.log(
             `  ${entry.questionId} [${entry.competency}] ${entry.selectionReason}` +
-              (entry.replayReason ? ` — ${entry.replayReason}` : "")
+              (entry.replayReason ? ` (${entry.replayReason})` : "")
           );
         }
       }
@@ -306,7 +306,7 @@ export default function AdaptiveEnglishMockPage() {
               <Clock size={18} className="text-gray-400 dark:text-gray-500" />
               <span className="text-sm text-gray-700 dark:text-gray-300">Around <strong>10-15 minutes</strong></span>
             </div>
-            <p className="text-sm text-gray-600 dark:text-gray-400">One passage, with every question that belongs to it — never split apart.</p>
+            <p className="text-sm text-gray-600 dark:text-gray-400">One passage, with every question that belongs to it: never split apart.</p>
           </div>
 
           <div className="bg-amber-50 dark:bg-amber-950 border border-amber-100 dark:border-amber-900 rounded-xl p-4">
@@ -315,7 +315,7 @@ export default function AdaptiveEnglishMockPage() {
               <div className="text-xs text-amber-700 dark:text-amber-300 space-y-1 leading-relaxed">
                 <p className="font-semibold">Before you start</p>
                 <p>Your answers are compared to a model answer to check for full marks. Read the model answer afterwards to see what to improve.</p>
-                <p>Our passage bank is currently a small sample set while we build out the full one — you may see the same passage again across sessions.</p>
+                <p>Our passage bank is currently a small sample set while we build out the full one, so you may see the same passage again across sessions.</p>
               </div>
             </div>
           </div>
@@ -375,7 +375,7 @@ export default function AdaptiveEnglishMockPage() {
 
         {usingSyntheticFixture && (
           <div className="bg-amber-50 dark:bg-amber-950 text-amber-700 dark:text-amber-300 text-xs text-center py-1.5">
-            Sample passage — not yet your full personalised set
+            Sample passage: not yet your full personalised set
           </div>
         )}
 
