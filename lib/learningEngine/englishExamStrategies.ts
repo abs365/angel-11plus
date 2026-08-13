@@ -76,6 +76,15 @@ export const ENGLISH_FAMILY_WORKED_EXAMPLE: Partial<Record<string, WorkedExample
     weakAnswerLooksLike: "Quoting the right words but then just restating them in different words, without explaining what they reveal.",
     whatImprovesIt: "Naming the feeling or idea the quotation reveals, and connecting it clearly back to the question.",
   },
+  // Educational Increment 007C, Part 3/7 — 5th priority family added to
+  // MODEL coverage on completion (was 4 of 9; see ENGLISH_WAVE2_MODEL_
+  // COVERAGE_AUDIT_V1.md for the full 9-family classification).
+  "wave1-fam-vocab-explain": {
+    scenario: "Imagine a sentence describing someone's walk as 'a determined trudge up the hill'.",
+    modelReasoning: "Cover the tricky word ('trudge') with a finger and read the rest of the sentence. 'Determined' and 'up the hill' both suggest effort, so the word likely means a slow, effortful walk, not a light or easy one.",
+    weakAnswerLooksLike: "Guessing a meaning that sounds similar to the word but isn't supported by the sentence around it, such as confusing 'trudge' with 'trek' as a place name rather than a way of walking.",
+    whatImprovesIt: "Checking the guessed meaning actually fits back into the sentence sensibly, using only clues that are really there in the surrounding words.",
+  },
 };
 
 export function getWorkedExample(familyId?: string | null): WorkedExample | undefined {

@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { checkAcceptedAnswerSet, checkQuotationPresent, checkOrderedSequence, checkMultiSelect } from "@/lib/learningEngine/englishAnswerValidation";
+import { checkAcceptedAnswerSet, checkQuotationPresent, checkOrderedSequence, checkMultiSelect, scoreEnglishComprehensionAnswer } from "@/lib/learningEngine/englishAnswerValidation";
 
 /**
  * Educational Increment 007B. Exercises the 007A-designed Answer
@@ -141,4 +141,52 @@ test("Tier 6: a completely wrong selection set (all distractors) earns zero, not
   const result = checkMultiSelect(["B", "C", "F", "H"], ["A", "D", "E", "G"], 4);
   assert.equal(result.marks, 0);
   assert.equal(Number.isNaN(result.marks), false);
+});
+
+// --- Tier 6 completion (007C completion, Part 9): boundary tests explicitly
+// required beyond the first 7 --------------------------------------------
+
+test("Tier 6: duplicate selections do not inflate the count or double-count marks", () => {
+  const result = checkMultiSelect(["A", "A", "A", "D"], ["A", "D", "E", "G"], 4);
+  // "A" repeated 3 times collapses to one selection via the Set; selectedCount
+  // must reflect the 2 distinct options actually chosen, not 4 raw tokens.
+  assert.equal(result.selectedCount, 2);
+  assert.equal(result.marks, 2);
+  assert.equal(result.overSelected, false);
+});
+
+test("Tier 6: duplicates that would otherwise push the raw token count over the limit do not falsely trigger over-selection", () => {
+  // 6 raw tokens but only 4 distinct options -> must NOT be treated as over-selected.
+  const result = checkMultiSelect(["A", "A", "D", "D", "E", "G"], ["A", "D", "E", "G"], 4);
+  assert.equal(result.selectedCount, 4);
+  assert.equal(result.overSelected, false);
+  assert.equal(result.exactMatch, true);
+  assert.equal(result.marks, 4);
+});
+
+test("Tier 6: malformed free-text input (stray punctuation, blank lines, mixed case) via the real end-to-end dispatcher still scores correctly", () => {
+  const prompt = { marks: 4, validationTier: "TIER6_MULTI_SELECT" as const, correctOptions: ["A", "D", "E", "G"], requiredSelectionCount: 4 };
+  const legacy = () => 0;
+  const result = scoreEnglishComprehensionAnswer("  a,, \n\n d , e\n g.  ", prompt, legacy);
+  assert.equal(result.tier, "TIER6_MULTI_SELECT");
+  assert.equal(result.multiSelectDetail?.marks, 4, "stray commas, blank lines and trailing punctuation-adjacent whitespace must not break parsing of a genuinely correct answer");
+});
+
+test("Tier 6: completely non-option garbage input scores zero without throwing", () => {
+  const prompt = { marks: 4, validationTier: "TIER6_MULTI_SELECT" as const, correctOptions: ["A", "D", "E", "G"], requiredSelectionCount: 4 };
+  const legacy = () => 0;
+  const result = scoreEnglishComprehensionAnswer("banana, purple elephant, 12345", prompt, legacy);
+  assert.equal(result.multiSelectDetail?.marks, 0);
+  assert.equal(Number.isNaN(result.multiSelectDetail?.marks), false);
+});
+
+test("Tier 6: maximum score boundary — requiredCount equal to the full correct set earns full marks, no more no less", () => {
+  const result = checkMultiSelect(["A", "D", "E", "G"], ["A", "D", "E", "G"], 4);
+  assert.equal(result.marks, result.requiredCount);
+});
+
+test("Tier 6: partial-credit boundary — exactly one below the required count earns exactly requiredCount-1 when all selected are correct", () => {
+  const result = checkMultiSelect(["A", "D", "E"], ["A", "D", "E", "G"], 4);
+  assert.equal(result.marks, 3);
+  assert.equal(result.marks, result.requiredCount - 1);
 });

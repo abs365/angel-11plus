@@ -26,8 +26,10 @@ import {
   scoreEnglishAnswer,
   WRITING_CORRECTNESS_THRESHOLD,
 } from "@/lib/learningEngine/practiceContent";
-import { scoreEnglishComprehensionAnswer, type EnglishScoringResult, type ValidationTier } from "@/lib/learningEngine/englishAnswerValidation";
+import { scoreEnglishComprehensionAnswer, checkQuotationPresent, type EnglishScoringResult, type ValidationTier } from "@/lib/learningEngine/englishAnswerValidation";
 import { getExamStrategyHint, getWorkedExample } from "@/lib/learningEngine/englishExamStrategies";
+import { getGuidedScaffoldKind, getGuidedInstructionText, checkLiveSelectionCount } from "@/lib/learningEngine/guidedPractice";
+import { classifyAutomaticError, getSelfReflectionCategories, WRONG_ANSWER_CATEGORY_LABEL } from "@/lib/learningEngine/englishErrorClassification";
 import { CompetencyProfile } from "@/components/learningEngine/CompetencyProfile";
 import { EvidenceProfile } from "@/components/learningEngine/EvidenceProfile";
 import { DiagnosticOverview } from "@/components/learningEngine/DiagnosticOverview";
@@ -98,6 +100,17 @@ export default function PracticeSessionPage({ params }: { params: Promise<{ area
   // see recordAndAdvance()'s docstring below for why these must be
   // captured before recordPresentation() runs, not inside recordAndAdvance).
   const preSessionSnapshotsRef = useRef<Map<CompetencyId, EducationalIntelligenceSnapshot>>(new Map());
+  // Educational Increment 007C, Part 5 — families still defaulting to
+  // Guided Practice this session. Seeded at session start with every
+  // family that has a real scaffold (lib/learningEngine/guidedPractice.ts)
+  // and appears in this session; a family is removed the first time the
+  // learner answers it correctly under guidance ("gradually reduce
+  // support" — session-local only, not a new mastery mechanic).
+  const guidedFamiliesRef = useRef<Set<string>>(new Set());
+  // Remembers whether the just-submitted (non-auto-verified) attempt was
+  // made under Guided Practice, across the async gap until the learner
+  // responds to self-assessment.
+  const pendingGuidedRef = useRef(false);
 
   if (!area) {
     return (
@@ -173,6 +186,12 @@ export default function PracticeSessionPage({ params }: { params: Promise<{ area
         recordPresentation(supabase, profileId, tagged.map((q) => q.id), "practice_experience"),
         10000,
         "starting your session"
+      );
+
+      guidedFamiliesRef.current = new Set(
+        tagged
+          .map((q) => q.familyId)
+          .filter((id): id is string => Boolean(id) && Boolean(getGuidedScaffoldKind(id)))
       );
 
       setActivities(tagged);
@@ -266,7 +285,7 @@ export default function PracticeSessionPage({ params }: { params: Promise<{ area
     }
   }
 
-  async function submitReadingOrMaths() {
+  async function submitReadingOrMaths(guided: boolean = false) {
     if (area!.id === "mathematics") {
       const q = current.prompt as MathsQuestion;
       const isCorrect = checkMathsAnswer(answer, String(q.answer));
@@ -277,18 +296,24 @@ export default function PracticeSessionPage({ params }: { params: Promise<{ area
       // rows, no validationTier metadata) falls through to the exact same
       // scoreEnglishAnswer heuristic and "independent" recording as
       // before, byte-for-byte — this is an extension, not a replacement.
-      const q = current.prompt as EnglishComprehensionPrompt & {
-        acceptedAnswers?: string[]; quotationRequired?: string[]; orderedAnswer?: string[];
-        validationTier?: ValidationTier;
-      };
+      const q = current.prompt as EnglishComprehensionPrompt;
       const result = scoreEnglishComprehensionAnswer(answer, q, scoreEnglishAnswer);
       if (result.automaticallyVerified) {
         setLastAutoResult(result);
-        await recordAndAdvance(result.earnedMarks === q.marks, q.skill);
+        const isCorrect = result.earnedMarks === q.marks;
+        await recordAndAdvance(isCorrect, q.skill, guided ? "supported" : "independent");
+        // Educational Increment 007C, Part 5 — "gradually reduce support":
+        // once a family is answered correctly under Guided Practice, it
+        // stops defaulting to guided for the rest of this session. A
+        // session-local nudge, not a new mastery mechanic — the mastery
+        // gate itself (lib/ali/mastery.ts) is untouched and still requires
+        // supportTier === "independent" regardless of this.
+        if (guided && isCorrect && current.familyId) guidedFamiliesRef.current.delete(current.familyId);
       } else {
         // Do not fabricate correctness. Hold the attempt for the
         // learner's own self-comparison against the model answer —
         // recordAndAdvance() is deferred until they respond (Part 7).
+        pendingGuidedRef.current = guided;
         setSubmitted(true);
         setPendingSelfAssessment(result);
       }
@@ -302,8 +327,15 @@ export default function PracticeSessionPage({ params }: { params: Promise<{ area
     // supportTier === "independent", so a self-assessed attempt can
     // never accidentally produce the same mastery evidence as a
     // genuinely independent correct answer (Part 7's explicit
-    // requirement), with no new mechanism invented.
+    // requirement), with no new mechanism invented. This is true
+    // regardless of Guided Practice — self-assessed Tier 3/5 answers were
+    // already "supported" before Part 5 existed; guided merely adds
+    // formative scaffolding shown before this point.
     await recordAndAdvance(learnerSaysCorrect, q.skill, "supported");
+    if (pendingGuidedRef.current && learnerSaysCorrect && current.familyId) {
+      guidedFamiliesRef.current.delete(current.familyId);
+    }
+    pendingGuidedRef.current = false;
     setPendingSelfAssessment(null);
   }
 
@@ -425,8 +457,10 @@ export default function PracticeSessionPage({ params }: { params: Promise<{ area
 
             {area.id === "reading-comprehension" && (
               <ReadingActivity
+                key={current.id}
                 prompt={current.prompt as EnglishComprehensionPrompt}
                 familyId={current.familyId}
+                guidedAvailable={Boolean(current.familyId && guidedFamiliesRef.current.has(current.familyId))}
                 answer={answer}
                 setAnswer={setAnswer}
                 submitted={submitted}
@@ -543,10 +577,11 @@ export default function PracticeSessionPage({ params }: { params: Promise<{ area
 }
 
 function ReadingActivity({
-  prompt, familyId, answer, setAnswer, submitted, lastCorrect, pendingSelfAssessment, lastAutoResult, onSelfAssess, onSubmit, onNext, isLast,
+  prompt, familyId, guidedAvailable, answer, setAnswer, submitted, lastCorrect, pendingSelfAssessment, lastAutoResult, onSelfAssess, onSubmit, onNext, isLast,
 }: {
   prompt: EnglishComprehensionPrompt;
   familyId?: string;
+  guidedAvailable: boolean;
   answer: string;
   setAnswer: (v: string) => void;
   submitted: boolean;
@@ -554,14 +589,30 @@ function ReadingActivity({
   pendingSelfAssessment: EnglishScoringResult | null;
   lastAutoResult: EnglishScoringResult | null;
   onSelfAssess: (learnerSaysCorrect: boolean) => void;
-  onSubmit: () => void;
+  onSubmit: (guided: boolean) => void;
   onNext: () => void;
   isLast: boolean;
 }) {
   const [showStrategyHint, setShowStrategyHint] = useState(false);
   const [showWorkedExample, setShowWorkedExample] = useState(false);
+  // Educational Increment 007C, Part 5 — Guided Practice. Defaults on for
+  // a family the learner hasn't yet succeeded at under guidance this
+  // session (guidedAvailable, computed by the parent from
+  // guidedFamiliesRef). This component remounts fresh per question (see
+  // the `key={current.id}` on its call site), so this default is
+  // re-evaluated every question rather than sticking from a stale render.
+  const [guidedMode, setGuidedMode] = useState(guidedAvailable);
+  const [quotationCheckResult, setQuotationCheckResult] = useState<boolean | null>(null);
   const strategyHint = getExamStrategyHint(familyId);
   const workedExample = getWorkedExample(familyId);
+  const scaffoldKind = getGuidedScaffoldKind(familyId);
+  const liveSelectionCheck =
+    scaffoldKind === "selection-count-check"
+      ? checkLiveSelectionCount(answer, prompt.requiredSelectionCount ?? prompt.marks)
+      : null;
+  const automaticErrorCategories =
+    submitted && !lastCorrect && lastAutoResult ? classifyAutomaticError(lastAutoResult, familyId) : [];
+  const selfReflectionCategories = getSelfReflectionCategories(familyId);
 
   return (
     <InfoCard className="mt-3">
@@ -594,6 +645,18 @@ function ReadingActivity({
             {showWorkedExample ? "Hide worked example" : "See a worked example"}
           </button>
         )}
+        {/* Educational Increment 007C, Part 5 — Guided Practice toggle.
+            Recording still goes through the same supportTier gate as
+            self-assessment; this only controls whether scaffolding is
+            shown and which supportTier this attempt is recorded with. */}
+        {scaffoldKind && !submitted && (
+          <button
+            onClick={() => setGuidedMode((v) => !v)}
+            className="text-xs text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950 hover:bg-emerald-100 dark:hover:bg-emerald-900 px-3 py-1.5 rounded-lg font-medium transition-colors"
+          >
+            {guidedMode ? "Switch to independent practice" : "Try with guidance"}
+          </button>
+        )}
       </div>
       {showStrategyHint && !submitted && strategyHint && (
         <p className="mt-2 text-xs text-amber-700 dark:text-amber-300 bg-amber-50 dark:bg-amber-950 rounded-xl p-3">
@@ -609,9 +672,55 @@ function ReadingActivity({
         </div>
       )}
 
+      {/* Educational Increment 007C, Part 5 — the actual Guided Practice
+          scaffold, family-appropriate, never revealing the answer key
+          text itself (sequence-anchor is the one disclosed exception —
+          it shows the FIRST ordered item, per the directive's own
+          example of a legitimate "sequencing anchor"). */}
+      {guidedMode && !submitted && scaffoldKind && (
+        <div className="mt-2 text-xs text-emerald-800 dark:text-emerald-200 bg-emerald-50 dark:bg-emerald-950 rounded-xl p-3 space-y-2">
+          <p>{getGuidedInstructionText(familyId, scaffoldKind)}</p>
+          {scaffoldKind === "sequence-anchor" && prompt.orderedAnswer?.[0] && (
+            <p className="font-semibold">Given: 1. {prompt.orderedAnswer[0]}</p>
+          )}
+          {scaffoldKind === "selection-count-check" && liveSelectionCheck && (
+            <p className={`font-semibold ${liveSelectionCheck.overLimit ? "text-red-700 dark:text-red-300" : ""}`}>
+              Selected: {liveSelectionCheck.selectedCount} of {prompt.requiredSelectionCount ?? prompt.marks}
+              {liveSelectionCheck.overLimit ? ": that's too many, remove one before submitting" : ""}
+            </p>
+          )}
+          {scaffoldKind === "staged-quotation" && (
+            <div>
+              <button
+                type="button"
+                onClick={() =>
+                  setQuotationCheckResult(
+                    Boolean(prompt.quotationRequired?.length) &&
+                      prompt.quotationRequired!.some((q) => checkQuotationPresent(answer, q).quotationFound)
+                  )
+                }
+                className="text-xs bg-emerald-600 hover:bg-emerald-700 text-white font-semibold px-3 py-1.5 rounded-lg transition-colors"
+              >
+                Check my quotation
+              </button>
+              {quotationCheckResult !== null && (
+                <p className="mt-1.5">
+                  {quotationCheckResult
+                    ? "Angel found the exact words you need somewhere in your answer."
+                    : "Angel couldn't find the exact words yet. Check you copied them precisely from the passage, then try again."}
+                </p>
+              )}
+            </div>
+          )}
+        </div>
+      )}
+
       <textarea
         value={answer}
-        onChange={(e) => setAnswer(e.target.value)}
+        onChange={(e) => {
+          setAnswer(e.target.value);
+          if (quotationCheckResult !== null) setQuotationCheckResult(null);
+        }}
         disabled={submitted}
         rows={4}
         className="w-full mt-2 text-sm rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-3"
@@ -662,21 +771,46 @@ function ReadingActivity({
                 Not quite
               </button>
             </div>
+            {/* Educational Increment 007C, Part 8 — offered to the LEARNER
+                as a bounded self-reflection checklist once they've judged
+                their own answer against the model answer. Angel never
+                claims to have detected these itself for a self-assessed
+                tier it cannot verify. */}
+            {selfReflectionCategories.length > 0 && (
+              <div className="mt-2">
+                <p className="text-[11px] text-gray-400 dark:text-gray-500">If it wasn&apos;t quite right, was it more like:</p>
+                <ul className="text-[11px] text-gray-500 dark:text-gray-400 list-disc list-inside">
+                  {selfReflectionCategories.map((c) => (
+                    <li key={c}>{WRONG_ANSWER_CATEGORY_LABEL[c]}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
           </div>
         </div>
       ) : (
         <>
-          <SubmitOrNext submitted={submitted} lastCorrect={lastCorrect} onSubmit={onSubmit} onNext={onNext} isLast={isLast} disabled={!answer.trim()} />
-          {/* Educational Increment 007C, Part 9 — specific multi-select
-              remediation, using only the real classification checkMultiSelect
-              already computed (over-selection vs under-selection vs wrong
-              selections), never a fabricated diagnosis. */}
+          <SubmitOrNext submitted={submitted} lastCorrect={lastCorrect} onSubmit={() => onSubmit(guidedMode)} onNext={onNext} isLast={isLast} disabled={!answer.trim()} />
+          {/* Educational Increment 007C, Part 8/9 — wrong-answer
+              remediation, using only real classifications
+              classifyAutomaticError() derived from what the scoring
+              result's own structure demonstrated (never a fabricated
+              diagnosis). Multi-select keeps its specific worded message;
+              other automatically-verified tiers get the general
+              classification label. */}
           {submitted && !lastCorrect && lastAutoResult?.multiSelectDetail && (
             <p className="text-xs text-blue-700 dark:text-blue-300 bg-blue-50 dark:bg-blue-950 rounded-xl p-3 mt-3">
               {lastAutoResult.multiSelectDetail.overSelected
                 ? `You ticked ${lastAutoResult.multiSelectDetail.selectedCount} boxes, more than the ${lastAutoResult.multiSelectDetail.requiredCount} asked for. Selecting more than the number instructed loses all the marks for this question, even if some ticks were right.`
                 : `You selected ${lastAutoResult.multiSelectDetail.correctCount} of the ${lastAutoResult.multiSelectDetail.requiredCount} correct boxes. Check each option against the passage one at a time before you decide.`}
             </p>
+          )}
+          {submitted && !lastCorrect && !lastAutoResult?.multiSelectDetail && automaticErrorCategories.length > 0 && (
+            <div className="text-xs text-blue-700 dark:text-blue-300 bg-blue-50 dark:bg-blue-950 rounded-xl p-3 mt-3">
+              {automaticErrorCategories.map((c) => (
+                <p key={c}>{WRONG_ANSWER_CATEGORY_LABEL[c]}</p>
+              ))}
+            </div>
           )}
           {submitted && prompt.modelAnswer && (
             <p className="text-xs text-gray-500 dark:text-gray-400 mt-3 bg-gray-50 dark:bg-gray-800 rounded-xl p-3">

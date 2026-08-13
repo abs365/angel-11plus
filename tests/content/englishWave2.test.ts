@@ -12,6 +12,7 @@ interface Wave2Item {
   passageId: string;
   question: string;
   competency: string;
+  family: string;
   validation: string;
   misconception: string;
   acceptedAnswers: string[] | null;
@@ -31,8 +32,12 @@ const items = wave2Content.items as Wave2Item[];
  * test against future edits.
  */
 
-test("Wave 2: 8 passages authored", () => {
-  assert.equal(passages.length, 8);
+test("Wave 2: 9 passages authored (8 original + 1 added on completion, Part 4)", () => {
+  assert.equal(passages.length, 9);
+});
+
+test("Wave 2: at least 60 questions authored (completion requirement)", () => {
+  assert.ok(items.length >= 60, `expected at least 60 questions, got ${items.length}`);
 });
 
 test("Wave 2: every question id is unique", () => {
@@ -101,7 +106,7 @@ test("Wave 2: every question's declared tier actually matches the data it carrie
 
 test("Wave 2: multi-select over-selection loses all marks for every wave2-fam-multiselect question", () => {
   const multiSelectItems = items.filter((it) => it.validation === "TIER6_MULTI_SELECT");
-  assert.ok(multiSelectItems.length >= 3, "expected at least 3 multi-select questions this wave");
+  assert.ok(multiSelectItems.length >= 6, "expected at least 6 multi-select questions after completion (Part 3A)");
   for (const it of multiSelectItems) {
     const overSelected = [...it.correctOptions!, "Z"]; // one extra, definitely-wrong option beyond the required count
     const result = checkMultiSelect(overSelected, it.correctOptions!, it.requiredSelectionCount!);
@@ -118,9 +123,26 @@ test("Wave 2: all four evidence-confirmed competencies plus the new multi-select
   assert.ok(multiSelectCount > 0, "the new multi-select family must have real coverage");
 });
 
-test("Wave 2: two-character family has more than Wave 1's single instance", () => {
-  const twoCharacterCount = items.filter((i) => i.validation === "TIER3_QUOTATION_PLUS_EXPLANATION" && i.question.toLowerCase().includes("differ")).length;
-  assert.ok(twoCharacterCount >= 2, "Wave 2 must deepen two-character coverage beyond Wave 1's single instance");
+test("Wave 2: two-character family reaches at least 5 new instances, cumulative total (with Wave 1's 1) at least 6", () => {
+  const twoCharacterCount = items.filter((i) => i.family === "wave1-fam-two-character").length;
+  assert.ok(twoCharacterCount >= 5, "Wave 2 must contribute at least 5 two-character instances so the cumulative total (with Wave 1's 1) reaches at least 6");
+});
+
+test("Wave 2 completion: sequencing gains structural variety, not just repeated 3-item reorder questions", () => {
+  const sequencing = items.filter((i) => i.family === "wave1-fam-sequencing");
+  assert.ok(sequencing.length >= 9, "sequencing must grow beyond Wave 1+original-Wave-2's combined 12... at least 9 within Wave 2 alone");
+  const fourItemSequences = sequencing.filter((i) => i.orderedAnswer && i.orderedAnswer.length === 4);
+  assert.ok(fourItemSequences.length >= 3, "at least 3 completion-added sequencing questions must use a 4-item chain, a structurally distinct shape from the original 3-item reorder pattern");
+});
+
+test("Wave 2 completion: the new passage (wave2-eng-surprise) is real, original, and distinct from the other 8", () => {
+  const surprise = passages.find((p) => p.id === "wave2-eng-surprise");
+  assert.ok(surprise, "wave2-eng-surprise must exist");
+  const others = passages.filter((p) => p.id !== "wave2-eng-surprise");
+  for (const other of others) {
+    assert.notEqual(surprise.originalText, other.originalText);
+  }
+  assert.ok(surprise.originalText.length > 1000, "the new passage must be a real, substantial passage, not a stub");
 });
 
 test("Wave 2: no question declares its own eligibility_status in content data", () => {

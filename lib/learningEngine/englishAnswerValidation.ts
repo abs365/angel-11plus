@@ -155,7 +155,13 @@ export interface MultiSelectResult {
  * not fabricated as confirmed.
  */
 export function checkMultiSelect(selectedOptions: string[], correctOptions: string[], requiredCount: number): MultiSelectResult {
-  const normalise = (s: string) => s.trim().toUpperCase();
+  // Educational Increment 007C completion, Part 9 — every real question in
+  // this family uses single-letter options (A-H), so stripping anything
+  // that isn't a letter or digit is always safe and never collapses two
+  // genuinely distinct options together. Found via a malformed-input
+  // boundary test: a trailing full stop a learner might naturally type
+  // ("G.") was silently failing to match "G" before this fix.
+  const normalise = (s: string) => s.trim().toUpperCase().replace(/[^A-Z0-9]/g, "");
   const selected = new Set(selectedOptions.map(normalise).filter((s) => s.length > 0));
   const correct = new Set(correctOptions.map(normalise));
 

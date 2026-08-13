@@ -41,6 +41,29 @@ export type AliSubject =
 export interface EnglishComprehensionPrompt extends Question {
   passageTitle: string;
   passageText: string;
+  // Educational Increment 007C, Part 5/9 — these have always been present
+  // in the real JSON prompt payload since 007B's tiered validation
+  // architecture (see lib/learningEngine/englishAnswerValidation.ts's
+  // EnglishPromptValidationFields), just not previously declared here;
+  // callers used inline intersection casts instead. Declared properly now
+  // that Guided Practice needs to read them directly from a typed prop
+  // rather than through another ad hoc cast.
+  acceptedAnswers?: string[];
+  quotationRequired?: string[];
+  orderedAnswer?: string[];
+  correctOptions?: string[];
+  requiredSelectionCount?: number;
+  // Mirrors lib/learningEngine/englishAnswerValidation.ts's ValidationTier
+  // union as a literal string type rather than importing it — types/
+  // never imports from lib/ elsewhere in this codebase, and duplicating
+  // 6 literal strings is cheaper than inverting that convention.
+  validationTier?:
+    | "TIER1_EXACT_MATCH"
+    | "TIER2_ACCEPTED_SET"
+    | "TIER3_QUOTATION_PLUS_EXPLANATION"
+    | "TIER4_ORDERED_LIST"
+    | "TIER5_NAMED_COMPONENT_PLUS_EXPLANATION"
+    | "TIER6_MULTI_SELECT";
 }
 
 /**

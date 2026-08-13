@@ -53,6 +53,36 @@ test("distinctCorrectSessions never increments for supported attempts", () => {
   assert.equal(history.distinctCorrectSessions, 0);
 });
 
+/**
+ * Educational Increment 007C, Part 6. Guided Practice (lib/learningEngine/
+ * guidedPractice.ts) introduces a NEW way to reach supportTier="supported"
+ * for tiers that were previously ALWAYS "independent" when correct:
+ * multi-select (Tier 6) and sequencing (Tier 4) are automatically
+ * verifiable, so before Guided Practice existed a correct answer on them
+ * was always recorded independent. app/learning-intelligence/practice/
+ * [area]/page.tsx's submitReadingOrMaths() now passes supportTier:
+ * "supported" whenever the learner answered under Guided mode (see its
+ * `guided ? "supported" : "independent"` call), even for these
+ * automatically-verified tiers. This proves that new path is exactly as
+ * mastery-safe as the pre-existing Tier 3/5 self-assessment path — the
+ * literal requirement "SUPPORTED SUCCESS != INDEPENDENT SUCCESS for
+ * mastery purposes" must hold for Guided Practice specifically, not just
+ * for the self-assessment flow this file already covered.
+ */
+test("a Guided Practice success on an automatically-verified tier (e.g. multi-select) never reaches mastered, exactly like self-assessed supported evidence", () => {
+  let guidedHistory = freshHistory();
+  let independentHistory = freshHistory();
+  for (let session = 0; session < 5; session++) {
+    const guidedUpdate = applyAttemptOutcome(guidedHistory, true, `guided-${session}`, 2, "supported");
+    guidedHistory = { ...guidedHistory, ...guidedUpdate };
+    const independentUpdate = applyAttemptOutcome(independentHistory, true, `independent-${session}`, 2, "independent");
+    independentHistory = { ...independentHistory, ...independentUpdate };
+  }
+  assert.notEqual(guidedHistory.masteryState, "mastered", "repeated Guided Practice successes must never accumulate into mastery");
+  assert.equal(independentHistory.masteryState, "mastered", "the same number of independent successes must reach mastered, proving the two paths genuinely diverge");
+  assert.notEqual(guidedHistory.masteryState, independentHistory.masteryState);
+});
+
 // --- Dispatcher-level: Tier 3/5 never claim automatic verification -------
 
 test("Tier 3 dispatch never sets automaticallyVerified, regardless of quotation match", () => {

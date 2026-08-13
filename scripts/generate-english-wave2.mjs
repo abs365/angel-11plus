@@ -719,6 +719,166 @@ items.push(
   })
 );
 
+// ============================================================
+// Educational Increment 007C completion (Founder directive:
+// "COMPLETION, PRODUCTION ACTIVATION AND LEARNING-LOOP CLOSURE").
+// 12 additional questions, +1 new passage, completing the 60-90
+// authorised range (50 -> 62) and reaching the required depth floors:
+// multiselect 3 -> 6, cumulative two-character 4 -> 6, plus 3
+// structurally distinct new sequencing sub-types (action-reconstruction,
+// cause/effect, dispersed-evidence) rather than repeating the existing
+// reorder-events pattern. Existing passages assessed first for genuine
+// capacity (Part 4) before this new passage was written — twoletters
+// (a short 303-word epistolary passage) had already had its strongest
+// quotable evidence used by the first 50 questions, so a second
+// two-character question there would have forced reused or weak
+// evidence; a new passage was the honest choice instead.
+// ============================================================
+
+// ---------- Passage 9: "The Surprise" — two-character (organiser vs. relaxed helper), multiselect, action-reconstruction sequencing ----------
+const p9Text = `The clock in the hallway read four fifteen, which meant Kofi had exactly forty-five minutes before Mum's train got in, and precisely none of it to waste.
+
+He had planned this for three weeks: a spreadsheet of tasks, a group chat with strict instructions, and a hiding spot for the banner that even his own memory hadn't fully committed to trusting. His cousin Leo had been assigned the streamers and, in Kofi's opinion, was treating the entire operation with a worrying lack of urgency.
+
+"Relax," Leo said, taping a streamer to the doorframe at an angle Kofi found personally offensive. "She's not going to notice a slightly wonky streamer."
+
+"She's going to notice everything. That's the whole problem." Kofi checked the group chat again, a nervous habit he'd developed roughly every ninety seconds since lunchtime.
+
+At four thirty, Leo wandered into the kitchen, phone in hand, and very nearly answered a video call from Mum's sister without checking who else might be listening on the other end of the room. Kofi lunged for the phone with a speed he hadn't previously known he possessed.
+
+"You almost said the word surprise out loud. On a call. That she could have walked in on."
+
+"I didn't, though," Leo said, entirely unbothered, retrieving his phone. "Crisis averted."
+
+Kofi did not find this reassuring.
+
+By five o'clock the banner was up, slightly crooked in a way only Kofi appeared to notice, the lights were dimmed exactly as the spreadsheet specified, and everyone was crouched behind the sofa in a silence that felt, to Kofi, dangerously fragile.
+
+The front door opened at five past five. There was a beat of pure, held-breath quiet, and then the whole room erupted at once, Leo loudest of anyone, as if he personally hadn't spent the previous forty minutes threatening to ruin the entire thing.`;
+assertNoDash(p9Text, "p9Text");
+passages.push({
+  id: "wave2-eng-surprise", title: "The Surprise", originalText: p9Text,
+  textType: "narrative-extract", genre: "contemporary-realistic-fiction",
+  wordCount: wordCount(p9Text), readingComplexity: "moderate",
+  passageFamily: "wave2-family-cousin-contrast", provenance: "angel_original",
+  copyrightStatus: "Angel original, unpublished; no external rights holder", contentDifficulty: "medium",
+});
+
+items.push(
+  q({
+    id: "w2-surprise-01", passageId: "wave2-eng-surprise", family: "wave1-fam-two-character",
+    competency: "RC-02", qType: "QT-RC-07", legacySkill: "character", marks: 4,
+    question: "Using evidence from the passage, explain how Kofi's and Leo's attitudes to keeping the party secret differ.",
+    modelAnswer: "Kofi is anxious and highly vigilant, checking the group chat constantly and treating every small risk as a serious threat to the surprise. Leo is relaxed almost to the point of carelessness, staying calm even after nearly answering a call that could have given the surprise away.",
+    quotationRequired: ["a nervous habit he'd developed roughly every ninety seconds", "entirely unbothered"],
+    transferClass: "MIXED_TRANSFER", validation: "TIER3_QUOTATION_PLUS_EXPLANATION",
+    misconception: "Describing only Kofi's nervousness without contrasting it against Leo's calm reaction to the near miss with the phone call.",
+  }),
+  q({
+    id: "w2-surprise-02", passageId: "wave2-eng-surprise", family: "wave2-fam-multiselect",
+    competency: "RC-01", qType: "QT-RC-09", legacySkill: "evidence", marks: 4,
+    question: "Tick 4 boxes that accurately describe things that happened while getting ready for the surprise. A. Leo taped a streamer to the doorframe. B. Kofi hid the banner somewhere even he might forget. C. Leo answered Mum's sister's video call. D. The lights were dimmed at five o'clock. E. Kofi checked the group chat only once. F. Everyone hid behind the sofa. G. Mum arrived exactly at four fifteen. H. The banner ended up perfectly straight.",
+    modelAnswer: "A, B, D, F.",
+    correctOptions: ["A", "B", "D", "F"], requiredSelectionCount: 4,
+    transferClass: "NEAR_TRANSFER", validation: "TIER6_MULTI_SELECT",
+    misconception: "Ticking C because Leo nearly answered the call, without noticing the passage says he did not actually answer it; or ticking G, confusing four fifteen (when the countdown started) with when Mum actually arrived.",
+  }),
+  q({
+    id: "w2-surprise-03", passageId: "wave2-eng-surprise", family: "wave1-fam-vocab-explain",
+    competency: "RC-03", qType: "QT-RC-05", legacySkill: "vocabulary", marks: 2,
+    question: "Explain what the phrase 'entirely unbothered' suggests about how Leo reacted to nearly answering the phone call.",
+    modelAnswer: "It suggests Leo felt completely calm and unworried about the near miss, not at all shaken by how close it came to ruining the surprise.",
+    acceptedAnswers: ["calm", "relaxed", "not worried", "not concerned", "unconcerned", "casual", "unfazed"],
+    transferClass: "NEAR_TRANSFER", validation: "TIER2_ACCEPTED_SET",
+    misconception: "Assuming 'unbothered' means Leo didn't understand the risk, rather than that he understood it but simply wasn't anxious about it.",
+  }),
+  q({
+    id: "w2-surprise-04", passageId: "wave2-eng-surprise", family: "wave1-fam-sequencing",
+    competency: "RC-04", qType: "QT-RC-06", legacySkill: "structure", marks: 3,
+    question: "Write down these three things in the order they happened: the lights being dimmed, Leo nearly answering the video call, Leo taping the streamer to the doorframe.",
+    modelAnswer: "1. Leo taping the streamer to the doorframe. 2. Leo nearly answering the video call. 3. The lights being dimmed.",
+    orderedAnswer: ["taping the streamer to the doorframe", "nearly answering the video call", "the lights being dimmed"],
+    transferClass: "NEAR_TRANSFER", validation: "TIER4_ORDERED_LIST",
+    misconception: "Placing the video call incident first because it feels like the most dramatic moment, rather than checking each event's actual position in the passage.",
+  })
+);
+
+// ---------- Additional depth on existing Wave 2 passages (two-character, sequencing, multiselect, vocab, quote-explain) ----------
+items.push(
+  q({
+    id: "w2-sciencefair-06", passageId: "wave2-eng-sciencefair", family: "wave1-fam-two-character",
+    competency: "RC-02", qType: "QT-RC-07", legacySkill: "character", marks: 4,
+    question: "Using evidence from the passage, explain how Ben's and Zara's explanations to the judges differ in style.",
+    modelAnswer: "Ben delivers a rehearsed, technical explanation using correct chemical terminology, exactly as he had practised. Zara explains her project live and informally, in far simpler language, relying on demonstrating the effect on herself rather than technical vocabulary.",
+    quotationRequired: ["exactly as rehearsed, complete with the correct chemical terminology", "far less technical language than Ben had used"],
+    transferClass: "MIXED_TRANSFER", validation: "TIER3_QUOTATION_PLUS_EXPLANATION",
+    misconception: "Describing what each project was about rather than how their explanations to the judges specifically differed in style.",
+  }),
+  q({
+    id: "w2-sciencefair-07", passageId: "wave2-eng-sciencefair", family: "wave1-fam-sequencing",
+    competency: "RC-04", qType: "QT-RC-06", legacySkill: "structure", marks: 4,
+    question: "Write down these four things in the order they happened: Zara receiving her certificate, Zara forgetting the project was due, the judges coming round, Zara preparing her project.",
+    modelAnswer: "1. Zara forgetting the project was due. 2. Zara preparing her project. 3. The judges coming round. 4. Zara receiving her certificate.",
+    orderedAnswer: ["forgetting the project was due", "preparing her project", "the judges coming round", "receiving her certificate"],
+    transferClass: "NEAR_TRANSFER", validation: "TIER4_ORDERED_LIST",
+    misconception: "Ordering events by how they are grouped in the passage's paragraphs rather than by when they actually happened in the story.",
+  }),
+  q({
+    id: "w2-stormwarning-07", passageId: "wave2-eng-stormwarning", family: "wave1-fam-sequencing",
+    competency: "RC-04", qType: "QT-RC-06", legacySkill: "structure", marks: 4,
+    question: "Write down these four things in the order they happened: the family losing power, the narrator being given the job of the bins, the rain turning sideways, Dad's final trip to check the trampoline.",
+    modelAnswer: "1. The narrator being given the job of the bins. 2. The rain turning sideways. 3. Dad's final trip to check the trampoline. 4. The family losing power.",
+    orderedAnswer: ["being given the job of the bins", "the rain turning sideways", "Dad's final trip to check the trampoline", "the family losing power"],
+    transferClass: "FAR_TRANSFER", validation: "TIER4_ORDERED_LIST",
+    misconception: "Only using the early paragraph about jobs being assigned and missing that the rain, the final trampoline check and the power cut are described later, spread across separate paragraphs.",
+  }),
+  q({
+    id: "w2-twoletters-07", passageId: "wave2-eng-twoletters", family: "wave2-fam-multiselect",
+    competency: "RC-01", qType: "QT-RC-09", legacySkill: "evidence", marks: 4,
+    question: "Tick 4 boxes that accurately describe things mentioned in the two letters. A. Grandad flattened the fence at half past seven in the morning. B. Mr Henderson thanked Grandad for fixing the fence. C. The ice cream van caught fire on the street before. D. Iris was completely unbothered by what Grandad did. E. Mum says Robyn's side of the family worries too much. F. Robyn wrote her letter the same night the fence came down. G. Grandad asked Mr Henderson's permission first. H. Iris told Robyn to say well done to Grandad anyway.",
+    modelAnswer: "A, C, F, H.",
+    correctOptions: ["A", "C", "F", "H"], requiredSelectionCount: 4,
+    transferClass: "NEAR_TRANSFER", validation: "TIER6_MULTI_SELECT",
+    misconception: "Ticking E by remembering that Mum commented on the two sides of the family worrying differently, but reversing which side she said worries too much.",
+  }),
+  q({
+    id: "w2-twoletters-08", passageId: "wave2-eng-twoletters", family: "wave1-fam-vocab-explain",
+    competency: "RC-03", qType: "QT-RC-05", legacySkill: "vocabulary", marks: 2,
+    question: "Explain what Iris means by saying the fence incident is 'basically proof of that theory'.",
+    modelAnswer: "She means the fence incident supports or confirms what Mum always says about the two sides of the family having different attitudes to worrying.",
+    acceptedAnswers: ["evidence", "confirmation", "support for the idea", "proves the idea", "backs up the idea", "confirms it"],
+    transferClass: "MIXED_TRANSFER", validation: "TIER2_ACCEPTED_SET",
+    misconception: "Explaining what the 'theory' itself is about, rather than what 'proof of that theory' means as a phrase.",
+  }),
+  q({
+    id: "w2-pianorecital-07", passageId: "wave2-eng-pianorecital", family: "wave2-fam-multiselect",
+    competency: "RC-01", qType: "QT-RC-09", legacySkill: "evidence", marks: 4,
+    question: "Tick 4 boxes that accurately describe things that happen in the passage. A. The recital hall smells of polished wood. B. Freya forgets her piece completely. C. The first few bars are tentative and quiet. D. Freya's performance gets worse after the eighth bar. E. The audience's applause arrives before Freya expects it. F. Freya's teacher says only two words to her afterwards. G. Freya practises the piece for the first time that morning. H. The girl before Freya receives polite, dutiful applause.",
+    modelAnswer: "A, C, F, H.",
+    correctOptions: ["A", "C", "F", "H"], requiredSelectionCount: 4,
+    transferClass: "NEAR_TRANSFER", validation: "TIER6_MULTI_SELECT",
+    misconception: "Ticking D or E by assuming the passage describes things going wrong, when it actually describes Freya's playing improving and the applause arriving later than she expected, not earlier.",
+  }),
+  q({
+    id: "w2-understudy-07", passageId: "wave2-eng-understudy", family: "wave1-fam-vocab-explain",
+    competency: "RC-03", qType: "QT-RC-05", legacySkill: "vocabulary", marks: 2,
+    question: "Explain what the phrase 'something in his chest had loosened slightly' suggests about how Oliver feels by the third line.",
+    modelAnswer: "It suggests he feels a sense of relief and is becoming less anxious, as his nervous tension starts to ease.",
+    acceptedAnswers: ["relief", "relieved", "less nervous", "calmer", "more relaxed", "less anxious", "more at ease"],
+    transferClass: "NEAR_TRANSFER", validation: "TIER2_ACCEPTED_SET",
+    misconception: "Confusing this moment of easing tension with the earlier, opposite description of his stomach performing 'a complicated manoeuvre'.",
+  }),
+  q({
+    id: "w2-longwalk-07", passageId: "wave2-eng-longwalk", family: "wave1-fam-quote-explain",
+    competency: "RC-02", qType: "QT-RC-02", legacySkill: "evidence", marks: 4,
+    question: "Find two quotations that show the narrator notices small, specific details along the way, and explain what each one shows.",
+    modelAnswer: "The detail of 'the boarded-up shop that had been boarded up for as long as I could remember' shows the narrator pays attention to small, unchanging features of their route. The description of the cat watching 'with what I chose to interpret as mild interest rather than judgement' shows the narrator notices tiny details and even imagines meaning behind them.",
+    quotationRequired: ["boarded-up shop that had been boarded up for as long as I could remember", "mild interest rather than judgement"],
+    transferClass: "FAR_TRANSFER", validation: "TIER3_QUOTATION_PLUS_EXPLANATION",
+    misconception: "Choosing quotations about the narrator's feelings in general rather than ones that specifically show close observation of small details.",
+  })
+);
+
 console.log(`\nQuestions authored: ${items.length}`);
 const byFamily = {};
 for (const it of items) byFamily[it.family] = (byFamily[it.family] || 0) + 1;
