@@ -195,6 +195,127 @@ export interface Database {
         };
         Relationships: [];
       };
+      // Educational Increment 007E, Part 9 — added so the admin Educational
+      // Review interface (app/admin-beta/review) can be properly typed.
+      // These tables existed since migrations 034/043 but were never
+      // queried from application code before 007E (only from migration
+      // scripts, which are not type-checked), so they were never added
+      // here. Matches migrations 034/037/043/045/047 exactly.
+      ali_family_review: {
+        Row: {
+          id: string;
+          family_id: string;
+          reviewer: string;
+          review_date: string;
+          educational_validity: boolean | null;
+          competency_validity: boolean | null;
+          wording_quality: boolean | null;
+          age_appropriate: boolean | null;
+          ambiguity_free: boolean | null;
+          difficulty_appropriate: boolean | null;
+          misconception_quality: boolean | null;
+          explanation_quality: boolean | null;
+          variation_boundaries_sound: boolean | null;
+          authenticity_confirmed: boolean | null;
+          provenance_reference: string | null;
+          evidence_reference: string | null;
+          decision: "approved" | "approved_with_amendment" | "rejected" | "requires_revalidation" | "pending_independent_review";
+          notes: string | null;
+          created_at: string;
+          /** Migration 047. */
+          review_target_type: "question_family" | "passage";
+          question_type_alignment: boolean | null;
+          answer_correctness_verified: boolean | null;
+          transfer_validity: boolean | null;
+          teaching_quality: boolean | null;
+          exam_strategy_quality: boolean | null;
+          validation_behaviour_sound: boolean | null;
+          originality_confirmed: boolean | null;
+          copyright_risk_clear: boolean | null;
+        };
+        Insert: {
+          id?: string;
+          family_id: string;
+          reviewer: string;
+          review_date?: string;
+          educational_validity?: boolean | null;
+          competency_validity?: boolean | null;
+          wording_quality?: boolean | null;
+          age_appropriate?: boolean | null;
+          ambiguity_free?: boolean | null;
+          difficulty_appropriate?: boolean | null;
+          misconception_quality?: boolean | null;
+          explanation_quality?: boolean | null;
+          variation_boundaries_sound?: boolean | null;
+          authenticity_confirmed?: boolean | null;
+          provenance_reference?: string | null;
+          evidence_reference?: string | null;
+          decision: "approved" | "approved_with_amendment" | "rejected" | "requires_revalidation" | "pending_independent_review";
+          notes?: string | null;
+          created_at?: string;
+          review_target_type?: "question_family" | "passage";
+          question_type_alignment?: boolean | null;
+          answer_correctness_verified?: boolean | null;
+          transfer_validity?: boolean | null;
+          teaching_quality?: boolean | null;
+          exam_strategy_quality?: boolean | null;
+          validation_behaviour_sound?: boolean | null;
+          originality_confirmed?: boolean | null;
+          copyright_risk_clear?: boolean | null;
+        };
+        Update: {
+          decision?: "approved" | "approved_with_amendment" | "rejected" | "requires_revalidation" | "pending_independent_review";
+          notes?: string | null;
+        };
+        Relationships: [];
+      };
+      ali_passage_bank: {
+        Row: {
+          id: string;
+          title: string;
+          original_text: string;
+          text_type: string;
+          genre: string;
+          word_count: number;
+          reading_complexity: string;
+          provenance: ContentProvenance;
+          copyright_status: string;
+          pathway: string[];
+          content_difficulty: ContentDifficultyEnum;
+          content_version: number;
+          eligibility_status: ContentEligibilityStatus;
+          active: boolean;
+          passage_family_id: string | null;
+          review_state: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id: string;
+          title: string;
+          original_text: string;
+          text_type: string;
+          genre: string;
+          word_count: number;
+          reading_complexity: string;
+          provenance: ContentProvenance;
+          copyright_status: string;
+          pathway: string[];
+          content_difficulty: ContentDifficultyEnum;
+          content_version?: number;
+          eligibility_status?: ContentEligibilityStatus;
+          active?: boolean;
+          passage_family_id?: string | null;
+          review_state?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          eligibility_status?: ContentEligibilityStatus;
+          active?: boolean;
+        };
+        Relationships: [];
+      };
       ali_mastery_defaults: {
         Row: {
           content_difficulty: ContentDifficultyEnum;
