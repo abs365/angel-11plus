@@ -19,7 +19,8 @@ export type ValidationTier =
   | "TIER1_EXACT_MATCH"
   | "TIER2_ACCEPTED_SET"
   | "TIER3_QUOTATION_PLUS_EXPLANATION"
-  | "TIER4_ORDERED_LIST";
+  | "TIER4_ORDERED_LIST"
+  | "TIER5_NAMED_COMPONENT_PLUS_EXPLANATION";
 
 export interface AcceptedSetResult {
   correct: boolean;
@@ -102,4 +103,125 @@ export function checkOrderedSequence(userAnswer: string[], correctOrderAcceptedS
     }
   }
   return { correctInPosition, totalPositions, marks: correctInPosition };
+}
+
+export interface NamedComponentResult {
+  namedComponentCorrect: boolean;
+  matchedOn: string | null;
+  explanationStatus: "NOT_AUTOMATICALLY_GRADABLE";
+}
+
+/**
+ * Tier 5 — "how does X feel, and why" style questions (007B's emotion-
+ * cause family). Distinct from Tier 3: there is no quotation requirement,
+ * but exactly like Tier 3, the causal explanation half cannot be reliably
+ * auto-graded and is never claimed to be. Caught by programmatic
+ * verification of the live Wave 1 content, which found these questions
+ * mislabelled as Tier 3 (they have `acceptedAnswers`, not
+ * `quotationRequired`) — a real content bug, fixed at the source rather
+ * than forced to fit an ill-matching tier.
+ */
+export function checkNamedComponent(userAnswer: string, acceptedComponents: string[]): NamedComponentResult {
+  const result = checkAcceptedAnswerSet(userAnswer, acceptedComponents);
+  return {
+    namedComponentCorrect: result.correct,
+    matchedOn: result.matchedOn,
+    explanationStatus: "NOT_AUTOMATICALLY_GRADABLE",
+  };
+}
+
+// ---------------------------------------------------------------------
+// Live-loop dispatcher (Educational Increment 007B, Part 3). The single
+// entry point every Practice/adaptive-mock page should call for English
+// comprehension scoring, so the tiered architecture and the legacy
+// keyword-overlap heuristic (still correct for the original 13 rows,
+// which carry no validationTier metadata) are both reachable from one
+// place — not two competing engines.
+// ---------------------------------------------------------------------
+
+export interface EnglishPromptValidationFields {
+  modelAnswer?: string;
+  marks: number;
+  acceptedAnswers?: string[] | null;
+  quotationRequired?: string[] | null;
+  orderedAnswer?: string[] | null;
+  validationTier?: ValidationTier | null;
+}
+
+export interface EnglishScoringResult {
+  tier: ValidationTier | "LEGACY_HEURISTIC";
+  /** True only when Angel can state correctness with confidence, with no human/self judgement involved. */
+  automaticallyVerified: boolean;
+  earnedMarks: number;
+  /** True when the learner must compare their own explanation to a model answer — Angel cannot grade it. */
+  requiresSelfComparison: boolean;
+  quotationFound?: boolean;
+  namedComponentCorrect?: boolean;
+  sequenceDetail?: OrderedSequenceResult;
+}
+
+/**
+ * Splits a free-text sequencing answer into ordered lines for Tier 4,
+ * tolerating numbered-list input ("1. bask" / "1) bask") since the
+ * existing Practice UI is a single textarea, not per-item fields.
+ */
+function parseOrderedAnswer(userAnswer: string): string[] {
+  return userAnswer
+    .split(/\r?\n/)
+    .map((line) => line.replace(/^\s*\d+[.)]\s*/, "").trim())
+    .filter((line) => line.length > 0);
+}
+
+export function scoreEnglishComprehensionAnswer(
+  userAnswer: string,
+  prompt: EnglishPromptValidationFields,
+  legacyHeuristic: (userAnswer: string, modelAnswer: string | undefined, maxMarks: number) => number
+): EnglishScoringResult {
+  const tier = prompt.validationTier;
+
+  if (!tier) {
+    // Legacy path — the original 13 rows and any future content without
+    // validation metadata. Behaviour is byte-for-byte unchanged from the
+    // pre-007B keyword-overlap heuristic.
+    const earnedMarks = legacyHeuristic(userAnswer, prompt.modelAnswer, prompt.marks);
+    return { tier: "LEGACY_HEURISTIC", automaticallyVerified: true, earnedMarks, requiresSelfComparison: false };
+  }
+
+  switch (tier) {
+    case "TIER2_ACCEPTED_SET": {
+      const result = checkAcceptedAnswerSet(userAnswer, prompt.acceptedAnswers ?? []);
+      return {
+        tier, automaticallyVerified: true, requiresSelfComparison: false,
+        earnedMarks: result.correct ? prompt.marks : 0,
+      };
+    }
+    case "TIER4_ORDERED_LIST": {
+      const lines = parseOrderedAnswer(userAnswer);
+      const acceptedSets = (prompt.orderedAnswer ?? []).map((item) => [item]);
+      const result = checkOrderedSequence(lines, acceptedSets);
+      return {
+        tier, automaticallyVerified: true, requiresSelfComparison: false,
+        earnedMarks: result.marks, sequenceDetail: result,
+      };
+    }
+    case "TIER3_QUOTATION_PLUS_EXPLANATION": {
+      const requiredQuotes = prompt.quotationRequired ?? [];
+      const quotationFound = requiredQuotes.length > 0 && requiredQuotes.some((q) => checkQuotationPresent(userAnswer, q).quotationFound);
+      return {
+        tier, automaticallyVerified: false, requiresSelfComparison: true,
+        earnedMarks: 0, quotationFound,
+      };
+    }
+    case "TIER5_NAMED_COMPONENT_PLUS_EXPLANATION": {
+      const result = checkNamedComponent(userAnswer, prompt.acceptedAnswers ?? []);
+      return {
+        tier, automaticallyVerified: false, requiresSelfComparison: true,
+        earnedMarks: 0, namedComponentCorrect: result.namedComponentCorrect,
+      };
+    }
+    default: {
+      const earnedMarks = legacyHeuristic(userAnswer, prompt.modelAnswer, prompt.marks);
+      return { tier: "LEGACY_HEURISTIC", automaticallyVerified: true, earnedMarks, requiresSelfComparison: false };
+    }
+  }
 }

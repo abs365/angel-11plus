@@ -329,7 +329,7 @@ items.push(
     question: "How does Femi feel at the very end of the passage, and why?",
     modelAnswer: "Femi feels quietly content or satisfied. He realises Grandad's single nod is 'the closest thing to a celebration he was going to get', and that this is enough for him, even without louder praise.",
     acceptedAnswers: ["content", "satisfied", "happy", "proud", "pleased"],
-    transferClass: "FAR_TRANSFER", validation: "TIER3_QUOTATION_PLUS_EXPLANATION",
+    transferClass: "FAR_TRANSFER", validation: "TIER5_NAMED_COMPONENT_PLUS_EXPLANATION",
     misconception: "Assuming Femi is disappointed because he did not receive obvious praise, missing that the passage explicitly says the quiet acknowledgement 'was enough'.",
   })
 );
@@ -396,7 +396,7 @@ items.push(
     question: "How does the narrator's emotion change in the last two paragraphs of the passage, and why?",
     modelAnswer: "She changes from fear and exhaustion to relief and laughter. Once she is safely on the bus and the danger of missing it has passed, her body finally 'gives permission' to laugh, showing the fear draining away now that she is safe.",
     acceptedAnswers: ["from scared to relieved", "fear to relief", "anxious to happy/laughing"],
-    transferClass: "FAR_TRANSFER", validation: "TIER3_QUOTATION_PLUS_EXPLANATION",
+    transferClass: "FAR_TRANSFER", validation: "TIER5_NAMED_COMPONENT_PLUS_EXPLANATION",
     misconception: "Describing only the surface action (she laughed) without explaining the emotional shift from fear that causes it.",
   })
 );
@@ -463,7 +463,7 @@ items.push(
     question: "How does Priya feel by the end of the passage, and why?",
     modelAnswer: "She feels cautiously content, even though little was resolved. She recognises that nobody needed to ask about her background yet, and she 'didn't mind' sitting quietly at the edge of the group, seeing it as 'a start'.",
     acceptedAnswers: ["content", "hopeful", "relieved", "okay", "cautiously happy"],
-    transferClass: "FAR_TRANSFER", validation: "TIER3_QUOTATION_PLUS_EXPLANATION",
+    transferClass: "FAR_TRANSFER", validation: "TIER5_NAMED_COMPONENT_PLUS_EXPLANATION",
     misconception: "Assuming she must feel disappointed because her rehearsed plan failed, missing that the passage explicitly frames the outcome positively.",
   })
 );
@@ -530,7 +530,7 @@ items.push(
     question: "How does Marcus feel in the very last sentence of the passage, and why?",
     modelAnswer: "He feels a kind of anticipation he wants to hold onto. He deliberately pauses, 'savouring... the last few seconds of not yet knowing', because once he opens the trunk the mystery and excitement of not knowing will be over.",
     acceptedAnswers: ["anticipation", "excitement", "suspense", "wants to delay the moment"],
-    transferClass: "FAR_TRANSFER", validation: "TIER3_QUOTATION_PLUS_EXPLANATION",
+    transferClass: "FAR_TRANSFER", validation: "TIER5_NAMED_COMPONENT_PLUS_EXPLANATION",
     misconception: "Assuming he pauses out of fear alone, missing that the passage frames it as savouring anticipation, not dread.",
   })
 );
@@ -597,7 +597,7 @@ items.push(
     question: "How does Ade feel at the very end of the passage, and why?",
     modelAnswer: "He feels uneasy or a little resentful, despite the team winning. Watching Cass being celebrated after doing 'everything right' himself while 'she had simply won' without the same effort, he feels his own achievement overshadowed.",
     acceptedAnswers: ["uneasy", "resentful", "frustrated", "a bit jealous", "uncomfortable"],
-    transferClass: "FAR_TRANSFER", validation: "TIER3_QUOTATION_PLUS_EXPLANATION",
+    transferClass: "FAR_TRANSFER", validation: "TIER5_NAMED_COMPONENT_PLUS_EXPLANATION",
     misconception: "Assuming Ade must feel simply happy because his team won, missing the more complicated, less comfortable feeling the passage actually describes.",
   })
 );
@@ -664,7 +664,7 @@ items.push(
     question: "How does Dara feel about being embarrassed on her first day, looking back on it in this letter?",
     modelAnswer: "She seems able to laugh at herself about it now rather than feeling upset. She calls it 'possibly the most embarrassing thing that has ever happened to me' in a light, exaggerated, humorous way, comparing it jokingly to falling off a stage in Year 4.",
     acceptedAnswers: ["she finds it funny now", "able to laugh about it", "not upset anymore, finds it amusing"],
-    transferClass: "FAR_TRANSFER", validation: "TIER3_QUOTATION_PLUS_EXPLANATION",
+    transferClass: "FAR_TRANSFER", validation: "TIER5_NAMED_COMPONENT_PLUS_EXPLANATION",
     misconception: "Assuming she is still embarrassed or upset now, missing the humorous, self-aware tone she uses to describe the memory.",
   })
 );

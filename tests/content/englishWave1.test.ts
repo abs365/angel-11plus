@@ -1,6 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import * as wave1Content from "../../scripts/generate-english-wave1.mjs";
+import { checkAcceptedAnswerSet, checkQuotationPresent, checkOrderedSequence, checkNamedComponent } from "@/lib/learningEngine/englishAnswerValidation";
 
 interface Wave1Passage {
   id: string;
@@ -13,7 +14,9 @@ interface Wave1Item {
   competency: string;
   validation: string;
   misconception: string;
+  acceptedAnswers: string[] | null;
   quotationRequired: string[] | null;
+  orderedAnswer: string[] | null;
 }
 
 const passages = wave1Content.passages as Wave1Passage[];
@@ -68,9 +71,39 @@ test("Wave 1: every question has a populated misconception", () => {
 });
 
 test("Wave 1: every question declares an answer-validation tier", () => {
-  const validTiers = new Set(["TIER1_EXACT_MATCH", "TIER2_ACCEPTED_SET", "TIER3_QUOTATION_PLUS_EXPLANATION", "TIER4_ORDERED_LIST"]);
+  const validTiers = new Set([
+    "TIER1_EXACT_MATCH", "TIER2_ACCEPTED_SET", "TIER3_QUOTATION_PLUS_EXPLANATION",
+    "TIER4_ORDERED_LIST", "TIER5_NAMED_COMPONENT_PLUS_EXPLANATION",
+  ]);
   for (const it of items) {
     assert.ok(validTiers.has(it.validation), `${it.id} has an unrecognised validation tier "${it.validation}"`);
+  }
+});
+
+test("Wave 1: every question's declared tier actually matches the data it carries (tier conformance)", () => {
+  // Real regression: this exact check caught 6 emotion-cause questions
+  // mislabelled TIER3 when they carry acceptedAnswers, not
+  // quotationRequired (007B Wave 1 production activation). A tier that
+  // doesn't match its own data would silently misroute in the live UI.
+  const CLEARLY_WRONG = "zzz_no_semantic_overlap_qqq";
+  for (const it of items) {
+    if (it.validation === "TIER2_ACCEPTED_SET") {
+      assert.ok(it.acceptedAnswers && it.acceptedAnswers.length > 0, `${it.id}: TIER2 requires acceptedAnswers`);
+      assert.ok(checkAcceptedAnswerSet(it.acceptedAnswers![0], it.acceptedAnswers!).correct, `${it.id}: TIER2's own first accepted answer must validate as correct`);
+      assert.ok(!checkAcceptedAnswerSet(CLEARLY_WRONG, it.acceptedAnswers!).correct, `${it.id}: TIER2 must reject a clearly wrong answer`);
+    } else if (it.validation === "TIER3_QUOTATION_PLUS_EXPLANATION") {
+      assert.ok(it.quotationRequired && it.quotationRequired.length > 0, `${it.id}: TIER3 requires quotationRequired`);
+      for (const q of it.quotationRequired!) {
+        assert.ok(checkQuotationPresent(`context ${q} context`, q).quotationFound, `${it.id}: TIER3 quotation must be findable`);
+      }
+    } else if (it.validation === "TIER4_ORDERED_LIST") {
+      assert.ok(it.orderedAnswer && it.orderedAnswer.length > 0, `${it.id}: TIER4 requires orderedAnswer`);
+      const sets = it.orderedAnswer!.map((s) => [s]);
+      assert.equal(checkOrderedSequence(it.orderedAnswer!, sets).marks, it.orderedAnswer!.length, `${it.id}: TIER4's own correct order must score full marks`);
+    } else if (it.validation === "TIER5_NAMED_COMPONENT_PLUS_EXPLANATION") {
+      assert.ok(it.acceptedAnswers && it.acceptedAnswers.length > 0, `${it.id}: TIER5 requires acceptedAnswers`);
+      assert.ok(checkNamedComponent(it.acceptedAnswers![0], it.acceptedAnswers!).namedComponentCorrect, `${it.id}: TIER5's own first accepted answer must validate as correct`);
+    }
   }
 });
 

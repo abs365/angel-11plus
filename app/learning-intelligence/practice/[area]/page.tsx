@@ -26,6 +26,8 @@ import {
   scoreEnglishAnswer,
   WRITING_CORRECTNESS_THRESHOLD,
 } from "@/lib/learningEngine/practiceContent";
+import { scoreEnglishComprehensionAnswer, type EnglishScoringResult, type ValidationTier } from "@/lib/learningEngine/englishAnswerValidation";
+import { getExamStrategyHint } from "@/lib/learningEngine/englishExamStrategies";
 import { CompetencyProfile } from "@/components/learningEngine/CompetencyProfile";
 import { EvidenceProfile } from "@/components/learningEngine/EvidenceProfile";
 import { DiagnosticOverview } from "@/components/learningEngine/DiagnosticOverview";
@@ -68,6 +70,15 @@ export default function PracticeSessionPage({ params }: { params: Promise<{ area
   const [writingFeedbackError, setWritingFeedbackError] = useState("");
   const [checkedItems, setCheckedItems] = useState<Set<string>>(new Set());
   const [correctCount, setCorrectCount] = useState(0);
+  // Educational Increment 007B, Part 3-4 — English Answer Validation
+  // Architecture live-loop integration. Non-null only for Tier 3/5
+  // Reading Comprehension answers, where Angel can verify part of the
+  // response (a quotation, or a named component like an emotion) but
+  // cannot reliably auto-grade the accompanying explanation. Rendering
+  // this instead of an immediate correct/incorrect tick is what keeps
+  // that limitation honest, per the explicit instruction not to convert
+  // an unverifiable component into false mastery evidence.
+  const [pendingSelfAssessment, setPendingSelfAssessment] = useState<EnglishScoringResult | null>(null);
   const [profile, setProfile] = useState<LearnerIntelligenceProfile | null | undefined>(undefined);
   // Sprint 3 (ANGEL-CSSE-002A, Personalised Practice) — per-activity learner
   // explanations and the session-level parent/learner summary, both from
@@ -174,12 +185,17 @@ export default function PracticeSessionPage({ params }: { params: Promise<{ area
     setAnswer("");
     setSubmitted(false);
     setLastCorrect(null);
+    setPendingSelfAssessment(null);
     setWritingFeedback(null);
     setWritingFeedbackError("");
     setCheckedItems(new Set());
   }
 
-  async function recordAndAdvance(isCorrect: boolean, legacySkill: string) {
+  async function recordAndAdvance(
+    isCorrect: boolean,
+    legacySkill: string,
+    supportTier: "independent" | "supported" = "independent"
+  ) {
     setLastCorrect(isCorrect);
     setSubmitted(true);
     if (isCorrect) setCorrectCount((c) => c + 1);
@@ -217,7 +233,9 @@ export default function PracticeSessionPage({ params }: { params: Promise<{ area
         current.id,
         isCorrect,
         sessionIdRef.current,
-        current.masteryThreshold
+        current.masteryThreshold,
+        undefined,
+        supportTier
       ).catch(() => {});
 
       if (competencyId && preAttemptSnapshot) {
@@ -247,10 +265,38 @@ export default function PracticeSessionPage({ params }: { params: Promise<{ area
       const isCorrect = checkMathsAnswer(answer, String(q.answer));
       await recordAndAdvance(isCorrect, q.skill);
     } else {
-      const q = current.prompt as EnglishComprehensionPrompt;
-      const earned = scoreEnglishAnswer(answer, q.modelAnswer, q.marks);
-      await recordAndAdvance(earned === q.marks, q.skill);
+      // Educational Increment 007B, Part 3 — dispatches through the 007A
+      // Answer Validation Architecture. Legacy content (the original 13
+      // rows, no validationTier metadata) falls through to the exact same
+      // scoreEnglishAnswer heuristic and "independent" recording as
+      // before, byte-for-byte — this is an extension, not a replacement.
+      const q = current.prompt as EnglishComprehensionPrompt & {
+        acceptedAnswers?: string[]; quotationRequired?: string[]; orderedAnswer?: string[];
+        validationTier?: ValidationTier;
+      };
+      const result = scoreEnglishComprehensionAnswer(answer, q, scoreEnglishAnswer);
+      if (result.automaticallyVerified) {
+        await recordAndAdvance(result.earnedMarks === q.marks, q.skill);
+      } else {
+        // Do not fabricate correctness. Hold the attempt for the
+        // learner's own self-comparison against the model answer —
+        // recordAndAdvance() is deferred until they respond (Part 7).
+        setSubmitted(true);
+        setPendingSelfAssessment(result);
+      }
     }
+  }
+
+  async function submitSelfAssessment(learnerSaysCorrect: boolean) {
+    const q = current.prompt as EnglishComprehensionPrompt;
+    // "supported" — reuses the existing support-tier gate (lib/ali/
+    // mastery.ts) unchanged: mastery only ever advances for
+    // supportTier === "independent", so a self-assessed attempt can
+    // never accidentally produce the same mastery evidence as a
+    // genuinely independent correct answer (Part 7's explicit
+    // requirement), with no new mechanism invented.
+    await recordAndAdvance(learnerSaysCorrect, q.skill, "supported");
+    setPendingSelfAssessment(null);
   }
 
   async function submitWriting() {
@@ -372,10 +418,13 @@ export default function PracticeSessionPage({ params }: { params: Promise<{ area
             {area.id === "reading-comprehension" && (
               <ReadingActivity
                 prompt={current.prompt as EnglishComprehensionPrompt}
+                familyId={current.familyId}
                 answer={answer}
                 setAnswer={setAnswer}
                 submitted={submitted}
                 lastCorrect={lastCorrect}
+                pendingSelfAssessment={pendingSelfAssessment}
+                onSelfAssess={submitSelfAssessment}
                 onSubmit={submitReadingOrMaths}
                 onNext={goToNextOrFinish}
                 isLast={index + 1 === activities.length}
@@ -485,17 +534,23 @@ export default function PracticeSessionPage({ params }: { params: Promise<{ area
 }
 
 function ReadingActivity({
-  prompt, answer, setAnswer, submitted, lastCorrect, onSubmit, onNext, isLast,
+  prompt, familyId, answer, setAnswer, submitted, lastCorrect, pendingSelfAssessment, onSelfAssess, onSubmit, onNext, isLast,
 }: {
   prompt: EnglishComprehensionPrompt;
+  familyId?: string;
   answer: string;
   setAnswer: (v: string) => void;
   submitted: boolean;
   lastCorrect: boolean | null;
+  pendingSelfAssessment: EnglishScoringResult | null;
+  onSelfAssess: (learnerSaysCorrect: boolean) => void;
   onSubmit: () => void;
   onNext: () => void;
   isLast: boolean;
 }) {
+  const [showStrategyHint, setShowStrategyHint] = useState(false);
+  const strategyHint = getExamStrategyHint(familyId);
+
   return (
     <InfoCard className="mt-3">
       <p className="text-sm font-bold text-gray-900 dark:text-gray-100">{prompt.passageTitle}</p>
@@ -503,6 +558,24 @@ function ReadingActivity({
         {prompt.passageText}
       </p>
       <p className="text-sm font-semibold text-gray-800 dark:text-gray-200 mt-4">{prompt.question}</p>
+
+      {/* Educational Increment 007B, Part 6 — the same efficient-method
+          content as ENGLISH_WAVE1_TEACHING_CARDS_V1.md, in plain
+          child-facing language, never exposing the family id itself. */}
+      {strategyHint && !submitted && (
+        <button
+          onClick={() => setShowStrategyHint((v) => !v)}
+          className="mt-2 text-xs text-amber-700 dark:text-amber-300 bg-amber-50 dark:bg-amber-950 hover:bg-amber-100 dark:hover:bg-amber-900 px-3 py-1.5 rounded-lg font-medium transition-colors"
+        >
+          {showStrategyHint ? "Hide tip" : "Show a tip for this kind of question"}
+        </button>
+      )}
+      {showStrategyHint && !submitted && strategyHint && (
+        <p className="mt-2 text-xs text-amber-700 dark:text-amber-300 bg-amber-50 dark:bg-amber-950 rounded-xl p-3">
+          {strategyHint}
+        </p>
+      )}
+
       <textarea
         value={answer}
         onChange={(e) => setAnswer(e.target.value)}
@@ -511,12 +584,63 @@ function ReadingActivity({
         className="w-full mt-2 text-sm rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-3"
         placeholder="Type your answer…"
       />
-      <SubmitOrNext submitted={submitted} lastCorrect={lastCorrect} onSubmit={onSubmit} onNext={onNext} isLast={isLast} disabled={!answer.trim()} />
-      {submitted && prompt.modelAnswer && (
-        <p className="text-xs text-gray-500 dark:text-gray-400 mt-3 bg-gray-50 dark:bg-gray-800 rounded-xl p-3">
-          <strong>Model answer: </strong>
-          {prompt.modelAnswer}
-        </p>
+
+      {/* Educational Increment 007B, Part 4 — self-comparison step for
+          questions Angel can only partially verify. What Angel checked is
+          shown separately from what the learner must judge for themselves;
+          neither is presented as an automatic Correct/Incorrect. */}
+      {submitted && pendingSelfAssessment ? (
+        <div className="mt-3 space-y-3">
+          {pendingSelfAssessment.quotationFound !== undefined && (
+            <p className="text-xs rounded-xl p-3 bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-blue-300">
+              {pendingSelfAssessment.quotationFound
+                ? "Angel found the exact words you needed in your answer."
+                : "Angel could not find the exact words you needed. Check you copied them precisely from the passage."}
+            </p>
+          )}
+          {pendingSelfAssessment.namedComponentCorrect !== undefined && (
+            <p className="text-xs rounded-xl p-3 bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-blue-300">
+              {pendingSelfAssessment.namedComponentCorrect
+                ? "Angel recognised the feeling you named."
+                : "Angel didn't recognise the feeling you named. Check it against the model answer below."}
+            </p>
+          )}
+          {prompt.modelAnswer && (
+            <p className="text-xs text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-gray-800 rounded-xl p-3">
+              <strong>Model answer: </strong>
+              {prompt.modelAnswer}
+            </p>
+          )}
+          <div>
+            <p className="text-xs font-semibold text-gray-700 dark:text-gray-300 mb-2">
+              Angel can&apos;t automatically mark your explanation. Compare it to the model answer above. Did you explain it well?
+            </p>
+            <div className="flex gap-2">
+              <button
+                onClick={() => onSelfAssess(true)}
+                className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold py-2.5 rounded-xl transition-colors"
+              >
+                Yes, I explained it well
+              </button>
+              <button
+                onClick={() => onSelfAssess(false)}
+                className="flex-1 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 text-sm font-semibold py-2.5 rounded-xl transition-colors"
+              >
+                Not quite
+              </button>
+            </div>
+          </div>
+        </div>
+      ) : (
+        <>
+          <SubmitOrNext submitted={submitted} lastCorrect={lastCorrect} onSubmit={onSubmit} onNext={onNext} isLast={isLast} disabled={!answer.trim()} />
+          {submitted && prompt.modelAnswer && (
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-3 bg-gray-50 dark:bg-gray-800 rounded-xl p-3">
+              <strong>Model answer: </strong>
+              {prompt.modelAnswer}
+            </p>
+          )}
+        </>
       )}
     </InfoCard>
   );
