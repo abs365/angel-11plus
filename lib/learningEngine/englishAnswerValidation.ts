@@ -20,7 +20,8 @@ export type ValidationTier =
   | "TIER2_ACCEPTED_SET"
   | "TIER3_QUOTATION_PLUS_EXPLANATION"
   | "TIER4_ORDERED_LIST"
-  | "TIER5_NAMED_COMPONENT_PLUS_EXPLANATION";
+  | "TIER5_NAMED_COMPONENT_PLUS_EXPLANATION"
+  | "TIER6_MULTI_SELECT";
 
 export interface AcceptedSetResult {
   correct: boolean;
@@ -130,6 +131,54 @@ export function checkNamedComponent(userAnswer: string, acceptedComponents: stri
   };
 }
 
+export interface MultiSelectResult {
+  correctCount: number;
+  requiredCount: number;
+  selectedCount: number;
+  overSelected: boolean;
+  exactMatch: boolean;
+  marks: number;
+}
+
+/**
+ * Tier 6 — multi-select recognition (Educational Increment 007C's new
+ * `wave2-fam-multiselect` family, evidenced by CSSE-013/2021 Q11: "Tick 4
+ * boxes that accurately match the action"). Over-selection handling is
+ * directly evidenced, not invented: the 2023 paper's own cover-page
+ * instruction states "Candidates must NOT tick more boxes than they are
+ * instructed to. Any who do will lose all the marks for that question" —
+ * a general CSSE tick-box rule, applied here exactly. Under-selection/
+ * partial-correctness credit (1 mark per correct selection, capped at
+ * `requiredCount`) is a defensible, disclosed POLICY choice, not a
+ * directly-evidenced rule — the specific mark scheme for a multi-select
+ * item was not among the papers read, and this is named as an inference,
+ * not fabricated as confirmed.
+ */
+export function checkMultiSelect(selectedOptions: string[], correctOptions: string[], requiredCount: number): MultiSelectResult {
+  const normalise = (s: string) => s.trim().toUpperCase();
+  const selected = new Set(selectedOptions.map(normalise).filter((s) => s.length > 0));
+  const correct = new Set(correctOptions.map(normalise));
+
+  const overSelected = selected.size > requiredCount;
+  if (overSelected) {
+    // Directly evidenced: over-selection loses all marks for the question.
+    return { correctCount: 0, requiredCount, selectedCount: selected.size, overSelected: true, exactMatch: false, marks: 0 };
+  }
+
+  let correctCount = 0;
+  for (const s of selected) if (correct.has(s)) correctCount++;
+  const exactMatch = correctCount === requiredCount && selected.size === requiredCount;
+
+  return {
+    correctCount,
+    requiredCount,
+    selectedCount: selected.size,
+    overSelected: false,
+    exactMatch,
+    marks: correctCount, // 1 mark per correct selection, capped at requiredCount by construction (overSelected already handled above)
+  };
+}
+
 // ---------------------------------------------------------------------
 // Live-loop dispatcher (Educational Increment 007B, Part 3). The single
 // entry point every Practice/adaptive-mock page should call for English
@@ -145,6 +194,8 @@ export interface EnglishPromptValidationFields {
   acceptedAnswers?: string[] | null;
   quotationRequired?: string[] | null;
   orderedAnswer?: string[] | null;
+  correctOptions?: string[] | null;
+  requiredSelectionCount?: number | null;
   validationTier?: ValidationTier | null;
 }
 
@@ -158,6 +209,15 @@ export interface EnglishScoringResult {
   quotationFound?: boolean;
   namedComponentCorrect?: boolean;
   sequenceDetail?: OrderedSequenceResult;
+  multiSelectDetail?: MultiSelectResult;
+}
+
+/** Splits a free-text multi-select answer ("A, D, E, G" or one letter per line) into option tokens. */
+function parseMultiSelectAnswer(userAnswer: string): string[] {
+  return userAnswer
+    .split(/[\r\n,]+/)
+    .map((s) => s.trim())
+    .filter((s) => s.length > 0);
 }
 
 /**
@@ -217,6 +277,14 @@ export function scoreEnglishComprehensionAnswer(
       return {
         tier, automaticallyVerified: false, requiresSelfComparison: true,
         earnedMarks: 0, namedComponentCorrect: result.namedComponentCorrect,
+      };
+    }
+    case "TIER6_MULTI_SELECT": {
+      const selected = parseMultiSelectAnswer(userAnswer);
+      const result = checkMultiSelect(selected, prompt.correctOptions ?? [], prompt.requiredSelectionCount ?? prompt.marks);
+      return {
+        tier, automaticallyVerified: true, requiresSelfComparison: false,
+        earnedMarks: result.marks, multiSelectDetail: result,
       };
     }
     default: {

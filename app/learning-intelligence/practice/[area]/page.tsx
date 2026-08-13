@@ -27,7 +27,7 @@ import {
   WRITING_CORRECTNESS_THRESHOLD,
 } from "@/lib/learningEngine/practiceContent";
 import { scoreEnglishComprehensionAnswer, type EnglishScoringResult, type ValidationTier } from "@/lib/learningEngine/englishAnswerValidation";
-import { getExamStrategyHint } from "@/lib/learningEngine/englishExamStrategies";
+import { getExamStrategyHint, getWorkedExample } from "@/lib/learningEngine/englishExamStrategies";
 import { CompetencyProfile } from "@/components/learningEngine/CompetencyProfile";
 import { EvidenceProfile } from "@/components/learningEngine/EvidenceProfile";
 import { DiagnosticOverview } from "@/components/learningEngine/DiagnosticOverview";
@@ -79,6 +79,12 @@ export default function PracticeSessionPage({ params }: { params: Promise<{ area
   // that limitation honest, per the explicit instruction not to convert
   // an unverifiable component into false mastery evidence.
   const [pendingSelfAssessment, setPendingSelfAssessment] = useState<EnglishScoringResult | null>(null);
+  // Educational Increment 007C, Part 9 — the automatically-verified
+  // result of the last attempt (Tier 2/4/6/legacy only), kept so wrong-
+  // answer feedback can be specific (e.g. multi-select over-selection)
+  // rather than a bare "incorrect". Only ever holds data this closure
+  // genuinely computed — never a fabricated diagnosis.
+  const [lastAutoResult, setLastAutoResult] = useState<EnglishScoringResult | null>(null);
   const [profile, setProfile] = useState<LearnerIntelligenceProfile | null | undefined>(undefined);
   // Sprint 3 (ANGEL-CSSE-002A, Personalised Practice) — per-activity learner
   // explanations and the session-level parent/learner summary, both from
@@ -186,6 +192,7 @@ export default function PracticeSessionPage({ params }: { params: Promise<{ area
     setSubmitted(false);
     setLastCorrect(null);
     setPendingSelfAssessment(null);
+    setLastAutoResult(null);
     setWritingFeedback(null);
     setWritingFeedbackError("");
     setCheckedItems(new Set());
@@ -276,6 +283,7 @@ export default function PracticeSessionPage({ params }: { params: Promise<{ area
       };
       const result = scoreEnglishComprehensionAnswer(answer, q, scoreEnglishAnswer);
       if (result.automaticallyVerified) {
+        setLastAutoResult(result);
         await recordAndAdvance(result.earnedMarks === q.marks, q.skill);
       } else {
         // Do not fabricate correctness. Hold the attempt for the
@@ -424,6 +432,7 @@ export default function PracticeSessionPage({ params }: { params: Promise<{ area
                 submitted={submitted}
                 lastCorrect={lastCorrect}
                 pendingSelfAssessment={pendingSelfAssessment}
+                lastAutoResult={lastAutoResult}
                 onSelfAssess={submitSelfAssessment}
                 onSubmit={submitReadingOrMaths}
                 onNext={goToNextOrFinish}
@@ -534,7 +543,7 @@ export default function PracticeSessionPage({ params }: { params: Promise<{ area
 }
 
 function ReadingActivity({
-  prompt, familyId, answer, setAnswer, submitted, lastCorrect, pendingSelfAssessment, onSelfAssess, onSubmit, onNext, isLast,
+  prompt, familyId, answer, setAnswer, submitted, lastCorrect, pendingSelfAssessment, lastAutoResult, onSelfAssess, onSubmit, onNext, isLast,
 }: {
   prompt: EnglishComprehensionPrompt;
   familyId?: string;
@@ -543,13 +552,16 @@ function ReadingActivity({
   submitted: boolean;
   lastCorrect: boolean | null;
   pendingSelfAssessment: EnglishScoringResult | null;
+  lastAutoResult: EnglishScoringResult | null;
   onSelfAssess: (learnerSaysCorrect: boolean) => void;
   onSubmit: () => void;
   onNext: () => void;
   isLast: boolean;
 }) {
   const [showStrategyHint, setShowStrategyHint] = useState(false);
+  const [showWorkedExample, setShowWorkedExample] = useState(false);
   const strategyHint = getExamStrategyHint(familyId);
+  const workedExample = getWorkedExample(familyId);
 
   return (
     <InfoCard className="mt-3">
@@ -562,18 +574,39 @@ function ReadingActivity({
       {/* Educational Increment 007B, Part 6 — the same efficient-method
           content as ENGLISH_WAVE1_TEACHING_CARDS_V1.md, in plain
           child-facing language, never exposing the family id itself. */}
-      {strategyHint && !submitted && (
-        <button
-          onClick={() => setShowStrategyHint((v) => !v)}
-          className="mt-2 text-xs text-amber-700 dark:text-amber-300 bg-amber-50 dark:bg-amber-950 hover:bg-amber-100 dark:hover:bg-amber-900 px-3 py-1.5 rounded-lg font-medium transition-colors"
-        >
-          {showStrategyHint ? "Hide tip" : "Show a tip for this kind of question"}
-        </button>
-      )}
+      <div className="flex flex-wrap gap-2 mt-2">
+        {strategyHint && !submitted && (
+          <button
+            onClick={() => setShowStrategyHint((v) => !v)}
+            className="text-xs text-amber-700 dark:text-amber-300 bg-amber-50 dark:bg-amber-950 hover:bg-amber-100 dark:hover:bg-amber-900 px-3 py-1.5 rounded-lg font-medium transition-colors"
+          >
+            {showStrategyHint ? "Hide tip" : "Show a tip for this kind of question"}
+          </button>
+        )}
+        {/* Educational Increment 007C, Part 7 — MODEL step: a worked
+            example using a safe, separate teaching scenario, never the
+            live question's own passage or wording. */}
+        {workedExample && !submitted && (
+          <button
+            onClick={() => setShowWorkedExample((v) => !v)}
+            className="text-xs text-purple-700 dark:text-purple-300 bg-purple-50 dark:bg-purple-950 hover:bg-purple-100 dark:hover:bg-purple-900 px-3 py-1.5 rounded-lg font-medium transition-colors"
+          >
+            {showWorkedExample ? "Hide worked example" : "See a worked example"}
+          </button>
+        )}
+      </div>
       {showStrategyHint && !submitted && strategyHint && (
         <p className="mt-2 text-xs text-amber-700 dark:text-amber-300 bg-amber-50 dark:bg-amber-950 rounded-xl p-3">
           {strategyHint}
         </p>
+      )}
+      {showWorkedExample && !submitted && workedExample && (
+        <div className="mt-2 text-xs text-purple-700 dark:text-purple-300 bg-purple-50 dark:bg-purple-950 rounded-xl p-3 space-y-1.5">
+          <p><strong>Example: </strong>{workedExample.scenario}</p>
+          <p><strong>How to think about it: </strong>{workedExample.modelReasoning}</p>
+          <p><strong>A weaker answer: </strong>{workedExample.weakAnswerLooksLike}</p>
+          <p><strong>What makes it better: </strong>{workedExample.whatImprovesIt}</p>
+        </div>
       )}
 
       <textarea
@@ -634,6 +667,17 @@ function ReadingActivity({
       ) : (
         <>
           <SubmitOrNext submitted={submitted} lastCorrect={lastCorrect} onSubmit={onSubmit} onNext={onNext} isLast={isLast} disabled={!answer.trim()} />
+          {/* Educational Increment 007C, Part 9 — specific multi-select
+              remediation, using only the real classification checkMultiSelect
+              already computed (over-selection vs under-selection vs wrong
+              selections), never a fabricated diagnosis. */}
+          {submitted && !lastCorrect && lastAutoResult?.multiSelectDetail && (
+            <p className="text-xs text-blue-700 dark:text-blue-300 bg-blue-50 dark:bg-blue-950 rounded-xl p-3 mt-3">
+              {lastAutoResult.multiSelectDetail.overSelected
+                ? `You ticked ${lastAutoResult.multiSelectDetail.selectedCount} boxes, more than the ${lastAutoResult.multiSelectDetail.requiredCount} asked for. Selecting more than the number instructed loses all the marks for this question, even if some ticks were right.`
+                : `You selected ${lastAutoResult.multiSelectDetail.correctCount} of the ${lastAutoResult.multiSelectDetail.requiredCount} correct boxes. Check each option against the passage one at a time before you decide.`}
+            </p>
+          )}
           {submitted && prompt.modelAnswer && (
             <p className="text-xs text-gray-500 dark:text-gray-400 mt-3 bg-gray-50 dark:bg-gray-800 rounded-xl p-3">
               <strong>Model answer: </strong>

@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { checkAcceptedAnswerSet, checkQuotationPresent, checkOrderedSequence } from "@/lib/learningEngine/englishAnswerValidation";
+import { checkAcceptedAnswerSet, checkQuotationPresent, checkOrderedSequence, checkMultiSelect } from "@/lib/learningEngine/englishAnswerValidation";
 
 /**
  * Educational Increment 007B. Exercises the 007A-designed Answer
@@ -94,4 +94,51 @@ test("Tier 4: a missing final item does not throw and scores only the positions 
   const result = checkOrderedSequence(["got lost on the first day", "made a friend (Yusra)"], acceptedSets);
   assert.equal(result.marks, 2);
   assert.equal(result.totalPositions, 3);
+});
+
+// --- Tier 6: multi-select recognition (Educational Increment 007C) -------
+
+test("Tier 6: exact selection of the correct set earns full marks", () => {
+  const result = checkMultiSelect(["A", "D", "E", "G"], ["A", "D", "E", "G"], 4);
+  assert.equal(result.marks, 4);
+  assert.equal(result.exactMatch, true);
+  assert.equal(result.overSelected, false);
+});
+
+test("Tier 6: order and case of selections do not matter", () => {
+  const result = checkMultiSelect(["g", "a", "e", "d"], ["A", "D", "E", "G"], 4);
+  assert.equal(result.marks, 4);
+  assert.equal(result.exactMatch, true);
+});
+
+test("Tier 6: under-selection earns partial credit for correct selections only, per position", () => {
+  const result = checkMultiSelect(["A", "D"], ["A", "D", "E", "G"], 4);
+  assert.equal(result.marks, 2);
+  assert.equal(result.exactMatch, false);
+  assert.equal(result.overSelected, false);
+});
+
+test("Tier 6: wrong selections earn no credit for those selections, correct ones still count", () => {
+  const result = checkMultiSelect(["A", "B", "C", "D"], ["A", "D", "E", "G"], 4);
+  // A and D are correct; B and C are wrong (but within the allowed count of 4).
+  assert.equal(result.marks, 2);
+  assert.equal(result.overSelected, false);
+});
+
+test("Tier 6: over-selection loses ALL marks, per the directly-evidenced CSSE rule (\"will lose all the marks\")", () => {
+  const result = checkMultiSelect(["A", "D", "E", "G", "H"], ["A", "D", "E", "G"], 4);
+  assert.equal(result.overSelected, true);
+  assert.equal(result.marks, 0, "even though 4 of the 5 selections are correct, over-selection must zero the mark, matching the CSSE cover-page rule exactly");
+});
+
+test("Tier 6: zero selections earns zero marks, does not throw", () => {
+  const result = checkMultiSelect([], ["A", "D", "E", "G"], 4);
+  assert.equal(result.marks, 0);
+  assert.equal(result.selectedCount, 0);
+});
+
+test("Tier 6: a completely wrong selection set (all distractors) earns zero, not negative or NaN", () => {
+  const result = checkMultiSelect(["B", "C", "F", "H"], ["A", "D", "E", "G"], 4);
+  assert.equal(result.marks, 0);
+  assert.equal(Number.isNaN(result.marks), false);
 });
