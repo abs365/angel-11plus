@@ -71,7 +71,8 @@ export interface ReviewSubmission {
   reviewer: string;
   /** Educational Increment 007F, Part 2 — no dedicated column exists for this (Operating Model §2's deliberate choice not to build a separate credentialing system), so it is recorded as the first line of `notes`, never silently dropped. */
   qualificationBasis: string;
-  decision: ReviewDecision;
+  /** Educational Increment 007F correction — never defaults to "approved"; null means the reviewer has not yet chosen. */
+  decision: ReviewDecision | null;
   notes: string;
   evidenceReference: string;
   provenanceReference: string;
@@ -110,6 +111,33 @@ export async function fetchPendingReviewTargets(): Promise<PendingReviewTarget[]
   return data.map((r) => ({ id: r.family_id, reviewTargetType: r.review_target_type, notes: r.notes }));
 }
 
+/** Educational Increment 007F, Part 1 — every family_id/passage id that has at least one REAL decision recorded (anything other than the placeholder pending row), so the UI can show "X of 7 reviewed" and per-card status honestly. A target can have both a pending row (history, never deleted) and a real decision row; this only counts the latter. */
+export async function fetchReviewedTargetIds(): Promise<Set<string>> {
+  const supabase = getSupabaseClient();
+  if (!supabase) return new Set();
+  const { data, error } = await supabase
+    .from("ali_family_review")
+    .select("family_id")
+    .neq("decision", "pending_independent_review");
+  if (error || !data) return new Set();
+  return new Set(data.map((r) => r.family_id));
+}
+
+export const DIFFICULTY_RANK: Record<string, number> = { easy: 0, medium: 1, hard: 2 };
+
+/** Pure: true difficulty order (easy -> medium -> hard), not the database's default alphabetical order, which would wrongly place "hard" before "medium". Exported and unit-tested directly (tests/lib/adminReview.test.ts). */
+export function sortByDifficulty<T extends { contentDifficulty: string }>(items: T[]): T[] {
+  return [...items].sort((a, b) => (DIFFICULTY_RANK[a.contentDifficulty] ?? 1) - (DIFFICULTY_RANK[b.contentDifficulty] ?? 1));
+}
+
+/** Pure: turns a set of difficulty labels into the plain-language range shown on a target's summary card. */
+export function computeDifficultyRange(difficulties: string[]): string {
+  const distinct = [...new Set(difficulties)].sort((a, b) => (DIFFICULTY_RANK[a] ?? 1) - (DIFFICULTY_RANK[b] ?? 1));
+  if (distinct.length === 0) return "unknown";
+  if (distinct.length === 1) return distinct[0];
+  return `${distinct[0]} to ${distinct[distinct.length - 1]}`;
+}
+
 /** Up to `limit` real questions for a family — the reviewer's representative + boundary sample (Operating Model §3), not the full sibling set. */
 export async function fetchRepresentativeQuestions(familyId: string, limit = 8): Promise<RepresentativeQuestion[]> {
   const supabase = getSupabaseClient();
@@ -118,10 +146,9 @@ export async function fetchRepresentativeQuestions(familyId: string, limit = 8):
     .from("ali_question_bank")
     .select("id, subject, skill, prompt, family_id, learning_unit_id, content_difficulty, transfer_class, addresses_misconception, content_version, active, provenance, eligibility_status")
     .eq("family_id", familyId)
-    .order("content_difficulty", { ascending: true })
     .limit(limit);
   if (error || !data) return [];
-  return data.map((r) => ({
+  const mapped = data.map((r) => ({
     id: r.id, subject: r.subject, skill: r.skill,
     question: promptText(r.prompt, "question"),
     modelAnswer: promptText(r.prompt, "modelAnswer"),
@@ -130,6 +157,30 @@ export async function fetchRepresentativeQuestions(familyId: string, limit = 8):
     addressesMisconception: r.addresses_misconception, contentVersion: r.content_version,
     active: r.active, provenance: r.provenance, eligibilityStatus: r.eligibility_status,
   }));
+  return sortByDifficulty(mapped);
+}
+
+export interface TargetSummary {
+  subject: string;
+  competencyCodes: string[];
+  questionTypeCodes: string[];
+  questionCount: number;
+  difficultyRange: string;
+  reviewed: boolean;
+}
+
+/** Educational Increment 007F, Part 3 — the summary card shown BEFORE a reviewer opens a target: enough to orient them, not the full review content. Computed from the same real rows the detail page uses, not a separate cached figure that could drift. */
+export async function fetchTargetSummary(target: PendingReviewTarget, alreadyReviewed: boolean): Promise<TargetSummary> {
+  const questions = target.reviewTargetType === "passage"
+    ? await fetchQuestionsForPassage(target.id)
+    : await fetchRepresentativeQuestions(target.id, 50);
+  const subject = questions[0]?.subject ?? (target.id.startsWith("mr") ? "maths" : "english");
+  const questionTypeCodes = [...new Set(questions.map((q) => q.skill))];
+  const difficultyRange = computeDifficultyRange(questions.map((q) => q.contentDifficulty));
+  return {
+    subject, competencyCodes: [], questionTypeCodes,
+    questionCount: questions.length, difficultyRange, reviewed: alreadyReviewed,
+  };
 }
 
 /** Same shape, but scoped to a specific passage (learning_unit_id), for reviewing a complete passage's own question set. */
@@ -181,6 +232,7 @@ export interface SubmitReviewResult {
 export function validateReviewSubmission(s: ReviewSubmission): string | null {
   if (!s.reviewer.trim()) return "Reviewer name is required, a review cannot be recorded anonymously.";
   if (!s.qualificationBasis.trim()) return "Reviewer qualification basis is required (e.g. teaching experience, subject knowledge, 11+ preparation experience).";
+  if (!s.decision) return "Choose a decision: this is never chosen for you.";
   if (s.decision === "rejected" && !s.notes.trim()) {
     return "A rejected decision requires notes explaining why (enforced by the database itself, but checked here for a clearer message).";
   }
@@ -197,6 +249,11 @@ export function buildNotesWithQualification(s: ReviewSubmission): string {
 export async function submitReview(s: ReviewSubmission): Promise<SubmitReviewResult> {
   const validationError = validateReviewSubmission(s);
   if (validationError) return { error: validationError };
+  // validateReviewSubmission already rejects a null decision above, but
+  // TypeScript can't narrow s.decision through that separate function
+  // call — this re-check is redundant at runtime, purely to keep the
+  // insert below correctly typed without an unsafe assertion.
+  if (!s.decision) return { error: "Choose a decision: this is never chosen for you." };
   const supabase = getSupabaseClient();
   if (!supabase) return { error: "Not connected" };
   const { error } = await supabase.from("ali_family_review").insert({

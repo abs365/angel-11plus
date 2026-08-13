@@ -2,15 +2,66 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { CheckCircle2, ArrowLeft, ArrowRight, ShieldAlert, LogOut, Mail } from "lucide-react";
+import { CheckCircle2, ArrowLeft, ArrowRight, ShieldAlert, LogOut, Mail, ChevronDown, ChevronUp } from "lucide-react";
 import { useAuth } from "@/components/providers/AuthProvider";
 import { checkIsAdmin } from "@/lib/feedback";
 import {
-  fetchPendingReviewTargets, fetchRepresentativeQuestions, fetchQuestionsForPassage, fetchPassageDetail, submitReview,
+  fetchPendingReviewTargets, fetchReviewedTargetIds, fetchRepresentativeQuestions, fetchQuestionsForPassage,
+  fetchPassageDetail, fetchTargetSummary, submitReview,
   type PendingReviewTarget, type RepresentativeQuestion, type PassageDetail, type ReviewDecision, type ReviewSubmission,
+  type TargetSummary,
 } from "@/lib/adminReview";
 import { getExamStrategyHint, getWorkedExample } from "@/lib/learningEngine/englishExamStrategies";
-import { getGuidedScaffoldKind } from "@/lib/learningEngine/guidedPractice";
+import { getGuidedScaffoldKind, getGuidedInstructionText } from "@/lib/learningEngine/guidedPractice";
+import { getSelfReflectionCategories, WRONG_ANSWER_CATEGORY_LABEL } from "@/lib/learningEngine/englishErrorClassification";
+
+/**
+ * Educational Increment 007F, "Reviewer Experience Correction" — the
+ * Founder inspected the first version of this page and found it exposed
+ * raw implementation identifiers (wave1-fam-quote-explain, mr04-elapsed-
+ * time) and the full 44-target backlog as the primary view, making the
+ * reviewer decode internal architecture instead of performing an
+ * educational review. This rewrite fixes that: a clearly bounded
+ * "First Educational Review Pilot" section (the same 7 targets from
+ * ENGLISH_007E_PILOT_REVIEW_PACK_V1.md) leads the page, every target
+ * gets a plain-language name and educational-context summary before its
+ * technical ID appears (small, secondary), and the full backlog is
+ * demoted to a collapsed section beneath the pilot.
+ *
+ * Still not a CMS and still cannot change eligibility_status — see
+ * ANGEL_EDUCATIONAL_REVIEW_OPERATING_MODEL_V1.md §5.
+ */
+
+// ─── Pilot scope and human-readable naming ─────────────────────────────────
+
+const PILOT_TARGET_IDS = [
+  "wave2-fam-multiselect",
+  "wave1-fam-sequencing",
+  "wave1-fam-quote-explain",
+  "wave1-fam-two-character",
+  "wave1-fam-vocab-explain",
+  "wave2-eng-surprise",
+  "mr02-compare",
+];
+
+const FAMILY_DISPLAY_NAME: Record<string, string> = {
+  "wave2-fam-multiselect": "Selecting Multiple Correct Statements",
+  "wave1-fam-sequencing": "Sequencing Events and Evidence",
+  "wave1-fam-quote-explain": "Quotation and Explanation",
+  "wave1-fam-two-character": "Comparing Two Characters",
+  "wave1-fam-vocab-explain": "Vocabulary in Context",
+  "wave1-fam-direct-retrieval": "Direct Retrieval",
+  "wave1-fam-synonym-battery": "Synonym Recognition",
+  "wave1-fam-tick-justify": "Tick and Justify",
+  "wave1-fam-emotion-cause": "Emotion and Cause",
+  "mr02-compare": "Comparing Algebraic Expressions",
+};
+
+/** Graceful fallback for any family/passage not in the curated name map above — never shows a raw dash-separated ID as the primary label. */
+function formatFallbackName(id: string): string {
+  const withoutPrefix = id.replace(/^wave\d-eng-/, "").replace(/^wave\d-fam-/, "").replace(/^mr\d\d-/, "");
+  return withoutPrefix.split(/[-_]/).map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(" ");
+}
 
 /**
  * Educational Increment 007F, Part 4/6 — plain-language educational
@@ -42,57 +93,67 @@ const FAMILY_EDUCATIONAL_CONTEXT: Record<string, { objective: string; evidenceBa
     evidenceBasis: "CSSE 2021/2022/2023 Main Test papers.",
   },
   "mr02-compare": {
-    objective: "Compare two mathematical quantities or expressions and determine their relationship.",
-    evidenceBasis: "CSSE-006 (2023), CSSE-011 (2022), CSSE-016 (2021) Mathematics papers.",
+    objective: "Evaluate two linear expressions at a stated value and judge whether the first is greater than, less than, or equal to the second.",
+    evidenceBasis: "CSSE 2021/2022/2023 Mathematics papers (Algebraic/Symbolic Problem-Solving competency).",
   },
 };
 
-/**
- * Educational Increment 007E, Part 9 — the smallest secure internal
- * review interface needed for the first genuine human educational
- * review to happen through the real ali_family_review mechanism, rather
- * than the Founder hand-writing SQL. Reuses /admin-beta's exact
- * authentication gate (Supabase magic-link + is_current_user_admin()) —
- * not exposed to learners or ordinary parents. Not a CMS: it can only
- * read pending targets and their real content, and insert one review
- * decision — it cannot edit content, cannot delete anything, and cannot
- * change eligibility_status (see ANGEL_EDUCATIONAL_REVIEW_OPERATING_
- * MODEL_V1.md §5 — activation is a distinct, later, migration-based step).
- */
+/** Real remediation categories a family's wrong-answer feedback can genuinely draw on — reuses the live functions, never a separately-maintained duplicate for the 3 automatically-verified families whose logic isn't expressible as a static lookup without a live scoring result. */
+function getRemediationLabels(familyId: string): string[] {
+  const selfReflection = getSelfReflectionCategories(familyId).map((c) => WRONG_ANSWER_CATEGORY_LABEL[c]);
+  if (selfReflection.length > 0) return selfReflection;
+  if (familyId === "wave2-fam-multiselect") return [WRONG_ANSWER_CATEGORY_LABEL.OVER_SELECTION, WRONG_ANSWER_CATEGORY_LABEL.UNDER_SELECTION];
+  if (familyId === "wave1-fam-sequencing") return [WRONG_ANSWER_CATEGORY_LABEL.EVIDENCE_NOT_LOCATED, WRONG_ANSWER_CATEGORY_LABEL.SEQUENCE_ERROR];
+  if (familyId === "wave1-fam-vocab-explain" || familyId === "wave1-fam-synonym-battery") return [WRONG_ANSWER_CATEGORY_LABEL.VOCABULARY_CONTEXT_ERROR];
+  return [];
+}
 
-const CRITERIA: Array<{ key: keyof ReviewSubmission; label: string }> = [
-  { key: "educationalValidity", label: "Educational validity" },
-  { key: "competencyValidity", label: "Competency validity" },
-  { key: "questionTypeAlignment", label: "Question Type alignment" },
-  { key: "answerCorrectnessVerified", label: "Answer correctness verified" },
-  { key: "ambiguityFree", label: "Ambiguity-free" },
-  { key: "wordingQuality", label: "Wording quality" },
-  { key: "ageAppropriate", label: "Age appropriate" },
-  { key: "difficultyAppropriate", label: "Difficulty appropriate" },
-  { key: "transferValidity", label: "Transfer classification valid" },
-  { key: "misconceptionQuality", label: "Misconception/trap quality" },
-  { key: "variationBoundariesSound", label: "Variation/boundaries sound" },
-  { key: "teachingQuality", label: "Teaching quality (MODEL/worked example)" },
-  { key: "examStrategyQuality", label: "Exam strategy quality" },
-  { key: "explanationQuality", label: "Explanation quality" },
-  { key: "validationBehaviourSound", label: "Answer-validation behaviour sound" },
-  { key: "authenticityConfirmed", label: "CSSE authenticity confirmed" },
-  { key: "originalityConfirmed", label: "Originality confirmed" },
-  { key: "copyrightRiskClear", label: "Copyright risk clear" },
+const GUIDED_KIND_LABEL: Record<string, string> = {
+  "selection-count-check": "A real, checked scaffold: Angel counts the learner's selections live and warns before they submit too many.",
+  "sequence-anchor": "A real, checked scaffold: the first correct step is given to the learner as a starting point.",
+  "staged-quotation": "A real, checked scaffold: the learner can check whether they found the right quotation before writing their explanation.",
+  "locate-instruction": "A written tip shown to the learner, not an interactive checked scaffold.",
+};
+
+// ─── Plain-language reviewer questions (mapped to the real ali_family_review columns) ──
+
+const CRITERIA: Array<{ key: keyof ReviewSubmission; question: string }> = [
+  { key: "educationalValidity", question: "Is the educational content accurate?" },
+  { key: "competencyValidity", question: "Does it genuinely assess the skill it claims to?" },
+  { key: "questionTypeAlignment", question: "Does it match the real CSSE question pattern it's based on?" },
+  { key: "answerCorrectnessVerified", question: "Are the answers and marking expectations correct?" },
+  { key: "ambiguityFree", question: "Could a reasonable child give a different, equally defensible answer the key does not accept?" },
+  { key: "wordingQuality", question: "Is the wording clear for an 11+ learner?" },
+  { key: "ageAppropriate", question: "Is this age-appropriate for an 11+ candidate?" },
+  { key: "difficultyAppropriate", question: "Is the difficulty appropriate for its stated level?" },
+  { key: "transferValidity", question: "Is the transfer demand (how far this asks the learner to generalise) honestly classified?" },
+  { key: "misconceptionQuality", question: "Is the recorded misconception a real, plausible mistake a child would make?" },
+  { key: "variationBoundariesSound", question: "Do the easiest and hardest examples you saw genuinely represent the family's range?" },
+  { key: "teachingQuality", question: "Does the teaching support genuinely help the learner, where one exists?" },
+  { key: "examStrategyQuality", question: "Is the exam strategy shown to learners useful and safe advice?" },
+  { key: "explanationQuality", question: "Where a model answer is shown, does it actually explain, not just restate?" },
+  { key: "validationBehaviourSound", question: "Does the way Angel marks this match how CSSE would genuinely mark it?" },
+  { key: "authenticityConfirmed", question: "Does this genuinely resemble a real CSSE question, not a generic worksheet?" },
+  { key: "originalityConfirmed", question: "Is the content sufficiently original?" },
+  { key: "copyrightRiskClear", question: "Is the content free of any copyright concern?" },
 ];
 
-const DECISIONS: { value: ReviewDecision; label: string }[] = [
-  { value: "approved", label: "Approved" },
-  { value: "approved_with_amendment", label: "Approved with amendment" },
-  { value: "requires_revalidation", label: "Requires revalidation" },
-  { value: "rejected", label: "Rejected" },
+const DECISIONS: { value: ReviewDecision; label: string; hint: string }[] = [
+  { value: "approved", label: "Approved", hint: "Ready to move toward Practice, pending a separate activation step." },
+  { value: "approved_with_amendment", label: "Approved with amendment", hint: "Sound, but needs a specific, correctable fix first." },
+  { value: "requires_revalidation", label: "Requires revalidation", hint: "You cannot confirm something yet and need it resolved before deciding." },
+  { value: "rejected", label: "Rejected", hint: "Should not be activated as it stands." },
 ];
 
 function emptySubmission(target: PendingReviewTarget, reviewerName: string): ReviewSubmission {
   return {
     reviewTargetType: target.reviewTargetType, targetId: target.id, reviewer: reviewerName,
     qualificationBasis: "",
-    decision: "approved", notes: "", evidenceReference: "", provenanceReference: "",
+    // Educational Increment 007F correction — the Founder's own directive
+    // states plainly: "Claude must never preselect APPROVED." No decision
+    // has a default; the reviewer must actively choose one.
+    decision: null,
+    notes: "", evidenceReference: "", provenanceReference: "",
     educationalValidity: null, competencyValidity: null, wordingQuality: null, ageAppropriate: null,
     ambiguityFree: null, difficultyAppropriate: null, misconceptionQuality: null, explanationQuality: null,
     variationBoundariesSound: null, authenticityConfirmed: null, questionTypeAlignment: null,
@@ -103,7 +164,7 @@ function emptySubmission(target: PendingReviewTarget, reviewerName: string): Rev
 
 function TriState({ value, onChange }: { value: boolean | null; onChange: (v: boolean | null) => void }) {
   return (
-    <div className="flex gap-1">
+    <div className="flex gap-1 shrink-0">
       {[["Yes", true], ["No", false], ["N/A", null]].map(([label, v]) => (
         <button
           key={label as string}
@@ -124,6 +185,20 @@ function TriState({ value, onChange }: { value: boolean | null; onChange: (v: bo
   );
 }
 
+function Card({ children }: { children: React.ReactNode }) {
+  return <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-5">{children}</div>;
+}
+
+function SectionTitle({ letter, title }: { letter: string; title: string }) {
+  return (
+    <p className="text-xs font-semibold text-purple-600 dark:text-purple-400 uppercase tracking-wide mb-2">
+      {letter}. {title}
+    </p>
+  );
+}
+
+// ─── Full review form (per Founder's A-F ordering) ─────────────────────────
+
 function ReviewForm({ target, onDone }: { target: PendingReviewTarget; onDone: () => void }) {
   const [reviewerName, setReviewerName] = useState("");
   const [submission, setSubmission] = useState<ReviewSubmission>(() => emptySubmission(target, ""));
@@ -134,10 +209,13 @@ function ReviewForm({ target, onDone }: { target: PendingReviewTarget; onDone: (
   const [submitError, setSubmitError] = useState("");
   const [submitted, setSubmitted] = useState(false);
 
+  const displayName = FAMILY_DISPLAY_NAME[target.id] ?? (passage?.title || formatFallbackName(target.id));
   const educationalContext = FAMILY_EDUCATIONAL_CONTEXT[target.id];
   const workedExample = target.reviewTargetType === "question_family" ? getWorkedExample(target.id) : undefined;
   const guidedScaffold = target.reviewTargetType === "question_family" ? getGuidedScaffoldKind(target.id) : undefined;
+  const guidedInstruction = guidedScaffold ? getGuidedInstructionText(target.id, guidedScaffold) : undefined;
   const strategyHint = target.reviewTargetType === "question_family" ? getExamStrategyHint(target.id) : undefined;
+  const remediationLabels = target.reviewTargetType === "question_family" ? getRemediationLabels(target.id) : [];
 
   useEffect(() => {
     (async () => {
@@ -159,6 +237,10 @@ function ReviewForm({ target, onDone }: { target: PendingReviewTarget; onDone: (
   }, [reviewerName]);
 
   async function handleSubmit() {
+    if (!submission.decision) {
+      setSubmitError("Choose a decision before submitting: this is your judgement to make, not a default.");
+      return;
+    }
     setSubmitting(true);
     setSubmitError("");
     const { error } = await submitReview(submission);
@@ -174,209 +256,364 @@ function ReviewForm({ target, onDone }: { target: PendingReviewTarget; onDone: (
     return (
       <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-6 text-center">
         <CheckCircle2 size={28} className="text-emerald-500 mx-auto mb-2" />
-        <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">Review recorded for {target.id}</p>
+        <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">Review recorded for {displayName}</p>
         <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
           Decision: {submission.decision}. This does not change Practice Eligibility, since that is a separate, controlled activation step.
         </p>
-        <button onClick={onDone} className="mt-4 text-sm font-semibold text-purple-600 dark:text-purple-400">Back to backlog</button>
+        <button onClick={onDone} className="mt-4 text-sm font-semibold text-purple-600 dark:text-purple-400">Back to review pilot</button>
       </div>
     );
   }
 
+  const easiest = questions[0];
+  const hardest = questions.length > 1 ? questions[questions.length - 1] : undefined;
+  const unusual = questions.find((q) => q.transferClass === "FAR_TRANSFER" && q !== easiest && q !== hardest);
+  const otherExamples = questions.filter((q) => q !== easiest && q !== hardest && q !== unusual);
+
   return (
-    <div className="space-y-5">
+    <div className="space-y-5 max-w-full overflow-x-hidden">
       <button onClick={onDone} className="text-xs font-semibold text-gray-500 dark:text-gray-400 inline-flex items-center gap-1">
-        <ArrowLeft size={13} /> Back to backlog
+        <ArrowLeft size={13} /> Back to review pilot
       </button>
 
-      <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-5">
+      <Card>
         <p className="text-xs font-semibold text-purple-600 dark:text-purple-400 uppercase tracking-wide">
           {target.reviewTargetType === "passage" ? "Reading passage" : "Question family"}
         </p>
-        {educationalContext ? (
-          <>
-            <h1 className="text-lg font-bold text-gray-900 dark:text-gray-100 mt-1">{educationalContext.objective}</h1>
-            <p className="text-xs text-gray-500 dark:text-gray-400 mt-2"><strong>Evidence basis:</strong> {educationalContext.evidenceBasis}</p>
-          </>
-        ) : (
-          <h1 className="text-lg font-bold text-gray-900 dark:text-gray-100 mt-1">{target.id}</h1>
-        )}
-        <div className="flex flex-wrap gap-2 mt-3">
-          {workedExample && (
-            <span className="text-[11px] font-medium text-purple-700 dark:text-purple-300 bg-purple-50 dark:bg-purple-950 px-2 py-1 rounded-lg">
-              Has a worked teaching example
-            </span>
-          )}
-          {guidedScaffold && (
-            <span className="text-[11px] font-medium text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950 px-2 py-1 rounded-lg">
-              Has real Guided Practice support
-            </span>
-          )}
-          {strategyHint && (
-            <span className="text-[11px] font-medium text-amber-700 dark:text-amber-300 bg-amber-50 dark:bg-amber-950 px-2 py-1 rounded-lg">
-              Has an exam strategy tip
-            </span>
-          )}
-        </div>
-        {strategyHint && (
-          <p className="text-xs text-gray-500 dark:text-gray-400 mt-2"><strong>Exam strategy shown to learners:</strong> {strategyHint}</p>
-        )}
-        {target.notes && <p className="text-xs text-gray-400 dark:text-gray-500 mt-2">{target.notes}</p>}
-        <p className="text-[11px] text-gray-300 dark:text-gray-600 mt-3 font-mono">{target.id}</p>
-      </div>
+        <h1 className="text-lg font-bold text-gray-900 dark:text-gray-100 mt-1 break-words">{displayName}</h1>
+        <p className="text-[11px] text-gray-300 dark:text-gray-600 mt-1 font-mono break-all">{target.id}</p>
+      </Card>
 
       {loading && <p className="text-sm text-gray-400 dark:text-gray-500">Loading content…</p>}
 
+      {!loading && educationalContext && (
+        <Card>
+          <SectionTitle letter="A" title="What this teaches" />
+          <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed">{educationalContext.objective}</p>
+          <div className="mt-4">
+            <SectionTitle letter="B" title="Why it belongs in Angel 11+" />
+            <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed">{educationalContext.evidenceBasis}</p>
+          </div>
+        </Card>
+      )}
+
+      {!loading && !passage && target.reviewTargetType === "question_family" && (
+        <Card>
+          <SectionTitle letter="C" title="How Angel teaches it" />
+          <div className="space-y-3">
+            <div>
+              <p className="text-xs font-semibold text-gray-700 dark:text-gray-300">MODEL approach</p>
+              {workedExample ? (
+                <div className="text-xs text-gray-600 dark:text-gray-400 mt-1 space-y-1">
+                  <p><strong>Example:</strong> {workedExample.scenario}</p>
+                  <p><strong>Reasoning shown:</strong> {workedExample.modelReasoning}</p>
+                  <p><strong>A weaker answer:</strong> {workedExample.weakAnswerLooksLike}</p>
+                  <p><strong>What improves it:</strong> {workedExample.whatImprovesIt}</p>
+                </div>
+              ) : (
+                <p className="text-xs text-amber-600 dark:text-amber-400 mt-1">No worked example has been authored yet for this family. This is a genuine gap, not hidden from you.</p>
+              )}
+            </div>
+            <div>
+              <p className="text-xs font-semibold text-gray-700 dark:text-gray-300">Guided Practice approach</p>
+              <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">
+                {guidedInstruction} {guidedScaffold && GUIDED_KIND_LABEL[guidedScaffold]}
+              </p>
+            </div>
+            <div>
+              <p className="text-xs font-semibold text-gray-700 dark:text-gray-300">Independent approach</p>
+              <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">
+                The learner attempts the question unaided. Where Angel can check the answer automatically, feedback is immediate. Where it cannot (a free-text explanation), the learner compares their own answer to a model answer themselves, and this is never counted as independently verified mastery.
+              </p>
+            </div>
+            <div>
+              <p className="text-xs font-semibold text-gray-700 dark:text-gray-300">Exam strategy</p>
+              <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">{strategyHint ?? "No exam strategy tip has been authored yet for this family."}</p>
+            </div>
+            <div>
+              <p className="text-xs font-semibold text-gray-700 dark:text-gray-300">Wrong-answer remediation</p>
+              {remediationLabels.length > 0 ? (
+                <ul className="text-xs text-gray-600 dark:text-gray-400 mt-1 list-disc list-inside">
+                  {remediationLabels.map((l) => <li key={l}>{l}</li>)}
+                </ul>
+              ) : (
+                <p className="text-xs text-amber-600 dark:text-amber-400 mt-1">No specific remediation categories are defined for this family yet; the learner only sees the model answer.</p>
+              )}
+            </div>
+          </div>
+        </Card>
+      )}
+
       {!loading && passage && (
-        <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-5">
+        <Card>
           <p className="text-sm font-bold text-gray-900 dark:text-gray-100">{passage.title}</p>
           <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">
-            {passage.wordCount} words · {passage.readingComplexity} · {passage.genre} · content_version {passage.contentVersion} · active={String(passage.active)} · {passage.eligibilityStatus}
+            {passage.wordCount} words, {passage.readingComplexity} reading demand, {passage.genre.replace(/-/g, " ")}
           </p>
-          <p className="text-xs text-gray-600 dark:text-gray-400 mt-3 whitespace-pre-line leading-relaxed max-h-96 overflow-y-auto">
+          <p className="text-xs text-gray-600 dark:text-gray-400 mt-3 whitespace-pre-line leading-relaxed max-h-96 overflow-y-auto break-words">
             {passage.originalText}
           </p>
-          <p className="text-[11px] text-gray-400 dark:text-gray-500 mt-2">{passage.copyrightStatus} · provenance: {passage.provenance}</p>
-        </div>
+          <p className="text-[11px] text-gray-400 dark:text-gray-500 mt-2">{passage.copyrightStatus}. Provenance: {passage.provenance}.</p>
+        </Card>
       )}
 
       {!loading && questions.length > 0 && (
-        <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-5">
-          <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-3">
-            {target.reviewTargetType === "passage" ? "All questions on this passage" : `Representative sample (${questions.length})`}
-          </p>
-          <div className="space-y-4">
-            {questions.map((q) => (
-              <div key={q.id} className="border-t border-gray-50 dark:border-gray-800 pt-3 first:border-t-0 first:pt-0">
-                <p className="text-[11px] font-mono text-gray-400 dark:text-gray-500">{q.id} · {q.contentDifficulty} · {q.transferClass ?? "no transfer class"} · v{q.contentVersion}</p>
-                <p className="text-sm font-semibold text-gray-800 dark:text-gray-200 mt-1">{q.question}</p>
-                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1"><strong>Model answer:</strong> {q.modelAnswer}</p>
-                {q.addressesMisconception && (
-                  <p className="text-xs text-amber-700 dark:text-amber-300 mt-1"><strong>Misconception:</strong> {q.addressesMisconception}</p>
+        <Card>
+          <SectionTitle letter="D" title="Questions to review" />
+          {[
+            ["Representative example", easiest && questions.length === 1 ? easiest : questions[Math.floor(questions.length / 2)]],
+            ["Easiest example", easiest],
+            ["Hardest example", hardest],
+            ["Unusual / transfer example", unusual],
+          ].filter(([, q]) => q).map(([label, q]) => {
+            const question = q as RepresentativeQuestion;
+            return (
+              <div key={`${label}-${question.id}`} className="border-t border-gray-50 dark:border-gray-800 pt-3 mt-3 first:border-t-0 first:pt-0 first:mt-0">
+                <p className="text-[11px] font-semibold text-purple-600 dark:text-purple-400 uppercase tracking-wide">{label as string}</p>
+                <p className="text-sm font-semibold text-gray-800 dark:text-gray-200 mt-1">{question.question}</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1"><strong>Model answer ({question.contentDifficulty} difficulty):</strong> {question.modelAnswer}</p>
+                {question.addressesMisconception && (
+                  <p className="text-xs text-amber-700 dark:text-amber-300 mt-1"><strong>Common trap:</strong> {question.addressesMisconception}</p>
+                )}
+                {question.transferClass && (
+                  <p className="text-[11px] text-gray-400 dark:text-gray-500 mt-1">Transfer demand: {question.transferClass.replace(/_/g, " ").toLowerCase()}</p>
                 )}
               </div>
-            ))}
-          </div>
-        </div>
+            );
+          })}
+          {otherExamples.length > 0 && (
+            <details className="mt-3">
+              <summary className="text-xs font-semibold text-gray-500 dark:text-gray-400 cursor-pointer">{otherExamples.length} more example(s)</summary>
+              <div className="space-y-3 mt-2">
+                {otherExamples.map((q) => (
+                  <div key={q.id} className="border-t border-gray-50 dark:border-gray-800 pt-3">
+                    <p className="text-sm font-semibold text-gray-800 dark:text-gray-200">{q.question}</p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-1"><strong>Model answer ({q.contentDifficulty}):</strong> {q.modelAnswer}</p>
+                  </div>
+                ))}
+              </div>
+            </details>
+          )}
+        </Card>
       )}
 
       {!loading && questions.length === 0 && !passage && (
         <p className="text-sm text-amber-600 dark:text-amber-400">No content found for this target: nothing to review yet.</p>
       )}
 
-      <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-5 space-y-4">
-        <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">Your review</p>
-
-        <div>
-          <label className="text-xs font-semibold text-gray-700 dark:text-gray-300">Reviewer name (required, a review cannot be recorded anonymously)</label>
-          <input
-            value={reviewerName}
-            onChange={(e) => setReviewerName(e.target.value)}
-            placeholder="Your full name"
-            className="w-full mt-1 text-sm rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-2.5"
-          />
-        </div>
-
-        <div>
-          <label className="text-xs font-semibold text-gray-700 dark:text-gray-300">
-            Your qualification to review this (required, e.g. teaching experience, subject knowledge, 11+ preparation experience)
-          </label>
-          <input
-            value={submission.qualificationBasis}
-            onChange={(e) => setSubmission((s) => ({ ...s, qualificationBasis: e.target.value }))}
-            placeholder="e.g. Founder, 11+ preparation experience, programme owner"
-            className="w-full mt-1 text-sm rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-2.5"
-          />
-          <p className="text-[11px] text-gray-400 dark:text-gray-500 mt-1">
-            This is recorded with your review. Describe your own real basis for judging this content, do not accept a suggestion that does not genuinely apply to you.
+      {!loading && (questions.length > 0 || passage) && (
+        <Card>
+          <SectionTitle letter="E" title="Automated checks" />
+          <p className="text-xs text-gray-600 dark:text-gray-400 leading-relaxed">
+            {passage
+              ? "This passage and every question attached to it have been mechanically checked for internal consistency: no duplicate questions, every required quotation appears verbatim in the passage text, and each question's declared marking method matches the shape of its actual answer data."
+              : "Every question in this family has been mechanically checked: no duplicate questions, verbatim quotation checks where the family requires a quotation, and each question's declared marking method matches the shape of its actual answer data."}
           </p>
-        </div>
+          <p className="text-xs font-semibold text-gray-700 dark:text-gray-300 mt-2">
+            These are mechanical checks, not an educational judgement. That is what your review below provides.
+          </p>
+        </Card>
+      )}
 
-        <div className="space-y-2">
-          {CRITERIA.map(({ key, label }) => (
-            <div key={key} className="flex items-center justify-between gap-3">
-              <span className="text-xs text-gray-600 dark:text-gray-400">{label}</span>
-              <TriState
-                value={submission[key] as boolean | null}
-                onChange={(v) => setSubmission((s) => ({ ...s, [key]: v }))}
-              />
-            </div>
-          ))}
-        </div>
+      <Card>
+        <SectionTitle letter="F" title="Your judgement" />
 
-        <div>
-          <label className="text-xs font-semibold text-gray-700 dark:text-gray-300">Decision</label>
-          <div className="flex flex-wrap gap-2 mt-1">
-            {DECISIONS.map((d) => (
-              <button
-                key={d.value}
-                type="button"
-                onClick={() => setSubmission((s) => ({ ...s, decision: d.value }))}
-                className={`text-xs px-3 py-1.5 rounded-lg font-medium transition-colors ${
-                  submission.decision === d.value
-                    ? "bg-purple-600 text-white"
-                    : "bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-400"
-                }`}
-              >
-                {d.label}
-              </button>
+        <div className="space-y-4">
+          <div>
+            <label className="text-xs font-semibold text-gray-700 dark:text-gray-300">Your name (required, a review cannot be recorded anonymously)</label>
+            <input
+              value={reviewerName}
+              onChange={(e) => setReviewerName(e.target.value)}
+              placeholder="Your full name"
+              className="w-full mt-1 text-sm rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-2.5"
+            />
+          </div>
+
+          <div>
+            <label className="text-xs font-semibold text-gray-700 dark:text-gray-300">
+              Your basis for reviewing this (required)
+            </label>
+            <input
+              value={submission.qualificationBasis}
+              onChange={(e) => setSubmission((s) => ({ ...s, qualificationBasis: e.target.value }))}
+              placeholder="e.g. teaching experience, subject knowledge, 11+ preparation experience"
+              className="w-full mt-1 text-sm rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-2.5"
+            />
+            <p className="text-[11px] text-gray-400 dark:text-gray-500 mt-1">
+              Record your own real basis for judging this content. This is recorded with your review.
+            </p>
+          </div>
+
+          <div className="space-y-2">
+            {CRITERIA.map(({ key, question }) => (
+              <div key={key} className="flex items-center justify-between gap-3">
+                <span className="text-xs text-gray-600 dark:text-gray-400">{question}</span>
+                <TriState
+                  value={submission[key] as boolean | null}
+                  onChange={(v) => setSubmission((s) => ({ ...s, [key]: v }))}
+                />
+              </div>
             ))}
           </div>
-        </div>
 
-        <div>
-          <label className="text-xs font-semibold text-gray-700 dark:text-gray-300">
-            Findings / notes {submission.decision === "rejected" && "(required for a rejection)"}
-          </label>
-          <textarea
-            value={submission.notes}
-            onChange={(e) => setSubmission((s) => ({ ...s, notes: e.target.value }))}
-            rows={4}
-            className="w-full mt-1 text-sm rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-2.5"
-            placeholder="What you checked, what you found, any amendment needed…"
-          />
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div>
-            <label className="text-xs font-semibold text-gray-700 dark:text-gray-300">Evidence reference</label>
-            <input
-              value={submission.evidenceReference}
-              onChange={(e) => setSubmission((s) => ({ ...s, evidenceReference: e.target.value }))}
-              placeholder="e.g. ENGLISH_WAVE2_REVIEW_PACKS_V1.md#..."
+            <label className="text-xs font-semibold text-gray-700 dark:text-gray-300">
+              Findings / notes {submission.decision === "rejected" && "(required for a rejection)"}
+            </label>
+            <textarea
+              value={submission.notes}
+              onChange={(e) => setSubmission((s) => ({ ...s, notes: e.target.value }))}
+              rows={4}
               className="w-full mt-1 text-sm rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-2.5"
+              placeholder="What you checked, what you found, any amendment needed…"
             />
           </div>
+
           <div>
-            <label className="text-xs font-semibold text-gray-700 dark:text-gray-300">Provenance reference</label>
-            <input
-              value={submission.provenanceReference}
-              onChange={(e) => setSubmission((s) => ({ ...s, provenanceReference: e.target.value }))}
-              className="w-full mt-1 text-sm rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-2.5"
-            />
+            <label className="text-xs font-semibold text-gray-700 dark:text-gray-300">Your decision (required, choose one)</label>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-1">
+              {DECISIONS.map((d) => (
+                <button
+                  key={d.value}
+                  type="button"
+                  onClick={() => setSubmission((s) => ({ ...s, decision: d.value }))}
+                  className={`text-left p-3 rounded-xl border transition-colors ${
+                    submission.decision === d.value
+                      ? "bg-purple-600 border-purple-600 text-white"
+                      : "bg-gray-50 dark:bg-gray-800 border-gray-100 dark:border-gray-700 text-gray-700 dark:text-gray-300"
+                  }`}
+                >
+                  <p className="text-xs font-semibold">{d.label}</p>
+                  <p className={`text-[11px] mt-0.5 ${submission.decision === d.value ? "text-purple-100" : "text-gray-400 dark:text-gray-500"}`}>{d.hint}</p>
+                </button>
+              ))}
+            </div>
           </div>
+
+          {submitError && <p className="text-xs text-red-500">{submitError}</p>}
+
+          <button
+            onClick={handleSubmit}
+            disabled={submitting || !reviewerName.trim() || !submission.qualificationBasis.trim()}
+            className="w-full flex items-center justify-center gap-2 bg-purple-600 hover:bg-purple-700 disabled:opacity-40 text-white font-semibold py-3 rounded-xl text-sm transition-colors"
+          >
+            {submitting ? "Submitting…" : (<>Submit review <ArrowRight size={16} /></>)}
+          </button>
         </div>
+      </Card>
+    </div>
+  );
+}
 
-        {submitError && <p className="text-xs text-red-500">{submitError}</p>}
+// ─── List views: pilot summary cards + collapsed full backlog ──────────────
 
-        <button
-          onClick={handleSubmit}
-          disabled={submitting || !reviewerName.trim() || !submission.qualificationBasis.trim()}
-          className="w-full flex items-center justify-center gap-2 bg-purple-600 hover:bg-purple-700 disabled:opacity-40 text-white font-semibold py-3 rounded-xl text-sm transition-colors"
-        >
-          {submitting ? "Submitting…" : (<>Submit review <ArrowRight size={16} /></>)}
-        </button>
+function TargetCard({ target, onOpen }: { target: PendingReviewTarget; onOpen: () => void }) {
+  const [summary, setSummary] = useState<TargetSummary | null>(null);
+  const displayName = FAMILY_DISPLAY_NAME[target.id] ?? formatFallbackName(target.id);
+
+  useEffect(() => {
+    (async () => {
+      const reviewed = (await fetchReviewedTargetIds()).has(target.id);
+      setSummary(await fetchTargetSummary(target, reviewed));
+    })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [target.id]);
+
+  return (
+    <button
+      onClick={onOpen}
+      className="w-full text-left px-5 py-4 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors"
+    >
+      <div className="flex items-start justify-between gap-3">
+        <div className="min-w-0">
+          <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">{displayName}</p>
+          {summary && (
+            <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">
+              {summary.subject === "maths" ? "Mathematics" : "English"}
+              {target.reviewTargetType === "passage" ? " passage" : " question family"}
+              {summary.questionCount > 0 && ` · ${summary.questionCount} question${summary.questionCount === 1 ? "" : "s"}`}
+              {summary.difficultyRange !== "unknown" && ` · ${summary.difficultyRange} difficulty`}
+            </p>
+          )}
+          {summary?.reviewed && (
+            <span className="inline-block mt-1.5 text-[11px] font-semibold text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950 px-2 py-0.5 rounded-full">
+              Reviewed
+            </span>
+          )}
+        </div>
+        <ArrowRight size={14} className="text-gray-300 dark:text-gray-600 shrink-0 mt-1" />
       </div>
+    </button>
+  );
+}
+
+function PilotSection({ targets, reviewedIds, onOpen }: { targets: PendingReviewTarget[]; reviewedIds: Set<string>; onOpen: (t: PendingReviewTarget) => void }) {
+  const pilotTargets = PILOT_TARGET_IDS
+    .map((id) => targets.find((t) => t.id === id))
+    .filter((t): t is PendingReviewTarget => Boolean(t));
+  const reviewedCount = PILOT_TARGET_IDS.filter((id) => reviewedIds.has(id)).length;
+
+  return (
+    <div className="bg-white dark:bg-gray-900 rounded-2xl border-2 border-purple-200 dark:border-purple-800 overflow-hidden">
+      <div className="px-5 py-4 border-b border-purple-100 dark:border-purple-900 bg-purple-50 dark:bg-purple-950/40">
+        <p className="text-sm font-bold text-purple-900 dark:text-purple-200">First Educational Review Pilot</p>
+        <p className="text-xs text-purple-600 dark:text-purple-400 mt-0.5">{reviewedCount} of {PILOT_TARGET_IDS.length} reviewed</p>
+      </div>
+      {pilotTargets.length === 0 ? (
+        <p className="px-5 py-4 text-sm text-gray-400 dark:text-gray-500">
+          None of the 7 pilot targets are visible yet. Confirm migrations 047/050/052/053/054 are applied.
+        </p>
+      ) : (
+        <div className="divide-y divide-gray-50 dark:divide-gray-800">
+          {pilotTargets.map((t) => <TargetCard key={t.id} target={t} onOpen={() => onOpen(t)} />)}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function FullBacklogSection({ targets, onOpen }: { targets: PendingReviewTarget[]; onOpen: (t: PendingReviewTarget) => void }) {
+  const [open, setOpen] = useState(false);
+  const backlogTargets = targets.filter((t) => !PILOT_TARGET_IDS.includes(t.id));
+
+  return (
+    <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 overflow-hidden">
+      <button
+        onClick={() => setOpen((v) => !v)}
+        className="w-full flex items-center justify-between px-5 py-3 text-left"
+      >
+        <span className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">
+          Full Review Backlog ({backlogTargets.length} pending, outside this pilot)
+        </span>
+        {open ? <ChevronUp size={15} className="text-gray-400" /> : <ChevronDown size={15} className="text-gray-400" />}
+      </button>
+      {open && (
+        <div className="divide-y divide-gray-50 dark:divide-gray-800 border-t border-gray-50 dark:border-gray-800">
+          {backlogTargets.map((t) => (
+            <button
+              key={t.id}
+              onClick={() => onOpen(t)}
+              className="w-full text-left px-5 py-3 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors flex items-center justify-between gap-3"
+            >
+              <span className="text-sm font-medium text-gray-900 dark:text-gray-100">{FAMILY_DISPLAY_NAME[t.id] ?? formatFallbackName(t.id)}</span>
+              <ArrowRight size={14} className="text-gray-300 dark:text-gray-600 shrink-0" />
+            </button>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
 
 function ReviewDashboard() {
   const [targets, setTargets] = useState<PendingReviewTarget[] | null>(null);
+  const [reviewedIds, setReviewedIds] = useState<Set<string>>(new Set());
   const [selected, setSelected] = useState<PendingReviewTarget | null>(null);
 
   async function load() {
-    setTargets(await fetchPendingReviewTargets());
+    const [pending, reviewed] = await Promise.all([fetchPendingReviewTargets(), fetchReviewedTargetIds()]);
+    setTargets(pending);
+    setReviewedIds(reviewed);
   }
 
   useEffect(() => { load(); }, []);
@@ -385,7 +622,7 @@ function ReviewDashboard() {
     return <ReviewForm target={selected} onDone={() => { setSelected(null); load(); }} />;
   }
 
-  if (targets === null) return <p className="text-sm text-gray-400 dark:text-gray-500">Loading backlog…</p>;
+  if (targets === null) return <p className="text-sm text-gray-400 dark:text-gray-500">Loading review pilot…</p>;
 
   if (targets.length === 0) {
     return (
@@ -396,32 +633,10 @@ function ReviewDashboard() {
     );
   }
 
-  const passages = targets.filter((t) => t.reviewTargetType === "passage");
-  const families = targets.filter((t) => t.reviewTargetType === "question_family");
-
   return (
     <div className="space-y-5">
-      {([["English/Mathematics passages", passages], ["Question families", families]] as const).map(([label, list]) => (
-        list.length > 0 && (
-          <div key={label} className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 overflow-hidden">
-            <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide px-5 py-3 border-b border-gray-50 dark:border-gray-800">
-              {label} ({list.length} pending)
-            </p>
-            <div className="divide-y divide-gray-50 dark:divide-gray-800">
-              {list.map((t) => (
-                <button
-                  key={t.id}
-                  onClick={() => setSelected(t)}
-                  className="w-full text-left px-5 py-3 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors flex items-center justify-between gap-3"
-                >
-                  <span className="text-sm font-medium text-gray-900 dark:text-gray-100">{t.id}</span>
-                  <ArrowRight size={14} className="text-gray-300 dark:text-gray-600 shrink-0" />
-                </button>
-              ))}
-            </div>
-          </div>
-        )
-      ))}
+      <PilotSection targets={targets} reviewedIds={reviewedIds} onOpen={setSelected} />
+      <FullBacklogSection targets={targets} onOpen={setSelected} />
     </div>
   );
 }

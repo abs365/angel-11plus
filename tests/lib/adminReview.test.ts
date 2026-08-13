@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { validateReviewSubmission, buildNotesWithQualification, type ReviewSubmission } from "@/lib/adminReview";
+import { validateReviewSubmission, buildNotesWithQualification, sortByDifficulty, computeDifficultyRange, type ReviewSubmission } from "@/lib/adminReview";
 
 /**
  * Educational Increment 007E, Part 9. Tests the pure validation guard
@@ -73,4 +73,49 @@ test("buildNotesWithQualification appends the reviewer's own findings after the 
   }));
   assert.ok(notes.startsWith("Reviewer qualification: Founder, 11+ preparation experience, programme owner."));
   assert.ok(notes.includes("The distractors in item w1-fam-two-character-03 are too obviously wrong."));
+});
+
+/**
+ * Educational Increment 007F, Part 3/4. content_difficulty is stored as
+ * "easy"/"medium"/"hard" — plain alphabetical sort would wrongly order
+ * these as easy, hard, medium. These prove the real difficulty order is
+ * used everywhere the reviewer sees a "easiest to hardest" sample or
+ * range, matching the Founder's own observation that the interface must
+ * present genuine educational structure, not an implementation artefact.
+ */
+
+test("sortByDifficulty orders easy before medium before hard, not alphabetically", () => {
+  const items = [{ contentDifficulty: "hard" }, { contentDifficulty: "easy" }, { contentDifficulty: "medium" }];
+  const sorted = sortByDifficulty(items);
+  assert.deepEqual(sorted.map((i) => i.contentDifficulty), ["easy", "medium", "hard"]);
+});
+
+test("sortByDifficulty does not mutate the original array", () => {
+  const items = [{ contentDifficulty: "hard" }, { contentDifficulty: "easy" }];
+  const original = [...items];
+  sortByDifficulty(items);
+  assert.deepEqual(items, original);
+});
+
+test("computeDifficultyRange collapses a single difficulty to just that word", () => {
+  assert.equal(computeDifficultyRange(["medium", "medium", "medium"]), "medium");
+});
+
+test("computeDifficultyRange shows a genuine easy-to-hard range in the correct order regardless of input order", () => {
+  assert.equal(computeDifficultyRange(["hard", "easy", "medium"]), "easy to hard");
+  assert.equal(computeDifficultyRange(["medium", "hard"]), "medium to hard");
+});
+
+test("computeDifficultyRange handles no data without throwing", () => {
+  assert.equal(computeDifficultyRange([]), "unknown");
+});
+
+/**
+ * Educational Increment 007F reviewer-experience correction: "Claude must
+ * never preselect APPROVED." A null decision must be rejected by the same
+ * guard as an empty reviewer name, never silently defaulted.
+ */
+test("a null decision is rejected, never silently treated as approved", () => {
+  const err = validateReviewSubmission(baseSubmission({ decision: null }));
+  assert.ok(err !== null);
 });
