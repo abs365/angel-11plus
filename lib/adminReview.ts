@@ -69,6 +69,8 @@ export interface ReviewSubmission {
   reviewTargetType: ReviewTargetType;
   targetId: string;
   reviewer: string;
+  /** Educational Increment 007F, Part 2 — no dedicated column exists for this (Operating Model §2's deliberate choice not to build a separate credentialing system), so it is recorded as the first line of `notes`, never silently dropped. */
+  qualificationBasis: string;
   decision: ReviewDecision;
   notes: string;
   evidenceReference: string;
@@ -178,10 +180,17 @@ export interface SubmitReviewResult {
  */
 export function validateReviewSubmission(s: ReviewSubmission): string | null {
   if (!s.reviewer.trim()) return "Reviewer name is required, a review cannot be recorded anonymously.";
+  if (!s.qualificationBasis.trim()) return "Reviewer qualification basis is required (e.g. teaching experience, subject knowledge, 11+ preparation experience).";
   if (s.decision === "rejected" && !s.notes.trim()) {
     return "A rejected decision requires notes explaining why (enforced by the database itself, but checked here for a clearer message).";
   }
   return null;
+}
+
+/** Combines qualification basis and the reviewer's own findings into the single `notes` field, per the Operating Model §2's deliberate choice not to add a separate credentialing column — the qualification line is never silently dropped. */
+export function buildNotesWithQualification(s: ReviewSubmission): string {
+  const qualificationLine = `Reviewer qualification: ${s.qualificationBasis.trim()}.`;
+  return s.notes.trim() ? `${qualificationLine}\n\n${s.notes.trim()}` : qualificationLine;
 }
 
 /** Inserts one real, traceable review decision. Never updates eligibility_status — see this file's module docstring. */
@@ -195,7 +204,7 @@ export async function submitReview(s: ReviewSubmission): Promise<SubmitReviewRes
     family_id: s.targetId,
     reviewer: s.reviewer.trim(),
     decision: s.decision,
-    notes: s.notes.trim() || null,
+    notes: buildNotesWithQualification(s),
     evidence_reference: s.evidenceReference.trim() || null,
     provenance_reference: s.provenanceReference.trim() || null,
     educational_validity: s.educationalValidity,

@@ -9,6 +9,43 @@ import {
   fetchPendingReviewTargets, fetchRepresentativeQuestions, fetchQuestionsForPassage, fetchPassageDetail, submitReview,
   type PendingReviewTarget, type RepresentativeQuestion, type PassageDetail, type ReviewDecision, type ReviewSubmission,
 } from "@/lib/adminReview";
+import { getExamStrategyHint, getWorkedExample } from "@/lib/learningEngine/englishExamStrategies";
+import { getGuidedScaffoldKind } from "@/lib/learningEngine/guidedPractice";
+
+/**
+ * Educational Increment 007F, Part 4/6 — plain-language educational
+ * context for each target, so the reviewer is answering "would I trust
+ * this to teach and assess a child preparing seriously for the 11+?",
+ * not reading raw database rows. Every fact here is drawn from real,
+ * already-documented evidence (ENGLISH_WAVE2_COVERAGE_MATRIX_V1.md,
+ * MATHEMATICS_WAVE2_REVIEW_PACKS.md) — nothing invented for this UI.
+ */
+const FAMILY_EDUCATIONAL_CONTEXT: Record<string, { objective: string; evidenceBasis: string }> = {
+  "wave2-fam-multiselect": {
+    objective: "Recognise which of several statements about a passage are actually supported by the text, when told exactly how many to select.",
+    evidenceBasis: "CSSE 2021 Main Test paper, Question 11 (tick-box format). Single-year evidence: the thinnest evidence base of any family in the programme.",
+  },
+  "wave1-fam-sequencing": {
+    objective: "Reconstruct the true order of events, actions, or a cause-and-effect chain from a passage, without relying on memory of a natural-feeling order.",
+    evidenceBasis: "CSSE 2021/2022/2023 Main Test papers and the 2023 marking scheme's own worked example (which awards partial credit for items correct but out of position).",
+  },
+  "wave1-fam-quote-explain": {
+    objective: "Find the exact words in a passage that answer a question, then explain what those words show, not just restate them.",
+    evidenceBasis: "The single most frequent question pattern across all 3 CSSE years read for this programme.",
+  },
+  "wave1-fam-two-character": {
+    objective: "Compare and contrast two people or characters in a passage using separate, specific evidence for each, not a one-sided answer.",
+    evidenceBasis: "CSSE 2021/2022/2023 Main Test papers.",
+  },
+  "wave1-fam-vocab-explain": {
+    objective: "Work out what a word or phrase means from how it is used in its sentence, not from memorised dictionary definitions.",
+    evidenceBasis: "CSSE 2021/2022/2023 Main Test papers.",
+  },
+  "mr02-compare": {
+    objective: "Compare two mathematical quantities or expressions and determine their relationship.",
+    evidenceBasis: "CSSE-006 (2023), CSSE-011 (2022), CSSE-016 (2021) Mathematics papers.",
+  },
+};
 
 /**
  * Educational Increment 007E, Part 9 — the smallest secure internal
@@ -54,6 +91,7 @@ const DECISIONS: { value: ReviewDecision; label: string }[] = [
 function emptySubmission(target: PendingReviewTarget, reviewerName: string): ReviewSubmission {
   return {
     reviewTargetType: target.reviewTargetType, targetId: target.id, reviewer: reviewerName,
+    qualificationBasis: "",
     decision: "approved", notes: "", evidenceReference: "", provenanceReference: "",
     educationalValidity: null, competencyValidity: null, wordingQuality: null, ageAppropriate: null,
     ambiguityFree: null, difficultyAppropriate: null, misconceptionQuality: null, explanationQuality: null,
@@ -95,6 +133,11 @@ function ReviewForm({ target, onDone }: { target: PendingReviewTarget; onDone: (
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState("");
   const [submitted, setSubmitted] = useState(false);
+
+  const educationalContext = FAMILY_EDUCATIONAL_CONTEXT[target.id];
+  const workedExample = target.reviewTargetType === "question_family" ? getWorkedExample(target.id) : undefined;
+  const guidedScaffold = target.reviewTargetType === "question_family" ? getGuidedScaffoldKind(target.id) : undefined;
+  const strategyHint = target.reviewTargetType === "question_family" ? getExamStrategyHint(target.id) : undefined;
 
   useEffect(() => {
     (async () => {
@@ -147,9 +190,39 @@ function ReviewForm({ target, onDone }: { target: PendingReviewTarget; onDone: (
       </button>
 
       <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-5">
-        <p className="text-xs font-semibold text-purple-600 dark:text-purple-400 uppercase tracking-wide">{target.reviewTargetType}</p>
-        <h1 className="text-lg font-bold text-gray-900 dark:text-gray-100 mt-1">{target.id}</h1>
-        {target.notes && <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">{target.notes}</p>}
+        <p className="text-xs font-semibold text-purple-600 dark:text-purple-400 uppercase tracking-wide">
+          {target.reviewTargetType === "passage" ? "Reading passage" : "Question family"}
+        </p>
+        {educationalContext ? (
+          <>
+            <h1 className="text-lg font-bold text-gray-900 dark:text-gray-100 mt-1">{educationalContext.objective}</h1>
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-2"><strong>Evidence basis:</strong> {educationalContext.evidenceBasis}</p>
+          </>
+        ) : (
+          <h1 className="text-lg font-bold text-gray-900 dark:text-gray-100 mt-1">{target.id}</h1>
+        )}
+        <div className="flex flex-wrap gap-2 mt-3">
+          {workedExample && (
+            <span className="text-[11px] font-medium text-purple-700 dark:text-purple-300 bg-purple-50 dark:bg-purple-950 px-2 py-1 rounded-lg">
+              Has a worked teaching example
+            </span>
+          )}
+          {guidedScaffold && (
+            <span className="text-[11px] font-medium text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950 px-2 py-1 rounded-lg">
+              Has real Guided Practice support
+            </span>
+          )}
+          {strategyHint && (
+            <span className="text-[11px] font-medium text-amber-700 dark:text-amber-300 bg-amber-50 dark:bg-amber-950 px-2 py-1 rounded-lg">
+              Has an exam strategy tip
+            </span>
+          )}
+        </div>
+        {strategyHint && (
+          <p className="text-xs text-gray-500 dark:text-gray-400 mt-2"><strong>Exam strategy shown to learners:</strong> {strategyHint}</p>
+        )}
+        {target.notes && <p className="text-xs text-gray-400 dark:text-gray-500 mt-2">{target.notes}</p>}
+        <p className="text-[11px] text-gray-300 dark:text-gray-600 mt-3 font-mono">{target.id}</p>
       </div>
 
       {loading && <p className="text-sm text-gray-400 dark:text-gray-500">Loading content…</p>}
@@ -202,6 +275,21 @@ function ReviewForm({ target, onDone }: { target: PendingReviewTarget; onDone: (
             placeholder="Your full name"
             className="w-full mt-1 text-sm rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-2.5"
           />
+        </div>
+
+        <div>
+          <label className="text-xs font-semibold text-gray-700 dark:text-gray-300">
+            Your qualification to review this (required, e.g. teaching experience, subject knowledge, 11+ preparation experience)
+          </label>
+          <input
+            value={submission.qualificationBasis}
+            onChange={(e) => setSubmission((s) => ({ ...s, qualificationBasis: e.target.value }))}
+            placeholder="e.g. Founder, 11+ preparation experience, programme owner"
+            className="w-full mt-1 text-sm rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-2.5"
+          />
+          <p className="text-[11px] text-gray-400 dark:text-gray-500 mt-1">
+            This is recorded with your review. Describe your own real basis for judging this content, do not accept a suggestion that does not genuinely apply to you.
+          </p>
         </div>
 
         <div className="space-y-2">
@@ -273,7 +361,7 @@ function ReviewForm({ target, onDone }: { target: PendingReviewTarget; onDone: (
 
         <button
           onClick={handleSubmit}
-          disabled={submitting || !reviewerName.trim()}
+          disabled={submitting || !reviewerName.trim() || !submission.qualificationBasis.trim()}
           className="w-full flex items-center justify-center gap-2 bg-purple-600 hover:bg-purple-700 disabled:opacity-40 text-white font-semibold py-3 rounded-xl text-sm transition-colors"
         >
           {submitting ? "Submitting…" : (<>Submit review <ArrowRight size={16} /></>)}

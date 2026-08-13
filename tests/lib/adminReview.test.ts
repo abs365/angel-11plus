@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { validateReviewSubmission, type ReviewSubmission } from "@/lib/adminReview";
+import { validateReviewSubmission, buildNotesWithQualification, type ReviewSubmission } from "@/lib/adminReview";
 
 /**
  * Educational Increment 007E, Part 9. Tests the pure validation guard
@@ -12,7 +12,7 @@ import { validateReviewSubmission, type ReviewSubmission } from "@/lib/adminRevi
 function baseSubmission(overrides: Partial<ReviewSubmission> = {}): ReviewSubmission {
   return {
     reviewTargetType: "question_family", targetId: "wave1-fam-two-character",
-    reviewer: "Jane Smith", decision: "approved", notes: "", evidenceReference: "", provenanceReference: "",
+    reviewer: "Jane Smith", qualificationBasis: "Teaching experience, KS2 English", decision: "approved", notes: "", evidenceReference: "", provenanceReference: "",
     educationalValidity: true, competencyValidity: true, wordingQuality: true, ageAppropriate: true,
     ambiguityFree: true, difficultyAppropriate: true, misconceptionQuality: true, explanationQuality: true,
     variationBoundariesSound: true, authenticityConfirmed: true, questionTypeAlignment: true,
@@ -49,4 +49,28 @@ test("a rejected decision WITH notes passes validation", () => {
 test("approved_with_amendment and requires_revalidation do not require notes to pass this guard", () => {
   assert.equal(validateReviewSubmission(baseSubmission({ decision: "approved_with_amendment", notes: "" })), null);
   assert.equal(validateReviewSubmission(baseSubmission({ decision: "requires_revalidation", notes: "" })), null);
+});
+
+test("an empty qualification basis is rejected — 007F, Part 2's recording requirement", () => {
+  const err = validateReviewSubmission(baseSubmission({ qualificationBasis: "" }));
+  assert.ok(err && err.toLowerCase().includes("qualification"));
+});
+
+test("a whitespace-only qualification basis is rejected", () => {
+  const err = validateReviewSubmission(baseSubmission({ qualificationBasis: "   " }));
+  assert.ok(err !== null);
+});
+
+test("buildNotesWithQualification always leads with the qualification line, never silently drops it", () => {
+  const notes = buildNotesWithQualification(baseSubmission({ qualificationBasis: "Founder, 11+ preparation experience, programme owner", notes: "" }));
+  assert.equal(notes, "Reviewer qualification: Founder, 11+ preparation experience, programme owner.");
+});
+
+test("buildNotesWithQualification appends the reviewer's own findings after the qualification line, not instead of it", () => {
+  const notes = buildNotesWithQualification(baseSubmission({
+    qualificationBasis: "Founder, 11+ preparation experience, programme owner",
+    notes: "The distractors in item w1-fam-two-character-03 are too obviously wrong.",
+  }));
+  assert.ok(notes.startsWith("Reviewer qualification: Founder, 11+ preparation experience, programme owner."));
+  assert.ok(notes.includes("The distractors in item w1-fam-two-character-03 are too obviously wrong."));
 });
