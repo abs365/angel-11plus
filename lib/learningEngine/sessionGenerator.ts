@@ -122,16 +122,35 @@ export function reduceFamilyClustering(
 
   const selectedIds = new Set(selected.map((q) => q.id));
   const result = [...selected];
+  // Every family currently present in `result`, kept in sync as swaps
+  // happen. Without this, a swap that resolves one over-represented
+  // family could introduce a fresh collision with a *different* family
+  // already sitting elsewhere in the session — the outer loop only
+  // revisits families that were over-represented in the original
+  // selection, so a newly-introduced collision would otherwise go
+  // undetected and unfixed.
+  const presentFamilies = new Set<string>();
+  for (const q of result) if (q.familyId) presentFamilies.add(q.familyId);
 
   for (const [familyId, count] of overRepresented) {
     let excess = count - 1; // keep exactly one representative per family, swap the rest
     for (let i = result.length - 1; i >= 0 && excess > 0; i--) {
       if (result[i].familyId !== familyId) continue;
-      const replacement = candidatePool.find((c) => !selectedIds.has(c.id) && c.familyId !== familyId);
+      // Prefer a candidate that is itself a distinct, real family not
+      // already present anywhere in the session — a genuine
+      // diversification signal — over an untagged (no familyId)
+      // candidate, which is merely "not this family" by omission. Only
+      // fall back to an untagged candidate when no such alternative
+      // exists, so the swap target isn't decided by pool array order.
+      const replacement =
+        candidatePool.find(
+          (c) => !selectedIds.has(c.id) && !!c.familyId && !presentFamilies.has(c.familyId)
+        ) ?? candidatePool.find((c) => !selectedIds.has(c.id) && c.familyId !== familyId);
       if (!replacement) continue; // no distinct-family alternative available; leave the repeat
       selectedIds.delete(result[i].id);
       selectedIds.add(replacement.id);
       result[i] = replacement;
+      if (replacement.familyId) presentFamilies.add(replacement.familyId);
       excess--;
     }
   }
