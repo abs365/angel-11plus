@@ -297,7 +297,12 @@ export default function PracticeSessionPage({ params }: { params: Promise<{ area
       // scoreEnglishAnswer heuristic and "independent" recording as
       // before, byte-for-byte — this is an extension, not a replacement.
       const q = current.prompt as EnglishComprehensionPrompt;
-      const result = scoreEnglishComprehensionAnswer(answer, q, scoreEnglishAnswer);
+      // Educational Increment 007G defect correction — only the
+      // sequence-anchor scaffold pre-supplies part of the answer; the
+      // instruction/interaction/scoring contract must agree on that, not
+      // just look consistent in the UI.
+      const guidedSequenceAnchorSupplied = guided && getGuidedScaffoldKind(current.familyId) === "sequence-anchor";
+      const result = scoreEnglishComprehensionAnswer(answer, q, scoreEnglishAnswer, { guidedSequenceAnchorSupplied });
       if (result.automaticallyVerified) {
         setLastAutoResult(result);
         const isCorrect = result.earnedMarks === q.marks;

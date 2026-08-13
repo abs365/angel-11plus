@@ -238,10 +238,27 @@ function parseOrderedAnswer(userAnswer: string): string[] {
     .filter((line) => line.length > 0);
 }
 
+export interface ScoreEnglishComprehensionOptions {
+  /**
+   * Educational Increment 007G defect correction. When true, Guided
+   * Practice has shown the learner the first ordered item as an anchor
+   * ("Given: 1. ...") and instructed them to supply only the remaining
+   * items — the learner's raw textarea content therefore does not
+   * include that first item at all. TIER4_ORDERED_LIST reconstructs the
+   * complete sequence by prepending the exact anchor text before
+   * scoring, so a learner who follows the on-screen instruction exactly
+   * is scored correctly. checkOrderedSequence() itself is unchanged; an
+   * independent attempt (this flag absent/false) is scored identically
+   * to before this correction.
+   */
+  guidedSequenceAnchorSupplied?: boolean;
+}
+
 export function scoreEnglishComprehensionAnswer(
   userAnswer: string,
   prompt: EnglishPromptValidationFields,
-  legacyHeuristic: (userAnswer: string, modelAnswer: string | undefined, maxMarks: number) => number
+  legacyHeuristic: (userAnswer: string, modelAnswer: string | undefined, maxMarks: number) => number,
+  options?: ScoreEnglishComprehensionOptions
 ): EnglishScoringResult {
   const tier = prompt.validationTier;
 
@@ -264,7 +281,13 @@ export function scoreEnglishComprehensionAnswer(
     case "TIER4_ORDERED_LIST": {
       const lines = parseOrderedAnswer(userAnswer);
       const acceptedSets = (prompt.orderedAnswer ?? []).map((item) => [item]);
-      const result = checkOrderedSequence(lines, acceptedSets);
+      // 007G correction — see ScoreEnglishComprehensionOptions above. The
+      // anchor is only ever the real position-1 accepted text Angel
+      // actually displayed, never fabricated, and only applied when the
+      // caller explicitly says the anchor was shown.
+      const anchor = prompt.orderedAnswer?.[0];
+      const combinedLines = options?.guidedSequenceAnchorSupplied && anchor ? [anchor, ...lines] : lines;
+      const result = checkOrderedSequence(combinedLines, acceptedSets);
       return {
         tier, automaticallyVerified: true, requiresSelfComparison: false,
         earnedMarks: result.marks, sequenceDetail: result,
