@@ -21,21 +21,21 @@
 | `wave2-eng-sciencefair` | English | RC-01/02/04 | as above | PASS | pending_independent_review | provisional | None known | High (two-character) |
 | `wave2-eng-stormwarning` | English | RC-01/02/04 | as above | PASS | pending_independent_review | provisional | None known | High (multiselect) |
 | `wave2-eng-pianorecital` | English | RC-01/02/03 | as above | PASS | pending_independent_review | provisional | None known | Medium |
-| `wave2-eng-surprise` | English | RC-01/02/03/04 | as above | PASS | pending_independent_review (mig. 052) | provisional | None known | High (2-char + multiselect) |
+| `wave2-eng-surprise` | English | RC-01/02/03/04 | as above | PASS | **approved** (Ayobami Lawal — Decision 51) | provisional | None known | High (2-char + multiselect) |
 
 ## B. English question families (9 targets)
 
 | Family | Subject | QT | Instances (all waves) | Evidence basis | Automated validation | Review status | Blocking defects | Priority |
 |---|---|---|---|---|---|---|---|---|
 | `wave1-fam-direct-retrieval` | English | QT-RC-01 | 14 | CSSE-003/005/008/013 | PASS | pending_independent_review | None known | Medium (well-established) |
-| `wave1-fam-vocab-explain` | English | QT-RC-05 | 17 | as above | PASS | pending_independent_review | None known | **High** (Part 8 priority) |
+| `wave1-fam-vocab-explain` | English | QT-RC-05 | 17 | as above | PASS | **approved** (Ayobami Lawal — Decision 51) | None known | **High** (Part 8 priority) |
 | `wave1-fam-synonym-battery` | English | QT-RC-05 | 11 | as above | PASS | pending_independent_review | None known | Medium |
 | `wave1-fam-tick-justify` | English | QT-RC-02 | 12 | as above | PASS | pending_independent_review | Known gap: no dedicated self-reflection category set (disclosed, 007C) | Medium |
-| `wave1-fam-quote-explain` | English | QT-RC-02 | 13 | as above | PASS | pending_independent_review | None known | **High** (Part 8 priority, most frequent CSSE pattern) |
-| `wave1-fam-sequencing` | English | QT-RC-06 | 15 | as above | PASS | pending_independent_review | None known | **High** (Part 8 priority) |
-| `wave1-fam-two-character` | English | QT-RC-07 | 6 | as above | PASS | pending_independent_review | Thinnest depth of the 8 original families (6, at target floor) | **High** (Part 8 priority) |
+| `wave1-fam-quote-explain` | English | QT-RC-02 | 13 | as above | PASS | **approved** (Ayobami Lawal — Decision 51) | None known | **High** (Part 8 priority, most frequent CSSE pattern) |
+| `wave1-fam-sequencing` | English | QT-RC-06 | 15 | as above | PASS | **approved** (Ayobami Lawal — Decision 51) | None known | **High** (Part 8 priority) |
+| `wave1-fam-two-character` | English | QT-RC-07 | 6 | as above | PASS | **approved** (Ayobami Lawal — Decision 51) | Thinnest depth of the 8 original families (6, at target floor) | **High** (Part 8 priority) |
 | `wave1-fam-emotion-cause` | English | QT-RC-08 | 11 | as above | PASS | pending_independent_review | None known | Medium |
-| `wave2-fam-multiselect` | English | QT-RC-09 | 6 | CSSE-013/2021 Q11 only (single-year evidence, disclosed as thinner) | PASS, incl. real defect found+fixed (trailing-punctuation tokenisation) | pending_independent_review (mig. 050) | Under-selection partial-credit rule is a disclosed policy inference, not directly evidenced | **High** (Part 8 priority, newest family) |
+| `wave2-fam-multiselect` | English | QT-RC-09 | 6 | CSSE-013/2021 Q11 only (single-year evidence, disclosed as thinner) | PASS, incl. real defect found+fixed (trailing-punctuation tokenisation) | **approved** (Ayobami Lawal — Decision 51) | Under-selection partial-credit rule is a disclosed policy inference, not directly evidenced | **High** (Part 8 priority, newest family) |
 
 ## C. Mathematics families (21 targets: 4 with review packs already prepared, 17 with none)
 
@@ -43,7 +43,7 @@
 
 | Family | QT | Provisional count | Evidence basis | Automated validation | Review status | Priority |
 |---|---|---|---|---|---|---|
-| `mr02-compare` | QT-MR-06 | 3 | CSSE-006/011/016 | PASS (Mathematics test suite) | pending_independent_review (mig. 038/041) | High |
+| `mr02-compare` | QT-MR-06 | 3 | CSSE-006/011/016 | PASS (Mathematics test suite) | **approved** (Ayobami Lawal — Decision 51) | High |
 | `mr03-classify` | QT-MR-07 | 3 | CSSE-006/011/016 | PASS | pending_independent_review | High |
 | `mr04-far-percent` | QT-MR-04 | 3 | CSSE-006/011/016 | PASS | pending_independent_review | High |
 | `mr04-mixed-divisibility` | QT-MR-13 | 3 | CSSE-006/016 | PASS | pending_independent_review | High |

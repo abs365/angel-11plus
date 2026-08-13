@@ -2,6 +2,8 @@
 
 **Purpose:** the bounded first human-review batch, per the Founder's Part 8 instruction. A real reviewer (meeting `ANGEL_EDUCATIONAL_REVIEW_STANDARD_V1.md §2`'s qualification standard) should start here, using `/admin-beta/review`, not the full backlog.
 
+**Status: CLOSED, 7 of 7 approved.** Per Decision 51 (`ALI_DECISION_LOG.md`), reviewer Ayobami Lawal decided `approved` for all 7 targets below, on the strength of the Founder's own authenticated Table Editor inspection of `public.ali_family_review`. Educational Increment 007G computed and generated the resulting controlled-activation migration (055) from this decision.
+
 ## Why these 6 targets
 
 Prioritises English because releasing the new English supply has the highest immediate learner value (Part 8), covers every family the Founder's own directives repeatedly named as a priority (multi-select, sequencing, quote-explain, two-character, vocabulary-in-context — 007C Part 8, 007D Part 8), includes one complete passage (Part 8's explicit requirement — passages are never covered by family-level sampling, Operating Model §3), and includes one Mathematics family so the operating model is demonstrated across both subjects in the same pilot, not just English.
@@ -24,6 +26,6 @@ Prioritises English because releasing the new English supply has the highest imm
 - For the 1 passage: the interface shows the full original text plus every question attached to it.
 - Work through `ANGEL_EDUCATIONAL_REVIEW_STANDARD_V1.md`'s criteria, record a real name, choose one of the 4 canonical decisions, and submit.
 
-## What happens after the pilot
+## What happened after the pilot
 
-Each submitted decision is a new `ali_family_review` row — nothing is promoted automatically (Operating Model §5). Once at least one `approved` (or `approved_with_amendment` + revalidated) decision exists, `scripts/activate-reviewed-content.mjs` (Educational Increment 007E) can generate the exact, scoped promotion migration for that specific target, for the Founder to apply.
+Each submitted decision was a new `ali_family_review` row — nothing was promoted automatically (Operating Model §5). With all 7 decided `approved`, `scripts/generate-pilot-activation-migration.mjs` (Educational Increment 007G) recomputed the exact live manifest (60 questions + 1 passage, 0 exclusions) and generated migration 055 — a single, scoped, idempotent activation for exactly this set, for the Founder to apply.

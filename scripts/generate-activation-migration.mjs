@@ -25,6 +25,7 @@
  */
 
 import { writeFileSync } from "node:fs";
+import { pathToFileURL } from "node:url";
 
 const SUPABASE_URL = "https://agxunwcdatosrmzhhuxj.supabase.co";
 const ANON_KEY = process.env.ANGEL_SUPABASE_ANON_KEY ?? "";
@@ -136,6 +137,11 @@ async function main() {
   console.log(`Wrote ${outPath} — ${rows.length} row(s) ready for Founder review and application.`);
 }
 
-if (import.meta.url === `file://${process.argv[1]}`) {
+// Educational Increment 007G — this guard never matched on Windows when
+// invoked with a relative path (argv[1] is relative, import.meta.url is
+// always absolute), silently no-oping the whole script. Found via actual
+// execution while building 007G's activation migration, fixed here since
+// this script shares the identical defect.
+if (import.meta.url === pathToFileURL(process.argv[1]).href) {
   main();
 }
