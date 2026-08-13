@@ -39,10 +39,30 @@ export interface FamilyExposure {
 }
 
 /**
- * Aggregates a learner's real, existing per-item history into per-family
- * exposure, keyed by the MOST RECENTLY seen item in each family (so
- * "last exposure" genuinely means the family's own most recent contact,
- * not an arbitrary item within it).
+ * The exposure/clustering grouping key for a question (Educational
+ * Increment 007A — English Scale Foundation). Prefers `familyId`
+ * (Mathematics' sibling-variant grouping); falls back to `learningUnitId`
+ * when absent. This fallback is inert for every subject where
+ * `learningUnitId === id` (VR, Mathematics — "Atomic subjects... set this
+ * equal to their own id", types/ali/questionBank.ts) since a group of size
+ * one can never be "over-represented" or accumulate multi-item exposure.
+ * For Reading Comprehension, where `learningUnitId` is the shared passage
+ * id across several questions, this same fallback makes the family_id
+ * mechanism (clustering, exposure, spaced retrieval) apply to PASSAGES
+ * with zero new code paths — no parallel English engine, per instruction.
+ * `familyId` remains authoritative and untouched wherever it IS populated
+ * (a future English "question family" concept, per the same field).
+ */
+export function groupingKeyOf(q: BankQuestion): string | undefined {
+  return q.familyId ?? q.learningUnitId;
+}
+
+/**
+ * Aggregates a learner's real, existing per-item history into per-group
+ * exposure (family, or passage via the `learningUnitId` fallback above),
+ * keyed by the MOST RECENTLY seen item in each group (so "last exposure"
+ * genuinely means the group's own most recent contact, not an arbitrary
+ * item within it).
  */
 export function computeFamilyExposure(
   candidatePool: BankQuestion[],
@@ -51,14 +71,15 @@ export function computeFamilyExposure(
   const byFamily = new Map<string, FamilyExposure>();
 
   for (const q of candidatePool) {
-    if (!q.familyId) continue;
+    const groupKey = groupingKeyOf(q);
+    if (!groupKey) continue;
     const row = history.get(q.id);
     if (!row || row.timesSeen === 0) continue;
 
-    const existing = byFamily.get(q.familyId);
+    const existing = byFamily.get(groupKey);
     if (!existing) {
-      byFamily.set(q.familyId, {
-        familyId: q.familyId,
+      byFamily.set(groupKey, {
+        familyId: groupKey,
         count: 1,
         lastExposureAt: row.lastPresentedAt,
         lastOutcome: row.lastAttemptCorrect,

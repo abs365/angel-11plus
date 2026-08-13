@@ -11,7 +11,7 @@ import { getTargetExamDate } from "@/lib/progress";
 import { getRecommendations } from "./educationalIntelligenceService";
 import { QUESTION_TYPE_PRIMARY_COMPETENCY, getQuestionTypesForCompetency } from "./assessmentBrainMap";
 import { getPracticeArea, type PracticeAreaId } from "./practiceContent";
-import { classifyRetrievalStage, computeFamilyExposure, type FamilyExposure } from "@/lib/ali/exposureIntelligence";
+import { classifyRetrievalStage, computeFamilyExposure, groupingKeyOf, type FamilyExposure } from "@/lib/ali/exposureIntelligence";
 
 /**
  * Personalised Session Generation (Sprint 3, ANGEL-CSSE-002A). Single entry
@@ -91,17 +91,22 @@ export interface PersonalisedSession {
 }
 
 /**
- * Family-aware Practice selection (Educational Increment 004 §12). A pure
- * post-processing pass over selectQuestions()'s own output — deliberately
- * NOT a change to lib/ali/selection.ts's cooldown/weak-skill-override
- * engine itself (real, previously tested, reused unmodified from the old
- * ALI/GL adaptive mocks; too risky to touch for a diversity concern that
- * only matters for the small minority of rows that carry a familyId at
- * all — every row before migration 030 has none).
+ * Family/Learning-Unit-aware Practice selection (Educational Increment
+ * 004 §12; generalised beyond family_id in Educational Increment 007A —
+ * English Scale Foundation). A pure post-processing pass over
+ * selectQuestions()'s own output — deliberately NOT a change to
+ * lib/ali/selection.ts's cooldown/weak-skill-override engine itself (real,
+ * previously tested, reused unmodified from the old ALI/GL adaptive
+ * mocks).
  *
- * Keeps at most one item per family within a single session; when a
- * family is over-represented, swaps the extra item(s) for any
- * not-yet-selected candidate from a different family. If no such
+ * Groups by `groupingKeyOf()` (lib/ali/exposureIntelligence.ts) —
+ * `familyId` where populated (Mathematics sibling variants), falling back
+ * to `learningUnitId` where it isn't (Reading Comprehension's shared
+ * passage id). The fallback is inert for every subject where
+ * `learningUnitId === id` (VR, Mathematics), so this is a genuine
+ * generalisation, not new subject-specific behaviour: it keeps at most one
+ * item per group within a single session, swapping the extra item(s) for
+ * any not-yet-selected candidate from a different group. If no such
  * candidate exists (small pool, or every alternative already selected),
  * the repeat is left in place rather than forced — this is a genuine
  * diversity preference, not a hard constraint that could make a session
@@ -114,43 +119,49 @@ export function reduceFamilyClustering(
 ): BankQuestion[] {
   const familyCounts = new Map<string, number>();
   for (const q of selected) {
-    if (!q.familyId) continue;
-    familyCounts.set(q.familyId, (familyCounts.get(q.familyId) ?? 0) + 1);
+    const key = groupingKeyOf(q);
+    if (!key) continue;
+    familyCounts.set(key, (familyCounts.get(key) ?? 0) + 1);
   }
   const overRepresented = [...familyCounts.entries()].filter(([, count]) => count > 1);
   if (overRepresented.length === 0) return selected;
 
   const selectedIds = new Set(selected.map((q) => q.id));
   const result = [...selected];
-  // Every family currently present in `result`, kept in sync as swaps
+  // Every group currently present in `result`, kept in sync as swaps
   // happen. Without this, a swap that resolves one over-represented
-  // family could introduce a fresh collision with a *different* family
+  // group could introduce a fresh collision with a *different* group
   // already sitting elsewhere in the session — the outer loop only
-  // revisits families that were over-represented in the original
+  // revisits groups that were over-represented in the original
   // selection, so a newly-introduced collision would otherwise go
   // undetected and unfixed.
-  const presentFamilies = new Set<string>();
-  for (const q of result) if (q.familyId) presentFamilies.add(q.familyId);
+  const presentGroups = new Set<string>();
+  for (const q of result) {
+    const key = groupingKeyOf(q);
+    if (key) presentGroups.add(key);
+  }
 
-  for (const [familyId, count] of overRepresented) {
-    let excess = count - 1; // keep exactly one representative per family, swap the rest
+  for (const [groupKey, count] of overRepresented) {
+    let excess = count - 1; // keep exactly one representative per group, swap the rest
     for (let i = result.length - 1; i >= 0 && excess > 0; i--) {
-      if (result[i].familyId !== familyId) continue;
-      // Prefer a candidate that is itself a distinct, real family not
+      if (groupingKeyOf(result[i]) !== groupKey) continue;
+      // Prefer a candidate that is itself a distinct, real group not
       // already present anywhere in the session — a genuine
-      // diversification signal — over an untagged (no familyId)
-      // candidate, which is merely "not this family" by omission. Only
+      // diversification signal — over an untagged (no group key)
+      // candidate, which is merely "not this group" by omission. Only
       // fall back to an untagged candidate when no such alternative
       // exists, so the swap target isn't decided by pool array order.
       const replacement =
-        candidatePool.find(
-          (c) => !selectedIds.has(c.id) && !!c.familyId && !presentFamilies.has(c.familyId)
-        ) ?? candidatePool.find((c) => !selectedIds.has(c.id) && c.familyId !== familyId);
-      if (!replacement) continue; // no distinct-family alternative available; leave the repeat
+        candidatePool.find((c) => {
+          const cKey = groupingKeyOf(c);
+          return !selectedIds.has(c.id) && !!cKey && !presentGroups.has(cKey);
+        }) ?? candidatePool.find((c) => !selectedIds.has(c.id) && groupingKeyOf(c) !== groupKey);
+      if (!replacement) continue; // no distinct-group alternative available; leave the repeat
       selectedIds.delete(result[i].id);
       selectedIds.add(replacement.id);
       result[i] = replacement;
-      if (replacement.familyId) presentFamilies.add(replacement.familyId);
+      const replacementKey = groupingKeyOf(replacement);
+      if (replacementKey) presentGroups.add(replacementKey);
       excess--;
     }
   }
@@ -175,8 +186,10 @@ export function applyRetrievalPriority(
   exposureByFamily: Map<string, FamilyExposure>,
   now: Date = new Date()
 ): BankQuestion[] {
-  const stageOf = (q: BankQuestion): ReturnType<typeof classifyRetrievalStage> =>
-    classifyRetrievalStage(q.familyId ? exposureByFamily.get(q.familyId) : undefined, now);
+  const stageOf = (q: BankQuestion): ReturnType<typeof classifyRetrievalStage> => {
+    const key = groupingKeyOf(q);
+    return classifyRetrievalStage(key ? exposureByFamily.get(key) : undefined, now);
+  };
 
   const selectedIds = new Set(selected.map((q) => q.id));
   const result = [...selected];

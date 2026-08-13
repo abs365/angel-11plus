@@ -142,3 +142,53 @@ test("F: an empty Mock-eligible result for the current bank state (no row is moc
   const out = await fetchMockEligibleQuestionBank(client, "maths", "csse");
   assert.equal(out.length, 0, "matches the disclosed production state: zero rows are mock_eligible as of this migration");
 });
+
+// --- English-specific firewall coverage (Educational Increment 007A) -----
+// fetchQuestionBank/fetchMockEligibleQuestionBank are already subject-
+// agnostic (same code path as Mathematics); these confirm that holds for
+// English specifically, including the passage-provenance distinction this
+// increment introduces (EVIDENCE_ONLY / ANGEL_ORIGINAL / LEGALLY_REPRODUCIBLE).
+
+test("Practice firewall (English): provisional Reading Comprehension content is excluded", async () => {
+  const client = stubClient([
+    row({ id: "rc1", subject: "english", skill: "QT-RC-01", eligibility_status: "provisional", learning_unit_id: "passageA" }),
+  ]);
+  const out = await fetchQuestionBank(client, "english", "csse");
+  assert.equal(out.length, 0);
+});
+
+test("Practice firewall (English): practice_eligible Reading Comprehension content is admitted", async () => {
+  const client = stubClient([
+    row({ id: "rc1", subject: "english", skill: "QT-RC-01", eligibility_status: "practice_eligible", learning_unit_id: "passageA" }),
+  ]);
+  const out = await fetchQuestionBank(client, "english", "csse");
+  assert.deepEqual(out.map((q) => q.id), ["rc1"]);
+});
+
+test("evidence_only provenance firewall: a passage/question tagged evidence_only never enters Practice, even if marked practice_eligible", async () => {
+  const client = stubClient([
+    row({
+      id: "rc1", subject: "english", skill: "QT-RC-01",
+      eligibility_status: "practice_eligible", provenance: "evidence_only", learning_unit_id: "passageA",
+    }),
+  ]);
+  const out = await fetchQuestionBank(client, "english", "csse");
+  assert.equal(out.length, 0, "a CSSE-source-derived (evidence_only) row must fail closed from Practice regardless of eligibility_status");
+});
+
+test("evidence_only provenance firewall: does not affect a sibling question from the same passage with real provenance", async () => {
+  const client = stubClient([
+    row({ id: "rc1", subject: "english", eligibility_status: "practice_eligible", provenance: "evidence_only", learning_unit_id: "passageA" }),
+    row({ id: "rc2", subject: "english", eligibility_status: "practice_eligible", provenance: "angel_original", learning_unit_id: "passageA" }),
+  ]);
+  const out = await fetchQuestionBank(client, "english", "csse");
+  assert.deepEqual(out.map((q) => q.id), ["rc2"], "provenance is enforced per-row, not silently inherited or shared across a passage");
+});
+
+test("Mock firewall (English): Practice Eligible Reading Comprehension does not become Mock Eligible", async () => {
+  const client = stubClient([
+    row({ id: "rc1", subject: "english", eligibility_status: "practice_eligible", learning_unit_id: "passageA" }),
+  ]);
+  const out = await fetchMockEligibleQuestionBank(client, "english", "csse");
+  assert.equal(out.length, 0);
+});
