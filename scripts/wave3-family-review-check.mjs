@@ -28,6 +28,10 @@ async function rest(path) {
   return { status: res.status, body };
 }
 
+// See scripts/check-family-review-raw.mjs for why this result must be read
+// as "ANON-visible rows", never as "database row count" — RLS-enabled-
+// with-no-policy and a genuinely empty table are indistinguishable at the
+// HTTP level via an anon key (both return 200 + []).
 const all = await rest("ali_family_review?select=family_id,decision,reviewer,created_at");
-console.log("Status:", all.status);
+console.log("Status:", all.status, "(ANON-visible rows only — not proof of database row count)");
 console.log(JSON.stringify(all.body, null, 2));
