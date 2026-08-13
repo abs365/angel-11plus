@@ -18,6 +18,144 @@ import { getSupabaseClient } from "./supabase";
 export type ReviewTargetType = "passage" | "question_family";
 export type ReviewDecision = "approved" | "approved_with_amendment" | "rejected" | "requires_revalidation";
 
+/**
+ * Educational Increment 007F, "Review Evidence Clarification" — moved
+ * here (from app/admin-beta/review/page.tsx) so the semantic-consistency
+ * convention below is unit-testable without loading React/JSX
+ * (tests/lib/adminReview.test.ts).
+ *
+ * QUALITY RULE (the Founder's own instruction): for every criterion
+ * where practical, Yes = criterion satisfied, No = a problem was found,
+ * N/A = genuinely not applicable. `polarity: "yes-is-good"` records that
+ * every criterion below meets this convention — a regression test
+ * asserts every entry carries it, so a future edit that reintroduces a
+ * negatively-framed question (Yes = bad) fails the test suite, not just
+ * a human re-reading the UI.
+ */
+export interface ReviewCriterion {
+  key: keyof ReviewSubmission;
+  question: string;
+  polarity: "yes-is-good";
+}
+
+export const REVIEW_CRITERIA: ReviewCriterion[] = [
+  { key: "educationalValidity", question: "Is the educational content accurate?", polarity: "yes-is-good" },
+  { key: "competencyValidity", question: "Does it genuinely assess the skill it claims to?", polarity: "yes-is-good" },
+  { key: "questionTypeAlignment", question: "Does it match the real CSSE question pattern it's based on?", polarity: "yes-is-good" },
+  { key: "answerCorrectnessVerified", question: "Are the answers and marking expectations correct?", polarity: "yes-is-good" },
+  // Educational Increment 007F, Review Evidence Clarification — was
+  // "Could a reasonable child give a different, equally defensible
+  // answer the key does not accept?", where "No" (not "Yes") was the
+  // desirable answer, breaking the Yes-is-good convention every other
+  // criterion follows. Reframed positively without changing what it
+  // actually checks (ambiguity-freedom).
+  { key: "ambiguityFree", question: "Does the answer key accept every reasonable answer supported by the passage?", polarity: "yes-is-good" },
+  { key: "wordingQuality", question: "Is the wording clear for an 11+ learner?", polarity: "yes-is-good" },
+  { key: "ageAppropriate", question: "Is this age-appropriate for an 11+ candidate?", polarity: "yes-is-good" },
+  { key: "difficultyAppropriate", question: "Is the difficulty appropriate for its stated level?", polarity: "yes-is-good" },
+  { key: "transferValidity", question: "Is the transfer demand (how far this asks the learner to generalise) honestly classified?", polarity: "yes-is-good" },
+  { key: "misconceptionQuality", question: "Is the recorded misconception a real, plausible mistake a child would make?", polarity: "yes-is-good" },
+  { key: "variationBoundariesSound", question: "Do the easiest and hardest examples you saw genuinely represent the family's range?", polarity: "yes-is-good" },
+  { key: "teachingQuality", question: "Does the teaching support genuinely help the learner, where one exists?", polarity: "yes-is-good" },
+  { key: "examStrategyQuality", question: "Is the exam strategy shown to learners useful and safe advice?", polarity: "yes-is-good" },
+  { key: "explanationQuality", question: "Where a model answer is shown, does it actually explain, not just restate?", polarity: "yes-is-good" },
+  { key: "validationBehaviourSound", question: "Does the way Angel marks this match how CSSE would genuinely mark it?", polarity: "yes-is-good" },
+  { key: "authenticityConfirmed", question: "Does this genuinely resemble a real CSSE question, not a generic worksheet?", polarity: "yes-is-good" },
+  { key: "originalityConfirmed", question: "Is the content sufficiently original?", polarity: "yes-is-good" },
+  { key: "copyrightRiskClear", question: "Is the content free of any copyright concern?", polarity: "yes-is-good" },
+];
+
+/**
+ * Heuristic guard against reintroducing negative framing: a "yes-is-good"
+ * question should not itself be phrased as "could/does X go wrong"
+ * ("Could a reasonable child...", "Does it fail to...", "Is there a
+ * problem..."). This is a defensible lint, not a proof of correct
+ * framing — genuine review of new wording still matters — but it catches
+ * the exact class of regression this correction fixes.
+ */
+const NEGATIVE_FRAMING_PATTERNS = [/^could\b/i, /\bfail to\b/i, /\bproblem with\b/i, /\bdoes not\b.*\?$/i, /\bwithout\b.*\?$/i];
+
+export function hasNegativeFraming(question: string): boolean {
+  return NEGATIVE_FRAMING_PATTERNS.some((p) => p.test(question));
+}
+
+/**
+ * Educational Increment 007F, Review Evidence Clarification, Part 1 —
+ * distinguishes what the accepted CSSE evidence itself demonstrates (A)
+ * from Angel's own original teaching content built on that demonstrated
+ * demand (B), and states the evidence's real limitation honestly (C).
+ * `evidenceBasis` remains the short summary already shown for the other
+ * 5 pilot families that don't yet need this fuller breakdown — nothing
+ * about their entries changes.
+ */
+export interface FamilyEvidenceContext {
+  objective: string;
+  evidenceBasis: string;
+  confirmedFromEvidence?: string;
+  angelExtension?: string;
+  evidenceLimitation?: string;
+}
+
+export const FAMILY_EDUCATIONAL_CONTEXT: Record<string, FamilyEvidenceContext> = {
+  "wave2-fam-multiselect": {
+    objective: "Recognise which of several statements about a passage are actually supported by the text, when told exactly how many to select.",
+    evidenceBasis: "CSSE 2021 Main Test paper, Question 11 (tick-box format). Observed in 1 of the 3 CSSE Main Test years read for this programme.",
+    confirmedFromEvidence: "The CSSE 2021 Main Test paper's Question 11 uses a tick-box format: candidates are told exactly how many statements to select from a longer list, and select the ones the passage supports.",
+    angelExtension: "Angel's questions in this family are original: new passages, new statements, and new distractors, written by Angel to test the same structural demand the 2021 paper demonstrated. No Angel wording, passage, or generated variant is copied from, or derived from the specific wording of, any CSSE paper.",
+    evidenceLimitation: "This exact tick-box structure was observed in only 1 of the 3 CSSE Main Test years read (2021; not present in the 2022 or 2023 papers read for this programme). It is a genuinely observed CSSE assessment demand, not a proven, annually recurring format, and should not be presented to a reviewer as more certain than that.",
+  },
+  "wave1-fam-sequencing": {
+    objective: "Reconstruct the true order of events, actions, or a cause-and-effect chain from a passage, without relying on memory of a natural-feeling order.",
+    evidenceBasis: "CSSE 2021/2022/2023 Main Test papers and the 2023 marking scheme's own worked example (which awards partial credit for items correct but out of position).",
+  },
+  "wave1-fam-quote-explain": {
+    objective: "Find the exact words in a passage that answer a question, then explain what those words show, not just restate them.",
+    evidenceBasis: "The single most frequent question pattern across all 3 CSSE years read for this programme.",
+  },
+  "wave1-fam-two-character": {
+    objective: "Compare and contrast two people or characters in a passage using separate, specific evidence for each, not a one-sided answer.",
+    evidenceBasis: "CSSE 2021/2022/2023 Main Test papers.",
+  },
+  "wave1-fam-vocab-explain": {
+    objective: "Work out what a word or phrase means from how it is used in its sentence, not from memorised dictionary definitions.",
+    evidenceBasis: "CSSE 2021/2022/2023 Main Test papers.",
+  },
+  "mr02-compare": {
+    objective: "Evaluate two linear expressions at a stated value and judge whether the first is greater than, less than, or equal to the second.",
+    evidenceBasis: "CSSE 2021/2022/2023 Mathematics papers (Algebraic/Symbolic Problem-Solving competency).",
+  },
+};
+
+/**
+ * Educational Increment 007F, Review Evidence Clarification, Part 1D —
+ * makes the directly-evidenced-vs-inferred distinction that already
+ * existed in checkMultiSelect()'s own code comments
+ * (lib/learningEngine/englishAnswerValidation.ts) visible to a human
+ * reviewer, instead of only to whoever reads the source. Nothing here
+ * changes the actual scoring behaviour or upgrades the inferred rule to
+ * confirmed — it only surfaces the existing, real distinction.
+ */
+export interface MarkingBasisItem {
+  rule: string;
+  status: "directly-evidenced" | "inferred";
+  citation: string;
+}
+
+export const FAMILY_MARKING_BASIS: Record<string, MarkingBasisItem[]> = {
+  "wave2-fam-multiselect": [
+    {
+      rule: "Selecting more options than instructed loses all marks for the question, even if some of the selections were correct.",
+      status: "directly-evidenced",
+      citation: "CSSE 2023 Main Test paper, cover-page instruction: \"Candidates must NOT tick more boxes than they are instructed to. Any who do will lose all the marks for that question.\"",
+    },
+    {
+      rule: "Selecting fewer than the required number earns one mark per correct selection made.",
+      status: "inferred",
+      citation: "No accepted CSSE marking-scheme artefact for this specific item type was among the evidence read for this programme (CSSE-003/005/008/013). This is a defensible educational scoring policy Angel has adopted, not a confirmed CSSE marking rule. If a marking scheme is found that states this explicitly, this classification should be revisited citing that exact source.",
+    },
+  ],
+};
+
 export interface PendingReviewTarget {
   id: string; // the family_id column's value — either a real family id or a passage id
   reviewTargetType: ReviewTargetType;

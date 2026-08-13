@@ -8,6 +8,7 @@ import { checkIsAdmin } from "@/lib/feedback";
 import {
   fetchPendingReviewTargets, fetchReviewedTargetIds, fetchRepresentativeQuestions, fetchQuestionsForPassage,
   fetchPassageDetail, fetchTargetSummary, submitReview,
+  REVIEW_CRITERIA, FAMILY_EDUCATIONAL_CONTEXT, FAMILY_MARKING_BASIS,
   type PendingReviewTarget, type RepresentativeQuestion, type PassageDetail, type ReviewDecision, type ReviewSubmission,
   type TargetSummary,
 } from "@/lib/adminReview";
@@ -63,41 +64,6 @@ function formatFallbackName(id: string): string {
   return withoutPrefix.split(/[-_]/).map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(" ");
 }
 
-/**
- * Educational Increment 007F, Part 4/6 — plain-language educational
- * context for each target, so the reviewer is answering "would I trust
- * this to teach and assess a child preparing seriously for the 11+?",
- * not reading raw database rows. Every fact here is drawn from real,
- * already-documented evidence (ENGLISH_WAVE2_COVERAGE_MATRIX_V1.md,
- * MATHEMATICS_WAVE2_REVIEW_PACKS.md) — nothing invented for this UI.
- */
-const FAMILY_EDUCATIONAL_CONTEXT: Record<string, { objective: string; evidenceBasis: string }> = {
-  "wave2-fam-multiselect": {
-    objective: "Recognise which of several statements about a passage are actually supported by the text, when told exactly how many to select.",
-    evidenceBasis: "CSSE 2021 Main Test paper, Question 11 (tick-box format). Single-year evidence: the thinnest evidence base of any family in the programme.",
-  },
-  "wave1-fam-sequencing": {
-    objective: "Reconstruct the true order of events, actions, or a cause-and-effect chain from a passage, without relying on memory of a natural-feeling order.",
-    evidenceBasis: "CSSE 2021/2022/2023 Main Test papers and the 2023 marking scheme's own worked example (which awards partial credit for items correct but out of position).",
-  },
-  "wave1-fam-quote-explain": {
-    objective: "Find the exact words in a passage that answer a question, then explain what those words show, not just restate them.",
-    evidenceBasis: "The single most frequent question pattern across all 3 CSSE years read for this programme.",
-  },
-  "wave1-fam-two-character": {
-    objective: "Compare and contrast two people or characters in a passage using separate, specific evidence for each, not a one-sided answer.",
-    evidenceBasis: "CSSE 2021/2022/2023 Main Test papers.",
-  },
-  "wave1-fam-vocab-explain": {
-    objective: "Work out what a word or phrase means from how it is used in its sentence, not from memorised dictionary definitions.",
-    evidenceBasis: "CSSE 2021/2022/2023 Main Test papers.",
-  },
-  "mr02-compare": {
-    objective: "Evaluate two linear expressions at a stated value and judge whether the first is greater than, less than, or equal to the second.",
-    evidenceBasis: "CSSE 2021/2022/2023 Mathematics papers (Algebraic/Symbolic Problem-Solving competency).",
-  },
-};
-
 /** Real remediation categories a family's wrong-answer feedback can genuinely draw on — reuses the live functions, never a separately-maintained duplicate for the 3 automatically-verified families whose logic isn't expressible as a static lookup without a live scoring result. */
 function getRemediationLabels(familyId: string): string[] {
   const selfReflection = getSelfReflectionCategories(familyId).map((c) => WRONG_ANSWER_CATEGORY_LABEL[c]);
@@ -115,28 +81,10 @@ const GUIDED_KIND_LABEL: Record<string, string> = {
   "locate-instruction": "A written tip shown to the learner, not an interactive checked scaffold.",
 };
 
-// ─── Plain-language reviewer questions (mapped to the real ali_family_review columns) ──
-
-const CRITERIA: Array<{ key: keyof ReviewSubmission; question: string }> = [
-  { key: "educationalValidity", question: "Is the educational content accurate?" },
-  { key: "competencyValidity", question: "Does it genuinely assess the skill it claims to?" },
-  { key: "questionTypeAlignment", question: "Does it match the real CSSE question pattern it's based on?" },
-  { key: "answerCorrectnessVerified", question: "Are the answers and marking expectations correct?" },
-  { key: "ambiguityFree", question: "Could a reasonable child give a different, equally defensible answer the key does not accept?" },
-  { key: "wordingQuality", question: "Is the wording clear for an 11+ learner?" },
-  { key: "ageAppropriate", question: "Is this age-appropriate for an 11+ candidate?" },
-  { key: "difficultyAppropriate", question: "Is the difficulty appropriate for its stated level?" },
-  { key: "transferValidity", question: "Is the transfer demand (how far this asks the learner to generalise) honestly classified?" },
-  { key: "misconceptionQuality", question: "Is the recorded misconception a real, plausible mistake a child would make?" },
-  { key: "variationBoundariesSound", question: "Do the easiest and hardest examples you saw genuinely represent the family's range?" },
-  { key: "teachingQuality", question: "Does the teaching support genuinely help the learner, where one exists?" },
-  { key: "examStrategyQuality", question: "Is the exam strategy shown to learners useful and safe advice?" },
-  { key: "explanationQuality", question: "Where a model answer is shown, does it actually explain, not just restate?" },
-  { key: "validationBehaviourSound", question: "Does the way Angel marks this match how CSSE would genuinely mark it?" },
-  { key: "authenticityConfirmed", question: "Does this genuinely resemble a real CSSE question, not a generic worksheet?" },
-  { key: "originalityConfirmed", question: "Is the content sufficiently original?" },
-  { key: "copyrightRiskClear", question: "Is the content free of any copyright concern?" },
-];
+// ─── Plain-language reviewer questions now live in lib/adminReview.ts as
+// REVIEW_CRITERIA, so the Yes-is-good semantic convention (Educational
+// Increment 007F, Review Evidence Clarification, Part 2) is unit-testable
+// without loading this React module. ──────────────────────────────────
 
 const DECISIONS: { value: ReviewDecision; label: string; hint: string }[] = [
   { value: "approved", label: "Approved", hint: "Ready to move toward Practice, pending a separate activation step." },
@@ -216,6 +164,7 @@ function ReviewForm({ target, onDone }: { target: PendingReviewTarget; onDone: (
   const guidedInstruction = guidedScaffold ? getGuidedInstructionText(target.id, guidedScaffold) : undefined;
   const strategyHint = target.reviewTargetType === "question_family" ? getExamStrategyHint(target.id) : undefined;
   const remediationLabels = target.reviewTargetType === "question_family" ? getRemediationLabels(target.id) : [];
+  const markingBasis = FAMILY_MARKING_BASIS[target.id];
 
   useEffect(() => {
     (async () => {
@@ -292,8 +241,47 @@ function ReviewForm({ target, onDone }: { target: PendingReviewTarget; onDone: (
           <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed">{educationalContext.objective}</p>
           <div className="mt-4">
             <SectionTitle letter="B" title="Why it belongs in Angel 11+" />
-            <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed">{educationalContext.evidenceBasis}</p>
+            {educationalContext.confirmedFromEvidence ? (
+              <div className="space-y-3">
+                <div>
+                  <p className="text-[11px] font-semibold text-emerald-700 dark:text-emerald-300 uppercase tracking-wide">Confirmed from CSSE evidence</p>
+                  <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed mt-0.5">{educationalContext.confirmedFromEvidence}</p>
+                </div>
+                <div>
+                  <p className="text-[11px] font-semibold text-purple-700 dark:text-purple-300 uppercase tracking-wide">Angel's original teaching content</p>
+                  <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed mt-0.5">{educationalContext.angelExtension}</p>
+                </div>
+                <div>
+                  <p className="text-[11px] font-semibold text-amber-700 dark:text-amber-300 uppercase tracking-wide">Evidence limitation</p>
+                  <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed mt-0.5">{educationalContext.evidenceLimitation}</p>
+                </div>
+              </div>
+            ) : (
+              <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed">{educationalContext.evidenceBasis}</p>
+            )}
           </div>
+          {markingBasis && markingBasis.length > 0 && (
+            <div className="mt-4">
+              <SectionTitle letter="D" title="Directly evidenced vs. inferred marking" />
+              <div className="space-y-2">
+                {markingBasis.map((m) => (
+                  <div key={m.rule} className="flex items-start gap-2">
+                    <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded shrink-0 mt-0.5 ${
+                      m.status === "directly-evidenced"
+                        ? "bg-emerald-100 dark:bg-emerald-900 text-emerald-700 dark:text-emerald-300"
+                        : "bg-amber-100 dark:bg-amber-900 text-amber-700 dark:text-amber-300"
+                    }`}>
+                      {m.status === "directly-evidenced" ? "EVIDENCED" : "INFERRED"}
+                    </span>
+                    <div>
+                      <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed">{m.rule}</p>
+                      <p className="text-[11px] text-gray-400 dark:text-gray-500 mt-0.5">{m.citation}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </Card>
       )}
 
@@ -445,7 +433,7 @@ function ReviewForm({ target, onDone }: { target: PendingReviewTarget; onDone: (
           </div>
 
           <div className="space-y-2">
-            {CRITERIA.map(({ key, question }) => (
+            {REVIEW_CRITERIA.map(({ key, question }) => (
               <div key={key} className="flex items-center justify-between gap-3">
                 <span className="text-xs text-gray-600 dark:text-gray-400">{question}</span>
                 <TriState
