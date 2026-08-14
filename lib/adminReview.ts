@@ -149,6 +149,35 @@ export const FAMILY_EDUCATIONAL_CONTEXT: Record<string, FamilyEvidenceContext> =
     objective: "Find the one number that satisfies two simultaneous conditions (a stated range plus two grouping/divisibility rules) given in continuous prose, not as separate labelled equations.",
     evidenceBasis: "CSSE-006, CSSE-016 (Best-Value/Combinatorial Word Problem). Review pack: MATHEMATICS_WAVE2_REVIEW_PACKS.md. Uniqueness of the answer is verified at content-generation time, not asserted by hand.",
   },
+  // Educational Increment 007I, Controlled Review Batch 3.
+  "mr01-missing-operand": {
+    objective: "Find an unknown number in a simple equation using the inverse operation, when the unknown can appear in any position, not only at the end.",
+    evidenceBasis: "CSSE-006 Q2(b)(c)(d) (2023), CSSE-016 Q2(c)(d)/Q3(a)(b) (2021). Currently the only Mathematics competency (QT-MR-02) with zero practice-eligible supply. See ANGEL_007I_BATCH3_SELECTION_V1.md.",
+  },
+  "mr03-coordinate": {
+    objective: "Apply a single geometric transformation (reflection in the x-axis, reflection in the y-axis, or a translation) to a coordinate pair.",
+    evidenceBasis: "AEP-004 QT-MR-08 (Coordinate/Transformation Reasoning), CSSE Multi-Year Pattern Analysis. Currently the only other Mathematics competency (QT-MR-08) with zero practice-eligible supply.",
+  },
+  "mr01-measurement-conversion": {
+    objective: "Convert two measurements to a common unit before combining them.",
+    evidenceBasis: "CSSE_QUESTION_INTELLIGENCE_FRAMEWORK.md QT-MR-03 (Obs. 11): CSSE-006, CSSE-011, CSSE-016. Currently has only 1 practice-eligible question, a legacy singleton with no real family behind it.",
+  },
+  "mr01-data-table": {
+    objective: "Read values from a small labelled table and apply the specific operation the question asks for, a targeted sum, a difference, or the range, not just read off one number.",
+    evidenceBasis: "CSSE_QUESTION_INTELLIGENCE_FRAMEWORK.md QT-MR-09 (Obs. 11): CSSE-006, CSSE-011, CSSE-016. Currently has only 1 practice-eligible question, a legacy singleton.",
+  },
+  "mr04-elapsed-time": {
+    objective: "Add several sequential durations onto a start time, carrying minutes into hours correctly.",
+    evidenceBasis: "CSSE_QUESTION_INTELLIGENCE_FRAMEWORK.md QT-MR-10 (Obs. 11): CSSE-006, CSSE-011, CSSE-016. Currently has only 1 practice-eligible question, a legacy singleton.",
+  },
+  "mr01-average-mean": {
+    objective: "Compute the mean of a small set of values, dividing by the correct count.",
+    evidenceBasis: "CSSE_QUESTION_INTELLIGENCE_FRAMEWORK.md QT-MR-12 (Obs. 11): CSSE-006, CSSE-011, CSSE-016. Currently has only 1 practice-eligible question, a legacy singleton.",
+  },
+  "mr02-nth-term": {
+    objective: "Infer the rule behind a number sequence and use it to find a term far beyond what is shown, without listing every term up to it.",
+    evidenceBasis: "CSSE_QUESTION_INTELLIGENCE_FRAMEWORK.md QT-MR-05 (Obs. 11): CSSE-006, CSSE-011, CSSE-016. Breaks a current one-family monopoly on this competency (10 practice-eligible questions, all from a single family).",
+  },
 };
 
 /**

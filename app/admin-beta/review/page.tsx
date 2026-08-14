@@ -61,6 +61,23 @@ const BATCH2_TARGET_IDS = [
   "mr04-mixed-divisibility",
 ];
 
+/**
+ * Educational Increment 007I, Controlled Review Batch 3 — selected in
+ * ANGEL_007I_BATCH3_SELECTION_V1.md from the existing provisional
+ * Mathematics corpus (no new content authored). All 7 Mathematics
+ * families; kept as its own section, distinct from the Pilot and Batch 2
+ * above, matching the same "never merge batch counts" rule.
+ */
+const BATCH3_TARGET_IDS = [
+  "mr01-missing-operand",
+  "mr03-coordinate",
+  "mr01-measurement-conversion",
+  "mr01-data-table",
+  "mr04-elapsed-time",
+  "mr01-average-mean",
+  "mr02-nth-term",
+];
+
 const FAMILY_DISPLAY_NAME: Record<string, string> = {
   "wave2-fam-multiselect": "Selecting Multiple Correct Statements",
   "wave1-fam-sequencing": "Sequencing Events and Evidence",
@@ -75,6 +92,13 @@ const FAMILY_DISPLAY_NAME: Record<string, string> = {
   "mr03-classify": "Classifying Triangles by Angle",
   "mr04-far-percent": "Proportional Reasoning (Far Transfer)",
   "mr04-mixed-divisibility": "Simultaneous Divisibility Conditions",
+  "mr01-missing-operand": "Missing Operand (Reverse Reasoning)",
+  "mr03-coordinate": "Coordinate Transformations",
+  "mr01-measurement-conversion": "Measurement Conversion",
+  "mr01-data-table": "Reading and Interpreting Data Tables",
+  "mr04-elapsed-time": "Multi-Step Elapsed Time",
+  "mr01-average-mean": "Calculating the Mean",
+  "mr02-nth-term": "Pattern Inference and the nth Term",
 };
 
 /** Graceful fallback for any family/passage not in the curated name map above — never shows a raw dash-separated ID as the primary label. */
@@ -624,9 +648,34 @@ function Batch2Section({ targets, reviewedIds, onOpen }: { targets: PendingRevie
   );
 }
 
+function Batch3Section({ targets, reviewedIds, onOpen }: { targets: PendingReviewTarget[]; reviewedIds: Set<string>; onOpen: (t: PendingReviewTarget) => void }) {
+  const batch3Targets = BATCH3_TARGET_IDS
+    .map((id) => targets.find((t) => t.id === id))
+    .filter((t): t is PendingReviewTarget => Boolean(t));
+  const reviewedCount = BATCH3_TARGET_IDS.filter((id) => reviewedIds.has(id)).length;
+
+  return (
+    <div className="bg-white dark:bg-gray-900 rounded-2xl border-2 border-amber-200 dark:border-amber-800 overflow-hidden">
+      <div className="px-5 py-4 border-b border-amber-100 dark:border-amber-900 bg-amber-50 dark:bg-amber-950/40">
+        <p className="text-sm font-bold text-amber-900 dark:text-amber-200">Controlled Review Batch 3</p>
+        <p className="text-xs text-amber-600 dark:text-amber-400 mt-0.5">{reviewedCount} of {BATCH3_TARGET_IDS.length} reviewed</p>
+      </div>
+      {batch3Targets.length === 0 ? (
+        <p className="px-5 py-4 text-sm text-gray-400 dark:text-gray-500">
+          None of the 7 Batch 3 targets are visible yet. See ANGEL_007I_BATCH3_SELECTION_V1.md.
+        </p>
+      ) : (
+        <div className="divide-y divide-gray-50 dark:divide-gray-800">
+          {batch3Targets.map((t) => <TargetCard key={t.id} target={t} onOpen={() => onOpen(t)} />)}
+        </div>
+      )}
+    </div>
+  );
+}
+
 function FullBacklogSection({ targets, onOpen }: { targets: PendingReviewTarget[]; onOpen: (t: PendingReviewTarget) => void }) {
   const [open, setOpen] = useState(false);
-  const backlogTargets = targets.filter((t) => !PILOT_TARGET_IDS.includes(t.id) && !BATCH2_TARGET_IDS.includes(t.id));
+  const backlogTargets = targets.filter((t) => !PILOT_TARGET_IDS.includes(t.id) && !BATCH2_TARGET_IDS.includes(t.id) && !BATCH3_TARGET_IDS.includes(t.id));
 
   return (
     <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 overflow-hidden">
@@ -689,6 +738,7 @@ function ReviewDashboard() {
     <div className="space-y-5">
       <PilotSection targets={targets} reviewedIds={reviewedIds} onOpen={setSelected} />
       <Batch2Section targets={targets} reviewedIds={reviewedIds} onOpen={setSelected} />
+      <Batch3Section targets={targets} reviewedIds={reviewedIds} onOpen={setSelected} />
       <FullBacklogSection targets={targets} onOpen={setSelected} />
     </div>
   );

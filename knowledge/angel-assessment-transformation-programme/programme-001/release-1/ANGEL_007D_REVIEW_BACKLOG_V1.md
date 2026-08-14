@@ -30,7 +30,7 @@
 | `wave1-fam-direct-retrieval` | English | QT-RC-01 | 14 | CSSE-003/005/008/013 | PASS | pending_independent_review | None known | Medium (well-established) |
 | `wave1-fam-vocab-explain` | English | QT-RC-05 | 17 | as above | PASS | **approved** (Ayobami Lawal — Decision 51) | None known | **High** (Part 8 priority) |
 | `wave1-fam-synonym-battery` | English | QT-RC-05 | 11 | as above | PASS | pending_independent_review | None known | Medium |
-| `wave1-fam-tick-justify` | English | QT-RC-02 | 12 | as above | PASS | pending_independent_review | Known gap: no dedicated self-reflection category set (disclosed, 007C) | Medium |
+| `wave1-fam-tick-justify` | English | QT-RC-02 | 11 (corrected 007I — Wave 1 count was misrecorded as 6/12; Race Day's slot went to `two-character` instead, true count always 5 Wave 1 + 6 Wave 2) | as above | PASS | pending_independent_review | Known gap: no dedicated self-reflection category set (disclosed, 007C) | Medium |
 | `wave1-fam-quote-explain` | English | QT-RC-02 | 13 | as above | PASS | **approved** (Ayobami Lawal — Decision 51) | None known | **High** (Part 8 priority, most frequent CSSE pattern) |
 | `wave1-fam-sequencing` | English | QT-RC-06 | 15 | as above | PASS | **approved** (Ayobami Lawal — Decision 51) | None known | **High** (Part 8 priority) |
 | `wave1-fam-two-character` | English | QT-RC-07 | 6 | as above | PASS | **approved** (Ayobami Lawal — Decision 51) | Thinnest depth of the 8 original families (6, at target floor) | **High** (Part 8 priority) |

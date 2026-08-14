@@ -27,7 +27,7 @@
 | `wave1-fam-direct-retrieval` | 6 | 8 | 0 | 14 |
 | `wave1-fam-vocab-explain` | 6 | 8 | 3 | 17 |
 | `wave1-fam-synonym-battery` | 6 | 5 | 0 | 11 |
-| `wave1-fam-tick-justify` | 6 | 6 | 0 | 12 |
+| `wave1-fam-tick-justify` | 5 | 6 | 0 | 11 |
 | `wave1-fam-quote-explain` | 6 | 6 | 1 | 13 |
 | `wave1-fam-sequencing` | 6 | 6 | 3 | 15 |
 | `wave1-fam-two-character` | 1 | 3 | 2 | **6** |
@@ -35,6 +35,8 @@
 | `wave2-fam-multiselect` (new) | 0 | 3 | 3 | **6** |
 
 **Gaps closed on completion:** question total 50 -> 62 (>=60 floor met). Multi-select 3 -> 6 (target met). Two-character 4 -> 6 cumulative (target met). Sequencing gained 3 structurally distinct new sub-types (action-reconstruction in `wave2-eng-surprise`, cause/effect in `wave2-eng-sciencefair`, dispersed-evidence spanning all 5 paragraphs in `wave2-eng-stormwarning`) rather than repeating the original 3-item reorder-events pattern — see `ENGLISH_WAVE2_MODEL_COVERAGE_AUDIT_V1.md` and `tests/content/englishWave2.test.ts`'s 4-item-chain structural check.
+
+**Correction, Educational Increment 007I:** `wave1-fam-tick-justify`'s Wave 1 count was previously misrecorded as 6 (total 12). Direct reading of `scripts/generate-english-wave1.mjs` and live production confirms only 5 Wave 1 instances were ever authored (`kitemaker`, `lastbus`, `newgirl`, `atticdoor`, `letter`) — `w1-raceday-04` was deliberately allocated to `wave1-fam-two-character` instead, since Race Day was the one Wave 1 passage built with two contrasting characters (this table's own `two-character` row already correctly shows Wave 1 count 1, not 2, reflecting the same trade-off; `tick-justify`'s count simply wasn't updated to match at the time). No content is missing and no correction to production is needed: 11 is, and always was, the correct count.
 
 ## Answer-validation architecture applied
 
