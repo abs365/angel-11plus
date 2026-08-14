@@ -30,6 +30,7 @@ import { scoreEnglishComprehensionAnswer, checkQuotationPresent, type EnglishSco
 import { getExamStrategyHint, getWorkedExample } from "@/lib/learningEngine/englishExamStrategies";
 import { getGuidedScaffoldKind, getGuidedInstructionText, checkLiveSelectionCount } from "@/lib/learningEngine/guidedPractice";
 import { classifyAutomaticError, getSelfReflectionCategories, WRONG_ANSWER_CATEGORY_LABEL } from "@/lib/learningEngine/englishErrorClassification";
+import { getMathsTeachingContent, MATHS_MISCONCEPTION_CATEGORY_LABEL } from "@/lib/learningEngine/mathsTeachingContent";
 import { CompetencyProfile } from "@/components/learningEngine/CompetencyProfile";
 import { EvidenceProfile } from "@/components/learningEngine/EvidenceProfile";
 import { DiagnosticOverview } from "@/components/learningEngine/DiagnosticOverview";
@@ -107,6 +108,13 @@ export default function PracticeSessionPage({ params }: { params: Promise<{ area
   // learner answers it correctly under guidance ("gradually reduce
   // support" — session-local only, not a new mastery mechanic).
   const guidedFamiliesRef = useRef<Set<string>>(new Set());
+  // Educational Increment 007L — Mathematics Guided Practice proof.
+  // Mirrors guidedFamiliesRef's exact "gradually reduce support" discipline
+  // above, scoped to the 4 proof-set Mathematics families
+  // (lib/learningEngine/mathsTeachingContent.ts) instead of English's
+  // FAMILY_SCAFFOLD. A family is removed the first time the learner
+  // answers it correctly under guidance this session.
+  const mathsGuidedFamiliesRef = useRef<Set<string>>(new Set());
   // Remembers whether the just-submitted (non-auto-verified) attempt was
   // made under Guided Practice, across the async gap until the learner
   // responds to self-assessment.
@@ -192,6 +200,11 @@ export default function PracticeSessionPage({ params }: { params: Promise<{ area
         tagged
           .map((q) => q.familyId)
           .filter((id): id is string => Boolean(id) && Boolean(getGuidedScaffoldKind(id)))
+      );
+      mathsGuidedFamiliesRef.current = new Set(
+        tagged
+          .map((q) => q.familyId)
+          .filter((id): id is string => Boolean(id) && Boolean(getMathsTeachingContent(id)))
       );
 
       setActivities(tagged);
@@ -289,7 +302,15 @@ export default function PracticeSessionPage({ params }: { params: Promise<{ area
     if (area!.id === "mathematics") {
       const q = current.prompt as MathsQuestion;
       const isCorrect = checkMathsAnswer(answer, String(q.answer));
-      await recordAndAdvance(isCorrect, q.skill);
+      // Educational Increment 007L — supportTier now reflects whether the
+      // learner had Guided mode toggled on for this question, exactly
+      // mirroring the English branch below's guidedMode ? "supported" :
+      // "independent" convention (reused, not reinvented). Every family
+      // outside the 4-family teaching-content proof set never renders the
+      // guided toggle at all (see MathsActivity below), so `guided` stays
+      // false for them and this call is byte-for-byte the prior behaviour.
+      await recordAndAdvance(isCorrect, q.skill, guided ? "supported" : "independent");
+      if (guided && isCorrect && current.familyId) mathsGuidedFamiliesRef.current.delete(current.familyId);
     } else {
       // Educational Increment 007B, Part 3 — dispatches through the 007A
       // Answer Validation Architecture. Legacy content (the original 13
@@ -481,7 +502,11 @@ export default function PracticeSessionPage({ params }: { params: Promise<{ area
 
             {area.id === "mathematics" && (
               <MathsActivity
+                key={current.id}
                 prompt={current.prompt as MathsQuestion}
+                familyId={current.familyId}
+                addressesMisconception={current.addressesMisconception}
+                guidedAvailable={Boolean(current.familyId && mathsGuidedFamiliesRef.current.has(current.familyId))}
                 answer={answer}
                 setAnswer={setAnswer}
                 submitted={submitted}
@@ -829,21 +854,104 @@ function ReadingActivity({
   );
 }
 
+/**
+ * Educational Increment 007L, Part 8 — Mathematics Teaching Architecture
+ * bounded proof. Adds MODEL (worked example), Guided step reveal, and
+ * misconception-aware remediation ONLY for the 4 proof-set families
+ * (lib/learningEngine/mathsTeachingContent.ts) — a family absent from that
+ * lookup renders exactly the pre-007L behaviour below (question, input,
+ * Submit, static post-hoc workingSteps), unchanged byte-for-byte. See
+ * ANGEL_007L_MATHEMATICS_TEACHING_ARCHITECTURE_V1.md Part 6.
+ */
 function MathsActivity({
-  prompt, answer, setAnswer, submitted, lastCorrect, onSubmit, onNext, isLast,
+  prompt, familyId, addressesMisconception, guidedAvailable, answer, setAnswer, submitted, lastCorrect, onSubmit, onNext, isLast,
 }: {
   prompt: MathsQuestion;
+  familyId?: string;
+  addressesMisconception?: string;
+  guidedAvailable: boolean;
   answer: string;
   setAnswer: (v: string) => void;
   submitted: boolean;
   lastCorrect: boolean | null;
-  onSubmit: () => void;
+  onSubmit: (guided: boolean) => void;
   onNext: () => void;
   isLast: boolean;
 }) {
+  const [guidedMode, setGuidedMode] = useState(guidedAvailable);
+  const [showModel, setShowModel] = useState(false);
+  const [stepsRevealed, setStepsRevealed] = useState(0);
+
+  const teachingContent = getMathsTeachingContent(familyId);
+  const misconceptionLabel = teachingContent ? MATHS_MISCONCEPTION_CATEGORY_LABEL[teachingContent.misconceptionCategory] : undefined;
+
   return (
     <InfoCard className="mt-3">
       <p className="text-sm font-semibold text-gray-800 dark:text-gray-200">{prompt.question}</p>
+
+      {/* Educational Increment 007L, Part 3E — Guided toggle, exact same
+          interaction pattern as ReadingActivity's guidedMode button
+          (reused, not reinvented). Only rendered for the 4 proof-set
+          families; every other family never sees this button, matching
+          today's behaviour exactly. */}
+      {teachingContent && !submitted && (
+        <div className="flex flex-wrap gap-2 mt-2">
+          <button
+            onClick={() => setGuidedMode((v) => !v)}
+            className="text-xs text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950 hover:bg-emerald-100 dark:hover:bg-emerald-900 px-3 py-1.5 rounded-lg font-medium transition-colors"
+          >
+            {guidedMode ? "Switch to independent practice" : "Try with guidance"}
+          </button>
+          {guidedMode && (
+            <button
+              onClick={() => setShowModel((v) => !v)}
+              className="text-xs text-purple-700 dark:text-purple-300 bg-purple-50 dark:bg-purple-950 hover:bg-purple-100 dark:hover:bg-purple-900 px-3 py-1.5 rounded-lg font-medium transition-colors"
+            >
+              {showModel ? "Hide worked example" : "See a worked example"}
+            </button>
+          )}
+        </div>
+      )}
+
+      {/* MODEL — Part 3A: a fixed, safe, non-live worked example, never
+          the current question's own numbers. */}
+      {guidedMode && showModel && !submitted && teachingContent && (
+        <div className="mt-2 text-xs text-purple-700 dark:text-purple-300 bg-purple-50 dark:bg-purple-950 rounded-xl p-3 space-y-1.5">
+          <p><strong>What to notice: </strong>{teachingContent.model.whatToNotice}</p>
+          <p><strong>The rule: </strong>{teachingContent.model.relationship}</p>
+          <p><strong>Worked example: </strong>{teachingContent.model.scenario}</p>
+          <ul className="list-disc list-inside space-y-0.5">
+            {teachingContent.model.reasoning.map((step, i) => <li key={i}>{step}</li>)}
+          </ul>
+          <p><strong>Answer: </strong>{teachingContent.model.answer}</p>
+          <p><strong>Check it: </strong>{teachingContent.model.verification}</p>
+        </div>
+      )}
+
+      {/* GUIDED STEP REVEAL — Part 3B: progressive reveal of the real
+          workingSteps, never a second authored copy. The learner still
+          types and submits exactly one final answer below, checked by the
+          same unmodified checkMathsAnswer every Independent attempt uses. */}
+      {guidedMode && !submitted && prompt.workingSteps && prompt.workingSteps.length > 0 && (
+        <div className="mt-2 text-xs text-emerald-800 dark:text-emerald-200 bg-emerald-50 dark:bg-emerald-950 rounded-xl p-3 space-y-1.5">
+          {stepsRevealed === 0 ? (
+            <p>Stuck? You can reveal this question&apos;s steps one at a time.</p>
+          ) : (
+            <ul className="list-disc list-inside space-y-0.5">
+              {prompt.workingSteps.slice(0, stepsRevealed).map((s, i) => <li key={i}>{s}</li>)}
+            </ul>
+          )}
+          {stepsRevealed < prompt.workingSteps.length && (
+            <button
+              onClick={() => setStepsRevealed((n) => n + 1)}
+              className="text-xs font-semibold text-emerald-700 dark:text-emerald-300"
+            >
+              Reveal the next step ({stepsRevealed} of {prompt.workingSteps.length})
+            </button>
+          )}
+        </div>
+      )}
+
       <input
         value={answer}
         onChange={(e) => setAnswer(e.target.value)}
@@ -851,7 +959,20 @@ function MathsActivity({
         className="w-full mt-3 text-sm rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-3"
         placeholder="Your answer…"
       />
-      <SubmitOrNext submitted={submitted} lastCorrect={lastCorrect} onSubmit={onSubmit} onNext={onNext} isLast={isLast} disabled={!answer.trim()} />
+      <SubmitOrNext submitted={submitted} lastCorrect={lastCorrect} onSubmit={() => onSubmit(guidedMode)} onNext={onNext} isLast={isLast} disabled={!answer.trim()} />
+
+      {/* WRONG-ANSWER REMEDIATION — Part 3D: the family's own real,
+          human-review-evidenced addressesMisconception text, mapped to its
+          category label for consistent framing. Never a fabricated
+          per-answer diagnosis; shown after ANY incorrect attempt, guided
+          or independent, matching the contract exactly. */}
+      {submitted && !lastCorrect && addressesMisconception && misconceptionLabel && (
+        <div className="text-xs text-blue-700 dark:text-blue-300 bg-blue-50 dark:bg-blue-950 rounded-xl p-3 mt-3">
+          <p className="font-semibold">{misconceptionLabel}</p>
+          <p className="mt-1">{addressesMisconception}</p>
+        </div>
+      )}
+
       {submitted && prompt.workingSteps && (
         <div className="text-xs text-gray-500 dark:text-gray-400 mt-3 bg-gray-50 dark:bg-gray-800 rounded-xl p-3">
           <strong>Correct answer: {String(prompt.answer)}</strong>
