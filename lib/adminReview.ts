@@ -124,6 +124,31 @@ export const FAMILY_EDUCATIONAL_CONTEXT: Record<string, FamilyEvidenceContext> =
     objective: "Evaluate two linear expressions at a stated value and judge whether the first is greater than, less than, or equal to the second.",
     evidenceBasis: "CSSE 2021/2022/2023 Mathematics papers (Algebraic/Symbolic Problem-Solving competency).",
   },
+  // Educational Increment 007H, Controlled Review Batch 2.
+  "wave1-fam-direct-retrieval": {
+    objective: "Locate a single, explicitly stated fact or detail in a passage and report it accurately, without summarising or inferring beyond what the text says.",
+    evidenceBasis: "CSSE 2021/2022/2023 Main Test papers (direct reading, ANGEL_007D_REVIEW_BACKLOG_V1.md). The most foundational comprehension demand present in every year read.",
+  },
+  "wave1-fam-synonym-battery": {
+    objective: "Give a synonym for a word exactly as it is used in its specific sentence, not a generic dictionary definition or a synonym for a different, more common sense of the word.",
+    evidenceBasis: "CSSE 2021/2022/2023 Main Test papers (direct reading, ANGEL_007D_REVIEW_BACKLOG_V1.md). Currently the only English competency (QT-RC-04) with zero practice-eligible supply. See ANGEL_007H_BATCH2_SELECTION_V1.md.",
+  },
+  "wave1-fam-emotion-cause": {
+    objective: "Identify how a character feels at a specific point in a passage and explain, using evidence, why they feel that way. Not just naming an emotion without grounding it in the text.",
+    evidenceBasis: "CSSE 2021/2022/2023 Main Test papers (direct reading, ANGEL_007D_REVIEW_BACKLOG_V1.md).",
+  },
+  "mr03-classify": {
+    objective: "Classify a triangle as equilateral, isosceles or scalene from its three angles, using the equal-angles-imply-equal-opposite-sides property rather than guessing from appearance.",
+    evidenceBasis: "CSSE-006 Q7/Q12, CSSE-011 Q12/Q17, CSSE-016 Q11 (Geometric Angle/Shape Reasoning competency). Review pack: MATHEMATICS_WAVE2_REVIEW_PACKS.md.",
+  },
+  "mr04-far-percent": {
+    objective: "Recognise a proportional (not fixed-amount) relationship between a before/after pair of values, and apply that same relationship to a new value, without the prompt ever naming 'percentage' or 'fraction'.",
+    evidenceBasis: "CSSE-006 Q1/Q13, CSSE-011 Q1/Q2/Q3, CSSE-016 Q1/Q2 (Percentage/Proportional Change Word Problem). Review pack: MATHEMATICS_WAVE2_REVIEW_PACKS.md. Disclosed limitation: all 3 variants share one narrative frame and use a 'nice' ratio; no non-simplifying ratio variant exists yet.",
+  },
+  "mr04-mixed-divisibility": {
+    objective: "Find the one number that satisfies two simultaneous conditions (a stated range plus two grouping/divisibility rules) given in continuous prose, not as separate labelled equations.",
+    evidenceBasis: "CSSE-006, CSSE-016 (Best-Value/Combinatorial Word Problem). Review pack: MATHEMATICS_WAVE2_REVIEW_PACKS.md. Uniqueness of the answer is verified at content-generation time, not asserted by hand.",
+  },
 };
 
 /**

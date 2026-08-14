@@ -45,6 +45,22 @@ const PILOT_TARGET_IDS = [
   "mr02-compare",
 ];
 
+/**
+ * Educational Increment 007H, Controlled Review Batch 2 — selected in
+ * ANGEL_007H_BATCH2_SELECTION_V1.md from the existing provisional corpus
+ * (no new content authored). Kept as its own section, distinct from the
+ * First Educational Review Pilot above, per the Founder's Part 5
+ * instruction: the two batches must never be merged into one count.
+ */
+const BATCH2_TARGET_IDS = [
+  "wave1-fam-direct-retrieval",
+  "wave1-fam-synonym-battery",
+  "wave1-fam-emotion-cause",
+  "mr03-classify",
+  "mr04-far-percent",
+  "mr04-mixed-divisibility",
+];
+
 const FAMILY_DISPLAY_NAME: Record<string, string> = {
   "wave2-fam-multiselect": "Selecting Multiple Correct Statements",
   "wave1-fam-sequencing": "Sequencing Events and Evidence",
@@ -56,6 +72,9 @@ const FAMILY_DISPLAY_NAME: Record<string, string> = {
   "wave1-fam-tick-justify": "Tick and Justify",
   "wave1-fam-emotion-cause": "Emotion and Cause",
   "mr02-compare": "Comparing Algebraic Expressions",
+  "mr03-classify": "Classifying Triangles by Angle",
+  "mr04-far-percent": "Proportional Reasoning (Far Transfer)",
+  "mr04-mixed-divisibility": "Simultaneous Divisibility Conditions",
 };
 
 /** Graceful fallback for any family/passage not in the curated name map above — never shows a raw dash-separated ID as the primary label. */
@@ -159,11 +178,25 @@ function ReviewForm({ target, onDone }: { target: PendingReviewTarget; onDone: (
 
   const displayName = FAMILY_DISPLAY_NAME[target.id] ?? (passage?.title || formatFallbackName(target.id));
   const educationalContext = FAMILY_EDUCATIONAL_CONTEXT[target.id];
-  const workedExample = target.reviewTargetType === "question_family" ? getWorkedExample(target.id) : undefined;
-  const guidedScaffold = target.reviewTargetType === "question_family" ? getGuidedScaffoldKind(target.id) : undefined;
+  // Educational Increment 007H, Part 7 — found and fixed here: this page
+  // previously called the English-only guidedPractice/englishExamStrategies
+  // helpers for every question_family target regardless of subject. For a
+  // Mathematics family (e.g. mr02-compare, and now this batch's 3
+  // Mathematics targets) getGuidedScaffoldKind() correctly returns
+  // undefined, but getGuidedInstructionText() then falls through to its
+  // generic default ("find the exact part of the passage..."), which is
+  // false for Mathematics content — there is no passage and no Guided
+  // Practice mechanic for Mathematics anywhere in the codebase
+  // (lib/learningEngine/guidedPractice.ts's FAMILY_SCAFFOLD is keyed
+  // entirely by English family IDs). Gating on subject fixes the false
+  // claim rather than papering over it with different wording.
+  const subject = questions[0]?.subject ?? (passage ? "english" : target.id.startsWith("mr") ? "maths" : "english");
+  const isEnglish = subject === "english";
+  const workedExample = target.reviewTargetType === "question_family" && isEnglish ? getWorkedExample(target.id) : undefined;
+  const guidedScaffold = target.reviewTargetType === "question_family" && isEnglish ? getGuidedScaffoldKind(target.id) : undefined;
   const guidedInstruction = guidedScaffold ? getGuidedInstructionText(target.id, guidedScaffold) : undefined;
-  const strategyHint = target.reviewTargetType === "question_family" ? getExamStrategyHint(target.id) : undefined;
-  const remediationLabels = target.reviewTargetType === "question_family" ? getRemediationLabels(target.id) : [];
+  const strategyHint = target.reviewTargetType === "question_family" && isEnglish ? getExamStrategyHint(target.id) : undefined;
+  const remediationLabels = target.reviewTargetType === "question_family" && isEnglish ? getRemediationLabels(target.id) : [];
   const markingBasis = FAMILY_MARKING_BASIS[target.id];
 
   useEffect(() => {
@@ -298,15 +331,21 @@ function ReviewForm({ target, onDone }: { target: PendingReviewTarget; onDone: (
                   <p><strong>A weaker answer:</strong> {workedExample.weakAnswerLooksLike}</p>
                   <p><strong>What improves it:</strong> {workedExample.whatImprovesIt}</p>
                 </div>
-              ) : (
+              ) : isEnglish ? (
                 <p className="text-xs text-amber-600 dark:text-amber-400 mt-1">No worked example has been authored yet for this family. This is a genuine gap, not hidden from you.</p>
+              ) : (
+                <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">Mathematics has no separate live worked-example component. Each question's own <code>workingSteps</code> array is shown as a step-by-step explanation after the learner submits an answer. See the sample questions below for real examples.</p>
               )}
             </div>
             <div>
               <p className="text-xs font-semibold text-gray-700 dark:text-gray-300">Guided Practice approach</p>
-              <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">
-                {guidedInstruction} {guidedScaffold && GUIDED_KIND_LABEL[guidedScaffold]}
-              </p>
+              {isEnglish ? (
+                <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">
+                  {guidedInstruction} {guidedScaffold && GUIDED_KIND_LABEL[guidedScaffold]}
+                </p>
+              ) : (
+                <p className="text-xs text-amber-600 dark:text-amber-400 mt-1">Dedicated Guided Practice is not yet implemented for this Mathematics family. This is a genuine, project-wide gap disclosed in Educational Increment 007H, not specific to this family. Every currently practice-eligible Mathematics family has the same limitation.</p>
+              )}
             </div>
             <div>
               <p className="text-xs font-semibold text-gray-700 dark:text-gray-300">Independent approach</p>
@@ -316,7 +355,7 @@ function ReviewForm({ target, onDone }: { target: PendingReviewTarget; onDone: (
             </div>
             <div>
               <p className="text-xs font-semibold text-gray-700 dark:text-gray-300">Exam strategy</p>
-              <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">{strategyHint ?? "No exam strategy tip has been authored yet for this family."}</p>
+              <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">{strategyHint ?? (isEnglish ? "No exam strategy tip has been authored yet for this family." : "No dedicated exam-strategy tip has been authored for Mathematics families yet.")}</p>
             </div>
             <div>
               <p className="text-xs font-semibold text-gray-700 dark:text-gray-300">Wrong-answer remediation</p>
@@ -560,9 +599,34 @@ function PilotSection({ targets, reviewedIds, onOpen }: { targets: PendingReview
   );
 }
 
+function Batch2Section({ targets, reviewedIds, onOpen }: { targets: PendingReviewTarget[]; reviewedIds: Set<string>; onOpen: (t: PendingReviewTarget) => void }) {
+  const batch2Targets = BATCH2_TARGET_IDS
+    .map((id) => targets.find((t) => t.id === id))
+    .filter((t): t is PendingReviewTarget => Boolean(t));
+  const reviewedCount = BATCH2_TARGET_IDS.filter((id) => reviewedIds.has(id)).length;
+
+  return (
+    <div className="bg-white dark:bg-gray-900 rounded-2xl border-2 border-sky-200 dark:border-sky-800 overflow-hidden">
+      <div className="px-5 py-4 border-b border-sky-100 dark:border-sky-900 bg-sky-50 dark:bg-sky-950/40">
+        <p className="text-sm font-bold text-sky-900 dark:text-sky-200">Controlled Review Batch 2</p>
+        <p className="text-xs text-sky-600 dark:text-sky-400 mt-0.5">{reviewedCount} of {BATCH2_TARGET_IDS.length} reviewed</p>
+      </div>
+      {batch2Targets.length === 0 ? (
+        <p className="px-5 py-4 text-sm text-gray-400 dark:text-gray-500">
+          None of the 6 Batch 2 targets are visible yet. See ANGEL_007H_BATCH2_SELECTION_V1.md.
+        </p>
+      ) : (
+        <div className="divide-y divide-gray-50 dark:divide-gray-800">
+          {batch2Targets.map((t) => <TargetCard key={t.id} target={t} onOpen={() => onOpen(t)} />)}
+        </div>
+      )}
+    </div>
+  );
+}
+
 function FullBacklogSection({ targets, onOpen }: { targets: PendingReviewTarget[]; onOpen: (t: PendingReviewTarget) => void }) {
   const [open, setOpen] = useState(false);
-  const backlogTargets = targets.filter((t) => !PILOT_TARGET_IDS.includes(t.id));
+  const backlogTargets = targets.filter((t) => !PILOT_TARGET_IDS.includes(t.id) && !BATCH2_TARGET_IDS.includes(t.id));
 
   return (
     <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 overflow-hidden">
@@ -624,6 +688,7 @@ function ReviewDashboard() {
   return (
     <div className="space-y-5">
       <PilotSection targets={targets} reviewedIds={reviewedIds} onOpen={setSelected} />
+      <Batch2Section targets={targets} reviewedIds={reviewedIds} onOpen={setSelected} />
       <FullBacklogSection targets={targets} onOpen={setSelected} />
     </div>
   );

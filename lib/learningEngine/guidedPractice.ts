@@ -33,7 +33,23 @@ const FAMILY_SCAFFOLD: Record<string, GuidedScaffoldKind> = {
   "wave2-fam-multiselect": "selection-count-check",
   "wave1-fam-sequencing": "sequence-anchor",
   "wave1-fam-quote-explain": "staged-quotation",
-  "wave1-fam-emotion-cause": "staged-quotation",
+  // Educational Increment 007H, Part 7 — corrected from "staged-quotation".
+  // ENGLISH_WAVE2_MODEL_COVERAGE_AUDIT_V1.md claimed this family reuses
+  // quote-explain's verified staged-quotation check, but every
+  // wave1-fam-emotion-cause question's prompt.quotationRequired is
+  // undefined (this family is scored as
+  // TIER5_NAMED_COMPONENT_PLUS_EXPLANATION against prompt.acceptedAnswers,
+  // an emotion-word list, not a verbatim quotation). The live Practice
+  // page's staged-quotation button (app/learning-intelligence/practice/
+  // [area]/page.tsx) reads prompt.quotationRequired directly, so for this
+  // family "Check my quotation" was guaranteed to report "Angel couldn't
+  // find the exact words yet" regardless of what the learner typed, even
+  // a fully correct answer. Found via 007H's independent Batch 2 content
+  // validation (scripts/007h-part7-validation.mjs), before any human
+  // review — not itself an educational review or a content-correctness
+  // judgement, only a routing fix to an honest, already-established
+  // fallback scaffold this family's actual content can support.
+  "wave1-fam-emotion-cause": "locate-instruction",
   "wave1-fam-two-character": "locate-instruction",
   "wave1-fam-direct-retrieval": "locate-instruction",
   "wave1-fam-tick-justify": "locate-instruction",
@@ -59,6 +75,7 @@ const LOCATE_INSTRUCTION_TEXT: Partial<Record<string, string>> = {
   "wave1-fam-tick-justify": "Form a quick overall impression first, then go back and find two pieces of evidence specifically for that side, not the other.",
   "wave1-fam-vocab-explain": "Cover the tricky word with your finger and read the rest of the sentence around it before deciding what it means.",
   "wave1-fam-synonym-battery": "Go straight to the specific word given. Do not rely on your memory of the whole passage for its meaning.",
+  "wave1-fam-emotion-cause": "Find the exact moment the question asks about, then look at the sentences just before and after it for the feeling and its cause, before you name the emotion.",
 };
 
 export function getGuidedInstructionText(familyId?: string | null, kind?: GuidedScaffoldKind): string {
