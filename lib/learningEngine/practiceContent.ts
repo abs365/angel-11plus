@@ -64,6 +64,13 @@ export function getPracticeArea(id: string): PracticeAreaConfig | undefined {
  * semicolon) — duplicated here rather than imported, matching this
  * project's established "isolation via separate route" convention already
  * used by app/mocks/adaptive/maths/page.tsx for the exact same function.
+ * That duplication means this fix (Educational Increment 007K) does NOT
+ * reach those two pages — app/maths/page.tsx runs against a wholly
+ * separate legacy content pool (data/maths.ts), not the ali_question_bank
+ * families this fix concerns, and app/mocks/adaptive/maths/page.tsx is
+ * Mock, out of scope for this increment by explicit instruction. Both are
+ * disclosed as a known, pre-existing architectural duplication, not fixed
+ * here.
  */
 function normalizeNumeric(raw: string): number | null {
   // "°" added (Educational Increment 004 production closure fix) — a
@@ -77,22 +84,92 @@ function normalizeNumeric(raw: string): number | null {
   return Number.isFinite(num) && cleaned !== "" ? num : null;
 }
 
+/**
+ * Educational Increment 007K — the controlled unit vocabulary actually
+ * present in the Mathematics bank (confirmed by direct query against
+ * production, not invented): length (mm/cm/m/km), mass (mg/g/kg), volume
+ * (ml/l). Sorted longest-first so the regex below matches "kg" as a whole
+ * unit rather than stopping at "g". No currency/degree symbol here --
+ * those are already handled by normalizeNumeric's existing £/$/° strip
+ * above, a separate and unaffected path.
+ */
+const RECOGNISED_MEASUREMENT_UNITS = ["mm", "cm", "km", "mg", "kg", "ml", "m", "g", "l"];
+const NUMBER_WITH_UNIT_PATTERN = new RegExp(`^(-?\\d+(?:\\.\\d+)?)(${RECOGNISED_MEASUREMENT_UNITS.join("|")})$`, "i");
+
+export interface ParsedMeasurement {
+  value: number;
+  /** null when the input was a bare number with no unit suffix at all. */
+  unit: string | null;
+}
+
+/**
+ * Educational Increment 007K — parses either a bare number ("4.25") or a
+ * number immediately followed by one recognised unit ("4.25m", "4.25 m"
+ * after whitespace is stripped). Returns null for anything else (a
+ * categorical word answer like "Equilateral", a malformed value, or a
+ * number followed by something that isn't a recognised unit at all) so
+ * callers can safely fall through to the existing text-comparison path
+ * for those cases.
+ */
+export function parseNumberWithUnit(raw: string): ParsedMeasurement | null {
+  const cleaned = raw.trim().replace(/[£$,°]/g, "").replace(/\s+/g, "");
+  if (cleaned === "") return null;
+  const withUnit = cleaned.match(NUMBER_WITH_UNIT_PATTERN);
+  if (withUnit) return { value: Number(withUnit[1]), unit: withUnit[2].toLowerCase() };
+  const bare = Number(cleaned);
+  return Number.isFinite(bare) ? { value: bare, unit: null } : null;
+}
+
 export function checkMathsAnswer(userAnswer: string, correctAnswer: string): boolean {
   const userTrimmed = userAnswer.trim();
   const correctTrimmed = correctAnswer.trim();
   if (!userTrimmed) return false;
+  const correctFirstAlt = correctTrimmed.split(";")[0].trim();
 
+  // Original path, unchanged: plain numeric answers, and answers using
+  // only the symbols normalizeNumeric already strips (£, $, comma, °).
+  // Untouched so percentages, currency, degree, and existing semicolon-
+  // alternate behaviour cannot regress.
   const userNum = normalizeNumeric(userTrimmed);
-  const correctNum = normalizeNumeric(correctTrimmed.split(";")[0].trim());
+  const correctNum = normalizeNumeric(correctFirstAlt);
   if (userNum !== null && correctNum !== null) {
     return Math.abs(userNum - correctNum) < 0.0001;
   }
 
+  // Educational Increment 007K — unit-aware path. Only activates when the
+  // canonical answer is genuinely NUMBER + RECOGNISED UNIT (the check
+  // above already failed for it, since normalizeNumeric can't parse a
+  // letter suffix) — a categorical answer like "Equilateral" or "A" never
+  // matches NUMBER_WITH_UNIT_PATTERN and falls straight through to the
+  // original text path below, unaffected.
+  //
+  // Educational rule: the unit is not itself the skill being assessed in
+  // any family currently authored this way (the target unit is always
+  // already stated in the question, e.g. "what is the total length in
+  // m?") -- so a bare number is accepted as fully correct, matching the
+  // correct number with the correct unit attached. A present-but-WRONG
+  // unit (right number, mismatched unit, e.g. "4.25kg" for a length
+  // question) is deliberately NOT accepted: that is a genuine learner
+  // error (not reading which unit the question asked for), not an
+  // incidental formatting difference, so it is rejected rather than
+  // silently passed. No question in the bank currently makes unit choice
+  // itself the assessed skill; if one ever does, it should carry its own
+  // semicolon-delimited accepted-unit alternatives (the pre-existing
+  // mechanism above), which this path does not override.
+  const correctMeasurement = parseNumberWithUnit(correctFirstAlt);
+  if (correctMeasurement && correctMeasurement.unit) {
+    const userMeasurement = parseNumberWithUnit(userTrimmed);
+    if (!userMeasurement) return false;
+    if (Math.abs(userMeasurement.value - correctMeasurement.value) >= 0.0001) return false;
+    return userMeasurement.unit === null || userMeasurement.unit === correctMeasurement.unit;
+  }
+
+  // Original path, unchanged: exact and semicolon-first-alternate text match.
   const userLower = userTrimmed.toLowerCase().replace(/\s+/g, "");
   const correctLower = correctTrimmed.toLowerCase().replace(/\s+/g, "");
   if (userLower === correctLower) return true;
 
-  const correctFirstPart = correctTrimmed.split(";")[0].trim().toLowerCase().replace(/\s+/g, "");
+  const correctFirstPart = correctFirstAlt.toLowerCase().replace(/\s+/g, "");
   return userLower === correctFirstPart;
 }
 
