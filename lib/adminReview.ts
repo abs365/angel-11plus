@@ -178,6 +178,43 @@ export const FAMILY_EDUCATIONAL_CONTEXT: Record<string, FamilyEvidenceContext> =
     objective: "Infer the rule behind a number sequence and use it to find a term far beyond what is shown, without listing every term up to it.",
     evidenceBasis: "CSSE_QUESTION_INTELLIGENCE_FRAMEWORK.md QT-MR-05 (Obs. 11): CSSE-006, CSSE-011, CSSE-016. Breaks a current one-family monopoly on this competency (10 practice-eligible questions, all from a single family).",
   },
+  // Educational Increment 007K, Controlled Review Batch 4.
+  "mr04-best-value": {
+    objective: "Compare unit prices across two options to determine which is genuinely cheaper per item, not just which total cost is smaller.",
+    evidenceBasis: "CSSE_QUESTION_INTELLIGENCE_FRAMEWORK.md QT-MR-13 (Obs. 11): CSSE-006, CSSE-016. Currently the thinnest Practice Eligible Mathematics competency (3 questions, 1 family). See ANGEL_007K_MATHEMATICS_DEPTH_AND_BATCH4_READINESS_V1.md.",
+  },
+  "mr02-far-ratio-context": {
+    objective: "Split a total by a stated ratio, then apply a second, separate operation to one of the resulting shares.",
+    evidenceBasis: "CSSE-006 Q8/Q18, CSSE-011 Q6/Q18, CSSE-016 Q6. See ANGEL_007K_MATHEMATICS_DEPTH_AND_BATCH4_READINESS_V1.md.",
+  },
+  "mr05-factors-primes": {
+    objective: "Count all factors of a number, or determine whether a number is prime.",
+    evidenceBasis: "CSSE_QUESTION_INTELLIGENCE_FRAMEWORK.md QT-MR-11 (Obs. 11). See ANGEL_007K_MATHEMATICS_DEPTH_AND_BATCH4_READINESS_V1.md.",
+  },
+  "mr05-constrained-multiple": {
+    objective: "Find the smallest (or largest) common multiple of two numbers that also satisfies a stated bound.",
+    evidenceBasis: "CSSE-006 Q10, CSSE-011 Q13, CSSE-016. See ANGEL_007K_MATHEMATICS_DEPTH_AND_BATCH4_READINESS_V1.md.",
+  },
+  "mr03-angle-ratio": {
+    objective: "Split a known angle total (180° on a line, 360° around a point) by a stated ratio to find the largest share.",
+    evidenceBasis: "CSSE_QUESTION_INTELLIGENCE_FRAMEWORK.md QT-MR-07 (Obs. 11). See ANGEL_007K_MATHEMATICS_DEPTH_AND_BATCH4_READINESS_V1.md.",
+  },
+  "mr02-sum-difference": {
+    objective: "Recover two unknown amounts from their sum and their stated difference.",
+    evidenceBasis: "CSSE_QUESTION_INTELLIGENCE_FRAMEWORK.md QT-MR-06 (Obs. 11). See ANGEL_007K_MATHEMATICS_DEPTH_AND_BATCH4_READINESS_V1.md.",
+  },
+  "mr04-compound-percentage": {
+    objective: "Apply two percentage changes in sequence, each to the result of the previous one, not both to the original value.",
+    evidenceBasis: "CSSE_QUESTION_INTELLIGENCE_FRAMEWORK.md QT-MR-04 (Obs. 11). See ANGEL_007K_MATHEMATICS_DEPTH_AND_BATCH4_READINESS_V1.md.",
+  },
+  "mr03-mixed-perimeter": {
+    objective: "Use a rectangle's area and one known side to find the other side, then compute the perimeter.",
+    evidenceBasis: "CSSE-006 Q7/Q12, CSSE-011 Q12/Q17, CSSE-016 Q11. See ANGEL_007K_MATHEMATICS_DEPTH_AND_BATCH4_READINESS_V1.md. Answers carry a unit suffix; affected by the unit-answer validation defect fixed in Decision 55, now resolved and verified.",
+  },
+  "mr04-far-recipe": {
+    objective: "Find a unit rate (amount per person) and scale it to a different number of people.",
+    evidenceBasis: "CSSE-006 Q1/Q13, CSSE-011 Q1/Q2/Q3, CSSE-016 Q1/Q2. See ANGEL_007K_MATHEMATICS_DEPTH_AND_BATCH4_READINESS_V1.md. Answers carry a unit suffix; affected by the unit-answer validation defect fixed in Decision 55, now resolved and verified.",
+  },
 };
 
 /**
