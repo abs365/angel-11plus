@@ -96,6 +96,36 @@ function normalizeNumeric(raw: string): number | null {
 const RECOGNISED_MEASUREMENT_UNITS = ["mm", "cm", "km", "mg", "kg", "ml", "m", "g", "l"];
 const NUMBER_WITH_UNIT_PATTERN = new RegExp(`^(-?\\d+(?:\\.\\d+)?)(${RECOGNISED_MEASUREMENT_UNITS.join("|")})$`, "i");
 
+/**
+ * 007L post-closure fix (cubic-unit answer defect) — squared/cubed forms
+ * are only meaningful for length units (area, volume-by-length); mass and
+ * liquid-volume units never appear squared or cubed anywhere in this bank,
+ * so they are deliberately excluded here rather than generalising the
+ * whole RECOGNISED_MEASUREMENT_UNITS list. Confirmed by direct query
+ * against the full production bank (264 rows, both subjects, every
+ * eligibility status): exactly one live row uses a power unit today
+ * (mth-009, "942 cm³"), and it is the only one — this is not a broad
+ * pattern, just this fix's bounded target.
+ *
+ * A real Unicode superscript (²/³) and the plain ASCII digit (2/3) are
+ * accepted as the same unit -- the same "no natural keyboard equivalent"
+ * rationale already established for °: a learner typing "cm3" for a
+ * stored "cm³" answer is not making a mathematical error, and must not be
+ * marked wrong for lacking a superscript key. Both forms are normalised
+ * to the canonical Unicode form so a correct-value submission is accepted
+ * regardless of which form the learner typed, while the exact same wrong-
+ * unit rejection this project's existing units already enforce (Decision
+ * 55) applies unchanged: "942 cm²" for a "942 cm³" question is still
+ * rejected, because that is a genuine unit-of-measure error, not a
+ * formatting difference.
+ */
+const RECOGNISED_LENGTH_UNITS_FOR_POWERS = ["mm", "cm", "km", "m"];
+const NUMBER_WITH_POWER_UNIT_PATTERN = new RegExp(
+  `^(-?\\d+(?:\\.\\d+)?)(${RECOGNISED_LENGTH_UNITS_FOR_POWERS.join("|")})(²|2|³|3)$`,
+  "i"
+);
+const CANONICAL_EXPONENT: Record<string, string> = { "2": "²", "²": "²", "3": "³", "³": "³" };
+
 export interface ParsedMeasurement {
   value: number;
   /** null when the input was a bare number with no unit suffix at all. */
@@ -114,6 +144,13 @@ export interface ParsedMeasurement {
 export function parseNumberWithUnit(raw: string): ParsedMeasurement | null {
   const cleaned = raw.trim().replace(/[£$,°]/g, "").replace(/\s+/g, "");
   if (cleaned === "") return null;
+  const withPowerUnit = cleaned.match(NUMBER_WITH_POWER_UNIT_PATTERN);
+  if (withPowerUnit) {
+    return {
+      value: Number(withPowerUnit[1]),
+      unit: withPowerUnit[2].toLowerCase() + CANONICAL_EXPONENT[withPowerUnit[3]],
+    };
+  }
   const withUnit = cleaned.match(NUMBER_WITH_UNIT_PATTERN);
   if (withUnit) return { value: Number(withUnit[1]), unit: withUnit[2].toLowerCase() };
   const bare = Number(cleaned);

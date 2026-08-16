@@ -108,6 +108,54 @@ test("mr04-far-06 (provisional): 160g", () => {
   assert.equal(checkMathsAnswer("100", correct), false, "the base recipe amount must not be accepted as the scaled answer");
 });
 
+// ─── 007L post-closure fix: cubic/squared unit answers ─────────────────────
+// Confirmed by direct production scan (264 rows, both subjects, every
+// status): exactly one live row uses a power unit -- mth-009, "942 cm³".
+// No cm², m², mm², m³, or mm³ answer exists anywhere in the bank today;
+// these tests cover the full recognised-unit contract (mm/cm/km/m, squared
+// and cubed) so the fix is exercised beyond just the one live instance.
+
+test("mth-009 (LIVE, practice_eligible): 942 cm³ (Unicode superscript stored form)", () => {
+  const correct = "942 cm³";
+  assert.equal(checkMathsAnswer("942", correct), true, "bare number must be accepted");
+  assert.equal(checkMathsAnswer("942cm³", correct), true, "number + Unicode cm³ must be accepted");
+  assert.equal(checkMathsAnswer("942 cm³", correct), true, "number + space + Unicode cm³ must be accepted");
+  assert.equal(checkMathsAnswer("942cm3", correct), true, "number + ASCII cm3 (no superscript key) must be accepted");
+  assert.equal(checkMathsAnswer("942 CM3", correct), true, "case must not matter");
+  assert.equal(checkMathsAnswer("941", correct), false, "wrong number must remain rejected");
+  assert.equal(checkMathsAnswer("943", correct), false, "wrong number must remain rejected");
+  assert.equal(checkMathsAnswer("942cm", correct), false, "linear cm is a different unit to cubic cm and must be rejected");
+  assert.equal(checkMathsAnswer("942cm²", correct), false, "area is a different quantity to volume and must be rejected");
+  assert.equal(checkMathsAnswer("942m³", correct), false, "correct number + wrong length unit must be rejected");
+});
+
+test("parseNumberWithUnit: squared/cubed length units, Unicode and ASCII forms normalise to the same canonical unit", () => {
+  assert.deepEqual(parseNumberWithUnit("48m²"), { value: 48, unit: "m²" });
+  assert.deepEqual(parseNumberWithUnit("48m2"), { value: 48, unit: "m²" });
+  assert.deepEqual(parseNumberWithUnit("48 M2"), { value: 48, unit: "m²" });
+  assert.deepEqual(parseNumberWithUnit("125cm³"), { value: 125, unit: "cm³" });
+  assert.deepEqual(parseNumberWithUnit("125cm3"), { value: 125, unit: "cm³" });
+  assert.deepEqual(parseNumberWithUnit("8mm³"), { value: 8, unit: "mm³" });
+  assert.deepEqual(parseNumberWithUnit("8mm3"), { value: 8, unit: "mm³" });
+  assert.deepEqual(parseNumberWithUnit("2km²"), { value: 2, unit: "km²" });
+});
+
+test("checkMathsAnswer: squared-area answers (no live row today, contract still verified directly)", () => {
+  assert.equal(checkMathsAnswer("48", "48 m²"), true);
+  assert.equal(checkMathsAnswer("48m²", "48 m²"), true);
+  assert.equal(checkMathsAnswer("48m2", "48 m²"), true);
+  assert.equal(checkMathsAnswer("49", "48 m²"), false);
+  assert.equal(checkMathsAnswer("48cm²", "48 m²"), false, "correct number + wrong length unit must be rejected");
+  assert.equal(checkMathsAnswer("48m", "48 m²"), false, "linear m is a different quantity to area and must be rejected");
+});
+
+test("regression: mass and liquid-volume units are never treated as power-unit-eligible", () => {
+  // g/kg/ml/l squared or cubed have no meaning in this bank; confirm the
+  // power-unit path does not accidentally fire for them.
+  assert.equal(checkMathsAnswer("300g2", "300g"), false, "300g2 is not a valid form of 300g, must not be silently accepted");
+  assert.equal(checkMathsAnswer("300g", "300g"), true, "the existing plain-unit path must still work unchanged");
+});
+
 // ─── parseNumberWithUnit, directly ─────────────────────────────────────────
 
 test("parseNumberWithUnit: bare number has unit=null", () => {
