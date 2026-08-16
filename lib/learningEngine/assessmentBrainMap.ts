@@ -91,11 +91,27 @@ export const COMPONENT_SUBJECT: Record<AssessmentComponent, "english" | "writing
   Mathematics: "maths",
 };
 
-export const ALL_COMPETENCY_IDS = Object.keys(COMPETENCIES) as CompetencyId[];
+/**
+ * CSSE Completion Programme Phase A, Decision 58 — Applied Reasoning (AR-01)
+ * was removed from the live CSSE English paper from September 2024 (2025
+ * Entry) onward, Founder-confirmed from current official CSSE information.
+ * `COMPETENCIES["AR-01"]` above is left unedited, a faithful transcription
+ * of Assessment Brain V1's 2021-2023 historical evidence (must not be
+ * deleted or rewritten) — but every LIVE consumer of "all current
+ * competencies"/"all current assessment components" (profile.ts →
+ * diagnostics.ts/readiness.ts/recommendations.ts, revisionPlanner.ts,
+ * mockReadiness.ts) iterates ALL_COMPETENCY_IDS/ALL_ASSESSMENT_COMPONENTS,
+ * not COMPETENCIES directly, so excluding AR-01 only here is sufficient to
+ * stop it appearing as a live, current, permanently-"Not Yet Evidenced"
+ * readiness component and diagnostic "coverage gap" chip to real parents
+ * and children — confirmed by direct trace of both live rendering paths
+ * (components/learningEngine/ReadinessSummary.tsx,
+ * components/learningEngine/DiagnosticOverview.tsx) before this fix.
+ */
+export const ALL_COMPETENCY_IDS = (Object.keys(COMPETENCIES) as CompetencyId[]).filter((id) => id !== "AR-01");
 export const ALL_QUESTION_TYPE_IDS = Object.keys(QUESTION_TYPE_PRIMARY_COMPETENCY) as QuestionTypeId[];
 export const ALL_ASSESSMENT_COMPONENTS: AssessmentComponent[] = [
   "English Comprehension",
-  "Applied Reasoning",
   "Continuous Writing",
   "Mathematics",
 ];

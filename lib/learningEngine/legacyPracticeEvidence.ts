@@ -46,6 +46,21 @@ export interface LegacyPracticeAnswerParams {
   source: string;
   /** Only directly observable facts a legacy page genuinely collects — never fabricated (migration 015, Phase 2B). */
   evidenceFacts?: AttemptEvidenceFacts;
+  /**
+   * CSSE Completion Programme Phase A, Decision 60 (Continuous Writing
+   * mastery safety) — defaults to "independent", the exact prior behaviour
+   * for every existing caller (legacy Maths/English/Vocabulary, whose
+   * isCorrect comes from a real, deterministic checker). Callers whose
+   * isCorrect is derived from an assessment value NOT validated/calibrated
+   * against an approved educational standard (today: only app/writing's AI-
+   * generated overallScore) must pass "supported" here — lib/ali/mastery.ts's
+   * existing, already-proven supportTier gate (countsTowardMastery =
+   * isCorrect && supportTier === "independent") then guarantees this
+   * evidence can never independently produce "mastered" or advance
+   * distinctCorrectSessions, while still recording genuine attempt/
+   * engagement evidence (useful formative signal preserved).
+   */
+  supportTier?: "independent" | "supported";
 }
 
 export type LegacyPracticeEvidenceOutcome =
@@ -124,7 +139,8 @@ export async function recordLegacyPracticeEvidence(
       params.isCorrect,
       params.sessionId,
       masteryThreshold,
-      params.evidenceFacts
+      params.evidenceFacts,
+      params.supportTier ?? "independent"
     ).catch(() => {});
 
     if (competencyId && preAttemptSnapshot) {

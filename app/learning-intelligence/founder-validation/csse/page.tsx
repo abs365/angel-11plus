@@ -50,8 +50,10 @@ type Mode = "intro" | "loading" | "error" | "exam" | "submitting" | "results";
  * whatever profile is testing it — disclosed explicitly on the intro
  * screen and in FOUNDER_TEST_INSTRUCTIONS.md, not hidden.
  *
- * No Applied Reasoning content exists here — AR-01 remains deferred
- * (Gate 3) and is untouched by this route. No Continuous Writing either
+ * No Applied Reasoning content exists here — AR-01/QT-AR-01 are current-
+ * excluded (Decision 58: removed from the live CSSE English paper from
+ * September 2024/2025 Entry onward, Founder-confirmed) and untouched by
+ * this route. No Continuous Writing either
  * — judged not yet evidence-ready for this validation slice (see
  * FOUNDER_VALIDATION_ASSESSMENT_BLUEPRINT.md §Writing).
  */
@@ -337,7 +339,7 @@ export default function FounderValidationCsseAssessment() {
                   estimate for this smaller slice (11 items, not a full paper). Approximation disclosed, not hidden.
                 </li>
                 <li>Difficulty labels are educational judgements, not empirical CSSE measurements. No facility-rate data exists for any Angel content today.</li>
-                <li>Applied Reasoning is not included. That evidence gate remains deferred.</li>
+                <li>Applied Reasoning is not included — it is no longer part of the current CSSE English paper (removed September 2024/2025 Entry onward).</li>
                 <li>
                   Completing this writes real evidence-pipeline and Mock Attempt Ledger data under your current
                   profile, the same as a real Mock sitting would.

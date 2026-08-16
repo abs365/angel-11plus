@@ -11,7 +11,7 @@ import { withTimeout } from "@/lib/withTimeout";
 import { mathsSyntheticFixture } from "@/data/ali/mathsSyntheticFixture";
 import { getSupabaseClient } from "@/lib/supabase";
 import { ensureProfile } from "@/lib/supabaseProgress";
-import { fetchQuestionBank } from "@/lib/ali/questionBank";
+import { fetchMockEligibleQuestionBank } from "@/lib/ali/questionBank";
 import { fetchStudentHistory, ensureAdaptiveState, recordPresentation, recordOutcome } from "@/lib/ali/history";
 import { buildAdaptiveSection } from "@/lib/adaptiveMockBuilder";
 import { logSelectionTrace } from "@/lib/ali/observability";
@@ -114,7 +114,10 @@ export default function AdaptiveMathsMockPage() {
       }
       profileIdRef.current = profileId;
 
-      let bank = await withTimeout(fetchQuestionBank(supabase, "maths", "gl"), 10000, "today's questions");
+      // Mock Content Firewall (CSSE Completion Programme Phase A, Decision 59)
+      // — this route persists a real MockResult; must only draw from
+      // fetchMockEligibleQuestionBank(), never the general fetchQuestionBank().
+      let bank = await withTimeout(fetchMockEligibleQuestionBank(supabase, "maths", "gl"), 10000, "today's questions");
       let synthetic = false;
       if (bank.length === 0) {
         bank = mathsSyntheticFixture;

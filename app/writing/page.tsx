@@ -116,6 +116,18 @@ export default function WritingPage() {
       // — never the self-ticked checklist alone. If a learner never
       // requests AI feedback, no evidence is recorded for this prompt,
       // which is a real content-interaction gap, not a fabricated result.
+      //
+      // CSSE Completion Programme Phase A, Decision 60 — supportTier:
+      // "supported" (not the default "independent"). overallScore's own
+      // system prompt (app/api/writing-feedback/route.ts) explicitly
+      // states it "is not calibrated against any exam board's mark scheme
+      // and must not be described as one" — an uncalibrated value must not
+      // determine durable mastery. This is a quarantine, not a removal:
+      // attempt/engagement evidence is still recorded (useful formative
+      // signal), but lib/ali/mastery.ts's existing supportTier gate
+      // guarantees it can never independently reach "mastered" or advance
+      // distinctCorrectSessions, exactly the same proven mechanism English/
+      // Maths guided attempts already rely on.
       const writingFeedback = data as WritingFeedbackData;
       recordLegacyPracticeEvidence({
         questionId: selectedPrompt.id,
@@ -123,6 +135,7 @@ export default function WritingPage() {
         sessionId: evidenceSessionId,
         source: "legacy_writing_practice",
         evidenceFacts: { finalAnswer: writingText },
+        supportTier: "supported",
       }).catch(() => {});
       // Phase 3.0, WP3 (Learning History) — only reached when real
       // evidence was just written above (never on the checklist-only

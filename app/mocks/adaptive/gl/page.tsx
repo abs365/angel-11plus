@@ -14,7 +14,7 @@ import { numericalReasoningQuestions } from "@/data/numerical-reasoning";
 import { vrSyntheticFixture } from "@/data/ali/vrSyntheticFixture";
 import { getSupabaseClient } from "@/lib/supabase";
 import { ensureProfile } from "@/lib/supabaseProgress";
-import { fetchQuestionBank } from "@/lib/ali/questionBank";
+import { fetchMockEligibleQuestionBank } from "@/lib/ali/questionBank";
 import { fetchStudentHistory, ensureAdaptiveState, recordPresentation, recordOutcome } from "@/lib/ali/history";
 import { buildAdaptiveSection } from "@/lib/adaptiveMockBuilder";
 import { logSelectionTrace } from "@/lib/ali/observability";
@@ -143,13 +143,21 @@ export default function AdaptiveGlMockPage() {
       }
       profileIdRef.current = profileId;
 
-      let bank = await withTimeout(fetchQuestionBank(supabase, "verbal-reasoning", "gl"), 10000, "today's questions");
+      // Mock Content Firewall (CSSE Completion Programme Phase A, Decision 59)
+      // — this route persists a real MockResult via completeMockAttempt(),
+      // so it is a genuine Mock, not Practice; it must only ever draw from
+      // fetchMockEligibleQuestionBank(), never the general fetchQuestionBank()
+      // every Practice/Learn page correctly uses. Previously called
+      // fetchQuestionBank(), which would have served real practice_eligible
+      // content as "mock" content the moment any "gl"-tagged row existed —
+      // not exploitable historically only because zero such rows exist.
+      let bank = await withTimeout(fetchMockEligibleQuestionBank(supabase, "verbal-reasoning", "gl"), 10000, "today's questions");
       let synthetic = false;
       if (bank.length === 0) {
-        // ali_question_bank has no hand-tagged rows yet (pre-migration or
-        // pre-import) — fall back to the synthetic dev fixture rather than
-        // failing outright. Never silently mistaken for real content: the
-        // banner below stays visible for the whole mock.
+        // ali_question_bank has no mock_eligible rows for this pathway yet
+        // — fall back to the synthetic dev fixture rather than failing
+        // outright. Never silently mistaken for real content: the banner
+        // below stays visible for the whole mock.
         bank = vrSyntheticFixture;
         synthetic = true;
       }

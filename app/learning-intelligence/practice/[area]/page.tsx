@@ -387,7 +387,12 @@ export default function PracticeSessionPage({ params }: { params: Promise<{ area
       }
       const feedback: WritingFeedback = await res.json();
       setWritingFeedback(feedback);
-      await recordAndAdvance(feedback.overallScore >= WRITING_CORRECTNESS_THRESHOLD, "writing");
+      // CSSE Completion Programme Phase A, Decision 60 — "supported", not
+      // the default "independent". overallScore is AI-generated and its own
+      // system prompt discloses it is not exam-board-calibrated; an
+      // uncalibrated value must not determine durable mastery. See
+      // app/writing/page.tsx's identical fix for the full rationale.
+      await recordAndAdvance(feedback.overallScore >= WRITING_CORRECTNESS_THRESHOLD, "writing", "supported");
     } catch {
       setWritingFeedbackError("Smart feedback is temporarily unavailable. Please check your connection.");
     }

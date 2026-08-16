@@ -12,7 +12,7 @@ import { withTimeout } from "@/lib/withTimeout";
 import { englishSyntheticFixture } from "@/data/ali/englishSyntheticFixture";
 import { getSupabaseClient } from "@/lib/supabase";
 import { ensureProfile } from "@/lib/supabaseProgress";
-import { fetchQuestionBank } from "@/lib/ali/questionBank";
+import { fetchMockEligibleQuestionBank } from "@/lib/ali/questionBank";
 import { fetchStudentHistory, ensureAdaptiveState, recordPresentation, recordOutcome } from "@/lib/ali/history";
 import { groupQuestionsByLearningUnit, selectLearningUnit } from "@/lib/ali/learningUnit";
 import { deriveWeakCompetencies, deriveCompetencySignal } from "@/lib/ali/weakness";
@@ -132,7 +132,10 @@ export default function AdaptiveEnglishMockPage() {
       }
       profileIdRef.current = profileId;
 
-      let bank = await withTimeout(fetchQuestionBank(supabase, "english", "gl"), 10000, "today's passage");
+      // Mock Content Firewall (CSSE Completion Programme Phase A, Decision 59)
+      // — this route persists a real MockResult; must only draw from
+      // fetchMockEligibleQuestionBank(), never the general fetchQuestionBank().
+      let bank = await withTimeout(fetchMockEligibleQuestionBank(supabase, "english", "gl"), 10000, "today's passage");
       let synthetic = false;
       if (bank.length === 0) {
         bank = englishSyntheticFixture;
