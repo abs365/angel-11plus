@@ -510,3 +510,15 @@ export function getMathsTeachingContent(familyId?: string | null): MathsFamilyTe
   if (!familyId) return undefined;
   return MATHS_FAMILY_TEACHING_CONTENT[familyId];
 }
+
+/**
+ * CSSE Completion Programme, Phase B Founder review readiness — pure
+ * extraction of the exact cap logic app/learning-intelligence/practice/
+ * [area]/page.tsx's MathsActivity already applies inline, so the
+ * Mathematics Teaching Review interface (app/admin-beta/review/page.tsx)
+ * can show a family's real, live "maximum Guided reveal boundary" without
+ * a second, potentially-drifting copy of this rule.
+ */
+export function effectiveGuidedRevealStepCount(workingStepsLength: number, cap?: number): number {
+  return cap === undefined ? workingStepsLength : Math.min(workingStepsLength, cap);
+}

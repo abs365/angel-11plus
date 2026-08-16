@@ -228,3 +228,126 @@ test("the inferred marking rule's citation honestly states no confirming CSSE ar
   const underSelection = basis.find((b) => b.status === "inferred")!;
   assert.ok(underSelection.citation.toLowerCase().includes("no accepted") || underSelection.citation.toLowerCase().includes("not") );
 });
+
+/**
+ * CSSE Completion Programme, Phase B — Founder Educational Review
+ * readiness. Mathematics Teaching Review is a distinct review type from
+ * the content review covered above (see lib/adminReview.ts's own
+ * review_type docstring) — these tests cover its own criteria, target
+ * list, and validation, mirroring the discipline already established
+ * above for REVIEW_CRITERIA/validateReviewSubmission.
+ */
+
+import {
+  MATHS_TEACHING_REVIEW_CRITERIA, MATHS_TEACHING_REVIEW_TARGET_IDS, MATHS_TEACHING_REVIEW_METADATA,
+  MATHS_TEACHING_CONTENT_VERSION, validateMathsTeachingReviewSubmission,
+  type MathsTeachingReviewSubmission,
+} from "@/lib/adminReview";
+
+function baseTeachingSubmission(overrides: Partial<MathsTeachingReviewSubmission> = {}): MathsTeachingReviewSubmission {
+  return {
+    targetId: "mr01-average-mean", reviewer: "Jane Smith", qualificationBasis: "Founder, 11+ preparation experience",
+    decision: "approved", notes: "",
+    mathematicallyCorrect: true, modelUnderstandable: true, modelTeachesMethod: true,
+    guidedPracticeBalanced: true, supportReducedAppropriately: true, remediationUseful: true,
+    languageAgeAppropriate: true, teachingRelevantToSkill: true, exampleAvoidsAnswerLeakage: true,
+    conceptualExplanationSufficient: true, independentExpectationAppropriate: true, clearAndUnambiguous: true,
+    ...overrides,
+  };
+}
+
+test("exactly 22 Mathematics Teaching Review targets, no duplicates", () => {
+  assert.equal(MATHS_TEACHING_REVIEW_TARGET_IDS.length, 22);
+  assert.equal(new Set(MATHS_TEACHING_REVIEW_TARGET_IDS).size, 22);
+});
+
+test("mr05-number-property-search is never a Mathematics Teaching Review target — it was deliberately excluded from Phase B as TRANSFER-UNSAFE", () => {
+  assert.ok(!MATHS_TEACHING_REVIEW_TARGET_IDS.includes("mr05-number-property-search"));
+});
+
+test("none of the 4 original 007L proof families are Mathematics Teaching Review targets — they are not new in this phase", () => {
+  for (const id of ["mr01-missing-operand", "mr04-best-value", "mr03-angle-ratio", "mr01-measurement-conversion"]) {
+    assert.ok(!MATHS_TEACHING_REVIEW_TARGET_IDS.includes(id), `${id} must not appear — it predates Phase B`);
+  }
+});
+
+test("every Mathematics Teaching Review target has real per-family metadata (competency, Question Type, transfer classification)", () => {
+  for (const id of MATHS_TEACHING_REVIEW_TARGET_IDS) {
+    const meta = MATHS_TEACHING_REVIEW_METADATA[id];
+    assert.ok(meta, `${id} is missing MATHS_TEACHING_REVIEW_METADATA`);
+    assert.ok(meta.competency.length > 0);
+    assert.ok(meta.questionType.length > 0);
+    assert.ok(meta.transferClassification === "TRANSFER-SUFFICIENT" || meta.transferClassification === "TRANSFER-LIMITED");
+    assert.ok(meta.transferNote.length > 0);
+  }
+});
+
+test("MATHS_TEACHING_REVIEW_METADATA has no stray entries beyond the 22 real targets", () => {
+  assert.deepEqual(Object.keys(MATHS_TEACHING_REVIEW_METADATA).sort(), [...MATHS_TEACHING_REVIEW_TARGET_IDS].sort());
+});
+
+test("every Mathematics Teaching Review target also has a real FAMILY_EDUCATIONAL_CONTEXT entry (what the child is learning / why it matters for CSSE)", () => {
+  for (const id of MATHS_TEACHING_REVIEW_TARGET_IDS) {
+    const ctx = FAMILY_EDUCATIONAL_CONTEXT[id];
+    assert.ok(ctx, `${id} is missing a FAMILY_EDUCATIONAL_CONTEXT entry`);
+    assert.ok(ctx.objective.length > 0, `${id} objective must be non-empty`);
+    assert.ok(ctx.evidenceBasis.length > 0, `${id} evidenceBasis must be non-empty`);
+  }
+});
+
+test("every Mathematics Teaching Review criterion declares the yes-is-good polarity", () => {
+  for (const c of MATHS_TEACHING_REVIEW_CRITERIA) {
+    assert.equal(c.polarity, "yes-is-good", `${c.key} does not declare the yes-is-good convention`);
+  }
+});
+
+test("no Mathematics Teaching Review criterion is phrased with negative framing", () => {
+  for (const c of MATHS_TEACHING_REVIEW_CRITERIA) {
+    assert.equal(hasNegativeFraming(c.question), false, `${c.key}: "${c.question}" reads as negatively framed`);
+  }
+});
+
+test("Mathematics Teaching Review has exactly 12 criteria, matching the directive's own checklist, no duplicates", () => {
+  const keys = MATHS_TEACHING_REVIEW_CRITERIA.map((c) => c.key);
+  assert.equal(keys.length, 12);
+  assert.equal(new Set(keys).size, keys.length, "duplicate criterion key found");
+});
+
+test("MATHS_TEACHING_CONTENT_VERSION is a real, non-empty identifier", () => {
+  assert.ok(MATHS_TEACHING_CONTENT_VERSION.length > 0);
+  assert.ok(MATHS_TEACHING_CONTENT_VERSION.includes("007M"));
+});
+
+test("validateMathsTeachingReviewSubmission: a complete submission passes", () => {
+  assert.equal(validateMathsTeachingReviewSubmission(baseTeachingSubmission()), null);
+});
+
+test("validateMathsTeachingReviewSubmission: an empty reviewer name is rejected", () => {
+  const err = validateMathsTeachingReviewSubmission(baseTeachingSubmission({ reviewer: "" }));
+  assert.ok(err && err.includes("anonymously"));
+});
+
+test("validateMathsTeachingReviewSubmission: an empty qualification basis is rejected — never pre-filled, must be actively confirmed", () => {
+  const err = validateMathsTeachingReviewSubmission(baseTeachingSubmission({ qualificationBasis: "" }));
+  assert.ok(err && err.toLowerCase().includes("qualification"));
+});
+
+test("validateMathsTeachingReviewSubmission: a null decision is rejected, never silently treated as approved", () => {
+  const err = validateMathsTeachingReviewSubmission(baseTeachingSubmission({ decision: null }));
+  assert.ok(err !== null);
+});
+
+test("validateMathsTeachingReviewSubmission: a rejected decision without notes is blocked", () => {
+  const err = validateMathsTeachingReviewSubmission(baseTeachingSubmission({ decision: "rejected", notes: "" }));
+  assert.ok(err && err.toLowerCase().includes("rejected decision requires notes"));
+});
+
+test("validateMathsTeachingReviewSubmission: a rejected decision WITH notes passes", () => {
+  assert.equal(validateMathsTeachingReviewSubmission(baseTeachingSubmission({ decision: "rejected", notes: "The MODEL's worked example is confusing." })), null);
+});
+
+test("buildNotesWithQualification also works for the Mathematics Teaching Review submission shape (structural type, not ReviewSubmission-specific)", () => {
+  const notes = buildNotesWithQualification(baseTeachingSubmission({ qualificationBasis: "Founder, 11+ preparation experience", notes: "The MODEL for mr01-average-mean is clear." }));
+  assert.ok(notes.startsWith("Reviewer qualification: Founder, 11+ preparation experience."));
+  assert.ok(notes.includes("The MODEL for mr01-average-mean is clear."));
+});

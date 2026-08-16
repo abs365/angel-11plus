@@ -215,6 +215,34 @@ export const FAMILY_EDUCATIONAL_CONTEXT: Record<string, FamilyEvidenceContext> =
     objective: "Find a unit rate (amount per person) and scale it to a different number of people.",
     evidenceBasis: "CSSE-006 Q1/Q13, CSSE-011 Q1/Q2/Q3, CSSE-016 Q1/Q2. See ANGEL_007K_MATHEMATICS_DEPTH_AND_BATCH4_READINESS_V1.md. Answers carry a unit suffix; affected by the unit-answer validation defect fixed in Decision 55, now resolved and verified.",
   },
+  // CSSE Completion Programme Phase B (Educational Increment 007M) — the 6
+  // of the phase's 22 newly-taught families that had never previously
+  // appeared in any Controlled Review Batch (content or teaching), so no
+  // FAMILY_EDUCATIONAL_CONTEXT entry existed for them until now.
+  "mr02-sequence-rule": {
+    objective: "Apply a two-step numeric rule forwards to find an output, or reverse both steps in the opposite order to find the input that produced a given output.",
+    evidenceBasis: "CSSE_QUESTION_INTELLIGENCE_FRAMEWORK.md QT-MR-05 (Obs. 11): CSSE-006, CSSE-011, CSSE-016.",
+  },
+  "mr02-substitution": {
+    objective: "Substitute two given algebraic relationships into a single total equation, so every unknown is expressed in terms of one variable before solving.",
+    evidenceBasis: "CSSE_QUESTION_INTELLIGENCE_FRAMEWORK.md QT-MR-06 (Obs. 11): CSSE-006, CSSE-011, CSSE-016.",
+  },
+  "mr03-angle-sum": {
+    objective: "Find a missing angle in a triangle or quadrilateral by subtracting the known angles from the shape's fixed angle total (180° or 360°).",
+    evidenceBasis: "CSSE_QUESTION_INTELLIGENCE_FRAMEWORK.md QT-MR-07 (Obs. 11): CSSE-006, CSSE-011, CSSE-016.",
+  },
+  "mr05-number-property": {
+    objective: "Apply the exact definition of a stated number property (e.g. prime, square, factor) directly to a number, rather than a related but different rule of thumb.",
+    evidenceBasis: "CSSE_QUESTION_INTELLIGENCE_FRAMEWORK.md QT-MR-11 (Obs. 11): CSSE-006, CSSE-011, CSSE-016.",
+  },
+  "precision-dec": {
+    objective: "Round a decimal answer correctly to the number of decimal places asked for, using the next digit rather than truncating early.",
+    evidenceBasis: "CSSE_QUESTION_INTELLIGENCE_FRAMEWORK.md QT-MR-14 (Obs. 3): CSSE-007, CSSE-012, CSSE-017. Precision Under Exact-Match applies as a cross-cutting scoring condition across every Mathematics Question Type, not as a separate content relationship.",
+  },
+  "precision-frac": {
+    objective: "Give an answer as an exact fraction (not a rounded decimal) when the question's own instruction requires it.",
+    evidenceBasis: "CSSE_QUESTION_INTELLIGENCE_FRAMEWORK.md QT-MR-14 (Obs. 3): CSSE-007, CSSE-012, CSSE-017. Precision Under Exact-Match applies as a cross-cutting scoring condition across every Mathematics Question Type, not as a separate content relationship.",
+  },
 };
 
 /**
@@ -247,6 +275,214 @@ export const FAMILY_MARKING_BASIS: Record<string, MarkingBasisItem[]> = {
   ],
 };
 
+/**
+ * CSSE Completion Programme, Phase B — Founder Educational Review
+ * readiness (ANGEL_CSSE_COMPLETION_PROGRAMME_V1.md Phase B; the review
+ * pack is ANGEL_PHASE_B_MATHEMATICS_TEACHING_COMPLETION_V1.md Part 10;
+ * the underlying content is Decision 62 / Educational Increment 007M).
+ *
+ * This is a SEPARATE review type from the REVIEW_CRITERIA/FAMILY_
+ * EDUCATIONAL_CONTEXT machinery above. The 18-criterion content review
+ * above judges a question family's own wording/answer/CSSE-fit; this
+ * judges the MODEL/Guided-practice/Remediation TEACHING layer Educational
+ * Increment 007M added on top of already-existing families (12 of the 22
+ * target families here already have an unrelated content_review row from
+ * Controlled Review Batches 2-4, predating this teaching content — that
+ * earlier approval must never be read as approval of teaching material
+ * that did not exist when it was recorded, which is exactly why this is
+ * `review_type = 'maths_teaching_review'`, a distinct value on the same
+ * ali_family_review table, migration 059).
+ */
+
+/**
+ * The exact 22 Mathematics families Educational Increment 007M added
+ * MODEL/Guided/Remediation teaching content for (Decision 62;
+ * ANGEL_PHASE_B_MATHEMATICS_TEACHING_COMPLETION_V1.md Part 3) — reconciled
+ * fresh against lib/learningEngine/mathsTeachingContent.ts's own 26 keys,
+ * minus the 4 pre-existing 007L proof families (mr01-missing-operand,
+ * mr04-best-value, mr03-angle-ratio, mr01-measurement-conversion —
+ * already-reviewed TEACHING content, not new in this phase, and already
+ * covered by the pilot/earlier content-review batches) and minus
+ * mr05-number-property-search (deliberately excluded from Phase B itself
+ * as TRANSFER-UNSAFE — it has no teaching content to review). Exported
+ * from here, not defined inline in app/admin-beta/review/page.tsx, so it
+ * is the single source of truth both the UI and
+ * tests/lib/adminReview.test.ts can check against
+ * MATHS_TEACHING_REVIEW_METADATA and tests/lib/learningEngine/
+ * mathsTeachingContent.test.ts's own independently-derived PHASE_B_FAMILIES
+ * list, with no risk of the two silently drifting apart.
+ */
+export const MATHS_TEACHING_REVIEW_TARGET_IDS = [
+  "mr01-average-mean",
+  "mr01-data-table",
+  "mr02-compare",
+  "mr02-far-ratio-context",
+  "mr02-nth-term",
+  "mr02-sequence-rule",
+  "mr02-substitution",
+  "mr02-sum-difference",
+  "mr03-angle-sum",
+  "mr03-classify",
+  "mr03-coordinate",
+  "mr03-mixed-perimeter",
+  "mr04-compound-percentage",
+  "mr04-elapsed-time",
+  "mr04-far-percent",
+  "mr04-far-recipe",
+  "mr04-mixed-divisibility",
+  "mr05-constrained-multiple",
+  "mr05-factors-primes",
+  "mr05-number-property",
+  "precision-dec",
+  "precision-frac",
+];
+
+/** Static identifier for which version of lib/learningEngine/mathsTeachingContent.ts a Mathematics Teaching Review judged — the teaching content is a static code file, not a versioned database row, so a named Educational Increment + commit hash is the closest honest equivalent to a reviewed content_version. Update this only when the teaching content itself changes. */
+export const MATHS_TEACHING_CONTENT_VERSION = "Educational Increment 007M (CSSE Completion Programme Phase B), commit e3f1c09";
+
+export interface MathsTeachingReviewCriterion {
+  key: keyof MathsTeachingReviewSubmission;
+  question: string;
+  polarity: "yes-is-good";
+}
+
+/**
+ * The 12 educational-judgement questions from the Founder's own directive
+ * Part 3 ("questions such as"), each rephrased where needed to keep the
+ * project's established Yes-is-good convention (lib/adminReview.ts's own
+ * `hasNegativeFraming` guard, tested against these below) — the directive
+ * itself asks for this: "Keep polarity consistent so that YES means
+ * educationally satisfactory wherever practical."
+ */
+export const MATHS_TEACHING_REVIEW_CRITERIA: MathsTeachingReviewCriterion[] = [
+  { key: "mathematicallyCorrect", question: "Is the mathematical teaching correct?", polarity: "yes-is-good" },
+  { key: "modelUnderstandable", question: "Would an 11+ child understand the MODEL?", polarity: "yes-is-good" },
+  { key: "modelTeachesMethod", question: "Does the MODEL teach the method, not just give an answer?", polarity: "yes-is-good" },
+  { key: "guidedPracticeBalanced", question: "Does Guided Practice give enough help while still leaving genuine thinking to the learner?", polarity: "yes-is-good" },
+  { key: "supportReducedAppropriately", question: "Is support reduced appropriately moving from Guided to Independent practice?", polarity: "yes-is-good" },
+  { key: "remediationUseful", question: "Is the remediation useful after a wrong answer?", polarity: "yes-is-good" },
+  { key: "languageAgeAppropriate", question: "Is the language age-appropriate for an 11+ candidate?", polarity: "yes-is-good" },
+  { key: "teachingRelevantToSkill", question: "Is the teaching relevant to the skill being tested?", polarity: "yes-is-good" },
+  { key: "exampleAvoidsAnswerLeakage", question: "Does the MODEL example avoid leaking the live question's answer?", polarity: "yes-is-good" },
+  { key: "conceptualExplanationSufficient", question: "Is there enough conceptual explanation, not just mechanical instruction?", polarity: "yes-is-good" },
+  { key: "independentExpectationAppropriate", question: "Is the independent-practice expectation appropriate?", polarity: "yes-is-good" },
+  { key: "clearAndUnambiguous", question: "Is everything clear, unambiguous, and appropriately simple for this age group?", polarity: "yes-is-good" },
+];
+
+export interface MathsTeachingReviewSubmission {
+  targetId: string;
+  reviewer: string;
+  qualificationBasis: string;
+  decision: ReviewDecision | null;
+  notes: string;
+  mathematicallyCorrect: boolean | null;
+  modelUnderstandable: boolean | null;
+  modelTeachesMethod: boolean | null;
+  guidedPracticeBalanced: boolean | null;
+  supportReducedAppropriately: boolean | null;
+  remediationUseful: boolean | null;
+  languageAgeAppropriate: boolean | null;
+  teachingRelevantToSkill: boolean | null;
+  exampleAvoidsAnswerLeakage: boolean | null;
+  conceptualExplanationSufficient: boolean | null;
+  independentExpectationAppropriate: boolean | null;
+  clearAndUnambiguous: boolean | null;
+}
+
+/**
+ * Per-family metadata for the review pack, sourced verbatim from
+ * ANGEL_PHASE_B_MATHEMATICS_TEACHING_COMPLETION_V1.md Part 1A (Question
+ * Type / competency) and Part 3 (transfer classification and its
+ * supporting note — the exact reasoning recorded when the family was
+ * designed, not re-derived or paraphrased here).
+ */
+export interface MathsTeachingReviewMetadata {
+  competency: string;
+  questionType: string;
+  transferClassification: "TRANSFER-SUFFICIENT" | "TRANSFER-LIMITED";
+  transferNote: string;
+  knownLimitation?: string;
+}
+
+export const MATHS_TEACHING_REVIEW_METADATA: Record<string, MathsTeachingReviewMetadata> = {
+  "mr01-average-mean": { competency: "MR-01 Arithmetic", questionType: "QT-MR-12 Average (Mean)", transferClassification: "TRANSFER-SUFFICIENT", transferNote: "4 genuinely distinct contexts." },
+  "mr01-data-table": { competency: "MR-01 Arithmetic", questionType: "QT-MR-09 Data Reading", transferClassification: "TRANSFER-LIMITED", transferNote: "Only 3 distinct underlying datasets across 5 questions.", knownLimitation: "This family's own final workingSteps entry is a generic \"Compute the answer\" restatement, not real working. Guided reveal is capped so that step can never be shown before submission (see the Maximum Guided reveal boundary below)." },
+  "mr02-compare": { competency: "MR-02 Algebraic/Symbolic", questionType: "QT-MR-06 Algebraic Symbol/Unknown", transferClassification: "TRANSFER-LIMITED", transferNote: "3 siblings." },
+  "mr02-far-ratio-context": { competency: "MR-02 Algebraic/Symbolic", questionType: "QT-MR-06 Algebraic Symbol/Unknown", transferClassification: "TRANSFER-LIMITED", transferNote: "3 siblings." },
+  "mr02-nth-term": { competency: "MR-02 Algebraic/Symbolic", questionType: "QT-MR-05 Sequence/Function-Rule", transferClassification: "TRANSFER-SUFFICIENT", transferNote: "5 siblings, varied start/difference/position, includes a negative-difference case." },
+  "mr02-sequence-rule": { competency: "MR-02 Algebraic/Symbolic", questionType: "QT-MR-05 Sequence/Function-Rule", transferClassification: "TRANSFER-SUFFICIENT", transferNote: "10 siblings (5 rule-pairs), genuinely distinct rules." },
+  "mr02-substitution": { competency: "MR-02 Algebraic/Symbolic", questionType: "QT-MR-06 Algebraic Symbol/Unknown", transferClassification: "TRANSFER-SUFFICIENT", transferNote: "5 siblings, every coefficient pair differs (borderline sufficient).", knownLimitation: "This family's compound answer format (e.g. \"A=6, C=3\") relies on brittle exact-text matching. A reordered but equivalent submission would currently fail. Pre-existing, flagged, not fixed by this phase (out of teaching-content scope)." },
+  "mr02-sum-difference": { competency: "MR-02 Algebraic/Symbolic", questionType: "QT-MR-06 Algebraic Symbol/Unknown", transferClassification: "TRANSFER-LIMITED", transferNote: "Despite 5 siblings, every question uses an identical sentence template." },
+  "mr03-angle-sum": { competency: "MR-03 Geometric/Spatial", questionType: "QT-MR-07 Geometric Angle/Shape", transferClassification: "TRANSFER-SUFFICIENT", transferNote: "7 siblings across triangle and quadrilateral sub-cases." },
+  "mr03-classify": { competency: "MR-03 Geometric/Spatial", questionType: "QT-MR-07 Geometric Angle/Shape", transferClassification: "TRANSFER-LIMITED", transferNote: "Only 3 siblings, one per answer category: a real memorisation risk." },
+  "mr03-coordinate": { competency: "MR-03 Geometric/Spatial", questionType: "QT-MR-08 Coordinate/Transformation", transferClassification: "TRANSFER-LIMITED", transferNote: "Thinnest of the geometry families: 3 siblings, 3 different sub-skills, no repetition of any one transformation type.", knownLimitation: "This family's parenthesised-pair answer format (e.g. \"(3, -5)\") relies on brittle exact-text matching. An unparenthesised but equivalent submission would currently fail. Pre-existing, flagged, not fixed by this phase (out of teaching-content scope)." },
+  "mr03-mixed-perimeter": { competency: "MR-03 Geometric/Spatial", questionType: "QT-MR-07 Geometric Angle/Shape", transferClassification: "TRANSFER-LIMITED", transferNote: "Closest to a disguised clone set of the 22: the same word-problem template repeated 3 times, numbers only." },
+  "mr04-compound-percentage": { competency: "MR-04 Multi-Step Word Problems", questionType: "QT-MR-04 Percentage/Proportional", transferClassification: "TRANSFER-SUFFICIENT", transferNote: "5 genuinely different price/percentage-pair combinations." },
+  "mr04-elapsed-time": { competency: "MR-04 Multi-Step Word Problems", questionType: "QT-MR-10 Elapsed-Time", transferClassification: "TRANSFER-SUFFICIENT", transferNote: "Real numeric variation, but every question shares an identical 3-stage template (sufficient with a disclosed caveat)." },
+  "mr04-far-percent": { competency: "MR-04 Multi-Step Word Problems", questionType: "QT-MR-04 Percentage/Proportional", transferClassification: "TRANSFER-LIMITED", transferNote: "3 siblings, distinct fractions." },
+  "mr04-far-recipe": { competency: "MR-04 Multi-Step Word Problems", questionType: "QT-MR-04 Percentage/Proportional", transferClassification: "TRANSFER-LIMITED", transferNote: "3 siblings." },
+  "mr04-mixed-divisibility": { competency: "MR-04 Multi-Step Word Problems", questionType: "QT-MR-13 Best-Value/Combinatorial", transferClassification: "TRANSFER-LIMITED", transferNote: "3 siblings, genuinely different divisor/remainder pairs." },
+  "mr05-constrained-multiple": { competency: "MR-05 Number Properties", questionType: "QT-MR-11 Number-Property", transferClassification: "TRANSFER-LIMITED", transferNote: "3 siblings." },
+  "mr05-factors-primes": { competency: "MR-05 Number Properties", questionType: "QT-MR-11 Number-Property", transferClassification: "TRANSFER-LIMITED", transferNote: "Nominally 5 siblings but only 2-3 per actual sub-skill (factor-count vs. primality). Flagged for a possible future family split." },
+  "mr05-number-property": { competency: "MR-05 Number Properties", questionType: "QT-MR-11 Number-Property", transferClassification: "TRANSFER-SUFFICIENT", transferNote: "5 siblings, genuine conceptual variety (borderline sufficient).", knownLimitation: "This family's live rows have no stored workingSteps at all. Guided step reveal is architecturally absent for this family (not a design choice), confirmed by direct code-path check, not just by design intent." },
+  "precision-dec": { competency: "MR-06 Precision Under Exact-Match", questionType: "QT-MR-14 Precision (cross-cutting)", transferClassification: "TRANSFER-LIMITED", transferNote: "All 3 siblings round up; no round-down example exists yet." },
+  "precision-frac": { competency: "MR-06 Precision Under Exact-Match", questionType: "QT-MR-14 Precision (cross-cutting)", transferClassification: "TRANSFER-LIMITED", transferNote: "All 3 siblings are structurally identical." },
+};
+
+/** Every family_id that already has at least one real Mathematics Teaching Review decision recorded (review_type = 'maths_teaching_review'), so the UI can show "X of 22 reviewed" honestly from persisted evidence, not a hardcoded count. Deliberately does NOT reuse fetchReviewedTargetIds() above — that function is scoped to content_review rows (implicitly, since it never filters review_type) and conflating the two would let an old content-review approval masquerade as a teaching-review one. */
+export async function fetchMathsTeachingReviewedFamilyIds(): Promise<Set<string>> {
+  const supabase = getSupabaseClient();
+  if (!supabase) return new Set();
+  const { data, error } = await supabase
+    .from("ali_family_review")
+    .select("family_id")
+    .eq("review_type", "maths_teaching_review");
+  if (error || !data) return new Set();
+  return new Set(data.map((r) => r.family_id));
+}
+
+/** Same validation discipline as validateReviewSubmission (reviewer required, qualification basis required and never pre-filled, decision never defaults, rejection requires notes) — kept as a separate function rather than a generic one because the two submission shapes' fields genuinely differ (12 teaching criteria vs. 18 content criteria), not because the rules differ. */
+export function validateMathsTeachingReviewSubmission(s: MathsTeachingReviewSubmission): string | null {
+  if (!s.reviewer.trim()) return "Reviewer name is required, a review cannot be recorded anonymously.";
+  if (!s.qualificationBasis.trim()) return "Reviewer qualification basis is required (e.g. teaching experience, subject knowledge, 11+ preparation experience).";
+  if (!s.decision) return "Choose a decision: this is never chosen for you.";
+  if (s.decision === "rejected" && !s.notes.trim()) {
+    return "A rejected decision requires notes explaining why (enforced by the database itself, but checked here for a clearer message).";
+  }
+  return null;
+}
+
+/** Inserts one real, traceable Mathematics Teaching Review decision — review_type = 'maths_teaching_review', a value migration 059 added specifically so this can never be conflated with, or overwrite, an earlier content_review row for the same family. Append-only, exactly like submitReview above; never touches ali_question_bank.eligibility_status. */
+export async function submitMathsTeachingReview(s: MathsTeachingReviewSubmission): Promise<SubmitReviewResult> {
+  const validationError = validateMathsTeachingReviewSubmission(s);
+  if (validationError) return { error: validationError };
+  if (!s.decision) return { error: "Choose a decision: this is never chosen for you." };
+  const supabase = getSupabaseClient();
+  if (!supabase) return { error: "Not connected" };
+  const { error } = await supabase.from("ali_family_review").insert({
+    review_target_type: "question_family",
+    review_type: "maths_teaching_review",
+    family_id: s.targetId,
+    reviewer: s.reviewer.trim(),
+    decision: s.decision,
+    notes: buildNotesWithQualification(s),
+    teaching_content_version: MATHS_TEACHING_CONTENT_VERSION,
+    teaching_mathematically_correct: s.mathematicallyCorrect,
+    teaching_model_understandable: s.modelUnderstandable,
+    teaching_model_teaches_method: s.modelTeachesMethod,
+    teaching_guided_practice_balanced: s.guidedPracticeBalanced,
+    teaching_support_reduced_appropriately: s.supportReducedAppropriately,
+    teaching_remediation_useful: s.remediationUseful,
+    teaching_language_age_appropriate: s.languageAgeAppropriate,
+    teaching_relevant_to_skill: s.teachingRelevantToSkill,
+    teaching_example_avoids_answer_leakage: s.exampleAvoidsAnswerLeakage,
+    teaching_conceptual_explanation_sufficient: s.conceptualExplanationSufficient,
+    teaching_independent_expectation_appropriate: s.independentExpectationAppropriate,
+    teaching_clear_and_unambiguous: s.clearAndUnambiguous,
+  });
+  return { error: error ? error.message : null };
+}
+
 export interface PendingReviewTarget {
   id: string; // the family_id column's value — either a real family id or a passage id
   reviewTargetType: ReviewTargetType;
@@ -268,15 +504,25 @@ export interface RepresentativeQuestion {
   active: boolean;
   provenance: string | null;
   eligibilityStatus: string;
+  /** Mathematics-only, from the same prompt jsonb the Practice pathway itself reads (app/learning-intelligence/practice/[area]/page.tsx). null for English rows, or a Maths row with no stored steps (e.g. every mr05-number-property row — genuinely absent, not a fetch failure). Added for the CSSE Completion Programme Phase B Mathematics Teaching Review, so it can show a family's real Guided Practice sequence without a second, separately-fetched copy. */
+  workingSteps: string[] | null;
 }
 
-/** prompt is stored as jsonb (typed `unknown` at the client) — narrows just enough to read the two display fields safely, without claiming to know its full shape. */
+/** prompt is stored as jsonb (typed `unknown` at the client) — narrows just enough to read the display fields safely, without claiming to know its full shape. */
 function promptText(prompt: unknown, key: "question" | "modelAnswer"): string {
   if (prompt && typeof prompt === "object" && key in prompt) {
     const value = (prompt as Record<string, unknown>)[key];
     if (typeof value === "string") return value;
   }
   return key === "question" ? "(no question text found)" : "(no model answer found)";
+}
+
+function promptWorkingSteps(prompt: unknown): string[] | null {
+  if (prompt && typeof prompt === "object" && "workingSteps" in prompt) {
+    const value = (prompt as Record<string, unknown>).workingSteps;
+    if (Array.isArray(value) && value.every((s) => typeof s === "string")) return value as string[];
+  }
+  return null;
 }
 
 export interface PassageDetail {
@@ -385,6 +631,7 @@ export async function fetchRepresentativeQuestions(familyId: string, limit = 8):
     contentDifficulty: r.content_difficulty, transferClass: r.transfer_class,
     addressesMisconception: r.addresses_misconception, contentVersion: r.content_version,
     active: r.active, provenance: r.provenance, eligibilityStatus: r.eligibility_status,
+    workingSteps: promptWorkingSteps(r.prompt),
   }));
   return sortByDifficulty(mapped);
 }
@@ -429,6 +676,7 @@ export async function fetchQuestionsForPassage(passageId: string): Promise<Repre
     contentDifficulty: r.content_difficulty, transferClass: r.transfer_class,
     addressesMisconception: r.addresses_misconception, contentVersion: r.content_version,
     active: r.active, provenance: r.provenance, eligibilityStatus: r.eligibility_status,
+    workingSteps: promptWorkingSteps(r.prompt),
   }));
 }
 
@@ -468,8 +716,8 @@ export function validateReviewSubmission(s: ReviewSubmission): string | null {
   return null;
 }
 
-/** Combines qualification basis and the reviewer's own findings into the single `notes` field, per the Operating Model §2's deliberate choice not to add a separate credentialing column — the qualification line is never silently dropped. */
-export function buildNotesWithQualification(s: ReviewSubmission): string {
+/** Combines qualification basis and the reviewer's own findings into the single `notes` field, per the Operating Model §2's deliberate choice not to add a separate credentialing column — the qualification line is never silently dropped. Structural parameter type (not `ReviewSubmission` itself) so the Mathematics Teaching Review submission (a distinct shape, see below) can reuse this exact logic rather than duplicating it. */
+export function buildNotesWithQualification(s: { qualificationBasis: string; notes: string }): string {
   const qualificationLine = `Reviewer qualification: ${s.qualificationBasis.trim()}.`;
   return s.notes.trim() ? `${qualificationLine}\n\n${s.notes.trim()}` : qualificationLine;
 }

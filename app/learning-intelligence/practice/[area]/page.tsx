@@ -30,7 +30,7 @@ import { scoreEnglishComprehensionAnswer, checkQuotationPresent, type EnglishSco
 import { getExamStrategyHint, getWorkedExample } from "@/lib/learningEngine/englishExamStrategies";
 import { getGuidedScaffoldKind, getGuidedInstructionText, checkLiveSelectionCount } from "@/lib/learningEngine/guidedPractice";
 import { classifyAutomaticError, getSelfReflectionCategories, WRONG_ANSWER_CATEGORY_LABEL } from "@/lib/learningEngine/englishErrorClassification";
-import { getMathsTeachingContent, MATHS_MISCONCEPTION_CATEGORY_LABEL } from "@/lib/learningEngine/mathsTeachingContent";
+import { getMathsTeachingContent, MATHS_MISCONCEPTION_CATEGORY_LABEL, effectiveGuidedRevealStepCount } from "@/lib/learningEngine/mathsTeachingContent";
 import { CompetencyProfile } from "@/components/learningEngine/CompetencyProfile";
 import { EvidenceProfile } from "@/components/learningEngine/EvidenceProfile";
 import { DiagnosticOverview } from "@/components/learningEngine/DiagnosticOverview";
@@ -945,8 +945,7 @@ function MathsActivity({
         // much of the family's own real steps Guided reveal may expose
         // before submission; the post-submission explanation below is
         // always the full, unmodified workingSteps, unaffected by this cap.
-        const cap = teachingContent?.maxGuidedRevealSteps;
-        const effectiveStepCount = cap === undefined ? prompt.workingSteps.length : Math.min(prompt.workingSteps.length, cap);
+        const effectiveStepCount = effectiveGuidedRevealStepCount(prompt.workingSteps.length, teachingContent?.maxGuidedRevealSteps);
         if (effectiveStepCount === 0) return null;
         return (
           <div className="mt-2 text-xs text-emerald-800 dark:text-emerald-200 bg-emerald-50 dark:bg-emerald-950 rounded-xl p-3 space-y-1.5">

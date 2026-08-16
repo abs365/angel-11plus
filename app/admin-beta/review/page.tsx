@@ -9,12 +9,16 @@ import {
   fetchPendingReviewTargets, fetchReviewedTargetIds, fetchRepresentativeQuestions, fetchQuestionsForPassage,
   fetchPassageDetail, fetchTargetSummary, submitReview,
   REVIEW_CRITERIA, FAMILY_EDUCATIONAL_CONTEXT, FAMILY_MARKING_BASIS,
+  fetchMathsTeachingReviewedFamilyIds, submitMathsTeachingReview,
+  MATHS_TEACHING_REVIEW_CRITERIA, MATHS_TEACHING_REVIEW_METADATA, MATHS_TEACHING_CONTENT_VERSION,
+  MATHS_TEACHING_REVIEW_TARGET_IDS,
   type PendingReviewTarget, type RepresentativeQuestion, type PassageDetail, type ReviewDecision, type ReviewSubmission,
-  type TargetSummary,
+  type TargetSummary, type MathsTeachingReviewSubmission,
 } from "@/lib/adminReview";
 import { getExamStrategyHint, getWorkedExample } from "@/lib/learningEngine/englishExamStrategies";
 import { getGuidedScaffoldKind, getGuidedInstructionText } from "@/lib/learningEngine/guidedPractice";
 import { getSelfReflectionCategories, WRONG_ANSWER_CATEGORY_LABEL } from "@/lib/learningEngine/englishErrorClassification";
+import { getMathsTeachingContent, MATHS_MISCONCEPTION_CATEGORY_LABEL, effectiveGuidedRevealStepCount } from "@/lib/learningEngine/mathsTeachingContent";
 
 /**
  * Educational Increment 007F, "Reviewer Experience Correction" — the
@@ -100,6 +104,12 @@ const BATCH4_TARGET_IDS = [
   "mr04-far-recipe",
 ];
 
+// MATHS_TEACHING_REVIEW_TARGET_IDS (the exact 22 Phase B families) now
+// lives in lib/adminReview.ts, imported above — the single source of
+// truth both this page and tests/lib/adminReview.test.ts check against,
+// so the UI's target list and the underlying data can never silently
+// drift apart.
+
 const FAMILY_DISPLAY_NAME: Record<string, string> = {
   "wave2-fam-multiselect": "Selecting Multiple Correct Statements",
   "wave1-fam-sequencing": "Sequencing Events and Evidence",
@@ -130,6 +140,12 @@ const FAMILY_DISPLAY_NAME: Record<string, string> = {
   "mr04-compound-percentage": "Successive Percentage Change",
   "mr03-mixed-perimeter": "Area to Perimeter",
   "mr04-far-recipe": "Recipe Scaling",
+  "mr02-sequence-rule": "Two-Step Sequence Rules (Forward and Reverse)",
+  "mr02-substitution": "Substituting Linked Relationships",
+  "mr03-angle-sum": "Angle Sum in Triangles and Quadrilaterals",
+  "mr05-number-property": "Number Property Definitions",
+  "precision-dec": "Rounding to a Decimal Place",
+  "precision-frac": "Exact Fractional Answers",
 };
 
 /** Graceful fallback for any family/passage not in the curated name map above — never shows a raw dash-separated ID as the primary label. */
@@ -587,6 +603,302 @@ function ReviewForm({ target, onDone }: { target: PendingReviewTarget; onDone: (
   );
 }
 
+// ─── Mathematics Teaching Review — CSSE Completion Programme Phase B ───────
+// A distinct review experience from ReviewForm above: it judges the
+// MODEL/Guided-practice/Remediation TEACHING layer Educational Increment
+// 007M added (Decision 62), not the underlying question content itself
+// (that's what the batches above already judged, for the 12 of these 22
+// families that happen to also appear in Batch 2/3/4 — a different,
+// earlier evidence trail, never conflated with this one; see
+// lib/adminReview.ts's review_type docstring). Reuses this same page's
+// existing Card/SectionTitle/TriState/DECISIONS building blocks and the
+// existing authenticated /admin-beta/review architecture — no parallel
+// review system.
+
+function emptyMathsTeachingSubmission(targetId: string): MathsTeachingReviewSubmission {
+  return {
+    targetId, reviewer: "", qualificationBasis: "", decision: null, notes: "",
+    mathematicallyCorrect: null, modelUnderstandable: null, modelTeachesMethod: null,
+    guidedPracticeBalanced: null, supportReducedAppropriately: null, remediationUseful: null,
+    languageAgeAppropriate: null, teachingRelevantToSkill: null, exampleAvoidsAnswerLeakage: null,
+    conceptualExplanationSufficient: null, independentExpectationAppropriate: null, clearAndUnambiguous: null,
+  };
+}
+
+function MathsTeachingReviewForm({ familyId, onDone }: { familyId: string; onDone: () => void }) {
+  const [submission, setSubmission] = useState<MathsTeachingReviewSubmission>(() => emptyMathsTeachingSubmission(familyId));
+  const [questions, setQuestions] = useState<RepresentativeQuestion[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState("");
+  const [submitted, setSubmitted] = useState(false);
+
+  const displayName = FAMILY_DISPLAY_NAME[familyId] ?? formatFallbackName(familyId);
+  const teachingContent = getMathsTeachingContent(familyId);
+  const metadata = MATHS_TEACHING_REVIEW_METADATA[familyId];
+  const educationalContext = FAMILY_EDUCATIONAL_CONTEXT[familyId];
+  const misconceptionLabel = teachingContent ? MATHS_MISCONCEPTION_CATEGORY_LABEL[teachingContent.misconceptionCategory] : undefined;
+
+  useEffect(() => {
+    (async () => {
+      setLoading(true);
+      setQuestions(await fetchRepresentativeQuestions(familyId, 50));
+      setLoading(false);
+    })();
+  }, [familyId]);
+
+  async function handleSubmit() {
+    if (!submission.decision) {
+      setSubmitError("Choose a decision before submitting: this is your judgement to make, not a default.");
+      return;
+    }
+    setSubmitting(true);
+    setSubmitError("");
+    const { error } = await submitMathsTeachingReview(submission);
+    setSubmitting(false);
+    if (error) { setSubmitError(error); return; }
+    setSubmitted(true);
+  }
+
+  if (submitted) {
+    return (
+      <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-6 text-center">
+        <CheckCircle2 size={28} className="text-emerald-500 mx-auto mb-2" />
+        <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">Teaching review recorded for {displayName}</p>
+        <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+          Decision: {submission.decision}. This is a separate evidence record from any earlier content review of this family, and does not change Practice Eligibility.
+        </p>
+        <button onClick={onDone} className="mt-4 text-sm font-semibold text-purple-600 dark:text-purple-400">Back to Mathematics Teaching Review</button>
+      </div>
+    );
+  }
+
+  const representative = questions.length > 0 ? questions[Math.floor(questions.length / 2)] : undefined;
+
+  return (
+    <div className="space-y-5 max-w-full overflow-x-hidden">
+      <button onClick={onDone} className="text-xs font-semibold text-gray-500 dark:text-gray-400 inline-flex items-center gap-1">
+        <ArrowLeft size={13} /> Back to Mathematics Teaching Review
+      </button>
+
+      <Card>
+        <p className="text-xs font-semibold text-purple-600 dark:text-purple-400 uppercase tracking-wide">Mathematics Teaching Review</p>
+        <h1 className="text-lg font-bold text-gray-900 dark:text-gray-100 mt-1 break-words">{displayName}</h1>
+        <p className="text-[11px] text-gray-300 dark:text-gray-600 mt-1 font-mono break-all">{familyId}</p>
+        {metadata && (
+          <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">{metadata.competency} · {metadata.questionType}</p>
+        )}
+      </Card>
+
+      {loading && <p className="text-sm text-gray-400 dark:text-gray-500">Loading content…</p>}
+
+      {!loading && educationalContext && (
+        <Card>
+          <SectionTitle letter="A" title="What the child is learning" />
+          <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed">{educationalContext.objective}</p>
+          <div className="mt-4">
+            <SectionTitle letter="B" title="Why this matters for CSSE preparation" />
+            <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed">{educationalContext.evidenceBasis}</p>
+          </div>
+        </Card>
+      )}
+
+      {!loading && representative && (
+        <Card>
+          <SectionTitle letter="C" title="Representative real question" />
+          <p className="text-sm font-semibold text-gray-800 dark:text-gray-200">{representative.question}</p>
+          <p className="text-xs text-gray-500 dark:text-gray-400 mt-1"><strong>Correct answer ({representative.contentDifficulty} difficulty):</strong> {representative.modelAnswer}</p>
+        </Card>
+      )}
+
+      {!loading && teachingContent && (
+        <Card>
+          <SectionTitle letter="D" title="MODEL example and explanation" />
+          <div className="text-sm text-gray-700 dark:text-gray-300 space-y-1.5">
+            <p><strong>What to notice: </strong>{teachingContent.model.whatToNotice}</p>
+            <p><strong>The rule: </strong>{teachingContent.model.relationship}</p>
+            <p><strong>Worked example (never the live question&apos;s own numbers): </strong>{teachingContent.model.scenario}</p>
+            <ul className="list-disc list-inside space-y-0.5">
+              {teachingContent.model.reasoning.map((step, i) => <li key={i}>{step}</li>)}
+            </ul>
+            <p><strong>Answer: </strong>{teachingContent.model.answer}</p>
+            <p><strong>Check it: </strong>{teachingContent.model.verification}</p>
+          </div>
+        </Card>
+      )}
+
+      {!loading && teachingContent && (
+        <MathsGuidedPracticeSummary teachingContent={teachingContent} representative={representative} />
+      )}
+
+      <Card>
+        <SectionTitle letter="F" title="Wrong-answer remediation and common misconception" />
+        {teachingContent && misconceptionLabel ? (
+          <div className="space-y-2">
+            <p className="text-sm text-gray-700 dark:text-gray-300"><strong>Remediation category: </strong>{misconceptionLabel}</p>
+            {representative?.addressesMisconception && (
+              <p className="text-sm text-gray-700 dark:text-gray-300"><strong>Common misconception addressed: </strong>{representative.addressesMisconception}</p>
+            )}
+          </div>
+        ) : (
+          <p className="text-sm text-amber-600 dark:text-amber-400">No remediation content found for this family. This would be a genuine gap, not expected for any of the 22 Phase B families.</p>
+        )}
+      </Card>
+
+      <Card>
+        <SectionTitle letter="G" title="Independent Practice expectation" />
+        <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed">
+          The learner attempts the question unaided (no MODEL, no Guided step reveal). Angel checks the answer automatically and gives immediate feedback. Independent success is the only kind of attempt that can move mastery evidence forward.
+        </p>
+      </Card>
+
+      {metadata && (
+        <Card>
+          <SectionTitle letter="H" title="Transfer classification and known limitation" />
+          <p className={`inline-block text-[11px] font-bold px-2 py-0.5 rounded-full ${metadata.transferClassification === "TRANSFER-SUFFICIENT" ? "bg-emerald-100 dark:bg-emerald-900 text-emerald-700 dark:text-emerald-300" : "bg-amber-100 dark:bg-amber-900 text-amber-700 dark:text-amber-300"}`}>
+            {metadata.transferClassification}
+          </p>
+          <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed mt-2">{metadata.transferNote}</p>
+          {metadata.knownLimitation && (
+            <p className="text-sm text-amber-700 dark:text-amber-300 leading-relaxed mt-2"><strong>Known limitation: </strong>{metadata.knownLimitation}</p>
+          )}
+        </Card>
+      )}
+
+      <Card>
+        <SectionTitle letter="I" title="Mastery protection" />
+        <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed">
+          A supported (Guided or otherwise assisted) success can never, by itself, establish independently-verified mastery or advance the learner&apos;s mastery streak. Only a later, genuinely independent correct attempt can do that, unchanged and re-proven, not modified, by this phase (Decision 62).
+        </p>
+      </Card>
+
+      <Card>
+        <SectionTitle letter="J" title="Your judgement" />
+        <div className="space-y-4">
+          <div>
+            <label className="text-xs font-semibold text-gray-700 dark:text-gray-300">Your name (required, a review cannot be recorded anonymously)</label>
+            <input
+              value={submission.reviewer}
+              onChange={(e) => setSubmission((s) => ({ ...s, reviewer: e.target.value }))}
+              placeholder="Your full name"
+              className="w-full mt-1 text-sm rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-2.5"
+            />
+          </div>
+
+          <div>
+            <label className="text-xs font-semibold text-gray-700 dark:text-gray-300">Your basis for reviewing this (required)</label>
+            <input
+              value={submission.qualificationBasis}
+              onChange={(e) => setSubmission((s) => ({ ...s, qualificationBasis: e.target.value }))}
+              placeholder="Founder and parent with direct experience of preparing children for the Essex CSSE 11+, including previous use of 11+ tuition, practice materials and mock examinations."
+              className="w-full mt-1 text-sm rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-2.5"
+            />
+            <p className="text-[11px] text-gray-400 dark:text-gray-500 mt-1">
+              This is only suggested wording, shown as a placeholder: nothing is pre-filled. Enter or confirm your own real basis; it is recorded with your review.
+            </p>
+          </div>
+
+          <div className="space-y-2">
+            {MATHS_TEACHING_REVIEW_CRITERIA.map(({ key, question }) => (
+              <div key={key} className="flex items-center justify-between gap-3">
+                <span className="text-xs text-gray-600 dark:text-gray-400">{question}</span>
+                <TriState
+                  value={submission[key] as boolean | null}
+                  onChange={(v) => setSubmission((s) => ({ ...s, [key]: v }))}
+                />
+              </div>
+            ))}
+          </div>
+
+          <div>
+            <label className="text-xs font-semibold text-gray-700 dark:text-gray-300">
+              Findings / notes {submission.decision === "rejected" && "(required for a rejection)"}
+            </label>
+            <textarea
+              value={submission.notes}
+              onChange={(e) => setSubmission((s) => ({ ...s, notes: e.target.value }))}
+              rows={4}
+              className="w-full mt-1 text-sm rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-2.5"
+              placeholder="What you checked, what you found, any amendment needed…"
+            />
+          </div>
+
+          <div>
+            <label className="text-xs font-semibold text-gray-700 dark:text-gray-300">Your decision (required, choose one)</label>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-1">
+              {DECISIONS.map((d) => (
+                <button
+                  key={d.value}
+                  type="button"
+                  onClick={() => setSubmission((s) => ({ ...s, decision: d.value }))}
+                  className={`text-left p-3 rounded-xl border transition-colors ${
+                    submission.decision === d.value
+                      ? "bg-purple-600 border-purple-600 text-white"
+                      : "bg-gray-50 dark:bg-gray-800 border-gray-100 dark:border-gray-700 text-gray-700 dark:text-gray-300"
+                  }`}
+                >
+                  <p className="text-xs font-semibold">{d.label}</p>
+                  <p className={`text-[11px] mt-0.5 ${submission.decision === d.value ? "text-purple-100" : "text-gray-400 dark:text-gray-500"}`}>{d.hint}</p>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {submitError && <p className="text-xs text-red-500">{submitError}</p>}
+
+          <button
+            onClick={handleSubmit}
+            disabled={submitting || !submission.reviewer.trim() || !submission.qualificationBasis.trim()}
+            className="w-full flex items-center justify-center gap-2 bg-purple-600 hover:bg-purple-700 disabled:opacity-40 text-white font-semibold py-3 rounded-xl text-sm transition-colors"
+          >
+            {submitting ? "Submitting…" : (<>Submit teaching review <ArrowRight size={16} /></>)}
+          </button>
+
+          <p className="text-[10px] text-gray-300 dark:text-gray-600">Reviewing teaching-content version: {MATHS_TEACHING_CONTENT_VERSION}</p>
+        </div>
+      </Card>
+    </div>
+  );
+}
+
+/** Section E — Guided Practice sequence and its maximum reveal boundary, computed from the representative question's own real, live workingSteps (the same field the real Practice pathway reads from ali_question_bank.prompt — never a second, hand-maintained copy) via the exact same effectiveGuidedRevealStepCount rule that pathway applies. */
+function MathsGuidedPracticeSummary({ teachingContent, representative }: {
+  teachingContent: NonNullable<ReturnType<typeof getMathsTeachingContent>>;
+  representative?: RepresentativeQuestion;
+}) {
+  const cap = teachingContent.maxGuidedRevealSteps;
+  const workingSteps = representative?.workingSteps ?? null;
+  const realStepCount = workingSteps?.length ?? 0;
+  const effectiveStepCount = effectiveGuidedRevealStepCount(realStepCount, cap);
+
+  return (
+    <Card>
+      <SectionTitle letter="E" title="Guided Practice sequence and maximum reveal boundary" />
+      {workingSteps && workingSteps.length > 0 ? (
+        <div className="space-y-2">
+          <p className="text-sm text-gray-700 dark:text-gray-300">A representative question&apos;s real, stored working steps (the same steps Guided Practice progressively reveals, never a second, separately-authored copy):</p>
+          <ul className="list-disc list-inside text-sm text-gray-700 dark:text-gray-300 space-y-0.5">
+            {workingSteps.map((s, i) => (
+              <li key={i} className={i >= effectiveStepCount ? "text-gray-400 dark:text-gray-600" : undefined}>
+                {s}{i >= effectiveStepCount && " (capped, never revealed pre-submission)"}
+              </li>
+            ))}
+          </ul>
+          <p className="text-xs text-gray-500 dark:text-gray-400">
+            Maximum Guided reveal boundary: <strong>{effectiveStepCount} of {realStepCount}</strong> real steps
+            {cap !== undefined && cap < realStepCount && " (capped by design, see Known limitation below)"}
+            {effectiveStepCount === 0 && ". No Guided reveal control renders for this family."}
+          </p>
+        </div>
+      ) : (
+        <p className="text-sm text-amber-600 dark:text-amber-400">
+          This family&apos;s live rows have no stored working steps. Guided step reveal is architecturally absent (0 of 0), not a design choice. Confirmed by direct query, not assumed.
+        </p>
+      )}
+    </Card>
+  );
+}
+
 // ─── List views: pilot summary cards + collapsed full backlog ──────────────
 
 function TargetCard({ target, onOpen }: { target: PendingReviewTarget; onOpen: () => void }) {
@@ -762,18 +1074,77 @@ function FullBacklogSection({ targets, onOpen }: { targets: PendingReviewTarget[
   );
 }
 
+/** A single card in the Mathematics Teaching Review section — deliberately not TargetCard (that fetches a content-review TargetSummary via fetchTargetSummary/fetchReviewedTargetIds, the WRONG evidence source for this review type). Plain-language name first, family_id as small secondary text only, per the directive's own instruction. */
+function TeachingTargetCard({ familyId, reviewed, onOpen }: { familyId: string; reviewed: boolean; onOpen: () => void }) {
+  const displayName = FAMILY_DISPLAY_NAME[familyId] ?? formatFallbackName(familyId);
+  const metadata = MATHS_TEACHING_REVIEW_METADATA[familyId];
+  return (
+    <button onClick={onOpen} className="w-full text-left px-5 py-4 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
+      <div className="flex items-start justify-between gap-3">
+        <div className="min-w-0">
+          <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">{displayName}</p>
+          {metadata && <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">{metadata.competency} · {metadata.questionType}</p>}
+          {reviewed && (
+            <span className="inline-block mt-1.5 text-[11px] font-semibold text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950 px-2 py-0.5 rounded-full">
+              Reviewed
+            </span>
+          )}
+        </div>
+        <ArrowRight size={14} className="text-gray-300 dark:text-gray-600 shrink-0 mt-1" />
+      </div>
+    </button>
+  );
+}
+
+/**
+ * CSSE Completion Programme, Phase B — the Founder's own required
+ * "Mathematics Teaching Review" section, clearly separated from the
+ * content-review pilot/batches above (a distinct review_type, a distinct
+ * evidence trail, a distinct 22-family target list — see this file's own
+ * MATHS_TEACHING_REVIEW_TARGET_IDS docstring). Shows the genuine current
+ * count from persisted review evidence, never a hardcoded number.
+ */
+function MathsTeachingSection({ reviewedIds, onOpen }: { reviewedIds: Set<string>; onOpen: (familyId: string) => void }) {
+  const reviewedCount = MATHS_TEACHING_REVIEW_TARGET_IDS.filter((id) => reviewedIds.has(id)).length;
+  return (
+    <div className="bg-white dark:bg-gray-900 rounded-2xl border-2 border-indigo-200 dark:border-indigo-800 overflow-hidden">
+      <div className="px-5 py-4 border-b border-indigo-100 dark:border-indigo-900 bg-indigo-50 dark:bg-indigo-950/40">
+        <p className="text-sm font-bold text-indigo-900 dark:text-indigo-200">Mathematics Teaching Review</p>
+        <p className="text-xs text-indigo-600 dark:text-indigo-400 mt-0.5">{reviewedCount} of {MATHS_TEACHING_REVIEW_TARGET_IDS.length} reviewed</p>
+        <p className="text-[11px] text-indigo-500 dark:text-indigo-500 mt-1.5 leading-relaxed">
+          Judges the MODEL, Guided Practice, and remediation teaching content added for these 22 Mathematics families (CSSE Completion Programme Phase B). This is separate from, and does not reuse, any earlier content review of the underlying questions.
+        </p>
+      </div>
+      <div className="divide-y divide-gray-50 dark:divide-gray-800">
+        {MATHS_TEACHING_REVIEW_TARGET_IDS.map((id) => (
+          <TeachingTargetCard key={id} familyId={id} reviewed={reviewedIds.has(id)} onOpen={() => onOpen(id)} />
+        ))}
+      </div>
+    </div>
+  );
+}
+
 function ReviewDashboard() {
   const [targets, setTargets] = useState<PendingReviewTarget[] | null>(null);
   const [reviewedIds, setReviewedIds] = useState<Set<string>>(new Set());
   const [selected, setSelected] = useState<PendingReviewTarget | null>(null);
+  const [teachingReviewedIds, setTeachingReviewedIds] = useState<Set<string>>(new Set());
+  const [selectedTeachingFamilyId, setSelectedTeachingFamilyId] = useState<string | null>(null);
 
   async function load() {
-    const [pending, reviewed] = await Promise.all([fetchPendingReviewTargets(), fetchReviewedTargetIds()]);
+    const [pending, reviewed, teachingReviewed] = await Promise.all([
+      fetchPendingReviewTargets(), fetchReviewedTargetIds(), fetchMathsTeachingReviewedFamilyIds(),
+    ]);
     setTargets(pending);
     setReviewedIds(reviewed);
+    setTeachingReviewedIds(teachingReviewed);
   }
 
   useEffect(() => { load(); }, []);
+
+  if (selectedTeachingFamilyId) {
+    return <MathsTeachingReviewForm familyId={selectedTeachingFamilyId} onDone={() => { setSelectedTeachingFamilyId(null); load(); }} />;
+  }
 
   if (selected) {
     return <ReviewForm target={selected} onDone={() => { setSelected(null); load(); }} />;
@@ -781,22 +1152,23 @@ function ReviewDashboard() {
 
   if (targets === null) return <p className="text-sm text-gray-400 dark:text-gray-500">Loading review pilot…</p>;
 
-  if (targets.length === 0) {
-    return (
-      <p className="text-sm text-gray-500 dark:text-gray-400">
-        No pending review targets visible. If you expect targets here, confirm migrations 047/050/052/053/054 have
-        been applied: see ANGEL_007D_REVIEW_BACKLOG_V1.md.
-      </p>
-    );
-  }
-
   return (
     <div className="space-y-5">
+      <MathsTeachingSection reviewedIds={teachingReviewedIds} onOpen={setSelectedTeachingFamilyId} />
+      {targets.length === 0 ? (
+        <p className="text-sm text-gray-500 dark:text-gray-400">
+          No pending content-review targets visible. If you expect targets here, confirm migrations 047/050/052/053/054 have
+          been applied: see ANGEL_007D_REVIEW_BACKLOG_V1.md.
+        </p>
+      ) : (
+      <>
       <PilotSection targets={targets} reviewedIds={reviewedIds} onOpen={setSelected} />
       <Batch2Section targets={targets} reviewedIds={reviewedIds} onOpen={setSelected} />
       <Batch3Section targets={targets} reviewedIds={reviewedIds} onOpen={setSelected} />
       <Batch4Section targets={targets} reviewedIds={reviewedIds} onOpen={setSelected} />
       <FullBacklogSection targets={targets} onOpen={setSelected} />
+      </>
+      )}
     </div>
   );
 }

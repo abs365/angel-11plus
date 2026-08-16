@@ -4,6 +4,7 @@ import {
   MATHS_FAMILY_TEACHING_CONTENT,
   MATHS_MISCONCEPTION_CATEGORY_LABEL,
   getMathsTeachingContent,
+  effectiveGuidedRevealStepCount,
   type MathsMisconceptionCategory,
 } from "../../../lib/learningEngine/mathsTeachingContent";
 import { checkMathsAnswer } from "../../../lib/learningEngine/practiceContent";
@@ -367,4 +368,38 @@ test("mr03-coordinate MODEL's own scenario point (6, -3) does not match any live
   const modelPoint: [number, number] = [6, -3];
   const liveAnswerPoints: [number, number][] = [[3, -5], [-4, -2], [2, 4]];
   assert.ok(!liveAnswerPoints.some(([x, y]) => x === modelPoint[0] && y === modelPoint[1]));
+});
+
+/**
+ * CSSE Completion Programme, Phase B Founder review readiness —
+ * effectiveGuidedRevealStepCount is a pure extraction of the exact cap
+ * logic app/learning-intelligence/practice/[area]/page.tsx's MathsActivity
+ * already applied inline (byte-for-byte, only moved), now also reused by
+ * the Mathematics Teaching Review interface. These tests prove the
+ * extraction preserved the original behaviour exactly.
+ */
+
+test("effectiveGuidedRevealStepCount: no cap returns the full real step count, unmodified", () => {
+  assert.equal(effectiveGuidedRevealStepCount(3, undefined), 3);
+  assert.equal(effectiveGuidedRevealStepCount(0, undefined), 0);
+});
+
+test("effectiveGuidedRevealStepCount: a cap below the real count restricts reveal to the cap (mr01-data-table's real case: 2 real steps, capped to 1)", () => {
+  assert.equal(effectiveGuidedRevealStepCount(2, 1), 1);
+});
+
+test("effectiveGuidedRevealStepCount: a cap of 0 always yields 0, regardless of how many real steps exist (mr05-number-property's case, though its real count is itself 0)", () => {
+  assert.equal(effectiveGuidedRevealStepCount(5, 0), 0);
+  assert.equal(effectiveGuidedRevealStepCount(0, 0), 0);
+});
+
+test("effectiveGuidedRevealStepCount: a cap at or above the real count never exceeds the real count (min, not the cap itself)", () => {
+  assert.equal(effectiveGuidedRevealStepCount(2, 5), 2);
+  assert.equal(effectiveGuidedRevealStepCount(3, 3), 3);
+});
+
+test("effectiveGuidedRevealStepCount matches every family's real maxGuidedRevealSteps contract", () => {
+  assert.equal(effectiveGuidedRevealStepCount(2, MATHS_FAMILY_TEACHING_CONTENT["mr01-data-table"].maxGuidedRevealSteps), 1);
+  assert.equal(effectiveGuidedRevealStepCount(0, MATHS_FAMILY_TEACHING_CONTENT["mr05-number-property"].maxGuidedRevealSteps), 0);
+  assert.equal(effectiveGuidedRevealStepCount(3, MATHS_FAMILY_TEACHING_CONTENT["mr02-nth-term"].maxGuidedRevealSteps), 3);
 });

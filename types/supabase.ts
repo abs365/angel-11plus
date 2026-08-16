@@ -232,6 +232,21 @@ export interface Database {
           validation_behaviour_sound: boolean | null;
           originality_confirmed: boolean | null;
           copyright_risk_clear: boolean | null;
+          /** Migration 059. */
+          review_type: "content_review" | "maths_teaching_review";
+          teaching_content_version: string | null;
+          teaching_mathematically_correct: boolean | null;
+          teaching_model_understandable: boolean | null;
+          teaching_model_teaches_method: boolean | null;
+          teaching_guided_practice_balanced: boolean | null;
+          teaching_support_reduced_appropriately: boolean | null;
+          teaching_remediation_useful: boolean | null;
+          teaching_language_age_appropriate: boolean | null;
+          teaching_relevant_to_skill: boolean | null;
+          teaching_example_avoids_answer_leakage: boolean | null;
+          teaching_conceptual_explanation_sufficient: boolean | null;
+          teaching_independent_expectation_appropriate: boolean | null;
+          teaching_clear_and_unambiguous: boolean | null;
         };
         Insert: {
           id?: string;
@@ -262,6 +277,21 @@ export interface Database {
           validation_behaviour_sound?: boolean | null;
           originality_confirmed?: boolean | null;
           copyright_risk_clear?: boolean | null;
+          /** Migration 059. */
+          review_type?: "content_review" | "maths_teaching_review";
+          teaching_content_version?: string | null;
+          teaching_mathematically_correct?: boolean | null;
+          teaching_model_understandable?: boolean | null;
+          teaching_model_teaches_method?: boolean | null;
+          teaching_guided_practice_balanced?: boolean | null;
+          teaching_support_reduced_appropriately?: boolean | null;
+          teaching_remediation_useful?: boolean | null;
+          teaching_language_age_appropriate?: boolean | null;
+          teaching_relevant_to_skill?: boolean | null;
+          teaching_example_avoids_answer_leakage?: boolean | null;
+          teaching_conceptual_explanation_sufficient?: boolean | null;
+          teaching_independent_expectation_appropriate?: boolean | null;
+          teaching_clear_and_unambiguous?: boolean | null;
         };
         Update: {
           decision?: "approved" | "approved_with_amendment" | "rejected" | "requires_revalidation" | "pending_independent_review";
