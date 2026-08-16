@@ -148,6 +148,40 @@ No `content_difficulty` value was changed. No family was relabelled. This sectio
 
 ---
 
+## Part 9 — Live learner experience verification
+
+Deployed to production (commit `e3f1c09`, Vercel READY, aliased `https://angel-11plus.vercel.app`) and verified through the real `/learning-intelligence/practice/mathematics` pathway across 2 full sessions (16 questions), a real logged-in profile, not a synthetic/dev harness.
+
+**Families directly walked live:** `mr04-best-value` (pre-existing 007L, re-confirmed unregressed: MODEL, both Guided and Independent modes, correct and incorrect submissions, remediation), the legacy ungrouped pool (confirmed firewall intact, zero MODEL/Guided UI), **`mr01-data-table`** (new, and specifically the family carrying this phase's step-reveal safety fix), **`mr05-constrained-multiple`** (new).
+
+**The two new safety mechanisms this phase introduced were both directly exercised and confirmed working exactly as designed:**
+- `mr01-data-table`'s capped Guided reveal: the button correctly read "Reveal the next step (0 of **1**)" (not the real 2), and after revealing that 1 step, the reveal button disappeared entirely — the family's second real step ("Compute the answer: 39") was never shown before submission. Post-submission, the full explanation correctly showed both real steps in full, confirming the cap only affects pre-submission Guided reveal, exactly as designed.
+- `mr05-number-property`'s zero-reveal case (`maxGuidedRevealSteps: 0`) was not reached live this session (session generator did not happen to surface it in either of the 2 sessions run) — verified instead by direct code-path confirmation (`effectiveStepCount === 0` causes the reveal block to return `null`, a simple, low-risk absence-of-UI path) and by the automated verification script.
+
+**Checked against the reject list (Part 9's own explicit checklist):** no raw family IDs, no engine/developer terminology, no misleading scoring, no answer leakage (both MODEL examples viewed used different scenarios/numbers from the live question), no repetitive generic hints (each family's MODEL and remediation text was specific to its own real misconception), no MODEL revealing the current live answer, remediation genuinely explained the error rather than just repeating the solution (e.g. `mr05-constrained-multiple`: "Finding a multiple of only one of the two numbers, or finding the lowest common multiple itself without then checking it against the stated bound").
+
+**Not exhaustively covered live:** of the 22 new families, only 2 (`mr01-data-table`, `mr05-constrained-multiple`) were directly walked through the real Practice pathway this session — repeated browser-automation click failures (not a product defect; a tooling/environment issue, confirmed by retrying with multiple techniques) stopped further live sessions after the second one, and per this project's own "avoid rabbit holes" discipline, further retries were not pursued. The remaining 20 new families are verified by the automated live-data script (`scripts/007l-model-verification.mjs`, 26/26 families, 112/112 live rows, ALL CHECKS PASS, re-run fresh against production after deployment) and 35 unit tests, but not by direct human-eye browser observation this session. This is reported honestly as a real, bounded gap in this phase's live-verification coverage, not glossed over.
+
+---
+
+## Part 10 — Educational quality review pack (Founder review required, not self-approved)
+
+**This section does not certify the authored teaching content as educationally approved.** Per 007L's own established discipline and this directive's explicit instruction ("Do not self-approve that content on the Founder's behalf"), no family implemented in this phase is claimed above **TEACHING PARTIAL / REVIEW READY** (007L's own maturity model, Part 4 of the original 007L document). What follows is the review pack for the Founder's own educational judgement, not a substitute for it.
+
+**Automated evidence supporting review-readiness (not sufficient alone):** mathematical correctness independently re-derived for every one of 26 families (35 passing unit tests, each recomputing the MODEL's own answer from first principles); zero answer leakage (26/26 families, 112/112 live rows, live-verified); bank-wide Mathematics answer-validation regression unaffected (168/168); mastery-protection properties proven to hold (8 tests); Copy Quality Guard clean (0 violations, after this phase's own first-pass caught and corrected 24 em-dash violations in newly-authored learner-facing text — the same category of finding 007L's own process caught, working as intended, not a sign of carelessness left uncorrected).
+
+**What requires genuine human educational judgement, not automatable:**
+1. **Pedagogical usefulness** — does each MODEL actually explain *why*, not just restate a rule? (007L's own item 3.) Self-assessed as reasonable during design (each MODEL includes an explicit "what to notice" + "the rule" + worked reasoning + a verification step), but this is exactly the judgement call this directive reserves for the Founder.
+2. **Remediation category fairness** — do the two new categories (`INCOMPLETE_REASONING`, `PRECISION_INSTRUCTION_IGNORED`) and the necessarily-imperfect existing-category fits (`mr01-average-mean`'s `MISREAD_QUANTITY`, `mr05-factors-primes`' `STRUCTURAL_MISAPPLICATION` umbrella for a genuinely bimodal family) fairly characterise the real misconception text? Flagged honestly throughout Part 3 wherever a fit was imperfect, not hidden.
+3. **Age-appropriateness and tone** for 11+ candidates — self-assessed as consistent with 007L's own already-Founder-reviewable style, not independently re-validated by a second party.
+4. **The transfer classifications themselves** (14 LIMITED families) — these are this phase's own honest self-assessment of depth, not a claim that LIMITED content should not have been built; the Founder may reasonably disagree with where a specific family was placed.
+
+**Recommended next action, not performed here:** Founder review of this document's Part 3 (all 22 family designs) and this Part 10, using the same review discipline already established for Controlled Review Batches 1-4 and the 007L proof set — a family-by-family decision, not a single wholesale approval, mirroring `ali_family_review`'s own per-family review unit.
+
+**007L's precedent explicitly followed:** the prior 007L increment was deployed before an equivalent Decision was recorded (Decision 57 later closed that governance gap retroactively). This phase does not repeat that gap — Decision 62 (below) records this deployment's actual state (implemented, tested, live-verified, NOT yet Founder-content-reviewed) accurately and immediately, not after the fact.
+
+---
+
 ## Part 11 — Legacy Mathematics questions (out of scope, reported not touched)
 
 **32 rows, `family_id: null`, spanning 11 different Question Types** (per Part 1B). **27 are `practice_eligible`** (already live, undifferentiated, `ASSESSMENT ONLY`); **5 are `provisional`** — these 5 are the ones Part 11 of the Phase B directive names. Neither group was classified into families, promoted, demoted, or had provenance invented. Attaching teaching content to any of them would require a content-governance step (classification into real families) that is explicitly a different kind of work from teaching-architecture extension — out of Phase B's scope by the directive's own instruction, not overlooked.
