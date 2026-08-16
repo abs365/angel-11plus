@@ -937,25 +937,37 @@ function MathsActivity({
           workingSteps, never a second authored copy. The learner still
           types and submits exactly one final answer below, checked by the
           same unmodified checkMathsAnswer every Independent attempt uses. */}
-      {guidedMode && !submitted && prompt.workingSteps && prompt.workingSteps.length > 0 && (
-        <div className="mt-2 text-xs text-emerald-800 dark:text-emerald-200 bg-emerald-50 dark:bg-emerald-950 rounded-xl p-3 space-y-1.5">
-          {stepsRevealed === 0 ? (
-            <p>Stuck? You can reveal this question&apos;s steps one at a time.</p>
-          ) : (
-            <ul className="list-disc list-inside space-y-0.5">
-              {prompt.workingSteps.slice(0, stepsRevealed).map((s, i) => <li key={i}>{s}</li>)}
-            </ul>
-          )}
-          {stepsRevealed < prompt.workingSteps.length && (
-            <button
-              onClick={() => setStepsRevealed((n) => n + 1)}
-              className="text-xs font-semibold text-emerald-700 dark:text-emerald-300"
-            >
-              Reveal the next step ({stepsRevealed} of {prompt.workingSteps.length})
-            </button>
-          )}
-        </div>
-      )}
+      {guidedMode && !submitted && prompt.workingSteps && prompt.workingSteps.length > 0 && (() => {
+        // Phase B safety rule: some families' real, stored workingSteps end
+        // in a step that is just the final answer restated, not genuine
+        // intermediate working (see MathsFamilyTeachingContent's
+        // maxGuidedRevealSteps doc comment). effectiveStepCount caps how
+        // much of the family's own real steps Guided reveal may expose
+        // before submission; the post-submission explanation below is
+        // always the full, unmodified workingSteps, unaffected by this cap.
+        const cap = teachingContent?.maxGuidedRevealSteps;
+        const effectiveStepCount = cap === undefined ? prompt.workingSteps.length : Math.min(prompt.workingSteps.length, cap);
+        if (effectiveStepCount === 0) return null;
+        return (
+          <div className="mt-2 text-xs text-emerald-800 dark:text-emerald-200 bg-emerald-50 dark:bg-emerald-950 rounded-xl p-3 space-y-1.5">
+            {stepsRevealed === 0 ? (
+              <p>Stuck? You can reveal this question&apos;s steps one at a time.</p>
+            ) : (
+              <ul className="list-disc list-inside space-y-0.5">
+                {prompt.workingSteps!.slice(0, stepsRevealed).map((s, i) => <li key={i}>{s}</li>)}
+              </ul>
+            )}
+            {stepsRevealed < effectiveStepCount && (
+              <button
+                onClick={() => setStepsRevealed((n) => n + 1)}
+                className="text-xs font-semibold text-emerald-700 dark:text-emerald-300"
+              >
+                Reveal the next step ({stepsRevealed} of {effectiveStepCount})
+              </button>
+            )}
+          </div>
+        );
+      })()}
 
       <input
         value={answer}
