@@ -818,13 +818,37 @@ export async function fetchPendingReviewTargets(): Promise<PendingReviewTarget[]
   return data.map((r) => ({ id: r.family_id, reviewTargetType: r.review_target_type, notes: r.notes }));
 }
 
-/** Educational Increment 007F, Part 1 — every family_id/passage id that has at least one REAL decision recorded (anything other than the placeholder pending row), so the UI can show "X of 7 reviewed" and per-card status honestly. A target can have both a pending row (history, never deleted) and a real decision row; this only counts the latter. */
+/**
+ * Educational Increment 007F, Part 1 — every family_id/passage id that has
+ * at least one REAL decision recorded (anything other than the
+ * placeholder pending row), so the UI can show "X of 7 reviewed" and
+ * per-card status honestly. A target can have both a pending row
+ * (history, never deleted) and a real decision row; this only counts the
+ * latter.
+ *
+ * Educational Increment 007T, Migration 064 Review-Surface Reconciliation
+ * Part 6 correction — explicitly scoped to `review_type = 'content_review'`
+ * (the only review_type this function's every caller, and every
+ * pending-placeholder row `fetchPendingReviewTargets()` can return, is
+ * ever created against — submitReview()/the pilot/batch/007T
+ * placeholder-seeding migrations never set review_type, so it always
+ * takes the column's own 'content_review' default). Without this scope,
+ * a family_id that happens to ALSO carry an approved
+ * maths_teaching_review/english_teaching_review/writing_teaching_review
+ * decision (Decisions 63/65/67) — a genuinely different review purpose,
+ * submitted through entirely separate functions — would be wrongly
+ * treated as "reviewed" here even if its own, separate content_review is
+ * still genuinely outstanding. This is the exact "a [teaching] approval
+ * must not accidentally satisfy a [content] review" failure this scope
+ * closes, in either direction.
+ */
 export async function fetchReviewedTargetIds(): Promise<Set<string>> {
   const supabase = getSupabaseClient();
   if (!supabase) return new Set();
   const { data, error } = await supabase
     .from("ali_family_review")
     .select("family_id")
+    .eq("review_type", "content_review")
     .neq("decision", "pending_independent_review");
   if (error || !data) return new Set();
   return new Set(data.map((r) => r.family_id));

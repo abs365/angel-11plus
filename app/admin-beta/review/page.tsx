@@ -1412,9 +1412,24 @@ function SevenTSection({ targets, reviewedIds, onOpen }: { targets: PendingRevie
   );
 }
 
-function FullBacklogSection({ targets, onOpen }: { targets: PendingReviewTarget[]; onOpen: (t: PendingReviewTarget) => void }) {
+/**
+ * Educational Increment 007T, Migration 064 Review-Surface Reconciliation
+ * Part 6 correction — `reviewedIds` (now scoped to review_type =
+ * 'content_review', see fetchReviewedTargetIds()) is cross-referenced
+ * here so a target whose pending placeholder row was superseded by a
+ * LATER, real content_review decision — submitted directly through this
+ * very backlog, outside any named batch array, which the append-only
+ * model never deletes the old placeholder row for — no longer inflates
+ * the "pending" count or list. This does not touch, and cannot be
+ * satisfied by, a maths/english/writing teaching-review decision for the
+ * same family_id (a different review_type entirely, deliberately
+ * excluded by fetchReviewedTargetIds()'s own scope).
+ */
+function FullBacklogSection({ targets, reviewedIds, onOpen }: { targets: PendingReviewTarget[]; reviewedIds: Set<string>; onOpen: (t: PendingReviewTarget) => void }) {
   const [open, setOpen] = useState(false);
-  const backlogTargets = targets.filter((t) => !PILOT_TARGET_IDS.includes(t.id) && !BATCH2_TARGET_IDS.includes(t.id) && !BATCH3_TARGET_IDS.includes(t.id) && !BATCH4_TARGET_IDS.includes(t.id) && !SEVEN_T_TARGET_IDS.includes(t.id));
+  const backlogTargets = targets.filter((t) =>
+    !PILOT_TARGET_IDS.includes(t.id) && !BATCH2_TARGET_IDS.includes(t.id) && !BATCH3_TARGET_IDS.includes(t.id) &&
+    !BATCH4_TARGET_IDS.includes(t.id) && !SEVEN_T_TARGET_IDS.includes(t.id) && !reviewedIds.has(t.id));
 
   return (
     <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 overflow-hidden">
@@ -1423,7 +1438,7 @@ function FullBacklogSection({ targets, onOpen }: { targets: PendingReviewTarget[
         className="w-full flex items-center justify-between px-5 py-3 text-left"
       >
         <span className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">
-          Full Review Backlog ({backlogTargets.length} pending, outside this pilot)
+          Full Review Backlog ({backlogTargets.length} genuinely unresolved, outside this pilot)
         </span>
         {open ? <ChevronUp size={15} className="text-gray-400" /> : <ChevronDown size={15} className="text-gray-400" />}
       </button>
@@ -1597,7 +1612,7 @@ function ReviewDashboard() {
       <Batch3Section targets={targets} reviewedIds={reviewedIds} onOpen={setSelected} />
       <Batch4Section targets={targets} reviewedIds={reviewedIds} onOpen={setSelected} />
       <SevenTSection targets={targets} reviewedIds={reviewedIds} onOpen={setSelected} />
-      <FullBacklogSection targets={targets} onOpen={setSelected} />
+      <FullBacklogSection targets={targets} reviewedIds={reviewedIds} onOpen={setSelected} />
       </>
       )}
     </div>
