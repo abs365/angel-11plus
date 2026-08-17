@@ -24,6 +24,9 @@ import { computeAdaptiveState } from "@/lib/adaptiveEngine";
 import { computeGamification } from "@/lib/gamification";
 import { computeParentReport, READINESS_CONFIG } from "@/lib/parentInsights";
 import { getMockResults, bestScoreForPathway, countForPathway } from "@/lib/mockProgress";
+import { getSupabaseClient } from "@/lib/supabase";
+import { ensureProfile } from "@/lib/supabaseProgress";
+import { computeSubjectPreparationSummary, applyCanonicalWritingEvidence } from "@/lib/learningEngine/preparationState";
 import NewBadgeBanner from "@/components/NewBadgeBanner";
 import InsightCard from "@/components/InsightCard";
 import { getPathwayById } from "@/lib/pathways";
@@ -359,6 +362,40 @@ export default function DashboardPage() {
     // bestScoreForPathway()/countForPathway() helpers, same idiom.
     getMockResults().then(setMockResults);
     migrateLocalProgressToSupabase().catch(() => {});
+
+    // Educational Increment 007V, Part 8/9/10 — the one bounded, proven
+    // integration this increment ships: for a CSSE learner, fetch the
+    // canonical Continuous Writing evidence (real ali_student_question_
+    // history, via lib/learningEngine/preparationState.ts, which itself
+    // never bypasses the Educational Intelligence Engine) and, only if it
+    // genuinely disagrees with the legacy report's own Writing signal
+    // (applyCanonicalWritingEvidence() is a no-op otherwise, proven by its
+    // own tests), correct the report/mission/parent-report state this
+    // effect already set above. A brief legacy-then-corrected render is
+    // an accepted, pre-existing pattern on this page (getMockResults()
+    // already resolves after initial render the same way); it never
+    // shows a false "0%", only ever the pre-existing legacy copy briefly
+    // before the honest one replaces it.
+    if (p.selectedPathwayId === "csse") {
+      const supabase = getSupabaseClient();
+      if (supabase) {
+        (async () => {
+          const profileId = await ensureProfile();
+          if (!profileId) return;
+          const writingSummary = await computeSubjectPreparationSummary(supabase, profileId, "Continuous Writing");
+          const corrected = applyCanonicalWritingEvidence(r, writingSummary.evidenceState);
+          if (corrected === r) return; // no-op: real evidence already agreed with the legacy signal
+          setReport(corrected);
+          setMission(computeAdaptiveState(p, corrected).dailyMission);
+          setParentReport(computeParentReport(p, corrected, gamification));
+        })().catch(() => {
+          // Real ALI evidence is unreachable (offline, RLS, etc.) -- fail
+          // open to the legacy report already set above, never block or
+          // error the dashboard for a correction pass that is additive by
+          // design.
+        });
+      }
+    }
   }, []);
 
   function handleDismissBanner() {
