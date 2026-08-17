@@ -77,3 +77,53 @@ test("Confirms the Year 4/5 developmental cap is specifically about the two late
   assert.equal(year4, "transfer");
   assert.equal(year6, "final_preparation");
 });
+
+/**
+ * Programme Increment 008B, Part 8/24 — the remaining named scenarios
+ * (C, E, F, G, H) this directive's own list requires proven directly,
+ * completing the full A-H set alongside 007W's own A/B/D/F above.
+ */
+
+const mixedEvidence = subjects([
+  competency("mastered", "high"),
+  competency("practising", "moderate"),
+  competency("exploring", "low"),
+]);
+
+test("Scenario C: early Year 5 + mixed evidence -> a real, non-extreme stage, never rounded up or down to a clean label", () => {
+  const stage = derivePreparationStage(mixedEvidence, littleTime, "Year 5");
+  assert.ok(
+    ["developing", "teaching", "foundation"].includes(stage),
+    `mixed evidence must not resolve to an extreme stage like insufficient_evidence or final_preparation, got ${stage}`
+  );
+});
+
+test("Scenario E: late Year 5, strong academically -> reaches transfer but remains capped, exactly like every other Year 5 case (no timed-experience shortcut exists at the stage layer)", () => {
+  const stage = derivePreparationStage(strongEvidence, closeExamClock, "Year 5");
+  assert.equal(stage, "transfer", "strong evidence alone cannot bypass the Year 5 cap, regardless of how close the exam is");
+});
+
+test("Scenario F: early Year 6 + mixed readiness -> a real intermediate stage, not forced to either extreme by proximity to the exam", () => {
+  const stage = derivePreparationStage(mixedEvidence, closeExamClock, "Year 6");
+  assert.ok(
+    stage !== "insufficient_evidence" && stage !== "final_preparation",
+    `genuinely mixed Year 6 readiness must not be flattened to an extreme, got ${stage}`
+  );
+});
+
+test("Scenario G: unknown year group -> treated as developmentally eligible (the documented, safe default), never blocked or guessed at", () => {
+  const withUnknownYear = derivePreparationStage(strongEvidence, closeExamClock, undefined);
+  const withYear6 = derivePreparationStage(strongEvidence, closeExamClock, "Year 6");
+  assert.equal(withUnknownYear, withYear6, "an unset year group must resolve identically to Year 6, its documented safe default, not to a capped Year 4/5-like restriction");
+});
+
+test("Scenario H: year group present but target exam date unavailable -> stage still derives correctly from real evidence alone, clock never fabricates urgency", () => {
+  const unavailableClock = resolvePreparationClockFor(undefined, NOW);
+  assert.equal(unavailableClock.horizonBand, "unavailable");
+  const stage = derivePreparationStage(strongEvidence, unavailableClock, "Year 6");
+  // With no clock to promote it further, strong evidence still reaches its
+  // real evidence-only ceiling (transfer) -- exam-condition/final-prep
+  // upgrades require BOTH a late-enough year group AND a real clock, never
+  // year group alone.
+  assert.equal(stage, "transfer", "an unavailable clock must never be treated as 'close', nor block a real evidence-based stage from resolving honestly");
+});

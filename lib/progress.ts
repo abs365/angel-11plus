@@ -165,13 +165,20 @@ export function isPlausibleExamDate(dateIso: string, now: Date = new Date()): bo
  * is direct evidence and is never silently overridden — this function only
  * rejects implausible values (§ above), it does not check against any
  * pathway's public-record typical exam window.
+ *
+ * Programme Increment 008B — every call site of this function has always
+ * supplied a parent-typed date, never an official CSSE-published one (no
+ * such official-date source exists anywhere in this codebase), so
+ * "parent_supplied" is the honest, correct provenance for every write
+ * this function has ever made or will make until a genuinely different
+ * evidence source is wired in.
  */
 export function setTargetExamDate(dateIso: string): { success: boolean; error?: string } {
   if (!isPlausibleExamDate(dateIso)) {
     return { success: false, error: "That doesn't look like a valid upcoming exam date." };
   }
   const p = getProgress();
-  saveProgress({ ...p, targetExamDate: dateIso });
+  saveProgress({ ...p, targetExamDate: dateIso, targetExamDateProvenance: "parent_supplied" });
   return { success: true };
 }
 
@@ -179,7 +186,57 @@ export function getTargetExamDate(): string | undefined {
   return getProgress().targetExamDate;
 }
 
+/**
+ * Pure core, directly testable without touching localStorage (same
+ * pattern as isPlausibleExamDate above). "unknown" (never "parent_
+ * supplied") both when no date exists at all, and when a date exists but
+ * predates this field's introduction -- absence of evidence is never
+ * silently upgraded into a specific claimed provenance.
+ */
+export function deriveExamDateProvenance(
+  p: Pick<UserProgress, "targetExamDate" | "targetExamDateProvenance">
+): "official" | "parent_supplied" | "estimated" | "unknown" {
+  if (!p.targetExamDate) return "unknown";
+  return p.targetExamDateProvenance ?? "unknown";
+}
+
+export function getTargetExamDateProvenance(): "official" | "parent_supplied" | "estimated" | "unknown" {
+  return deriveExamDateProvenance(getProgress());
+}
+
 export function clearTargetExamDate(): void {
   const p = getProgress();
-  saveProgress({ ...p, targetExamDate: undefined });
+  saveProgress({ ...p, targetExamDate: undefined, targetExamDateProvenance: undefined });
+}
+
+const PLAUSIBLE_SCHOOL_YEARS = ["Year 4", "Year 5", "Year 6"] as const;
+
+/** Pure core, directly testable. */
+export function isValidSchoolYear(year: string): year is (typeof PLAUSIBLE_SCHOOL_YEARS)[number] {
+  return (PLAUSIBLE_SCHOOL_YEARS as readonly string[]).includes(year);
+}
+
+/**
+ * Programme Increment 008B — parent/guardian-supplied, optional, never
+ * asked of the child (same convention as setTargetExamDate above).
+ * Reuses lib/learningEngine/preparationStage.ts's own SchoolYear type; no
+ * second type is defined. Feeds derivePreparationStage()'s schoolYear
+ * parameter directly.
+ */
+export function setSchoolYear(year: string): { success: boolean; error?: string } {
+  if (!isValidSchoolYear(year)) {
+    return { success: false, error: "Choose Year 4, Year 5, or Year 6." };
+  }
+  const p = getProgress();
+  saveProgress({ ...p, schoolYear: year });
+  return { success: true };
+}
+
+export function getSchoolYear(): "Year 4" | "Year 5" | "Year 6" | undefined {
+  return getProgress().schoolYear;
+}
+
+export function clearSchoolYear(): void {
+  const p = getProgress();
+  saveProgress({ ...p, schoolYear: undefined });
 }

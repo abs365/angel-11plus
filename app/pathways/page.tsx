@@ -17,12 +17,21 @@ import {
   setSelectedPathway,
   getTargetExamDate,
   setTargetExamDate,
+  getTargetExamDateProvenance,
+  getSchoolYear,
+  setSchoolYear,
   getProgress,
 } from "@/lib/progress";
 import { computeAnalytics } from "@/lib/analytics";
 import { computeGamification } from "@/lib/gamification";
 import { computeParentReport, READINESS_CONFIG } from "@/lib/parentInsights";
 import type { ParentReport } from "@/types/parent";
+import { getSupabaseClient } from "@/lib/supabase";
+import { ensureProfile } from "@/lib/supabaseProgress";
+import { computeSubjectPreparationSummary } from "@/lib/learningEngine/preparationState";
+import { derivePreparationStage, stagePrinciple, type SchoolYear } from "@/lib/learningEngine/preparationStage";
+import { resolvePreparationClock } from "@/lib/learningEngine/preparationClock";
+import { CSSE_EXAM_AUTHORITY_NAME, getCurrentCsseFacts, CSSE_EVIDENCE_LAST_VERIFIED } from "@/lib/examIntelligence/csseEvidence";
 
 /**
  * Angel V2.0 Sprint 7 (School Intelligence Experience) — this is the
@@ -44,17 +53,59 @@ export default function PathwaysPage() {
   const [examDate, setExamDate] = useState("");
   const [examDateError, setExamDateError] = useState<string | undefined>();
   const [examDateSaved, setExamDateSaved] = useState(false);
+  const [examDateProvenance, setExamDateProvenance] = useState<"official" | "parent_supplied" | "estimated" | "unknown">("unknown");
+  const [schoolYear, setSchoolYearState] = useState<SchoolYear | "">("");
+  const [schoolYearSaved, setSchoolYearSaved] = useState(false);
   const [parentReport, setParentReport] = useState<ParentReport | null>(null);
   const [confirmTarget, setConfirmTarget] = useState<Pathway | null>(null);
+  // Programme Increment 008B — Exam Information card. undefined = not yet
+  // computed/no real evidence reachable; a real value only ever comes from
+  // resolvePreparationClock()/derivePreparationStage(), never invented.
+  const [preparationClock, setPreparationClock] = useState<ReturnType<typeof resolvePreparationClock> | null>(null);
+  const [preparationStagePrinciple, setPreparationStagePrinciple] = useState<string | null>(null);
 
   useEffect(() => {
     setSelected(getSelectedPathwayId());
     setExamDate(getTargetExamDate() ?? "");
+    setExamDateProvenance(getTargetExamDateProvenance());
+    setSchoolYearState(getSchoolYear() ?? "");
 
     const p = getProgress();
     const r = computeAnalytics(p);
     const gamification = computeGamification(p);
     setParentReport(computeParentReport(p, r, gamification));
+
+    setPreparationClock(resolvePreparationClock(new Date()));
+
+    // Programme Increment 008B, Part 7 — the Exam Information card's stage
+    // principle. Reuses the exact same real-evidence composition dashboard
+    // page.tsx's own CSSE-only effect already uses (Decision 78/79) — no
+    // new engine, no new mastery/confidence logic. Bounded to CSSE, since
+    // that is the only pathway with real evidence today (008A/008B's own
+    // explicit scope).
+    if (p.selectedPathwayId === "csse") {
+      const supabase = getSupabaseClient();
+      if (supabase) {
+        (async () => {
+          const profileId = await ensureProfile();
+          if (!profileId) return;
+          const [writingSummary, mathsSummary, englishSummary] = await Promise.all([
+            computeSubjectPreparationSummary(supabase, profileId, "Continuous Writing"),
+            computeSubjectPreparationSummary(supabase, profileId, "Mathematics"),
+            computeSubjectPreparationSummary(supabase, profileId, "English Comprehension"),
+          ]);
+          const stage = derivePreparationStage(
+            [writingSummary, mathsSummary, englishSummary],
+            resolvePreparationClock(new Date()),
+            p.schoolYear
+          );
+          setPreparationStagePrinciple(stagePrinciple(stage));
+        })().catch(() => {
+          // Real evidence unreachable (offline, RLS, etc.) -- fail open,
+          // the card simply omits the stage-principle line below.
+        });
+      }
+    }
   }, []);
 
   /**
@@ -104,6 +155,15 @@ export default function PathwaysPage() {
     }
     setExamDateError(undefined);
     setExamDateSaved(true);
+    setExamDateProvenance(getTargetExamDateProvenance());
+  }
+
+  function handleSchoolYearSave(year: SchoolYear) {
+    const result = setSchoolYear(year);
+    if (result.success) {
+      setSchoolYearState(year);
+      setSchoolYearSaved(true);
+    }
   }
 
   const targetPathway = selected ? getPathwayById(selected) : undefined;
@@ -303,7 +363,91 @@ export default function PathwaysPage() {
           {examDateError && (
             <p className="text-xs text-red-500 dark:text-red-400 mt-2">{examDateError}</p>
           )}
+          {examDate && (
+            <p className="text-[11px] text-gray-400 dark:text-gray-500 mt-2">
+              {examDateProvenance === "official"
+                ? "According to current official guidance."
+                : "This is the date you told us, not yet confirmed by an official source."}
+            </p>
+          )}
         </div>
+
+        {/* School year — optional, Programme Increment 008B */}
+        <div className="mt-4 bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-5">
+          <h2 className="text-sm font-semibold text-gray-900 dark:text-gray-100 mb-1">
+            What school year are they in now? (optional)
+          </h2>
+          <p className="text-xs text-gray-500 dark:text-gray-400 leading-relaxed mb-3">
+            This helps us pace preparation appropriately. It never changes what your child has demonstrably learned. Not sure yet? Skip this too.
+          </p>
+          <div className="flex flex-wrap gap-2">
+            {(["Year 4", "Year 5", "Year 6"] as const).map((year) => (
+              <button
+                key={year}
+                type="button"
+                onClick={() => handleSchoolYearSave(year)}
+                className={`text-sm font-semibold px-3 py-2 rounded-lg border transition-colors ${
+                  schoolYear === year
+                    ? "border-sky-400 bg-sky-50 dark:bg-sky-950 text-sky-700 dark:text-sky-400"
+                    : "border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800"
+                }`}
+              >
+                {year}
+              </button>
+            ))}
+          </div>
+          {schoolYearSaved && (
+            <span className="text-xs text-green-600 dark:text-green-400 font-medium mt-2 inline-block">Saved</span>
+          )}
+        </div>
+
+        {/* Exam Information — Programme Increment 008B */}
+        {targetPathway?.id === "csse" && (
+          <div className="mt-4 bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-5 space-y-4">
+            <div>
+              <h2 className="text-sm font-semibold text-gray-900 dark:text-gray-100 mb-1">Exam Information</h2>
+              <p className="text-xs text-gray-500 dark:text-gray-400 leading-relaxed">
+                What we currently know about the {CSSE_EXAM_AUTHORITY_NAME} exam, and what that means for preparation right now.
+              </p>
+            </div>
+
+            <div>
+              <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 dark:text-gray-500 mb-1.5">
+                Time remaining
+              </p>
+              <p className="text-sm text-gray-700 dark:text-gray-300">
+                {preparationClock?.daysRemaining != null
+                  ? `Approximately ${preparationClock.weeksRemaining} weeks (${preparationClock.daysRemaining} days) until your exam date.`
+                  : "Add your exam date above to see time remaining."}
+              </p>
+            </div>
+
+            {preparationStagePrinciple && (
+              <div>
+                <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 dark:text-gray-500 mb-1.5">
+                  Current focus
+                </p>
+                <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed">{preparationStagePrinciple}</p>
+              </div>
+            )}
+
+            <div>
+              <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 dark:text-gray-500 mb-1.5">
+                According to current CSSE guidance
+              </p>
+              <ul className="space-y-1.5">
+                {getCurrentCsseFacts().map((fact) => (
+                  <li key={fact.id} className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed">
+                    {fact.detail}
+                  </li>
+                ))}
+              </ul>
+              <p className="text-[11px] text-gray-400 dark:text-gray-500 mt-2">
+                Last verified {CSSE_EVIDENCE_LAST_VERIFIED}. This is official exam information, not Angel 11+ preparation guidance.
+              </p>
+            </div>
+          </div>
+        )}
 
         {/* Legal disclaimer */}
         <p className="mt-8 text-xs text-gray-400 dark:text-gray-500 text-center leading-relaxed px-4">

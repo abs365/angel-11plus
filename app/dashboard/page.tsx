@@ -441,14 +441,21 @@ export default function DashboardPage() {
           // Part 5 -- prove the preparation stage has real operational
           // value: when real evidence supports a stage beyond
           // "insufficient_evidence," its principle replaces the mission
-          // tagline. School year is not yet plumbed into this surface, so
-          // it is left undefined here -- derivePreparationStage's own
-          // documented convention treats that as eligible, never as a
-          // block. This is deliberately messaging-only this increment; it
+          // tagline. This is deliberately messaging-only this increment; it
           // never changes which activities are selected.
+          //
+          // Programme Increment 008B -- school year is now plumbed in from
+          // the real, parent-supplied UserProgress.schoolYear (007W's own
+          // disclosed gap: this parameter previously had no real caller
+          // anywhere). Absent (undefined) still means "developmentally
+          // eligible for late-stage work" per derivePreparationStage's own
+          // unchanged, pre-existing convention -- a parent who has not set
+          // a school year sees exactly the same behaviour as before this
+          // change, never a new restriction.
           const stage = derivePreparationStage(
             [writingSummary, mathsSummary, englishSummary],
-            resolvePreparationClock(new Date())
+            resolvePreparationClock(new Date()),
+            p.schoolYear
           );
           const adaptiveMission = computeAdaptiveState(missionViewProgress, correctedReport).dailyMission;
           const correctedMission =

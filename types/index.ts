@@ -93,6 +93,30 @@ export interface UserProgress {
    * EAW-004 §2.1's explicit "behaviour when absent" specification.
    */
   targetExamDate?: string;
+  /**
+   * Programme Increment 008B (Exam Intelligence + Preparation Clock
+   * Product Integration) — provenance for targetExamDate above. Every
+   * date this codebase has ever stored here has, in fact, always been
+   * "parent_supplied" (WP-09's own docstring: "a family's own stated date
+   * is direct evidence"); this field makes that honest rather than
+   * implicit, and gives the product a place to represent an eventual
+   * OFFICIAL (CSSE-published) date differently, without ever silently
+   * upgrading a parent's guess into a claimed official fact. Absent
+   * (undefined) is treated as "unknown provenance," never inferred as
+   * official.
+   */
+  targetExamDateProvenance?: "official" | "parent_supplied" | "estimated" | "unknown";
+  /**
+   * Programme Increment 008B — parent-supplied school year, reusing
+   * lib/learningEngine/preparationStage.ts's own existing SchoolYear type
+   * (no new type invented). Optional, never asked of the child. Feeds
+   * derivePreparationStage()'s schoolYear parameter, which until this
+   * increment was never populated by any real caller (a disclosed 007W
+   * gap) — its own documented convention already treats undefined as
+   * "developmentally eligible for late-stage work," the safe default,
+   * so leaving this unset changes nothing about existing behaviour.
+   */
+  schoolYear?: import("../lib/learningEngine/preparationStage").SchoolYear;
   mockResults?: import("./mock").MockResult[];
   // ALI competency bridge (Phase ALI 1.3) — additive only, does not touch
   // `scores`/the Math.max ratchet. Keyed by ALI subject.
