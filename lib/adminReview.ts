@@ -483,6 +483,170 @@ export async function submitMathsTeachingReview(s: MathsTeachingReviewSubmission
   return { error: error ? error.message : null };
 }
 
+/**
+ * CSSE Completion Programme, Phase C, Part 13 — Founder Educational Review
+ * readiness for English (ANGEL_CSSE_COMPLETION_PROGRAMME_V1.md Phase C).
+ * Judges the English teaching layer — most materially, Educational
+ * Increment 007O's addresses_misconception rendering, live in
+ * ReadingActivity for the first time — as a distinct evidence trail from
+ * any earlier content_review of the same family (migration 060's own
+ * design intent). Unlike Mathematics Teaching Review, this reuses the
+ * existing REVIEW_CRITERIA/ReviewSubmission shape unchanged (see migration
+ * 060's own comment: the 18 columns were already designed broad enough for
+ * English's teaching-quality needs), so no new criteria type is defined
+ * here — only a distinct target list, evidence-fetch scope, content
+ * version, and submit function that force review_type =
+ * 'english_teaching_review' instead of relying on the table's
+ * 'content_review' default.
+ */
+
+/** Static identifier for which version of the ReadingActivity remediation-rendering behaviour (app/learning-intelligence/practice/[area]/page.tsx) an English Teaching Review judged. Update this only when that learner-facing behaviour itself changes again. */
+export const ENGLISH_TEACHING_CONTENT_VERSION = "Educational Increment 007O (CSSE Completion Programme Phase C), commit 7b69638";
+
+/**
+ * The 8 named English families that are genuinely learner-reachable
+ * (Practice Eligible > 0) and were therefore materially affected by
+ * Educational Increment 007O's remediation-rendering change — every one
+ * of them had 100%-populated addresses_misconception text that was never
+ * rendered before this phase. `wave1-fam-tick-justify` (11 authored rows,
+ * 0 Practice Eligible, still provisional/blocked) is deliberately excluded:
+ * per this phase's own Part 2 instruction, "a capability counts only if
+ * the learner can actually receive it through the real Practice pathway,"
+ * and no learner can reach this family today.
+ */
+export const ENGLISH_TEACHING_REVIEW_TARGET_IDS = [
+  "wave1-fam-direct-retrieval",
+  "wave1-fam-synonym-battery",
+  "wave1-fam-vocab-explain",
+  "wave1-fam-quote-explain",
+  "wave1-fam-sequencing",
+  "wave1-fam-two-character",
+  "wave1-fam-emotion-cause",
+  "wave2-fam-multiselect",
+];
+
+export interface EnglishTeachingReviewMetadata {
+  questionType: string;
+  competency: string;
+  modelStatus: "MODEL present" | "No MODEL authored yet";
+  guidedClassification: "REAL" | "INSTRUCTIONAL ONLY";
+  remediationBeforePhaseC: string;
+  transferNote: string;
+  knownGap?: string;
+}
+
+/**
+ * Sourced directly from this phase's own live code trace and live
+ * production data query (Part 2/5/6/7/8 of the governing directive), not
+ * carried forward from any prior document's own self-assessment.
+ */
+export const ENGLISH_TEACHING_REVIEW_METADATA: Record<string, EnglishTeachingReviewMetadata> = {
+  "wave1-fam-direct-retrieval": {
+    questionType: "QT-RC-01 Literal Short-Answer", competency: "RC-01 Literal Retrieval",
+    modelStatus: "No MODEL authored yet", guidedClassification: "INSTRUCTIONAL ONLY",
+    remediationBeforePhaseC: "NONE. This family had zero wrong-answer remediation of any kind before this phase (no automatic classification applies to its tier, no self-reflection checklist exists for it). The largest named English family (14 Practice Eligible), with the most severe gap.",
+    transferNote: "14 siblings across 14 distinct passages (good raw diversity), but 13 of those 14 passages are also drawn on by several other families' own questions.",
+    knownGap: "No MODEL/worked example exists for this family (4 of 9 named families share this gap: direct-retrieval, synonym-battery, tick-justify, emotion-cause).",
+  },
+  "wave1-fam-synonym-battery": {
+    questionType: "QT-RC-04 Synonym Substitution", competency: "RC-03 Word/Phrase Meaning",
+    modelStatus: "No MODEL authored yet", guidedClassification: "INSTRUCTIONAL ONLY",
+    remediationBeforePhaseC: "Automatic VOCABULARY_CONTEXT_ERROR classification only (fires when the scoring tier's own structure shows zero marks earned): real but generic, not the specific per-question text this phase now adds alongside it.",
+    transferNote: "11 siblings across 11 distinct passages (good raw diversity); most of those 11 passages are also drawn on by several other families.",
+    knownGap: "No MODEL/worked example exists for this family.",
+  },
+  "wave1-fam-vocab-explain": {
+    questionType: "QT-RC-03/RC-05 Word/Phrase Meaning, Quotation-and-Explanation", competency: "RC-02/RC-03 (shared)",
+    modelStatus: "MODEL present", guidedClassification: "INSTRUCTIONAL ONLY",
+    remediationBeforePhaseC: "Automatic VOCABULARY_CONTEXT_ERROR classification only, same basis as synonym-battery.",
+    transferNote: "17 siblings (the largest named family) across 15 distinct passages; most of those passages are also drawn on by several other families.",
+  },
+  "wave1-fam-quote-explain": {
+    questionType: "QT-RC-05 Quotation-and-Explanation", competency: "RC-02 Inference & Justified Interpretation",
+    modelStatus: "MODEL present", guidedClassification: "REAL",
+    remediationBeforePhaseC: "Self-reflection checklist (WEAK_QUOTATION, EXPLANATION_MISMATCH), shown once the learner self-assesses their own self-assessed-tier answer as \"Not quite\".",
+    transferNote: "13 siblings across 12 distinct passages; most of those passages are also drawn on by several other families.",
+  },
+  "wave1-fam-sequencing": {
+    questionType: "QT-RC-06 Sequential Ordering", competency: "RC-04 Sequential Ordering",
+    modelStatus: "MODEL present", guidedClassification: "REAL",
+    remediationBeforePhaseC: "Automatic EVIDENCE_NOT_LOCATED/SEQUENCE_ERROR classification, derived directly from the scorer's own position-by-position comparison. The sequence-anchor Guided scaffold (Educational Increment 007G's own corrected scoring reconciliation) was independently re-tested live this phase and confirmed working.",
+    transferNote: "15 siblings across 13 distinct passages; most of those passages are also drawn on by several other families.",
+  },
+  "wave1-fam-two-character": {
+    questionType: "QT-RC-07 Multi-Entity Comparative", competency: "RC-01 Literal Retrieval",
+    modelStatus: "MODEL present", guidedClassification: "INSTRUCTIONAL ONLY",
+    remediationBeforePhaseC: "Self-reflection checklist (CHARACTER_COMPARISON_WITHOUT_EVIDENCE, WEAK_QUOTATION), independently re-tested live this phase and confirmed working correctly, including the addresses_misconception addition, only after the learner self-assesses \"Not quite\".",
+    transferNote: "Thinnest family in this review set: only 6 siblings across 5 distinct passages.",
+    knownGap: "Previously disclosed depth gap (only 6 siblings), deferred to Phase E, not addressed by this phase.",
+  },
+  "wave1-fam-emotion-cause": {
+    questionType: "QT-RC-08 List-N-Items (feeling + cause)", competency: "RC-01/RC-02 (shared)",
+    modelStatus: "No MODEL authored yet", guidedClassification: "INSTRUCTIONAL ONLY",
+    remediationBeforePhaseC: "Self-reflection checklist (EVIDENCE_NOT_LOCATED, UNSUPPORTED_INFERENCE). Its Guided scaffold was corrected in Educational Increment 007H (routed away from a misapplied staged-quotation check to an honest instructional fallback), re-confirmed still correct this phase.",
+    transferNote: "11 siblings across 11 distinct passages; most of those passages are also drawn on by several other families.",
+    knownGap: "No MODEL/worked example exists for this family.",
+  },
+  "wave2-fam-multiselect": {
+    questionType: "QT-RC-09 Multi-Select Tick-Box", competency: "RC-01 Literal Retrieval",
+    modelStatus: "MODEL present", guidedClassification: "REAL",
+    remediationBeforePhaseC: "Dedicated, specifically-worded over-/under-selection message (the only family with its own hand-written remediation copy, directly evidenced by a real CSSE cover-page marking instruction), independently re-tested live this phase and confirmed working correctly, including the addresses_misconception addition.",
+    transferNote: "Thinnest family in this review set alongside two-character: only 6 siblings across 6 distinct passages.",
+    knownGap: "Previously disclosed depth gap (only 6 siblings), deferred to Phase E, not addressed by this phase.",
+  },
+};
+
+/** Every family_id that already has at least one real English Teaching Review decision recorded (review_type = 'english_teaching_review'). Deliberately separate from fetchReviewedTargetIds() above for the same reason fetchMathsTeachingReviewedFamilyIds() is: conflating review types would let an old content-review approval masquerade as covering the Phase C remediation-rendering change. */
+export async function fetchEnglishTeachingReviewedFamilyIds(): Promise<Set<string>> {
+  const supabase = getSupabaseClient();
+  if (!supabase) return new Set();
+  const { data, error } = await supabase
+    .from("ali_family_review")
+    .select("family_id")
+    .eq("review_type", "english_teaching_review");
+  if (error || !data) return new Set();
+  return new Set(data.map((r) => r.family_id));
+}
+
+/** Inserts one real, traceable English Teaching Review decision — review_type = 'english_teaching_review' (migration 060), reusing the exact same ReviewSubmission shape/validation/notes convention as submitReview() above (English's 18 criteria already cover this review's needs), but forcing the distinct review_type and populating teaching_content_version, which submitReview() never sets (its rows keep the table's 'content_review' default). Append-only; never touches ali_question_bank.eligibility_status. */
+export async function submitEnglishTeachingReview(s: ReviewSubmission): Promise<SubmitReviewResult> {
+  const validationError = validateReviewSubmission(s);
+  if (validationError) return { error: validationError };
+  if (!s.decision) return { error: "Choose a decision: this is never chosen for you." };
+  const supabase = getSupabaseClient();
+  if (!supabase) return { error: "Not connected" };
+  const { error } = await supabase.from("ali_family_review").insert({
+    review_target_type: "question_family",
+    review_type: "english_teaching_review",
+    family_id: s.targetId,
+    reviewer: s.reviewer.trim(),
+    decision: s.decision,
+    notes: buildNotesWithQualification(s),
+    evidence_reference: s.evidenceReference.trim() || null,
+    provenance_reference: s.provenanceReference.trim() || null,
+    teaching_content_version: ENGLISH_TEACHING_CONTENT_VERSION,
+    educational_validity: s.educationalValidity,
+    competency_validity: s.competencyValidity,
+    wording_quality: s.wordingQuality,
+    age_appropriate: s.ageAppropriate,
+    ambiguity_free: s.ambiguityFree,
+    difficulty_appropriate: s.difficultyAppropriate,
+    misconception_quality: s.misconceptionQuality,
+    explanation_quality: s.explanationQuality,
+    variation_boundaries_sound: s.variationBoundariesSound,
+    authenticity_confirmed: s.authenticityConfirmed,
+    question_type_alignment: s.questionTypeAlignment,
+    answer_correctness_verified: s.answerCorrectnessVerified,
+    transfer_validity: s.transferValidity,
+    teaching_quality: s.teachingQuality,
+    exam_strategy_quality: s.examStrategyQuality,
+    validation_behaviour_sound: s.validationBehaviourSound,
+    originality_confirmed: s.originalityConfirmed,
+    copyright_risk_clear: s.copyrightRiskClear,
+  });
+  return { error: error ? error.message : null };
+}
+
 export interface PendingReviewTarget {
   id: string; // the family_id column's value — either a real family id or a passage id
   reviewTargetType: ReviewTargetType;

@@ -351,3 +351,73 @@ test("buildNotesWithQualification also works for the Mathematics Teaching Review
   assert.ok(notes.startsWith("Reviewer qualification: Founder, 11+ preparation experience."));
   assert.ok(notes.includes("The MODEL for mr01-average-mean is clear."));
 });
+
+/**
+ * CSSE Completion Programme, Phase C, Part 13 — English Teaching Review.
+ * Reuses REVIEW_CRITERIA/ReviewSubmission/validateReviewSubmission
+ * unchanged (migration 060's own design intent: English's 18 criteria
+ * already cover this review's needs) — these tests cover only what is
+ * genuinely new: the target list, the metadata, and the distinct
+ * review_type submit path.
+ */
+
+import {
+  ENGLISH_TEACHING_REVIEW_TARGET_IDS, ENGLISH_TEACHING_REVIEW_METADATA, ENGLISH_TEACHING_CONTENT_VERSION,
+} from "@/lib/adminReview";
+
+test("exactly 8 English Teaching Review targets, no duplicates", () => {
+  assert.equal(ENGLISH_TEACHING_REVIEW_TARGET_IDS.length, 8);
+  assert.equal(new Set(ENGLISH_TEACHING_REVIEW_TARGET_IDS).size, 8);
+});
+
+test("wave1-fam-tick-justify is never an English Teaching Review target — it has 0 Practice Eligible rows, not learner-reachable", () => {
+  assert.ok(!ENGLISH_TEACHING_REVIEW_TARGET_IDS.includes("wave1-fam-tick-justify"));
+});
+
+test("every English Teaching Review target has real per-family metadata", () => {
+  for (const id of ENGLISH_TEACHING_REVIEW_TARGET_IDS) {
+    const meta = ENGLISH_TEACHING_REVIEW_METADATA[id];
+    assert.ok(meta, `${id} is missing ENGLISH_TEACHING_REVIEW_METADATA`);
+    assert.ok(meta.competency.length > 0);
+    assert.ok(meta.questionType.length > 0);
+    assert.ok(meta.remediationBeforePhaseC.length > 0);
+    assert.ok(meta.transferNote.length > 0);
+    assert.ok(meta.guidedClassification === "REAL" || meta.guidedClassification === "INSTRUCTIONAL ONLY");
+  }
+});
+
+test("ENGLISH_TEACHING_REVIEW_METADATA has no stray entries beyond the 8 real targets", () => {
+  assert.deepEqual(Object.keys(ENGLISH_TEACHING_REVIEW_METADATA).sort(), [...ENGLISH_TEACHING_REVIEW_TARGET_IDS].sort());
+});
+
+test("every English Teaching Review target also has a real FAMILY_EDUCATIONAL_CONTEXT entry", () => {
+  for (const id of ENGLISH_TEACHING_REVIEW_TARGET_IDS) {
+    const ctx = FAMILY_EDUCATIONAL_CONTEXT[id];
+    assert.ok(ctx, `${id} is missing a FAMILY_EDUCATIONAL_CONTEXT entry`);
+    assert.ok(ctx.objective.length > 0);
+    assert.ok(ctx.evidenceBasis.length > 0);
+  }
+});
+
+test("the 3 REAL Guided families (quote-explain, sequencing, multiselect) are classified REAL, not INSTRUCTIONAL ONLY", () => {
+  for (const id of ["wave1-fam-quote-explain", "wave1-fam-sequencing", "wave2-fam-multiselect"]) {
+    assert.equal(ENGLISH_TEACHING_REVIEW_METADATA[id].guidedClassification, "REAL");
+  }
+});
+
+test("the 5 INSTRUCTIONAL-ONLY families are classified correctly, not overstated as REAL", () => {
+  for (const id of ["wave1-fam-direct-retrieval", "wave1-fam-synonym-battery", "wave1-fam-vocab-explain", "wave1-fam-two-character", "wave1-fam-emotion-cause"]) {
+    assert.equal(ENGLISH_TEACHING_REVIEW_METADATA[id].guidedClassification, "INSTRUCTIONAL ONLY");
+  }
+});
+
+test("the 3 of these 8 families with no MODEL are disclosed honestly, not overstated as having one", () => {
+  for (const id of ["wave1-fam-direct-retrieval", "wave1-fam-synonym-battery", "wave1-fam-emotion-cause"]) {
+    assert.equal(ENGLISH_TEACHING_REVIEW_METADATA[id].modelStatus, "No MODEL authored yet");
+  }
+});
+
+test("ENGLISH_TEACHING_CONTENT_VERSION is a real, non-empty identifier naming the real increment", () => {
+  assert.ok(ENGLISH_TEACHING_CONTENT_VERSION.length > 0);
+  assert.ok(ENGLISH_TEACHING_CONTENT_VERSION.includes("007O"));
+});

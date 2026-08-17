@@ -12,6 +12,8 @@ import {
   fetchMathsTeachingReviewedFamilyIds, submitMathsTeachingReview,
   MATHS_TEACHING_REVIEW_CRITERIA, MATHS_TEACHING_REVIEW_METADATA, MATHS_TEACHING_CONTENT_VERSION,
   MATHS_TEACHING_REVIEW_TARGET_IDS,
+  fetchEnglishTeachingReviewedFamilyIds, submitEnglishTeachingReview,
+  ENGLISH_TEACHING_REVIEW_METADATA, ENGLISH_TEACHING_CONTENT_VERSION, ENGLISH_TEACHING_REVIEW_TARGET_IDS,
   type PendingReviewTarget, type RepresentativeQuestion, type PassageDetail, type ReviewDecision, type ReviewSubmission,
   type TargetSummary, type MathsTeachingReviewSubmission,
 } from "@/lib/adminReview";
@@ -237,7 +239,7 @@ function SectionTitle({ letter, title }: { letter: string; title: string }) {
 
 // ─── Full review form (per Founder's A-F ordering) ─────────────────────────
 
-function ReviewForm({ target, onDone }: { target: PendingReviewTarget; onDone: () => void }) {
+function ReviewForm({ target, onDone, reviewType = "content_review" }: { target: PendingReviewTarget; onDone: () => void; reviewType?: "content_review" | "english_teaching_review" }) {
   const [reviewerName, setReviewerName] = useState("");
   const [submission, setSubmission] = useState<ReviewSubmission>(() => emptySubmission(target, ""));
   const [passage, setPassage] = useState<PassageDetail | null>(null);
@@ -296,7 +298,12 @@ function ReviewForm({ target, onDone }: { target: PendingReviewTarget; onDone: (
     }
     setSubmitting(true);
     setSubmitError("");
-    const { error } = await submitReview(submission);
+    // CSSE Completion Programme Phase C, Part 13 — reviewType routes to a
+    // distinct review_type on the same table (migration 060), never
+    // conflated with a content_review row for the same family. Every
+    // other field/validation/notes-building path is identical; only which
+    // row is inserted differs.
+    const { error } = reviewType === "english_teaching_review" ? await submitEnglishTeachingReview(submission) : await submitReview(submission);
     setSubmitting(false);
     if (error) {
       setSubmitError(error);
@@ -309,11 +316,15 @@ function ReviewForm({ target, onDone }: { target: PendingReviewTarget; onDone: (
     return (
       <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-6 text-center">
         <CheckCircle2 size={28} className="text-emerald-500 mx-auto mb-2" />
-        <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">Review recorded for {displayName}</p>
+        <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">
+          {reviewType === "english_teaching_review" ? "Teaching review" : "Review"} recorded for {displayName}
+        </p>
         <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
           Decision: {submission.decision}. This does not change Practice Eligibility, since that is a separate, controlled activation step.
         </p>
-        <button onClick={onDone} className="mt-4 text-sm font-semibold text-purple-600 dark:text-purple-400">Back to review pilot</button>
+        <button onClick={onDone} className="mt-4 text-sm font-semibold text-purple-600 dark:text-purple-400">
+          Back to {reviewType === "english_teaching_review" ? "English Teaching Review" : "review pilot"}
+        </button>
       </div>
     );
   }
@@ -326,7 +337,7 @@ function ReviewForm({ target, onDone }: { target: PendingReviewTarget; onDone: (
   return (
     <div className="space-y-5 max-w-full overflow-x-hidden">
       <button onClick={onDone} className="text-xs font-semibold text-gray-500 dark:text-gray-400 inline-flex items-center gap-1">
-        <ArrowLeft size={13} /> Back to review pilot
+        <ArrowLeft size={13} /> Back to {reviewType === "english_teaching_review" ? "English Teaching Review" : "review pilot"}
       </button>
 
       <Card>
@@ -438,6 +449,40 @@ function ReviewForm({ target, onDone }: { target: PendingReviewTarget; onDone: (
                 <p className="text-xs text-amber-600 dark:text-amber-400 mt-1">No specific remediation categories are defined for this family yet; the learner only sees the model answer.</p>
               )}
             </div>
+          </div>
+        </Card>
+      )}
+
+      {!loading && reviewType === "english_teaching_review" && ENGLISH_TEACHING_REVIEW_METADATA[target.id] && (
+        <Card>
+          <SectionTitle letter="E" title="What Educational Increment 007O changed (Phase C)" />
+          <div className="space-y-3">
+            <div>
+              <p className="text-xs font-semibold text-gray-700 dark:text-gray-300">Remediation before this phase</p>
+              <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">{ENGLISH_TEACHING_REVIEW_METADATA[target.id].remediationBeforePhaseC}</p>
+            </div>
+            <div>
+              <p className="text-xs font-semibold text-gray-700 dark:text-gray-300">Now shown after a wrong answer, for the first time</p>
+              {questions[0]?.addressesMisconception ? (
+                <div className="text-xs text-blue-700 dark:text-blue-300 bg-blue-50 dark:bg-blue-950 rounded-xl p-3 mt-1">
+                  <p className="font-semibold">A common mistake with this kind of question:</p>
+                  <p className="mt-1">{questions[0].addressesMisconception}</p>
+                  <p className="text-[10px] text-blue-400 dark:text-blue-500 mt-2">Real text from a representative question in this family, shown exactly as a learner would see it (not a description of it).</p>
+                </div>
+              ) : (
+                <p className="text-xs text-amber-600 dark:text-amber-400 mt-1">No addresses_misconception text found on the representative question sampled. Check other questions in this family.</p>
+              )}
+            </div>
+            <div>
+              <p className="text-xs font-semibold text-gray-700 dark:text-gray-300">Transfer / passage-diversity note</p>
+              <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">{ENGLISH_TEACHING_REVIEW_METADATA[target.id].transferNote}</p>
+            </div>
+            {ENGLISH_TEACHING_REVIEW_METADATA[target.id].knownGap && (
+              <div>
+                <p className="text-xs font-semibold text-gray-700 dark:text-gray-300">Known gap, disclosed not hidden</p>
+                <p className="text-xs text-amber-600 dark:text-amber-400 mt-1">{ENGLISH_TEACHING_REVIEW_METADATA[target.id].knownGap}</p>
+              </div>
+            )}
           </div>
         </Card>
       )}
@@ -595,8 +640,12 @@ function ReviewForm({ target, onDone }: { target: PendingReviewTarget; onDone: (
             disabled={submitting || !reviewerName.trim() || !submission.qualificationBasis.trim()}
             className="w-full flex items-center justify-center gap-2 bg-purple-600 hover:bg-purple-700 disabled:opacity-40 text-white font-semibold py-3 rounded-xl text-sm transition-colors"
           >
-            {submitting ? "Submitting…" : (<>Submit review <ArrowRight size={16} /></>)}
+            {submitting ? "Submitting…" : (<>Submit {reviewType === "english_teaching_review" ? "teaching " : ""}review <ArrowRight size={16} /></>)}
           </button>
+
+          {reviewType === "english_teaching_review" && (
+            <p className="text-[10px] text-gray-300 dark:text-gray-600">Reviewing teaching-content version: {ENGLISH_TEACHING_CONTENT_VERSION}</p>
+          )}
         </div>
       </Card>
     </div>
@@ -1075,15 +1124,14 @@ function FullBacklogSection({ targets, onOpen }: { targets: PendingReviewTarget[
 }
 
 /** A single card in the Mathematics Teaching Review section — deliberately not TargetCard (that fetches a content-review TargetSummary via fetchTargetSummary/fetchReviewedTargetIds, the WRONG evidence source for this review type). Plain-language name first, family_id as small secondary text only, per the directive's own instruction. */
-function TeachingTargetCard({ familyId, reviewed, onOpen }: { familyId: string; reviewed: boolean; onOpen: () => void }) {
+function TeachingTargetCard({ familyId, subtitle, reviewed, onOpen }: { familyId: string; subtitle?: string; reviewed: boolean; onOpen: () => void }) {
   const displayName = FAMILY_DISPLAY_NAME[familyId] ?? formatFallbackName(familyId);
-  const metadata = MATHS_TEACHING_REVIEW_METADATA[familyId];
   return (
     <button onClick={onOpen} className="w-full text-left px-5 py-4 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
           <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">{displayName}</p>
-          {metadata && <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">{metadata.competency} · {metadata.questionType}</p>}
+          {subtitle && <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">{subtitle}</p>}
           {reviewed && (
             <span className="inline-block mt-1.5 text-[11px] font-semibold text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950 px-2 py-0.5 rounded-full">
               Reviewed
@@ -1116,9 +1164,52 @@ function MathsTeachingSection({ reviewedIds, onOpen }: { reviewedIds: Set<string
         </p>
       </div>
       <div className="divide-y divide-gray-50 dark:divide-gray-800">
-        {MATHS_TEACHING_REVIEW_TARGET_IDS.map((id) => (
-          <TeachingTargetCard key={id} familyId={id} reviewed={reviewedIds.has(id)} onOpen={() => onOpen(id)} />
-        ))}
+        {MATHS_TEACHING_REVIEW_TARGET_IDS.map((id) => {
+          const metadata = MATHS_TEACHING_REVIEW_METADATA[id];
+          return (
+            <TeachingTargetCard
+              key={id} familyId={id}
+              subtitle={metadata ? `${metadata.competency} · ${metadata.questionType}` : undefined}
+              reviewed={reviewedIds.has(id)} onOpen={() => onOpen(id)}
+            />
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+/**
+ * CSSE Completion Programme, Phase C, Part 13 — the Founder's own required
+ * "English Teaching Review" section, clearly separated from both the
+ * content-review pilot/batches above and from Mathematics Teaching Review
+ * (a distinct review_type, a distinct evidence trail, a distinct 8-family
+ * target list — see ENGLISH_TEACHING_REVIEW_TARGET_IDS's own docstring in
+ * lib/adminReview.ts). Shows the genuine current count from persisted
+ * review evidence, never a hardcoded number.
+ */
+function EnglishTeachingSection({ reviewedIds, onOpen }: { reviewedIds: Set<string>; onOpen: (familyId: string) => void }) {
+  const reviewedCount = ENGLISH_TEACHING_REVIEW_TARGET_IDS.filter((id) => reviewedIds.has(id)).length;
+  return (
+    <div className="bg-white dark:bg-gray-900 rounded-2xl border-2 border-teal-200 dark:border-teal-800 overflow-hidden">
+      <div className="px-5 py-4 border-b border-teal-100 dark:border-teal-900 bg-teal-50 dark:bg-teal-950/40">
+        <p className="text-sm font-bold text-teal-900 dark:text-teal-200">English Teaching Review</p>
+        <p className="text-xs text-teal-600 dark:text-teal-400 mt-0.5">{reviewedCount} of {ENGLISH_TEACHING_REVIEW_TARGET_IDS.length} reviewed</p>
+        <p className="text-[11px] text-teal-500 dark:text-teal-500 mt-1.5 leading-relaxed">
+          Judges Educational Increment 007O&apos;s change: reviewed wrong-answer remediation text, previously never shown to learners, now rendered live for these 8 families (CSSE Completion Programme Phase C). Separate from, and does not reuse, any earlier content review of the underlying questions.
+        </p>
+      </div>
+      <div className="divide-y divide-gray-50 dark:divide-gray-800">
+        {ENGLISH_TEACHING_REVIEW_TARGET_IDS.map((id) => {
+          const metadata = ENGLISH_TEACHING_REVIEW_METADATA[id];
+          return (
+            <TeachingTargetCard
+              key={id} familyId={id}
+              subtitle={metadata ? `${metadata.competency} · ${metadata.questionType}` : undefined}
+              reviewed={reviewedIds.has(id)} onOpen={() => onOpen(id)}
+            />
+          );
+        })}
       </div>
     </div>
   );
@@ -1130,20 +1221,28 @@ function ReviewDashboard() {
   const [selected, setSelected] = useState<PendingReviewTarget | null>(null);
   const [teachingReviewedIds, setTeachingReviewedIds] = useState<Set<string>>(new Set());
   const [selectedTeachingFamilyId, setSelectedTeachingFamilyId] = useState<string | null>(null);
+  const [englishTeachingReviewedIds, setEnglishTeachingReviewedIds] = useState<Set<string>>(new Set());
+  const [selectedEnglishTeachingFamilyId, setSelectedEnglishTeachingFamilyId] = useState<string | null>(null);
 
   async function load() {
-    const [pending, reviewed, teachingReviewed] = await Promise.all([
-      fetchPendingReviewTargets(), fetchReviewedTargetIds(), fetchMathsTeachingReviewedFamilyIds(),
+    const [pending, reviewed, teachingReviewed, englishTeachingReviewed] = await Promise.all([
+      fetchPendingReviewTargets(), fetchReviewedTargetIds(), fetchMathsTeachingReviewedFamilyIds(), fetchEnglishTeachingReviewedFamilyIds(),
     ]);
     setTargets(pending);
     setReviewedIds(reviewed);
     setTeachingReviewedIds(teachingReviewed);
+    setEnglishTeachingReviewedIds(englishTeachingReviewed);
   }
 
   useEffect(() => { load(); }, []);
 
   if (selectedTeachingFamilyId) {
     return <MathsTeachingReviewForm familyId={selectedTeachingFamilyId} onDone={() => { setSelectedTeachingFamilyId(null); load(); }} />;
+  }
+
+  if (selectedEnglishTeachingFamilyId) {
+    const target: PendingReviewTarget = { id: selectedEnglishTeachingFamilyId, reviewTargetType: "question_family", notes: null };
+    return <ReviewForm target={target} reviewType="english_teaching_review" onDone={() => { setSelectedEnglishTeachingFamilyId(null); load(); }} />;
   }
 
   if (selected) {
@@ -1155,6 +1254,7 @@ function ReviewDashboard() {
   return (
     <div className="space-y-5">
       <MathsTeachingSection reviewedIds={teachingReviewedIds} onOpen={setSelectedTeachingFamilyId} />
+      <EnglishTeachingSection reviewedIds={englishTeachingReviewedIds} onOpen={setSelectedEnglishTeachingFamilyId} />
       {targets.length === 0 ? (
         <p className="text-sm text-gray-500 dark:text-gray-400">
           No pending content-review targets visible. If you expect targets here, confirm migrations 047/050/052/053/054 have
