@@ -153,6 +153,13 @@ const FAMILY_DISPLAY_NAME: Record<string, string> = {
   "precision-dec": "Rounding to a Decimal Place",
   "precision-frac": "Exact Fractional Answers",
   "writing-reflective-discursive": "Reflective and Discursive Writing",
+  // Educational Increment 007T — first controlled content batch (provisional, not yet activated).
+  "mr01-whole-number-computation": "Whole-Number Direct Arithmetic",
+  "mr01-decimal-computation": "Decimal Direct Arithmetic",
+  "mr01-fraction-computation": "Fraction Direct Arithmetic",
+  "mr01-multistep-order-of-operations": "Multi-Step and Order of Operations",
+  "wave3-fam-rc10-word-choice": "Word-Choice Implication",
+  "wave3-fam-rc10-atmosphere-mood": "Atmosphere and Mood",
 };
 
 /** Graceful fallback for any family/passage not in the curated name map above — never shows a raw dash-separated ID as the primary label. */
