@@ -1,0 +1,210 @@
+/**
+ * Educational Increment 007X — Founder Review, Controlled Activation and
+ * Final Closure.
+ *
+ * Promotes exactly the 14 questions the Founder's own authenticated
+ * ali_family_review evidence approved (4 targets, all decided 'approved':
+ * mr05-number-property-search, mr03-mixed-perimeter, precision-frac,
+ * precision-dec). ali_family_review remains RLS-opaque to this script's
+ * anon key by design (migration 034/054), so the Founder-supplied
+ * decision is taken as this script's input, exactly as every prior
+ * controlled batch's generator already does (007E pilot, Batches 2-4,
+ * 007T) — see Decisions 79/80/81, ALI_DECISION_LOG.md.
+ *
+ * Disclosed duplicate-evidence finding: the authenticated evidence
+ * contained THREE "new 007X Founder decision" rows for
+ * mr05-number-property-search, all with the identical approval scope and
+ * the same 5 question IDs — treated as duplicate append-only evidence for
+ * ONE Founder decision (matching the same append-only, never-delete
+ * discipline this whole programme already follows), not three
+ * independent reviews. This script's own EXPECTED_QUESTION_COUNT guard
+ * (14, not e.g. inflated by re-counting) reflects that.
+ *
+ * Selects candidate rows by this generator's own exact, known-good 14
+ * IDs — never by family_id — per this increment's own explicit
+ * instruction and the 007T precedent (family_id alone would risk pulling
+ * in pre-existing siblings or a future reclassified legacy row, e.g.
+ * mth-003, which is deliberately excluded from this activation).
+ *
+ * Reuses checkActivationEligibility() from generate-activation-migration.mjs
+ * unchanged.
+ *
+ * Not run against production by this script — it only writes the
+ * migration file for the Founder to review and apply.
+ */
+
+import { readFileSync, writeFileSync } from "node:fs";
+import { pathToFileURL } from "node:url";
+import { checkActivationEligibility } from "./generate-activation-migration.mjs";
+import { mathsQuestions } from "./generate-007x-mathematics-batch.mjs";
+
+function loadAnonKey() {
+  const envRaw = readFileSync(".env.local", "utf8");
+  for (const line of envRaw.split("\n")) {
+    const m = line.match(/^NEXT_PUBLIC_SUPABASE_ANON_KEY=(.*)$/);
+    if (m) return m[1].trim();
+  }
+  throw new Error("NEXT_PUBLIC_SUPABASE_ANON_KEY not found in .env.local");
+}
+
+const ANON_KEY = loadAnonKey();
+const SUPABASE_URL = "https://" + JSON.parse(Buffer.from(ANON_KEY.split(".")[1], "base64").toString("utf8")).ref + ".supabase.co";
+
+const REVIEWER = "Founder";
+const EXPECTED_QUESTION_COUNT = 14;
+
+// mth-003 is deliberately NOT included here -- it was reclassified into
+// mr03-mixed-perimeter (metadata only, migration 066) but is not one of
+// the 14 newly authored questions the Founder's review covered. Selecting
+// strictly by this generator's own mathsQuestions manifest (never by
+// family_id, and never by reading mr03-mixed-perimeter's current sibling
+// list) makes it structurally impossible for this script to pick it up.
+const APPROVED_IDS_BY_FAMILY = {};
+for (const q of mathsQuestions) (APPROVED_IDS_BY_FAMILY[q.family_id] ??= []).push(q.id);
+
+async function fetchRowsByIds(ids) {
+  const columns = "id,family_id,content_version,provenance,active,eligibility_status";
+  const idList = ids.map((id) => encodeURIComponent(id)).join(",");
+  const res = await fetch(
+    `${SUPABASE_URL}/rest/v1/ali_question_bank?id=in.(${idList})&select=${columns}&order=id`,
+    { headers: { apikey: ANON_KEY, Authorization: `Bearer ${ANON_KEY}` } }
+  );
+  const rows = await res.json();
+  if (!Array.isArray(rows)) throw new Error(`Could not read ali_question_bank for the given ids: ${JSON.stringify(rows)}`);
+  return rows;
+}
+
+export function build007XActivationSql({ migrationNumber, reviewer, questionIds }) {
+  const idList = questionIds.map((id) => `'${id}'`).join(", ");
+  return `-- Angel Digital 11+ — Migration ${migrationNumber}
+-- Educational Increment 007X — Founder Review, Controlled Activation and
+-- Final Closure.
+--
+-- Promotes exactly the ${questionIds.length} questions covered by the 4 approved
+-- 007X question-family review targets (mr05-number-property-search,
+-- mr03-mixed-perimeter, precision-frac, precision-dec), all decided
+-- 'approved', reviewer: ${reviewer} — per the Founder's authenticated
+-- Supabase inspection of ali_family_review (that table remains RLS-opaque
+-- to every script/anon-key path in this repository by design, migration
+-- 034/054, so this migration records the Founder-supplied decision as its
+-- input, not a re-derivation — see Decisions 79/80/81, ALI_DECISION_LOG.md).
+--
+-- Disclosed: the authenticated evidence contained 3 duplicate "new 007X
+-- Founder decision" rows for mr05-number-property-search (identical scope,
+-- same 5 question IDs) — treated as one Founder decision recorded 3 times
+-- in append-only history, not 3 independent reviews. None were deleted or
+-- rewritten.
+--
+-- Generated by scripts/generate-007x-activation-migration.mjs, which
+-- re-verified content_version, provenance, active state and
+-- eligibility_status for every row against live production immediately
+-- before this file was written, reusing checkActivationEligibility()
+-- unchanged from scripts/generate-activation-migration.mjs (007E).
+--
+-- Selected by exact question ID, never by family_id: mth-003 (reclassified
+-- into mr03-mixed-perimeter by migration 066, metadata only) is NOT one of
+-- the 14 newly authored questions the Founder's review covered, and is
+-- deliberately excluded — its own eligibility_status is untouched by this
+-- migration. No other historical sibling in any of the 4 families is
+-- touched either.
+--
+-- Teaching-maturity / transfer-classification boundary (unchanged, not
+-- claimed by this migration): mr05-number-property-search's PRACTICE
+-- content is Founder-approved by this migration; its TRANSFER-UNSAFE
+-- classification and the absence of dedicated MODEL/Guided teaching
+-- content are UNCHANGED — approval of these 5 new questions does not
+-- itself revalidate transfer safety or teaching maturity.
+--
+-- Idempotent: only rows still 'provisional' are updated, so re-running
+-- this file after it has already taken effect is a no-op. No row outside
+-- this named set is touched. Nothing is set to mock_eligible. No content,
+-- answer, family_id, provenance, or content_version is changed.
+-- ali_family_review (review history) is not touched by this migration.
+--
+-- Fails safely: if fewer than ${questionIds.length} of the named IDs are currently
+-- 'provisional' (already activated elsewhere, or missing), this UPDATE
+-- simply affects fewer rows rather than erroring — re-run
+-- scripts/generate-007x-activation-migration.mjs to re-verify the exact
+-- candidate set against live production before applying if that is ever
+-- suspected.
+--
+-- Run this in: Supabase Dashboard > SQL Editor > New query.
+
+begin;
+
+update public.ali_question_bank
+set eligibility_status = 'practice_eligible'
+where id in (${idList})
+  and eligibility_status = 'provisional';
+
+commit;
+`;
+}
+
+async function main() {
+  const migrationNumber = process.argv.includes("--migration-number")
+    ? process.argv[process.argv.indexOf("--migration-number") + 1]
+    : "068";
+
+  let allQuestionIds = [];
+  let anyBlocked = false;
+  const byFamily = {};
+
+  for (const [family, expectedIds] of Object.entries(APPROVED_IDS_BY_FAMILY)) {
+    const rows = await fetchRowsByIds(expectedIds);
+    byFamily[family] = rows.map((r) => r.id);
+
+    const missing = expectedIds.filter((id) => !rows.some((r) => r.id === id));
+    if (missing.length > 0) {
+      console.error(`${family}: MISSING from production: ${missing.join(", ")}`);
+      anyBlocked = true;
+      continue;
+    }
+    const wrongFamily = rows.filter((r) => r.family_id !== family);
+    if (wrongFamily.length > 0) {
+      console.error(`${family}: family_id mismatch on production: ${wrongFamily.map((r) => `${r.id} -> ${r.family_id}`).join(", ")}`);
+      anyBlocked = true;
+      continue;
+    }
+
+    const expectedVersion = rows[0]?.content_version ?? 1;
+    const { canActivate, problems } = checkActivationEligibility(rows, expectedVersion);
+    console.log(`${family}: ${rows.length} live row(s), ${canActivate ? "ALL PASS" : "BLOCKED"}`);
+    if (!canActivate) {
+      anyBlocked = true;
+      for (const p of problems) console.error(`  - ${p}`);
+      continue;
+    }
+    allQuestionIds.push(...rows.map((r) => r.id));
+  }
+
+  const distinctIds = [...new Set(allQuestionIds)];
+  if (distinctIds.length !== allQuestionIds.length) {
+    console.error("DUPLICATE ID FOUND across approved families -- refusing to generate a migration.");
+    process.exit(1);
+  }
+  if (distinctIds.includes("mth-003")) {
+    console.error("mth-003 must never be part of this activation -- refusing to generate a migration.");
+    process.exit(1);
+  }
+  if (distinctIds.length !== EXPECTED_QUESTION_COUNT) {
+    console.error(`EXPECTED EXACTLY ${EXPECTED_QUESTION_COUNT} QUESTIONS, GOT ${distinctIds.length} -- refusing to generate a migration. Investigate before proceeding.`);
+    process.exit(1);
+  }
+
+  if (anyBlocked) {
+    console.error("\nACTIVATION BLOCKED for one or more targets -- see above. No migration written.");
+    process.exit(1);
+  }
+
+  const sql = build007XActivationSql({ migrationNumber, reviewer: REVIEWER, questionIds: distinctIds });
+  const outPath = `supabase/migrations/${migrationNumber}_007x_activation.sql`;
+  writeFileSync(outPath, sql);
+  console.log(`\nWrote ${outPath} -- ${distinctIds.length} question(s) ready for Founder review and application.`);
+  console.log("\nManifest by family:");
+  for (const [fam, ids] of Object.entries(byFamily)) console.log(`  ${fam} (${ids.length}): ${ids.join(", ")}`);
+}
+
+if (import.meta.url === pathToFileURL(process.argv[1]).href) {
+  main();
+}
