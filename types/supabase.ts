@@ -699,6 +699,30 @@ export interface Database {
         Args: { p_device_id: string };
         Returns: string | null;
       };
+      // Programme Increment 008D — supabase/migrations/070_mock_attempt_engine.sql.
+      // Not yet applied to production; declared here so lib/mockAttempt/client.ts
+      // can call these through the typed supabase.rpc() the same way every
+      // other RPC in this codebase already does.
+      mock_create_attempt: {
+        Args: { p_form_id: string; p_attempt_type: string };
+        Returns: string;
+      };
+      mock_start_attempt: {
+        Args: { p_attempt_id: string; p_duration_minutes?: number };
+        Returns: { status: string; started_at: string; expires_at: string }[];
+      };
+      mock_get_question: {
+        Args: { p_attempt_id: string; p_question_id: string };
+        Returns: Record<string, unknown>;
+      };
+      mock_submit_answer: {
+        Args: { p_attempt_id: string; p_question_id: string; p_response: Record<string, unknown> };
+        Returns: undefined;
+      };
+      mock_submit_attempt: {
+        Args: { p_attempt_id: string };
+        Returns: { status: string; submitted_at: string }[];
+      };
     };
     Enums: {
       subject_type: AliSubjectEnum;
