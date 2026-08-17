@@ -93,3 +93,33 @@ export function derivePreparationStage(
 
   return evidenceStage;
 }
+
+/**
+ * Educational Increment 007W, Part 5 — proves the preparation stage has
+ * real, distinct operational value rather than being a label with no
+ * consequence. Each principle below is the disclosed, learner-facing
+ * consequence of that stage (never engine terminology, never a specific
+ * activity promise — "a stage may only select activities that actually
+ * exist" is honoured by keeping this to priority/emphasis language, not a
+ * concrete content pointer). Deliberately kept to messaging/emphasis only
+ * this increment, not wired into which questions get selected, per the
+ * disclosed 007W scoping decision to keep this addition small and safe.
+ */
+export function stagePrinciple(stage: PreparationStage): string {
+  switch (stage) {
+    case "insufficient_evidence":
+      return "Not enough practice yet to judge where to focus. A short first session in each area will help build a real picture.";
+    case "foundation":
+      return "Building the core ideas first. Sessions favour worked examples and guided steps before independent practice.";
+    case "teaching":
+      return "A recent area needs re-teaching before more practice. Sessions focus on the specific skill that slipped.";
+    case "developing":
+      return "Core ideas are in place. Sessions mix guided and independent practice to build reliability.";
+    case "transfer":
+      return "Skills are solid. Sessions favour independent practice and applying skills in less familiar question styles.";
+    case "exam_preparation":
+      return "The exam is approaching and the fundamentals are solid. Sessions favour timed, independent practice.";
+    case "final_preparation":
+      return "In the final stretch before the exam. Sessions favour full independent practice and steady review of strengths.";
+  }
+}

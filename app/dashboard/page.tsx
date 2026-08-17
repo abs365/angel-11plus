@@ -17,7 +17,7 @@ import {
   Pencil,
 } from "lucide-react";
 import PageLayout from "@/components/PageLayout";
-import { getProgress, markBadgesSeen, getSelectedPathwayId } from "@/lib/progress";
+import { getProgress, markBadgesSeen, getSelectedPathwayId, recordAliCompetencySignal } from "@/lib/progress";
 import { migrateLocalProgressToSupabase } from "@/lib/migrateProgress";
 import { computeAnalytics } from "@/lib/analytics";
 import { computeAdaptiveState } from "@/lib/adaptiveEngine";
@@ -26,7 +26,9 @@ import { computeParentReport, READINESS_CONFIG } from "@/lib/parentInsights";
 import { getMockResults, bestScoreForPathway, countForPathway } from "@/lib/mockProgress";
 import { getSupabaseClient } from "@/lib/supabase";
 import { ensureProfile } from "@/lib/supabaseProgress";
-import { computeSubjectPreparationSummary, applyCanonicalWritingEvidence } from "@/lib/learningEngine/preparationState";
+import { computeSubjectPreparationSummary, applyCanonicalWritingEvidence, toAliCompetencySignal } from "@/lib/learningEngine/preparationState";
+import { derivePreparationStage, stagePrinciple } from "@/lib/learningEngine/preparationStage";
+import { resolvePreparationClock } from "@/lib/learningEngine/preparationClock";
 import NewBadgeBanner from "@/components/NewBadgeBanner";
 import InsightCard from "@/components/InsightCard";
 import { getPathwayById } from "@/lib/pathways";
@@ -363,31 +365,73 @@ export default function DashboardPage() {
     getMockResults().then(setMockResults);
     migrateLocalProgressToSupabase().catch(() => {});
 
-    // Educational Increment 007V, Part 8/9/10 — the one bounded, proven
-    // integration this increment ships: for a CSSE learner, fetch the
-    // canonical Continuous Writing evidence (real ali_student_question_
-    // history, via lib/learningEngine/preparationState.ts, which itself
-    // never bypasses the Educational Intelligence Engine) and, only if it
-    // genuinely disagrees with the legacy report's own Writing signal
-    // (applyCanonicalWritingEvidence() is a no-op otherwise, proven by its
-    // own tests), correct the report/mission/parent-report state this
-    // effect already set above. A brief legacy-then-corrected render is
-    // an accepted, pre-existing pattern on this page (getMockResults()
-    // already resolves after initial render the same way); it never
-    // shows a false "0%", only ever the pre-existing legacy copy briefly
-    // before the honest one replaces it.
+    // Educational Increment 007V (Part 8/9/10) + 007W (Part 2) — the
+    // bounded, proven integration both increments ship together: for a
+    // CSSE learner, fetch canonical evidence for every real CSSE subject
+    // with content (Mathematics, English, Continuous Writing — real
+    // ali_student_question_history via lib/learningEngine/
+    // preparationState.ts, never bypassing the Educational Intelligence
+    // Engine), then:
+    //   1. Correct the Writing entry in the legacy report if real
+    //      evidence disagrees (007V, unchanged, still a no-op when they
+    //      already agree).
+    //   2. Feed Mathematics/English evidence into the SAME synchronous
+    //      bridge lib/adaptiveEngine.ts's urgency()/aliReasonText() were
+    //      ALREADY built to prefer (p.aliCompetencySignal,
+    //      recordAliCompetencySignal()) — 007W's own root-cause finding:
+    //      that bridge exists precisely for this, but was previously only
+    //      ever written by the separate /mocks/adaptive/* pages, never by
+    //      the real CSSE Practice pathway, so it was permanently empty
+    //      for a CSSE-only learner and every mission decision fell
+    //      through to the legacy branch. No new mission-selection logic
+    //      was written — the existing, already-correct real-evidence
+    //      branch just finally receives real data.
+    // A brief legacy-then-corrected render is an accepted, pre-existing
+    // pattern on this page (getMockResults() already resolves after
+    // initial render the same way); it never shows a false "0%" or a
+    // recommendation to unavailable content, only ever the pre-existing
+    // legacy copy briefly before the honest one replaces it.
     if (p.selectedPathwayId === "csse") {
       const supabase = getSupabaseClient();
       if (supabase) {
         (async () => {
           const profileId = await ensureProfile();
           if (!profileId) return;
-          const writingSummary = await computeSubjectPreparationSummary(supabase, profileId, "Continuous Writing");
-          const corrected = applyCanonicalWritingEvidence(r, writingSummary.evidenceState);
-          if (corrected === r) return; // no-op: real evidence already agreed with the legacy signal
-          setReport(corrected);
-          setMission(computeAdaptiveState(p, corrected).dailyMission);
-          setParentReport(computeParentReport(p, corrected, gamification));
+
+          const [writingSummary, mathsSummary, englishSummary] = await Promise.all([
+            computeSubjectPreparationSummary(supabase, profileId, "Continuous Writing"),
+            computeSubjectPreparationSummary(supabase, profileId, "Mathematics"),
+            computeSubjectPreparationSummary(supabase, profileId, "English Comprehension"),
+          ]);
+
+          const correctedReport = applyCanonicalWritingEvidence(r, writingSummary.evidenceState);
+
+          const previousMaths = p.aliCompetencySignal?.["maths"];
+          const previousEnglish = p.aliCompetencySignal?.["english"];
+          recordAliCompetencySignal("maths", toAliCompetencySignal(mathsSummary, "maths", previousMaths));
+          recordAliCompetencySignal("english", toAliCompetencySignal(englishSummary, "english", previousEnglish));
+          const refreshedProgress = getProgress();
+
+          // Part 5 -- prove the preparation stage has real operational
+          // value: when real evidence supports a stage beyond
+          // "insufficient_evidence," its principle replaces the mission
+          // tagline. School year is not yet plumbed into this surface, so
+          // it is left undefined here -- derivePreparationStage's own
+          // documented convention treats that as eligible, never as a
+          // block. This is deliberately messaging-only this increment; it
+          // never changes which activities are selected.
+          const stage = derivePreparationStage(
+            [writingSummary, mathsSummary, englishSummary],
+            resolvePreparationClock(new Date())
+          );
+          const adaptiveMission = computeAdaptiveState(refreshedProgress, correctedReport).dailyMission;
+          const correctedMission =
+            stage === "insufficient_evidence" ? adaptiveMission : { ...adaptiveMission, tagline: stagePrinciple(stage) };
+
+          setReport(correctedReport);
+          setProgress(refreshedProgress);
+          setMission(correctedMission);
+          setParentReport(computeParentReport(refreshedProgress, correctedReport, gamification));
         })().catch(() => {
           // Real ALI evidence is unreachable (offline, RLS, etc.) -- fail
           // open to the legacy report already set above, never block or

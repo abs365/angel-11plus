@@ -82,6 +82,55 @@ test("C: a non-CSSE pathway is unaffected by the CSSE-specific writing exclusion
   assert.ok(state.dailyMission.items.length > 0);
 });
 
+test("007W Part 16(9): Mock is never a mission candidate, regardless of urgency signal", () => {
+  const p = baseProgress({
+    completedLessons: [],
+    scores: {},
+    aliCompetencySignal: {
+      maths: {
+        subject: "maths",
+        weakCompetencies: ["MR-01"],
+        masteredCompetencies: [],
+        attemptedCompetencies: ["MR-01"],
+        recentlyMasteredCompetencies: [],
+        updatedAt: new Date().toISOString(),
+      },
+    },
+  });
+  const report = computeAnalytics(p);
+  const state = computeAdaptiveState(p, report);
+
+  for (const item of state.dailyMission.items) {
+    assert.notEqual(item.subject, "mock-test", "Mock must never surface as a Today's Mission item");
+  }
+});
+
+test("007W Part 16(11/13): a real ALI weak-competency signal for Maths outranks legacy-only urgency and is used in the reason text", () => {
+  // English is legacy-weak (would win on the old branch); Maths carries a
+  // real ALI signal with a weak (rebuilding) competency -- the real-evidence
+  // branch of urgency() must take priority and its reason text must be used.
+  const p = baseProgress({
+    completedLessons: ["eng-001", "eng-002", "eng-003"],
+    scores: { "eng-001": 40, "eng-002": 38, "eng-003": 42 },
+    aliCompetencySignal: {
+      maths: {
+        subject: "maths",
+        weakCompetencies: ["MR-01"],
+        masteredCompetencies: [],
+        attemptedCompetencies: ["MR-01", "MR-02"],
+        recentlyMasteredCompetencies: [],
+        updatedAt: new Date().toISOString(),
+      },
+    },
+  });
+  const report = computeAnalytics(p);
+  const state = computeAdaptiveState(p, report);
+
+  const mathsItem = state.dailyMission.items.find((i) => i.subject === "maths");
+  assert.ok(mathsItem, "Maths must be selected given its real weak-competency signal");
+  assert.match(mathsItem!.reason, /reinforcement|focused practice/i, "reason text must come from the real-evidence branch (aliReasonText), not legacy copy");
+});
+
 test("A: 1-2 attempts (insufficient evidence) also never states a percentage average", () => {
   const p = baseProgress({
     completedLessons: ["eng-001", "eng-002", "eng-003", "maths-reasoning", "maths-arithmetic", "writing-wrt-001"],

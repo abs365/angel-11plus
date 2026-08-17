@@ -4,6 +4,7 @@ import type { CompetencyId, AssessmentComponent } from "./types";
 import type { EvidenceConfidenceTier } from "@/types/ali/confidence";
 import type { EducationalState } from "@/types/ali/educationalState";
 import type { AnalyticsReport } from "@/types/analytics";
+import type { AliCompetencySignal } from "@/types/ali/missionSignal";
 import { COMPETENCIES } from "./assessmentBrainMap";
 import { getEducationalIntelligence, type EducationalIntelligenceSnapshot } from "./educationalIntelligenceService";
 
@@ -111,6 +112,81 @@ export async function computeSubjectPreparationSummary(
     evidenceState: deriveSubjectEvidenceState(competencies.map((c) => c.confidenceTier)),
   };
 }
+
+/**
+ * Educational Increment 007W, Part 2 — the actual root cause of Today's
+ * Mission's legacy-evidence dependency, and the smallest correct fix.
+ *
+ * `lib/adaptiveEngine.ts`'s `urgency()`/`buildItem()`/`aliReasonText()`
+ * ALREADY prefer real, per-competency ALI evidence over the legacy
+ * `UserProgress.scores` signal — via `p.aliCompetencySignal[subject]`
+ * (`types/ali/missionSignal.ts`'s own docstring: "so
+ * lib/adaptiveEngine.ts's Daily Mission prioritisation can read it
+ * synchronously without a Supabase round-trip"). That bridge mechanism
+ * was built for exactly this problem. The defect is not that it doesn't
+ * exist — it is that `recordAliCompetencySignal()` (`lib/progress.ts`) is
+ * only ever CALLED by the separate, legacy `/mocks/adaptive/*` pages
+ * (GL/CEM-era adaptive mocks), never by the real CSSE Practice pathway
+ * (confirmed by direct search — no reference anywhere under
+ * `app/learning-intelligence/`). For a CSSE-only learner, the bridge is
+ * permanently empty, so `urgency()`'s real-evidence branch never fires
+ * and every CSSE subject falls through to the "Legacy branch" comment
+ * marks explicitly.
+ *
+ * This function is the CSSE-correct equivalent of the existing
+ * `deriveCompetencySignal()` (`lib/ali/weakness.ts`) that the adaptive-
+ * mock pages already use — deliberately NOT reused directly, because that
+ * function reads `question.skill` as if it were already a competency
+ * code, which is correct for the older VR/GL question bank but WRONG for
+ * CSSE content (`ali_question_bank.skill` stores a Question Type ID for
+ * CSSE — `QUESTION_TYPE_PRIMARY_COMPETENCY` resolves it, exactly the
+ * defect `educationalIntelligenceService.ts`'s own docstring already
+ * names and fixes). This function instead builds the signal from
+ * `SubjectPreparationSummary`, which is already resolved correctly per
+ * competency via `getEducationalIntelligence()`.
+ *
+ * `weakCompetencies` is deliberately the narrower, evidence-strict
+ * `educationalState === "rebuilding"` (a real, already-computed
+ * regression signal — mastery threshold was met, then a fresh attempt
+ * failed) rather than approximating the legacy "2 consecutive wrong"
+ * rule, since `urgency()`'s real-evidence branch treats a non-empty
+ * `weakCompetencies` as the HIGHEST priority signal (140+) — safer to
+ * under-flag than to over-flag what drives top mission priority.
+ */
+export function toAliCompetencySignal(
+  summary: SubjectPreparationSummary,
+  subjectKey: string,
+  previousSignal?: AliCompetencySignal
+): AliCompetencySignal {
+  const attemptedCompetencies = summary.competencies
+    .filter((c) => c.confidenceTier !== "insufficient")
+    .map((c) => c.competencyId);
+  const masteredCompetencies = summary.competencies
+    .filter((c) => c.educationalState === "mastered" || c.educationalState === "durably-mastered")
+    .map((c) => c.competencyId);
+  const weakCompetencies = summary.competencies
+    .filter((c) => c.educationalState === "rebuilding")
+    .map((c) => c.competencyId);
+
+  const previouslyMastered = new Set(previousSignal?.masteredCompetencies ?? []);
+  const recentlyMasteredCompetencies = masteredCompetencies.filter((c) => !previouslyMastered.has(c));
+
+  return {
+    subject: subjectKey,
+    weakCompetencies,
+    masteredCompetencies,
+    attemptedCompetencies,
+    recentlyMasteredCompetencies,
+    updatedAt: new Date().toISOString(),
+  };
+}
+
+/** The legacy `SubjectKey` string each real CSSE `AssessmentComponent` corresponds to — `p.aliCompetencySignal` and `lib/adaptiveEngine.ts`'s `SUBJECT_LABELS` are both keyed by this string, not by the Assessment Brain's own component name. Applied Reasoning has no CSSE-eligible SubjectKey (excluded from the exam since September 2024, Decision 58) and is intentionally absent. */
+export const COMPONENT_TO_SUBJECT_KEY: Partial<Record<AssessmentComponent, string>> = {
+  Mathematics: "maths",
+  "English Comprehension": "english",
+  "Continuous Writing": "writing",
+};
 
 /**
  * Educational Increment 007V, Part 8/9/10 — the one bounded, proven
