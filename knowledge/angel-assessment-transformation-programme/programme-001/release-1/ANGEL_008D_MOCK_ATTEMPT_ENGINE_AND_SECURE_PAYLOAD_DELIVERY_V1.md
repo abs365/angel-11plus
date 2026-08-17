@@ -205,6 +205,81 @@ delete from public.ali_mock_form where id = '008d-verification-fixture';
 
 **Founder approval is required before this fixture is inserted. Not inserted this session.**
 
-### 29.4 Verdict
+### 29.4 Verdict (superseded — see §30)
 
 **PASS WITH FINDINGS.** Every item provable without a fixture is clean: tables, functions, identity-derivation, Practice regression, passage security, production counts, zero real Mock content, full regression suite. One genuine, precisely-bounded finding (§29.2) has a generated, tested, not-yet-applied fix. One item (§29.3) awaits Founder approval for a fully-specified, reversible fixture before it can move from "structurally proven" to "live-proven." **008D is not yet described as genuinely closed** — both items should resolve before that claim is made.
+
+---
+
+## 30. Security Hardening Reconciliation (addendum) — a second, real finding
+
+The Founder's own authenticated catalogue evidence (Level 1) proved **two** findings, not one: Finding A (§29.2) was confirmed exactly — `information_schema.routine_privileges` shows `EXECUTE` granted to `anon, authenticated, postgres, service_role` on all 5 functions. **Finding B, new and correctly identified by the Founder's own review**: `ali_mock_form_select_all` grants `anon, authenticated` unconditional SELECT (`qual = true`) on `ali_mock_form` — and that table's `question_manifest` column is the ordered array of real question IDs and section mapping that constitutes the sealed form structure itself.
+
+### 30.1 ali_mock_form schema, classified per column
+
+| Column | Classification |
+|---|---|
+| `id` | PUBLIC-SAFE (an identifier string) |
+| `specification_version` | PUBLIC-SAFE |
+| `attempt_type` | PUBLIC-SAFE |
+| `question_manifest` | **SEALED UNTIL ATTEMPT** — the exact set, order, and section mapping of a form's question IDs |
+| `active` | PUBLIC-SAFE |
+| `created_at` | PUBLIC-SAFE |
+
+Migration 070's own original reasoning ("forms carry no question CONTENT themselves, only IDs, so the manifest alone does not leak sealed content") was too narrow — a genuine design error in 008D's own first pass, disclosed plainly, not minimised. Knowing which question IDs are assigned to a form, in what order and section structure, is itself sealed assessment structure, squarely within the anti-memorisation/exposure-protection concern this whole program exists to protect.
+
+### 30.2 Migration 071 — original scope was INCOMPLETE, now revised in place
+
+The original 071 addressed only Finding A. **Classified INCOMPLETE**, per the directive's own instruction, and revised — not superseded by a new migration number, since 071 was never applied and this repository's own established practice already treats an unapplied migration as safely editable in place (the same discipline applied to 007X's own migration 067 reconciliation). The revised 071 now:
+
+1. Revokes execute from `anon` on all 5 functions (Finding A, unchanged).
+2. **Drops `ali_mock_form_select_all` entirely** — no replacement SELECT policy for `anon` or ordinary `authenticated` (Finding B).
+3. Leaves `authenticated` execute on the 5 functions untouched — each function's own internal ownership/state checks remain the correct enforcement point.
+4. Leaves `ali_mock_form_admin_write` untouched — admin content-management access to forms is fully preserved.
+5. Leaves `ali_mock_attempt`/`ali_mock_attempt_answer`'s own ownership policies untouched.
+6. Leaves `postgres`/`service_role` untouched — the applying/bypass roles, appropriately unrestricted.
+
+### 30.3 Final form access contract
+
+`ali_mock_form` becomes **ADMIN/SERVER ONLY**, mirroring `ali_passage_bank`'s own established precedent (migration 054) exactly — no learner-safe projection was built, because none is currently needed: `attempt_type` already flows back to the client via `mock_start_attempt`'s own return value, and question content already flows one-at-a-time through `mock_get_question`'s own redacted projection. A future learner-facing form title/duration display, if ever wanted, should extend an attempt function's own return value — never a direct table grant. Named for 008E/008F, not built here.
+
+### 30.4 Tests
+
+8 tests (revised from the original 3), covering all 14 items in the directive's own Part 6 list — either structurally (anon/authenticated execute grants, the dropped policy, admin-write left untouched, attempt/answer policies left untouched, function bodies unmodified) or via live production checks (Practice regression, production counts, Mock Eligible = 0).
+
+### 30.5 Verification
+
+Full suite **566/566** (558 baseline + 8 revised migration-071 tests). TypeScript clean. Copy Quality Guard PASS (0 violations, 242 files). Production build succeeds. Production counts re-queried live: TOTAL 312, Practice Eligible 295, Mathematics PE 175, English PE 120, Provisional 17, **Mock Eligible 0** — exact match, zero discrepancy. Practice content (Mathematics) re-confirmed fully readable.
+
+### 30.6 Fixture decision — still required, plan unchanged in substance
+
+The one item genuinely requiring a fixture (§29.3 — live, end-to-end proof of `mock_get_question`'s redaction) remains necessary and unchanged in its exact plan (insert SQL, every object created, real-learner impact assessment, cleanup SQL, post-cleanup zero-row verification) — reproduced below for completeness, now explicitly sequenced *after* migration 071's own application (so the fixture is inserted under the hardened, admin-only `ali_mock_form` policy, via the Founder's own authenticated/owner SQL Editor session, which is unaffected by RLS regardless):
+
+```sql
+-- Insert (Founder-run, after migration 071 is applied):
+insert into public.ali_mock_form (id, specification_version, attempt_type, question_manifest, active)
+values (
+  '008d-verification-fixture',
+  1,
+  'diagnostic_mock',
+  '[{"question_id":"mr01-mop-01","section":"maths"}]'::jsonb,
+  true
+)
+on conflict (id) do nothing;
+
+-- Cleanup (after verification is complete):
+delete from public.ali_mock_attempt_answer
+  where attempt_id in (select id from public.ali_mock_attempt where form_id = '008d-verification-fixture');
+delete from public.ali_mock_attempt where form_id = '008d-verification-fixture';
+delete from public.ali_mock_form where id = '008d-verification-fixture';
+```
+
+Every object created, real-learner impact, and post-cleanup verification method are unchanged from §29.3's own original assessment. **Not inserted this session. Founder approval required.**
+
+### 30.7 Verdict
+
+**PASS WITH FINDINGS.** Both findings from the Founder's own catalogue evidence are now addressed by one revised, tested, not-yet-applied migration. Every item provable without a fixture remains clean. **008D still cannot be described as genuinely closed** until migration 071 is applied and independently re-verified, and the one remaining fixture-gated item is resolved (with Founder approval) or explicitly waived.
+
+---
+
+**STOP. Migration 071 revised in place, NOT applied. No fixture inserted. Mock Eligible remains 0. Return to Founder/Product leadership.**

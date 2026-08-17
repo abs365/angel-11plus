@@ -1099,3 +1099,31 @@ None of the above is converted to "complete" by this decision. They remain named
 **Rationale:** Distinguishing "the core security property (redaction, ownership) is not broken" from "the stated design (authenticated-only execute grants) was fully achieved" is the same precision this project's own Evidence Hierarchy discipline demands elsewhere — a defense-in-depth gap is a real, disclosable finding even when the practical exploit surface is empty, and naming it precisely (rather than either overstating it as a breach or ignoring it as immaterial) is what lets the Founder make an informed, proportionate decision about the hardening fix.
 
 **Implications:** 008D's engine is confirmed installed and structurally sound; one small, generated, ready-to-apply hardening fix and one fully-specified, Founder-gated fixture stand between this and genuine closure. No further increment begins automatically; the next controlled programme activity after 008D's own closure is the Mock Visual and Product Experience Standard, separately authorised, not begun here.
+
+---
+
+### Decision 90 — Programme Increment 008D, Security Hardening Reconciliation: Founder's own authenticated catalogue evidence proved a SECOND finding beyond Decision 89's own — `ali_mock_form`'s SELECT policy exposed the sealed question manifest itself to anon/authenticated; migration 071 revised in place (never applied) to close both findings together; `ali_mock_form` becomes ADMIN/SERVER ONLY
+
+**Decision:** The Founder's Level 1 catalogue evidence confirmed Decision 89's Finding A exactly (`EXECUTE` granted to `anon, authenticated, postgres, service_role` on all 5 functions) and surfaced a second, genuine, previously-undisclosed finding: `ali_mock_form_select_all` grants `anon, authenticated` unconditional SELECT (`qual = true`) on `ali_mock_form`, whose `question_manifest` column is the ordered array of real question IDs and section mapping — the sealed form structure itself, not merely inert metadata as migration 070's own original design comment (mistakenly) reasoned.
+
+**`ali_mock_form` schema classified column-by-column**: `id`/`specification_version`/`attempt_type`/`active`/`created_at` are PUBLIC-SAFE; `question_manifest` is **SEALED UNTIL ATTEMPT**. This was a genuine design error in 008D's own first pass — disclosed plainly as such, not minimised — correctly caught by the Founder's own review before migration 071 could be treated as sufficient.
+
+**Migration 071, classified INCOMPLETE against its original scope, revised in place** (never applied, so editing it directly — rather than issuing a new migration number — follows this repository's own established practice for an unapplied migration, the same discipline already used for 007X's migration 067). The revised migration now: revokes `anon` execute on all 5 functions (Finding A, unchanged); **drops `ali_mock_form_select_all` entirely**, with no replacement SELECT policy for `anon` or ordinary `authenticated` (Finding B); leaves `authenticated` execute on the 5 functions, `ali_mock_form_admin_write`, and `ali_mock_attempt`/`ali_mock_attempt_answer`'s own ownership policies all untouched.
+
+**Final form access contract**: `ali_mock_form` becomes ADMIN/SERVER ONLY, mirroring `ali_passage_bank`'s own established precedent exactly (migration 054) — no learner-safe projection was invented, since none is currently needed (`attempt_type` already flows through `mock_start_attempt`'s own return value; question content already flows through `mock_get_question`'s own redacted, one-question-at-a-time projection). A future learner-facing form title/duration display, if ever wanted, should extend an attempt function's own return value, not a direct table grant — named for 008E/008F, not built.
+
+**Tests revised**: 8 tests (from the original 3) covering all 14 items of the directive's own required list, either structurally or via live production checks.
+
+**Verification:** Full suite 566/566 (558 baseline + 8 revised tests). TypeScript clean. Copy Quality Guard PASS (0 violations, 242 files). Production build succeeds.
+
+**Production counts, re-queried live: TOTAL 312, Practice Eligible 295, Mathematics PE 175, English PE 120, Provisional 17, Mock Eligible 0 — unchanged, zero discrepancy.**
+
+**The one fixture-gated item (live redaction proof) remains necessary and unchanged in its exact, fully-specified plan** (insert SQL, every object created, real-learner impact assessment, cleanup SQL, post-cleanup zero-row verification) — now explicitly sequenced after migration 071's own application. **Not inserted this session. Founder approval required.**
+
+**What this decision does NOT claim:** it does not claim migration 071 has been applied; it does not claim 008D is genuinely closed; it does not claim any fixture was inserted; it does not claim any real Mock content, form, or attempt exists; it does not claim a learner-safe form projection was built (deliberately not needed yet).
+
+**Date:** 2026-08-17
+
+**Rationale:** A second real finding surfacing during the SAME reconciliation the first one triggered is exactly why this project treats Founder-supplied Level 1 catalogue evidence as authoritative over a generator's own structural self-testing — the original migration's own tests correctly proved what the SQL text said, but could not catch a design reasoning error (treating question-ID structure as non-sealed) that only became visible once the real, installed policy was inspected against the real column contents by someone reviewing the actual security implication, not just the SQL syntax.
+
+**Implications:** Both findings from the Founder's own review are now addressed in one coherent, revised, not-yet-applied migration, closing the gap between "structurally correct" and "correctly scoped" before any real Mock content is ever placed behind this firewall. No further increment begins automatically; the next controlled programme activity after 008D's eventual closure remains the separately-authorised Mock Visual and Product Experience Standard, not begun here.
