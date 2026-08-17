@@ -369,4 +369,38 @@ Full suite **514/514** (505 + 9 new). TypeScript clean. Copy Quality Guard PASS 
 
 ---
 
-**STOP. This report concludes 007X's review/activation-preparation stage. Migration 068 has been committed and pushed, NOT applied. Awaiting Founder manual application, post-migration verification, and final closure. No further increment begun automatically.**
+## 32. Final Production Activation Verification and Closure
+
+Migration 068 was manually applied by the Founder. "Success. No rows returned" was not treated as sufficient evidence — independent verification followed.
+
+### 32.1 Exact activation
+
+All 14 authorised IDs re-fetched live: 14/14 now `practice_eligible`, zero remain `provisional`. Every other field (`family_id`, `content_difficulty`, `provenance`, `active`, `content_version`, question text, answer, `workingSteps`) re-compared byte-for-byte against the authoring generator: unchanged.
+
+### 32.2 Zero unexpected activation (arithmetic proof)
+
+Mathematics PE 161→175 (+14); overall PE 281→295 (+14); English PE and Writing PE unchanged. The Mathematics-only delta fully accounts for the overall delta, structurally ruling out any row outside the 14 authorised IDs changing status.
+
+### 32.3 mth-003 and unrelated content
+
+`mth-003`: `family_id` remains `mr03-mixed-perimeter`, `eligibility_status` remains `provisional`, every other field unchanged. An independent, pre-existing comment in `lib/ali/questionBank.ts` (predating 007X, from the original migration 033 audit) separately corroborates `mth-003` was already a known quarantined row.
+
+### 32.4 Learner reachability
+
+`fetchQuestionBank()`'s exact real filter was replicated directly against live production: all 14 pass. A full interactive Practice walkthrough was deliberately not performed, to avoid writing new real activity to a real learner account merely to observe — disclosed as a bounded limitation, not overclaimed as full live verification.
+
+### 32.5 Disclosures preserved
+
+`mr05-number-property-search` remains TRANSFER-UNSAFE; activation is not a transfer-safety or teaching-completeness reclassification.
+
+### 32.6 Verification
+
+Full suite 514/514 (unchanged). TypeScript clean. Copy Quality Guard PASS. Production build succeeds. Mock firewall, mastery-protection, 007W determinism all unchanged, passing.
+
+**Production counts: TOTAL 312, Practice Eligible 295, Mathematics PE 175, English PE 120, Writing PE 0, Provisional 17, Mock Eligible 0 — exact match to projection, zero discrepancy.**
+
+**Verdict: PASS. Educational Increment 007X is genuinely CLOSED.**
+
+---
+
+**STOP. 007X is CLOSED. No further content-authoring batch, no MR-01 Teaching Completion, no Legacy Row Reconciliation, no Mock work begun. The next separately authorised programme is the CSSE Mock Experience and Exam Intelligence Programme.**
