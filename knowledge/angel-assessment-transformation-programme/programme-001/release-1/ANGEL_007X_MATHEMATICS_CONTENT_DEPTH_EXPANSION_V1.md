@@ -244,4 +244,55 @@ No redesign performed. No UX observations to record this increment — no learne
 - The MR-01 teaching-content gap (§7) and the 18-row legacy pool's remaining candidate reclassifications (§9) are both real, confirmed gaps, deliberately not attempted this increment to keep 007X's own scope honest and governable.
 - **Recommendation:** apply migrations 066 and 067 (Founder decision), route the 4 families through the existing Founder review interface, and treat "MR-01 Teaching Completion" and "Legacy Row Reconciliation" as the two most evidence-backed candidate next increments — both named, not started.
 
+---
+
+## 29. Post-Migration Reconciliation (addendum)
+
+Migrations 066 and 067 were applied by the Founder. This section records independent post-application verification, the Migration 067 incident, and one new confirmed finding — all as a bounded reconciliation, no further content or activation work performed.
+
+### 29.1 Migration 067 incident — accurately recorded
+
+The Founder's own investigation (schema, RLS, enum, permission function, and a controlled `BEGIN`/`ROLLBACK` INSERT all independently verified healthy; the SQL Editor's "creates a table without enabling RLS" warning firing on SQL that creates no table) is accepted as conclusive: **this was a Supabase SQL Editor parsing/safety-analysis behaviour on the original file's prose-heavy comments and `values()`-table construct, not a database-schema defect.** It is not classified as an `ali_family_review` defect. The minimal, comment-free, four-statement `INSERT...SELECT...WHERE NOT EXISTS` form that was actually run is semantically equivalent to (and, in one respect, stricter than) the original draft — it explicitly sets and checks `review_type = 'content_review'` on every row, rather than relying on the column's own default. The migration file and `tests/content/007xPendingReview.test.ts` were both updated to reflect the actual applied SQL, with the incident recorded in the file's own header comment for the audit trail.
+
+### 29.2 Part A — Migration 066 independent verification: exact match, zero discrepancy
+
+Re-queried live, not inferred: **all 14 expected question IDs present**, each with the correct `family_id`, `provisional`/`angel_original`/`active: true`/`content_version: 1`, and the exact designed difficulty split (easy 3 / medium 5 / hard 6). `mth-003` carries `family_id = 'mr03-mixed-perimeter'` with every other field byte-identical to its pre-migration state. Mathematics row totals reconcile exactly: 180 total (166 + 14), 17 null-family rows (18 − 1, confirming no *other* legacy row was touched), and each target family's sibling count matches the design exactly (mr03-mixed-perimeter 7, mr05-number-property-search 7, precision-frac 6, precision-dec 6).
+
+### 29.3 Part B — Migration 067 verification: RLS-opaque, authenticated query required
+
+`ali_family_review` returned `200`/`content-range: */0`/`[]` to the anon key for all 4 target families — the exact RLS-opaque signature this project's own standing principle (Decision 48) requires is never read as "no rows exist." **Not inferred as absence.** The exact authenticated query needed was provided directly to the Founder in-session:
+
+```sql
+select
+  id, family_id, review_target_type, review_type, decision, reviewer, created_at,
+  left(notes, 80) as notes_preview
+from public.ali_family_review
+where family_id in ('mr05-number-property-search', 'mr03-mixed-perimeter', 'precision-frac', 'precision-dec')
+order by family_id, created_at;
+```
+
+This single query resolves both Part B (do the 4 new placeholders exist, with correct reviewer/decision/review_type/review_target_type) and the live severity of §29.4 below (does any of these families carry a prior row that would interact with the new one). **Result pending** — not yet run at the time of this reconciliation.
+
+### 29.4 Part C — a real, confirmed code-level review-surface risk (severity pending §29.3)
+
+Direct reading of `app/admin-beta/review/page.tsx` (not speculation) found a genuine architectural risk for exactly this batch's situation:
+
+- **`precision-frac` and `precision-dec` appear in NO hardcoded section list** (`PILOT_TARGET_IDS`/`BATCH2_TARGET_IDS`/`BATCH3_TARGET_IDS`/`BATCH4_TARGET_IDS`/`SEVEN_T_TARGET_IDS`), so their new pending targets fall through to `FullBacklogSection`, whose filter is `!reviewedIds.has(t.id)` — `reviewedIds` comes from `fetchReviewedTargetIds()`, which flags a family as "reviewed" if it has **any** non-pending `content_review` decision at all, regardless of which specific questions that decision covered. **If either family already carries an approved `content_review` row from an earlier batch, the new 007X pending placeholder would be silently excluded from every section on the page — invisible, not shown anywhere.**
+- **`mr03-mixed-perimeter` IS in `BATCH4_TARGET_IDS`** (Controlled Review Batch 4 reviewed its original 3 siblings). `Batch4Section` renders via `targets.find(t => t.id === id)` — since `ali_family_review` is append-only and old pending placeholders are never deleted even after being superseded by a real decision, if this family has more than one row with `decision = 'pending_independent_review'` (an old, already-resolved one plus the new 007X one), `.find()` returns whichever comes first in an order the code does not control for this purpose — the card shown could display the wrong (stale) `notes` text, not clearly identifying it as the new 007X siblings needing review.
+- **`mr05-number-property-search`** also appears in no hardcoded list, same `FullBacklogSection` exposure as above; its live risk is lower since it was deliberately excluded from every prior review batch (TRANSFER-UNSAFE), but this is not fully confirmed without §29.3's query.
+
+At the *data* level, this batch already does the right thing — every new row's `notes` is uniquely prefixed `"007X new content review: ..."`, structurally distinct from any historical batch's notes text (§29.1). The risk is entirely in the **UI's exclusion/selection logic**, not in the data. This mirrors, and is a variant of, the exact class of defect this codebase already fixed once before for 007T's own new families (the original "missing 007T Content Review section" reconciliation) — the established fix pattern (a dedicated section, bypassing `reviewedIds`/`.find()`-first-match entirely, as `SevenTSection` already does) would resolve it here too, but **was not implemented this reconciliation** — verification only was authorised. Recommended as a named, bounded follow-on fix, not attempted here.
+
+### 29.5 Part D — educational disclosure preserved
+
+Confirmed unchanged since §8/§21: `mr05-number-property-search` remains TRANSFER-UNSAFE, not reclassified; the new siblings do not automatically upgrade the family's teaching maturity (§7 MR-01 gap and this family's ASSESSMENT ONLY status both unchanged); MR-01 teaching remains a separate, outstanding, named programme issue; no activation was performed or authorised this reconciliation.
+
+### 29.6 Part E — regression
+
+Full suite **492/492** (491 + 1 new: the reconciled `007xPendingReview.test.ts` gained one additional assertion during the fix). TypeScript clean. Copy Quality Guard PASS (0 violations, 237 files). Production build succeeds. Mathematics correctness for all 14 questions re-confirmed via §29.2's exact-ID/field reconciliation (independent of the generator's own `verify()`, which also still passes). Mock firewall, mastery-protection, and 007W determinism suites all re-ran unchanged as part of the full 492, passing.
+
+**Production counts after migrations 066/067: TOTAL 312 (298 + 14), Practice Eligible 281 (unchanged), Mathematics PE 161 (unchanged), Provisional 31 (17 + 14), Mock Eligible 0 (unchanged).** No eligibility change occurred.
+
+**Verdict: PASS WITH FINDINGS.** The one finding (§29.4) is real, disclosed, and does not affect data integrity, eligibility, or Mock/Writing/English boundaries — it affects only whether the Founder's own review UI will surface these targets correctly, which is precisely what still needs the §29.3 query to resolve with certainty.
+
 **STOP. This report concludes 007X. No activation performed. No further increment begun automatically.**
