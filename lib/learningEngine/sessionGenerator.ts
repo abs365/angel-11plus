@@ -11,7 +11,7 @@ import { getTargetExamDate } from "@/lib/progress";
 import { getRecommendations } from "./educationalIntelligenceService";
 import { QUESTION_TYPE_PRIMARY_COMPETENCY, getQuestionTypesForCompetency } from "./assessmentBrainMap";
 import { getPracticeArea, type PracticeAreaId } from "./practiceContent";
-import { classifyRetrievalStage, computeFamilyExposure, groupingKeyOf, type FamilyExposure } from "@/lib/ali/exposureIntelligence";
+import { classifyRetrievalStage, computeFamilyExposure, groupingKeyOf, passageGroupingKeyOf, type FamilyExposure } from "@/lib/ali/exposureIntelligence";
 
 /**
  * Personalised Session Generation (Sprint 3, ANGEL-CSSE-002A). Single entry
@@ -112,14 +112,22 @@ export interface PersonalisedSession {
  * diversity preference, not a hard constraint that could make a session
  * impossible to fill. Distinct from cross-session item-level cooldown
  * (lib/ali/selection.ts), which this does not touch or duplicate.
+ *
+ * `keyFn` defaults to `groupingKeyOf` — every existing caller's behaviour
+ * is byte-for-byte unchanged. Educational Increment 007S calls this a
+ * second time with `passageGroupingKeyOf` (lib/ali/exposureIntelligence.ts)
+ * as a genuinely separate pass, so a session can be free of BOTH
+ * family-level AND passage-level clustering — the same mechanism reused,
+ * not a parallel selector.
  */
 export function reduceFamilyClustering(
   selected: BankQuestion[],
-  candidatePool: BankQuestion[]
+  candidatePool: BankQuestion[],
+  keyFn: (q: BankQuestion) => string | undefined = groupingKeyOf
 ): BankQuestion[] {
   const familyCounts = new Map<string, number>();
   for (const q of selected) {
-    const key = groupingKeyOf(q);
+    const key = keyFn(q);
     if (!key) continue;
     familyCounts.set(key, (familyCounts.get(key) ?? 0) + 1);
   }
@@ -137,14 +145,14 @@ export function reduceFamilyClustering(
   // undetected and unfixed.
   const presentGroups = new Set<string>();
   for (const q of result) {
-    const key = groupingKeyOf(q);
+    const key = keyFn(q);
     if (key) presentGroups.add(key);
   }
 
   for (const [groupKey, count] of overRepresented) {
     let excess = count - 1; // keep exactly one representative per group, swap the rest
     for (let i = result.length - 1; i >= 0 && excess > 0; i--) {
-      if (groupingKeyOf(result[i]) !== groupKey) continue;
+      if (keyFn(result[i]) !== groupKey) continue;
       // Prefer a candidate that is itself a distinct, real group not
       // already present anywhere in the session — a genuine
       // diversification signal — over an untagged (no group key)
@@ -153,14 +161,14 @@ export function reduceFamilyClustering(
       // exists, so the swap target isn't decided by pool array order.
       const replacement =
         candidatePool.find((c) => {
-          const cKey = groupingKeyOf(c);
+          const cKey = keyFn(c);
           return !selectedIds.has(c.id) && !!cKey && !presentGroups.has(cKey);
-        }) ?? candidatePool.find((c) => !selectedIds.has(c.id) && groupingKeyOf(c) !== groupKey);
+        }) ?? candidatePool.find((c) => !selectedIds.has(c.id) && keyFn(c) !== groupKey);
       if (!replacement) continue; // no distinct-group alternative available; leave the repeat
       selectedIds.delete(result[i].id);
       selectedIds.add(replacement.id);
       result[i] = replacement;
-      const replacementKey = groupingKeyOf(replacement);
+      const replacementKey = keyFn(replacement);
       if (replacementKey) presentGroups.add(replacementKey);
       excess--;
     }
@@ -179,15 +187,22 @@ export function reduceFamilyClustering(
  * selected — never a hard exclusion (a securely-mastered family can
  * still appear if no better alternative exists), matching the
  * directive's explicit "do not permanently suppress" instruction.
+ *
+ * `keyFn` defaults to `groupingKeyOf` — every existing caller's behaviour
+ * is byte-for-byte unchanged. Educational Increment 007S calls this a
+ * second time with `passageGroupingKeyOf`, using a passage-keyed exposure
+ * map, so a recently-confirmed passage can be swapped out even when the
+ * question asking about it belongs to a family that itself is NEW.
  */
 export function applyRetrievalPriority(
   selected: BankQuestion[],
   candidatePool: BankQuestion[],
   exposureByFamily: Map<string, FamilyExposure>,
-  now: Date = new Date()
+  now: Date = new Date(),
+  keyFn: (q: BankQuestion) => string | undefined = groupingKeyOf
 ): BankQuestion[] {
   const stageOf = (q: BankQuestion): ReturnType<typeof classifyRetrievalStage> => {
-    const key = groupingKeyOf(q);
+    const key = keyFn(q);
     return classifyRetrievalStage(key ? exposureByFamily.get(key) : undefined, now);
   };
 
@@ -330,12 +345,29 @@ export async function generatePersonalisedSession(
   const remainingSlots = Math.max(0, area.sessionSize - reviewActivities.length);
   const candidatePool = tagged.filter((q) => !reservedIds.has(q.id));
   const selection = selectQuestions(candidatePool, history, currentSequence, weakSkills, remainingSlots);
-  const diversifiedQuestions = reduceFamilyClustering(selection.questions, candidatePool);
+  const familyDiversifiedQuestions = reduceFamilyClustering(selection.questions, candidatePool);
+  // Passage-level diversification (Educational Increment 007S, Part 4) —
+  // a second, independent pass over the SAME reduceFamilyClustering()
+  // mechanism, keyed by passageGroupingKeyOf() instead of groupingKeyOf().
+  // Root cause (007R, re-confirmed live this increment): every named
+  // English family now carries its own family_id, so the family-level pass
+  // above can no longer see that two DIFFERENT families both draw on the
+  // same passage — this pass restores that visibility without touching
+  // Mathematics/VR behaviour (passageGroupingKeyOf() is undefined for
+  // every non-English question, an inert no-op there, exactly like the
+  // original family fallback's own documented inertness).
+  const diversifiedQuestions = reduceFamilyClustering(familyDiversifiedQuestions, candidatePool, passageGroupingKeyOf);
   // Exposure intelligence / spaced retrieval (Educational Increment 006
   // Parts 12-14) — computed from the same real history this function
   // already fetched; no second history read, no parallel learner model.
   const familyExposure = computeFamilyExposure(candidatePool, history);
-  const retrievalPrioritisedQuestions = applyRetrievalPriority(diversifiedQuestions, candidatePool, familyExposure, now);
+  const familyRetrievalPrioritisedQuestions = applyRetrievalPriority(diversifiedQuestions, candidatePool, familyExposure, now);
+  // Passage-level spaced retrieval (007S, Part 4) — same generalisation
+  // as above, applied to the cross-session deprioritisation pass too, so
+  // a passage recently confirmed via ONE family can still deprioritise a
+  // different, otherwise-NEW family that happens to share the same text.
+  const passageExposure = computeFamilyExposure(candidatePool, history, passageGroupingKeyOf);
+  const retrievalPrioritisedQuestions = applyRetrievalPriority(familyRetrievalPrioritisedQuestions, candidatePool, passageExposure, now, passageGroupingKeyOf);
 
   const candidateByCompetency = new Map(priority.map((c) => [c.competencyCode, c] as const));
   const priorityActivities: SessionActivity[] = retrievalPrioritisedQuestions.map((question) => {

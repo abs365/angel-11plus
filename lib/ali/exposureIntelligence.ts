@@ -58,20 +58,58 @@ export function groupingKeyOf(q: BankQuestion): string | undefined {
 }
 
 /**
+ * Educational Increment 007S, Parts 2-4 — passage-identity grouping key,
+ * independent of `groupingKeyOf()` above. Root cause confirmed by live
+ * production data this increment: every named English family (migration
+ * 030/031's `family_id`, e.g. `wave1-fam-direct-retrieval`) now groups
+ * questions by structural QUESTION-TYPE shape, not by passage — and every
+ * one of the 15 shared passages feeds 5-7 *different* named families. Since
+ * `groupingKeyOf()` prefers `familyId` whenever it is populated,
+ * `learningUnitId` (the real passage id, Decision 36) is never consulted
+ * for any named-family row, so neither `reduceFamilyClustering()` nor
+ * `applyRetrievalPriority()` (lib/learningEngine/sessionGenerator.ts) has
+ * ever been able to see that two questions from two *different* families
+ * expose the learner to the same underlying passage.
+ *
+ * Deliberately restricted to `subject === "english"`: for every other
+ * subject `learningUnitId === id` (Decision 36 — "atomic subjects... set
+ * this equal to their own id"), so this key would already be an inert,
+ * always-unique no-op there; the explicit subject check makes that
+ * intentional rather than incidental, and guarantees Mathematics/VR
+ * selection can never be affected by this dimension even if some future
+ * subject's `learningUnitId` convention changes.
+ *
+ * This is a genuinely separate grouping dimension from `groupingKeyOf()`,
+ * not a replacement — both are fed to the same, already-proven
+ * `reduceFamilyClustering()`/`applyRetrievalPriority()`/
+ * `computeFamilyExposure()` functions below (each now accepting the key
+ * function to group by), run as a second pass. This is deliberately NOT a
+ * parallel selection engine: it is the same mechanism, invoked twice.
+ */
+export function passageGroupingKeyOf(q: BankQuestion): string | undefined {
+  return q.subject === "english" ? q.learningUnitId : undefined;
+}
+
+/**
  * Aggregates a learner's real, existing per-item history into per-group
  * exposure (family, or passage via the `learningUnitId` fallback above),
  * keyed by the MOST RECENTLY seen item in each group (so "last exposure"
  * genuinely means the group's own most recent contact, not an arbitrary
  * item within it).
+ *
+ * `keyFn` defaults to `groupingKeyOf` — every existing caller's behaviour
+ * is byte-for-byte unchanged. Educational Increment 007S's own caller
+ * passes `passageGroupingKeyOf` for the second, passage-level pass.
  */
 export function computeFamilyExposure(
   candidatePool: BankQuestion[],
-  history: Map<string, StudentQuestionHistoryRow>
+  history: Map<string, StudentQuestionHistoryRow>,
+  keyFn: (q: BankQuestion) => string | undefined = groupingKeyOf
 ): Map<string, FamilyExposure> {
   const byFamily = new Map<string, FamilyExposure>();
 
   for (const q of candidatePool) {
-    const groupKey = groupingKeyOf(q);
+    const groupKey = keyFn(q);
     if (!groupKey) continue;
     const row = history.get(q.id);
     if (!row || row.timesSeen === 0) continue;
