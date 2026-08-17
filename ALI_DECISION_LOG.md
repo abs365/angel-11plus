@@ -1027,3 +1027,19 @@ None of the above is converted to "complete" by this decision. They remain named
 **Rationale:** The directive's own closure standard explicitly requires installed-policy verification "from database metadata," not the migration file alone — a requirement this session's own tooling genuinely cannot satisfy without either elevated access or the Founder's own query. Naming this gap precisely, rather than treating strong behavioural evidence as equivalent to it, preserves the same Evidence Hierarchy discipline this project has applied to every other Level 1/Level 2 evidence question throughout this programme.
 
 **Implications:** 008C is one Founder-supplied query away from genuine closure. Every risk this increment could independently test for was tested and found clean. 008D remains not begun.
+
+---
+
+### Decision 87 — Educational Increment 008C is genuinely CLOSED: Founder-supplied authenticated Supabase catalog evidence is an exact, verbatim match to migration 069's intended predicate; RLS confirmed enabled; `relforcerowsecurity=false` confirmed correct for this architecture
+
+**Decision:** The Founder supplied the exact `pg_policies`/`pg_class` query result requested in Decision 86: `ali_question_bank_select_all` (roles `anon, authenticated`, command `SELECT`), `qual = ((eligibility_status IS DISTINCT FROM 'mock_eligible'::text) OR is_current_user_admin())`, `relrowsecurity = true`, `relforcerowsecurity = false`. This is an **exact, verbatim match** to migration 069's own designed and reviewed predicate — not an approximation, confirming the installed policy is precisely what was intended. RLS is confirmed enabled. `relforcerowsecurity = false` is confirmed correct, not a gap: it exempts only the table owner and other privileged/bypass roles (the service role 008D's own future delivery path depends on, and any migration-applying superuser), never `anon`/`authenticated` — the only roles this firewall protects against.
+
+**Combined with Decision 86's own exhaustive behavioural verification** (live Practice regression on the real production account — a real Mathematics question answered correctly with real `workingSteps` returned, a real passage-backed English question loading correctly; `ali_passage_bank` re-confirmed unaffected; admin access re-confirmed unmodified; production counts exact; full suite 537/537), **008C's own 10-point closure standard is now satisfied on every point.**
+
+**Production counts, re-confirmed live before 008D begins: TOTAL 312, Practice Eligible 295, Mathematics PE 175, English PE 120, Provisional 17, Mock Eligible 0 — unchanged.**
+
+**Date:** 2026-08-17
+
+**Rationale:** Closing on exact catalog evidence rather than strong-but-indirect behavioural inference is the same discipline this project has applied to every Level 1 evidence question throughout this programme — the difference between "consistent with" and "confirmed."
+
+**Implications: Educational Increment 008C is genuinely CLOSED.** The sealed-content row-level firewall is live in production, confirmed by direct catalog inspection. 008D (Mock Attempt Engine + Secure Payload Delivery + Exam Experience Foundation) is separately authorised and begins next.

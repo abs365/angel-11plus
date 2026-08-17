@@ -230,4 +230,27 @@ Of the directive's own 10-point closure standard: items 1 (migration applied —
 
 ---
 
-**STOP. Awaiting the Founder's §22.1 catalog query result before 008C can be described as genuinely, fully CLOSED. No 008D work begun.**
+### 22.12 §22.1 catalog evidence — supplied, closing the one outstanding gap
+
+The Founder supplied authenticated Supabase catalog evidence directly:
+
+```
+table: public.ali_question_bank
+policy: ali_question_bank_select_all
+roles: anon, authenticated
+command: SELECT
+qual: ((eligibility_status IS DISTINCT FROM 'mock_eligible'::text) OR is_current_user_admin())
+
+relrowsecurity = true
+relforcerowsecurity = false
+```
+
+This is an **exact, verbatim match** to migration 069's own intended predicate (§9) — confirming the installed policy is precisely what was designed and reviewed, not merely "close enough." RLS is enabled (`relrowsecurity = true`). `relforcerowsecurity = false` is the correct, accepted setting for this architecture: it means the table owner and other privileged/bypass roles are not subject to RLS, which is intentional — the service role (008D's own future delivery path) and any migration-applying superuser role must remain able to operate without RLS interference; ordinary `anon`/`authenticated` traffic, the only roles this firewall is protecting against, remain fully subject to the policy regardless of this setting.
+
+**§22.1's evidence gap is closed. Combined with every behavioural test in §22.2-§22.10 (all clean), 008C's own closure standard (§21) is now fully satisfied on all 10 points.**
+
+**Verdict: PASS. Educational Increment 008C is genuinely CLOSED.**
+
+---
+
+**STOP. 008C is CLOSED. Mock Eligible remains 0. 008D (Mock Attempt Engine + Secure Payload Delivery + Exam Experience Foundation) is separately authorised — see Decision 87.**
