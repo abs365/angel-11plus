@@ -1,0 +1,87 @@
+-- Angel Digital 11+ — Migration 069
+-- Programme Increment 008C — Mock Security Foundation + Sealed Content
+-- Firewall.
+--
+-- Closes the exact gap named in Decision 83/008A and specified in
+-- Decision 84/008B §13 (the 008C security acceptance specification):
+-- public.ali_question_bank's SELECT policy (migration 020,
+-- ali_question_bank_select_all) grants anon + authenticated unconditional
+-- read access to every row regardless of eligibility_status. Today this
+-- exposes no secret content because Mock Eligible = 0 in production; the
+-- moment any row is set eligibility_status = 'mock_eligible', its full
+-- question/answer/workingSteps would become fetchable by any holder of
+-- the public anon key via a direct REST call, bypassing every UI
+-- filter — confirmed live this session: an unfiltered anon SELECT
+-- against a real Mathematics row returns its full `prompt` JSONB
+-- (question, answer, workingSteps) with zero redaction, for every
+-- eligibility_status value including a hypothetical future
+-- 'mock_eligible' one.
+--
+-- FIX: the SELECT policy now excludes eligibility_status = 'mock_eligible'
+-- rows from anon/authenticated access, with an explicit exception for
+-- is_current_user_admin() (migration 008), reusing the exact same
+-- function every other admin-gated policy in this codebase already uses
+-- (migration 054's own ali_passage_bank_select_admin is the direct
+-- precedent this mirrors).
+--
+-- Uses "is distinct from" rather than "!=" deliberately: per
+-- lib/ali/questionBank.ts's own documented convention, SQL's != evaluates
+-- to NULL (excluding, not including) for a NULL column, which would
+-- silently deny access to a legitimate row if eligibility_status were
+-- ever NULL. "is distinct from" is NULL-safe: a NULL eligibility_status
+-- (should not occur — the column has a NOT NULL default — handled
+-- defensively, matching the same convention this codebase already
+-- applies elsewhere) is treated as "not mock_eligible," i.e. fails open
+-- to the PRE-EXISTING behaviour, never introduces a new Practice
+-- regression.
+--
+-- Live-verified before writing this migration:
+--   - 0 rows currently have eligibility_status = 'mock_eligible'
+--     (nothing is newly hidden by this change today);
+--   - 0 rows have a NULL or unexpected eligibility_status value
+--     (the NULL-safety guard above is defensive, not compensating for a
+--     live problem);
+--   - ali_passage_bank already has NO anon/authenticated SELECT policy
+--     at all (migration 054 only grants admin SELECT) — confirmed live
+--     (anon query returns 200/[], the RLS-opaque signature) — no change
+--     is needed or made to ali_passage_bank by this migration.
+--
+-- Preserves:
+--   - every current Practice/provisional/review read path unchanged —
+--     eligibility_status values other than 'mock_eligible' are
+--     completely unaffected, proven by the regression suite this
+--     migration ships alongside;
+--   - admin access (is_current_user_admin()) to every row, including a
+--     future mock_eligible one, for content review;
+--   - service-role access (RLS does not apply to the service role).
+--
+-- Does NOT:
+--   - change any eligibility_status value;
+--   - populate any Mock content;
+--   - delete any row;
+--   - touch ali_passage_bank (already correctly restricted).
+--
+-- This is the row-level baseline only. It does NOT, on its own, provide
+-- field-level projection (hiding the answer/workingSteps while showing
+-- the question during a governed Mock attempt) — Postgres RLS operates
+-- at row granularity, not column granularity. 008D must deliver sealed
+-- Mock question content exclusively through a server-mediated path
+-- (service role, never a client-side Supabase call) that itself never
+-- returns the answer/workingSteps fields before submission/release — see
+-- ANGEL_008C_MOCK_SECURITY_FOUNDATION_AND_SEALED_CONTENT_FIREWALL_V1.md
+-- §7/§16 for the full contract this migration's row-level gate is the
+-- foundation for.
+--
+-- Idempotent (drop-and-recreate, matching every prior RLS migration's
+-- own convention in this repository, e.g. migrations 020/054).
+--
+-- NOT APPLIED by this increment. Generated for Founder review and manual
+-- application via Supabase Dashboard > SQL Editor > New query.
+
+begin;
+
+drop policy if exists ali_question_bank_select_all on public.ali_question_bank;
+create policy ali_question_bank_select_all on public.ali_question_bank for select to anon, authenticated
+  using (eligibility_status is distinct from 'mock_eligible' or public.is_current_user_admin());
+
+commit;
