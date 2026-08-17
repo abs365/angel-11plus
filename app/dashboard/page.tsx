@@ -17,7 +17,7 @@ import {
   Pencil,
 } from "lucide-react";
 import PageLayout from "@/components/PageLayout";
-import { getProgress, markBadgesSeen, getSelectedPathwayId, recordAliCompetencySignal } from "@/lib/progress";
+import { getProgress, markBadgesSeen, getSelectedPathwayId } from "@/lib/progress";
 import { migrateLocalProgressToSupabase } from "@/lib/migrateProgress";
 import { computeAnalytics } from "@/lib/analytics";
 import { computeAdaptiveState } from "@/lib/adaptiveEngine";
@@ -375,22 +375,28 @@ export default function DashboardPage() {
     //   1. Correct the Writing entry in the legacy report if real
     //      evidence disagrees (007V, unchanged, still a no-op when they
     //      already agree).
-    //   2. Feed Mathematics/English evidence into the SAME synchronous
-    //      bridge lib/adaptiveEngine.ts's urgency()/aliReasonText() were
-    //      ALREADY built to prefer (p.aliCompetencySignal,
-    //      recordAliCompetencySignal()) — 007W's own root-cause finding:
-    //      that bridge exists precisely for this, but was previously only
-    //      ever written by the separate /mocks/adaptive/* pages, never by
-    //      the real CSSE Practice pathway, so it was permanently empty
-    //      for a CSSE-only learner and every mission decision fell
-    //      through to the legacy branch. No new mission-selection logic
-    //      was written — the existing, already-correct real-evidence
-    //      branch just finally receives real data.
+    //   2. Feed Mathematics/English evidence into the SAME real-evidence
+    //      branch lib/adaptiveEngine.ts's urgency()/aliReasonText() were
+    //      ALREADY built to prefer (the p.aliCompetencySignal shape) —
+    //      007W's own root-cause finding: that branch exists precisely for
+    //      this, but was previously only ever fed by the separate
+    //      /mocks/adaptive/* pages, never by the real CSSE Practice
+    //      pathway, so it was permanently empty for a CSSE-only learner and
+    //      every mission decision fell through to the legacy branch. No new
+    //      mission-selection logic was written — the existing,
+    //      already-correct real-evidence branch just finally receives real
+    //      data, held in memory only for this render (see
+    //      missionViewProgress below — never persisted via
+    //      recordAliCompetencySignal, per the bounded-volatility fix this
+    //      increment also made: a dashboard view must never write learning
+    //      evidence).
     // A brief legacy-then-corrected render is an accepted, pre-existing
     // pattern on this page (getMockResults() already resolves after
     // initial render the same way); it never shows a false "0%" or a
     // recommendation to unavailable content, only ever the pre-existing
-    // legacy copy briefly before the honest one replaces it.
+    // legacy copy briefly before the honest one replaces it. Because
+    // nothing in this block is persisted, the settled (post-async) state is
+    // now deterministic across repeated loads given unchanged evidence.
     if (p.selectedPathwayId === "csse") {
       const supabase = getSupabaseClient();
       if (supabase) {
@@ -406,11 +412,31 @@ export default function DashboardPage() {
 
           const correctedReport = applyCanonicalWritingEvidence(r, writingSummary.evidenceState);
 
-          const previousMaths = p.aliCompetencySignal?.["maths"];
-          const previousEnglish = p.aliCompetencySignal?.["english"];
-          recordAliCompetencySignal("maths", toAliCompetencySignal(mathsSummary, "maths", previousMaths));
-          recordAliCompetencySignal("english", toAliCompetencySignal(englishSummary, "english", previousEnglish));
-          const refreshedProgress = getProgress();
+          // 007W bounded-volatility fix -- viewing the dashboard must never
+          // manufacture or persist learning evidence (a real defect this
+          // increment's own live verification caught: recordAliCompetency
+          // Signal() previously wrote maths/english signals to localStorage
+          // on every page view, which then fed the NEXT load's initial
+          // synchronous paint before that load's own async correction
+          // landed, producing a genuinely different mission on repeated
+          // loads with zero learner activity between them). Maths/English
+          // now follow Writing's own, already-correct, already-persistence-
+          // free pattern exactly: recomputed fresh from real Supabase
+          // evidence every load, held only in memory for this render, never
+          // written back to UserProgress. This view-only object feeds
+          // mission selection alone -- it is deliberately NOT passed to
+          // computeParentReport(), preserving 007W's own disclosed scoping
+          // decision (no Maths/English insight-card migration this
+          // increment) exactly as before, so this fix changes no other
+          // surface's behaviour.
+          const missionViewProgress: UserProgress = {
+            ...p,
+            aliCompetencySignal: {
+              ...p.aliCompetencySignal,
+              maths: toAliCompetencySignal(mathsSummary, "maths"),
+              english: toAliCompetencySignal(englishSummary, "english"),
+            },
+          };
 
           // Part 5 -- prove the preparation stage has real operational
           // value: when real evidence supports a stage beyond
@@ -424,14 +450,13 @@ export default function DashboardPage() {
             [writingSummary, mathsSummary, englishSummary],
             resolvePreparationClock(new Date())
           );
-          const adaptiveMission = computeAdaptiveState(refreshedProgress, correctedReport).dailyMission;
+          const adaptiveMission = computeAdaptiveState(missionViewProgress, correctedReport).dailyMission;
           const correctedMission =
             stage === "insufficient_evidence" ? adaptiveMission : { ...adaptiveMission, tagline: stagePrinciple(stage) };
 
           setReport(correctedReport);
-          setProgress(refreshedProgress);
           setMission(correctedMission);
-          setParentReport(computeParentReport(refreshedProgress, correctedReport, gamification));
+          setParentReport(computeParentReport(p, correctedReport, gamification));
         })().catch(() => {
           // Real ALI evidence is unreachable (offline, RLS, etc.) -- fail
           // open to the legacy report already set above, never block or

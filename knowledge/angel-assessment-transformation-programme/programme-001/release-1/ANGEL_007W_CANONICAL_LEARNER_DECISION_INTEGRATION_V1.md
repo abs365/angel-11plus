@@ -108,9 +108,9 @@ Grepped and read the real implementation (not just imports) behind all five rema
 | Recommendation Centre / Revision Planner / Admissions Readiness / Mock Readiness / Readiness Timeline | Presumed partial (unconfirmed) | **CONFIRMED ALREADY AUTHORITATIVE — no migration needed** |
 | `evidenceState.ts` | Legitimate adapter, retained | Unchanged — same verdict, reconfirmed |
 | `p.aliCompetencySignal` bridge (Writing key) | Active (007V) | Unchanged |
-| `p.aliCompetencySignal` bridge (Maths/English keys) | Not populated by real CSSE evidence (root cause) | **Populated by real CSSE evidence (this increment's fix)** |
+| `p.aliCompetencySignal` bridge (Maths/English keys) | Not populated by real CSSE evidence (root cause) | **Fed real CSSE evidence in memory only, every load, via `missionViewProgress` — never persisted to `localStorage` (corrected by the Bounded Live-Volatility Investigation, §19 below; the original persisted-write design was itself the volatility defect)** |
 | Subject cards (`app/learn/page.tsx`) | Not migrated, no live defect found | Unchanged — out of this increment's priority order |
-| Parent dashboard | Inherits corrected `AnalyticsReport` automatically | Unchanged mechanism; now also inherits the Maths/English signal via the same bridge |
+| Parent dashboard focus areas (`buildFocusAreas()`) | Inherits corrected `AnalyticsReport` automatically for Writing | **Also now structurally excludes Writing and Mock from ever being recommended as actionable focus-area cards while their Practice/Mock Eligible content is 0 (§19 below) — a related, previously-unguarded gap found and closed during the same investigation** |
 
 ---
 
@@ -158,10 +158,40 @@ New test files: `tests/lib/learningEngine/toAliCompetencySignal.test.ts` (6), `t
 
 ---
 
-## 18. Remaining risks / recommended next increment
+## 19. Bounded Live-Volatility Investigation (post-report addendum)
+
+Founder-authorised follow-up after §17's live baseline capture: three production dashboard loads on the same authenticated learner, seconds apart, no learner activity between loads, produced materially different Today's Mission recommendations. Treated as a genuine, undisclosed defect, not accepted without evidence.
+
+**Reproduction and root cause (confirmed by direct code reading, not guessed):** `app/dashboard/page.tsx`'s CSSE async block was calling `recordAliCompetencySignal("maths", ...)` and `("english", ...)` — which persists to `localStorage` via `saveProgress()` — as a side effect of every dashboard *view*. That persisted write then fed the *next* load's initial synchronous paint (computed from `getProgress()` before that load's own async correction lands), producing a load that mixed one load's real evidence with another load's timing. Writing's own correction (Decision 75) never had this problem because it is purely in-memory and was never persisted — Maths/English's new write (this increment's own addition) was the actual defect. **Classification: introduced by 007W**, not pre-existing — 007V's Writing-only pattern was already correct; 007W's extension of the same idea to two more subjects used a different, unsafe mechanism (persistent write) instead of replicating Writing's own safe one (in-memory only).
+
+**`recordAliCompetencySignal`, answered directly (Part 2):** (1) it was executed on every dashboard load, not at an educational-event boundary; (2) it wrote a full `AliCompetencySignal` (weak/mastered/attempted/recently-mastered competency lists) to `localStorage`; (3) this is a *cache* of real evidence, not new evidence itself — the underlying `ali_student_question_history` was never touched; (4) yes, the very next load's initial synchronous paint read it back before that load's own fetch resolved; (5) yes — repeated views could shift which subject the mission recommended, purely from viewing; (6) the write itself was idempotent given identical input (same signal in, same bytes out), but its *effect on subsequent renders* was not, because it changed what the *next* load's first paint read; (7) no deduplication key existed or was needed once removed; (8) two near-simultaneous loads could theoretically race on the same `localStorage` key, though this was not the primary defect; (9) yes — Maths and English could each resolve against whatever the last load happened to have written, independently; (10) no legacy state beyond `aliCompetencySignal` itself was touched.
+
+**Principle applied (Part 3):** viewing a dashboard is not a learning event. The fix makes Maths/English follow Writing's own already-correct pattern exactly: a `missionViewProgress` object built fresh in memory every load from real Supabase evidence, fed only to `computeAdaptiveState()`, never written back via `recordAliCompetencySignal`/`saveProgress`. No historical evidence was deleted — `ali_student_question_history` was never involved.
+
+**Writing card (Part 5):** "Worth focusing on next: Writing needs attention" is rendered by `lib/parentInsights.ts`'s `buildFocusAreas()` — a genuinely *actionable* card (a real `href` via `resolveSubjectHref()`, a "Daily" recommended frequency), not merely informational. It appeared only during the pre-correction transient paint (before `applyCanonicalWritingEvidence()` landed), which the existing "brief flash" tolerance (accepted for a stale percentage) does not adequately cover for an actionable recommendation to unavailable content. Fixed structurally: `buildFocusAreas()` now excludes any CSSE subject with zero actionable content (`writing`, and — a related, previously entirely unguarded gap found in the same pass — `mock-test`, which could otherwise be recommended by this same card once a learner had 4+ sessions, regardless of Mock Eligible being 0) at the single filter point every branch of the function reads from, removing the timing dependency entirely rather than narrowing the window.
+
+**Determinism contract (Part 6) and concurrency (Part 7):** `tests/lib/learningEngine/missionDeterminism.test.ts` (10 tests) proves the Core Product Invariant directly against the real `computeAdaptiveState()`/`toAliCompetencySignal()` functions: repeated calculation, repeated dashboard-style composition, mixed Maths+English evidence, tied-priority competencies, no evidence, strong evidence, Writing exclusion, Mock exclusion, and two independently-built "near-simultaneous load" objects proven to never share mutable state. `tests/lib/parentInsights.focusAreas.test.ts` (3 tests) proves the Writing/Mock focus-area exclusion directly, including a non-CSSE-pathway control.
+
+**Legacy interaction (Part 8):** with no persistence, there is no longer a mechanism by which a *later* load's first paint can read an *earlier* load's real-evidence write — the two systems (legacy synchronous first paint, real async correction) still exist, but their sequencing is now confined to a single load, never leaking into the next.
+
+---
+
+## 20. Verification (Bounded Live-Volatility Investigation)
+
+- TypeScript: clean.
+- Full suite: **471/471** (458 from §17 + 13 new: 10 `missionDeterminism`, 3 `parentInsights.focusAreas`).
+- Copy Quality Guard: PASS, 0 violations, 237 files.
+- Production build: succeeds.
+- Production counts re-queried live: **TOTAL 298, Practice Eligible 281, Mathematics PE 161, English PE 120, Writing PE 0, Provisional 17, Mock Eligible 0** — unchanged.
+- Live three-load verification: performed after deploy — see Decision 77 for the recorded result.
+
+---
+
+## 21. Remaining risks / recommended next increment
 
 - School year is not yet plumbed into the dashboard's stage computation (§5's disclosed gap) — a low-risk, additive follow-on.
 - Mathematics/English insight *card text* (avgScore/status) remains legacy-only by disclosed decision (§7-8), not a defect — worth revisiting only if a live discrepancy is ever found.
 - Preparation stage currently affects messaging only, not content mix or difficulty selection — a legitimate, larger future increment if the Founder wants stage-aware content emphasis, not attempted here to keep this change small and safe.
+- The remaining brief legacy-then-corrected flash on first paint (§17's own disclosed, accepted pattern) is now provably non-persistent and self-resolving within a single load, but a future increment could eliminate it entirely (e.g. a loading skeleton) if the Founder considers it worth the added complexity.
 
-**STOP. This report concludes 007W. No further increment is begun automatically.**
+**STOP. This report, together with the Bounded Live-Volatility Investigation above, concludes 007W. No further increment is begun automatically.**

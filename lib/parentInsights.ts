@@ -314,8 +314,21 @@ function buildFocusAreas(report: AnalyticsReport, p: UserProgress): FocusArea[] 
   // test (e.g. Verbal Reasoning). Applied here for the first time, same
   // function, same pattern as lib/adaptiveEngine.ts.
   const eligibleKeys = getEligibleSubjectKeys(p.selectedPathwayId);
+  // 007W Bounded Live-Volatility Investigation, Part 5 — a real, disclosed
+  // gap this increment's own live verification found: this focus-area card
+  // is actionable (a real href, a "Daily"/"This week" recommended
+  // frequency), so it must never recommend a subject with zero Practice
+  // Eligible content, exactly the same principle lib/adaptiveEngine.ts's
+  // buildDailyMission() already enforces for Today's Mission (mirrored
+  // here rather than shared, matching that guard's own disclosed,
+  // file-local convention). Applied at the single point every branch below
+  // reads from, so it also structurally prevents Mock ever appearing here
+  // while Mock Eligible is 0 — not previously guarded at all.
+  const CSSE_SUBJECTS_WITHOUT_ACTIONABLE_CONTENT = new Set<string>(["writing", "mock-test"]);
   const eligibleSubjects = report.subjects.filter(
-    (s) => s.subject === "mock-test" || eligibleKeys.has(s.subject)
+    (s) =>
+      (s.subject === "mock-test" || eligibleKeys.has(s.subject)) &&
+      !(p.selectedPathwayId === "csse" && CSSE_SUBJECTS_WITHOUT_ACTIONABLE_CONTENT.has(s.subject))
   );
 
   // 1. Weak subjects first — excludes ALI-covered subjects (Phase ALI 1.4),
