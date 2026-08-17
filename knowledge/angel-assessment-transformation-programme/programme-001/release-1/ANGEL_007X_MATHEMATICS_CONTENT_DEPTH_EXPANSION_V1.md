@@ -295,4 +295,46 @@ Full suite **492/492** (491 + 1 new: the reconciled `007xPendingReview.test.ts` 
 
 **Verdict: PASS WITH FINDINGS.** The one finding (§29.4) is real, disclosed, and does not affect data integrity, eligibility, or Mock/Writing/English boundaries — it affects only whether the Founder's own review UI will surface these targets correctly, which is precisely what still needs the §29.3 query to resolve with certainty.
 
+---
+
+## 30. Founder Review-Surface Correction
+
+The Founder's own authenticated §29.3 query confirmed §29.4's risk precisely: all four target families carry historical review state (`mr03-mixed-perimeter`: historical pending + historical approved content review + approved Mathematics Teaching Review; `precision-frac`/`precision-dec`: approved Mathematics Teaching Review; `mr05-number-property-search`: none) coexisting with new 007X pending records, **and each family carries two duplicate 007X pending placeholders** (a detailed one created around 17:29 UTC, a short one around 17:49 UTC).
+
+### 30.1 Duplicate-placeholder root cause (traced with direct evidence, not speculation)
+
+`git show 0e926d3:supabase/migrations/067_007x_pending_review_records.sql` — the originally committed migration 067 (this increment's own first draft, before the §29.1 SQL Editor incident and reconciliation) — contains, verbatim, the exact prose the Founder's "detailed" 17:29 record carries (`"Educational Increment 007X, Part 8. 5 new provisional questions (mr05-search-03..07) added to this pre-existing, Phase-B-deferred TRANSFER-UNSAFE family..."`). This is direct, conclusive evidence that a variant of that original `values()`-table INSERT (likely with its problematic header comment reduced or stripped to work around the SQL Editor parsing issue, while its body and full prose notes were kept intact) executed successfully first, at 17:29. The short 17:49 records match, verbatim, the later, fully reconciled, comment-free four-statement form now committed at `934e7f6` (§29.1) — the version the Founder described as the "minimal executable-only version" that finally produced "Success. No rows returned." Both are genuine, valid attempts at the same underlying migration; neither is corrupted or wrong on its own, but together they left two rows per family. **Not deleted or mutated** — append-only history preserved exactly as instructed.
+
+**Forward-looking prevention (no code change required, since the new derivation is already duplicate-safe — see §30.4):** future review-placeholder migrations should be drafted in the comment-free, explicit `INSERT...SELECT...WHERE NOT EXISTS` style from the outset (the form this incident converged on), rather than the prose-heavy `values()`-table style that triggered the SQL Editor's parsing/safety-analysis behaviour in the first place — reducing the chance a retry-under-parser-pressure produces a second, textually-different (and therefore not idempotency-guard-catchable) row for the same target.
+
+### 30.2 Review-status derivation, before and after
+
+**Before:** `fetchReviewedTargetIds()` (family-level: any non-pending `content_review` row for a `family_id`, regardless of which questions it covered) combined with `FullBacklogSection`'s `!reviewedIds.has(t.id)` exclusion and `Batch4Section`'s `.find()`-first-match — see §29.4. Confirmed live: `precision-frac`/`precision-dec` (approved Mathematics Teaching Review exists, but that is `review_type = 'maths_teaching_review'`, not `content_review`, so `fetchReviewedTargetIds()` itself would NOT have falsely excluded them; the real risk there was a possible content_review approval, which the Founder's evidence shows does not exist for these two, so §29.4's worst case for these two did not materialise, though the architectural gap was still real and is still fixed below). `mr03-mixed-perimeter` DOES have a historical approved `content_review` row, confirming §29.4's `Batch4Section` `.find()`-ambiguity risk was live and real for this family.
+
+**After:** a new, dedicated, batch-marker-scoped derivation (`deriveSevenXReviewStatus()`/`fetchSevenXReviewStatus()`, `lib/adminReview.ts`) that only counts a `content_review` decision as "007X reviewed" if its `notes` contain the stable `SEVEN_X_BATCH_MARKER` (`"007X"`) substring, present in every 007X-related row regardless of which of the two duplicate forms produced it (§30.1), absent from every historical Batch 2-4/Phase B row (which predate 007X and cannot mention it). A `maths_teaching_review` row can never satisfy this at all, since the query itself is scoped to `review_type = 'content_review'`.
+
+### 30.3 Exact 14-question review scope (Part 2)
+
+`SEVEN_X_FAMILIES` (`lib/adminReview.ts`, moved there from the page component for direct testability): `mr05-number-property-search` (5: `mr05-search-03..07`), `mr03-mixed-perimeter` (3: `mr03-mix-04..06`, plus `mth-003` shown separately as reclassified-not-new), `precision-frac` (3: `precision-frac-04..06`), `precision-dec` (3: `precision-dec-04..06`). Exactly 14 new questions, verified directly (`tests/lib/adminReview.sevenX.test.ts`).
+
+### 30.4 UI correction (Part 2/3/4)
+
+A dedicated **"007X Mathematics Content Review"** section (`SevenXSection`, `app/admin-beta/review/page.tsx`) was added, positioned alongside (not replacing) the existing `SevenTSection`/batch sections, and `SEVEN_X_TARGET_IDS` was added to `FullBacklogSection`'s own exclusion list so these 4 families are never ALSO shown in the generic backlog. Each family card shows the new-question count, reclassified-row count where applicable, and a reviewed/not-reviewed badge driven exclusively by `fetchSevenXReviewStatus()`, never `reviewedIds`. Opening a card renders `ReviewForm` with a new optional `sevenX` prop that: (a) fetches exactly the family's new question IDs via a new `fetchQuestionsByIds()` function (never the family-wide `fetchRepresentativeQuestions()`), (b) separately fetches and displays any reclassified-but-unchanged row (`mth-003`) under its own "Reclassified, not new" heading, (c) renders a fixed amber disclosure banner stating "Reviewing newly authored content only" plus the family-specific text explaining exactly which prior approval exists and that it does not cover this batch, (d) for `mr05-number-property-search` specifically, states the family remains TRANSFER-UNSAFE and that these siblings do not on their own make it mature teaching content, and (e) on submission, prefixes the review's own `notes` with `buildSevenXNotesPrefix()` (the same batch marker plus the exact question IDs decided upon) before calling the existing, unmodified `submitReview()`, so the resulting decision row is itself correctly recognisable by the same derivation, not just the pending placeholder it resolves.
+
+### 30.5 Schema changes
+
+**None.** Part 4's own escape hatch ("if the schema genuinely cannot represent this, stop and report the smallest extension needed") was not needed: the existing `notes` free-text field, already present and already used this way for `mth-003`'s own disclosure precedent, was sufficient once a stable, always-present marker substring was adopted as the scoping key. No new column, no new `review_type` value, no new table.
+
+### 30.6 Tests added (Part 8, all 10 items covered)
+
+`tests/lib/adminReview.sevenX.test.ts` (13 tests): historical content approval does not satisfy 007X review; `maths_teaching_review` does not satisfy it; duplicate pending placeholders collapse to one status, not duplicate cards; `buildSevenXNotesPrefix` correctness; `mr03-mixed-perimeter`/`precision-frac`/`precision-dec`/`mr05-number-property-search` each independently proven reviewable despite their respective historical state; a genuine post-submission 007X approval IS correctly recognised; exactly the 14 real question IDs (matching migration 066) appear in scope, no more no less; `SEVEN_X_TARGET_IDS` covers exactly the 4 families; `mth-003` is disclosed as reclassified-not-new under `mr03-mixed-perimeter` only, never counted as a new question; the review-scope config contains no activation/Mock-eligibility mechanism.
+
+### 30.7 Regression, deployment, and readiness
+
+Full suite **505/505** (492 + 13). TypeScript clean. Copy Quality Guard PASS (0 violations, 237 files — 2 em-dash violations were found and fixed in the new disclosure copy during this same pass, since `app/admin-beta/review/page.tsx` and `lib/adminReview.ts` are both within the guard's scan scope). Production build succeeds. **Production counts, re-queried live after all this work: TOTAL 312, Practice Eligible 281, Mathematics PE 161, Writing PE 0, Provisional 31, Mock Eligible 0, unchanged from §29.6, since this correction made zero database writes.** No historical `ali_family_review` row was modified or deleted. `mth-003` remains exactly as verified in §29.2.
+
+**The 007X Founder review is genuinely ready to perform** once this correction deploys: `/admin-beta/review` → "007X Mathematics Content Review" section.
+
+---
+
 **STOP. This report concludes 007X. No activation performed. No further increment begun automatically.**

@@ -854,6 +854,151 @@ export async function fetchReviewedTargetIds(): Promise<Set<string>> {
   return new Set(data.map((r) => r.family_id));
 }
 
+/**
+ * Educational Increment 007X, Founder Review-Surface Correction — the
+ * stable, notes-text batch marker every 007X-related ali_family_review
+ * row carries (both the original values()-table draft's prose, "Educational
+ * Increment 007X, Part...", and the applied minimal form's "007X new
+ * content review: ..." — see migration 067 and Decision 79 — contain this
+ * exact substring). A family-level "Reviewed" boolean (fetchReviewedTargetIds
+ * above) cannot distinguish "this family's ORIGINAL siblings were approved"
+ * from "this family has newly authored siblings still awaiting review" —
+ * both produce the same family_id with an approved content_review row. This
+ * marker is the smallest safe extension of the existing schema (no new
+ * column, no new review_type, no new table) that makes that distinction
+ * queryable: a decision only counts as "007X reviewed" if its notes
+ * mention this marker, so a historical Batch 2-4 / Phase B approval (which
+ * predates 007X and never mentions it) can never satisfy it.
+ */
+export const SEVEN_X_BATCH_MARKER = "007X";
+
+export interface SevenXReviewStatus {
+  reviewed: boolean;
+  decision: ReviewDecision | null;
+  reviewer: string | null;
+}
+
+export interface SevenXReviewRow {
+  family_id: string;
+  review_type: string;
+  decision: string;
+  notes: string | null;
+  reviewer: string;
+}
+
+/**
+ * Pure core of fetchSevenXReviewStatus, directly unit-testable
+ * (tests/lib/adminReview.sevenX.test.ts) against constructed rows
+ * mirroring the exact shape of real historical + new evidence (a family
+ * with a historical pending content review, a historical APPROVED content
+ * review, an approved maths_teaching_review, and a new 007X pending
+ * placeholder — sometimes duplicated — all coexisting, per Decision 79's
+ * authenticated evidence). `rows` is assumed already filtered to
+ * `review_type = 'content_review'` (the caller's own Supabase query does
+ * this); this function's own extra `review_type` check is a second,
+ * defensive guard in case a caller ever forgets to filter server-side.
+ */
+export function deriveSevenXReviewStatus(rows: SevenXReviewRow[], familyIds: string[]): Map<string, SevenXReviewStatus> {
+  const result = new Map<string, SevenXReviewStatus>(familyIds.map((id) => [id, { reviewed: false, decision: null, reviewer: null }]));
+  for (const row of rows) {
+    if (row.review_type !== "content_review") continue;
+    if (row.decision === "pending_independent_review") continue;
+    if (!row.notes || !row.notes.includes(SEVEN_X_BATCH_MARKER)) continue;
+    if (!result.has(row.family_id)) continue;
+    result.set(row.family_id, { reviewed: true, decision: row.decision as ReviewDecision, reviewer: row.reviewer });
+  }
+  return result;
+}
+
+/**
+ * Per-family "has this specific 007X batch of newly authored siblings been
+ * reviewed" status — deliberately NOT derived from fetchReviewedTargetIds()
+ * (family-level, batch-blind). Only a non-pending content_review row whose
+ * notes contain SEVEN_X_BATCH_MARKER counts; an approved maths_teaching_review
+ * (a different review_type entirely) or a historical content_review that
+ * predates 007X can never satisfy this, however many duplicate pending
+ * placeholders exist underneath (duplicates are collapsed here into a
+ * single boolean per family, so they can never produce duplicate review
+ * cards in the UI). Thin I/O wrapper — all real logic lives in
+ * deriveSevenXReviewStatus above.
+ */
+export async function fetchSevenXReviewStatus(familyIds: string[]): Promise<Map<string, SevenXReviewStatus>> {
+  const supabase = getSupabaseClient();
+  if (!supabase) return deriveSevenXReviewStatus([], familyIds);
+  const { data, error } = await supabase
+    .from("ali_family_review")
+    .select("family_id, review_type, decision, notes, reviewer, created_at")
+    .in("family_id", familyIds)
+    .eq("review_type", "content_review")
+    .order("created_at", { ascending: true });
+  if (error || !data) return deriveSevenXReviewStatus([], familyIds);
+  return deriveSevenXReviewStatus(data, familyIds);
+}
+
+/**
+ * Pure: the fixed disclosure line prepended to a 007X review's notes
+ * before it is submitted through the existing submitReview() (never a
+ * second review system) — this is what makes the resulting APPROVED row
+ * itself, not just the pending placeholder, identifiable as covering
+ * specifically these question IDs rather than the whole family.
+ */
+export function buildSevenXNotesPrefix(familyId: string, questionIds: string[]): string {
+  return `${SEVEN_X_BATCH_MARKER} New Content Review for ${familyId}. Question IDs: ${questionIds.join(", ")}.`;
+}
+
+export interface SevenXFamilyConfig {
+  familyId: string;
+  newQuestionIds: string[];
+  reclassified?: { id: string; note: string }[];
+  disclosure: string;
+}
+
+/**
+ * Educational Increment 007X, Founder Review-Surface Correction — the
+ * exact 14 newly authored Mathematics questions (plus 1 metadata-only
+ * reclassified legacy row, mth-003) from migration 066, one entry per
+ * target family. Lives here (not app/admin-beta/review/page.tsx, where
+ * PILOT_TARGET_IDS/BATCH2_TARGET_IDS/etc. live) so its exact question-ID
+ * scope is directly unit-testable without a React/JSX dependency,
+ * matching MATHS_TEACHING_REVIEW_TARGET_IDS's own precedent above. Built
+ * as its own dedicated review section (matching the SEVEN_T_* UI
+ * precedent) rather than relying on FullBacklogSection's family-level
+ * reviewedIds exclusion, because all 4 of these families already carry
+ * historical review decisions (content and/or teaching) that must never
+ * be read as covering this new content — see Decision 79 and
+ * ANGEL_007X_MATHEMATICS_CONTENT_DEPTH_EXPANSION_V1.md §29.4.
+ */
+export const SEVEN_X_FAMILIES: SevenXFamilyConfig[] = [
+  {
+    familyId: "mr05-number-property-search",
+    newQuestionIds: ["mr05-search-03", "mr05-search-04", "mr05-search-05", "mr05-search-06", "mr05-search-07"],
+    disclosure:
+      "This family has no prior content or teaching review, and remains classified TRANSFER-UNSAFE (its 2 original siblings were too structurally similar to demonstrate independent transfer). These 5 new siblings genuinely vary the searched property, but that does not make them fully mature teaching content on its own. This review judges the new questions themselves, not the family's teaching-maturity status.",
+  },
+  {
+    familyId: "mr03-mixed-perimeter",
+    newQuestionIds: ["mr03-mix-04", "mr03-mix-05", "mr03-mix-06"],
+    reclassified: [
+      { id: "mth-003", note: "Pre-existing question, metadata-reclassified into this family this increment (007X). Its question content, working, answer, and eligibility_status (provisional) were unchanged: only its family_id was set." },
+    ],
+    disclosure:
+      "This family's 3 original siblings already have an approved content review AND an approved Mathematics Teaching Review. Neither covers these 3 newly authored siblings, which have not been reviewed before.",
+  },
+  {
+    familyId: "precision-frac",
+    newQuestionIds: ["precision-frac-04", "precision-frac-05", "precision-frac-06"],
+    disclosure:
+      "This family's 3 original siblings already have an approved Mathematics Teaching Review. That review predates these 3 newly authored siblings and does not cover them.",
+  },
+  {
+    familyId: "precision-dec",
+    newQuestionIds: ["precision-dec-04", "precision-dec-05", "precision-dec-06"],
+    disclosure:
+      "This family's 3 original siblings already have an approved Mathematics Teaching Review. That review predates these 3 newly authored siblings and does not cover them.",
+  },
+];
+export const SEVEN_X_TARGET_IDS = SEVEN_X_FAMILIES.map((f) => f.familyId);
+
 export const DIFFICULTY_RANK: Record<string, number> = { easy: 0, medium: 1, hard: 2 };
 
 /** Pure: true difficulty order (easy -> medium -> hard), not the database's default alphabetical order, which would wrongly place "hard" before "medium". Exported and unit-tested directly (tests/lib/adminReview.test.ts). */
@@ -869,17 +1014,13 @@ export function computeDifficultyRange(difficulties: string[]): string {
   return `${distinct[0]} to ${distinct[distinct.length - 1]}`;
 }
 
-/** Up to `limit` real questions for a family — the reviewer's representative + boundary sample (Operating Model §3), not the full sibling set. */
-export async function fetchRepresentativeQuestions(familyId: string, limit = 8): Promise<RepresentativeQuestion[]> {
-  const supabase = getSupabaseClient();
-  if (!supabase) return [];
-  const { data, error } = await supabase
-    .from("ali_question_bank")
-    .select("id, subject, skill, prompt, family_id, learning_unit_id, content_difficulty, transfer_class, addresses_misconception, content_version, active, provenance, eligibility_status")
-    .eq("family_id", familyId)
-    .limit(limit);
-  if (error || !data) return [];
-  const mapped = data.map((r) => ({
+/** Shared row -> RepresentativeQuestion mapping, reused by every fetch* function below so a future column addition only needs to change one place. */
+function mapQuestionRow(r: {
+  id: string; subject: string; skill: string; prompt: unknown; family_id: string | null; learning_unit_id: string | null;
+  content_difficulty: string; transfer_class: string | null; addresses_misconception: string | null;
+  content_version: number; active: boolean; provenance: string | null; eligibility_status: string;
+}): RepresentativeQuestion {
+  return {
     id: r.id, subject: r.subject, skill: r.skill,
     question: promptText(r.prompt, "question"),
     modelAnswer: promptText(r.prompt, "modelAnswer"),
@@ -888,8 +1029,43 @@ export async function fetchRepresentativeQuestions(familyId: string, limit = 8):
     addressesMisconception: r.addresses_misconception, contentVersion: r.content_version,
     active: r.active, provenance: r.provenance, eligibilityStatus: r.eligibility_status,
     workingSteps: promptWorkingSteps(r.prompt),
-  }));
-  return sortByDifficulty(mapped);
+  };
+}
+
+const QUESTION_SELECT_COLUMNS = "id, subject, skill, prompt, family_id, learning_unit_id, content_difficulty, transfer_class, addresses_misconception, content_version, active, provenance, eligibility_status";
+
+/** Up to `limit` real questions for a family — the reviewer's representative + boundary sample (Operating Model §3), not the full sibling set. */
+export async function fetchRepresentativeQuestions(familyId: string, limit = 8): Promise<RepresentativeQuestion[]> {
+  const supabase = getSupabaseClient();
+  if (!supabase) return [];
+  const { data, error } = await supabase
+    .from("ali_question_bank")
+    .select(QUESTION_SELECT_COLUMNS)
+    .eq("family_id", familyId)
+    .limit(limit);
+  if (error || !data) return [];
+  return sortByDifficulty(data.map(mapQuestionRow));
+}
+
+/**
+ * Educational Increment 007X, Founder Review-Surface Correction, Part 2 —
+ * the exact-ID-scoped counterpart to fetchRepresentativeQuestions() above.
+ * Used to show a bounded batch's own newly authored siblings (e.g. 007X's
+ * 14 new Mathematics questions) without also pulling in every OTHER
+ * sibling a shared family_id happens to have — the family-level fetch is
+ * the wrong tool once a family can contain both long-reviewed and
+ * newly-authored, not-yet-reviewed content at once.
+ */
+export async function fetchQuestionsByIds(ids: string[]): Promise<RepresentativeQuestion[]> {
+  if (ids.length === 0) return [];
+  const supabase = getSupabaseClient();
+  if (!supabase) return [];
+  const { data, error } = await supabase
+    .from("ali_question_bank")
+    .select(QUESTION_SELECT_COLUMNS)
+    .in("id", ids);
+  if (error || !data) return [];
+  return sortByDifficulty(data.map(mapQuestionRow));
 }
 
 export interface TargetSummary {

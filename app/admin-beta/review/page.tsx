@@ -16,8 +16,9 @@ import {
   ENGLISH_TEACHING_REVIEW_METADATA, ENGLISH_TEACHING_CONTENT_VERSION, ENGLISH_TEACHING_REVIEW_TARGET_IDS,
   fetchWritingTeachingReviewedFamilyIds, submitWritingTeachingReview,
   WRITING_TEACHING_CONTENT_VERSION, WRITING_TEACHING_REVIEW_TARGET_IDS,
+  fetchQuestionsByIds, fetchSevenXReviewStatus, buildSevenXNotesPrefix, SEVEN_X_FAMILIES, SEVEN_X_TARGET_IDS,
   type PendingReviewTarget, type RepresentativeQuestion, type PassageDetail, type ReviewDecision, type ReviewSubmission,
-  type TargetSummary, type MathsTeachingReviewSubmission,
+  type TargetSummary, type MathsTeachingReviewSubmission, type SevenXReviewStatus, type SevenXFamilyConfig,
 } from "@/lib/adminReview";
 import { getExamStrategyHint, getWorkedExample } from "@/lib/learningEngine/englishExamStrategies";
 import { getGuidedScaffoldKind, getGuidedInstructionText } from "@/lib/learningEngine/guidedPractice";
@@ -184,6 +185,7 @@ const FAMILY_DISPLAY_NAME: Record<string, string> = {
   "mr05-number-property": "Number Property Definitions",
   "precision-dec": "Rounding to a Decimal Place",
   "precision-frac": "Exact Fractional Answers",
+  "mr05-number-property-search": "Searching for a Number with a Property",
   "writing-reflective-discursive": "Reflective and Discursive Writing",
   // Educational Increment 007T — first controlled content batch (provisional, not yet activated).
   "mr01-whole-number-computation": "Whole-Number Direct Arithmetic",
@@ -283,7 +285,33 @@ function SectionTitle({ letter, title }: { letter: string; title: string }) {
 
 // ─── Full review form (per Founder's A-F ordering) ─────────────────────────
 
-function ReviewForm({ target, onDone, reviewType = "content_review" }: { target: PendingReviewTarget; onDone: () => void; reviewType?: "content_review" | "english_teaching_review" }) {
+function ReviewForm({
+  target, onDone, reviewType = "content_review", sevenX,
+}: {
+  target: PendingReviewTarget;
+  onDone: () => void;
+  reviewType?: "content_review" | "english_teaching_review";
+  /**
+   * Educational Increment 007X, Founder Review-Surface Correction — when
+   * set, this review is scoped to a specific, newly authored batch of
+   * sibling questions within `target.id`'s family, not the family's full
+   * sibling set. `questionIds` are shown as the reviewable content (via
+   * fetchQuestionsByIds, not the family-wide fetchRepresentativeQuestions);
+   * `reclassified` are shown separately, disclosed as unchanged content
+   * whose family_id metadata moved this batch, never counted as "new."
+   * `disclosure` is a fixed banner making explicit that any earlier
+   * approval of this family does not cover this batch. On submit, the
+   * resulting review row's notes are prefixed with a stable batch marker
+   * (buildSevenXNotesPrefix) so the SAME distinction holds for the
+   * decision this form itself produces, not only for the pending
+   * placeholder that preceded it.
+   */
+  sevenX?: {
+    questionIds: string[];
+    reclassified?: { id: string; note: string }[];
+    disclosure: string;
+  };
+}) {
   const [reviewerName, setReviewerName] = useState("");
   const [submission, setSubmission] = useState<ReviewSubmission>(() => emptySubmission(target, ""));
   const [passage, setPassage] = useState<PassageDetail | null>(null);
@@ -316,10 +344,26 @@ function ReviewForm({ target, onDone, reviewType = "content_review" }: { target:
   const remediationLabels = target.reviewTargetType === "question_family" && isEnglish ? getRemediationLabels(target.id) : [];
   const markingBasis = FAMILY_MARKING_BASIS[target.id];
 
+  const [reclassifiedQuestions, setReclassifiedQuestions] = useState<RepresentativeQuestion[]>([]);
+
   useEffect(() => {
     (async () => {
       setLoading(true);
-      if (target.reviewTargetType === "passage") {
+      if (sevenX) {
+        // Educational Increment 007X, Founder Review-Surface Correction —
+        // exact-ID-scoped, never the family-wide fetch: a family can
+        // contain long-approved siblings alongside these newly authored
+        // ones, and this view must show only the latter (plus, separately,
+        // any reclassified-but-unchanged row).
+        const [newQs, reclassifiedQs] = await Promise.all([
+          fetchQuestionsByIds(sevenX.questionIds),
+          sevenX.reclassified && sevenX.reclassified.length > 0
+            ? fetchQuestionsByIds(sevenX.reclassified.map((r) => r.id))
+            : Promise.resolve([]),
+        ]);
+        setQuestions(newQs);
+        setReclassifiedQuestions(reclassifiedQs);
+      } else if (target.reviewTargetType === "passage") {
         const [p, qs] = await Promise.all([fetchPassageDetail(target.id), fetchQuestionsForPassage(target.id)]);
         setPassage(p);
         setQuestions(qs);
@@ -342,12 +386,22 @@ function ReviewForm({ target, onDone, reviewType = "content_review" }: { target:
     }
     setSubmitting(true);
     setSubmitError("");
+    // Educational Increment 007X, Founder Review-Surface Correction — the
+    // resulting decision row's own notes are prefixed with the same
+    // 007X batch marker fetchSevenXReviewStatus() looks for, so this
+    // decision is itself correctly identifiable as covering only this
+    // batch's question IDs, not the whole family, exactly like the
+    // pending placeholder it resolves. Reuses submitReview() unchanged —
+    // no second review system, no new review_type, no schema change.
+    const submissionToSend = sevenX
+      ? { ...submission, notes: `${buildSevenXNotesPrefix(target.id, sevenX.questionIds)}\n\n${submission.notes}`.trim() }
+      : submission;
     // CSSE Completion Programme Phase C, Part 13 — reviewType routes to a
     // distinct review_type on the same table (migration 060), never
     // conflated with a content_review row for the same family. Every
     // other field/validation/notes-building path is identical; only which
     // row is inserted differs.
-    const { error } = reviewType === "english_teaching_review" ? await submitEnglishTeachingReview(submission) : await submitReview(submission);
+    const { error } = reviewType === "english_teaching_review" ? await submitEnglishTeachingReview(submissionToSend) : await submitReview(submissionToSend);
     setSubmitting(false);
     if (error) {
       setSubmitError(error);
@@ -392,7 +446,33 @@ function ReviewForm({ target, onDone, reviewType = "content_review" }: { target:
         <p className="text-[11px] text-gray-300 dark:text-gray-600 mt-1 font-mono break-all">{target.id}</p>
       </Card>
 
+      {sevenX && (
+        <div className="bg-amber-50 dark:bg-amber-950/40 border-2 border-amber-200 dark:border-amber-800 rounded-2xl p-4">
+          <p className="text-sm font-bold text-amber-900 dark:text-amber-200">Reviewing newly authored content only</p>
+          <p className="text-xs text-amber-800 dark:text-amber-300 mt-1 leading-relaxed">{sevenX.disclosure}</p>
+          <p className="text-xs text-amber-800 dark:text-amber-300 mt-2 font-semibold">
+            {sevenX.questionIds.length} new question{sevenX.questionIds.length === 1 ? "" : "s"} below require your review. Earlier siblings in this family are not part of this decision.
+          </p>
+        </div>
+      )}
+
       {loading && <p className="text-sm text-gray-400 dark:text-gray-500">Loading content…</p>}
+
+      {!loading && sevenX && reclassifiedQuestions.length > 0 && (
+        <Card>
+          <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">Reclassified, not new</p>
+          {sevenX.reclassified?.map((r) => {
+            const q = reclassifiedQuestions.find((rq) => rq.id === r.id);
+            return (
+              <div key={r.id} className="mt-2 border-t border-gray-100 dark:border-gray-800 pt-2 first:border-0 first:pt-0">
+                <p className="text-[11px] text-gray-400 dark:text-gray-500 font-mono">{r.id}</p>
+                <p className="text-xs text-gray-600 dark:text-gray-400 mt-0.5">{r.note}</p>
+                {q && <p className="text-sm text-gray-800 dark:text-gray-200 mt-1">{q.question}</p>}
+              </div>
+            );
+          })}
+        </Card>
+      )}
 
       {!loading && educationalContext && (
         <Card>
@@ -1413,6 +1493,66 @@ function SevenTSection({ targets, reviewedIds, onOpen }: { targets: PendingRevie
 }
 
 /**
+ * Educational Increment 007X, Founder Review-Surface Correction — a
+ * dedicated section for the 14 newly authored Mathematics questions,
+ * built because all 4 target families already carry historical review
+ * decisions a family-level "Reviewed" boolean cannot distinguish from
+ * approval of this new content (Decision 79). `sevenXStatus` (from
+ * fetchSevenXReviewStatus, batch-marker-scoped) drives the reviewed
+ * badge here, never the shared family-level `reviewedIds` every other
+ * section uses. Each card opens a ReviewForm scoped to exactly that
+ * family's new question IDs (ReviewForm's own `sevenX` prop), never the
+ * family's full sibling set.
+ */
+function SevenXSection({
+  targets, sevenXStatus, onOpen,
+}: {
+  targets: PendingReviewTarget[];
+  sevenXStatus: Map<string, SevenXReviewStatus>;
+  onOpen: (t: PendingReviewTarget, sevenX: SevenXFamilyConfig) => void;
+}) {
+  const reviewedCount = SEVEN_X_FAMILIES.filter((f) => sevenXStatus.get(f.familyId)?.reviewed).length;
+  return (
+    <div className="bg-white dark:bg-gray-900 rounded-2xl border-2 border-amber-200 dark:border-amber-800 overflow-hidden">
+      <div className="px-5 py-4 border-b border-amber-100 dark:border-amber-900 bg-amber-50 dark:bg-amber-950/40">
+        <p className="text-sm font-bold text-amber-900 dark:text-amber-200">007X Mathematics Content Review</p>
+        <p className="text-xs text-amber-600 dark:text-amber-400 mt-0.5">{reviewedCount} of {SEVEN_X_FAMILIES.length} families reviewed. 14 new questions total.</p>
+        <div className="mt-2 text-xs text-amber-800 dark:text-amber-300 space-y-0.5">
+          <p>• All 14 new questions remain PROVISIONAL. Reviewing a family does not activate it.</p>
+          <p>• Every family below already has an earlier approval for its ORIGINAL siblings. That earlier approval does not cover the new questions shown here.</p>
+          <p>• mr05-number-property-search remains classified TRANSFER-UNSAFE; these new siblings do not automatically change that.</p>
+          <p>• No Mock content is involved anywhere in this batch.</p>
+        </div>
+      </div>
+      <div className="divide-y divide-gray-50 dark:divide-gray-800">
+        {SEVEN_X_FAMILIES.map((f) => {
+          const status = sevenXStatus.get(f.familyId);
+          const pendingTarget = targets.find((t) => t.id === f.familyId && (t.notes ?? "").includes("007X"));
+          return (
+            <button
+              key={f.familyId}
+              disabled={!pendingTarget}
+              onClick={() => pendingTarget && onOpen(pendingTarget, f)}
+              className="w-full text-left px-5 py-3 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors flex items-center justify-between gap-3 disabled:opacity-50"
+            >
+              <div>
+                <p className="text-sm font-medium text-gray-900 dark:text-gray-100">{FAMILY_DISPLAY_NAME[f.familyId] ?? formatFallbackName(f.familyId)}</p>
+                <p className="text-[11px] text-gray-400 dark:text-gray-500 mt-0.5">
+                  {f.newQuestionIds.length} new question{f.newQuestionIds.length === 1 ? "" : "s"}
+                  {f.reclassified && f.reclassified.length > 0 ? ` + ${f.reclassified.length} reclassified` : ""}
+                  {status?.reviewed ? ` · reviewed (${status.decision})` : " · not yet reviewed"}
+                </p>
+              </div>
+              {status?.reviewed ? <CheckCircle2 size={16} className="text-emerald-500 shrink-0" /> : <ArrowRight size={14} className="text-gray-300 dark:text-gray-600 shrink-0" />}
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+/**
  * Educational Increment 007T, Migration 064 Review-Surface Reconciliation
  * Part 6 correction — `reviewedIds` (now scoped to review_type =
  * 'content_review', see fetchReviewedTargetIds()) is cross-referenced
@@ -1429,7 +1569,8 @@ function FullBacklogSection({ targets, reviewedIds, onOpen }: { targets: Pending
   const [open, setOpen] = useState(false);
   const backlogTargets = targets.filter((t) =>
     !PILOT_TARGET_IDS.includes(t.id) && !BATCH2_TARGET_IDS.includes(t.id) && !BATCH3_TARGET_IDS.includes(t.id) &&
-    !BATCH4_TARGET_IDS.includes(t.id) && !SEVEN_T_TARGET_IDS.includes(t.id) && !reviewedIds.has(t.id));
+    !BATCH4_TARGET_IDS.includes(t.id) && !SEVEN_T_TARGET_IDS.includes(t.id) && !SEVEN_X_TARGET_IDS.includes(t.id) &&
+    !reviewedIds.has(t.id));
 
   return (
     <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 overflow-hidden">
@@ -1562,16 +1703,20 @@ function ReviewDashboard() {
   const [selectedEnglishTeachingFamilyId, setSelectedEnglishTeachingFamilyId] = useState<string | null>(null);
   const [writingTeachingReviewedIds, setWritingTeachingReviewedIds] = useState<Set<string>>(new Set());
   const [selectedWritingTeachingFamilyId, setSelectedWritingTeachingFamilyId] = useState<string | null>(null);
+  const [sevenXStatus, setSevenXStatus] = useState<Map<string, SevenXReviewStatus>>(new Map());
+  const [selectedSevenX, setSelectedSevenX] = useState<{ target: PendingReviewTarget; family: SevenXFamilyConfig } | null>(null);
 
   async function load() {
-    const [pending, reviewed, teachingReviewed, englishTeachingReviewed, writingTeachingReviewed] = await Promise.all([
+    const [pending, reviewed, teachingReviewed, englishTeachingReviewed, writingTeachingReviewed, sevenX] = await Promise.all([
       fetchPendingReviewTargets(), fetchReviewedTargetIds(), fetchMathsTeachingReviewedFamilyIds(), fetchEnglishTeachingReviewedFamilyIds(), fetchWritingTeachingReviewedFamilyIds(),
+      fetchSevenXReviewStatus(SEVEN_X_TARGET_IDS),
     ]);
     setTargets(pending);
     setReviewedIds(reviewed);
     setTeachingReviewedIds(teachingReviewed);
     setEnglishTeachingReviewedIds(englishTeachingReviewed);
     setWritingTeachingReviewedIds(writingTeachingReviewed);
+    setSevenXStatus(sevenX);
   }
 
   useEffect(() => { load(); }, []);
@@ -1593,6 +1738,17 @@ function ReviewDashboard() {
     return <ReviewForm target={selected} onDone={() => { setSelected(null); load(); }} />;
   }
 
+  if (selectedSevenX) {
+    const { target, family } = selectedSevenX;
+    return (
+      <ReviewForm
+        target={target}
+        onDone={() => { setSelectedSevenX(null); load(); }}
+        sevenX={{ questionIds: family.newQuestionIds, reclassified: family.reclassified, disclosure: family.disclosure }}
+      />
+    );
+  }
+
   if (targets === null) return <p className="text-sm text-gray-400 dark:text-gray-500">Loading review pilot…</p>;
 
   return (
@@ -1612,6 +1768,7 @@ function ReviewDashboard() {
       <Batch3Section targets={targets} reviewedIds={reviewedIds} onOpen={setSelected} />
       <Batch4Section targets={targets} reviewedIds={reviewedIds} onOpen={setSelected} />
       <SevenTSection targets={targets} reviewedIds={reviewedIds} onOpen={setSelected} />
+      <SevenXSection targets={targets} sevenXStatus={sevenXStatus} onOpen={(target, family) => setSelectedSevenX({ target, family })} />
       <FullBacklogSection targets={targets} reviewedIds={reviewedIds} onOpen={setSelected} />
       </>
       )}
