@@ -110,6 +110,38 @@ const BATCH4_TARGET_IDS = [
   "mr04-far-recipe",
 ];
 
+/**
+ * Educational Increment 007T, Post-Migration 064 Review-Surface
+ * Reconciliation — root cause of the missing "007T Content Review"
+ * section: FullBacklogSection's own filter only excludes the four
+ * hardcoded arrays above (PILOT/BATCH2/BATCH3/BATCH4). Migration 064's 11
+ * targets (whether or not they exist live — this section renders an
+ * honest empty state per group if they do not, exactly like every batch
+ * section above) were never added to a named array, so they would fall
+ * into the generic, unlabelled backlog regardless of whether migration
+ * 064 itself succeeded. Split into 3 named sub-arrays (not one flat list)
+ * so Mathematics, English Effect-of-Language, and Passages can be shown
+ * as clearly separated groups, per the Founder's explicit instruction.
+ */
+const SEVEN_T_MATHS_TARGET_IDS = [
+  "mr01-whole-number-computation",
+  "mr01-decimal-computation",
+  "mr01-fraction-computation",
+  "mr01-multistep-order-of-operations",
+];
+const SEVEN_T_ENGLISH_TARGET_IDS = [
+  "wave3-fam-rc10-word-choice",
+  "wave3-fam-rc10-atmosphere-mood",
+];
+const SEVEN_T_PASSAGE_TARGET_IDS = [
+  "wave3-eng-emptyclassroom",
+  "wave3-eng-bakersapprentice",
+  "wave3-eng-lettertograndad",
+  "wave3-eng-stormharbour",
+  "wave3-eng-newtrainers",
+];
+const SEVEN_T_TARGET_IDS = [...SEVEN_T_MATHS_TARGET_IDS, ...SEVEN_T_ENGLISH_TARGET_IDS, ...SEVEN_T_PASSAGE_TARGET_IDS];
+
 // MATHS_TEACHING_REVIEW_TARGET_IDS (the exact 22 Phase B families) now
 // lives in lib/adminReview.ts, imported above — the single source of
 // truth both this page and tests/lib/adminReview.test.ts check against,
@@ -1329,9 +1361,60 @@ function Batch4Section({ targets, reviewedIds, onOpen }: { targets: PendingRevie
   );
 }
 
+/** One named sub-group within SevenTSection (Mathematics, English Effect of Language, or Passages) — a thin wrapper around the same TargetCard every other section uses, never a new evidence source. */
+function SevenTSubGroup({ heading, ids, targets, onOpen }: { heading: string; ids: string[]; targets: PendingReviewTarget[]; onOpen: (t: PendingReviewTarget) => void }) {
+  const found = ids.map((id) => targets.find((t) => t.id === id)).filter((t): t is PendingReviewTarget => Boolean(t));
+  return (
+    <div>
+      <p className="px-5 pt-3 pb-1 text-[11px] font-bold text-teal-700 dark:text-teal-400 uppercase tracking-wide">{heading}</p>
+      {found.length === 0 ? (
+        <p className="px-5 pb-3 text-sm text-gray-400 dark:text-gray-500">
+          None of the {ids.length} targets are visible yet. Confirm migration 064 has been applied.
+        </p>
+      ) : (
+        <div className="divide-y divide-gray-50 dark:divide-gray-800">
+          {found.map((t) => <TargetCard key={t.id} target={t} onOpen={() => onOpen(t)} />)}
+        </div>
+      )}
+    </div>
+  );
+}
+
+/**
+ * Educational Increment 007T Content Review — the first controlled
+ * content batch (Decision 69), independently verified against live
+ * production (Decision 70). 6 question families (4 Mathematics, 2
+ * English Effect-of-Language) and 5 newly commissioned English passages,
+ * shown as three clearly separated named sub-groups per the Founder's
+ * explicit instruction, reusing the exact same TargetCard/ReviewForm
+ * evidence path every other section on this page already uses — no new
+ * review mechanism.
+ */
+function SevenTSection({ targets, reviewedIds, onOpen }: { targets: PendingReviewTarget[]; reviewedIds: Set<string>; onOpen: (t: PendingReviewTarget) => void }) {
+  const reviewedCount = SEVEN_T_TARGET_IDS.filter((id) => reviewedIds.has(id)).length;
+  return (
+    <div className="bg-white dark:bg-gray-900 rounded-2xl border-2 border-teal-200 dark:border-teal-800 overflow-hidden">
+      <div className="px-5 py-4 border-b border-teal-100 dark:border-teal-900 bg-teal-50 dark:bg-teal-950/40">
+        <p className="text-sm font-bold text-teal-900 dark:text-teal-200">007T Content Review</p>
+        <p className="text-xs text-teal-600 dark:text-teal-400 mt-0.5">{reviewedCount} of {SEVEN_T_TARGET_IDS.length} reviewed</p>
+        <div className="mt-2 text-xs text-teal-800 dark:text-teal-300 space-y-0.5">
+          <p>• All 34 questions in this batch remain PROVISIONAL. Reviewing a family does not activate it.</p>
+          <p>• Mathematics: Practice content is review-ready, but dedicated MODEL/Guided teaching content has NOT YET been authored for these 4 families.</p>
+          <p>• English: uses the new Effect-of-Language families (QT-RC-10), distinct from the 9 existing named English families.</p>
+          <p>• Passage review is separate from question-family review. The 5 passages below are their own review target.</p>
+          <p>• No Mock content is involved anywhere in this batch.</p>
+        </div>
+      </div>
+      <SevenTSubGroup heading="Mathematics" ids={SEVEN_T_MATHS_TARGET_IDS} targets={targets} onOpen={onOpen} />
+      <SevenTSubGroup heading="English Effect of Language" ids={SEVEN_T_ENGLISH_TARGET_IDS} targets={targets} onOpen={onOpen} />
+      <SevenTSubGroup heading="Passages" ids={SEVEN_T_PASSAGE_TARGET_IDS} targets={targets} onOpen={onOpen} />
+    </div>
+  );
+}
+
 function FullBacklogSection({ targets, onOpen }: { targets: PendingReviewTarget[]; onOpen: (t: PendingReviewTarget) => void }) {
   const [open, setOpen] = useState(false);
-  const backlogTargets = targets.filter((t) => !PILOT_TARGET_IDS.includes(t.id) && !BATCH2_TARGET_IDS.includes(t.id) && !BATCH3_TARGET_IDS.includes(t.id) && !BATCH4_TARGET_IDS.includes(t.id));
+  const backlogTargets = targets.filter((t) => !PILOT_TARGET_IDS.includes(t.id) && !BATCH2_TARGET_IDS.includes(t.id) && !BATCH3_TARGET_IDS.includes(t.id) && !BATCH4_TARGET_IDS.includes(t.id) && !SEVEN_T_TARGET_IDS.includes(t.id));
 
   return (
     <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 overflow-hidden">
@@ -1513,6 +1596,7 @@ function ReviewDashboard() {
       <Batch2Section targets={targets} reviewedIds={reviewedIds} onOpen={setSelected} />
       <Batch3Section targets={targets} reviewedIds={reviewedIds} onOpen={setSelected} />
       <Batch4Section targets={targets} reviewedIds={reviewedIds} onOpen={setSelected} />
+      <SevenTSection targets={targets} reviewedIds={reviewedIds} onOpen={setSelected} />
       <FullBacklogSection targets={targets} onOpen={setSelected} />
       </>
       )}
