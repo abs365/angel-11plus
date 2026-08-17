@@ -183,7 +183,7 @@ Founder-authorised follow-up after §17's live baseline capture: three productio
 - Copy Quality Guard: PASS, 0 violations, 237 files.
 - Production build: succeeds.
 - Production counts re-queried live: **TOTAL 298, Practice Eligible 281, Mathematics PE 161, English PE 120, Writing PE 0, Provisional 17, Mock Eligible 0** — unchanged.
-- Live three-load verification: performed after deploy — see Decision 77 for the recorded result.
+- Live three-load verification: performed after deploy on the same authenticated account with no intervening learner activity — all three loads returned byte-identical page text (Vocabulary Builder / English Comprehension / Revise: Reasoning; no Writing card; no Mock card). The optional fourth step (one genuine learner action, then reload) was deliberately not performed, per the directive's own instruction not to manipulate production learner history merely to force a test.
 
 ---
 
