@@ -39,6 +39,8 @@ import { RecommendationSummary } from "@/components/learningEngine/Recommendatio
 import type { BankQuestion } from "@/types/ali/questionBank";
 import type { LearnerIntelligenceProfile } from "@/lib/learningEngine/types";
 import type { WritingFeedback } from "@/types/writing-feedback";
+import { getWritingTeachingContent, getWritingTaskFamilyForPromptType } from "@/lib/learningEngine/writingTeachingContent";
+import { WRITING_DIMENSION_LABEL } from "@/lib/learningEngine/writingRubric";
 import type { EnglishComprehensionPrompt } from "@/types/ali/questionBank";
 import type { MathsQuestion } from "@/types/index";
 
@@ -525,7 +527,7 @@ export default function PracticeSessionPage({ params }: { params: Promise<{ area
 
             {area.id === "continuous-writing" && (
               <WritingActivity
-                prompt={current.prompt as { title: string; prompt: string; checklist: string[] }}
+                prompt={current.prompt as { title: string; prompt: string; checklist: string[]; type?: string }}
                 answer={answer}
                 setAnswer={setAnswer}
                 checkedItems={checkedItems}
@@ -1026,7 +1028,7 @@ function MathsActivity({
 function WritingActivity({
   prompt, answer, setAnswer, checkedItems, setCheckedItems, submitted, feedback, feedbackError, onSubmit, onNext, isLast,
 }: {
-  prompt: { title: string; prompt: string; checklist: string[] };
+  prompt: { title: string; prompt: string; checklist: string[]; type?: string };
   answer: string;
   setAnswer: (v: string) => void;
   checkedItems: Set<string>;
@@ -1038,11 +1040,49 @@ function WritingActivity({
   onNext: () => void;
   isLast: boolean;
 }) {
+  const [showModel, setShowModel] = useState(false);
   const wordCount = answer.trim().split(/\s+/).filter(Boolean).length;
+  // CSSE Completion Programme Phase D — only resolves for a genuinely
+  // CSSE-evidenced task type (see getWritingTaskFamilyForPromptType's own
+  // docstring); the one live Writing row today is "persuasive", which
+  // correctly resolves to undefined, so no CSSE-aligned teaching content
+  // is falsely attached to a non-CSSE-evidenced prompt.
+  const taskFamily = getWritingTaskFamilyForPromptType(prompt.type);
+  const teachingContent = getWritingTeachingContent(taskFamily);
+
   return (
     <InfoCard className="mt-3">
       <p className="text-sm font-bold text-gray-900 dark:text-gray-100">{prompt.title}</p>
       <p className="text-xs text-gray-600 dark:text-gray-400 mt-2 whitespace-pre-line leading-relaxed">{prompt.prompt}</p>
+
+      {teachingContent && !submitted && (
+        <div className="mt-2">
+          <button
+            onClick={() => setShowModel((v) => !v)}
+            className="text-xs text-purple-700 dark:text-purple-300 bg-purple-50 dark:bg-purple-950 hover:bg-purple-100 dark:hover:bg-purple-900 px-3 py-1.5 rounded-lg font-medium transition-colors"
+          >
+            {showModel ? "Hide worked example" : "See a worked example and planning questions"}
+          </button>
+          {showModel && (
+            <div className="mt-2 text-xs text-purple-700 dark:text-purple-300 bg-purple-50 dark:bg-purple-950 rounded-xl p-3 space-y-2">
+              <p><strong>What to notice: </strong>{teachingContent.model.whatToNotice}</p>
+              <p><strong>Approach: </strong>{teachingContent.model.approach}</p>
+              <p><strong>Worked example topic (not this question): </strong>{teachingContent.model.topic}</p>
+              <p><strong>A worked opening: </strong>{teachingContent.model.workedOpening}</p>
+              <ul className="list-disc list-inside space-y-0.5">
+                {teachingContent.model.reasoning.map((r, i) => <li key={i}>{r}</li>)}
+              </ul>
+              <div className="pt-1">
+                <p className="font-semibold">Plan your own answer first:</p>
+                <ul className="list-disc list-inside space-y-0.5">
+                  {teachingContent.planningScaffold.map((q) => <li key={q.question}>{q.question}</li>)}
+                </ul>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
       <textarea
         value={answer}
         onChange={(e) => setAnswer(e.target.value)}
@@ -1091,11 +1131,28 @@ function WritingActivity({
             ) : (
               <XCircle size={16} className="text-amber-500" />
             )}
-            <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">Overall score: {feedback.overallScore}/100</p>
+            <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">Angel progress indicator: {feedback.overallScore}/100</p>
           </div>
           <p className="text-[11px] text-gray-400 dark:text-gray-500">
             AI-generated general writing-quality guidance, not a CSSE (or any exam board&apos;s) official or validated mark.
           </p>
+
+          {feedback.dimensions && feedback.dimensions.length > 0 && (
+            <div className="text-xs text-gray-600 dark:text-gray-400 bg-gray-50 dark:bg-gray-800 rounded-xl p-3 space-y-2">
+              <p className="font-semibold text-gray-700 dark:text-gray-300">Against the CSSE Continuous Writing rubric&apos;s own dimensions:</p>
+              {feedback.dimensions.map((d) => (
+                <div key={d.dimension}>
+                  <p>
+                    <strong>{WRITING_DIMENSION_LABEL[d.dimension]}: </strong>
+                    <span className="capitalize">{d.level}</span>
+                    {!d.confident && <span className="text-amber-600 dark:text-amber-400"> (not enough here to judge confidently)</span>}
+                  </p>
+                  <p className="text-gray-500 dark:text-gray-500">{d.comment}</p>
+                </div>
+              ))}
+            </div>
+          )}
+
           <div className="text-xs text-gray-600 dark:text-gray-400 bg-gray-50 dark:bg-gray-800 rounded-xl p-3 space-y-2">
             <p><strong>Strengths:</strong> {feedback.strengths.join(" · ")}</p>
             <p><strong>Areas to improve:</strong> {feedback.areasToImprove.join(" · ")}</p>

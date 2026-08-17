@@ -1,86 +1,17 @@
 import { NextRequest, NextResponse } from "next/server";
-import type { WritingFeedbackRequest, WritingFeedback } from "@/types/writing-feedback";
-
-// copy-guard-ignore-start: this is an instruction TO the AI model, never
-// rendered verbatim to a learner or parent — it is deliberately allowed to
-// name the prohibited characters so the model knows what to avoid
-// producing in its OWN output. Real learner-facing text (this route's
-// NextResponse error strings) stays outside this suppressed span.
-const SYSTEM_PROMPT = `You are a supportive writing coach giving 10–11 year olds general, craft-focused feedback on a practice piece of writing.
-
-You are NOT a CSSE (or any other exam board) examiner, and your feedback is NOT a validated or calibrated CSSE mark — do not claim, imply, or reference any specific exam board's marking standard, examiners, or grading criteria anywhere in your response. Give feedback on general writing craft only:
-- Originality and imagination
-- Technical accuracy: spelling, punctuation, grammar
-- Ambitious vocabulary used correctly — not just long words for their own sake
-- Varied sentence structures and openings
-- A controlled narrative or descriptive voice
-- Atmosphere created through technique, not merely description
-
-Your feedback style:
-- Reference the student's exact words and phrases wherever possible
-- Be specific, not general ("Your use of 'crept' is effective" not "Good verbs")
-- Never use empty praise: "Great job!", "Well done!", "Excellent!", "Amazing"
-- Be honest about weaknesses — direct, constructive, and encouraging
-- Write like a knowledgeable private tutor, not a generic grammar checker
-
-Your analysis covers four areas:
-1. Strengths — 2 specific items: what is genuinely working well, with reference to the text
-2. Areas to Improve — 2 to 3 specific, actionable issues the student can address now
-3. Suggested Upgrade — take ONE short excerpt (1–2 sentences) verbatim from their text and show a stronger version. Explain what changed and name the technique used. Keep the improvement grounded in the student's voice.
-4. Tutor Tip — ONE memorable, actionable technique they should apply in their next attempt
-
-overallScore (0–100) is a general writing-quality estimate only — it is not calibrated against any exam board's mark scheme and must not be described as one. Base it on the craft qualities above; do not attach exam-entry or pass/fail-style descriptions to any score range.
-
-If writing is very short (under 60 words), note this in areas to improve.
-If writing appears off-topic, note this.
-
-Writing style rule: never use an em dash (—) or en dash (–) as sentence punctuation anywhere in your response. Write natural sentences using full stops, commas, semicolons or colons instead.
-
-Return ONLY valid JSON with no markdown, no preamble, no explanation outside the object:
-{
-  "strengths": [string, string],
-  "areasToImprove": [string, string, string],
-  "suggestedUpgrade": {
-    "original": string,
-    "improved": string,
-    "explanation": string
-  },
-  "tutorTip": string,
-  "overallScore": number
-}`;
-// copy-guard-ignore-end
+import type { WritingFeedbackRequest, WritingFeedback, WritingDimensionFeedback } from "@/types/writing-feedback";
+import { runWritingPreflightChecks, WRITING_DIMENSIONS, WRITING_DIMENSION_LABEL, computeOverallScoreFromDimensions } from "@/lib/learningEngine/writingRubric";
+import { WRITING_FEEDBACK_SYSTEM_PROMPT, stripDashPunctuation, buildWritingFeedbackUserMessage } from "@/lib/learningEngine/writingFeedbackPrompt";
 
 /**
- * Runtime Copy Quality Guard for AI-generated feedback: replaces an em/en
- * dash used as prose punctuation (surrounded by whitespace, e.g. "strong —
- * but rushed") with a comma. Deliberately leaves a dash with no surrounding
- * whitespace untouched (e.g. "10–15", a numeric range this model has no
- * reason to produce here, but preserved on the same principle as the
- * static guard in scripts/copy-quality-guard.mjs, for consistency).
+ * CSSE Completion Programme, Phase D
+ * (ANGEL_PHASE_D_CONTINUOUS_WRITING_STANDARD_V1.md Part 4/5). The system
+ * prompt and user-message builder live in
+ * lib/learningEngine/writingFeedbackPrompt.ts (a Next-independent
+ * module) specifically so scripts/writing-rubric-calibration.mjs can
+ * import the exact same prompt this route sends — no separately-
+ * maintained copy that could drift from what is actually deployed.
  */
-function stripDashPunctuation(text: string): string {
-  return text.replace(/\s+[—–]\s+/g, ", "); // copy-guard-ignore-line: this line's dash characters are the regex pattern being matched, not prose
-}
-
-function buildUserMessage(body: WritingFeedbackRequest): string {
-  const checklist =
-    body.checkedItems.length > 0
-      ? `\nChecklist items the student confirmed:\n${body.checkedItems.map((i) => `- ${i}`).join("\n")}`
-      : "";
-
-  // Cap at ~1500 words to control token cost
-  const words = body.writingText.trim().split(/\s+/);
-  const capped = words.length > 1500 ? words.slice(0, 1500).join(" ") + " [...]" : body.writingText;
-
-  return `Writing prompt: "${body.promptTitle}" (${body.promptType})
-
-Prompt text:
-${body.promptText}
-${checklist}
-
-Student's response:
-${capped}`;
-}
 
 export async function POST(request: NextRequest) {
   const apiKey = process.env.OPENAI_API_KEY;
@@ -102,6 +33,19 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Writing is too short to analyse." }, { status: 400 });
   }
 
+  // CSSE Completion Programme Phase D — pre-flight confidence gate
+  // (lib/learningEngine/writingRubric.ts), run before the AI call. This
+  // is advisory context for the model (a hint, since the heuristic can
+  // be wrong), but its own `confidence` verdict is enforced as a hard,
+  // deterministic ceiling on the returned dimensions below — never
+  // merely a suggestion the model can override by claiming confidence
+  // itself.
+  const preflight = runWritingPreflightChecks(body.writingText, body.promptText);
+  const preflightFlags: string[] = [];
+  if (!preflight.meetsMinimumLength) preflightFlags.push(`shorter than the CSSE-evidenced minimum of ${preflight.sentenceCount < 1 ? "0" : preflight.sentenceCount} sentence(s) detected (aim for at least six)`);
+  if (preflight.likelyOffTopic) preflightFlags.push("may not engage with the actual prompt");
+  const preflightNote = preflightFlags.length > 0 ? `\nAutomatic pre-check flags (verify honestly, do not ignore): ${preflightFlags.join("; ")}.` : "";
+
   let openAiResponse: Response;
   try {
     openAiResponse = await fetch("https://api.openai.com/v1/chat/completions", {
@@ -113,11 +57,11 @@ export async function POST(request: NextRequest) {
       body: JSON.stringify({
         model: "gpt-4o-mini",
         messages: [
-          { role: "system", content: SYSTEM_PROMPT },
-          { role: "user", content: buildUserMessage(body) },
+          { role: "system", content: WRITING_FEEDBACK_SYSTEM_PROMPT },
+          { role: "user", content: buildWritingFeedbackUserMessage(body, preflightNote) },
         ],
         temperature: 0.3,
-        max_tokens: 900,
+        max_tokens: 1300,
         response_format: { type: "json_object" },
       }),
     });
@@ -158,8 +102,40 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  // Clamp score to valid range
-  feedback.overallScore = Math.max(0, Math.min(100, Math.round(feedback.overallScore ?? 0)));
+  // CSSE Completion Programme Phase D — validate and sanitize the
+  // dimensions array defensively (an LLM's JSON structure is never
+  // guaranteed byte-for-byte even with response_format: json_object),
+  // then enforce the pre-flight gate's own confidence verdict as a hard
+  // ceiling: if the deterministic check found low confidence, every
+  // dimension is forced to confident: false regardless of what the
+  // model itself claimed — a code-level guarantee, not merely a prompt
+  // instruction the model could fail to follow.
+  const validLevels = new Set(["developing", "secure", "strong"]);
+  const rawDimensions = Array.isArray(feedback.dimensions) ? feedback.dimensions : [];
+  feedback.dimensions = WRITING_DIMENSIONS.map((dimension) => {
+    const found = rawDimensions.find((d) => d && d.dimension === dimension);
+    const level = found && validLevels.has(found.level) ? found.level : "developing";
+    const comment = found && typeof found.comment === "string" && found.comment.trim()
+      ? found.comment
+      : `Angel could not generate a reliable comment on ${WRITING_DIMENSION_LABEL[dimension]} for this response.`;
+    const modelConfident = Boolean(found?.confident);
+    return {
+      dimension,
+      level,
+      comment,
+      confident: preflight.confidence === "low" ? false : modelConfident,
+    } satisfies WritingDimensionFeedback;
+  });
+
+  // Never trust the model's own overallScore: found via live calibration
+  // (scripts/writing-rubric-calibration.mjs) that the model does not
+  // reliably include this key at all (finish_reason "stop", not
+  // truncated — a genuine omission, not a length limit), which the
+  // previous code's `?? 0` fallback would have silently turned into a
+  // fake "0/100". Always computed deterministically from the five
+  // (now-validated) dimension levels instead, so it can never be
+  // missing and can never disagree with the dimensions shown alongside it.
+  feedback.overallScore = computeOverallScoreFromDimensions(feedback.dimensions);
 
   // Copy Quality Guard (runtime): the system prompt instructs the model not
   // to use em/en dash punctuation, but an LLM cannot be guaranteed to
@@ -172,6 +148,7 @@ export async function POST(request: NextRequest) {
   feedback.suggestedUpgrade.improved = stripDashPunctuation(feedback.suggestedUpgrade.improved);
   feedback.suggestedUpgrade.explanation = stripDashPunctuation(feedback.suggestedUpgrade.explanation);
   feedback.tutorTip = stripDashPunctuation(feedback.tutorTip);
+  feedback.dimensions = feedback.dimensions.map((d) => ({ ...d, comment: stripDashPunctuation(d.comment) }));
 
   return NextResponse.json(feedback);
 }

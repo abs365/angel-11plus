@@ -647,6 +647,74 @@ export async function submitEnglishTeachingReview(s: ReviewSubmission): Promise<
   return { error: error ? error.message : null };
 }
 
+/**
+ * CSSE Completion Programme, Phase D, Part 12 — Founder Educational
+ * Review readiness for Continuous Writing
+ * (ANGEL_PHASE_D_CONTINUOUS_WRITING_STANDARD_V1.md). Judges the one
+ * bounded-proof task family this phase built (MODEL, planning scaffold,
+ * the CSSE-evidenced 5-dimension rubric, the confidence-gate design) as
+ * a distinct evidence trail, `review_type = 'writing_teaching_review'`
+ * (migration 061) — exactly the same pattern already established for
+ * Mathematics (Decision 62-63) and English (Decision 64-65). Reuses the
+ * existing 18-criterion REVIEW_CRITERIA/ReviewSubmission shape
+ * unchanged, same reasoning as English Teaching Review.
+ */
+
+export const WRITING_TEACHING_CONTENT_VERSION = "Educational Increment 007Q (CSSE Completion Programme Phase D)";
+
+/** Exactly the one task family this phase built (Part 7 of the design document) — picture-narrative is deferred pending an image asset, and is deliberately not a review target here since no content exists for it to review. */
+export const WRITING_TEACHING_REVIEW_TARGET_IDS = ["writing-reflective-discursive"];
+
+export async function fetchWritingTeachingReviewedFamilyIds(): Promise<Set<string>> {
+  const supabase = getSupabaseClient();
+  if (!supabase) return new Set();
+  const { data, error } = await supabase
+    .from("ali_family_review")
+    .select("family_id")
+    .eq("review_type", "writing_teaching_review");
+  if (error || !data) return new Set();
+  return new Set(data.map((r) => r.family_id));
+}
+
+/** Inserts one real, traceable Continuous Writing Teaching Review decision — review_type = 'writing_teaching_review' (migration 061). Append-only; never touches ali_question_bank.eligibility_status. */
+export async function submitWritingTeachingReview(s: ReviewSubmission): Promise<SubmitReviewResult> {
+  const validationError = validateReviewSubmission(s);
+  if (validationError) return { error: validationError };
+  if (!s.decision) return { error: "Choose a decision: this is never chosen for you." };
+  const supabase = getSupabaseClient();
+  if (!supabase) return { error: "Not connected" };
+  const { error } = await supabase.from("ali_family_review").insert({
+    review_target_type: "question_family",
+    review_type: "writing_teaching_review",
+    family_id: s.targetId,
+    reviewer: s.reviewer.trim(),
+    decision: s.decision,
+    notes: buildNotesWithQualification(s),
+    evidence_reference: s.evidenceReference.trim() || null,
+    provenance_reference: s.provenanceReference.trim() || null,
+    teaching_content_version: WRITING_TEACHING_CONTENT_VERSION,
+    educational_validity: s.educationalValidity,
+    competency_validity: s.competencyValidity,
+    wording_quality: s.wordingQuality,
+    age_appropriate: s.ageAppropriate,
+    ambiguity_free: s.ambiguityFree,
+    difficulty_appropriate: s.difficultyAppropriate,
+    misconception_quality: s.misconceptionQuality,
+    explanation_quality: s.explanationQuality,
+    variation_boundaries_sound: s.variationBoundariesSound,
+    authenticity_confirmed: s.authenticityConfirmed,
+    question_type_alignment: s.questionTypeAlignment,
+    answer_correctness_verified: s.answerCorrectnessVerified,
+    transfer_validity: s.transferValidity,
+    teaching_quality: s.teachingQuality,
+    exam_strategy_quality: s.examStrategyQuality,
+    validation_behaviour_sound: s.validationBehaviourSound,
+    originality_confirmed: s.originalityConfirmed,
+    copyright_risk_clear: s.copyrightRiskClear,
+  });
+  return { error: error ? error.message : null };
+}
+
 export interface PendingReviewTarget {
   id: string; // the family_id column's value — either a real family id or a passage id
   reviewTargetType: ReviewTargetType;

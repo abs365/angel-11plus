@@ -14,6 +14,8 @@ import {
   MATHS_TEACHING_REVIEW_TARGET_IDS,
   fetchEnglishTeachingReviewedFamilyIds, submitEnglishTeachingReview,
   ENGLISH_TEACHING_REVIEW_METADATA, ENGLISH_TEACHING_CONTENT_VERSION, ENGLISH_TEACHING_REVIEW_TARGET_IDS,
+  fetchWritingTeachingReviewedFamilyIds, submitWritingTeachingReview,
+  WRITING_TEACHING_CONTENT_VERSION, WRITING_TEACHING_REVIEW_TARGET_IDS,
   type PendingReviewTarget, type RepresentativeQuestion, type PassageDetail, type ReviewDecision, type ReviewSubmission,
   type TargetSummary, type MathsTeachingReviewSubmission,
 } from "@/lib/adminReview";
@@ -21,6 +23,8 @@ import { getExamStrategyHint, getWorkedExample } from "@/lib/learningEngine/engl
 import { getGuidedScaffoldKind, getGuidedInstructionText } from "@/lib/learningEngine/guidedPractice";
 import { getSelfReflectionCategories, WRONG_ANSWER_CATEGORY_LABEL } from "@/lib/learningEngine/englishErrorClassification";
 import { getMathsTeachingContent, MATHS_MISCONCEPTION_CATEGORY_LABEL, effectiveGuidedRevealStepCount } from "@/lib/learningEngine/mathsTeachingContent";
+import { getWritingTeachingContent } from "@/lib/learningEngine/writingTeachingContent";
+import { WRITING_DIMENSIONS, WRITING_DIMENSION_LABEL } from "@/lib/learningEngine/writingRubric";
 
 /**
  * Educational Increment 007F, "Reviewer Experience Correction" — the
@@ -148,6 +152,7 @@ const FAMILY_DISPLAY_NAME: Record<string, string> = {
   "mr05-number-property": "Number Property Definitions",
   "precision-dec": "Rounding to a Decimal Place",
   "precision-frac": "Exact Fractional Answers",
+  "writing-reflective-discursive": "Reflective and Discursive Writing",
 };
 
 /** Graceful fallback for any family/passage not in the curated name map above — never shows a raw dash-separated ID as the primary label. */
@@ -948,6 +953,233 @@ function MathsGuidedPracticeSummary({ teachingContent, representative }: {
   );
 }
 
+// ─── Continuous Writing Teaching Review — CSSE Completion Programme
+// Phase D. Unlike Maths/English Teaching Review, this has no live DB
+// question to fetch (the bounded proof deliberately did not author new
+// content, ANGEL_PHASE_D_CONTINUOUS_WRITING_STANDARD_V1.md Part 10) —
+// the review pack presents the MODEL/planning/rubric design directly,
+// not a live representative question.
+
+function WritingTeachingReviewForm({ familyId, onDone }: { familyId: string; onDone: () => void }) {
+  const [submission, setSubmission] = useState<ReviewSubmission>(() => emptySubmission({ id: familyId, reviewTargetType: "question_family", notes: null }, ""));
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState("");
+  const [submitted, setSubmitted] = useState(false);
+
+  const displayName = FAMILY_DISPLAY_NAME[familyId] ?? formatFallbackName(familyId);
+  const teachingContent = getWritingTeachingContent(familyId as "writing-reflective-discursive");
+
+  async function handleSubmit() {
+    if (!submission.decision) {
+      setSubmitError("Choose a decision before submitting: this is your judgement to make, not a default.");
+      return;
+    }
+    setSubmitting(true);
+    setSubmitError("");
+    const { error } = await submitWritingTeachingReview(submission);
+    setSubmitting(false);
+    if (error) { setSubmitError(error); return; }
+    setSubmitted(true);
+  }
+
+  if (submitted) {
+    return (
+      <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-6 text-center">
+        <CheckCircle2 size={28} className="text-emerald-500 mx-auto mb-2" />
+        <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">Teaching review recorded for {displayName}</p>
+        <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+          Decision: {submission.decision}. This is a design/proof review, not a content-eligibility decision: no Writing content is Practice Eligible or Mock Eligible as a result.
+        </p>
+        <button onClick={onDone} className="mt-4 text-sm font-semibold text-purple-600 dark:text-purple-400">Back to Continuous Writing Teaching Review</button>
+      </div>
+    );
+  }
+
+  if (!teachingContent) {
+    return (
+      <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-6 text-center">
+        <p className="text-sm text-amber-600 dark:text-amber-400">No teaching content found for {familyId}.</p>
+        <button onClick={onDone} className="mt-4 text-sm font-semibold text-purple-600 dark:text-purple-400">Back</button>
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-5 max-w-full overflow-x-hidden">
+      <button onClick={onDone} className="text-xs font-semibold text-gray-500 dark:text-gray-400 inline-flex items-center gap-1">
+        <ArrowLeft size={13} /> Back to Continuous Writing Teaching Review
+      </button>
+
+      <Card>
+        <p className="text-xs font-semibold text-purple-600 dark:text-purple-400 uppercase tracking-wide">Continuous Writing Teaching Review</p>
+        <h1 className="text-lg font-bold text-gray-900 dark:text-gray-100 mt-1 break-words">{displayName}</h1>
+        <p className="text-[11px] text-gray-300 dark:text-gray-600 mt-1 font-mono break-all">{familyId}</p>
+        <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">CSSE Continuous Writing, Question 1 pattern (reflective/discursive). No live DB question exists for this family yet, so this reviews the design and bounded-proof code directly, per Phase D&apos;s own bounded-scope instruction not to author new content merely to populate a review pack.</p>
+      </Card>
+
+      <Card>
+        <SectionTitle letter="A" title="MODEL example" />
+        <div className="text-sm text-gray-700 dark:text-gray-300 space-y-1.5">
+          <p><strong>What to notice: </strong>{teachingContent.model.whatToNotice}</p>
+          <p><strong>Approach: </strong>{teachingContent.model.approach}</p>
+          <p><strong>Worked example topic (never the live prompt): </strong>{teachingContent.model.topic}</p>
+          <p><strong>Worked opening: </strong>{teachingContent.model.workedOpening}</p>
+          <ul className="list-disc list-inside space-y-0.5">
+            {teachingContent.model.reasoning.map((r, i) => <li key={i}>{r}</li>)}
+          </ul>
+        </div>
+      </Card>
+
+      <Card>
+        <SectionTitle letter="B" title="Planning scaffold" />
+        <ul className="text-sm text-gray-700 dark:text-gray-300 space-y-2">
+          {teachingContent.planningScaffold.map((q) => (
+            <li key={q.question}>
+              <p className="font-semibold">{q.question}</p>
+              <p className="text-xs text-gray-500 dark:text-gray-400">{q.purpose}</p>
+            </li>
+          ))}
+        </ul>
+      </Card>
+
+      <Card>
+        <SectionTitle letter="C" title="Common misconception this family teaches against" />
+        <p className="text-sm text-gray-700 dark:text-gray-300">{teachingContent.commonMisconception}</p>
+      </Card>
+
+      <Card>
+        <SectionTitle letter="D" title="CSSE-evidenced assessment rubric (Ideas / Vocabulary / Grammar / Structure / Punctuation)" />
+        <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed">
+          Every response is judged against exactly these five dimensions, sourced from the official CSSE Continuous Writing sample mark scheme (still the current, live-linked document, confirmed 2026-08-17, ANGEL_PHASE_D_CONTINUOUS_WRITING_STANDARD_V1.md Part 2), never an invented craft-quality list. Each dimension gets a qualitative level (developing/secure/strong, matching the official rubric&apos;s own banded language, never a fabricated numeric sub-score) and a comment referencing the student&apos;s own words.
+        </p>
+        <ul className="list-disc list-inside text-sm text-gray-700 dark:text-gray-300 mt-2 space-y-0.5">
+          {WRITING_DIMENSIONS.map((d) => <li key={d}>{WRITING_DIMENSION_LABEL[d]}</li>)}
+        </ul>
+      </Card>
+
+      <Card>
+        <SectionTitle letter="E" title="Confidence gate and safety design" />
+        <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed">
+          Before any AI call, a deterministic pre-flight check (length against the real CSSE-evidenced six-sentence minimum, off-topic and template/copy detection, prompt-injection marker detection) computes a confidence verdict. When confidence is low, every dimension is forced to &quot;not confident&quot; in code, regardless of what the model itself claims, verified live via scripts/writing-rubric-calibration.mjs, including a real prompt-injection attempt that the model did not comply with. The Angel-internal progress indicator (a labelled, non-CSSE score) is always computed deterministically from the five dimension levels, never trusted directly from the model: a real defect found in live calibration (the model was observed to omit its own score) is fixed by this design, not merely worked around.
+        </p>
+      </Card>
+
+      <Card>
+        <SectionTitle letter="F" title="Mastery protection" />
+        <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed">
+          Every AI-scored Writing attempt is recorded with supportTier &quot;supported&quot;, unconditionally, regardless of confidence or score (Decision 60&apos;s quarantine, unmodified by this phase). No Writing evidence in this codebase can independently establish mastery.
+        </p>
+      </Card>
+
+      <Card>
+        <SectionTitle letter="G" title="Your judgement" />
+        <div className="space-y-4">
+          <div>
+            <label className="text-xs font-semibold text-gray-700 dark:text-gray-300">Your name (required, a review cannot be recorded anonymously)</label>
+            <input
+              value={submission.reviewer}
+              onChange={(e) => setSubmission((s) => ({ ...s, reviewer: e.target.value }))}
+              placeholder="Your full name"
+              className="w-full mt-1 text-sm rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-2.5"
+            />
+          </div>
+
+          <div>
+            <label className="text-xs font-semibold text-gray-700 dark:text-gray-300">Your basis for reviewing this (required)</label>
+            <input
+              value={submission.qualificationBasis}
+              onChange={(e) => setSubmission((s) => ({ ...s, qualificationBasis: e.target.value }))}
+              placeholder="Founder and parent with direct experience of preparing children for the Essex CSSE 11+, including previous use of 11+ tuition, practice materials and mock examinations."
+              className="w-full mt-1 text-sm rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-2.5"
+            />
+            <p className="text-[11px] text-gray-400 dark:text-gray-500 mt-1">
+              This is only suggested wording, shown as a placeholder: nothing is pre-filled. Enter or confirm your own real basis; it is recorded with your review.
+            </p>
+          </div>
+
+          <div className="space-y-2">
+            {REVIEW_CRITERIA.map(({ key, question }) => (
+              <div key={key} className="flex items-center justify-between gap-3">
+                <span className="text-xs text-gray-600 dark:text-gray-400">{question}</span>
+                <TriState
+                  value={submission[key] as boolean | null}
+                  onChange={(v) => setSubmission((s) => ({ ...s, [key]: v }))}
+                />
+              </div>
+            ))}
+          </div>
+
+          <div>
+            <label className="text-xs font-semibold text-gray-700 dark:text-gray-300">
+              Findings / notes {submission.decision === "rejected" && "(required for a rejection)"}
+            </label>
+            <textarea
+              value={submission.notes}
+              onChange={(e) => setSubmission((s) => ({ ...s, notes: e.target.value }))}
+              rows={4}
+              className="w-full mt-1 text-sm rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-2.5"
+              placeholder="What you checked, what you found, any amendment needed…"
+            />
+          </div>
+
+          <div>
+            <label className="text-xs font-semibold text-gray-700 dark:text-gray-300">Your decision (required, choose one)</label>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-1">
+              {DECISIONS.map((d) => (
+                <button
+                  key={d.value}
+                  type="button"
+                  onClick={() => setSubmission((s) => ({ ...s, decision: d.value }))}
+                  className={`text-left p-3 rounded-xl border transition-colors ${
+                    submission.decision === d.value
+                      ? "bg-purple-600 border-purple-600 text-white"
+                      : "bg-gray-50 dark:bg-gray-800 border-gray-100 dark:border-gray-700 text-gray-700 dark:text-gray-300"
+                  }`}
+                >
+                  <p className="text-xs font-semibold">{d.label}</p>
+                  <p className={`text-[11px] mt-0.5 ${submission.decision === d.value ? "text-purple-100" : "text-gray-400 dark:text-gray-500"}`}>{d.hint}</p>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {submitError && <p className="text-xs text-red-500">{submitError}</p>}
+
+          <button
+            onClick={handleSubmit}
+            disabled={submitting || !submission.reviewer.trim() || !submission.qualificationBasis.trim()}
+            className="w-full flex items-center justify-center gap-2 bg-purple-600 hover:bg-purple-700 disabled:opacity-40 text-white font-semibold py-3 rounded-xl text-sm transition-colors"
+          >
+            {submitting ? "Submitting…" : (<>Submit teaching review <ArrowRight size={16} /></>)}
+          </button>
+
+          <p className="text-[10px] text-gray-300 dark:text-gray-600">Reviewing teaching-content version: {WRITING_TEACHING_CONTENT_VERSION}</p>
+        </div>
+      </Card>
+    </div>
+  );
+}
+
+function WritingTeachingSection({ reviewedIds, onOpen }: { reviewedIds: Set<string>; onOpen: (familyId: string) => void }) {
+  const reviewedCount = WRITING_TEACHING_REVIEW_TARGET_IDS.filter((id) => reviewedIds.has(id)).length;
+  return (
+    <div className="bg-white dark:bg-gray-900 rounded-2xl border-2 border-rose-200 dark:border-rose-800 overflow-hidden">
+      <div className="px-5 py-4 border-b border-rose-100 dark:border-rose-900 bg-rose-50 dark:bg-rose-950/40">
+        <p className="text-sm font-bold text-rose-900 dark:text-rose-200">Continuous Writing Teaching Review</p>
+        <p className="text-xs text-rose-600 dark:text-rose-400 mt-0.5">{reviewedCount} of {WRITING_TEACHING_REVIEW_TARGET_IDS.length} reviewed</p>
+        <p className="text-[11px] text-rose-500 dark:text-rose-500 mt-1.5 leading-relaxed">
+          Judges the CSSE Completion Programme Phase D bounded proof: MODEL, planning scaffold, and CSSE-evidenced rubric for the reflective/discursive task family. No new Writing content was authored or activated by this phase.
+        </p>
+      </div>
+      <div className="divide-y divide-gray-50 dark:divide-gray-800">
+        {WRITING_TEACHING_REVIEW_TARGET_IDS.map((id) => (
+          <TeachingTargetCard key={id} familyId={id} subtitle="CSSE Continuous Writing, Question 1 pattern" reviewed={reviewedIds.has(id)} onOpen={() => onOpen(id)} />
+        ))}
+      </div>
+    </div>
+  );
+}
+
 // ─── List views: pilot summary cards + collapsed full backlog ──────────────
 
 function TargetCard({ target, onOpen }: { target: PendingReviewTarget; onOpen: () => void }) {
@@ -1223,15 +1455,18 @@ function ReviewDashboard() {
   const [selectedTeachingFamilyId, setSelectedTeachingFamilyId] = useState<string | null>(null);
   const [englishTeachingReviewedIds, setEnglishTeachingReviewedIds] = useState<Set<string>>(new Set());
   const [selectedEnglishTeachingFamilyId, setSelectedEnglishTeachingFamilyId] = useState<string | null>(null);
+  const [writingTeachingReviewedIds, setWritingTeachingReviewedIds] = useState<Set<string>>(new Set());
+  const [selectedWritingTeachingFamilyId, setSelectedWritingTeachingFamilyId] = useState<string | null>(null);
 
   async function load() {
-    const [pending, reviewed, teachingReviewed, englishTeachingReviewed] = await Promise.all([
-      fetchPendingReviewTargets(), fetchReviewedTargetIds(), fetchMathsTeachingReviewedFamilyIds(), fetchEnglishTeachingReviewedFamilyIds(),
+    const [pending, reviewed, teachingReviewed, englishTeachingReviewed, writingTeachingReviewed] = await Promise.all([
+      fetchPendingReviewTargets(), fetchReviewedTargetIds(), fetchMathsTeachingReviewedFamilyIds(), fetchEnglishTeachingReviewedFamilyIds(), fetchWritingTeachingReviewedFamilyIds(),
     ]);
     setTargets(pending);
     setReviewedIds(reviewed);
     setTeachingReviewedIds(teachingReviewed);
     setEnglishTeachingReviewedIds(englishTeachingReviewed);
+    setWritingTeachingReviewedIds(writingTeachingReviewed);
   }
 
   useEffect(() => { load(); }, []);
@@ -1245,6 +1480,10 @@ function ReviewDashboard() {
     return <ReviewForm target={target} reviewType="english_teaching_review" onDone={() => { setSelectedEnglishTeachingFamilyId(null); load(); }} />;
   }
 
+  if (selectedWritingTeachingFamilyId) {
+    return <WritingTeachingReviewForm familyId={selectedWritingTeachingFamilyId} onDone={() => { setSelectedWritingTeachingFamilyId(null); load(); }} />;
+  }
+
   if (selected) {
     return <ReviewForm target={selected} onDone={() => { setSelected(null); load(); }} />;
   }
@@ -1255,6 +1494,7 @@ function ReviewDashboard() {
     <div className="space-y-5">
       <MathsTeachingSection reviewedIds={teachingReviewedIds} onOpen={setSelectedTeachingFamilyId} />
       <EnglishTeachingSection reviewedIds={englishTeachingReviewedIds} onOpen={setSelectedEnglishTeachingFamilyId} />
+      <WritingTeachingSection reviewedIds={writingTeachingReviewedIds} onOpen={setSelectedWritingTeachingFamilyId} />
       {targets.length === 0 ? (
         <p className="text-sm text-gray-500 dark:text-gray-400">
           No pending content-review targets visible. If you expect targets here, confirm migrations 047/050/052/053/054 have

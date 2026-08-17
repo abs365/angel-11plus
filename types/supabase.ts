@@ -233,7 +233,7 @@ export interface Database {
           originality_confirmed: boolean | null;
           copyright_risk_clear: boolean | null;
           /** Migration 059, extended migration 060. */
-          review_type: "content_review" | "maths_teaching_review" | "english_teaching_review";
+          review_type: "content_review" | "maths_teaching_review" | "english_teaching_review" | "writing_teaching_review";
           teaching_content_version: string | null;
           teaching_mathematically_correct: boolean | null;
           teaching_model_understandable: boolean | null;
@@ -278,7 +278,7 @@ export interface Database {
           originality_confirmed?: boolean | null;
           copyright_risk_clear?: boolean | null;
           /** Migration 059, extended migration 060. */
-          review_type?: "content_review" | "maths_teaching_review" | "english_teaching_review";
+          review_type?: "content_review" | "maths_teaching_review" | "english_teaching_review" | "writing_teaching_review";
           teaching_content_version?: string | null;
           teaching_mathematically_correct?: boolean | null;
           teaching_model_understandable?: boolean | null;
