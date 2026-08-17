@@ -154,4 +154,80 @@ The full attempt-scoped, field-projected delivery path (§5/§6/§14) remains un
 
 ---
 
-**STOP. This report concludes 008C. Migration 069 committed and pushed, NOT applied. Mock Eligible remains 0. Return to Founder/Product leadership for manual migration application, then post-application verification, then 008D authorisation.**
+**STOP. This report concludes 008C's own generation stage. Migration 069 committed and pushed, NOT applied. Mock Eligible remains 0. Return to Founder/Product leadership for manual migration application, then post-application verification, then 008D authorisation.**
+
+---
+
+## 22. Post-Migration Security Reconciliation (addendum)
+
+The Founder manually applied migration 069 ("Success. No rows returned" — explicitly not treated as sufficient evidence on its own). Independent post-application verification follows.
+
+### 22.1 Installed-policy verification — the one item requiring Founder-supplied evidence
+
+`pg_policies`/`pg_class` are Postgres system catalogs, not exposed via PostgREST — this session's anon key has no path to query them directly (the same category of limitation this project has repeatedly hit with `ali_family_review`'s RLS-opaque anon behaviour, now applying to catalog introspection itself). The exact query needed:
+
+```sql
+select schemaname, tablename, policyname, permissive, roles, cmd, qual, with_check
+from pg_policies
+where tablename = 'ali_question_bank'
+order by policyname;
+
+select relname, relrowsecurity, relforcerowsecurity
+from pg_class
+where relname = 'ali_question_bank';
+```
+
+**Not yet supplied — this is the one remaining Level 1 evidence gap**, distinct from and additional to every behavioural test below, all of which passed.
+
+### 22.2 Anonymous access test (A/B/C)
+
+Live, bounded, non-destructive: (A) `practice_eligible` Mathematics row returns its full `prompt` including `answer`/`workingSteps` — Practice unaffected. (B) `provisional` rows remain queryable, unchanged pre-existing behaviour. (C) A query filtered to `eligibility_status = 'mock_eligible'` returns `200`/`[]` — **behaviourally identical to pre-migration**, and, as disclosed in §20 before this addendum, cannot be distinguished from "0 rows exist" without either real `mock_eligible` content (not created, per explicit instruction) or the §22.1 catalog evidence. This is not new information — the same disclosed limitation stands, now doubly motivating the §22.1 request.
+
+### 22.3 Authenticated learner boundary
+
+**No separate learner credential was used or was needed.** The installed policy (per migration 069's own text, pending §22.1's direct confirmation) grants `anon` and `authenticated` the *identical* `using` predicate — it does not branch on `auth.uid()`, session state, or any authentication-specific condition. Since Postgres RLS evaluates the same boolean expression for both roles here, an anon-key test is structurally equivalent proof for the authenticated-learner case, not merely a proxy for it — there is no behavioural difference the policy itself could produce between the two roles. This is a structural argument, not a workaround, and is disclosed as such rather than claimed as a live authenticated-session test.
+
+### 22.4 Admin access
+
+`is_current_user_admin()` was not modified by migration 069 (confirmed by direct reading of the migration's own SQL — no `DROP FUNCTION`/`CREATE FUNCTION` statement anywhere in it) and remains the same function migration 054's own `ali_passage_bank_select_admin` policy already relies on. No defect found; nothing altered.
+
+### 22.5 Practice regression — live, on the real production account
+
+Mathematics Practice: loaded a real question ("What is the smallest multiple of both 4 and 9 that is greater than 30?"), submitted the correct answer (36), received "Correct" plus real `workingSteps` explanation text ("The lowest common multiple of 4 and 9 is 36", "The smallest multiple of 36 above 30 is 36") — the full pipeline (question delivery → answer submission → post-answer explanation) confirmed working end-to-end. English (Reading Comprehension, passage-backed): loaded a full real passage ("The Kite Maker") and its question correctly. Both confirm **zero Practice regression** from migration 069.
+
+### 22.6 Answer-secrecy boundary — reconfirmed, not solved here
+
+Migration 069 remains a row-level gate only. §6/§14 of this document's own original design stands unchanged: the pre-submission Mock payload's field-level secrecy (answer, accepted answers, workingSteps, misconception metadata) is **008D's own obligation, not yet built**. This report does not claim otherwise.
+
+### 22.7 Passage security
+
+Re-confirmed live: `ali_passage_bank` still returns `200`/`[]` to the anon key — identical to its pre-migration state (§2). No regression, since migration 069 never touched this table (confirmed by the migration's own SQL and by the structural test asserting exactly one table is referenced).
+
+### 22.8 Direct API attack matrix (re-run)
+
+| Test | Result |
+|---|---|
+| Anon unfiltered SELECT | ALLOWED BY DESIGN (Practice/provisional content, unchanged, intentional) |
+| Anon `eligibility_status=eq.mock_eligible` | NO MATCHING ROW EXISTS (cannot distinguish from BLOCKED BY RLS without §22.1) |
+| Anon answer-field request (`prompt->answer`) on a `practice_eligible` row | ALLOWED BY DESIGN (Practice requires this for self-marking) |
+| Anon `workingSteps` request | ALLOWED BY DESIGN (same reason) |
+| `ali_passage_bank` enumeration | BLOCKED BY RLS (unchanged, pre-existing) |
+| ID-based lookup | NOT TESTABLE BEYOND THE ABOVE without fabricating a `mock_eligible` row (not done, per explicit instruction) |
+
+### 22.9 Production counts
+
+Re-queried live: **TOTAL 312, Practice Eligible 295, Mathematics PE 175, English PE 120, Provisional 17, Mock Eligible 0 — exact match, zero discrepancy.**
+
+### 22.10 Regression
+
+Full suite **537/537** (unchanged — no code changed this verification pass). TypeScript clean. Copy Quality Guard PASS (0 violations, 238 files). Production build succeeds.
+
+### 22.11 Closure standard applied
+
+Of the directive's own 10-point closure standard: items 1 (migration applied — Founder-confirmed), 4-9 (admin access, Practice, passage security, production counts, Mock Eligible=0, regressions) are all independently confirmed. **Item 2-3 (installed policy matches the intended rule; ordinary clients cannot retrieve `mock_eligible` rows) rest on behavioural evidence that is consistent with the fix but cannot be distinguished from "nothing to find" without §22.1's catalog query** — disclosed honestly, not asserted as fully proven. Item 10 (the field-level obligation explicitly carried into 008D) is satisfied by this document's own unchanged §6/§14/§21.
+
+**Verdict: PASS WITH FINDINGS.** The one finding is evidentiary, not a defect: §22.1's catalog query remains outstanding. Every test this session could independently perform, passed cleanly, with no regression anywhere.
+
+---
+
+**STOP. Awaiting the Founder's §22.1 catalog query result before 008C can be described as genuinely, fully CLOSED. No 008D work begun.**

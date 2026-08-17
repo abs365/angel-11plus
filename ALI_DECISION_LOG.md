@@ -999,3 +999,31 @@ None of the above is converted to "complete" by this decision. They remain named
 **Rationale:** Proving the exposure live, rather than trusting Decision 83's own prior description of it, follows this project's own Evidence Hierarchy discipline applied to security claims specifically — a security fix built on an assumed, not re-verified, vulnerability description is itself a risk. Choosing RLS-plus-server-mediation over RLS alone or a premature full RPC/attempt-engine build reflects the directive's own explicit preference for the simplest architecture that is actually correct, not the most complete one buildable today.
 
 **Implications:** The single most important pre-Mock-activation gate named in Decision 83 now has a concrete, reviewed, ready-to-apply fix, and 008D has a specified, non-negotiable delivery contract (server-mediated, field-projected, attempt-scoped) rather than a general instruction to "be careful." No further increment begins automatically; 008D (Mock assessment engine + sealed-content firewall implementation) is recommended only after migration 069 is applied and independently re-verified.
+
+---
+
+### Decision 86 — Programme Increment 008C, Post-Migration Security Reconciliation: migration 069 confirmed applied by the Founder; every behavioural test available performed cleanly (no Practice regression, passage security intact, admin access intact, production counts exact); one Level 1 evidence gap (installed-policy catalog query) remains outstanding before genuine closure — PASS WITH FINDINGS, not yet fully CLOSED
+
+**Decision:** Following the Founder's manual application of migration 069 ("Success. No rows returned" — explicitly not accepted as sufficient evidence, matching this project's own standing discipline applied identically at every prior migration closure this session), independent post-application verification was performed.
+
+**Live Practice regression, on the real production account, not merely at the API level:** a real Mathematics question ("What is the smallest multiple of both 4 and 9 that is greater than 30?") was answered correctly (36), returning "Correct" plus real `workingSteps` explanation text — the full question-delivery → answer-submission → post-answer-explanation pipeline confirmed working end-to-end. A real, passage-backed English Reading Comprehension question ("The Kite Maker") loaded its full passage and question text correctly. **Zero Practice regression found.**
+
+**`ali_passage_bank` re-confirmed unaffected** (still `200`/`[]` to anon, identical to its pre-migration state) — migration 069 never touched this table, confirmed both by direct reading of its SQL and by the structural test asserting exactly one table is referenced.
+
+**Admin access (`is_current_user_admin()`) confirmed unmodified** — migration 069 contains no `DROP FUNCTION`/`CREATE FUNCTION` statement; the same function migration 054's own `ali_passage_bank_select_admin` policy already relies on is untouched.
+
+**Authenticated-learner boundary reasoned through structurally, not evaded**: since migration 069's own policy grants `anon` and `authenticated` the identical `using` predicate (no branch on `auth.uid()` or session state), an anon-key test is structurally equivalent proof for the authenticated-learner case — there is no behavioural difference the policy itself could produce between the two roles. Disclosed as a structural argument, not claimed as a separate live authenticated-session test that was not actually performed.
+
+**One genuine Level 1 evidence gap remains, disclosed rather than glossed over**: `pg_policies`/`pg_class` are Postgres system catalogs, not reachable via the anon-key REST API this session has access to — the same category of limitation this project has repeatedly hit with `ali_family_review`'s own RLS-opaque behaviour, now applying to catalog introspection itself. The exact query needed was provided directly to the Founder (governance doc §22.1). Every *behavioural* test available (Practice, passage security, admin, production counts, the `mock_eligible` query returning `200`/`[]`) is consistent with the fix working as designed, but **cannot, on its own, distinguish "blocked by the new RLS predicate" from "nothing to find"** without either this catalog evidence or real `mock_eligible` content (deliberately not created, per explicit instruction never to fabricate Mock data to force a test).
+
+**Verification:** Full suite 537/537 (unchanged — no code changed this reconciliation pass). TypeScript clean. Copy Quality Guard PASS (0 violations, 238 files). Production build succeeds.
+
+**Production counts, re-queried live: TOTAL 312, Practice Eligible 295, Mathematics PE 175, English PE 120, Provisional 17, Mock Eligible 0 — exact match, zero discrepancy.**
+
+**What this decision does NOT claim:** it does not claim the installed policy's exact `USING` expression has been independently confirmed against the live catalog (the one outstanding item); it does not claim field-level answer secrecy exists (008D's own unchanged obligation); it does not claim 008C is genuinely, fully CLOSED — the verdict is **PASS WITH FINDINGS**, one evidentiary gap short of full closure, not a defect.
+
+**Date:** 2026-08-17
+
+**Rationale:** The directive's own closure standard explicitly requires installed-policy verification "from database metadata," not the migration file alone — a requirement this session's own tooling genuinely cannot satisfy without either elevated access or the Founder's own query. Naming this gap precisely, rather than treating strong behavioural evidence as equivalent to it, preserves the same Evidence Hierarchy discipline this project has applied to every other Level 1/Level 2 evidence question throughout this programme.
+
+**Implications:** 008C is one Founder-supplied query away from genuine closure. Every risk this increment could independently test for was tested and found clean. 008D remains not begun.
