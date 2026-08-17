@@ -1,0 +1,203 @@
+/**
+ * Educational Increment 007T — Final Review Reconciliation and Controlled
+ * Activation.
+ *
+ * Combines the 6 approved 007T question-family targets' independent
+ * educational review (Founder-supplied authenticated Table Editor
+ * evidence: all 11 targets — 6 question families + 5 passages — decided
+ * `approved`, reviewer Ayobami Lawal, one historical row spelled
+ * "Ayobami Lawl" — a disclosed data-entry typo, not a different reviewer
+ * — ali_family_review remains RLS-opaque to this script's anon key, so
+ * that decision is taken as input, exactly as every prior controlled
+ * batch's generator script already does; see Decision 73,
+ * ALI_DECISION_LOG.md) into ONE combined, idempotent migration.
+ *
+ * Scoped to QUESTIONS ONLY (34: 20 Mathematics + 14 English), matching
+ * the Founder's own explicit ceiling. The 5 approved passages are
+ * deliberately NOT touched by this migration — every RC-10 question's
+ * own `prompt.passageText`/`prompt.passageTitle` is a self-contained
+ * copy (confirmed live against production), so Practice does not depend
+ * on `ali_passage_bank`'s own eligibility_status to display or complete
+ * these questions correctly. Passage activation, if wanted, is a
+ * separate, not-yet-authorised decision.
+ *
+ * Reuses checkActivationEligibility() from generate-activation-migration.mjs
+ * unchanged — the same gate (content_version match, provenance, active,
+ * still provisional) is applied to every candidate row across all 6
+ * families before it is allowed into the manifest.
+ *
+ * Not run against production by this script — it only writes the
+ * migration file for the Founder to review and apply.
+ */
+
+import { readFileSync, writeFileSync } from "node:fs";
+import { pathToFileURL } from "node:url";
+import { checkActivationEligibility } from "./generate-activation-migration.mjs";
+import { mathsQuestions } from "./generate-007t-mathematics-mr01.mjs";
+import { rc10Questions } from "./generate-007t-english-rc10.mjs";
+
+function loadAnonKey() {
+  const envRaw = readFileSync(".env.local", "utf8");
+  for (const line of envRaw.split("\n")) {
+    const m = line.match(/^NEXT_PUBLIC_SUPABASE_ANON_KEY=(.*)$/);
+    if (m) return m[1].trim();
+  }
+  throw new Error("NEXT_PUBLIC_SUPABASE_ANON_KEY not found in .env.local");
+}
+
+const ANON_KEY = loadAnonKey();
+const SUPABASE_URL = "https://" + JSON.parse(Buffer.from(ANON_KEY.split(".")[1], "base64").toString("utf8")).ref + ".supabase.co";
+
+const REVIEWER = "Ayobami Lawal";
+const EXPECTED_QUESTION_COUNT = 34;
+
+// Educational Increment 007T Final Reconciliation — fetching by family_id
+// was tried first and rejected: migration 062 (the legacy QT-MR-01
+// reclassification) has already been applied to production, so the 4
+// Mathematics families now ALSO contain 14 legacy rows sharing the same
+// family_id, none of which were part of the Founder's 34-question
+// approval. Selecting by this generator's OWN exact, known-good 34 IDs
+// (the same manifests migration 063 was built from) is the only
+// selection that can never accidentally pick up unrelated rows,
+// regardless of what else has since been reclassified into these families.
+const APPROVED_IDS_BY_FAMILY = {};
+for (const q of mathsQuestions) (APPROVED_IDS_BY_FAMILY[q.family_id] ??= []).push(q.id);
+for (const q of rc10Questions) (APPROVED_IDS_BY_FAMILY[q.family_id] ??= []).push(q.id);
+
+async function fetchRowsByIds(ids) {
+  const columns = "id,family_id,content_version,provenance,active,eligibility_status";
+  const idList = ids.map((id) => encodeURIComponent(id)).join(",");
+  const res = await fetch(
+    `${SUPABASE_URL}/rest/v1/ali_question_bank?id=in.(${idList})&select=${columns}&order=id`,
+    { headers: { apikey: ANON_KEY, Authorization: `Bearer ${ANON_KEY}` } }
+  );
+  const rows = await res.json();
+  if (!Array.isArray(rows)) throw new Error(`Could not read ali_question_bank for the given ids: ${JSON.stringify(rows)}`);
+  return rows;
+}
+
+export function build007TActivationSql({ migrationNumber, reviewer, questionIds }) {
+  const idList = questionIds.map((id) => `'${id}'`).join(", ");
+  return `-- Angel Digital 11+ — Migration ${migrationNumber}
+-- Educational Increment 007T — Final Review Reconciliation and Controlled
+-- Activation.
+--
+-- Promotes exactly the ${questionIds.length} questions covered by the 6
+-- approved 007T question-family targets' independent educational review
+-- (all 11 007T targets — 6 question families + 5 passages — decided
+-- 'approved', reviewer: ${reviewer}, one historical row spelled "Ayobami
+-- Lawl" — a disclosed data-entry typo, not a different reviewer or
+-- invalid evidence — per the Founder's authenticated Supabase Table
+-- Editor inspection of ali_family_review -- that table remains RLS-opaque
+-- to every script/anon-key path in this repository by design, migration
+-- 034/054, so this migration records the Founder-supplied decision as
+-- its input, not a re-derivation -- see Decision 73, ALI_DECISION_LOG.md).
+--
+-- Generated by scripts/generate-007t-activation-migration.mjs, which
+-- re-verified content_version, provenance, active state and
+-- eligibility_status for every row against live production immediately
+-- before this file was written, reusing checkActivationEligibility()
+-- unchanged from scripts/generate-activation-migration.mjs (007E).
+--
+-- SCOPED TO QUESTIONS ONLY. The 5 approved passages
+-- (wave3-eng-emptyclassroom, wave3-eng-bakersapprentice,
+-- wave3-eng-lettertograndad, wave3-eng-stormharbour, wave3-eng-newtrainers)
+-- are deliberately NOT touched: every one of the 14 English question rows
+-- below carries its own self-contained copy of its passage's text
+-- (prompt.passageText/prompt.passageTitle), confirmed against live
+-- production, so Practice does not depend on ali_passage_bank's own
+-- eligibility_status to display or complete these questions correctly.
+-- Passage activation, if wanted, is a separate, not-yet-authorised
+-- decision.
+--
+-- Teaching-maturity boundary (unchanged, not claimed by this migration):
+-- the 4 new Mathematics families' PRACTICE content is Founder-approved by
+-- this migration; their dedicated MODEL/Guided teaching architecture has
+-- NOT been authored (007T Part 10 / 007U's own disclosure) and this
+-- migration does not, and cannot, change that. The 2 English families use
+-- only the existing question-row modelAnswer convention, already
+-- technically supported -- no teaching content is manufactured here.
+--
+-- Idempotent: only rows still 'provisional' are updated, so re-running
+-- this file after it has already taken effect is a no-op. No row outside
+-- this named set is touched. Nothing is set to mock_eligible. No content,
+-- answer, family_id, provenance, or content_version is changed.
+-- ali_family_review (review history) is not touched by this migration.
+-- ali_passage_bank is not touched by this migration.
+--
+-- Run this in: Supabase Dashboard > SQL Editor > New query.
+
+begin;
+
+update public.ali_question_bank
+set eligibility_status = 'practice_eligible'
+where id in (${idList})
+  and eligibility_status = 'provisional';
+
+commit;
+`;
+}
+
+async function main() {
+  const migrationNumber = process.argv.includes("--migration-number")
+    ? process.argv[process.argv.indexOf("--migration-number") + 1]
+    : "065";
+
+  let allQuestionIds = [];
+  let anyBlocked = false;
+  const byFamily = {};
+
+  for (const [family, expectedIds] of Object.entries(APPROVED_IDS_BY_FAMILY)) {
+    const rows = await fetchRowsByIds(expectedIds);
+    byFamily[family] = rows.map((r) => r.id);
+
+    const missing = expectedIds.filter((id) => !rows.some((r) => r.id === id));
+    if (missing.length > 0) {
+      console.error(`${family}: MISSING from production: ${missing.join(", ")}`);
+      anyBlocked = true;
+      continue;
+    }
+    const wrongFamily = rows.filter((r) => r.family_id !== family);
+    if (wrongFamily.length > 0) {
+      console.error(`${family}: family_id mismatch on production: ${wrongFamily.map((r) => `${r.id} -> ${r.family_id}`).join(", ")}`);
+      anyBlocked = true;
+      continue;
+    }
+
+    const expectedVersion = rows[0]?.content_version ?? 1;
+    const { canActivate, problems } = checkActivationEligibility(rows, expectedVersion);
+    console.log(`${family}: ${rows.length} live row(s), ${canActivate ? "ALL PASS" : "BLOCKED"}`);
+    if (!canActivate) {
+      anyBlocked = true;
+      for (const p of problems) console.error(`  - ${p}`);
+      continue;
+    }
+    allQuestionIds.push(...rows.map((r) => r.id));
+  }
+
+  const distinctIds = [...new Set(allQuestionIds)];
+  if (distinctIds.length !== allQuestionIds.length) {
+    console.error("DUPLICATE ID FOUND across approved families -- refusing to generate a migration.");
+    process.exit(1);
+  }
+  if (distinctIds.length !== EXPECTED_QUESTION_COUNT) {
+    console.error(`EXPECTED EXACTLY ${EXPECTED_QUESTION_COUNT} QUESTIONS, GOT ${distinctIds.length} -- refusing to generate a migration. Investigate before proceeding.`);
+    process.exit(1);
+  }
+
+  if (anyBlocked) {
+    console.error("\nACTIVATION BLOCKED for one or more targets -- see above. No migration written.");
+    process.exit(1);
+  }
+
+  const sql = build007TActivationSql({ migrationNumber, reviewer: REVIEWER, questionIds: distinctIds });
+  const outPath = `supabase/migrations/${migrationNumber}_007t_activation.sql`;
+  writeFileSync(outPath, sql);
+  console.log(`\nWrote ${outPath} -- ${distinctIds.length} question(s) ready for Founder review and application.`);
+  console.log("\nManifest by family:");
+  for (const [fam, ids] of Object.entries(byFamily)) console.log(`  ${fam} (${ids.length}): ${ids.join(", ")}`);
+}
+
+if (import.meta.url === pathToFileURL(process.argv[1]).href) {
+  main();
+}
