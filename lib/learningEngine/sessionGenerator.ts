@@ -88,6 +88,18 @@ export interface PersonalisedSession {
   summary: string;
   /** Present only when a caller passed familyFocusCompetencyId. Coexists with `summary` (Angel's own view) — never merges or overwrites it. */
   familyFocus?: FamilyFocusSessionInfo;
+  /**
+   * Educational Increment 007U, Part 3 (Problem B) — true only when this
+   * area has zero Practice Eligible content right now (`activities` is
+   * empty for that reason, not a genuine error). Lets a caller render a
+   * distinct "not yet ready" state instead of a generic error/retry UI —
+   * retrying cannot help here, and the previous unconditional `throw new
+   * Error(session.summary)` surfaced `summary`'s internal wording
+   * (migration numbers, "database") directly to the learner. `summary`
+   * itself is also written to stay honest and non-technical either way,
+   * so a caller that doesn't check this flag still shows a safe message.
+   */
+  noContentAvailable?: boolean;
 }
 
 /**
@@ -267,8 +279,8 @@ export async function generatePersonalisedSession(
   if (tagged.length === 0) {
     return {
       activities: [],
-      summary:
-        "No practice content is available for this area yet. The illustrative content set (migration 013) has not been applied to this database.",
+      summary: "This practice area is still being prepared and does not yet have questions ready for practice.",
+      noContentAvailable: true,
     };
   }
 

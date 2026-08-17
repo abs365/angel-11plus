@@ -44,7 +44,7 @@ import { WRITING_DIMENSION_LABEL } from "@/lib/learningEngine/writingRubric";
 import type { EnglishComprehensionPrompt } from "@/types/ali/questionBank";
 import type { MathsQuestion } from "@/types/index";
 
-type Mode = "intro" | "loading" | "error" | "session" | "results";
+type Mode = "intro" | "loading" | "error" | "unavailable" | "session" | "results";
 
 /**
  * Capability 3, Wave 2 — Practice Experience session runner. One dynamic
@@ -161,6 +161,15 @@ export default function PracticeSessionPage({ params }: { params: Promise<{ area
       );
       const tagged = session.activities.map((a) => a.question);
 
+      // Educational Increment 007U, Part 3 (Problem B) — a real, expected
+      // "this area has no content yet" state, distinct from a genuine
+      // error: retrying cannot fix it, so it gets its own mode/copy
+      // instead of the generic error UI's "We couldn't prepare this
+      // practice session" framing and "Try again" button.
+      if (session.noContentAvailable) {
+        setMode("unavailable");
+        return;
+      }
       if (tagged.length === 0) {
         throw new Error(session.summary);
       }
@@ -470,6 +479,20 @@ export default function PracticeSessionPage({ params }: { params: Promise<{ area
                 <RotateCcw size={14} /> Try again
               </button>
               <Link href="/learning-intelligence/practice" className="min-h-[44px] inline-flex items-center text-xs font-semibold text-gray-500 dark:text-gray-400 px-2">
+                Back to practice
+              </Link>
+            </div>
+          </InfoCard>
+        )}
+
+        {mode === "unavailable" && (
+          <InfoCard className="mt-6 text-center">
+            <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">This practice area is being prepared</p>
+            <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">
+              It does not have questions ready for practice yet. Please check back soon, or continue with another subject in the meantime.
+            </p>
+            <div className="flex items-center justify-center mt-4">
+              <Link href="/learning-intelligence/practice" className="min-h-[44px] inline-flex items-center text-xs font-semibold text-purple-600 dark:text-purple-400 px-2">
                 Back to practice
               </Link>
             </div>

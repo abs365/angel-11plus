@@ -5,6 +5,7 @@ import type { AliCompetencySignal } from "@/types/ali/missionSignal";
 import { buildReplayQueue } from "./replayEngine";
 import { competencyLabel } from "./ali/labels";
 import { getEligibleSubjectKeys, resolveSubjectHref } from "./ali/pathwayEligibility";
+import { classifyEvidenceState, isEvidenceTooThinForAverage } from "./learningEngine/evidenceState";
 
 /**
  * Known, undocumented-until-now parallel-system finding (Educational
@@ -142,6 +143,27 @@ function reasonText(
       "numerical-reasoning": "Numerical Reasoning combines number patterns and data, an essential CEM skill.",
     };
     return copy[subject.subject] ?? "You haven't tried this section yet. Now is a good time.";
+  }
+
+  // Educational Increment 007U, Part 3 (Problem A) — `status()` only
+  // distinguishes 0 attempts ("not-started") from a score-based tier; it
+  // does not know that 1-2 attempts is too small a sample to state as a
+  // stable "average". Without this check, a single low-scoring attempt
+  // (or a stray 0, e.g. an abandoned or misrecorded session) reads to the
+  // learner exactly like a confirmed, repeatedly-demonstrated weakness.
+  if (isEvidenceTooThinForAverage(classifyEvidenceState(subject.attempts))) {
+    const copy: Record<string, string> = {
+      english: "You've made a start on Comprehension. A few more sessions will show a clearer picture of your progress here.",
+      maths: "You've made a start on Maths Reasoning. A few more sessions will show a clearer picture of your progress here.",
+      vocabulary: "You've made a start on Vocabulary. A few more sessions will show a clearer picture of your progress here.",
+      writing: "You've made a start on Writing. A few more sessions will show a clearer picture of your progress here.",
+      "mock-test": "You've sat one mock so far. A second sitting will give a much more reliable picture.",
+      "verbal-reasoning": "You've made a start on Verbal Reasoning. A few more sessions will show a clearer picture of your progress here.",
+      "non-verbal-reasoning": "You've made a start on Non-Verbal Reasoning. A few more sessions will show a clearer picture of your progress here.",
+      "spatial-reasoning": "You've made a start on Spatial Reasoning. A few more sessions will show a clearer picture of your progress here.",
+      "numerical-reasoning": "You've made a start on Numerical Reasoning. A few more sessions will show a clearer picture of your progress here.",
+    };
+    return copy[subject.subject] ?? `You've made a start on ${subject.label.toLowerCase()}. A few more sessions will show a clearer picture of your progress here.`;
   }
 
   if (subject.status === "weak") {
@@ -362,6 +384,26 @@ function buildDailyMission(
     ),
   };
 
+  // Educational Increment 007U, Part 3 (Problem C) — a real, executable-
+  // recommendation guard, distinct from pathway eligibility above. CSSE
+  // Writing IS a tested, eligible subject for this pathway; the problem is
+  // that /learning-intelligence/practice/continuous-writing (its real
+  // route for a CSSE learner — resolveSubjectHref()) currently has zero
+  // Practice Eligible questions, so recommending it produces a dead end.
+  // This legacy engine has no live connection to ali_question_bank to
+  // check that generally, so this is a small, explicitly disclosed, and
+  // currently-accurate exclusion — not an arbitrary substitute
+  // recommendation, just a removal of one that cannot be completed. MUST
+  // be updated (or replaced with a real content-availability check) once
+  // CSSE Writing content is activated.
+  const CSSE_SUBJECTS_WITHOUT_REACHABLE_CONTENT = new Set<string>(["writing"]);
+  const missionCandidateReport: AnalyticsReport = {
+    ...eligibleReport,
+    subjects: eligibleReport.subjects.filter(
+      (s) => !(p.selectedPathwayId === "csse" && CSSE_SUBJECTS_WITHOUT_REACHABLE_CONTENT.has(s.subject))
+    ),
+  };
+
   // Find the weakest skill per subject for richer reason text
   const weakSkillBySubject = new Map<string, string>();
   for (const skill of report.skills) {
@@ -377,7 +419,7 @@ function buildDailyMission(
     }
   }
 
-  const nonMock = eligibleReport.subjects.filter((s) => s.subject !== "mock-test");
+  const nonMock = missionCandidateReport.subjects.filter((s) => s.subject !== "mock-test");
   const sorted = [...nonMock].sort(
     (a, b) => urgency(b, p.aliCompetencySignal?.[b.subject]) - urgency(a, p.aliCompetencySignal?.[a.subject])
   );
@@ -409,7 +451,7 @@ function buildDailyMission(
   }
 
   // Review — a strong subject to maintain (different from primary + secondary)
-  const reviewSubject = eligibleReport.subjects.find(
+  const reviewSubject = missionCandidateReport.subjects.find(
     (s) =>
       s.status === "strong" &&
       s.subject !== "mock-test" &&
@@ -433,8 +475,10 @@ function buildDailyMission(
   // report.skills (unlike report.subjects) has its own separate subject
   // mapping inside replayEngine.ts's SKILL_SUBJECT table, so filtering
   // eligibleReport.subjects alone would not have gated this candidate source.
-  const eligibleReplayQueue = buildReplayQueue(p, report).filter((item) =>
-    eligibleSubjectKeys.has(item.subject)
+  const eligibleReplayQueue = buildReplayQueue(p, report).filter(
+    (item) =>
+      eligibleSubjectKeys.has(item.subject) &&
+      !(p.selectedPathwayId === "csse" && CSSE_SUBJECTS_WITHOUT_REACHABLE_CONTENT.has(item.subject))
   );
   const topReplay = eligibleReplayQueue.length > 0 ? eligibleReplayQueue[0] : null;
   if (topReplay && items.length < 3) {
