@@ -148,4 +148,63 @@ Passage delivery through the redaction boundary (§7); parent-facing attempt sta
 
 ---
 
-**STOP. This report concludes 008D. Migration 070 committed and pushed, NOT applied. Mock Eligible remains 0. Return to Founder/Product leadership for manual migration application (plus the one test fixture form, if live verification is wanted), then post-application verification, then 008E authorisation.**
+**STOP. This report concludes 008D's own generation stage. Migration 070 committed and pushed, NOT applied. Mock Eligible remains 0. Return to Founder/Product leadership for manual migration application (plus the one test fixture form, if live verification is wanted), then post-application verification, then 008E authorisation.**
+
+---
+
+## 29. Post-Migration Production Verification (addendum)
+
+Migration 070 was applied by the Founder. Independent verification follows.
+
+### 29.1 Confirmed clean, without any fixture
+
+All 3 tables exist (anon-key probe: `200`, not a "relation does not exist" error). All 5 functions exist (a bare, unauthenticated anon-key RPC call to each reached real application logic — `P0001` exceptions from this migration's own `raise exception` statements — never a PostgREST "function not found" error). `ali_mock_form`/`ali_mock_attempt`/`ali_mock_attempt_answer` all contain exactly 0 rows — no real form, attempt, or answer was created by the migration itself. Production content counts exact match (TOTAL 312/PE 295/Maths PE 175/English PE 120/Provisional 17/**Mock Eligible 0**). `ali_passage_bank` unaffected (still `200`/`[]`). Practice content (Mathematics and English) confirmed fully readable via direct API check. `eligibility_status = 'mock_eligible'` direct-read remains blocked exactly as migration 069 left it. Full suite 561/561 (558 + 3 new), TypeScript clean, Copy Quality Guard PASS, build succeeds.
+
+### 29.2 A real, disclosed finding: anon can invoke the functions (identity check still blocks it)
+
+A bare anon-key call (no `signInAnonymously()`, no real session) to every one of the 5 functions was **not** rejected at the Postgres permission layer — it executed and reached the function's own business logic (e.g. `mock_create_attempt` → "No profile found for the calling user"). This contradicts migration 070's own stated intent ("execute grants are authenticated-only, never anon"). The likely cause: a Supabase-project-level default privilege grant to `anon` on new `public` schema functions, which `revoke all ... from public` alone does not remove (`REVOKE FROM PUBLIC` only removes the PUBLIC pseudo-grant, not an explicit per-role grant made via `ALTER DEFAULT PRIVILEGES`).
+
+**Practical impact, precisely bounded**: this is not a content-exposure or state-mutation defect. `auth.uid()` is `NULL` for a bare anon-key request, so every function's own identity-derivation (`select id into v_profile_id from public.profiles where auth_user_id = auth.uid()`) matches no row for an anon caller — every function fails at its own "no profile"/"attempt not found" check *before* reaching any content or mutation. No anon caller can retrieve a redacted question, submit an answer, or mutate any attempt. This is a least-privilege / defense-in-depth gap, not a bypass of the core security property.
+
+**Hardening migration generated**: `supabase/migrations/071_mock_attempt_functions_revoke_anon.sql` — explicitly revokes execute from `anon` on all 5 functions. Touches no table, no policy, no content. 3 structural tests added, all passing. **NOT applied.**
+
+**Founder evidence requested** (Part D of the query below) to confirm the root cause precisely before treating 071 as necessary versus confirming the grant was never actually present and the P0001 responses have some other explanation.
+
+### 29.3 Item 7 — the one item requiring a fixture
+
+Everything about `mock_get_question`'s redaction is proven **structurally** (14 existing tests assert the exact `jsonb_build_object` field list and the absence of every protected field name in the function body) and via the parallel TypeScript contract (7 tests). What remains unproven is the **live, end-to-end** fact: actually calling the function for a real in-progress attempt and inspecting the real returned JSON. This requires at least one `ali_mock_form` row to exist, since `mock_create_attempt` fails immediately without one — no attempt can be created, so no question can ever be fetched, without a form.
+
+**Exact fixture SQL:**
+```sql
+insert into public.ali_mock_form (id, specification_version, attempt_type, question_manifest, active)
+values (
+  '008d-verification-fixture',
+  1,
+  'diagnostic_mock',
+  '[{"question_id":"mr01-mop-01","section":"maths"}]'::jsonb,
+  true
+)
+on conflict (id) do nothing;
+```
+
+**Every object this creates**: one `ali_mock_form` row (metadata only — an id, a version number, an attempt type, and a manifest referencing one existing, already-public `practice_eligible` question ID by reference; no question content is duplicated or newly created). If then exercised (e.g. by re-running `scripts/verify-mock-attempt-engine.mjs`), also one throwaway `auth.users` row + one throwaway `profiles` row (created via genuine `signInAnonymously()`, exactly as any real learner's first visit does) and one `ali_mock_attempt`/`ali_mock_attempt_answer` row pair, all owned by that throwaway identity.
+
+**Can it interact with a real learner?** No. The form row is inert metadata. Any attempt created against it is owned exclusively by a newly-created, disposable anonymous identity — never a real learner's account, never touching any real learner's own evidence, progress, or profile.
+
+**Exact cleanup SQL:**
+```sql
+delete from public.ali_mock_attempt_answer
+  where attempt_id in (select id from public.ali_mock_attempt where form_id = '008d-verification-fixture');
+delete from public.ali_mock_attempt where form_id = '008d-verification-fixture';
+delete from public.ali_mock_form where id = '008d-verification-fixture';
+```
+
+**Proof cleanup returns production to its original state**: after this SQL, all three tables return to exactly 0 rows again (verifiable via the same anon-key count queries used in §29.1). `ali_question_bank`'s own `mr01-mop-01` row is never written to at any point — only referenced by ID — so Practice content remains byte-identical throughout, trivially re-verifiable. The one residual, disclosed byproduct: the throwaway `auth.users`/`profiles` row(s) cannot be cleanly deleted via a plain SQL `DELETE` (Supabase Auth users require the Auth Admin API); this is a low-risk, no-PII, already-precedented byproduct (identical to what this increment's own earlier live smoke test already left behind), not a new category of residue.
+
+**The specific verification that cannot otherwise be performed**: confirming, with a real payload actually returned by the live function (not just the SQL text), that `mock_get_question` genuinely omits every protected field for a real question — closing the gap between "structurally proven correct" and "proven to work."
+
+**Founder approval is required before this fixture is inserted. Not inserted this session.**
+
+### 29.4 Verdict
+
+**PASS WITH FINDINGS.** Every item provable without a fixture is clean: tables, functions, identity-derivation, Practice regression, passage security, production counts, zero real Mock content, full regression suite. One genuine, precisely-bounded finding (§29.2) has a generated, tested, not-yet-applied fix. One item (§29.3) awaits Founder approval for a fully-specified, reversible fixture before it can move from "structurally proven" to "live-proven." **008D is not yet described as genuinely closed** — both items should resolve before that claim is made.
