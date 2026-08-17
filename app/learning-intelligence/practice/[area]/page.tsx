@@ -491,6 +491,7 @@ export default function PracticeSessionPage({ params }: { params: Promise<{ area
                 key={current.id}
                 prompt={current.prompt as EnglishComprehensionPrompt}
                 familyId={current.familyId}
+                addressesMisconception={current.addressesMisconception}
                 guidedAvailable={Boolean(current.familyId && guidedFamiliesRef.current.has(current.familyId))}
                 answer={answer}
                 setAnswer={setAnswer}
@@ -612,10 +613,11 @@ export default function PracticeSessionPage({ params }: { params: Promise<{ area
 }
 
 function ReadingActivity({
-  prompt, familyId, guidedAvailable, answer, setAnswer, submitted, lastCorrect, pendingSelfAssessment, lastAutoResult, onSelfAssess, onSubmit, onNext, isLast,
+  prompt, familyId, addressesMisconception, guidedAvailable, answer, setAnswer, submitted, lastCorrect, pendingSelfAssessment, lastAutoResult, onSelfAssess, onSubmit, onNext, isLast,
 }: {
   prompt: EnglishComprehensionPrompt;
   familyId?: string;
+  addressesMisconception?: string;
   guidedAvailable: boolean;
   answer: string;
   setAnswer: (v: string) => void;
@@ -845,6 +847,26 @@ function ReadingActivity({
               {automaticErrorCategories.map((c) => (
                 <p key={c}>{WRONG_ANSWER_CATEGORY_LABEL[c]}</p>
               ))}
+            </div>
+          )}
+          {/* CSSE Completion Programme Phase C — closes the known gap
+              identified in Phase A/the completion baseline: this reviewed,
+              human-evidenced addresses_misconception text existed for
+              every English question (100% populated, Batch 1-4 content-
+              reviewed) but was never rendered anywhere on this page.
+              Framed as a general common-mistake note (never a diagnosis
+              of THIS learner's specific reasoning, which Angel cannot
+              know for a self-assessed or auto-scored short answer alike)
+              — mirrors MathsActivity's equivalent block below, additive
+              to (never replacing) the structural categories above. Gated
+              identically (submitted && !lastCorrect): for the 3
+              self-assessed families this only becomes reachable once the
+              learner has judged their own answer "Not quite" and
+              lastCorrect resolves to false, never before. */}
+          {submitted && !lastCorrect && addressesMisconception && (
+            <div className="text-xs text-blue-700 dark:text-blue-300 bg-blue-50 dark:bg-blue-950 rounded-xl p-3 mt-3">
+              <p className="font-semibold">A common mistake with this kind of question:</p>
+              <p className="mt-1">{addressesMisconception}</p>
             </div>
           )}
           {submitted && prompt.modelAnswer && (
