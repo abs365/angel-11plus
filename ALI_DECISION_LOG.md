@@ -1225,3 +1225,71 @@ The ordinary source question row also contains `id`, `answer`, and `workingSteps
 **Rationale:** The directive named a precise, narrow Mandatory First Priority (retire the insecure path on the real learner-facing route) ahead of the broader reporting-foundation work, and separately warned against turning 008E into a full visual redesign or a second scoring engine. Replacing the route in place, building only the schema/RPC architecture the directive's own Part 5-7 items require (never the scoring computation itself), and disclosing every dropped integration explicitly rather than silently degrading it, follows both constraints at once: the security priority is resolved now, and the harder, riskier work (real grading logic, real section timing, real passage layout) is named as future scope rather than rushed into this increment under time pressure.
 
 **Implications:** No 008F work begins automatically. Before any real Mock content, Form A/B/C, or scoring logic is built, the Founder should decide: (1) whether to apply migration 072 and, optionally, run the offered extended live-verification script; (2) whether the disclosed loss of Learning-Report/readiness/Mock-History integration for CSSE Mock attempts is acceptable until a dedicated scoring/analysis increment restores it, or whether that increment should be prioritised before any real content is created; (3) whether `mocks/adaptive/*`'s continued use of the pre-008E content-retrieval pattern needs its own remediation, given it was named a residual gap here rather than fixed.
+
+---
+
+### Decision 94 — Programme Increment 008E, Post-Migration Production Verification: migration 072 confirmed installed and behaviourally correct on every dimension except one; a genuine, bounded execute-grant defect discovered on all 3 new functions (anon can invoke them, matching the exact defect class Decision 89 found and 071 fixed) — 008E is NOT genuinely closed; STOPPED per directive, no fix applied
+
+**Decision:** Following the Founder's confirmation that migration 072 was manually applied to production, this session performed bounded, read-only-except-where-explicitly-authorised verification. **A genuine defect was found and this session stopped, reported it, and changed nothing**, per the directive's own explicit instruction ("If a security or architectural defect is discovered, STOP and report it before changing anything").
+
+**The defect:** `mock_get_active_form`, `mock_get_attempt_manifest`, and `mock_set_flag` (all three new functions from migration 072) are callable by a bare, fully unauthenticated `anon`-key client with no Supabase Auth session at all — proven behaviourally, not inferred: a fresh client (anon key, `signInAnonymously()` never called) received a clean response from all three RPCs rather than a permission-denied error. `mock_get_attempt_manifest` and `mock_set_flag` failed safely with "Attempt ... not found for caller" (their own internal `profile_id = v_profile_id` check correctly finds no match when `auth.uid()` is null) — bounded, not exploitable, exactly Decision 89's own "Finding A" reasoning. **`mock_get_active_form` has no identity check at all by design** (it was never meant to need one — a form's own id was reasoned to be non-sealed information) and returned a **clean, non-error response** (`[]`, since no active form currently exists) rather than being denied outright.
+
+**Root cause, matching a known defect class exactly:** migration 072's own grant statements (`revoke all on function ... from public; grant execute on function ... to authenticated;`) reproduce precisely the pattern migration 070 originally used and Decision 89 found insufficient — a Supabase project-level default-privilege grant to `anon` survives a bare `revoke ... from public`, because `REVOKE FROM PUBLIC` only removes the `PUBLIC` pseudo-grant, never an explicit per-role grant made via `ALTER DEFAULT PRIVILEGES`. Migration 071 fixed this for the original 5 functions with an explicit `revoke execute on function ... from anon` statement for each. **Migration 072 omitted that same explicit anon-revoke for all 3 of its own new functions** — this session's own defect, introduced when writing 072, not a pre-existing platform issue and not something 008D's own architecture caused.
+
+**Practical impact, precisely bounded:** today, zero. No active Mock form exists (Content Boundary correctly holding — see Mock Eligible confirmation below), so `mock_get_active_form` currently returns an empty result to anyone, authenticated or not. `mock_create_attempt` (unaffected, migration 070's own function, correctly still `authenticated`-only per this session's own direct re-test) remains the actual gate on ever creating a real attempt, so no attempt/answer/flag data is reachable via this gap regardless. **The defect becomes live-impactful the moment a real Mock form is ever activated**: at that point, an anonymous, never-signed-in caller would be able to learn a currently-active form's `form_id` and `attempt_type` without authenticating at all — a real, if narrow, unauthenticated information disclosure (which Mock is currently live and its type), and a violation of this codebase's own stated, consistent design intent ("authenticated only, never anon" — the same rule every other Mock RPC in this codebase, migrations 070/071 both, already correctly enforces).
+
+**Not fixed this session, deliberately, per the directive's own STOP instruction.** The evident fix (three explicit `revoke execute on function public.mock_get_active_form(text)/mock_get_attempt_manifest(uuid)/mock_set_flag(uuid,text,boolean) from anon;` statements, mirroring migration 071's own established remediation exactly) is not applied, drafted as a migration file, or committed in this session — reported for Founder decision first.
+
+**Everything else verified this session, independently, with the evidence tier stated:**
+- **Table/trigger existence — behavioural, via anon key (relation-not-found vs. RLS-empty-result are distinguishable via the anon key even without catalogue access):** `ali_mock_attempt_report` and `ali_mock_attempt_flag` both exist (queries succeeded, no "relation does not exist" error), alongside the three pre-existing Mock tables, all unaffected.
+- **The 5 proven 008D RPCs — behavioural, re-tested directly against production:** all 5 correctly return "permission denied for function ..." to a bare anon-key caller, unchanged and unaffected by 072, exactly as migration 071 established.
+- **Production content counts — independently computed, not merely accepted from the stated baseline, via `count: 'exact'` queries the anon key's own RLS permits for every non-`mock_eligible` status:** TOTAL 312, Practice Eligible 295 (Maths 175, English 120), Provisional 17, `independently_validated` 0 — **an exact match to the established baseline, computed directly by this session, not merely repeated.** Mock Eligible: anon sees 0 (RLS-filtered — this specific figure is not independently provable beyond the anon key's own boundary, same caveat as every prior decision in this chain).
+- **Practice regression — behavioural, direct read against production:** a real Maths `practice_eligible` row returns its `answer` field; a real English `practice_eligible` row returns `modelAnswer`/`acceptedAnswers`/passage content; a `practice_eligible` row with `workingSteps` present was found and readable. No regression from migration 072.
+- **Formal Mock entry journey — behavioural, via direct RPC calls matching exactly what the page's own code invokes, not a live browser click-through (no confirmed production URL was available to this session, and none was guessed — see this decision's own "Evidence limitations" below):** `mock_get_active_form('full_mock')` returns an empty, error-free result when authenticated (via the extended verification script's own first three steps, which ran successfully up to that exact point) — this is the correct, honest "no mock available" behaviour the new page's own code is built to handle, with no crash and no fallback to the retired path (confirmed by this session's own prior source-level test, `mockContentFirewall.test.ts`'s test 5b, still passing).
+- **Extended verification script — run this session per explicit Founder authorisation ("Run: the extended 008E verification script"):** stopped at its own step 3 ("No active form found for attempt_type = 'full_mock'"), exactly as expected since no fixture form was inserted. Its own first two steps did write real, if inert, production rows before stopping: one throwaway `auth.users` identity and one throwaway `profiles` row (name = "008E verification (throwaway)"). **This session could not retrieve their exact IDs after the fact** (a fresh, unauthenticated anon-key query cannot read another identity's own `profiles` row — RLS correctly denies it, the same protection this whole architecture relies on) — the Founder can locate them via the Supabase Dashboard by that exact name string and a `created_at` timestamp matching this session. No attempt/answer/flag/report row was created (the script never reached that step).
+- **Automated verification — re-run fresh this session:** 592/592 tests, TypeScript clean, ESLint clean, Copy Quality Guard PASS (0/245 files), production build succeeds. No file was changed this session (`git status` clean throughout) — no new commit.
+
+**What this decision does NOT claim:** it does not claim 008E is closed; it does not claim the execute-grant defect has been fixed; it does not claim the throwaway verification identity has been cleaned up; it does not claim a live browser journey was walked through; it does not claim Mock Eligible's true production value beyond what anon's own RLS-bounded view can show; it does not claim `mocks/adaptive/*` was reviewed (unchanged from Decision 93, still named as residual technical debt, not fixed).
+
+**Verdict:** 008E is **NOT genuinely closed.** Every verification item this session could check independently passed, except one genuine, bounded, currently-zero-impact but real defect in this session's own migration 072, which must be fixed and re-verified before closure.
+
+**Date:** 2026-08-18
+
+**Rationale:** The Founder's own closure rule for this session was explicit: do not declare 008E closed merely because migration 072 ran successfully; closure requires the deployed architecture and security behaviour to actually reconcile. One did not. Reporting this precisely and stopping, rather than quietly patching it inline under the same authorisation that asked for verification, keeps the same discipline this project has applied at every prior closure gate (Decisions 86, 89 both found a genuine finding at a "verification" step and treated it as blocking, not folded silently into the same pass).
+
+**Implications:** No 008F work begins. Before 008E can close, the Founder should: (1) authorise the drafting and application of a small, migration-071-pattern fix (explicit anon-revoke on the 3 new functions); (2) re-run this session's own behavioural anon-access checks (or the consolidated SQL query below) to confirm the fix; (3) clean up the one throwaway `auth.users`/`profiles` pair this session's own explicitly-authorised script run created, via the Supabase Dashboard, by name.
+
+**Consolidated catalogue-evidence SQL query, for the Founder's own Supabase SQL Editor** (per the directive's own instruction to provide exactly one consolidated query rather than several small ones) — confirms or disproves this decision's own behavioural finding at the catalogue level, plus every other Part 1 item this session could not verify without authenticated access:
+
+```sql
+select 'A. table/column' as check_group, table_name as k1, column_name as k2, data_type as k3, is_nullable as k4, coalesce(column_default, '') as k5
+from information_schema.columns
+where table_schema = 'public' and table_name in ('ali_mock_attempt_report', 'ali_mock_attempt_flag')
+
+union all
+
+select 'B. rls_enabled', c.relname, c.relrowsecurity::text, c.relforcerowsecurity::text, '', ''
+from pg_class c join pg_namespace n on n.oid = c.relnamespace
+where n.nspname = 'public' and c.relname in ('ali_mock_attempt_report', 'ali_mock_attempt_flag')
+
+union all
+
+select 'C. policy', tablename, policyname, roles::text, cmd, coalesce(qual, '')
+from pg_policies
+where schemaname = 'public' and tablename in ('ali_mock_attempt_report', 'ali_mock_attempt_flag')
+
+union all
+
+select 'D. trigger', trigger_name, event_manipulation, event_object_table, action_timing, ''
+from information_schema.triggers
+where trigger_schema = 'public' and trigger_name = 'mock_attempt_report_init_trigger'
+
+union all
+
+select 'E. function_grant -- THE CRITICAL CHECK: any row here with grantee = anon on mock_get_active_form/mock_get_attempt_manifest/mock_set_flag confirms this decision''s own behavioural finding', routine_name, grantee, privilege_type, '', ''
+from information_schema.routine_privileges
+where routine_schema = 'public'
+  and routine_name in ('mock_get_active_form', 'mock_get_attempt_manifest', 'mock_set_flag', 'mock_create_attempt', 'mock_start_attempt', 'mock_get_question', 'mock_submit_answer', 'mock_submit_attempt')
+
+order by 1, 2, 3;
+```
