@@ -778,13 +778,23 @@ export interface Database {
         Returns: undefined;
       };
       // Programme Increment 008F — supabase/migrations/074_mock_scoring_
-      // and_report_release.sql. Not yet applied to production; declared
-      // here so lib/mockAttempt/client.ts can call these through the
-      // typed supabase.rpc() the same way every other RPC already does.
+      // and_report_release.sql. Not yet applied to production.
+      // mock_score_attempt is declared here for completeness/typechecking
+      // against the real schema only — after the Founder pre-application
+      // architecture review, it has NO execute grant to authenticated or
+      // anon at all (only its own owning role, via the report-init
+      // trigger's own internal call), so no lib/mockAttempt/client.ts
+      // wrapper calls it; a client-side call would always fail. Declared
+      // here, not removed, because the function genuinely exists in the
+      // schema.
       mock_score_attempt: {
         Args: { p_attempt_id: string };
         Returns: undefined;
       };
+      // mock_release_report, unlike the above, IS meant to be called by
+      // client code (an admin session) — declared here so lib/
+      // mockAttempt/client.ts can call it through the typed
+      // supabase.rpc() the same way every other RPC already does.
       mock_release_report: {
         Args: { p_attempt_id: string };
         Returns: undefined;

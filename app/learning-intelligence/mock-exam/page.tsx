@@ -17,7 +17,6 @@ import {
   submitMockAnswer,
   submitMockAttempt,
   setMockFlag,
-  scoreMockAttempt,
 } from "@/lib/mockAttempt/client";
 import type { MockAttemptType, MockQuestionPayload } from "@/lib/mockAttempt/types";
 import {
@@ -56,15 +55,20 @@ import { QuestionPalette } from "@/components/mockAttempt/QuestionPalette";
  * string or unrecognised rich content, not with the full passage layout.
  *
  * Deliberate scope boundary (008E directive, Part 6/"submission and full
- * diagnostic feedback are not necessarily the same event"): this page
- * does not grade anything, does not call the old Educational Intelligence
- * evidence pipeline, does not call recordReadinessSnapshot or
- * saveMockResult. Migration 072's own trigger creates a bare
- * ali_mock_attempt_report row (all null, 'not_started'/'pending') the
- * moment mock_submit_attempt() locks the attempt — a future dedicated
- * scoring/analysis increment owns turning that into a real report. Until
- * then, this page's own submitted-state copy says exactly that, honestly,
- * rather than fabricating a score.
+ * diagnostic feedback are not necessarily the same event"; 008F): this
+ * page does not grade anything itself, does not call the old Educational
+ * Intelligence evidence pipeline, does not call recordReadinessSnapshot
+ * or saveMockResult. Migration 074's own redefined report-init trigger
+ * creates the report row and immediately, automatically, server-side
+ * runs mock_score_attempt() the moment mock_submit_attempt() locks the
+ * attempt — this client never triggers scoring itself and has no
+ * execute grant on that function at all (008F Founder pre-application
+ * architecture review: authoritative scoring must be controlled by
+ * Angel's own trusted database boundary, never learner/browser-
+ * initiated). A separate, admin-gated release step (mock_release_
+ * report()) is still what actually surfaces the result — this page's
+ * own submitted-state copy says exactly that, honestly, rather than
+ * implying an immediate score.
  *
  * Because Content Boundary (008E directive) forbids creating Form A/B/C
  * or any real Mock content, and Mock Eligible remains 0, a real learner
@@ -121,15 +125,13 @@ export default function MockExamPage() {
     setPhase("submitting");
     const result = await submitMockAttempt(supabase, attemptId);
     if (result.error) { setErrorMessage(result.error); setPhase("error"); return; }
-    // 008F — kick off server-side, deterministic marking now that the
-    // attempt is locked. Fire-and-forget, deliberately: scoring returns
-    // no data (mock_score_attempt is `returns void`), it's a background
-    // step distinct from submission itself (the delayed-report
-    // principle — see migration 074's own header), and its failure must
-    // never block the learner's own submission confirmation. A future
-    // admin release step is what actually surfaces the result, not this
-    // call.
-    void scoreMockAttempt(supabase, attemptId);
+    // 008F, revised after Founder pre-application architecture review —
+    // this client never triggers scoring itself. Marking now happens
+    // automatically, server-side, the moment mock_submit_attempt() locks
+    // the attempt (migration 074's own redefined report-init trigger) —
+    // authoritative scoring is controlled by Angel's own trusted
+    // database boundary, never learner/browser-initiated. This client
+    // has no execute grant on mock_score_attempt at all.
     setPhase("submitted");
   }, [attemptId, currentQuestionId, answerDraft]);
 

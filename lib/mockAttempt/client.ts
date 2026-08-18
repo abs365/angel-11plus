@@ -136,24 +136,6 @@ export async function setMockFlag(
 }
 
 /**
- * Programme Increment 008F — server-side, deterministic marking for a
- * submitted (locked) attempt. Returns no data (the RPC itself is `returns
- * void`) — this is deliberate: nothing about a fresh score is ever
- * revealed to the caller directly, only through the separately-governed,
- * sealed-until-released report row. Safe to call from the attempt owner
- * themselves (matches this codebase's own established grant model) since
- * there is nothing in the response to extract.
- */
-export async function scoreMockAttempt(
-  supabase: SupabaseClient<Database>,
-  attemptId: string
-): Promise<MockClientResult<true>> {
-  const { error } = await supabase.rpc("mock_score_attempt", { p_attempt_id: attemptId });
-  if (error) return { data: null, error: error.message };
-  return { data: true, error: null };
-}
-
-/**
  * Admin-only (enforced inside the SECURITY DEFINER function body via
  * is_current_user_admin(), migration 074) — report release cannot be
  * self-authorised by the learner. Calling this as an ordinary learner

@@ -37,6 +37,64 @@
 -- NOT APPLIED. Generated for Founder review and manual application via
 -- Supabase Dashboard > SQL Editor > New query, after migrations 069-073
 -- have already been applied (confirmed, Decisions 87/89/91/96).
+--
+-- AMENDED IN PLACE before any application, per Founder pre-application
+-- architecture review (never applied, so amending directly — not a new
+-- migration 075 — follows this repository's own established practice
+-- for an unapplied migration, the same discipline migration 071's own
+-- revision already used). Three findings, all addressed below:
+--
+-- Issue 1 (trust boundary): the original version granted mock_score_
+-- attempt's EXECUTE to authenticated, authorised only by an ownership
+-- check -- meaning an ordinary learner could trigger authoritative
+-- scoring directly. Investigation confirmed scoring was in fact wired
+-- to fire from browser client code (app/learning-intelligence/mock-
+-- exam/page.tsx's own submission handler), the only caller that ever
+-- existed. There is no technical reason a learner needs this: mock_
+-- score_attempt returns void, and the true trusted-infrastructure
+-- boundary this codebase already has is the database itself via a
+-- SECURITY DEFINER trigger (migration 072's own report-init trigger,
+-- which already fires automatically, entirely server-side, the moment
+-- mock_submit_attempt() locks an attempt). Corrected: mock_score_
+-- attempt's EXECUTE is no longer granted to authenticated (or anon) at
+-- all -- only the function's own owning role can call it, which the
+-- redefined trigger below now does automatically, with no client
+-- involvement and no service-role credential introduced (the owning
+-- role's own implicit rights over its own objects are what make this
+-- work, not a new secret). The client-side call in mock-exam/page.tsx
+-- and its lib/mockAttempt/client.ts wrapper are removed in this same
+-- change (see ALI_DECISION_LOG.md).
+--
+-- Issue 2 (manual-marking semantics): the original version set
+-- scoring_state = 'scored' unconditionally, even when one or more
+-- questions were requires_manual_marking and percentage was null --
+-- meaning a report with unresolved Continuous Writing (or any other
+-- manually-markable question) could look fully scored to mock_release_
+-- report's own gate (`scoring_state = 'scored'`) and be released
+-- incomplete. Corrected WITHOUT inventing a new state or altering the
+-- existing scoring_state check constraint (migration 072, already
+-- applied) -- the smallest change compatible with the existing schema:
+-- mock_score_attempt now sets scoring_state to 'scoring' (an existing,
+-- previously-unused valid value) whenever any question still requires
+-- manual marking, reserving 'scored' exclusively for a fully-resolved
+-- report. mock_release_report's own gate is unchanged -- it becomes
+-- correct automatically, since 'scored' now genuinely means "nothing
+-- left unresolved."
+--
+-- Issue 3 (null/empty response): the original version read a response
+-- row's own 'value' key without checking whether it was null or empty,
+-- which could fall through to 'incorrect' rather than 'unanswered'.
+-- Traced the real contract: mock_submit_answer (migration 070,
+-- unmodified) only requires p_response to be a JSON object -- nothing
+-- about its internal shape -- and while this codebase's own client
+-- (mock-exam/page.tsx) never submits an empty answer (guarded by
+-- `if (answerDraft.trim())` before ever calling it), a direct RPC call
+-- could still send {value: ""} or {value: null}, bypassing that client-
+-- side discipline entirely. Corrected: a response row with a null,
+-- missing, or whitespace-only 'value' is now treated exactly like no
+-- response at all -- 'unanswered', never 'incorrect' or 'manual' --
+-- the server, not client discipline, is now the authoritative boundary
+-- for this distinction.
 
 begin;
 
@@ -156,13 +214,24 @@ begin
     select response into v_response from public.ali_mock_attempt_answer
       where attempt_id = p_attempt_id and question_id = v_question_id;
 
-    if v_response is null then
+    v_response_value := null;
+    if v_response is not null then
+      v_response_value := v_response->>'value';
+    end if;
+
+    -- Issue 3 (Founder pre-application review): a response row that
+    -- exists but carries no genuine content (a null, missing, or
+    -- whitespace-only 'value') is treated exactly like no response at
+    -- all. mock_submit_answer's own contract only requires p_response
+    -- to be a JSON object, nothing about its internal shape, so this
+    -- server-side check -- not the client's own `if (answerDraft.trim())`
+    -- discipline -- is the real, authoritative boundary.
+    if v_response is null or v_response_value is null or trim(v_response_value) = '' then
       v_status := 'unanswered';
       v_marks_awarded := 0;
       v_unanswered_count := v_unanswered_count + 1;
     else
       v_answered_count := v_answered_count + 1;
-      v_response_value := v_response->>'value';
       v_stored_answer := v_bank_row.prompt->>'answer';
 
       -- Writing/essay content, or an answer this migration's own
@@ -234,7 +303,16 @@ begin
   end if;
 
   update public.ali_mock_attempt_report
-  set scoring_state = 'scored',
+  -- Issue 2 (Founder pre-application review): 'scored' is reserved
+  -- exclusively for a fully-resolved report -- reusing the existing,
+  -- previously-unused 'scoring' state (no constraint change, no new
+  -- enum value) whenever any question still requires manual marking.
+  -- mock_release_report's own gate (`scoring_state = 'scored'`) is
+  -- unchanged and becomes correct automatically: a report with
+  -- unresolved Continuous Writing, or any other manually-marked
+  -- question, can never reach 'scored' and can therefore never be
+  -- released while incomplete.
+  set scoring_state = case when v_manual_count > 0 then 'scoring' else 'scored' end,
       marking_version = v_current_marking_version,
       question_outcomes = v_outcomes,
       overall = jsonb_build_object(
@@ -253,6 +331,53 @@ begin
   if not found then
     raise exception 'No report row exists for attempt % -- the migration 072 report-init trigger should have created one on submission', p_attempt_id;
   end if;
+end;
+$$;
+
+-- === Function: mock_attempt_report_init (redefined) ==================
+--
+-- Issue 1 (Founder pre-application review): redefines migration 072's
+-- own already-applied report-init trigger function so that authoritative
+-- scoring is triggered automatically, entirely server-side, by Angel's
+-- own trusted database boundary -- never by a learner or browser. This
+-- is the SAME trigger (mock_attempt_report_init_trigger, migration 072,
+-- unmodified -- only the function body it calls changes; CREATE OR
+-- REPLACE FUNCTION preserves the same function identity, so the existing
+-- trigger picks up this new body with no trigger DDL needed). Calling
+-- mock_score_attempt() here, from within a SECURITY DEFINER function
+-- owned by the same role that owns mock_score_attempt itself, needs no
+-- explicit EXECUTE grant at all -- ownership already confers full rights
+-- over one's own objects, which is exactly why mock_score_attempt's own
+-- grants (below) no longer include authenticated.
+--
+-- Scoring is wrapped in its own nested exception block so a scoring
+-- failure can never roll back the learner's own genuine submission --
+-- mock_submit_attempt()'s own status update (migration 070, unmodified)
+-- must always succeed once truly submitted, regardless of what happens
+-- to scoring afterward. On a caught exception, the report row is marked
+-- scoring_state = 'failed' (an existing, valid state, migration 072)
+-- rather than left silently at 'not_started'.
+create or replace function public.mock_attempt_report_init()
+returns trigger
+language plpgsql
+security definer
+set search_path = public
+as $$
+begin
+  if new.status = 'submitted' and (old.status is distinct from 'submitted') then
+    insert into public.ali_mock_attempt_report (attempt_id)
+    values (new.id)
+    on conflict (attempt_id) do nothing;
+
+    begin
+      perform public.mock_score_attempt(new.id);
+    exception when others then
+      update public.ali_mock_attempt_report
+      set scoring_state = 'failed', updated_at = now()
+      where attempt_id = new.id;
+    end;
+  end if;
+  return new;
 end;
 $$;
 
@@ -291,13 +416,24 @@ begin
 end;
 $$;
 
--- Execute grants: authenticated only, never anon or public -- applied
--- correctly and completely in this same migration, for both functions,
--- from the start.
+-- Execute grants.
+--
+-- mock_score_attempt: Issue 1 (Founder pre-application review) --
+-- NOT granted to authenticated. Its only caller is the report-init
+-- trigger above, invoked automatically, server-side, on submission --
+-- ownership already gives that trigger's own SECURITY DEFINER context
+-- full rights to call this function with no explicit grant needed.
+-- Every revoke below is therefore a documenting no-op, kept explicit and
+-- auditable rather than omitted, matching this codebase's own
+-- established paranoia level for every other Mock function's grants.
 revoke all on function public.mock_score_attempt(uuid) from public;
-grant execute on function public.mock_score_attempt(uuid) to authenticated;
 revoke execute on function public.mock_score_attempt(uuid) from anon;
+revoke execute on function public.mock_score_attempt(uuid) from authenticated;
 
+-- mock_release_report: unchanged from the original design -- granted to
+-- authenticated (matching every other Mock function's own grant model),
+-- with admin-gating enforced inside the function body itself
+-- (is_current_user_admin()), never anon.
 revoke all on function public.mock_release_report(uuid) from public;
 grant execute on function public.mock_release_report(uuid) to authenticated;
 revoke execute on function public.mock_release_report(uuid) from anon;
