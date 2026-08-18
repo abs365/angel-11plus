@@ -38,6 +38,43 @@ export interface MockQuestionPayload {
 }
 
 /**
+ * Programme Increment 008E — supabase/migrations/072_mock_lifecycle_and_
+ * reporting_foundation.sql. Mirrors mock_get_active_form()'s exact
+ * return shape: only form_id + attempt_type, never question_manifest.
+ */
+export interface ActiveMockForm {
+  formId: string;
+  attemptType: MockAttemptType;
+}
+
+export type MockScoringState = "not_started" | "scoring" | "scored" | "failed";
+export type MockAnalysisState = "not_started" | "analysing" | "complete" | "failed";
+export type MockReportReleaseState = "pending" | "released";
+
+/**
+ * Mirrors ali_mock_attempt_report's own columns exactly. Only ever
+ * readable once report_release_state = 'released' (the table's own RLS
+ * policy enforces this server-side); every data field stays null until a
+ * future scoring/analysis increment populates it — this type does not
+ * claim any of these fields are computed today.
+ */
+export interface MockAttemptReport {
+  attemptId: string;
+  scoringState: MockScoringState;
+  analysisState: MockAnalysisState;
+  reportReleaseState: MockReportReleaseState;
+  overall: unknown | null;
+  subjectBreakdown: unknown | null;
+  questionOutcomes: unknown | null;
+  competencyEvidence: unknown | null;
+  strengths: unknown | null;
+  weaknesses: unknown | null;
+  timingEvidence: unknown | null;
+  practiceComparison: unknown | null;
+  parentExplanation: string | null;
+}
+
+/**
  * Fields that must NEVER appear in a payload delivered to a learner
  * before their attempt's report is released — the field-level secrecy
  * boundary this increment exists to prove. Used directly by

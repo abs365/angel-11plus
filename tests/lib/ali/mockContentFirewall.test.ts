@@ -98,13 +98,17 @@ test("4. Mock Eligible = 0 produces zero genuine Mock questions", async () => {
   assert.deepEqual(result, [], "with zero mock_eligible rows, the function itself must return an empty array — never synthesise or substitute real-looking content");
 });
 
-test("5. No Mock route can silently fall back to the general question bank (source check)", () => {
+test("5. No still-client-fetched Mock route can silently fall back to the general question bank (source check)", () => {
+  // These four routes are unchanged by Programme Increment 008E (out of
+  // its named scope — see ANGEL_008V's own Part 13 taxonomy: these are
+  // adaptive PRACTICE runners, not the formal Mock Exam entry point 008E
+  // targeted) and still retrieve content the pre-008E way, so this
+  // decision's original rule still applies to them unmodified.
   for (const file of [
     "app/mocks/adaptive/gl/page.tsx",
     "app/mocks/adaptive/english/page.tsx",
     "app/mocks/adaptive/maths/page.tsx",
     "app/mocks/adaptive/vocabulary/page.tsx",
-    "app/learning-intelligence/mock-exam/page.tsx",
   ]) {
     const src = readFileSync(file, "utf8");
     // Checks the actual import statement, not just any textual mention (this
@@ -122,6 +126,19 @@ test("5. No Mock route can silently fall back to the general question bank (sour
       `${file} must never import the general fetchQuestionBank() — it must only ever import fetchMockEligibleQuestionBank()`
     );
     assert.ok(importedNames.includes("fetchMockEligibleQuestionBank"), `${file} must import the firewalled retrieval function`);
+  }
+});
+
+test("5b. Programme Increment 008E: the canonical Mock Exam entry point no longer touches lib/ali/questionBank at all -- it migrated to the secure 008D/072 RPC engine entirely, a strictly stronger guarantee than the client-side eligibility filter this decision originally required", () => {
+  const file = "app/learning-intelligence/mock-exam/page.tsx";
+  const src = readFileSync(file, "utf8");
+  assert.ok(
+    !/from\s*["']@\/lib\/ali\/questionBank["']/.test(src),
+    `${file} must not import lib/ali/questionBank at all -- Mock content now flows exclusively through lib/mockAttempt/client.ts's SECURITY DEFINER RPC wrappers`
+  );
+  assert.match(src, /from\s*["']@\/lib\/mockAttempt\/client["']/, `${file} must source Mock content through the proven secure engine`);
+  for (const requiredImport of ["getActiveMockForm", "createMockAttempt", "startMockAttempt", "getMockQuestion", "submitMockAnswer", "submitMockAttempt"]) {
+    assert.ok(new RegExp(`\\b${requiredImport}\\b`).test(src), `${file} must call ${requiredImport} from the secure engine`);
   }
 });
 

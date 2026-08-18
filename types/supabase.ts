@@ -723,6 +723,22 @@ export interface Database {
         Args: { p_attempt_id: string };
         Returns: { status: string; submitted_at: string }[];
       };
+      // Programme Increment 008E — supabase/migrations/072_mock_lifecycle_
+      // and_reporting_foundation.sql. Not yet applied to production;
+      // declared here so lib/mockAttempt/client.ts can call these through
+      // the typed supabase.rpc() the same way every other RPC already does.
+      mock_get_active_form: {
+        Args: { p_attempt_type: string };
+        Returns: { form_id: string; attempt_type: string }[];
+      };
+      mock_get_attempt_manifest: {
+        Args: { p_attempt_id: string };
+        Returns: string[];
+      };
+      mock_set_flag: {
+        Args: { p_attempt_id: string; p_question_id: string; p_flagged: boolean };
+        Returns: undefined;
+      };
     };
     Enums: {
       subject_type: AliSubjectEnum;

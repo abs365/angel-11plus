@@ -1,7 +1,7 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Database } from "@/types/supabase";
 import { isValidMockQuestionPayload, isPayloadRedactionSafe } from "./redaction";
-import type { MockAttemptStatus, MockQuestionPayload } from "./types";
+import type { ActiveMockForm, MockAttemptStatus, MockAttemptType, MockQuestionPayload } from "./types";
 
 /**
  * Programme Increment 008D — thin wrappers around the five
@@ -81,4 +81,50 @@ export async function submitMockAttempt(
   const row = Array.isArray(data) ? data[0] : data;
   if (!row) return { data: null, error: "No attempt state returned" };
   return { data: { status: row.status as MockAttemptStatus, submittedAt: row.submitted_at }, error: null };
+}
+
+/**
+ * Programme Increment 008E — the learner-discovery gap named in migration
+ * 072's own header: since ali_mock_form has no learner SELECT policy
+ * (migration 071), this is the only way a client can learn whether a
+ * Mock is currently available and which form_id to pass to
+ * createMockAttempt(). Returns { data: null, error: null } (not an error)
+ * when no active form exists — that is the expected, honest "no Mock
+ * available yet" state while Mock Eligible remains 0, never a failure.
+ */
+export async function getActiveMockForm(
+  supabase: SupabaseClient<Database>,
+  attemptType: MockAttemptType
+): Promise<MockClientResult<ActiveMockForm | null>> {
+  const { data, error } = await supabase.rpc("mock_get_active_form", { p_attempt_type: attemptType });
+  if (error) return { data: null, error: error.message };
+  const row = Array.isArray(data) ? data[0] : data;
+  if (!row) return { data: null, error: null };
+  return { data: { formId: row.form_id, attemptType: row.attempt_type as MockAttemptType }, error: null };
+}
+
+/**
+ * Returns the caller's own attempt's assigned_question_ids, in order.
+ * IDs only — never any question content. See migration 072's own header
+ * ("Problem 1b") for why this exists as an RPC rather than a direct
+ * `.from("ali_mock_attempt")` read RLS would already permit.
+ */
+export async function getMockAttemptManifest(
+  supabase: SupabaseClient<Database>,
+  attemptId: string
+): Promise<MockClientResult<string[]>> {
+  const { data, error } = await supabase.rpc("mock_get_attempt_manifest", { p_attempt_id: attemptId });
+  if (error) return { data: null, error: error.message };
+  return { data: data ?? [], error: null };
+}
+
+export async function setMockFlag(
+  supabase: SupabaseClient<Database>,
+  attemptId: string,
+  questionId: string,
+  flagged: boolean
+): Promise<MockClientResult<true>> {
+  const { error } = await supabase.rpc("mock_set_flag", { p_attempt_id: attemptId, p_question_id: questionId, p_flagged: flagged });
+  if (error) return { data: null, error: error.message };
+  return { data: true, error: null };
 }
