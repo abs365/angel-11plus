@@ -146,32 +146,34 @@ interface MissionCardProps extends CardBaseProps {
 }
 
 /**
- * Final Visual Refinement (Section 4) — priority must be legible from
- * position, numbering and typography first; colour is now the last,
- * lightest signal, not a competing pill fill. Remapped to the Founder's
- * own five-role palette instead of an arbitrary rose/amber/emerald trio:
- * FOCUS is amber ("attention/developing" — the area that genuinely needs
- * work today), NEXT is the restrained learner blue ("informational/what's
- * next"), MAINTAIN is emerald only because reviewing an already-mastered
- * skill is genuine positive evidence, not a default. Surface and border
- * weight now do most of the differentiation: FOCUS sits on a raised white
- * card with a full-strength accent border; NEXT and MAINTAIN sit on the
- * quieter neutral surface with a thinner, softer border, MAINTAIN quietest
- * of all — so the three cards read as a hierarchy, not three competitors.
+ * Experience Transformation, Stage 1A (Dashboard composition correction) —
+ * previously each mission step was its own nested rounded/bordered box
+ * inside the outer Mission Card ("rectangles inside a rectangle," the
+ * Founder's own explicit Stage 1A finding #5). `MissionCard` has exactly
+ * one consumer, `app/dashboard/page.tsx` (confirmed by repository-wide
+ * search before this change), so restyling its internals carries no
+ * propagation risk to any other surface. Priority is now legible from a
+ * left accent bar plus typography/spacing alone — no per-row fill, no
+ * per-row radius, no per-row shadow — and adjacent rows are separated by a
+ * thin divider supplied by the caller's own `divide-y` list, not by each
+ * row drawing its own box. FOCUS keeps the strongest (amber, full-height)
+ * accent bar; NEXT is the restrained learner blue; MAINTAIN is emerald and
+ * thinnest — the same three-tier priority signal as before, carried by one
+ * visual device instead of three (fill + border + shadow).
  */
-const MISSION_STYLE: Record<MissionCardProps["priority"], string> = {
-  primary: "bg-white dark:bg-gray-900 border-l-4 border-l-amber-400 dark:border-l-amber-500 shadow-sm",
-  secondary: "bg-gray-50 dark:bg-gray-800/60 border-l-4 border-l-sky-300 dark:border-l-sky-700",
-  review: "bg-gray-50/70 dark:bg-gray-800/40 border-l-2 border-l-emerald-300 dark:border-l-emerald-800",
+const MISSION_ACCENT_BAR: Record<MissionCardProps["priority"], string> = {
+  primary: "border-l-4 border-l-amber-400 dark:border-l-amber-500",
+  secondary: "border-l-4 border-l-sky-300 dark:border-l-sky-700",
+  review: "border-l-2 border-l-emerald-300 dark:border-l-emerald-800",
 };
 
-/** Mission card — "here's what to do right now," left-border priority accent, per the existing Session/Mission card convention (Dashboard's Today's Mission, AEI-002). */
+/** Mission row — "here's what to do right now," left-border priority accent only, no per-row card surface (Dashboard's Today's Mission, AEI-002; flattened Stage 1A). */
 export function MissionCard({ priority, children, className }: MissionCardProps) {
   return (
     <div
       className={cn(
-        "flex items-start gap-3.5 p-4 rounded-xl",
-        MISSION_STYLE[priority],
+        "flex items-start gap-3.5 py-4 pl-4",
+        MISSION_ACCENT_BAR[priority],
         className
       )}
     >

@@ -3,11 +3,9 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import {
-  BookOpen,
   Target,
   BarChart2,
   MapPin,
-  Puzzle,
   Play,
   Trophy,
   ChevronRight,
@@ -30,10 +28,9 @@ import { computeSubjectPreparationSummary, applyCanonicalWritingEvidence, toAliC
 import { derivePreparationStage, stagePrinciple } from "@/lib/learningEngine/preparationStage";
 import { resolvePreparationClock } from "@/lib/learningEngine/preparationClock";
 import NewBadgeBanner from "@/components/NewBadgeBanner";
-import InsightCard from "@/components/InsightCard";
 import { getPathwayById } from "@/lib/pathways";
-import { Card, PremiumCard, MissionCard } from "@/components/ui/Card";
-import { ProgressBar, ReadinessIndicator, StatusIndicator } from "@/components/ui/Progress";
+import { Card, MissionCard } from "@/components/ui/Card";
+import { ReadinessIndicator } from "@/components/ui/Progress";
 import { ButtonLink } from "@/components/ui/Button";
 import { deriveActiveStageIndex } from "@/components/JourneyTimeline";
 import type { UserProgress } from "@/types";
@@ -66,6 +63,56 @@ import type { MockPathwayId, MockResult } from "@/types/mock";
  * /progress's own Achievements section); and the seven-card Quick
  * Access subject grid (redundant with the persistent sidebar nav and
  * the Learn/Practice/Mock Centre hub pages themselves).
+ *
+ * Experience Transformation, Stage 1A (Dashboard composition correction,
+ * Founder visual review after Stage 1) — the Founder's own finding was that
+ * Stage 1's card consolidation made every section *consistent* but the page
+ * still read as rectangle-after-rectangle: Hero card, achievement banner,
+ * pathway-strip card, Mission card, Progress card, Mock card, a duplicate
+ * action row, an About card — none visually distinct from its neighbours
+ * except by size. This pass answers that with composition, not more
+ * polish, following the Founder's own suggested hierarchy (Orientation →
+ * Primary Work → Progress Signal → Secondary Opportunities), the Card
+ * Reduction Test ("why does this need a card?"), and the desktop standard
+ * (a real main/secondary spatial split, not a single narrow column
+ * stretched wide):
+ *   - The Hero is no longer a card. It is bare typography — greeting,
+ *     message, and three small metadata chips — directly on the page
+ *     background. Its own "Focus today" line is removed: Today's Mission,
+ *     immediately below, now shows that same information as the page's
+ *     first real content, not a second time first.
+ *   - The pathway strip ("Today's mission is prioritised for X") is
+ *     deleted as its own bounded Link card — it was genuinely redundant
+ *     with Mission's own pathway subtitle, which now carries the same
+ *     "tap to review School Intelligence" link as a plain text line
+ *     instead of a second full-width rectangle.
+ *   - Today's Mission is the one surface that keeps a strong, raised,
+ *     accent-bordered Card treatment — deliberately, so it reads as the
+ *     one genuinely bounded, dominant surface on the page, not one of six
+ *     equal boxes. On desktop (lg+) it occupies the wider of a two-column
+ *     split; on tablet/mobile it is simply first in a single column.
+ *   - Progress Snapshot and Mock Examinations Available — both real,
+ *     both genuinely secondary per the Founder's own hierarchy — are
+ *     combined into one plainly-bordered (no shadow, no accent stripe)
+ *     secondary panel, sitting beside Mission on desktop and below it on
+ *     smaller screens, instead of two separate full-width card sections.
+ *     Progress Snapshot's own strong/weak-subject chips and insight cards
+ *     are trimmed here (both already exist in full on /progress, which
+ *     this concise signal links to) — kept: the one real readiness signal
+ *     and the weekly-goal line, per the Founder's own "concise indication
+ *     of how the learner is progressing," not a second copy of /progress.
+ *   - "Continue Learning" is removed entirely: every one of its four
+ *     buttons was a confirmed exact duplicate of an action that already
+ *     exists elsewhere — "Continue" routed to the identical href as
+ *     Mission's own primary CTA (`mission.items[0].href` in both places),
+ *     "Take a mock" duplicated the Mock panel's own link, and "Learn"/
+ *     "Practise" duplicated the persistent top-level navigation
+ *     (Learn/Practice/Mock/Progress — Experience System Section E's own
+ *     confirmed, unchanged navigation model). Removing a row of confirmed
+ *     duplicates is not a scope reduction of real functionality.
+ *   - About/disclaimer becomes a plain muted text block below a divider,
+ *     not a bordered card — legal/trust footer content that needs to be
+ *     present, not visually competing with the page's real hierarchy.
  */
 
 // ─── Mission priority styles ────────────────────────────────────────────────
@@ -114,26 +161,6 @@ const EXPECTED_OUTCOME: Record<string, string> = {
  */
 const STAGE_NAMES = ["Starting", "Building Foundations", "Building Skills", "Developing Confidence", "Admission Ready"] as const;
 
-const pathwayIconBg: Record<string, string> = {
-  blue: "bg-blue-100 dark:bg-blue-900",
-  indigo: "bg-indigo-100 dark:bg-indigo-900",
-  purple: "bg-purple-100 dark:bg-purple-900",
-  emerald: "bg-emerald-100 dark:bg-emerald-900",
-  amber: "bg-amber-100 dark:bg-amber-900",
-  teal: "bg-teal-100 dark:bg-teal-900",
-  gray: "bg-gray-100 dark:bg-gray-800",
-};
-
-const pathwayIconText: Record<string, string> = {
-  blue: "text-blue-600 dark:text-blue-400",
-  indigo: "text-indigo-600 dark:text-indigo-400",
-  purple: "text-purple-600 dark:text-purple-400",
-  emerald: "text-emerald-600 dark:text-emerald-400",
-  amber: "text-amber-600 dark:text-amber-400",
-  teal: "text-teal-600 dark:text-teal-400",
-  gray: "text-gray-600 dark:text-gray-400",
-};
-
 const MOCK_PATHWAY_IDS: MockPathwayId[] = ["gl", "cem", "csse", "iseb"];
 
 /**
@@ -156,27 +183,16 @@ function getEncouragingMessage(progress: UserProgress, weeklyGoal: WeeklyGoal | 
   return "Your admission journey starts here.";
 }
 
-// ─── Admission Hero — reuses PremiumCard (Sprint 1). Product Experience
-// Standard V1 Correction 2 removes the Level/XP/streak stat line entirely
-// (previously de-emphasised into one small line per EEP-002/003 — this
-// Wave removes it, not just repositions it). The session count alone
-// remains: it's a plain completion count, not a gamification score.
-//
-// AN-102 (Premium Dashboard Experience) — the Hero must answer "how is my
-// child doing / what's today's focus / how confident are we" within five
-// seconds. Three additions, all reusing already-computed data, no new
-// calculation:
-//   - A third chip surfaces READINESS_CONFIG's own label (the same real,
-//     evidence-based band Progress Snapshot already shows via
-//     ReadinessIndicator below) — "confidence" was previously only visible
-//     after scrolling past Today's Mission.
-//   - A "Focus today" line names the mission's own #1 item — previously
-//     only visible inside the Mission card itself.
-//   - text-purple-200 → text-purple-100 for the greeting line: measured at
-//     ~3.95:1 against the card's purple-600 fill, below the 4.5:1 AA
-//     threshold for normal text (purple-100 measures ~4.56:1) — the same
-//     class of correction as Sprint 1's own logged success/warning/info
-//     WCAG fixes, found and fixed here rather than left for a later audit.
+// ─── Orientation header — Experience Transformation Stage 1A: no longer a
+// card (was PremiumCard). AN-102's original "how is my child doing/what's
+// today's focus/how confident are we" requirement is still met — pathway,
+// stage and confidence remain one glance away as three small chips — but
+// "how confident are we" is now answered here alone; the redundant "Focus
+// today" line is removed since Today's Mission, immediately below, answers
+// "what's today's focus" as the page's own first real content instead of a
+// second time first. The session count alone remains a plain completion
+// count, not a gamification score (unchanged from Product Experience
+// Standard V1 Correction 2).
 // ───────────────────────────────────────────────────────────────────────
 
 const CHILD_NAME_KEY = "angel_child_name";
@@ -201,13 +217,12 @@ function saveChildName(next: string): string | null {
   return trimmed;
 }
 
-function AdmissionHero({
+function OrientationHeader({
   progress,
   weeklyGoal,
   pathway,
   hasEnoughData,
   readiness,
-  focusLabel,
   childName,
   onSaveChildName,
 }: {
@@ -216,7 +231,6 @@ function AdmissionHero({
   pathway: Pathway | undefined;
   hasEnoughData: boolean;
   readiness: ParentReport["examReadiness"] | null;
-  focusLabel: string | null;
   childName: string | null;
   onSaveChildName: (name: string) => void;
 }) {
@@ -237,12 +251,8 @@ function AdmissionHero({
   }
 
   return (
-    <PremiumCard>
-      {/* New Angel Visual System — PremiumCard is now a light surface
-          (Card.tsx), so its contents read dark-on-light with a soft purple
-          accent, matching every other card in the product, instead of the
-          previous white/light-tint-on-solid-colour treatment. */}
-      <div className="flex items-start justify-between gap-3 mb-4">
+    <div>
+      <div className="flex items-start justify-between gap-3 mb-2">
         <p className="text-gray-500 dark:text-gray-400 text-sm font-medium">
           {greeting}
           {childName ? `, ${childName}` : ""}
@@ -263,7 +273,7 @@ function AdmissionHero({
       </div>
 
       {editingName && (
-        <form onSubmit={handleNameSubmit} className="flex items-center gap-2 mb-4">
+        <form onSubmit={handleNameSubmit} className="flex items-center gap-2 mb-3">
           <label htmlFor="child-name-input" className="sr-only">
             Child&apos;s name
           </label>
@@ -292,39 +302,27 @@ function AdmissionHero({
         </form>
       )}
 
-      <p className="text-gray-900 dark:text-gray-100 font-bold text-2xl leading-snug mb-6">{message}</p>
+      <p className="text-gray-900 dark:text-gray-100 font-semibold text-xl leading-snug mb-3">{message}</p>
 
-      {/* Final Visual Refinement (Section 5) — these three chips are
-          metadata, not brand actions or interactive controls: the text
-          itself already communicates meaning, so a saturated purple pill
-          repeated three times in a row added colour volume without adding
-          information, and crowded the Hero's real content (greeting,
-          message, focus line). Neutral pills now, no colour asked of them. */}
-      <div className="flex items-center gap-2 flex-wrap mb-5">
-        <span className="inline-flex items-center gap-1.5 bg-gray-50 dark:bg-gray-800 rounded-full px-3 py-1.5 text-xs text-gray-600 dark:text-gray-400">
+      {/* Final Visual Refinement (Section 5), still true post-Stage-1A —
+          metadata, not brand actions: text alone already communicates
+          meaning, so these stay neutral pills, no colour asked of them. */}
+      <div className="flex items-center gap-2 flex-wrap text-xs text-gray-400 dark:text-gray-500">
+        <span className="inline-flex items-center gap-1.5 bg-gray-50 dark:bg-gray-800 rounded-full px-3 py-1.5 text-gray-600 dark:text-gray-400">
           <MapPin size={12} aria-hidden="true" />
           {pathway ? pathway.name : "No target school chosen yet"}
         </span>
-        <span className="inline-flex items-center gap-1.5 bg-gray-50 dark:bg-gray-800 rounded-full px-3 py-1.5 text-xs text-gray-600 dark:text-gray-400">
+        <span className="inline-flex items-center gap-1.5 bg-gray-50 dark:bg-gray-800 rounded-full px-3 py-1.5 text-gray-600 dark:text-gray-400">
           <Compass size={12} aria-hidden="true" />
           {STAGE_NAMES[stageIndex]}
         </span>
-        <span className="inline-flex items-center gap-1.5 bg-gray-50 dark:bg-gray-800 rounded-full px-3 py-1.5 text-xs text-gray-600 dark:text-gray-400">
+        <span className="inline-flex items-center gap-1.5 bg-gray-50 dark:bg-gray-800 rounded-full px-3 py-1.5 text-gray-600 dark:text-gray-400">
           <TrendingUp size={12} aria-hidden="true" />
           {confidenceLabel}
         </span>
+        <span>{progress.completedLessons.length} sessions so far</span>
       </div>
-
-      {focusLabel && (
-        <p className="text-gray-500 dark:text-gray-400 text-sm mb-6">
-          Focus today: <span className="text-gray-900 dark:text-gray-100 font-medium">{focusLabel}</span>
-        </p>
-      )}
-
-      <div className="flex items-center gap-3 text-gray-400 dark:text-gray-500 text-xs pt-4 border-t border-gray-100 dark:border-gray-800">
-        <span>{progress.completedLessons.length} sessions</span>
-      </div>
-    </PremiumCard>
+    </div>
   );
 }
 
@@ -484,16 +482,13 @@ export default function DashboardPage() {
     if (saved) setChildName(saved);
   }
 
-  const accentBg = pathway ? (pathwayIconBg[pathway.accentColor] ?? pathwayIconBg.purple) : pathwayIconBg.purple;
-  const accentText = pathway ? (pathwayIconText[pathway.accentColor] ?? pathwayIconText.purple) : pathwayIconText.purple;
-  const topMissionItem = mission && mission.items.length > 0 ? mission.items[0] : null;
   const mockSupported = pathway && MOCK_PATHWAY_IDS.includes(pathway.id as MockPathwayId);
   const bestMockScore = mockSupported ? bestScoreForPathway(mockResults, pathway!.id as MockPathwayId) : null;
   const mockAttempts = mockSupported ? countForPathway(mockResults, pathway!.id as MockPathwayId) : 0;
 
   return (
     <PageLayout breadcrumbs={[{ label: "My Admission Journey" }]}>
-      <div className="max-w-4xl mx-auto px-4 py-6 md:px-8 md:py-8 space-y-8">
+      <div className="max-w-4xl lg:max-w-6xl mx-auto px-4 py-6 md:px-8 md:py-8">
 
         {/* AN-102 — this page had no <h1> anywhere in its render tree
             (Breadcrumbs renders a <span>, not a heading), so every visible
@@ -503,71 +498,49 @@ export default function DashboardPage() {
             structure instead of changing the Hero's design. */}
         <h1 className="sr-only">Today</h1>
 
-        {/* 1. Admission Hero */}
+        {/* 1. Orientation — bare, no card (Stage 1A). */}
         {progress && (
-          <AdmissionHero
+          <OrientationHeader
             progress={progress}
             weeklyGoal={weeklyGoal}
             pathway={pathway}
             hasEnoughData={report?.hasEnoughData ?? false}
             readiness={parentReport?.examReadiness ?? null}
-            focusLabel={topMissionItem?.label ?? null}
             childName={childName}
             onSaveChildName={handleSaveChildName}
           />
         )}
 
         {newBadgeIds.length > 0 && (
-          <NewBadgeBanner newlyEarnedIds={newBadgeIds} onDismiss={handleDismissBanner} />
+          <div className="mt-5">
+            <NewBadgeBanner newlyEarnedIds={newBadgeIds} onDismiss={handleDismissBanner} />
+          </div>
         )}
 
-        {/* 2. School Focus — EEP-002: shrunk from a full section with its
-             own H2 and description text into a slim strip placed directly
-             above Today's Mission, connecting pathway to today's mission
-             spatially rather than as an equally-weighted separate section
-             ("keep pathway information short, meaningful and connected to
-             today's mission"). The claim that today's mission is
-             pathway-prioritised is real: lib/adaptiveEngine.ts's
-             buildDailyMission() calls getEligibleSubjectKeys(selectedPathwayId)
-             to filter candidates before building the mission — verified in
-             source, not asserted. The standalone Journey Timeline section
-             is removed entirely — its stage is already shown in the Hero's
-             "Stage: X" chip above, and the full stepper is unchanged and
-             still available on /progress (Sprint 10's Progress Journey). */}
-        <Link
-          href="/pathways"
-          className="flex items-center gap-3 bg-white dark:bg-gray-900 rounded-xl border border-gray-100 dark:border-gray-800 px-4 py-3 hover:shadow-sm hover:border-sky-100 dark:hover:border-sky-900 active:scale-[0.98] transition-all motion-reduce:transition-none group"
-        >
-          <div className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 ${accentBg}`}>
-            <MapPin size={17} className={accentText} />
-          </div>
-          <div className="flex-1 min-w-0">
-            <p className="text-sm font-semibold text-gray-900 dark:text-gray-100 truncate">
-              {pathway ? `Today's mission is prioritised for ${pathway.name}` : "Choose your target pathway"}
-            </p>
-            <p className="text-xs text-gray-400 dark:text-gray-500">
-              {pathway ? "Tap to review School Intelligence" : "GL · CEM · CSSE · ISEB · Independent"}
-            </p>
-          </div>
-          <ChevronRight size={16} aria-hidden="true" className="text-gray-300 dark:text-gray-600 group-hover:text-sky-600 dark:group-hover:text-sky-400 transition-colors motion-reduce:transition-none shrink-0" />
-        </Link>
-
-        {/* 3. Today's Admission Mission — EEP-002: this is now the
+        {/* 2. Primary work (Mission) + secondary rail (Progress/Mock) —
+             Stage 1A desktop standard: a real main/secondary spatial split
+             at lg+ instead of one narrow column stretched wide. On
+             tablet/mobile this is naturally a single column, Mission
+             first — no separate mobile-specific composition is needed
+             since there was never a second column to collapse. */}
+        <div className="mt-6 lg:mt-8 lg:grid lg:grid-cols-3 lg:gap-8 lg:items-start">
+          <div className="lg:col-span-2">
+            {/* Today's Admission Mission — EEP-002: this is now the
              homepage's primary visual focus, moved directly beneath the
-             Hero and School Focus strip rather than sitting several
-             sections down the page. Every item already states its
-             objective (label), expected benefit (EXPECTED_OUTCOME, keyed
-             on the engine's own priority field), estimated effort
-             (estimatedMinutes) and links to a primary action (Start
-             Today's Mission) — all four of this sprint's required fields
-             were already real and reused, only the position changed. */}
-        {/* Product Experience Standard, Stage 1 (ANGEL_EXPERIENCE_SYSTEM_V1.md
-            Section C/Part 16) — Today's Mission is the dashboard's PRIMARY
-            action: a larger heading (text-2xl, up from text-xl) and a raised,
-            accent-bordered Card visually separate it from the SECONDARY
-            sections below (Progress Snapshot, Mock Examinations), which keep
-            a smaller heading and a flat card — establishing real typographic
-            hierarchy instead of every section reading as equally weighted. */}
+             Orientation header rather than sitting several sections down
+             the page. Every item already states its objective (label),
+             expected benefit (EXPECTED_OUTCOME, keyed on the engine's own
+             priority field), estimated effort (estimatedMinutes) and links
+             to a primary action (Start Today's Mission) — all four of this
+             sprint's required fields were already real and reused, only
+             the position changed. */}
+        {/* Stage 1A — Today's Mission is the one surface that keeps a
+            strong, raised, accent-bordered Card: deliberately, so it reads
+            as the page's one genuinely bounded, dominant surface rather
+            than one of several equal boxes. The pathway subtitle now
+            carries the deleted "Today's mission is prioritised for X"
+            strip's own link and meaning as plain text, instead of a
+            second full-width bordered rectangle immediately above it. */}
         <section>
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-2.5">
@@ -576,8 +549,19 @@ export default function DashboardPage() {
               </div>
               <div>
                 <h2 className="text-gray-900 dark:text-gray-100 font-bold text-2xl leading-tight">Today&apos;s Admission Mission</h2>
-                {pathway && (
-                  <p className="text-xs text-sky-700 dark:text-sky-400 font-medium mt-0.5">{pathway.shortName} pathway</p>
+                {pathway ? (
+                  <Link
+                    href="/pathways"
+                    className="inline-flex items-center gap-1 text-xs text-sky-700 dark:text-sky-400 font-medium mt-0.5 hover:underline"
+                  >
+                    {pathway.shortName} pathway · School Intelligence
+                    <ChevronRight size={11} aria-hidden="true" />
+                  </Link>
+                ) : (
+                  <Link href="/pathways" className="inline-flex items-center gap-1 text-xs text-sky-700 dark:text-sky-400 font-medium mt-0.5 hover:underline">
+                    Choose your target pathway
+                    <ChevronRight size={11} aria-hidden="true" />
+                  </Link>
                 )}
               </div>
             </div>
@@ -591,7 +575,7 @@ export default function DashboardPage() {
 
           {mission && mission.items.length > 0 ? (
             <Card elevation="raised" accent="primary" padding="none" className="overflow-hidden">
-              <ol className="p-5 space-y-3 list-none">
+              <ol className="px-5 divide-y divide-gray-100 dark:divide-gray-800 list-none">
                 {mission.items.map((item, i) => (
                   <MissionCard key={item.id} priority={item.priority}>
                     <div className="w-6 h-6 rounded-full bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 flex items-center justify-center shrink-0 mt-0.5 shadow-sm">
@@ -675,166 +659,101 @@ export default function DashboardPage() {
              NewBadgeBanner's celebratory moment and /progress's own
              Achievements section). Every value shown reuses an existing,
              already-computed field — no new metric is introduced. */}
-        <section>
-          <h2 className="text-gray-900 dark:text-gray-100 font-bold text-xl mb-3">Progress Snapshot</h2>
-          {parentReport && parentReport.hasEnoughData ? (
-            <Card padding="comfortable" className="space-y-4">
-              <ReadinessIndicator readiness={parentReport.examReadiness} />
-
-              {report && (report.strongSubjects.length > 0 || report.weakSubjects.length > 0) && (
-                <div>
-                  {/* AN-102 — one narrative lead-in instead of two bare
-                      "Strong:"/"Focus:" labels sitting beside a chip row;
-                      same two already-computed lists (report.strongSubjects/
-                      weakSubjects), no new calculation. */}
-                  <p className="text-xs text-gray-500 dark:text-gray-400 mb-1.5">
-                    {report.strongSubjects.length > 0 && report.weakSubjects.length > 0
-                      ? "Doing well, and where to focus next:"
-                      : report.strongSubjects.length > 0
-                        ? "Doing well in:"
-                        : "Worth focusing on next:"}
-                  </p>
-                  <div className="flex flex-wrap items-center gap-1.5">
-                    {report.strongSubjects.map((label) => (
-                      <StatusIndicator key={label} tone="success" label={label} />
-                    ))}
-                    {report.weakSubjects.map((label) => (
-                      <StatusIndicator key={label} tone="warning" label={label} />
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {weeklyGoal && (
-                <div>
-                  <ProgressBar
-                    percent={(weeklyGoal.sessions / weeklyGoal.target) * 100}
-                    color={weeklyGoal.isComplete ? "emerald" : "purple"}
-                    label="Weekly goal progress"
-                  />
-                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-1.5">
-                    {weeklyGoal.isComplete ? "Weekly goal complete. Great work!" : `${weeklyGoal.sessions} of ${weeklyGoal.target} sessions this week`}
-                  </p>
-                </div>
-              )}
-
-              {report && report.hasEnoughData && report.insights.length > 0 && (
-                <div className="pt-1 flex flex-col gap-2">
-                  {report.insights.slice(0, 2).map((insight) => (
-                    <InsightCard key={insight.id} insight={insight} compact />
-                  ))}
-                </div>
-              )}
-
-              <ButtonLink href="/progress" variant="outline" size="sm" className="w-full justify-center">
-                View full progress →
-              </ButtonLink>
-            </Card>
-          ) : (
-            <Card padding="none" className="px-4 py-5 flex items-center gap-3">
-              <div className="w-10 h-10 bg-sky-50 dark:bg-sky-950 rounded-xl flex items-center justify-center shrink-0">
-                <BarChart2 size={18} className="text-sky-300 dark:text-sky-700" />
-              </div>
-              <div>
-                <p className="text-gray-700 dark:text-gray-300 font-semibold text-sm">Not enough data yet</p>
-                <p className="text-gray-400 dark:text-gray-500 text-xs mt-0.5">Complete a few more sessions to unlock your progress snapshot</p>
-              </div>
-            </Card>
-          )}
-        </section>
-
-        {/* 5. Mock Examinations Available — honestly framed as "available,"
-             not "scheduled": no real mock-scheduling concept exists
-             anywhere in this codebase, and this sprint does not invent
-             one. Kept as-is: genuinely unique information (this pathway's
-             own attempt count / best score) not shown anywhere else on
-             the homepage. */}
-        <section>
-          <h2 className="text-gray-900 dark:text-gray-100 font-bold text-xl mb-3">Mock Examinations Available</h2>
-          {pathway && mockSupported ? (
-            <Link
-              href="/mocks"
-              className="flex items-center gap-4 bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 px-5 py-4 shadow-sm hover:shadow-md active:scale-[0.98] transition-all motion-reduce:transition-none group"
-            >
-              <div className="w-12 h-12 rounded-2xl bg-pink-100 dark:bg-pink-900 flex items-center justify-center shrink-0">
-                <Trophy size={22} className="text-pink-600 dark:text-pink-400" />
-              </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-gray-900 dark:text-gray-100 font-bold text-base leading-snug">{pathway.name} Mock Exam</p>
-                <p className="text-gray-400 dark:text-gray-500 text-xs mt-0.5">
-                  {mockAttempts > 0 ? `${mockAttempts} attempt${mockAttempts === 1 ? "" : "s"} · Best score ${bestMockScore}%` : "Not attempted yet"}
-                </p>
-              </div>
-              <ChevronRight size={18} aria-hidden="true" className="text-gray-300 dark:text-gray-600 group-hover:text-sky-600 dark:group-hover:text-sky-400 transition-colors motion-reduce:transition-none shrink-0" />
-            </Link>
-          ) : (
-            <Card padding="none" className="px-4 py-5 flex items-center gap-3">
-              <div className="w-10 h-10 bg-pink-50 dark:bg-pink-950 rounded-xl flex items-center justify-center shrink-0">
-                <Trophy size={18} className="text-pink-300 dark:text-pink-700" />
-              </div>
-              <div>
-                <p className="text-gray-700 dark:text-gray-300 font-semibold text-sm">
-                  {pathway ? "No mock exam yet for this pathway" : "Choose target schools to see available mocks"}
-                </p>
-                <p className="text-gray-400 dark:text-gray-500 text-xs mt-0.5">Visit the Mock Centre to see what&apos;s available</p>
-              </div>
-            </Card>
-          )}
-        </section>
-
-        {/* 6. Continue Learning — EEP-002: reduced from a four-button
-             action row PLUS a seven-card illustrated subject grid down to
-             just the four most relevant actions, per this sprint's own
-             "reduce visual clutter, surface only the most relevant
-             activities." The removed subject grid duplicated navigation
-             the persistent sidebar and the Learn/Practice/Mock Centre hub
-             pages already provide. "Review Progress" is replaced with
-             "Learn" here since Progress Snapshot above already has its
-             own "View Full Progress" link — this row now covers the three
-             real hubs (Learn/Practice/Mocks) plus the one auto-picked
-             Continue action, with no duplicate route across the two. */}
-        <section>
-          <h2 className="text-gray-900 dark:text-gray-100 font-bold text-xl mb-3">Continue Learning</h2>
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
-            {/* Product Experience Standard V1 §6 — one primary CTA per page;
-                "Start Today's Mission" above is the page's primary action,
-                so this shortcut is secondary, not a second solid-purple CTA. */}
-            <ButtonLink href={topMissionItem?.href ?? "/english"} variant="secondary" size="sm" leftIcon={<Play size={14} />}>
-              Continue
-            </ButtonLink>
-            <ButtonLink
-              href={getSelectedPathwayId() === "csse" ? "/learning-intelligence/learn" : "/learn"}
-              variant="secondary"
-              size="sm"
-              leftIcon={<BookOpen size={14} />}
-            >
-              Learn
-            </ButtonLink>
-            <ButtonLink
-              href={getSelectedPathwayId() === "csse" ? "/learning-intelligence/practice" : "/reasoning"}
-              variant="secondary"
-              size="sm"
-              leftIcon={<Puzzle size={14} />}
-            >
-              Practise
-            </ButtonLink>
-            <ButtonLink href="/mocks" variant="outline" size="sm" leftIcon={<Trophy size={14} />}>
-              Take a mock
-            </ButtonLink>
           </div>
-        </section>
 
-        {/* 7. About + disclaimer — kept as-is; already minimal and serves
-             a real legal/trust purpose. */}
-        <Card padding="comfortable">
-          <p className="text-gray-500 dark:text-gray-400 text-xs font-semibold uppercase tracking-wide mb-2">About Angel 11+</p>
-          <p className="text-gray-700 dark:text-gray-300 text-sm leading-relaxed mb-2">
-            Original exam-style practice for UK 11+ preparation across English, Maths, Reasoning, Writing and Vocabulary.
+          {/* 3. Secondary rail — Progress Signal + Mock, combined into one
+               plainly-bordered panel (Stage 1A). Both were previously full-
+               width card sections of their own; both are genuinely
+               secondary per the Founder's own hierarchy ("concise
+               indication of how the learner is progressing," "mock
+               availability... only where genuinely relevant"), so they now
+               share one panel instead of two. Progress Signal is trimmed to
+               the one real readiness indicator plus the weekly-goal line —
+               the strong/weak-subject chips and the two insight cards are
+               dropped here, not lost: both already exist in full on
+               /progress (Subject Breakdown, Learning Insights), which
+               "View full progress" links straight to. No card-elevation or
+               accent-border here, unlike Mission's Card above — a real,
+               visible difference in container weight, not just position,
+               so this panel reads as secondary rather than a second equal
+               box. */}
+          <div className="mt-8 lg:mt-0 lg:col-span-1">
+            <Card padding="comfortable" className="space-y-5">
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-wide text-gray-400 dark:text-gray-500 mb-3">
+                  Your Progress
+                </p>
+                {parentReport && parentReport.hasEnoughData ? (
+                  <div className="space-y-3">
+                    <ReadinessIndicator readiness={parentReport.examReadiness} />
+                    {weeklyGoal && (
+                      <p className="text-xs text-gray-500 dark:text-gray-400">
+                        {weeklyGoal.isComplete
+                          ? "Weekly goal complete. Great work!"
+                          : `${weeklyGoal.sessions} of ${weeklyGoal.target} sessions this week`}
+                      </p>
+                    )}
+                    <ButtonLink href="/progress" variant="outline" size="sm" className="w-full justify-center">
+                      View full progress →
+                    </ButtonLink>
+                  </div>
+                ) : (
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 bg-sky-50 dark:bg-sky-950 rounded-xl flex items-center justify-center shrink-0">
+                      <BarChart2 size={18} className="text-sky-300 dark:text-sky-700" />
+                    </div>
+                    <p className="text-gray-500 dark:text-gray-400 text-xs leading-relaxed">
+                      Complete a few more sessions to unlock your progress snapshot
+                    </p>
+                  </div>
+                )}
+              </div>
+
+              <div className="h-px bg-gray-100 dark:bg-gray-800" />
+
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-wide text-gray-400 dark:text-gray-500 mb-3">
+                  Mock Exams
+                </p>
+                {pathway && mockSupported ? (
+                  <Link href="/mocks" className="flex items-center gap-3 group">
+                    <div className="w-10 h-10 rounded-xl bg-pink-100 dark:bg-pink-900 flex items-center justify-center shrink-0">
+                      <Trophy size={18} className="text-pink-600 dark:text-pink-400" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-gray-900 dark:text-gray-100 font-semibold text-sm leading-snug">{pathway.name} Mock Exam</p>
+                      <p className="text-gray-400 dark:text-gray-500 text-xs mt-0.5">
+                        {mockAttempts > 0 ? `${mockAttempts} attempt${mockAttempts === 1 ? "" : "s"} · Best ${bestMockScore}%` : "Not attempted yet"}
+                      </p>
+                    </div>
+                    <ChevronRight size={16} aria-hidden="true" className="text-gray-300 dark:text-gray-600 group-hover:text-sky-600 dark:group-hover:text-sky-400 transition-colors motion-reduce:transition-none shrink-0" />
+                  </Link>
+                ) : (
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 bg-pink-50 dark:bg-pink-950 rounded-xl flex items-center justify-center shrink-0">
+                      <Trophy size={18} className="text-pink-300 dark:text-pink-700" />
+                    </div>
+                    <p className="text-gray-500 dark:text-gray-400 text-xs leading-relaxed">
+                      {pathway ? "No mock exam yet for this pathway" : "Choose target schools to see available mocks"}
+                    </p>
+                  </div>
+                )}
+              </div>
+            </Card>
+          </div>
+        </div>
+
+        {/* 4. About + disclaimer — Stage 1A: no longer a bordered Card.
+             Legal/trust footer content needs to be present, not visually
+             competing with the page's real hierarchy above it — a divider
+             plus muted text carries it correctly per the Card Reduction
+             Test ("why does this need a card?" — it doesn't). */}
+        <div className="mt-10 pt-6 border-t border-gray-100 dark:border-gray-800">
+          <p className="text-gray-400 dark:text-gray-500 text-xs font-semibold uppercase tracking-wide mb-2">About Angel 11+</p>
+          <p className="text-gray-500 dark:text-gray-400 text-xs leading-relaxed">
+            Original exam-style practice for UK 11+ preparation across English, Maths, Reasoning, Writing and Vocabulary. Angel 11+ provides original practice content and is not affiliated with or endorsed by any exam board or school.
           </p>
-          <p className="text-gray-400 dark:text-gray-500 text-xs leading-relaxed">
-            Angel 11+ provides original practice content and is not affiliated with or endorsed by any exam board or school.
-          </p>
-        </Card>
+        </div>
 
       </div>
     </PageLayout>
