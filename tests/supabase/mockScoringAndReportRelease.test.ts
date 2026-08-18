@@ -5,8 +5,11 @@ import fs from "node:fs";
 /**
  * Programme Increment 008F — structural tests against migration 074's own
  * SQL text (testable without a live database, matching this project's
- * established migration-testing convention). Live, end-to-end proof
- * requires the Founder to apply this migration first.
+ * established migration-testing convention). Migration 074 has been
+ * applied to production (Decision 99) — these tests describe and prove
+ * its own as-applied content, including the design issues corrected
+ * forward in migration 075 (see mockScoringTrustBoundaryCorrection.test.ts)
+ * rather than rewritten here, since 074 itself is not being changed.
  */
 
 const sql = fs.readFileSync("supabase/migrations/074_mock_scoring_and_report_release.sql", "utf8");
@@ -26,14 +29,8 @@ const EXISTING_RPCS = [
 test("does not redefine any of the 8 proven Mock RPCs -- purely additive", () => {
   for (const fn of EXISTING_RPCS) {
     assert.ok(!new RegExp(`create or replace function public\\.${fn}\\(`).test(executable), `must never redefine ${fn}`);
-    assert.ok(!executable.includes(fn), `must not mention ${fn} at all -- scoped exclusively to its own new functions`);
+    assert.ok(!executable.includes(fn), `must not mention ${fn} at all -- scoped exclusively to its own 2 new functions`);
   }
-});
-
-test("redefines exactly one existing function -- migration 072's own report-init trigger function -- and no other pre-existing object", () => {
-  assert.match(executable, /create or replace function public\.mock_attempt_report_init\(\)/);
-  const redefinitions = [...executable.matchAll(/create or replace function public\.(\w+)\(/g)].map((m) => m[1]);
-  assert.deepEqual(new Set(redefinitions), new Set(["mock_score_attempt", "mock_release_report", "mock_attempt_report_init"]), "only these 3 functions may be created/redefined by this migration");
 });
 
 test("does not touch ali_student_question_history, ali_durable_mastery, or ali_educational_audit -- the disclosed provenance-gap boundary", () => {
@@ -42,7 +39,7 @@ test("does not touch ali_student_question_history, ali_durable_mastery, or ali_e
   }
 });
 
-test("does not create any table, policy, or trigger -- only ALTER TABLE ADD COLUMN and function definitions (mock_attempt_report_init is redefined via CREATE OR REPLACE, not a new CREATE TRIGGER)", () => {
+test("does not create any table, policy, or trigger -- only ALTER TABLE ADD COLUMN and two new functions", () => {
   assert.ok(!/create table|drop table|create policy|drop policy|create trigger|drop trigger/i.test(executable));
 });
 
@@ -95,28 +92,6 @@ test("mock_score_attempt never computes a percentage while any question still re
   assert.match(body, /if v_manual_count > 0 or v_raw_available = 0 then\s*\n\s*v_percentage := null;/);
 });
 
-test("Founder pre-application review, Issue 3: a response row with a null, missing, or whitespace-only value is treated as unanswered, never incorrect or manual", () => {
-  const body = executable.match(/create or replace function public\.mock_score_attempt\([\s\S]*?\n\$\$;/)![0];
-  assert.match(body, /if v_response is null or v_response_value is null or trim\(v_response_value\) = '' then/);
-  const branch = body.match(/if v_response is null or v_response_value is null or trim\(v_response_value\) = '' then[\s\S]*?end if;/)![0];
-  assert.match(branch, /v_status := 'unanswered';/);
-});
-
-test("Founder pre-application review, Issue 2: scoring_state is 'scored' only when nothing requires manual marking, otherwise 'scoring' -- an existing, valid state, no new enum value invented", () => {
-  const body = executable.match(/create or replace function public\.mock_score_attempt\([\s\S]*?\n\$\$;/)![0];
-  assert.match(body, /set scoring_state = case when v_manual_count > 0 then 'scoring' else 'scored' end,/);
-  // Confirms this migration does not touch ali_mock_attempt_report's own scoring_state CHECK constraint at all.
-  assert.ok(!/alter table public\.ali_mock_attempt_report\s+(drop|add) constraint/i.test(executable), "must not alter the existing scoring_state check constraint -- reuses an existing valid value instead");
-});
-
-test("a report can therefore never reach scoring_state = 'scored' -- and so can never be released -- while any question still requires manual marking, including future Continuous Writing", () => {
-  const scoreBody = executable.match(/create or replace function public\.mock_score_attempt\([\s\S]*?\n\$\$;/)![0];
-  // Writing always sets v_manual_count > 0 (routes to requires_manual_marking), which the case expression above maps to 'scoring', never 'scored'.
-  assert.match(scoreBody, /v_bank_row\.subject = 'writing'[\s\S]*?v_manual_count := v_manual_count \+ 1;/);
-  const releaseBody = executable.match(/create or replace function public\.mock_release_report\([\s\S]*?\n\$\$;/)![0];
-  assert.match(releaseBody, /and scoring_state = 'scored'/);
-});
-
 test("mock_score_attempt writes only to ali_mock_attempt_report -- no other table is mutated", () => {
   const body = executable.match(/create or replace function public\.mock_score_attempt\([\s\S]*?\n\$\$;/)![0];
   assert.ok(!/insert into|update public\.(?!ali_mock_attempt_report)/i.test(body.replace(/update public\.ali_mock_attempt_report/g, "")), "must not write to any table other than ali_mock_attempt_report");
@@ -131,33 +106,6 @@ test("mock_score_attempt includes questionTypeId (already client-visible via moc
   }
 });
 
-test("Founder pre-application review, Issue 1: mock_attempt_report_init (migration 072's own trigger function, redefined here) creates the report row and then automatically calls mock_score_attempt server-side -- no client/learner action required", () => {
-  const body = executable.match(/create or replace function public\.mock_attempt_report_init\(\)[\s\S]*?\n\$\$;/)![0];
-  assert.match(body, /security definer/);
-  assert.match(body, /new\.status = 'submitted' and \(old\.status is distinct from 'submitted'\)/);
-  assert.match(body, /insert into public\.ali_mock_attempt_report \(attempt_id\)/);
-  assert.match(body, /perform public\.mock_score_attempt\(new\.id\);/);
-});
-
-test("the automatic scoring call is wrapped in its own exception block -- a scoring failure can never roll back the learner's own genuine submission", () => {
-  const body = executable.match(/create or replace function public\.mock_attempt_report_init\(\)[\s\S]*?\n\$\$;/)![0];
-  const nestedBlock = body.match(/begin\s*\n\s*perform public\.mock_score_attempt\(new\.id\);\s*\n\s*exception when others then[\s\S]*?end;/);
-  assert.ok(nestedBlock, "expected a nested begin/exception/end block around the scoring call");
-  assert.match(nestedBlock![0], /scoring_state = 'failed'/);
-});
-
-test("mock_score_attempt has NO execute grant to authenticated (or anon) -- only its own owning role can call it, invoked exclusively by the report-init trigger above", () => {
-  assert.ok(!/grant execute on function public\.mock_score_attempt\(uuid\) to authenticated;/.test(executable), "must never grant mock_score_attempt to authenticated -- Issue 1's own fix");
-  assert.match(executable, /revoke execute on function public\.mock_score_attempt\(uuid\) from authenticated;/);
-  assert.match(executable, /revoke execute on function public\.mock_score_attempt\(uuid\) from anon;/);
-  assert.match(executable, /revoke all on function public\.mock_score_attempt\(uuid\) from public;/);
-});
-
-test("mock_release_report retains its execute grant to authenticated, admin-gated internally -- unchanged by this review", () => {
-  assert.match(executable, /grant execute on function public\.mock_release_report\(uuid\) to authenticated;/);
-  assert.match(executable, /revoke execute on function public\.mock_release_report\(uuid\) from anon;/);
-});
-
 test("mock_release_report requires is_current_user_admin() -- report release cannot be self-authorised by the learner", () => {
   const fnMatch = executable.match(/create or replace function public\.mock_release_report\([\s\S]*?\n\$\$;/);
   assert.ok(fnMatch);
@@ -170,6 +118,14 @@ test("mock_release_report requires is_current_user_admin() -- report release can
 test("mock_release_report only releases an already-scored report -- scoring_state = 'scored' is required", () => {
   const body = executable.match(/create or replace function public\.mock_release_report\([\s\S]*?\n\$\$;/)![0];
   assert.match(body, /and scoring_state = 'scored'/);
+});
+
+test("execute grants for both new functions: authenticated granted, anon explicitly revoked, applied correctly from the start (unlike migration 072's own original omission)", () => {
+  for (const fn of ["mock_score_attempt(uuid)", "mock_release_report(uuid)"]) {
+    assert.match(executable, new RegExp(`grant execute on function public\\.${fn.replace(/[()]/g, "\\$&")} to authenticated;`));
+    assert.match(executable, new RegExp(`revoke execute on function public\\.${fn.replace(/[()]/g, "\\$&")} from anon;`));
+    assert.match(executable, new RegExp(`revoke all on function public\\.${fn.replace(/[()]/g, "\\$&")} from public;`));
+  }
 });
 
 test("no execute grant to anon anywhere in this migration", () => {
