@@ -1,7 +1,13 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Database } from "@/types/supabase";
 import { isValidMockQuestionPayload, isPayloadRedactionSafe } from "./redaction";
-import type { ActiveMockForm, MockAttemptStatus, MockAttemptType, MockQuestionPayload } from "./types";
+import type {
+  ActiveMockForm,
+  MockAttemptReport,
+  MockAttemptStatus,
+  MockAttemptType,
+  MockQuestionPayload,
+} from "./types";
 
 /**
  * Programme Increment 008D — thin wrappers around the five
@@ -127,4 +133,81 @@ export async function setMockFlag(
   const { error } = await supabase.rpc("mock_set_flag", { p_attempt_id: attemptId, p_question_id: questionId, p_flagged: flagged });
   if (error) return { data: null, error: error.message };
   return { data: true, error: null };
+}
+
+/**
+ * Programme Increment 008F — server-side, deterministic marking for a
+ * submitted (locked) attempt. Returns no data (the RPC itself is `returns
+ * void`) — this is deliberate: nothing about a fresh score is ever
+ * revealed to the caller directly, only through the separately-governed,
+ * sealed-until-released report row. Safe to call from the attempt owner
+ * themselves (matches this codebase's own established grant model) since
+ * there is nothing in the response to extract.
+ */
+export async function scoreMockAttempt(
+  supabase: SupabaseClient<Database>,
+  attemptId: string
+): Promise<MockClientResult<true>> {
+  const { error } = await supabase.rpc("mock_score_attempt", { p_attempt_id: attemptId });
+  if (error) return { data: null, error: error.message };
+  return { data: true, error: null };
+}
+
+/**
+ * Admin-only (enforced inside the SECURITY DEFINER function body via
+ * is_current_user_admin(), migration 074) — report release cannot be
+ * self-authorised by the learner. Calling this as an ordinary learner
+ * fails exactly as if no execute grant existed at all.
+ */
+export async function releaseMockReport(
+  supabase: SupabaseClient<Database>,
+  attemptId: string
+): Promise<MockClientResult<true>> {
+  const { error } = await supabase.rpc("mock_release_report", { p_attempt_id: attemptId });
+  if (error) return { data: null, error: error.message };
+  return { data: true, error: null };
+}
+
+/**
+ * Reads a Mock attempt's own report — a direct, RLS-gated `.from()` read,
+ * deliberately, not a wrapping RPC (see types/supabase.ts's own comment
+ * on the ali_mock_attempt_report Table entry for why). Returns
+ * { data: null, error: null } (not an error) both when no report row
+ * exists yet and when it exists but is not yet released — RLS makes the
+ * two cases indistinguishable from the client's own point of view, which
+ * is the correct, intended behaviour: a caller must never be able to
+ * infer "it exists but isn't released yet" from an error shape, only
+ * from their own independent knowledge that they submitted an attempt.
+ */
+export async function getMockAttemptReport(
+  supabase: SupabaseClient<Database>,
+  attemptId: string
+): Promise<MockClientResult<MockAttemptReport | null>> {
+  const { data, error } = await supabase
+    .from("ali_mock_attempt_report")
+    .select("*")
+    .eq("attempt_id", attemptId)
+    .maybeSingle();
+  if (error) return { data: null, error: error.message };
+  if (!data) return { data: null, error: null };
+  return {
+    data: {
+      attemptId: data.attempt_id,
+      scoringState: data.scoring_state as MockAttemptReport["scoringState"],
+      analysisState: data.analysis_state as MockAttemptReport["analysisState"],
+      reportReleaseState: data.report_release_state as MockAttemptReport["reportReleaseState"],
+      releasedAt: data.released_at,
+      markingVersion: data.marking_version,
+      overall: data.overall as MockAttemptReport["overall"],
+      subjectBreakdown: data.subject_breakdown as MockAttemptReport["subjectBreakdown"],
+      questionOutcomes: data.question_outcomes as MockAttemptReport["questionOutcomes"],
+      competencyEvidence: data.competency_evidence as MockAttemptReport["competencyEvidence"],
+      strengths: data.strengths as MockAttemptReport["strengths"],
+      weaknesses: data.weaknesses as MockAttemptReport["weaknesses"],
+      timingEvidence: data.timing_evidence as MockAttemptReport["timingEvidence"],
+      practiceComparison: data.practice_comparison,
+      parentExplanation: data.parent_explanation,
+    },
+    error: null,
+  };
 }

@@ -688,6 +688,44 @@ export interface Database {
         Update: Record<string, never>;
         Relationships: [];
       };
+      // Programme Increment 008E/008F — supabase/migrations/072_mock_
+      // lifecycle_and_reporting_foundation.sql (table) and 074_mock_
+      // scoring_and_report_release.sql (marking_version/released_at
+      // columns). Not yet applied to production; declared here so
+      // lib/mockAttempt/client.ts can read a released report via a
+      // direct, RLS-gated `.from()` select — deliberately, not through a
+      // new SECURITY DEFINER function, since migration 072's own RLS
+      // policy (report_release_state = 'released' AND real ownership)
+      // already implements exactly the right gate; a redundant function
+      // would only add a second place that same gate could be
+      // implemented incorrectly. No Insert/Update — every row is created
+      // by migration 072's own trigger and mutated only by
+      // mock_score_attempt()/mock_release_report() (074), never a
+      // direct client write.
+      ali_mock_attempt_report: {
+        Row: {
+          attempt_id: string;
+          scoring_state: string;
+          analysis_state: string;
+          report_release_state: string;
+          marking_version: number | null;
+          released_at: string | null;
+          overall: Record<string, unknown> | null;
+          subject_breakdown: unknown[] | null;
+          question_outcomes: unknown[] | null;
+          competency_evidence: unknown[] | null;
+          strengths: unknown[] | null;
+          weaknesses: unknown[] | null;
+          timing_evidence: Record<string, unknown> | null;
+          practice_comparison: unknown | null;
+          parent_explanation: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: Record<string, never>;
+        Update: Record<string, never>;
+        Relationships: [];
+      };
     };
     Views: Record<string, never>;
     Functions: {
@@ -737,6 +775,18 @@ export interface Database {
       };
       mock_set_flag: {
         Args: { p_attempt_id: string; p_question_id: string; p_flagged: boolean };
+        Returns: undefined;
+      };
+      // Programme Increment 008F — supabase/migrations/074_mock_scoring_
+      // and_report_release.sql. Not yet applied to production; declared
+      // here so lib/mockAttempt/client.ts can call these through the
+      // typed supabase.rpc() the same way every other RPC already does.
+      mock_score_attempt: {
+        Args: { p_attempt_id: string };
+        Returns: undefined;
+      };
+      mock_release_report: {
+        Args: { p_attempt_id: string };
         Returns: undefined;
       };
     };

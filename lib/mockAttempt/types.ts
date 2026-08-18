@@ -52,24 +52,101 @@ export type MockAnalysisState = "not_started" | "analysing" | "complete" | "fail
 export type MockReportReleaseState = "pending" | "released";
 
 /**
+ * Programme Increment 008F — supabase/migrations/074_mock_scoring_and_
+ * report_release.sql. The exact, hand-picked outcome per question
+ * mock_score_attempt() writes into ali_mock_attempt_report.question_
+ * outcomes. Deliberately does NOT include the learner's own submitted
+ * response text or the stored answer/model answer — Part 13's own "do
+ * not log protected answer material unnecessarily" instruction, applied
+ * even to a sealed-until-released row.
+ */
+export type MockQuestionOutcomeStatus = "correct" | "incorrect" | "unanswered" | "requires_manual_marking";
+
+export interface MockQuestionOutcome {
+  questionId: string;
+  status: MockQuestionOutcomeStatus;
+  marksAwarded: number | null;
+  marksAvailable: number;
+  /** The question's own skill/QuestionTypeId code (e.g. "QT-MR-01") — already delivered to the client via mock_get_question(), not a protected field. Null only when the manifest question no longer resolves to a real bank row. */
+  questionTypeId: string | null;
+}
+
+/** Mirrors mock_score_attempt()'s own jsonb_build_object() for the `overall` column exactly. */
+export interface MockOverallResult {
+  rawMarksAchieved: number;
+  rawMarksAvailable: number;
+  /** Null whenever any question still requires manual marking — never computed against a partial total. */
+  percentage: number | null;
+  answeredCount: number;
+  unansweredCount: number;
+  correctCount: number;
+  incorrectCount: number;
+  requiresManualMarkingCount: number;
+}
+
+export interface MockSubjectBreakdownEntry {
+  subject: string;
+  marksAchieved: number;
+  marksAvailable: number;
+  percentage: number | null;
+}
+
+/**
+ * A single Mock data point about one competency, explicitly tagged with
+ * its own provenance. NEVER fed into ali_student_question_history or
+ * processEvidenceForCompetency() by this increment (see migration 074's
+ * own disclosed architecture decision) — this is the "boundary/adapter"
+ * the 008F directive itself names as the correct fallback when the
+ * shared evidence pipeline cannot yet safely consume a new evidence
+ * source. Consumed only by Mock-specific reporting until a future
+ * increment gives the shared pipeline a real provenance dimension.
+ */
+export interface MockCompetencyEvidenceEntry {
+  competencyId: string;
+  questionTypeId: string;
+  source: "mock";
+  correct: boolean;
+  attemptId: string;
+  formId: string;
+  scoredAt: string;
+}
+
+export interface MockStrengthOrPriorityEntry {
+  competencyId: string;
+  questionCount: number;
+  correctCount: number;
+}
+
+export interface MockTimingEvidence {
+  startedAt: string;
+  submittedAt: string;
+  durationSeconds: number;
+  timeLimitSeconds: number | null;
+}
+
+/**
  * Mirrors ali_mock_attempt_report's own columns exactly. Only ever
  * readable once report_release_state = 'released' (the table's own RLS
  * policy enforces this server-side); every data field stays null until a
  * future scoring/analysis increment populates it — this type does not
- * claim any of these fields are computed today.
+ * claim any of these fields are computed today. `practiceComparison`
+ * stays null in 008F specifically (named as deferred, not silently
+ * omitted — see ALI_DECISION_LOG.md).
  */
 export interface MockAttemptReport {
   attemptId: string;
   scoringState: MockScoringState;
   analysisState: MockAnalysisState;
   reportReleaseState: MockReportReleaseState;
-  overall: unknown | null;
-  subjectBreakdown: unknown | null;
-  questionOutcomes: unknown | null;
-  competencyEvidence: unknown | null;
-  strengths: unknown | null;
-  weaknesses: unknown | null;
-  timingEvidence: unknown | null;
+  releasedAt: string | null;
+  markingVersion: number | null;
+  overall: MockOverallResult | null;
+  subjectBreakdown: MockSubjectBreakdownEntry[] | null;
+  questionOutcomes: MockQuestionOutcome[] | null;
+  competencyEvidence: MockCompetencyEvidenceEntry[] | null;
+  strengths: MockStrengthOrPriorityEntry[] | null;
+  weaknesses: MockStrengthOrPriorityEntry[] | null;
+  timingEvidence: MockTimingEvidence | null;
   practiceComparison: unknown | null;
   parentExplanation: string | null;
 }

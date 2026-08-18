@@ -17,6 +17,7 @@ import {
   submitMockAnswer,
   submitMockAttempt,
   setMockFlag,
+  scoreMockAttempt,
 } from "@/lib/mockAttempt/client";
 import type { MockAttemptType, MockQuestionPayload } from "@/lib/mockAttempt/types";
 import {
@@ -120,6 +121,15 @@ export default function MockExamPage() {
     setPhase("submitting");
     const result = await submitMockAttempt(supabase, attemptId);
     if (result.error) { setErrorMessage(result.error); setPhase("error"); return; }
+    // 008F — kick off server-side, deterministic marking now that the
+    // attempt is locked. Fire-and-forget, deliberately: scoring returns
+    // no data (mock_score_attempt is `returns void`), it's a background
+    // step distinct from submission itself (the delayed-report
+    // principle — see migration 074's own header), and its failure must
+    // never block the learner's own submission confirmation. A future
+    // admin release step is what actually surfaces the result, not this
+    // call.
+    void scoreMockAttempt(supabase, attemptId);
     setPhase("submitted");
   }, [attemptId, currentQuestionId, answerDraft]);
 
