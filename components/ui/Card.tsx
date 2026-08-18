@@ -30,32 +30,107 @@ export function InfoCard({ children, className }: CardBaseProps) {
   );
 }
 
+interface SurfaceCardProps extends CardBaseProps {
+  /** "flat" (default) matches the calm, no-shadow treatment most of the product already uses. "raised" adds a subtle shadow for content the page wants to lift slightly. */
+  elevation?: "flat" | "raised";
+  /** A left-border accent stripe — the one structural way this primitive communicates priority/category, without a filled colour block or an added icon. */
+  accent?: "none" | "primary" | "success" | "warning" | "info";
+  /** "none" is for a card acting as an outer shell around internally-padded sections (e.g. a header block plus a divided footer) — a real, existing pattern, not a workaround. */
+  padding?: "none" | "compact" | "comfortable" | "spacious";
+}
+
+const ELEVATION_CLASSES: Record<NonNullable<SurfaceCardProps["elevation"]>, string> = {
+  flat: "",
+  raised: "shadow-sm",
+};
+
+const ACCENT_CLASSES: Record<NonNullable<SurfaceCardProps["accent"]>, string> = {
+  none: "",
+  primary: "border-l-4 border-l-purple-400 dark:border-l-purple-600",
+  success: "border-l-4 border-l-emerald-400 dark:border-l-emerald-600",
+  warning: "border-l-4 border-l-amber-400 dark:border-l-amber-600",
+  info: "border-l-4 border-l-sky-300 dark:border-l-sky-700",
+};
+
+const PADDING_CLASSES: Record<NonNullable<SurfaceCardProps["padding"]>, string> = {
+  none: "",
+  compact: "p-4",
+  comfortable: "p-5",
+  spacious: "p-6",
+};
+
+/**
+ * Card — the canonical container primitive (Experience Programme, Stage 1,
+ * ANGEL_EXPERIENCE_SYSTEM_V1.md Section I). Consolidates the visual
+ * language `ProgressCard`/`SchoolCard`/`PremiumCard` and every ad-hoc
+ * `bg-white dark:bg-gray-900 rounded-2xl border...` div already used
+ * (identical rendered appearance — this is a genuine, zero-visual-
+ * regression consolidation, not a redesign) into one primitive with
+ * variant props instead of N independently-decided implementations.
+ *
+ * Per this stage's own explicit, bounded scope: the six named components
+ * below are NOT deleted or restructured internally this stage — their
+ * real consumers were audited (see ALI_DECISION_LOG.md) and left
+ * untouched wherever the consuming page was outside this stage's own two
+ * proof surfaces (Dashboard, Progress). This primitive is what those two
+ * surfaces' own ad-hoc divs are replaced with; full internal migration of
+ * the remaining five named components onto this base is deferred, not
+ * silently abandoned.
+ *
+ * Card governance rule (Section I, restated in code): a card separates a
+ * genuinely discrete, self-contained unit of information or action from
+ * its neighbours — never a default wrapper for a heading-plus-paragraph
+ * that typography and spacing alone would already separate correctly.
+ */
+export function Card({ elevation = "flat", accent = "none", padding = "comfortable", children, className }: SurfaceCardProps) {
+  return (
+    <div
+      className={cn(
+        "bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800",
+        ELEVATION_CLASSES[elevation],
+        ACCENT_CLASSES[accent],
+        PADDING_CLASSES[padding],
+        className
+      )}
+    >
+      {children}
+    </div>
+  );
+}
+
 interface StatCardProps extends CardBaseProps {
   icon: LucideIcon;
   value: string | number;
   label: string;
-  color?: "orange" | "amber" | "purple" | "emerald" | "indigo";
+  color?: "orange" | "amber" | "neutral" | "emerald";
 }
 
 /**
- * `color`'s default ("purple") is `StatCard`'s generic, no-specific-meaning
- * fallback (used whenever a caller doesn't name a subject/semantic colour).
- * Final Visual Refinement: moved from the muted-indigo educational accent
- * to the restrained learner blue (sky) — indigo reads close enough to
- * purple to compete with brand rather than stay a calm, distinct
- * "routine interaction" colour. The key names are left as-is to avoid a
- * churny rename across every call site; only the rendered classes change.
+ * Experience Programme, Stage 1 — naming correction (ANGEL_PRODUCT_
+ * EXPERIENCE_COMMERCIAL_BENCHMARK_V1.md Part 3, finding 2). This
+ * component's own "purple" key previously mapped to sky colours (a
+ * generic, no-specific-meaning default) while `RecommendationCard`'s own
+ * "purple" key, below, maps to a genuinely distinct, semantically real
+ * legend category (Consolidation, matching `RecommendationSummary.tsx`'s
+ * own CATEGORY_COLOR) — the same key name meant two different things in
+ * two places in this file. Audited before renaming (not assumed): this
+ * exported `StatCard` has zero real consumers anywhere in the app today
+ * (confirmed by repository-wide search — every `StatCard` reference
+ * elsewhere is an unrelated, locally-defined component with the same
+ * name), so renaming its key carries no migration risk. "purple"/"indigo"
+ * (both previously rendering identical sky classes, a second redundancy)
+ * collapse to one honestly-named "neutral" default; the rendered colour
+ * is unchanged.
  */
 const STAT_COLOR_CLASSES: Record<NonNullable<StatCardProps["color"]>, string> = {
   orange: "bg-orange-50 dark:bg-orange-950 border-orange-100 dark:border-orange-900 text-orange-500",
   amber: "bg-amber-50 dark:bg-amber-950 border-amber-100 dark:border-amber-900 text-amber-500",
-  purple: "bg-sky-50 dark:bg-sky-950 border-sky-100 dark:border-sky-900 text-sky-600",
+  neutral: "bg-sky-50 dark:bg-sky-950 border-sky-100 dark:border-sky-900 text-sky-600",
   emerald: "bg-emerald-50 dark:bg-emerald-950 border-emerald-100 dark:border-emerald-900 text-emerald-500",
-  indigo: "bg-sky-50 dark:bg-sky-950 border-sky-100 dark:border-sky-900 text-sky-600",
 };
 
-/** Statistics card — a single number with a label and icon (XP, streak, sessions, accuracy). No CTA, per the existing Achievement/stat card convention. */
-export function StatCard({ icon: Icon, value, label, color = "purple", className }: StatCardProps) {
+/** Statistics card — a single number with a label and icon (XP, streak, sessions, accuracy). No CTA, per the existing Achievement/stat card convention. Currently unused in production (see naming-correction note above) — kept, not deleted, pending confirmation it is genuinely obsolete rather than reserved for near-term use. */
+export function StatCard({ icon: Icon, value, label, color = "neutral", className }: StatCardProps) {
   const c = STAT_COLOR_CLASSES[color];
   return (
     <div className={cn("rounded-2xl border p-4 text-center", c, className)}>

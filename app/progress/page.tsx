@@ -12,6 +12,7 @@ import {
   Award,
 } from "lucide-react";
 import PageLayout from "@/components/PageLayout";
+import { Card } from "@/components/ui/Card";
 import { getProgress, saveProgress, getSelectedPathwayId } from "@/lib/progress";
 import { englishLessons } from "@/data/lessons";
 import { computeAnalytics } from "@/lib/analytics";
@@ -87,7 +88,37 @@ export default function ProgressPage() {
     }
   }
 
-  if (!progress) return null;
+  // Experience Programme, Stage 1 — accessibility/loading foundation fix:
+  // this previously rendered nothing at all (not even PageLayout) while
+  // getProgress() ran, a blank-screen state per Section 13. Same header +
+  // shaped skeleton cards as the loaded page below, so there's no layout
+  // shift once real data arrives.
+  if (!progress) {
+    return (
+      <PageLayout>
+        <div className="max-w-3xl mx-auto px-4 py-6 md:px-8 md:py-8">
+          <div className="flex items-center gap-3 mb-6">
+            <div className="bg-indigo-100 dark:bg-indigo-900 p-3 rounded-2xl">
+              <BarChart2 size={22} className="text-indigo-600 dark:text-indigo-400" />
+            </div>
+            <div>
+              <h1 className="text-gray-900 dark:text-gray-100 font-bold text-2xl">My Progress</h1>
+              <p className="text-gray-400 dark:text-gray-500 text-sm">Track your 11+ journey</p>
+            </div>
+          </div>
+          <div className="animate-pulse motion-reduce:animate-none space-y-4" role="status" aria-label="Loading your progress">
+            <Card padding="comfortable" className="h-28 bg-gray-100 dark:bg-gray-800" />
+            <div className="grid grid-cols-3 gap-3">
+              <Card padding="compact" className="h-20 bg-gray-100 dark:bg-gray-800" />
+              <Card padding="compact" className="h-20 bg-gray-100 dark:bg-gray-800" />
+              <Card padding="compact" className="h-20 bg-gray-100 dark:bg-gray-800" />
+            </div>
+            <Card padding="comfortable" className="h-40 bg-gray-100 dark:bg-gray-800" />
+          </div>
+        </div>
+      </PageLayout>
+    );
+  }
 
   const totalPossible = 16;
   const completionPct = Math.round((progress.completedLessons.length / totalPossible) * 100);
@@ -135,7 +166,7 @@ export default function ProgressPage() {
             historical data is invented — hasEnoughData/examReadiness/
             nextMilestone are all existing, already-computed outputs. */}
         {parentReport && gamification && (
-          <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-5 mb-5">
+          <Card padding="comfortable" className="mb-5">
             <h2 className="text-gray-900 dark:text-gray-100 font-semibold mb-4">Progress Journey</h2>
             <JourneyTimeline hasEnoughData={parentReport.hasEnoughData} readiness={parentReport.examReadiness} />
             <div className="mt-5 pt-4 border-t border-gray-50 dark:border-gray-800 space-y-1.5 text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
@@ -156,28 +187,28 @@ export default function ProgressPage() {
                   : "Maximum rank reached. More milestones are on the way."}
               </p>
             </div>
-          </div>
+          </Card>
         )}
 
         {/* Stats grid */}
         <div className="grid grid-cols-3 gap-3 mb-6">
-          <div className="bg-white dark:bg-gray-900 rounded-2xl p-4 border border-gray-100 dark:border-gray-800 text-center">
+          <Card padding="compact" className="text-center">
             <CheckCircle size={20} className="text-green-500 mx-auto mb-2" />
             <p className="text-gray-900 dark:text-gray-100 font-bold text-2xl">{progress.completedLessons.length}</p>
             <p className="text-gray-400 dark:text-gray-500 text-xs mt-0.5">Completed</p>
-          </div>
-          <div className="bg-white dark:bg-gray-900 rounded-2xl p-4 border border-gray-100 dark:border-gray-800 text-center">
+          </Card>
+          <Card padding="compact" className="text-center">
             <Target size={20} className="text-blue-500 mx-auto mb-2" />
             <p className="text-gray-900 dark:text-gray-100 font-bold text-2xl">{completionPct}%</p>
             <p className="text-gray-400 dark:text-gray-500 text-xs mt-0.5">Coverage</p>
-          </div>
-          <div className="bg-white dark:bg-gray-900 rounded-2xl p-4 border border-gray-100 dark:border-gray-800 text-center">
+          </Card>
+          <Card padding="compact" className="text-center">
             <Trophy size={20} className="text-amber-500 mx-auto mb-2" />
             <p className="text-gray-900 dark:text-gray-100 font-bold text-2xl">
               {Object.values(progress.scores).filter((s) => s >= 80).length}
             </p>
             <p className="text-gray-400 dark:text-gray-500 text-xs mt-0.5">Strong scores</p>
-          </div>
+          </Card>
         </div>
         {/* Sprint 4 Completion Package (WP4A) — Coverage's denominator (16)
             was previously unexplained; this reuses the same real values
@@ -188,7 +219,7 @@ export default function ProgressPage() {
 
         {/* Completed lessons */}
         {progress.completedLessons.length > 0 ? (
-          <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 overflow-hidden mb-5">
+          <Card padding="none" className="overflow-hidden mb-5">
             <div className="px-5 py-4 border-b border-gray-50 dark:border-gray-800">
               <h2 className="text-gray-900 dark:text-gray-100 font-semibold">Completed Sessions</h2>
             </div>
@@ -219,7 +250,7 @@ export default function ProgressPage() {
                 );
               })}
             </div>
-          </div>
+          </Card>
         ) : (
           <div className="bg-white dark:bg-gray-900 rounded-2xl border border-dashed border-gray-200 dark:border-gray-700 p-8 text-center mb-5">
             <Star size={24} className="text-gray-200 dark:text-gray-700 mx-auto mb-3" />
@@ -229,7 +260,7 @@ export default function ProgressPage() {
         )}
 
         {/* English lesson progress */}
-        <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 overflow-hidden mb-8">
+        <Card padding="none" className="overflow-hidden mb-8">
           <div className="px-5 py-4 border-b border-gray-50 dark:border-gray-800">
             <h2 className="text-gray-900 dark:text-gray-100 font-semibold">English Lessons</h2>
           </div>
@@ -268,13 +299,13 @@ export default function ProgressPage() {
               );
             })}
           </div>
-        </div>
+        </Card>
 
         {/* ── ANALYTICS SECTION ─────────────────────────────── */}
         {report && (
           <>
             {/* Subject breakdown */}
-            <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-5 mb-4">
+            <Card padding="comfortable" className="mb-4">
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-gray-900 dark:text-gray-100 font-semibold">Subject Breakdown</h2>
                 {report.overallScore > 0 && (
@@ -288,7 +319,7 @@ export default function ProgressPage() {
                   <SubjectBar key={s.subject} subject={s} />
                 ))}
               </div>
-            </div>
+            </Card>
 
             {/* Competency Progress (Sprint 10) — a shared heading over the
                 two existing competency sections below (Learning Confidence,
@@ -306,7 +337,7 @@ export default function ProgressPage() {
 
             {/* Learning confidence */}
             {adaptiveProfile && adaptiveProfile.subjectConfidence.some((c) => c.score > 0) && (
-              <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-5 mb-4">
+              <Card padding="comfortable" className="mb-4">
                 <div className="mb-4">
                   <h2 className="text-gray-900 dark:text-gray-100 font-semibold">Learning Confidence</h2>
                   <p className="text-gray-400 dark:text-gray-500 text-xs mt-0.5">
@@ -349,12 +380,12 @@ export default function ProgressPage() {
                       );
                     })}
                 </div>
-              </div>
+              </Card>
             )}
 
             {/* Skill analysis */}
             {report.skills.length > 0 && (
-              <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-5 mb-4">
+              <Card padding="comfortable" className="mb-4">
                 <div className="mb-4">
                   <h2 className="text-gray-900 dark:text-gray-100 font-semibold">Skill Analysis</h2>
                   <p className="text-gray-400 dark:text-gray-500 text-xs mt-0.5">
@@ -409,7 +440,7 @@ export default function ProgressPage() {
                     </div>
                   </div>
                 )}
-              </div>
+              </Card>
             )}
 
             {/* Admission Context (Sprint 10) — explains how progress
@@ -419,7 +450,7 @@ export default function ProgressPage() {
                 to the existing School Intelligence Hub (Sprint 7) rather
                 than duplicating it. */}
             {parentReport && (
-              <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-5 mb-4">
+              <Card padding="comfortable" className="mb-4">
                 <h2 className="text-gray-900 dark:text-gray-100 font-semibold mb-1">Admission Context</h2>
                 <p className="text-gray-400 dark:text-gray-500 text-xs mb-3">How this connects to your target school</p>
                 {pathway ? (
@@ -442,7 +473,7 @@ export default function ProgressPage() {
                 >
                   View School Intelligence →
                 </Link>
-              </div>
+              </Card>
             )}
 
             {/* Learning insights */}

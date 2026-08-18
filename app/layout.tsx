@@ -1,7 +1,34 @@
 import type { Metadata, Viewport } from "next";
+import { Lexend } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "@/components/providers/AuthProvider";
 import PWAProvider from "@/components/PWAProvider";
+
+/**
+ * Experience Programme, Stage 1 — typography foundation. Replaces the bare
+ * OS system-font stack (the single most concrete, evidence-cited cause of
+ * the "AI-generated/generic SaaS" concern — see ANGEL_PRODUCT_EXPERIENCE_
+ * COMMERCIAL_BENCHMARK_V1.md Part 3). One family only, per the Experience
+ * System's own "own the typography... not multiple decorative families"
+ * principle — weight range alone (300-700 in active use) carries the full
+ * hierarchy, no second display family.
+ *
+ * Lexend, not a taste pick: it is the one widely-available production
+ * typeface whose entire design brief is reading-proficiency research (the
+ * Lexend Reading Acceleration project, university reading-rate studies),
+ * making it the one candidate with a real evidentiary rationale for a
+ * product whose own brand promise is evidence-based education — the same
+ * criterion this codebase already applies to its own educational claims,
+ * applied here to a typography decision instead of an ad-hoc preference.
+ * Self-hosted via next/font/google (zero runtime request, zero layout
+ * shift, automatic subsetting) — the correct, current Next.js integration
+ * pattern, not a <link> tag.
+ */
+const lexend = Lexend({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-sans",
+});
 
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? "https://angel11plus.com";
 
@@ -57,8 +84,11 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
-  maximumScale: 1,
-  userScalable: false,
+  // Experience Programme, Stage 1 — accessibility foundation fix:
+  // maximumScale: 1 + userScalable: false disabled pinch-zoom entirely,
+  // failing WCAG 2.1 SC 1.4.4 (Resize Text — must allow zoom to at least
+  // 200%). Removed; the app's own layout already tolerates zoom (rem-based
+  // type scale, no fixed-width containers found on the audited surfaces).
   themeColor: "#7c3aed",
   // Needed for iOS safe-area env() variables to work correctly in standalone mode.
   viewportFit: "cover",
@@ -70,7 +100,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="h-full">
+    <html lang="en" className={`h-full ${lexend.variable}`}>
       <body className="min-h-full antialiased">
         <AuthProvider>{children}</AuthProvider>
         <PWAProvider />

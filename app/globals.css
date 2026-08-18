@@ -95,6 +95,36 @@
   --text-primary: var(--foreground);
   --text-secondary: var(--foreground-muted);
   --text-tertiary: var(--foreground-subtle);
+
+  /* ── Experience Programme, Stage 1 — canonical semantic roles ───────────
+     Named aliases over the tokens already defined above, formalising the
+     Experience System's own Section H requirement ("define semantic
+     roles rather than page-specific colours"). No new colour value is
+     introduced anywhere in this block — every alias below points at an
+     existing, already-WCAG-verified token. This is documentation-as-code
+     (a real, enforceable canonical mapping), not a recolouring. */
+  --role-canvas: var(--background);
+  --role-surface: var(--surface);
+  --role-surface-elevated: var(--surface-raised);
+  --role-border: var(--border);
+  --role-border-subtle: var(--border-subtle);
+  --role-accent: var(--color-primary);
+  --role-focus: #8b5a7c; /* matches :focus-visible below exactly — named here so a future component can reference the role, not just the rule */
+}
+
+/* ── Experience Programme, Stage 1 — canonical spacing scale ────────────────
+   Formalises the rhythm this codebase already uses ad-hoc via Tailwind's
+   own default spacing scale (4/8/12/16/24/32px = Tailwind's 1/2/3/4/6/8) —
+   naming it here does not change a single rendered value; it makes the
+   existing, working rhythm the documented standard so future components
+   have one scale to reference instead of re-deriving it per page. */
+:root {
+  --space-1: 0.25rem; /* 4px  — tight inline gaps (icon-to-label) */
+  --space-2: 0.5rem;  /* 8px  — compact stacks */
+  --space-3: 0.75rem; /* 12px — default inline gaps */
+  --space-4: 1rem;    /* 16px — default card padding, comfortable stacks */
+  --space-6: 1.5rem;  /* 24px — section spacing within a page */
+  --space-8: 2rem;    /* 32px — spacious card padding, major section breaks */
 }
 
 /* ── Design tokens — dark mode ───────────────────────────────────────────────── */
@@ -230,7 +260,13 @@ html {
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  /* Experience Programme, Stage 1 — --font-sans is set by next/font/google
+     (app/layout.tsx, the Lexend family) on <html>, self-hosted with zero
+     runtime request and zero layout shift. The system stack now serves
+     only as the graceful-degradation fallback if that variable is ever
+     absent (e.g. a test harness rendering globals.css without the real
+     layout), not the primary typeface. */
+  font-family: var(--font-sans), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;

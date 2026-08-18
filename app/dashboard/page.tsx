@@ -32,7 +32,7 @@ import { resolvePreparationClock } from "@/lib/learningEngine/preparationClock";
 import NewBadgeBanner from "@/components/NewBadgeBanner";
 import InsightCard from "@/components/InsightCard";
 import { getPathwayById } from "@/lib/pathways";
-import { PremiumCard, MissionCard } from "@/components/ui/Card";
+import { Card, PremiumCard, MissionCard } from "@/components/ui/Card";
 import { ProgressBar, ReadinessIndicator, StatusIndicator } from "@/components/ui/Progress";
 import { ButtonLink } from "@/components/ui/Button";
 import { deriveActiveStageIndex } from "@/components/JourneyTimeline";
@@ -561,6 +561,13 @@ export default function DashboardPage() {
              (estimatedMinutes) and links to a primary action (Start
              Today's Mission) — all four of this sprint's required fields
              were already real and reused, only the position changed. */}
+        {/* Product Experience Standard, Stage 1 (ANGEL_EXPERIENCE_SYSTEM_V1.md
+            Section C/Part 16) — Today's Mission is the dashboard's PRIMARY
+            action: a larger heading (text-2xl, up from text-xl) and a raised,
+            accent-bordered Card visually separate it from the SECONDARY
+            sections below (Progress Snapshot, Mock Examinations), which keep
+            a smaller heading and a flat card — establishing real typographic
+            hierarchy instead of every section reading as equally weighted. */}
         <section>
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-2.5">
@@ -568,7 +575,7 @@ export default function DashboardPage() {
                 <Target size={17} className="text-sky-700 dark:text-sky-400" />
               </div>
               <div>
-                <h2 className="text-gray-900 dark:text-gray-100 font-bold text-xl leading-tight">Today&apos;s Admission Mission</h2>
+                <h2 className="text-gray-900 dark:text-gray-100 font-bold text-2xl leading-tight">Today&apos;s Admission Mission</h2>
                 {pathway && (
                   <p className="text-xs text-sky-700 dark:text-sky-400 font-medium mt-0.5">{pathway.shortName} pathway</p>
                 )}
@@ -583,7 +590,7 @@ export default function DashboardPage() {
           </div>
 
           {mission && mission.items.length > 0 ? (
-            <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 shadow-sm overflow-hidden">
+            <Card elevation="raised" accent="primary" padding="none" className="overflow-hidden">
               <ol className="p-5 space-y-3 list-none">
                 {mission.items.map((item, i) => (
                   <MissionCard key={item.id} priority={item.priority}>
@@ -629,9 +636,9 @@ export default function DashboardPage() {
                   Your Progress and Learning Report update automatically once you finish.
                 </p>
               </div>
-            </div>
+            </Card>
           ) : (
-            <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 shadow-sm p-8 text-center">
+            <Card elevation="raised" padding="spacious" className="text-center">
               <div className="w-16 h-16 bg-sky-50 dark:bg-sky-950 rounded-2xl flex items-center justify-center mx-auto mb-4">
                 <Target size={30} className="text-sky-400 dark:text-sky-600" />
               </div>
@@ -651,7 +658,7 @@ export default function DashboardPage() {
                 <Play size={14} aria-hidden="true" />
                 Start Learning
               </Link>
-            </div>
+            </Card>
           )}
         </section>
 
@@ -671,7 +678,7 @@ export default function DashboardPage() {
         <section>
           <h2 className="text-gray-900 dark:text-gray-100 font-bold text-xl mb-3">Progress Snapshot</h2>
           {parentReport && parentReport.hasEnoughData ? (
-            <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-5 space-y-4">
+            <Card padding="comfortable" className="space-y-4">
               <ReadinessIndicator readiness={parentReport.examReadiness} />
 
               {report && (report.strongSubjects.length > 0 || report.weakSubjects.length > 0) && (
@@ -722,9 +729,9 @@ export default function DashboardPage() {
               <ButtonLink href="/progress" variant="outline" size="sm" className="w-full justify-center">
                 View full progress →
               </ButtonLink>
-            </div>
+            </Card>
           ) : (
-            <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 px-4 py-5 flex items-center gap-3">
+            <Card padding="none" className="px-4 py-5 flex items-center gap-3">
               <div className="w-10 h-10 bg-sky-50 dark:bg-sky-950 rounded-xl flex items-center justify-center shrink-0">
                 <BarChart2 size={18} className="text-sky-300 dark:text-sky-700" />
               </div>
@@ -732,7 +739,7 @@ export default function DashboardPage() {
                 <p className="text-gray-700 dark:text-gray-300 font-semibold text-sm">Not enough data yet</p>
                 <p className="text-gray-400 dark:text-gray-500 text-xs mt-0.5">Complete a few more sessions to unlock your progress snapshot</p>
               </div>
-            </div>
+            </Card>
           )}
         </section>
 
@@ -761,7 +768,7 @@ export default function DashboardPage() {
               <ChevronRight size={18} aria-hidden="true" className="text-gray-300 dark:text-gray-600 group-hover:text-sky-600 dark:group-hover:text-sky-400 transition-colors motion-reduce:transition-none shrink-0" />
             </Link>
           ) : (
-            <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 px-4 py-5 flex items-center gap-3">
+            <Card padding="none" className="px-4 py-5 flex items-center gap-3">
               <div className="w-10 h-10 bg-pink-50 dark:bg-pink-950 rounded-xl flex items-center justify-center shrink-0">
                 <Trophy size={18} className="text-pink-300 dark:text-pink-700" />
               </div>
@@ -771,7 +778,7 @@ export default function DashboardPage() {
                 </p>
                 <p className="text-gray-400 dark:text-gray-500 text-xs mt-0.5">Visit the Mock Centre to see what&apos;s available</p>
               </div>
-            </div>
+            </Card>
           )}
         </section>
 
@@ -819,7 +826,7 @@ export default function DashboardPage() {
 
         {/* 7. About + disclaimer — kept as-is; already minimal and serves
              a real legal/trust purpose. */}
-        <div className="bg-white dark:bg-gray-900 rounded-2xl p-5 border border-gray-100 dark:border-gray-800">
+        <Card padding="comfortable">
           <p className="text-gray-500 dark:text-gray-400 text-xs font-semibold uppercase tracking-wide mb-2">About Angel 11+</p>
           <p className="text-gray-700 dark:text-gray-300 text-sm leading-relaxed mb-2">
             Original exam-style practice for UK 11+ preparation across English, Maths, Reasoning, Writing and Vocabulary.
@@ -827,7 +834,7 @@ export default function DashboardPage() {
           <p className="text-gray-400 dark:text-gray-500 text-xs leading-relaxed">
             Angel 11+ provides original practice content and is not affiliated with or endorsed by any exam board or school.
           </p>
-        </div>
+        </Card>
 
       </div>
     </PageLayout>
