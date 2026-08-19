@@ -13,6 +13,7 @@ import { getRecommendations } from "@/lib/learningEngine/educationalIntelligence
 import { COMPETENCIES, ALL_COMPETENCY_IDS } from "@/lib/learningEngine/assessmentBrainMap";
 import { getMockResults } from "@/lib/mockProgress";
 import { assessMockReadiness, type MockReadinessAssessment } from "@/lib/learningEngine/mockReadiness";
+import { getActiveMockForm, isMockFormAvailable } from "@/lib/mockAttempt/client";
 import { CompetencySummary } from "@/components/learningEngine/parent/CompetencySummary";
 import { EvidenceComposition } from "@/components/learningEngine/parent/EvidenceComposition";
 import { RecommendationExplanation } from "@/components/learningEngine/parent/RecommendationExplanation";
@@ -48,6 +49,15 @@ export function CssePathwayParentContent() {
   // is now opt-in, not the first thing a parent sees. Nothing here is
   // deleted or recomputed differently — see PARENT_DASHBOARD_SIMPLIFICATION_SPEC.md.
   const [showDetails, setShowDetails] = useState(false);
+  // Completion Assurance Programme, Completion D — a live-verification
+  // finding: this card's own "Start a mock exam →" CTA (below, driven by
+  // assessMockReadiness()'s nextAction) had no signal for whether a real
+  // CSSE mock actually exists, so it recommended one even while Mock
+  // Eligible content is 0 in production — the exact contradiction
+  // Completion B (Decision 126) already corrected on the Mock Centre
+  // itself, but this separate Parent Dashboard card was never touched by
+  // that fix. Starts false so the CTA never briefly claims availability.
+  const [csseMockAvailable, setCsseMockAvailable] = useState(false);
 
   useEffect(() => {
     const pathwayId = getSelectedPathwayId();
@@ -55,6 +65,11 @@ export function CssePathwayParentContent() {
       .then((p) => {
         setProfile(p);
         const supabase = getSupabaseClient();
+        if (supabase) {
+          getActiveMockForm(supabase, "full_mock")
+            .then((result) => setCsseMockAvailable(isMockFormAvailable(result)))
+            .catch(() => setCsseMockAvailable(false));
+        }
         if (p?.pathwayEligible && supabase) {
           fetchRecentActivity(supabase, p.profileId).then(setRecentActivity).catch(() => setRecentActivity([]));
           getRecommendations(supabase, p.profileId, ALL_COMPETENCY_IDS)
@@ -232,9 +247,15 @@ export function CssePathwayParentContent() {
                       }[mockReadiness.verdict]}
                     </p>
                     <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 leading-relaxed">{mockReadiness.explanation}</p>
-                    <Link href={mockReadiness.nextAction.href} className="inline-block text-xs font-semibold text-purple-600 dark:text-purple-400 mt-2">
-                      {mockReadiness.nextAction.label}
-                    </Link>
+                    {mockReadiness.nextAction.href === "/learning-intelligence/mock-exam" && !csseMockAvailable ? (
+                      <Link href="/learning-intelligence/practice" className="inline-block text-xs font-semibold text-purple-600 dark:text-purple-400 mt-2">
+                        See practice areas →
+                      </Link>
+                    ) : (
+                      <Link href={mockReadiness.nextAction.href} className="inline-block text-xs font-semibold text-purple-600 dark:text-purple-400 mt-2">
+                        {mockReadiness.nextAction.label}
+                      </Link>
+                    )}
                   </>
                 )}
               </div>
