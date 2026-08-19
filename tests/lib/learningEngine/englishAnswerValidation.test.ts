@@ -335,3 +335,78 @@ test("Tier 6 regression: multi-select scoring is untouched by the Defect B fix (
 test("Positive flexibility (Tier 2): case variation and punctuation variation still credit", () => {
   assert.equal(checkAcceptedAnswerSet("  WARMED UP THOROUGHLY.  ", RACEDAY_01_TIER2.acceptedAnswers!).correct, true);
 });
+
+// ===========================================================================
+// Founder real-production finding, Stage 2 Educational Integrity Correction
+// — w2-pianorecital-06, "How does Freya feel in the recital hall in the
+// minutes before she is called, and why?" (TIER5_NAMED_COMPONENT_PLUS_
+// EXPLANATION). Founder testing captured "yes" rendering as an unqualified
+// "Correct" in production. Root-caused: NOT an automatic-scoring defect —
+// scoreEnglishComprehensionAnswer already never auto-verifies Tier 5 (see
+// below, reconfirmed) — the "Correct" label came from the learner's own
+// subsequent self-assessment click, rendered identically to a genuinely
+// auto-verified "Correct" (fixed separately in
+// lib/learningEngine/practiceInteractionGuard.ts's resolveOutcomeLabel(),
+// see practiceInteractionGuard.test.ts). These tests reconfirm the scoring
+// layer itself was never the defect and remains correct.
+// ===========================================================================
+
+const PIANORECITAL_06_TIER5: EnglishPromptValidationFields = {
+  marks: 2,
+  modelAnswer:
+    "She feels nervous or anxious. The hall's smell is associated with 'nervous anticipation', and she is preoccupied with worry about whether her fingers will remember the piece once she actually sits down.",
+  acceptedAnswers: ["nervous", "anxious", "worried", "apprehensive"],
+  validationTier: "TIER5_NAMED_COMPONENT_PLUS_EXPLANATION",
+};
+
+test("w2-pianorecital-06 (the exact Founder-reported question): 'yes' cannot automatically become Correct", () => {
+  const result = scoreEnglishComprehensionAnswer("yes", PIANORECITAL_06_TIER5, legacyHeuristicShouldNotBeCalled);
+  assert.equal(result.automaticallyVerified, false);
+  assert.equal(result.namedComponentCorrect, false);
+  assert.equal(result.earnedMarks, 0);
+});
+
+test("w2-pianorecital-06: 'no' cannot automatically become Correct", () => {
+  const result = scoreEnglishComprehensionAnswer("no", PIANORECITAL_06_TIER5, legacyHeuristicShouldNotBeCalled);
+  assert.equal(result.automaticallyVerified, false);
+  assert.equal(result.namedComponentCorrect, false);
+});
+
+test("w2-pianorecital-06: an unrelated sentence cannot automatically become Correct", () => {
+  const result = scoreEnglishComprehensionAnswer(
+    "The recital hall was very large and had many chairs in it.",
+    PIANORECITAL_06_TIER5,
+    legacyHeuristicShouldNotBeCalled
+  );
+  assert.equal(result.automaticallyVerified, false);
+  assert.equal(result.namedComponentCorrect, false);
+});
+
+test("w2-pianorecital-06: the full adversarial battery, plus 'hi'/'x'/'up' (the Defect B proof strings), never auto-verifies", () => {
+  for (const input of [...ADVERSARIAL_GARBAGE_INPUTS, "hi", "up"]) {
+    const result = scoreEnglishComprehensionAnswer(input, PIANORECITAL_06_TIER5, legacyHeuristicShouldNotBeCalled);
+    assert.equal(result.automaticallyVerified, false, `"${input}" must never be automatically verified`);
+    assert.equal(result.namedComponentCorrect, false, `"${input}" must not match a named component`);
+  }
+});
+
+test("w2-pianorecital-06: a genuine named component (the valid self-assessment comparison target) is still recognised, proving positive flexibility is intact", () => {
+  const result = scoreEnglishComprehensionAnswer("nervous", PIANORECITAL_06_TIER5, legacyHeuristicShouldNotBeCalled);
+  assert.equal(result.namedComponentCorrect, true, "the scoring signal Angel shows the learner during self-assessment is itself still accurate");
+});
+
+test("verified auto-scored tiers (Tier 2/4/6) remain unaffected by this investigation — reconfirmed, not assumed", () => {
+  const tier2 = scoreEnglishComprehensionAnswer("warmed up thoroughly", RACEDAY_01_TIER2, legacyHeuristicShouldNotBeCalled);
+  assert.equal(tier2.automaticallyVerified, true);
+  assert.equal(tier2.earnedMarks, 1);
+
+  const tier6Prompt: EnglishPromptValidationFields = {
+    marks: 4,
+    validationTier: "TIER6_MULTI_SELECT",
+    correctOptions: ["A", "D", "E", "G"],
+    requiredSelectionCount: 4,
+  };
+  const tier6 = scoreEnglishComprehensionAnswer("A, D, E, G", tier6Prompt, () => 0);
+  assert.equal(tier6.automaticallyVerified, true);
+  assert.equal(tier6.multiSelectDetail?.marks, 4);
+});

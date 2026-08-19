@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { canSubmitAnswer, runGuardedSubmission } from "../../../lib/learningEngine/practiceInteractionGuard";
+import { canSubmitAnswer, runGuardedSubmission, resolveOutcomeLabel } from "../../../lib/learningEngine/practiceInteractionGuard";
 
 /**
  * Stage 2 (Practice Question Experience and Keyboard Interaction). Covers
@@ -144,4 +144,34 @@ test("runGuardedSubmission: isBlocked (e.g. writingSubmitting || submitted) prev
   assert.equal(ran, false);
   assert.equal(taskRuns, 0);
   assert.equal(guard.current, false); // never set — isBlocked short-circuits before the guard is touched
+});
+
+/**
+ * resolveOutcomeLabel — the Founder real-production finding, Stage 2
+ * Educational Integrity Correction. Production evidence showed a
+ * self-assessed "Yes" (Tier 3/5, e.g. w2-pianorecital-06's "How does
+ * Freya feel..." question, answered "yes") rendering as an unqualified
+ * "Correct" — visually and textually identical to a genuinely
+ * auto-verified correct answer, even though the underlying evidence was
+ * already correctly recorded as last_attempt_verified: false throughout.
+ * This is the pure decision behind the fix, proven independent of the
+ * surrounding JSX/DOM.
+ */
+test("no submission yet (lastCorrect null) has no outcome label", () => {
+  assert.equal(resolveOutcomeLabel(null, false), null);
+  assert.equal(resolveOutcomeLabel(null, true), null);
+});
+
+test("a genuinely auto-verified correct answer renders the plain 'correct' label, never the self-assessed variant", () => {
+  assert.equal(resolveOutcomeLabel(true, false), "correct");
+});
+
+test("THE FIX: a self-assessed correct answer renders 'self-assessed-correct', distinct from a genuinely auto-verified 'correct'", () => {
+  assert.equal(resolveOutcomeLabel(true, true), "self-assessed-correct");
+  assert.notEqual(resolveOutcomeLabel(true, true), resolveOutcomeLabel(true, false));
+});
+
+test("an incorrect answer is always 'not-quite', regardless of whether it was self-assessed", () => {
+  assert.equal(resolveOutcomeLabel(false, false), "not-quite");
+  assert.equal(resolveOutcomeLabel(false, true), "not-quite");
 });

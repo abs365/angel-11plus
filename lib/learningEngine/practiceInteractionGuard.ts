@@ -45,3 +45,28 @@ export async function runGuardedSubmission(
     guard.current = false;
   }
 }
+
+export type SubmitOrNextOutcomeLabel = "correct" | "self-assessed-correct" | "not-quite";
+
+/**
+ * Stage 2 Educational Integrity Correction — the pure decision behind
+ * SubmitOrNext's rendered label, extracted for the same reason
+ * canSubmitAnswer() is a pure function above: this repository has no
+ * DOM/React harness to render the component and check pixels, but the
+ * actual bug a Founder found live in production was exactly this
+ * decision, not the surrounding JSX. A self-assessed "Yes" (Tier 3/5) and
+ * a genuinely auto-verified correct answer both set lastCorrect=true;
+ * before this fix, both rendered the identical "Correct" label, with
+ * nothing distinguishing "Angel verified this" from "the learner told
+ * Angel this was right" — the underlying evidence recording
+ * (last_attempt_verified) was already correct throughout and is
+ * unaffected by this; only the rendered label was ever wrong.
+ */
+export function resolveOutcomeLabel(
+  lastCorrect: boolean | null,
+  selfAssessed: boolean
+): SubmitOrNextOutcomeLabel | null {
+  if (lastCorrect === null) return null;
+  if (!lastCorrect) return "not-quite";
+  return selfAssessed ? "self-assessed-correct" : "correct";
+}

@@ -31,7 +31,7 @@ import { getExamStrategyHint, getWorkedExample } from "@/lib/learningEngine/engl
 import { getGuidedScaffoldKind, getGuidedInstructionText, checkLiveSelectionCount } from "@/lib/learningEngine/guidedPractice";
 import { classifyAutomaticError, getSelfReflectionCategories, WRONG_ANSWER_CATEGORY_LABEL } from "@/lib/learningEngine/englishErrorClassification";
 import { getMathsTeachingContent, MATHS_MISCONCEPTION_CATEGORY_LABEL, effectiveGuidedRevealStepCount } from "@/lib/learningEngine/mathsTeachingContent";
-import { canSubmitAnswer, runGuardedSubmission } from "@/lib/learningEngine/practiceInteractionGuard";
+import { canSubmitAnswer, runGuardedSubmission, resolveOutcomeLabel } from "@/lib/learningEngine/practiceInteractionGuard";
 import { CompetencyProfile } from "@/components/learningEngine/CompetencyProfile";
 import { EvidenceProfile } from "@/components/learningEngine/EvidenceProfile";
 import { DiagnosticOverview } from "@/components/learningEngine/DiagnosticOverview";
@@ -85,6 +85,18 @@ export default function PracticeSessionPage({ params }: { params: Promise<{ area
   // that limitation honest, per the explicit instruction not to convert
   // an unverifiable component into false mastery evidence.
   const [pendingSelfAssessment, setPendingSelfAssessment] = useState<EnglishScoringResult | null>(null);
+  // Founder real-production finding (Stage 2 Educational Integrity
+  // Correction) — once a Tier 3/5 self-assessment resolves,
+  // pendingSelfAssessment clears to null and SubmitOrNext's "Correct"
+  // label becomes visually IDENTICAL to a genuinely auto-verified correct
+  // answer, even though `lastCorrect` here came entirely from the
+  // learner's own click, not Angel's own judgement. The underlying
+  // evidence recording was already correct (verified: false, unchanged by
+  // this) — this is a presentation-only gap: nothing distinguished
+  // "Angel verified this" from "the learner told Angel this was right" in
+  // the rendered label itself. Purely a display flag, never read by any
+  // scoring/evidence function.
+  const [wasSelfAssessed, setWasSelfAssessed] = useState(false);
   // Educational Increment 007C, Part 9 — the automatically-verified
   // result of the last attempt (Tier 2/4/6/legacy only), kept so wrong-
   // answer feedback can be specific (e.g. multi-select over-selection)
@@ -256,6 +268,7 @@ export default function PracticeSessionPage({ params }: { params: Promise<{ area
     setLastCorrect(null);
     setPendingSelfAssessment(null);
     setLastAutoResult(null);
+    setWasSelfAssessed(false);
     setWritingFeedback(null);
     setWritingFeedbackError("");
     setCheckedItems(new Set());
@@ -429,6 +442,10 @@ export default function PracticeSessionPage({ params }: { params: Promise<{ area
     }
     pendingGuidedRef.current = false;
     setPendingSelfAssessment(null);
+    // Founder real-production finding — see wasSelfAssessed's own
+    // declaration comment. Set after recordAndAdvance() so it reflects
+    // the outcome the learner just clicked, for the render that follows.
+    setWasSelfAssessed(true);
   }
 
   async function submitWriting() {
@@ -593,6 +610,7 @@ export default function PracticeSessionPage({ params }: { params: Promise<{ area
                 setAnswer={setAnswer}
                 submitted={submitted}
                 lastCorrect={lastCorrect}
+                wasSelfAssessed={wasSelfAssessed}
                 pendingSelfAssessment={pendingSelfAssessment}
                 lastAutoResult={lastAutoResult}
                 onSelfAssess={submitSelfAssessment}
@@ -710,7 +728,7 @@ export default function PracticeSessionPage({ params }: { params: Promise<{ area
 }
 
 function ReadingActivity({
-  prompt, familyId, addressesMisconception, guidedAvailable, answer, setAnswer, submitted, lastCorrect, pendingSelfAssessment, lastAutoResult, onSelfAssess, onSubmit, onNext, isLast,
+  prompt, familyId, addressesMisconception, guidedAvailable, answer, setAnswer, submitted, lastCorrect, wasSelfAssessed, pendingSelfAssessment, lastAutoResult, onSelfAssess, onSubmit, onNext, isLast,
 }: {
   prompt: EnglishComprehensionPrompt;
   familyId?: string;
@@ -720,6 +738,7 @@ function ReadingActivity({
   setAnswer: (v: string) => void;
   submitted: boolean;
   lastCorrect: boolean | null;
+  wasSelfAssessed: boolean;
   pendingSelfAssessment: EnglishScoringResult | null;
   lastAutoResult: EnglishScoringResult | null;
   onSelfAssess: (learnerSaysCorrect: boolean) => void;
@@ -955,7 +974,7 @@ function ReadingActivity({
         </div>
       ) : (
         <div ref={feedbackRegionRef} tabIndex={-1} className="outline-none">
-          <SubmitOrNext submitted={submitted} lastCorrect={lastCorrect} onSubmit={() => onSubmit(guidedMode)} onNext={onNext} isLast={isLast} disabled={!answer.trim()} />
+          <SubmitOrNext submitted={submitted} lastCorrect={lastCorrect} selfAssessed={wasSelfAssessed} onSubmit={() => onSubmit(guidedMode)} onNext={onNext} isLast={isLast} disabled={!answer.trim()} />
           {/* Educational Increment 007C, Part 8/9 — wrong-answer
               remediation, using only real classifications
               classifyAutomaticError() derived from what the scoring
@@ -1352,10 +1371,22 @@ function WritingActivity({
 }
 
 function SubmitOrNext({
-  submitted, lastCorrect, onSubmit, onNext, isLast, disabled,
+  submitted, lastCorrect, selfAssessed = false, onSubmit, onNext, isLast, disabled,
 }: {
   submitted: boolean;
   lastCorrect: boolean | null;
+  /**
+   * Founder real-production finding (Stage 2 Educational Integrity
+   * Correction) — a self-assessed "Yes" (Tier 3/5) and a genuinely
+   * auto-verified correct answer both set lastCorrect=true, and this
+   * component previously rendered the identical "Correct" label for
+   * both, with no visual distinction. The underlying evidence recording
+   * was always correct (last_attempt_verified: false for self-assessed
+   * outcomes, unaffected by this) — this prop only changes what is
+   * displayed, never what is scored or recorded. Defaults false so
+   * Mathematics (which never self-assesses) is unaffected.
+   */
+  selfAssessed?: boolean;
   onSubmit: () => void;
   onNext: () => void;
   isLast: boolean;
@@ -1372,10 +1403,18 @@ function SubmitOrNext({
       </button>
     );
   }
+  const outcomeLabel = resolveOutcomeLabel(lastCorrect, selfAssessed);
   return (
     <div className="mt-3 flex items-center gap-3">
       <span className="inline-flex items-center gap-1.5 text-sm font-semibold">
-        {lastCorrect ? (
+        {outcomeLabel === "self-assessed-correct" ? (
+          // Founder real-production finding — visually and textually
+          // distinct from a genuinely auto-verified "Correct" (blue, not
+          // emerald; "You said" framing) so a self-assessed outcome is
+          // never mistaken for Angel's own judgement, without exposing
+          // any internal terminology.
+          <><CheckCircle2 size={16} className="text-blue-500" /> You said: Correct</>
+        ) : outcomeLabel === "correct" ? (
           <><CheckCircle2 size={16} className="text-emerald-500" /> Correct</>
         ) : (
           <><XCircle size={16} className="text-amber-500" /> Not quite</>
