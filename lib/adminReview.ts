@@ -243,6 +243,25 @@ export const FAMILY_EDUCATIONAL_CONTEXT: Record<string, FamilyEvidenceContext> =
     objective: "Give an answer as an exact fraction (not a rounded decimal) when the question's own instruction requires it.",
     evidenceBasis: "CSSE_QUESTION_INTELLIGENCE_FRAMEWORK.md QT-MR-14 (Obs. 3): CSSE-007, CSSE-012, CSSE-017. Precision Under Exact-Match applies as a cross-cutting scoring condition across every Mathematics Question Type, not as a separate content relationship.",
   },
+  // Stage 3, Increment 003 (Decision 116) — 3 brand-new families, each
+  // extending an already-validated sibling family's evidence basis to a
+  // reverse/conversion direction that sibling never covered. No new
+  // external CSSE-format research was performed for these specific
+  // reverse/conversion structures this increment (per Stage 3, Increment
+  // 004's own explicit instruction); evidenceBasis is stated with that
+  // bound honestly rather than implying independently-researched support.
+  "mr04-reverse-percentage": {
+    objective: "Given a known percentage change and the resulting value, find the original value before the change: the reverse of the already-established mr04-compound-percentage family's own forward-only direction.",
+    evidenceBasis: "Extends the already-validated mr04-compound-percentage family's evidence basis (percentage/proportional change is a confirmed CSSE Mathematics demand) to the reverse direction. See ALI_DECISION_LOG.md Decisions 116-117 for the full reconciliation and technical review.",
+  },
+  "mr04-time-reverse": {
+    objective: "Given a finish time and a sequence of stage durations, find the start time: the reverse of the already-established mr04-elapsed-time family's own forward-only direction.",
+    evidenceBasis: "Extends the already-validated mr04-elapsed-time family's evidence basis (elapsed-time word problems are a confirmed CSSE Mathematics demand) to the reverse direction. See ALI_DECISION_LOG.md Decisions 116-117 for the full reconciliation and technical review.",
+  },
+  "mr04-bv-convert": {
+    objective: "Compare unit prices across two options where the units first require conversion to a common unit. Extends the already-established mr04-best-value family, whose existing siblings never require a conversion step.",
+    evidenceBasis: "Extends the already-validated mr04-best-value family's evidence basis (best-value/unit-price comparison is a confirmed CSSE Mathematics demand) to include a genuine unit-conversion step. See ALI_DECISION_LOG.md Decisions 116-117 for the full reconciliation and technical review.",
+  },
 };
 
 /**
@@ -898,16 +917,29 @@ export interface SevenXReviewRow {
  * this); this function's own extra `review_type` check is a second,
  * defensive guard in case a caller ever forgets to filter server-side.
  */
-export function deriveSevenXReviewStatus(rows: SevenXReviewRow[], familyIds: string[]): Map<string, SevenXReviewStatus> {
+/**
+ * Marker-parameterised so every batch that scopes review to a specific
+ * subset of new siblings within an existing family (007X, and now Stage 3
+ * Increment 004's MR-04 depth batch) reuses one proven implementation
+ * rather than a copy each time — same reasoning as the marker-scoping
+ * mechanism itself (SEVEN_X_BATCH_MARKER's own docstring above).
+ * `deriveSevenXReviewStatus` below is an unchanged, exported thin wrapper
+ * so every existing call site and test keeps working exactly as before.
+ */
+export function deriveBatchReviewStatus(rows: SevenXReviewRow[], familyIds: string[], marker: string): Map<string, SevenXReviewStatus> {
   const result = new Map<string, SevenXReviewStatus>(familyIds.map((id) => [id, { reviewed: false, decision: null, reviewer: null }]));
   for (const row of rows) {
     if (row.review_type !== "content_review") continue;
     if (row.decision === "pending_independent_review") continue;
-    if (!row.notes || !row.notes.includes(SEVEN_X_BATCH_MARKER)) continue;
+    if (!row.notes || !row.notes.includes(marker)) continue;
     if (!result.has(row.family_id)) continue;
     result.set(row.family_id, { reviewed: true, decision: row.decision as ReviewDecision, reviewer: row.reviewer });
   }
   return result;
+}
+
+export function deriveSevenXReviewStatus(rows: SevenXReviewRow[], familyIds: string[]): Map<string, SevenXReviewStatus> {
+  return deriveBatchReviewStatus(rows, familyIds, SEVEN_X_BATCH_MARKER);
 }
 
 /**
@@ -922,17 +954,21 @@ export function deriveSevenXReviewStatus(rows: SevenXReviewRow[], familyIds: str
  * cards in the UI). Thin I/O wrapper — all real logic lives in
  * deriveSevenXReviewStatus above.
  */
-export async function fetchSevenXReviewStatus(familyIds: string[]): Promise<Map<string, SevenXReviewStatus>> {
+async function fetchBatchReviewStatus(familyIds: string[], marker: string): Promise<Map<string, SevenXReviewStatus>> {
   const supabase = getSupabaseClient();
-  if (!supabase) return deriveSevenXReviewStatus([], familyIds);
+  if (!supabase) return deriveBatchReviewStatus([], familyIds, marker);
   const { data, error } = await supabase
     .from("ali_family_review")
     .select("family_id, review_type, decision, notes, reviewer, created_at")
     .in("family_id", familyIds)
     .eq("review_type", "content_review")
     .order("created_at", { ascending: true });
-  if (error || !data) return deriveSevenXReviewStatus([], familyIds);
-  return deriveSevenXReviewStatus(data, familyIds);
+  if (error || !data) return deriveBatchReviewStatus([], familyIds, marker);
+  return deriveBatchReviewStatus(data, familyIds, marker);
+}
+
+export async function fetchSevenXReviewStatus(familyIds: string[]): Promise<Map<string, SevenXReviewStatus>> {
+  return fetchBatchReviewStatus(familyIds, SEVEN_X_BATCH_MARKER);
 }
 
 /**
@@ -998,6 +1034,59 @@ export const SEVEN_X_FAMILIES: SevenXFamilyConfig[] = [
   },
 ];
 export const SEVEN_X_TARGET_IDS = SEVEN_X_FAMILIES.map((f) => f.familyId);
+
+/**
+ * Stage 3, Increment 004, Post-Increment Review-Readiness Correction — the
+ * 3 brand-new MR-04 families migration 078 (Decision 116) inserted as
+ * `provisional`, made reviewable via the same scoped-batch mechanism
+ * 007X established (SEVEN_X_FAMILIES above), with its own distinct
+ * marker so this batch's evidence trail and count can never be conflated
+ * with 007X's or any other batch's (the same "never merge batch counts"
+ * rule this project has followed since Decision 56). Unlike every
+ * SEVEN_X_FAMILIES entry, all 3 families here are entirely new — no
+ * `reclassified` rows, and no prior review of any kind to distinguish
+ * from. `disclosure` on each entry carries the exact, non-biasing
+ * educational-review findings from Decision 117 (Stage 3, Increment 004's
+ * own technical QA), so a real reviewer sees them without Claude's PASS
+ * verdict being presented as, or substituting for, the independent review
+ * itself — see ANGEL_EDUCATIONAL_REVIEW_OPERATING_MODEL_V1.md and this
+ * project's standing rule that Claude must never self-approve content.
+ */
+export const MR04_DEPTH_BATCH_MARKER = "STAGE3-INC004-MR04-DEPTH";
+
+export const MR04_DEPTH_FAMILIES: SevenXFamilyConfig[] = [
+  {
+    familyId: "mr04-reverse-percentage",
+    newQuestionIds: ["mr04-revpct-01", "mr04-revpct-02", "mr04-revpct-03", "mr04-revpct-04"],
+    disclosure:
+      "This is a brand-new family with no prior review of any kind. Stage 3 Increment 004's own technical review (Decision 117) found all 4 questions mathematically correct and correctly targeted at the intended misconception, but also disclosed a limitation: mr04-revpct-01 and mr04-revpct-03 share a near-identical sentence template, differing only in the numeral/object/price, so the 4 questions represent closer to 2 distinct scenario shapes than 4 fully independent ones. Disclosed for your own judgement, not a recommendation either way.",
+  },
+  {
+    familyId: "mr04-time-reverse",
+    newQuestionIds: ["mr04-timerev-01", "mr04-timerev-02", "mr04-timerev-03", "mr04-timerev-04"],
+    disclosure:
+      "This is a brand-new family with no prior review of any kind. Stage 3 Increment 004's own technical review (Decision 117) found all 4 questions mathematically correct and correctly targeted at the intended misconception. All 4 intentionally share one structural template (finish time minus summed stage durations) by design, consistent with the existing mr04-elapsed-time family's own convention; only mr04-timerev-04 varies the input format (mixed hour/minute notation). Disclosed for your own judgement, not a recommendation either way.",
+  },
+  {
+    familyId: "mr04-bv-convert",
+    newQuestionIds: ["mr04-bvconv-01", "mr04-bvconv-02", "mr04-bvconv-03"],
+    disclosure:
+      "This is a brand-new family with no prior review of any kind. Stage 3 Increment 004's own technical review (Decision 117) found all 3 questions mathematically correct and correctly targeted at the intended misconception, with the most genuine structural variety of the three new families (three different products, three different unit-pairs, non-uniform answers).",
+  },
+];
+export const MR04_DEPTH_TARGET_IDS = MR04_DEPTH_FAMILIES.map((f) => f.familyId);
+
+export function buildMr04DepthNotesPrefix(familyId: string, questionIds: string[]): string {
+  return `${MR04_DEPTH_BATCH_MARKER} New Content Review for ${familyId}. Question IDs: ${questionIds.join(", ")}.`;
+}
+
+export function deriveMr04DepthReviewStatus(rows: SevenXReviewRow[], familyIds: string[]): Map<string, SevenXReviewStatus> {
+  return deriveBatchReviewStatus(rows, familyIds, MR04_DEPTH_BATCH_MARKER);
+}
+
+export async function fetchMr04DepthReviewStatus(familyIds: string[]): Promise<Map<string, SevenXReviewStatus>> {
+  return fetchBatchReviewStatus(familyIds, MR04_DEPTH_BATCH_MARKER);
+}
 
 export const DIFFICULTY_RANK: Record<string, number> = { easy: 0, medium: 1, hard: 2 };
 
