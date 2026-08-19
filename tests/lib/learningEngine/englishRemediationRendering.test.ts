@@ -17,6 +17,18 @@ import { readFileSync } from "node:fs";
  * writingMasterySafety.test.ts` already uses for asserting behaviour of
  * this same file: a source-text regex check against the real page
  * component, not a rendered-DOM assertion.
+ *
+ * Stage 3, Increment 001 update — the inline `submitted && !lastCorrect
+ * && addressesMisconception` condition this file originally matched was
+ * extracted into `shouldRenderMisconceptionNote()`
+ * (`lib/learningEngine/practiceInteractionGuard.ts`) so both
+ * ReadingActivity and MathsActivity are provably identical rather than
+ * merely assumed to be, and so the gating logic itself has real
+ * behavioural test coverage (`tests/lib/learningEngine/
+ * practiceInteractionGuard.test.ts`) rather than only a source-text
+ * regex. No rendering behaviour changed — this file's own regexes are
+ * updated to match the new call site; the gating semantics they used to
+ * verify inline are now verified more rigorously in that other file.
  */
 
 const PAGE_PATH = "app/learning-intelligence/practice/[area]/page.tsx";
@@ -34,25 +46,25 @@ test("ReadingActivity's function signature accepts an addressesMisconception pro
   assert.match(src, /addressesMisconception[?]?:\s*string/, "ReadingActivity must declare an addressesMisconception prop");
 });
 
-test("ReadingActivity renders addressesMisconception, gated on submitted && !lastCorrect (never before submission, never on a correct answer)", () => {
+test("ReadingActivity renders addressesMisconception, gated via the shared shouldRenderMisconceptionNote() predicate (never before submission, never on a correct answer)", () => {
   const src = readingActivitySource();
   assert.match(
     src,
-    /\{submitted && !lastCorrect && addressesMisconception && \(/,
-    "the remediation block must be gated on submitted && !lastCorrect, exactly like MathsActivity's equivalent block"
+    /\{shouldRenderMisconceptionNote\(submitted, lastCorrect, addressesMisconception\) && \(/,
+    "the remediation block must be gated by the shared predicate, exactly like MathsActivity's equivalent block -- see practiceInteractionGuard.test.ts for the predicate's own gating semantics (submitted && !lastCorrect && addressesMisconception)"
   );
 });
 
 test("ReadingActivity's remediation block actually interpolates the real addressesMisconception value, not a hardcoded placeholder", () => {
   const src = readingActivitySource();
-  const blockMatch = src.match(/\{submitted && !lastCorrect && addressesMisconception && \(([\s\S]*?)\)\}/);
+  const blockMatch = src.match(/\{shouldRenderMisconceptionNote\(submitted, lastCorrect, addressesMisconception\) && \(([\s\S]*?)\)\}/);
   assert.ok(blockMatch, "remediation block not found");
   assert.match(blockMatch![1], /\{addressesMisconception\}/, "the block must render the real prop value");
 });
 
 test("the remediation framing never claims to know the specific learner's own reasoning (no 'you probably thought' / 'you assumed' phrasing)", () => {
   const src = readingActivitySource();
-  const blockMatch = src.match(/\{submitted && !lastCorrect && addressesMisconception && \(([\s\S]*?)\)\}/);
+  const blockMatch = src.match(/\{shouldRenderMisconceptionNote\(submitted, lastCorrect, addressesMisconception\) && \(([\s\S]*?)\)\}/);
   assert.ok(blockMatch);
   const lower = blockMatch![1].toLowerCase();
   assert.ok(!lower.includes("you thought") && !lower.includes("you assumed"), "must not fabricate a diagnosis of this specific learner's reasoning");

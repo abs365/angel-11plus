@@ -1,6 +1,11 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { canSubmitAnswer, runGuardedSubmission, resolveOutcomeLabel } from "../../../lib/learningEngine/practiceInteractionGuard";
+import {
+  canSubmitAnswer,
+  runGuardedSubmission,
+  resolveOutcomeLabel,
+  shouldRenderMisconceptionNote,
+} from "../../../lib/learningEngine/practiceInteractionGuard";
 
 /**
  * Stage 2 (Practice Question Experience and Keyboard Interaction). Covers
@@ -174,4 +179,40 @@ test("THE FIX: a self-assessed correct answer renders 'self-assessed-correct', d
 test("an incorrect answer is always 'not-quite', regardless of whether it was self-assessed", () => {
   assert.equal(resolveOutcomeLabel(false, false), "not-quite");
   assert.equal(resolveOutcomeLabel(false, true), "not-quite");
+});
+
+/**
+ * shouldRenderMisconceptionNote — Stage 3, Increment 001 (English
+ * Misconception Feedback Parity). This is the shared gating condition
+ * both ReadingActivity and MathsActivity already used inline, extracted
+ * verbatim so both call sites are provably identical rather than merely
+ * assumed to be. No behaviour change: this reproduces logic that has
+ * rendered in production since commit 7b69638 (2026-08-17) — discovery
+ * for this increment incorrectly claimed ReadingActivity never rendered
+ * this feedback; direct inspection found it already did, well before
+ * this increment began. What genuinely had zero test coverage before
+ * this file was the gating condition itself.
+ */
+test("an incorrect, submitted English answer WITH authored misconception text renders the note", () => {
+  assert.equal(shouldRenderMisconceptionNote(true, false, "A common confusion is..."), true);
+});
+
+test("a question with NO authored misconception text never fabricates feedback", () => {
+  assert.equal(shouldRenderMisconceptionNote(true, false, undefined), false);
+});
+
+test("a CORRECT answer never shows the misconception note, even if the question has one authored", () => {
+  assert.equal(shouldRenderMisconceptionNote(true, true, "A common confusion is..."), false);
+});
+
+test("an unsubmitted question never shows the note", () => {
+  assert.equal(shouldRenderMisconceptionNote(false, false, "A common confusion is..."), false);
+});
+
+test("empty-string addressesMisconception is treated as absent, not shown as blank feedback", () => {
+  assert.equal(shouldRenderMisconceptionNote(true, false, ""), false);
+});
+
+test("reproduces the original inline condition's exact null-handling (lastCorrect: null behaves as truthy-for-!lastCorrect, matching the pre-extraction JSX byte-for-byte)", () => {
+  assert.equal(shouldRenderMisconceptionNote(true, null, "A common confusion is..."), true);
 });

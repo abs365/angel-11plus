@@ -70,3 +70,38 @@ export function resolveOutcomeLabel(
   if (!lastCorrect) return "not-quite";
   return selfAssessed ? "self-assessed-correct" : "correct";
 }
+
+/**
+ * Stage 3, Increment 001 (English Misconception Feedback Parity) —
+ * discovery for this increment claimed ReadingActivity never rendered
+ * the reviewed `addressesMisconception` text MathsActivity already
+ * showed. Direct inspection before implementing anything found that
+ * claim false: Educational Increment 007O (commit 7b69638, 2026-08-17)
+ * already added this exact rendering to ReadingActivity, predating this
+ * entire Stage 2/3 arc. No missing feature existed to build.
+ *
+ * This function is the one genuine, safe, in-scope action available:
+ * the shared gating condition both ReadingActivity and MathsActivity
+ * already use inline (`submitted && !lastCorrect && addressesMisconception`)
+ * had zero test coverage anywhere in this repository. Extracted verbatim
+ * (byte-identical resulting boolean, no behaviour change) so both call
+ * sites can be proven identical rather than merely assumed to be, and so
+ * a future edit to either can't silently diverge from the other again.
+ * MathsActivity keeps its own additional `misconceptionLabel` check
+ * layered on top of this, unchanged and untouched.
+ */
+export function shouldRenderMisconceptionNote(
+  submitted: boolean,
+  lastCorrect: boolean | null,
+  addressesMisconception: string | undefined
+): boolean {
+  // `!lastCorrect`, not `lastCorrect === false` — matches the original
+  // inline JSX condition exactly (true for both `false` and `null`). In
+  // both call sites this branch is only ever reached once lastCorrect has
+  // already resolved to a real boolean (the pending-self-assessment
+  // screen renders a separate branch entirely), so the two forms coincide
+  // in practice today — but this function's contract is to reproduce the
+  // original condition verbatim, not a semantically different one that
+  // merely behaves the same under today's callers.
+  return submitted && !lastCorrect && Boolean(addressesMisconception);
+}

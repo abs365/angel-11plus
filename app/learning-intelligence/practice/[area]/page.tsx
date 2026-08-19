@@ -31,7 +31,7 @@ import { getExamStrategyHint, getWorkedExample } from "@/lib/learningEngine/engl
 import { getGuidedScaffoldKind, getGuidedInstructionText, checkLiveSelectionCount } from "@/lib/learningEngine/guidedPractice";
 import { classifyAutomaticError, getSelfReflectionCategories, WRONG_ANSWER_CATEGORY_LABEL } from "@/lib/learningEngine/englishErrorClassification";
 import { getMathsTeachingContent, MATHS_MISCONCEPTION_CATEGORY_LABEL, effectiveGuidedRevealStepCount } from "@/lib/learningEngine/mathsTeachingContent";
-import { canSubmitAnswer, runGuardedSubmission, resolveOutcomeLabel } from "@/lib/learningEngine/practiceInteractionGuard";
+import { canSubmitAnswer, runGuardedSubmission, resolveOutcomeLabel, shouldRenderMisconceptionNote } from "@/lib/learningEngine/practiceInteractionGuard";
 import { CompetencyProfile } from "@/components/learningEngine/CompetencyProfile";
 import { EvidenceProfile } from "@/components/learningEngine/EvidenceProfile";
 import { DiagnosticOverview } from "@/components/learningEngine/DiagnosticOverview";
@@ -1010,7 +1010,7 @@ function ReadingActivity({
               self-assessed families this only becomes reachable once the
               learner has judged their own answer "Not quite" and
               lastCorrect resolves to false, never before. */}
-          {submitted && !lastCorrect && addressesMisconception && (
+          {shouldRenderMisconceptionNote(submitted, lastCorrect, addressesMisconception) && (
             <div className="text-xs text-blue-700 dark:text-blue-300 bg-blue-50 dark:bg-blue-950 rounded-xl p-3 mt-3">
               <p className="font-semibold">A common mistake with this kind of question:</p>
               <p className="mt-1">{addressesMisconception}</p>
@@ -1188,7 +1188,7 @@ function MathsActivity({
             category label for consistent framing. Never a fabricated
             per-answer diagnosis; shown after ANY incorrect attempt, guided
             or independent, matching the contract exactly. */}
-        {submitted && !lastCorrect && addressesMisconception && misconceptionLabel && (
+        {shouldRenderMisconceptionNote(submitted, lastCorrect, addressesMisconception) && misconceptionLabel && (
           <div className="text-xs text-blue-700 dark:text-blue-300 bg-blue-50 dark:bg-blue-950 rounded-xl p-3 mt-3">
             <p className="font-semibold">{misconceptionLabel}</p>
             <p className="mt-1">{addressesMisconception}</p>
