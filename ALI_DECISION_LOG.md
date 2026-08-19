@@ -2427,3 +2427,32 @@ Real question content for all 4 families read directly from production (not infe
 **Date:** 2026-08-19
 
 **Rationale:** Once a real, independent human review has genuinely occurred through a review surface built and verified for exactly this purpose (Decision 122), activating precisely the approved content through the same scoped, auditable, single-column mechanism this project has used for every prior controlled batch — reusing Decision 119's own proven contract unchanged rather than inventing a parallel one — keeps the activation boundary exactly as narrow and reviewable as this project's entire governance history has required it to be.
+
+### Decision 124 — Stage 3, Increment 006 Production Closure: migration 083 applied by the Founder; production state independently re-verified this session, byte-identical to the Founder's own supplied figures and to Decision 123's own predicted post-activation state — **all 8 Increment 006 structural-depth questions are now `practice_eligible`, reachable by real learners for the first time; Increment 006 is COMPLETE IN PRODUCTION**
+
+**Repository reconciliation:** working tree clean, `HEAD` and `origin/main` both at `fb627d6` (Decision 123) before this entry was written — no drift, no uncommitted changes.
+
+**Independent re-verification, not trusted from the Founder's report alone where the database could verify it:** `scripts/coverage-matrix.mjs` re-run live this session. Result, exact match to both the Founder's own figures and Decision 123's predicted state: TOTAL 331 (unchanged), Practice Eligible 314, **Maths Practice Eligible 194**, English Practice Eligible 120 (unchanged), Writing Practice Eligible 0 (unchanged), Provisional 17, Mock Eligible 0. Per-family breakdown confirms both targets independently and exclusively: `mr01-reverse-mean n=4 PE=4 prov=0 diff=hard`, `mr03-coord-combined n=4 PE=4 prov=0 diff=hard` — zero rows remain `provisional` in either family, and the Maths Practice Eligible increase (186 → 194) is exactly +8, matching only these two families with no unexpected activation elsewhere in the bank.
+
+**Final production baseline, recorded exactly:**
+
+| | Practice Eligible | Provisional |
+|---|---|---|
+| Maths | 194 | 5 |
+| English | 120 | 11 |
+| Writing | 0 | 1 |
+| **Total** | **314** | **17** |
+
+**Educational-capacity qualification, preserved not diluted by production closure:** `mr01-reverse-mean`'s 4 activated rows remain, honestly, one shared reverse-mean reasoning structure with 4 distinct number sets — not 4 fully independent experiences. `mr03-coord-combined`'s 4 activated rows remain 4 genuinely distinct combined-transformation experiences (order × axis varies). Raw question count (194 Maths Practice Eligible) is not, and must not be read as, proof of sustainable long-term practice depth — **Mathematics' wider zero-parameter-variation problem remains unsolved; Decision 116/117 Conclusion B remains open**, unchanged by this closure.
+
+**Verdict:** Increment 006 (authoring, Decision 122) and Increment 007 (activation, Decision 123) together achieved exactly what they set out to do, no more and no less. Decision 123 and all earlier decisions are not altered by this entry.
+
+**Validation:** documentation-only closure; no application code, test, or migration file changed. Lightweight regression assurance consistent with this arc's own established closure precedent (Decision 120): `scripts/coverage-matrix.mjs` independently re-run and cross-checked against both the Founder's figures and Decision 123's own prediction, both matching exactly. TypeScript, the full test suite, ESLint, Copy Quality Guard, and the production build were not re-run, as none could have been affected by an entry that touches only this log.
+
+**Files changed:** `ALI_DECISION_LOG.md` only.
+
+**What this decision does NOT claim:** it does not claim any new content was authored, any migration created or modified, any code changed, or any other provisional content activated — none of these occurred; it does not claim Mathematics' zero-parameter-variation problem is solved; it does not claim the 8 activated questions represent 8 fully independent novel experiences — the Part-7 qualification above is preserved exactly as Decision 122/123 recorded it; it does not recommend or begin Increment 007's successor; it does not begin parameterisation.
+
+**Date:** 2026-08-19
+
+**Rationale:** Closing an increment on independently re-verified production evidence, not merely on the Founder's own report of it, keeps this arc's own evidentiary discipline consistent at the one point (activation) where a defect would be most consequential to a real learner — exactly the same discipline Decision 120 applied to Increment 005's own closure.
