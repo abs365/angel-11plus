@@ -25,30 +25,13 @@ import { SubjectBar, SkillBar } from "@/components/SubjectBreakdown";
 import BadgeCard from "@/components/BadgeCard";
 import DifficultyBadge from "@/components/DifficultyBadge";
 import { computeAdaptiveProfile } from "@/lib/adaptiveDifficulty";
+import { humanizeSessionId } from "@/lib/learningEngine/sessionLabel";
 import type { UserProgress } from "@/types";
 import type { AnalyticsReport } from "@/types/analytics";
 import type { GamificationState } from "@/types/gamification";
 import type { AdaptiveProfile } from "@/types/adaptiveDifficulty";
 import type { ParentReport } from "@/types/parent";
 import type { Pathway } from "@/types/pathway";
-
-const lessonNames: Record<string, string> = {
-  "eng-001": "The Lighthouse Mystery",
-  "eng-002": "The Boy Who Collected Silence",
-  "eng-003": "Letters from the Trenches",
-  "maths-reasoning": "Mathematics Reasoning Session",
-  "maths-arithmetic": "Speed Arithmetic",
-  "vocab-session": "Vocabulary Flashcards",
-  "verbal-reasoning": "Verbal Reasoning Session",
-  "non-verbal-reasoning": "Non-Verbal Reasoning Session",
-  "spatial-reasoning": "Spatial Reasoning Session",
-  "numerical-reasoning": "Numerical Reasoning Session",
-};
-
-for (let i = 1; i <= 4; i++) {
-  lessonNames[`writing-wrt-00${i}`] = `Writing Prompt ${i}`;
-}
-lessonNames["mock-test"] = "Full Mock Test";
 
 export default function ProgressPage() {
   const [progress, setProgress] = useState<UserProgress | null>(null);
@@ -226,7 +209,7 @@ export default function ProgressPage() {
             <div className="divide-y divide-gray-50 dark:divide-gray-800">
               {progress.completedLessons.map((id) => {
                 const score = progress.scores[id];
-                const name = lessonNames[id] ?? id;
+                const name = humanizeSessionId(id);
                 return (
                   <div key={id} className="px-5 py-3.5 flex items-center justify-between">
                     <div className="flex items-center gap-2.5">
@@ -355,8 +338,8 @@ export default function ProgressPage() {
                       return (
                         <div key={c.subject} className="flex items-center gap-4">
                           <div className="w-24 shrink-0">
-                            <p className="text-gray-700 dark:text-gray-300 text-sm font-medium capitalize">
-                              {c.subject === "mock-test" ? "Mock Test" : c.subject.charAt(0).toUpperCase() + c.subject.slice(1)}
+                            <p className="text-gray-700 dark:text-gray-300 text-sm font-medium">
+                              {report?.subjects.find((s) => s.subject === c.subject)?.label ?? c.subject}
                             </p>
                             <div className="mt-1">
                               <DifficultyBadge tier={c.tier} />

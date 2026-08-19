@@ -1,5 +1,7 @@
 import { englishLessons } from "@/data/lessons";
 import { mathsQuestions, quickArithmetic } from "@/data/maths";
+import { PRACTICE_AREAS } from "./learningEngine/practiceContent";
+import { getEligibleSubjectKeys } from "./ali/pathwayEligibility";
 import type { UserProgress, SkillType } from "@/types";
 import type {
   AnalyticsReport,
@@ -9,6 +11,22 @@ import type {
   SkillAnalytics,
   SubjectAnalytics,
 } from "@/types/analytics";
+
+/**
+ * Completion Assurance Programme, Completion C — the canonical Practice
+ * engine (lib/learningEngine/practiceContent.ts) records completions as
+ * `practice-${areaId}`, a scheme buildSubjectAnalytics() below has always
+ * been blind to (it only recognised the older per-subject legacy lesson
+ * ids). This is the single reusable bridge from PRACTICE_AREAS' own
+ * subject field to the legacy per-subject id lists, rather than a second
+ * parallel mapping — the same root cause also explains why Subject
+ * Breakdown could show a subject as "not started" while Completed
+ * Sessions already counted a real practice session for it.
+ */
+function practiceLessonIdBySubject(subject: SubjectAnalytics["subject"]): string | undefined {
+  const area = PRACTICE_AREAS.find((a) => a.subject === subject);
+  return area ? `practice-${area.id}` : undefined;
+}
 
 // ─── helpers ────────────────────────────────────────────────────────────────
 
@@ -57,13 +75,19 @@ const SKILL_LABELS: Record<SkillType, string> = {
 // ─── subject analytics ───────────────────────────────────────────────────────
 
 function buildSubjectAnalytics(p: UserProgress): SubjectAnalytics[] {
-  // English — three lessons
-  const engIds = ["eng-001", "eng-002", "eng-003"];
+  // English — three legacy lessons, plus the canonical Practice engine's
+  // own session id for this subject, if one exists.
+  const engIds = ["eng-001", "eng-002", "eng-003", practiceLessonIdBySubject("english")].filter(
+    (id): id is string => id !== undefined
+  );
   const engScores = engIds.filter((id) => id in p.scores).map((id) => p.scores[id]);
   const engAvg = mean(engScores);
 
-  // Maths — two session types
-  const mathIds = ["maths-reasoning", "maths-arithmetic"];
+  // Maths — two legacy session types, plus the canonical Practice engine's
+  // own session id for this subject, if one exists.
+  const mathIds = ["maths-reasoning", "maths-arithmetic", practiceLessonIdBySubject("maths")].filter(
+    (id): id is string => id !== undefined
+  );
   const mathScores = mathIds.filter((id) => id in p.scores).map((id) => p.scores[id]);
   const mathAvg = mean(mathScores);
 
@@ -71,8 +95,15 @@ function buildSubjectAnalytics(p: UserProgress): SubjectAnalytics[] {
   const vocabScore = p.scores["vocab-session"];
   const vocabScores = vocabScore !== undefined ? [vocabScore] : [];
 
-  // Writing — four prompts
-  const writingIds = ["writing-wrt-001", "writing-wrt-002", "writing-wrt-003", "writing-wrt-004"];
+  // Writing — four legacy prompts, plus the canonical Practice engine's
+  // own session id for this subject, if one exists.
+  const writingIds = [
+    "writing-wrt-001",
+    "writing-wrt-002",
+    "writing-wrt-003",
+    "writing-wrt-004",
+    practiceLessonIdBySubject("writing"),
+  ].filter((id): id is string => id !== undefined);
   const writingScores = writingIds
     .filter((id) => id in p.scores)
     .map((id) => p.scores[id]);
@@ -95,7 +126,7 @@ function buildSubjectAnalytics(p: UserProgress): SubjectAnalytics[] {
   const nrScore = p.scores["numerical-reasoning"];
   const nrScores = nrScore !== undefined ? [nrScore] : [];
 
-  return [
+  const allSubjects: SubjectAnalytics[] = [
     {
       subject: "english",
       label: "English",
@@ -178,6 +209,24 @@ function buildSubjectAnalytics(p: UserProgress): SubjectAnalytics[] {
       status: status(mean(nrScores), nrScores.length),
     },
   ];
+
+  // Completion Assurance Programme, Completion C, Part 3 — a CSSE learner
+  // (or any other pathway) was always shown every one of the 9 hard-coded
+  // subjects above, including reasoning subjects the selected pathway has
+  // already deliberately excluded (lib/ali/pathwayEligibility.ts's own
+  // PATHWAY_SUBJECT_KEYS — the same mechanism buildFocusAreas() in
+  // lib/parentInsights.ts already applies, just never wired in here). A
+  // subject with zero attempts and no eligibility under the current
+  // pathway is dropped; real evidence (attempts > 0) is never hidden,
+  // whichever pathway it came from — this reads history honestly rather
+  // than concealing it. Mock Test is exempted from the eligibility check
+  // itself (it is deliberately absent from PATHWAY_SUBJECT_KEYS, matching
+  // buildFocusAreas()'s own carve-out), so its own "not started" row is
+  // unaffected by this change.
+  const eligibleKeys = getEligibleSubjectKeys(p.selectedPathwayId);
+  return allSubjects.filter(
+    (s) => s.subject === "mock-test" || eligibleKeys.has(s.subject) || s.attempts > 0
+  );
 }
 
 // ─── skill analytics ─────────────────────────────────────────────────────────
