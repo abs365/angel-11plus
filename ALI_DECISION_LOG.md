@@ -1907,3 +1907,30 @@ E. **Reproduced directly against the real, unmodified (at investigation start) `
 **Rationale:** Recording the mobile PASS and the Learn-path finding together keeps this session's full account in one place — a genuine gate closing and a genuine, if latent, defect found and fixed in the same investigation, neither smoothed into the other.
 
 **Implications:** Founder tablet-width evidence (or working browser tooling) is now the single item standing between Stage 2 and closure. If that is supplied and passes, a successor decision can close Stage 2 without further code investigation — every other gate this arc has raised is now either fixed, tested, or confirmed by real evidence.
+
+---
+
+### Decision 111 — Founder real-device tablet evidence supplied (19 August 2026): tablet gate PASS; **STAGE 2 IS APPROVED AND CLOSED** by explicit Founder decision; two non-blocking cosmetic observations recorded for future work, not acted on; Stage 3 authorised, not begun
+
+**Founder real-device tablet evidence (19 August 2026)**, recorded as **FOUNDER REAL-DEVICE TABLET EVIDENCE** — the last item Decision 110 left outstanding. Screenshots of the live Mathematics practice experience on a real tablet, landscape orientation, confirm: tablet navigation rendering, Mathematics practice question cards, question progress, timer, answer entry, the Check Answer action, on-screen keyboard interaction, and continued visibility of the active question and answer field while the keyboard is open. **No blocking clipping, overflow, or interaction failure is evidenced. Tablet gate: PASS.**
+
+Two observations — desktop-style tablet navigation, and subdued secondary/disabled text in dark appearance — are recorded as **non-blocking future UX refinement only**, per explicit Founder instruction. Not investigated, not actioned, not treated as a closure blocker.
+
+**Stage 2 closure checklist, each item resolved across this arc and not re-litigated here:**
+- Educational-integrity verification — Decisions 106, 109, 110 (self-assessment provenance, the presentation-label defect, the Learn-path legacy-scorer defect).
+- Historical/provenance investigation and reconciliation — Decisions 106-108 (migrations 076/077, the 19/8 forensic classification, `w1-raceday-05` confirmed corrected in production).
+- Previously identified scoring defects — all three (character-substring coincidence, the canonical legacy-heuristic floor, the Learn-path's own diverged copy of the same floor) corrected and regression-tested.
+- Evidence boundaries — verified: `ali_durable_mastery`/`ali_educational_audit` proven incapable of being populated by self-assessed-only evidence (Decision 107); the Learn path's untagged majority proven evidence-neutral by construction (Decision 110).
+- Automated regression verification — 730/730 tests passing as of `cd71e27`, reconfirmed clean this session (no code changed).
+- Production build verification — succeeded at every checkpoint this arc, most recently in Decision 110.
+- Desktop, mobile, and now tablet Founder real-device verification — complete (Decisions 109, 110, this decision).
+
+**No code, test, or configuration change accompanies this decision** — closure is a documentation-only act on an already-fully-verified baseline, per explicit instruction not to modify production behaviour or perform cosmetic work as part of closure. Minimum verification re-run to confirm the baseline is undisturbed: TypeScript clean, 730/730 tests pass (identical to Decision 110's own count) — full lint/Copy-Guard/build were not re-run, since no source file changed and Decision 110 already confirmed all four clean against this exact commit.
+
+**Verdict: STAGE 2 IS APPROVED AND CLOSED**, by explicit Founder decision, on the evidence recorded across Decisions 104-110 and this decision's own tablet confirmation. Every gate this arc raised — interaction quality, three independent scoring defects, verification-provenance architecture, historical data reconciliation, and desktop/mobile/tablet rendered verification — is resolved, fixed, tested, or confirmed by real evidence, not assumed.
+
+**Date:** 2026-08-19
+
+**Rationale:** Recording closure now, against the complete real-device evidence set this arc has assembled, gives the Founder a single, definitive close-out artefact for a programme that spanned repeated real production findings, three genuine scoring defects, and a full historical reconciliation — each disclosed and resolved in turn rather than smoothed over.
+
+**Implications:** **Stage 3 is authorised** by this decision. It has not begun — no Stage 3 scope, design, or implementation work was performed as part of this closure, per explicit instruction. The two non-blocking cosmetic observations (tablet navigation styling, dark-mode secondary-text contrast) and the previously-tracked non-blocking items (Continuous Writing content gap, Family Choice pilot provenance audit, the Report Consistency terminology-clarity finding) remain open, separately-tracked backlog items for whatever future, explicitly-authorised work the Founder chooses — none reopens or qualifies this closure.
