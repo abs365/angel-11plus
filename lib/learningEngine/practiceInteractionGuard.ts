@@ -105,3 +105,36 @@ export function shouldRenderMisconceptionNote(
   // merely behaves the same under today's callers.
   return submitted && !lastCorrect && Boolean(addressesMisconception);
 }
+
+/**
+ * Completion Assurance Programme, Completion A — surfaced only once
+ * MathsActivity's misconceptionLabel gate was removed: every
+ * pre-existing Mathematics family's addressesMisconception text
+ * (migrations 039/040 onward) is real, capitalised, punctuated prose
+ * ("Applying the stated operation directly to the two visible numbers
+ * instead of using its inverse to find the missing one."). The 5
+ * families Stage 3 Increments 003/006 authored (mr04-reverse-percentage,
+ * mr04-time-reverse, mr04-bv-convert, mr01-reverse-mean,
+ * mr03-coord-combined) instead used a kebab-case slug style
+ * ("applying-the-percentage-to-the-new-value-instead-of-dividing-to-undo-it").
+ * That deviation was invisible to any real learner until this
+ * correction, because the misconceptionLabel gate happened to suppress
+ * exactly the families without teaching content — the same families
+ * where this formatting mistake was made.
+ *
+ * A presentation-only reformatting, never a content change: detects the
+ * exact whole-string slug shape (lowercase words joined only by hyphens,
+ * no spaces or punctuation) and converts it to matching prose. Any text
+ * that is already real prose (contains a space, punctuation, or mixed
+ * case — every pre-existing family, and any future correctly-authored
+ * one) is returned completely unchanged. The stored database value is
+ * never modified; this only affects what is rendered.
+ */
+export function humanizeMisconceptionText(text: string | undefined): string {
+  if (!text) return "";
+  const looksLikeSlug = /^[a-z0-9]+(-[a-z0-9]+)+$/.test(text);
+  if (!looksLikeSlug) return text;
+  const sentence = text.split("-").join(" ");
+  const capitalized = sentence.charAt(0).toUpperCase() + sentence.slice(1);
+  return capitalized.endsWith(".") ? capitalized : `${capitalized}.`;
+}

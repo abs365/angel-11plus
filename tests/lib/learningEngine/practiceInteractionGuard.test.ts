@@ -5,6 +5,7 @@ import {
   runGuardedSubmission,
   resolveOutcomeLabel,
   shouldRenderMisconceptionNote,
+  humanizeMisconceptionText,
 } from "../../../lib/learningEngine/practiceInteractionGuard";
 
 /**
@@ -215,4 +216,55 @@ test("empty-string addressesMisconception is treated as absent, not shown as bla
 
 test("reproduces the original inline condition's exact null-handling (lastCorrect: null behaves as truthy-for-!lastCorrect, matching the pre-extraction JSX byte-for-byte)", () => {
   assert.equal(shouldRenderMisconceptionNote(true, null, "A common confusion is..."), true);
+});
+
+/**
+ * humanizeMisconceptionText — Completion Assurance Programme, Completion
+ * A. Surfaced only once MathsActivity's misconceptionLabel gate was
+ * removed: the 5 families Stage 3 Increments 003/006 authored used a
+ * kebab-case slug style for addressesMisconception, unlike every
+ * pre-existing Mathematics family's real prose (migrations 039/040
+ * onward). A presentation-only reformatting — the stored value is never
+ * touched, and any text that is already prose passes through unchanged.
+ */
+test("a real Stage 3 slug value is converted to a capitalised, punctuated sentence", () => {
+  assert.equal(
+    humanizeMisconceptionText("applying-the-two-transformations-in-the-wrong-order-or-only-applying-one-of-them"),
+    "Applying the two transformations in the wrong order or only applying one of them."
+  );
+});
+
+test("every one of the 5 real Stage 3 slug values reformats into a clean sentence", () => {
+  const realSlugs = [
+    "applying-the-percentage-to-the-new-value-instead-of-dividing-to-undo-it",
+    "subtracting-the-total-elapsed-time-incorrectly-or-adding-instead-of-subtracting",
+    "comparing-prices-without-converting-to-the-same-unit-first",
+    "treating-the-mean-as-the-total-instead-of-multiplying-by-the-count-first",
+    "applying-the-two-transformations-in-the-wrong-order-or-only-applying-one-of-them",
+  ];
+  for (const slug of realSlugs) {
+    const result = humanizeMisconceptionText(slug);
+    assert.ok(!result.includes("-"), `${slug}: no hyphen should remain in "${result}"`);
+    assert.match(result, /^[A-Z]/, `${slug}: must start with a capital letter, got "${result}"`);
+    assert.ok(result.endsWith("."), `${slug}: must end with a full stop, got "${result}"`);
+  }
+});
+
+test("real prose (every pre-existing Mathematics family) passes through completely unchanged", () => {
+  const realProse = "Applying the stated operation directly to the two visible numbers instead of using its inverse to find the missing one.";
+  assert.equal(humanizeMisconceptionText(realProse), realProse);
+});
+
+test("prose containing a genuine hyphenated word is never mangled — the whole-string slug shape must not match", () => {
+  const realProseWithHyphen = "Treating a well-known shortcut as if it always applies, without checking the question's own conditions.";
+  assert.equal(humanizeMisconceptionText(realProseWithHyphen), realProseWithHyphen);
+});
+
+test("undefined and empty input return an empty string, never a fabricated message", () => {
+  assert.equal(humanizeMisconceptionText(undefined), "");
+  assert.equal(humanizeMisconceptionText(""), "");
+});
+
+test("a slug already ending mid-word with no trailing period still gets exactly one added, never doubled", () => {
+  assert.equal(humanizeMisconceptionText("misreading-the-question"), "Misreading the question.");
 });

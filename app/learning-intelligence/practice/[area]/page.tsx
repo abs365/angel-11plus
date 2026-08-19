@@ -31,7 +31,7 @@ import { getExamStrategyHint, getWorkedExample } from "@/lib/learningEngine/engl
 import { getGuidedScaffoldKind, getGuidedInstructionText, checkLiveSelectionCount } from "@/lib/learningEngine/guidedPractice";
 import { classifyAutomaticError, getSelfReflectionCategories, WRONG_ANSWER_CATEGORY_LABEL } from "@/lib/learningEngine/englishErrorClassification";
 import { getMathsTeachingContent, MATHS_MISCONCEPTION_CATEGORY_LABEL, effectiveGuidedRevealStepCount } from "@/lib/learningEngine/mathsTeachingContent";
-import { canSubmitAnswer, runGuardedSubmission, resolveOutcomeLabel, shouldRenderMisconceptionNote } from "@/lib/learningEngine/practiceInteractionGuard";
+import { canSubmitAnswer, runGuardedSubmission, resolveOutcomeLabel, shouldRenderMisconceptionNote, humanizeMisconceptionText } from "@/lib/learningEngine/practiceInteractionGuard";
 import { CompetencyProfile } from "@/components/learningEngine/CompetencyProfile";
 import { EvidenceProfile } from "@/components/learningEngine/EvidenceProfile";
 import { DiagnosticOverview } from "@/components/learningEngine/DiagnosticOverview";
@@ -1057,6 +1057,18 @@ function MathsActivity({
   const [stepsRevealed, setStepsRevealed] = useState(0);
 
   const teachingContent = getMathsTeachingContent(familyId);
+  // Completion A — misconceptionLabel is an OPTIONAL heading sentence
+  // ("This looks like a units or conversion slip") sourced from a
+  // family's dedicated teaching content, when that family happens to
+  // have any. It must never gate whether the question's own real,
+  // independently-reviewed misconception guidance renders at all —
+  // mathsTeachingContent.ts's own module docstring is explicit that a
+  // family absent from MATHS_FAMILY_TEACHING_CONTENT "renders the
+  // Practice page's unmodified, pre-007L ASSESSMENT ONLY behaviour...
+  // never changes behaviour for one it doesn't cover." Requiring this
+  // label before rendering that guidance (the prior code below) violated
+  // that contract for every ASSESSMENT-ONLY family — see the render
+  // block below for the correction.
   const misconceptionLabel = teachingContent ? MATHS_MISCONCEPTION_CATEGORY_LABEL[teachingContent.misconceptionCategory] : undefined;
 
   // Stage 2 — feedback region focused once, right when this question
@@ -1184,14 +1196,31 @@ function MathsActivity({
         <SubmitOrNext submitted={submitted} lastCorrect={lastCorrect} onSubmit={() => onSubmit(guidedMode)} onNext={onNext} isLast={isLast} disabled={!answer.trim()} />
 
         {/* WRONG-ANSWER REMEDIATION — Part 3D: the family's own real,
-            human-review-evidenced addressesMisconception text, mapped to its
+            human-review-evidenced misconception guidance, mapped to its
             category label for consistent framing. Never a fabricated
             per-answer diagnosis; shown after ANY incorrect attempt, guided
-            or independent, matching the contract exactly. */}
-        {shouldRenderMisconceptionNote(submitted, lastCorrect, addressesMisconception) && misconceptionLabel && (
+            or independent, matching the contract exactly.
+
+            Completion A correction: the category-label heading
+            (misconceptionLabel) is an optional enhancement, present only
+            for families with dedicated teaching content — it is NOT a
+            prerequisite for the underlying guidance itself, which is
+            real, independently-reviewed, question-level metadata that
+            exists regardless of whether that family has a
+            teaching-content object. Gating the whole block on
+            misconceptionLabel silently discarded valid feedback for every
+            ASSESSMENT-ONLY family, including every recently
+            reviewed-and-activated "hard" structural-depth family
+            (mr04-reverse-percentage, mr04-time-reverse, mr04-bv-convert,
+            mr01-reverse-mean, mr03-coord-combined). Matches
+            ReadingActivity's own unconditional rendering above and
+            mathsTeachingContent.ts's own documented contract that absence
+            of teaching content must never change behaviour for a family
+            it doesn't cover. */}
+        {shouldRenderMisconceptionNote(submitted, lastCorrect, addressesMisconception) && (
           <div className="text-xs text-blue-700 dark:text-blue-300 bg-blue-50 dark:bg-blue-950 rounded-xl p-3 mt-3">
-            <p className="font-semibold">{misconceptionLabel}</p>
-            <p className="mt-1">{addressesMisconception}</p>
+            {misconceptionLabel && <p className="font-semibold">{misconceptionLabel}</p>}
+            <p className={misconceptionLabel ? "mt-1" : undefined}>{humanizeMisconceptionText(addressesMisconception)}</p>
           </div>
         )}
 
