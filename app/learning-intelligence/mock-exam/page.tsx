@@ -10,6 +10,7 @@ import { getSupabaseClient } from "@/lib/supabase";
 import { ensureProfile } from "@/lib/supabaseProgress";
 import {
   getActiveMockForm,
+  isMockFormAvailable,
   createMockAttempt,
   startMockAttempt,
   getMockAttemptManifest,
@@ -96,7 +97,15 @@ type Phase =
   | "error";
 
 export default function MockExamPage() {
-  const [phase, setPhase] = useState<Phase>("intro");
+  // Completion Assurance Programme, Completion B — starts at "checking",
+  // never "intro": a learner must never see "Before you begin" exam
+  // instructions for a mock Angel cannot actually deliver. The mount
+  // effect below resolves this to "intro" or "unavailable" before
+  // anything exam-shaped renders. handleBegin()'s own re-check (below,
+  // unchanged) remains the authoritative, transactional gate before an
+  // attempt is actually created — this is a second, earlier check for
+  // truthful presentation, not a replacement for it.
+  const [phase, setPhase] = useState<Phase>("checking");
   const [errorMessage, setErrorMessage] = useState("");
   const [attemptId, setAttemptId] = useState<string | null>(null);
   const [expiresAt, setExpiresAt] = useState<string | null>(null);
@@ -150,6 +159,23 @@ export default function MockExamPage() {
     return () => clearInterval(interval);
   }, [phase, expiresAt, handleSubmit]);
 
+  // Completion Assurance Programme, Completion B — the pre-instructions
+  // truthfulness check. Reuses getActiveMockForm()/isMockFormAvailable()
+  // unchanged (the same authoritative signal handleBegin() itself already
+  // uses to gate attempt creation) so this page can never show "Before
+  // you begin" for a mock it cannot deliver. Runs once, on mount, before
+  // anything exam-shaped renders.
+  useEffect(() => {
+    (async () => {
+      const supabase = getSupabaseClient();
+      if (!supabase) { setErrorMessage("Not connected."); setPhase("error"); return; }
+      supabaseRef.current = supabase;
+      const active = await getActiveMockForm(supabase, ATTEMPT_TYPE);
+      if (active.error) { setErrorMessage(active.error); setPhase("error"); return; }
+      setPhase(isMockFormAvailable(active) ? "intro" : "unavailable");
+    })();
+  }, []);
+
   async function loadCurrentQuestion(supabase: NonNullable<typeof supabaseRef.current>, attemptIdValue: string, questionId: string) {
     setQuestionLoading(true);
     const result = await getMockQuestion(supabase, attemptIdValue, questionId);
@@ -172,7 +198,7 @@ export default function MockExamPage() {
 
     const active = await getActiveMockForm(supabase, ATTEMPT_TYPE);
     if (active.error) { setErrorMessage(active.error); setPhase("error"); return; }
-    if (!active.data) { setPhase("unavailable"); return; }
+    if (!isMockFormAvailable(active)) { setPhase("unavailable"); return; }
 
     setPhase("starting");
     const profileId = await ensureProfile();

@@ -11,6 +11,7 @@ import { getSupabaseClient } from "@/lib/supabase";
 import { getSelectedPathwayId } from "@/lib/progress";
 import { getMockResults, bestScoreForPathway } from "@/lib/mockProgress";
 import { computeCsseMockReadiness, type CsseMockReadiness } from "@/lib/learningEngine/mockReadiness";
+import { getActiveMockForm, isMockFormAvailable } from "@/lib/mockAttempt/client";
 import { MOCK_SUGGESTED_PREPARATION } from "@/lib/mockMeta";
 import type { MockResult, MockPathwayId } from "@/types/mock";
 
@@ -103,10 +104,18 @@ function LegacyMockCard({ card, best }: { card: (typeof MOCK_CARDS)[number]; bes
  * that case, not one of several equal options.
  */
 function SimpleMockCard({
-  badge, name, bg, border, badgeBg, badgeText, minutesLabel, description, href, best,
+  badge, name, bg, border, badgeBg, badgeText, minutesLabel, description, href, best, available = true,
 }: {
   badge: string; name: string; bg: string; border: string; badgeBg: string; badgeText: string;
   minutesLabel: string; description: string; href: string; best: number | undefined;
+  /**
+   * Completion Assurance Programme, Completion B — genuine content
+   * availability, not merely "this card has a route." Defaults to true
+   * for the GL/CEM/ISEB legacy cards, whose static, bundled content is
+   * always deliverable and never depends on live server-side data. The
+   * CSSE card is the one caller that ever passes false.
+   */
+  available?: boolean;
 }) {
   return (
     <div className={`rounded-2xl border p-5 ${bg} ${border}`}>
@@ -115,13 +124,18 @@ function SimpleMockCard({
           <span className={`text-xs font-bold px-2.5 py-1 rounded-lg ${badgeBg} ${badgeText}`}>{badge}</span>
           <h3 className="text-base font-bold text-gray-900 dark:text-gray-100">{name}</h3>
         </div>
-        <StatusIndicator tone={best !== undefined ? "success" : "neutral"} label={best !== undefined ? "Completed" : "Available"} />
+        <StatusIndicator
+          tone={best !== undefined ? "success" : "neutral"}
+          label={best !== undefined ? "Completed" : available ? "Available" : "Not ready yet"}
+        />
       </div>
       <div className="flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400 mb-2">
         <Clock size={13} />
         {minutesLabel}
       </div>
-      <p className="text-xs text-gray-500 dark:text-gray-400 leading-relaxed mb-3">{description}</p>
+      <p className="text-xs text-gray-500 dark:text-gray-400 leading-relaxed mb-3">
+        {available ? description : "A full mock is not available right now. Practice stays available in the meantime, and reflects the same real evidence."}
+      </p>
       <div className="flex items-center justify-between">
         {best !== undefined ? (
           <span className="text-xs text-gray-500 dark:text-gray-400">
@@ -130,9 +144,15 @@ function SimpleMockCard({
         ) : (
           <span className="text-xs text-gray-400 dark:text-gray-500">Not attempted yet</span>
         )}
-        <ButtonLink href={href} variant="outline" size="sm" leftIcon={<Play size={14} />}>
-          Start mock
-        </ButtonLink>
+        {available ? (
+          <ButtonLink href={href} variant="outline" size="sm" leftIcon={<Play size={14} />}>
+            Start mock
+          </ButtonLink>
+        ) : (
+          <ButtonLink href="/learning-intelligence/practice" variant="outline" size="sm">
+            Go to Practice
+          </ButtonLink>
+        )}
       </div>
     </div>
   );
@@ -145,6 +165,12 @@ export default function MocksPage() {
   const [bestScores, setBestScores] = useState<Partial<Record<MockPathwayId, number>>>({});
   const [readiness, setReadiness] = useState<CsseMockReadiness | null | undefined>(undefined);
   const [showOtherPathways, setShowOtherPathways] = useState(false);
+  // Completion Assurance Programme, Completion B — starts false (never a
+  // false "Available" flash) and only ever becomes true once
+  // getActiveMockForm()/isMockFormAvailable() — the same authoritative
+  // signal the mock-exam page itself uses to gate attempt creation —
+  // genuinely confirms a mock can be delivered right now.
+  const [csseMockAvailable, setCsseMockAvailable] = useState(false);
 
   useEffect(() => {
     const selected = getSelectedPathwayId() ?? undefined;
@@ -166,6 +192,9 @@ export default function MocksPage() {
       computeCsseMockReadiness(supabase, selected)
         .then(setReadiness)
         .catch(() => setReadiness(null));
+      getActiveMockForm(supabase, "full_mock")
+        .then((result) => setCsseMockAvailable(isMockFormAvailable(result)))
+        .catch(() => setCsseMockAvailable(false));
     } else {
       setReadiness(null);
     }
@@ -185,7 +214,14 @@ export default function MocksPage() {
           </p>
         </div>
 
-        {/* YOUR MOCK READINESS — CSSE only, three real states, MOCK_READINESS_CAPABILITY_ASSESSMENT.md */}
+        {/* YOUR MOCK READINESS — CSSE only, three real states, MOCK_READINESS_CAPABILITY_ASSESSMENT.md.
+            Completion Assurance Programme, Completion B — assessMockReadiness()'s own verdict/
+            explanation logic is untouched (a genuinely separate question: "should this learner
+            attempt a mock," not "can Angel deliver one right now"). Only the rendered next-action
+            link is corrected here: when that verdict happens to recommend starting a mock and none
+            can currently be delivered, the link points to Practice instead — the same honest
+            fallback used elsewhere on this page — rather than repeating a CTA that would otherwise
+            imply a mock is available. */}
         {isCsse && readiness && (
           <InfoCard className="flex items-start gap-3">
             <Target size={18} className="text-indigo-500 mt-0.5 shrink-0" />
@@ -195,9 +231,15 @@ export default function MocksPage() {
                 <StatusIndicator tone={readinessDisplay(readiness).tone} label="Your mock readiness" />
               </div>
               <p className="text-xs text-gray-500 dark:text-gray-400 leading-relaxed mb-2">{readiness.assessment.explanation}</p>
-              <Link href={readiness.assessment.nextAction.href} className="inline-flex items-center gap-1 text-xs font-semibold text-purple-600 dark:text-purple-400">
-                <TrendingUp size={13} /> {readiness.assessment.nextAction.label}
-              </Link>
+              {readiness.assessment.nextAction.href === "/learning-intelligence/mock-exam" && !csseMockAvailable ? (
+                <Link href="/learning-intelligence/practice" className="inline-flex items-center gap-1 text-xs font-semibold text-purple-600 dark:text-purple-400">
+                  <TrendingUp size={13} /> See practice areas →
+                </Link>
+              ) : (
+                <Link href={readiness.assessment.nextAction.href} className="inline-flex items-center gap-1 text-xs font-semibold text-purple-600 dark:text-purple-400">
+                  <TrendingUp size={13} /> {readiness.assessment.nextAction.label}
+                </Link>
+              )}
             </div>
           </InfoCard>
         )}
@@ -221,11 +263,13 @@ export default function MocksPage() {
                     <span className="text-xs font-bold px-2.5 py-1 rounded-lg bg-purple-100 dark:bg-purple-900 text-purple-700 dark:text-purple-300">CSSE</span>
                     <h3 className="text-base font-bold text-gray-900 dark:text-gray-100">Full CSSE Mock</h3>
                   </div>
-                  <StatusIndicator tone="success" label="Available" />
+                  <StatusIndicator tone={csseMockAvailable ? "success" : "neutral"} label={csseMockAvailable ? "Available" : "Not ready yet"} />
                 </div>
                 <p className="text-xs text-gray-500 dark:text-gray-400 mb-2">English: 60 min, 60 marks · Mathematics: 60 min, 60 marks · ~10 min between papers</p>
                 <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed mb-3">
-                  Choose a full Standard sitting or a shorter Adaptive paper weighted to your recorded evidence. Today&apos;s content is still expanding toward this complete structure.
+                  {csseMockAvailable
+                    ? "Choose a full Standard sitting or a shorter Adaptive paper weighted to your recorded evidence. Today's content is still expanding toward this complete structure."
+                    : "A full mock is not available right now. Angel does not yet have a complete, reviewed set of exam questions to draw from. Practice stays available in the meantime, and reflects the same real evidence about how your child is progressing."}
                 </p>
                 <div className="flex items-center justify-between">
                   {bestScores.csse !== undefined ? (
@@ -235,9 +279,15 @@ export default function MocksPage() {
                   ) : (
                     <span className="text-xs text-gray-400 dark:text-gray-500">Not attempted yet</span>
                   )}
-                  <ButtonLink href="/learning-intelligence/mock-exam" variant="outline" size="sm" leftIcon={<Play size={14} />}>
-                    Start mock
-                  </ButtonLink>
+                  {csseMockAvailable ? (
+                    <ButtonLink href="/learning-intelligence/mock-exam" variant="outline" size="sm" leftIcon={<Play size={14} />}>
+                      Start mock
+                    </ButtonLink>
+                  ) : (
+                    <ButtonLink href="/learning-intelligence/practice" variant="outline" size="sm">
+                      Go to Practice
+                    </ButtonLink>
+                  )}
                 </div>
               </div>
 
@@ -266,6 +316,7 @@ export default function MocksPage() {
                 description="Choose Standard for the full sitting, or Adaptive for a shorter paper weighted to your recorded evidence."
                 href="/learning-intelligence/mock-exam"
                 best={bestScores.csse}
+                available={csseMockAvailable}
               />
               {MOCK_CARDS.map((card) => (
                 <LegacyMockCard key={card.pathway} card={card} best={bestScores[card.pathway]} />

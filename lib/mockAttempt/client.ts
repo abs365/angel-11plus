@@ -110,6 +110,25 @@ export async function getActiveMockForm(
 }
 
 /**
+ * Completion Assurance Programme, Completion B — the ONE authoritative
+ * answer to "can Angel actually deliver this mock right now," derived
+ * directly from getActiveMockForm()'s own result rather than a second,
+ * hard-coded signal. A learner-facing "Available" claim must never be
+ * shown unless this returns true — see app/mocks/page.tsx (the Mock
+ * Centre entry card) and app/learning-intelligence/mock-exam/page.tsx
+ * (the pre-instructions check), both of which call getActiveMockForm()
+ * and pass its result straight through this same predicate, so the two
+ * pages can never silently disagree about whether a mock exists. Errors
+ * are treated as "not available" — a network/RPC failure must never be
+ * mistaken for a real form.
+ */
+export function isMockFormAvailable(
+  result: MockClientResult<ActiveMockForm | null>
+): result is { data: ActiveMockForm; error: null } {
+  return result.error === null && result.data !== null;
+}
+
+/**
  * Returns the caller's own attempt's assigned_question_ids, in order.
  * IDs only — never any question content. See migration 072's own header
  * ("Problem 1b") for why this exists as an RPC rather than a direct
