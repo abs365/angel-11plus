@@ -18,6 +18,108 @@ export const COOLDOWN_QUESTIONS: Record<ContentDifficulty, number> = {
 /** Mastered questions get a longer secondary cooldown before resurfacing at all. */
 const MASTERED_RESURFACE_MULTIPLIER = 3;
 
+/**
+ * Stage 3, Increment 002 (Evidence-Driven Difficulty Progression).
+ * Ordinal ranking of the real `ContentDifficulty` values, used only to
+ * compare two questions' relative challenge, never displayed or stored.
+ */
+const DIFFICULTY_RANK: Record<ContentDifficulty, number> = {
+  easy: 0,
+  medium: 1,
+  hard: 2,
+  challenge: 3,
+};
+
+/**
+ * Provisional, disclosed as such (same convention as
+ * `lib/ali/confidence.ts`'s own calibration constants) — the multiplier
+ * applied to a candidate's base selection weight once real evidence
+ * justifies escalating toward it. Deliberately never a weight reduction:
+ * Stage 3 discovery (Decision 114) found the majority of Mathematics
+ * families expose only a single `contentDifficulty` value, so a design
+ * that *depressed* harder-tier weight by default (a "start at easy, earn
+ * your way up" ceiling) would systematically penalise the majority of
+ * real content for every learner, including ones with zero relevant
+ * history — punishing content scarcity, not reflecting skill readiness.
+ * Boost-only avoids this: a candidate's weight is only ever multiplied
+ * up when real, trustworthy evidence supports it, and is otherwise
+ * identical to today's unweighted behaviour — see this function's own
+ * callers for the exact evidence gate.
+ */
+const DIFFICULTY_ESCALATION_MULTIPLIER = 1.5;
+
+/**
+ * For every skill (QuestionTypeId) present in `candidates`, the set of
+ * difficulty ranks at which the learner has at least one genuinely
+ * `mastered` question. Reuses `StudentQuestionHistoryRow.masteryState`
+ * unmodified — no new evidence field, no duplicate mastery
+ * representation (Increment 002's own architectural rule 4). Because
+ * `masteryState` can only reach `"mastered"` via `distinctCorrectSessions
+ * >= masteryThreshold` (lib/ali/mastery.ts's `applyAttemptOutcome()`),
+ * which itself only ever increments for `supportTier === "independent"`,
+ * this is already structurally immune to self-assessed-only evidence,
+ * a single lucky answer, or raw repetition (`timesSeen`) — none of those
+ * can produce a `"mastered"` reading on their own; this function inherits
+ * that safety by construction rather than re-implementing it.
+ */
+export function computeMasteredRanksBySkill(
+  candidates: BankQuestion[],
+  history: Map<string, StudentQuestionHistoryRow>
+): Map<string, Set<number>> {
+  const result = new Map<string, Set<number>>();
+  for (const q of candidates) {
+    const row = history.get(q.id);
+    if (row?.masteryState !== "mastered") continue;
+    const rank = DIFFICULTY_RANK[q.contentDifficulty];
+    const existing = result.get(q.skill);
+    if (existing) {
+      existing.add(rank);
+    } else {
+      result.set(q.skill, new Set([rank]));
+    }
+  }
+  return result;
+}
+
+/**
+ * The one genuine progression decision this increment adds: does `q`
+ * deserve a difficulty-escalation boost right now? Two conditions, both
+ * evidence-gated, neither ever fabricated:
+ *
+ *   1. A strictly-easier question sharing the same skill is genuinely
+ *      `mastered` (see `computeMasteredRanksBySkill()` above for why this
+ *      is already safe against self-assessment/repetition/luck). If no
+ *      easier sibling exists at all — including the common real case of a
+ *      skill with only one `contentDifficulty` value present — this is
+ *      false and the candidate gets the ordinary, unboosted weight.
+ *   2. `q` itself is not currently `"weak"` (the existing, unmodified
+ *      two-consecutive-wrong-attempts signal, `applyAttemptOutcome()`).
+ *      A struggling learner must not keep receiving an artificially
+ *      elevated push toward a specific harder question they are
+ *      demonstrably not yet managing — this is what keeps escalation from
+ *      continuing once real difficulty is encountered. `q` is never
+ *      removed from the pool by this — only returned to ordinary,
+ *      unboosted weight, so it remains selectable and the session can
+ *      still be constructed (Increment 002's own fallback requirement).
+ */
+export function computeDifficultyWeightMultiplier(
+  question: BankQuestion,
+  masteredRanksBySkill: Map<string, Set<number>>,
+  history: Map<string, StudentQuestionHistoryRow>
+): number {
+  const row = history.get(question.id);
+  if (row?.masteryState === "weak") return 1;
+
+  const rankedMasterySiblings = masteredRanksBySkill.get(question.skill);
+  if (!rankedMasterySiblings) return 1;
+
+  const myRank = DIFFICULTY_RANK[question.contentDifficulty];
+  for (const masteredRank of rankedMasterySiblings) {
+    if (masteredRank < myRank) return DIFFICULTY_ESCALATION_MULTIPLIER;
+  }
+  return 1;
+}
+
 interface Weighted {
   question: BankQuestion;
   weight: number;
@@ -144,10 +246,23 @@ export function selectQuestions(
   const reservedIds = new Set(selected.map((q) => q.id));
   const remainingOverridden = overridden.filter((q) => !reservedIds.has(q.id));
 
+  // Stage 3, Increment 002 — difficulty-escalation multiplier, computed
+  // once from the full candidate pool (not just `remaining`, so a
+  // mastered easier sibling still counts even if it happened to be
+  // excluded from *this* session by step 1). Deliberately NOT applied to
+  // `masteredResurface` below — that bucket exists for retention
+  // maintenance (Decision 4's own resurface mechanic), a different
+  // purpose from progression, and this increment's own scope boundary
+  // (rule 8: operate within existing mechanisms, not replace them) is
+  // kept narrowest by leaving it untouched.
+  const masteredRanksBySkill = computeMasteredRanksBySkill(candidates, history);
+  const difficultyWeight = (question: BankQuestion) =>
+    computeDifficultyWeightMultiplier(question, masteredRanksBySkill, history);
+
   const pool: Weighted[] = [
-    ...unseen.map((question) => ({ question, weight: 3, reason: "unseen" as SelectionReason })),
-    ...eligibleSeen.map((question) => ({ question, weight: 2, reason: "eligible-seen" as SelectionReason })),
-    ...remainingOverridden.map((question) => ({ question, weight: 2, reason: "weak-skill-override-pool" as SelectionReason })),
+    ...unseen.map((question) => ({ question, weight: 3 * difficultyWeight(question), reason: "unseen" as SelectionReason })),
+    ...eligibleSeen.map((question) => ({ question, weight: 2 * difficultyWeight(question), reason: "eligible-seen" as SelectionReason })),
+    ...remainingOverridden.map((question) => ({ question, weight: 2 * difficultyWeight(question), reason: "weak-skill-override-pool" as SelectionReason })),
     ...masteredResurface.map((question) => ({ question, weight: 1, reason: "mastered-resurface" as SelectionReason })),
   ];
 

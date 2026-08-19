@@ -2058,3 +2058,71 @@ Read `sessionGenerator.ts:265-401` (`generatePersonalisedSession`) and `lib/ali/
 **Rationale:** Decision 113 proved a single wrong claim could have been caught by one `git log` check; this decision applies that same discipline to every remaining material claim, not just the one already caught, before any further Stage 3 resource is committed on Decision 112's word alone.
 
 **Implications:** Awaiting Founder decision on whether to authorise Increment 002 (difficulty-aware selection weighting, per the recommendation above) or a different target. The non-CSSE legacy-route architecture question remains open and unrelated to Stage 3, exactly as `LEGACY_CONTENT_RETIREMENT_REGISTER.md` left it.
+
+---
+
+### Decision 115 — Stage 3, Increment 002 (Evidence-Driven Difficulty Progression): a boost-only, evidence-gated difficulty-escalation weight added to `lib/ali/selection.ts`'s `selectQuestions()` — the exact function `sessionGenerator.ts` already reuses unmodified for canonical Practice — reusing `masteryState` alone (no new evidence field, no parallel engine); every pre-existing mechanism (weak-skill override, 14-day spaced retrieval, question-count cooldown) verified still intact by direct, passing tests, not merely by construction
+
+**Difficulty semantics verified before implementing anything (per explicit instruction — the field's educational reliability was checked, not assumed):** `ContentDifficulty` = `"easy" | "medium" | "hard" | "challenge"` (`types/ali/questionBank.ts:10`). Live query against production (read-only, anon key, no rows selected beyond `skill`/`subject`/`content_difficulty`/`eligibility_status`) grouped by the real skill granularity `selectQuestions()` itself already operates at (`QuestionTypeId`, e.g. `QT-MR-01` — the same grouping `weakSkills` already uses, not a new one invented for this increment): **17 of 24 practice-eligible skills (Maths + English) have 2 or more distinct difficulty values genuinely present; 7 have exactly one** (`QT-RC-07`, `QT-MR-02`, `QT-MR-04`, `QT-MR-08`, `QT-MR-10`, `QT-MR-12`, `QT-MR-13` — all single-valued at `"medium"`). Populated consistently — every practice-eligible row carries a real `content_difficulty` value, no nulls found. **Conclusion: the data safely supports a boost-only progression rule for the 17 skills with real diversity; for the 7 single-valued skills, no progression can ever occur (correctly, since no harder alternative exists) — this is reported, not hidden, and the implementation degrades safely to the pre-existing unweighted behaviour for exactly these skills, never fabricating a difficulty distinction that isn't real.**
+
+**Family-level thinness (Decision 114's own correction) and skill-level diversity are not the same measurement, and the difference matters for this increment specifically:** grouping by named family (Decision 114) found roughly two-thirds of Mathematics families internally single-valued; grouping by skill (this decision, the actual level `selectQuestions()` reasons at, since multiple families typically share one `QuestionTypeId`) finds only 7 of 24 skills single-valued. This confirms skill-level was the correct design granularity, not family-level — a family-scoped design would have been unable to progress in the large majority of Mathematics families for no real educational reason.
+
+---
+
+**Exact production path changed:** `lib/ali/selection.ts` only. `sessionGenerator.ts` (canonical Practice's real session builder) calls `selectQuestions()` unmodified — no change to that file, or to any other consumer, was required or made.
+
+**Progression rule implemented — the smallest deterministic rule the data supports, boost-only, never a depression:**
+1. `computeMasteredRanksBySkill(candidates, history)` — for every skill present, the set of difficulty ranks at which the learner has at least one question with real `masteryState === "mastered"`. Reuses the existing field verbatim; no new column, no duplicate mastery representation (architectural rule 4).
+2. `computeDifficultyWeightMultiplier(question, masteredRanksBySkill, history)` — a candidate's weight is multiplied by `1.5` (disclosed, provisional, same convention as `lib/ali/confidence.ts`'s own calibration constants) only if (a) a strictly-easier sibling sharing its skill is genuinely `"mastered"`, and (b) the candidate itself is not currently `masteryState === "weak"`. Otherwise the multiplier is `1` — byte-identical to today's unweighted behaviour.
+3. Applied only to the `unseen`, `eligibleSeen`, and `remainingOverridden` (weak-skill pool, not the guaranteed reserve) buckets inside `selectQuestions()`'s existing weighted-pool construction. **Deliberately not applied to `masteredResurface`** — that bucket serves retention maintenance, a different purpose, kept out of this increment's scope.
+
+**Why boost-only, not a "start easy, earn your way up" default ceiling:** considered and rejected. A default that *depressed* harder-tier weight for a learner with no relevant history yet would, given the real distribution above, systematically penalise every single-valued-at-`"medium"` skill (7 of 24) for every learner, including ones with perfectly appropriate evidence — punishing content scarcity, not reflecting skill readiness. Boost-only means a learner with zero history sees exactly today's existing, already-proven selection behaviour; escalation only ever adds weight, never removes it, and only when real evidence justifies it.
+
+**Selection precedence — before and after, explicitly:**
+| Step | Before | After |
+|---|---|---|
+| 1 | Absolute exclusion of the immediately-preceding session's questions | **Unchanged** |
+| 2 | Cooldown eligibility by question-count distance | **Unchanged** |
+| 3 | Partition: unseen / eligible-seen / mastered-resurface / cooling-down | **Unchanged** |
+| 4 | Weak-skill override (cooling-down → eligible if competency is weak) | **Unchanged** |
+| 4b | Guaranteed minimum reserve for overridden weak-skill questions | **Unchanged — receives no difficulty weighting, by design, so the guarantee itself is never diluted** |
+| 5 | Weighted random sample without replacement | **The per-candidate weight fed into this step now includes the new difficulty multiplier for the three buckets named above; the sampling mechanism itself (`weightedSampleWithoutReplacement`) is untouched** |
+| — | (downstream, `sessionGenerator.ts`) `reduceFamilyClustering` → `applyRetrievalPriority` (14-day spaced retrieval) | **Unchanged, not touched by this increment at all** |
+
+**Fallback behaviour:** by construction, not special-cased. Because the multiplier only ever scales an existing weight up, never to zero and never removing a candidate from eligibility, a skill with no harder alternative (the 7 single-valued skills above) simply never has anything to boost — selection proceeds exactly as before. No question is ever fabricated; no competency is ever silently dropped for thin difficulty diversity.
+
+---
+
+**Anti-false-progression — proven by tests, not asserted:**
+- **Repetition ≠ mastery / times seen ≠ escalation:** `computeDifficultyWeightMultiplier` never reads `timesSeen` at all — only `masteryState`. Test: "no evidence at all... every candidate gets neutral weight."
+- **Self-assessment alone ≠ escalation:** self-assessed evidence always writes `supportTier: "supported"`, which `lib/ali/mastery.ts`'s existing, untouched `applyAttemptOutcome()` already excludes from ever reaching `masteryState === "mastered"` — inherited by construction, confirmed by a dedicated test asserting `"new"`/`"learning"`/`"weak"` (the only states self-assessed evidence can ever reach) never boost.
+- **One lucky correct answer ≠ durable escalation:** `"mastered"` requires `distinctCorrectSessions >= masteryThreshold` (multiple distinct sessions) via the same untouched gate — test: a single-session correct with `masteryState: "learning"` does not boost.
+- **Struggling learner does not keep escalating:** the harder candidate itself reaching `masteryState === "weak"` (the existing two-consecutive-wrong signal) removes its own boost immediately, on the very next selection — test: "STRUGGLING LEARNER," confirmed the easier sibling's own status is untouched (never punished for the harder question's difficulty).
+
+**Weak-skill prioritisation proven intact:** dedicated test constructs a cooling-down question in a weak skill and confirms the pre-existing guaranteed-reserve mechanism (step 4b) still resurfaces it ahead of the general pool, unaffected by the new weighting layer.
+
+**14-day spaced retrieval proven intact — a real composition test, not an assertion that the file wasn't touched:** `applyRetrievalPriority()`/`computeFamilyExposure()` (both in `sessionGenerator.ts`/`exposureIntelligence.ts`, neither modified) are called directly against `selectQuestions()`'s real output shape; a `MASTERY_MAINTENANCE`-stage family (mastered, confirmed 1 day ago, well inside the 14-day window) is still correctly swapped for a genuinely new alternative.
+
+**Question-count cooldown proven intact:** dedicated test confirms a difficulty-boosted candidate still under its own cooldown window is correctly excluded regardless of the boost — eligibility is decided in steps 1-4, entirely before the new weighting is ever computed.
+
+**Determinism proven:** identical `candidates`/`history`/`random` function produces identical output across repeated calls.
+
+**The boost is measurably real, not merely present in the trace:** a 400-trial test with a varied deterministic pseudo-random sequence shows meaningfully more hard-tier picks once an easier sibling is genuinely mastered, versus an identical scenario with no history at all.
+
+---
+
+**Content-depth follow-up, quantified and reported separately, not solved here (per explicit instruction):** the 7 single-valued skills found above (`QT-RC-07`/RC-01; `QT-MR-02`/MR-01; `QT-MR-04`, `QT-MR-10`, `QT-MR-13`/all MR-04; `QT-MR-08`/MR-03; `QT-MR-12`/MR-01) can never have progression apply, not because of any code limitation, but because no harder (or easier) alternative has been authored for them at all. Three of the seven (`QT-MR-04`/`QT-MR-10`/`QT-MR-13`) all sit under the single competency MR-04 (Multi-Step Word-Problem Interpretation) — a concentrated, real content gap, not a scattered one. Not solved by duplicating questions or superficial number changes, per explicit instruction; recorded as direct input to a future sustainable-content increment.
+
+**Tests added:** 17, `tests/lib/ali/selection.test.ts` (new file — `lib/ali/selection.ts`'s `selectQuestions()` had zero prior direct unit test coverage in this repository, confirmed by search before writing this file; the only existing selection-adjacent test file, `passageAwareSelection.test.ts`, exercises `sessionGenerator.ts`'s own functions and never calls `selectQuestions()`). Two test-authoring bugs were found and fixed during this increment's own verification (not implementation bugs): two early test scenarios placed the target question as the *only* history row, inadvertently triggering step 1's own pre-existing "exclude the immediately-preceding session's questions" absolute-exclusion rule before the mechanism under test ever ran — corrected by adding a second, unrelated history row, disclosed here as the honest process, not silently fixed.
+
+**Validation:** TypeScript clean. Automated tests: 753/753 pass (17 new, zero regression across the full suite). Copy Quality Guard: PASS, 0 violations, 250 files. ESLint: 80 problems (62/18), byte-identical to every prior checkpoint this arc. Production build: succeeds.
+
+**Files changed:** `lib/ali/selection.ts` (the new difficulty-weighting functions and their wiring into the existing pool construction), `tests/lib/ali/selection.test.ts` (new). No other file touched — no UI, no Learn/Mock/legacy route, no Parent Dashboard terminology, per explicit instruction.
+
+**What this decision does NOT claim:** it does not claim difficulty progression now functions for the 7 single-valued skills — it structurally cannot, honestly, until more content is authored; it does not claim Mathematics' zero-parameter-variation problem is addressed — explicitly out of this increment's boundary, a separate content-depth increment; it does not claim the non-CSSE legacy-route product decision (Decision 114) has been touched; it does not claim any UI, Learn, Mock, or legacy route was modified — none was; it does not begin Increment 003.
+
+**Date:** 2026-08-19
+
+**Rationale:** A learner whose evidence genuinely shows readiness for harder material, within a skill where harder material actually exists, should meet it — this increment makes that true using only evidence Angel already trusts (Stage 1/2's own provenance and mastery-safety work, untouched and reused verbatim), while leaving every existing anti-repetition and weak-skill mechanism exactly as proven.
+
+**Implications:** The 7 single-valued skills and the MR-04-concentrated gap above should directly inform whichever sustainable-content increment the Founder authorises next. `DIFFICULTY_ESCALATION_MULTIPLIER = 1.5` is disclosed as provisional, not empirically calibrated — a future increment may tune it once real usage data exists, per the same convention already established for `lib/ali/confidence.ts`'s own thresholds.
