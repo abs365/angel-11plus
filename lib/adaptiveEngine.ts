@@ -99,7 +99,7 @@ function pickMathsMode(
 
 const SUBJECT_LABELS: Record<string, string> = {
   english: "English Comprehension",
-  maths: "Maths Reasoning",
+  maths: "Mathematics",
   vocabulary: "Vocabulary Builder",
   writing: "Creative Writing",
   "mock-test": "Mock Test",
@@ -154,7 +154,7 @@ function reasonText(
   if (isEvidenceTooThinForAverage(classifyEvidenceState(subject.attempts))) {
     const copy: Record<string, string> = {
       english: "You've made a start on Comprehension. A few more sessions will show a clearer picture of your progress here.",
-      maths: "You've made a start on Maths Reasoning. A few more sessions will show a clearer picture of your progress here.",
+      maths: "You've made a start on Mathematics. A few more sessions will show a clearer picture of your progress here.",
       vocabulary: "You've made a start on Vocabulary. A few more sessions will show a clearer picture of your progress here.",
       writing: "You've made a start on Writing. A few more sessions will show a clearer picture of your progress here.",
       "mock-test": "You've sat one mock so far. A second sitting will give a much more reliable picture.",
@@ -351,7 +351,7 @@ function buildDailyMission(
         {
           id: "mission-1",
           subject: "maths",
-          label: "Maths Reasoning",
+          label: "Mathematics",
           href: "/maths",
           reason:
             "Maths reasoning is half the exam. Work through each problem with full step-by-step solutions.",

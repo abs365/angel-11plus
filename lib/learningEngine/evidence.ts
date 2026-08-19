@@ -43,12 +43,20 @@ export async function fetchAllQuestionTypeExposure(
   }
 
   const allQuestionIds = (questions ?? []).map((q) => q.id);
-  let historyByQuestionId = new Map<string, { times_seen: number; times_correct: number; distinct_correct_sessions: number }>();
+  let historyByQuestionId = new Map<
+    string,
+    { times_seen: number; times_correct: number; distinct_correct_sessions: number; last_attempt_verified?: boolean | null }
+  >();
 
   if (allQuestionIds.length > 0) {
+    // Stage 2 Educational Integrity Correction — select("*") rather than
+    // naming last_attempt_verified explicitly, so this query does not fail
+    // outright on a database that has not yet applied migration 076; see
+    // lib/ali/persistence/educationalStateRuntime.ts's identical fix for
+    // the full rationale.
     const { data: history, error: historyError } = await supabase
       .from("ali_student_question_history")
-      .select("question_id, times_seen, times_correct, distinct_correct_sessions")
+      .select("*")
       .eq("profile_id", profileId)
       .in("question_id", allQuestionIds);
 
@@ -65,12 +73,24 @@ export async function fetchAllQuestionTypeExposure(
     let timesSeen = 0;
     let timesCorrect = 0;
     let distinctCorrectSessions = 0;
+    // Stage 2 Educational Integrity Correction — true the moment ANY
+    // contributing question's most recent attempt was automatically
+    // verified (undefined/null, pre-migration or never-attempted, counts
+    // as verified too — see deriveQuestionTypeOutcome's docstring). Only
+    // stays false if every question with real evidence was, at last
+    // attempt, purely self-assessed.
+    let anyVerified = false;
+    let anyEvidence = false;
     for (const qid of questionIds) {
       const h = historyByQuestionId.get(qid);
       if (h) {
         timesSeen += h.times_seen;
         timesCorrect += h.times_correct;
         distinctCorrectSessions += h.distinct_correct_sessions;
+        if (h.times_seen > 0) {
+          anyEvidence = true;
+          if (h.last_attempt_verified ?? true) anyVerified = true;
+        }
       }
     }
     result[qt] = {
@@ -79,7 +99,7 @@ export async function fetchAllQuestionTypeExposure(
       timesSeen,
       timesCorrect,
       distinctCorrectSessions,
-      outcome: deriveQuestionTypeOutcome(timesSeen, timesCorrect),
+      outcome: deriveQuestionTypeOutcome(timesSeen, timesCorrect, !anyEvidence || anyVerified),
     };
   }
   return result;

@@ -386,15 +386,29 @@ function MobileMoreDrawer({
  * replacement for the collapsed-rail SidebarLink usage. Larger type and a
  * taller click target than the old sidebar rows, per the governing
  * instruction's typography/touch-target direction.
+ *
+ * Stage 2 (tablet navigation correction) — reuses SidebarLink's existing,
+ * previously-unwired `collapsed` (768–1023px icon-rail) pattern verbatim
+ * rather than inventing a second one: same `md:`-to-`lg:` icon-only band,
+ * same sr-only/not-sr-only label toggle so the accessible name never
+ * disappears, same `title` tooltip. Founder real-device evidence showed
+ * "Progress" clipped to "Progr" at tablet width — root cause was this
+ * primary row's items each having no `shrink-0`/`whitespace-nowrap`, so a
+ * shrunk flex item wrapped its label onto a second line that the row's
+ * fixed h-11 then clipped. `shrink-0` + `whitespace-nowrap` close that
+ * structurally, and the icon-only band removes the crowding that forced
+ * the shrink in the first place.
  */
-function TopBarLink({ item, pathname }: { item: NavItem; pathname: string }) {
+function TopBarLink({ item, pathname, collapsed = false }: { item: NavItem; pathname: string; collapsed?: boolean }) {
   const active = isActive(pathname, item.href);
   return (
     <Link
       href={item.href}
       aria-current={active ? "page" : undefined}
+      title={collapsed ? item.label : undefined}
       className={cn(
-        "flex items-center gap-2 h-11 px-3.5 rounded-xl text-[15px] transition-colors motion-reduce:transition-none",
+        "flex items-center gap-2 h-11 px-3.5 rounded-xl text-[15px] shrink-0 transition-colors motion-reduce:transition-none",
+        collapsed && "md:justify-center md:px-0 md:w-11 lg:w-auto lg:px-3.5",
         active
           ? "font-semibold"
           : "font-medium text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-gray-800 dark:hover:text-gray-200"
@@ -411,9 +425,14 @@ function TopBarLink({ item, pathname }: { item: NavItem; pathname: string }) {
         className={cn("shrink-0", !active && "text-gray-400 dark:text-gray-500")}
         style={active ? { color: "var(--nav-accent-soft-text)" } : undefined}
       />
-      <span>{item.label}</span>
+      <span className={cn("whitespace-nowrap", collapsed && "md:sr-only lg:not-sr-only")}>{item.label}</span>
       {item.badge && (
-        <span className="text-[10px] font-semibold bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400 px-1.5 py-0.5 rounded-full leading-none">
+        <span
+          className={cn(
+            "text-[10px] font-semibold bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400 px-1.5 py-0.5 rounded-full leading-none",
+            collapsed && "hidden lg:inline-block"
+          )}
+        >
           {item.badge}
         </span>
       )}
@@ -520,7 +539,7 @@ export default function Navigation() {
         {/* Primary — the 5 daily-journey destinations */}
         <div role="group" aria-label="Primary" className="flex items-center gap-1 flex-1 min-w-0 overflow-x-auto">
           {primaryItems.map((item) => (
-            <TopBarLink key={item.href} item={item} pathname={pathname} />
+            <TopBarLink key={item.href} item={item} pathname={pathname} collapsed />
           ))}
         </div>
 

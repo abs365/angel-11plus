@@ -43,6 +43,7 @@ interface HistoryRow {
   question_id: string;
   times_seen: number;
   distinct_correct_sessions: number;
+  last_attempt_verified?: boolean | null;
 }
 
 /**
@@ -69,6 +70,11 @@ export function mergeQuestionsWithHistory(
       distinctCorrectSessions: row?.distinct_correct_sessions ?? 0,
       masteryThreshold: q.mastery_threshold,
       confidenceWeight: q.confidence_weight,
+      // Stage 2 Educational Integrity Correction (migration 076) — see
+      // lib/ali/persistence/educationalStateRuntime.ts's identical mapping
+      // for the full rationale; both functions read the same table and
+      // must apply the same conservative undefined/null -> true default.
+      verified: row?.last_attempt_verified ?? true,
     };
   });
 }
@@ -91,9 +97,13 @@ export async function fetchCompetencyEvidence(
   }
 
   const questionIds = questions.map((q) => q.id);
+  // Stage 2 Educational Integrity Correction — select("*") rather than
+  // naming last_attempt_verified explicitly, so this query does not fail
+  // outright on a database that has not yet applied migration 076; see
+  // educationalStateRuntime.ts's identical fix for the full rationale.
   const { data: history, error: historyError } = await supabase
     .from("ali_student_question_history")
-    .select("question_id, times_seen, distinct_correct_sessions")
+    .select("*")
     .eq("profile_id", profileId)
     .in("question_id", questionIds);
 

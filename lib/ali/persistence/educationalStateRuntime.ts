@@ -34,6 +34,7 @@ interface StateHistoryRow {
   last_attempt_correct: boolean | null;
   mastery_state: string;
   last_presented_at: string;
+  last_attempt_verified: boolean | null;
 }
 interface StateQuestionMeta {
   id: string;
@@ -100,9 +101,17 @@ async function fetchCompetencyStateEvidence(
   }
 
   const questionIds = questions.map((q: StateQuestionMeta) => q.id);
+  // Stage 2 Educational Integrity Correction — select("*") rather than an
+  // explicit column list, matching lib/ali/history.ts's recordOutcome()
+  // resilience convention: a hand-picked list naming last_attempt_verified
+  // would fail this entire query outright on a database that has not yet
+  // applied migration 076, breaking Educational State computation for
+  // every competency, not just this fix. select("*") degrades gracefully —
+  // the column is simply absent (undefined) pre-migration, read as
+  // verified=true below, identical to this function's pre-fix behaviour.
   const { data: history, error: historyError } = await supabase
     .from("ali_student_question_history")
-    .select("question_id, times_seen, distinct_correct_sessions, last_attempt_correct, mastery_state, last_presented_at")
+    .select("*")
     .eq("profile_id", profileId)
     .in("question_id", questionIds);
 
@@ -122,6 +131,12 @@ async function fetchCompetencyStateEvidence(
       masteryThreshold: q.mastery_threshold,
       confidenceWeight: q.confidence_weight,
       lastAttemptCorrect: row?.last_attempt_correct ?? null,
+      // Stage 2 Educational Integrity Correction — undefined (column not
+      // yet migrated) and null (no attempt yet, or a genuine pre-migration
+      // attempt with unknown provenance) both read as verified=true, the
+      // conservative default that narrows evidence only where a real
+      // self-assessed attempt is actually on record.
+      verified: row?.last_attempt_verified ?? true,
     };
   });
 

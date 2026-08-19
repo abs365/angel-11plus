@@ -235,6 +235,22 @@ function extractKeywords(text: string): string[] {
   );
 }
 
+/**
+ * Stage 2 Educational Integrity Correction — this legacy heuristic (the
+ * original 13 English rows with no validationTier, and any future content
+ * without one) is reached with zero self-assessment step at all: its
+ * return value is written straight to evidence as automatically-verified
+ * marks. Adversarial testing this increment found its previous fallback
+ * unconditionally returned `Math.max(1, round(maxMarks/2))` — half marks —
+ * for ANY answer 8+ characters long, with zero keyword overlap required:
+ * "aaaaaaaa" scored 2 of 4 marks against a real passage question. The
+ * fix below is the minimal change that closes this without inventing a new
+ * scoring model: partial credit is now conditional on `ratio > 0` (at
+ * least one real content keyword from the model answer genuinely present),
+ * matching this function's own existing full-marks branch's use of
+ * `ratio` as its correctness signal. A genuinely keyword-empty answer now
+ * earns 0, not an unconditional floor of half marks.
+ */
 export function scoreEnglishAnswer(userAnswer: string, modelAnswer: string | undefined, maxMarks: number): number {
   const trimmed = userAnswer.trim();
   if (!trimmed || trimmed.length < 8) return 0;
@@ -247,7 +263,8 @@ export function scoreEnglishAnswer(userAnswer: string, modelAnswer: string | und
   const lengthOk = trimmed.length >= 40 + maxMarks * 8;
 
   if (lengthOk && ratio >= 0.18) return maxMarks;
-  return Math.max(1, Math.round(maxMarks / 2));
+  if (ratio > 0) return Math.max(1, Math.round(maxMarks / 2));
+  return 0;
 }
 
 /**

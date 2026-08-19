@@ -85,7 +85,7 @@ const PATHWAYS = [
 
 const FEATURES = [
   { icon: BookOpen, label: "English & Comprehension", desc: "Passage-based questions with model answers" },
-  { icon: Calculator, label: "Maths Practice", desc: "Step-by-step working with adaptive difficulty" },
+  { icon: Calculator, label: "Mathematics Practice", desc: "Step-by-step working with adaptive difficulty" },
   { icon: Brain, label: "Reasoning Training", desc: "Verbal, non-verbal, spatial and numerical" },
   { icon: Target, label: "Timed Mock Exams", desc: "Full practice papers for GL, CEM, CSSE and ISEB" },
   { icon: BarChart2, label: "Progress Tracking", desc: "See improvement across every subject" },

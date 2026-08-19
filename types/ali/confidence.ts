@@ -21,6 +21,18 @@ export interface QuestionEvidenceInput {
   distinctCorrectSessions: number;
   masteryThreshold: number;
   confidenceWeight: number;
+  /**
+   * Stage 2 Educational Integrity Correction (migration 076) — whether the
+   * most recent attempt was automatically verified by Angel, as opposed to
+   * self-assessed by the learner against a model answer Angel could not
+   * automatically grade. Optional and defaults to `true` at the point of
+   * use (lib/ali/confidence.ts's anyEvidence check) so every existing
+   * caller that does not yet populate it (Mock's evidenceAdapter, any
+   * pre-migration history row) behaves exactly as before — this field only
+   * ever narrows evidence that would otherwise count, never invents new
+   * evidence.
+   */
+  verified?: boolean;
 }
 
 export interface CompetencyConfidenceInput {

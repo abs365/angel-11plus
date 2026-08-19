@@ -172,7 +172,19 @@ async function fetchRecentAttemptSignalsForCompetency(
 }
 
 /** Judgement call 2 above. Returns null when no honest trigger exists (judgement call 3). */
-function deriveTriggerReason(state: EducationalState): RecommendationTrigger | null {
+/**
+ * Exported for direct unit testing only (Stage 2 Educational Integrity
+ * Correction, Part 10) — not otherwise a public API of this module. Proves
+ * the recommendation-trigger layer distinguishes "exploring" (insufficient
+ * evidence, correctly yielding "never-attempted") from every state that
+ * implies real-but-unmastered evidence ("weak-competency-remediation") —
+ * a pure function of EducationalState, so once lib/ali/educationalState.ts
+ * can no longer reach "building-knowledge" from self-assessed-only
+ * evidence (proven in tests/lib/ali/educationalState.test.ts), this
+ * function's own existing, correct behaviour is what stops a "hu"-style
+ * false positive from ever reaching "weak-competency-remediation" copy.
+ */
+export function deriveTriggerReason(state: EducationalState): RecommendationTrigger | null {
   switch (state) {
     case "exploring":
       return "never-attempted";

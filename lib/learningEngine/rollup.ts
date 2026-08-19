@@ -12,9 +12,34 @@ import { COMPETENCIES, getQuestionTypesForCompetency } from "./assessmentBrainMa
  * LEARNING_ENGINE_V1.md §10(1).
  */
 
-/** LEARNING_ENGINE_V1.md §3.1 — derives the outcome directly from real ali_student_question_history aggregates (times_seen/times_correct), no new calibration. */
-export function deriveQuestionTypeOutcome(timesSeen: number, timesCorrect: number): QuestionTypeOutcome {
+/**
+ * LEARNING_ENGINE_V1.md §3.1 — derives the outcome directly from real
+ * ali_student_question_history aggregates (times_seen/times_correct), no
+ * new calibration.
+ *
+ * Stage 2 Educational Integrity Correction — `anyVerified` (defaults to
+ * `true`, exact prior behaviour for every existing caller) is the same
+ * verification-provenance signal introduced for lib/ali/confidence.ts's
+ * anyEvidence check (migration 076), applied here for the identical
+ * reason: this function's raw times_seen/times_correct aggregate is blind
+ * to whether a "correct" outcome was Angel's own automatic verification or
+ * the learner's own self-assessment of an English Tier 3/5 answer Angel
+ * could not automatically grade. `false` here means every contributing
+ * question's most recent attempt was self-assessed — the honest reading is
+ * "none" (no automatically-verified evidence), not "success"/"struggle",
+ * matching the same "never claim stronger evidence than actually
+ * possessed" principle. A question type with a mix of verified and
+ * self-assessed history still counts (`anyVerified: true`) — this only
+ * excludes the case where NOTHING contributing evidence was ever
+ * automatically verified.
+ */
+export function deriveQuestionTypeOutcome(
+  timesSeen: number,
+  timesCorrect: number,
+  anyVerified: boolean = true
+): QuestionTypeOutcome {
   if (timesSeen <= 0) return "none";
+  if (!anyVerified) return "none";
   if (timesCorrect === timesSeen) return "success";
   if (timesCorrect === 0) return "struggle";
   return "mixed";

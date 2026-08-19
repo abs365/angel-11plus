@@ -1,8 +1,8 @@
 "use client";
 
-import { use, useRef, useState } from "react";
+import { use, useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { CheckCircle2, XCircle, ArrowRight, RotateCcw } from "lucide-react";
+import { CheckCircle2, XCircle, ArrowRight, RotateCcw, Loader2 } from "lucide-react";
 import PageLayout from "@/components/PageLayout";
 import { InfoCard } from "@/components/ui/Card";
 import { getSupabaseClient } from "@/lib/supabase";
@@ -31,6 +31,7 @@ import { getExamStrategyHint, getWorkedExample } from "@/lib/learningEngine/engl
 import { getGuidedScaffoldKind, getGuidedInstructionText, checkLiveSelectionCount } from "@/lib/learningEngine/guidedPractice";
 import { classifyAutomaticError, getSelfReflectionCategories, WRONG_ANSWER_CATEGORY_LABEL } from "@/lib/learningEngine/englishErrorClassification";
 import { getMathsTeachingContent, MATHS_MISCONCEPTION_CATEGORY_LABEL, effectiveGuidedRevealStepCount } from "@/lib/learningEngine/mathsTeachingContent";
+import { canSubmitAnswer, runGuardedSubmission } from "@/lib/learningEngine/practiceInteractionGuard";
 import { CompetencyProfile } from "@/components/learningEngine/CompetencyProfile";
 import { EvidenceProfile } from "@/components/learningEngine/EvidenceProfile";
 import { DiagnosticOverview } from "@/components/learningEngine/DiagnosticOverview";
@@ -95,6 +96,15 @@ export default function PracticeSessionPage({ params }: { params: Promise<{ area
   // explanations and the session-level parent/learner summary, both from
   // generatePersonalisedSession(). Keyed by question id.
   const [activityExplanations, setActivityExplanations] = useState<Map<string, string>>(new Map());
+  // Stage 2 (Practice Question Experience and Keyboard Interaction) —
+  // Writing's own visible "pending" state. Unlike Maths/Reading (which flip
+  // `submitted` synchronously before any network call, so the Submit button
+  // is already gone before /api/writing-feedback's own latency is visible),
+  // Writing's `submitted` doesn't flip until AFTER that fetch resolves — a
+  // real, pre-existing gap (the Submit button stayed clickable, by mouse or
+  // now keyboard, for the fetch's whole duration) that Stage 2's own
+  // "must never double-submit" requirement directly depends on closing.
+  const [writingSubmitting, setWritingSubmitting] = useState(false);
 
   const profileIdRef = useRef<string>("");
   const sessionIdRef = useRef<string>(`practice-${areaId}-${Date.now()}`);
@@ -121,6 +131,16 @@ export default function PracticeSessionPage({ params }: { params: Promise<{ area
   // made under Guided Practice, across the async gap until the learner
   // responds to self-assessment.
   const pendingGuidedRef = useRef(false);
+  // Stage 2 — synchronous re-entry guard for every submit path (Maths
+  // Enter/click, Reading click, Writing click/Enter). A ref, not state:
+  // recordAndAdvance()'s own setSubmitted(true) is the first statement it
+  // runs, but that only schedules a React update — a second event fired in
+  // the same task, before that update commits, would still read the old
+  // `submitted` closure value. A ref mutates immediately, independent of
+  // render timing, closing that race window. Reset once per question in
+  // resetActivityUiState(), never inside recordAndAdvance() itself — this
+  // guard is purely an interaction-layer concern, not an educational one.
+  const isSubmittingRef = useRef(false);
 
   if (!area) {
     return (
@@ -239,12 +259,21 @@ export default function PracticeSessionPage({ params }: { params: Promise<{ area
     setWritingFeedback(null);
     setWritingFeedbackError("");
     setCheckedItems(new Set());
+    setWritingSubmitting(false);
+    isSubmittingRef.current = false;
   }
 
   async function recordAndAdvance(
     isCorrect: boolean,
     legacySkill: string,
-    supportTier: "independent" | "supported" = "independent"
+    supportTier: "independent" | "supported" = "independent",
+    // Stage 2 Educational Integrity Correction — whether Angel automatically
+    // verified this outcome (Maths exact-match, English Tier 1/2/4/6,
+    // Writing's automated AI score) as opposed to the learner's own
+    // self-assessment of an English Tier 3/5 answer Angel could not
+    // automatically grade. Defaults to true, the correct value for every
+    // caller except submitSelfAssessment below.
+    verified: boolean = true
   ) {
     setLastCorrect(isCorrect);
     setSubmitted(true);
@@ -285,7 +314,8 @@ export default function PracticeSessionPage({ params }: { params: Promise<{ area
         sessionIdRef.current,
         current.masteryThreshold,
         undefined,
-        supportTier
+        supportTier,
+        verified
       ).catch(() => {});
 
       if (competencyId && preAttemptSnapshot) {
@@ -310,6 +340,23 @@ export default function PracticeSessionPage({ params }: { params: Promise<{ area
   }
 
   async function submitReadingOrMaths(guided: boolean = false) {
+    // Stage 2 — guard applies to both the mouse path (SubmitOrNext's own
+    // button, already `disabled={!answer.trim()}`) and the new Maths
+    // Enter-key path below, since both call this exact function; there is
+    // no second submission implementation. canSubmitAnswer()'s own
+    // `!answer.trim()` check is redundant for the button path but required
+    // for Enter, which calls this directly rather than through a
+    // disabled-aware control.
+    if (!canSubmitAnswer(isSubmittingRef.current, submitted, answer)) return;
+    isSubmittingRef.current = true;
+    try {
+      await submitReadingOrMathsInner(guided);
+    } finally {
+      isSubmittingRef.current = false;
+    }
+  }
+
+  async function submitReadingOrMathsInner(guided: boolean) {
     if (area!.id === "mathematics") {
       const q = current.prompt as MathsQuestion;
       const isCorrect = checkMathsAnswer(answer, String(q.answer));
@@ -368,7 +415,15 @@ export default function PracticeSessionPage({ params }: { params: Promise<{ area
     // regardless of Guided Practice — self-assessed Tier 3/5 answers were
     // already "supported" before Part 5 existed; guided merely adds
     // formative scaffolding shown before this point.
-    await recordAndAdvance(learnerSaysCorrect, q.skill, "supported");
+    // Stage 2 Educational Integrity Correction — verified: false is the
+    // actual fix. supportTier stays "supported" (unchanged meaning: this
+    // remains excluded from mastery advancement, per Part 7's original
+    // requirement), but this attempt must no longer be indistinguishable
+    // from Angel's own automatic verification at the Evidence Confidence /
+    // Learning Engine rollup layer — see lib/ali/confidence.ts's
+    // anyEvidence check and lib/learningEngine/rollup.ts's
+    // deriveQuestionTypeOutcome.
+    await recordAndAdvance(learnerSaysCorrect, q.skill, "supported", false);
     if (pendingGuidedRef.current && learnerSaysCorrect && current.familyId) {
       guidedFamiliesRef.current.delete(current.familyId);
     }
@@ -377,36 +432,52 @@ export default function PracticeSessionPage({ params }: { params: Promise<{ area
   }
 
   async function submitWriting() {
-    const q = current.prompt as { title: string; prompt: string; type: string };
-    setWritingFeedbackError("");
-    try {
-      const res = await fetch("/api/writing-feedback", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          promptTitle: q.title,
-          promptType: q.type,
-          promptText: q.prompt,
-          writingText: answer,
-          checkedItems: Array.from(checkedItems),
-        }),
-      });
-      if (!res.ok) {
-        const body = await res.json().catch(() => ({}));
-        setWritingFeedbackError(body.error ?? "Smart feedback is temporarily unavailable.");
-        return;
+    // Stage 2 — this is the confirmed pre-existing gap: `submitted` didn't
+    // flip true until AFTER the fetch resolved, so the button (mouse or,
+    // now, keyboard) stayed activatable for the whole request.
+    // `runGuardedSubmission` (lib/learningEngine/practiceInteractionGuard.ts)
+    // is the same synchronous re-entry guard as the Maths/Reading path
+    // above, extracted to a pure function so the async contract — at most
+    // one in-flight request, guard cleared on both success and failure so
+    // a genuine failure allows retry — is unit-tested without a DOM/React
+    // harness. `writingSubmitting` stays here: it's real, visible pending
+    // state (WritingActivity disables its own button and shows it), a UI
+    // concern the guard function itself doesn't need to know about.
+    await runGuardedSubmission(isSubmittingRef, writingSubmitting || submitted, async () => {
+      setWritingSubmitting(true);
+      const q = current.prompt as { title: string; prompt: string; type: string };
+      setWritingFeedbackError("");
+      try {
+        const res = await fetch("/api/writing-feedback", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            promptTitle: q.title,
+            promptType: q.type,
+            promptText: q.prompt,
+            writingText: answer,
+            checkedItems: Array.from(checkedItems),
+          }),
+        });
+        if (!res.ok) {
+          const body = await res.json().catch(() => ({}));
+          setWritingFeedbackError(body.error ?? "Smart feedback is temporarily unavailable.");
+          return;
+        }
+        const feedback: WritingFeedback = await res.json();
+        setWritingFeedback(feedback);
+        // CSSE Completion Programme Phase A, Decision 60 — "supported", not
+        // the default "independent". overallScore is AI-generated and its own
+        // system prompt discloses it is not exam-board-calibrated; an
+        // uncalibrated value must not determine durable mastery. See
+        // app/writing/page.tsx's identical fix for the full rationale.
+        await recordAndAdvance(feedback.overallScore >= WRITING_CORRECTNESS_THRESHOLD, "writing", "supported");
+      } catch {
+        setWritingFeedbackError("Smart feedback is temporarily unavailable. Please check your connection.");
+      } finally {
+        setWritingSubmitting(false);
       }
-      const feedback: WritingFeedback = await res.json();
-      setWritingFeedback(feedback);
-      // CSSE Completion Programme Phase A, Decision 60 — "supported", not
-      // the default "independent". overallScore is AI-generated and its own
-      // system prompt discloses it is not exam-board-calibrated; an
-      // uncalibrated value must not determine durable mastery. See
-      // app/writing/page.tsx's identical fix for the full rationale.
-      await recordAndAdvance(feedback.overallScore >= WRITING_CORRECTNESS_THRESHOLD, "writing", "supported");
-    } catch {
-      setWritingFeedbackError("Smart feedback is temporarily unavailable. Please check your connection.");
-    }
+    });
   }
 
   async function goToNextOrFinish() {
@@ -556,6 +627,7 @@ export default function PracticeSessionPage({ params }: { params: Promise<{ area
                 checkedItems={checkedItems}
                 setCheckedItems={setCheckedItems}
                 submitted={submitted}
+                submitting={writingSubmitting}
                 feedback={writingFeedback}
                 feedbackError={writingFeedbackError}
                 onSubmit={submitWriting}
@@ -675,6 +747,28 @@ function ReadingActivity({
   const automaticErrorCategories =
     submitted && !lastCorrect && lastAutoResult ? classifyAutomaticError(lastAutoResult, familyId) : [];
   const selfReflectionCategories = getSelfReflectionCategories(familyId);
+
+  // Stage 2 — two distinct focus targets, matching two genuinely different
+  // states this component renders. Self-assessment (Tier 3/5, Angel cannot
+  // auto-verify) focuses the first meaningful decision control directly —
+  // its own explanatory text (what Angel checked, the model answer) is
+  // already visible in the same render, nothing streams in afterward.
+  // Auto-verified feedback focuses a wrapping region instead of the Next
+  // button directly, since the misconception/remediation text and model
+  // answer render inside that same region, after SubmitOrNext — region-
+  // first keeps a screen-reader user from having focus skip past that
+  // explanation straight to Next. `showsFeedbackRegion` covers both the
+  // immediate auto-verify path and arriving here after self-assessment
+  // resolves (pendingSelfAssessment clearing while submitted stays true).
+  const yesButtonRef = useRef<HTMLButtonElement>(null);
+  const feedbackRegionRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (pendingSelfAssessment) yesButtonRef.current?.focus();
+  }, [pendingSelfAssessment]);
+  const showsFeedbackRegion = submitted && !pendingSelfAssessment;
+  useEffect(() => {
+    if (showsFeedbackRegion) feedbackRegionRef.current?.focus();
+  }, [showsFeedbackRegion]);
 
   return (
     <InfoCard className="mt-3">
@@ -816,15 +910,24 @@ function ReadingActivity({
             </p>
           )}
           <div>
+            {/* Stage 2 Educational Integrity Correction — reworded so the
+                reason is explicit (reading and judging a written
+                explanation properly needs a person, not a mark-yourself
+                framing) and so the response is asked for as an honest
+                comparison, not a score the learner hands themselves. No
+                internal terminology (supportTier, verification provenance,
+                confidence tier, evidence tier) is ever shown here. */}
             <p className="text-xs font-semibold text-gray-700 dark:text-gray-300 mb-2">
-              Angel can&apos;t automatically mark your explanation. Compare it to the model answer above. Did you explain it well?
+              Angel can&apos;t read and judge an explanation the way a person can, so this one needs your own honest check.
+              Compare what you wrote to the model answer above, then judge honestly how close you got.
             </p>
             <div className="flex gap-2">
               <button
+                ref={yesButtonRef}
                 onClick={() => onSelfAssess(true)}
                 className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold py-2.5 rounded-xl transition-colors"
               >
-                Yes, I explained it well
+                Yes, I got the key points
               </button>
               <button
                 onClick={() => onSelfAssess(false)}
@@ -851,7 +954,7 @@ function ReadingActivity({
           </div>
         </div>
       ) : (
-        <>
+        <div ref={feedbackRegionRef} tabIndex={-1} className="outline-none">
           <SubmitOrNext submitted={submitted} lastCorrect={lastCorrect} onSubmit={() => onSubmit(guidedMode)} onNext={onNext} isLast={isLast} disabled={!answer.trim()} />
           {/* Educational Increment 007C, Part 8/9 — wrong-answer
               remediation, using only real classifications
@@ -900,7 +1003,7 @@ function ReadingActivity({
               {prompt.modelAnswer}
             </p>
           )}
-        </>
+        </div>
       )}
     </InfoCard>
   );
@@ -936,6 +1039,19 @@ function MathsActivity({
 
   const teachingContent = getMathsTeachingContent(familyId);
   const misconceptionLabel = teachingContent ? MATHS_MISCONCEPTION_CATEGORY_LABEL[teachingContent.misconceptionCategory] : undefined;
+
+  // Stage 2 — feedback region focused once, right when this question
+  // transitions to `submitted`. A wrapping region rather than the Next
+  // button directly: the Correct/Not-quite indicator and (on an incorrect
+  // attempt) the misconception note and workingSteps explanation render
+  // inside this same region, immediately after SubmitOrNext in the DOM —
+  // focusing the region first means a screen-reader user encounters that
+  // explanation before reaching Next, rather than having focus jump past
+  // it straight to the button.
+  const feedbackRegionRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (submitted) feedbackRegionRef.current?.focus();
+  }, [submitted]);
 
   return (
     <InfoCard className="mt-3">
@@ -1018,38 +1134,63 @@ function MathsActivity({
       <input
         value={answer}
         onChange={(e) => setAnswer(e.target.value)}
+        onKeyDown={(e) => {
+          // Stage 2 — the one true single-line control in this file (per
+          // the architecture checkpoint's own finding: Reading's and
+          // Writing's answer fields are both multiline <textarea>s and
+          // must never intercept Enter). Calls the exact same handler the
+          // Submit button already uses below — no second submission
+          // implementation. `submitted`/`!answer.trim()` mirror the
+          // button's own `disabled` condition; the real double-fire race
+          // is closed in the parent's `submitReadingOrMaths` guard, not
+          // here.
+          if (e.key !== "Enter") return;
+          e.preventDefault();
+          // Not the authoritative double-submit guard (that lives in the
+          // parent's isSubmittingRef, which this component has no access
+          // to) — this is the same not-empty/not-already-submitted check
+          // the Submit button's own `disabled` prop already applies,
+          // reused so Enter and the button can never disagree about when
+          // submission is valid. `false` (not submitting) since this
+          // component only knows about `submitted`, not the in-flight
+          // guard state.
+          if (!canSubmitAnswer(false, submitted, answer)) return;
+          onSubmit(guidedMode);
+        }}
         disabled={submitted}
         className="w-full mt-3 text-sm rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-3"
         placeholder="Your answer…"
       />
-      <SubmitOrNext submitted={submitted} lastCorrect={lastCorrect} onSubmit={() => onSubmit(guidedMode)} onNext={onNext} isLast={isLast} disabled={!answer.trim()} />
+      <div ref={feedbackRegionRef} tabIndex={-1} className="outline-none">
+        <SubmitOrNext submitted={submitted} lastCorrect={lastCorrect} onSubmit={() => onSubmit(guidedMode)} onNext={onNext} isLast={isLast} disabled={!answer.trim()} />
 
-      {/* WRONG-ANSWER REMEDIATION — Part 3D: the family's own real,
-          human-review-evidenced addressesMisconception text, mapped to its
-          category label for consistent framing. Never a fabricated
-          per-answer diagnosis; shown after ANY incorrect attempt, guided
-          or independent, matching the contract exactly. */}
-      {submitted && !lastCorrect && addressesMisconception && misconceptionLabel && (
-        <div className="text-xs text-blue-700 dark:text-blue-300 bg-blue-50 dark:bg-blue-950 rounded-xl p-3 mt-3">
-          <p className="font-semibold">{misconceptionLabel}</p>
-          <p className="mt-1">{addressesMisconception}</p>
-        </div>
-      )}
+        {/* WRONG-ANSWER REMEDIATION — Part 3D: the family's own real,
+            human-review-evidenced addressesMisconception text, mapped to its
+            category label for consistent framing. Never a fabricated
+            per-answer diagnosis; shown after ANY incorrect attempt, guided
+            or independent, matching the contract exactly. */}
+        {submitted && !lastCorrect && addressesMisconception && misconceptionLabel && (
+          <div className="text-xs text-blue-700 dark:text-blue-300 bg-blue-50 dark:bg-blue-950 rounded-xl p-3 mt-3">
+            <p className="font-semibold">{misconceptionLabel}</p>
+            <p className="mt-1">{addressesMisconception}</p>
+          </div>
+        )}
 
-      {submitted && prompt.workingSteps && (
-        <div className="text-xs text-gray-500 dark:text-gray-400 mt-3 bg-gray-50 dark:bg-gray-800 rounded-xl p-3">
-          <strong>Correct answer: {String(prompt.answer)}</strong>
-          <ul className="list-disc list-inside mt-1 space-y-0.5">
-            {prompt.workingSteps.map((s, i) => <li key={i}>{s}</li>)}
-          </ul>
-        </div>
-      )}
+        {submitted && prompt.workingSteps && (
+          <div className="text-xs text-gray-500 dark:text-gray-400 mt-3 bg-gray-50 dark:bg-gray-800 rounded-xl p-3">
+            <strong>Correct answer: {String(prompt.answer)}</strong>
+            <ul className="list-disc list-inside mt-1 space-y-0.5">
+              {prompt.workingSteps.map((s, i) => <li key={i}>{s}</li>)}
+            </ul>
+          </div>
+        )}
+      </div>
     </InfoCard>
   );
 }
 
 function WritingActivity({
-  prompt, answer, setAnswer, checkedItems, setCheckedItems, submitted, feedback, feedbackError, onSubmit, onNext, isLast,
+  prompt, answer, setAnswer, checkedItems, setCheckedItems, submitted, submitting, feedback, feedbackError, onSubmit, onNext, isLast,
 }: {
   prompt: { title: string; prompt: string; checklist: string[]; type?: string };
   answer: string;
@@ -1057,6 +1198,7 @@ function WritingActivity({
   checkedItems: Set<string>;
   setCheckedItems: (s: Set<string>) => void;
   submitted: boolean;
+  submitting: boolean;
   feedback: WritingFeedback | null;
   feedbackError: string;
   onSubmit: () => void;
@@ -1072,6 +1214,16 @@ function WritingActivity({
   // is falsely attached to a non-CSSE-evidenced prompt.
   const taskFamily = getWritingTaskFamilyForPromptType(prompt.type);
   const teachingContent = getWritingTeachingContent(taskFamily);
+
+  // Stage 2 — focuses the feedback region (score + dimensions + strengths),
+  // not the Next button directly, once feedback successfully loads: the
+  // AI-generated score and rubric commentary are the actual educational
+  // content here, and a screen-reader user must reach them before Next,
+  // not have focus skip straight past them.
+  const feedbackRegionRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (feedback) feedbackRegionRef.current?.focus();
+  }, [feedback]);
 
   return (
     <InfoCard className="mt-3">
@@ -1138,16 +1290,22 @@ function WritingActivity({
       {!submitted && (
         <button
           onClick={onSubmit}
-          disabled={wordCount < 10}
-          className="mt-4 bg-purple-600 hover:bg-purple-700 disabled:opacity-40 text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-colors"
+          disabled={wordCount < 10 || submitting}
+          aria-busy={submitting}
+          className="mt-4 bg-purple-600 hover:bg-purple-700 disabled:opacity-40 text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-colors inline-flex items-center gap-2"
         >
-          Submit for feedback
+          {submitting && <Loader2 size={14} className="animate-spin motion-reduce:animate-none" aria-hidden="true" />}
+          {submitting ? "Getting feedback…" : "Submit for feedback"}
         </button>
       )}
-      {feedbackError && <p className="text-xs text-red-500 mt-2">{feedbackError}</p>}
+      {feedbackError && (
+        <p className="text-xs text-red-500 mt-2" role="alert">
+          {feedbackError}
+        </p>
+      )}
 
       {feedback && (
-        <div className="mt-4 space-y-3">
+        <div ref={feedbackRegionRef} tabIndex={-1} className="mt-4 space-y-3 outline-none">
           <div className="flex items-center gap-2">
             {feedback.overallScore >= WRITING_CORRECTNESS_THRESHOLD ? (
               <CheckCircle2 size={16} className="text-emerald-500" />

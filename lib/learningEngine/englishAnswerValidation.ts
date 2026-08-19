@@ -28,21 +28,78 @@ export interface AcceptedSetResult {
   matchedOn: string | null;
 }
 
+/** Splits a normalised string into non-empty word tokens (alphanumeric runs). Shared by every token-boundary check below so "hi"/"his" or "x"/"excitement" can never collide as character substrings of one another. */
+function tokenise(normalised: string): string[] {
+  return normalised.split(/[^a-z0-9]+/).filter((t) => t.length > 0);
+}
+
+/**
+ * True if `needle` appears as a contiguous, in-order run inside `haystack`
+ * (token identity, not character containment) — e.g. ["checked","his",
+ * "spikes"] is found inside ["jogged","warmed","up","and","checked","his",
+ * "spikes"], but ["up"] alone is not treated specially by this function;
+ * the caller decides whether a single-token needle is allowed to match.
+ */
+function containsTokenSequence(haystack: string[], needle: string[]): boolean {
+  if (needle.length === 0 || needle.length > haystack.length) return false;
+  outer: for (let i = 0; i <= haystack.length - needle.length; i++) {
+    for (let j = 0; j < needle.length; j++) {
+      if (haystack[i + j] !== needle[j]) continue outer;
+    }
+    return true;
+  }
+  return false;
+}
+
 /**
  * Tier 1/2 — retrieval and vocabulary-in-context answers. Case-insensitive,
- * whitespace-normalised containment against an author-curated accepted-
- * answer list, per the mark scheme's own demonstrated tolerance (e.g.
- * accepting "relax" for "bask", rejecting "bathe" — a curated list, not a
- * generic keyword-overlap heuristic, which cannot make that distinction).
+ * whitespace-normalised matching against an author-curated accepted-answer
+ * list, per the mark scheme's own demonstrated tolerance (e.g. accepting
+ * "relax" for "bask", rejecting "bathe" — a curated list, not a generic
+ * keyword-overlap heuristic, which cannot make that distinction).
+ *
+ * Educational Integrity Correction (Stage 2) — the prior implementation
+ * matched via raw character `.includes()` in both directions, which is
+ * false-positive-prone: "hi" is a character substring of "...checked
+ * his spikes...", and "x" is a character substring of "excitement",
+ * despite neither being a real word match. Both directions below now
+ * operate on whole-word TOKENS, closing that class of defect
+ * structurally (a token boundary, not a percentage or minimum-character
+ * heuristic) rather than by picking an arbitrary threshold:
+ *
+ *   - Direction 1 (expanded/reworded answers) — the full accepted phrase,
+ *     however long, must appear as an intact token sequence inside the
+ *     user's answer. Always allowed, at any length, including a single
+ *     accepted token (e.g. "excitement" found inside "a feeling of
+ *     excitement and worry") — the accepted phrase itself is
+ *     author-curated, so this is exactly the "user gave the right
+ *     content plus extra words" case the tier is meant to reward.
+ *   - Direction 2 (abbreviated answers) — the user's own answer must
+ *     appear as an intact token sequence inside one accepted phrase.
+ *     Gated to user answers of 2+ tokens: a single incidental word
+ *     ("hi", "up", "x") is never enough on its own to stand in for a
+ *     longer curated phrase, since a lone token has no way to
+ *     distinguish "the core of the right answer, abbreviated" from "a
+ *     coincidental word that happens to also appear in the phrase". Two
+ *     or more matching tokens in the exact accepted order is not
+ *     coincidental in the same way — it is real, meaningful overlap. A
+ *     single-token user answer can still match, but only via exact
+ *     equality against a single-token accepted answer (handled above by
+ *     the direct string-equality check), never via this direction.
  */
 export function checkAcceptedAnswerSet(userAnswer: string, acceptedAnswers: string[]): AcceptedSetResult {
   const normalise = (s: string) => s.trim().toLowerCase().replace(/\s+/g, " ");
   const userNorm = normalise(userAnswer);
   if (!userNorm) return { correct: false, matchedOn: null };
+  const userTokens = tokenise(userNorm);
 
   for (const accepted of acceptedAnswers) {
     const acceptedNorm = normalise(accepted);
-    if (userNorm === acceptedNorm || userNorm.includes(acceptedNorm) || acceptedNorm.includes(userNorm)) {
+    if (userNorm === acceptedNorm) return { correct: true, matchedOn: accepted };
+
+    const acceptedTokens = tokenise(acceptedNorm);
+    if (containsTokenSequence(userTokens, acceptedTokens)) return { correct: true, matchedOn: accepted };
+    if (userTokens.length >= 2 && containsTokenSequence(acceptedTokens, userTokens)) {
       return { correct: true, matchedOn: accepted };
     }
   }

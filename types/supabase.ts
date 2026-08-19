@@ -406,6 +406,8 @@ export interface Database {
           // Migration 024 (Mathematics Reference Vertical Remediation Gate)
           first_source: string | null;
           last_attempt_support_tier: string | null;
+          // Migration 076 (Stage 2 Educational Integrity Correction)
+          last_attempt_verified: boolean | null;
         };
         Insert: {
           id?: string;
@@ -431,6 +433,7 @@ export interface Database {
           last_attempt_working_shown?: boolean | null;
           first_source?: string | null;
           last_attempt_support_tier?: string | null;
+          last_attempt_verified?: boolean | null;
         };
         Update: {
           times_seen?: number;
@@ -452,6 +455,7 @@ export interface Database {
           last_attempt_working_shown?: boolean | null;
           first_source?: string | null;
           last_attempt_support_tier?: string | null;
+          last_attempt_verified?: boolean | null;
         };
         Relationships: [];
       };

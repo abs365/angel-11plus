@@ -1,6 +1,13 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { checkAcceptedAnswerSet, checkQuotationPresent, checkOrderedSequence, checkMultiSelect, scoreEnglishComprehensionAnswer } from "@/lib/learningEngine/englishAnswerValidation";
+import {
+  checkAcceptedAnswerSet,
+  checkQuotationPresent,
+  checkOrderedSequence,
+  checkMultiSelect,
+  scoreEnglishComprehensionAnswer,
+  type EnglishPromptValidationFields,
+} from "@/lib/learningEngine/englishAnswerValidation";
 
 /**
  * Educational Increment 007B. Exercises the 007A-designed Answer
@@ -189,4 +196,142 @@ test("Tier 6: partial-credit boundary — exactly one below the required count e
   const result = checkMultiSelect(["A", "D", "E"], ["A", "D", "E", "G"], 4);
   assert.equal(result.marks, 3);
   assert.equal(result.marks, result.requiredCount - 1);
+});
+
+// ===========================================================================
+// Stage 2 Educational Integrity Correction — permanent adversarial
+// regression battery. Every false positive proven during this increment's
+// diagnostic (Founder real-use "hu" incident + this session's own
+// adversarial testing) now has an explicit, named regression test here.
+// Real content: w1-raceday-01/05 (supabase/migrations/044), the actual
+// questions involved in the reported incident.
+// ===========================================================================
+
+const RACEDAY_01_TIER2: EnglishPromptValidationFields = {
+  marks: 1,
+  acceptedAnswers: ["jogged/warmed up and checked his spikes", "practised the handover", "warmed up thoroughly"],
+  validationTier: "TIER2_ACCEPTED_SET",
+};
+
+const RACEDAY_05_TIER3: EnglishPromptValidationFields = {
+  marks: 4,
+  modelAnswer:
+    "'the familiar tightening in his chest' before the race shows his physical anxiety. His 'relief from moments earlier curdling slightly into something less comfortable' after Cass wins shows his satisfaction turning uneasy.",
+  quotationRequired: ["the familiar tightening in his chest", "curdling slightly into something less comfortable"],
+  validationTier: "TIER3_QUOTATION_PLUS_EXPLANATION",
+};
+
+const ATTICDOOR_07_TIER5: EnglishPromptValidationFields = {
+  marks: 2,
+  modelAnswer: "He feels a kind of anticipation he wants to hold onto...",
+  acceptedAnswers: ["anticipation", "excitement", "suspense", "wants to delay the moment"],
+  validationTier: "TIER5_NAMED_COMPONENT_PLUS_EXPLANATION",
+};
+
+const legacyHeuristicShouldNotBeCalled = () => {
+  throw new Error("legacyHeuristic must not be invoked for tiered content");
+};
+
+const ADVERSARIAL_GARBAGE_INPUTS = [
+  "x",
+  "hi",
+  "hu",
+  "yes",
+  "no",
+  "",
+  "   ",
+  "banana",
+  "the quick brown fox jumps over the lazy dog",
+];
+
+test("DEFECT B REGRESSION (Tier 2, the real incident's sibling question): tiny coincidental substrings no longer auto-score, real accepted answers still work", () => {
+  // Proven during diagnosis: "hi" is a character-substring of "...checked HIs spikes",
+  // "up" is a character-substring of "warmed UP and...". Neither is a real word match.
+  assert.equal(checkAcceptedAnswerSet("hi", RACEDAY_01_TIER2.acceptedAnswers!).correct, false);
+  assert.equal(checkAcceptedAnswerSet("up", RACEDAY_01_TIER2.acceptedAnswers!).correct, false);
+  assert.equal(checkAcceptedAnswerSet("x", RACEDAY_01_TIER2.acceptedAnswers!).correct, false);
+  // Positive: the real accepted phrases, and genuine multi-word abbreviations of them, still work.
+  assert.equal(checkAcceptedAnswerSet("warmed up thoroughly", RACEDAY_01_TIER2.acceptedAnswers!).correct, true);
+  assert.equal(
+    checkAcceptedAnswerSet("he warmed up thoroughly before the race", RACEDAY_01_TIER2.acceptedAnswers!).correct,
+    true,
+    "expanded/reworded answers containing the full accepted phrase must still credit"
+  );
+});
+
+test("DEFECT B REGRESSION (Tier 5, checkNamedComponent): 'x' no longer matches 'excitement' via substring coincidence", () => {
+  const result = scoreEnglishComprehensionAnswer("x", ATTICDOOR_07_TIER5, legacyHeuristicShouldNotBeCalled);
+  assert.equal(result.namedComponentCorrect, false);
+});
+
+test("DEFECT B REGRESSION (Tier 4, checkOrderedSequence): trivial per-position substrings no longer auto-score", () => {
+  const acceptedSets = [["picked his way across the boards"], ["pulled the dust sheet away"], ["touched the padlock and it fell open"]];
+  const result = checkOrderedSequence(["boards", "away", "open"], acceptedSets);
+  assert.equal(result.marks, 0, "single incidental words must not credit against a multi-word accepted phrase");
+});
+
+test("Tier 2 adversarial: full garbage battery never auto-verifies as correct", () => {
+  for (const input of ADVERSARIAL_GARBAGE_INPUTS) {
+    const result = scoreEnglishComprehensionAnswer(input, RACEDAY_01_TIER2, legacyHeuristicShouldNotBeCalled);
+    assert.equal(result.earnedMarks, 0, `"${input}" must not earn marks against RACEDAY_01`);
+  }
+});
+
+test("Tier 3 adversarial (w1-raceday-05, the real reported question): garbage input is never automatically verified", () => {
+  for (const input of ADVERSARIAL_GARBAGE_INPUTS) {
+    const result = scoreEnglishComprehensionAnswer(input, RACEDAY_05_TIER3, legacyHeuristicShouldNotBeCalled);
+    assert.equal(result.automaticallyVerified, false, `"${input}" must never be automatically verified`);
+    assert.equal(result.earnedMarks, 0, `"${input}" must never earn automatic marks`);
+    assert.equal(result.requiresSelfComparison, true);
+  }
+});
+
+test("Tier 3: the original incident input 'hu' is correctly reported as NOT containing the required quotation", () => {
+  const result = scoreEnglishComprehensionAnswer("hu", RACEDAY_05_TIER3, legacyHeuristicShouldNotBeCalled);
+  assert.equal(result.quotationFound, false);
+});
+
+test("Tier 3: one quotation supplied where two are required is still reported honestly (any-match, not a count) and still requires self-comparison", () => {
+  const oneOfTwo = "the familiar tightening in his chest showed his nerves.";
+  const result = scoreEnglishComprehensionAnswer(oneOfTwo, RACEDAY_05_TIER3, legacyHeuristicShouldNotBeCalled);
+  assert.equal(result.quotationFound, true);
+  assert.equal(result.automaticallyVerified, false, "quotationFound alone must never bypass self-comparison");
+});
+
+test("Tier 3: explanation without any quotation is correctly reported as quotation not found", () => {
+  const noQuote = "He felt more and more uncomfortable as the passage went on, because he worked so hard and she barely tried.";
+  const result = scoreEnglishComprehensionAnswer(noQuote, RACEDAY_05_TIER3, legacyHeuristicShouldNotBeCalled);
+  assert.equal(result.quotationFound, false);
+});
+
+test("Tier 5 adversarial (w1-atticdoor-07): garbage input is never automatically verified, including the proven 'x'-in-'excitement' case", () => {
+  for (const input of [...ADVERSARIAL_GARBAGE_INPUTS, "x"]) {
+    const result = scoreEnglishComprehensionAnswer(input, ATTICDOOR_07_TIER5, legacyHeuristicShouldNotBeCalled);
+    assert.equal(result.automaticallyVerified, false, `"${input}" must never be automatically verified`);
+    assert.equal(result.earnedMarks, 0, `"${input}" must never earn automatic marks`);
+    assert.equal(result.namedComponentCorrect, false, `"${input}" must not match a named component`);
+  }
+});
+
+test("Tier 5 positive: a genuine named component is still recognised", () => {
+  const result = scoreEnglishComprehensionAnswer("excitement", ATTICDOOR_07_TIER5, legacyHeuristicShouldNotBeCalled);
+  assert.equal(result.namedComponentCorrect, true);
+});
+
+test("Tier 6 regression: multi-select scoring is untouched by the Defect B fix (uses checkMultiSelect, not checkAcceptedAnswerSet)", () => {
+  const prompt: EnglishPromptValidationFields = {
+    marks: 4,
+    validationTier: "TIER6_MULTI_SELECT",
+    correctOptions: ["A", "D", "E", "G"],
+    requiredSelectionCount: 4,
+  };
+  const legacy = () => 0;
+  const result = scoreEnglishComprehensionAnswer("  a,, \n\n d , e\n g.  ", prompt, legacy);
+  assert.equal(result.multiSelectDetail?.marks, 4);
+  const garbage = scoreEnglishComprehensionAnswer("banana, purple elephant, 12345", prompt, legacy);
+  assert.equal(garbage.multiSelectDetail?.marks, 0);
+});
+
+test("Positive flexibility (Tier 2): case variation and punctuation variation still credit", () => {
+  assert.equal(checkAcceptedAnswerSet("  WARMED UP THOROUGHLY.  ", RACEDAY_01_TIER2.acceptedAnswers!).correct, true);
 });

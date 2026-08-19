@@ -43,7 +43,7 @@ const SUBJECTS: {
   iconBg: string;
 }[] = [
   { key: "english", href: "/english", label: "English Comprehension", icon: BookOpen, color: "text-purple-600 dark:text-purple-400", iconBg: "bg-purple-100 dark:bg-purple-900" },
-  { key: "maths", href: "/maths", label: "Maths Reasoning", icon: Calculator, color: "text-blue-600 dark:text-blue-400", iconBg: "bg-blue-100 dark:bg-blue-900" },
+  { key: "maths", href: "/maths", label: "Mathematics", icon: Calculator, color: "text-blue-600 dark:text-blue-400", iconBg: "bg-blue-100 dark:bg-blue-900" },
   { key: "vocabulary", href: "/vocabulary", label: "Vocabulary Builder", icon: BookMarked, color: "text-emerald-600 dark:text-emerald-400", iconBg: "bg-emerald-100 dark:bg-emerald-900" },
   { key: "writing", href: "/writing", label: "Creative Writing", icon: Pencil, color: "text-amber-600 dark:text-amber-400", iconBg: "bg-amber-100 dark:bg-amber-900" },
 ];

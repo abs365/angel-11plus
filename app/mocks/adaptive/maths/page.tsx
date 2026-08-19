@@ -41,10 +41,10 @@ import type { AdaptiveTier } from "@/types/adaptive";
 // this is a single-section adaptive practice session, isolated from the
 // existing app/maths/page.tsx experience (untouched by this phase).
 
-// Angel UX V3 — "Maths Practice" is the only name a student sees; ALI's
+// Angel UX V3 — "Mathematics Practice" is the only name a student sees; ALI's
 // internal name (SECTION.id, "maths-adaptive") is unchanged and still used
 // for tracking/bridge writes below — this is a presentation-only rename.
-const SECTION = { id: "maths-adaptive", name: "Maths Practice", minutes: 12, count: 10 };
+const SECTION = { id: "maths-adaptive", name: "Mathematics Practice", minutes: 12, count: 10 };
 const XP_REWARD = 80;
 
 // ─── Answer checking (numeric-aware, mirrors app/maths/page.tsx's pattern — duplicated by design, isolation) ─
@@ -304,7 +304,7 @@ export default function AdaptiveMathsMockPage() {
                 <Sparkles size={12} />
                 Personalised
               </span>
-              <h1 className="text-xl font-bold">Maths Practice</h1>
+              <h1 className="text-xl font-bold">Mathematics Practice</h1>
             </div>
             <p className="text-sm text-white/80">
               Questions matched to your practice level.

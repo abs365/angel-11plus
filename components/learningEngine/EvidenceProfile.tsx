@@ -31,11 +31,22 @@ export function EvidenceProfile({ competencies }: { competencies: CompetencyStat
 
   return (
     <div className="space-y-4">
+      {/* Stage 2 Educational Integrity Correction (Part 11) — platform
+          content availability and the learner's own attempted count were
+          previously one line joined by a mid-dot, which a reasonable
+          parent could read as "my child has covered 25 of 27 assessment
+          types." Split into two clearly separate, separately labelled
+          facts — same underlying data (withContent/withAttempts), no
+          model change — so platform coverage can never be mistaken for
+          learner achievement. */}
       <InfoCard className="flex items-center justify-between flex-wrap gap-2">
-        <div>
+        <div className="space-y-1">
           <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">Assessment Coverage</p>
-          <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">
-            {withContent} of {totalQuestionTypes} Question Types have content authored · {withAttempts} attempted
+          <p className="text-xs text-gray-400 dark:text-gray-500">
+            Platform content available: {withContent} of {totalQuestionTypes} question types
+          </p>
+          <p className="text-xs text-gray-400 dark:text-gray-500">
+            Your child has attempted: {withAttempts} question types
           </p>
         </div>
         {withContent === 0 && <StatusIndicator tone="neutral" label="No content authored yet" />}

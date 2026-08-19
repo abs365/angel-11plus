@@ -133,7 +133,7 @@ export default function MockTestPage() {
                   <ClipboardList size={16} className="text-blue-600" />
                 </div>
                 <div>
-                  <p className="text-gray-800 font-medium text-sm">Section 2: Maths Reasoning</p>
+                  <p className="text-gray-800 font-medium text-sm">Section 2: Mathematics</p>
                   <p className="text-gray-400 text-sm">{mockMathsQuestions.length} problem-solving questions · 25 minutes</p>
                 </div>
               </div>

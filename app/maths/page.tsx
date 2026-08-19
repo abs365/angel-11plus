@@ -10,6 +10,7 @@ import {
   ChevronUp,
   Sparkles,
   RefreshCw,
+  Play,
 } from "lucide-react";
 import PageLayout from "@/components/PageLayout";
 import { mathsQuestions, quickArithmetic } from "@/data/maths";
@@ -235,7 +236,7 @@ export default function MathsPage() {
               <Calculator size={22} aria-hidden="true" className="text-blue-600 dark:text-blue-400" />
             </div>
             <div>
-              <h1 className="text-gray-900 dark:text-gray-100 font-bold text-2xl">Maths Reasoning</h1>
+              <h1 className="text-gray-900 dark:text-gray-100 font-bold text-2xl">Mathematics</h1>
               <p className="text-gray-400 dark:text-gray-500 text-sm">Problem solving · Reasoning · Accuracy</p>
             </div>
           </div>
@@ -278,6 +279,12 @@ export default function MathsPage() {
               <p className="text-gray-400 dark:text-gray-500 text-sm">
                 Word problems, fractions, algebra, sequences and geometry. Work through each at your own pace with model solutions.
               </p>
+              {(recommendedMode === "reasoning" || recommendedMode === null) && (
+                <p className="mt-3 inline-flex items-center gap-1.5 text-sm font-semibold text-blue-700 dark:text-blue-300">
+                  <Play size={14} aria-hidden="true" />
+                  Start Mathematics Practice
+                </p>
+              )}
             </button>
 
             <button
@@ -306,6 +313,12 @@ export default function MathsPage() {
               <p className="text-gray-400 dark:text-gray-500 text-sm">
                 10 arithmetic questions. Race against the clock: 60 seconds. No calculator.
               </p>
+              {recommendedMode === "arithmetic" && (
+                <p className="mt-3 inline-flex items-center gap-1.5 text-sm font-semibold text-orange-700 dark:text-orange-300">
+                  <Play size={14} aria-hidden="true" />
+                  Start Mathematics Practice
+                </p>
+              )}
             </button>
           </div>
 

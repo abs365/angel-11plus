@@ -28,6 +28,7 @@ function rowToHistory(row: HistoryRow): StudentQuestionHistoryRow {
     lastAttemptWorkingShown: row.last_attempt_working_shown,
     firstSource: row.first_source,
     lastAttemptSupportTier: row.last_attempt_support_tier,
+    lastAttemptVerified: row.last_attempt_verified ?? null,
   };
 }
 
@@ -217,6 +218,14 @@ export function buildEvidenceUpdateColumns(evidenceFacts?: AttemptEvidenceFacts)
  * reached only after scaffolding/hints beyond the standard first try — see
  * lib/ali/mastery.ts's applyAttemptOutcome() for how this changes mastery
  * accounting, and GUIDED_LEARNING_REMEDIATION_REPORT.md for the full design.
+ *
+ * `verified` (migration 076, Stage 2 Educational Integrity Correction) —
+ * defaults to `true`, the exact prior behaviour for every existing caller.
+ * A caller that recorded a learner's own self-assessment of an answer
+ * Angel could not automatically grade (English Tier 3/5) must pass
+ * `false` — a genuinely different concept from `supportTier` (which stays
+ * about educational scaffolding, unchanged by this parameter). See
+ * lib/ali/confidence.ts's anyEvidence check for how this is consumed.
  */
 export async function recordOutcome(
   supabase: SupabaseClient<Database>,
@@ -226,7 +235,8 @@ export async function recordOutcome(
   sessionId: string,
   masteryThreshold: number,
   evidenceFacts?: AttemptEvidenceFacts,
-  supportTier: "independent" | "supported" = "independent"
+  supportTier: "independent" | "supported" = "independent",
+  verified: boolean = true
 ): Promise<void> {
   const { data: existing, error: fetchError } = await supabase
     .from("ali_student_question_history")
@@ -259,6 +269,7 @@ export async function recordOutcome(
         lastAttemptWorkingShown: null,
         firstSource: null,
         lastAttemptSupportTier: null,
+        lastAttemptVerified: null,
       } as StudentQuestionHistoryRow);
 
   const updated = applyAttemptOutcome(current, isCorrect, sessionId, masteryThreshold, supportTier);
@@ -293,6 +304,20 @@ export async function recordOutcome(
     .eq("question_id", questionId);
   if (supportTierError) {
     console.warn("[ALI] recordOutcome support-tier write failed:", supportTierError.message);
+  }
+
+  // Verification provenance (migration 076, Stage 2 Educational Integrity
+  // Correction): same separate best-effort write, same reasoning as
+  // supportTier above — never lets a database that has not yet applied
+  // migration 076 block the core mastery update this function's every
+  // existing caller depends on.
+  const { error: verifiedError } = await supabase
+    .from("ali_student_question_history")
+    .update({ last_attempt_verified: verified })
+    .eq("profile_id", profileId)
+    .eq("question_id", questionId);
+  if (verifiedError) {
+    console.warn("[ALI] recordOutcome verified write failed:", verifiedError.message);
   }
 
   // Global calibration-drift signal (ADAPTIVE_ASSESSMENT_ENGINE_ARCHITECTURE.md §3.4)

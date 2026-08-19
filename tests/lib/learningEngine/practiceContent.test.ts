@@ -1,6 +1,48 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { checkMathsAnswer, parseNumberWithUnit } from "../../../lib/learningEngine/practiceContent";
+import { checkMathsAnswer, parseNumberWithUnit, scoreEnglishAnswer } from "../../../lib/learningEngine/practiceContent";
+
+// --- Stage 2 Educational Integrity Correction: scoreEnglishAnswer (legacy
+// English heuristic, reached with NO self-assessment step at all — its
+// return value is written straight to evidence as automatically-verified
+// marks) --------------------------------------------------------------
+
+const RACEDAY_01_MODEL_ANSWER =
+  "He jogged slow laps to loosen his muscles, checked his spikes four times, and practised the baton handover, referring to a laminated card of his split times.";
+
+test("scoreEnglishAnswer REGRESSION: zero-keyword-overlap garbage no longer earns automatic half marks", () => {
+  for (const garbage of ["aaaaaaaa", "xxxxxxxxxxx", "asdf asdf asdf", "the quick brown fox jumps", "I do not know the answer at all"]) {
+    assert.equal(
+      scoreEnglishAnswer(garbage, RACEDAY_01_MODEL_ANSWER, 4),
+      0,
+      `"${garbage}" must score 0 — no real content overlap with the model answer`
+    );
+  }
+});
+
+test("scoreEnglishAnswer: an answer just at the 8-character floor with zero real overlap still scores 0", () => {
+  assert.equal(scoreEnglishAnswer("12345678", RACEDAY_01_MODEL_ANSWER, 4), 0);
+});
+
+test("scoreEnglishAnswer: genuine partial keyword overlap still earns partial credit (positive-flexibility preserved)", () => {
+  const marks = scoreEnglishAnswer("he checked his spikes before the race", RACEDAY_01_MODEL_ANSWER, 4);
+  assert.ok(marks >= 1, "real overlap with the model answer's own content words must still earn credit");
+});
+
+test("scoreEnglishAnswer: a genuinely complete, differently-worded answer still earns full marks (positive-flexibility preserved)", () => {
+  const marks = scoreEnglishAnswer(
+    "He jogged slow deliberate laps to loosen his muscles, checked his spikes for the fourth time, and practised the handover with an imaginary baton, referring to his laminated card of split times.",
+    RACEDAY_01_MODEL_ANSWER,
+    4
+  );
+  assert.equal(marks, 4);
+});
+
+test("scoreEnglishAnswer: empty/whitespace-only/too-short input still scores 0 (pre-existing behaviour, unaffected)", () => {
+  assert.equal(scoreEnglishAnswer("", RACEDAY_01_MODEL_ANSWER, 4), 0);
+  assert.equal(scoreEnglishAnswer("   ", RACEDAY_01_MODEL_ANSWER, 4), 0);
+  assert.equal(scoreEnglishAnswer("short", RACEDAY_01_MODEL_ANSWER, 4), 0);
+});
 
 /**
  * Educational Increment 007K — regression coverage for the unit-answer

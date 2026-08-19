@@ -447,7 +447,15 @@ export default function AdaptiveEnglishMockPage() {
             ))}
           </div>
 
-          <div className="pb-4">
+          {/* Stage 2 (English Comprehension submission defect) — same fix
+              as app/english/[id]/page.tsx: this is a genuine whole-lesson
+              submission (handleSubmit() scores every question together,
+              unchanged), so the completion control stays singular; it's
+              made `sticky` so it's reachable from any question in the
+              list, not only after scrolling past all of them. This route
+              renders standalone (no PageLayout, no fixed mobile bottom
+              nav), so no extra clearance offset is needed. */}
+          <div className="sticky bottom-4 z-30 bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 shadow-lg p-4">
             <div className="flex items-center justify-between mb-3">
               <p className="text-sm text-gray-400 dark:text-gray-500">
                 {answeredCount} of {questions.length} answered

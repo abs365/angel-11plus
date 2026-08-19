@@ -25,6 +25,21 @@ export interface StudentQuestionHistoryRow {
   firstSource: string | null;
   /** Migration 024 — "independent" | "supported" | null (older rows, pre-migration). See lib/ali/mastery.ts's applyAttemptOutcome(). */
   lastAttemptSupportTier: string | null;
+  /**
+   * Migration 076 (Stage 2 Educational Integrity Correction) — whether
+   * Angel automatically verified this attempt's correctness (true) or the
+   * learner self-assessed it against a model answer Angel could not
+   * automatically grade (false). A separate concept from
+   * lastAttemptSupportTier ("was this attempt guided/scaffolded"): a
+   * self-assessed Tier 3/5 English answer is "supported" for exactly this
+   * reason regardless of Guided Practice, but that conflated the two
+   * concepts into one field — see lib/ali/confidence.ts's anyEvidence
+   * check for why this distinction now matters at the Evidence Confidence
+   * layer, not just the mastery layer. Null on every pre-migration row
+   * (provenance cannot be reconstructed) — application code treats null as
+   * verified (true), the conservative, non-destructive default.
+   */
+  lastAttemptVerified?: boolean | null;
 }
 
 /**

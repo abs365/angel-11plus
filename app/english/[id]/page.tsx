@@ -296,8 +296,21 @@ export default function EnglishLessonPage({ params }: Props) {
           ))}
         </div>
 
-        {/* Submit */}
-        <div className="mt-6 pb-4">
+        {/* Submit — Stage 2 (English Comprehension submission defect):
+            Founder real-device evidence showed a learner reading a single
+            mid-list question saw the answer field and "Show hint" with no
+            visible way to complete it, because the only completion control
+            was this block, placed after every question card and reachable
+            only by scrolling to the very end. The lesson's marking is a
+            genuine single whole-lesson submission (handleSubmit() scores
+            every question together, unchanged here) — not a per-question
+            defect — so the fix is making this one real control reach the
+            learner wherever they are, not inventing a per-question submit.
+            `sticky` pins it near the bottom of the viewport once scrolled
+            into range; `bottom-16` clears the fixed mobile bottom nav
+            (h-16), `md:bottom-4` matches the desktop/tablet top-bar layout
+            where that nav doesn't exist. */}
+        <div className="sticky bottom-16 md:bottom-4 z-30 mt-6 bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 shadow-lg p-4">
           <div className="flex items-center justify-between mb-3">
             <p className="text-sm text-gray-400 dark:text-gray-500">
               {answeredCount} of {lesson.questions.length} answered

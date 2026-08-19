@@ -1,0 +1,54 @@
+-- Angel Digital 11+ — Migration 076
+-- Stage 2 Educational Integrity Correction — Evidence Verification
+-- Provenance. Additive-only. Depends on migration 006
+-- (ali_student_question_history) and reuses migration 024's exact
+-- last_attempt_support_tier pattern. Does not touch profiles / user_stats
+-- / lesson_progress / ali_question_bank / ali_durable_mastery.
+-- Run this in: Supabase Dashboard > SQL Editor > New query
+
+-- ============================================================
+-- ali_student_question_history.last_attempt_verified
+-- Root cause (this increment's diagnostic): supportTier ("independent" |
+-- "supported") already correctly gates whether a correct attempt can
+-- advance distinct-session mastery evidence (migration 024) — but no field
+-- anywhere records WHO judged the attempt correct. Confidence Processing
+-- (lib/ali/confidence.ts) and the Learning Engine V1 rollup
+-- (lib/learningEngine/rollup.ts) both read only times_seen/times_correct,
+-- which increment identically whether Angel automatically verified the
+-- answer or the learner self-assessed it against a model answer they could
+-- not be automatically checked against (TIER3_QUOTATION_PLUS_EXPLANATION /
+-- TIER5_NAMED_COMPONENT_PLUS_EXPLANATION). A single dishonest or careless
+-- self-assessed "Yes" was therefore proven capable of clearing the
+-- "insufficient evidence" confidence floor on its own, with the resulting
+-- competency state displayed to a parent as "Developing — Real progress."
+--
+-- last_attempt_verified is a new, separate fact — deliberately not merged
+-- into supportTier, which keeps its own existing, legitimate meaning
+-- (educational support/scaffolding) unchanged (see this increment's
+-- architecture note: the two concepts were being silently collapsed into
+-- one field, and this migration is the fix). It follows the exact
+-- "directly-known fact about how THIS specific attempt was produced" /
+-- most-recent-attempt-only convention already established for
+-- last_attempt_support_tier: true when Angel automatically verified
+-- correctness (Maths exact-match, English Tier 1/2/4/6, Writing's
+-- automated-but-uncalibrated AI score), false when the learner self-
+-- assessed an English Tier 3/5 answer Angel could not automatically grade.
+--
+-- Nullable, defaulting to null for every existing row — per the same
+-- first_source precedent (migration 024): a historical attempt's true
+-- verification provenance cannot be reconstructed after the fact, and this
+-- migration does not fabricate one. Application code (lib/ali/confidence.ts,
+-- lib/learningEngine/rollup.ts) treats a null value as verified (true) —
+-- the conservative, non-destructive choice: every attempt recorded before
+-- this defect was even architecturally nameable was either genuinely
+-- auto-verified or guided-but-correct, never a case of this specific
+-- self-assessment gap, so treating unknown-provenance history as verified
+-- does not re-introduce the defect this migration exists to close, and
+-- does not silently downgrade real historical evidence.
+-- ============================================================
+alter table public.ali_student_question_history
+  add column if not exists last_attempt_verified boolean;
+
+-- No RLS change: table already has RLS explicitly disabled (migration 006)
+-- under the account-wide-state convention; adding a nullable column does
+-- not alter that.

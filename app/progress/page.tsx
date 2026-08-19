@@ -36,7 +36,7 @@ const lessonNames: Record<string, string> = {
   "eng-001": "The Lighthouse Mystery",
   "eng-002": "The Boy Who Collected Silence",
   "eng-003": "Letters from the Trenches",
-  "maths-reasoning": "Maths Reasoning Session",
+  "maths-reasoning": "Mathematics Reasoning Session",
   "maths-arithmetic": "Speed Arithmetic",
   "vocab-session": "Vocabulary Flashcards",
   "verbal-reasoning": "Verbal Reasoning Session",

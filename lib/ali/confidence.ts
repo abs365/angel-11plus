@@ -39,7 +39,18 @@ export function computeCompetencyConfidence(
 ): EvidenceConfidenceTier {
   const { questions, transferCorroborated } = input;
 
-  const anyEvidence = questions.some((q) => q.timesSeen > 0);
+  // Stage 2 Educational Integrity Correction — the proven defect: this
+  // check previously only asked "has ANY question been attempted at all,"
+  // with no regard for whether that attempt was Angel's own automatic
+  // verification or the learner's own unverified self-report. A single
+  // self-assessed "Yes" on a nonsense English answer was proven sufficient
+  // to clear this floor entirely on its own. `verified` defaults to `true`
+  // for a question that doesn't populate it at all (every pre-migration
+  // history row, Mock's own separate evidence path), so this narrows what
+  // already counted as evidence — it never treats previously-valid
+  // evidence as insufficient, only stops treating self-assessed-only
+  // attempts as sufficient on their own.
+  const anyEvidence = questions.some((q) => q.timesSeen > 0 && q.verified !== false);
   if (!anyEvidence) return "insufficient";
 
   const thresholdMet = questions.filter(

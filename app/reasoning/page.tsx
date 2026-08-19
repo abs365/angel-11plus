@@ -100,7 +100,7 @@ const personalisedPracticeCards: {
   },
   {
     href: "/mocks/adaptive/maths",
-    title: "Maths Practice",
+    title: "Mathematics Practice",
     description: "Maths questions matched to your practice level.",
     minutes: "12 min",
     bg: "bg-blue-50 dark:bg-blue-950",
