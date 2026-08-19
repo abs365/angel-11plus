@@ -262,6 +262,19 @@ export const FAMILY_EDUCATIONAL_CONTEXT: Record<string, FamilyEvidenceContext> =
     objective: "Compare unit prices across two options where the units first require conversion to a common unit. Extends the already-established mr04-best-value family, whose existing siblings never require a conversion step.",
     evidenceBasis: "Extends the already-validated mr04-best-value family's evidence basis (best-value/unit-price comparison is a confirmed CSSE Mathematics demand) to include a genuine unit-conversion step. See ALI_DECISION_LOG.md Decisions 116-117 for the full reconciliation and technical review.",
   },
+  // Stage 3, Increment 006 (Decision 121 discovery, this increment's
+  // authoring) — 2 brand-new families. QT-MR-12's own inverse form and
+  // QT-MR-08's own rotation-family gap are both named directly in
+  // CSSE_QUESTION_INTELLIGENCE_FRAMEWORK.md's Measurement Purpose text for
+  // those Question Types, not invented for this increment.
+  "mr01-reverse-mean": {
+    objective: "Given the mean of a set of values and all but one of the individual values, find the missing value. This is the inverse of the already-established mr01-average-mean family, which only ever gives all the values and asks for the mean.",
+    evidenceBasis: "CSSE_QUESTION_INTELLIGENCE_FRAMEWORK.md's own Measurement Purpose for QT-MR-12 already names this inverse form directly: \"in its inverse form, [QT-MR-12 requires the candidate] to reconstruct a missing value... from a stated mean.\" See ALI_DECISION_LOG.md Decision 121 for the full discovery and this increment's decision entry for the authoring review.",
+  },
+  "mr03-coord-combined": {
+    objective: "Apply two transformations (a reflection and a translation) to one point, in a stated order, where the two operations do not commute. Extends the already-established mr03-coordinate family, whose existing siblings each apply exactly one transformation.",
+    evidenceBasis: "CSSE_QUESTION_INTELLIGENCE_FRAMEWORK.md's own Measurement Purpose for QT-MR-08 names transformation reasoning as this Question Type's own defined scope. See ALI_DECISION_LOG.md Decision 121 for the full discovery and this increment's decision entry for the authoring review.",
+  },
 };
 
 /**
@@ -1086,6 +1099,46 @@ export function deriveMr04DepthReviewStatus(rows: SevenXReviewRow[], familyIds: 
 
 export async function fetchMr04DepthReviewStatus(familyIds: string[]): Promise<Map<string, SevenXReviewStatus>> {
   return fetchBatchReviewStatus(familyIds, MR04_DEPTH_BATCH_MARKER);
+}
+
+/**
+ * Stage 3, Increment 006 (Mathematics Structural Depth Expansion) — the 2
+ * brand-new families migration 081 (Decision 121's discovery, this
+ * increment's authoring) inserted as `provisional`, made reviewable via
+ * the same scoped-batch mechanism as MR04_DEPTH_FAMILIES, with its own
+ * distinct marker so this batch's evidence trail and count can never be
+ * conflated with Increment 004's or 007X's. Included proactively in the
+ * same increment that authored the content, per explicit instruction, so
+ * no follow-up review-readiness correction is required this time.
+ */
+export const INC006_DEPTH_BATCH_MARKER = "STAGE3-INC006-DEPTH";
+
+export const INC006_DEPTH_FAMILIES: SevenXFamilyConfig[] = [
+  {
+    familyId: "mr01-reverse-mean",
+    newQuestionIds: ["mr01-revmean-01", "mr01-revmean-02", "mr01-revmean-03", "mr01-revmean-04"],
+    disclosure:
+      "This is a brand-new family with no prior review of any kind. It requires reasoning from a stated mean and all-but-one of the underlying values to the missing value (total = mean x count, then subtract the known values) -- the inverse of the existing mr01-average-mean family, which only ever gives all the values and asks for the mean. All 4 siblings deliberately mirror the original family's own 4 contexts (scores, temperature, savings, distance) with entirely new numbers, so the forward/reverse relationship is visible, though this also means the underlying sentence shape is close to the original family's own convention. Disclosed for your own judgement, not a recommendation either way.",
+  },
+  {
+    familyId: "mr03-coord-combined",
+    newQuestionIds: ["mr03-combo-01", "mr03-combo-02", "mr03-combo-03", "mr03-combo-04"],
+    disclosure:
+      "This is a brand-new family with no prior review of any kind. It requires applying two transformations to one point in a stated order (reflection and translation, which do not commute -- the wrong order gives a different, plausible-looking wrong answer). 2 of the 4 siblings reflect-then-translate and 2 translate-then-reflect, and both x-axis and y-axis reflections are represented, so neither the order nor the axis is fixed across the family. Disclosed for your own judgement, not a recommendation either way.",
+  },
+];
+export const INC006_DEPTH_TARGET_IDS = INC006_DEPTH_FAMILIES.map((f) => f.familyId);
+
+export function buildInc006DepthNotesPrefix(familyId: string, questionIds: string[]): string {
+  return `${INC006_DEPTH_BATCH_MARKER} New Content Review for ${familyId}. Question IDs: ${questionIds.join(", ")}.`;
+}
+
+export function deriveInc006DepthReviewStatus(rows: SevenXReviewRow[], familyIds: string[]): Map<string, SevenXReviewStatus> {
+  return deriveBatchReviewStatus(rows, familyIds, INC006_DEPTH_BATCH_MARKER);
+}
+
+export async function fetchInc006DepthReviewStatus(familyIds: string[]): Promise<Map<string, SevenXReviewStatus>> {
+  return fetchBatchReviewStatus(familyIds, INC006_DEPTH_BATCH_MARKER);
 }
 
 export const DIFFICULTY_RANK: Record<string, number> = { easy: 0, medium: 1, hard: 2 };

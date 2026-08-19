@@ -18,6 +18,7 @@ import {
   WRITING_TEACHING_CONTENT_VERSION, WRITING_TEACHING_REVIEW_TARGET_IDS,
   fetchQuestionsByIds, fetchSevenXReviewStatus, buildSevenXNotesPrefix, SEVEN_X_FAMILIES, SEVEN_X_TARGET_IDS,
   fetchMr04DepthReviewStatus, buildMr04DepthNotesPrefix, MR04_DEPTH_FAMILIES, MR04_DEPTH_TARGET_IDS,
+  fetchInc006DepthReviewStatus, buildInc006DepthNotesPrefix, INC006_DEPTH_FAMILIES, INC006_DEPTH_TARGET_IDS,
   type PendingReviewTarget, type RepresentativeQuestion, type PassageDetail, type ReviewDecision, type ReviewSubmission,
   type TargetSummary, type MathsTeachingReviewSubmission, type SevenXReviewStatus, type SevenXFamilyConfig,
 } from "@/lib/adminReview";
@@ -199,6 +200,9 @@ const FAMILY_DISPLAY_NAME: Record<string, string> = {
   "mr04-reverse-percentage": "Reverse Percentage Change",
   "mr04-time-reverse": "Reverse Elapsed Time",
   "mr04-bv-convert": "Best Value with Unit Conversion",
+  // Stage 3, Increment 006 (Decision 121 discovery/authoring).
+  "mr01-reverse-mean": "Reverse Mean (Missing Value)",
+  "mr03-coord-combined": "Combined Coordinate Transformations",
 };
 
 /** Graceful fallback for any family/passage not in the curated name map above — never shows a raw dash-separated ID as the primary label. */
@@ -1563,6 +1567,62 @@ function SevenXSection({
 }
 
 /**
+ * Stage 3, Increment 006 (Mathematics Structural Depth Expansion) — a
+ * dedicated section for the 8 newly authored questions across 2 new
+ * families (mr01-reverse-mean, mr03-coord-combined), structurally
+ * identical to Mr04DepthSection below (own array, own marker, own status
+ * map). Included in the same increment that authored the content, per
+ * explicit instruction, so no follow-up correction is needed this time.
+ */
+function Inc006DepthSection({
+  targets, status, onOpen,
+}: {
+  targets: PendingReviewTarget[];
+  status: Map<string, SevenXReviewStatus>;
+  onOpen: (t: PendingReviewTarget, family: SevenXFamilyConfig) => void;
+}) {
+  const reviewedCount = INC006_DEPTH_FAMILIES.filter((f) => status.get(f.familyId)?.reviewed).length;
+  return (
+    <div className="bg-white dark:bg-gray-900 rounded-2xl border-2 border-teal-200 dark:border-teal-800 overflow-hidden">
+      <div className="px-5 py-4 border-b border-teal-100 dark:border-teal-900 bg-teal-50 dark:bg-teal-950/40">
+        <p className="text-sm font-bold text-teal-900 dark:text-teal-200">Stage 3 Mathematics Structural Depth Review</p>
+        <p className="text-xs text-teal-600 dark:text-teal-400 mt-0.5">{reviewedCount} of {INC006_DEPTH_FAMILIES.length} families reviewed. 8 new questions total.</p>
+        <div className="mt-2 text-xs text-teal-800 dark:text-teal-300 space-y-0.5">
+          <p>• All 8 new questions remain PROVISIONAL. Reviewing a family does not activate it.</p>
+          <p>• Both families below are entirely new: no earlier review of any kind exists for either of them.</p>
+          <p>• Each card discloses the technical-authoring findings from this increment before you review.</p>
+          <p>• No Mock content is involved anywhere in this batch.</p>
+        </div>
+      </div>
+      <div className="divide-y divide-gray-50 dark:divide-gray-800">
+        {INC006_DEPTH_FAMILIES.map((f) => {
+          const s = status.get(f.familyId);
+          const pendingTarget = targets.find((t) => t.id === f.familyId && (t.notes ?? "").includes("STAGE3-INC006-DEPTH"));
+          return (
+            <button
+              key={f.familyId}
+              disabled={!pendingTarget}
+              onClick={() => pendingTarget && onOpen(pendingTarget, f)}
+              className="w-full text-left px-5 py-3 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors flex items-center justify-between gap-3 disabled:opacity-50"
+            >
+              <div>
+                <p className="text-sm font-medium text-gray-900 dark:text-gray-100">{FAMILY_DISPLAY_NAME[f.familyId] ?? formatFallbackName(f.familyId)}</p>
+                <p className="text-[11px] text-gray-400 dark:text-gray-500 mt-0.5">
+                  {f.newQuestionIds.length} new question{f.newQuestionIds.length === 1 ? "" : "s"}
+                  {s?.reviewed ? ` · reviewed (${s.decision})` : " · not yet reviewed"}
+                  {!pendingTarget ? " · migration 082 not yet applied" : ""}
+                </p>
+              </div>
+              {s?.reviewed ? <CheckCircle2 size={16} className="text-emerald-500 shrink-0" /> : <ArrowRight size={14} className="text-gray-300 dark:text-gray-600 shrink-0" />}
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+/**
  * Stage 3, Increment 004, Post-Increment Review-Readiness Correction — a
  * dedicated section for the 11 newly authored MR-04 questions across 3
  * brand-new families (Decision 116 authored them; Decision 117 reviewed
@@ -1638,7 +1698,7 @@ function FullBacklogSection({ targets, reviewedIds, onOpen }: { targets: Pending
   const backlogTargets = targets.filter((t) =>
     !PILOT_TARGET_IDS.includes(t.id) && !BATCH2_TARGET_IDS.includes(t.id) && !BATCH3_TARGET_IDS.includes(t.id) &&
     !BATCH4_TARGET_IDS.includes(t.id) && !SEVEN_T_TARGET_IDS.includes(t.id) && !SEVEN_X_TARGET_IDS.includes(t.id) &&
-    !MR04_DEPTH_TARGET_IDS.includes(t.id) &&
+    !MR04_DEPTH_TARGET_IDS.includes(t.id) && !INC006_DEPTH_TARGET_IDS.includes(t.id) &&
     !reviewedIds.has(t.id));
 
   return (
@@ -1776,11 +1836,13 @@ function ReviewDashboard() {
   const [selectedSevenX, setSelectedSevenX] = useState<{ target: PendingReviewTarget; family: SevenXFamilyConfig } | null>(null);
   const [mr04DepthStatus, setMr04DepthStatus] = useState<Map<string, SevenXReviewStatus>>(new Map());
   const [selectedMr04Depth, setSelectedMr04Depth] = useState<{ target: PendingReviewTarget; family: SevenXFamilyConfig } | null>(null);
+  const [inc006DepthStatus, setInc006DepthStatus] = useState<Map<string, SevenXReviewStatus>>(new Map());
+  const [selectedInc006Depth, setSelectedInc006Depth] = useState<{ target: PendingReviewTarget; family: SevenXFamilyConfig } | null>(null);
 
   async function load() {
-    const [pending, reviewed, teachingReviewed, englishTeachingReviewed, writingTeachingReviewed, sevenX, mr04Depth] = await Promise.all([
+    const [pending, reviewed, teachingReviewed, englishTeachingReviewed, writingTeachingReviewed, sevenX, mr04Depth, inc006Depth] = await Promise.all([
       fetchPendingReviewTargets(), fetchReviewedTargetIds(), fetchMathsTeachingReviewedFamilyIds(), fetchEnglishTeachingReviewedFamilyIds(), fetchWritingTeachingReviewedFamilyIds(),
-      fetchSevenXReviewStatus(SEVEN_X_TARGET_IDS), fetchMr04DepthReviewStatus(MR04_DEPTH_TARGET_IDS),
+      fetchSevenXReviewStatus(SEVEN_X_TARGET_IDS), fetchMr04DepthReviewStatus(MR04_DEPTH_TARGET_IDS), fetchInc006DepthReviewStatus(INC006_DEPTH_TARGET_IDS),
     ]);
     setTargets(pending);
     setReviewedIds(reviewed);
@@ -1789,6 +1851,7 @@ function ReviewDashboard() {
     setWritingTeachingReviewedIds(writingTeachingReviewed);
     setSevenXStatus(sevenX);
     setMr04DepthStatus(mr04Depth);
+    setInc006DepthStatus(inc006Depth);
   }
 
   useEffect(() => { load(); }, []);
@@ -1838,6 +1901,20 @@ function ReviewDashboard() {
     );
   }
 
+  if (selectedInc006Depth) {
+    const { target, family } = selectedInc006Depth;
+    return (
+      <ReviewForm
+        target={target}
+        onDone={() => { setSelectedInc006Depth(null); load(); }}
+        sevenX={{
+          questionIds: family.newQuestionIds, reclassified: family.reclassified, disclosure: family.disclosure,
+          notesPrefix: buildInc006DepthNotesPrefix(target.id, family.newQuestionIds),
+        }}
+      />
+    );
+  }
+
   if (targets === null) return <p className="text-sm text-gray-400 dark:text-gray-500">Loading review pilot…</p>;
 
   return (
@@ -1859,6 +1936,7 @@ function ReviewDashboard() {
       <SevenTSection targets={targets} reviewedIds={reviewedIds} onOpen={setSelected} />
       <SevenXSection targets={targets} sevenXStatus={sevenXStatus} onOpen={(target, family) => setSelectedSevenX({ target, family })} />
       <Mr04DepthSection targets={targets} status={mr04DepthStatus} onOpen={(target, family) => setSelectedMr04Depth({ target, family })} />
+      <Inc006DepthSection targets={targets} status={inc006DepthStatus} onOpen={(target, family) => setSelectedInc006Depth({ target, family })} />
       <FullBacklogSection targets={targets} reviewedIds={reviewedIds} onOpen={setSelected} />
       </>
       )}
