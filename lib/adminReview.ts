@@ -1245,6 +1245,98 @@ export async function fetchMockMrBatch001ReviewStatus(familyIds: string[]): Prom
 }
 
 /**
+ * Mock Programme Increment 004, Batch 002 (Decision 145) — the 20 new
+ * Mathematics Mock candidate questions across 10 families, made
+ * reviewable via the exact same scoped-batch mechanism as
+ * MOCK_MR_BATCH001_FAMILIES above (own array, own marker, own status
+ * map), reusing `review_type = 'mock_maths_independent_review'` and the
+ * generalised `deriveBatchReviewStatus()`/`fetchBatchReviewStatus()`
+ * helpers unchanged — no second Mock review mechanism, matching the
+ * directive's own explicit instruction to reuse Batch 001's own
+ * architecture rather than building a parallel one. Every row's
+ * `eligibility_status` is `authentic_assessment_candidate`, exactly as
+ * Batch 001's own families are; approving a family here still does NOT
+ * promote it, and does NOT create or touch any `ali_mock_form` row.
+ */
+export const MOCK_MR_BATCH002_BATCH_MARKER = "MOCK-INC004-BATCH002";
+
+export const MOCK_MR_BATCH002_FAMILIES: SevenXFamilyConfig[] = [
+  {
+    familyId: "mock-mr04-percentchange",
+    newQuestionIds: ["mock-mr04-percentchange-01", "mock-mr04-percentchange-02"],
+    disclosure:
+      "This is a brand-new family with no prior review of any kind. Successive percentage changes applied to a running total, evidenced CSSE-006 Q4, CSSE-011 Q14/Q16b, CSSE-016 Q19 (HIGH confidence, EMC-4). Variant 1 deliberately returns to the original price (+25% then -20%) -- a genuine, evidenced trap for a learner who wrongly nets the percentages, not a cosmetic one. Difficulty here is medium. Disclosed for your own judgement, not a recommendation either way.",
+  },
+  {
+    familyId: "mock-mr04-reversepercent",
+    newQuestionIds: ["mock-mr04-reversepercent-01", "mock-mr04-reversepercent-02"],
+    disclosure:
+      "This is a brand-new family with no prior review of any kind. A genuinely different demand from mock-mr04-percentchange: the final value is given and the original must be recovered by dividing, not multiplying. Independently authored, entirely new numbers/context -- not reused from the existing mr04-reverse-percentage Practice family. Difficulty here is hard, driven by the reversed algebraic direction. Disclosed for your own judgement, not a recommendation either way.",
+  },
+  {
+    familyId: "mock-mr06-sumdiff",
+    newQuestionIds: ["mock-mr06-sumdiff-01", "mock-mr06-sumdiff-02"],
+    disclosure:
+      "This is a brand-new family with no prior review of any kind. Solving for two unknowns from a stated sum and difference, evidenced CSSE-006 Q8/Q18, CSSE-011 Q6/Q18, CSSE-016 Q6 (HIGH confidence, EMC-4). Variant 2 asks for the smaller number rather than the larger (variant 1), a genuine variation in which value must be solved for. Difficulty here is medium. Disclosed for your own judgement, not a recommendation either way.",
+  },
+  {
+    familyId: "mock-mr06-multiplerelation",
+    newQuestionIds: ["mock-mr06-multiplerelation-01", "mock-mr06-multiplerelation-02"],
+    disclosure:
+      "This is a brand-new family with no prior review of any kind. A genuinely different demand from mock-mr06-sumdiff: the relationship between the two unknowns is a stated multiplier, not a difference, requiring a different equation structure (s + k*s = total) before solving. Difficulty here is hard. Disclosed for your own judgement, not a recommendation either way.",
+  },
+  {
+    familyId: "mock-mr07-triangleanglesum",
+    newQuestionIds: ["mock-mr07-triangleanglesum-01", "mock-mr07-triangleanglesum-02"],
+    disclosure:
+      "This is a brand-new family with no prior review of any kind. Algebraic angle-sum reasoning, evidenced CSSE-006 Q7/Q12, CSSE-011 Q12/Q17, CSSE-016 Q11 (HIGH confidence, EMC-4). Variant 1 uses a triangle (180 degrees), variant 2 a quadrilateral (360 degrees) -- a genuinely different shape and angle-sum constant, not a relabelled copy. Difficulty here is medium. Disclosed for your own judgement, not a recommendation either way.",
+  },
+  {
+    familyId: "mock-mr07-isoscelesproperty",
+    newQuestionIds: ["mock-mr07-isoscelesproperty-01", "mock-mr07-isoscelesproperty-02"],
+    disclosure:
+      "This is a brand-new family with no prior review of any kind. A genuinely different demand from mock-mr07-triangleanglesum: recognising and applying the isosceles equal-base-angles property is a real additional inference step before the angle sum can even be set up. Variant 2 reverses the direction (given the apex angle, find a base angle). Difficulty here is hard. Disclosed for your own judgement, not a recommendation either way.",
+  },
+  {
+    familyId: "mock-mr10-forwardschedule",
+    newQuestionIds: ["mock-mr10-forwardschedule-01", "mock-mr10-forwardschedule-02"],
+    disclosure:
+      "This is a brand-new family with no prior review of any kind. Multi-step forward elapsed-time reasoning across more than one stage, evidenced CSSE-006 Q9, CSSE-011 Q19, CSSE-016 Q9 (HIGH confidence, EMC-4). Difficulty here is medium. Disclosed for your own judgement, not a recommendation either way.",
+  },
+  {
+    familyId: "mock-mr10-reverseschedule",
+    newQuestionIds: ["mock-mr10-reverseschedule-01", "mock-mr10-reverseschedule-02"],
+    disclosure:
+      "This is a brand-new family with no prior review of any kind. A genuinely different reasoning direction from mock-mr10-forwardschedule: working backwards from a known arrival time through each stage, subtracting rather than adding. Difficulty here is hard. Disclosed for your own judgement, not a recommendation either way.",
+  },
+  {
+    familyId: "mock-mr11-truefalsejudgement",
+    newQuestionIds: ["mock-mr11-truefalsejudgement-01", "mock-mr11-truefalsejudgement-02"],
+    disclosure:
+      "This is a brand-new family with no prior review of any kind. True/false judgement about a stated number-property claim, the HIGH-confidence sub-format evidenced across all 3 years reviewed (CSSE-006 Q10, CSSE-011 Q13, CSSE-016). A genuinely different cognitive demand from every other family in this batch: evaluating a general claim (requiring a general proof or a single counter-example), not computing a specific numeric answer. Difficulty here is medium. Disclosed for your own judgement, not a recommendation either way.",
+  },
+  {
+    familyId: "mock-mr11-propertysearch",
+    newQuestionIds: ["mock-mr11-propertysearch-01", "mock-mr11-propertysearch-02"],
+    disclosure:
+      "This is a brand-new family with no prior review of any kind. The property-satisfying-search sub-format, evidenced but with lower confidence than the judgement sub-format above (CSSE-006 Q10, confirmed only in 2023 of the 3 years reviewed, LOW/1-of-3, disclosed honestly). This session's own verification found an originally-drafted variant (a prime number one less than a perfect square) has no valid answer for any square greater than 4, since n squared minus 1 always factorises as (n-1)(n+1) -- replaced before authoring finished, disclosed here rather than hidden. Difficulty here is hard. Disclosed for your own judgement, not a recommendation either way.",
+  },
+];
+export const MOCK_MR_BATCH002_TARGET_IDS = MOCK_MR_BATCH002_FAMILIES.map((f) => f.familyId);
+
+export function buildMockMrBatch002NotesPrefix(familyId: string, questionIds: string[]): string {
+  return `${MOCK_MR_BATCH002_BATCH_MARKER} new content review: ${familyId}-01..0${questionIds.length} (Question IDs: ${questionIds.join(", ")})`;
+}
+
+export function deriveMockMrBatch002ReviewStatus(rows: SevenXReviewRow[], familyIds: string[]): Map<string, SevenXReviewStatus> {
+  return deriveBatchReviewStatus(rows, familyIds, MOCK_MR_BATCH002_BATCH_MARKER, "mock_maths_independent_review");
+}
+
+export async function fetchMockMrBatch002ReviewStatus(familyIds: string[]): Promise<Map<string, SevenXReviewStatus>> {
+  return fetchBatchReviewStatus(familyIds, MOCK_MR_BATCH002_BATCH_MARKER, "mock_maths_independent_review");
+}
+
+/**
  * Inserts one real, traceable Mock-content independent-review decision —
  * `review_type = 'mock_maths_independent_review'` (migration 087,
  * Decision 139), explicitly set here exactly as `submitMathsTeachingReview`

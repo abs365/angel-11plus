@@ -21,6 +21,8 @@ import {
   fetchInc006DepthReviewStatus, buildInc006DepthNotesPrefix, INC006_DEPTH_FAMILIES, INC006_DEPTH_TARGET_IDS,
   fetchMockMrBatch001ReviewStatus, buildMockMrBatch001NotesPrefix, submitMockMathsIndependentReview,
   MOCK_MR_BATCH001_FAMILIES, MOCK_MR_BATCH001_TARGET_IDS,
+  fetchMockMrBatch002ReviewStatus, buildMockMrBatch002NotesPrefix,
+  MOCK_MR_BATCH002_FAMILIES, MOCK_MR_BATCH002_TARGET_IDS,
   type PendingReviewTarget, type RepresentativeQuestion, type PassageDetail, type ReviewDecision, type ReviewSubmission,
   type TargetSummary, type MathsTeachingReviewSubmission, type SevenXReviewStatus, type SevenXFamilyConfig,
 } from "@/lib/adminReview";
@@ -213,6 +215,17 @@ const FAMILY_DISPLAY_NAME: Record<string, string> = {
   "mock-mr05-forward": "Mock: Function Machine (Forward)",
   "mock-mr05-inverse": "Mock: Function Machine (Inverse)",
   "mock-mr13-bestvalue": "Mock: Best-Value Comparison",
+  // Mock Programme Increment 004, Batch 002 (Decision 145) — Mathematics Mock candidates, all authentic_assessment_candidate.
+  "mock-mr04-percentchange": "Mock: Successive Percentage Change",
+  "mock-mr04-reversepercent": "Mock: Reverse Percentage Change",
+  "mock-mr06-sumdiff": "Mock: Sum and Difference",
+  "mock-mr06-multiplerelation": "Mock: Multiple Relationship (k-Times)",
+  "mock-mr07-triangleanglesum": "Mock: Algebraic Angle Sum",
+  "mock-mr07-isoscelesproperty": "Mock: Isosceles Triangle Property",
+  "mock-mr10-forwardschedule": "Mock: Forward Elapsed Time",
+  "mock-mr10-reverseschedule": "Mock: Reverse Elapsed Time",
+  "mock-mr11-truefalsejudgement": "Mock: Number-Property True/False",
+  "mock-mr11-propertysearch": "Mock: Number-Property Search",
 };
 
 /** Graceful fallback for any family/passage not in the curated name map above — never shows a raw dash-separated ID as the primary label. */
@@ -1764,6 +1777,68 @@ function MockMrBatch001Section({
 }
 
 /**
+ * Mock Programme Increment 004, Batch 002 (Decision 145) — a dedicated
+ * section for the 20 newly authored Mathematics Mock candidate questions
+ * across 10 new families, structurally identical to MockMrBatch001Section
+ * above (own array, own marker, own status map, own `review_type =
+ * 'mock_maths_independent_review'` routed through the same
+ * submitMockMathsIndependentReview()), built in the SAME increment that
+ * authored the content, per explicit instruction, so no follow-up
+ * review-readiness correction is needed this time.
+ */
+function MockMrBatch002Section({
+  targets, status, onOpen,
+}: {
+  targets: PendingReviewTarget[];
+  status: Map<string, SevenXReviewStatus>;
+  onOpen: (t: PendingReviewTarget, family: SevenXFamilyConfig) => void;
+}) {
+  const reviewedCount = MOCK_MR_BATCH002_FAMILIES.filter((f) => status.get(f.familyId)?.reviewed).length;
+  const totalQuestions = MOCK_MR_BATCH002_FAMILIES.reduce((n, f) => n + f.newQuestionIds.length, 0);
+  return (
+    <div className="bg-white dark:bg-gray-900 rounded-2xl border-2 border-indigo-200 dark:border-indigo-800 overflow-hidden">
+      <div className="px-5 py-4 border-b border-indigo-100 dark:border-indigo-900 bg-indigo-50 dark:bg-indigo-950/40">
+        <p className="text-sm font-bold text-indigo-900 dark:text-indigo-200">Mock Mathematics Batch 002 Review</p>
+        <p className="text-xs text-indigo-600 dark:text-indigo-400 mt-0.5">
+          {reviewedCount} of {MOCK_MR_BATCH002_FAMILIES.length} families reviewed. {totalQuestions} new questions total across 10 families.
+        </p>
+        <div className="mt-2 text-xs text-indigo-800 dark:text-indigo-300 space-y-0.5">
+          <p>• These are Mock candidates, not Practice questions: none has ever been, or will be, automatically promoted from Practice.</p>
+          <p>• All {totalQuestions} questions are currently <strong>authentic_assessment_candidate</strong>. None is mock_eligible. None is used by any Mock form.</p>
+          <p>• {totalQuestions} rows represent 10 genuinely distinct reasoning structures, 2 per family: a foundational structure paired with a genuinely harder reverse/inverse/search structure. Each card discloses its own pair.</p>
+          <p>• Question Types: QT-MR-04, QT-MR-06, QT-MR-07, QT-MR-10, QT-MR-11, five genuinely different reasoning domains (proportional change, algebra, geometry, time, number-property judgement). QT-MR-01 was again deliberately excluded.</p>
+          <p>• Approving a family here does not activate it: promotion to independently_validated, and any later move to mock_eligible, remain separate, later, Founder-authorised steps.</p>
+        </div>
+      </div>
+      <div className="divide-y divide-gray-50 dark:divide-gray-800">
+        {MOCK_MR_BATCH002_FAMILIES.map((f) => {
+          const s = status.get(f.familyId);
+          const pendingTarget = targets.find((t) => t.id === f.familyId && (t.notes ?? "").includes("MOCK-INC004-BATCH002"));
+          return (
+            <button
+              key={f.familyId}
+              disabled={!pendingTarget}
+              onClick={() => pendingTarget && onOpen(pendingTarget, f)}
+              className="w-full text-left px-5 py-3 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors flex items-center justify-between gap-3 disabled:opacity-50"
+            >
+              <div>
+                <p className="text-sm font-medium text-gray-900 dark:text-gray-100">{FAMILY_DISPLAY_NAME[f.familyId] ?? formatFallbackName(f.familyId)}</p>
+                <p className="text-[11px] text-gray-400 dark:text-gray-500 mt-0.5">
+                  {f.newQuestionIds.length} new question{f.newQuestionIds.length === 1 ? "" : "s"}
+                  {s?.reviewed ? ` · reviewed (${s.decision})` : " · not yet reviewed"}
+                  {!pendingTarget ? " · migration 092 not yet applied" : ""}
+                </p>
+              </div>
+              {s?.reviewed ? <CheckCircle2 size={16} className="text-emerald-500 shrink-0" /> : <ArrowRight size={14} className="text-gray-300 dark:text-gray-600 shrink-0" />}
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+/**
  * Educational Increment 007T, Migration 064 Review-Surface Reconciliation
  * Part 6 correction — `reviewedIds` (now scoped to review_type =
  * 'content_review', see fetchReviewedTargetIds()) is cross-referenced
@@ -1782,7 +1857,7 @@ function FullBacklogSection({ targets, reviewedIds, onOpen }: { targets: Pending
     !PILOT_TARGET_IDS.includes(t.id) && !BATCH2_TARGET_IDS.includes(t.id) && !BATCH3_TARGET_IDS.includes(t.id) &&
     !BATCH4_TARGET_IDS.includes(t.id) && !SEVEN_T_TARGET_IDS.includes(t.id) && !SEVEN_X_TARGET_IDS.includes(t.id) &&
     !MR04_DEPTH_TARGET_IDS.includes(t.id) && !INC006_DEPTH_TARGET_IDS.includes(t.id) &&
-    !MOCK_MR_BATCH001_TARGET_IDS.includes(t.id) &&
+    !MOCK_MR_BATCH001_TARGET_IDS.includes(t.id) && !MOCK_MR_BATCH002_TARGET_IDS.includes(t.id) &&
     !reviewedIds.has(t.id));
 
   return (
@@ -1924,12 +1999,14 @@ function ReviewDashboard() {
   const [selectedInc006Depth, setSelectedInc006Depth] = useState<{ target: PendingReviewTarget; family: SevenXFamilyConfig } | null>(null);
   const [mockMrBatch001Status, setMockMrBatch001Status] = useState<Map<string, SevenXReviewStatus>>(new Map());
   const [selectedMockMrBatch001, setSelectedMockMrBatch001] = useState<{ target: PendingReviewTarget; family: SevenXFamilyConfig } | null>(null);
+  const [mockMrBatch002Status, setMockMrBatch002Status] = useState<Map<string, SevenXReviewStatus>>(new Map());
+  const [selectedMockMrBatch002, setSelectedMockMrBatch002] = useState<{ target: PendingReviewTarget; family: SevenXFamilyConfig } | null>(null);
 
   async function load() {
-    const [pending, reviewed, teachingReviewed, englishTeachingReviewed, writingTeachingReviewed, sevenX, mr04Depth, inc006Depth, mockMrBatch001] = await Promise.all([
+    const [pending, reviewed, teachingReviewed, englishTeachingReviewed, writingTeachingReviewed, sevenX, mr04Depth, inc006Depth, mockMrBatch001, mockMrBatch002] = await Promise.all([
       fetchPendingReviewTargets(), fetchReviewedTargetIds(), fetchMathsTeachingReviewedFamilyIds(), fetchEnglishTeachingReviewedFamilyIds(), fetchWritingTeachingReviewedFamilyIds(),
       fetchSevenXReviewStatus(SEVEN_X_TARGET_IDS), fetchMr04DepthReviewStatus(MR04_DEPTH_TARGET_IDS), fetchInc006DepthReviewStatus(INC006_DEPTH_TARGET_IDS),
-      fetchMockMrBatch001ReviewStatus(MOCK_MR_BATCH001_TARGET_IDS),
+      fetchMockMrBatch001ReviewStatus(MOCK_MR_BATCH001_TARGET_IDS), fetchMockMrBatch002ReviewStatus(MOCK_MR_BATCH002_TARGET_IDS),
     ]);
     setTargets(pending);
     setReviewedIds(reviewed);
@@ -1940,6 +2017,7 @@ function ReviewDashboard() {
     setMr04DepthStatus(mr04Depth);
     setInc006DepthStatus(inc006Depth);
     setMockMrBatch001Status(mockMrBatch001);
+    setMockMrBatch002Status(mockMrBatch002);
   }
 
   useEffect(() => { load(); }, []);
@@ -2018,6 +2096,21 @@ function ReviewDashboard() {
     );
   }
 
+  if (selectedMockMrBatch002) {
+    const { target, family } = selectedMockMrBatch002;
+    return (
+      <ReviewForm
+        target={target}
+        reviewType="mock_maths_independent_review"
+        onDone={() => { setSelectedMockMrBatch002(null); load(); }}
+        sevenX={{
+          questionIds: family.newQuestionIds, reclassified: family.reclassified, disclosure: family.disclosure,
+          notesPrefix: buildMockMrBatch002NotesPrefix(target.id, family.newQuestionIds),
+        }}
+      />
+    );
+  }
+
   if (targets === null) return <p className="text-sm text-gray-400 dark:text-gray-500">Loading review pilot…</p>;
 
   return (
@@ -2041,6 +2134,7 @@ function ReviewDashboard() {
       <Mr04DepthSection targets={targets} status={mr04DepthStatus} onOpen={(target, family) => setSelectedMr04Depth({ target, family })} />
       <Inc006DepthSection targets={targets} status={inc006DepthStatus} onOpen={(target, family) => setSelectedInc006Depth({ target, family })} />
       <MockMrBatch001Section targets={targets} status={mockMrBatch001Status} onOpen={(target, family) => setSelectedMockMrBatch001({ target, family })} />
+      <MockMrBatch002Section targets={targets} status={mockMrBatch002Status} onOpen={(target, family) => setSelectedMockMrBatch002({ target, family })} />
       <FullBacklogSection targets={targets} reviewedIds={reviewedIds} onOpen={setSelected} />
       </>
       )}
