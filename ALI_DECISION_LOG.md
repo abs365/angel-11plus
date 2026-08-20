@@ -3451,3 +3451,41 @@ QT-MR-01 excluded entirely, per explicit instruction, despite being the easiest 
 **Rationale:** the assertion-and-refuse pattern migration 077 already proved (rather than migration 083's simpler idempotent-by-omission pattern) is the correct choice here specifically because this task's own instruction asked for it explicitly and because a promotion migration — unlike a first-time content-insert migration — has a real, if narrow, failure mode: production drifting between this migration's generation and its application (a question deactivated, a status changed by an unrelated process). Refusing to guess and naming the exact observed counts, rather than silently affecting fewer rows, gives the Founder a precise diagnostic if that ever happens, instead of a silent partial promotion.
 
 **Implications:** Decisions 1–142 all stand, none reversed or rewritten. Decision 132's READY FOR CONTROLLED FAMILY LAUNCH verdict is not reopened. `mock_eligible` remains 0; no `ali_mock_form` row exists; no learner-facing change results from this decision. Once migration 090 is applied, the 18 Batch 001 questions will be `independently_validated` — genuinely reviewed, still not Mock-eligible, still not usable by any form. Remaining before any of this content can become `mock_eligible`: the pool-level Mock-Eligible gate (Decision 138, still unbuilt); a separate, later, Founder-authorised activation migration. No Batch 002, no English/Writing content, no form assembly, and no Mock Increment 005 is authorised or begun by this decision.
+
+---
+
+### Decision 144 — MOCK PROGRAMME INCREMENT 004, BATCH 001, INDEPENDENT VALIDATION COMPLETE IN PRODUCTION: migration 090 applied and Founder-verified via a full production eligibility summary; exactly the 18 named questions are `independently_validated`, `mock_eligible` remains 0, Practice unaffected (194 Maths / 120 English `practice_eligible`); Mathematics Mock capacity now 18 of the ≈80–85 initial target; next programme target named — Batch 002 — not begun
+
+**Scope and process:** Documentation-only closure. No source file, migration, or production data was changed by this decision — the only change is this log entry, per explicit Founder instruction. Grounded entirely in the Founder's own Level 1, authenticated production evidence (a full `ali_question_bank` eligibility-status-by-subject summary, not a narrow single-table count) — not re-queried this session, per that same instruction.
+
+**1. Repository reconciliation.** Clean working tree. HEAD == origin/main at both the pre-closure check and this entry's own commit. Decision 143 present exactly once. Migration 090 confirmed byte-unchanged since its commit (`git diff` empty).
+
+**2. Migration 090 production status.** Applied ("Success. No rows returned," Supabase SQL Editor).
+
+**3. Verified Batch 001 production state, Founder-supplied, accepted directly (not re-queried, per explicit instruction):** exactly 18 Mock Mathematics Batch 001 questions; all 18 `active = true`; all 18 `eligibility_status = 'independently_validated'`; confined to exactly the 7 expected families (`mock-mr02-invdiv`, `mock-mr02-twostep`, `mock-mr03-unitconv`, `mock-mr09-data`, `mock-mr05-forward`, `mock-mr05-inverse`, `mock-mr13-bestvalue`) — no unexpected question. This is an exact match to migration 090's own intended effect and to Decision 143's own named 18-ID allow-list.
+
+**4. `independently_validated` count.** 18 (subject `maths`) — the Founder's own full eligibility summary shows no other subject or status carries this value, confirming the promotion touched exactly, and only, the intended 18 rows.
+
+**5. `mock_eligible` count.** 0 — confirmed present in the Founder's own summary as an explicit absence ("No `mock_eligible` row exists in the result"), not merely unmentioned.
+
+**6. Practice counts.** Unaffected: 194 Mathematics / 120 English `practice_eligible`, byte-identical to the baseline Decisions 139–143 each already recorded. The Founder's own summary additionally shows the current full picture, useful to record here since it was supplied: `provisional` — 5 maths, 11 english, 1 writing.
+
+**7. Mock availability.** Unchanged. `independently_validated` is not a status any Mock-facing read path (`fetchMockEligibleQuestionBank()`, `isMockEligibleCandidate()`) treats as eligible — reaffirmed, not re-derived, from Decision 143's own direct test proof. No `ali_mock_form` row was created by this transition (migration 090 never mentions that table, confirmed structurally at Decision 143). The Mock Centre's "Not ready yet" state is untouched; no Mathematics Mock question is currently learner-available.
+
+**8. Review/audit status.** Independent review history remains on its own, separate write path (`ali_family_review`), never touched by migration 090. The original `UNASSIGNED`/`pending_independent_review` placeholder rows (migration 089) remain present as historical audit evidence, unmodified. The corrected `mock-mr09-data` reviewer remains `Ayobami Lawal`, per Decision 143's own recorded correction.
+
+**Governance boundary reaffirmed, not re-litigated:** `independently_validated` is not permission to use these 18 questions in a Mock. The lifecycle's remaining stages — pool-level Mock-Eligible gate (Decision 138, still unbuilt) → `mock_eligible` → reviewed form assembly (Decision 139 Part 9, still unbuilt) → learner Mock — have not occurred. No Mock question is currently learner-available, and this decision does not change that.
+
+**Checks performed this session:** repository reconciliation only (clean working tree; HEAD/origin match; Decision-143 count; migration-090 byte-identity). No production query was run — the Founder's own full eligibility summary is accepted directly as Level 1 evidence, per this decision's own explicit authorisation not to request it again. No test suite, `tsc`, ESLint, Copy Quality Guard, or build was re-run, since no source file changed in this closure beyond this log entry, and repository reconciliation found no unexpected source change requiring it.
+
+**What this decision does NOT claim:** it does not claim any question is `mock_eligible`; it does not claim any `ali_mock_form` exists; it does not claim Mock is, or is scheduled to become, available; it does not claim the pool-level Mock-Eligible gate has been built; it does not claim Decision 143 is rewritten (it is not — this decision only records that its own migration has now been verified applied).
+
+**Files changed:** `ALI_DECISION_LOG.md` only (this entry).
+
+**Decision number:** 144.
+
+**Commit SHA:** recorded after commit (see repository history immediately following this entry).
+
+**Rationale:** closing on the Founder's own full eligibility-summary query — which independently proves both the positive claim (18 `independently_validated`) and the negative one (0 `mock_eligible`, Practice counts unchanged) in a single piece of evidence — keeps this closure at the same Level 1 standard every genuine closure in this log has required, without needing a second narrower query to cover what a broader one already answered.
+
+**Implications:** Decisions 1–143 all stand, none reversed or rewritten. Decision 132's READY FOR CONTROLLED FAMILY LAUNCH verdict is not reopened. Mock Programme Increment 004, Batch 001, Independent Validation is CLOSED. **Current Mathematics Mock capacity: 18 of the ≈80–85 initial target (Decision 138).** **Next programme target, named for the record only — NOT begun by this decision: Mock Programme Increment 004, Mathematics Batch 002.** Batch 002 must continue building toward the ≈80–85 target, continuing to prioritise genuine structural diversity and anti-memorisation over superficial numerical variation, per Decision 138's own standing requirement. Batch 001 is not promoted to `mock_eligible` by this decision; the pool-level Mock-Eligible gate remains a later, separate programme dependency. No Batch 002 content, no promotion, no form assembly, no Mock UI/scoring/Educational Intelligence change, and no payment/parent-override work is authorised or begun by this decision.
