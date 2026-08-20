@@ -152,6 +152,20 @@ export interface MockAttemptReport {
 }
 
 /**
+ * Mock Governance Architecture Increment 001 (Decision 135) —
+ * supabase/migrations/085_mock_cycle_governance_architecture.sql. One row
+ * per Full Mock sitting; a Mathematics attempt and an English attempt
+ * (both attempt_type "full_mock") may link to the same cycle via the
+ * attempt's own new, nullable cycleId. 'scheduled' is the normal
+ * ~14-day-gated cadence; 'parent_override' is the Founder-authorised
+ * additional sitting (Decision 49/135) — persistently distinguishable,
+ * never inferred.
+ */
+export type MockCycleInitiatedBy = "scheduled" | "parent_override";
+
+export type MockCycleSubject = "mathematics" | "english";
+
+/**
  * Fields that must NEVER appear in a payload delivered to a learner
  * before their attempt's report is released — the field-level secrecy
  * boundary this increment exists to prove. Used directly by

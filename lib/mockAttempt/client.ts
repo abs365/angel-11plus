@@ -25,6 +25,13 @@ export interface MockClientResult<T> {
   error: string | null;
 }
 
+/**
+ * Since migration 085 (Decision 135), the server rejects attemptType
+ * "full_mock" here unconditionally — a full_mock attempt must be created
+ * through createMockCycleAttempt() below, as part of an owned, open,
+ * cadence-gated Mock cycle. This function remains the correct call for
+ * "timed_section"/"diagnostic_mock" attempts only, which stay uncycled.
+ */
 export async function createMockAttempt(
   supabase: SupabaseClient<Database>,
   formId: string,
@@ -211,4 +218,67 @@ export async function getMockAttemptReport(
     },
     error: null,
   };
+}
+
+/**
+ * Mock Governance Architecture Increment 001 (Decision 135) — thin
+ * wrappers around the 3 new SECURITY DEFINER functions (migration 085).
+ * Not yet wired into any route (Mock remains unavailable, mock_eligible
+ * still 0) — declared here so a future increment's Parent Dashboard/Mock
+ * UI work has the same sanctioned, RPC-only access pattern every other
+ * Mock function in this file already established, rather than reaching
+ * for a direct `.from()` call.
+ */
+
+/**
+ * Creates a normal, cadence-gated Mock cycle. Fails (via the RPC error
+ * channel, never a thrown exception) if a cycle is still open, or if the
+ * ~14-day interval since the profile's own last scheduled cycle has not
+ * yet elapsed — the server is the sole authority on both checks.
+ */
+export async function startNewMockCycle(
+  supabase: SupabaseClient<Database>
+): Promise<MockClientResult<string>> {
+  const { data, error } = await supabase.rpc("mock_start_new_cycle");
+  if (error) return { data: null, error: error.message };
+  return { data: data as string, error: null };
+}
+
+/**
+ * Creates a parent-authorised additional Mock cycle, bypassing the
+ * cadence check only. Persisted as initiated_by = 'parent_override',
+ * never merged with a normal 'scheduled' cycle. This function grants no
+ * payment/entitlement capability and makes no commercial claim — see
+ * migration 085's own header for the disclosed limitation that this
+ * codebase has no separate parent identity, and Decision 135 for the
+ * approved-but-unimplemented extra-cost principle. Callers of this
+ * wrapper must only ever be reached from a genuine Parent Dashboard
+ * control, never from the child-facing Mock-taking flow — this file
+ * cannot enforce that by itself, only document it.
+ */
+export async function authoriseExtraMockCycle(
+  supabase: SupabaseClient<Database>
+): Promise<MockClientResult<string>> {
+  const { data, error } = await supabase.rpc("mock_authorise_extra_cycle");
+  if (error) return { data: null, error: error.message };
+  return { data: data as string, error: null };
+}
+
+/**
+ * Creates one subject-pure ("full_mock") attempt within an already-owned,
+ * still-open cycle. The form must carry a non-null subject (Mathematics
+ * or English) — a combined/legacy form is rejected server-side. Distinct
+ * from createMockAttempt() above, which now refuses attemptType
+ * "full_mock" entirely (migration 085) and remains the correct call only
+ * for "timed_section"/"diagnostic_mock" (e.g. familiarisation) attempts,
+ * which stay uncycled exactly as before.
+ */
+export async function createMockCycleAttempt(
+  supabase: SupabaseClient<Database>,
+  formId: string,
+  cycleId: string
+): Promise<MockClientResult<string>> {
+  const { data, error } = await supabase.rpc("mock_create_cycle_attempt", { p_form_id: formId, p_cycle_id: cycleId });
+  if (error) return { data: null, error: error.message };
+  return { data: data as string, error: null };
 }
