@@ -223,7 +223,7 @@ export interface Database {
           notes: string | null;
           created_at: string;
           /** Migration 047. */
-          review_target_type: "question_family" | "passage";
+          review_target_type: "question_family" | "passage" | "writing_prompt";
           question_type_alignment: boolean | null;
           answer_correctness_verified: boolean | null;
           transfer_validity: boolean | null;
@@ -232,8 +232,8 @@ export interface Database {
           validation_behaviour_sound: boolean | null;
           originality_confirmed: boolean | null;
           copyright_risk_clear: boolean | null;
-          /** Migration 059, extended migration 060. */
-          review_type: "content_review" | "maths_teaching_review" | "english_teaching_review" | "writing_teaching_review";
+          /** Migration 059, extended migration 060/061/087. */
+          review_type: "content_review" | "maths_teaching_review" | "english_teaching_review" | "writing_teaching_review" | "mock_maths_independent_review" | "mock_english_passage_independent_review" | "mock_writing_prompt_independent_review";
           teaching_content_version: string | null;
           teaching_mathematically_correct: boolean | null;
           teaching_model_understandable: boolean | null;
@@ -268,7 +268,7 @@ export interface Database {
           decision: "approved" | "approved_with_amendment" | "rejected" | "requires_revalidation" | "pending_independent_review";
           notes?: string | null;
           created_at?: string;
-          review_target_type?: "question_family" | "passage";
+          review_target_type?: "question_family" | "passage" | "writing_prompt";
           question_type_alignment?: boolean | null;
           answer_correctness_verified?: boolean | null;
           transfer_validity?: boolean | null;
@@ -278,7 +278,7 @@ export interface Database {
           originality_confirmed?: boolean | null;
           copyright_risk_clear?: boolean | null;
           /** Migration 059, extended migration 060. */
-          review_type?: "content_review" | "maths_teaching_review" | "english_teaching_review" | "writing_teaching_review";
+          review_type?: "content_review" | "maths_teaching_review" | "english_teaching_review" | "writing_teaching_review" | "mock_maths_independent_review" | "mock_english_passage_independent_review" | "mock_writing_prompt_independent_review";
           teaching_content_version?: string | null;
           teaching_mathematically_correct?: boolean | null;
           teaching_model_understandable?: boolean | null;

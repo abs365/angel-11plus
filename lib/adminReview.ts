@@ -15,7 +15,17 @@
 
 import { getSupabaseClient } from "./supabase";
 
-export type ReviewTargetType = "passage" | "question_family";
+export type ReviewTargetType = "passage" | "question_family" | "writing_prompt";
+
+/** Every review_type value the live ali_family_review_review_type_check constraint permits (migrations 034/059/060/061/087). */
+export type ReviewType =
+  | "content_review"
+  | "maths_teaching_review"
+  | "english_teaching_review"
+  | "writing_teaching_review"
+  | "mock_maths_independent_review"
+  | "mock_english_passage_independent_review"
+  | "mock_writing_prompt_independent_review";
 export type ReviewDecision = "approved" | "approved_with_amendment" | "rejected" | "requires_revalidation";
 
 /**
@@ -939,10 +949,23 @@ export interface SevenXReviewRow {
  * `deriveSevenXReviewStatus` below is an unchanged, exported thin wrapper
  * so every existing call site and test keeps working exactly as before.
  */
-export function deriveBatchReviewStatus(rows: SevenXReviewRow[], familyIds: string[], marker: string): Map<string, SevenXReviewStatus> {
+/**
+ * `reviewType` defaults to `"content_review"` so every existing caller
+ * (SEVEN_X/MR04_DEPTH/INC006_DEPTH, all genuinely content_review batches)
+ * is completely unaffected. Mock Programme Increment 004's own batches
+ * pass `"mock_maths_independent_review"` explicitly (Decision 139's own
+ * distinct review_type, never conflated with content_review) — see
+ * MOCK_MR_BATCH001_FAMILIES below.
+ */
+export function deriveBatchReviewStatus(
+  rows: SevenXReviewRow[],
+  familyIds: string[],
+  marker: string,
+  reviewType: ReviewType = "content_review"
+): Map<string, SevenXReviewStatus> {
   const result = new Map<string, SevenXReviewStatus>(familyIds.map((id) => [id, { reviewed: false, decision: null, reviewer: null }]));
   for (const row of rows) {
-    if (row.review_type !== "content_review") continue;
+    if (row.review_type !== reviewType) continue;
     if (row.decision === "pending_independent_review") continue;
     if (!row.notes || !row.notes.includes(marker)) continue;
     if (!result.has(row.family_id)) continue;
@@ -967,17 +990,21 @@ export function deriveSevenXReviewStatus(rows: SevenXReviewRow[], familyIds: str
  * cards in the UI). Thin I/O wrapper — all real logic lives in
  * deriveSevenXReviewStatus above.
  */
-async function fetchBatchReviewStatus(familyIds: string[], marker: string): Promise<Map<string, SevenXReviewStatus>> {
+async function fetchBatchReviewStatus(
+  familyIds: string[],
+  marker: string,
+  reviewType: ReviewType = "content_review"
+): Promise<Map<string, SevenXReviewStatus>> {
   const supabase = getSupabaseClient();
-  if (!supabase) return deriveBatchReviewStatus([], familyIds, marker);
+  if (!supabase) return deriveBatchReviewStatus([], familyIds, marker, reviewType);
   const { data, error } = await supabase
     .from("ali_family_review")
     .select("family_id, review_type, decision, notes, reviewer, created_at")
     .in("family_id", familyIds)
-    .eq("review_type", "content_review")
+    .eq("review_type", reviewType)
     .order("created_at", { ascending: true });
-  if (error || !data) return deriveBatchReviewStatus([], familyIds, marker);
-  return deriveBatchReviewStatus(data, familyIds, marker);
+  if (error || !data) return deriveBatchReviewStatus([], familyIds, marker, reviewType);
+  return deriveBatchReviewStatus(data, familyIds, marker, reviewType);
 }
 
 export async function fetchSevenXReviewStatus(familyIds: string[]): Promise<Map<string, SevenXReviewStatus>> {
@@ -1139,6 +1166,134 @@ export function deriveInc006DepthReviewStatus(rows: SevenXReviewRow[], familyIds
 
 export async function fetchInc006DepthReviewStatus(familyIds: string[]): Promise<Map<string, SevenXReviewStatus>> {
   return fetchBatchReviewStatus(familyIds, INC006_DEPTH_BATCH_MARKER);
+}
+
+/**
+ * Mock Programme Increment 004, Batch 001 (Decision 141) — the 18 new
+ * Mathematics Mock candidate questions across 7 families, made reviewable
+ * via the same scoped-batch mechanism as INC006_DEPTH_FAMILIES, with two
+ * deliberate differences from every prior batch above: (1) its own
+ * distinct `review_type`, `mock_maths_independent_review` (migration 087,
+ * Decision 139) — never `content_review` — since this is the Assessment
+ * Eligibility Model's own Authentic-Assessment-Candidate-to-
+ * Independently-Validated transition, a genuinely different governance
+ * question from an ordinary Practice content review; (2) every row's
+ * `eligibility_status` is `authentic_assessment_candidate`, not
+ * `provisional` — approving a family here still does NOT change that
+ * status, does NOT promote to `independently_validated` or
+ * `mock_eligible`, and does NOT create or touch any `ali_mock_form` row.
+ * Reviewing is one governed step in a longer chain, not activation.
+ */
+export const MOCK_MR_BATCH001_BATCH_MARKER = "MOCK-INC004-BATCH001";
+
+export const MOCK_MR_BATCH001_FAMILIES: SevenXFamilyConfig[] = [
+  {
+    familyId: "mock-mr02-invdiv",
+    newQuestionIds: ["mock-mr02-invdiv-01", "mock-mr02-invdiv-02", "mock-mr02-invdiv-03"],
+    disclosure:
+      "This is a brand-new family with no prior review of any kind. One-step inverse division reasoning (find the missing divisor in \"a ÷ ___ = c\"), evidenced CSSE-006 Q2(b)(c)(d) and CSSE-016 Q2(c)(d)/Q3(a)(b). Fills a real gap: the existing mr01-missing-operand Practice family has 4 items, all medium difficulty; no easy or hard variant exists anywhere in the current bank. Difficulty here is easy. Disclosed for your own judgement, not a recommendation either way.",
+  },
+  {
+    familyId: "mock-mr02-twostep",
+    newQuestionIds: ["mock-mr02-twostep-01", "mock-mr02-twostep-02", "mock-mr02-twostep-03"],
+    disclosure:
+      "This is a brand-new family with no prior review of any kind. A genuinely different demand from mock-mr02-invdiv: two inverse operations (multiply, then add/subtract) must be undone in the correct order, not one. Difficulty here is hard, driven by that ordering demand rather than larger numbers. This session's own verification originally produced a near-duplicate answer against mock-mr02-invdiv-01 (both resolved to 8); the numbers were changed before this batch was recorded, disclosed here rather than left implicit. Disclosed for your own judgement, not a recommendation either way.",
+  },
+  {
+    familyId: "mock-mr03-unitconv",
+    newQuestionIds: ["mock-mr03-unitconv-01", "mock-mr03-unitconv-02", "mock-mr03-unitconv-03"],
+    disclosure:
+      "This is a brand-new family with no prior review of any kind. Multiply-then-convert reasoning across 3 distinct unit pairs (ml/L, cm/m, g/kg), evidenced CSSE-006 Q3, CSSE-011 Q4a, CSSE-016 Q5a (HIGH confidence, present all 3 years reviewed). Difficulty here is medium. Disclosed for your own judgement, not a recommendation either way.",
+  },
+  {
+    familyId: "mock-mr09-data",
+    newQuestionIds: ["mock-mr09-data-01", "mock-mr09-data-02", "mock-mr09-data-03"],
+    disclosure:
+      "This is a brand-new family with no prior review of any kind, and it is structurally different from every other family in this batch: its 3 rows are 3 genuinely distinct reasoning sub-structures (extremes-comparison, mean-calculation, multi-row revenue combination), not 3 variants of one structure, evidenced CSSE-006 Q11a, CSSE-011 Q15, CSSE-016 Q10. The third row (revenue combination) is deliberately hard, requiring three independently-calculated row totals to be combined. Disclosed for your own judgement, not a recommendation either way.",
+  },
+  {
+    familyId: "mock-mr05-forward",
+    newQuestionIds: ["mock-mr05-forward-01", "mock-mr05-forward-02"],
+    disclosure:
+      "This is a brand-new family with no prior review of any kind. Forward function-machine rule application (apply a stated two-step rule to an input), evidenced CSSE-006 Q5/Q11/Q15, CSSE-011 Q7/Q8, CSSE-016 Q21 (HIGH confidence, present all 3 years). Difficulty here is medium, matching the existing mr02-nth-term/mr02-sequence-rule Practice families' own forward-direction tier. Disclosed for your own judgement, not a recommendation either way.",
+  },
+  {
+    familyId: "mock-mr05-inverse",
+    newQuestionIds: ["mock-mr05-inverse-01", "mock-mr05-inverse-02"],
+    disclosure:
+      "This is a brand-new family with no prior review of any kind. The real gap this family closes: inverting a two-step function-machine rule (given the output, find the input) is directly evidenced as a real CSSE sub-format across all three years reviewed, but no item at any difficulty currently exists for it in the live bank. Difficulty here is hard, driven by the need to reverse both the operations and their order, not by larger numbers. Disclosed for your own judgement, not a recommendation either way.",
+  },
+  {
+    familyId: "mock-mr13-bestvalue",
+    newQuestionIds: ["mock-mr13-bestvalue-01", "mock-mr13-bestvalue-02"],
+    disclosure:
+      "This is a brand-new family with no prior review of any kind. Best-value unit-price comparison across 2 distinct product/unit contexts (juice/litre, rice/kilogram), evidenced CSSE-006 Q16 and CSSE-016 Q6 (MEDIUM confidence, 2 of 3 years). The scored answer is restructured to be the single lower per-unit price only (a bare number), not a free-text \"which pack\" judgement, to keep exact-match marking unambiguous. Difficulty here is medium. Disclosed for your own judgement, not a recommendation either way.",
+  },
+];
+export const MOCK_MR_BATCH001_TARGET_IDS = MOCK_MR_BATCH001_FAMILIES.map((f) => f.familyId);
+
+export function buildMockMrBatch001NotesPrefix(familyId: string, questionIds: string[]): string {
+  return `${MOCK_MR_BATCH001_BATCH_MARKER} new content review: ${familyId}-01..0${questionIds.length} (Question IDs: ${questionIds.join(", ")})`;
+}
+
+export function deriveMockMrBatch001ReviewStatus(rows: SevenXReviewRow[], familyIds: string[]): Map<string, SevenXReviewStatus> {
+  return deriveBatchReviewStatus(rows, familyIds, MOCK_MR_BATCH001_BATCH_MARKER, "mock_maths_independent_review");
+}
+
+export async function fetchMockMrBatch001ReviewStatus(familyIds: string[]): Promise<Map<string, SevenXReviewStatus>> {
+  return fetchBatchReviewStatus(familyIds, MOCK_MR_BATCH001_BATCH_MARKER, "mock_maths_independent_review");
+}
+
+/**
+ * Inserts one real, traceable Mock-content independent-review decision —
+ * `review_type = 'mock_maths_independent_review'` (migration 087,
+ * Decision 139), explicitly set here exactly as `submitMathsTeachingReview`
+ * explicitly sets its own distinct review_type, rather than relying on
+ * the table's own `'content_review'` default the way `submitReview()`
+ * (unmodified, below) correctly does for every genuine content-review
+ * batch. Reuses the exact same 18-criterion `ReviewSubmission` shape as
+ * `submitReview()` — Mock content review and ordinary content review ask
+ * the same educational questions, only the eligibility-pipeline meaning
+ * of the resulting decision differs, which is what the distinct
+ * `review_type` value records. Append-only; never touches
+ * `ali_question_bank.eligibility_status`, never creates or touches any
+ * `ali_mock_form` row.
+ */
+export async function submitMockMathsIndependentReview(s: ReviewSubmission): Promise<SubmitReviewResult> {
+  const validationError = validateReviewSubmission(s);
+  if (validationError) return { error: validationError };
+  if (!s.decision) return { error: "Choose a decision: this is never chosen for you." };
+  const supabase = getSupabaseClient();
+  if (!supabase) return { error: "Not connected" };
+  const { error } = await supabase.from("ali_family_review").insert({
+    review_target_type: s.reviewTargetType,
+    review_type: "mock_maths_independent_review",
+    family_id: s.targetId,
+    reviewer: s.reviewer.trim(),
+    decision: s.decision,
+    notes: buildNotesWithQualification(s),
+    evidence_reference: s.evidenceReference.trim() || null,
+    provenance_reference: s.provenanceReference.trim() || null,
+    educational_validity: s.educationalValidity,
+    competency_validity: s.competencyValidity,
+    wording_quality: s.wordingQuality,
+    age_appropriate: s.ageAppropriate,
+    ambiguity_free: s.ambiguityFree,
+    difficulty_appropriate: s.difficultyAppropriate,
+    misconception_quality: s.misconceptionQuality,
+    explanation_quality: s.explanationQuality,
+    variation_boundaries_sound: s.variationBoundariesSound,
+    authenticity_confirmed: s.authenticityConfirmed,
+    question_type_alignment: s.questionTypeAlignment,
+    answer_correctness_verified: s.answerCorrectnessVerified,
+    transfer_validity: s.transferValidity,
+    teaching_quality: s.teachingQuality,
+    exam_strategy_quality: s.examStrategyQuality,
+    validation_behaviour_sound: s.validationBehaviourSound,
+    originality_confirmed: s.originalityConfirmed,
+    copyright_risk_clear: s.copyrightRiskClear,
+  });
+  return { error: error ? error.message : null };
 }
 
 export const DIFFICULTY_RANK: Record<string, number> = { easy: 0, medium: 1, hard: 2 };

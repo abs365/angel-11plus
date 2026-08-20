@@ -19,6 +19,8 @@ import {
   fetchQuestionsByIds, fetchSevenXReviewStatus, buildSevenXNotesPrefix, SEVEN_X_FAMILIES, SEVEN_X_TARGET_IDS,
   fetchMr04DepthReviewStatus, buildMr04DepthNotesPrefix, MR04_DEPTH_FAMILIES, MR04_DEPTH_TARGET_IDS,
   fetchInc006DepthReviewStatus, buildInc006DepthNotesPrefix, INC006_DEPTH_FAMILIES, INC006_DEPTH_TARGET_IDS,
+  fetchMockMrBatch001ReviewStatus, buildMockMrBatch001NotesPrefix, submitMockMathsIndependentReview,
+  MOCK_MR_BATCH001_FAMILIES, MOCK_MR_BATCH001_TARGET_IDS,
   type PendingReviewTarget, type RepresentativeQuestion, type PassageDetail, type ReviewDecision, type ReviewSubmission,
   type TargetSummary, type MathsTeachingReviewSubmission, type SevenXReviewStatus, type SevenXFamilyConfig,
 } from "@/lib/adminReview";
@@ -203,6 +205,14 @@ const FAMILY_DISPLAY_NAME: Record<string, string> = {
   // Stage 3, Increment 006 (Decision 121 discovery/authoring).
   "mr01-reverse-mean": "Reverse Mean (Missing Value)",
   "mr03-coord-combined": "Combined Coordinate Transformations",
+  // Mock Programme Increment 004, Batch 001 (Decision 141) — Mathematics Mock candidates, all authentic_assessment_candidate.
+  "mock-mr02-invdiv": "Mock: Missing Divisor (One-Step Inverse)",
+  "mock-mr02-twostep": "Mock: Two-Step Inverse Arithmetic",
+  "mock-mr03-unitconv": "Mock: Unit Conversion with Calculation",
+  "mock-mr09-data": "Mock: Data Table Reasoning",
+  "mock-mr05-forward": "Mock: Function Machine (Forward)",
+  "mock-mr05-inverse": "Mock: Function Machine (Inverse)",
+  "mock-mr13-bestvalue": "Mock: Best-Value Comparison",
 };
 
 /** Graceful fallback for any family/passage not in the curated name map above — never shows a raw dash-separated ID as the primary label. */
@@ -299,7 +309,7 @@ function ReviewForm({
 }: {
   target: PendingReviewTarget;
   onDone: () => void;
-  reviewType?: "content_review" | "english_teaching_review";
+  reviewType?: "content_review" | "english_teaching_review" | "mock_maths_independent_review";
   /**
    * Educational Increment 007X, Founder Review-Surface Correction — when
    * set, this review is scoped to a specific, newly authored batch of
@@ -415,7 +425,10 @@ function ReviewForm({
     // conflated with a content_review row for the same family. Every
     // other field/validation/notes-building path is identical; only which
     // row is inserted differs.
-    const { error } = reviewType === "english_teaching_review" ? await submitEnglishTeachingReview(submissionToSend) : await submitReview(submissionToSend);
+    const { error } =
+      reviewType === "english_teaching_review" ? await submitEnglishTeachingReview(submissionToSend)
+      : reviewType === "mock_maths_independent_review" ? await submitMockMathsIndependentReview(submissionToSend)
+      : await submitReview(submissionToSend);
     setSubmitting(false);
     if (error) {
       setSubmitError(error);
@@ -432,7 +445,9 @@ function ReviewForm({
           {reviewType === "english_teaching_review" ? "Teaching review" : "Review"} recorded for {displayName}
         </p>
         <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-          Decision: {submission.decision}. This does not change Practice Eligibility, since that is a separate, controlled activation step.
+          {reviewType === "mock_maths_independent_review"
+            ? "Decision: " + submission.decision + ". This does not promote any question to independently_validated or mock_eligible, and does not activate any Mock form: those remain separate, controlled steps."
+            : "Decision: " + submission.decision + ". This does not change Practice Eligibility, since that is a separate, controlled activation step."}
         </p>
         <button onClick={onDone} className="mt-4 text-sm font-semibold text-purple-600 dark:text-purple-400">
           Back to {reviewType === "english_teaching_review" ? "English Teaching Review" : "review pilot"}
@@ -1681,6 +1696,74 @@ function Mr04DepthSection({
 }
 
 /**
+ * Mock Programme Increment 004, Batch 001 (Decision 141) — a dedicated
+ * section for the 18 newly authored Mathematics Mock candidate questions
+ * across 7 new families, structurally mirroring Inc006DepthSection above
+ * (own array, own marker, own status map) with two deliberate
+ * differences: (1) review_type is 'mock_maths_independent_review', not
+ * 'content_review' — routed through submitMockMathsIndependentReview(),
+ * never submitReview(); (2) every row here is currently
+ * authentic_assessment_candidate, not provisional, and the messaging
+ * below says so plainly, since "Practice Eligible"/"provisional"
+ * language would misdescribe this batch's real eligibility state.
+ * Reviewing a family here does not promote it to independently_validated
+ * or mock_eligible, and does not create or touch any ali_mock_form row —
+ * those remain separate, later, Founder-authorised steps (Decision 141).
+ */
+function MockMrBatch001Section({
+  targets, status, onOpen,
+}: {
+  targets: PendingReviewTarget[];
+  status: Map<string, SevenXReviewStatus>;
+  onOpen: (t: PendingReviewTarget, family: SevenXFamilyConfig) => void;
+}) {
+  const reviewedCount = MOCK_MR_BATCH001_FAMILIES.filter((f) => status.get(f.familyId)?.reviewed).length;
+  const totalQuestions = MOCK_MR_BATCH001_FAMILIES.reduce((n, f) => n + f.newQuestionIds.length, 0);
+  return (
+    <div className="bg-white dark:bg-gray-900 rounded-2xl border-2 border-indigo-200 dark:border-indigo-800 overflow-hidden">
+      <div className="px-5 py-4 border-b border-indigo-100 dark:border-indigo-900 bg-indigo-50 dark:bg-indigo-950/40">
+        <p className="text-sm font-bold text-indigo-900 dark:text-indigo-200">Mock Mathematics Batch 001 Review</p>
+        <p className="text-xs text-indigo-600 dark:text-indigo-400 mt-0.5">
+          {reviewedCount} of {MOCK_MR_BATCH001_FAMILIES.length} families reviewed. {totalQuestions} new questions total across 7 families.
+        </p>
+        <div className="mt-2 text-xs text-indigo-800 dark:text-indigo-300 space-y-0.5">
+          <p>• These are Mock candidates, not Practice questions: none has ever been, or will be, automatically promoted from Practice.</p>
+          <p>• All {totalQuestions} questions are currently <strong>authentic_assessment_candidate</strong>. None is mock_eligible. None is used by any Mock form.</p>
+          <p>• {totalQuestions} rows represent approximately 9 genuinely distinct reasoning structures: several families contain hand-verified variants of the same underlying structure, not independent experiences. Each card discloses which.</p>
+          <p>• QT-MR-01 (already the largest single Question Type in the Practice bank) was deliberately excluded from this batch.</p>
+          <p>• Mathematics anti-memorisation requires genuine structural diversity, not merely changed numbers. See each family&apos;s own disclosure below for how this batch approached that.</p>
+          <p>• Approving a family here does not activate it: promotion to independently_validated, and any later move to mock_eligible, remain separate, later, Founder-authorised steps.</p>
+        </div>
+      </div>
+      <div className="divide-y divide-gray-50 dark:divide-gray-800">
+        {MOCK_MR_BATCH001_FAMILIES.map((f) => {
+          const s = status.get(f.familyId);
+          const pendingTarget = targets.find((t) => t.id === f.familyId && (t.notes ?? "").includes("MOCK-INC004-BATCH001"));
+          return (
+            <button
+              key={f.familyId}
+              disabled={!pendingTarget}
+              onClick={() => pendingTarget && onOpen(pendingTarget, f)}
+              className="w-full text-left px-5 py-3 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors flex items-center justify-between gap-3 disabled:opacity-50"
+            >
+              <div>
+                <p className="text-sm font-medium text-gray-900 dark:text-gray-100">{FAMILY_DISPLAY_NAME[f.familyId] ?? formatFallbackName(f.familyId)}</p>
+                <p className="text-[11px] text-gray-400 dark:text-gray-500 mt-0.5">
+                  {f.newQuestionIds.length} new question{f.newQuestionIds.length === 1 ? "" : "s"}
+                  {s?.reviewed ? ` · reviewed (${s.decision})` : " · not yet reviewed"}
+                  {!pendingTarget ? " · migration 089 not yet applied" : ""}
+                </p>
+              </div>
+              {s?.reviewed ? <CheckCircle2 size={16} className="text-emerald-500 shrink-0" /> : <ArrowRight size={14} className="text-gray-300 dark:text-gray-600 shrink-0" />}
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+/**
  * Educational Increment 007T, Migration 064 Review-Surface Reconciliation
  * Part 6 correction — `reviewedIds` (now scoped to review_type =
  * 'content_review', see fetchReviewedTargetIds()) is cross-referenced
@@ -1699,6 +1782,7 @@ function FullBacklogSection({ targets, reviewedIds, onOpen }: { targets: Pending
     !PILOT_TARGET_IDS.includes(t.id) && !BATCH2_TARGET_IDS.includes(t.id) && !BATCH3_TARGET_IDS.includes(t.id) &&
     !BATCH4_TARGET_IDS.includes(t.id) && !SEVEN_T_TARGET_IDS.includes(t.id) && !SEVEN_X_TARGET_IDS.includes(t.id) &&
     !MR04_DEPTH_TARGET_IDS.includes(t.id) && !INC006_DEPTH_TARGET_IDS.includes(t.id) &&
+    !MOCK_MR_BATCH001_TARGET_IDS.includes(t.id) &&
     !reviewedIds.has(t.id));
 
   return (
@@ -1838,11 +1922,14 @@ function ReviewDashboard() {
   const [selectedMr04Depth, setSelectedMr04Depth] = useState<{ target: PendingReviewTarget; family: SevenXFamilyConfig } | null>(null);
   const [inc006DepthStatus, setInc006DepthStatus] = useState<Map<string, SevenXReviewStatus>>(new Map());
   const [selectedInc006Depth, setSelectedInc006Depth] = useState<{ target: PendingReviewTarget; family: SevenXFamilyConfig } | null>(null);
+  const [mockMrBatch001Status, setMockMrBatch001Status] = useState<Map<string, SevenXReviewStatus>>(new Map());
+  const [selectedMockMrBatch001, setSelectedMockMrBatch001] = useState<{ target: PendingReviewTarget; family: SevenXFamilyConfig } | null>(null);
 
   async function load() {
-    const [pending, reviewed, teachingReviewed, englishTeachingReviewed, writingTeachingReviewed, sevenX, mr04Depth, inc006Depth] = await Promise.all([
+    const [pending, reviewed, teachingReviewed, englishTeachingReviewed, writingTeachingReviewed, sevenX, mr04Depth, inc006Depth, mockMrBatch001] = await Promise.all([
       fetchPendingReviewTargets(), fetchReviewedTargetIds(), fetchMathsTeachingReviewedFamilyIds(), fetchEnglishTeachingReviewedFamilyIds(), fetchWritingTeachingReviewedFamilyIds(),
       fetchSevenXReviewStatus(SEVEN_X_TARGET_IDS), fetchMr04DepthReviewStatus(MR04_DEPTH_TARGET_IDS), fetchInc006DepthReviewStatus(INC006_DEPTH_TARGET_IDS),
+      fetchMockMrBatch001ReviewStatus(MOCK_MR_BATCH001_TARGET_IDS),
     ]);
     setTargets(pending);
     setReviewedIds(reviewed);
@@ -1852,6 +1939,7 @@ function ReviewDashboard() {
     setSevenXStatus(sevenX);
     setMr04DepthStatus(mr04Depth);
     setInc006DepthStatus(inc006Depth);
+    setMockMrBatch001Status(mockMrBatch001);
   }
 
   useEffect(() => { load(); }, []);
@@ -1915,6 +2003,21 @@ function ReviewDashboard() {
     );
   }
 
+  if (selectedMockMrBatch001) {
+    const { target, family } = selectedMockMrBatch001;
+    return (
+      <ReviewForm
+        target={target}
+        reviewType="mock_maths_independent_review"
+        onDone={() => { setSelectedMockMrBatch001(null); load(); }}
+        sevenX={{
+          questionIds: family.newQuestionIds, reclassified: family.reclassified, disclosure: family.disclosure,
+          notesPrefix: buildMockMrBatch001NotesPrefix(target.id, family.newQuestionIds),
+        }}
+      />
+    );
+  }
+
   if (targets === null) return <p className="text-sm text-gray-400 dark:text-gray-500">Loading review pilot…</p>;
 
   return (
@@ -1937,6 +2040,7 @@ function ReviewDashboard() {
       <SevenXSection targets={targets} sevenXStatus={sevenXStatus} onOpen={(target, family) => setSelectedSevenX({ target, family })} />
       <Mr04DepthSection targets={targets} status={mr04DepthStatus} onOpen={(target, family) => setSelectedMr04Depth({ target, family })} />
       <Inc006DepthSection targets={targets} status={inc006DepthStatus} onOpen={(target, family) => setSelectedInc006Depth({ target, family })} />
+      <MockMrBatch001Section targets={targets} status={mockMrBatch001Status} onOpen={(target, family) => setSelectedMockMrBatch001({ target, family })} />
       <FullBacklogSection targets={targets} reviewedIds={reviewedIds} onOpen={setSelected} />
       </>
       )}
