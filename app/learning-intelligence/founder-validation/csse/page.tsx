@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Clock, CheckCircle2, RotateCcw, ShieldAlert } from "lucide-react";
 import PageLayout from "@/components/PageLayout";
 import { InfoCard } from "@/components/ui/Card";
+import FounderOnlyGate from "@/components/FounderOnlyGate";
 import { getSupabaseClient } from "@/lib/supabase";
 import { ensureProfile } from "@/lib/supabaseProgress";
 import { withTimeout } from "@/lib/withTimeout";
@@ -60,7 +61,20 @@ type Mode = "intro" | "loading" | "error" | "exam" | "submitting" | "results";
 
 const FV_PATHWAY = "csse-founder-validation" as MockPathwayId;
 
+/**
+ * Gate 001 / Decision 130 LR-3 — wrapped in FounderOnlyGate below; this
+ * route is otherwise completely unchanged (same 11-question assessment,
+ * same evidence pipeline calls).
+ */
 export default function FounderValidationCsseAssessment() {
+  return (
+    <FounderOnlyGate>
+      <FounderValidationCsseAssessmentInner />
+    </FounderOnlyGate>
+  );
+}
+
+function FounderValidationCsseAssessmentInner() {
   const [mode, setMode] = useState<Mode>("intro");
   const [errorMessage, setErrorMessage] = useState("");
   const [activities, setActivities] = useState<BankQuestion[]>([]);

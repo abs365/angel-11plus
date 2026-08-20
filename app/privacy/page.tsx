@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import SupportLayout from "@/components/SupportLayout";
 
 const LAST_UPDATED = "June 2026";
@@ -26,7 +27,7 @@ export default function PrivacyPage() {
 
         <Section title="1. Who we are">
           <p>Angel 11+ is an educational preparation platform operated by Angel Digital, based in the United Kingdom. We create practice content to help children prepare for 11+ grammar and independent school entrance exams.</p>
-          <p className="mt-2">Contact: <a href="mailto:hello@angel11plus.co.uk" className="text-purple-600 dark:text-purple-400 hover:underline">hello@angel11plus.co.uk</a></p>
+          <p className="mt-2">Contact: <Link href="/contact" className="text-purple-600 dark:text-purple-400 hover:underline">our contact page</Link></p>
         </Section>
 
         <Section title="2. What data we collect">
@@ -67,7 +68,7 @@ export default function PrivacyPage() {
             <li>• We do not display advertising to any users</li>
             <li>• Parent or guardian consent is required before account creation</li>
           </ul>
-          <p className="mt-3">If you believe we have inadvertently collected personal data from a child without appropriate consent, please contact us immediately at <a href="mailto:hello@angel11plus.co.uk" className="text-purple-600 dark:text-purple-400 hover:underline">hello@angel11plus.co.uk</a>.</p>
+          <p className="mt-3">If you believe we have inadvertently collected personal data from a child without appropriate consent, please <Link href="/contact" className="text-purple-600 dark:text-purple-400 hover:underline">contact us</Link> immediately.</p>
         </Section>
 
         <Section title="5. Data retention">
@@ -85,7 +86,7 @@ export default function PrivacyPage() {
             <li>• Object to processing of your data</li>
             <li>• Data portability</li>
           </ul>
-          <p className="mt-3">To exercise any of these rights, email <a href="mailto:hello@angel11plus.co.uk" className="text-purple-600 dark:text-purple-400 hover:underline">hello@angel11plus.co.uk</a>. We will respond within 30 days.</p>
+          <p className="mt-3">To exercise any of these rights, <Link href="/contact" className="text-purple-600 dark:text-purple-400 hover:underline">contact us</Link>. We will respond within 30 days.</p>
         </Section>
 
         <Section title="7. Third party services">
@@ -107,7 +108,7 @@ export default function PrivacyPage() {
         </Section>
 
         <Section title="10. Contact">
-          <p>For any privacy questions: <a href="mailto:hello@angel11plus.co.uk" className="text-purple-600 dark:text-purple-400 hover:underline">hello@angel11plus.co.uk</a></p>
+          <p>For any privacy questions: <Link href="/contact" className="text-purple-600 dark:text-purple-400 hover:underline">our contact page</Link></p>
         </Section>
 
       </div>

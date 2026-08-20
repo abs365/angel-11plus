@@ -5,6 +5,7 @@ import Link from "next/link";
 import { CheckCircle2, XCircle, ArrowRight, Target, Sparkles, ShieldAlert } from "lucide-react";
 import PageLayout from "@/components/PageLayout";
 import { InfoCard } from "@/components/ui/Card";
+import FounderOnlyGate from "@/components/FounderOnlyGate";
 import { getSupabaseClient } from "@/lib/supabase";
 import { ensureProfile } from "@/lib/supabaseProgress";
 import { withTimeout } from "@/lib/withTimeout";
@@ -73,7 +74,19 @@ interface AngelView {
   pilotExplanation: string | null;
 }
 
+/**
+ * Gate 001 / Decision 130 LR-3 — wrapped in FounderOnlyGate below; this
+ * route is otherwise completely unchanged.
+ */
 export default function FamilyChoicePilotPage() {
+  return (
+    <FounderOnlyGate>
+      <FamilyChoicePilotPageInner />
+    </FounderOnlyGate>
+  );
+}
+
+function FamilyChoicePilotPageInner() {
   const [mode, setMode] = useState<Mode>("intro");
   const [errorMessage, setErrorMessage] = useState("");
   const [angelView, setAngelView] = useState<AngelView | null>(null);

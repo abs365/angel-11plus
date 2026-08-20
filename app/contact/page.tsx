@@ -28,7 +28,7 @@ export default function ContactPage() {
         </p>
       </div>
 
-      {/* Email card */}
+      {/* Contact card */}
       <section className="mb-6">
         <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-6">
           <div className="flex items-start gap-3 mb-4">
@@ -36,13 +36,13 @@ export default function ContactPage() {
               <Mail size={17} className="text-blue-600 dark:text-blue-400" />
             </div>
             <div>
-              <p className="text-sm font-bold text-gray-900 dark:text-gray-100 mb-0.5">Support email</p>
-              <a
-                href="mailto:hello@angel11plus.co.uk"
+              <p className="text-sm font-bold text-gray-900 dark:text-gray-100 mb-0.5">Message the founder</p>
+              <Link
+                href="/feedback"
                 className="text-base font-semibold text-blue-600 dark:text-blue-400 hover:underline"
               >
-                hello@angel11plus.co.uk
-              </a>
+                Use the contact form →
+              </Link>
             </div>
           </div>
 

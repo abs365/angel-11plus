@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import SupportLayout from "@/components/SupportLayout";
 
 const LAST_UPDATED = "June 2026";
@@ -26,7 +27,7 @@ export default function TermsPage() {
 
         <Section title="1. About Angel 11+">
           <p>Angel 11+ is an educational practice platform operated by Angel Digital, United Kingdom. The platform provides original exam-style practice content designed to help children prepare for UK 11+ entrance examinations.</p>
-          <p className="mt-2">Contact: <a href="mailto:hello@angel11plus.co.uk" className="text-purple-600 dark:text-purple-400 hover:underline">hello@angel11plus.co.uk</a></p>
+          <p className="mt-2">Contact: <Link href="/contact" className="text-purple-600 dark:text-purple-400 hover:underline">our contact page</Link></p>
         </Section>
 
         <Section title="2. Beta status">
@@ -101,7 +102,7 @@ export default function TermsPage() {
         </Section>
 
         <Section title="12. Contact">
-          <p>Questions about these terms: <a href="mailto:hello@angel11plus.co.uk" className="text-purple-600 dark:text-purple-400 hover:underline">hello@angel11plus.co.uk</a></p>
+          <p>Questions about these terms: <Link href="/contact" className="text-purple-600 dark:text-purple-400 hover:underline">our contact page</Link></p>
         </Section>
 
       </div>
