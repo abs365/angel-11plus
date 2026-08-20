@@ -3010,3 +3010,53 @@ None of the above requires tearing down or redesigning the proven 008D/008E/008F
 **Rationale:** treating this as a fresh, open-ended investigation would have ignored that this exact codebase has already solved this exact problem twice, with a proven, minimal, forward-only fix pattern each time — reusing that pattern precisely (rather than, say, revisiting the `revoke all ... from public` approach or adding a broader defensive mechanism) keeps the correction as small and auditable as the defect itself, and keeps this project's own migration history honest about what actually happened at each step, matching Decision 99's own standing precedent for correcting an already-applied migration.
 
 **Implications:** Decisions 1–135 all stand, none reversed or rewritten. Decision 135's own architecture (cycle model, cadence, subject-linking, initiation source) is confirmed correct and unaffected — only its privilege boundary needs correction. **Mock Governance Architecture Increment 001 remains OPEN, not closed by this decision.** It can only close once migration 086 is applied to production and the same catalogue query (or equivalent) confirms `anon` no longer has `EXECUTE` on any of the 4 functions, and `authenticated` no longer has it on `mock_cycle_is_open` specifically. No Mock content, UI, payment, or parent-identity work is authorised or begun by this decision.
+
+---
+
+### Decision 137 — MOCK GOVERNANCE ARCHITECTURE INCREMENT 001 COMPLETE IN PRODUCTION: migration 086 applied and Founder-verified via a second, independent `information_schema.routine_privileges` query, exactly matching Decision 136's intended privilege model; the fortnightly Mock-cycle governance architecture is now correctly and safely live; Mock itself remains NOT READY YET — governance readiness is not product availability
+
+**Scope and process:** Documentation-only closure. No source file, migration, or production data was changed by this decision — the only change is this log entry. Grounded entirely in the Founder's own two rounds of Level 1, authenticated `information_schema.routine_privileges` evidence (the first round, recorded in Decision 136, that surfaced the defect; a second, independent round, supplied with this closure request, confirming the correction) — not re-derived, not re-requested, not substituted with any inference from migration-success text alone.
+
+**Migration 085 (Decision 135) production status:** Applied. Established `ali_mock_cycle`, the `cycle_id`/`subject` columns on `ali_mock_attempt`, the `subject` column on `ali_mock_form`, the partial unique index, and the 4 new governance functions, plus the one disclosed guard added to `mock_create_attempt`. Its privilege grants, as originally authored, carried a real defect — recorded fully, not glossed over, in Decision 136.
+
+**Migration 086 (Decision 136) production status:** Applied ("Success. No rows returned," Supabase SQL Editor) and now independently confirmed correct via the Founder's second catalogue query — not accepted on the "Success" message alone.
+
+**Security-defect disposition: RESOLVED.** Founder-supplied production evidence, this session:
+
+| Function | authenticated | postgres | service_role | anon |
+|---|---|---|---|---|
+| `mock_start_new_cycle()` | EXECUTE | EXECUTE | EXECUTE | absent |
+| `mock_authorise_extra_cycle()` | EXECUTE | EXECUTE | EXECUTE | absent |
+| `mock_create_cycle_attempt(text, uuid)` | EXECUTE | EXECUTE | EXECUTE | absent |
+| `mock_cycle_is_open(uuid)` | absent | EXECUTE | EXECUTE | absent |
+
+This is an exact match to Decision 136's own stated intended model: `anon` execute removed from all 4 functions; `authenticated` retained on the 3 public authenticated APIs; `authenticated` also removed from the internal helper, restoring Decision 135's own original "granted to no role at all" design; `postgres`/`service_role` untouched throughout. The defect this project has now hit and independently corrected a third time (migrations 071, 073, 086 — each time via the identical, proven, forward-only `revoke execute ... from anon` pattern, never by revisiting the underlying architecture) is closed.
+
+**Final implemented Mock governance architecture, recorded for the record:**
+
+1. **Full Mock cycle** — `ali_mock_cycle` is the one governance unit a fortnightly Mock opportunity is measured against.
+2. **Two papers** — a cycle is designed to hold one Mathematics `full_mock` attempt and one English `full_mock` attempt, linked via `ali_mock_attempt.cycle_id`, remaining two genuinely separate attempt/report rows — never merged.
+3. **Reporting** — each subject attempt retains its own independent report lifecycle (unchanged from migrations 072/074/075); a future combined Full Mock parent summary may only ever sit above the two subject reports, never replace them (Decision 133's own standing rule, unaffected by this increment).
+4. **Cadence** — approximately 14 days, gating the Full Mock cycle as a whole, never Mathematics and English independently.
+5. **Cadence anchor** — the most recent `'scheduled'` cycle's own `created_at`; `'parent_override'` cycles never move this anchor.
+6. **Open-cycle control** — no new cycle (of either source) can be created while an existing one has not had both subject attempts reach `submitted`.
+7. **Parent override** — structurally distinguishable via `initiated_by = 'parent_override'`, created only through a distinct function (`mock_authorise_extra_cycle`) never reachable from any child-facing route built so far.
+8. **Extra cost** — an approved commercial *principle* only. No price chosen. No payment/entitlement/subscription table, column, or code exists anywhere in this architecture.
+9. **Parent-identity limitation — OPEN, not downgraded:** this codebase has exactly one shared Supabase Auth identity per family; nothing built in this increment, or at any point before it, can cryptographically distinguish a parent's own action from a child's. Paid parent-authorised extra Mock is **not production-ready** on this basis alone, independent of the pricing question. Closing this needs a real parent PIN or separate parent authentication — still named as necessary future work, not begun.
+10. **Anti-memorisation — binding requirement, not implemented:** the governance requirement recorded in Decision 135 (prior question/passage/form exposure, competency/difficulty/subject balance, retirement/cooldown, reproducibility, reviewed content only — reordering or renumbering alone does not satisfy it) stands unchanged. No form-generation or exposure-tracking engine has been built at any point in this increment.
+
+**Mock availability — unchanged, and explicitly not conflated with governance completion:** `mock_eligible` remains 0; `ali_mock_form` remains empty (0 rows, confirmed live by this session's own prior anon-key read, unchanged since); no active production CSSE Mock form exists. The Mock Centre and mock-exam pre-check continue to show the honest "Not ready yet" state (Decisions 126/128/133), untouched by migrations 085 or 086, both of which are pure governance/privilege infrastructure. **Increment 001 being complete does not mean a learner can sit a Mock today.**
+
+**Checks performed this session:** repository reconciliation only (clean working tree; HEAD == origin/main == `85159be1928106a3eccff2dbd512c482db5721da`; Decision 135 and Decision 136 each present exactly once; migrations 085 and 086 byte-unchanged since their respective commits). No production query was re-run — the Founder's own second, independent catalogue query is accepted directly as Level 1 evidence, per this decision's own explicit authorisation not to request a third. No test suite, `tsc`, ESLint, Copy Quality Guard, or build was re-run, since no source file changed in this closure beyond this log entry.
+
+**What this decision does NOT claim:** it does not claim Mock is available, ready, or scheduled to become available; it does not claim `mock_eligible` changed; it does not claim any Mock content, form, UI, or payment work occurred; it does not claim the parent-identity limitation is resolved or scheduled; it does not claim anti-memorisation is implemented; it does not claim Decisions 135 or 136 are rewritten (neither is — both stand exactly as recorded, this decision only records that 136's own corrective migration has now been verified applied).
+
+**Files changed:** `ALI_DECISION_LOG.md` only (this entry).
+
+**Decision number:** 137.
+
+**Commit SHA:** recorded after commit (see repository history immediately following this entry).
+
+**Rationale:** closing on the Founder's own independently-run, second catalogue query — rather than on migration success text, rather than on this session re-querying a third time, and rather than inferring correctness from the fact that a fix was authored — keeps this closure evidenced at the same Level 1 standard every other genuine closure in this log has required (Decisions 87, 91, 96, 100, 108, 120, 124, 132), and treats the Founder's own re-verification as authoritative rather than redundant.
+
+**Implications:** Decisions 1–136 all stand, none reversed or rewritten. Decision 132's READY FOR CONTROLLED FAMILY LAUNCH verdict is not reopened. Mock Governance Architecture Increment 001 is CLOSED. Remaining before the first real Mock can become available: subject-pure Mathematics/English content authored and independently reviewed; the Mock UI wired to `mock_start_new_cycle()`/`mock_create_cycle_attempt()`; `subject_breakdown` scoring populated per paper; the Full Mock umbrella's own presentation built. Remaining before paid additional-Mock activation can operate: a genuine price decision; payment/entitlement infrastructure; and real parent-identity verification. None of the above is authorised or begun by this decision.
