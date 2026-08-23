@@ -30,6 +30,10 @@ function rowToBankQuestion(row: BankRow): BankQuestion {
     provenance: row.provenance ?? undefined,
     eligibilityStatus: row.eligibility_status,
     active: row.active,
+    questionGroupId: row.question_group_id ?? undefined,
+    groupOrder: row.group_order ?? undefined,
+    subpartLabel: row.subpart_label ?? undefined,
+    markingMode: row.marking_mode ?? undefined,
   };
 }
 

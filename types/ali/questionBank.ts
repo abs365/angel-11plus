@@ -135,4 +135,37 @@ export interface BankQuestion {
   provenance?: string;
   eligibilityStatus?: string;
   active?: boolean;
+  /**
+   * Migration 093 (Mock Programme Increment 005, Decision 148). Undefined
+   * (the current value of every existing row) means this item is a
+   * standalone, atomic numbered question -- current-day meaning,
+   * unchanged. A value shared by several BankQuestions means those rows
+   * are subparts/response-components of one displayed numbered question,
+   * ordered by `groupOrder`. Deliberately distinct from `familyId`
+   * (sibling reasoning-variant grouping) and `learningUnitId` (read by
+   * every subject in live Practice selection, see
+   * lib/ali/exposureIntelligence.ts's groupingKeyOf() — reusing it here
+   * would have risked silently affecting Practice exposure/clustering).
+   * See lib/ali/assessmentHierarchy.ts.
+   */
+  questionGroupId?: string;
+  /** Migration 093. Deterministic 1-based position within a `questionGroupId` group. Undefined for a standalone item. */
+  groupOrder?: number;
+  /** Migration 093. Free-text display label within a numbered question (e.g. "(a)", "6(b)-i"). Undefined for a standalone item. */
+  subpartLabel?: string;
+  /** Migration 093. See `MarkingMode` and lib/ali/assessmentHierarchy.ts. Undefined is a deliberate non-claim, not "deterministic". */
+  markingMode?: MarkingMode;
 }
+
+/**
+ * Migration 093 (Mock Programme Increment 005, Decision 148 Part 9).
+ * `deterministic` — the only mode the live `mock_score_attempt()`
+ * (migrations 074/075) currently implements. `structured_acceptable_response`
+ * — a comprehension response whose marks depend on multiple acceptable
+ * evidence components/quotations/reasons (Decision 148 Part 4), not yet
+ * scored by any live function. `criterion_rubric` — Continuous Writing or
+ * any future criteria-judged response (Decision 148 Part 5), not yet
+ * scored by any live function, and not automated AI scoring (Decisions
+ * 47/61/106's Writing AI-score quarantine is untouched).
+ */
+export type MarkingMode = "deterministic" | "structured_acceptable_response" | "criterion_rubric";

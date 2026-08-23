@@ -159,6 +159,14 @@ export interface Database {
           transfer_class: "ROUTINE" | "NEAR_TRANSFER" | "FAR_TRANSFER" | "MIXED_TRANSFER" | null;
           /** Migration 035. Competency codes supporting (not primary to) this item. */
           supporting_competencies: string[] | null;
+          /** Migration 093. NULL (every existing row) means a standalone, atomic numbered question. See ali_question_bank.question_group_id's own column comment. */
+          question_group_id: string | null;
+          /** Migration 093. 1-based position within a question_group_id group. NULL for a standalone item. */
+          group_order: number | null;
+          /** Migration 093. Free-text label (e.g. "(a)", "6(b)-i"). NULL for a standalone item. */
+          subpart_label: string | null;
+          /** Migration 093. "deterministic" | "structured_acceptable_response" | "criterion_rubric". NULL is a deliberate non-claim, not "deterministic". */
+          marking_mode: "deterministic" | "structured_acceptable_response" | "criterion_rubric" | null;
         };
         Insert: {
           id: string;
@@ -188,6 +196,10 @@ export interface Database {
           active?: boolean;
           transfer_class?: "ROUTINE" | "NEAR_TRANSFER" | "FAR_TRANSFER" | "MIXED_TRANSFER" | null;
           supporting_competencies?: string[] | null;
+          question_group_id?: string | null;
+          group_order?: number | null;
+          subpart_label?: string | null;
+          marking_mode?: "deterministic" | "structured_acceptable_response" | "criterion_rubric" | null;
         };
         Update: {
           usage_count?: number;
