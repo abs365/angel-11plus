@@ -4131,3 +4131,74 @@ None of A–N is begun by this decision, including A.
 **Implications:** Decisions 1–147 all stand, none reversed or rewritten. Decision 132's READY FOR CONTROLLED FAMILY LAUNCH verdict is not reopened. `mock_eligible` remains 0; `ali_mock_form` remains 0 rows; Batch 002 remains unpromoted; Batch 003 not begun; no English content authored; no learner-facing change results from this decision. **No production migration application, no Batch 002 promotion, no Batch 003, no English/Writing content authoring, no `mock_eligible` change, no `ali_mock_form` creation, no Mock activation, no cadence implementation, no first-Mock readiness implementation, no parent payment/entitlement/identity work, no Educational Intelligence or Practice behaviour change, and no weakening of sealed-answer or server-side-scoring security is authorised or begun by this decision.** Awaiting Founder review before any dependent work in the recommended dependency order (A–N) above proceeds.
 
 ---
+
+### Decision 149 — Mock Programme Increment 004, Batch 002, Independent Validation Promotion: migration 094 (NOT applied) drafted, promoting exactly the 20 Batch 002 questions across the 10 Founder-authorised families from `authentic_assessment_candidate` to `independently_validated`, mirroring migration 090's own proven precedent exactly; content, Decision 148's 4 grouping columns, and `ali_family_review` all proven untouched; `mock_eligible` remains 0, no Mock form, Mock still NOT READY YET
+
+**Scope and process:** Migration authoring + governance recording, per explicit Founder authorisation. No migration applied by this session, no Mathematics Batch 003, no English Mock content, no field other than `eligibility_status` changed, no `ali_family_review` row created or modified, no `ali_mock_form` row created, no promotion to `mock_eligible`, no Mock UI/scoring/reporting/Practice/Educational Intelligence/cadence/payment/parent-override code touched.
+
+---
+
+**PART 1 — REPOSITORY RECONCILIATION**
+
+All 10 items confirmed directly, not assumed:
+1. Working tree clean before this session's own changes.
+2. HEAD == `origin/main` == `5c4e30f` (Decision 148) before this session — confirmed via `git fetch` + `git rev-parse` on both refs.
+3. Decision 148 present exactly once (`grep -c` confirmed).
+4. Migration 093 present, byte-unchanged since its own commit (`git diff 5c4e30f -- supabase/migrations/093_...sql` empty).
+5. Migrations 091/092 present, byte-unchanged since Decision 145's own commit `b80fbe5` (`git diff` empty for both).
+6. Batch 001 (migrations 088/089/090) confirmed byte-unchanged since their own respective commits (`289bad2`/`6604966`) — untouched.
+7. Batch 002 confirmed, by direct re-reading of migration 091's own SQL text (not recalled from any prior decision's summary), to consist of exactly 20 question IDs across exactly the 10 named families, every row `eligibility_status = 'authentic_assessment_candidate'`, `content_version = 1`, `active = true`, `subject = 'maths'` — an exact match to the Founder's own stated established position.
+8. No migration exists beyond 093 (`ls supabase/migrations` confirmed) — no later migration has already promoted Batch 002.
+9–10. **Not independently re-queryable this session** — this execution environment has no live Supabase credentials/access (unchanged from every prior session in this arc). Whether any Batch 002 question is already `mock_eligible` or whether a real `ali_mock_form` row exists cannot be confirmed by direct query; the Founder's own stated established position (`mock_eligible = 0`, `ali_mock_form = 0`) is relied on as the most recent evidence, explicitly labelled as such, per this project's own standing discipline against manufacturing verification. **No discrepancy found in any of the 8 independently-checkable items; nothing here required stopping.**
+
+---
+
+**PART 2 — INDEPENDENT REVIEW EVIDENCE RECONCILIATION**
+
+`ali_family_review` remains RLS-opaque to every anon-key/script path in this repository (migrations 034/054, re-confirmed by the same standing limitation every promotion decision in this arc has already documented — Decisions 87/90/94-96/107-108/117/119/121-123/143/147) — this session has no independent means to query it directly. The Founder's own directive states, as the established position, that genuine independent review of all 10 Batch 002 families has been completed via `/admin-beta/review`'s own "Mock Mathematics Batch 002 Review" section (`MockMrBatch002Section`, built at Decision 145 specifically to route through the corrected `submitMockMathsIndependentReview()` write path, `review_type = 'mock_maths_independent_review'`, `review_target_type = 'question_family'` — the exact governance surface Decision 142 built and hardened for this exact purpose, closing the "reviewed through the wrong path gets silently mis-recorded as `content_review`" defect that decision found and fixed). **This is accepted as Level 1, Founder-supplied evidence, at the same evidentiary standard migration 090/Decision 143 already established for the analogous Batch 001 transition** — not independently re-derived, because it cannot be. Per-family reviewer identity/date detail was not itemised to this session (unlike Batch 001's own disclosed `mock-mr09-data` reviewer-typo correction, Decision 143) — this is disclosed plainly, not smoothed over, and does not change the promotion's own governing rule: only a genuine, non-`UNASSIGNED`, non-`content_review`, `mock_maths_independent_review`/`question_family`-scoped `approved` decision qualifies a family for promotion, and the Founder's own directive states all 10 qualify on that exact basis. **No family is reported rejected, pending, or requiring revalidation. All 20 questions across all 10 families are promoted together — a full-batch promotion, not partial**, consistent with the Founder's own directive not authorising a partial promotion and finding no reason here to invoke one.
+
+---
+
+**PART 3 — PRODUCTION PRECONDITION**
+
+**Repository-level evidence, independently confirmed this session** (direct reading of migration 091's own SQL text): exactly 20 rows across the 10 named families, all `authentic_assessment_candidate`, `active = true`, `content_version = 1`, `subject = 'maths'`. **Founder-supplied production evidence, not independently re-queried this session** (no live Supabase access in this environment, Part 1 items 9–10): Batch 001 `independently_validated` = 18 (unchanged); Mathematics `practice_eligible` = 194; English `practice_eligible` = 120; `mock_eligible` = 0. **These two evidence classes are kept explicitly distinct in this record, per the directive's own instruction, rather than presented as a single undifferentiated "confirmed" claim.** Migration 094's own assertion-and-refuse guard (Part 4) is precisely the safeguard against the gap between repository evidence (verifiable now) and live production state (not verifiable from this environment, and possibly different by the time the migration is actually applied) — it does not proceed on a guess in either direction.
+
+---
+
+**PART 4 — MIGRATION 094**
+
+`supabase/migrations/094_mock_mathematics_batch002_independent_validation.sql` (**NOT APPLIED**), mirroring migration 090's own proven precedent exactly: an exact-ID allow-list (20 IDs, `array[...]`), never a bare family-wide `UPDATE`; a `do $$ ... $$` precondition block requiring exactly 20 rows matching `id = any(v_target_ids)`, `eligibility_status = 'authentic_assessment_candidate'`, `active = true`, `family_id = any(v_target_families)` before the `UPDATE` runs; a safe already-applied no-op branch when exactly 20 are already `independently_validated`; a `RAISE EXCEPTION` naming the actual observed counts for any other state, touching nothing. The `UPDATE`'s own `SET` clause touches only `eligibility_status`, to exactly one value (`independently_validated`) — confirmed by a dedicated test asserting no other column appears in any `SET` clause anywhere in the file.
+
+**Absolute content immutability, proven, not merely asserted:** a dedicated test confirms none of `question_group_id`, `group_order`, `subpart_label`, or `marking_mode` (Decision 148's own 4 new columns, now live in production per the Founder's own confirmation) appears anywhere in migration 094's real SQL — Batch 002 was authored before those columns existed and remains valid, unretrofitted, standalone content, exactly as the directive requires. No `prompt`, `answer`, `workingSteps`, `addresses_misconception`, `content_difficulty`, `skill`, `family_id`, `provenance`, or `content_version` is touched (the same generic "only `eligibility_status` is ever `SET`" test that covered this for migration 090 covers it here too).
+
+**Review-history immutability:** migration 094 never mentions `ali_family_review` anywhere in its real SQL (confirmed by a dedicated test) — no placeholder row deleted, no reviewer identity rewritten, no decision changed, no replacement record created. The independent-review records Part 2 relies on remain exactly as recorded, untouched by this migration.
+
+**Mock-availability boundary:** migration 094 never mentions `mock_eligible` or `ali_mock_form` anywhere in its real SQL (confirmed by dedicated tests) — it cannot create a form, populate a manifest, activate a Mock, or change Mock Centre availability, even in principle.
+
+---
+
+**PART 5 — TESTS**
+
+16 new (`tests/supabase/mockMathematicsBatch002IndependentValidation.test.ts`), mirroring `mockMathematicsBatch001IndependentValidation.test.ts`'s own established pattern (Decision 143) exactly, plus 2 tests this task's own directive specifically required beyond that precedent: exact 20-ID/10-family allow-list matched against migration 091's own real content; required source status present in both the precondition check and the `UPDATE`'s own `WHERE` clause; the only `SET` value anywhere is `independently_validated`; no `mock_eligible` transition; no column other than `eligibility_status` ever set; **the 4 Decision 148 grouping columns explicitly named and proven absent, not merely covered by the generic SET-clause check**; no `ali_family_review`/`ali_mock_form` mention; only `ali_question_bank` ever appears as an `UPDATE`/`INSERT`/`DELETE` target; exactly one `RAISE EXCEPTION` and two `RAISE NOTICE`; the already-applied branch contains no `UPDATE`; single transaction; not-applied disclosure; **zero ID overlap with Batch 001's own 18 target IDs**, proving this migration cannot accidentally re-touch Batch 001; and the cross-cutting proof that `isMockEligibleCandidate()` still rejects all 20 post-promotion IDs.
+
+**Verification performed this session:** full suite **1087/1087 pass** (1071 baseline + 16 new, zero regressions, zero existing tests modified). `npx tsc --noEmit` clean. ESLint on the new test file: 0 errors (one expected, harmless "no matching configuration" warning on the `.sql` migration file itself, matching every prior migration-only change). Copy Quality Guard PASS (0 violations, 256 files — the SQL migration and this Decision Log entry are not scanned files; the test file's directory is outside the guard's scanned set, matching the identical, unchanged file count every prior test-only addition in this arc has also produced). Production build succeeds (`✓ Compiled successfully`).
+
+---
+
+**What this decision does NOT claim:** it does not claim migration 094 is applied (it is not); it does not claim any question is `mock_eligible`; it does not claim `ali_family_review` was independently re-queried by this session (structurally impossible via anon key, accepted as Level 1, Founder-supplied evidence, exactly as precedent requires); it does not claim per-family reviewer identity/date detail was verified (not itemised to this session, disclosed plainly); it does not claim any `ali_mock_form` exists or that Mock is, or is scheduled to become, available; it does not claim the pool-level Mock-Eligible gate (Decision 138) has been built; it does not claim live production `mock_eligible`/`ali_mock_form` state was independently re-queried this session (no environment access, Part 1/3).
+
+**Files changed:** `supabase/migrations/094_mock_mathematics_batch002_independent_validation.sql` (new, NOT applied), `tests/supabase/mockMathematicsBatch002IndependentValidation.test.ts` (new), `ALI_DECISION_LOG.md` (this entry).
+
+**Migration number:** 094.
+
+**Production application status:** NOT APPLIED. Awaiting Founder review and manual application via Supabase Dashboard.
+
+**Decision number:** 149.
+
+**Commit SHA:** recorded after commit (see repository history immediately following this entry).
+
+**Rationale:** mirroring migration 090's own proven precedent exactly — same allow-list discipline, same assertion-and-refuse pattern, same content-immutability boundary — is the correct choice here specifically because nothing about this promotion is structurally different from Batch 001's own: same lifecycle stage, same governance surface (corrected at Decision 142, reused unchanged at Decision 145), same firewall between review history and eligibility promotion. The one genuinely new proof this task's own directive required beyond that precedent — that Decision 148's 4 grouping columns remain untouched — was added as an explicit, named test rather than left to be merely implied by the generic "only `eligibility_status` is ever SET" check, because the directive asked for it directly and a defect in exactly this dimension (a promotion migration accidentally retrofitting new metadata) is precisely the kind of quiet scope-creep this project's own evidence discipline exists to catch before it happens, not after.
+
+**Implications:** Decisions 1–148 all stand, none reversed or rewritten. Decision 132's READY FOR CONTROLLED FAMILY LAUNCH verdict is not reopened. `mock_eligible` remains 0; no `ali_mock_form` row exists; no learner-facing change results from this decision. Once migration 094 is applied, the 20 Batch 002 questions will be `independently_validated` — genuinely reviewed, still not Mock-eligible, still not usable by any form. **Expected Mathematics Mock candidate position after application: Batch 001 (18) + Batch 002 (20) = 38 `independently_validated`, `mock_eligible` still 0 — intentional, per the Founder's own directive.** Remaining before any of this content can become `mock_eligible`: the pool-level Mock-Eligible gate (Decision 138, still unbuilt); a separate, later, Founder-authorised activation migration. **No Batch 003, no English/Writing content, no form assembly, no cadence/readiness/UI/Practice/Educational Intelligence/reporting/payment/parent-override work, and no Mock Increment 006 is authorised or begun by this decision.**
+
+---
