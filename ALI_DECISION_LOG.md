@@ -3538,3 +3538,273 @@ QT-MR-01 excluded entirely, per explicit instruction, despite being the easiest 
 **Rationale:** disclosing the duplicate-check process gap (checked after authoring, not before) rather than silently folding the fix into a clean-looking report follows this exact log's own established pattern from Decision 141 (the near-duplicate answer and the SQL-escaping defect) — a defect caught and named, with the process lesson stated plainly for the next batch, is worth more to this project's own trust than a report that looks unblemished because an inconvenient finding was quietly absorbed. Correcting the one genuine near-duplicate while honestly disclosing, rather than attempting to rewrite, the remaining format-level overlaps reflects a real, evidenced judgement: CSSE's own limited canonical format vocabulary makes some technique-level overlap with Practice structurally unavoidable for authentically-shaped Mock content, and pretending otherwise would be a false claim, not a higher standard.
 
 **Implications:** Decisions 1–144 all stand, none reversed or rewritten. Decision 132's READY FOR CONTROLLED FAMILY LAUNCH verdict is not reopened. `mock_eligible` remains 0; no learner-facing change results from this decision. Remaining before Batch 002 can progress: Founder review and application of migrations 091/092; assignment of a genuine, non-author independent reviewer; that reviewer's own recorded decision via `mock_maths_independent_review`; only then, a separate, later, Founder-authorised activation migration promoting approved items to `independently_validated`, mirroring migration 090's own precedent. **Mathematics capacity if Batch 002 is eventually independently validated: 38 of the ≈80–85 initial target** (18 from Batch 001 plus 20 from Batch 002). **Remaining capacity gap: ≈42–47 questions.** No Batch 003, no promotion, no form assembly, no English/Writing content, and no Mock Increment 005 is authorised or begun by this decision.
+
+---
+
+### Decision 146 — Mock Programme, Sequencing Correction: Fortnightly Capacity Blueprint and Exam Architecture — discovery, evidence-reconciliation, and target-architecture only, per explicit Founder sequencing pause (do not begin Batch 003, do not promote Batch 002); establishes the real CSSE paper blueprint (Mathematics 21±1 Q/60 marks/60 min, English Comprehension+Writing 60 marks/60 min, no Applied Reasoning), a defensible tiered exposure/reuse model replacing naive cycles×questions multiplication, a revised Mathematics capacity model (≈80–85 launch floor confirmed correct but reframed as a *rolling* floor, not a ceiling — ≈150–170 required for 26/52-week sustainability), the equivalent English/passage model, a reserve-capacity rule for parent-authorised extra Mocks, and a 12-step dependency-ordered roadmap; Batch 002 confirmed sound and cleared to resume promotion once this blueprint is Founder-accepted; no content authored, no promotion performed, no schema/code changed
+
+**Scope and process:** Discovery, evidence-reconciliation, and target-architecture design only, per explicit Founder sequencing correction. No Batch 003 begun, no question authored, no Batch 001/002 content modified, no promotion migration applied or drafted, no `mock_eligible` change, no `ali_mock_form` created, no exposure-tracking/form-assembly/scoring/reporting/Educational Intelligence/Practice/payment/parent-override code touched, no Mock Centre availability change. Grounded directly in: `ALI_DECISION_LOG.md` Decisions 49, 58, 133–145 (read in full, not summarised from memory); `docs/intelligence/CSSE_QUESTION_INTELLIGENCE_FRAMEWORK.md` and its own cited primary sources (`docs/intelligence/CSSE_ASSESSMENT_INTELLIGENCE_FRAMEWORK.md` Observations 1–13, CSSE-001/003/004/006/008/009/011/013/014/016); `supabase/migrations/043` (passage bank), `030` (parameterised-family precedent), `034/047/054/059-061/087` (review governance), `069-092` (full Mock/content lineage); `lib/ali/selection.ts`, `lib/ali/exposureIntelligence.ts`, `lib/ali/mockEligibility.ts`; and a repository-wide reconciliation search for the Applied-Reasoning-removal claim, which surfaced and resolved a genuine internal evidence conflict (Part 1.3 below). Repository state confirmed: clean working tree, HEAD == origin/main == `b80fbe5` before this session, migrations 087–092 present and unapplied exactly as Decision 145 left them, no migration exists beyond 092.
+
+---
+
+**PART 1 — RECONCILIATION**
+
+**1.1 What is already decided (standing, reaffirmed, not re-derived):** two separately-attemptable Mathematics/English papers with separate reports (Decision 133); a Full Mock umbrella that must not erase the two-paper distinction (Decision 133); ~14-day scheduled cadence, gating the cycle (both papers together), anchored on `'scheduled'`-source cycles only (Decisions 49, 134 Finding 4, 135); a parent-authorised additional cycle, structurally distinct (`initiated_by = 'parent_override'`), never learner-self-unlockable (Decisions 49, 135); an eventual extra charge on the parent-override path approved in *principle*, implementation explicitly deferred (Decision 135); anti-memorisation as a real, five-mechanism design (sealed content, form-level exposure/reuse, passage exposure, structural item variation, scheduled retirement) with a disclosed, accepted household/sibling residual-exposure gap (008A §19, Decision 134 Finding 5); the 5-stage content-eligibility lifecycle (`provisional → practice_eligible → authentic_assessment_candidate → independently_validated → mock_eligible`) and its 3 Mock-specific independent-review types (Decisions 138, 139); the ≈80–85 Mathematics initial capacity target as "3–4 non-repeating Full Mock cycles," explicitly *not* an eventual ceiling (Decisions 138, 140); the `'maths'`/`'mathematics'` subject-naming mismatch between `ali_question_bank` and `ali_mock_form`, unresolved (Decision 139); the B/A-hybrid form-assembly recommendation (algorithmic candidate composition + independent human review + frozen `question_manifest`) (Decision 138 Part 7); Batch 001 (18 Q/7 families/9 structures, `independently_validated`, live) and Batch 002 (20 Q/10 families/10 structures, `authentic_assessment_candidate`, awaiting promotion) (Decisions 141–145).
+
+**1.2 What is implemented versus only architectural/governance intent, confirmed by direct reading, not assumed:**
+
+| Component | State | Evidence |
+|---|---|---|
+| Two-paper attempt/report separation (schema+RPC) | Structurally supported | Migration 085; `attempt_type`/`cycle_id`/`subject` columns live-designed |
+| Cadence/parent-override governance | Built, **NOT applied to production** | Migration 085 (Decision 135); no re-confirmation since found it applied |
+| Mock Centre/mock-exam UI wired to cycle RPCs | **NOT done** | `app/learning-intelligence/mock-exam/page.tsx` still hardcodes `attempt_type = "full_mock"` (Decision 135's own disclosure, unchanged since — no UI file touched by any decision 136–145) |
+| Content review governance (3 Mock review types) | **APPLIED in production** | Migration 087, Decision 140 |
+| Mathematics content (Batch 001) | **APPLIED, `independently_validated`** | Migration 090, Decision 144 |
+| Mathematics content (Batch 002) | Authored+review-ready, **NOT applied**, review reported complete by the Founder (accepted as Level 1 evidence, Part 12) | Migrations 091/092, Decision 145 |
+| Pool-level Mock-Eligible balance gate | **NOT built** | Named at Decision 138, reconfirmed absent at Decision 139/145, still absent — no migration since touches it |
+| Form-level review boundary | **NOT built** | Named at Decision 139 Part 9, still absent |
+| Question/attempt-level exposure history | **Fully reconstructable, zero new schema needed** | `ali_mock_attempt.assigned_question_ids`/`form_id` (migration 070), reused unchanged |
+| Passage-level exposure mechanism | **Real for Practice, not wired to Mock** | `passageGroupingKeyOf()` (`lib/ali/exposureIntelligence.ts`), confirmed still present, unchanged |
+| Family/structure-level exposure *query* | **NOT built anywhere** — new finding, Part 5 | `family_id` exists on content; no query anywhere in this repository aggregates a learner's family/structure-level Mock exposure history |
+| Form-level exposure/cooldown/retirement *policy* | **NOT built** | `ali_mock_form.active boolean` only; no cooldown column exists (Decision 138 Part 4C, reconfirmed unchanged) |
+| `ali_passage_bank` | Schema live, **0 rows** | Migration 043, reconfirmed unchanged since Decision 138/139 |
+| `mock_eligible` content (either subject) | **0** | Reconfirmed unchanged across every decision through 145 |
+| `ali_mock_form` rows | **0** | Reconfirmed unchanged across every decision through 145 |
+
+**1.3 A genuine internal evidence conflict found and resolved, disclosed rather than silently picked:** `CSSE_EXAMINATION_BLUEPRINT.md` §5 and the Assessment Excellence Programme's own Phase 3/4 review board (`knowledge/assessment-excellence-programme/phase-4-review-board/ASSESSMENT_EXCELLENCE_PHASE_4_REVIEW_BOARD_REPORT.md`, prepared 2026-08-05) each independently found the claim "Applied Reasoning was removed from the CSSE English paper from September 2024" **could not be confirmed or refuted** by the official evidence then held — sourced to one uncited tertiary site, and the one pair of official documents that could settle it (AEP2-065/066) were read in full and found "structurally unable to answer this question." Eleven days later, Decision 58 (2026-08-16) recorded the same claim as **Founder-confirmed from current official CSSE information** — a Level 1, later, and more direct evidentiary source than the Phase 3/4 review board's own unresolved finding, per this project's own standing evidence-hierarchy discipline (Level 1 evidence, once supplied, resolves — not overrides by silent edit — a documented lower-tier gap). **This decision treats Decision 58 as the current, correctly-resolved state** (current CSSE English = Comprehension + Continuous Writing only, no Applied Reasoning) and records this reconciliation explicitly here so a future increment does not re-discover the Phase 3/4 "unresolved" finding and wrongly treat it as still open.
+
+**1.4 Direct answer to the directive's own question — is the ≈80–85 Mathematics target sufficient for the fortnightly requirement?** **No, explicitly and specifically not**, for the reason Decision 138 itself already flagged but did not resolve numerically: ≈80–85 was scoped as a **launch floor** ("3–4 non-repeating cycles," i.e. roughly the first 6–8 weeks of a programme), not a standing figure for a multi-month, repeatedly-cycling programme. Part 7 below replaces it with a **rolling floor** model, not a larger fixed ceiling — the naive alternative (cycles × 21, up to 546 at 52 weeks) is explicitly rejected per the directive's own instruction, for the same reason Decision 138 itself already named: it is not authorable at this project's real pace and is not what genuine spaced non-recognition requires.
+
+---
+
+**PART 2 — THE REAL CSSE PAPER BLUEPRINT**
+
+Confidence tiers used throughout, per the directive: **A** = directly evidenced (primary CSSE source, ≥2/3 years or an explicit current-paper statement); **B** = strongly inferred (derived from A-tier facts via a stated, disclosed logical step, not itself independently observed); **C** = unknown/not sufficiently evidenced (named as a gap, not guessed).
+
+**MATHEMATICS**
+| Fact | Value | Tier | Evidence |
+|---|---|---|---|
+| Duration | 60 minutes | A | CSSE-006/011/016 identical "60 minutes" wording, 3/3 years |
+| Total marks | 60 marks | A | Identical "Total 60 marks" wording, 3/3 years |
+| Question count | 20 (2023) or 21 (2021/2022) — **not stable year to year** | A (for the range), explicit known limitation for a single fixed number | Each paper's own "END OF TEST... completed N questions" line |
+| Calculator/marking policy | No calculator; exact-match, no partial/method credit | A | Identical wording, 3/3 years; QT-MR-14 catalogued as this exact cross-cutting condition |
+| Marks-per-question pattern | Not uniform — several numbered questions are compound (combine 2+ Question Types in sub-parts) | A for compounding as a structural fact; C for a precise, general marks-per-sub-part rule | CSSE-006 Q14 (QT-MR-03+QT-MR-07), CSSE-006 Q9 (QT-MR-10+QT-MR-01), directly cited in the Framework §6 |
+| Question Type distribution | 13 substantive types (QT-MR-01–13) + 1 cross-cutting scoring condition (QT-MR-14), each independently evidenced/EMC-rated | A for the catalogue's existence and per-type evidence; confidence varies per type (HIGH for most, MEDIUM/LOW for QT-MR-02/11's search sub-format, EMC-1/2) | Framework §3, full traceability matrix §7 |
+| Real difficulty distribution (as CSSE itself grades it) | **Not published anywhere in this evidence base** | **C** | No mark scheme or paper states a per-question difficulty tier; "easy/medium/hard/challenge" is Angel's own internal taxonomy, not a CSSE-evidenced category |
+| Short vs multi-step balance | Compound, multi-domain questions are a confirmed, recurring structural feature (Observation 11, upgraded to HIGH confidence across all 3 years under CAP-1.1) | A | Framework §6, Observation 11 |
+| Breadth of skills | Spans arithmetic, algebraic/symbolic, geometric/spatial, word-problem, number-theory domains within a single paper, consistently | A | Observation 11 |
+
+**ENGLISH**
+| Fact | Value | Tier | Evidence |
+|---|---|---|---|
+| Paper structure (current) | Comprehension + Continuous Writing only — **no Applied Reasoning** | A | Decision 58, Founder-confirmed (Part 1.3) |
+| Historical structure (2021–2023 evidence base) | Comprehension (30+10 reading) + Applied Reasoning (10) + Continuous Writing (20) = 70 min total | A | CSSE-001/003/008/013 cover-page timing, cross-corroborated |
+| Current total duration | **Not independently confirmed by any post-2024 primary source held in this repository** — inferred by subtracting Applied Reasoning's known 10-minute block from the historical 70-minute total (≈60 min instructional + reading time) | **B**, named explicitly as a gap | No current-year (2025/2026 entry) official English paper is held in this evidence base |
+| Comprehension passage count | 1 substantial licensed literary extract per sitting | A | Migration 043's own Level A, csse.org.uk, Founder-Accepted sourcing |
+| Comprehension questions attached | 11–16, attached to the one passage | A | Same source |
+| Passage genre | Narrative fiction, 3/3 years observed; no non-fiction/poetry found | A (for the 3 observed instances — a small sample, disclosed) | Observation 6 |
+| Comprehension mark-scheme flexibility | Markers explicitly instructed to accept paraphrased/reworded answers | A | Observation 7 |
+| Continuous Writing task structure | 2 tasks — one reflective/discursive, one picture-stimulus narrative — stable, 3/3 years | A | Framework §4 (Continuous Writing) |
+| Continuous Writing marks | 15 (2021, 2022) or 20 (2023, with an emerging Content 15/SPAG 5 split) | A for the raw figures; B/C for whether the 20-mark/split format is now the current standard (1 data point only) | Observations 9, 13 |
+| Comprehension+AR combined marks (historical) | 45 (2021) / 40 (2023) — **total English marks (Comp+AR+Writing) stable at 60 both years** | A (a genuine, previously-unstated-this-precisely finding of this reconciliation) | Observation 4 arithmetic cross-checked against Observation 9 |
+| Current Comprehension-alone marks (post-AR-removal) | **Not independently confirmed** — if the stable-60-total pattern holds, ≈40 marks | **C**, named as a gap | No current-year paper held; inferred only |
+| Vocabulary/language-in-context as a distinct CSSE format | Not catalogued as its own recurring Question Type separate from the QT-RC-01–10 Comprehension set | C | Framework §3 lists no separate vocabulary format; Angel's own `english.vocabulary-in-context` is an internal Practice competency, not a CSSE-evidenced paper component |
+
+**No manufactured precision:** "60 marks = 60 questions" is explicitly not assumed anywhere above — Mathematics resolves to 20–21 *questions* (many compound) for 60 *marks*, and English resolves to a passage-plus-tasks structure, not a flat question-per-mark count.
+
+---
+
+**PART 3 — DEFINITION OF ONE ANGEL MOCK**
+
+**ANGEL MATHEMATICS MOCK:**
+- **21 questions per form** (majority-evidenced count, 2 of 3 years; 20 is equally evidenced for the most recent year and remains an acceptable tolerance, not a violation, if a specific form's balance genuinely requires it) — **60 marks**, **60 minutes**, no calculator, exact-match marking (no partial/method credit).
+- Question Type coverage: represent as many of the 13 substantive Question Types (QT-MR-01–13) as a 21-item form can genuinely support; **no single Question Type may exceed ≈15–18% of a form** (≈3–4 of 21) — a direct, deliberate correction of the live 34/194 (≈18%) QT-MR-01 concentration Decision 138/141 already found and flagged.
+- Difficulty balance: since CSSE's own real difficulty distribution is not published (Part 2, C-tier), Angel's internal easy/medium/hard/challenge tiers are a **design choice, not a CSSE-evidenced requirement** — recommended working target per form: ≈15–20% easy / ≈50–55% medium / ≈25–30% hard / minimal-to-none challenge, revisable once real attempt-level difficulty data exists. Stated as a recommendation, not a frozen rule.
+- Structural balance: authentic CSSE forms regularly compound two Question Types within one numbered question (Part 2). **Batch 001 and Batch 002's own 38 items are each single-Question-Type items** — a genuine, disclosed authenticity gap between the evidenced real paper structure and Angel's Mock content built so far, not previously stated this explicitly. A future batch should introduce genuine compound items; not attempted or required by this decision.
+
+**ANGEL ENGLISH MOCK:**
+- **1 passage** (licensed or Angel-original, narrative, matching the evidenced genre pattern) with **11–16 attached comprehension questions** — recommend **13–14** as a working target, near the evidenced range's midpoint.
+- **2 Continuous Writing tasks** — 1 reflective/discursive, 1 picture-stimulus narrative.
+- **60 marks total**; provisional split **≈40 Comprehension / 20 Writing (Content 15/SPAG 5)**, matching the most recent evidenced year and the stable-60-total finding (Part 2) — flagged B/C, not independently confirmed for the current, AR-removed paper.
+- **Duration:** current total not independently confirmed (Part 2); working target **≈60 minutes instructional time (≈30 Comprehension + ≈20 Writing) + separate reading time**, inferred, not evidenced — a real gap a future increment should close with a current official source before this becomes load-bearing for a real timer.
+- No Applied Reasoning content of any kind (Decision 58, reaffirmed).
+
+Angel must not invent artificial formats to create variation — every element above is drawn from an evidenced, recurring CSSE structure, not manufactured for its own sake.
+
+---
+
+**PART 4 — FORTNIGHTLY CAPACITY MODEL**
+
+Cycles = ⌊weeks ÷ 2⌋ at the established ~14-day cadence (Decision 49/135, unchanged):
+
+| Window | Full Mock cycles | Maths papers | English papers | Maths Q exposures (naive, zero-reuse) | English passage exposures (naive) | English Q exposures (naive, @13/passage) |
+|---|---|---|---|---|---|---|
+| 12 weeks | 6 | 6 | 6 | 126 | 6 | 78 |
+| 20 weeks | 10 | 10 | 10 | 210 | 10 | 130 |
+| 26 weeks | 13 | 13 | 13 | 273 | 13 | 169 |
+| 40 weeks | 20 | 20 | 20 | 420 | 20 | 260 |
+| 52 weeks | 26 | 26 | 26 | 546 | 26 | 338 |
+
+**The naive right-hand columns are explicitly not the capacity requirement**, per the directive's own instruction — they are the ceiling that would apply only under a "never repeat anything, ever" rule, which Part 5 below replaces with a defensible, tiered reuse model. They are retained in the table only to make the scale of the naive alternative visible, and to show precisely why Decision 138's own "this project's own current authoring pace could not sustain purely by hand" concern was correct as a critique of the naive model, not of the underlying demand itself.
+
+---
+
+**PART 5 — ANTI-MEMORISATION MODEL**
+
+**Five distinguished tiers, per the directive:**
+
+1. **Exact question repetition** — the identical item, same wording, same numbers. **Never permitted within the item-level cooldown window** (recommended: **≥8 cycles / ~16 weeks** for the same learner — chosen deliberately longer than Decision 138's own "3–4 cycle" launch-floor precedent, to give real operating margin once a programme is running continuously, not just at launch).
+2. **Textual near-duplication** — a reworded but recognisably-the-same item. **Treated identically to exact repetition for exposure purposes** — this is a content-review responsibility (the exact check Batch 001/002's own tests already perform against each other and against live Practice content, Decisions 141/145), not something an exposure-tracking query alone can catch, since it depends on reading meaning, not IDs.
+3. **Superficial parameter variation** (same template, different numbers) — permitted as a genuinely distinct exposure **only** when hand-verified per migration 030's own precedent (difficulty, misconception target, and reasoning demand preserved, not just numbers changed) — but tracked at the **family/template level**, with its own, longer cooldown (recommended **≥16 cycles / ~32 weeks** — double the item-level window), because recognising "the same trick with new numbers" too often is itself a memorisation risk even without literal repetition.
+4. **Effectively identical reasoning experience** — a different Question Type or surface format that tests the same underlying demand in a near-identical structure. Governed by the **same family/structure-level cooldown as Tier 3** — this is precisely why Batch 001/002's own "genuine reasoning-structure count, honestly reported, not conflated with row count" discipline (9 structures/18 rows; 10 structures/20 rows, Decisions 141/145) is the correct unit for exposure tracking, not the raw row.
+5. **Authentic structural recurrence** — a Question Type or general format recurring because it is a genuine, stable feature of every real CSSE paper (e.g. an arithmetic question will appear in every real sitting). **Permitted, unlimited, at the Question-Type category level.** What must never recur is the *specific item, family, or reasoning structure* — not the category itself. Angel must not invent artificial question formats merely to avoid this kind of recurrence (directive's own instruction, Part 3, reaffirmed here for exposure design specifically).
+
+**Concrete controls, evidence-graded:**
+
+| Control | State | Recommendation |
+|---|---|---|
+| Learner question-exposure history | **Reconstructable today, zero new schema** (`ali_mock_attempt.assigned_question_ids`/`form_id`) | Reuse unchanged (Decision 138 Part 4A) |
+| Passage-exposure history | **Real for Practice, unwired for Mock** (`passageGroupingKeyOf`) | Extend the same keying convention once `ali_passage_bank` is populated (Decision 138 Part 4B) |
+| Family/structure-exposure history | **No query exists anywhere** | **New finding of this decision** — a bounded, additive query over existing `family_id`-tagged data, no new table required |
+| Form-exposure history | **Reconstructable today** (`ali_mock_attempt.form_id`) | Reuse; no new schema needed for the *history*, only for the *policy* below |
+| Cooldown periods | Item ≥8 cycles; family/structure ≥16 cycles; **passage: recommend no repeat within one continuous learner enrolment at all** (per the directive's own explicit "particularly high memorisation risk" instruction) | New recommendation, Founder confirmation needed before this becomes a hard rule |
+| Max repeated-item % per paper | **0% within the item-cooldown window** (hard rule); **≤15% (≈3 of 21) once outside it** | New recommendation |
+| Max repeated-reasoning-structure % | **≤25% of a form's structures may repeat one seen in the prior 4 cycles** — tighter than the item-level bound, because structure-recognition is faster to memorise than literal recall | New recommendation |
+| Passage reuse | Effectively never per learner within one programme enrolment (see cooldown row above) | New recommendation |
+| Form retirement | `ali_mock_form.active` exists; no policy layer above it | Still unbuilt (Decision 139 Part 9, unchanged) |
+| Question retirement | `ali_question_bank.active`/`content_version` support versioned retirement | Reuse unchanged (Decision 138 Part 4F) |
+| Reserve capacity | See Part 9 | New |
+| Previously-exposed content | Fully queryable via the mechanisms above | Query needs to be *built*, not the underlying data |
+
+Everything already reconstructable is reused unchanged, matching this project's own repeated pattern (Decisions 133/135/138 each found existing capability rather than inventing a parallel one). The one genuinely new schema/code gap this decision surfaces precisely — not previously named this specifically — is the **family/structure-level exposure query** (row 3 above); everything else is either already reusable data or a policy/threshold decision layered on top of it.
+
+---
+
+**PART 6 — MOCK FORM BANK MODEL**
+
+Confirms and extends Decision 138 Part 7/11's own B/A-hybrid recommendation, reaffirmed: **reviewed, frozen forms, algorithmically candidate-composed then independently human-reviewed** — never fully dynamic per-attempt assembly, which would be structurally incompatible with `ali_mock_form.question_manifest`'s existing frozen-snapshot reproducibility guarantee (Decision 138 Part 4G, unchanged) and with independent pre-review (a form that does not exist until attempt-time cannot be reviewed before a learner sits it).
+
+```
+Reviewed Content Pool (independently_validated + mock_eligible, once the pool-gate exists)
+  → Pool-level Mock-Eligible Gate (still unbuilt, Decision 138)
+    → Algorithmic Candidate Composition (reuses selectQuestions()'s weighted-pool/balance machinery, Decision 138 Part 7)
+      → Independent Human Review (extends ali_family_review, Decision 139)
+        → Frozen ali_mock_form row (subject-pure, question_manifest sealed)
+          → FORM BANK (multiple pre-assembled, reviewed, frozen forms held in reserve — not one form generated on demand)
+            → Form-Routing-by-Exposure (NEW, this decision's own contribution — Part 6a below)
+              → Learner's Sealed Attempt (ali_mock_attempt, migrations 069-071/085/086)
+```
+
+**Part 6a — the one refinement this decision adds to the pipeline Decision 138/139 already designed:** neither prior decision specified *how* a specific learner, at cycle-start, is routed to a specific already-frozen form from the bank. This decision names that step explicitly: a **form-routing function**, evaluated at `mock_create_cycle_attempt()` time, selecting from the active, reviewed form bank the form whose complete `question_manifest` has the *least* recent-or-cooling-down overlap with that learner's own exposure history (Part 5), never first-available or random selection. This is a query over the exposure-history mechanism, not a new content-delivery path — reproducibility, review, sealing, and audit all remain exactly as already proven. Not built by this decision.
+
+A learner must not receive the same complete form twice — this is structurally guaranteed once form-exposure history (already reconstructable, Part 5) is consulted by the routing step, with no new table required for that guarantee specifically.
+
+---
+
+**PART 7 — MATHEMATICS CAPACITY TARGET**
+
+Current position, reconfirmed: Batch 001 = 18 `independently_validated` (live). Batch 002 = 20 `authentic_assessment_candidate`, review reported complete (Part 12), not yet promoted. **Total authored/reviewed: 38.**
+
+**Revised target — a rolling floor, not a fixed ceiling, replacing the naive multiplication the directive explicitly warned against:**
+
+| Stage | Target | Basis |
+|---|---|---|
+| First-Mock activation floor | ≥21–25 `mock_eligible` items, spanning enough distinct families/Question Types to assemble one authentic, no-single-QT-dominant form | Part 3's own form definition; Batch 001+002 combined (38, 10 of 13 QTs, QT-MR-01/08/12 still absent) is sufficient in *count* but not yet in *breadth* — a small, **targeted** gap-filling batch (capped, authentic QT-MR-01 representation + remaining QTs) is the right next content step, not raw-volume Batch 003 |
+| Controlled-launch floor (3–4 non-repeating cycles) | **≈80–85** | **Reaffirmed unchanged from Decision 138/140** — correct as a launch floor, explicitly not sufficient beyond it (Part 1.4) |
+| 26-week (13-cycle) sustainable | **A rolling floor of ≈150–170, maintained continuously** (≈8 cycles' worth at 21/form, matching the Part 5 item-cooldown window), replenished by ongoing batch authoring as content ages into reusability — **not** a one-off 273-item target |
+| 52-week (26-cycle) sustainable | **The same ≈150–170 rolling floor**, PLUS a **family/structural-diversity floor of ≥40–50 distinct families/structures** (not raw item count alone) — this is the real long-run lever, matching Decision 138 Part 5's own "majority-parameterised strategy" finding, reaffirmed: depth of genuine structural variety, not a bigger raw number, is what keeps the 16-week/32-week structural cooldown (Part 5) meaningful at sustained scale |
+
+This explicitly does **not** ask for 546 (the 52-week naive ceiling) or even 273 (the 26-week naive ceiling) — the tiered reuse model in Part 5 is what makes ≈150–170, continuously maintained, a defensible standing floor instead.
+
+---
+
+**PART 8 — ENGLISH CAPACITY TARGET**
+
+Current position, reconfirmed unchanged: `ali_passage_bank` = 0 rows; 24 passages exist in live Practice, **none** reach the 11–16 questions a real Mock passage needs; `writing` subject ≈1 row total, 0 `practice_eligible`.
+
+| Stage | Target | Basis |
+|---|---|---|
+| First-Mock activation floor | 1 fully-populated (11–16 Q), independently-reviewed passage + 2 Continuous Writing prompts | Part 3's own paper definition — the absolute minimum to assemble one authentic English form |
+| Multi-cycle/controlled-launch floor | **≈3–4 passages** (reaffirmed unchanged, Decision 138) + a small Writing prompt pool (≈4–6) |
+| 26-week (13-cycle) sustainable | **A rolling floor of ≈8–10 distinct, fully-populated passages** — deliberately short of the naive 13-passage ceiling, made defensible only by a **passage cooldown near-programme-length** (Part 5: effectively no repeat within one continuous enrolment), not by volume alone |
+| 52-week (26-cycle) sustainable | **Continued growth toward ≈15–18 distinct passages** over the full year via an ongoing licensing/authoring track — still short of the naive 26-passage ceiling, for the same reason | Reaffirms Decision 138 Part 6's own finding that passages, not Mathematics, are the true long-run bottleneck |
+| Writing prompt pool | Grow roughly in step with passages, ≈1:1–2:1 prompt-to-passage ratio | Writing carries lower per-item memorisation stakes than a passage (a prompt does not "give away" comprehension answers the way a reused passage does), but still needs genuine freshness — and inherits the existing AI-score-quarantine boundary unchanged (Decisions 47/61/106, reaffirmed, not re-litigated) |
+
+**The passage-cooldown recommendation above is the single point in this blueprint carrying the most tension between the directive's own "particularly high memorisation risk" instruction and realistic authoring/licensing capacity** — flagged explicitly for Founder confirmation before it becomes a hard rule, rather than silently adopted.
+
+---
+
+**PART 9 — PARENT-AUTHORISED EXTRA MOCK**
+
+Preserved, unchanged: normal cadence ~14 days, anchored on `'scheduled'` cycles only (Decisions 49/135); `parent_override` as a structurally distinct, non-learner-self-unlockable source (Decisions 49/135); extra-cost approved in principle, implementation explicitly deferred, not touched by this decision (Decision 135); the disclosed, unresolved single-Auth-identity parent/learner limitation (Decision 135, reaffirmed — no PIN or second factor exists).
+
+**New educational-capacity rule, per the directive's own explicit instruction ("Angel must never sell or activate an additional Mock merely because payment is available"):** `mock_authorise_extra_cycle()` must require, at authorisation time — **independent of and prior to any future payment/entitlement check** — that sufficient unexposed, reviewed capacity genuinely exists **for that specific learner**: an available Mathematics form and English form the learner's own exposure history has not seen and is not within any active cooldown (Part 5/6's routing mechanism). Recommend this reserve-capacity check be enforced at exactly the point cadence is already enforced today (`mock_start_new_cycle()`/`mock_authorise_extra_cycle()`, migration 085), as an additive guard clause — the same pattern migration 085 itself already used once (Decision 135's own "one disclosed guard clause" precedent). Payment, whenever it is built, must sit *behind* this check, never in front of or in place of it — a family that pays but has no genuinely fresh content available for that learner must still be told no. Not implemented by this decision.
+
+---
+
+**PART 10 — FIRST MOCK AVAILABILITY GATE**
+
+All of the following must hold before "Not ready yet" may change to genuine availability — **none currently hold**:
+
+1. Independently-validated content ≥ First-Mock floor (Part 7/8) for **both** subjects independently — Mathematics: not yet met (breadth gap, Part 7); English: not met (0 qualifying passages).
+2. Pool-level Mock-Eligible balance gate built — not built (Decision 138, unchanged).
+3. Subject balance maintained — not yet assessable; English is the binding constraint today.
+4. Difficulty balance (Part 3's working targets) verified against a real assembled form — no form exists to verify against.
+5. Form-level review boundary built (Decision 139 Part 9) — not built.
+6. Mathematics form readiness — not built; 0 `ali_mock_form` rows.
+7. English form readiness — not built, additionally blocked on the content gap.
+8. Exposure controls (Part 5's family/structure/form-level queries and routing) — not built.
+9. Reporting (`subject_breakdown` population, Decision 133/135) — not built.
+10. Scoring — per-subject scoring exists structurally (migrations 074/075); `subject_breakdown` population does not — partial.
+11. Cycle UI — Mock Centre/mock-exam still wired to the retired `full_mock` path, not the cycle RPCs (Decision 135, unchanged) — not built.
+12. Content security (sealed content, redaction, RLS, admin-gated release) — **already proven, migrations 069/071/073-075/084/086/087**, no gap.
+
+**Mock remains genuinely NOT READY YET, on multiple independent grounds, not primarily content volume.** This decision does not change, and does not authorise changing, that state.
+
+---
+
+**PART 11 — DELIVERY ROADMAP**
+
+Smallest dependency-ordered sequence from today's state to A–E, named for Founder consideration only, none begun:
+
+**Parallel-safe, can start immediately, independent of each other:**
+1. Resume Batch 002 promotion to `independently_validated` (governance-only, mirrors migration 090's exact pattern) — Part 12.
+2. Author a small, **targeted** QT-gap-filling batch (capped/authentic QT-MR-01 + remaining uncovered substantive Question Types) — sized to close the First-Mock breadth gap (Part 7), not for volume.
+3. Begin English passage + Continuous Writing authoring/licensing track — the acknowledged long-run bottleneck (Decision 138 Part 6) — must start now, in parallel with Mathematics, not after it.
+4. Build the pool-level Mock-Eligible balance gate (Decision 138's own still-unbuilt gate) — pure governance, no content dependency.
+
+**Sequential from here:**
+5. (depends on 4) Build the family/structure/passage/form exposure-history query layer (Part 5/6's own named gap) — bounded, additive, reuses existing data.
+6. (depends on 4+5) Build form-assembly tooling (algorithmic composer + review-surface extension, Decision 139 Part 9) plus the form-routing-by-exposure step (Part 6a).
+7. (depends on 1–3 reaching the First-Mock floor, and 4–6 existing) Assemble and independently review the first real Mathematics form and first real English form.
+8. (depends on 7) Wire Mock Centre/mock-exam UI to `mock_start_new_cycle()`/`mock_create_cycle_attempt()` (Decision 135's own still-outstanding item).
+9. (depends on 7–8) Build `subject_breakdown` scoring population + Full Mock Cycle Summary presentation.
+10. (depends on 4–9, all complete) A separate, explicitly Founder-authorised activation decision — `mock_eligible` moves off 0, Mock Centre becomes genuinely available. **= A. First real Mathematics Mock; B. First real English Mock; C. First complete Full Mock cycle.**
+11. (ongoing, depends on 10) Sustain the Part 7/8 rolling capacity floors via continuous batch authoring/licensing — this, not a one-time milestone, is what makes **D. sustainable fortnightly Mock programme** real.
+12. (depends on 5; can proceed in parallel with 7–9, since it is a guard clause on already-existing cadence code) Extend `mock_authorise_extra_cycle()` with the Part 9 reserve-capacity rule — **E. parent-authorised additional Mock**, still without payment.
+
+No step here is begun by this decision.
+
+---
+
+**PART 12 — BATCH 002 DISPOSITION**
+
+This decision's own reconciliation found **no problem with Batch 002**: migrations 091/092 remain byte-identical to Decision 145's own commit, exactly as left. The Founder's own account (accepted as Level 1, Founder-supplied evidence — `ali_family_review` remains RLS-opaque to this session, structurally identical to the standing limitation Decisions 87/90/94-96/107-108/117/119/121-123/143 have each already documented, so this cannot be independently re-derived, exactly as precedent requires) states genuine independent review of all 10 families/20 questions is now complete. **Batch 002 should remain valid, reviewed content — it must not be re-authored or re-reviewed.**
+
+**Recommended resumption point:** promote Batch 002 to `independently_validated` (a scoped migration mirroring migration 090's exact allow-list/precondition-guard pattern) as soon as the Founder has reviewed and accepted this blueprint — this promotion is a low-risk, narrowly-scoped governance action (touches only `eligibility_status`, on `ali_question_bank` only, per Decision 143's own structurally-proven boundary) that does **not** make content `mock_eligible` or Mock available, so nothing in this capacity/architecture discovery is a reason to delay it further once the sequencing pause itself is lifted. This decision does not perform that promotion.
+
+---
+
+**What this decision does NOT claim:** it does not claim any content was authored, reviewed, promoted, or activated; it does not claim the pool-level Mock-Eligible gate, form-assembly tooling, exposure-query layer, or form-routing mechanism were built; it does not claim Mock is, or is scheduled to become, available; it does not claim the current English total-duration figure (Part 2, B-tier) or the current Comprehension-alone marks figure (Part 2, C-tier) are confirmed — both are named gaps requiring a current-year primary source; it does not claim the passage-cooldown recommendation (Part 8/9) is Founder-approved as a hard rule, only proposed; it does not claim Batch 002's independent review was itself re-verified by this session (accepted as Level 1 evidence, Part 12, per standing precedent); it does not claim Decisions 1–145 are reversed or rewritten — all stand.
+
+**Files changed:** `ALI_DECISION_LOG.md` only (this entry).
+
+**Decision number:** 146.
+
+**Commit SHA:** recorded after commit (see repository history immediately following this entry).
+
+**Rationale:** the directive's own central instruction — do not multiply cycles × questions and declare the result a requirement, and do not optimise Mathematics merely to reach a convenient round number — is answered the same way this log has answered every prior "how much content is enough" question (Decision 138's own capacity work): by separating the *launch* question (≈80–85, reaffirmed correct for its own narrow scope) from the *sustained-programme* question (a rolling floor, replenished continuously, sized against a defensible cooldown model rather than a naive ceiling). Surfacing the Applied-Reasoning evidence conflict (Part 1.3) and the current-English-duration evidence gap (Part 2) rather than silently picking a number follows this project's own repeated discipline of naming what is genuinely unresolved instead of smoothing it into an unearned "A" confidence rating. Clearing Batch 002 to resume (Part 12) without re-litigating its own already-completed review respects the Founder's own sequencing instruction precisely: the pause was about *architecture-before-volume*, not about doubting content that had already passed genuine independent review.
+
+**Implications:** Decisions 1–145 all stand, none reversed or rewritten. Decision 132's READY FOR CONTROLLED FAMILY LAUNCH verdict is not reopened. `mock_eligible` remains 0; `ali_mock_form` remains 0 rows; no learner-facing change results from this decision. **Batch 002 promotion is cleared to resume once the Founder accepts this blueprint** (Part 12) — a separate, later decision, not performed here. **No Batch 003, no content authoring of any kind, no schema/code change, no promotion, no form assembly, no exposure/reuse implementation, no payment/parent-override implementation, and no Mock Programme Increment 005 is authorised or begun by this decision.**
+
+---
