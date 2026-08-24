@@ -6,6 +6,7 @@ import type {
   MockAttemptReport,
   MockAttemptStatus,
   MockAttemptType,
+  MockManifestGroupingEntry,
   MockQuestionPayload,
 } from "./types";
 
@@ -148,6 +149,41 @@ export async function getMockAttemptManifest(
   const { data, error } = await supabase.rpc("mock_get_attempt_manifest", { p_attempt_id: attemptId });
   if (error) return { data: null, error: error.message };
   return { data: data ?? [], error: null };
+}
+
+/**
+ * Migration 106 (Decision 161) — the caller's own attempt's full
+ * grouping structure, IDs and grouping identity only, never question
+ * content. Called once, alongside getMockAttemptManifest(), when an
+ * attempt starts, so the workspace can compute correct display-unit
+ * counts and palette entries before the learner has visited every
+ * question — see lib/mockAttempt/workspace.ts's own buildDisplayUnits().
+ */
+export async function getMockAttemptGrouping(
+  supabase: SupabaseClient<Database>,
+  attemptId: string
+): Promise<MockClientResult<MockManifestGroupingEntry[]>> {
+  const { data, error } = await supabase.rpc("mock_get_attempt_grouping", { p_attempt_id: attemptId });
+  if (error) return { data: null, error: error.message };
+  return { data: (data as MockManifestGroupingEntry[]) ?? [], error: null };
+}
+
+/**
+ * Migration 107 (Decision 161) — the caller's own currently open Mock
+ * cycle id, or null if none. See migration 107's own header for why this
+ * exists: mock_start_new_cycle()/mock_authorise_extra_cycle() (migration
+ * 085) each raise an exception if a cycle is already open rather than
+ * returning it, and mock_cycle_is_open() is deliberately never granted
+ * to authenticated. This is the sanctioned way a caller discovers an
+ * existing open cycle BEFORE deciding whether to start a new one, rather
+ * than triggering that exception just to find out.
+ */
+export async function getOpenMockCycle(
+  supabase: SupabaseClient<Database>
+): Promise<MockClientResult<string | null>> {
+  const { data, error } = await supabase.rpc("mock_get_open_cycle");
+  if (error) return { data: null, error: error.message };
+  return { data: (data as string | null) ?? null, error: null };
 }
 
 export async function setMockFlag(

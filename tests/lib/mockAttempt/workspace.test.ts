@@ -5,10 +5,12 @@ import {
   isAttemptExpired,
   formatRemainingTime,
   classifyTimerUrgency,
+  buildDisplayUnits,
   buildPalette,
-  unansweredQuestionIds,
+  unansweredUnitIndices,
   payloadMatchesQuestion,
 } from "@/lib/mockAttempt/workspace";
+import type { MockManifestGroupingEntry } from "@/lib/mockAttempt/types";
 
 /**
  * Programme Increment 008E — pure-function tests for the canonical
@@ -47,31 +49,144 @@ test("classifyTimerUrgency: calm above 10 minutes, approaching-end from 10 minut
   assert.equal(classifyTimerUrgency(0), "final-warning");
 });
 
-test("buildPalette reflects answered/flagged/current as independent booleans, in manifest order", () => {
-  const assigned = ["q1", "q2", "q3"];
-  const answered = new Set(["q1", "q3"]);
-  const flagged = new Set(["q2", "q3"]);
-  const palette = buildPalette(assigned, answered, flagged, "q2");
-  assert.deepEqual(palette, [
-    { questionId: "q1", index: 0, answered: true, flagged: false, current: false },
-    { questionId: "q2", index: 1, answered: false, flagged: true, current: true },
-    { questionId: "q3", index: 2, answered: true, flagged: true, current: false },
+/**
+ * Mathematics First Mock Form-Assembly Gate (Decision 161) —
+ * buildDisplayUnits()/buildPalette()/unansweredUnitIndices() tests.
+ * Fixtures mirror the real, already-certified grouped family
+ * (mock-mr01mr10-costumeschedule) and real standalone ids, exactly
+ * matching this codebase's own established fixture-fidelity discipline.
+ */
+
+const NO_GROUPING: MockManifestGroupingEntry[] = [];
+
+function grouping(entries: Partial<MockManifestGroupingEntry>[]): MockManifestGroupingEntry[] {
+  return entries.map((e) => ({
+    questionId: e.questionId!,
+    questionGroupId: e.questionGroupId ?? null,
+    groupOrder: e.groupOrder ?? null,
+    subpartLabel: e.subpartLabel ?? null,
+  }));
+}
+
+test("buildDisplayUnits: with no grouping data at all, every id becomes its own standalone unit, unchanged from pre-Decision-161 behaviour", () => {
+  const units = buildDisplayUnits(["q1", "q2", "q3"], NO_GROUPING);
+  assert.deepEqual(units, [
+    { questionIds: ["q1"], questionGroupId: null },
+    { questionIds: ["q2"], questionGroupId: null },
+    { questionIds: ["q3"], questionGroupId: null },
   ]);
 });
 
-test("buildPalette with no current question marks every entry current: false", () => {
-  const palette = buildPalette(["q1"], new Set(), new Set(), null);
+test("buildDisplayUnits: the real mock-mr01mr10-costumeschedule family's 4 subparts collapse into exactly 2 display units, standalone ids either side are unaffected", () => {
+  const rawIds = [
+    "mock-mr02-invdiv-01",
+    "mock-mr01mr10-costumeschedule-01a",
+    "mock-mr01mr10-costumeschedule-01b",
+    "mock-mr01mr10-costumeschedule-02a",
+    "mock-mr01mr10-costumeschedule-02b",
+    "mock-mr02-invdiv-02",
+  ];
+  const groupingData = grouping([
+    { questionId: "mock-mr01mr10-costumeschedule-01a", questionGroupId: "mock-mr01mr10-costumeschedule-01", groupOrder: 1, subpartLabel: "(a)" },
+    { questionId: "mock-mr01mr10-costumeschedule-01b", questionGroupId: "mock-mr01mr10-costumeschedule-01", groupOrder: 2, subpartLabel: "(b)" },
+    { questionId: "mock-mr01mr10-costumeschedule-02a", questionGroupId: "mock-mr01mr10-costumeschedule-02", groupOrder: 1, subpartLabel: "(a)" },
+    { questionId: "mock-mr01mr10-costumeschedule-02b", questionGroupId: "mock-mr01mr10-costumeschedule-02", groupOrder: 2, subpartLabel: "(b)" },
+  ]);
+  const units = buildDisplayUnits(rawIds, groupingData);
+  assert.equal(units.length, 4);
+  assert.deepEqual(units[0], { questionIds: ["mock-mr02-invdiv-01"], questionGroupId: null });
+  assert.deepEqual(units[1], {
+    questionIds: ["mock-mr01mr10-costumeschedule-01a", "mock-mr01mr10-costumeschedule-01b"],
+    questionGroupId: "mock-mr01mr10-costumeschedule-01",
+  });
+  assert.deepEqual(units[2], {
+    questionIds: ["mock-mr01mr10-costumeschedule-02a", "mock-mr01mr10-costumeschedule-02b"],
+    questionGroupId: "mock-mr01mr10-costumeschedule-02",
+  });
+  assert.deepEqual(units[3], { questionIds: ["mock-mr02-invdiv-02"], questionGroupId: null });
+});
+
+test("buildDisplayUnits: two DIFFERENT groups appearing consecutively never merge into one unit", () => {
+  const groupingData = grouping([
+    { questionId: "a1", questionGroupId: "group-a", groupOrder: 1 },
+    { questionId: "b1", questionGroupId: "group-b", groupOrder: 1 },
+  ]);
+  const units = buildDisplayUnits(["a1", "b1"], groupingData);
+  assert.deepEqual(units, [
+    { questionIds: ["a1"], questionGroupId: "group-a" },
+    { questionIds: ["b1"], questionGroupId: "group-b" },
+  ]);
+});
+
+test("buildDisplayUnits fails closed to standalone: an id with no matching grouping entry is never guessed at, never merged into a neighbour", () => {
+  const groupingData = grouping([{ questionId: "q1", questionGroupId: "some-group", groupOrder: 1 }]);
+  const units = buildDisplayUnits(["q1", "unknown-id"], groupingData);
+  assert.deepEqual(units, [
+    { questionIds: ["q1"], questionGroupId: "some-group" },
+    { questionIds: ["unknown-id"], questionGroupId: null },
+  ]);
+});
+
+test("buildPalette reflects answered/flagged/current as independent booleans, in unit order — a grouped unit is answered only when EVERY subpart is answered, flagged when ANY subpart is flagged", () => {
+  const units = buildDisplayUnits(
+    ["q1", "g-01a", "g-01b", "q3"],
+    grouping([
+      { questionId: "g-01a", questionGroupId: "g-01", groupOrder: 1 },
+      { questionId: "g-01b", questionGroupId: "g-01", groupOrder: 2 },
+    ])
+  );
+  const answered = new Set(["q1", "g-01a"]); // only ONE of the group's two subparts answered
+  const flagged = new Set(["g-01b", "q3"]);
+  const palette = buildPalette(units, answered, flagged, 1);
+  assert.deepEqual(palette, [
+    { questionIds: ["q1"], index: 0, answered: true, flagged: false, current: false },
+    { questionIds: ["g-01a", "g-01b"], index: 1, answered: false, flagged: true, current: true },
+    { questionIds: ["q3"], index: 2, answered: false, flagged: true, current: false },
+  ]);
+});
+
+test("buildPalette: a grouped unit becomes answered once BOTH subparts are answered", () => {
+  const units = buildDisplayUnits(
+    ["g-01a", "g-01b"],
+    grouping([
+      { questionId: "g-01a", questionGroupId: "g-01", groupOrder: 1 },
+      { questionId: "g-01b", questionGroupId: "g-01", groupOrder: 2 },
+    ])
+  );
+  const palette = buildPalette(units, new Set(["g-01a", "g-01b"]), new Set(), 0);
+  assert.equal(palette[0].answered, true);
+});
+
+test("buildPalette with an out-of-range current index marks every entry current: false", () => {
+  const units = buildDisplayUnits(["q1"], NO_GROUPING);
+  const palette = buildPalette(units, new Set(), new Set(), -1);
   assert.equal(palette[0].current, false);
 });
 
-test("unansweredQuestionIds returns exactly the assigned ids not yet answered, preserving manifest order", () => {
-  assert.deepEqual(unansweredQuestionIds(["q1", "q2", "q3"], new Set(["q2"])), ["q1", "q3"]);
-  assert.deepEqual(unansweredQuestionIds(["q1", "q2"], new Set(["q1", "q2"])), []);
-  assert.deepEqual(unansweredQuestionIds(["q1"], new Set()), ["q1"]);
+test("unansweredUnitIndices returns exactly the unit indices not yet fully answered, preserving unit order, and treats a partially-answered grouped unit as unanswered", () => {
+  const units = buildDisplayUnits(
+    ["q1", "g-01a", "g-01b", "q3"],
+    grouping([
+      { questionId: "g-01a", questionGroupId: "g-01", groupOrder: 1 },
+      { questionId: "g-01b", questionGroupId: "g-01", groupOrder: 2 },
+    ])
+  );
+  assert.deepEqual(unansweredUnitIndices(units, new Set(["q1", "g-01a"])), [1, 2]);
+  assert.deepEqual(unansweredUnitIndices(units, new Set(["q1", "g-01a", "g-01b", "q3"])), []);
 });
 
 test("payloadMatchesQuestion confirms a fetched payload genuinely belongs to the question that was asked for", () => {
-  const payload = { questionId: "q1", subject: "maths", skill: "QT-MR-01", question: "?", marks: 1, contentDifficulty: "easy" };
+  const payload = {
+    questionId: "q1",
+    subject: "maths",
+    skill: "QT-MR-01",
+    question: "?",
+    marks: 1,
+    contentDifficulty: "easy",
+    questionGroupId: null,
+    groupOrder: null,
+    subpartLabel: null,
+  };
   assert.equal(payloadMatchesQuestion(payload, "q1"), true);
   assert.equal(payloadMatchesQuestion(payload, "q2"), false);
 });

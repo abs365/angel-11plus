@@ -11,9 +11,12 @@ import { ensureProfile } from "@/lib/supabaseProgress";
 import {
   getActiveMockForm,
   isMockFormAvailable,
-  createMockAttempt,
+  getOpenMockCycle,
+  startNewMockCycle,
+  createMockCycleAttempt,
   startMockAttempt,
   getMockAttemptManifest,
+  getMockAttemptGrouping,
   getMockQuestion,
   submitMockAnswer,
   submitMockAttempt,
@@ -23,8 +26,10 @@ import type { MockAttemptType, MockQuestionPayload } from "@/lib/mockAttempt/typ
 import {
   computeRemainingSeconds,
   isAttemptExpired,
+  buildDisplayUnits,
   buildPalette,
-  unansweredQuestionIds,
+  unansweredUnitIndices,
+  type DisplayUnit,
 } from "@/lib/mockAttempt/workspace";
 import { ExamTimer } from "@/components/mockAttempt/ExamTimer";
 import { QuestionPalette } from "@/components/mockAttempt/QuestionPalette";
@@ -36,10 +41,9 @@ import { QuestionPalette } from "@/components/mockAttempt/QuestionPalette";
  * to. It replaces the prior implementation's own data path entirely: no
  * fetchMockEligibleQuestionBank() (a raw, unprojected `.select("*")`
  * against ali_question_bank), no client-side grading. Every read/write of
- * Mock content or state now goes exclusively through the 5 proven
- * SECURITY DEFINER functions from migration 070 (unmodified by this
- * increment) plus the 2 new ones from migration 072
- * (mock_get_active_form, mock_set_flag) — see lib/mockAttempt/client.ts.
+ * Mock content or state now goes exclusively through the proven
+ * SECURITY DEFINER functions from migrations 070/072/085/106/107 — see
+ * lib/mockAttempt/client.ts.
  *
  * Deliberate scope boundary (008E directive, Part 8/"do not turn 008E
  * into the complete visual redesign"): this workspace proves the
@@ -71,13 +75,41 @@ import { QuestionPalette } from "@/components/mockAttempt/QuestionPalette";
  * own submitted-state copy says exactly that, honestly, rather than
  * implying an immediate score.
  *
- * Because Content Boundary (008E directive) forbids creating Form A/B/C
- * or any real Mock content, and Mock Eligible remains 0, a real learner
- * visiting this page today will see the "no mock available yet" state
- * (mock_get_active_form returns no row) — functionally the same honest
- * outcome the prior implementation's own "not enough content" error gave,
- * now sourced from the correct, secure signal instead of an empty
- * eligibility-filtered client fetch.
+ * Mathematics First Mock Form-Assembly Gate (Decision 161) — two
+ * corrections made this increment, both to close gaps this increment's
+ * own mandatory Section 7 trace found, not features added speculatively:
+ *
+ * 1. LEARNER ATTEMPT CREATION. Migration 085 (Decision 135) made
+ *    mock_create_attempt() unconditionally reject attempt_type =
+ *    "full_mock" — a full_mock attempt must be created via
+ *    mock_create_cycle_attempt(form_id, cycle_id) as part of an owned,
+ *    open, cadence-gated Mock cycle. This page previously still called
+ *    the old, now-guarded path (migration 085's own header disclosed
+ *    this exact gap as deliberately deferred "future bounded UI work").
+ *    handleBegin() below now discovers or starts a cycle first
+ *    (migration 107's new mock_get_open_cycle(), plus the existing,
+ *    unchanged mock_start_new_cycle()) and creates the attempt through
+ *    the cycle-aware path. A genuine cadence-not-yet-elapsed rejection
+ *    from mock_start_new_cycle() is surfaced exactly as received, never
+ *    bypassed — this is a routing correction onto the EXISTING,
+ *    already-approved architecture, not a new attempt route and not a
+ *    cadence change.
+ *
+ * 2. GROUPED-QUESTION RENDERING. mock_get_question() and the manifest
+ *    previously carried no grouping identity at all, so a grouped
+ *    family's subparts (e.g. mock-mr01mr10-costumeschedule-01a/-01b)
+ *    would have rendered as two disconnected, flatly-numbered questions
+ *    instead of one "Question N (a) ... (b) ..." unit — the exact
+ *    defect class Decision 155 found and fixed for the ADMIN review
+ *    surface, but that fix never reached this learner-facing page.
+ *    Migration 106 adds questionGroupId/groupOrder/subpartLabel to both
+ *    mock_get_question()'s payload and a new mock_get_attempt_grouping()
+ *    call; lib/mockAttempt/workspace.ts's own buildDisplayUnits() turns
+ *    the raw manifest into "display units" (one per numbered question,
+ *    one or more response components each); every question/answer/
+ *    navigation/palette/flag/submit operation below is expressed in
+ *    terms of units, not raw ids. A standalone question is a
+ *    single-id unit — byte-identical rendering to before this decision.
  */
 
 const ATTEMPT_TYPE: MockAttemptType = "full_mock";
@@ -110,10 +142,10 @@ export default function MockExamPage() {
   const [attemptId, setAttemptId] = useState<string | null>(null);
   const [expiresAt, setExpiresAt] = useState<string | null>(null);
   const [remainingSeconds, setRemainingSeconds] = useState<number | null>(null);
-  const [assignedQuestionIds, setAssignedQuestionIds] = useState<string[]>([]);
-  const [currentQuestionId, setCurrentQuestionId] = useState<string | null>(null);
-  const [currentPayload, setCurrentPayload] = useState<MockQuestionPayload | null>(null);
-  const [answerDraft, setAnswerDraft] = useState("");
+  const [units, setUnits] = useState<DisplayUnit[]>([]);
+  const [currentUnitIndex, setCurrentUnitIndex] = useState(0);
+  const [currentPayloads, setCurrentPayloads] = useState<MockQuestionPayload[]>([]);
+  const [answerDrafts, setAnswerDrafts] = useState<string[]>([]);
   const [answeredQuestionIds, setAnsweredQuestionIds] = useState<Set<string>>(new Set());
   const [flaggedQuestionIds, setFlaggedQuestionIds] = useState<Set<string>>(new Set());
   const [questionLoading, setQuestionLoading] = useState(false);
@@ -126,11 +158,16 @@ export default function MockExamPage() {
     submittedRef.current = true;
     const supabase = supabaseRef.current;
     if (!supabase) return;
-    // Save whatever is in the current draft before locking, same as any
-    // other navigation: a timeout must not discard an in-progress answer.
-    if (currentQuestionId && answerDraft.trim()) {
-      await submitMockAnswer(supabase, attemptId, currentQuestionId, { value: answerDraft.trim() }).catch(() => {});
-    }
+    // Save whatever is in the current draft(s) before locking, same as
+    // any other navigation: a timeout must not discard an in-progress
+    // answer, including every response component of a grouped question.
+    await Promise.all(
+      currentPayloads.map((payload, index) => {
+        const draft = answerDrafts[index] ?? "";
+        if (!draft.trim()) return Promise.resolve();
+        return submitMockAnswer(supabase, attemptId, payload.questionId, { value: draft.trim() }).catch(() => {});
+      })
+    );
     setPhase("submitting");
     const result = await submitMockAttempt(supabase, attemptId);
     if (result.error) { setErrorMessage(result.error); setPhase("error"); return; }
@@ -142,7 +179,7 @@ export default function MockExamPage() {
     // database boundary, never learner/browser-initiated. This client
     // has no execute grant on mock_score_attempt at all.
     setPhase("submitted");
-  }, [attemptId, currentQuestionId, answerDraft]);
+  }, [attemptId, currentPayloads, answerDrafts]);
 
   // Server-authoritative countdown — re-derives from expiresAt every
   // second, never trusts an accumulating client-side counter. Matches
@@ -176,17 +213,18 @@ export default function MockExamPage() {
     })();
   }, []);
 
-  async function loadCurrentQuestion(supabase: NonNullable<typeof supabaseRef.current>, attemptIdValue: string, questionId: string) {
+  async function loadUnit(supabase: NonNullable<typeof supabaseRef.current>, attemptIdValue: string, unit: DisplayUnit) {
     setQuestionLoading(true);
-    const result = await getMockQuestion(supabase, attemptIdValue, questionId);
+    const results = await Promise.all(unit.questionIds.map((id) => getMockQuestion(supabase, attemptIdValue, id)));
     setQuestionLoading(false);
-    if (result.error || !result.data) {
-      setErrorMessage(result.error ?? "Could not load this question.");
+    const failure = results.find((result) => result.error || !result.data);
+    if (failure) {
+      setErrorMessage(failure.error ?? "Could not load this question.");
       setPhase("error");
       return;
     }
-    setCurrentPayload(result.data);
-    setAnswerDraft("");
+    setCurrentPayloads(results.map((result) => result.data as MockQuestionPayload));
+    setAnswerDrafts(unit.questionIds.map(() => ""));
   }
 
   async function handleBegin() {
@@ -204,16 +242,37 @@ export default function MockExamPage() {
     const profileId = await ensureProfile();
     if (!profileId) { setErrorMessage("Could not establish a learner profile."); setPhase("error"); return; }
 
-    const created = await createMockAttempt(supabase, active.data.formId, ATTEMPT_TYPE);
+    // Migration 107 (Decision 161) — a full_mock attempt must be created
+    // through an owned, open Mock cycle. Discover an existing one first;
+    // only start a new one (subject to the ~14-day cadence check that
+    // function itself enforces) if none exists. See this file's own
+    // header for why the old, now-guarded mock_create_attempt() path can
+    // no longer be used for attempt_type "full_mock".
+    const openCycle = await getOpenMockCycle(supabase);
+    if (openCycle.error) { setErrorMessage(openCycle.error); setPhase("error"); return; }
+    let cycleId = openCycle.data;
+    if (!cycleId) {
+      const cycleStart = await startNewMockCycle(supabase);
+      if (cycleStart.error || !cycleStart.data) {
+        setErrorMessage(cycleStart.error ?? "Could not start a new Mock cycle.");
+        setPhase("error");
+        return;
+      }
+      cycleId = cycleStart.data;
+    }
+
+    const created = await createMockCycleAttempt(supabase, active.data.formId, cycleId);
     if (created.error || !created.data) { setErrorMessage(created.error ?? "Could not create an attempt."); setPhase("error"); return; }
 
     const started = await startMockAttempt(supabase, created.data, DURATION_MINUTES);
     if (started.error || !started.data) { setErrorMessage(started.error ?? "Could not start the attempt."); setPhase("error"); return; }
 
     // The learner's own attempt manifest — IDs only, in order, never any
-    // question content — via mock_get_attempt_manifest(). This is what
-    // populates the full question palette from the start, rather than
-    // building it up one visited question at a time.
+    // question content — via mock_get_attempt_manifest(), plus its
+    // grouping structure via mock_get_attempt_grouping() (migration 106,
+    // Decision 161) so the full display-unit list (and therefore the
+    // correct "Question N of Total" count and palette) can be computed
+    // before the learner has visited a single question.
     const manifest = await getMockAttemptManifest(supabase, created.data);
     if (manifest.error || !manifest.data || manifest.data.length === 0) {
       setErrorMessage(manifest.error ?? "Could not load this attempt's question list.");
@@ -221,48 +280,84 @@ export default function MockExamPage() {
       return;
     }
 
+    const grouping = await getMockAttemptGrouping(supabase, created.data);
+    if (grouping.error) { setErrorMessage(grouping.error); setPhase("error"); return; }
+
+    const displayUnits = buildDisplayUnits(manifest.data, grouping.data ?? []);
+
     setAttemptId(created.data);
     setExpiresAt(started.data.expiresAt);
     submittedRef.current = false;
     setAnsweredQuestionIds(new Set());
     setFlaggedQuestionIds(new Set());
-    setAssignedQuestionIds(manifest.data);
-    setCurrentQuestionId(manifest.data[0]);
+    setUnits(displayUnits);
+    setCurrentUnitIndex(0);
     setPhase("in-progress");
-    await loadCurrentQuestion(supabase, created.data, manifest.data[0]);
+    await loadUnit(supabase, created.data, displayUnits[0]);
   }
 
-  async function handleAnswerAndAdvance(nextQuestionId: string | null) {
+  async function handleAnswerAndAdvance(nextUnitIndex: number | null) {
     const supabase = supabaseRef.current;
-    if (!supabase || !attemptId || !currentQuestionId) return;
-    if (answerDraft.trim()) {
-      const result = await submitMockAnswer(supabase, attemptId, currentQuestionId, { value: answerDraft.trim() });
-      if (result.error) { setErrorMessage(result.error); setPhase("error"); return; }
-      setAnsweredQuestionIds((prev) => new Set(prev).add(currentQuestionId));
+    const currentUnit = units[currentUnitIndex];
+    if (!supabase || !attemptId || !currentUnit) return;
+
+    const results = await Promise.all(
+      currentUnit.questionIds.map((id, index) => {
+        const draft = answerDrafts[index] ?? "";
+        if (!draft.trim()) return Promise.resolve(null);
+        return submitMockAnswer(supabase, attemptId, id, { value: draft.trim() });
+      })
+    );
+    const failed = results.find((result) => result && result.error);
+    if (failed) { setErrorMessage(failed.error as string); setPhase("error"); return; }
+
+    const newlyAnswered = currentUnit.questionIds.filter((_, index) => (answerDrafts[index] ?? "").trim());
+    if (newlyAnswered.length > 0) {
+      setAnsweredQuestionIds((prev) => {
+        const next = new Set(prev);
+        newlyAnswered.forEach((id) => next.add(id));
+        return next;
+      });
     }
-    if (nextQuestionId) {
-      setCurrentQuestionId(nextQuestionId);
-      await loadCurrentQuestion(supabase, attemptId, nextQuestionId);
+
+    if (nextUnitIndex !== null) {
+      setCurrentUnitIndex(nextUnitIndex);
+      await loadUnit(supabase, attemptId, units[nextUnitIndex]);
     }
   }
 
   async function handleToggleFlag() {
     const supabase = supabaseRef.current;
-    if (!supabase || !attemptId || !currentQuestionId) return;
-    const nextFlagged = !flaggedQuestionIds.has(currentQuestionId);
-    const result = await setMockFlag(supabase, attemptId, currentQuestionId, nextFlagged);
-    if (result.error) { setErrorMessage(result.error); setPhase("error"); return; }
+    const currentUnit = units[currentUnitIndex];
+    if (!supabase || !attemptId || !currentUnit) return;
+    // Flagging is a whole-displayed-question action: a grouped unit's
+    // subparts are flagged/unflagged together (matching buildPalette()'s
+    // own "flagged if ANY subpart is flagged" read), never independently.
+    const nextFlagged = !currentUnit.questionIds.some((id) => flaggedQuestionIds.has(id));
+    const results = await Promise.all(currentUnit.questionIds.map((id) => setMockFlag(supabase, attemptId, id, nextFlagged)));
+    const failed = results.find((result) => result.error);
+    if (failed) { setErrorMessage(failed.error as string); setPhase("error"); return; }
     setFlaggedQuestionIds((prev) => {
       const next = new Set(prev);
-      if (nextFlagged) next.add(currentQuestionId);
-      else next.delete(currentQuestionId);
+      currentUnit.questionIds.forEach((id) => {
+        if (nextFlagged) next.add(id);
+        else next.delete(id);
+      });
       return next;
     });
   }
 
-  const palette = buildPalette(assignedQuestionIds, answeredQuestionIds, flaggedQuestionIds, currentQuestionId);
-  const unanswered = unansweredQuestionIds(assignedQuestionIds, answeredQuestionIds);
+  const currentUnit: DisplayUnit | undefined = units[currentUnitIndex];
+  const palette = buildPalette(units, answeredQuestionIds, flaggedQuestionIds, currentUnitIndex);
+  const unanswered = unansweredUnitIndices(units, answeredQuestionIds);
   const expired = expiresAt ? isAttemptExpired(expiresAt) : false;
+  const currentFlagged = !!currentUnit && currentUnit.questionIds.some((id) => flaggedQuestionIds.has(id));
+
+  function goToUnitContainingId(id: string) {
+    const targetIndex = units.findIndex((unit) => unit.questionIds.includes(id));
+    if (targetIndex === -1) return;
+    return targetIndex;
+  }
 
   return (
     <PageLayout breadcrumbs={[{ label: "Learning Report", href: "/learning-intelligence" }, { label: "Mock exam" }]}>
@@ -330,45 +425,48 @@ export default function MockExamPage() {
         {phase === "in-progress" && (
           <div>
             {(() => {
-              const currentIndex = assignedQuestionIds.indexOf(currentQuestionId ?? "");
-              const previousId = currentIndex > 0 ? assignedQuestionIds[currentIndex - 1] : null;
-              const nextId = currentIndex >= 0 && currentIndex < assignedQuestionIds.length - 1 ? assignedQuestionIds[currentIndex + 1] : null;
+              const previousIndex = currentUnitIndex > 0 ? currentUnitIndex - 1 : null;
+              const nextIndex = currentUnitIndex >= 0 && currentUnitIndex < units.length - 1 ? currentUnitIndex + 1 : null;
               return (
                 <>
                   <div className="flex items-center justify-between mb-3">
                     <p className="text-xs text-gray-400 dark:text-gray-500">
-                      Question {currentIndex + 1} of {assignedQuestionIds.length}
+                      Question {currentUnitIndex + 1} of {units.length}
                     </p>
                     <ExamTimer remainingSeconds={remainingSeconds ?? 0} />
                   </div>
 
                   <InfoCard>
-                    {questionLoading || !currentPayload ? (
+                    {questionLoading || currentPayloads.length === 0 ? (
                       <p className="text-sm text-gray-400 dark:text-gray-500" aria-live="polite">Loading question…</p>
                     ) : (
-                      <MockQuestionRenderer payload={currentPayload} value={answerDraft} onChange={setAnswerDraft} />
+                      <MockQuestionRenderer
+                        payloads={currentPayloads}
+                        values={answerDrafts}
+                        onChange={(index, value) => setAnswerDrafts((prev) => prev.map((draft, i) => (i === index ? value : draft)))}
+                      />
                     )}
 
                     <div className="flex items-center justify-between mt-5 pt-4 border-t border-gray-50 dark:border-gray-800">
                       <button
                         onClick={handleToggleFlag}
-                        disabled={!currentQuestionId}
-                        aria-pressed={!!currentQuestionId && flaggedQuestionIds.has(currentQuestionId)}
+                        disabled={!currentUnit}
+                        aria-pressed={currentFlagged}
                         className="inline-flex items-center gap-1.5 text-xs font-semibold text-gray-500 dark:text-gray-400 disabled:opacity-30"
                       >
-                        <Flag size={13} className={currentQuestionId && flaggedQuestionIds.has(currentQuestionId) ? "text-amber-500 fill-amber-500" : ""} />
-                        {currentQuestionId && flaggedQuestionIds.has(currentQuestionId) ? "Flagged for review" : "Flag for review"}
+                        <Flag size={13} className={currentFlagged ? "text-amber-500 fill-amber-500" : ""} />
+                        {currentFlagged ? "Flagged for review" : "Flag for review"}
                       </button>
                       <div className="flex items-center gap-2">
                         <button
-                          onClick={() => handleAnswerAndAdvance(previousId)}
-                          disabled={!previousId}
+                          onClick={() => handleAnswerAndAdvance(previousIndex)}
+                          disabled={previousIndex === null}
                           className="text-xs font-semibold text-gray-500 dark:text-gray-400 disabled:opacity-30 px-2"
                         >
                           Back
                         </button>
-                        {nextId ? (
-                          <Button onClick={() => handleAnswerAndAdvance(nextId)} size="sm">
+                        {nextIndex !== null ? (
+                          <Button onClick={() => handleAnswerAndAdvance(nextIndex)} size="sm">
                             Next
                           </Button>
                         ) : (
@@ -397,8 +495,9 @@ export default function MockExamPage() {
                 <QuestionPalette
                   entries={palette}
                   onSelect={(id) => {
-                    if (id === currentQuestionId) return;
-                    void handleAnswerAndAdvance(id);
+                    if (currentUnit && currentUnit.questionIds.includes(id)) return;
+                    const targetIndex = goToUnitContainingId(id);
+                    if (targetIndex !== undefined) void handleAnswerAndAdvance(targetIndex);
                   }}
                 />
               </div>
@@ -423,7 +522,7 @@ export default function MockExamPage() {
             {flaggedQuestionIds.size > 0 && (
               <InfoCard className="mb-4">
                 <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">
-                  {flaggedQuestionIds.size} question{flaggedQuestionIds.size === 1 ? "" : "s"} flagged for review
+                  {palette.filter((entry) => entry.flagged).length} question{palette.filter((entry) => entry.flagged).length === 1 ? "" : "s"} flagged for review
                 </p>
               </InfoCard>
             )}
@@ -431,8 +530,10 @@ export default function MockExamPage() {
             <QuestionPalette
               entries={palette}
               onSelect={(id) => {
+                const targetIndex = goToUnitContainingId(id);
+                if (targetIndex === undefined) return;
                 setPhase("in-progress");
-                void handleAnswerAndAdvance(id);
+                void handleAnswerAndAdvance(targetIndex);
               }}
             />
 
@@ -470,36 +571,77 @@ export default function MockExamPage() {
 
 /**
  * Deliberately minimal — 008V Part 7's full split-screen passage
- * treatment is a named, deferred gap (see this file's header). This
- * renders `question` safely whether it's the plain string every fixture
- * used so far has been, or an unrecognised rich-content shape, without
- * ever assuming a structure this increment hasn't verified against real
- * content (none exists yet — Mock Eligible remains 0).
+ * treatment is a named, deferred gap (see this file's header). Renders
+ * `question` safely whether it's the plain string every fixture used so
+ * far has been, or an unrecognised rich-content shape.
+ *
+ * Mathematics First Mock Form-Assembly Gate (Decision 161) — now accepts
+ * one payload per response component in the current display unit. A
+ * standalone question (`payloads.length === 1`) renders byte-identically
+ * to before this decision. A grouped question (`payloads.length > 1`)
+ * renders every subpart together, each with its own subpart label (from
+ * ali_question_bank.subpart_label, migration 093/106 — never guessed
+ * from array position) and its own independent answer control, matching
+ * the real compound structure the content was authored and reviewed as
+ * (migration 095, Decision 155).
  */
 function MockQuestionRenderer({
-  payload,
-  value,
+  payloads,
+  values,
   onChange,
 }: {
-  payload: MockQuestionPayload;
-  value: string;
-  onChange: (v: string) => void;
+  payloads: MockQuestionPayload[];
+  values: string[];
+  onChange: (index: number, value: string) => void;
 }) {
-  const questionText = typeof payload.question === "string" ? payload.question : JSON.stringify(payload.question);
+  if (payloads.length <= 1) {
+    const payload = payloads[0];
+    const questionText = typeof payload.question === "string" ? payload.question : JSON.stringify(payload.question);
+    return (
+      <div>
+        <div className="flex items-center justify-between text-xs text-gray-400 dark:text-gray-500 mb-2">
+          <span className="uppercase tracking-wide font-semibold">{payload.subject}</span>
+          <span>{payload.marks} mark{payload.marks === 1 ? "" : "s"}</span>
+        </div>
+        <p className="text-sm font-semibold text-gray-800 dark:text-gray-200 whitespace-pre-line leading-relaxed">{questionText}</p>
+        <textarea
+          value={values[0] ?? ""}
+          onChange={(e) => onChange(0, e.target.value)}
+          rows={4}
+          className="w-full mt-4 text-sm rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-3"
+          placeholder="Your answer…"
+        />
+      </div>
+    );
+  }
+
+  const totalMarks = payloads.reduce((sum, payload) => sum + payload.marks, 0);
   return (
     <div>
       <div className="flex items-center justify-between text-xs text-gray-400 dark:text-gray-500 mb-2">
-        <span className="uppercase tracking-wide font-semibold">{payload.subject}</span>
-        <span>{payload.marks} mark{payload.marks === 1 ? "" : "s"}</span>
+        <span className="uppercase tracking-wide font-semibold">{payloads[0].subject}</span>
+        <span>{totalMarks} mark{totalMarks === 1 ? "" : "s"} total</span>
       </div>
-      <p className="text-sm font-semibold text-gray-800 dark:text-gray-200 whitespace-pre-line leading-relaxed">{questionText}</p>
-      <textarea
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        rows={4}
-        className="w-full mt-4 text-sm rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-3"
-        placeholder="Your answer…"
-      />
+      <div className="space-y-5">
+        {payloads.map((payload, index) => {
+          const questionText = typeof payload.question === "string" ? payload.question : JSON.stringify(payload.question);
+          return (
+            <div key={payload.questionId}>
+              <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 mb-1">
+                {payload.subpartLabel ?? `(${index + 1})`}
+              </p>
+              <p className="text-sm font-semibold text-gray-800 dark:text-gray-200 whitespace-pre-line leading-relaxed">{questionText}</p>
+              <textarea
+                value={values[index] ?? ""}
+                onChange={(e) => onChange(index, e.target.value)}
+                rows={3}
+                className="w-full mt-3 text-sm rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-3"
+                placeholder="Your answer…"
+              />
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 }

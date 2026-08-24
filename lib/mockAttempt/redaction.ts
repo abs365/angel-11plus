@@ -30,6 +30,9 @@ export function isValidMockQuestionPayload(payload: unknown): payload is MockQue
     typeof p.skill === "string" &&
     "question" in p &&
     typeof p.marks === "number" &&
-    typeof p.contentDifficulty === "string"
+    typeof p.contentDifficulty === "string" &&
+    (p.questionGroupId === null || typeof p.questionGroupId === "string") &&
+    (p.groupOrder === null || typeof p.groupOrder === "number") &&
+    (p.subpartLabel === null || typeof p.subpartLabel === "string")
   );
 }

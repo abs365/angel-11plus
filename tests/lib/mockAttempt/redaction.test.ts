@@ -18,6 +18,10 @@ const SAFE_PAYLOAD = {
   question: "6 × 47 = ?",
   marks: 1,
   contentDifficulty: "easy",
+  // Migration 106 — always present, null for a standalone question.
+  questionGroupId: null,
+  groupOrder: null,
+  subpartLabel: null,
 };
 
 test("a genuinely safe payload has zero leaked protected fields", () => {
@@ -59,4 +63,37 @@ test("isValidMockQuestionPayload rejects a payload missing a required field", ()
 
 test("isValidMockQuestionPayload rejects a payload with the wrong type for a required field", () => {
   assert.equal(isValidMockQuestionPayload({ ...SAFE_PAYLOAD, marks: "1" }), false);
+});
+
+test("Mathematics First Mock Form-Assembly Gate (Decision 161) — isValidMockQuestionPayload accepts a genuinely grouped subpart's real values", () => {
+  const groupedSubpart = {
+    ...SAFE_PAYLOAD,
+    questionId: "mock-mr01mr10-costumeschedule-01a",
+    questionGroupId: "mock-mr01mr10-costumeschedule-01",
+    groupOrder: 1,
+    subpartLabel: "(a)",
+  };
+  assert.equal(isValidMockQuestionPayload(groupedSubpart), true);
+});
+
+test("Decision 161 — isValidMockQuestionPayload rejects the wrong type for a grouping field even though it is nullable", () => {
+  assert.equal(isValidMockQuestionPayload({ ...SAFE_PAYLOAD, questionGroupId: 42 }), false);
+  assert.equal(isValidMockQuestionPayload({ ...SAFE_PAYLOAD, groupOrder: "1" }), false);
+  assert.equal(isValidMockQuestionPayload({ ...SAFE_PAYLOAD, subpartLabel: 1 }), false);
+});
+
+test("Decision 161 — isValidMockQuestionPayload rejects a payload missing a grouping field entirely (the real RPC always includes it, null or not)", () => {
+  const { questionGroupId: _questionGroupId, ...missingGroupId } = SAFE_PAYLOAD;
+  assert.equal(isValidMockQuestionPayload(missingGroupId), false);
+});
+
+test("Decision 161 — none of the three grouping fields are ever treated as protected/leaked (they are structural paper metadata, not answer material)", () => {
+  const groupedSubpart = {
+    ...SAFE_PAYLOAD,
+    questionGroupId: "mock-mr01mr10-costumeschedule-01",
+    groupOrder: 1,
+    subpartLabel: "(a)",
+  };
+  assert.deepEqual(findLeakedProtectedFields(groupedSubpart), []);
+  assert.equal(isPayloadRedactionSafe(groupedSubpart), true);
 });

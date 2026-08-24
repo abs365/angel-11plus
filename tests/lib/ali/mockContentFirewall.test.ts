@@ -137,9 +137,29 @@ test("5b. Programme Increment 008E: the canonical Mock Exam entry point no longe
     `${file} must not import lib/ali/questionBank at all -- Mock content now flows exclusively through lib/mockAttempt/client.ts's SECURITY DEFINER RPC wrappers`
   );
   assert.match(src, /from\s*["']@\/lib\/mockAttempt\/client["']/, `${file} must source Mock content through the proven secure engine`);
-  for (const requiredImport of ["getActiveMockForm", "createMockAttempt", "startMockAttempt", "getMockQuestion", "submitMockAnswer", "submitMockAttempt"]) {
+  // Mathematics First Mock Form-Assembly Gate (Decision 161) — the page
+  // no longer calls createMockAttempt() for attempt_type "full_mock":
+  // migration 085 made mock_create_attempt() unconditionally reject it,
+  // so the page now routes through the cycle-aware
+  // createMockCycleAttempt() instead (via a discovered-or-started Mock
+  // cycle, getOpenMockCycle()/startNewMockCycle()) — a correction onto
+  // the existing, already-approved architecture, not a weaker guarantee.
+  for (const requiredImport of [
+    "getActiveMockForm",
+    "getOpenMockCycle",
+    "startNewMockCycle",
+    "createMockCycleAttempt",
+    "startMockAttempt",
+    "getMockQuestion",
+    "submitMockAnswer",
+    "submitMockAttempt",
+  ]) {
     assert.ok(new RegExp(`\\b${requiredImport}\\b`).test(src), `${file} must call ${requiredImport} from the secure engine`);
   }
+  assert.ok(
+    !/\bcreateMockAttempt\b/.test(src),
+    `${file} must not call createMockAttempt() for a full_mock attempt -- migration 085 unconditionally rejects that attempt_type; createMockCycleAttempt() is the only correct path`
+  );
 });
 
 test("6. Future non-zero Practice growth cannot alter Mock supply", async () => {

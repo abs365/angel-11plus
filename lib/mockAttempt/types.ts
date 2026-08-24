@@ -22,11 +22,12 @@ export interface MockAttempt {
 }
 
 /**
- * The exact, hand-picked field set mock_get_question() (migration 070)
- * returns — never a superset. Every field here corresponds to a real
- * column in that function's own jsonb_build_object() call; a field must
- * be added to BOTH places together, never just one, or this type would
- * silently drift from what the server actually returns.
+ * The exact, hand-picked field set mock_get_question() (migration 070,
+ * extended by migration 106) returns — never a superset. Every field
+ * here corresponds to a real column in that function's own
+ * jsonb_build_object() call; a field must be added to BOTH places
+ * together, never just one, or this type would silently drift from what
+ * the server actually returns.
  */
 export interface MockQuestionPayload {
   questionId: string;
@@ -35,6 +36,31 @@ export interface MockQuestionPayload {
   question: unknown; // jsonb prompt.question — string or rich content, not narrowed further here
   marks: number;
   contentDifficulty: string;
+  /**
+   * Migration 106 — the id shared by every subpart of one displayed
+   * numbered question (e.g. mock-mr01mr10-costumeschedule-01), or null
+   * for a standalone question. Mirrors ali_question_bank.question_group_id
+   * exactly (migration 093).
+   */
+  questionGroupId: string | null;
+  /** Migration 106 — 1-based order of this subpart within its group, or null for a standalone question. */
+  groupOrder: number | null;
+  /** Migration 106 — the subpart's own display label (e.g. "(a)"), or null for a standalone question. */
+  subpartLabel: string | null;
+}
+
+/**
+ * Migration 106 — one attempt's full grouping structure, IDs and
+ * grouping identity only, never question content. Returned by
+ * mock_get_attempt_grouping(), mirroring mock_get_attempt_manifest()'s
+ * own "IDs only" discipline exactly, extended by the same three fields
+ * as MockQuestionPayload above.
+ */
+export interface MockManifestGroupingEntry {
+  questionId: string;
+  questionGroupId: string | null;
+  groupOrder: number | null;
+  subpartLabel: string | null;
 }
 
 /**

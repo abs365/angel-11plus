@@ -11,7 +11,7 @@
  * page component."
  */
 
-import type { MockQuestionPayload } from "./types";
+import type { MockManifestGroupingEntry, MockQuestionPayload } from "./types";
 
 /** Never negative — a stale expiresAt in the past reads as 0 remaining, not a negative countdown. */
 export function computeRemainingSeconds(expiresAt: string, now: number = Date.now()): number {
@@ -44,13 +44,65 @@ export function classifyTimerUrgency(remainingSeconds: number): TimerUrgency {
 }
 
 /**
- * One entry per assigned question, in manifest order — the shape
- * 008V Part 5/6's question palette needs (answered/flagged/current are
- * orthogonal booleans, never collapsed into one enum, since a question
- * can genuinely be both answered and flagged at once).
+ * Mathematics First Mock Form-Assembly Gate (Decision 161) — a
+ * "display unit" is ONE learner-facing numbered question: either a
+ * single standalone id (questionGroupId null — every question in this
+ * codebase before this decision, and every non-Mathematics question
+ * today), or every subpart of one grouped family together, in
+ * groupOrder. This is the structure Section 7's own mandatory trace
+ * found completely absent: the manifest and the workspace previously
+ * treated every raw assigned id as its own displayed question, so a
+ * grouped family's subparts (e.g. mock-mr01mr10-costumeschedule-01a/
+ * -01b) were shown as two disconnected, flatly-numbered questions
+ * instead of one "Question N (a) ... (b) ..." unit.
+ */
+export interface DisplayUnit {
+  questionIds: string[];
+  questionGroupId: string | null;
+}
+
+/**
+ * Groups the manifest's raw, ordered id list into display units:
+ * consecutive ids sharing the same non-null questionGroupId become one
+ * unit; every other id becomes its own singleton unit — byte-identical
+ * behaviour to treating every id as standalone, which is what every
+ * non-grouped id in this pool already is. Fails closed to standalone,
+ * never guesses from an id's own string shape (migration 104's own
+ * rejected approach for the equivalent scoring-side problem): any id
+ * with no matching entry in `grouping` at all is treated as its own
+ * ungrouped unit rather than assumed to belong to a neighbour.
+ */
+export function buildDisplayUnits(
+  rawIds: readonly string[],
+  grouping: readonly MockManifestGroupingEntry[]
+): DisplayUnit[] {
+  const byId = new Map(grouping.map((entry) => [entry.questionId, entry]));
+  const units: DisplayUnit[] = [];
+  for (const id of rawIds) {
+    const groupId = byId.get(id)?.questionGroupId ?? null;
+    const previous = units[units.length - 1];
+    if (groupId !== null && previous && previous.questionGroupId === groupId) {
+      previous.questionIds.push(id);
+    } else {
+      units.push({ questionIds: [id], questionGroupId: groupId });
+    }
+  }
+  return units;
+}
+
+/**
+ * One entry per DISPLAY UNIT (Decision 161), in manifest order — the
+ * shape 008V Part 5/6's question palette needs (answered/flagged/current
+ * are orthogonal booleans, never collapsed into one enum, since a
+ * question can genuinely be both answered and flagged at once). A unit
+ * is "answered" only once every one of its response components is
+ * answered, and "flagged" if any of its response components is flagged
+ * — flagging is a whole-displayed-question action (see
+ * app/learning-intelligence/mock-exam/page.tsx's own handleToggleFlag,
+ * which calls setMockFlag for every id in the current unit together).
  */
 export interface PaletteEntry {
-  questionId: string;
+  questionIds: string[];
   index: number;
   answered: boolean;
   flagged: boolean;
@@ -58,22 +110,27 @@ export interface PaletteEntry {
 }
 
 export function buildPalette(
-  assignedQuestionIds: string[],
+  units: readonly DisplayUnit[],
   answeredQuestionIds: ReadonlySet<string>,
   flaggedQuestionIds: ReadonlySet<string>,
-  currentQuestionId: string | null
+  currentUnitIndex: number
 ): PaletteEntry[] {
-  return assignedQuestionIds.map((questionId, index) => ({
-    questionId,
+  return units.map((unit, index) => ({
+    questionIds: unit.questionIds,
     index,
-    answered: answeredQuestionIds.has(questionId),
-    flagged: flaggedQuestionIds.has(questionId),
-    current: questionId === currentQuestionId,
+    answered: unit.questionIds.every((id) => answeredQuestionIds.has(id)),
+    flagged: unit.questionIds.some((id) => flaggedQuestionIds.has(id)),
+    current: index === currentUnitIndex,
   }));
 }
 
-export function unansweredQuestionIds(assignedQuestionIds: string[], answeredQuestionIds: ReadonlySet<string>): string[] {
-  return assignedQuestionIds.filter((id) => !answeredQuestionIds.has(id));
+/** Indices (into `units`) of every display unit not yet fully answered. */
+export function unansweredUnitIndices(units: readonly DisplayUnit[], answeredQuestionIds: ReadonlySet<string>): number[] {
+  const result: number[] = [];
+  units.forEach((unit, index) => {
+    if (!unit.questionIds.every((id) => answeredQuestionIds.has(id))) result.push(index);
+  });
+  return result;
 }
 
 /** Pure structural re-check, defence-in-depth on top of lib/mockAttempt/redaction.ts, that a payload actually belongs to this question before it's ever rendered. */

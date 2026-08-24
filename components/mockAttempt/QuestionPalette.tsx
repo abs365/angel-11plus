@@ -20,9 +20,9 @@ export function QuestionPalette({
     <div role="group" aria-label="Question overview" className="grid grid-cols-6 gap-2">
       {entries.map((entry) => (
         <button
-          key={entry.questionId}
+          key={entry.questionIds[0]}
           type="button"
-          onClick={() => onSelect(entry.questionId)}
+          onClick={() => onSelect(entry.questionIds[0])}
           aria-current={entry.current || undefined}
           aria-label={`Question ${entry.index + 1}${entry.answered ? ", answered" : ", not answered yet"}${entry.flagged ? ", flagged for review" : ""}`}
           className={cn(

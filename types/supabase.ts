@@ -816,10 +816,9 @@ export interface Database {
         Returns: undefined;
       };
       // Mock Governance Architecture Increment 001 (Decision 135) —
-      // supabase/migrations/085_mock_cycle_governance_architecture.sql.
-      // Not yet applied to production; declared here so
-      // lib/mockAttempt/client.ts can call these through the typed
-      // supabase.rpc() the same way every other RPC already does.
+      // supabase/migrations/085_mock_cycle_governance_architecture.sql,
+      // corrected by migration 086 (Decision 136). Applied to production
+      // and Founder-verified (Decision 137).
       mock_start_new_cycle: {
         Args: Record<string, never>;
         Returns: string;
@@ -831,6 +830,21 @@ export interface Database {
       mock_create_cycle_attempt: {
         Args: { p_form_id: string; p_cycle_id: string };
         Returns: string;
+      };
+      // Mathematics First Mock Form-Assembly Gate (Decision 161) —
+      // supabase/migrations/106_mock_mathematics_grouped_question_
+      // learner_rendering.sql and 107_mock_full_mock_cycle_attempt_
+      // learner_compatibility.sql. Not yet applied to production;
+      // declared here so lib/mockAttempt/client.ts can call these
+      // through the typed supabase.rpc() the same way every other RPC
+      // already does.
+      mock_get_attempt_grouping: {
+        Args: { p_attempt_id: string };
+        Returns: { questionId: string; questionGroupId: string | null; groupOrder: number | null; subpartLabel: string | null }[];
+      };
+      mock_get_open_cycle: {
+        Args: Record<string, never>;
+        Returns: string | null;
       };
     };
     Enums: {
