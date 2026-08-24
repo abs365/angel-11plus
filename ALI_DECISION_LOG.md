@@ -4362,3 +4362,180 @@ Full suite: **1140/1140 pass** (1087 baseline at Decision 150 + 26 Track A + 27 
 **Implications:** Decisions 1–150 all stand, none reversed or rewritten. Decision 132's READY FOR CONTROLLED FAMILY LAUNCH verdict is not reopened. **Mathematics Batch 003 and English Mock Content Foundation Batch 001 are AUTHORED AND REVIEW-READY, not validated, not eligible, not live.** Neither track's content has been independently reviewed, promoted, or made available to any learner. `mock_eligible` remains 0; `ali_mock_form` remains uncreated; Mock remains NOT READY YET. **A new, higher-priority item is now on record for Founder decision: the Part 5 Practice-exposure gap, recommended to be resolved before migrations 095–099 (or any further Mock content) are applied to production.** No independent review, no promotion, no form assembly, no pool-level gate, and no Practice-selection code change is authorised or begun by this decision.
 
 ---
+
+### Decision 152 — PROTECTED MOCK CONTENT ISOLATION AND SECURITY CORRECTION: the Decision 151 Part 5 finding is CONFIRMED from source at both layers — application code (`lib/ali/questionBank.ts`) and, newly found this session, the database RLS policy itself (migration 084) — root-caused to a single conceptual error (treating `eligibility_status` as one linear ladder instead of two separate, non-nested tracks sharing a column); corrected at both layers with a positive allow-list (`eligibility_status = 'practice_eligible'`), application fix committed directly, database fix drafted as migration 100 (NOT applied); a test that explicitly asserted the defect as intentional ("Practice Eligible is a floor, not exclusive") is corrected; historical exposure of the 38 existing protected Mathematics questions is investigated, found reconstructable but with a genuine, disclosed limitation, and a precise read-only Founder query is prepared — no exposure classification is performed by this session, since it requires production access this environment does not have
+
+**Scope and process:** A bounded correction increment, per explicit Founder authorisation, working directly (not via parallel forks — a single coherent investigate-then-fix task, not two independent content tracks). Content production is NOT continued. Migrations 095–099 are untouched and remain exactly as Decision 151 left them.
+
+---
+
+**PART 1 — REPOSITORY RECONCILIATION**
+
+1. Working tree clean before this session's own changes. 2. HEAD == origin/main == `35a8434` (Decision 151) before this session, confirmed via `git fetch` + `git rev-parse` on both refs. 3. Decision 151 present exactly once (`grep -c` confirmed). 4. Migrations 095–099 present, confirmed unapplied (no production change has occurred since Decision 151). 5. Migrations 095–099 confirmed byte-unchanged (`git diff HEAD` empty against all five). 6. Migrations 088–094 confirmed byte-unchanged (same `git diff HEAD` check, empty). 7. Established production position relied on as the Founder's own prior evidence, not re-queried (no live Supabase access in this environment, unchanged from every prior session in this arc): 38 Mathematics `independently_validated`, 0 `mock_eligible`, 0 `ali_mock_form`. 8. **Every live code path capable of constructing an ordinary Practice session was traced, not assumed to be `selectQuestions()` alone** — see Part 2. No discrepancy found; nothing here required stopping.
+
+---
+
+**PART 2 — THE DEFECT, PROVEN FROM SOURCE**
+
+**1. Where Practice eligibility statuses were defined:** `lib/ali/questionBank.ts`, a module-level constant (`PRACTICE_ELIGIBLE_STATUSES`, now corrected — see Part 5).
+
+**2. Statuses previously accepted:** `practice_eligible`, `authentic_assessment_candidate`, `independently_validated`, `mock_eligible` — modelled explicitly, in the constant's own prior docstring, as "at this status or higher," i.e. every Mock-governance-track status was deliberately, not accidentally, included.
+
+**3. Where those statuses entered the database query:** they did not enter the Postgrest query itself (`fetchQuestionBank()` filters only by `subject`/`pathway` at the query layer) — the eligibility filter was applied entirely in application code, in-memory, after every row for the subject+pathway had already been fetched from the database.
+
+**4. Whether any downstream filter removed protected Mock states:** **no.** Traced the full real chain: `lib/learningEngine/sessionGenerator.ts`'s `generatePersonalisedSession()` (the actual Practice session generator) calls `fetchQuestionBank()` directly (line 277), filters only to QT-tagged rows (`skill.startsWith("QT-")`, line 278 — not an eligibility filter), builds `candidatePool` (line 358) from that, and passes it straight into `lib/ali/selection.ts`'s `selectQuestions()` — confirmed by direct search to contain **zero** references to `eligibilityStatus`/`eligibility_status` anywhere in that file. A repository-wide search of `lib/learningEngine/*` for `eligibility_status` also returned **zero files**. The output of `selectQuestions()` becomes the real `activities` array returned to, and rendered for, the learner.
+
+**5. Whether other Practice routes use a different path — traced, not assumed single-path:** four real, learner-facing (non-admin-gated) routes call the same `fetchQuestionBank()` directly: `lib/learningEngine/sessionGenerator.ts` (personalised Practice, the main pathway), `app/learning-intelligence/learn/mathematics/percentages/page.tsx`, and `app/learning-intelligence/learn/mathematics/arithmetic/page.tsx` (the "Learn" lesson pages — genuinely ordinary learner routes, confirmed not admin-gated: no `FounderOnlyGate`/admin check present in either file). A fifth caller, `app/learning-intelligence/founder-validation/csse/page.tsx`, also uses it but is wrapped in `FounderOnlyGate` (confirmed) — a Founder/admin validation tool, not ordinary learner Practice, and unaffected by the correction since an admin session satisfies the corrected RLS policy's own admin carve-out regardless (Part 5). No other Practice/recommendation/revision/competency route was found to use a separate, differently-filtered path — `fetchQuestionBank()` is the single shared choke point for all of them.
+
+**6. Server/API/RPC bypass paths:** none found. `app/api/` contains no route touching `ali_question_bank` at all (confirmed by search). Practice has no RPC layer of its own — it reads `ali_question_bank` directly via the anon/authenticated Supabase client, governed only by RLS (unlike Mock's own canonical entry point, which uses SECURITY DEFINER RPCs exclusively, confirmed unaffected — see Part 5).
+
+**7. Whether tests currently encode the incorrect behaviour:** **yes, explicitly.** `tests/lib/ali/questionBank.test.ts` contained a test titled "E: mock_eligible content is still admitted to Practice (Practice Eligible is a floor, not exclusive)" that asserted exactly the defect and defended it in its own name as intentional design, not an oversight. Corrected this session (Part 6) — this is not merely a missing test, it is a test that actively locked the defect in as expected behaviour.
+
+**Root cause, classified precisely:** `eligibility_status` was modelled as a single linear ladder ("a row must be at this status OR HIGHER to be Practice-ready"), when it actually encodes two separate, non-nested tracks sharing one column — a **Practice track** (`provisional` → `practice_eligible`) and a **Mock-governance track** (`authentic_assessment_candidate` → `independently_validated` → `mock_eligible`, `RELEASE_1_ASSESSMENT_ELIGIBILITY_MODEL.md`'s own transition sequence). Being further along the Mock track does not imply Practice-readiness; it means the opposite — that content is reserved and unreleased specifically because it has not yet been exposed to any learner. **This is correctly classified as an educational-content isolation defect affecting anti-memorisation integrity, not a Mock UI defect** — protected assessment material (including full passage text, embedded inline in every Comprehension question's own `prompt` field) was structurally reachable by the real Practice serving pipeline, for every Mock question ever authored across this entire arc (Batch 001/002, already `independently_validated` in production; Batch 003/English Batch 001, still `authentic_assessment_candidate`, migrations 095–099 not yet applied).
+
+**Also found, beyond the application layer — genuinely new this session, not disclosed at Decision 151:** the database's own RLS SELECT policy on `ali_question_bank` (migration 084's `ali_question_bank_select_all`) independently permits the exact same exposure: `using (eligibility_status is distinct from 'mock_eligible' or is_current_user_admin())` allows any anon/authenticated client to read every row except `mock_eligible` — meaning `authentic_assessment_candidate`/`independently_validated` are, and always have been, readable directly by any client querying the table, regardless of what `fetchQuestionBank()` does. This is the TRUE authoritative boundary (Postgres enforces RLS regardless of application code); an application-only fix would not have been structural, only probabilistic (correct only for as long as every caller remembers to use the fixed function).
+
+---
+
+**PART 3 — HISTORICAL EXPOSURE INVESTIGATION**
+
+**Reconstructability: partially yes, with a genuine, disclosed limitation.** `public.ali_student_question_history` (migration 006) records Practice/Mock/Learn presentation and outcome evidence keyed by `(profile_id, question_id)` — one row per learner per question (not one row per attempt), with `times_seen`, `times_correct`, `last_presented_at`, and two provenance columns: `source` (the MOST RECENT presentation context, overwritten on every subsequent presentation) and `first_source` (write-once, the FIRST-EVER presentation context, migration 024, never overwritten). The real source-tag taxonomy, confirmed by direct search of every caller: genuine Practice-track sources are `"practice_experience"` (`app/learning-intelligence/practice/[area]/page.tsx`), `"learning_guided"` and `"learning_independent"` (the two Learn lesson pages); non-Practice sources are `"adaptive_mock"` (the default, used by the 4 old-style `app/mocks/adaptive/*` pages), `"founder_validation_assessment"`, and `"family_choice_pilot"` (both Founder-only tools).
+
+**The genuine limitation, stated explicitly, per the directive's own instruction not to infer "never exposed" from absence of a convenient log:** because only the FIRST and MOST RECENT presentation context are ever retained (not a full per-attempt log), a question presented 3 times — e.g. once via `adaptive_mock`, once via genuine Practice, once via `adaptive_mock` again — would show `first_source = 'adaptive_mock'` and `source = 'adaptive_mock'`, with the middle Practice exposure **structurally invisible** to any query against this table. A "no Practice source found in `first_source`/`source`" result is therefore evidence of "no CONFIRMED Practice exposure at the two recorded boundary points," never proof of "never exposed via Practice." Only a genuinely absent row (`times_seen` = 0 / no row at all for that `question_id` across every profile) is confident, complete evidence of zero exposure by any mechanism.
+
+**Read-only query prepared for the Founder** (not run by this session — no live Supabase access in this environment):
+
+```sql
+with protected_ids as (
+  select unnest(array[
+    'mock-mr02-invdiv-01','mock-mr02-invdiv-02','mock-mr02-invdiv-03',
+    'mock-mr02-twostep-01','mock-mr02-twostep-02','mock-mr02-twostep-03',
+    'mock-mr03-unitconv-01','mock-mr03-unitconv-02','mock-mr03-unitconv-03',
+    'mock-mr05-forward-01','mock-mr05-forward-02',
+    'mock-mr05-inverse-01','mock-mr05-inverse-02',
+    'mock-mr09-data-01','mock-mr09-data-02','mock-mr09-data-03',
+    'mock-mr13-bestvalue-01','mock-mr13-bestvalue-02',
+    'mock-mr04-percentchange-01','mock-mr04-percentchange-02',
+    'mock-mr04-reversepercent-01','mock-mr04-reversepercent-02',
+    'mock-mr06-multiplerelation-01','mock-mr06-multiplerelation-02',
+    'mock-mr06-sumdiff-01','mock-mr06-sumdiff-02',
+    'mock-mr07-isoscelesproperty-01','mock-mr07-isoscelesproperty-02',
+    'mock-mr07-triangleanglesum-01','mock-mr07-triangleanglesum-02',
+    'mock-mr10-forwardschedule-01','mock-mr10-forwardschedule-02',
+    'mock-mr10-reverseschedule-01','mock-mr10-reverseschedule-02',
+    'mock-mr11-propertysearch-01','mock-mr11-propertysearch-02',
+    'mock-mr11-truefalsejudgement-01','mock-mr11-truefalsejudgement-02'
+  ]) as question_id
+)
+select
+  p.question_id,
+  count(h.profile_id)                                     as history_rows,
+  coalesce(sum(h.times_seen), 0)                           as total_times_seen,
+  count(distinct h.profile_id)                              as distinct_learners,
+  max(h.last_presented_at)                                  as most_recent_exposure,
+  bool_or(h.first_source in ('practice_experience','learning_guided','learning_independent')) as first_source_was_practice,
+  bool_or(h.source in ('practice_experience','learning_guided','learning_independent'))       as latest_source_was_practice,
+  bool_or(h.source = 'adaptive_mock' or h.first_source = 'adaptive_mock')                     as ever_adaptive_mock_source,
+  bool_or(h.source in ('founder_validation_assessment','family_choice_pilot')
+       or h.first_source in ('founder_validation_assessment','family_choice_pilot'))          as ever_founder_validation_source
+from protected_ids p
+left join public.ali_student_question_history h on h.question_id = p.question_id
+group by p.question_id
+order by p.question_id;
+```
+
+Read-only (a plain `select`, no writes). Reports aggregates only — `distinct_learners` is a count, no learner names, IDs, or other personal data are returned. Covers exactly the 38 existing Batch 001 (18) + Batch 002 (20) question IDs, confirmed against migration 090's own allow-list (Batch 001) and the Founder's own Decision 149 directive (Batch 002) — not recalled from memory.
+
+**Current evidence about the 38 protected Mathematics questions: none — not established by this session.** This session has no live production access; running the query above and interpreting its results is the Founder's own next step, per this project's own standing discipline against fabricating verification this environment cannot perform.
+
+---
+
+**PART 4 — CONTENT DISPOSITION RULE (FRAMEWORK ONLY, NOT APPLIED)**
+
+No question's `eligibility_status` is changed by this decision. The classification framework the directive requested, to be applied once the Part 3 query's results are available:
+
+- **A — NO EVIDENCE OF EXPOSURE:** `history_rows = 0` for that question_id (no row exists for any profile) — the only confident, complete "never presented by any mechanism" case.
+- **B — CONFIRMED PRACTICE EXPOSURE:** `first_source_was_practice` or `latest_source_was_practice` is true — at least one of the two recorded boundary points is a genuine Practice-track source.
+- **C — EXPOSURE CANNOT BE DETERMINED:** a row exists (`history_rows > 0`), but neither boundary point shows a Practice-track source. Per Part 3's own disclosed limitation, this must be labelled unknown, not treated as pristine, whenever `total_times_seen > 1` (a hidden middle exposure remains structurally possible). Even at `total_times_seen = 1` (where the single recorded exposure's source is fully known), this decision recommends the Founder still apply C rather than A out of caution, since first_source not being reliably populated for pre-migration-024 rows is a separate, disclosed data-completeness gap this session has not independently ruled out.
+
+No automatic retirement. Disposition of any B/C question is a separate, later educational decision for the Founder, made after seeing the Part 3 query's actual results.
+
+---
+
+**PART 5 — THE CORRECTION (SMALLEST AUTHORITATIVE LAYERS)**
+
+**Application layer, corrected directly (not a migration):** `lib/ali/questionBank.ts`. `PRACTICE_ELIGIBLE_STATUSES` (a 4-value Set, blacklist-shaped by omission) replaced with `PRACTICE_ELIGIBLE_STATUS` (a single string constant, `"practice_eligible"`), and `fetchQuestionBank()`'s filter changed from `.has(q.eligibilityStatus)` to `q.eligibilityStatus === PRACTICE_ELIGIBLE_STATUS` — a genuine positive allow-list, per the directive's own explicit preference, not a `!=` / growing-blacklist. `provisional` remains excluded (unchanged from before). The stale comment above `fetchMockEligibleQuestionBank()` claiming "Practice... has never enforced eligibility" — itself a symptom of the same root-cause misconception — is corrected to reflect the new, intentional behaviour.
+
+**Database layer — migration 100, drafted, NOT applied.** `ali_question_bank_select_all`'s predicate changed from `eligibility_status is distinct from 'mock_eligible' or is_current_user_admin()` to `eligibility_status = 'practice_eligible' or is_current_user_admin()` — the same allow-list, enforced at the true authoritative layer, so the boundary holds even for a future caller that bypasses `fetchQuestionBank()` entirely. **Why a database correction is genuinely required, not merely an app-layer fix (Part 9):** RLS is the only thing separating "any anon/authenticated client" from "reads protected Mock content" — an application-only fix is probabilistic (correct only while every caller remembers to use the fixed function); the directive's own "must be structural" instruction is not satisfied without this. No function is created, altered, or granted — a pure policy change, so the anon-EXECUTE-privilege defect class already fixed in migrations 071/073/086 does not apply here (checked explicitly, not assumed — see the migration's own tests). `ali_passage_bank` is confirmed untouched and not requiring a mirrored fix: migration 069's own comment (re-verified this session) already states it has NO anon/authenticated SELECT policy at all, and confirmed structurally sound — every Comprehension question's own `prompt` jsonb carries its passage's full text inline (migration 097), so `ali_question_bank` alone was ever the exposure path.
+
+**Why a positive allow-list, not a longer exclusion list:** proven, not merely asserted — `authentic_assessment_candidate` and `independently_validated` are legitimate Practice-track values in NO circumstance found anywhere in this codebase; only `practice_eligible` is. A blacklist requires remembering to add every new protected status as it is invented (exactly how this defect was created — `provisional` was excluded, three later-invented Mock-track statuses were not); an allow-list requires nothing to be added for a defect to be reintroduced by a future status.
+
+---
+
+**PART 6 — PRACTICE BEHAVIOUR VERIFICATION**
+
+1–2. `practice_eligible` Mathematics/English remain selectable: proven directly (`tests/lib/ali/questionBank.test.ts`, "E: practice_eligible is admitted to Practice" and the English-specific equivalent, both pre-existing and still passing). 3–5. `authentic_assessment_candidate`/`independently_validated`/`mock_eligible` excluded: proven by 3 new dedicated tests plus the corrected test (previously asserting the opposite). 6. `provisional` remains excluded: pre-existing test, unchanged, still passing. 7–10. Practice balancing/competency targeting/difficulty weighting/family-exposure logic: **untouched** — this correction changes only the INPUT POOL `fetchQuestionBank()` returns; `lib/ali/selection.ts`, `reduceFamilyClustering()`, `applyRetrievalPriority()`, `computeFamilyExposure()` are not modified, confirmed by `git diff` touching only `lib/ali/questionBank.ts` (application layer) plus new test/migration files — the full pre-existing test suite for all of these (unchanged files) still passes. 11. Recommendations still reach legitimate Practice content: proven by the same "practice_eligible is admitted" tests — the only content ever legitimately in scope remains fully reachable. 12. No learner Practice route can bypass the corrected boundary: proven by two new source-check tests confirming `sessionGenerator.ts` and both Learn lesson pages still import and call the real, corrected `fetchQuestionBank()`, not a direct query.
+
+---
+
+**PART 7 — REGRESSION TESTS FOR THE ACTUAL FAILURE MODE**
+
+`tests/lib/ali/questionBank.test.ts`: the pre-existing test that asserted the defect as intentional is corrected in place; 2 new tests prove `authentic_assessment_candidate`/`independently_validated` exclusion individually; **2 new "E2" mixed-pool tests** (Mathematics and English) construct a single candidate pool containing all 5 real `eligibility_status` values at once and prove the REAL, exported `fetchQuestionBank()` — the exact function `sessionGenerator.ts` calls, unmodified, at its own real call site — returns only the `practice_eligible` row; 2 new source-check tests prove the real Practice session generator and both Learn lesson pages still route through this corrected function, not a bypass. All of these fail against the pre-correction `PRACTICE_ELIGIBLE_STATUSES` Set (which would have returned 3 rows in the mixed-pool test: `practice_eligible`, `authentic_assessment_candidate`, `independently_validated`) and pass against the correction — confirmed by construction, matching the directive's own explicit requirement.
+
+`tests/supabase/protectedMockContentPracticeIsolation.test.ts` (new, mirroring `tests/supabase/mockSealedContentRls.test.ts`'s own established structural-testing pattern for migration 069): 10 tests proving migration 100's predicate shape, that it excludes every Mock-track status explicitly (not merely `mock_eligible`), that admin access is preserved, that no other table/function/data is touched, and that it does not reference any migration 095–099 content.
+
+---
+
+**PART 8 — MOCK GOVERNANCE: UNCHANGED**
+
+Confirmed by `git diff`: no row's `eligibility_status` was changed by this decision; Batch 001/002 content untouched; migrations 095–099 untouched (byte-identical, Part 1); no `ali_mock_form` row created; `mock_eligible` untouched; no cadence/readiness/grouped-scoring/form-assembly/reporting/parent-override/payment code touched. This is a quarantine correction only.
+
+---
+
+**PART 9 — DATABASE IMPACT**
+
+**A genuine database correction IS required** (Part 5) — this is not "merely because this is a production defect," but because the RLS policy itself, independent of any application code, permits the exact exposure. Forward-only (migration 100, next number after 099). Grants/RLS inspected carefully: no GRANT is broadened; the admin carve-out (`is_current_user_admin()`) is unchanged from migration 084; no function created, altered, or granted, so the anon-EXECUTE-privilege defect class from migrations 071/073/086 does not apply — verified explicitly by a dedicated test (Part 7), not assumed.
+
+---
+
+**PART 10 — PRODUCTION VERIFICATION PLAN**
+
+**A.** `select eligibility_status, count(*) from ali_question_bank where subject in ('maths','english') group by eligibility_status;` — expect Mathematics `practice_eligible` = 194, English `practice_eligible` = 120, unchanged.
+**B.** Same query — expect Mathematics `independently_validated` = 38, unchanged.
+**C.** Expect `mock_eligible` = 0, unchanged (or absent from the grouped result, per every prior session's own established reading of that absence).
+**D.** `select count(*) from ali_mock_form;` — expect 0, unchanged.
+**E.** **Not provable from database counts alone, and not claimed as such.** Proof of E requires the corrected application boundary and its tests (Part 6/7) — already demonstrated in this session against the real, exported `fetchQuestionBank()` — plus, after migration 100 is applied, an independent, non-admin-authenticated (or anon-key) query directly against `ali_question_bank` confirming zero rows with `eligibility_status <> 'practice_eligible'` are visible (the migration's own "Verify after applying" block states this exact query). Both the code-level and RLS-level proofs are required together; neither alone is sufficient for E.
+
+---
+
+**PART 11 — DECISION 151 CONTENT: PRESERVED**
+
+Migrations 095–099 remain exactly as authored (Part 1, byte-unchanged), still candidate content awaiting production application. Nothing from Decision 151 is discarded. Once this quarantine defect is production-closed (application fix live — already true — and migration 100 applied and verified per Part 10) and historical exposure is understood (Part 3's query run and interpreted), the Founder can separately authorise application of migrations 095–099.
+
+---
+
+**PART 12 — VERIFICATION PERFORMED**
+
+Full suite: **1156/1156 pass** (1140 baseline at Decision 151 + 16 new: 6 in `tests/lib/ali/questionBank.test.ts`, 10 in `tests/supabase/protectedMockContentPracticeIsolation.test.ts`; zero regressions). `tests/lib/ali/mockContentFirewall.test.ts` (the pre-existing, opposite-direction Mock firewall suite) re-run in isolation: all 10 pass unchanged, confirming this correction does not weaken that firewall. `npx tsc --noEmit`: clean. ESLint on every touched file (`lib/ali/questionBank.ts`, `tests/lib/ali/questionBank.test.ts`, `tests/supabase/protectedMockContentPracticeIsolation.test.ts`): 0 errors, 0 warnings. Copy Quality Guard: PASS, 0 violations, 256 files. Production build: succeeds.
+
+---
+
+**What this decision does NOT claim:** it does not claim migration 100 is applied (it is not — application-layer fix is committed and live in the repository, but the database-layer fix awaits Founder application, exactly like migrations 095–099); it does not claim E (Part 10) is proven in production, only that it is proven at the code/test level and specifies exactly what further evidence production application requires; it does not claim any of the 38 existing protected Mathematics questions has been classified A/B/C (Part 4) — that requires the Founder to run the Part 3 query and interpret its results; it does not claim historical exposure can be fully, perfectly reconstructed — the `source`/`first_source` limitation (Part 3) is a genuine, disclosed gap, not resolved by this decision; it does not claim `ali_passage_bank` required any change (investigated and confirmed already correctly restricted); it does not claim Decision 151's authored content is in any way defective — the defect predates it and was merely inherited by it, exactly as Decision 151 itself already disclosed.
+
+**Files changed:** `lib/ali/questionBank.ts` (modified — the application-layer fix, live immediately on commit, not gated on any migration), `tests/lib/ali/questionBank.test.ts` (modified — 1 test corrected, 6 new), `supabase/migrations/100_protected_mock_content_practice_isolation.sql` (new, NOT applied), `tests/supabase/protectedMockContentPracticeIsolation.test.ts` (new), `ALI_DECISION_LOG.md` (this entry).
+
+**Migration created:** 100 — drafted, NOT applied, awaiting Founder review.
+
+**Tests:** 16 new/corrected, all passing; full suite 1156/1156.
+
+**Production deployment status:** the application-layer fix (`lib/ali/questionBank.ts`) will be live in production the moment this commit is deployed through the normal deployment pipeline — **it is not gated on any migration, since it is a code change, not a schema change.** The database-layer fix (migration 100) is NOT applied — awaiting Founder review and manual application via Supabase Dashboard, exactly like migrations 095–099. **Full closure of this defect requires BOTH**: the application fix is closed once deployed (a separate, non-database deployment step this session does not control or claim to have observed); the database fix is closed only once migration 100 is applied AND Part 10's verification plan (specifically item E) is actually carried out — not merely once code has been committed, per the directive's own explicit instruction not to close on commit alone.
+
+**Decision number:** 152.
+
+**Commit SHA:** recorded after commit (see repository history immediately following this entry).
+
+**Rationale:** correcting both layers, not just the one the directive's own investigation happened to find first, follows directly from Part 2's own root-cause finding — the application layer alone was never the true authority, only ever one caller among several real ones, so a fix confined to it would have been probabilistic (correct only while every current and future caller remembers to use it), directly contradicting the directive's own explicit "must be structural, not probabilistic" instruction. Choosing a positive allow-list over a longer exclusion list follows from the same root cause: the original defect was created by an exclusion list that was correct on the day it was written and silently wrong the moment a new Mock-track status was later invented; an allow-list cannot be defeated the same way by a future status nobody remembers to add to a blacklist. Disclosing the Part 3 exposure-reconstruction limitation explicitly, rather than presenting a confident "no evidence found, therefore pristine" reading of an absent Practice-source tag, follows this project's own standing discipline against inferring absence-of-evidence as evidence-of-absence, especially here, where the cost of being wrong is a real child's memorised exposure to protected assessment content.
+
+**Implications:** Decisions 1–151 all stand, none reversed or rewritten; Decision 151's authored content (migrations 095–099) is preserved, not discarded, and remains awaiting Founder authorisation, now correctly sequenced AFTER this correction rather than before it. **Migrations 095–099 are NOT yet safe to apply for the reason Decision 151 itself already gave — their content has not been independently reviewed — and this decision adds no new reason they would be unsafe specifically because of the isolation defect, since the application-layer fix (live once deployed) plus migration 100 (once applied) close that specific gap for ALL Mathematics/English `ali_question_bank` content, present and future, not only for these 5 migrations.** The Founder's own next actions: (1) deploy the application-layer fix through the normal pipeline; (2) review and apply migration 100, then run Part 10's verification plan; (3) run the Part 3 read-only query and interpret its results against the Part 4 A/B/C framework for each of the 38 existing questions; (4) only then decide, separately, whether and when to apply migrations 095–099. No independent review, no content batch, no Mock form, and no further Practice-selection code change is authorised or begun by this decision.
+
+---

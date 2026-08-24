@@ -1,0 +1,105 @@
+-- Angel Digital 11+ — Migration 100
+-- Protected Mock Content Isolation and Security Correction (Decision 152).
+--
+-- FINDING (Decision 151 Part 5, confirmed and root-caused this session):
+-- migration 084's own `ali_question_bank_select_all` RLS SELECT policy
+-- allows anon/authenticated to read every row EXCEPT eligibility_status =
+-- 'mock_eligible' -- meaning eligibility_status = 'authentic_assessment_
+-- candidate' and 'independently_validated' (the two earlier stages of the
+-- SAME Mock-governance track, RELEASE_1_ASSESSMENT_ELIGIBILITY_MODEL.md's
+-- own transition sequence) have been readable by any anon/authenticated
+-- client this whole time. Paired with the application-layer defect this
+-- migration's sibling correction (lib/ali/questionBank.ts,
+-- PRACTICE_ELIGIBLE_STATUS) has just closed, this is the TRUE, database-
+-- level authority the application code was never the sole guarantee
+-- against -- RLS is enforced by Postgres regardless of what any current
+-- or future caller's application code does, correctly or not.
+--
+-- ROOT CAUSE (same conceptual error at both layers, see the application-
+-- layer fix's own docstring for the full explanation): eligibility_status
+-- was treated as a single linear ladder ("anything except the one worst
+-- case is fine to read"), when it actually encodes two separate, non-
+-- nested tracks sharing one column -- a Practice track (provisional ->
+-- practice_eligible) and a Mock-governance track
+-- (authentic_assessment_candidate -> independently_validated ->
+-- mock_eligible). The old policy's blacklist shape (exclude only the
+-- worst case) silently admitted every other Mock-track status.
+--
+-- FIX: replace the blacklist with a positive allow-list, exactly mirroring
+-- the application-layer correction and Decision 152's own explicit
+-- preference for `eligibility_status = 'practice_eligible'` over a
+-- growing exclusion list. Anon/authenticated may now read a row only if
+-- it is `practice_eligible`, OR the requester is `is_current_user_admin()`
+-- (migration 008, unchanged) -- preserving the review surface's own
+-- existing, already-proven access to authentic_assessment_candidate/
+-- independently_validated/mock_eligible content for genuine human review
+-- (app/admin-beta/review, Decisions 139-151), since every admin session
+-- already satisfies is_current_user_admin() regardless of a row's status.
+--
+-- WHAT THIS DOES NOT CHANGE:
+-- - `provisional` remains excluded from anon/authenticated reads exactly
+--   as before (it was never in the old policy's carve-out either).
+-- - `mock_eligible` remains excluded from anon/authenticated reads exactly
+--   as before -- this migration tightens the boundary further, it does
+--   not loosen anything migration 084 already protected.
+-- - The canonical Mock Exam entry point (app/learning-intelligence/
+--   mock-exam/page.tsx) is unaffected: it sources content exclusively
+--   through SECURITY DEFINER RPCs (lib/mockAttempt/client.ts, Programme
+--   Increment 008E), which run with elevated privilege and bypass RLS
+--   entirely, regardless of this policy.
+-- - The 4 still-client-fetched adaptive Mock pages (app/mocks/adaptive/
+--   {gl,english,maths,vocabulary}/page.tsx) call
+--   fetchMockEligibleQuestionBank(), scoped to exactly 'mock_eligible' --
+--   already RLS-invisible to non-admin anon/authenticated before this
+--   migration (migration 084), and unchanged by it. mock_eligible is 0 in
+--   production today, so this pre-existing interaction remains dormant
+--   and is explicitly out of this migration's bounded scope (Decision 138
+--   territory, not reopened here).
+-- - `ali_passage_bank` is untouched: confirmed (migration 069's own
+--   comment, re-verified this session) to already have NO anon/
+--   authenticated SELECT policy at all -- already correctly restricted,
+--   nothing to widen or narrow. The actual leak vector was exclusively
+--   `ali_question_bank`, since every Comprehension question's own `prompt`
+--   jsonb carries its passage's full text inline (migration 097), so no
+--   separate ali_passage_bank read is needed, or was ever the exposure
+--   path, for ordinary content delivery.
+-- - No function is created, altered, or granted here -- this is a pure
+--   RLS policy change on one table, so the anon-EXECUTE-privilege defect
+--   class already encountered and fixed in migrations 071/073/086 (RPC
+--   functions silently left executable by anon) does not apply; checked
+--   explicitly this session, not assumed.
+-- - Does not touch any row's own eligibility_status, content, or any
+--   other table. Does not promote, demote, retire, or modify any of the
+--   38 existing Mathematics Mock candidate questions, Batch 001/002/003
+--   content, or the new English content (migrations 095-099, still not
+--   applied, unaffected by this migration either way).
+--
+-- FORWARD-ONLY. Idempotent: safe to run whether or not migration 084 was
+-- previously applied, matching that migration's own convention.
+--
+-- Before applying, verify the current state directly:
+--   select polname, qual from pg_policies where tablename = 'ali_question_bank';
+-- (expect the migration-084 predicate: "eligibility_status IS DISTINCT FROM 'mock_eligible'::text OR is_current_user_admin()")
+--
+-- NOT APPLIED. Generated for Founder review and manual application via
+-- Supabase Dashboard > SQL Editor > New query.
+
+begin;
+
+drop policy if exists ali_question_bank_select_all on public.ali_question_bank;
+create policy ali_question_bank_select_all on public.ali_question_bank for select to anon, authenticated
+  using (eligibility_status = 'practice_eligible' or public.is_current_user_admin());
+
+commit;
+
+-- Verify after applying:
+--   select polname, polcmd, roles::regrole[], qual from pg_policies where tablename = 'ali_question_bank';
+--   -- expect: exactly one row, ali_question_bank_select_all, cmd 'r', roles {anon,authenticated},
+--   -- qual containing "eligibility_status = 'practice_eligible'::text OR is_current_user_admin()"
+--
+-- Then, as a non-admin authenticated session (or anon key), confirm:
+--   select count(*) from ali_question_bank where eligibility_status <> 'practice_eligible';
+--   -- expect: 0 rows visible (RLS silently filters them, this is not an error)
+--   select count(*) from ali_question_bank where eligibility_status = 'practice_eligible';
+--   -- expect: the full existing practice_eligible count, unchanged (194 maths + 120 english
+--   -- per the established production position at Decision 151)
