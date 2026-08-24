@@ -1337,6 +1337,67 @@ export async function fetchMockMrBatch002ReviewStatus(familyIds: string[]): Prom
 }
 
 /**
+ * Mock Programme Increment 004, Batch 003 — 8 new Mathematics Mock
+ * candidate questions across 4 families, made reviewable via the exact
+ * same scoped-batch mechanism as MOCK_MR_BATCH001/002_FAMILIES above (own
+ * array, own marker, own status map), reusing `review_type =
+ * 'mock_maths_independent_review'` and the generalised
+ * `deriveBatchReviewStatus()`/`fetchBatchReviewStatus()` helpers
+ * unchanged — no third Mock review mechanism. One family
+ * (mock-mr01mr10-costumeschedule) is a grouped family: its 4
+ * newQuestionIds are 2 numbered-question instances of 2 subparts each
+ * (migration 095), reviewed as one family decision, matching how every
+ * other multi-row family in this file is already reviewed as a whole.
+ * Every row's `eligibility_status` is `authentic_assessment_candidate`;
+ * approving a family here still does NOT promote it, and does NOT
+ * create or touch any `ali_mock_form` row.
+ */
+export const MOCK_MR_BATCH003_BATCH_MARKER = "MOCK-INC004-BATCH003";
+
+export const MOCK_MR_BATCH003_FAMILIES: SevenXFamilyConfig[] = [
+  {
+    familyId: "mock-mr01-directcalc",
+    newQuestionIds: ["mock-mr01-directcalc-01", "mock-mr01-directcalc-02"],
+    disclosure:
+      "This is a brand-new family with no prior review of any kind. Direct arithmetic computation with no embedded word problem or missing operand, evidenced CSSE-006 Q1/Q13, CSSE-011 Q1/Q2/Q3, CSSE-016 Q1/Q2 (HIGH confidence, EMC-4, the paper's own opening question format). Batch 001/002 carry zero QT-MR-01 rows despite this; Practice already carries substantial QT-MR-01 volume (~18%), disclosed here rather than treated as irrelevant to this Mock-specific authentic-paper-composition gap. Difficulty here is easy. Disclosed for your own judgement, not a recommendation either way.",
+  },
+  {
+    familyId: "mock-mr08-rotation",
+    newQuestionIds: ["mock-mr08-rotation-01", "mock-mr08-rotation-02"],
+    disclosure:
+      "This is a brand-new family with no prior review of any kind, and no rotation or coordinate-transformation content of any kind existed anywhere in this repository before this batch (confirmed by repository-wide search). Rotation-about-origin mechanic, evidenced CSSE-011 Q18 (MEDIUM confidence, EMC-3; the coordinate mechanic varies year to year, only this one is text-answerable without an image/plotting surface). Difficulty here is medium. Disclosed for your own judgement, not a recommendation either way.",
+  },
+  {
+    familyId: "mock-mr12-reversemean",
+    newQuestionIds: ["mock-mr12-reversemean-01", "mock-mr12-reversemean-02"],
+    disclosure:
+      "This is a brand-new family with no prior review of any kind. Uses ONLY the running-average sub-format (a new data point changes an already-known mean; find that new data point), evidenced CSSE-011 Q11. Deliberately excludes the forward-mean and plain-reverse-mean (N-1 knowns, find the missing one) sub-formats, both already represented elsewhere in this repository under different Question Type tags (mr01-mean-01..04, mr01-revmean-01..04, mock-mr09-data-02): disclosed as a real, considered exclusion, not an oversight. Difficulty here is hard. Disclosed for your own judgement, not a recommendation either way.",
+  },
+  {
+    familyId: "mock-mr01mr10-costumeschedule",
+    newQuestionIds: [
+      "mock-mr01mr10-costumeschedule-01a", "mock-mr01mr10-costumeschedule-01b",
+      "mock-mr01mr10-costumeschedule-02a", "mock-mr01mr10-costumeschedule-02b",
+    ],
+    disclosure:
+      "This is a brand-new family with no prior review of any kind, and it is structurally different from every other family in this batch: its 4 rows form 2 grouped numbered-question instances (2 subparts each: (a) QT-MR-10 elapsed time, (b) QT-MR-01 arithmetic), using migration 093's question_group_id/group_order/subpart_label/marking_mode columns for the first time since that migration was applied. The grouping is evidenced directly: the CSSE_QUESTION_INTELLIGENCE_FRAMEWORK's own Section 6 records that CSSE-006 Q9 combines QT-MR-10 with QT-MR-01 within one numbered question. marking_mode is 'deterministic' on all 4 rows; no grouped-scoring function is implemented or invoked by this batch. Difficulty here is hard. Disclosed for your own judgement, not a recommendation either way.",
+  },
+];
+export const MOCK_MR_BATCH003_TARGET_IDS = MOCK_MR_BATCH003_FAMILIES.map((f) => f.familyId);
+
+export function buildMockMrBatch003NotesPrefix(familyId: string, questionIds: string[]): string {
+  return `${MOCK_MR_BATCH003_BATCH_MARKER} new content review: ${familyId} (Question IDs: ${questionIds.join(", ")})`;
+}
+
+export function deriveMockMrBatch003ReviewStatus(rows: SevenXReviewRow[], familyIds: string[]): Map<string, SevenXReviewStatus> {
+  return deriveBatchReviewStatus(rows, familyIds, MOCK_MR_BATCH003_BATCH_MARKER, "mock_maths_independent_review");
+}
+
+export async function fetchMockMrBatch003ReviewStatus(familyIds: string[]): Promise<Map<string, SevenXReviewStatus>> {
+  return fetchBatchReviewStatus(familyIds, MOCK_MR_BATCH003_BATCH_MARKER, "mock_maths_independent_review");
+}
+
+/**
  * Inserts one real, traceable Mock-content independent-review decision —
  * `review_type = 'mock_maths_independent_review'` (migration 087,
  * Decision 139), explicitly set here exactly as `submitMathsTeachingReview`
@@ -1360,6 +1421,183 @@ export async function submitMockMathsIndependentReview(s: ReviewSubmission): Pro
   const { error } = await supabase.from("ali_family_review").insert({
     review_target_type: s.reviewTargetType,
     review_type: "mock_maths_independent_review",
+    family_id: s.targetId,
+    reviewer: s.reviewer.trim(),
+    decision: s.decision,
+    notes: buildNotesWithQualification(s),
+    evidence_reference: s.evidenceReference.trim() || null,
+    provenance_reference: s.provenanceReference.trim() || null,
+    educational_validity: s.educationalValidity,
+    competency_validity: s.competencyValidity,
+    wording_quality: s.wordingQuality,
+    age_appropriate: s.ageAppropriate,
+    ambiguity_free: s.ambiguityFree,
+    difficulty_appropriate: s.difficultyAppropriate,
+    misconception_quality: s.misconceptionQuality,
+    explanation_quality: s.explanationQuality,
+    variation_boundaries_sound: s.variationBoundariesSound,
+    authenticity_confirmed: s.authenticityConfirmed,
+    question_type_alignment: s.questionTypeAlignment,
+    answer_correctness_verified: s.answerCorrectnessVerified,
+    transfer_validity: s.transferValidity,
+    teaching_quality: s.teachingQuality,
+    exam_strategy_quality: s.examStrategyQuality,
+    validation_behaviour_sound: s.validationBehaviourSound,
+    originality_confirmed: s.originalityConfirmed,
+    copyright_risk_clear: s.copyrightRiskClear,
+  });
+  return { error: error ? error.message : null };
+}
+
+/**
+ * Mock Programme Increment 006, English Mock Content Foundation, Batch 001
+ * (Track B) — review-surface wiring, added after both parallel content
+ * tracks (Track A Mathematics, Track B English) had already landed in the
+ * working tree, per Decision 151. Track B's own migration 099 registered
+ * the pending-review rows; it deliberately did not touch this file or
+ * app/admin-beta/review/page.tsx, since Track A was concurrently editing
+ * both — this integration pass is that follow-up, done once both trees
+ * could be read together safely.
+ *
+ * The Comprehension passage is reviewed via the EXISTING, generic
+ * `target.reviewTargetType === "passage"` path in ReviewForm
+ * (fetchPassageDetail + fetchQuestionsForPassage(learning_unit_id)) — no
+ * new fetch logic needed, since migration 097 already set
+ * learning_unit_id = 'mock-eng-boathouse' on all 13 new question rows,
+ * exactly what fetchQuestionsForPassage() reads. Only a status
+ * lookup/notes-prefix and a dedicated submit function (review_type
+ * distinct from ordinary passage content_review) are added below.
+ */
+export const MOCK_ENGLISH_PASSAGE_BATCH001_MARKER = "MOCK-INC006-ENGLISH-BATCH001";
+export const MOCK_ENGLISH_PASSAGE_BATCH001_TARGET_ID = "mock-eng-boathouse";
+
+export function buildMockEnglishPassageBatch001NotesPrefix(passageId: string): string {
+  return `${MOCK_ENGLISH_PASSAGE_BATCH001_MARKER} new content review: passage "The Boat in the Boathouse" (${passageId}) + its complete 12-numbered-question comprehension set (mock-eng-boathouse-q01..q11, q12a/q12b)`;
+}
+
+export function deriveMockEnglishPassageBatch001ReviewStatus(rows: SevenXReviewRow[]): Map<string, SevenXReviewStatus> {
+  return deriveBatchReviewStatus(rows, [MOCK_ENGLISH_PASSAGE_BATCH001_TARGET_ID], MOCK_ENGLISH_PASSAGE_BATCH001_MARKER, "mock_english_passage_independent_review");
+}
+
+export async function fetchMockEnglishPassageBatch001ReviewStatus(): Promise<Map<string, SevenXReviewStatus>> {
+  return fetchBatchReviewStatus([MOCK_ENGLISH_PASSAGE_BATCH001_TARGET_ID], MOCK_ENGLISH_PASSAGE_BATCH001_MARKER, "mock_english_passage_independent_review");
+}
+
+/**
+ * Inserts one real, traceable Mock-content independent-review decision for
+ * the English Comprehension passage — `review_type =
+ * 'mock_english_passage_independent_review'` (migration 087), the
+ * passage-level counterpart to submitMockMathsIndependentReview() above.
+ * Reviewing this passage reviews the passage AND its complete attached
+ * question set together, as one unit — never per-question — matching
+ * migration 099's own design comment. Append-only; never touches
+ * `ali_passage_bank.eligibility_status` or `ali_question_bank`, never
+ * creates or touches any `ali_mock_form` row.
+ */
+export async function submitMockEnglishPassageIndependentReview(s: ReviewSubmission): Promise<SubmitReviewResult> {
+  const validationError = validateReviewSubmission(s);
+  if (validationError) return { error: validationError };
+  if (!s.decision) return { error: "Choose a decision: this is never chosen for you." };
+  const supabase = getSupabaseClient();
+  if (!supabase) return { error: "Not connected" };
+  const { error } = await supabase.from("ali_family_review").insert({
+    review_target_type: s.reviewTargetType,
+    review_type: "mock_english_passage_independent_review",
+    family_id: s.targetId,
+    reviewer: s.reviewer.trim(),
+    decision: s.decision,
+    notes: buildNotesWithQualification(s),
+    evidence_reference: s.evidenceReference.trim() || null,
+    provenance_reference: s.provenanceReference.trim() || null,
+    educational_validity: s.educationalValidity,
+    competency_validity: s.competencyValidity,
+    wording_quality: s.wordingQuality,
+    age_appropriate: s.ageAppropriate,
+    ambiguity_free: s.ambiguityFree,
+    difficulty_appropriate: s.difficultyAppropriate,
+    misconception_quality: s.misconceptionQuality,
+    explanation_quality: s.explanationQuality,
+    variation_boundaries_sound: s.variationBoundariesSound,
+    authenticity_confirmed: s.authenticityConfirmed,
+    question_type_alignment: s.questionTypeAlignment,
+    answer_correctness_verified: s.answerCorrectnessVerified,
+    transfer_validity: s.transferValidity,
+    teaching_quality: s.teachingQuality,
+    exam_strategy_quality: s.examStrategyQuality,
+    validation_behaviour_sound: s.validationBehaviourSound,
+    originality_confirmed: s.originalityConfirmed,
+    copyright_risk_clear: s.copyrightRiskClear,
+  });
+  return { error: error ? error.message : null };
+}
+
+/**
+ * The 3 new Continuous Writing candidate prompts (migration 098), each its
+ * own distinct reviewable unit (`review_target_type = 'writing_prompt'`,
+ * migration 087). Reviewed via the `sevenX` prop mechanism — NOT the
+ * generic `fetchRepresentativeQuestions(target.id)` fallback — because
+ * migration 099's own review rows key `family_id` to each prompt's own
+ * `id` (e.g. 'mock-writing-mindchange-01'), while the live question rows'
+ * OWN `family_id` column is a different value (e.g.
+ * 'mock-writing-wc01a-mindchange', migration 098). `newQuestionIds: [id]`
+ * routes through fetchQuestionsByIds() (an exact-id lookup, matching the
+ * `id` column, not `family_id`), the same mechanism every other
+ * exact-ID-scoped batch in this file already uses — avoiding a genuine
+ * empty-result mismatch the generic family_id fallback would have hit.
+ */
+export const MOCK_WRITING_BATCH001_MARKER = "MOCK-INC006-ENGLISH-BATCH001";
+
+export const MOCK_WRITING_BATCH001_FAMILIES: SevenXFamilyConfig[] = [
+  {
+    familyId: "mock-writing-mindchange-01",
+    newQuestionIds: ["mock-writing-mindchange-01"],
+    disclosure:
+      "This is a brand-new Continuous Writing prompt with no prior review of any kind. QT-WC-01a (Reflective/Discursive Response Prompt), evidenced CSSE_QUESTION_INTELLIGENCE_FRAMEWORK.md Confidence HIGH, EMC-3 (format position and reflective/discursive demand consistent 3/3 years; topic content itself genuinely unpredictable, per the Framework's own limitation). Prompt shape: personal-change narrative (before/turning-point/after), one of three deliberately distinct shapes in this batch, not a topic-swapped copy of either sibling. No AI Writing scoring is enabled for this or any prompt. Disclosed for your own judgement, not a recommendation either way.",
+  },
+  {
+    familyId: "mock-writing-kindness-01",
+    newQuestionIds: ["mock-writing-kindness-01"],
+    disclosure:
+      "This is a brand-new Continuous Writing prompt with no prior review of any kind. QT-WC-01a, same HIGH/EMC-3 evidence base as its siblings. Prompt shape: a single-relationship/emotion personal-experience narrative, genuinely distinct in structure, with no before/after turning-point structure and no direct opinion-question framing. No AI Writing scoring is enabled. Disclosed for your own judgement, not a recommendation either way.",
+  },
+  {
+    familyId: "mock-writing-cookopinion-01",
+    newQuestionIds: ["mock-writing-cookopinion-01"],
+    disclosure:
+      "This is a brand-new Continuous Writing prompt with no prior review of any kind. QT-WC-01a, same HIGH/EMC-3 evidence base as its siblings. Prompt shape: a direct opinion-question format, mirroring CSSE-009's own real 2022 prompt shape (\"Do you think that food can change a person's mood?\") closely, with a genuinely different topic, distinct from the existing wrt-003 persuasive-speech prompt (migration 013), which this batch does not modify. No AI Writing scoring is enabled. Disclosed for your own judgement, not a recommendation either way.",
+  },
+];
+export const MOCK_WRITING_BATCH001_TARGET_IDS = MOCK_WRITING_BATCH001_FAMILIES.map((f) => f.familyId);
+
+export function buildMockWritingBatch001NotesPrefix(promptId: string, questionIds: string[]): string {
+  return `${MOCK_WRITING_BATCH001_MARKER} new content review: Continuous Writing prompt (${promptId}) (Question IDs: ${questionIds.join(", ")})`;
+}
+
+export function deriveMockWritingBatch001ReviewStatus(rows: SevenXReviewRow[], familyIds: string[]): Map<string, SevenXReviewStatus> {
+  return deriveBatchReviewStatus(rows, familyIds, MOCK_WRITING_BATCH001_MARKER, "mock_writing_prompt_independent_review");
+}
+
+export async function fetchMockWritingBatch001ReviewStatus(familyIds: string[]): Promise<Map<string, SevenXReviewStatus>> {
+  return fetchBatchReviewStatus(familyIds, MOCK_WRITING_BATCH001_MARKER, "mock_writing_prompt_independent_review");
+}
+
+/**
+ * Inserts one real, traceable Mock-content independent-review decision for
+ * a single Continuous Writing prompt — `review_type =
+ * 'mock_writing_prompt_independent_review'` (migration 087). Append-only;
+ * never touches `ali_question_bank.eligibility_status`, never enables or
+ * references any AI Writing-scoring code path, never creates or touches
+ * any `ali_mock_form` row.
+ */
+export async function submitMockWritingPromptIndependentReview(s: ReviewSubmission): Promise<SubmitReviewResult> {
+  const validationError = validateReviewSubmission(s);
+  if (validationError) return { error: validationError };
+  if (!s.decision) return { error: "Choose a decision: this is never chosen for you." };
+  const supabase = getSupabaseClient();
+  if (!supabase) return { error: "Not connected" };
+  const { error } = await supabase.from("ali_family_review").insert({
+    review_target_type: s.reviewTargetType,
+    review_type: "mock_writing_prompt_independent_review",
     family_id: s.targetId,
     reviewer: s.reviewer.trim(),
     decision: s.decision,
