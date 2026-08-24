@@ -5267,3 +5267,96 @@ Judged against Angel's own governing outcome, not feature count: even the strong
 **Implications:** Decisions 1–158 all stand, none reversed or rewritten; Decision 158's certification is confirmed closed. **First Mock Minimum is NOT READY.** The next action, pending Founder approval, is the bounded Mathematics-only pool-level gate + grouped-scoring increment named in Part 17 — not more content authoring, not the full roadmap simultaneously, not English or Writing work, not cadence, not payment, not Mock Centre activation. `mock_eligible` remains 0, `ali_mock_form` remains 0, and no implementation begins until the Founder explicitly authorises Part 17's own increment.
 
 ---
+
+### Decision 160 — MATHEMATICS FIRST MOCK FOUNDATION: POOL-LEVEL ELIGIBILITY GATE + GROUPED-QUESTION SCORING IMPLEMENTED: Decision 159's own selected increment is built, tested, and committed — migration 104 adds Mathematics grouped-question scoring (metadata carried through to `question_outcomes`, no marks-total bug existed to fix) plus a marking-mode fail-closed safety check; migration 105 promotes all 48 certified Mathematics rows (not a subset — every row satisfies the pool-gate contract, disclosed as a genuinely clean result) from `independently_validated` to `mock_eligible`; the qualifying pool (46 numbered-question experiences, 68 marks) can support one authentic Mathematics form with real but manageable constraint; **verdict: A, MATHEMATICS POOL READY FOR FORM-ASSEMBLY GATE** — a narrower claim than First Mock Minimum overall, which remains NOT READY per Decision 159 (form assembly itself, the readiness-gate wire, and EI-ingestion wire are still separate, unbuilt dependencies)
+
+**Scope and process:** Real implementation — two migrations, both `NOT APPLIED`, supplied to the Founder one at a time starting with 104. No English, Writing, cadence, payment, exposure-routing, or form-assembly work is touched. No migration applied by this session.
+
+---
+
+**PART 1 — REPOSITORY RECONCILIATION**
+
+Clean working tree; HEAD == origin/main == `0baa209` (Decision 159); commit `0baa209` present; Decisions 147–159 each present exactly once, unreversed; Mathematics `independently_validated` = 48 (Founder-confirmed production position, carried forward from Decision 158's own closure, not re-queried — no live access in this environment); English/Writing certification untouched (this increment is Mathematics-only, confirmed by `git diff` touching only two new migration files and their tests); `mock_eligible` = 0 and `ali_mock_form` = 0 before this increment (established production position, unchanged by any code committed since); Practice isolation intact (migration 100/Decision 154's own fix, confirmed unchanged — `git diff HEAD` empty against `lib/ali/questionBank.ts`). No discrepancy found.
+
+---
+
+**PART 2 — POOL-GATE CONTRACT**
+
+A Mathematics row qualifies for `mock_eligible` promotion if and only if: (1) `eligibility_status = 'independently_validated'`; (2) `active = true`; (3) `subject = 'maths'`; (4) a defensible, single-form answer — no `null` stored answer, no semicolon (the existing scoring function's own manual-marking trigger); (5) a declared `marks` value, not reliant on the scoring function's own fallback; (6) `marking_mode` is `NULL` or `'deterministic'` — anything else fails closed to manual marking, structurally guaranteed by migration 104's own new check, not merely observed; (7) grouping consistency — a grouped family is promoted as a complete unit, never partially; (8) the family's own `ali_family_review` decision is `approved`, not `approved_with_amendment`/`rejected`/`requires_revalidation`; (9) Practice isolation is unaffected either way, since migration 100's RLS predicate already excludes both `independently_validated` and `mock_eligible` identically; (10) scoring-architecture suitability, satisfied by migration 104. Row count alone is never the criterion — this is an explicit, content-suitability contract, checked against real data, not inferred from volume.
+
+---
+
+**PART 3 — 48-ROW ASSESSMENT-UNIT RECONSTRUCTION AND CLASSIFICATION**
+
+Reconstructed as 46 numbered-question experiences (18 Batch 001 + 20 Batch 002, all standalone, no grouping ever used in either — confirmed by Decision 149's own content-immutability guarantee; 8 in Batch 003 — 6 standalone + 2 grouped instances of the `costumeschedule` family), 68 marks total (24 + 30 + 14, counted directly from each migration's own `"marks"` fields, not estimated).
+
+**Answer/marking-mode check, performed directly against the real migration text, not assumed:** every one of the 48 `"answer"` fields across migrations 088/091/095 extracted and inspected — all are purely numeric, a time string, a coordinate pair, or `"true"`/`"false"`; **none is `null`, none contains a semicolon.** Every row explicitly declares its own `"marks"` field (48 matches across the three files, exactly matching the row count — no row relies on the fallback). No Mathematics row anywhere uses any `marking_mode` other than `NULL` or `'deterministic'` (confirmed by direct search).
+
+**Classification result — clean, disclosed honestly, not manufactured to appear more rigorous than the evidence supports:**
+- **44 standalone rows (Batch 001: 18, Batch 002: 20, Batch 003 standalone: 6): ELIGIBLE NOW** — already fully compatible with the existing, unmodified scoring architecture; require no code change to be safely scored.
+- **4 grouped rows (`mock-mr01mr10-costumeschedule-01a/01b/02a/02b`): ELIGIBLE AFTER THIS INCREMENT** — content-wise identical in suitability to the standalone rows (deterministic, single-form answers), but held to a stricter bar pending this increment's own grouping-metadata and marking-mode-safety extension, applied uniformly rather than assumed safe by analogy.
+- **0 NOT YET ELIGIBLE. 0 EXCLUDED.** No Mathematics row fails the pool-gate contract.
+
+---
+
+**PART 4 — GROUPED-SCORING IMPLEMENTATION (MIGRATION 104)**
+
+**Root finding, confirmed before writing a single line:** `mock_score_attempt()` (migration 075, the current live version) already sums marks correctly across every `question_id` in an attempt's `assigned_question_ids` array, regardless of grouping — there was never a marks-total bug to fix, since the loop never treated grouping specially in the first place, for better (no double-counting risk) and worse (no rollup structure either).
+
+**Two genuine, additive corrections, nothing else changed:**
+1. **Grouping metadata carried through to `question_outcomes`** — `questionGroupId`/`groupOrder`/`subpartLabel`, read directly from `ali_question_bank` (the same columns Decision 155 already proved correct for the review surface's own grouping display, reused here rather than duplicated), added to every outcome entry in both code branches (the real per-row branch and the defensive not-found branch). The actual rollup (grouping by `questionGroupId`, summing `marksAwarded`/`marksAvailable` within each group) is left to the report/diagnostic consumer, mirroring exactly how `groupQuestionsForReview()` (Decision 155) already performs the equivalent grouping client-side — not a second, database-side rollup representation for a `SECURITY DEFINER` function to maintain.
+2. **Marking-mode fail-closed safety** — the existing manual-marking trigger condition gains one additional clause: any row whose `marking_mode` is non-`NULL` and not `'deterministic'` routes to `requires_manual_marking`, regardless of what its stored answer looks like. No row in today's certified Mathematics pool triggers this branch (Part 3) — it exists purely as forward-looking protection against ever silently auto-scoring content (e.g. a future `structured_acceptable_response` row) the simple matcher was never validated against.
+
+**Structurally proven, not merely asserted:** exactly one unconditional accumulation site each for `v_raw_available`/`v_raw_achieved` (no group-aware branching exists anywhere that could sum a grouped family's marks differently from an equal number of standalone rows); a diff-equivalent test proves every other line of the function — signature, ownership check, submitted-only guard, idempotency check, the 0.0001 tolerance, the conservative auto-marking scope, `scoring_state` logic, unanswered handling — is byte-identical to migration 075's own proven design.
+
+**Behaviourally proven, within this environment's real constraints:** this repository has no in-process Postgres test harness (confirmed by search — no `pg-mem`/`pglite` dependency exists), so the real `SECURITY DEFINER` function cannot be executed directly in tests, exactly like every other Mock RPC in this codebase. A deliberately narrow, line-faithful mirror of only the ~15-line comparison kernel (not the whole function, not grouping, not manual-marking routing) is run against the real migration 095 answer strings for the one grouped family, proving fully-correct (4/4 marks), zero-correct (0/4), and partial-correctness (1/2 marks on one numbered-question instance, each subpart scored independently) scenarios directly, plus a mixed grouped-and-standalone accumulation proving no double counting (6 marks available, 5 achieved, exactly as hand-computed). This is explicitly disclosed as a test aid requiring future maintenance if the real kernel changes, never claimed as a substitute for live-database execution.
+
+---
+
+**PART 5 — MARKING-MODE SAFETY**
+
+**Safe for the Mathematics first Mock: `NULL` (pre-093 standalone convention) and `'deterministic'` — the only two values present anywhere in the certified Mathematics pool.** Any other value (most notably `'structured_acceptable_response'`, the mode Decision 151's own English Q12b uses) is now structurally routed to `requires_manual_marking` by migration 104's own new check, never silently scored by logic validated only against simple exact/numeric matching. This is implemented directly in the scoring function, not merely documented as a policy.
+
+---
+
+**PART 6 — POOL ELIGIBILITY IMPLEMENTATION (MIGRATION 105)**
+
+Exact 48-ID allow-list (the union of Batch 001/002/003, no more, no less, no duplicates — structurally proven), mirroring migration 090/094/101's own proven assertion-and-refuse pattern at a new, larger, multi-batch scale. The grouped `costumeschedule` family's all 4 subparts are present together in the same list — proven, not merely intended, that no partial-group promotion is possible.
+
+**IMPORTANT STATUS SEMANTICS, verified before writing this migration, per the Founder's own explicit instruction:** `eligibility_status` is, and has been throughout this entire arc, a single mutually-exclusive column modelling a strictly linear progression — `RELEASE_1_ASSESSMENT_ELIGIBILITY_MODEL.md`'s own transition table documents `mock_eligible` as a *later* stage presupposing independent validation already happened, never a parallel or incompatible state. **No certification provenance is destroyed by this transition:** (a) `ali_family_review` is append-only — every genuine `approved` review decision for these 48 rows remains permanently in that table, untouched by this migration, exactly as it has for every prior promotion in this arc; (b) migrations 090/094/101 remain permanent, immutable repository history proving these exact IDs passed through `independently_validated` before this migration ever ran; (c) every governance-count query this arc has used (Decisions 144/150/158/159) already treats `eligibility_status` as a current-snapshot, not a cumulative badge set — a row moving further along and no longer being counted under its earlier status is the correct, already-established reading. **No modelling problem was found; this migration proceeds on that basis, not on an assumption.**
+
+---
+
+**PART 7 — FIRST MOCK CAPACITY CHECK (POST-INCREMENT)**
+
+Unchanged in substance from Decision 158/159's own finding, now confirmed against the actual qualifying (not merely validated) pool: 46 numbered-question experiences, 68 marks, against a ~20–21 question/~60-mark target. Assembling one authentic form would consume roughly 41 of the 46 available experiences — **real, tight constraint, not a comfortable double-capacity margin, but achievable.** All 13 real content Question Types remain covered; the one grouped structure remains evidenced (CSSE-006 Q9). **This is a capability check only — `ali_mock_form` is not assembled by this decision.**
+
+---
+
+**PART 8 — REGRESSION AND SAFETY VERIFICATION**
+
+35 new tests across two files (`tests/supabase/mockMathematicsGroupedScoringAndMarkingModeSafety.test.ts`, 17; `tests/supabase/mockMathematicsPoolEligiblePromotion.test.ts`, 18), covering every item Part 8 of the directive itself required: standalone scoring unchanged (diff-equivalent proof against migration 075); grouped two-subpart scoring (shadow-kernel proof); partial/zero/fully-correct grouped scenarios; no double counting (single-site, unconditional accumulation, structurally proven); correct paper total (mixed grouped+standalone shadow calculation); grouping metadata present in `question_outcomes`; QT/skill preserved per component (`questionTypeId` untouched); unsupported marking mode fails closed (structural + the mechanism itself, proven present); Practice isolation unchanged (no reference to Practice code in either migration); English/Writing unaffected (explicit absence checks — neither migration references `mock-eng-boathouse` or any `mock-writing-*` ID, and migration 105 scopes strictly to `subject = 'maths'`); no `ali_mock_form` created (explicit absence check in both migrations); no learner Mock becomes available merely because pool eligibility exists (`ali_mock_form` untouched, `active` Mock Centre availability remains governed solely by `getActiveMockForm()`'s own real query, confirmed unaffected).
+
+Full suite: **1252/1252 pass** (1217 baseline at Decision 159 + 35 new; zero regressions). `npx tsc --noEmit`: clean (one narrowing issue in the shadow-test's own arithmetic found and fixed during verification — a test-only correction, not a scoring-logic change). ESLint on every touched file: 0 errors, 0 warnings. Copy Quality Guard: PASS, 0 violations, 256 files. Production build: succeeds.
+
+---
+
+**What this decision does NOT claim:** it does not claim either migration has been applied (both are self-disclosed `NOT APPLIED`); it does not claim First Mock Minimum overall is ready — Decision 159's verdict stands, form assembly, the readiness-gate wire, and the EI-ingestion wire remain separate, unbuilt dependencies; it does not claim English or Writing scoring, marking, or eligibility is affected in any way; it does not claim `ali_mock_form` exists or that any Mock is available to a learner; it does not claim the shadow-kernel test is a substitute for live-database verification of the real function — that remains the Founder's own post-application verification step, per Part 6's own return item.
+
+**Files changed:** `supabase/migrations/104_mock_mathematics_grouped_scoring_and_marking_mode_safety.sql` (new, NOT applied), `supabase/migrations/105_mock_mathematics_pool_eligible_promotion.sql` (new, NOT applied), `tests/supabase/mockMathematicsGroupedScoringAndMarkingModeSafety.test.ts` (new), `tests/supabase/mockMathematicsPoolEligiblePromotion.test.ts` (new), `ALI_DECISION_LOG.md` (this entry).
+
+**Migrations created:** 104, 105 — both drafted, tested, NOT applied, awaiting Founder review one at a time, starting with 104.
+
+**Decision number:** 160.
+
+**Commit SHA:** recorded after commit (see repository history immediately following this entry).
+
+**Production application status:** neither migration applied. Migration 104 is supplied to the Founder immediately following this entry; migration 105 is held back until the Founder reports 104's own result, per the directive's own explicit one-at-a-time sequencing (matching every promotion sequence already proven in this arc).
+
+**Remaining First Mock blockers after this increment (unchanged list, Decision 159's own Part 15/17, none begun here):** form assembly (Option C, Decision 159's own recommendation) — now buildable once a real `mock_eligible` pool exists to assemble from; the readiness-gate wire (`assessMockReadiness()` into `mock-exam/page.tsx`'s own entry path); the minimum EI-ingestion wire (`evidenceAdapter.ts`'s output into the report); learner-facing grouped-question presentation in the attempt UI itself (proven only for the review surface, Decision 155 — not re-verified for `mock_get_question`'s own presentation shape this session); English's own first-Mock blockers (QT-WC-01b, passage diversity) and Writing marking validity, both untouched and unchanged.
+
+**Rationale:** implementing grouping-metadata-carry-through and marking-mode safety as two small, additive corrections to the proven scoring function — rather than a larger rewrite or a new parallel scoring path — follows directly from the Part 4 root finding that no marks-total bug existed to fix; the smallest correct change is also the safest one for a `SECURITY DEFINER` function already handling real (if not yet learner-facing) financial-equivalent trust boundaries. Promoting all 48 rows together, rather than splitting standalone and grouped content into separate migrations, reflects that both classes are now proven equally safe by this same increment — holding the 44 standalone rows back for a second migration would have added process overhead without a corresponding safety benefit, since Part 3 already shows they were always eligible on content grounds alone.
+
+**Implications:** Decisions 1–159 all stand, none reversed or rewritten. Decision 159's selected next increment is now implemented and ready for Founder-controlled, one-at-a-time production application. **Mathematics pool: READY FOR FORM-ASSEMBLY GATE (verdict A)** — a narrower, more specific claim than First Mock Minimum overall, which remains NOT READY per Decision 159's own broader verdict, unchanged and not reopened here. `mock_eligible` remains 0 and `ali_mock_form` remains 0 in production until the Founder applies migrations 104 and 105. No Mock is assembled, no English or Writing work is touched, and no further implementation begins until the Founder reports migration 104's own production result.
+
+---
