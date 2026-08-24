@@ -5452,3 +5452,80 @@ Reuse `ali_family_review` exactly as-is (the same append-only, `review_target_ty
 **Implications:** Decisions 1–160 all stand, none reversed or rewritten. Decision 160's own "learner-facing grouped-question presentation... not re-verified this session" and "full_mock attempt creation" gaps are now closed at the code level, pending production application. **Mathematics Form-Assembly Gate: READY (verdict A)** — the architecture, RPC layer, and learner UI can now correctly assemble, create, render, answer, navigate, flag, submit, and score a Mathematics-only Mock form once migrations 106/107 are applied and a real form is created and approved. **This is explicitly NOT a claim that the Mathematics Mock is learner-ready** — no form exists yet, Mock Centre remains unavailable (`ali_mock_form` still 0 in production), and the exact first-form composition remains a deliberate, disclosed, Founder-facing open decision. No English or Writing work is touched, no cadence change, no Practice-isolation change, and no further implementation begins until the Founder reports migration 106's own production result.
 
 ---
+
+### Decision 162 — MATHEMATICS FORM-ASSEMBLY GATE, PRODUCTION VERIFICATION + SECURITY CORRECTION: migrations 106/107 Founder-applied, then Founder-run production catalogue evidence found the anon-EXECUTE-privilege defect class (Decisions 89/91, 94/96, 136/137) a fourth time on the two brand-new functions those migrations created; root-caused exactly (a `CREATE OR REPLACE` of an already-corrected function preserves its ACL, a first-ever `CREATE FUNCTION` does not); migration 108 (NOT applied) closes it with two explicit `revoke execute ... from anon` statements; Practice isolation and all Part 4 governance counts independently confirmed correct; a genuine root cause for the 46-unit/68-mark vs 21-question/60-mark tension was also diagnosed this same production-verification cycle — under-authored compound Mathematics content, not a marks-modelling or blueprint error; **Decision 161 remains NOT production-closed until migration 108 is applied and re-verified**
+
+**Scope and process:** Production verification plus one bounded, forward-only security-correction migration (108, NOT applied), following this project's own established, four-times-proven remediation pattern (migrations 071/073/086). No content authored, no `ali_mock_form` row created, no eligibility change, no Mock Centre activation, no readiness/EI/cadence work.
+
+---
+
+**PART 1 — PRODUCTION VERIFICATION RECEIVED (Founder-supplied, Level 1 evidence)**
+
+Migrations 106 and 107 applied ("Success. No rows returned" each). Founder-run `information_schema.routine_privileges` and `pg_get_functiondef`-based catalogue queries confirmed: both new functions' body content carries the intended grouping fields (`mock_get_question`, `mock_get_attempt_grouping`) and the intended cycle-discovery logic (`mock_get_open_cycle`, confirmed calling `mock_cycle_is_open` and containing no INSERT/UPDATE/DELETE). Content/governance counts confirmed exactly: Mathematics `mock_eligible` = 48, `practice_eligible` = 194, `provisional` = 5; English `practice_eligible` = 120, `independently_validated` = 13, `provisional` = 11; Writing `independently_validated` = 3, `provisional` = 1; `ali_mock_form` = 0. **Practice-isolation regression, `SET LOCAL ROLE anon`, PASS:** exactly `english | practice_eligible | 120` and `maths | practice_eligible | 194`, no protected-status row visible.
+
+---
+
+**PART 2 — THE DEFECT AND ITS ROOT CAUSE, RECONCILED DIRECTLY AGAINST MIGRATIONS 106/107'S OWN SQL, NOT GUESSED**
+
+Founder's own `routine_privileges` query: `mock_get_question` correctly shows anon absent (authenticated/postgres/service_role only). `mock_get_attempt_grouping` and `mock_get_open_cycle` both showed anon EXECUTE present — the same defect class this project has now hit **four times** (migrations 070→071, 072→073, 085→086, and now 106/107→108), every prior instance root-caused identically: `revoke all on function ... from public` removes only the PUBLIC pseudo-role's grant; it does not touch the separate, explicit per-role EXECUTE grant this Supabase project's own `ALTER DEFAULT PRIVILEGES` configuration makes directly to `anon` (and `authenticated`) on every newly created function.
+
+**The precise reconciliation of why one function was correct and two were not:** `mock_get_question` is a `CREATE OR REPLACE` of an *already-existing* function (migration 070, whose anon grant migration 071 already explicitly corrected once) — Postgres preserves a function's existing ACL across `CREATE OR REPLACE FUNCTION` when name and signature are unchanged; it does not reset privileges to the project default. Migration 106's own `revoke all ... from public` on this function was genuinely redundant (as its own header already said), because the real fix already existed and simply carried forward. `mock_get_attempt_grouping` and `mock_get_open_cycle` are both *first-ever creations* — there was no pre-existing ACL to inherit, so each received the project's own default-privilege anon grant at creation time, exactly as every previous defect instance's new functions did, and each migration's `revoke all ... from public` (without an explicit `revoke execute ... from anon`) was insufficient to remove it. **Confirmed, not guessed — this is exactly the established defect class, applied here because the lesson had been correctly carried forward for the one *replaced* function but not re-derived for the two *new* ones in the same two migrations.**
+
+A separate, Founder-run, targeted query (`grantee in ('anon','authenticated')`) against `mock_cycle_is_open` returned zero rows — that function (migration 085, corrected by migration 086) remains correctly internal-only and is unaffected by, and untouched by, this correction. The `postgres`/`service_role` rows the Founder's own broader query showed for every function, including `mock_cycle_is_open`, are the expected, non-defect baseline this arc already established at Decisions 95/136/137: `postgres` (the applying/owning role) always retains implicit privileges once any GRANT/REVOKE materializes a function's ACL, and `service_role` is Supabase's own platform-level, RLS-bypassing service credential, granted broadly by project-level default and never equivalent to `anon`/`authenticated`.
+
+---
+
+**PART 3 — EXACT AFFECTED SIGNATURES, RECONCILED AGAINST REPOSITORY SQL**
+
+`mock_get_attempt_grouping(uuid)` (migration 106, parameter named `p_attempt_id` in the source, `uuid` is the only type that matters for a REVOKE statement) and `mock_get_open_cycle()` (migration 107, no arguments) — matching the Founder's own confirmed live production signatures exactly. Neither function body is touched by this correction.
+
+---
+
+**PART 4 — CORRECTION MIGRATION**
+
+`supabase/migrations/108_mock_form_assembly_gate_functions_revoke_anon.sql` (NOT applied) — two statements only:
+```sql
+revoke execute on function public.mock_get_attempt_grouping(uuid) from anon;
+revoke execute on function public.mock_get_open_cycle() from anon;
+```
+Mirrors migrations 071/073/086's own proven fix pattern exactly. `authenticated`, `postgres`, and `service_role` are untouched. `mock_get_question` and `mock_cycle_is_open` are not mentioned at all — both already correct, confirmed by the Founder's own evidence, and no action against either is warranted.
+
+---
+
+**PART 5 — SECURITY-SCOPE PROOF (structural, tested)**
+
+13 new tests in `tests/supabase/mockFormAssemblyGateFunctionsRevokeAnon.test.ts` prove, against migration 108's own raw SQL text: no `create or replace function` anywhere in the file; no table/column/policy/RLS DDL; no `eligibility_status`, `ali_question_bank`, `ali_mock_form`, `ali_mock_attempt`, `practice_eligible`, or `mock_eligible` reference anywhere; exactly 2 `revoke execute ... from anon` statements, exact signatures; zero `from authenticated`/`from postgres`/`from service_role` statements; `mock_get_question`/`mock_cycle_is_open`/every other proven Mock RPC not mentioned; migrations 106/107 themselves confirmed unmodified (their own original revoke/grant statements re-read and asserted present, unchanged); wrapped in a single `begin`/`commit`; REVOKE's own natural idempotency (a no-op when the grant is already absent) requires no additional guard.
+
+---
+
+**PART 6 — TESTS AND VERIFICATION**
+
+**Full suite: 1298/1298 pass** (1285 baseline + 13 new; zero regressions). `npx tsc --noEmit`: clean (one test-only regex-flag fix, ES2018 `s`-flag unsupported at this project's TS target — corrected to an equivalent `[\s\S]*` pattern, no assertion logic changed). ESLint scoped to the new test file: 0 errors, 0 warnings. Copy Quality Guard: PASS, 0 violations, 256 files. Production build: succeeds.
+
+---
+
+**PART 7 — ROOT CAUSE OF THE 46-UNIT/68-MARK VS 21-QUESTION/60-MARK TENSION (read-only educational analysis, requested this same verification cycle, no content authored)**
+
+The ≈21-question/≈60-mark CSSE Mathematics blueprint itself carries Confidence A evidence (`CSSE_QUESTION_INTELLIGENCE_FRAMEWORK.md`, "60 minutes"/"60 marks" identical wording 3/3 years) and is not revised here. The pool's own existing "1 mark per subpart" convention is independently supported by AEP-002 Observation 3 (HIGH/EMC-4, "1 mark for each correct answer," identical wording 3/3 years) — not a marks-modelling error. The Framework's own §6 names at least two real, distinct compound (multi-Question-Type) Mathematics numbered questions in the primary-source papers: CSSE-006 Q9 (QT-MR-10+QT-MR-01 — the one structure this pool has authored, as `costumeschedule`) and **CSSE-006 Q14 (QT-MR-03+QT-MR-07 — never authored anywhere in this pool)**, with the Framework's own "**several**" wording implying more may exist across the three evidenced years. **Root cause: a content-structure gap** — the pool has authored only 1 of at least 2 evidenced compound structures, so its average mark density (≈1.48 marks/unit) sits roughly half the blueprint's own implied ≈2.86 marks/question, forcing any 60-mark selection to consume nearly the entire 46-unit pool. **Verdict on first-form composition: B — the current pool cannot yet support an authentic 20–21-question/≈60-mark form.** No content is authored by this decision; the named gap (CSSE-006 Q14's own structure, and any further compound structures the primary-source papers support) is recorded as the next content-authoring target, not begun here.
+
+---
+
+**What this decision does NOT claim:** it does not claim migration 108 has been applied (self-disclosed `NOT APPLIED`); it does not claim Decision 161 is production-closed — it explicitly is not, until migration 108 is applied and re-verified; it does not claim the compound-content gap named in Part 7 has been closed — no Mathematics content is authored by this decision; it does not claim `ali_mock_form` exists, that Mock Centre is available, or that any form has been assembled; it does not claim English or Writing is affected in any way.
+
+**Files changed:** `supabase/migrations/108_mock_form_assembly_gate_functions_revoke_anon.sql` (new, NOT applied), `tests/supabase/mockFormAssemblyGateFunctionsRevokeAnon.test.ts` (new), `ALI_DECISION_LOG.md` (this entry).
+
+**Migrations created:** 108 — drafted, tested, NOT applied, awaiting Founder review and application.
+
+**Decision number:** 162.
+
+**Commit SHA:** recorded after commit (see repository history immediately following this entry).
+
+**Production application status:** migration 108 NOT applied. Supplied to the Founder immediately following this entry.
+
+**Exact Founder action required next:** apply migration 108 via Supabase Dashboard > SQL Editor, then re-run the Part 3 privilege query (`information_schema.routine_privileges` for `mock_get_attempt_grouping`/`mock_get_open_cycle`) to confirm anon is now absent and authenticated remains present, and report the result. Decision 161 closes only once that re-verification is reported. No compound-content authoring, form assembly, or Mock Centre activation begins until the Founder separately authorises that next, distinct increment (Part 7's own named gap).
+
+**Rationale:** the smallest, most direct correction — two explicit `revoke execute ... from anon` statements, using the exact, fourth-time-proven repository pattern — was chosen over any broader change (e.g. redefining either function, or auditing every function in the schema) because the root cause is precisely and narrowly understood, matching this project's own standing discipline of bounded, forward-only corrections sized to the actual defect, not to a hypothetical broader one.
+
+**Implications:** Decisions 1–161 all stand, none reversed or rewritten. Decision 161's own verdict A ("Mathematics Form-Assembly Gate READY") is **suspended, not withdrawn**, pending this correction's own production application and re-verification — the architecture and rendering logic Decision 161 built remain sound; the privilege leak is a deployment-configuration defect in two of its supporting functions, not a design defect. No further implementation begins until the Founder reports migration 108's own production result.
+
+---

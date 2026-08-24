@@ -1,0 +1,97 @@
+-- Angel Digital 11+ — Migration 108
+-- Mathematics First Mock Form-Assembly Gate, Security Correction
+-- (Decision 162).
+--
+-- FORWARD-ONLY. Migrations 106 and 107 (already applied to production
+-- per the Founder) are NOT rewritten here. This migration corrects the
+-- already-installed state, matching this project's own standing
+-- "corrections are forward-only" convention (migration 075/086's own
+-- precedent for the identical situation).
+--
+-- ROOT CAUSE, reconciled directly against migrations 106 and 107's own
+-- SQL text, and against the exact proven project precedent (migrations
+-- 071, 073, 086 — Decisions 89/91, 94/96, 136/137 — the same defect
+-- class, now confirmed a FOURTH time): `revoke all on function ... from
+-- public` only removes the PUBLIC pseudo-role's grant. It does not touch
+-- an explicit per-role grant this Supabase project makes via its own
+-- `ALTER DEFAULT PRIVILEGES ... GRANT EXECUTE ... TO anon, authenticated`
+-- configuration, which fires automatically on every NEWLY CREATED
+-- function in the public schema.
+--
+-- Two functions, two different histories, one correctly deployed and one
+-- not:
+--
+-- 1. mock_get_question(uuid, text) (migration 106) is a `CREATE OR
+--    REPLACE` of an ALREADY-EXISTING function (migration 070, whose anon
+--    grant was already explicitly corrected once, by migration 071).
+--    Postgres preserves a function's existing ACL across `CREATE OR
+--    REPLACE FUNCTION` when the name and signature are unchanged — it
+--    does not reset privileges to the schema/project default. Migration
+--    106's own `revoke all ... from public` on this function was
+--    genuinely redundant (its own header said so at the time), because
+--    the real fix already existed and simply carried forward untouched.
+--    Founder-confirmed live in production: anon absent, correct, no
+--    action needed.
+--
+-- 2. mock_get_attempt_grouping(uuid) (migration 106) and
+--    mock_get_open_cycle() (migration 107) are BOTH first-ever creations
+--    of functions with those exact names -- there was no pre-existing ACL
+--    for `CREATE OR REPLACE` to inherit. Each therefore received the
+--    Supabase project's own default-privilege EXECUTE grant to anon at
+--    creation time, exactly as migrations 070, 072, and 085's own new
+--    functions did before them. Migrations 106/107 each used only
+--    `revoke all on function ... from public` + `grant execute ... to
+--    authenticated` for these two new functions -- sufficient to grant
+--    authenticated correctly, insufficient to remove the separate,
+--    project-default anon grant. This is the exact mistake migrations
+--    071/073/086's own header comments already documented and warned
+--    against, repeated here because that lesson was applied to the one
+--    REPLACED function (mock_get_question) but not re-derived for the
+--    two NEW functions in the same two migrations.
+--
+-- CONFIRMED LIVE IN PRODUCTION, Founder-supplied, Level 1 evidence: a
+-- direct `information_schema.routine_privileges` query shows
+-- mock_get_attempt_grouping and mock_get_open_cycle both granting
+-- EXECUTE to anon, authenticated, postgres, and service_role;
+-- mock_get_question shows authenticated/postgres/service_role only, anon
+-- correctly absent. A separate, targeted query restricted to `grantee in
+-- ('anon','authenticated')` against mock_cycle_is_open (migration 085,
+-- corrected by migration 086) returned zero rows -- that function remains
+-- correctly internal-only, unaffected by this defect and untouched by
+-- this migration.
+--
+-- CORRECTION: explicit `revoke execute ... from anon` on exactly the two
+-- affected functions, using their exact deployed signatures -- the same
+-- fix pattern migrations 071, 073, and 086 already established and
+-- proved, applied here a fourth time to the same recurring root cause.
+--
+-- Does NOT: redefine any function body (no `create or replace function`
+-- anywhere in this file); touch mock_get_question (its production
+-- privilege state is already correct — Founder-confirmed, not touched);
+-- touch mock_cycle_is_open or any of migration 085/086's own functions;
+-- touch any table, column, or RLS policy; touch eligibility_status,
+-- ali_question_bank content, ali_mock_form, ali_mock_attempt, Practice,
+-- English, or Writing in any way; touch scoring, readiness, or
+-- Educational Intelligence; widen authenticated's own existing grant on
+-- either function (left exactly as migrations 106/107 already correctly
+-- set it); touch postgres or service_role (the applying/bypass roles,
+-- appropriately unrestricted, matching migrations 071/073/086's own
+-- precedent of never touching them).
+--
+-- Idempotent: REVOKE is a no-op when the grant is already absent.
+--
+-- NOT APPLIED. Generated for Founder review and manual application via
+-- Supabase Dashboard > SQL Editor > New query, after migrations 106 and
+-- 107 have already been applied (confirmed by the Founder; this is the
+-- correction that same application requires).
+
+begin;
+
+-- The two affected functions (migrations 106/107): anon execute removed
+-- explicitly; authenticated retains execute (already correctly granted
+-- by migrations 106/107's own `grant execute ... to authenticated`,
+-- unchanged and untouched here).
+revoke execute on function public.mock_get_attempt_grouping(uuid) from anon;
+revoke execute on function public.mock_get_open_cycle() from anon;
+
+commit;
