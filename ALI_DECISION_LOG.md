@@ -5651,3 +5651,113 @@ Selecting ≈21 of the strictly-normalised 24 experiences lands at ≈59-60 mark
 **Implications:** Decisions 1–163 all stand, none reversed or rewritten. Decision 163's own verdict B ("structural content gap remains") is **superseded for First Mock Minimum specifically** by this decision's own more rigorous audit: the gap is not content, it is an unapplied grouping-metadata decision. Decision 163's own authored content (`mock-mr03mr07-perimeterarea`) remains valid, valuable, and unaffected — it improves the Strict Normalisation + Batch 001 scenario's own reserve margin, even though it is no longer strictly necessary for First Mock Minimum alone. No mutation, promotion, form creation, or further authoring begins from this decision — the next step is a separate, bounded, Founder-authorised grouping-metadata decision, not yet begun.
 
 ---
+
+### Decision 165 — DECISION 164 EVIDENCE RESOLUTION + STRUCTURAL NORMALISATION PRE-FLIGHT: the CSSE-006 Q9 discrepancy resolved by direct primary-source re-reading (both real subparts are elapsed-time, one forward one reverse — the framework's own QT-MR-10+QT-MR-01 claim is a source-classification error, not an Angel content-quality error; `mock-mr01mr10-costumeschedule` remains mathematically valid but its own claimed Q9 provenance needs future correction); all 19 Classification-A families pre-flighted at the prompt level, all 19 survive unchanged with an exact proposed grouping-metadata map (41 rows, none requiring content rewriting); safe normalisation recomputed precisely at 19 experiences / 60 marks (exactly at the marks target, one question below the lower evidenced count bound) or 21 experiences / 64 marks including the untouched `costumeschedule`; Batch 001 (`mock-mr03mr07-perimeterarea`) confirmed independent-validation-ready on genuine Founder-supplied review evidence, migration 111 (independently_validated only, NOT mock_eligible) drafted and tested, NOT applied; no mutation performed
+
+**Scope and process:** Analysis plus one bounded, forward-only promotion migration (111, NOT applied), matching migration 090/094/101's own proven pattern exactly. No grouping-metadata mutation performed — the proposed map is a Founder-review artifact only. No new content authored, no Mock form, no Mock Centre activation.
+
+---
+
+**PART 1 — RECONCILIATION**
+
+Confirmed: `HEAD == origin/main`, Decision 164 present exactly once, commit `0f109a8` present in `git log`, no grouping metadata changed by Decision 164 (documentation-only, verified by its own diff being a single-file log append), `ali_mock_form` unaffected, no First Mock assembled.
+
+---
+
+**PART 2 — Q9 DISCREPANCY, RESOLVED**
+
+Direct re-reading of the real 2023 question and mark scheme together (not reproduced here): Mrs. Jones makes 3 identical costumes, each taking a stated duration. Subpart (a) asks when a stated start time finishes (forward elapsed time); subpart (b) asks what start time is needed to finish by a stated deadline (reverse elapsed time). **Both subparts require the identical QT-MR-10 elapsed-time reasoning, one forward and one reverse — neither is a standalone QT-MR-01 arithmetic item.** `CSSE_QUESTION_INTELLIGENCE_FRAMEWORK.md` §6's own claim ("CSSE-006 Q9 combines QT-MR-10 with QT-MR-01") does not match the real question. **Verdict: SOURCE CLASSIFICATION ERROR** in the framework document itself, not an Angel content-quality error — `mock-mr01mr10-costumeschedule`'s own two subparts are each individually well-formed, mathematically verified, non-duplicate content; only their *claimed structural precedent* (a QT-MR-10+QT-MR-01 split) is unsupported by the real source. **Impact on costumeschedule: none on its current, already-promoted `mock_eligible` status** (untouched, out of scope); a documentation debt exists (migration 095's own provenance comment) worth correcting in a future, separate, documentation-only decision — not urgent, not blocking.
+
+---
+
+**PART 3 — PROMPT-LEVEL PRE-FLIGHT, ALL 19 CLASSIFICATION-A FAMILIES**
+
+Every row in all 19 families re-inspected directly (not merely re-classified at the family level). Confirmed for all 41 rows: each subpart's prompt is fully self-contained (no row assumes unstated context from a sibling — unlike `costumeschedule`/`perimeterarea`'s own subpart-(b) rows, which legitimately reuse a resolved value from subpart (a) within the SAME family), every answer is a single deterministic value with no semicolon/free-text, every existing `marks` value is unchanged and valid, and every family's bundling shape matches a directly-observed real-paper convention (either "several independent same-skill items, no shared narrative" — the dominant real pattern, confirmed directly from Q1/Q13/Q19/Q20 — or "different diagram/scenario per subpart, same skill area" — confirmed from Q3/Q12). **Zero families required removal; zero rows required content rewriting.** All 19 families and 41 rows survive Part 3 unchanged.
+
+---
+
+**PART 4 — MR09-DATA STATUS (unchanged)**
+
+Remains Classification D, not grouped. To resolve: an educational judgement on whether its 3 sub-structures (extremes-comparison/medium, mean/medium, multi-row-combination/hard — migration 088's own header already discloses these as genuinely distinct, not variants of one structure) are coherent enough as one numbered question despite the difficulty escalation and structural heterogeneity, or whether they are better represented as 3 permanently-separate standalone experiences. Not a First Mock blocker either way (Part 6's own capacity figures do not require it).
+
+---
+
+**PART 5 — CROSS-FAMILY B CANDIDATES (unchanged, excluded)**
+
+`mock-mr04-percentchange`↔`mock-mr04-reversepercent` and `mock-mr10-forwardschedule`↔`mock-mr10-reverseschedule` remain outside the metadata-only set, exactly as Decision 164 established — both would require a shared scenario to be authored, not free.
+
+---
+
+**PART 6 — EXACT SAFE NORMALISATION**
+
+41 rows across the 19 surviving families, computed precisely, row by row: **19 grouped experiences, exactly 60 marks** (verified by direct summation of each family's own real marks: `mr02-invdiv`=3, `mr02-twostep`=6, `mr03-unitconv`=3, `mr05-forward`=2, `mr05-inverse`=4, `mr13-bestvalue`=2, `mr04-percentchange`=2, `mr04-reversepercent`=4, `mr06-sumdiff`=2, `mr06-multiplerelation`=4, `mr07-triangleanglesum`=2, `mr07-isoscelesproperty`=4, `mr10-forwardschedule`=2, `mr10-reverseschedule`=4, `mr11-truefalsejudgement`=2, `mr11-propertysearch`=4, `mr01-directcalc`=2, `mr08-rotation`=4, `mr12-reversemean`=4 — sum 60). This lands **exactly on the 60-mark target**, one question below the lower evidenced bound (20-21) — within Decision 146's own already-established "20 is equally evidenced... acceptable tolerance" allowance. Including the untouched, already-grouped `costumeschedule` (2 experiences, 4 marks) alongside the 19 new groups: **21 experiences, 64 marks** — exactly at the upper evidenced question-count bound, 4 marks over target. Both are illustrative capacity figures, not a form-assembly decision (not performed here).
+
+**Projected, once Batch 001 completes independent validation and promotion (not performed here):** adding `mock-mr03mr07-perimeterarea`'s 2 experiences/4 marks to the 21/64 figure gives 23 experiences/68 marks — above both evidenced bounds, meaning a real future form-assembly step would select a genuine subset, not the entire normalised pool.
+
+---
+
+**PART 7 — Q11 unaffected**
+
+Unchanged from Decision 164: not required for First Mock Minimum given the above; remains a well-evidenced Rolling Programme target with a confirmed (not merely suspected) real plotting mechanic requiring a text-answerable adaptation before it could ever be authored.
+
+---
+
+**PART 8 — PROPOSED GROUPING-METADATA MAP (for Founder review only, NOT applied)**
+
+All 19 families use `question_group_id = family_id` (each family becomes exactly one grouped numbered question, unlike `costumeschedule`/`perimeterarea`'s own two-instances-per-family shape), `group_order` in authored (01/02/03) sequence, `subpart_label` (a)/(b)/(c) accordingly, `marking_mode = 'deterministic'` throughout (every answer is a plain exact-match value, matching the same convention already proven for `costumeschedule`/`perimeterarea`):
+
+| family_id (= question_group_id) | rows → group_order/subpart_label |
+|---|---|
+| mock-mr02-invdiv | -01→1/(a), -02→2/(b), -03→3/(c) |
+| mock-mr02-twostep | -01→1/(a), -02→2/(b), -03→3/(c) |
+| mock-mr03-unitconv | -01→1/(a), -02→2/(b), -03→3/(c) |
+| mock-mr05-forward | -01→1/(a), -02→2/(b) |
+| mock-mr05-inverse | -01→1/(a), -02→2/(b) |
+| mock-mr13-bestvalue | -01→1/(a), -02→2/(b) |
+| mock-mr04-percentchange | -01→1/(a), -02→2/(b) |
+| mock-mr04-reversepercent | -01→1/(a), -02→2/(b) |
+| mock-mr06-sumdiff | -01→1/(a), -02→2/(b) |
+| mock-mr06-multiplerelation | -01→1/(a), -02→2/(b) |
+| mock-mr07-triangleanglesum | -01→1/(a), -02→2/(b) |
+| mock-mr07-isoscelesproperty | -01→1/(a), -02→2/(b) |
+| mock-mr10-forwardschedule | -01→1/(a), -02→2/(b) |
+| mock-mr10-reverseschedule | -01→1/(a), -02→2/(b) |
+| mock-mr11-truefalsejudgement | -01→1/(a), -02→2/(b) |
+| mock-mr11-propertysearch | -01→1/(a), -02→2/(b) |
+| mock-mr01-directcalc | -01→1/(a), -02→2/(b) |
+| mock-mr08-rotation | -01→1/(a), -02→2/(b) |
+| mock-mr12-reversemean | -01→1/(a), -02→2/(b) |
+
+Not yet a migration. Awaiting Founder approval of this exact map before any migration is drafted.
+
+---
+
+**PART 9 — BATCH 001 PROMOTION READINESS**
+
+Founder-supplied production evidence: `mock-mr03mr07-perimeterarea` shows "1 of 1 families reviewed (approved)" on the live review surface. Traced from source: the review was submitted through `MockFirstMockCompoundBatch001Section` (Decision 163's own component), which passes the correct `MOCK-FIRSTMOCK-COMPOUND-BATCH001` notes marker via `buildMockFirstMockCompoundBatch001NotesPrefix()` — the identical, unmodified `submitMockMathsIndependentReview()` write path and status-derivation mechanism every prior Mathematics Mock batch has used. **Satisfies the same established independent-review requirement as migrations 090/094/101.** Migration 111 (NOT applied) drafted: promotes exactly the 4 named rows from `authentic_assessment_candidate` to `independently_validated` only, mirroring migration 101's own assertion-and-refuse structure exactly, kept entirely separate from Part 8's own distinct grouping-metadata proposal (disjoint row sets, no shared migration).
+
+---
+
+**PART 10 — TESTS AND VERIFICATION**
+
+16 new tests in `tests/supabase/mockMathematicsFirstMockCompoundBatch001IndependentValidation.test.ts`, mirroring `mockMathematicsBatch003IndependentValidation.test.ts`'s own established convention exactly: exact 4-ID/1-family allow-lists, source-status preconditions, single-column-SET proof, grouping-column non-reference (explicit separation from Part 8's own distinct, unapplied proposal), no `ali_family_review`/`ali_mock_form` mutation, fail-safe/idempotent structure, zero overlap with any prior batch's IDs, and a positive proof that the real, unmodified `isMockEligibleCandidate()` gate still correctly rejects `independently_validated` content. **Full suite: 1342/1342 pass** (1326 baseline + 16 new; zero regressions). `npx tsc --noEmit`: clean. Copy Quality Guard: PASS, 0 violations, 256 files. Production build: succeeds.
+
+---
+
+**What this decision does NOT claim:** it does not claim migration 111 has been applied (self-disclosed `NOT APPLIED`); it does not claim any grouping metadata has been mutated — Part 8's own map is a proposal, not an executed change; it does not claim `mock-mr09-data`'s Classification D is resolved; it does not claim the Q9 discrepancy has been corrected in `CSSE_QUESTION_INTELLIGENCE_FRAMEWORK.md` or migration 095's own text — only diagnosed and disclosed; it does not claim any Mock form exists or that Mock Centre is available; it does not claim Rolling Programme's own content-diversity requirement is reduced in any way by these findings.
+
+**Files changed:** `supabase/migrations/111_mock_mathematics_firstmock_compound_batch001_independent_validation.sql` (new, NOT applied), `tests/supabase/mockMathematicsFirstMockCompoundBatch001IndependentValidation.test.ts` (new), `ALI_DECISION_LOG.md` (this entry).
+
+**Migrations created:** 111 — drafted, tested, NOT applied, awaiting Founder review.
+
+**Decision number:** 165.
+
+**Commit SHA:** recorded after commit (see repository history immediately following this entry).
+
+**Production application status:** migration 111 NOT applied. Supplied to the Founder immediately following this entry, since Batch 001's own independent-validation evidence is genuine and satisfies the established requirement — kept explicitly separate from, and not conditional on, the still-unauthorised Part 8 grouping-metadata proposal.
+
+**Rationale:** promoting Batch 001 to `independently_validated` now, ahead of any grouping-metadata decision, follows this arc's own established discipline of applying each proven, evidence-backed step as soon as it is ready rather than batching unrelated decisions together — the two are genuinely independent (one touches `mock-mr03mr07-perimeterarea`'s own eligibility_status; the other, not yet authorised, would touch 41 different, disjoint rows' grouping columns only).
+
+**Implications:** Decisions 1–164 all stand, none reversed or rewritten. Decision 164's own verdict A stands, now with a concrete, prompt-level-verified metadata map ready for Founder approval rather than a family-level estimate. No mutation, promotion, or form creation has actually occurred — migration 111 awaits Founder application, and the Part 8 grouping map awaits separate Founder authorisation before any migration is drafted for it.
+
+---
