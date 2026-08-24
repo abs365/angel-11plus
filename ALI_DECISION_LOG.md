@@ -4925,3 +4925,136 @@ Full suite: **1171/1171 pass** (1161 baseline at Decision 156 + 10 new; zero net
 **Implications:** Decisions 1–156 all stand, none reversed or rewritten. The English Comprehension passage's genuine, twice-submitted human review is now correctly recognised by the review surface without requiring a third submission. Mathematics Batch 003 remains not yet reviewed (unchanged, not addressed by this decision). No content — English, Writing, or Mathematics — is promoted, made `independently_validated`, or made `mock_eligible` by this decision. No `ali_mock_form` is created. The next action remains genuine human review of Mathematics Batch 003, and the Founder's own confirmation that the passage now correctly displays as reviewed once this deploy completes.
 
 ---
+
+### Decision 158 — INCREMENT 006 INDEPENDENT-VALIDATION CERTIFICATION PREPARED (PHASE A) + GOAL-ALIGNED MOCK READINESS ASSESSMENT (PHASE B, READ-ONLY): three certification migrations (101 Mathematics Batch 003, 102 English Comprehension Batch 001, 103 Continuous Writing Batch 001 — 27 rows total, not 26, see Part 3's own disclosed scope decision) are drafted, tested, and committed, NOT applied; a full read-only architectural and educational readiness assessment against Angel's own primary goal finds the content pool structurally close to sufficient for Mathematics but genuinely thin for English, and finds the governing constraint is NOT content volume but several unbuilt system capabilities (pool-level gate, reviewed form assembly, grouped-question scoring, exposure routing, Writing marking validity, cadence-gate wiring, Educational Intelligence depth) — **final verdict: C, NOT READY, material assessment architecture missing**, not a content-volume problem
+
+**Scope and process:** Two explicitly separate phases, not collapsed. Phase A is real, tested, committed preparation work (no production application). Phase B is documentation-only analysis — no code, schema, or content change of any kind.
+
+---
+
+**PART 1 — REPOSITORY RECONCILIATION**
+
+All 12 items confirmed: working tree clean before this session's own change; HEAD == origin/main == `1ad09e7` (Decision 157); Decisions 150–157 each present exactly once (`grep -c`), none reversed; commit `1ad09e7` confirmed deployed (Vercel "Deployment has completed," GitHub commit-status API); migrations 095–100 confirmed byte-unchanged (`git diff HEAD` empty); no migration beyond 100 existed before this session's own 101/102/103; Mathematics Batch 001 (migrations 088–090) and Batch 002 (091/092/094) confirmed byte-unchanged; no code path introduced since Decision 150 writes `mock_eligible` or creates `ali_mock_form`; Decision 154's Practice-isolation correction (`lib/ali/questionBank.ts`, migration 100) confirmed unchanged; no new content batch has begun. No discrepancy found.
+
+---
+
+**PART 2 — INDEPENDENT-REVIEW EVIDENCE RECONCILIATION**
+
+**Mathematics Batch 003** (targets `mock-mr01-directcalc`, `mock-mr08-rotation`, `mock-mr12-reversemean`, `mock-mr01mr10-costumeschedule`, `review_type = mock_maths_independent_review`): this batch's own submission path passes the `sevenX` prop with the correct `MOCK-INC004-BATCH003` marker (confirmed from source) — its status-derivation mechanism was never affected by the Decision 157 defect. The Founder's own report ("4 of 4 families reviewed (approved)") is accepted as Level 1 evidence, corroborated by a proven-correct display mechanism, not a bare screenshot claim.
+
+**English Comprehension Batch 001** (target `mock-eng-boathouse`, `review_target_type = passage`, `review_type = mock_english_passage_independent_review`): the strongest evidence class held for any of the three certifications — a direct, Founder-run, read-only production query (reported verbatim earlier in this session) returned exactly 3 `ali_family_review` rows: the original migration 099 placeholder, and two genuine rows, reviewer Ayobami Lawal, `decision = approved`, at `2026-08-24 15:45:22` and `2026-08-24 16:40:36`. Neither existing row is touched, deleted, or replaced by this decision.
+
+**Continuous Writing Batch 001** (targets `mock-writing-mindchange-01`/`-kindness-01`/`-cookopinion-01`, `review_type = mock_writing_prompt_independent_review`): same proven-correct `sevenX`/marker mechanism as Mathematics. The Founder's report ("3 of 3 reviewed (approved)") is accepted as Level 1, corroborated the same way.
+
+---
+
+**PART 3 — CERTIFICATION SCOPE, MIGRATIONS, AND A DISCLOSED SCOPE DECISION**
+
+**Mathematics Batch 003 — migration 101:** exactly the 10 rows across 4 families, mirroring migration 090/094's proven assertion-and-refuse pattern exactly (exact-ID allow-list, safe already-applied no-op branch, refuse-to-guess on any other state).
+
+**English Comprehension Batch 001 — migration 102:** the 13 attached `ali_question_bank` rows, **plus the passage's own `ali_passage_bank` row — 14 rows, not 13.** This is a deliberate, explicitly disclosed departure from the directive's own stated "13 response-component rows" / "Total: 26 rows" figures, reasoned and named in the migration's own header comment: the same directive also states "Do not treat '26 rows' as the educational unit of the Mock programme... The relevant units remain: ... English passage + complete attached question set," and migration 099's own design already established that the Founder's review judges the passage and its complete question set together, as one unit. Leaving the passage's own row at `authentic_assessment_candidate` while promoting only its 13 questions would split one reviewed, approved educational unit across two different governance stages. **The true grand total across all three migrations is 27 rows, not 26** — named here precisely so the Founder can correct this reading if it is wrong, not silently substituted for the directive's own stated figure.
+
+**Continuous Writing Batch 001 — migration 103:** exactly the 3 prompts, same proven pattern.
+
+**Safety proof, identical to every prior promotion migration in this arc:** exact-ID (and exact-passage-ID) allow-lists, never family_id/subject alone; assertion-and-refuse guard requiring the precise expected pre-promotion count or the clean already-applied count, refusing to guess otherwise; only `eligibility_status` is ever `SET`, on either table; no `ali_mock_form` or `ali_family_review` reference anywhere in any of the three files; no grouping-column, passage-association, or content-field mutation; each migration independently guarded, and (for 102) both tables promoted atomically in one transaction — the question set and its passage move together or not at all.
+
+---
+
+**PART 4 — EXPECTED POST-CERTIFICATION POSITION**
+
+Mathematics: 38 (existing) + 10 (Batch 003) = **48 `independently_validated` rows**, across **46 numbered-question experiences** (18 + 20 + 8 — Batch 003's grouped `costumeschedule` family collapses 4 rows into 2 experiences). English Comprehension: **13 newly `independently_validated` question rows + 1 newly `independently_validated` passage row**. Writing: **3 newly `independently_validated` prompts**. Practice unaffected: Mathematics 194 / English 120 `practice_eligible`, unchanged by any of this (these migrations never touch `practice_eligible` rows). `mock_eligible` remains 0; `ali_mock_form` remains 0. **None of these numbers themselves imply Mock readiness — see Phase B.**
+
+---
+
+**PART 5 (PHASE A5) — FOUNDER APPLICATION SEQUENCE**
+
+One migration at a time, in this order (no dependency between 101/102/103 beyond all three following migrations 095–100, confirmed from each file's own header): **101 first** (supplied this turn), then STOP for the Founder's result; then 102; then 103. After all three are applied, the smallest read-only verification queries will be supplied, matching the exact pattern already used successfully for migrations 095–100.
+
+---
+
+**PART 6 (PHASE B) — GOAL-ALIGNED MOCK READINESS ASSESSMENT**
+
+**B1 — Mathematics paper authenticity.** Exact marks, counted directly from each migration's own `"marks"` fields, not estimated: Batch 001 = 18 rows / **24 marks**; Batch 002 = 20 rows / **30 marks**; Batch 003 = 10 rows / **14 marks**. **Total validated pool (post-certification): 48 rows, 46 numbered-question experiences, 68 marks.** Against the established target (~20–21 numbered questions, ~60 marks): the **experience count** (46) looks comfortably over double the target, but this is the exact "row count ≠ exam question count" trap Decision 146/147 already warned against, in a sharper form than previously measured — **the pool's own average mark density is ≈1.48 marks/experience (68÷46), well below an authentic CSSE paper's own ≈2.9 marks/question (60÷21)**. Assembling one authentic 60-mark form would require roughly 41 of the 46 available experiences — **not a comfortable double-capacity margin, closer to using nearly the entire validated pool on a single form, with negligible reserve for a second distinct paper without repetition.** Skill/QT coverage is a genuine strength: combined, Batch 001–003 cover all 13 real content Question Types (QT-MR-01 through QT-MR-13, QT-MR-14 being a scoring condition, never a content format) — no QT is entirely absent. One genuine grouped structure exists (`costumeschedule`, evidenced against CSSE-006 Q9). **Finding: a single authentic Mathematics Mock form is architecturally plausible from content alone, but with far less rolling reserve than the raw experience count suggests, and no mechanism yet exists to actually assemble one (see B6).**
+
+**B2 — English paper authenticity.** Post-certification: **1 independently validated passage**, 1 complete attached question set (12 numbered questions, 13 rows, 30 marks, covering all 10 evidenced QT-RC types), **3 Writing prompts, all QT-WC-01a**. One authentic Mock could plausibly be assembled once form-assembly exists: the one passage's own question set is genuinely complete (Decision 138's own 2–7-question shortfall is corrected for this one passage), and one of the three Writing prompts could fill the Q1-equivalent slot. **But the paper would be structurally incomplete even then**: QT-WC-01b (picture-stimulus, the real paper's own Question 2) has no authored content and no image-asset pipeline to author it against (disclosed gap, migration 098) — an authentic English Mock's own second Writing task cannot currently be filled at all, by any amount of QT-WC-01a content. **Repeated English Mocks are NOT sustainable with only 1 passage**: a second Mock would immediately have to re-serve the same passage a learner has already seen, the single highest-recognition-risk content type this whole arc has repeatedly flagged (Decision 152 Part 6). **Finding: one incomplete-but-partially-authentic English Mock is plausible; a second one without exact passage repetition is not, and the paper's own second Writing slot cannot be filled at all today.**
+
+**B3 — Anti-memorisation and sustainability, using the corrected hierarchy (Decisions 147–148), not Decision 146's superseded flat-row model.** Genuinely fresh learner experiences: 46 Mathematics numbered-question experiences (real structural diversity — direct computation, rotation, running-average mean, and one grouped elapsed-time+arithmetic structure, each with disclosed evidence, none a superficial parameter swap of another), 12 Comprehension questions across 1 passage, 3 Writing prompts (three genuinely different shapes, not topic-swapped copies — confirmed at authoring time, migration 098's own disclosure). Family/structure diversity for Mathematics is real and evidenced; for English it is a single passage — the more relevant diversity axis (passage diversity) is at its floor. **Cooldown/exposure routing does not exist as a mechanism anywhere in this codebase** — Decision 152 Part 6 named this explicitly as a future, unimplemented "exposure-routing engine," and nothing built since has changed that. **This is a hard, structural blocker for "sustain the adaptive Mock cadence over months," independent of how much content exists** — even a much larger pool could not be safely rotated without it. **Finding: the validated pool by itself cannot yet sustain a repeating Mock cadence, for a system reason (no routing mechanism), not primarily a content-volume reason.**
+
+**B4 — Educational Intelligence value, classified against the existing architecture, not re-derived:**
+- Deterministic scoring (`mock_score_attempt()`, migrations 074/075, auto-marks Mathematics + eligible English tiers, routes everything else to `requires_manual_marking`): **EXISTING.**
+- Grouped-question scoring (for `costumeschedule`, Q12-style multi-part questions): **NEW** — every migration touching migration 093's grouping columns since it was applied has explicitly disclaimed implementing this; it does not exist in any form.
+- Competency-evidence classification (`lib/mockAttempt/evidenceAdapter.ts`, pure and tested): **EXTEND** — real, tested logic exists, but is explicitly disclosed (in its own file) as not wired into any automatic pipeline; a scored-and-released report's own `competency_evidence`/`strengths`/`weaknesses` fields stay `null` today, even after release.
+- Reporting (`ali_mock_attempt_report`, `mock_release_report()`): **EXTEND** — the table, sealing, and release RPC exist and are proven; the diagnostic *content* a released report can actually show is currently limited to raw right/wrong, not the strengths/weaknesses/misconception patterns B4's own list requires, because of the same unwired gap above.
+- Readiness advisory (`lib/learningEngine/mockReadiness.ts`): **EXTEND** — Decision 147 already found this real, live, and informational-only, "not wired to any gate." Unchanged since.
+- Cadence/cycle governance (migrations 085/086): **EXTEND** — the scheduling *architecture* exists; the actual readiness-driven gating logic Decision 147 called for is not implemented.
+- Practice's own mastery/evidence engine merging into Mock's: **NOT REQUIRED** — and should stay that way. The firewall between them is intentional (`evidenceAdapter.ts`'s own explicit "never touches `ali_student_question_history`" design, and this entire arc's Decision 152/154/157 work protecting exactly this boundary). Mock needs its **own** equivalent reporting depth, not a merge with Practice's.
+
+**B5 — Adaptive cadence.** Preserving Decision 147's own direction, not reopening it: first-Mock readiness should be driven by `mockReadiness.ts` wired to a real gate — this remains unbuilt (B4). The ~28-day normal / ~14-day accelerated cadence split is architecturally described (Decision 147) but not implemented as enforced logic anywhere found. The parent-requested extra Mock chain (Request → Educational/Capacity Eligibility → Entitlement/Payment → Authorisation) does not exist — payment is unimplemented everywhere in this codebase, confirmed by the same absence every prior decision in this arc has already recorded. **No cadence change is implemented by this decision — this is assessment only, as instructed.**
+
+---
+
+**B6 — FIRST MOCK GATE TABLE**
+
+| Condition | Why it matters to selective-school success | Current evidence | Status | Dependency | Smallest next action |
+|---|---|---|---|---|---|
+| Authentic Mathematics paper capability | A Mock that doesn't resemble the real paper cannot validly predict exam performance | 46 experiences / 68 marks, all 13 QTs covered, tight but plausible for one form | **PARTIAL** | Pool-level gate + form assembly (below) | Build the pool-level Mock-Eligible gate (Decision 138) against this now-realistic pool |
+| Authentic English paper capability | Same reason; English is the weaker half | 1 passage, 1 complete question set, 3 Writing prompts, Q2 (picture-stimulus) entirely unfillable | **FAIL** | More passage content; image-asset pipeline for QT-WC-01b | Author 2–3 more original passages (Decision 138's own launch-floor figure) before attempting form assembly |
+| Grouped-question support | The real paper genuinely uses (a)/(b)/(c) structures; scoring them wrong would misgrade real learners | Content authored (Mathematics + English), scoring not implemented anywhere | **PARTIAL** | Content exists; scoring is the gap | Design and implement grouped-question scoring in `mock_score_attempt()`'s own family |
+| Scoring support | Same | Deterministic auto-marking proven for standalone content; grouped content unscoreable | **PARTIAL** | Grouped-question support above | Same |
+| Marking support | Manually-marked responses need a real reviewer workflow, not just a `requires_manual_marking` flag | Flag/routing exists; no marker UI/workflow evidenced in this codebase | **UNKNOWN** | — | Locate or confirm absence of a manual-marking review surface |
+| Writing assessment validity | A Mock cannot honestly report Writing performance without validated marking | AI scoring explicitly quarantined/unvalidated (Decisions 47/60/61/106); no confirmed manual alternative | **FAIL** | Marking support above | Decide the Writing marking model (human, or a validated AI path) before any Writing Mock score is shown to a learner |
+| Content diversity | Repeated near-identical experiences teach memorisation, not the skill | Strong for Mathematics, weak for English (1 passage) | **PARTIAL** | English paper capability above | Same |
+| Anti-memorisation routing | Without it, a learner could be re-served content they've already seen, regardless of pool size | Not built anywhere (Decision 152's own disclosed gap) | **FAIL** | — | Design the exposure-routing engine before any repeat Mock is offered |
+| Learner exposure tracking | Feeds the routing above | `ali_student_question_history` exists generically but is deliberately firewalled from Mock evidence | **PARTIAL** | Anti-memorisation routing above | Design Mock's own exposure record, not a reuse of Practice's |
+| Readiness decision | A Mock offered before a learner is ready wastes the attempt and the diagnostic value | `mockReadiness.ts` exists, informational-only | **PARTIAL** | — | Wire it to a real gate (Decision 147's own next step) |
+| Cadence governance | Prevents both premature and needlessly-delayed Mocks | Architecture described (Decision 147), not enforced | **PARTIAL** | Readiness decision above | Implement the ~28-day/~14-day gate once readiness is wired |
+| Educational Intelligence integration | This is the actual point of a Mock, per Angel's own goal | Scoring exists; competency/strengths/weaknesses classification exists but is unwired; reports would show raw scores only today | **PARTIAL** | — | Wire `evidenceAdapter.ts`'s own existing, tested classification into the report pipeline |
+| Reporting | Same | Table/release mechanism proven; diagnostic depth blocked on the item above | **PARTIAL** | Educational Intelligence integration above | Same |
+| Reviewed form assembly | Without it, no Mock paper can be constructed at all, regardless of every other row above | Not built — named as a dependency since Decision 139 Part 9, still true today | **FAIL** | Pool-level gate above | Design form assembly once the pool-level gate exists to feed it |
+| Production security/isolation | A defect here could expose protected content or misrepresent Practice | Confirmed PASS in production (Decisions 152/154/157) — application layer and database RLS both verified live | **PASS** | — | None — this is this session's own strongest, closed area |
+
+---
+
+**B7 — CONTENT GAP DECISION**
+
+**Not begun** by this decision, per its own explicit instruction. Findings, precisely scoped:
+
+- **FIRST MOCK MINIMUM:** English passage diversity is a genuine first-Mock blocker — 1 passage cannot support even a second Mock without exact repetition, and Decision 138's own 3–4 passage launch-floor figure was never met (1 of 3–4). This is content, not architecture, and is a real dependency. Mathematics is **not** a first-Mock content blocker at current pool size — tight, but architecturally sufficient for one form once the missing system capabilities (B6) exist.
+- **ROLLING PROGRAMME CAPACITY:** both subjects need more content for month-over-month sustainability once a first Mock exists — Mathematics because 68 marks leaves negligible reserve past one form (B1), English for the same passage-diversity reason at a larger scale.
+- **LONG-TERM ANTI-MEMORISATION CAPACITY:** ultimately gated by the exposure-routing engine (B3/B6), not by row count alone — building more content without that engine would not, by itself, solve sustainability.
+
+**No content batch is begun by this decision.**
+
+---
+
+**B8 — FINAL ANGEL-GOAL-ALIGNED VERDICT**
+
+**C. NOT READY — material assessment architecture missing.**
+
+Justified against Angel's own stated goal, not engineering completion percentage: even if a Mathematics-only Mock were assembled today from the certified pool, Angel could not yet turn a learner's attempt into what the governing principle requires — "demonstrated strengths, weak competencies, reasoning weaknesses, misconception patterns... recommended targeted Practice, readiness trajectory, what the learner should do next." It could currently only return a raw score, closer to the explicitly-rejected "42/60" than genuine diagnostic value, because the Educational Intelligence wiring (B4/B6) does not exist yet. English cannot yet be assembled at all without an unfillable Writing slot and a passage-repetition risk on any second attempt. None of this is a content-volume complaint (Decision 147's own corrected framing) — it is that several real system capabilities (pool-level gate, form assembly, grouped scoring, exposure routing, Writing marking validity, EI wiring) simply do not exist yet, and a Mock built without them would not advance a child's selective-school preparation the way Angel's own goal requires, however complete the underlying content migration and certification work is.
+
+---
+
+**Recommended dependency-ordered next actions** (recorded for the record, none begun by this decision): (1) author 2–3 more original English passages, closing the first-Mock passage-diversity gap named in B7; (2) design and build the pool-level Mock-Eligible gate (Decision 138) against the now-realistic Mathematics pool; (3) design and implement grouped-question scoring; (4) decide and build the Writing marking model (human workflow or a validated AI path) before any Writing Mock score is ever shown to a learner; (5) design and build the exposure-routing engine; (6) wire `mockReadiness.ts` to a real first-Mock gate; (7) wire `evidenceAdapter.ts`'s existing competency classification into the report pipeline; (8) only then, design reviewed form assembly. Each remains a separate, later, Founder-authorised decision.
+
+---
+
+**What this decision does NOT claim:** it does not claim any migration has been applied (none has — 101/102/103 are all self-disclosed `NOT APPLIED`); it does not claim Mock readiness, in whole or in part, has been achieved by preparing these migrations; it does not claim the 27-row certification scope is the same as the directive's own stated 26-row figure — the difference (the passage's own row) is explicitly disclosed, not silently substituted; it does not claim any content batch has begun; it does not claim AI Writing scoring is validated; it does not claim the exposure-routing engine, pool-level gate, form assembly, or grouped-question scoring exist — all are confirmed absent by direct search.
+
+**Files changed:** `supabase/migrations/101_mock_mathematics_batch003_independent_validation.sql` (new, NOT applied), `supabase/migrations/102_mock_english_comprehension_batch001_independent_validation.sql` (new, NOT applied), `supabase/migrations/103_mock_writing_batch001_independent_validation.sql` (new, NOT applied), `tests/supabase/mockMathematicsBatch003IndependentValidation.test.ts` (new), `tests/supabase/mockEnglishComprehensionBatch001IndependentValidation.test.ts` (new), `tests/supabase/mockWritingBatch001IndependentValidation.test.ts` (new), `ALI_DECISION_LOG.md` (this entry).
+
+**Migrations created:** 101, 102, 103 — all drafted, tested, NOT applied, awaiting Founder review one at a time.
+
+**Tests:** 46 new, all passing; full suite **1217/1217**. `npx tsc --noEmit`: clean. ESLint on every touched file: 0 errors, 0 warnings. Copy Quality Guard: PASS, 0 violations, 256 files. Production build: succeeds.
+
+**Decision number:** 158.
+
+**Commit SHA:** recorded after commit (see repository history immediately following this entry).
+
+**Production application status:** NONE of the three migrations has been applied. Migration 101 is supplied to the Founder immediately following this entry; 102 and 103 are held back until the Founder reports 101's own result, per the directive's own explicit one-at-a-time sequencing.
+
+**Rationale:** disclosing the 27-vs-26-row scope decision explicitly, in the migration's own permanent header, rather than silently matching the directive's stated figure or silently deviating from it, follows this project's own standing evidentiary discipline — a genuine interpretive gap in an otherwise extremely precise directive is recorded, explained, and left correctable, never resolved by guessing quietly in either direction. Conducting Phase B before any Mock-readiness claim is made, and grounding it in exact figures (68 marks, not "roughly enough") rather than the raw row/experience counts alone, follows directly from Decision 146/147's own corrected principle that a database row is not an exam question — extended here to show that even a corrected experience count can still overstate readiness if mark density is not also checked.
+
+**Implications:** Decisions 1–157 all stand, none reversed or rewritten. Phase A's three certification migrations are prepared and ready for Founder-controlled, one-at-a-time production application, starting with migration 101. Phase B's verdict — **C, NOT READY** — governs what happens next: the recommended dependency-ordered actions above, not a jump to Mock activation, cadence implementation, or another content batch. **No content is promoted by this decision** — that requires the Founder's own application of migrations 101/102/103, each a separate, explicit production action. `mock_eligible` remains 0, `ali_mock_form` remains 0, and Mock remains NOT READY YET, now for a documented, architectural reason rather than an open question.
+
+---
