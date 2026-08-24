@@ -4605,3 +4605,96 @@ This closure is scoped exactly to Decision 152 Part 3 (historical exposure). It 
 **Implications:** Decisions 1–152 all stand, none reversed or rewritten. The 38 existing Batch 001/002 Mathematics Mock questions require no retirement, no replacement, and no quarantine on the basis of this defect — they remain `independently_validated` Mock inventory exactly as Decision 150 left them. **This does not authorise application of migration 100 or migrations 095–099** — no instruction to apply either was given alongside this evidence, and Decision 152's own sequencing (deploy → apply migration 100 → verify → THEN separately decide on 095–099) is preserved, not accelerated by this closure. No independent review, no content batch, no Mock form, and no further Practice-selection code change is authorised or begun by this decision.
 
 ---
+
+### Decision 154 — PROTECTED MOCK CONTENT ISOLATION: PRODUCTION CLOSED: both isolation layers are now Founder-verified live in production — the RLS policy predicate confirmed exactly `eligibility_status = 'practice_eligible' OR is_current_user_admin()`, and a direct `SET LOCAL ROLE anon` visibility probe confirmed ordinary anon reads return only `practice_eligible` rows (194 Mathematics + 120 English), zero rows of any protected status; `ali_mock_form` confirmed 0; historical exposure remains closed at Decision 153 (38/38 classification A, no recorded exposure); Decision 152's defect is CONFIRMED AND CORRECTED at both the application and database layers — **the isolation defect no longer blocks migrations 095–099**, though their own, separate independent-review requirement (Decision 151) is unchanged and unmet
+
+**Scope and process:** Documentation-only closure. No source file, migration, or production data was changed by this decision — the only change is this log entry. Grounded entirely in the Founder's own Level 1, production-run evidence (the live `pg_policies` query result and the anon-role visibility probe, both run directly against production) — not re-queried this session, per this project's own standing instruction not to request evidence already supplied.
+
+---
+
+**PART 1 — REPOSITORY RECONCILIATION**
+
+All 6 items confirmed directly: 1. Working tree clean before this session's own change. 2. HEAD == origin/main == `130f924` (Decision 153), confirmed via `git fetch` + `git rev-parse` on both refs. 3. Decision 153 present exactly once (`grep -c` confirmed). 4. Migration 100 confirmed byte-unchanged since its own commit (`git diff HEAD` empty). 5. Migrations 095–099 confirmed byte-unchanged (`git diff HEAD` empty against all five), still self-disclosed `NOT APPLIED`. 6. The application-layer isolation correction (`lib/ali/questionBank.ts`) confirmed byte-unchanged (`git diff HEAD` empty). No discrepancy found; nothing here required stopping.
+
+---
+
+**PART 2 — MIGRATION 100 PRODUCTION STATUS**
+
+Applied ("Success. No rows returned," Supabase SQL Editor) — Founder-reported at the prior session's own closure request, carried forward here, not re-verified independently (no live production access in this environment, unchanged from every prior session in this arc).
+
+---
+
+**PART 3 — LIVE RLS POLICY RESULT, FOUNDER-VERIFIED**
+
+`pg_policies` queried directly in production: `policyname = ali_question_bank_select_all`, `roles = {anon, authenticated}`, `cmd = SELECT`, `qual = ((eligibility_status = 'practice_eligible'::text) OR is_current_user_admin())`. This is an exact match to migration 100's own intended predicate — the prior, broader `eligibility_status IS DISTINCT FROM 'mock_eligible'` predicate (migration 084) is confirmed no longer live.
+
+---
+
+**PART 4 — ANON-ROLE VISIBILITY RESULT, FOUNDER-VERIFIED**
+
+A direct `SET LOCAL ROLE anon` probe against production `ali_question_bank` (the methodologically correct test — the Supabase SQL Editor's own default connection is a superuser session that bypasses RLS entirely, so this role switch was necessary for the result to mean anything) returned exactly two rows: `english | practice_eligible | 120`, `maths | practice_eligible | 194`. No row of any other `eligibility_status` — specifically `provisional`, `authentic_assessment_candidate`, `independently_validated`, or `mock_eligible` — was visible under the anon role. This is direct, positive production proof that the database-layer boundary excludes every protected status from ordinary learner reads, not merely that the policy text looks correct.
+
+---
+
+**PART 5 — APPLICATION-LAYER ISOLATION, STATED AT ITS ACTUAL EVIDENCE LEVEL**
+
+`lib/ali/questionBank.ts`'s `fetchQuestionBank()` uses the positive allow-list `q.eligibilityStatus === "practice_eligible"` (confirmed unchanged, Part 1 item 6) — source-level and test-level proof (Decision 152's 16 regression tests, including the mixed-pool test proving only `practice_eligible` survives a candidate pool containing all 5 real statuses). Commit `dc88382`, which introduced this correction, was Founder-confirmed deployed to Production and Ready in Vercel at Decision 152's own closure request — carried forward here, not re-confirmed as a fresh deployment check this session. **No separate authenticated-learner browser session was performed by this decision** — application-layer isolation is evidenced at the source/test/deployment-confirmation level, not by an independent runtime observation of a live Practice session; this is stated plainly, not overstated as a browser test that did not occur.
+
+---
+
+**PART 6 — MOCK FORM AND CONTENT-LOSS VERIFICATION**
+
+`ali_mock_form` count: **0**, Founder-verified in production. No row's `eligibility_status`, content, or any other field was changed by either migration 100 or this closure — the 38 existing Batch 001/002 Mathematics Mock questions remain exactly as Decision 150 left them. **Protected Mock content loss: NONE.**
+
+---
+
+**PART 7 — HISTORICAL EXPOSURE, CARRIED FORWARD FROM DECISION 153 UNCHANGED**
+
+38 protected Mathematics Mock questions audited; 38 classification A, 0 classification B, 0 classification C; `history_record_exists = false` for all 38; `distinct_learners = 0`; `total_times_seen = 0` for all 38. Required wording, preserved exactly, not strengthened into an unsupported absolute:
+
+> No recorded historical exposure was found for any of the 38 protected Mathematics Mock questions.
+
+Not re-run this session — no discrepancy was found requiring it.
+
+---
+
+**PART 8 — FINAL DECISION 152 CLOSURE VERDICT**
+
+| Dimension | Result |
+|---|---|
+| Architectural defect | CONFIRMED AND CORRECTED |
+| Application Practice isolation | **PASS** (source/test-verified, deployment Founder-confirmed) |
+| Database/RLS Practice isolation | **PASS** (Founder-verified live in production, both policy text and anon-role visibility) |
+| Recorded historical exposure | NONE FOUND |
+| Protected Mock content loss | NONE |
+| Mathematics Practice inventory | 194 `practice_eligible` |
+| English Practice inventory | 120 `practice_eligible` |
+| Protected Mathematics Mock inventory | 38 `independently_validated` |
+| Mock form count | 0 |
+| Mock availability | NOT READY YET |
+
+**Decision 152 is now PRODUCTION CLOSED.** Both required layers (Part 6 of Decision 152's own closure gate) are evidenced: the application layer by source/test proof plus Founder-confirmed deployment, and the database layer by direct Founder-run production queries — the stronger, independently-verified form of evidence, not merely "should be true given the code."
+
+---
+
+**PART 9 — STATUS OF MIGRATIONS 095–099**
+
+**The Practice-isolation defect no longer blocks migrations 095–099.** Once applied, their content (10 Mathematics Batch 003 rows + 16 English Batch 001 rows, all `authentic_assessment_candidate`) would be subject to exactly the same corrected boundary just verified live — structurally unreachable by ordinary Practice, the same as every other non-`practice_eligible` row in the table today. **This does NOT automatically authorise their application.** They remain governed by their own, separate, unmet requirement from Decision 151: genuine independent review has not occurred for either track. Their content states are unchanged and nothing is promoted by this decision — `authentic_assessment_candidate` throughout, migrations 095–099 still self-disclosed `NOT APPLIED`.
+
+---
+
+**Checks performed this session:** repository reconciliation only (clean working tree; HEAD/origin match; Decision-153 count; migration-100/095–099/application-fix byte-identity). No production query was run — the Founder's own directly-run `pg_policies` result and anon-role visibility probe are accepted directly as Level 1 evidence, the strongest form this project's evidentiary discipline recognises. No test suite, `tsc`, ESLint, Copy Quality Guard, or build was re-run, since no source file changed in this closure beyond this log entry, and reconciliation found no unexpected source change requiring it.
+
+**What this decision does NOT claim:** it does not claim any browser/runtime Practice session was independently observed by this session (Part 5, stated plainly); it does not claim migrations 095–099 are now authorised for application (Part 9 — independent review remains the blocking step, unrelated to this closure); it does not claim the `ali_student_question_history` reconstruction limitation (Decision 152 Part 3) has been resolved, only that it did not prevent a clean, fully-confident classification-A result for all 38 questions this time; it does not claim any Mock availability, cadence, form-assembly, or Educational Intelligence change — none occurred.
+
+**Files changed:** `ALI_DECISION_LOG.md` only (this entry).
+
+**Decision number:** 154.
+
+**Commit SHA:** recorded after commit (see repository history immediately following this entry).
+
+**Rationale:** closing on the Founder's own two directly-run production queries — the `pg_policies` predicate check and the anon-role visibility probe — rather than on migration-application confirmation alone, is the correct bar for a security/isolation correction specifically: "the migration ran without error" proves the DDL executed, not that the resulting policy behaves as intended, and Decision 152 Part 10 item E explicitly required exactly this stronger form of evidence before closure. Distinguishing application-layer evidence (source/test/deployment-confirmation) from database-layer evidence (direct production query) rather than presenting them as equally strong follows this session's own standing discipline against overstating what has actually been observed.
+
+**Implications:** Decisions 1–153 all stand, none reversed or rewritten. Decision 152 (Protected Mock Content Isolation and Security Correction) is CLOSED. Current protected Mathematics Mock inventory: 38 `independently_validated` (Batch 001: 18, Batch 002: 20) — unchanged, no retirement or replacement required. Decision 151's authored content (migrations 095–099: Mathematics Batch 003 — 10 candidate rows across 4 families; English Mock Content Foundation Batch 001 — 1 original passage, 13 Comprehension rows, 3 Continuous Writing prompts, plus the associated review-governance migrations) remains preserved, unapplied, and `authentic_assessment_candidate`. **The next programme action is to return to Decision 151's own controlled production-application and independent-review sequence for migrations 095–099** — not to begin another content batch, and not implied or accelerated by this closure to happen automatically. No independent review, no content promotion, no Mock form, no Mock Centre activation, and no further Practice-selection code change is authorised or begun by this decision.
+
+---
