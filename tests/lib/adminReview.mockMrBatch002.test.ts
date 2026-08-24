@@ -75,7 +75,7 @@ test("a Batch 001 approval for a DIFFERENT family (same review_type, no Batch 00
 
 test("a genuine mock_maths_independent_review approval for Batch 002, carrying the real notes marker migration 092 writes, IS correctly recognised", () => {
   const notes = `${buildMockMrBatch002NotesPrefix("mock-mr04-percentchange", ["mock-mr04-percentchange-01", "mock-mr04-percentchange-02"])}\n\nReviewer qualification: 11+ tutoring experience.\n\nLooks sound.`;
-  const rows: SevenXReviewRow[] = [row({ decision: "approved", notes })];
+  const rows: SevenXReviewRow[] = [row({ decision: "approved", notes, reviewer: "A Real Reviewer" })];
   const status = deriveMockMrBatch002ReviewStatus(rows, MOCK_MR_BATCH002_TARGET_IDS);
   assert.equal(status.get("mock-mr04-percentchange")!.reviewed, true);
   assert.equal(status.get("mock-mr04-percentchange")!.decision, "approved");

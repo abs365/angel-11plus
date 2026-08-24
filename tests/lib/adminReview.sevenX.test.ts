@@ -97,7 +97,7 @@ test("8. mr05-number-property-search is reviewable (no prior review of any kind)
 
 test("a genuine 007X approval (post-submission, via buildSevenXNotesPrefix) IS correctly recognised as reviewed", () => {
   const notes = `${buildSevenXNotesPrefix("precision-dec", ["precision-dec-04", "precision-dec-05", "precision-dec-06"])}\n\nReviewer qualification: Essex CSSE 11+ parent.\n\nLooks correct.`;
-  const rows: SevenXReviewRow[] = [row({ family_id: "precision-dec", decision: "approved", notes })];
+  const rows: SevenXReviewRow[] = [row({ family_id: "precision-dec", decision: "approved", notes, reviewer: "A Real Reviewer" })];
   const status = deriveSevenXReviewStatus(rows, FOUR_FAMILIES);
   assert.equal(status.get("precision-dec")!.reviewed, true);
   assert.equal(status.get("precision-dec")!.decision, "approved");

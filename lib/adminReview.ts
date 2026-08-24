@@ -962,17 +962,60 @@ export interface SevenXReviewRow {
  * distinct review_type, never conflated with content_review) — see
  * MOCK_MR_BATCH001_FAMILIES below.
  */
+/**
+ * `requireMarker` (Decision 157, English Passage Review Status Defect
+ * Correction) — defaults to `true`, preserving byte-identical behaviour
+ * for every existing caller (SevenX, Mr04Depth, Inc006Depth, Mock
+ * Mathematics Batch 001/002/003). Pass `false` only for a target whose
+ * canonical identity (`family_id` + `reviewType`, both already filtered
+ * at the database query in `fetchBatchReviewStatus` below) is already
+ * unambiguous on its own — i.e. a brand-new, never-reused `family_id`
+ * whose `review_type` has exactly one purpose in the whole system (the
+ * English Mock passage review is exactly this: `mock-eng-boathouse` was
+ * created fresh by migration 097 and is not, and will never be, reused
+ * by any other batch, and `mock_english_passage_independent_review`
+ * exists for no other purpose). The marker exists to stop an unrelated
+ * HISTORICAL row for the SAME `family_id` (e.g. an old `content_review`,
+ * or a different sub-batch of new siblings added to an already-reviewed
+ * family — the real scenario `SEVEN_X_FAMILIES`/`MR04_DEPTH_FAMILIES`
+ * were built to handle) from being misread as covering this specific new
+ * batch; where that scenario is structurally impossible, requiring it
+ * anyway can silently reject a genuine, correctly-identified review
+ * whose submission path never happened to prepend that free-text marker
+ * — exactly the defect this correction closes for the passage, confirmed
+ * from both source and production evidence (2 genuine `approved` rows,
+ * correct `family_id`/`review_type`/`decision`/`reviewer` throughout,
+ * neither containing the marker because the passage's own submission
+ * path never passes the `sevenX` prop that would have added it).
+ *
+ * `reviewer !== 'UNASSIGNED'` is checked unconditionally for every
+ * caller, marker-required or not — this is a no-op for existing
+ * behaviour (every row that could ever have `reviewer = 'UNASSIGNED'` is
+ * a pending placeholder, already excluded by the `pending_independent_
+ * review` check above it), added as explicit defence-in-depth matching
+ * this correction's own canonical-identity definition.
+ *
+ * Rows are always processed in ascending `created_at` order (enforced by
+ * `fetchBatchReviewStatus`'s own `.order()`), and each matching row
+ * simply overwrites the map entry — so where multiple genuine completed
+ * reviews exist for the same target (the passage's own 2 genuine
+ * `approved` rows), the LATEST one by `created_at` is what remains after
+ * the loop, with no extra logic required for that rule beyond already-
+ * ascending iteration order.
+ */
 export function deriveBatchReviewStatus(
   rows: SevenXReviewRow[],
   familyIds: string[],
   marker: string,
-  reviewType: ReviewType = "content_review"
+  reviewType: ReviewType = "content_review",
+  requireMarker = true
 ): Map<string, SevenXReviewStatus> {
   const result = new Map<string, SevenXReviewStatus>(familyIds.map((id) => [id, { reviewed: false, decision: null, reviewer: null }]));
   for (const row of rows) {
     if (row.review_type !== reviewType) continue;
     if (row.decision === "pending_independent_review") continue;
-    if (!row.notes || !row.notes.includes(marker)) continue;
+    if (!row.reviewer || row.reviewer === "UNASSIGNED") continue;
+    if (requireMarker && (!row.notes || !row.notes.includes(marker))) continue;
     if (!result.has(row.family_id)) continue;
     result.set(row.family_id, { reviewed: true, decision: row.decision as ReviewDecision, reviewer: row.reviewer });
   }
@@ -998,18 +1041,19 @@ export function deriveSevenXReviewStatus(rows: SevenXReviewRow[], familyIds: str
 async function fetchBatchReviewStatus(
   familyIds: string[],
   marker: string,
-  reviewType: ReviewType = "content_review"
+  reviewType: ReviewType = "content_review",
+  requireMarker = true
 ): Promise<Map<string, SevenXReviewStatus>> {
   const supabase = getSupabaseClient();
-  if (!supabase) return deriveBatchReviewStatus([], familyIds, marker, reviewType);
+  if (!supabase) return deriveBatchReviewStatus([], familyIds, marker, reviewType, requireMarker);
   const { data, error } = await supabase
     .from("ali_family_review")
     .select("family_id, review_type, decision, notes, reviewer, created_at")
     .in("family_id", familyIds)
     .eq("review_type", reviewType)
     .order("created_at", { ascending: true });
-  if (error || !data) return deriveBatchReviewStatus([], familyIds, marker, reviewType);
-  return deriveBatchReviewStatus(data, familyIds, marker, reviewType);
+  if (error || !data) return deriveBatchReviewStatus([], familyIds, marker, reviewType, requireMarker);
+  return deriveBatchReviewStatus(data, familyIds, marker, reviewType, requireMarker);
 }
 
 export async function fetchSevenXReviewStatus(familyIds: string[]): Promise<Map<string, SevenXReviewStatus>> {
@@ -1522,12 +1566,32 @@ export function buildMockEnglishPassageBatch001NotesPrefix(passageId: string): s
   return `${MOCK_ENGLISH_PASSAGE_BATCH001_MARKER} new content review: passage "The Boat in the Boathouse" (${passageId}) + its complete 12-numbered-question comprehension set (mock-eng-boathouse-q01..q11, q12a/q12b)`;
 }
 
+/**
+ * Decision 157, English Passage Review Status Defect Correction —
+ * `requireMarker: false`. The passage's own `ReviewForm` submission path
+ * (`app/admin-beta/review/page.tsx`, the plain `target={...}` case with
+ * no `sevenX` prop) never prepends `MOCK_ENGLISH_PASSAGE_BATCH001_MARKER`
+ * to a submitted review's notes — confirmed both from source and from
+ * production evidence (2 genuine `approved` rows for `family_id =
+ * 'mock-eng-boathouse'`, correct in every other field, neither
+ * containing the marker). Requiring it here would mean no genuine
+ * passage review could ever be recognised, regardless of how many times
+ * it is correctly submitted. Safe to drop for this one target: the
+ * `family_id`/`reviewType` pair passed to `deriveBatchReviewStatus`
+ * above (and filtered at the database query in `fetchBatchReviewStatus`)
+ * is already unambiguous on its own — `mock-eng-boathouse` is a brand
+ * -new id introduced by migration 097, never reused before or since, and
+ * `mock_english_passage_independent_review` has no other purpose in this
+ * system. This does not affect Mathematics Batch 001/002/003 or Writing
+ * Batch 001 — none of their own calls below pass this flag, so all keep
+ * requiring the marker exactly as before.
+ */
 export function deriveMockEnglishPassageBatch001ReviewStatus(rows: SevenXReviewRow[]): Map<string, SevenXReviewStatus> {
-  return deriveBatchReviewStatus(rows, [MOCK_ENGLISH_PASSAGE_BATCH001_TARGET_ID], MOCK_ENGLISH_PASSAGE_BATCH001_MARKER, "mock_english_passage_independent_review");
+  return deriveBatchReviewStatus(rows, [MOCK_ENGLISH_PASSAGE_BATCH001_TARGET_ID], MOCK_ENGLISH_PASSAGE_BATCH001_MARKER, "mock_english_passage_independent_review", false);
 }
 
 export async function fetchMockEnglishPassageBatch001ReviewStatus(): Promise<Map<string, SevenXReviewStatus>> {
-  return fetchBatchReviewStatus([MOCK_ENGLISH_PASSAGE_BATCH001_TARGET_ID], MOCK_ENGLISH_PASSAGE_BATCH001_MARKER, "mock_english_passage_independent_review");
+  return fetchBatchReviewStatus([MOCK_ENGLISH_PASSAGE_BATCH001_TARGET_ID], MOCK_ENGLISH_PASSAGE_BATCH001_MARKER, "mock_english_passage_independent_review", false);
 }
 
 /**

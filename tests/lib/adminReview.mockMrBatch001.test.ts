@@ -71,7 +71,7 @@ test("2. an approved content_review row for the same family_id does NOT satisfy 
 
 test("2. a genuine mock_maths_independent_review approval IS correctly recognised, via the real notes marker migration 089 writes", () => {
   const notes = `${buildMockMrBatch001NotesPrefix("mock-mr02-invdiv", ["mock-mr02-invdiv-01", "mock-mr02-invdiv-02", "mock-mr02-invdiv-03"])}\n\nReviewer qualification: 11+ tutoring experience.\n\nLooks sound.`;
-  const rows: SevenXReviewRow[] = [row({ decision: "approved", notes })];
+  const rows: SevenXReviewRow[] = [row({ decision: "approved", notes, reviewer: "A Real Reviewer" })];
   const status = deriveMockMrBatch001ReviewStatus(rows, MOCK_MR_BATCH001_TARGET_IDS);
   assert.equal(status.get("mock-mr02-invdiv")!.reviewed, true);
   assert.equal(status.get("mock-mr02-invdiv")!.decision, "approved");

@@ -4,7 +4,12 @@ import {
   validateReviewSubmission, buildNotesWithQualification, sortByDifficulty, computeDifficultyRange,
   REVIEW_CRITERIA, hasNegativeFraming, FAMILY_EDUCATIONAL_CONTEXT, FAMILY_MARKING_BASIS,
   groupQuestionsForReview,
-  type ReviewSubmission, type RepresentativeQuestion,
+  deriveBatchReviewStatus, deriveMockEnglishPassageBatch001ReviewStatus, deriveMockWritingBatch001ReviewStatus,
+  deriveMockMrBatch003ReviewStatus,
+  MOCK_ENGLISH_PASSAGE_BATCH001_MARKER, MOCK_ENGLISH_PASSAGE_BATCH001_TARGET_ID,
+  MOCK_WRITING_BATCH001_FAMILIES, MOCK_WRITING_BATCH001_MARKER,
+  MOCK_MR_BATCH003_FAMILIES, MOCK_MR_BATCH003_BATCH_MARKER,
+  type ReviewSubmission, type RepresentativeQuestion, type SevenXReviewRow,
 } from "@/lib/adminReview";
 
 /**
@@ -494,4 +499,127 @@ test("the 3 of these 8 families with no MODEL are disclosed honestly, not overst
 test("ENGLISH_TEACHING_CONTENT_VERSION is a real, non-empty identifier naming the real increment", () => {
   assert.ok(ENGLISH_TEACHING_CONTENT_VERSION.length > 0);
   assert.ok(ENGLISH_TEACHING_CONTENT_VERSION.includes("007O"));
+});
+
+// --- English Passage Review Status Defect Correction (Decision 157) ------
+// Reproduces the exact production scenario: a genuine passage review is
+// stored correctly but the pre-correction status reader required a
+// free-text marker the passage's own submission path never wrote, so it
+// could never be recognised. Fixtures below mirror the real production
+// row shapes (family_id/reviewer/review_type/decision/notes) reported by
+// the Founder's own read-only query, not synthetic placeholders.
+
+function pendingPlaceholderRow(familyId: string, reviewType: string, marker: string): SevenXReviewRow {
+  return {
+    family_id: familyId, review_type: reviewType, decision: "pending_independent_review",
+    notes: `${marker} new content review: placeholder`, reviewer: "UNASSIGNED",
+  };
+}
+
+function genuineReviewRow(overrides: Partial<SevenXReviewRow> & { family_id: string; review_type: string }): SevenXReviewRow {
+  return {
+    decision: "approved", notes: "Reviewer qualification: KS2 English teaching experience.\n\nGenuine reviewer notes.",
+    reviewer: "Ayobami Lawal",
+    ...overrides,
+  };
+}
+
+test("1. English passage: pending placeholder only -> not yet reviewed", () => {
+  const rows = [pendingPlaceholderRow(MOCK_ENGLISH_PASSAGE_BATCH001_TARGET_ID, "mock_english_passage_independent_review", MOCK_ENGLISH_PASSAGE_BATCH001_MARKER)];
+  const status = deriveMockEnglishPassageBatch001ReviewStatus(rows);
+  assert.equal(status.get(MOCK_ENGLISH_PASSAGE_BATCH001_TARGET_ID)?.reviewed, false);
+});
+
+test("2. English passage: pending placeholder + one valid approved review WITHOUT the marker -> reviewed (approved) -- the exact production defect", () => {
+  const rows = [
+    pendingPlaceholderRow(MOCK_ENGLISH_PASSAGE_BATCH001_TARGET_ID, "mock_english_passage_independent_review", MOCK_ENGLISH_PASSAGE_BATCH001_MARKER),
+    genuineReviewRow({ family_id: MOCK_ENGLISH_PASSAGE_BATCH001_TARGET_ID, review_type: "mock_english_passage_independent_review" }),
+  ];
+  const status = deriveMockEnglishPassageBatch001ReviewStatus(rows);
+  const s = status.get(MOCK_ENGLISH_PASSAGE_BATCH001_TARGET_ID);
+  assert.equal(s?.reviewed, true, "a genuine review must be recognised even though its notes never contained the marker");
+  assert.equal(s?.decision, "approved");
+  assert.equal(s?.reviewer, "Ayobami Lawal");
+});
+
+test("3. English passage: pending placeholder + TWO valid approved reviews without the marker -> reviewed (approved), latest wins, does not regress to pending", () => {
+  const rows = [
+    pendingPlaceholderRow(MOCK_ENGLISH_PASSAGE_BATCH001_TARGET_ID, "mock_english_passage_independent_review", MOCK_ENGLISH_PASSAGE_BATCH001_MARKER),
+    genuineReviewRow({ family_id: MOCK_ENGLISH_PASSAGE_BATCH001_TARGET_ID, review_type: "mock_english_passage_independent_review", notes: "Reviewer qualification: first submission." }),
+    genuineReviewRow({ family_id: MOCK_ENGLISH_PASSAGE_BATCH001_TARGET_ID, review_type: "mock_english_passage_independent_review", notes: "Reviewer qualification: second submission (latest)." }),
+  ];
+  const status = deriveMockEnglishPassageBatch001ReviewStatus(rows);
+  const s = status.get(MOCK_ENGLISH_PASSAGE_BATCH001_TARGET_ID);
+  assert.equal(s?.reviewed, true);
+  assert.equal(s?.decision, "approved");
+  // rows are processed in the order given (matching fetchBatchReviewStatus's
+  // own ascending created_at ordering) -- the LAST matching row wins.
+});
+
+test("4. English passage: a completed review with the WRONG review_type is not accepted for this batch", () => {
+  const rows = [
+    genuineReviewRow({ family_id: MOCK_ENGLISH_PASSAGE_BATCH001_TARGET_ID, review_type: "content_review" }),
+  ];
+  const status = deriveMockEnglishPassageBatch001ReviewStatus(rows);
+  assert.equal(status.get(MOCK_ENGLISH_PASSAGE_BATCH001_TARGET_ID)?.reviewed, false);
+});
+
+test("5. English passage: a completed review for the WRONG family_id/target is not accepted", () => {
+  const rows = [
+    genuineReviewRow({ family_id: "some-other-passage", review_type: "mock_english_passage_independent_review" }),
+  ];
+  const status = deriveMockEnglishPassageBatch001ReviewStatus(rows);
+  assert.equal(status.get(MOCK_ENGLISH_PASSAGE_BATCH001_TARGET_ID)?.reviewed, false);
+});
+
+test("6. English passage: a row with reviewer UNASSIGNED is never treated as completed, even if it happens to contain the marker and a non-pending decision", () => {
+  const rows: SevenXReviewRow[] = [
+    { family_id: MOCK_ENGLISH_PASSAGE_BATCH001_TARGET_ID, review_type: "mock_english_passage_independent_review", decision: "approved", notes: `${MOCK_ENGLISH_PASSAGE_BATCH001_MARKER} malformed row`, reviewer: "UNASSIGNED" },
+  ];
+  const status = deriveMockEnglishPassageBatch001ReviewStatus(rows);
+  assert.equal(status.get(MOCK_ENGLISH_PASSAGE_BATCH001_TARGET_ID)?.reviewed, false, "UNASSIGNED must never be read as a genuine reviewer regardless of decision or notes content");
+});
+
+test("7. Writing Batch 001 status behaviour is unchanged: still requires the marker, still correctly recognises a properly-tagged review", () => {
+  const family = MOCK_WRITING_BATCH001_FAMILIES[0];
+  const rows = [
+    genuineReviewRow({ family_id: family.familyId, review_type: "mock_writing_prompt_independent_review", notes: `${MOCK_WRITING_BATCH001_MARKER} new content review: ${family.familyId}` }),
+  ];
+  const status = deriveMockWritingBatch001ReviewStatus(rows, [family.familyId]);
+  assert.equal(status.get(family.familyId)?.reviewed, true);
+
+  // and a review missing the marker is still correctly rejected for Writing -- Decision 157 did not weaken this batch's own isolation.
+  const rowsWithoutMarker = [
+    genuineReviewRow({ family_id: family.familyId, review_type: "mock_writing_prompt_independent_review", notes: "Reviewer qualification: no marker here." }),
+  ];
+  const statusWithoutMarker = deriveMockWritingBatch001ReviewStatus(rowsWithoutMarker, [family.familyId]);
+  assert.equal(statusWithoutMarker.get(family.familyId)?.reviewed, false, "Writing must still require its own marker -- unaffected by the passage-specific correction");
+});
+
+test("8. Mathematics Batch 003 status behaviour is unchanged: still requires the marker, still correctly recognises a properly-tagged review", () => {
+  const family = MOCK_MR_BATCH003_FAMILIES[0];
+  const rows = [
+    genuineReviewRow({ family_id: family.familyId, review_type: "mock_maths_independent_review", notes: `${MOCK_MR_BATCH003_BATCH_MARKER} new content review: ${family.familyId}` }),
+  ];
+  const status = deriveMockMrBatch003ReviewStatus(rows, [family.familyId]);
+  assert.equal(status.get(family.familyId)?.reviewed, true);
+
+  const rowsWithoutMarker = [
+    genuineReviewRow({ family_id: family.familyId, review_type: "mock_maths_independent_review", notes: "Reviewer qualification: no marker here." }),
+  ];
+  const statusWithoutMarker = deriveMockMrBatch003ReviewStatus(rowsWithoutMarker, [family.familyId]);
+  assert.equal(statusWithoutMarker.get(family.familyId)?.reviewed, false, "Mathematics Batch 003 must still require its own marker -- unaffected by the passage-specific correction");
+});
+
+test("deriveBatchReviewStatus default behaviour (requireMarker defaults to true) still rejects a genuine review with no marker, for any generic caller not opting out", () => {
+  const rows = [genuineReviewRow({ family_id: "some-family", review_type: "content_review", notes: "no marker in this text" })];
+  const status = deriveBatchReviewStatus(rows, ["some-family"], "SOME-BATCH-MARKER", "content_review");
+  assert.equal(status.get("some-family")?.reviewed, false);
+});
+
+test("deriveBatchReviewStatus with requireMarker explicitly true behaves identically to the default (no silent behaviour change for existing callers)", () => {
+  const rows = [genuineReviewRow({ family_id: "some-family", review_type: "content_review", notes: "no marker in this text" })];
+  const withDefault = deriveBatchReviewStatus(rows, ["some-family"], "SOME-BATCH-MARKER", "content_review");
+  const withExplicitTrue = deriveBatchReviewStatus(rows, ["some-family"], "SOME-BATCH-MARKER", "content_review", true);
+  assert.deepEqual(withDefault, withExplicitTrue);
 });

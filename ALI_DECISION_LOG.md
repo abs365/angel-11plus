@@ -4849,3 +4849,79 @@ No new unit test was needed (this is a static `id`/anchor-link addition, not new
 **Implications:** Decisions 1–155 all stand, none reversed or rewritten. All three Increment 006 review sections (Mathematics Batch 003, English Comprehension, Continuous Writing) are confirmed live, correctly wired, and now more easily locatable on the deployed review page. **No independent review has been performed.** No content promoted, no eligibility changed, no `ali_mock_form` created, no Mock Centre activation, and no further content batch is authorised or begun by this decision. The next action remains genuine human review by the Founder or a qualified reviewer, using the navigation aid this decision adds if helpful.
 
 ---
+
+### Decision 157 — ENGLISH PASSAGE REVIEW STATUS DEFECT: CONFIRMED AND CORRECTED: production evidence (3 real `ali_family_review` rows for `family_id = 'mock-eng-boathouse'` — the original migration 099 placeholder, and TWO genuine `approved` rows from reviewer Ayobami Lawal, both correct in every field except the free-text marker the status reader required) confirms the source-level root cause already identified: the passage's own `ReviewForm` submission path never prepends `MOCK_ENGLISH_PASSAGE_BATCH001_MARKER` to a submitted review's notes, so `deriveBatchReviewStatus`'s marker-in-notes requirement made it structurally impossible for any genuine passage review to ever be recognised as reviewed, regardless of how many times it was correctly submitted; corrected by making the marker requirement optional (`requireMarker`, defaulting to `true`, preserving every other batch's behaviour byte-for-byte) and opting the passage's own status functions out of it, since its canonical identity (`family_id` + `review_type`, already filtered at the database query) is unambiguous on its own; the Founder's two genuine approvals are preserved untouched as audit evidence and are now correctly recognised, with the later one governing per the existing ascending-`created_at`/overwrite-on-match mechanism, requiring no new ordering logic
+
+**Scope and process:** A single, targeted code fix, made this turn per the directive's own explicit authorisation to proceed once the defect was "proven completely from source and production evidence, with no ambiguity left to distinguish competing causes." No production data was read, written, updated, or deleted by this session — the Founder's own query result is accepted directly as Level 1 evidence.
+
+---
+
+**PART 1 — REPOSITORY RECONCILIATION**
+
+Working tree clean before this session's own change; HEAD == origin/main == `d72c7bc` (Decision 156); commit `d72c7bc` confirmed deployed to production (Vercel "Deployment has completed," GitHub commit-status API, independently obtained); Decision 155's submission code confirmed unchanged since, except for Decision 156's own `id`/`scroll-mt-4`/navigation-card additions (`git diff` against the Decision 155 commit showed nothing else). No discrepancy found.
+
+---
+
+**PART 2 — ROOT CAUSE, NOW CONFIRMED BY BOTH SOURCE AND PRODUCTION EVIDENCE**
+
+**WRITE path** (`submitMockEnglishPassageIndependentReview`, unchanged by this decision): correctly writes `review_target_type = passage`, `family_id = mock-eng-boathouse`, `review_type = mock_english_passage_independent_review`, the genuine reviewer's name, and `decision = approved` — the Founder's own production rows confirm every one of these fields was written exactly right, both times.
+
+**STATUS-READ path** (`deriveBatchReviewStatus`, before this fix): additionally required `notes.includes("MOCK-INC006-ENGLISH-BATCH001")`. The passage's own `ReviewForm` invocation (`page.tsx`, the plain `target={...}` case, no `sevenX` prop) never triggers the one code path (`handleSubmit`'s `sevenX ? {...prefix} : submission` branch) that prepends that marker — unlike Writing, whose invocation does pass `sevenX` with `notesPrefix: buildMockWritingBatch001NotesPrefix(...)`, which is exactly why Writing correctly showed "3 of 3 reviewed" while the passage could not.
+
+**Production confirmation:** both genuine `approved` rows (2026-08-24 15:45:22 and 16:40:36, reviewer Ayobami Lawal) carry the correct `family_id`/`review_target_type`/`review_type`/`decision`/`reviewer`, and neither contains the marker — exactly matching the source-level prediction. **The defect is proven, not merely inferred: a genuine passage review could be stored correctly but could never satisfy the status-reader's own precondition, independent of how many times it was submitted.**
+
+---
+
+**PART 3 — CORRECTION**
+
+Reused the existing shared abstraction rather than writing a parallel one, per the directive's own instruction: `deriveBatchReviewStatus()` and `fetchBatchReviewStatus()` gained one new parameter, `requireMarker` (defaulting to `true`), and one new universal check, `reviewer !== 'UNASSIGNED'` (a no-op for every existing caller, since the only rows that can ever carry `reviewer = 'UNASSIGNED'` are pending placeholders, already excluded by the `decision === 'pending_independent_review'` check immediately above it — added as explicit defence-in-depth matching the directive's own canonical-identity definition, not a behaviour change).
+
+`deriveMockEnglishPassageBatch001ReviewStatus()`/`fetchMockEnglishPassageBatch001ReviewStatus()` are the **only** callers passing `requireMarker: false` — justified because `family_id = 'mock-eng-boathouse'` is a brand-new id introduced by migration 097, never reused before or since, and `review_type = mock_english_passage_independent_review` has no other purpose anywhere in the system; the database query already filters on both fields, so the marker's original purpose (distinguishing a new batch's review from an unrelated historical row for the SAME reused `family_id` — the real scenario `SEVEN_X_FAMILIES`/`MR04_DEPTH_FAMILIES` exist to handle) cannot apply here. **Every other caller — SevenX, Mr04Depth, Inc006Depth, Mock Mathematics Batch 001/002/003, Continuous Writing Batch 001 — is unchanged, confirmed by `grep`: none of their own call sites pass a 5th argument, so all keep the default `true`, byte-identical to their pre-existing behaviour.**
+
+**Duplicate genuine reviews, handled without new logic:** `fetchBatchReviewStatus()` already orders rows by `created_at` ascending, and `deriveBatchReviewStatus()`'s loop simply overwrites the map entry on each further match — so where multiple genuine completed reviews exist for one target (the passage's own two), the chronologically LATEST one is what remains after the loop, with no additional rule required. Both rows remain untouched in `ali_family_review`, preserved as audit evidence exactly as instructed — this decision reads them, never writes, updates, or deletes either.
+
+---
+
+**PART 4 — REGRESSION TESTS**
+
+10 new tests, `tests/lib/adminReview.test.ts`, using fixtures that mirror the real production row shapes the Founder's own query returned (not synthetic placeholders): (1) pending placeholder only → not reviewed; (2) placeholder + one genuine approval without the marker → reviewed (approved) — the exact production defect, now passing; (3) placeholder + two genuine approvals without the marker → reviewed (approved), does not regress to pending, latest by array order (matching ascending `created_at`) governs; (4) wrong `review_type` → rejected; (5) wrong `family_id`/target → rejected; (6) `reviewer = UNASSIGNED` with a non-pending decision and the marker present → still rejected, proving the new defensive check actually fires; (7) Writing Batch 001 — both a correctly-marked review (still recognised) and one missing the marker (still correctly rejected, proving Decision 157 did not weaken Writing's own isolation); (8) Mathematics Batch 003 — identical pairing, same proof. Two further tests confirm `deriveBatchReviewStatus`'s default (`requireMarker` omitted) behaves byte-identically to `requireMarker: true` explicitly passed — no silent behaviour change for any existing caller.
+
+**A genuine pre-existing gap found while adding these tests, fixed alongside them:** three pre-existing tests (`tests/lib/adminReview.sevenX.test.ts`, `tests/lib/adminReview.mockMrBatch001.test.ts`, `tests/lib/adminReview.mockMrBatch002.test.ts`) that were each titled "a genuine ... approval IS correctly recognised" used a fixture that never actually overrode `reviewer` from the shared default of `"UNASSIGNED"` — harmless before this session's own new `reviewer !== 'UNASSIGNED'` check (which didn't exist), but not a realistic fixture for what the test claimed to represent (a real submission, per `validateReviewSubmission`'s own non-empty-reviewer requirement, can never actually have `reviewer = 'UNASSIGNED'`). Each fixture corrected to a real reviewer name, strengthening the test's own fidelity to what it claims to test, not weakening the new check to accommodate it.
+
+**Grouped-question rendering tests from Decision 155 (`groupQuestionsForReview`) confirmed still present and passing, untouched by this change.**
+
+Full suite: **1171/1171 pass** (1161 baseline at Decision 156 + 10 new; zero net regressions — the 3 pre-existing tests that initially failed against the new defensive check were fixed at the fixture level, not by weakening the check). `npx tsc --noEmit`: clean. ESLint on every touched file: 0 errors, 0 warnings. Copy Quality Guard: PASS, 0 violations, 256 files. Production build: succeeds.
+
+---
+
+**PART 5 — GOVERNANCE STATUS**
+
+**English Comprehension Batch 001:** 1 passage, 13 response-component rows, 12 numbered questions. Genuine independent human review is now **completed and correctly recognised** — decision `approved`, reviewer Ayobami Lawal. Still `authentic_assessment_candidate`. **NOT `independently_validated`. NOT `mock_eligible`. Not used by any Mock form.** This decision changes only how the review is *displayed*; it promotes nothing.
+
+**Continuous Writing Batch 001:** 3 prompts, already correctly showing 3 of 3 reviewed and approved (unaffected by this defect or its correction). Still `authentic_assessment_candidate`. No promotion authorised by this correction.
+
+**Mathematics Batch 003:** not touched, not inferred, not re-checked by this decision — its own actual review state (per Decision 155/156, not yet reviewed) is preserved exactly as it stood before this correction.
+
+---
+
+**What this decision does NOT claim:** it does not claim any English content is now `independently_validated` or `mock_eligible` — recognising a completed review and promoting content remain two separate, distinct governance steps, and only the former occurred here; it does not claim Mathematics Batch 003's review status changed in any way; it does not claim either of the Founder's two genuine review rows was modified, merged, or replaced — both remain exactly as submitted; it does not claim this correction retroactively adds the marker to those two rows' own `notes` (it does not — the fix is in the reader, not a rewrite of history); it does not claim `ali_mock_form` was created or any content was promoted.
+
+**Files changed:** `lib/adminReview.ts` (modified — `requireMarker` parameter added to the shared status functions, universal `reviewer !== 'UNASSIGNED'` check added, the passage's own status functions opted out of the marker requirement), `tests/lib/adminReview.test.ts` (modified — 10 new tests), `tests/lib/adminReview.sevenX.test.ts`, `tests/lib/adminReview.mockMrBatch001.test.ts`, `tests/lib/adminReview.mockMrBatch002.test.ts` (each modified — one pre-existing fixture corrected to a realistic reviewer name), `ALI_DECISION_LOG.md` (this entry).
+
+**Migration:** none created by this decision — this is an application-layer read-path correction only, no schema or data change.
+
+**Decision number:** 157.
+
+**Commit SHA:** recorded after commit (see repository history immediately following this entry).
+
+**Deployment status:** committed and pushed; production deployment via the normal Vercel pipeline is expected to follow automatically, matching every prior commit in this arc — not independently re-confirmed as deployed within this same turn (that confirmation, via the GitHub commit-status API, is available on request once the deploy completes).
+
+**Expected production review-screen result, without any further human submission:** once deployed, "Mock English Comprehension Batch 001 Review" for "The Boat in the Boathouse" should show "Reviewed (approved)," derived entirely from the two already-existing genuine production review rows — no new `ali_family_review` row is required or created by this correction.
+
+**No production review data was mutated** — Decision 157 is a code-only, read-path correction; the Founder's own two genuine review rows remain exactly as submitted. **No content was promoted** — `authentic_assessment_candidate` is unchanged for all English Batch 001 content; no `independently_validated`, `mock_eligible`, or `ali_mock_form` action was taken.
+
+**Rationale:** extending the existing shared `deriveBatchReviewStatus`/`fetchBatchReviewStatus` functions with an opt-out parameter, rather than writing a bespoke status function for the passage alone, keeps the one proven, already-tested mechanism (ascending-order fetch + overwrite-on-match, which already correctly implements "latest genuine review governs" with no new code) as the single source of truth for every batch, and makes the passage's own deviation from the default explicit and self-documenting at its own two call sites rather than duplicated logic that could drift. Fixing the three pre-existing tests' fixtures rather than loosening the new `reviewer !== 'UNASSIGNED'` check follows this project's own standing discipline: a test titled "a genuine approval is correctly recognised" should use a fixture that could actually occur in production, and the new check is correct governance, not an accident to work around.
+
+**Implications:** Decisions 1–156 all stand, none reversed or rewritten. The English Comprehension passage's genuine, twice-submitted human review is now correctly recognised by the review surface without requiring a third submission. Mathematics Batch 003 remains not yet reviewed (unchanged, not addressed by this decision). No content — English, Writing, or Mathematics — is promoted, made `independently_validated`, or made `mock_eligible` by this decision. No `ali_mock_form` is created. The next action remains genuine human review of Mathematics Batch 003, and the Founder's own confirmation that the passage now correctly displays as reviewed once this deploy completes.
+
+---
