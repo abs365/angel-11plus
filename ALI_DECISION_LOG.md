@@ -4539,3 +4539,69 @@ Full suite: **1156/1156 pass** (1140 baseline at Decision 151 + 16 new: 6 in `te
 **Implications:** Decisions 1–151 all stand, none reversed or rewritten; Decision 151's authored content (migrations 095–099) is preserved, not discarded, and remains awaiting Founder authorisation, now correctly sequenced AFTER this correction rather than before it. **Migrations 095–099 are NOT yet safe to apply for the reason Decision 151 itself already gave — their content has not been independently reviewed — and this decision adds no new reason they would be unsafe specifically because of the isolation defect, since the application-layer fix (live once deployed) plus migration 100 (once applied) close that specific gap for ALL Mathematics/English `ali_question_bank` content, present and future, not only for these 5 migrations.** The Founder's own next actions: (1) deploy the application-layer fix through the normal pipeline; (2) review and apply migration 100, then run Part 10's verification plan; (3) run the Part 3 read-only query and interpret its results against the Part 4 A/B/C framework for each of the 38 existing questions; (4) only then decide, separately, whether and when to apply migrations 095–099. No independent review, no content batch, no Mock form, and no further Practice-selection code change is authorised or begun by this decision.
 
 ---
+
+### Decision 153 — PROTECTED MOCK CONTENT ISOLATION, HISTORICAL EXPOSURE AUDIT CLOSED: the Founder's own production result for Decision 152's read-only audit query returned all 38/38 protected Mathematics Mock questions (Batch 001: 18 + Batch 002: 20) as classification A — no `ali_student_question_history` row exists for any of them; 0 confirmed exposure (B), 0 unresolved (C); no learner exposure remediation, retirement, or content replacement is required on the basis of this defect; the application-layer isolation fix (commit dc88382) is Founder-confirmed deployed to Production and Ready in Vercel; migration 100 (the database-layer RLS correction) and migrations 095–099 (Batch 003/English Batch 001) remain unapplied — this decision closes the historical-exposure question only, not the full defect-closure or content-application questions
+
+**Scope and process:** Documentation-only closure of Decision 152 Part 3. No source file, migration, or production data was changed by this decision beyond this log entry. Grounded entirely in the Founder's own Level 1, production-run result from the exact read-only query this session supplied — not re-run or re-derived here (no live Supabase access in this environment, unchanged from every prior session in this arc).
+
+---
+
+**PART 1 — REPOSITORY RECONCILIATION**
+
+All 8 items confirmed directly: 1. Working tree clean before this session's own change. 2. HEAD == origin/main == `dc88382` (Decision 152), confirmed via `git fetch` + `git rev-parse` on both refs. 3. Decision 152 present exactly once (`grep -c` confirmed). 4. Commit `dc88382` present in `git log` (confirmed). 5. The application-layer isolation correction (`lib/ali/questionBank.ts`) confirmed byte-unchanged since that commit (`git diff HEAD` empty). 6. Migration 100 confirmed byte-unchanged, still self-disclosed `NOT APPLIED` in its own file header. 7. Migrations 095–099 confirmed byte-unchanged (`git diff HEAD` empty against all five), still self-disclosed `NOT APPLIED`. 8. The 38-question inventory re-derived directly from migrations 088 (18 IDs) + 091 (20 IDs) — 38 unique, matching exactly the set the Founder's own query was built against in the prior session. No discrepancy found; nothing here required stopping.
+
+---
+
+**PART 2 — HISTORICAL AUDIT RESULT, RECORDED AS SUPPLIED**
+
+**Founder-supplied production result, accepted directly, not re-queried (no live access in this environment):** the Decision 152 read-only query returned exactly 38 rows — one per protected question ID, matching the audited set exactly. All 38 carry `eligibility_status = independently_validated`, `history_record_exists = false`, `distinct_learners = 0`, `total_times_seen = 0`, `most_recent_presented_at = null`, `exposure_classification = A`. Tally: **38 × A, 0 × B, 0 × C.**
+
+**Evidential wording, preserved exactly as instructed, not strengthened into an unsupported absolute:**
+
+> No recorded historical exposure was found for any of the 38 protected questions.
+
+This is a statement about the recorded evidence, not a claim that Decision 152's own disclosed reconstruction limitation (`source`/`first_source` retain only the first and most-recent presentation context, not a full per-attempt ledger) has been eliminated. A classification-A result — zero `ali_student_question_history` rows for a question_id, across every profile — is the one case Decision 152 Part 4 itself already identified as the fully confident reading: no row at all means no presentation was ever recorded by ANY mechanism (Practice, Mock, Learn, or Founder-validation), which is a stronger, cleaner result than a B or C classification would have been, and does not depend on the `source`/`first_source` overwrite limitation at all (that limitation only bears on distinguishing WHICH mechanism a recorded presentation came from — it has no bearing on whether a presentation was recorded in the first place).
+
+**Established:**
+- 38/38 protected questions have no `ali_student_question_history` row.
+- 0 protected questions have confirmed Practice exposure.
+- 0 protected questions have unresolved historical exposure.
+- No learner exposure remediation is required.
+- No protected question needs replacement because of this defect.
+- Batch 001 and Batch 002 Mock inventory remains educationally usable.
+
+**Explicit distinction, as instructed:**
+
+- **ARCHITECTURAL DEFECT: Confirmed.** Decision 152 already proved this from source at both the application layer (`fetchQuestionBank()`'s prior `PRACTICE_ELIGIBLE_STATUSES` set) and the database layer (migration 084's RLS predicate) — the defect existing is not in question and is not reopened or softened by this closure.
+- **RECORDED HISTORICAL CONTENT EXPOSURE: None found.** The Founder's own production evidence, accepted as Level 1.
+- **CONTENT LOSS: None.** No question was retired, demoted, or altered as a result of either the defect or this audit; Batch 001/002's 38 `independently_validated` questions stand exactly as Decision 150 left them.
+
+---
+
+**PART 3 — WHAT REMAINS OPEN (NOT CLOSED BY THIS DECISION)**
+
+This closure is scoped exactly to Decision 152 Part 3 (historical exposure). It does not close, and does not claim to close:
+
+- **Migration 100** (the database RLS correction) — still `NOT APPLIED`, per Part 1 item 6. The application-layer fix being deployed does not substitute for it; Decision 152 Part 5 already established both layers are required together for a structural (not merely probabilistic) fix.
+- **Decision 152 Part 10's verification plan, item E** — proof that ordinary Practice selection can no longer return protected Mock statuses in production specifically — requires migration 100 to be applied first, then verified; not yet performed.
+- **Migrations 095–099** (Mathematics Batch 003 / English Mock Content Foundation Batch 001) — Decision 152's own implications already stated these are not blocked BY the isolation defect once both correction layers are live, but remain blocked for the separate, original reason Decision 151 gave: no independent review has occurred. That review has not begun.
+
+---
+
+**Checks performed this session:** repository reconciliation only (clean working tree; HEAD/origin match; Decision-152 count; commit `dc88382` presence; application-fix/migration-100/migrations-095–099 byte-identity; 38-question inventory re-derivation). No production query was run — the Founder's own query result is accepted directly as Level 1 evidence. No test suite, `tsc`, ESLint, Copy Quality Guard, or build was re-run, since no source file changed in this closure beyond this log entry, and reconciliation found no unexpected source change requiring it.
+
+**What this decision does NOT claim:** it does not claim migration 100 has been applied (it has not); it does not claim Decision 152 Part 10 item E has been verified in production; it does not claim migrations 095–099 are now authorised for application (they are not — independent review is still the blocking step); it does not claim the `source`/`first_source` reconstruction limitation has been resolved or is no longer relevant to any future audit of different content; it does not claim this result would generalise to Batch 003/English content once those migrations are applied — this audit covers exactly the 38 questions already live in production as of Decision 150, not any future batch.
+
+**Files changed:** `ALI_DECISION_LOG.md` only (this entry).
+
+**Migration:** none created by this decision.
+
+**Decision number:** 153.
+
+**Commit SHA:** recorded after commit (see repository history immediately following this entry).
+
+**Rationale:** recording this result as a documentation-only closure, using the Founder's own query output verbatim rather than re-deriving or rephrasing it, keeps this entry at the same Level 1 evidentiary standard every closure in this log has required, while the explicit three-way distinction (architectural defect confirmed / recorded exposure none found / content loss none) prevents the strong, genuinely good news in Part 2 from being misread as evidence the underlying defect was minor or the remaining open items (migration 100, review, migrations 095–099) are now moot.
+
+**Implications:** Decisions 1–152 all stand, none reversed or rewritten. The 38 existing Batch 001/002 Mathematics Mock questions require no retirement, no replacement, and no quarantine on the basis of this defect — they remain `independently_validated` Mock inventory exactly as Decision 150 left them. **This does not authorise application of migration 100 or migrations 095–099** — no instruction to apply either was given alongside this evidence, and Decision 152's own sequencing (deploy → apply migration 100 → verify → THEN separately decide on 095–099) is preserved, not accelerated by this closure. No independent review, no content batch, no Mock form, and no further Practice-selection code change is authorised or begun by this decision.
+
+---
