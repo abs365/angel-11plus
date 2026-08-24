@@ -4777,3 +4777,75 @@ Confirmed at every step of the sequence, and again for this entry: working tree 
 **Implications:** Decisions 1–154 all stand, none reversed or rewritten. Migrations 095–099 are now live in production, confirmed by direct Founder-run verification, with Decision 154's Practice-isolation boundary re-confirmed effective against them. The review surface is now genuinely ready to support independent review of all three new content units — Mathematics Batch 003 (4 families, including the one grouped family shown coherently), the English Comprehension passage (12 numbered questions including the grouped Q12), and the 3 Continuous Writing prompts — without misrepresenting any grouped structure as unrelated rows. **No independent review has been performed.** No content has been promoted, no `ali_mock_form` created, no `mock_eligible` set, no Mock Centre activation, and no further content batch is authorised or begun by this decision. The next action is genuine human review by the Founder or a qualified reviewer.
 
 ---
+
+### Decision 156 — REVIEW-PAGE VISIBILITY VERIFICATION: NOT A DEFECT, POSITION AND NAVIGATION: the Founder's report of seeing only the English Comprehension section on `/admin-beta/review` is traced conclusively to page position, not a rendering, data-fetch, or deployment defect — independent evidence (GitHub's own commit-status API showing Vercel reports "Deployment has completed" for commit f736d61) confirms production is running Decision 155's code, and direct source inspection confirms all three current sections render unconditionally, identically wired, with Mathematics Batch 003 sitting immediately above the English section and Continuous Writing immediately below it in a single vertical stack — no condition, guard, or data state could have hidden either; a small, scoped navigation aid (3 anchor links + `id` targets on the three current sections) is added since the Founder genuinely missed two sections sitting directly adjacent to the one they found, without touching or reordering any historical section
+
+**Scope and process:** Investigation first, correction only where the investigation actually found something to correct. No Mock content, review decision, reviewer identity, promotion, eligibility, or Practice code was touched.
+
+---
+
+**PART 1 — REPOSITORY RECONCILIATION AND DEPLOYMENT CONFIRMATION**
+
+1–5. Working tree clean before this session's own change; HEAD == origin/main == `f736d61` (Decision 155); Decision 155 present exactly once; commit `f736d61` present in `git log`; the Decision 155 review-surface changes (`groupQuestionsForReview`, the three `MockMrBatch003Section`/`MockEnglishPassageBatch001Section`/`MockWritingBatch001Section` components) confirmed present in current source, not merely claimed.
+
+6. **Production deployment confirmed independently, not assumed:** `gh api repos/abs365/angel-11plus/commits/f736d61/status` returned a Vercel commit-status check with `"state":"success"`, `"description":"Deployment has completed"`, timestamped `2026-08-24T14:31:04Z` — after this session's own push of commit `f736d61`. **Production is running Decision 155's code.** This is real, external, independently-obtained evidence (GitHub's own status API, not a self-report), not an assumption made to avoid investigating further.
+
+No discrepancy found in any of the 6 items; nothing here required stopping.
+
+---
+
+**PART 2 — EXACT RENDER CONDITIONS FOR ALL THREE SECTIONS, TRACED FROM SOURCE**
+
+All three are plain, unconditionally-rendered components, no early return, no role/auth/environment/feature-flag condition of their own (the page-level admin gate applies equally to all three, and to the English section the Founder already saw):
+
+| | Component | JSX position (`ReviewDashboard`'s return) | Fetch call in `load()` | Guard |
+|---|---|---|---|---|
+| A | `MockMrBatch003Section` | line 2411, immediately before B | `fetchMockMrBatch003ReviewStatus(MOCK_MR_BATCH003_TARGET_IDS)` | none — header and all 4 families always render; only each family's own *button* is `disabled` if its migration were unapplied (095/096 both confirmed applied, Decision 155) |
+| B | `MockEnglishPassageBatch001Section` | line 2412 (the section the Founder saw) | `fetchMockEnglishPassageBatch001ReviewStatus()` | same pattern, none |
+| C | `MockWritingBatch001Section` | line 2413, immediately after B | `fetchMockWritingBatch001ReviewStatus(MOCK_WRITING_BATCH001_TARGET_IDS)` | same pattern, none |
+
+All three state variables (`mockMrBatch003Status`, `mockEnglishPassageBatch001Status`, `mockWritingBatch001Status`) are fetched in the exact same `Promise.all` in `load()`, in the exact same `useEffect(() => { load(); }, [])`, and rendered via the exact same JSX pattern as every other section on the page (Pilot/Batch2-4/SevenT/SevenX/Mr04Depth/Inc006Depth/MockMrBatch001-002) — sections already proven to work correctly across Decisions 141-150. There is no structural difference between A/B/C's own wiring; B is not "more correct" than A or C in any way this session could find.
+
+---
+
+**PART 3 — POSITION, NOT DEFECT**
+
+**Mathematics Batch 003 (A) sits directly ABOVE English (B)** — no other section is rendered between them (line 2411 immediately precedes line 2412). **Continuous Writing (C) sits directly BELOW English (B)** — no other section is rendered between them (line 2413 immediately follows line 2412). Neither is hidden by a condition (Part 2), neither fails because of a data-fetch return (both status fetches use the same proven pattern, and Decision 155's own Founder-run verification already confirmed both migrations' content and review placeholders exist in production exactly as expected), and neither is absent from the deployed commit (Part 1 item 6). **The Founder's observation is explained entirely by page position: English was the section in view; Mathematics Batch 003 was one screen-height or so above it, Continuous Writing one screen-height or so below it, both immediately adjacent, neither missing.**
+
+---
+
+**PART 4 — PRODUCTION DATA COMPATIBILITY, RE-CONFIRMED**
+
+The fetch/filter logic for all three sections keys on the exact same records Decision 155 already Founder-verified present in production: `MOCK_MR_BATCH003_FAMILIES`' 4 family IDs (10 rows, 4 pending `mock_maths_independent_review` placeholders), `MOCK_ENGLISH_PASSAGE_BATCH001_TARGET_ID` (`mock-eng-boathouse`, 1 pending `mock_english_passage_independent_review` placeholder), and `MOCK_WRITING_BATCH001_FAMILIES`' 3 prompt IDs (1 pending `mock_writing_prompt_independent_review` placeholder each). No production data was mutated to perform this check — this is a static comparison between the UI's own hardcoded ID constants and the production state Decision 155 already established.
+
+---
+
+**PART 5 — NAVIGATION ASSESSMENT AND CORRECTION**
+
+**Assessment: yes, real.** The review page now stacks 13 sections (historical Pilot/Batch2-4/SevenT/SevenX/Mr04Depth/Inc006Depth plus 6 Mock-programme sections) before the collapsed backlog. Two sections sitting **immediately adjacent** to one the Founder successfully found were still missed — direct, first-hand evidence that scroll position alone is no longer a reliable way to locate the three currently-relevant sections on a page this long, even without any code defect.
+
+**Correction, scoped to exactly this:** an `id` attribute added to each of the three current sections' own root element (`mock-review-mr-batch003`, `mock-review-english-passage-batch001`, `mock-review-writing-batch001`, each with `scroll-mt-4` so an anchor jump doesn't tuck the header under any sticky UI), and one small card — "Jump to current review (Increment 006)" — with three anchor links, inserted immediately before `MockMrBatch003Section` in the JSX (after `MockMrBatch002Section`, before the three current sections it links to). **No historical section is hidden, reordered, or otherwise touched** — every section from `PilotSection` through `FullBacklogSection` remains exactly where it was, in exactly the same order.
+
+---
+
+**PART 6 — TESTS AND VERIFICATION**
+
+No new unit test was needed (this is a static `id`/anchor-link addition, not new logic — nothing pure to test in isolation). Full suite: **1161/1161 pass**, unchanged from Decision 155 (zero regressions — confirms this change touches no tested logic). `npx tsc --noEmit`: clean. ESLint on the touched file: the same 5 pre-existing errors present before this change (confirmed by diff-hunk inspection — all 4 changed hunks, at the three section headers and the JSX insertion point, fall well outside all 5 error lines), 0 new errors, 0 warnings. Copy Quality Guard: PASS, 0 violations, 256 files. Production build: succeeds.
+
+---
+
+**What this decision does NOT claim:** it does not claim any independent review was performed (none was); it does not claim any Mock content, eligibility_status, or `ali_family_review` row was touched (none was); it does not claim the review page has been redesigned (it has not — one small, additive navigation aid only); it does not claim this is the last time page length could cause a similar visibility confusion as more content is added — only that this specific, reported instance is now addressed.
+
+**Files changed:** `app/admin-beta/review/page.tsx` (modified — `id`/`scroll-mt-4` added to the three current section root elements, one jump-navigation card added), `ALI_DECISION_LOG.md` (this entry).
+
+**Migration:** none created by this decision.
+
+**Decision number:** 156.
+
+**Commit SHA:** recorded after commit (see repository history immediately following this entry).
+
+**Rationale:** investigating fully before changing anything — confirming deployment via an independent source (GitHub's own commit-status API, not a self-report), tracing every render condition from source rather than inferring from tests, and only then concluding "position, not defect" — follows this project's own standing discipline against assuming user error and against fixing code that was never actually broken. Adding the navigation aid despite finding no defect is still the correct minimal action: the Founder's own experience of missing two adjacent sections is real UX evidence regardless of whether the underlying code was ever wrong, and the directive itself authorised exactly this ("if so, implement the smallest safe navigation improvement... without redesigning the review system") conditioned on a genuine finding, which Part 5 supplies.
+
+**Implications:** Decisions 1–155 all stand, none reversed or rewritten. All three Increment 006 review sections (Mathematics Batch 003, English Comprehension, Continuous Writing) are confirmed live, correctly wired, and now more easily locatable on the deployed review page. **No independent review has been performed.** No content promoted, no eligibility changed, no `ali_mock_form` created, no Mock Centre activation, and no further content batch is authorised or begun by this decision. The next action remains genuine human review by the Founder or a qualified reviewer, using the navigation aid this decision adds if helpful.
+
+---

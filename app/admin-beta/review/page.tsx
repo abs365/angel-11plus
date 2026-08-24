@@ -1902,7 +1902,7 @@ function MockMrBatch003Section({
   const reviewedCount = MOCK_MR_BATCH003_FAMILIES.filter((f) => status.get(f.familyId)?.reviewed).length;
   const totalQuestions = MOCK_MR_BATCH003_FAMILIES.reduce((n, f) => n + f.newQuestionIds.length, 0);
   return (
-    <div className="bg-white dark:bg-gray-900 rounded-2xl border-2 border-indigo-200 dark:border-indigo-800 overflow-hidden">
+    <div id="mock-review-mr-batch003" className="bg-white dark:bg-gray-900 rounded-2xl border-2 border-indigo-200 dark:border-indigo-800 overflow-hidden scroll-mt-4">
       <div className="px-5 py-4 border-b border-indigo-100 dark:border-indigo-900 bg-indigo-50 dark:bg-indigo-950/40">
         <p className="text-sm font-bold text-indigo-900 dark:text-indigo-200">Mock Mathematics Batch 003 Review</p>
         <p className="text-xs text-indigo-600 dark:text-indigo-400 mt-0.5">
@@ -1963,7 +1963,7 @@ function MockEnglishPassageBatch001Section({
   const s = status.get(MOCK_ENGLISH_PASSAGE_BATCH001_TARGET_ID);
   const pendingTarget = targets.find((t) => t.id === MOCK_ENGLISH_PASSAGE_BATCH001_TARGET_ID && (t.notes ?? "").includes("MOCK-INC006-ENGLISH-BATCH001"));
   return (
-    <div className="bg-white dark:bg-gray-900 rounded-2xl border-2 border-teal-200 dark:border-teal-800 overflow-hidden">
+    <div id="mock-review-english-passage-batch001" className="bg-white dark:bg-gray-900 rounded-2xl border-2 border-teal-200 dark:border-teal-800 overflow-hidden scroll-mt-4">
       <div className="px-5 py-4 border-b border-teal-100 dark:border-teal-900 bg-teal-50 dark:bg-teal-950/40">
         <p className="text-sm font-bold text-teal-900 dark:text-teal-200">Mock English Comprehension Batch 001 Review</p>
         <p className="text-xs text-teal-600 dark:text-teal-400 mt-0.5">
@@ -2016,7 +2016,7 @@ function MockWritingBatch001Section({
 }) {
   const reviewedCount = MOCK_WRITING_BATCH001_FAMILIES.filter((f) => status.get(f.familyId)?.reviewed).length;
   return (
-    <div className="bg-white dark:bg-gray-900 rounded-2xl border-2 border-teal-200 dark:border-teal-800 overflow-hidden">
+    <div id="mock-review-writing-batch001" className="bg-white dark:bg-gray-900 rounded-2xl border-2 border-teal-200 dark:border-teal-800 overflow-hidden scroll-mt-4">
       <div className="px-5 py-4 border-b border-teal-100 dark:border-teal-900 bg-teal-50 dark:bg-teal-950/40">
         <p className="text-sm font-bold text-teal-900 dark:text-teal-200">Mock Continuous Writing Batch 001 Review</p>
         <p className="text-xs text-teal-600 dark:text-teal-400 mt-0.5">
@@ -2408,6 +2408,24 @@ function ReviewDashboard() {
       <Inc006DepthSection targets={targets} status={inc006DepthStatus} onOpen={(target, family) => setSelectedInc006Depth({ target, family })} />
       <MockMrBatch001Section targets={targets} status={mockMrBatch001Status} onOpen={(target, family) => setSelectedMockMrBatch001({ target, family })} />
       <MockMrBatch002Section targets={targets} status={mockMrBatch002Status} onOpen={(target, family) => setSelectedMockMrBatch002({ target, family })} />
+
+      {/* Decision 155 — the Founder reported seeing only the English section
+          on the deployed page despite Mathematics Batch 003 sitting directly
+          above it and Writing directly below: not a rendering defect (all
+          three sections render unconditionally, confirmed from source), but
+          real evidence this page is now long enough that three adjacent,
+          currently-relevant sections can still be missed by scroll position
+          alone. This jump card fixes exactly that, without touching or
+          hiding any historical section above or below it. */}
+      <div className="bg-gray-50 dark:bg-gray-900/60 border border-gray-200 dark:border-gray-800 rounded-2xl px-5 py-3">
+        <p className="text-[11px] font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-2">Jump to current review (Increment 006)</p>
+        <div className="flex flex-wrap gap-2">
+          <a href="#mock-review-mr-batch003" className="text-xs font-medium px-3 py-1.5 rounded-lg bg-indigo-100 dark:bg-indigo-900 text-indigo-700 dark:text-indigo-300 hover:bg-indigo-200 dark:hover:bg-indigo-800 transition-colors">Mathematics Batch 003</a>
+          <a href="#mock-review-english-passage-batch001" className="text-xs font-medium px-3 py-1.5 rounded-lg bg-teal-100 dark:bg-teal-900 text-teal-700 dark:text-teal-300 hover:bg-teal-200 dark:hover:bg-teal-800 transition-colors">English Comprehension</a>
+          <a href="#mock-review-writing-batch001" className="text-xs font-medium px-3 py-1.5 rounded-lg bg-teal-100 dark:bg-teal-900 text-teal-700 dark:text-teal-300 hover:bg-teal-200 dark:hover:bg-teal-800 transition-colors">Continuous Writing</a>
+        </div>
+      </div>
+
       <MockMrBatch003Section targets={targets} status={mockMrBatch003Status} onOpen={(target, family) => setSelectedMockMrBatch003({ target, family })} />
       <MockEnglishPassageBatch001Section targets={targets} status={mockEnglishPassageBatch001Status} onOpen={setSelectedMockEnglishPassageBatch001} />
       <MockWritingBatch001Section targets={targets} status={mockWritingBatch001Status} onOpen={(target, family) => setSelectedMockWritingBatch001({ target, family })} />
