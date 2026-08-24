@@ -5607,3 +5607,47 @@ Even after successful future review/promotion of this batch, the conceptual pool
 **Implications:** Decisions 1–162 all stand, none reversed or rewritten. Decision 161/162's Mathematics Form-Assembly Gate infrastructure is now fully production-closed and un-suspended. **First Mock Minimum structural content gap: verdict B, REMAINS** — real, evidence-backed progress made and the authoring method proven, but several more batches of comparable size and rigour are needed before an authentic first-form composition becomes genuinely assembleable, per Part 10's own honest projection. No form is created, no content is promoted, and no further content-authoring work begins until the Founder reviews this batch and reports a decision on migrations 109/110.
 
 ---
+
+### Decision 164 — MATHEMATICS MOCK STRUCTURAL NORMALISATION AUDIT: read-only audit of all 48 mock-eligible rows plus direct primary-source reading of the real 2023 CSSE Mathematics question paper (not just its mark scheme) found real numbered questions use two equally-legitimate bundling conventions — shared-scenario grouping AND several independent, unconnected same-skill items simply numbered together — the second of which directly matches how 19 of Angel's 21 standalone families are already shaped; strict normalisation (grouping metadata only, zero new content, zero mutation) would raise the pool's own marks density from ≈1.48 to ≈2.83 marks/experience, essentially at the authentic ≈2.9 target; **verdict: A, EXISTING CONTENT IS SUFFICIENT FOR FIRST MOCK STRUCTURE**, conditional on a separate, future, bounded grouping-metadata decision, not new authoring; CSSE-006 Q11 reassessed as unnecessary for First Mock Minimum, valuable only for Rolling Programme diversity; a discrepancy in CSSE-006 Q9's own prior QT classification was found and disclosed, not resolved
+
+**Scope and process:** Documentation-only. No source file, migration, or production data was changed by this decision — this log entry is the only change. Performed entirely as a read-only audit per the Founder's own explicit "audit only, do not mutate" instruction, reconstructing all 48 rows directly from migrations 088/091/095/109 and reading the real 2023 CSSE Mathematics question paper (`knowledge/csse/official-papers/Maths-Paper-2023-Entry-for-publication.pdf`) directly for structural understanding — no question wording reproduced here or anywhere in this decision.
+
+---
+
+**Governing finding:** the real 2023 paper shows two distinct, both-authentic bundling conventions for numbered questions: (i) one shared rule/scenario/system governing every subpart (e.g. a stated sequence rule, one costume-making scenario, one data table); and (ii) **several independent, unconnected same-skill problems simply numbered together with no shared narrative at all** (real Q1: three unrelated calculations; Q13: four unrelated decimal calculations; Q19: three unrelated mean-calculation word problems in different scenarios; Q20: two unrelated money-sharing problems). Convention (ii) is not an invented convenience — it directly matches how Angel's own same-family standalone rows are already authored.
+
+**Classification result, all 21 standalone families (44 rows) tested against the strict coherence criteria (shared context or legitimate common instruction, natural subpart progression, no contradictory scenarios, no artificial joining, valid marks/answer contracts, defensible difficulty, authentic CSSE resemblance — same family_id alone explicitly not sufficient):** 19 families (41 rows) classified **A** — genuinely coherent as one numbered question via convention (ii), matching real-paper precedent directly (`mock-mr02-invdiv`, `mock-mr02-twostep`, `mock-mr03-unitconv`, `mock-mr05-forward`, `mock-mr05-inverse`, `mock-mr13-bestvalue`, `mock-mr04-percentchange`, `mock-mr04-reversepercent`, `mock-mr06-sumdiff`, `mock-mr06-multiplerelation`, `mock-mr07-triangleanglesum`, `mock-mr07-isoscelesproperty`, `mock-mr10-forwardschedule`, `mock-mr10-reverseschedule`, `mock-mr11-truefalsejudgement`, `mock-mr11-propertysearch`, `mock-mr01-directcalc`, `mock-mr08-rotation`, `mock-mr12-reversemean`). One family (`mock-mr09-data`, 3 rows) classified **D** (uncertain) — migration 088's own header already discloses these as "3 distinct sub-structures, not 3 variants of one structure," more heterogeneous than a typical bundle, held separate pending closer review. Two cross-family candidates (`mock-mr04-percentchange`↔`mock-mr04-reversepercent`; `mock-mr10-forwardschedule`↔`mock-mr10-reverseschedule`) classified **B** — thematically related, echoing real Q4's and Q9's own progressive/forward-reverse patterns, but would require a shared scenario to be rewritten, not free as-is; not counted toward any capacity figure.
+
+**Capacity scenarios, computed directly (no mutation performed):**
+
+| Scenario | Experiences | Marks | Avg marks/experience | Compound share |
+|---|---|---|---|---|
+| Baseline (current) | 46 | 68 | ≈1.48 | 2/46 (~4%) |
+| Strict normalisation (19 A-families grouped only) | 24 | 68 | ≈2.83 | 21/24 (~87.5%) |
+| Strict normalisation + Batch 001 (Decision 163, once promoted) | 26 | 72 | ≈2.77 | 23/26 (~88.5%) |
+
+Selecting ≈21 of the strictly-normalised 24 experiences lands at ≈59-60 marks — a genuinely authentic ≈20-21-question composition becomes achievable, using **only already-certified content**, via a metadata-only decision, with a thin (~3-experience) reserve.
+
+**Disclosed discrepancy, not resolved by this decision:** direct reading of the real 2023 Q9 shows both subparts are elapsed-time calculations (one forward, one reverse), not the QT-MR-10+QT-MR-01 split the framework's own §6 and `mock-mr01mr10-costumeschedule` (migration 095) assume. This is this session's own primary-source reading, not Founder-confirmed — named here for a future decision's attention, not acted on. It does not affect this audit's own scope, since `costumeschedule` is already-grouped and was correctly excluded from re-classification.
+
+**Structural capacity vs. content-diversity capacity, kept strictly separate per the Founder's own explicit instruction:** regrouping raises structural (presentation-shape) capacity only. It creates zero new reasoning diversity — a learner who saw `mock-mr02-invdiv-01/02/03` in one form would still recognise the same three problems in a later form regardless of relabelling. Rolling Programme's own real diversity requirement is entirely unchanged by this finding and still requires genuine new authoring.
+
+---
+
+**What this decision does NOT claim:** it does not claim any grouping metadata has been applied — `question_group_id`/`group_order`/`subpart_label`/`marking_mode` on all 44 standalone rows remain exactly as migration 093 left them, NULL; it does not claim the regrouping decision is authorised — it is named as the recommended next action, not performed; it does not claim `mock-mr09-data`'s Classification D is resolved, or that the two Classification-B cross-family candidates have been built; it does not claim the CSSE-006 Q9 discrepancy is confirmed or corrected; it does not claim CSSE-006 Q11 will never be authored — only that it is not required for First Mock Minimum specifically; it does not claim any Mock form exists, any content is promoted, or Mock Centre is available.
+
+**Files changed:** `ALI_DECISION_LOG.md` (this entry only).
+
+**Migrations created:** none.
+
+**Decision number:** 164.
+
+**Commit SHA:** recorded after commit (see repository history immediately following this entry).
+
+**Production application status:** not applicable — no migration, no production change.
+
+**Rationale:** recording this finding as a Decision, despite being read-only, follows this project's own established precedent (Decisions 137, 156) for documentation-only closures whose conclusion materially changes downstream governance — here, whether First Mock Minimum requires new content authoring at all. Leaving a finding of this magnitude in conversation history rather than the permanent record would risk a future session re-deriving it from scratch, or worse, silently repeating the "author more batches" path this audit shows is not actually the smallest path to First Mock Minimum.
+
+**Implications:** Decisions 1–163 all stand, none reversed or rewritten. Decision 163's own verdict B ("structural content gap remains") is **superseded for First Mock Minimum specifically** by this decision's own more rigorous audit: the gap is not content, it is an unapplied grouping-metadata decision. Decision 163's own authored content (`mock-mr03mr07-perimeterarea`) remains valid, valuable, and unaffected — it improves the Strict Normalisation + Batch 001 scenario's own reserve margin, even though it is no longer strictly necessary for First Mock Minimum alone. No mutation, promotion, form creation, or further authoring begins from this decision — the next step is a separate, bounded, Founder-authorised grouping-metadata decision, not yet begun.
+
+---
