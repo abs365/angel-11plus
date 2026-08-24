@@ -5529,3 +5529,81 @@ The ≈21-question/≈60-mark CSSE Mathematics blueprint itself carries Confiden
 **Implications:** Decisions 1–161 all stand, none reversed or rewritten. Decision 161's own verdict A ("Mathematics Form-Assembly Gate READY") is **suspended, not withdrawn**, pending this correction's own production application and re-verification — the architecture and rendering logic Decision 161 built remain sound; the privilege leak is a deployment-configuration defect in two of its supporting functions, not a design defect. No further implementation begins until the Founder reports migration 108's own production result.
 
 ---
+
+### Decision 163 — MATHEMATICS FIRST MOCK MINIMUM: EVIDENCE-LED COMPOUND CONTENT FOUNDATION, BATCH 001: migration 108 Founder-confirmed applied and re-verified (anon absent, authenticated present, both corrected functions); Decision 161/162 infrastructure now production-closed; a direct, primary-source read of all three real CSSE Mathematics mark schemes (not merely the existing framework's own prose) found the compound-question pattern is the OVERWHELMING NORM across all three evidenced years (18/20, 20/21, 21/21 numbered questions have 2+ marked components), far more systemic than the "two named examples" prior framing suggested; one new, evidence-backed compound family authored (`mock-mr03mr07-perimeterarea`, 2 numbered-question instances, 4 rows, 4 marks, matching CSSE-006 Q14's own confirmed 2-subpart/1-mark-each shape) at `authentic_assessment_candidate`, genuine pending review registered, no promotion; **verdict: B, FIRST MOCK STRUCTURAL CONTENT GAP REMAINS** — this batch closes the one specifically-named CSSE-006 Q14 gap in candidate form and proves the authoring method, but the broader marks-density gap (Part 3) is barely dented and requires several more batches of this kind, quantity named, not solved here
+
+**Scope and process:** Production verification (Decision 162 closure) plus real content authoring — 2 new migrations (109 content, 110 pending review, both NOT applied), `lib/adminReview.ts` and `app/admin-beta/review/page.tsx` extended with the same, unmodified review mechanism every prior Mock Mathematics batch already uses. No promotion, no form, no Mock Centre activation, no eligibility change to any existing row.
+
+---
+
+**PART 1 — DECISION 161/162 PRODUCTION CLOSURE**
+
+Founder-confirmed: migration 108 applied; re-verification query restricted to `mock_get_attempt_grouping`/`mock_get_open_cycle` returned `authenticated`/`postgres`/`service_role` only, `anon` absent from both. **Decision 162 CLOSED. Decision 161's Mathematics Form-Assembly Gate verdict A is un-suspended** — the architecture, RPC layer, and learner UI are correctly, safely deployed. Repository reconciled clean before this work began: `HEAD == origin/main`, Decision 162 present exactly once, migration 108 byte-unchanged (hash-verified). `ali_mock_form` remains 0; no first-form manifest exists; no learner Mock is activated — unaffected by this decision.
+
+---
+
+**PART 2/3 — PRIMARY-SOURCE COMPOUND STRUCTURE AUDIT, PERFORMED BEFORE AUTHORING**
+
+Read directly, this session, rather than re-derived from the existing framework's own prose alone: `docs/intelligence/CSSE_ASSESSMENT_INTELLIGENCE_FRAMEWORK.md`'s Observation 3 (corrected under CAP-1.1, verified during AEP-004's own full question-by-question review of all three years: "20 numbered questions in 2023, 21 in 2021 and 2022, **most with lettered sub-parts**"), and the three real, primary-source Mathematics mark schemes preserved in this repository (`knowledge/csse/mark-schemes/Maths-*-Entry-Mark-Scheme.pdf`, Evidence Level A, Founder-accepted — read for structural facts only, no protected wording reproduced anywhere in this decision or its own content).
+
+**Independently confirmed structural finding, sharper than the prior framing:** of the 2023 paper's 20 numbered questions, 18 have 2+ independently-marked response components; of 2022's 21, 20 do; of 2021's 21, all 21 do. This is the overwhelming norm across all three evidenced years, not a small number of named exceptions — Angel's own pool represents it in exactly 1 of 46 units (~2%). A second, richer compound structure was also found this session by cross-referencing the existing framework's own separate per-Question-Type catalogue entries: **CSSE-006 Q11 is a genuine 3-Question-Type compound question (QT-MR-09 data reading + QT-MR-08 coordinate/transformation + QT-MR-05 sequence/function-rule)**, evidenced across three separately-cited entries in `CSSE_QUESTION_INTELLIGENCE_FRAMEWORK.md` §7 but never previously flagged together as one compound relationship in §6. Named here as a real, evidence-backed target for a future batch — **not authored this session**, since its coordinate/plotting component carries genuine quality/mechanic risk better addressed with more time (see Part 5).
+
+**Marks-density reconstruction of the current 48-row pool, computed directly:** 28 rows worth 1 mark, 20 rows worth 2 marks — 68 marks total, 46 numbered-question experiences (44 standalone + 2 grouped, from the one existing `costumeschedule` family), confirming Decision 162's own figures independently. Average density ≈1.48 marks/experience, against the authentic paper's own ≈2.9 marks/question (60÷21, now corroborated directly from the real 2023 mark scheme's own ≈20-question/60-mark structure, not merely the blueprint's summary claim). Selecting the highest-value 21 units from the existing pool caps at ≈41–43 marks; reaching 60 marks requires ≈41 of the 46 available units — Decision 162's own figure, now explained with primary-source depth rather than merely restated.
+
+---
+
+**PART 4 — THREE HORIZONS, ONLY (A) AUTHORISED**
+
+**A. First Mock Minimum (this decision's own scope):** enough new authentic compound structure to make one defensible paper *possible*, not to close the full density gap. This batch adds 1 family (2 experiences, 4 marks) — a real, evidence-backed down payment, explicitly not a claim of sufficiency.
+**B. Rolling monthly capacity (named only, not solved):** the CSSE-006 Q11 structure found this session, plus however many further compound structures the primary-source papers support beyond the two now identified, sized to reach a genuinely sustainable multi-form rolling pool.
+**C. Long-term/accelerated capacity (named only, not solved):** further diversity beyond B, for long-term preparation and evidence-authorised accelerated cadence — no work performed toward this horizon.
+
+---
+
+**PART 5 — AUTHORING DECISION AND CONTENT**
+
+Selected: **CSSE-006 Q14** (QT-MR-03 unit conversion/measurement + QT-MR-07 geometric perimeter/area) — already named in `CSSE_QUESTION_INTELLIGENCE_FRAMEWORK.md` §6, independently confirmed this session against the real 2023 mark scheme's own 2-subpart, 1-mark-each structure, the exact same size/shape Angel already proved once (`mock-mr01mr10-costumeschedule`, migration 095). CSSE-006 Q11's richer 3-QT structure is deliberately deferred (Part 4B), not rushed.
+
+**Family authored: `mock-mr03mr07-perimeterarea`** — 2 original Angel scenarios (garden bed, cm/m conversion; window pane, mm/cm conversion) representing the SAME structural relationship as CSSE-006 Q14 (a genuine, un-skippable unit-conversion step producing a length result, then a geometric area calculation reusing the converted dimension), never a paraphrase of the source question's own wording or numbers. 4 rows, 2 grouped numbered-question instances of 2 subparts each, `question_group_id`/`group_order`/`subpart_label`/`marking_mode` used exactly as migration 095 already proved safe. Every answer independently re-derived and hand-verified (12.2, 9, 270, 4050 — all confirmed again by this session's own tests).
+
+**Duplicate/overlap audit performed before authoring:** the one genuine, closely-related existing family — `mr03-mixed-perimeter` (live Practice content, migrations 039/066, QT-MR-07, "given area/perimeter and one side, find the other") — is disclosed explicitly, not hidden: it never requires a unit conversion and is always a single standalone question, a different reasoning shape from this batch's own genuine mixed-unit-conversion-then-two-part-calculation structure. No exact or near-textual duplication found against any of the 194 Practice rows, the 48 mock_eligible rows, or this batch's own 4 rows against each other; instance 2 reuses instance 1's reasoning shape with a genuinely different unit pair and context, matching Decision 148's own established Tier 4/5 diversity standard, not a Tier 3 renumbering.
+
+**Marks contract:** 1 mark per subpart throughout, matching AEP-002 Observation 3 ("1 mark for each correct answer," HIGH/EMC-4, identical wording 3/3 years) and the real Q14 mark scheme's own confirmed structure — no mark value chosen to hit a target total.
+
+---
+
+**PART 9 — REVIEW GOVERNANCE**
+
+`lib/adminReview.ts`: `MOCK_FIRSTMOCK_COMPOUND_BATCH001_FAMILIES`/`_TARGET_IDS`/`_BATCH_MARKER`, `buildMockFirstMockCompoundBatch001NotesPrefix`, `deriveMockFirstMockCompoundBatch001ReviewStatus`, `fetchMockFirstMockCompoundBatch001ReviewStatus` — structurally identical to `MOCK_MR_BATCH003_*`, reusing `deriveBatchReviewStatus`/`fetchBatchReviewStatus` and `review_type = 'mock_maths_independent_review'` unchanged, no new review mechanism. `app/admin-beta/review/page.tsx`: a new `MockFirstMockCompoundBatch001Section`, wired via the `sevenX` prop (the same grouped-rendering path Decision 155 already proved for `mock-mr01mr10-costumeschedule`) so the family's 2 numbered-question instances present coherently, all subparts together, never as 4 disconnected flat questions. Migration 110 registers the family as `pending_independent_review`, reviewer `UNASSIGNED` — no self-approval, no automatic promotion.
+
+---
+
+**PART 10 — PROJECTED POST-VALIDATION CAPABILITY**
+
+Even after successful future review/promotion of this batch, the conceptual pool becomes 50 units / 72 marks (46+2, 68+4) — reaching 60 marks would still require ≈41 of the 50 available units, materially unchanged from Decision 162's own finding. **This batch does not, by itself, make a genuinely authentic ≈20–30-question/≈60-mark form assembleable** — it demonstrates the correct, evidence-led authoring method and closes the one specifically-named gap, nothing more. A rough planning estimate, not a commitment: roughly 7–10 further families of this same size (≈15–20 further compound experiences) would be needed to shift the pool's density meaningfully toward the authentic ≈2.9 marks/question target while keeping total question count in a defensible ≈25–30 range — named for the Founder's own future sequencing judgement, not solved here.
+
+---
+
+**PART 11 — TESTS AND VERIFICATION**
+
+28 new tests in `tests/content/mockMathematicsFirstMockCompoundBatch001.test.ts` (real `$json$` payload parsing, not regex-only, mirroring `tests/content/mockMathematicsBatch003.test.ts`'s own established approach): grouping integrity (all 4 rows grouped, 2 distinct groups, 2 different QTs per group, no orphan subpart), independently re-derived answer correctness (all 4 values recomputed from stated numbers), unit-conversion correctness re-verified, marks contract (1 mark/subpart, 4 total), no duplicate ids/questions, no collision against any Batch 001/002/003 id or `mr03-mixed-perimeter`, eligibility never touched beyond `authentic_assessment_candidate`, no `ali_mock_form`/`ali_family_review` mutation in migration 109, review-placeholder correctness in migration 110 (`UNASSIGNED`, `pending_independent_review`, no approval), both migrations self-disclosed `NOT APPLIED`. **Full suite: 1326/1326 pass** (1298 baseline + 28 new; zero regressions). `npx tsc --noEmit`: clean. ESLint scoped to every touched file: 0 new errors (5 pre-existing, unrelated `react-hooks/set-state-in-effect` findings elsewhere in the same large file, confirmed unrelated to any line this decision touched). Copy Quality Guard: PASS, 0 violations, 256 files (one em-dash found and fixed in this decision's own new disclosure/heading text during verification). Production build: succeeds.
+
+---
+
+**What this decision does NOT claim:** it does not claim either migration 109 or 110 has been applied (both self-disclosed `NOT APPLIED`); it does not claim the First Mock Minimum content gap is closed overall — verdict is explicitly B, not A; it does not claim the new family is independently validated, mock_eligible, or usable by any form; it does not claim the CSSE-006 Q11 structure named in Part 2 has been authored; it does not claim Rolling or Long-term capacity (Part 4 B/C) has been addressed in any way; it does not claim English or Writing content is affected; it does not claim any of the existing 48 `mock_eligible` rows or their grouping metadata has changed.
+
+**Files changed:** `supabase/migrations/109_mock_mathematics_firstmock_compound_batch001.sql` (new, NOT applied), `supabase/migrations/110_mock_mathematics_firstmock_compound_batch001_pending_review.sql` (new, NOT applied), `lib/adminReview.ts`, `app/admin-beta/review/page.tsx`, `tests/content/mockMathematicsFirstMockCompoundBatch001.test.ts` (new), `ALI_DECISION_LOG.md` (this entry).
+
+**Migrations created:** 109, 110 — both drafted, tested, NOT applied, awaiting Founder review.
+
+**Decision number:** 163.
+
+**Commit SHA:** recorded after commit (see repository history immediately following this entry).
+
+**Production application status:** neither migration applied. Both supplied to the Founder following this entry (content and its pending-review placeholder are naturally paired, matching migration 095/096's own precedent of being suppliable together).
+
+**Rationale:** authoring exactly one new family, matching a size/shape already proven safe once, over either authoring nothing (leaving the named Q14 gap open despite now having the evidence to close it) or authoring several families at once (including the riskier, plotting-adjacent Q11 structure) reflects this project's own standing discipline of the smallest defensible increment — a rushed multi-family, multi-mechanic batch risks exactly the kind of quality/duplication problem this arc has repeatedly caught and corrected elsewhere. Verdict B, not A, is chosen deliberately over a more flattering reading, because Part 10's own honest recalculation shows the aggregate marks-density problem is essentially unchanged by 4 additional marks — claiming the gap is "closed in candidate form" would overstate what one family can do against a ≈41-of-46-unit requirement.
+
+**Implications:** Decisions 1–162 all stand, none reversed or rewritten. Decision 161/162's Mathematics Form-Assembly Gate infrastructure is now fully production-closed and un-suspended. **First Mock Minimum structural content gap: verdict B, REMAINS** — real, evidence-backed progress made and the authoring method proven, but several more batches of comparable size and rigour are needed before an authentic first-form composition becomes genuinely assembleable, per Part 10's own honest projection. No form is created, no content is promoted, and no further content-authoring work begins until the Founder reviews this batch and reports a decision on migrations 109/110.
+
+---

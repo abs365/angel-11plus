@@ -1447,6 +1447,48 @@ export async function fetchMockMrBatch003ReviewStatus(familyIds: string[]): Prom
 }
 
 /**
+ * Mathematics First Mock Minimum — Compound Content Foundation, Batch 001
+ * (Decision 163). One new family (mock-mr03mr07-perimeterarea, migration
+ * 109), made reviewable via the exact same scoped-batch mechanism as
+ * MOCK_MR_BATCH001/002/003_FAMILIES above (own array, own marker, own
+ * status map), reusing `review_type = 'mock_maths_independent_review'`
+ * and the generalised `deriveBatchReviewStatus()`/`fetchBatchReviewStatus()`
+ * helpers unchanged — no new review mechanism. The family is grouped: its
+ * 4 newQuestionIds are 2 numbered-question instances of 2 subparts each,
+ * reviewed as one family decision, matching how mock-mr01mr10-
+ * costumeschedule (Batch 003) is already reviewed. Every row's
+ * `eligibility_status` is `authentic_assessment_candidate`; approving
+ * this family here still does NOT promote it, and does NOT create or
+ * touch any `ali_mock_form` row.
+ */
+export const MOCK_FIRSTMOCK_COMPOUND_BATCH001_BATCH_MARKER = "MOCK-FIRSTMOCK-COMPOUND-BATCH001";
+
+export const MOCK_FIRSTMOCK_COMPOUND_BATCH001_FAMILIES: SevenXFamilyConfig[] = [
+  {
+    familyId: "mock-mr03mr07-perimeterarea",
+    newQuestionIds: [
+      "mock-mr03mr07-perimeterarea-01a", "mock-mr03mr07-perimeterarea-01b",
+      "mock-mr03mr07-perimeterarea-02a", "mock-mr03mr07-perimeterarea-02b",
+    ],
+    disclosure:
+      "This is a brand-new family with no prior review of any kind. It is a grouped family: its 4 rows form 2 grouped numbered-question instances (2 subparts each: (a) QT-MR-03 unit conversion, (b) QT-MR-07 area), using migration 093's question_group_id/group_order/subpart_label/marking_mode columns (the same mechanism already proven for mock-mr01mr10-costumeschedule, Batch 003). The grouping is evidenced directly: CSSE_QUESTION_INTELLIGENCE_FRAMEWORK.md Section 6 records that CSSE-006 Q14 combines QT-MR-03 (rounding/measurement) with QT-MR-07 (geometric perimeter/area) within one numbered question, independently confirmed this session against the real 2023 mark scheme's own 2-subpart, 1-mark-each structure. A close existing neighbour was found and is disclosed, not hidden: mr03-mixed-perimeter (live Practice content, migrations 039/066) is a related but structurally distinct family: it never requires a unit conversion and is always a single standalone question, whereas this family's defining step is a genuine mixed-unit conversion (cm/m or mm/cm) before a two-part perimeter-and-area calculation. marking_mode is 'deterministic' on all 4 rows; no grouped-scoring function is implemented or invoked by this batch. Difficulty here is hard. Disclosed for your own judgement, not a recommendation either way.",
+  },
+];
+export const MOCK_FIRSTMOCK_COMPOUND_BATCH001_TARGET_IDS = MOCK_FIRSTMOCK_COMPOUND_BATCH001_FAMILIES.map((f) => f.familyId);
+
+export function buildMockFirstMockCompoundBatch001NotesPrefix(familyId: string, questionIds: string[]): string {
+  return `${MOCK_FIRSTMOCK_COMPOUND_BATCH001_BATCH_MARKER} new content review: ${familyId} (Question IDs: ${questionIds.join(", ")})`;
+}
+
+export function deriveMockFirstMockCompoundBatch001ReviewStatus(rows: SevenXReviewRow[], familyIds: string[]): Map<string, SevenXReviewStatus> {
+  return deriveBatchReviewStatus(rows, familyIds, MOCK_FIRSTMOCK_COMPOUND_BATCH001_BATCH_MARKER, "mock_maths_independent_review");
+}
+
+export async function fetchMockFirstMockCompoundBatch001ReviewStatus(familyIds: string[]): Promise<Map<string, SevenXReviewStatus>> {
+  return fetchBatchReviewStatus(familyIds, MOCK_FIRSTMOCK_COMPOUND_BATCH001_BATCH_MARKER, "mock_maths_independent_review");
+}
+
+/**
  * Inserts one real, traceable Mock-content independent-review decision —
  * `review_type = 'mock_maths_independent_review'` (migration 087,
  * Decision 139), explicitly set here exactly as `submitMathsTeachingReview`
