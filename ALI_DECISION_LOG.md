@@ -5058,3 +5058,212 @@ Justified against Angel's own stated goal, not engineering completion percentage
 **Implications:** Decisions 1–157 all stand, none reversed or rewritten. Phase A's three certification migrations are prepared and ready for Founder-controlled, one-at-a-time production application, starting with migration 101. Phase B's verdict — **C, NOT READY** — governs what happens next: the recommended dependency-ordered actions above, not a jump to Mock activation, cadence implementation, or another content batch. **No content is promoted by this decision** — that requires the Founder's own application of migrations 101/102/103, each a separate, explicit production action. `mock_eligible` remains 0, `ali_mock_form` remains 0, and Mock remains NOT READY YET, now for a documented, architectural reason rather than an open question.
 
 ---
+
+### Decision 159 — FIRST MOCK MINIMUM: GOAL-ALIGNED EXECUTION BLUEPRINT: Decision 158 certification confirmed CLOSED by independent Founder production verification (48 Mathematics / 13+1 English / 3 Writing rows `independently_validated`, Practice/isolation unchanged); this decision defines First Mock Minimum precisely, distinct from Rolling and Long-Term capacity, and traces real implementation truth (not Decision prose) for every capability a first Mock requires — finding Mathematics content is architecturally sufficient for one subject-pure paper, English is not (1 passage, one unfillable Writing slot), grouped scoring and Writing marking are entirely unbuilt, the readiness function exists and is real but does not gate attempt creation, and Decision 133's own prior finding that Mathematics/English should be separately attemptable Mocks (not one combined Full Mock) is the correct lens for sequencing the next increment; **verdict: C, FIRST MOCK MINIMUM NOT READY**; the selected next increment is the pool-level Mock-Eligible gate plus grouped-question scoring for Mathematics only, not more content and not the full roadmap at once
+
+**Scope and process:** Assessment and execution planning only, per the directive's own explicit instruction — no source file, migration, schema, or content was changed. Documentation-only, recorded because a genuine Founder Decision (accepting Decision 158's closure and selecting the next increment) resulted.
+
+---
+
+**PART 1 — REPOSITORY RECONCILIATION**
+
+Working tree clean; HEAD == origin/main == `9538a10` (Decision 158); Decision 158 present exactly once, unreversed. No discrepancy.
+
+---
+
+**PART 2 — DECISION 158 CERTIFICATION CLOSURE CONFIRMATION**
+
+**CLOSED**, on the Founder's own independent production verification (not re-derived here): Mathematics Batch 003 10/10 `independently_validated`, active, grouping intact; Mathematics total 48; English Comprehension passage + all 13 question rows `independently_validated`, active, Q12 grouping intact (independently re-confirmed this turn via the passage's own dedicated query); Continuous Writing 3/3 `independently_validated`, active; Practice unchanged (194/120); `mock_eligible` = 0 across all subjects; `ali_mock_form` = 0; anon-role visibility confirmed to show only `practice_eligible` content, nothing else. **This is the strongest possible evidence class this arc uses — direct, Founder-run production queries, not inference.**
+
+---
+
+**PART 3 — PRECISE FIRST MOCK MINIMUM DEFINITION**
+
+**The First Mock Minimum is the smallest complete set of validated content, assessment behaviour, marking, intelligence, safety, and learner-experience capability required for Angel to deliver ONE genuine first Mock that improves the learner's preparation for the real selective-school examination — no more.** It explicitly excludes: six/twelve months of monthly Mocks, accelerated repeated Mocks, parent-purchased extras, and long-term zero-repetition capacity — all later, separate capacity gates (Part 16).
+
+---
+
+**PART 4 — IMPLEMENTATION TRUTH RECONCILIATION (FROM CODE, NOT DECISION PROSE)**
+
+Directly re-verified this session (grep/read against real source, not recalled):
+
+- **Grouped scoring:** zero references to `question_group_id`/`group_order`/`subpart_label` anywhere outside the migrations that create or populate them (093/095/097/101/102) — confirmed by a repository-wide search of every OTHER migration and of `lib/mockAttempt/*`. **The scoring engine (`mock_score_attempt`, migrations 074/075) has no awareness grouping exists at all.**
+- **`mockReadiness.ts`** (`lib/learningEngine/mockReadiness.ts`): real, live, tested code — `assessMockReadiness()` is a pure dispatch over three genuinely real inputs (`hasAnyEvidence` from the Learner Intelligence Profile, `mockAttemptCount` from `getMockResults()`, `topTriggerReason` from the unmodified Recommendation Engine), producing one of three verdicts (`practice-first`, `first-mock-valuable`, `mock-valuable`). `computeCsseMockReadiness()` wires this to real Practice evidence and real mock history — **this is substantially more built than "informational only" suggested; it is a working advisory function.**
+- **But it does not gate anything:** `app/learning-intelligence/mock-exam/page.tsx` (the canonical, SECURITY DEFINER-RPC-based Mock entry point) never imports or calls `mockReadiness`/`assessMockReadiness`/`computeCsseMockReadiness` anywhere — it proceeds straight to `createMockAttempt()` once entered. **Confirmed: Decision 147's "not wired to any gate" finding still holds exactly, unchanged.**
+- **`getActiveMockForm()`** (`lib/mockAttempt/client.ts`): calls `mock_get_active_form()`, returns `{ data: null, error: null }` cleanly when no row exists — a safe, honest "not available" state, not a crash or a fabricated one. Confirmed as "the ONE authoritative answer to can Angel actually deliver this mock right now," by that function's own docstring.
+- **`ali_mock_form` schema** (migration 070): `question_manifest jsonb` (ordered `[{question_id, section}]`), `active boolean`, no per-form review/freeze field of its own — because, per the migration's own comment, **the review already happens upstream, at content promotion to `mock_eligible`, checked at attempt-creation time inside `mock_create_attempt()`, not by a schema constraint on the form**. This confirms the pool-level gate is a hard functional prerequisite for form assembly, not a nice-to-have.
+- **Exposure recording:** `ali_mock_attempt.assigned_question_ids text[]` already exists and is populated per attempt — **the raw exposure record Part 12 asks about already exists structurally**; nothing currently reads it to prevent re-selection in a future form, but the recording mechanism itself does not need to be built from scratch.
+- **Writing marking:** `requires_manual_marking` (the routing flag `mock_score_attempt` produces for ungraded responses, migrations 074/075) is referenced in exactly one file outside its own type definition — `lib/mockAttempt/types.ts` — and in **zero** `app/` files. **There is no marking workflow of any kind, human or automated-with-confirmation, anywhere in this codebase today.** AI Writing scoring remains separately quarantined (Decisions 47/60/61/106), confirmed unreferenced by migration 103 this session.
+- **Educational Intelligence loop:** `lib/mockAttempt/evidenceAdapter.ts` produces real, tested `MockCompetencyEvidenceEntry` classifications from scored outcomes, but by its own explicit design **never calls `recordOutcome`, never touches `ali_student_question_history`/`ali_durable_mastery`/`ali_educational_audit`** — deliberately isolated from Practice's own mastery pipeline (the correct, intentional firewall this whole arc has protected, Decisions 152/154/157). A released report's own `competency_evidence`/`strengths`/`weaknesses` fields stay `null` today — confirmed, not merely asserted, by Decision 158's own Part 4 finding, unchanged since.
+- **Subject separation (Decision 133, re-read directly, not from memory):** already found the schema/RPC layer (`ali_mock_form.attempt_type`, `mock_create_attempt`, `mock_get_active_form`, and every per-attempt scoring/report RPC) to be **already generic** over subject — a Mathematics-only or English-only form is already a legally representable row today. The one hardcoding is in the *presentation* layer (`mock-exam/page.tsx`'s own `ATTEMPT_TYPE = "full_mock"` constant) and the absence of a Full-Mock linking concept between two separate attempts. `attempt_type`'s own CHECK constraint currently allows exactly `full_mock`/`timed_section`/`diagnostic_mock` — no literal `maths_only`/`english_only` value exists yet, so a subject-pure first attempt would need either to reuse `timed_section` with a subject-pure manifest or a small, additive constraint extension — not a redesign.
+
+---
+
+**PART 5 — MATHEMATICS FIRST-MOCK SUFFICIENCY**
+
+Reconstructed as real assessment units, not rows, using Decision 158's own exact figures (marks counted directly from migration content, not estimated): **48 rows, 46 numbered-question experiences, 68 marks**, covering all 13 real content Question Types (QT-MR-01 through QT-MR-13), one genuine grouped structure (`costumeschedule`, evidenced against CSSE-006 Q9).
+
+**A. Can one authentic Mathematics paper be assembled today?** Content-wise, **yes, with real constraint, not comfortably** — the target is ~60 marks/~20–21 questions; the pool's own mark density (≈1.48 marks/experience) means assembling one 60-mark form would use roughly 41 of the 46 available experiences, leaving negligible reserve.
+
+**B. Safe composition constraints, if assembled:** the single grouped family must be used at most once (only one grouped instance exists per numbered-question shape); QT-MR-01 must not be over-weighted merely because it is the largest single-family contributor; difficulty should follow the pool's own natural easy/medium/hard spread rather than being forced into an artificial curve; near-total pool consumption for this one form must be disclosed to whoever reviews the assembled form, not presented as if reserve capacity remains.
+
+**C. Not applicable — content answer is YES, with the above constraints**, not a missing-experience gap. **The actual First Mock blocker for Mathematics is not content — it is the unbuilt pool-level gate and grouped-question scoring (Part 4), without which no form can be safely assembled or scored regardless of content sufficiency.**
+
+---
+
+**PART 6 — ENGLISH FIRST-MOCK SUFFICIENCY**
+
+**A. Can one authentic English paper be assembled from current validated content?** **No, not completely.** The Comprehension half is genuinely complete for one passage (12 numbered questions, all 10 evidenced QT-RC types, the Q12 grouped structure correctly certified). The Writing half is not.
+
+**B. Does the real format require one or two Writing tasks?** Two — the CSSE Continuous Writing section's own evidenced structure is Question 1 (QT-WC-01a, reflective/discursive) **and** Question 2 (QT-WC-01b, picture-stimulus narrative), per `docs/intelligence/CSSE_QUESTION_INTELLIGENCE_FRAMEWORK.md §5`, HIGH confidence/EMC-4 for the picture-stimulus format's own existence.
+
+**C. Is the current pool sufficient for that first paper?** **No** — QT-WC-01b has zero authored content and no image-asset pipeline exists anywhere in this codebase to author it against (disclosed at migration-098 authoring time, unchanged since). An assembled English Mock today would be missing an entire evidenced component of the real paper, not merely thinner than ideal.
+
+**D. Genuine FIRST-MOCK blockers:** (i) the missing QT-WC-01b component and its prerequisite image-asset infrastructure — without it, "one authentic English Mock" cannot be assembled at all, only a structurally incomplete one; (ii) the same pool-level gate and marking-validity gaps that also block Mathematics.
+
+**E. Gaps that matter only for the second/later Mock:** passage diversity beyond 1 (Decision 138's own 3–4 launch-floor figure) — this blocks a *second* English Mock from existing without exact passage repetition, but does not by itself block a first one. **This decision does not authorise authoring more passages now** — that remains a Rolling Programme item (Part 16), not a First Mock Minimum one, per the directive's own explicit instruction not to conflate the two.
+
+---
+
+**PART 7 — GROUPED-QUESTION SCORING VERDICT**
+
+For Mathematics `costumeschedule` and English Q12(a)/(b): **presented** coherently (Decision 155's own review-surface fix proved this for the *review* surface specifically; the equivalent proof for the *learner-facing* attempt UI was not re-verified this session and should not be assumed identical without checking `mock_get_question`'s own redaction/presentation shape). **Answered, scored per component, rolled up into the numbered question, represented in total marks, represented in diagnostics: none of these exist** — confirmed by the zero-reference search in Part 4. **Classification: NEW.** If Mathematics is the selected First Mock subject (Part 17), this is a genuine, bounded First Mock blocker (one grouped family, 2 numbered-question instances, 2 subparts each) — not the large, general-purpose grouped-scoring system a full catalogue of future grouped content would eventually need.
+
+---
+
+**PART 8 — WRITING MARKING VALIDITY VERDICT**
+
+**CONTENT validity** (the 3 prompts' own suitability as genuine Mock tasks) **is now certified** — Decision 158's own certification. **MARKING validity is a completely separate question, and remains unresolved.** AI Writing scoring is explicitly quarantined and unvalidated (Decisions 47/60/61/106) and this session confirms, again, that certifying the 3 prompts did not touch that boundary. No human marking workflow exists anywhere in this codebase (Part 4). **The first Mock cannot legitimately auto-mark Writing, and cannot currently route a manually-marked response to any real resolution mechanism either** — `requires_manual_marking` is a dead-end flag today, not a working queue.
+
+**Smallest defensible First Mock solution, recommended, not implemented:** a bounded, human-reviewed marking step — the same Founder/reviewer role already proven throughout this entire arc (Decisions 141–158) reviews a submitted Writing response against the CSSE 5-dimension rubric already built for Teaching Review (Phase D, `ANGEL_PHASE_D_CONTINUOUS_WRITING_STANDARD_V1.md`) and manually records a mark. This reuses proven review-surface patterns rather than inventing new AI-assisted marking infrastructure, and keeps the standard honest: **do not lower it merely to launch a Mock** (the directive's own explicit instruction).
+
+---
+
+**PART 9 — EDUCATIONAL INTELLIGENCE LOOP VERDICT**
+
+| Loop element | Classification |
+|---|---|
+| Competency evidence classification (raw logic) | **EXISTING** (`evidenceAdapter.ts`, pure, tested) |
+| Competency evidence wired into a released report | **NEW** (currently `null`) |
+| Mastery/`ali_student_question_history` update from Mock | **NOT REQUIRED** — the firewall from Practice's own mastery track is intentional and protected by this arc's own recent work; Mock needs its *own* equivalent depth, not a merge |
+| Weaknesses/misconceptions surfaced to the learner/parent | **NEW** |
+| Confidence/evidence quality (where legitimately measurable) | **NEW** |
+| Targeted Practice recommendation triggered by a Mock result | **EXTEND** — the Recommendation Engine already exists and already drives `mockReadiness.ts`'s own "practice-first" verdict from Practice evidence; it has never been fed a Mock result as an input |
+| Parent explanation | **NEW** — no Mock-specific parent-facing explanation surface exists today |
+| Readiness trajectory update after a Mock | **EXTEND** — `mockAttemptCount` already flows into `assessMockReadiness()`; the richer trajectory concept beyond attempt-count does not yet exist |
+
+**Minimum intelligence loop required before the first Mock:** a scored Mock attempt must produce, at minimum, per-competency correct/incorrect evidence (reusing `evidenceAdapter.ts`'s own already-tested classification, simply wiring its output into the report rather than leaving it stranded) and at least one genuinely specific "what to work on next" recommendation, even in a simple, bounded first form — not the full parent-explanation/trajectory system. **A first Mock that returns only a raw score does not meet Angel's own governing principle and should not be considered a valid First Mock Minimum outcome**, regardless of whether every other gate passes.
+
+---
+
+**PART 10 — FIRST-MOCK READINESS VERDICT**
+
+Existing logic (`assessMockReadiness`) is real and sufficient in its own DECISION LOGIC — it correctly distinguishes "no evidence yet," "ready for a first Mock," "a more specific Practice need exists first," and "broadly ready." **What is missing is not the logic, it is the gate**: nothing currently prevents a learner from starting a Mock attempt regardless of this verdict (Part 4). **Minimum evidence required before Angel can honestly say "you are ready for your first Mock": `hasAnyEvidence = true` and `topTriggerReason = null` — both already computed by real, unmodified functions.** The minimum extension is not a new state machine (the directive's own explicit preference) — it is wiring the existing verdict into `mock-exam/page.tsx`'s own entry path, so a `practice-first` verdict redirects to the Recommendation Engine's own already-real "what to work on" surface, rather than silently allowing entry regardless.
+
+**When NOT ready:** the correct answer, already structurally available via `assessMockReadiness()`'s own `nextAction` field, is targeted preparation (a link to the Recommendation Engine's revision planner or practice areas), never a bare waiting message — this already exists as data, it is just not yet the thing standing between a learner and the attempt-creation call.
+
+---
+
+**PART 11 — RESULTS/REPORTING VERDICT**
+
+`ali_mock_attempt_report` (sealed until `report_release_state = 'released'`) and `mock_release_report()` are real and proven (Decision 145/149's own Mathematics reviews already relied on adjacent proven infrastructure). What a released report can *currently* show: raw score, per-question correct/incorrect outcomes. What it **cannot** currently show, because of Part 9's own gap: strengths, weaknesses, misconception patterns, a "what to practise next" recommendation, or a readiness-trajectory statement — the exact list the directive's own governing principle requires, and the exact list a released report's own `competency_evidence`/`strengths`/`weaknesses` fields being permanently `null` today directly contradicts. **This is the single most direct evidence for why "42/60" is not yet an acceptable Mock outcome under Angel's own goal** — it is not a hypothetical risk, it is what the system would actually produce today.
+
+---
+
+**PART 12 — ANTI-MEMORISATION MINIMUM VERDICT**
+
+**Favourable finding: the raw exposure record already exists.** `ali_mock_attempt.assigned_question_ids` is populated on every attempt today (Part 4) — First Mock Minimum does **not** need a new recording table. What is missing, and is a genuine First Mock Minimum requirement (not a later-only one): whatever assembles the first form must **read** this existing field for the specific learner before finalising a manifest, so a learner's own first Mock cannot, even by pure chance, be assembled from questions they were already shown through an unrelated route. **This is a small, bounded check at form-assembly time, not the full future cooldown/routing engine** (which remains explicitly out of First Mock Minimum scope, per the directive's own Part 12 instruction).
+
+---
+
+**PART 13 — FORM ASSEMBLY RECOMMENDATION**
+
+**Option C — generated then independently reviewed and frozen** — matching what the existing schema already assumes, not inventing a new model. `ali_mock_form`'s own design (Part 4) already places the real review at content-promotion time (`mock_eligible`) and treats the form itself as a fixed manifest once created, checked authoritatively at attempt-creation time. The smallest safe process: a bounded script/tool proposes a manifest from the `mock_eligible` pool respecting marks/difficulty/QT-coverage/grouping constraints (Part 5's own composition rules), a human (the same reviewer role this entire arc has used) reviews and confirms it, and only then is the `ali_mock_form` row inserted with `active = true`. **Dynamic per-attempt generation (Option A) is explicitly not recommended** — it would remove the one human review point the existing architecture, and this whole arc's own standing discipline, has consistently required before content reaches a learner.
+
+---
+
+**PART 14 — SUBJECT SEPARATION RECOMMENDATION**
+
+**Use Decision 133's own already-established direction, not a fresh product decision.** That decision already found the schema/RPC layer subject-agnostic and recommended Mathematics and English be separately attemptable, with "Full Mock" as an optional later aggregation of two independent attempts, not a prerequisite. Combined with Part 5/6's own finding — **Mathematics is materially closer to First Mock Minimum than English (content-sufficient with real constraint vs. structurally incomplete)** — the correct First Mock Minimum interpretation is: **permit a genuine, subject-pure Mathematics-only first Mock**, deferring English's own first Mock until its own genuine blocker (QT-WC-01b / the image-asset pipeline) is resolved, rather than gating the *entire* programme's first Mock on English catching up. This does not require a new product model; it requires exactly the small, additive `attempt_type` extension Decision 133 already scoped (reuse `timed_section`, or add a narrow new value), not a redesign.
+
+---
+
+**PART 15 — FIRST MOCK MINIMUM GATE TABLE**
+
+| Capability | Why it matters to Angel's goal | Current state | First Mock required? | Status | Smallest next action | Dependency |
+|---|---|---|---|---|---|---|
+| Mathematics content sufficiency | Paper must resemble the real exam to generate valid evidence | 46 experiences / 68 marks, all 13 QTs, tight but real | Yes | **PARTIAL** | None — content is sufficient with disclosed constraint | — |
+| English content sufficiency | Same | 1 passage complete; Writing structurally incomplete (no Q2) | Yes, if English is in scope | **FAIL** | Defer English's own first Mock (Part 14) | Image-asset pipeline for QT-WC-01b |
+| Grouped presentation (learner-facing) | Real questions genuinely use (a)/(b)/(c) | Proven for the review surface (Decision 155); not re-verified for the learner attempt UI this session | Yes, for the one grouped Mathematics family | **UNKNOWN** | Verify `mock_get_question`'s own grouped presentation before relying on it | — |
+| Grouped scoring | A misgraded grouped question misgrades a real learner | Not implemented anywhere (Part 7) | Yes | **FAIL** | Implement grouped scoring for the one Mathematics grouped family | Grouped presentation confirmed first |
+| Deterministic marking | Core Mathematics correctness must be trustworthy | Proven, live, tested (`mock_score_attempt`) | Yes | **PASS** | — | — |
+| Structured acceptable-response marking | English's own answer-validation tiers need honest grading | Exists in Practice/review tooling; not independently re-verified inside `mock_score_attempt` this session | Only if English is in scope | **UNKNOWN** | Verify before including English | — |
+| Writing marking | An unmarked or invalidly-marked Writing task cannot honestly report performance | No workflow of any kind exists (Part 8) | Only if Writing is in the first Mock's scope | **FAIL** | Build the bounded human-marking step (Part 8) | — |
+| Form assembly | Without it no Mock can exist regardless of every other row | Not built | Yes | **FAIL** | Build Option C (Part 13) | Pool-level gate |
+| Form review/freeze | Prevents an unreviewed manifest reaching a learner | No dedicated field, but the architecture already assumes upstream review (Part 4/13) | Yes | **PARTIAL** | Same process as form assembly | Pool-level gate |
+| Learner exposure recording | Foundation for all future anti-memorisation work | Already exists (`assigned_question_ids`), unread by anything yet | Yes, in bounded form (Part 12) | **PARTIAL** | Read it at form-assembly time for the specific learner | Form assembly |
+| First-Mock readiness | Prevents a wasted, low-value first attempt | Real logic exists, not wired to the entry gate (Part 10) | Yes | **PARTIAL** | Wire `assessMockReadiness()` into `mock-exam/page.tsx`'s own entry path | — |
+| Educational Intelligence ingestion | The actual point of a Mock, per Angel's own goal | Classification logic exists, unwired to reports (Part 9) | Yes, at minimum | **PARTIAL** | Wire `evidenceAdapter.ts`'s output into the report | — |
+| Mastery/evidence impact (Practice) | — | Intentionally firewalled from Mock | Not required to merge | **NOT REQUIRED** | — | — |
+| Targeted Practice generation | Converts a Mock result into forward action | Recommendation Engine exists; never fed a Mock result | Yes, at minimum | **PARTIAL** | Feed one Mock-derived signal into the existing engine | EI ingestion above |
+| Child results | Must be understandable, not raw scores/IDs | Raw score/outcomes exist; strengths/weaknesses do not (Part 11) | Yes | **FAIL** | Same as EI ingestion | EI ingestion |
+| Parent results | Same | No Mock-specific parent surface exists | Yes, at minimum | **FAIL** | Same | EI ingestion |
+| Readiness reassessment | Prevents premature or needlessly delayed next Mock | `mockAttemptCount` already feeds the existing verdict; no richer trajectory yet | Not required for the *first* Mock's own delivery | **NOT REQUIRED FOR FIRST MOCK** | — | Rolling Programme |
+| Practice isolation | A defect here already once let Mock content leak toward Practice | Confirmed PASS in production (Decisions 152/154/157) | Yes | **PASS** | — | — |
+| Security/RLS | Same class of risk, database layer | Confirmed PASS in production, independently re-verified this session (anon-role probe) | Yes | **PASS** | — | — |
+| Mock Centre availability control | Must never claim availability that doesn't exist | `getActiveMockForm()` already fails safely to "Not ready yet" (Decision 133's own confirmation, re-verified) | Yes | **PASS** | — | — |
+
+---
+
+**PART 16 — THREE CAPACITY HORIZONS**
+
+**A. FIRST MOCK MINIMUM:** one Mathematics-only form (Part 14), the pool-level gate, grouped scoring for the one Mathematics grouped family, form assembly (Option C), the readiness-gate wire, the minimum EI-ingestion wire (raw competency evidence into the report), and exposure recording read at assembly time. **English and Writing marking are explicitly out of this horizon**, deferred per Parts 6/8/14.
+
+**B. ROLLING PROGRAMME CAPACITY (approximately monthly):** 2–3 more English passages (Decision 138's own 3–4 launch-floor figure, still not met at 1), the QT-WC-01b image-asset pipeline and its own content, the Writing marking workflow generalised beyond a single bounded first-Mock step, richer readiness-trajectory logic beyond raw attempt count, parent-facing results depth, and material Mathematics reserve (68 marks leaves almost none past one form — a second distinct Mathematics form needs meaningfully more content).
+
+**C. LONG-TERM / ACCELERATED CAPACITY:** the exposure-routing/cooldown engine (Decision 152's own named future work, still entirely unbuilt), sufficient passage/family diversity to make ~14-day accelerated Mocks safe, the parent-requested-extra-Mock chain (Request → Eligibility → Entitlement/Payment → Authorisation, payment never overriding educational protection), and whatever additional content volume that routing engine's own real cooldown rules turn out to require once built (not estimated here, since Decision 146's own flat-row estimate was already superseded and should not be resurrected).
+
+---
+
+**PART 17 — SELECTED NEXT EXECUTION INCREMENT**
+
+**Not** "author more content." **Not** "grouped scoring" in isolation. **Not** Decision 158's own earlier ordering, mechanically followed. Derived directly from the gate table (Part 15): the highest-leverage bounded increment that removes the most FAIL/PARTIAL rows at once, without crossing English/Writing/cadence/payment gates prematurely, is:
+
+**Build the pool-level Mock-Eligible gate (Decision 138) for Mathematics only, plus grouped-question scoring for the one Mathematics grouped family.**
+
+This single, bounded increment is the specific dependency named by five different FAIL/PARTIAL rows in Part 15 (form assembly, form review/freeze, grouped scoring, and indirectly deterministic marking's own completeness for grouped content) — building it first, and only for Mathematics, avoids doing English/Writing-specific work that Parts 6/8/14 have already shown is not yet a First Mock blocker.
+
+**Acceptance criteria for this increment (recorded for the record, not yet authorised for implementation):**
+1. A pool-level gate exists that can promote a defined, reviewed subset of `independently_validated` Mathematics rows to `mock_eligible`, scoped by exact ID (matching every promotion migration's own established discipline in this arc), never a bulk/blanket promotion.
+2. `mock_score_attempt` (or an additive extension of it) correctly scores the one grouped Mathematics family — each subpart marked individually, rolled up into its own numbered-question total, represented correctly in the attempt's own total marks.
+3. Both are proven by tests that fail against the pre-increment behaviour and pass after, mirroring every regression-test discipline already established in this arc.
+4. No English content, no Writing marking, no cadence, no payment, no exposure-routing engine, and no form assembly is touched by this increment — those remain separately scoped, later, Founder-authorised work.
+5. Production application follows the same one-migration-at-a-time, Founder-controlled pattern already proven for migrations 090–103.
+
+**Dependencies after this increment:** form assembly (Part 13, Option C) becomes buildable once a real `mock_eligible` pool exists to assemble from; the readiness-gate wire (Part 10) and minimum EI-ingestion wire (Part 9) can proceed independently, in parallel, once authorised, since neither depends on the pool-level gate itself.
+
+---
+
+**PART 18 — ANGEL-GOAL-ALIGNED FINAL VERDICT**
+
+**C. FIRST MOCK MINIMUM NOT READY.**
+
+Judged against Angel's own governing outcome, not feature count: even the stronger subject (Mathematics) cannot yet be safely assembled into a form (no pool-level gate), cannot be correctly scored if it were (grouped scoring absent), is not gated by genuine readiness (the readiness function exists but does not stand between a learner and the attempt), and — most decisively against the goal itself — would today return a bare score with no strengths, weaknesses, misconceptions, or "what to practise next," because the Educational Intelligence wiring a first Mock's own value depends on does not exist yet. English is further behind still, missing a whole evidenced paper component. **None of this is a content-volume problem** — Decision 147's own corrected framing, reaffirmed and sharpened by Decision 158's own mark-density finding, still holds. It is that several specific, bounded, already-identified system capabilities do not exist yet, and Part 17 names the single highest-leverage one to build next.
+
+---
+
+**What this decision does NOT claim:** it does not claim any of the recommended increments has been implemented (none has); it does not claim the selected increment (Part 17) is authorised for implementation — it is recorded for Founder approval, per the directive's own explicit "Wait for Founder approval" instruction; it does not claim English or Writing marking work is cancelled, only sequenced after Mathematics's own First Mock Minimum; it does not claim `mockReadiness.ts` needs to be rebuilt — Part 10 explicitly finds the existing logic sufficient, only its wiring is missing; it does not claim the exposure-routing engine is a First Mock requirement (Part 12 explicitly scopes only a bounded read of already-existing data as in-scope); it does not claim any production data, code, or content was changed by this decision.
+
+**Files changed:** `ALI_DECISION_LOG.md` only (this entry).
+
+**Migration:** none created by this decision.
+
+**Decision number:** 159.
+
+**Commit SHA:** recorded after commit (see repository history immediately following this entry).
+
+**Rationale:** grounding every verdict in direct source reads this session performed itself (grouping-column references, `mockReadiness.ts`'s real wiring, `evidenceAdapter.ts`'s own disclosed isolation, `ali_mock_form`'s own schema comment, `assigned_question_ids`'s existing presence, and Decision 133's own re-read prior finding) rather than recalling prior decisions' prose keeps this assessment at the same evidentiary standard the rest of this arc has required, and produced at least two findings a prose-only re-read would likely have missed: that the readiness function is real and working (not merely "informational" in the dismissive sense), and that the raw exposure-recording field already exists, meaning the anti-memorisation minimum (Part 12) is a small read, not a new table. Selecting a Mathematics-only, gate-plus-scoring increment as the next step, rather than mechanically continuing Decision 158's own listed order, follows directly from the gate table itself (Part 15) — the increment that removes the most genuine blockers at once, without crossing gates the assessment shows are not yet ready to be crossed.
+
+**Implications:** Decisions 1–158 all stand, none reversed or rewritten; Decision 158's certification is confirmed closed. **First Mock Minimum is NOT READY.** The next action, pending Founder approval, is the bounded Mathematics-only pool-level gate + grouped-scoring increment named in Part 17 — not more content authoring, not the full roadmap simultaneously, not English or Writing work, not cadence, not payment, not Mock Centre activation. `mock_eligible` remains 0, `ali_mock_form` remains 0, and no implementation begins until the Founder explicitly authorises Part 17's own increment.
+
+---
