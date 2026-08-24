@@ -17,6 +17,7 @@ import {
   fetchWritingTeachingReviewedFamilyIds, submitWritingTeachingReview,
   WRITING_TEACHING_CONTENT_VERSION, WRITING_TEACHING_REVIEW_TARGET_IDS,
   fetchQuestionsByIds, fetchSevenXReviewStatus, buildSevenXNotesPrefix, SEVEN_X_FAMILIES, SEVEN_X_TARGET_IDS,
+  groupQuestionsForReview,
   fetchMr04DepthReviewStatus, buildMr04DepthNotesPrefix, MR04_DEPTH_FAMILIES, MR04_DEPTH_TARGET_IDS,
   fetchInc006DepthReviewStatus, buildInc006DepthNotesPrefix, INC006_DEPTH_FAMILIES, INC006_DEPTH_TARGET_IDS,
   fetchMockMrBatch001ReviewStatus, buildMockMrBatch001NotesPrefix, submitMockMathsIndependentReview,
@@ -677,39 +678,84 @@ function ReviewForm({
       {!loading && questions.length > 0 && (
         <Card>
           <SectionTitle letter="D" title="Questions to review" />
-          {[
-            ["Representative example", easiest && questions.length === 1 ? easiest : questions[Math.floor(questions.length / 2)]],
-            ["Easiest example", easiest],
-            ["Hardest example", hardest],
-            ["Unusual / transfer example", unusual],
-          ].filter(([, q]) => q).map(([label, q]) => {
-            const question = q as RepresentativeQuestion;
-            return (
-              <div key={`${label}-${question.id}`} className="border-t border-gray-50 dark:border-gray-800 pt-3 mt-3 first:border-t-0 first:pt-0 first:mt-0">
-                <p className="text-[11px] font-semibold text-purple-600 dark:text-purple-400 uppercase tracking-wide">{label as string}</p>
-                <p className="text-sm font-semibold text-gray-800 dark:text-gray-200 mt-1">{question.question}</p>
-                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1"><strong>Model answer ({question.contentDifficulty} difficulty):</strong> {question.modelAnswer}</p>
-                {question.addressesMisconception && (
-                  <p className="text-xs text-amber-700 dark:text-amber-300 mt-1"><strong>Common trap:</strong> {question.addressesMisconception}</p>
-                )}
-                {question.transferClass && (
-                  <p className="text-[11px] text-gray-400 dark:text-gray-500 mt-1">Transfer demand: {question.transferClass.replace(/_/g, " ").toLowerCase()}</p>
-                )}
-              </div>
-            );
-          })}
-          {otherExamples.length > 0 && (
-            <details className="mt-3">
-              <summary className="text-xs font-semibold text-gray-500 dark:text-gray-400 cursor-pointer">{otherExamples.length} more example(s)</summary>
-              <div className="space-y-3 mt-2">
-                {otherExamples.map((q) => (
-                  <div key={q.id} className="border-t border-gray-50 dark:border-gray-800 pt-3">
-                    <p className="text-sm font-semibold text-gray-800 dark:text-gray-200">{q.question}</p>
-                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-1"><strong>Model answer ({q.contentDifficulty}):</strong> {q.modelAnswer}</p>
+          {sevenX || target.reviewTargetType === "passage" ? (
+            // Decision 152, Review-Surface Grouping Correction — this is a
+            // bounded, exact-scoped question set (a sevenX batch, or a
+            // passage's complete attached set), never a large ordinary
+            // family with many long-approved siblings, so every question
+            // is shown, in full, in its natural order — never sampled down
+            // to "easiest/hardest/unusual" examples with the rest hidden
+            // behind a collapsed toggle. A grouped numbered question
+            // (question_group_id set) is rendered as ONE coherent unit
+            // with its subparts together, never as unrelated flat rows.
+            <div className="space-y-4">
+              {groupQuestionsForReview(questions).map((group) => (
+                <div key={group.key} className="border-t border-gray-50 dark:border-gray-800 pt-3 first:border-t-0 first:pt-0">
+                  {group.items.length > 1 && (
+                    <p className="text-[11px] font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-wide mb-1">
+                      One numbered question: {group.items.length} subparts, reviewed together
+                    </p>
+                  )}
+                  <div className={group.items.length > 1 ? "space-y-3 pl-3 border-l-2 border-indigo-100 dark:border-indigo-900" : ""}>
+                    {group.items.map((question) => (
+                      <div key={question.id}>
+                        {question.subpartLabel && (
+                          <p className="text-[11px] font-semibold text-gray-400 dark:text-gray-500">
+                            Subpart {question.subpartLabel}
+                            {question.markingMode ? ` · marking: ${question.markingMode.replace(/_/g, " ")}` : ""}
+                          </p>
+                        )}
+                        <p className="text-sm font-semibold text-gray-800 dark:text-gray-200 mt-1">{question.question}</p>
+                        <p className="text-xs text-gray-500 dark:text-gray-400 mt-1"><strong>Model answer ({question.contentDifficulty} difficulty):</strong> {question.modelAnswer}</p>
+                        {question.addressesMisconception && (
+                          <p className="text-xs text-amber-700 dark:text-amber-300 mt-1"><strong>Common trap:</strong> {question.addressesMisconception}</p>
+                        )}
+                        {question.transferClass && (
+                          <p className="text-[11px] text-gray-400 dark:text-gray-500 mt-1">Transfer demand: {question.transferClass.replace(/_/g, " ").toLowerCase()}</p>
+                        )}
+                      </div>
+                    ))}
                   </div>
-                ))}
-              </div>
-            </details>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <>
+              {[
+                ["Representative example", easiest && questions.length === 1 ? easiest : questions[Math.floor(questions.length / 2)]],
+                ["Easiest example", easiest],
+                ["Hardest example", hardest],
+                ["Unusual / transfer example", unusual],
+              ].filter(([, q]) => q).map(([label, q]) => {
+                const question = q as RepresentativeQuestion;
+                return (
+                  <div key={`${label}-${question.id}`} className="border-t border-gray-50 dark:border-gray-800 pt-3 mt-3 first:border-t-0 first:pt-0 first:mt-0">
+                    <p className="text-[11px] font-semibold text-purple-600 dark:text-purple-400 uppercase tracking-wide">{label as string}</p>
+                    <p className="text-sm font-semibold text-gray-800 dark:text-gray-200 mt-1">{question.question}</p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-1"><strong>Model answer ({question.contentDifficulty} difficulty):</strong> {question.modelAnswer}</p>
+                    {question.addressesMisconception && (
+                      <p className="text-xs text-amber-700 dark:text-amber-300 mt-1"><strong>Common trap:</strong> {question.addressesMisconception}</p>
+                    )}
+                    {question.transferClass && (
+                      <p className="text-[11px] text-gray-400 dark:text-gray-500 mt-1">Transfer demand: {question.transferClass.replace(/_/g, " ").toLowerCase()}</p>
+                    )}
+                  </div>
+                );
+              })}
+              {otherExamples.length > 0 && (
+                <details className="mt-3">
+                  <summary className="text-xs font-semibold text-gray-500 dark:text-gray-400 cursor-pointer">{otherExamples.length} more example(s)</summary>
+                  <div className="space-y-3 mt-2">
+                    {otherExamples.map((q) => (
+                      <div key={q.id} className="border-t border-gray-50 dark:border-gray-800 pt-3">
+                        <p className="text-sm font-semibold text-gray-800 dark:text-gray-200">{q.question}</p>
+                        <p className="text-xs text-gray-500 dark:text-gray-400 mt-1"><strong>Model answer ({q.contentDifficulty}):</strong> {q.modelAnswer}</p>
+                      </div>
+                    ))}
+                  </div>
+                </details>
+              )}
+            </>
           )}
         </Card>
       )}

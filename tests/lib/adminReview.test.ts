@@ -3,7 +3,8 @@ import assert from "node:assert/strict";
 import {
   validateReviewSubmission, buildNotesWithQualification, sortByDifficulty, computeDifficultyRange,
   REVIEW_CRITERIA, hasNegativeFraming, FAMILY_EDUCATIONAL_CONTEXT, FAMILY_MARKING_BASIS,
-  type ReviewSubmission,
+  groupQuestionsForReview,
+  type ReviewSubmission, type RepresentativeQuestion,
 } from "@/lib/adminReview";
 
 /**
@@ -99,6 +100,79 @@ test("sortByDifficulty does not mutate the original array", () => {
   const original = [...items];
   sortByDifficulty(items);
   assert.deepEqual(items, original);
+});
+
+// --- groupQuestionsForReview (Decision 152, Review-Surface Grouping ------
+// Correction) — proves a grouped numbered question is presented as ONE
+// coherent unit, never as unrelated flat rows, the exact defect this
+// session found: the review surface previously fetched and rendered
+// questions with no awareness of migration 093's grouping columns at all.
+
+function q(overrides: Partial<RepresentativeQuestion>): RepresentativeQuestion {
+  return {
+    id: "q1", subject: "maths", skill: "QT-MR-01", question: "?", modelAnswer: "1",
+    familyId: null, learningUnitId: null, contentDifficulty: "medium", transferClass: null,
+    addressesMisconception: null, contentVersion: 1, active: true, provenance: "angel_original",
+    eligibilityStatus: "authentic_assessment_candidate", workingSteps: null,
+    questionGroupId: null, groupOrder: null, subpartLabel: null, markingMode: null,
+    ...overrides,
+  };
+}
+
+test("groupQuestionsForReview: an ungrouped row forms its own singleton group", () => {
+  const groups = groupQuestionsForReview([q({ id: "a" }), q({ id: "b" })]);
+  assert.equal(groups.length, 2);
+  assert.deepEqual(groups.map((g) => g.items.length), [1, 1]);
+});
+
+test("groupQuestionsForReview: mock-mr01mr10-costumeschedule's real 4 rows collapse into exactly 2 groups of 2, matching Decision 151's own content", () => {
+  const rows = [
+    q({ id: "mock-mr01mr10-costumeschedule-01a", questionGroupId: "mock-mr01mr10-costumeschedule-01", groupOrder: 1, subpartLabel: "(a)" }),
+    q({ id: "mock-mr01mr10-costumeschedule-01b", questionGroupId: "mock-mr01mr10-costumeschedule-01", groupOrder: 2, subpartLabel: "(b)" }),
+    q({ id: "mock-mr01mr10-costumeschedule-02a", questionGroupId: "mock-mr01mr10-costumeschedule-02", groupOrder: 1, subpartLabel: "(a)" }),
+    q({ id: "mock-mr01mr10-costumeschedule-02b", questionGroupId: "mock-mr01mr10-costumeschedule-02", groupOrder: 2, subpartLabel: "(b)" }),
+  ];
+  const groups = groupQuestionsForReview(rows);
+  assert.equal(groups.length, 2, "the 4 rows must NEVER be rendered as 4 unrelated flat questions");
+  assert.deepEqual(groups.map((g) => g.items.length), [2, 2]);
+  assert.deepEqual(groups[0].items.map((i) => i.id), ["mock-mr01mr10-costumeschedule-01a", "mock-mr01mr10-costumeschedule-01b"]);
+  assert.deepEqual(groups[1].items.map((i) => i.id), ["mock-mr01mr10-costumeschedule-02a", "mock-mr01mr10-costumeschedule-02b"]);
+});
+
+test("groupQuestionsForReview: within a group, items are ordered by groupOrder even if the input array is reversed", () => {
+  const rows = [
+    q({ id: "mock-eng-boathouse-q12b", questionGroupId: "mock-eng-boathouse-q12", groupOrder: 2, subpartLabel: "(b)" }),
+    q({ id: "mock-eng-boathouse-q12a", questionGroupId: "mock-eng-boathouse-q12", groupOrder: 1, subpartLabel: "(a)" }),
+  ];
+  const groups = groupQuestionsForReview(rows);
+  assert.equal(groups.length, 1);
+  assert.deepEqual(groups[0].items.map((i) => i.id), ["mock-eng-boathouse-q12a", "mock-eng-boathouse-q12b"]);
+});
+
+test("groupQuestionsForReview: groups are ordered by each group's own first item id, producing the natural Q1..Q12 reading order for a real passage's 13 rows", () => {
+  const standalone = (id: string) => q({ id, familyId: id });
+  const rows = [
+    standalone("mock-eng-boathouse-q02"), standalone("mock-eng-boathouse-q01"),
+    q({ id: "mock-eng-boathouse-q12b", questionGroupId: "mock-eng-boathouse-q12", groupOrder: 2, subpartLabel: "(b)" }),
+    standalone("mock-eng-boathouse-q11"),
+    q({ id: "mock-eng-boathouse-q12a", questionGroupId: "mock-eng-boathouse-q12", groupOrder: 1, subpartLabel: "(a)" }),
+    standalone("mock-eng-boathouse-q03"),
+  ];
+  const groups = groupQuestionsForReview(rows);
+  assert.deepEqual(groups.map((g) => g.key), [
+    "mock-eng-boathouse-q01", "mock-eng-boathouse-q02", "mock-eng-boathouse-q03",
+    "mock-eng-boathouse-q11", "mock-eng-boathouse-q12",
+  ]);
+});
+
+test("groupQuestionsForReview: never merges two different questionGroupId values together", () => {
+  const rows = [
+    q({ id: "x1a", questionGroupId: "x1", groupOrder: 1 }),
+    q({ id: "x1b", questionGroupId: "x1", groupOrder: 2 }),
+    q({ id: "x2a", questionGroupId: "x2", groupOrder: 1 }),
+  ];
+  const groups = groupQuestionsForReview(rows);
+  assert.equal(groups.length, 2);
 });
 
 test("computeDifficultyRange collapses a single difficulty to just that word", () => {

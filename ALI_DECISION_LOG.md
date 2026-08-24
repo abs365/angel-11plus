@@ -4698,3 +4698,82 @@ Not re-run this session — no discrepancy was found requiring it.
 **Implications:** Decisions 1–153 all stand, none reversed or rewritten. Decision 152 (Protected Mock Content Isolation and Security Correction) is CLOSED. Current protected Mathematics Mock inventory: 38 `independently_validated` (Batch 001: 18, Batch 002: 20) — unchanged, no retirement or replacement required. Decision 151's authored content (migrations 095–099: Mathematics Batch 003 — 10 candidate rows across 4 families; English Mock Content Foundation Batch 001 — 1 original passage, 13 Comprehension rows, 3 Continuous Writing prompts, plus the associated review-governance migrations) remains preserved, unapplied, and `authentic_assessment_candidate`. **The next programme action is to return to Decision 151's own controlled production-application and independent-review sequence for migrations 095–099** — not to begin another content batch, and not implied or accelerated by this closure to happen automatically. No independent review, no content promotion, no Mock form, no Mock Centre activation, and no further Practice-selection code change is authorised or begun by this decision.
 
 ---
+
+### Decision 155 — MOCK PROGRAMME INCREMENT 006: PRODUCTION APPLICATION COMPLETE + REVIEW-SURFACE GROUPING CORRECTION: migrations 095–099 (Decision 151's Mathematics Batch 003 + English Mock Content Foundation Batch 001) are Founder-confirmed successfully applied to production, with the Decision 154 Practice-isolation boundary re-verified effective afterward (anon-role visibility unchanged: 194 maths + 120 english `practice_eligible` only); a genuine review-surface defect was found while verifying reviewer readiness — the admin review UI never fetched or rendered migration 093's grouping columns at all, so `mock-mr01mr10-costumeschedule`'s 4 rows and `mock-eng-boathouse-q12a/q12b` would have been shown to a reviewer as unrelated flat questions, not as the 2 and 1 coherent numbered-question units they actually are — found, fixed, and tested this session; genuine human independent review has NOT begun
+
+**Scope and process:** Two parts. Part A is documentation-only closure of Decision 151's production-application sequence (Founder-run migrations, Founder-run verification queries, accepted directly as Level 1 evidence). Part B is a real, necessary code fix to the review surface, found while verifying reviewer readiness per this session's own directive — corrected, tested, and committed alongside this entry, since the directive's own Part 9 instruction authorises "the minimum defect required to make genuine independent review possible."
+
+---
+
+**PART 1 — PRODUCTION APPLICATION, FOUNDER-CONFIRMED**
+
+Migrations 095, 096, 097, 098, and 099 were each applied by the Founder via Supabase SQL Editor, each returning "Success. No rows returned," across the controlled one-migration-at-a-time sequence this session ran turn by turn (reconciling and verifying the content contract of each migration directly from the repository before supplying it, per the Founder's own explicit instruction not to reconstruct from memory).
+
+**Verified production state, Founder-supplied, accepted directly (not re-queried, per this environment's standing lack of live access):**
+- **Mathematics Batch 003:** exactly 10 rows across 4 families (`mock-mr01-directcalc`, `mock-mr08-rotation`, `mock-mr12-reversemean`, `mock-mr01mr10-costumeschedule`), all `active = true`, all `authentic_assessment_candidate`. Grouping present exactly where intended: `mock-mr01mr10-costumeschedule-01a/01b` share one `question_group_id` with `group_order` 1/2, subparts (a)/(b); `-02a/02b` form the second grouped instance identically. 4 pending-review placeholders exist (`review_target_type = question_family`, `review_type = mock_maths_independent_review`, `reviewer = UNASSIGNED`, `decision = pending_independent_review`).
+- **English Comprehension:** passage `mock-eng-boathouse` ("The Boat in the Boathouse") present, active, `authentic_assessment_candidate`. Exactly 13 question rows / 12 numbered questions attached; Q12a/Q12b confirmed as the only grouped pair (`question_group_id = mock-eng-boathouse-q12`, `group_order` 1/2, `marking_mode` `deterministic`/`structured_acceptable_response`). All 13 `active = true`, `authentic_assessment_candidate`.
+- **Continuous Writing:** exactly 3 prompts (`mock-writing-mindchange-01`, `-kindness-01`, `-cookopinion-01`), all `QT-WC-01a`, `active = true`, `authentic_assessment_candidate`. No AI Writing scoring activated or validated.
+- **English review governance:** exactly 4 pending records — 1 passage (`review_target_type = passage`, `review_type = mock_english_passage_independent_review`) + 3 writing prompts (`review_target_type = writing_prompt`, `review_type = mock_writing_prompt_independent_review`), all `reviewer = UNASSIGNED`, `decision = pending_independent_review`.
+- **Governance counts:** Mathematics `practice_eligible` = 194, `independently_validated` = 38, `authentic_assessment_candidate` = 10 (new). English `practice_eligible` = 120, `authentic_assessment_candidate` = 13 (new). Writing `authentic_assessment_candidate` = 3 (new). `mock_eligible` = 0. `ali_mock_form` count = 0. Mock remains NOT READY YET.
+
+**Practice isolation regression (mandatory, Decision 154's own boundary re-checked with real new content present):** a `SET LOCAL ROLE anon` probe against production `ali_question_bank`, run by the Founder after all five migrations were applied, returned exactly `english | practice_eligible | 120` and `maths | practice_eligible | 194` — no `authentic_assessment_candidate`, `independently_validated`, `mock_eligible`, or `provisional` row of any subject visible. **PASS.** The isolation boundary holds with the new candidate content actually present, not merely in the abstract.
+
+---
+
+**PART 2 — REPOSITORY RECONCILIATION (BEFORE EACH MIGRATION, AND FOR THIS CLOSURE)**
+
+Confirmed at every step of the sequence, and again for this entry: working tree clean before each turn's own change; HEAD == origin/main throughout; Decision 154 present exactly once; Decision 151 unchanged; migrations 095–100 byte-unchanged at every check (`git diff HEAD` empty each time); no migration beyond 100 exists; no `ali_mock_form` creation anywhere in migrations 095–099 (only a disclaiming comment in 095); no `mock_eligible` mutation anywhere in their executable SQL. No discrepancy found at any point; nothing required stopping.
+
+---
+
+**PART 3 — REVIEW-SURFACE DEFECT FOUND AND CORRECTED**
+
+**The defect, confirmed from source, not assumed:** `QUESTION_SELECT_COLUMNS` (the single shared Postgrest column list used by `fetchRepresentativeQuestions()`, `fetchQuestionsByIds()`, and `fetchQuestionsForPassage()` in `lib/adminReview.ts`) did not include `question_group_id`, `group_order`, `subpart_label`, or `marking_mode` — migration 093's own grouping columns, live since Decision 148, first populated with real content by migrations 095 and 097 this arc. `RepresentativeQuestion` (the type every review-surface fetch returns) had no fields for them either. A repository-wide search of `app/admin-beta/review/page.tsx` for any of the four column names returned zero matches. **This meant the grouping relationship was not merely unrendered — it was never even fetched from the database**, so no amount of UI-level fix could have recovered it without first fixing the data layer. `fetchQuestionsForPassage()` additionally carried its own separate, hand-duplicated select/mapper (not reusing `QUESTION_SELECT_COLUMNS`/`mapQuestionRow`), doubling the surface needing the fix.
+
+**Concrete consequence, verified against real Decision 151 content:** a reviewer opening the `mock-mr01mr10-costumeschedule` family (Mathematics Batch 003's only grouped family) or the `mock-eng-boathouse` passage (English Comprehension, Q12a/Q12b) would have seen 4 and 2 rows respectively rendered through the existing "easiest/hardest/unusual/other examples" sampling view — a display designed for large, ordinary families with many independent siblings, never intended to represent a single numbered question's own subparts as one unit. Nothing in that view indicated `-01a` and `-01b` belonged together, or that Q12a and Q12b were one displayed numbered question. This is precisely the failure mode this session's own directive named explicitly: "Do not present the four database rows as though they were four unrelated questions."
+
+**The fix, minimal and scoped:**
+1. `QUESTION_SELECT_COLUMNS` extended to include the 4 grouping columns; `RepresentativeQuestion` extended with `questionGroupId`/`groupOrder`/`subpartLabel`/`markingMode`; `mapQuestionRow()` extended to populate them.
+2. `fetchQuestionsForPassage()` rewritten to reuse `QUESTION_SELECT_COLUMNS`/`mapQuestionRow()` instead of its own hand-duplicated copy — removing the second place the fields could have been (and were) missed, not merely patching it in two places.
+3. A new pure function, `groupQuestionsForReview()`, buckets a bounded question list by `questionGroupId` (ungrouped rows form their own singleton group), orders items within a group by `groupOrder`, and orders groups by each group's own first item's `id` — which, given this project's own existing ID convention, produces the natural Q1..Q12 / 01a..02b reading order without a separate ordering field.
+4. In `ReviewForm`'s question-list render, a new branch fires when `sevenX` is set OR `target.reviewTargetType === "passage"` (the two contexts that always receive a bounded, exact-scoped set — never a large ordinary family) — showing **every** question in the set, grouped and ordered by `groupQuestionsForReview()`, with a grouped unit visually bracketed and labelled "One numbered question: N subparts, reviewed together," each subpart showing its own label and marking mode. **The pre-existing "easiest/hardest/unusual/other examples" sampling view is unchanged and untouched for the generic, non-`sevenX`, non-passage family-review path** — this fix does not alter behaviour for any other review target.
+
+**What this fix does NOT do:** it does not change any educational content; it does not touch `eligibility_status`, `ali_family_review`, or `ali_mock_form`; it does not alter Practice selection or any Practice-facing code; it does not change the review-submission write path (Part 4 below); it does not touch the generic family-review sampling view used by every other pre-existing review section.
+
+---
+
+**PART 4 — REVIEW SUBMISSION GOVERNANCE, CONFIRMED FROM SOURCE**
+
+**Routing:** `handleSubmit()`'s ternary confirmed unchanged — `mock_maths_independent_review` → `submitMockMathsIndependentReview()`; `mock_english_passage_independent_review` → `submitMockEnglishPassageIndependentReview()`; `mock_writing_prompt_independent_review` → `submitMockWritingPromptIndependentReview()`. Every `<ReviewForm reviewType="...">` invocation for the Batch 001/002/003 Mathematics sections, the English passage section, and the Writing section confirmed to pass the correct literal value.
+
+**Reviewer identity and qualification required:** `validateReviewSubmission()` rejects an empty `reviewer` ("cannot be recorded anonymously") and an empty `qualificationBasis`, before any of the three submit functions runs.
+
+**No default-to-Approved:** `emptySubmission()`'s own `decision` field is `null`, with an explicit in-code comment: "the Founder's own directive states plainly: 'Claude must never preselect APPROVED.' No decision has a default; the reviewer must actively choose one." `validateReviewSubmission()` separately rejects a `null` decision.
+
+**No criteria auto-populated as passed:** all 18 educational review criteria (`educationalValidity` through `copyrightRiskClear`) default to `null` in `emptySubmission()`, not `true`.
+
+**Submission write-scope, proven not merely asserted:** all three submit functions' bodies confirmed to contain exactly one `.from("ali_family_review").insert(...)` call each, and no reference anywhere in any of them to `ali_question_bank`, `eligibility_status`, or `ali_mock_form`. A submission cannot change eligibility, cannot create a Mock form, and cannot set `mock_eligible` — structurally, not by convention.
+
+---
+
+**PART 5 — TESTS AND VERIFICATION**
+
+5 new tests for `groupQuestionsForReview()` (`tests/lib/adminReview.test.ts`): an ungrouped row forms its own singleton group; the real `mock-mr01mr10-costumeschedule` 4-row shape collapses into exactly 2 groups of 2 (asserted against the migration's own real IDs, not a synthetic fixture); items within a group are ordered by `groupOrder` even when the input array is reversed; groups are ordered by first-item `id`, proving the natural Q1..Q12 reading order for a 13-row passage-shaped fixture; two different `questionGroupId` values are never merged. Full suite: **1161/1161 pass** (1156 baseline at Decision 154 + 5 new, zero regressions). `npx tsc --noEmit`: clean. ESLint on every touched file: the same 5 pre-existing `page.tsx` errors present before this change (confirmed by diff-hunk inspection — both changed hunks fall well outside all 5 error lines), 0 new errors, 0 warnings (one Copy Quality Guard em-dash violation introduced by this session's own new UI copy was found and fixed before this check). Copy Quality Guard: PASS, 0 violations, 256 files. Production build: succeeds.
+
+---
+
+**What this decision does NOT claim:** it does not claim any human independent review has occurred for Mathematics Batch 003, the English Comprehension passage, or the Writing prompts — none has; it does not claim any content is `independently_validated` or `mock_eligible`; it does not claim `ali_mock_form` exists; it does not claim Mock is or is scheduled to become available; it does not claim the review-surface fix was the only possible defect in the review experience — it is the one this session's own verification found and was authorised to fix; it does not claim any educational content was changed (none was).
+
+**Files changed:** `lib/adminReview.ts` (modified — grouping columns added to the select/type/mapper layer, `fetchQuestionsForPassage()` deduplicated, `groupQuestionsForReview()` added), `app/admin-beta/review/page.tsx` (modified — question-list render branch added for `sevenX`/passage contexts), `tests/lib/adminReview.test.ts` (modified — 5 new tests), `ALI_DECISION_LOG.md` (this entry).
+
+**Migration:** none created by this decision.
+
+**Decision number:** 155.
+
+**Commit SHA:** recorded after commit (see repository history immediately following this entry).
+
+**Rationale:** fixing the data layer (select columns, type, mapper) before the render layer was the correct order because the render layer had nothing to group with until the fields existed at all — a UI-only fix would have been impossible, not merely incomplete. Scoping the render fix to exactly the `sevenX`/passage contexts, rather than changing the generic family-review sampling view everywhere, follows the directive's own "correct only the minimum defect required" instruction and this project's standing discipline against touching working, unrelated behaviour while fixing something else. Committing this as its own decision, rather than folding it silently into the production-application closure, keeps a real code change individually traceable and testable, matching every other genuine correction in this arc.
+
+**Implications:** Decisions 1–154 all stand, none reversed or rewritten. Migrations 095–099 are now live in production, confirmed by direct Founder-run verification, with Decision 154's Practice-isolation boundary re-confirmed effective against them. The review surface is now genuinely ready to support independent review of all three new content units — Mathematics Batch 003 (4 families, including the one grouped family shown coherently), the English Comprehension passage (12 numbered questions including the grouped Q12), and the 3 Continuous Writing prompts — without misrepresenting any grouped structure as unrelated rows. **No independent review has been performed.** No content has been promoted, no `ali_mock_form` created, no `mock_eligible` set, no Mock Centre activation, and no further content batch is authorised or begun by this decision. The next action is genuine human review by the Founder or a qualified reviewer.
+
+---

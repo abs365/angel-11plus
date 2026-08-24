@@ -780,6 +780,11 @@ export interface RepresentativeQuestion {
   eligibilityStatus: string;
   /** Mathematics-only, from the same prompt jsonb the Practice pathway itself reads (app/learning-intelligence/practice/[area]/page.tsx). null for English rows, or a Maths row with no stored steps (e.g. every mr05-number-property row — genuinely absent, not a fetch failure). Added for the CSSE Completion Programme Phase B Mathematics Teaching Review, so it can show a family's real Guided Practice sequence without a second, separately-fetched copy. */
   workingSteps: string[] | null;
+  /** Migration 093's grouped-question columns (Decision 152, Part 8 — Review-Surface Grouping Correction). All null for every standalone question; populated together only on rows that form one displayed numbered question with subparts (e.g. mock-mr01mr10-costumeschedule-01a/01b, mock-eng-boathouse-q12a/q12b). Added so the review surface can render a grouped numbered question coherently instead of as unrelated flat rows — the exact gap Decision 152's own directive found and required fixed before genuine independent review is possible. */
+  questionGroupId: string | null;
+  groupOrder: number | null;
+  subpartLabel: string | null;
+  markingMode: string | null;
 }
 
 /** prompt is stored as jsonb (typed `unknown` at the client) — narrows just enough to read the display fields safely, without claiming to know its full shape. */
@@ -1449,6 +1454,48 @@ export async function submitMockMathsIndependentReview(s: ReviewSubmission): Pro
   return { error: error ? error.message : null };
 }
 
+export interface QuestionGroup {
+  key: string;
+  items: RepresentativeQuestion[];
+}
+
+/**
+ * Decision 152, Review-Surface Grouping Correction — a bounded question
+ * list (an exact-ID `sevenX` batch, or a passage's complete attached set)
+ * grouped into coherent numbered-question units, so a grouped row
+ * (`questionGroupId` set — e.g. mock-mr01mr10-costumeschedule-01a/01b,
+ * mock-eng-boathouse-q12a/q12b) is never rendered as though it were an
+ * unrelated standalone question. Found and fixed this session: the review
+ * surface previously fetched and displayed questions with no awareness of
+ * migration 093's grouping columns at all — not merely un-rendered, but
+ * never even selected from the database (`QUESTION_SELECT_COLUMNS` did
+ * not include them). Ungrouped rows form their own singleton group (never
+ * merged with anything). Items within a group are ordered by
+ * `groupOrder`; groups themselves are ordered by their first item's `id`
+ * — stable, and (not by coincidence, but because every family/group in
+ * this project's own ID convention is built this way) sorts every
+ * existing standalone and grouped ID into its natural intended reading
+ * order (q01, q02, ... q11, q12a, q12b; 01a, 01b, 02a, 02b) without a
+ * separate ordering field. Pure and unit-tested
+ * (tests/lib/adminReview.test.ts).
+ */
+export function groupQuestionsForReview(questions: RepresentativeQuestion[]): QuestionGroup[] {
+  const groups = new Map<string, RepresentativeQuestion[]>();
+  for (const q of questions) {
+    const key = q.questionGroupId ?? q.id;
+    const existing = groups.get(key);
+    if (existing) existing.push(q);
+    else groups.set(key, [q]);
+  }
+  const result: QuestionGroup[] = [];
+  for (const [key, items] of groups) {
+    items.sort((a, b) => (a.groupOrder ?? 0) - (b.groupOrder ?? 0));
+    result.push({ key, items });
+  }
+  result.sort((a, b) => a.items[0].id.localeCompare(b.items[0].id));
+  return result;
+}
+
 /**
  * Mock Programme Increment 006, English Mock Content Foundation, Batch 001
  * (Track B) — review-surface wiring, added after both parallel content
@@ -1646,6 +1693,7 @@ function mapQuestionRow(r: {
   id: string; subject: string; skill: string; prompt: unknown; family_id: string | null; learning_unit_id: string | null;
   content_difficulty: string; transfer_class: string | null; addresses_misconception: string | null;
   content_version: number; active: boolean; provenance: string | null; eligibility_status: string;
+  question_group_id?: string | null; group_order?: number | null; subpart_label?: string | null; marking_mode?: string | null;
 }): RepresentativeQuestion {
   return {
     id: r.id, subject: r.subject, skill: r.skill,
@@ -1656,10 +1704,12 @@ function mapQuestionRow(r: {
     addressesMisconception: r.addresses_misconception, contentVersion: r.content_version,
     active: r.active, provenance: r.provenance, eligibilityStatus: r.eligibility_status,
     workingSteps: promptWorkingSteps(r.prompt),
+    questionGroupId: r.question_group_id ?? null, groupOrder: r.group_order ?? null,
+    subpartLabel: r.subpart_label ?? null, markingMode: r.marking_mode ?? null,
   };
 }
 
-const QUESTION_SELECT_COLUMNS = "id, subject, skill, prompt, family_id, learning_unit_id, content_difficulty, transfer_class, addresses_misconception, content_version, active, provenance, eligibility_status";
+const QUESTION_SELECT_COLUMNS = "id, subject, skill, prompt, family_id, learning_unit_id, content_difficulty, transfer_class, addresses_misconception, content_version, active, provenance, eligibility_status, question_group_id, group_order, subpart_label, marking_mode";
 
 /** Up to `limit` real questions for a family — the reviewer's representative + boundary sample (Operating Model §3), not the full sibling set. */
 export async function fetchRepresentativeQuestions(familyId: string, limit = 8): Promise<RepresentativeQuestion[]> {
@@ -1724,19 +1774,10 @@ export async function fetchQuestionsForPassage(passageId: string): Promise<Repre
   if (!supabase) return [];
   const { data, error } = await supabase
     .from("ali_question_bank")
-    .select("id, subject, skill, prompt, family_id, learning_unit_id, content_difficulty, transfer_class, addresses_misconception, content_version, active, provenance, eligibility_status")
+    .select(QUESTION_SELECT_COLUMNS)
     .eq("learning_unit_id", passageId);
   if (error || !data) return [];
-  return data.map((r) => ({
-    id: r.id, subject: r.subject, skill: r.skill,
-    question: promptText(r.prompt, "question"),
-    modelAnswer: promptText(r.prompt, "modelAnswer"),
-    familyId: r.family_id, learningUnitId: r.learning_unit_id,
-    contentDifficulty: r.content_difficulty, transferClass: r.transfer_class,
-    addressesMisconception: r.addresses_misconception, contentVersion: r.content_version,
-    active: r.active, provenance: r.provenance, eligibilityStatus: r.eligibility_status,
-    workingSteps: promptWorkingSteps(r.prompt),
-  }));
+  return data.map(mapQuestionRow);
 }
 
 export async function fetchPassageDetail(passageId: string): Promise<PassageDetail | null> {
