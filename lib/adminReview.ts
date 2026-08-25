@@ -795,6 +795,19 @@ export interface RepresentativeQuestion {
    * rendering, exactly like the learner surface does.
    */
   stimulus: unknown;
+  /**
+   * Shared-Scenario Presentation Correction (Decision 180) — the same
+   * optional `prompt.sharedStem` explicit content-contract field the
+   * learner's own mock_get_question() payload carries
+   * (lib/mockAttempt/types.ts's MockQuestionPayload.sharedStem), null
+   * for every row that has never set it. Narrowed to `string | null`
+   * here (unlike `stimulus`'s `unknown`) because it is always a plain
+   * string when present — see promptSharedStem() below. Callers must
+   * still validate group-level safety with
+   * lib/mockAttempt/workspace.ts's resolveGroupSharedStem() before
+   * trusting it, exactly like the learner surface does.
+   */
+  sharedStem: string | null;
 }
 
 /** prompt is stored as jsonb (typed `unknown` at the client) — narrows just enough to read the display fields safely, without claiming to know its full shape. */
@@ -818,6 +831,15 @@ function promptWorkingSteps(prompt: unknown): string[] | null {
 function promptStimulus(prompt: unknown): unknown {
   if (prompt && typeof prompt === "object" && "stimulus" in prompt) {
     return (prompt as Record<string, unknown>).stimulus ?? null;
+  }
+  return null;
+}
+
+/** Migration 121/122 (Decision 180) — read straight off jsonb, narrowed to string | null; never guessed or derived from `question` text. */
+function promptSharedStem(prompt: unknown): string | null {
+  if (prompt && typeof prompt === "object" && "sharedStem" in prompt) {
+    const value = (prompt as Record<string, unknown>).sharedStem;
+    return typeof value === "string" ? value : null;
   }
   return null;
 }
@@ -1922,6 +1944,7 @@ function mapQuestionRow(r: {
     questionGroupId: r.question_group_id ?? null, groupOrder: r.group_order ?? null,
     subpartLabel: r.subpart_label ?? null, markingMode: r.marking_mode ?? null,
     stimulus: promptStimulus(r.prompt),
+    sharedStem: promptSharedStem(r.prompt),
   };
 }
 

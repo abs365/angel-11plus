@@ -40,6 +40,12 @@ export function isValidMockQuestionPayload(payload: unknown): payload is MockQue
     // existed still passes rather than being rejected outright. This
     // check deliberately stays as loose on stimulus as it already is on
     // `question`.
-    (p.stimulus === null || p.stimulus === undefined || typeof p.stimulus === "object")
+    (p.stimulus === null || p.stimulus === undefined || typeof p.stimulus === "object") &&
+    // Migration 122 (Decision 180) — same loose top-level shape as
+    // stimulus above: absent/null/undefined accepted so a payload
+    // fetched before this field existed still passes; a present value
+    // must be a string (resolveGroupSharedStem() does the real
+    // exact-prefix validation at the render site).
+    (p.sharedStem === null || p.sharedStem === undefined || typeof p.sharedStem === "string")
   );
 }

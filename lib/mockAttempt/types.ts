@@ -83,6 +83,23 @@ export interface MockQuestionPayload {
    * site must call before trusting this shape.
    */
   stimulus: MockStimulus | null;
+  /**
+   * Migration 122 (Decision 180) — optional explicit shared-stem content
+   * contract, read straight from `prompt.sharedStem`, `null` for every
+   * row that has never set it (every row before this migration, and
+   * every row since with no genuinely identical shared-scenario prefix
+   * across its group). NOT derived by parsing/diffing `question` text at
+   * render time — that was explicitly rejected as a fragile heuristic
+   * (Decision 180). A group only renders its shared stem once, and each
+   * subpart's own distinguishing tail, when EVERY payload in the group
+   * carries the identical non-empty `sharedStem` value AND that value is
+   * an exact prefix of that payload's own `question` text — see
+   * lib/mockAttempt/workspace.ts's own resolveGroupSharedStem(), the
+   * single fail-safe gate every render site must use. Any group that
+   * doesn't meet this exactly falls back to full per-subpart rendering,
+   * unchanged from before this migration.
+   */
+  sharedStem: string | null;
 }
 
 /**

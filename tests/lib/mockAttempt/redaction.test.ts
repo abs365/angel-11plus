@@ -135,3 +135,35 @@ test("isValidMockQuestionPayload rejects a non-object, non-null stimulus (a genu
   assert.equal(isValidMockQuestionPayload({ ...SAFE_PAYLOAD, stimulus: "not an object" }), false);
   assert.equal(isValidMockQuestionPayload({ ...SAFE_PAYLOAD, stimulus: 42 }), false);
 });
+
+/**
+ * Shared-Scenario Presentation Correction (Decision 180) — `sharedStem`
+ * is authored, non-secret scenario prose, exactly like `question`
+ * itself; it must never be treated as answer-adjacent, and the real
+ * mock-mr06-linkedvalues payload shape must validate correctly.
+ */
+const LINKEDVALUES_SHARED_STEM = "A collector has three bags of marbles: red, blue and green. The blue bag has 6 more marbles than the red bag. The green bag has 3 times as many marbles as the blue bag. Altogether, the three bags contain 64 marbles.";
+
+test("sharedStem is never a protected/leaked field", () => {
+  const withStem = { ...SAFE_PAYLOAD, sharedStem: LINKEDVALUES_SHARED_STEM };
+  assert.deepEqual(findLeakedProtectedFields(withStem), []);
+  assert.equal(isPayloadRedactionSafe(withStem), true);
+});
+
+test("isValidMockQuestionPayload accepts a real linkedvalues-shaped payload with sharedStem present", () => {
+  assert.equal(isValidMockQuestionPayload({ ...SAFE_PAYLOAD, sharedStem: LINKEDVALUES_SHARED_STEM }), true);
+});
+
+test("isValidMockQuestionPayload accepts sharedStem: null (every family that has never authored this contract)", () => {
+  assert.equal(isValidMockQuestionPayload({ ...SAFE_PAYLOAD, sharedStem: null }), true);
+});
+
+test("isValidMockQuestionPayload accepts a payload where sharedStem is entirely absent -- a payload fetched before migration 122 existed must not be rejected outright", () => {
+  assert.equal(isValidMockQuestionPayload(SAFE_PAYLOAD), true);
+  assert.ok(!("sharedStem" in SAFE_PAYLOAD));
+});
+
+test("isValidMockQuestionPayload rejects a non-string, non-null sharedStem", () => {
+  assert.equal(isValidMockQuestionPayload({ ...SAFE_PAYLOAD, sharedStem: 42 }), false);
+  assert.equal(isValidMockQuestionPayload({ ...SAFE_PAYLOAD, sharedStem: { not: "a string" } }), false);
+});

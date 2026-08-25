@@ -181,3 +181,57 @@ export function selectDisplayUnitStimulus(payloads: readonly MockQuestionPayload
   }
   return null;
 }
+
+/** One shared stem plus each item's own remaining, subpart-specific text, in the same order as the input. */
+export interface ResolvedSharedStem {
+  stem: string;
+  tails: string[];
+}
+
+/**
+ * Shared-Scenario Presentation Correction (Decision 180) — resolves a
+ * genuine shared stem for a grouped numbered question, generic over ANY
+ * family, never coupled to a family id or name. Founder production
+ * review of mock-mr06-linkedvalues found the review and learner
+ * renderers both render every subpart's own COMPLETE, self-contained
+ * `question` text in full (the correct, unchanged storage contract for
+ * persistence/scoring/audit), which is exactly right when subparts
+ * genuinely differ but produces the identical opening paragraph three
+ * times over for a family whose subparts restate one byte-identical
+ * shared scenario. Automatic derivation (diffing/parsing sentence
+ * boundaries out of the stored `question` strings) was explicitly
+ * rejected as a fragile heuristic that could misfire on coincidental
+ * prefixes or punctuation edge cases; this function instead trusts only
+ * an explicit, authored `sharedStem` content-contract field
+ * (`prompt.sharedStem`, migration 121/122), and — even then — only acts
+ * on it after re-verifying, deterministically and exactly, that it is
+ * genuinely safe to use:
+ *
+ *   1. every item in the group must carry the SAME non-empty
+ *      `sharedStem` value (a mismatch, or any item missing it, means
+ *      "not a safe shared stem for this group" -- fail closed);
+ *   2. every item's own `question` text must literally START WITH that
+ *      exact stem (defence in depth against a stem that was authored
+ *      but has drifted out of sync with the actual stored question);
+ *   3. every item's own remaining tail (after the stem is removed) must
+ *      be non-empty (a subpart with nothing left to show after removing
+ *      the stem would be a broken, empty render -- never accepted).
+ *
+ * Any group failing any of these returns `null`, and every existing
+ * caller already falls back to rendering each item's full `question`
+ * text unchanged -- exactly today's behaviour, for every family that
+ * has never set `sharedStem` (which is every family before this
+ * increment, and every ordinary Classification B/C/S family after it).
+ */
+export function resolveGroupSharedStem(
+  items: readonly { question: string; sharedStem: string | null | undefined }[]
+): ResolvedSharedStem | null {
+  if (items.length <= 1) return null;
+  const first = items[0].sharedStem;
+  if (typeof first !== "string" || first.length === 0) return null;
+  if (!items.every((item) => item.sharedStem === first)) return null;
+  if (!items.every((item) => item.question.startsWith(first))) return null;
+  const tails = items.map((item) => item.question.slice(first.length).trimStart());
+  if (tails.some((tail) => tail.length === 0)) return null;
+  return { stem: first, tails };
+}

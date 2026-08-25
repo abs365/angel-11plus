@@ -45,7 +45,7 @@ import { getSelfReflectionCategories, WRONG_ANSWER_CATEGORY_LABEL } from "@/lib/
 import { getMathsTeachingContent, MATHS_MISCONCEPTION_CATEGORY_LABEL, effectiveGuidedRevealStepCount } from "@/lib/learningEngine/mathsTeachingContent";
 import { getWritingTeachingContent } from "@/lib/learningEngine/writingTeachingContent";
 import { WRITING_DIMENSIONS, WRITING_DIMENSION_LABEL } from "@/lib/learningEngine/writingRubric";
-import { isValidTableStimulus } from "@/lib/mockAttempt/workspace";
+import { isValidTableStimulus, resolveGroupSharedStem } from "@/lib/mockAttempt/workspace";
 import { DataTableStimulus } from "@/components/mockAttempt/DataTableStimulus";
 
 /**
@@ -704,6 +704,15 @@ function ReviewForm({
                 // Founder reviews one table per grouped numbered
                 // question, never one repeated per subpart.
                 const groupStimulus = group.items.map((q) => q.stimulus).find(isValidTableStimulus) ?? null;
+                // Shared-Scenario Presentation Correction (Decision 180)
+                // — resolved only via the explicit sharedStem content
+                // contract, never by parsing/diffing question text here.
+                // null for every group that hasn't authored a genuinely
+                // safe shared stem (every group before this increment,
+                // and every ordinary Classification B/C/S group after
+                // it) — those fall back to full per-subpart text below,
+                // byte-identical to before this correction.
+                const sharedStem = resolveGroupSharedStem(group.items);
                 return (
                   <div key={group.key} className="border-t border-gray-50 dark:border-gray-800 pt-3 first:border-t-0 first:pt-0">
                     {group.items.length > 1 && (
@@ -712,8 +721,11 @@ function ReviewForm({
                       </p>
                     )}
                     {groupStimulus && <DataTableStimulus stimulus={groupStimulus} />}
+                    {sharedStem && (
+                      <p className="text-sm font-semibold text-gray-800 dark:text-gray-200 whitespace-pre-line">{sharedStem.stem}</p>
+                    )}
                     <div className={group.items.length > 1 ? "space-y-3 pl-3 border-l-2 border-indigo-100 dark:border-indigo-900" : ""}>
-                      {group.items.map((question) => (
+                      {group.items.map((question, index) => (
                         <div key={question.id}>
                           {question.subpartLabel && (
                             <p className="text-[11px] font-semibold text-gray-400 dark:text-gray-500">
@@ -721,7 +733,7 @@ function ReviewForm({
                               {question.markingMode ? ` · marking: ${question.markingMode.replace(/_/g, " ")}` : ""}
                             </p>
                           )}
-                          <p className="text-sm font-semibold text-gray-800 dark:text-gray-200 mt-1 whitespace-pre-line">{question.question}</p>
+                          <p className="text-sm font-semibold text-gray-800 dark:text-gray-200 mt-1 whitespace-pre-line">{sharedStem ? sharedStem.tails[index] : question.question}</p>
                           <p className="text-xs text-gray-500 dark:text-gray-400 mt-1"><strong>Model answer ({question.contentDifficulty} difficulty):</strong> {question.modelAnswer}</p>
                           {question.addressesMisconception && (
                             <p className="text-xs text-amber-700 dark:text-amber-300 mt-1"><strong>Common trap:</strong> {question.addressesMisconception}</p>

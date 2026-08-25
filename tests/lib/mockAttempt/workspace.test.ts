@@ -187,6 +187,7 @@ test("payloadMatchesQuestion confirms a fetched payload genuinely belongs to the
     groupOrder: null,
     subpartLabel: null,
     stimulus: null,
+    sharedStem: null,
   };
   assert.equal(payloadMatchesQuestion(payload, "q1"), true);
   assert.equal(payloadMatchesQuestion(payload, "q2"), false);

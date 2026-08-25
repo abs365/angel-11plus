@@ -37,6 +37,7 @@ function payload(overrides: Partial<MockQuestionPayload>): MockQuestionPayload {
     groupOrder: 1,
     subpartLabel: "(a)",
     stimulus: null,
+    sharedStem: null,
     ...overrides,
   };
 }

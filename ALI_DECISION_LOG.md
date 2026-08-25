@@ -6888,3 +6888,77 @@ Not described as sufficient; the actual mechanism is: every migration test in th
 **Implications:** Decisions 1-178 all stand, none reversed or rewritten; Decision 178's own educational approval and primary-source evidence are unaffected. No content, marks, eligibility, or grouping changes from this decision. The next step is unchanged from Decision 178: a fresh Founder application attempt of the now-corrected migration 119, followed by migration 120, then independent review — not begun here.
 
 ---
+
+### Decision 180 — SHARED-SCENARIO PRESENTATION CORRECTION FOR MOCK-MR06-LINKEDVALUES. Founder production review of `mock-mr06-linkedvalues` (migrations 119/120, confirmed applied) passed content, answer accuracy, grouping, difficulty progression, and structural authenticity, but found the admin review surface renders the family's complete, byte-identical shared scenario three times over — once per subpart — because every subpart's own `question` text is genuinely, deliberately self-contained (this project's established convention since migration 109/113). Traced, not assumed: the identical repetition risk is confirmed structurally on the learner Mock renderer too (`MockQuestionRenderer` in `app/learning-intelligence/mock-exam/page.tsx`), which renders each grouped payload's full `question` text exactly the same way. Automatic derivation (diffing/parsing the stored text) was rejected as the fragile heuristic the Founder's own instruction explicitly warned against; instead, the smallest safe explicit content contract is implemented: a new, optional `prompt.sharedStem` field, resolved only via a single generic, fail-safe helper (`resolveGroupSharedStem()`, `lib/mockAttempt/workspace.ts`) that requires every item in a group to carry the identical non-empty stem AND that stem to be a genuine, exact prefix of that item's own stored `question` text AND every remaining tail to be non-empty — any deviation falls back to full per-subpart rendering, byte-identical to before this correction, for every family that has never authored the contract (which is every family before this increment). Both the review surface and the learner surface are updated to use this same helper; every other per-component evidence field (model answer, difficulty, marking mode, common trap, transfer demand, palette, timer, navigation, answer persistence, scoring) is verified unchanged. Two new migrations are introduced — 121 (adds the `sharedStem` value to `mock-mr06-linkedvalues`'s 3 rows only, additive-only, positively proven to preserve every other prompt key) and 122 (extends `mock_get_question()`'s explicit allow-list to deliver `sharedStem` to the learner, mirroring migration 115's own precedent exactly) — explicitly disclosed as presentation-support migrations, not content or eligibility migrations: neither touches `question`, `answer`, `marks`, `eligibility_status`, or any grouping column. The family remains `authentic_assessment_candidate`; its pending independent review remains pending; `ali_mock_form` remains 0 rows. Full verification suite passes (1566/1566 tests, 51 new; `tsc` clean; ESLint at established baseline; Copy Quality Guard PASS; Migration SQL Guard PASS; production build succeeds). Neither new migration applied. The family is NOT approved by this decision.
+
+**Scope and process:** Root-cause trace plus a bounded, generic presentation-layer correction, two forward-only migrations (both NOT applied), and full regression coverage. No content reopened, no approval submitted.
+
+---
+
+**PART 1 — RECONCILIATION**
+
+`HEAD == origin/main` at `53f6c4b` (Decision 179) confirmed before and after. Founder production evidence (Level 1, per this project's own evidence hierarchy): migrations 119 and 120 both successfully applied and verified; all 3 `mock-mr06-linkedvalues` rows remain `authentic_assessment_candidate`; a pending independent review exists; no approval has been submitted; `ali_mock_form` remains 0.
+
+---
+
+**PART 2 — EXACT VISUAL DEFECT AND ROOT CAUSE**
+
+The Founder's own finding: the review surface's Section D correctly recognises "ONE NUMBERED QUESTION: 3 SUBPARTS, REVIEWED TOGETHER," but then renders the complete shared scenario separately inside every one of the three subpart blocks — the same paragraph appearing three times. Traced directly to `app/admin-beta/review/page.tsx`'s grouped-rendering block (`groupQuestionsForReview(questions).map(...)`), which renders `{question.question}` — each item's own COMPLETE, self-contained text — once per item in the group, unconditionally. This is not a defect introduced by this increment: it is the SAME generic rendering path every prior grouped family (`costumeschedule`, `perimeterarea`, `fairprep`, `runningclub`) has always used; it is far more visually obvious for `mock-mr06-linkedvalues` because all three of its subparts restate a byte-identical, near-total-overlap scenario (unlike the prior families, whose non-shared portions are proportionally larger and more visually distinct).
+
+**Learner surface, traced (not assumed):** `MockQuestionRenderer`'s grouped branch (`app/learning-intelligence/mock-exam/page.tsx`) contains the structurally identical pattern — `{questionText}` rendered from each `payload.question` in full, per subpart, unconditionally. **Confirmed: the identical repetition would occur on the learner surface once this family reaches a Mock form.** Not review-only.
+
+---
+
+**PART 3 — CHOSEN PRESENTATION CONTRACT AND WHY IT IS SAFE**
+
+Automatic derivation (longest-common-prefix or sentence-boundary diffing of the stored `question` strings) was considered and explicitly rejected: it would risk collapsing a coincidental shared prefix between unrelated scenarios, and cutting at a "sentence boundary" requires exactly the kind of fragile heuristic (decimal points, abbreviations, punctuation edge cases) the Founder's own instruction named and forbade. Instead: a new, optional `prompt.sharedStem` field (string), populated only when deliberately authored, resolved at render time by `resolveGroupSharedStem()` (`lib/mockAttempt/workspace.ts`), which returns a usable `{ stem, tails }` only when, for every item in the group: (1) `sharedStem` is present, non-empty, and identical across every item; (2) that exact stem is a genuine, literal prefix of that item's own stored `question` text; (3) the remaining tail (after removing the stem) is non-empty. Any single deviation returns `null`, and every caller already falls back to full per-item text — unit-tested directly against the real `fairprep`/`costumeschedule` shapes (neither has ever set `sharedStem`, both correctly resolve to `null`, both render exactly as before this correction). No family id, name, or one-off string match is coupled into the helper or either render site — verified by a dedicated test that the rendering logic contains no reference to `mock-mr06-linkedvalues`.
+
+---
+
+**PART 4 — REVIEW-SURFACE CHANGE**
+
+`app/admin-beta/review/page.tsx`'s grouped block now resolves `sharedStem = resolveGroupSharedStem(group.items)`; when non-null, the stem is rendered once above the subparts, and each subpart shows `sharedStem.tails[index]` instead of its own full `question.question`; when null (every family before this increment, and every ordinary Classification B/C/S family after it), rendering is byte-identical to before. Model answer, difficulty, marking mode, common trap, and transfer demand remain rendered per component, untouched — only the assessment-prompt-text line changed. The structured-stimulus resolution (`runningclub`) is entirely independent and unaffected.
+
+---
+
+**PART 5 — LEARNER-SURFACE CHANGE**
+
+`MockQuestionRenderer`'s grouped branch resolves the same `sharedStem` via the identical generic helper (adapted for `MockQuestionPayload`'s own `question: unknown` shape); when resolved, the stem renders once above the subpart list and each subpart shows its own tail; when null, rendering is byte-identical to before. `buildDisplayUnits`, `buildPalette`, `unansweredUnitIndices`, `values`/`onChange` (answer persistence), the timer, navigation, and flagging code are entirely untouched — verified directly, not merely asserted, by source-text tests confirming those exact lines are unmodified.
+
+---
+
+**PART 6 — BEFORE/AFTER CONCEPTUAL RENDERING**
+
+Before: "[Full marbles scenario] How many marbles are in the red bag?" / "[Full marbles scenario] How many marbles are in the green bag?" / "[Full marbles scenario] How many more marbles..." — three times. After: "[Full marbles scenario]" once, then (a) "How many marbles are in the red bag?", (b) "How many marbles are in the green bag?", (c) "How many more marbles are in the green bag than in the red and blue bags combined?" — exactly the presentation the Founder specified.
+
+---
+
+**PART 7 — MIGRATIONS 121/122, EXPLICITLY DISCLOSED**
+
+Two new migrations were required, and this is disclosed plainly rather than silently done: the Founder's own instruction stated a strong preference for a pure presentation-layer solution and explicitly forbade stripping the shared scenario from the database — but a presentation-layer function has no way to know, without either a forbidden heuristic or a stored signal, where a shared stem genuinely ends. Migration 121 (content-support, not content/eligibility) adds ONLY the new `sharedStem` key to `mock-mr06-linkedvalues`'s existing `prompt` jsonb on all 3 rows — `question`, `answer`, `marks`, `eligibility_status`, and every grouping column are proven byte-for-byte unchanged via the same pre/post preservation-snapshot pattern established in migrations 117/118/121, plus a live precondition that the stem is genuinely a prefix of each row's own stored question (refuses to run if content has drifted since migration 119). Migration 122 (RPC delivery, not content/eligibility) extends `mock_get_question()`'s own explicit allow-list by exactly one key, `sharedStem`, mirroring migration 115's own `stimulus` precedent — without it, migration 121's database write would never reach a learner at all. Neither migration is a content migration (no educational meaning changes) or an eligibility migration (`eligibility_status` never appears in either file's executable SQL, verified by test). Both remain NOT APPLIED.
+
+---
+
+**PART 8 — REGRESSION EVIDENCE**
+
+51 new tests across 8 files: pure-function coverage of `resolveGroupSharedStem()` (the real `linkedvalues` shape resolves correctly; a standalone item never resolves; missing/empty/mismatched/non-prefix/empty-tail stems all fail safe to `null`; the real `fairprep`/`costumeschedule` shapes are proven unaffected); `redaction.ts` extension (`sharedStem` never a protected/leaked field, accepted null/undefined/string, rejected otherwise); migration 121/122 structural tests (exact 3-row target, exact stem value independently re-verified against migration 119's own real content, jsonb_set-only write, preservation proof, live prefix precondition, fail-closed guards, RPC allow-list order, anon-EXECUTE audit); and source-text wiring proof for both surfaces (stem rendered exactly once per group, tails/full-text both reachable, model answer/common trap/transfer demand/subpart label untouched, stimulus resolution independent, learner persistence/palette/timer code lines unmodified, no family-id hardcode in the rendering logic, no eligibility/content column ever SET). **Full suite: 1566/1566 pass** (1515 baseline + 51 new; zero regressions — 4 pre-existing test fixtures updated to include the new required `sharedStem: null` field, matching the same fixture-update precedent as when `stimulus` was introduced). `npx tsc --noEmit`: clean. ESLint: 81 problems (62 errors/19 warnings), identical to baseline. Copy Quality Guard: PASS, 0 violations, 257 files. Migration SQL Guard: PASS, 122 files. Production build: succeeds.
+
+---
+
+**What this decision does NOT claim:** it does not claim migration 121 or 122 has been applied (both NOT APPLIED); it does not claim the family is approved, certified, or independently validated (pending review remains pending); it does not claim any answer, mark, difficulty, QT, grouping, or eligibility value has changed; it does not claim the general Educational Review page has been redesigned (the large governance/disclosure panel is explicitly unchanged, noted only as a later review-UX refinement opportunity); it does not claim automatic shared-stem derivation was implemented (it was deliberately not, per the Founder's own instruction).
+
+**Files changed:** `supabase/migrations/121_mock_mathematics_linkedvalues_shared_stem_contract.sql` (new, NOT applied), `supabase/migrations/122_mock_mathematics_shared_stem_delivery.sql` (new, NOT applied), `lib/mockAttempt/types.ts`, `lib/mockAttempt/redaction.ts`, `lib/mockAttempt/workspace.ts`, `lib/adminReview.ts`, `app/admin-beta/review/page.tsx`, `app/learning-intelligence/mock-exam/page.tsx` (all modified), 4 pre-existing test files updated for the new required field, 6 new test files, `ALI_DECISION_LOG.md` (this entry).
+
+**Migrations created:** 121 — drafted, tested, NOT applied. 122 — drafted, tested, NOT applied.
+
+**Decision number:** 180.
+
+**Commit SHA:** recorded after commit (see repository history immediately following this entry).
+
+**Production application status:** migrations 121/122 NOT applied. No production change has occurred.
+
+**Rationale:** trusting an explicit, positively-verified content contract over a heuristic text-parsing algorithm follows this arc's own established discipline (Decision 172's own "no fabricated confidence" standard, Decision 170's own generic-not-hardcoded stimulus precedent) — a presentation defect gets a presentation-layer-first solution, and only the smallest possible additive database signal when a presentation-only function genuinely cannot resolve it safely without one, disclosed plainly rather than assumed acceptable.
+
+**Implications:** Decisions 1-179 all stand, none reversed or rewritten. No content, marks, eligibility, difficulty, QT, or grouping changes from this decision. The family remains pending independent review. The next step is a fresh Founder visual re-review of the corrected presentation (after applying migrations 121/122), followed by the still-outstanding independent-review decision — not begun here.
+
+---

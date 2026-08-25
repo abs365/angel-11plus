@@ -31,6 +31,7 @@ import {
   unansweredUnitIndices,
   selectDisplayUnitStimulus,
   isValidTableStimulus,
+  resolveGroupSharedStem,
   type DisplayUnit,
 } from "@/lib/mockAttempt/workspace";
 import { ExamTimer } from "@/components/mockAttempt/ExamTimer";
@@ -624,6 +625,15 @@ function MockQuestionRenderer({
   // Decision 170 — one shared stimulus rendered once for the whole grouped
   // experience (display-unit level), never once per raw subpart.
   const sharedStimulus = selectDisplayUnitStimulus(payloads);
+  // Shared-Scenario Presentation Correction (Decision 180) — resolved
+  // only via the explicit sharedStem content contract (migration 121/
+  // 122), never by parsing/diffing question text here. null for every
+  // group that hasn't authored a genuinely safe shared stem (every group
+  // before this increment, and every ordinary Classification B/C/S group
+  // after it) — those render each subpart's full question text below,
+  // byte-identical to before this correction.
+  const questionTexts = payloads.map((payload) => (typeof payload.question === "string" ? payload.question : JSON.stringify(payload.question)));
+  const sharedStem = resolveGroupSharedStem(payloads.map((payload, i) => ({ question: questionTexts[i], sharedStem: payload.sharedStem })));
   return (
     <div>
       <div className="flex items-center justify-between text-xs text-gray-400 dark:text-gray-500 mb-2">
@@ -631,9 +641,12 @@ function MockQuestionRenderer({
         <span>{totalMarks} mark{totalMarks === 1 ? "" : "s"} total</span>
       </div>
       {sharedStimulus && <DataTableStimulus stimulus={sharedStimulus} />}
+      {sharedStem && (
+        <p className="text-sm font-semibold text-gray-800 dark:text-gray-200 whitespace-pre-line leading-relaxed mb-4">{sharedStem.stem}</p>
+      )}
       <div className="space-y-5">
         {payloads.map((payload, index) => {
-          const questionText = typeof payload.question === "string" ? payload.question : JSON.stringify(payload.question);
+          const questionText = sharedStem ? sharedStem.tails[index] : questionTexts[index];
           return (
             <div key={payload.questionId}>
               <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 mb-1">

@@ -123,7 +123,7 @@ function q(overrides: Partial<RepresentativeQuestion>): RepresentativeQuestion {
     addressesMisconception: null, contentVersion: 1, active: true, provenance: "angel_original",
     eligibilityStatus: "authentic_assessment_candidate", workingSteps: null,
     questionGroupId: null, groupOrder: null, subpartLabel: null, markingMode: null,
-    stimulus: null,
+    stimulus: null, sharedStem: null,
     ...overrides,
   };
 }
