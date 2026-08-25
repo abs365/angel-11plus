@@ -7094,3 +7094,119 @@ Every one of Decision 181's 23 tests asserted against the migration's own SQL **
 **Implications:** Decisions 1-181 all stand, none reversed or rewritten; Decision 181's own certification scope and educational-approval evidence are unaffected — this was a migration-implementation defect, not a governance or evidence defect. No content, marks, eligibility, grouping, RPC, RLS, or review-record change occurs from this decision. The next step is unchanged in kind from Decision 181: a fresh Founder retry of the now-corrected migration 123 — not begun here.
 
 ---
+
+### Decision 183 — FIRST MATHEMATICS MOCK RESERVE ADMISSION AND COMPOSITION IMPACT REVIEW: read-only, no implementation. Founder production evidence confirms migrations 119-123 fully closed: `independently_validated` = 11 rows/11 marks (exactly the sum of the four reserve families, confirming completeness), `mock_eligible` = 48/48 unchanged, `ali_mock_form` = 0. All four reserve families (`perimeterarea`, `fairprep`, `runningclub`, `linkedvalues`) are individually audited and confirmed technically mock-eligibility-ready (active, deterministic, approved review, Classification A). Reasoning through actual richest-first experience selection (not marks÷questions), a decisive finding emerges: a bounded 3-family admission (`fairprep`+`runningclub`+`linkedvalues`, holding `perimeterarea` in reserve) achieves the **identical** 20/21-question composition ceiling (44/46 marks) as admitting all four — perimeterarea's marginal experiences are never needed to fill a 20-21-question form once ≥4 three-mark and ≥17-20 two-mark experiences already exist, so full admission trades zero First-Mock capacity gain for total reserve depletion. Shared-timetable (Decision 177's own second-ranked archetype) is reassessed and downgraded from "closes a zero-representation gap" to "deepens an already-started, thin (2-subpart) representation" now that `fairprep` is confirmed to already be a real instance of that archetype — shared price-list/menu (Decision 168's own archetype 6, still zero representation) is now a roughly co-equal candidate, though shared-timetable retains a frequency edge. Anti-memorisation/Rolling Programme readiness remains NOT READY regardless of state: every current Classification-A archetype exists as exactly one instance, and full reserve admission would leave zero certified reserve for any second sitting. Visual capability is reconfirmed unchanged: structured table stimulus and explicit shared-stem are production-proven; diagrams, plotted coordinate graphs (the real papers explicitly require plotting a point on a graph), and geometric figures remain entirely unrepresentable, blocking the single highest-frequency real visual archetype. Recommendation: **B — bounded admission** (`fairprep`/`runningclub`/`linkedvalues` for a future, separate mock-eligibility decision; `perimeterarea` held in reserve). First Mock readiness: still NOT READY (ceiling ≈14-16 marks short of authentic ≈58-60, unchanged in kind from Decision 177/181). No migration, no content, no eligibility, no production mutation.
+
+**Scope and process:** Read-only architecture reconstruction, reserve audit, composition-ceiling reasoning, and admission recommendation. No implementation.
+
+---
+
+**PART 1 — RECONCILIATION**
+
+`HEAD == origin/main` at `2163e69` (Decision 182) confirmed before this analysis. Founder production evidence treated as authoritative live state: `independently_validated` = 11 rows/11 marks, `mock_eligible` = 48 rows/48 marks, `ali_mock_form` = 0. Migration 123 confirmed applied (the 11-row figure exactly matches the reconstructed sum of the four reserve families below, positively confirming completeness — no other family is silently included or missing). No migration exists after 123.
+
+---
+
+**PART 2 — COMPLETE ARCHITECTURE, RE-DERIVED FROM SOURCE**
+
+`mock_eligible` (48 rows/24 experiences/48 marks, unchanged since Decision 105/117/118): 19 Classification-B experiences (16 two-subpart, 3 three-subpart: `invdiv`/`twostep`/`unitconv`), `costumeschedule` (2 Classification-C experiences, 4 marks), `mr09-data` (3 Classification-S standalone experiences, 3 marks). Zero Classification A. All 13 Question Types represented at least once, confirmed by direct re-derivation of the difficulty-tag counts across migrations 088/091/095/109/113/119 this session (totalling exactly 59 rows across the combined pool+reserve: 5 easy/25 medium/29 hard).
+
+Reserve — full family-by-family audit, all four confirmed present and complete (no other independently_validated Mathematics family exists):
+
+| Family | Rows | Experiences | Marks | QT | Difficulty | Classification | Archetype | Stimulus | Blocker |
+|---|---|---|---|---|---|---|---|---|---|
+| `mock-mr03mr07-perimeterarea` | 4 | 2 | 4 | QT-03+QT-07 | hard/hard (×2) | A | unit-conversion-then-area, 2 instances | none (text-only) | none technical; one disclosed minor provenance gap (reviewer identity not explicitly recorded in migration 111's own text; the approval itself is confirmed) |
+| `mock-mr10-fairprep` | 2 | 1 | 2 | QT-10 | medium/hard | A | shared elapsed-time, forward+reverse | none | none |
+| `mock-mr09-runningclub` | 2 | 1 | 2 | QT-09 | medium/hard | A | shared dataset, multi-query | real `DataTableStimulus` table, Founder production-visual-confirmed (Decision 171) | none |
+| `mock-mr06-linkedvalues` | 3 | 1 | 3 | QT-06 | medium/medium/hard | A | interdependent algebraic system | `prompt.sharedStem`, Founder production-visual-confirmed (Decision 182) | none |
+
+All four: `active=true`, `marking_mode=deterministic`, `ali_family_review` decision=`approved`, `review_type=mock_maths_independent_review`. All four are technically ready for a mock-eligibility promotion decision — this is explicitly not treated as automatic entitlement (Part 6).
+
+---
+
+**PART 3 — STATES AND COMPOSITION CEILING, REASONED NOT DIVIDED**
+
+Richest-experience-first selection (Decision 177's own established method, re-applied and re-verified):
+
+| State | Definition | Rows/Exp/Marks | A/B/C/S | 20-question ceiling | 21-question ceiling |
+|---|---|---|---|---|---|
+| 0 | `mock_eligible` only | 48/24/48 | 0/19/2/3 | 43 marks | 45 marks |
+| 1 | + `fairprep`+`runningclub`+`linkedvalues` (bounded) | 55/27/55 | 3/19/2/3 | **44 marks** | **46 marks** |
+| 2 | + all 4 reserve families | 59/29/59 | 5/19/2/3 | **44 marks** | **46 marks** |
+
+**Decisive finding, reasoned directly from the available richest-first experience pool, not asserted:** States 1 and 2 produce an *identical* composition ceiling. With 4 three-mark experiences and (20 in State 1 / 22 in State 2) two-mark experiences available, a 20-21-question selection never needs to reach into `perimeterarea`'s marginal 2 experiences — both states already exceed the required count of non-degenerate experiences well before those 2 are needed. Full reserve admission therefore purchases zero First-Mock capacity beyond bounded admission, at the cost of exhausting the entire certified reserve.
+
+---
+
+**PART 4 — PRIMARY-SOURCE AUTHENTICITY COMPARISON (Decision 168's own 30A/26B/3C/3D of 62, 60 marks/20-21 questions every year — no new percentages invented)**
+
+| Dimension | State 1 | State 2 | Verdict |
+|---|---|---|---|
+| Numbered-question count (once a form is selected) | ~20-21 | ~20-21 | MATCH |
+| ≈58-60 marks | 44-46 max | 44-46 max | GAP |
+| Subpart multiplicity (avg/experience) | 2.04 | 2.03 | PARTIAL (authentic ≈2.8-3.0) |
+| Classification A share | 11.1% (3/27) | 17.2% (5/29) | PARTIAL (authentic 48.4%) |
+| QT/reasoning diversity | all 13 QT | all 13 QT | MATCH |
+| Difficulty progression | 8.5%E/42.4%M/49.2%H (whole-pool row tally) | same | PARTIAL — hard-skewed; the authentic ramp shape itself not independently re-derived this session |
+| Shared-diagram/geometry archetype | none | none | GAP (6 real instances, 0% represented, capability-blocked) |
+| Shared-table archetype | 1 (`runningclub`) | 1 | MATCH for that one archetype specifically |
+
+---
+
+**PART 5 — LINKEDVALUES STRUCTURAL IMPACT**
+
+Not "+3 marks": Angel's only genuine interdependent-algebraic-system experience — one system (additive relation + multiplicative relation + total) stated once, three subparts each requiring engagement with that same system, staged medium (solve for base unknown) → medium (forward application) → hard (combined comparison), text-only, the only family using the explicit `sharedStem` presentation contract. Closes QT-06's Classification-A gap the same structural way `fairprep`/`runningclub`/`perimeterarea` close QT-10/QT-09/QT-03+07's.
+
+---
+
+**PART 6 — SHARED-TIMETABLE REASSESSMENT (revised, not reaffirmed)**
+
+Decision 177 ranked shared-timetable second assuming zero existing representation. Re-examined against the current architecture: `mock-mr10-fairprep` is itself a shared-scenario elapsed-time forward+reverse family (QT-10) citing the exact same real-paper evidence (2023 Q9/2021 Q9/2022 Q19) Decision 168's own archetype-4 definition uses — the archetype is not at 0%, it is *thin* (2 subparts/2 marks) relative to the real archetype's own fuller depth (real 2022 Q19 supports up to 4 related time-queries). **Downgraded from "the clear #2 pick, closing a zero-representation gap" to "a valuable deepening of an already-started, thin archetype,"** now roughly co-equal with shared price-list/menu (Decision 168's own archetype 6 — 2 confirmed instances, genuinely 0% represented, text-only, no capability blocker). A richer (3-4 subpart) shared-timetable family retains a frequency edge (3/3-year evidence vs. 2 instances) and remains the top-ranked recommendation, but this is a closer call than Decision 177 stated, and is disclosed as a correction, not a silent reaffirmation.
+
+---
+
+**PART 7 — ANTI-MEMORISATION / ROLLING PROGRAMME**
+
+State 1 leaves 4 rows/2 experiences/4 marks in reserve (`perimeterarea`, deliberately held back); State 2 leaves **zero**. Every current Classification-A archetype exists as exactly one authored instance — genuine Rolling Programme readiness requires multiple independent families per archetype, true of none of them yet. A First Mock built from either state already consumes most of the available pool (6-9 spare experiences remain either way after a 20-21-question selection), so repeat-exposure risk is real and unresolved regardless of which admission state is chosen — full admission simply forecloses the cheapest available mitigation (promoting an already-certified reserve family later) for zero First-Mock benefit.
+
+---
+
+**PART 8 — VISUAL CAPABILITY**
+
+Built and production-confirmed: structured `DataTableStimulus`, explicit `sharedStem`, grouped multi-subpart rendering. Still cannot represent: any diagram or image, a plotted coordinate graph (the real 2023 paper explicitly instructs "Plot the point on the graph below with an X"; Angel's own `mock-mr08-rotation` family uses pure text coordinate notation, never an actual grid), shape/geometry figures, or measurement figures. This blocks the highest-frequency real visual archetype (shared diagram, 6 confirmed instances) entirely — unchanged from Decision 177, not addressed or begun here.
+
+---
+
+**PART 9 — PRODUCT STANDARD**
+
+Genuine reasoning: holds — all four reserve families are real interdependent/shared-data structures. No inflated marks: holds (Marking Integrity Gate closed, Decision 175). No artificial difficulty: holds. Premium visual presentation: holds for what is built. Sufficient variation for sustained multi-week use: **does not yet hold** — single-instance archetypes and thin reserve at every state are a real, disclosed compromise against the "no question-bank feel" standard beyond a first sitting.
+
+---
+
+**PART 10 — RECOMMENDATION**
+
+**B — bounded reserve admission recommended:** `fairprep`, `runningclub`, `linkedvalues` (7 rows/3 experiences/7 marks) as candidates for a future, separate mock-eligibility decision — achieves the full available composition ceiling with zero capacity loss relative to full admission. `perimeterarea` held in reserve — contributes zero marginal composition-ceiling value at current pool size and is preserved as immediate, no-new-authoring-required variety for a second sitting or Rolling Programme use.
+
+**Next bounded authoring increment (not begun):** a richer shared-timetable family, QT-10, 3-4 subparts, medium→hard→hard, text-only, 3-4 marks — highest marginal value because it deepens the strongest-evidenced (3/3-year) still-thin archetype. **Following archetypes, planning only:** (2) a second, independent interdependent-algebraic-system family (Rolling Programme redundancy, not First Mock capacity); (3) shared price-list/menu (zero representation, no capability blocker); (4) shared-diagram geometry (capability-blocked, correctly deferred).
+
+**First Mock readiness: NOT READY** — ceiling remains ≈14-16 marks short of authentic ≈58-60 at every state examined, unchanged in kind from Decisions 177/181. **Rolling Programme readiness: NOT READY** — every Classification-A archetype is a single instance; reserve after any bounded promotion remains thin.
+
+---
+
+**What this decision does NOT claim:** it does not claim any family has been promoted to `mock_eligible`; it does not claim any family has been demoted or removed from `independently_validated`; it does not claim `ali_mock_form` has been created or any composition has been performed; it does not claim the First Mock or Rolling Programme deficit is narrowed; it does not claim shared-timetable, price-list, or any other archetype has been authored or begun; it does not claim diagram capability exists.
+
+**Files changed:** `ALI_DECISION_LOG.md` (this entry only).
+
+**Migrations created:** none.
+
+**Decision number:** 183.
+
+**Commit SHA:** recorded after commit (see repository history immediately following this entry).
+
+**Production application status:** not applicable — no migration, no production change.
+
+**Rationale:** recording a bounded-versus-full reserve-admission analysis as its own Decision, before any promotion migration is drafted, follows this arc's own established discipline (Decisions 176/177's own capacity-reasoning precedent) — reasoning through actual experience selection rather than dividing totals surfaced a genuinely decisive, non-obvious finding (identical ceiling at States 1 and 2) that materially changes the recommended next step from "promote everything now available" to "promote a bounded subset, preserve the rest."
+
+**Implications:** Decisions 1-182 all stand, none reversed or rewritten. No content, marks, eligibility, grouping, or production state changes from this decision. The next step is a separate, future Founder-authorised mock-eligibility promotion decision for the three bounded families named above — not begun here — followed, separately again, by a bounded authoring decision for a richer shared-timetable family.
+
+---
