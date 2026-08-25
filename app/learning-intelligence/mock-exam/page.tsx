@@ -29,10 +29,13 @@ import {
   buildDisplayUnits,
   buildPalette,
   unansweredUnitIndices,
+  selectDisplayUnitStimulus,
+  isValidTableStimulus,
   type DisplayUnit,
 } from "@/lib/mockAttempt/workspace";
 import { ExamTimer } from "@/components/mockAttempt/ExamTimer";
 import { QuestionPalette } from "@/components/mockAttempt/QuestionPalette";
+import { DataTableStimulus } from "@/components/mockAttempt/DataTableStimulus";
 
 /**
  * Programme Increment 008E — Secure Mock Experience Integration and
@@ -597,6 +600,7 @@ function MockQuestionRenderer({
   if (payloads.length <= 1) {
     const payload = payloads[0];
     const questionText = typeof payload.question === "string" ? payload.question : JSON.stringify(payload.question);
+    const stimulus = isValidTableStimulus(payload.stimulus) ? payload.stimulus : null;
     return (
       <div>
         <div className="flex items-center justify-between text-xs text-gray-400 dark:text-gray-500 mb-2">
@@ -604,6 +608,7 @@ function MockQuestionRenderer({
           <span>{payload.marks} mark{payload.marks === 1 ? "" : "s"}</span>
         </div>
         <p className="text-sm font-semibold text-gray-800 dark:text-gray-200 whitespace-pre-line leading-relaxed">{questionText}</p>
+        {stimulus && <DataTableStimulus stimulus={stimulus} />}
         <textarea
           value={values[0] ?? ""}
           onChange={(e) => onChange(0, e.target.value)}
@@ -616,12 +621,16 @@ function MockQuestionRenderer({
   }
 
   const totalMarks = payloads.reduce((sum, payload) => sum + payload.marks, 0);
+  // Decision 170 — one shared stimulus rendered once for the whole grouped
+  // experience (display-unit level), never once per raw subpart.
+  const sharedStimulus = selectDisplayUnitStimulus(payloads);
   return (
     <div>
       <div className="flex items-center justify-between text-xs text-gray-400 dark:text-gray-500 mb-2">
         <span className="uppercase tracking-wide font-semibold">{payloads[0].subject}</span>
         <span>{totalMarks} mark{totalMarks === 1 ? "" : "s"} total</span>
       </div>
+      {sharedStimulus && <DataTableStimulus stimulus={sharedStimulus} />}
       <div className="space-y-5">
         {payloads.map((payload, index) => {
           const questionText = typeof payload.question === "string" ? payload.question : JSON.stringify(payload.question);

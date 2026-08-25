@@ -33,6 +33,13 @@ export function isValidMockQuestionPayload(payload: unknown): payload is MockQue
     typeof p.contentDifficulty === "string" &&
     (p.questionGroupId === null || typeof p.questionGroupId === "string") &&
     (p.groupOrder === null || typeof p.groupOrder === "number") &&
-    (p.subpartLabel === null || typeof p.subpartLabel === "string")
+    (p.subpartLabel === null || typeof p.subpartLabel === "string") &&
+    // Migration 115 — top-level shape only (absent/null, or an object to
+    // be deep-validated by isValidTableStimulus() at the render site);
+    // `undefined` is accepted too, so a payload fetched before this field
+    // existed still passes rather than being rejected outright. This
+    // check deliberately stays as loose on stimulus as it already is on
+    // `question`.
+    (p.stimulus === null || p.stimulus === undefined || typeof p.stimulus === "object")
   );
 }

@@ -11,7 +11,7 @@
  * page component."
  */
 
-import type { MockManifestGroupingEntry, MockQuestionPayload } from "./types";
+import type { MockManifestGroupingEntry, MockQuestionPayload, MockStimulus, MockTableStimulus } from "./types";
 
 /** Never negative — a stale expiresAt in the past reads as 0 remaining, not a negative countdown. */
 export function computeRemainingSeconds(expiresAt: string, now: number = Date.now()): number {
@@ -136,4 +136,48 @@ export function unansweredUnitIndices(units: readonly DisplayUnit[], answeredQue
 /** Pure structural re-check, defence-in-depth on top of lib/mockAttempt/redaction.ts, that a payload actually belongs to this question before it's ever rendered. */
 export function payloadMatchesQuestion(payload: MockQuestionPayload, expectedQuestionId: string): boolean {
   return payload.questionId === expectedQuestionId;
+}
+
+/**
+ * Structured Assessment Stimulus (Decision 170) — the real, tested
+ * validation every render site must call before trusting a payload's
+ * `stimulus` value, since it arrives off jsonb with no server-side
+ * schema enforcement. Fails closed: anything not shaped exactly like a
+ * table (right keys, headers/rows both string arrays, every row the
+ * same width as headers, at least one header and one row) returns
+ * false rather than being guessed at or partially rendered — the same
+ * discipline buildDisplayUnits() already applies to malformed grouping
+ * data.
+ */
+export function isValidTableStimulus(value: unknown): value is MockTableStimulus {
+  if (!value || typeof value !== "object") return false;
+  const v = value as Record<string, unknown>;
+  if (v.type !== "table") return false;
+  if (v.caption !== undefined && typeof v.caption !== "string") return false;
+  const headers = v.headers;
+  if (!Array.isArray(headers) || headers.length === 0 || !headers.every((h) => typeof h === "string")) return false;
+  const rows = v.rows;
+  if (!Array.isArray(rows) || rows.length === 0) return false;
+  return rows.every((row) => Array.isArray(row) && row.length === headers.length && row.every((cell) => typeof cell === "string"));
+}
+
+/**
+ * One structured stimulus per DISPLAY UNIT (Decision 170), not per raw
+ * response component: `prompt.stimulus` is additive JSON attached to
+ * whichever raw row(s) in a group actually carry the shared dataset
+ * (this project's own convention: every subpart that genuinely depends
+ * on it restates the identical stimulus, exactly as every subpart
+ * already restates identical shared numbers in prose for a genuine
+ * Classification-A family — see Decision 168/169). Rendering it once
+ * per raw component would repeat the same table under every subpart;
+ * this function is the "smallest safe deduplication at the display-unit
+ * level" the Founder's own directive asked for — generic over ANY set
+ * of payloads, coupled to nothing but "the first valid stimulus present
+ * in this unit," never to a family id or name.
+ */
+export function selectDisplayUnitStimulus(payloads: readonly MockQuestionPayload[]): MockStimulus | null {
+  for (const payload of payloads) {
+    if (isValidTableStimulus(payload.stimulus)) return payload.stimulus;
+  }
+  return null;
 }

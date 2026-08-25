@@ -77,21 +77,27 @@
 -- mock-mr09-data's own reading-challenge/temperature/ticket scenarios,
 -- no CSSE wording, names, or numbers reproduced.
 --
--- PRESENTATION DESIGN NOTE (Part 7 of the Founder's own directive):
--- ali_question_bank's `prompt` JSONB has no separate structured-table
--- field, and the real learner-facing renderer (app/learning-
--- intelligence/mock-exam/page.tsx, confirmed by direct reading this
--- session) displays `question` via a plain <p> with the Tailwind class
--- `whitespace-pre-line` — it renders literal newlines faithfully but
--- has no column-aligned <table> rendering. Rather than degrade the
--- dataset into one run-on sentence to fit a plain-text field, this
--- migration uses `\n`-separated "Week N: count" lines within the
--- `question` string — the one structured-text mechanism the current UI
--- already renders correctly (confirmed by direct source reading, not
--- assumed), producing a clearly separated, readable list rather than a
--- true grid table. A genuine, disclosed presentation-fidelity gap
--- (no aligned-column table), not a blocker: see this session's own
--- Visual Standard Pre-flight for the full assessment.
+-- PRESENTATION, AMENDED (Decision 170 — this migration was amended
+-- before ever being applied, safe to do since it has never reached
+-- production): the original version of this migration embedded the
+-- dataset as `\n`-separated "Week N: count" lines inside the `question`
+-- string itself, disclosed at the time as a presentation-fidelity gap
+-- (no real table, no accessible structure). Decision 169's own Pre-
+-- Production Quality Gate found that gap material enough to require a
+-- real fix before production application, not merely a disclosure —
+-- migration 115 (Structured Assessment Stimulus) now delivers a genuine
+-- `prompt.stimulus` table object through mock_get_question(), rendered
+-- by a real semantic <table> (components/mockAttempt/
+-- DataTableStimulus.tsx) on both the learner and admin review surfaces.
+-- Both rows below now carry an identical `stimulus` object (the
+-- mechanism this project's own display-unit-level de-duplication,
+-- selectDisplayUnitStimulus(), relies on to render it once per grouped
+-- experience, not once per subpart — see migration 115's own header).
+-- The dataset is therefore no longer duplicated inside either subpart's
+-- own prose — each `question` string now states only the query being
+-- asked, exactly matching the instruction "avoid unnecessarily
+-- duplicating the complete dataset inside prose if the structured
+-- stimulus now carries it clearly."
 --
 -- Difficulty: both subparts require reading the same 5-value dataset;
 -- (a) is medium (read, sum, one multiplication); (b) is hard (compute 4
@@ -174,9 +180,12 @@
 --
 -- NOT APPLIED. Generated for independent-reviewer and Founder inspection
 -- via Supabase Dashboard > SQL Editor > New query, after migration 112
--- (grouping columns' established convention) has already been applied.
--- This migration does NOT itself grant any review approval — see
--- migration 114 for the pending-review placeholder records.
+-- (grouping columns' established convention) AND migration 115
+-- (Structured Assessment Stimulus — mock_get_question() must return
+-- `stimulus` before mock-mr09-runningclub's dataset is deliverable at
+-- all) have already been applied. This migration does NOT itself grant
+-- any review approval — see migration 114 for the pending-review
+-- placeholder records.
 
 begin;
 
@@ -201,15 +210,15 @@ values
  'FAR_TRANSFER', 'mock-mr10-fairprep', 2, '(b)', 'deterministic'),
 
 ('mock-mr09-runningclub-01', 'maths', 'QT-MR-09', array['csse'], 'medium', 'short-answer', 75,
- $json${"id":"mock-mr09-runningclub-01","marks":1,"skill":"data-handling","answer":"139.50","question":"A school running club recorded how many pupils attended each week during one half-term:\nWeek 1: 14\nWeek 2: 19\nWeek 3: 16\nWeek 4: 23\nWeek 5: 21\nEach week, the club charges £1.50 per attending pupil for a hot drink afterwards. How much money was collected in total across all five weeks, in pounds?","workingSteps":["Total attendance = 14 + 19 + 16 + 23 + 21 = 93","Total collected = 93 × £1.50 = £139.50"]}$json$,
- 'Mathematics First Mock Minimum, Shared-Scenario Completion Batch (Decision 168/169). Subpart (a) — QT-MR-09 (Data Reading), competency MR-01/MR-04, family mock-mr09-runningclub. Reads a shared 5-value dataset, then applies an external rate to the total — a two-step read-then-calculate demand, directly evidenced (2021 Q10/Q13, 2022 Q15, Decision 168''s own three-year audit) as a real, recurring shared-dataset compound structure, closing the QT-MR-09 gap named across two prior review turns. Presented as newline-separated lines (not a column-aligned table) because the confirmed learner-facing renderer (app/learning-intelligence/mock-exam/page.tsx) supports whitespace-pre-line text but not table markup — the one structured-text mechanism it already renders correctly. Answer independently recomputed: 14+19+16+23+21=93, 93×1.50=139.50.', 2, 'mock-mr09-runningclub-01',
+ $json${"id":"mock-mr09-runningclub-01","marks":1,"skill":"data-handling","answer":"139.50","question":"A school running club recorded how many pupils attended each week during one half-term. Each week, the club charges £1.50 per attending pupil for a hot drink afterwards. How much money was collected in total across all five weeks, in pounds?","workingSteps":["Total attendance = 14 + 19 + 16 + 23 + 21 = 93","Total collected = 93 × £1.50 = £139.50"],"stimulus":{"type":"table","caption":"Weekly running club attendance","headers":["Week","Attendance"],"rows":[["Week 1","14"],["Week 2","19"],["Week 3","16"],["Week 4","23"],["Week 5","21"]]}}$json$,
+ 'Mathematics First Mock Minimum, Shared-Scenario Completion Batch (Decision 168/169). Subpart (a) — QT-MR-09 (Data Reading), competency MR-01/MR-04, family mock-mr09-runningclub. Reads a shared 5-value dataset, then applies an external rate to the total — a two-step read-then-calculate demand, directly evidenced (2021 Q10/Q13, 2022 Q15, Decision 168''s own three-year audit) as a real, recurring shared-dataset compound structure, closing the QT-MR-09 gap named across two prior review turns. The dataset is now delivered as a structured `prompt.stimulus` table object (Decision 170, migration 115), rendered as a real semantic <table> rather than encoded into this row''s own prose — see this migration''s own header for the amendment record. Answer independently recomputed: 14+19+16+23+21=93, 93×1.50=139.50.', 2, 'mock-mr09-runningclub-01',
  'mock-mr09-runningclub', 'angel_original', 'authentic_assessment_candidate', 1, true,
  'Multiplying £1.50 by a single week''s attendance instead of the five-week total, or omitting the final multiplication step and giving the raw attendance total (93) as the answer.',
  'FAR_TRANSFER', 'mock-mr09-runningclub', 1, '(a)', 'deterministic'),
 
 ('mock-mr09-runningclub-02', 'maths', 'QT-MR-09', array['csse'], 'hard', 'short-answer', 90,
- $json${"id":"mock-mr09-runningclub-02","marks":2,"skill":"data-handling","answer":"Week 3 to Week 4","question":"A school running club recorded how many pupils attended each week during one half-term:\nWeek 1: 14\nWeek 2: 19\nWeek 3: 16\nWeek 4: 23\nWeek 5: 21\nBetween which two consecutive weeks did attendance increase by the greatest amount? Give your answer in the form \"Week X to Week Y\".","workingSteps":["Week-on-week changes: Week 1→2: +5, Week 2→3: −3, Week 3→4: +7, Week 4→5: −2","The greatest increase is +7, from Week 3 to Week 4"]}$json$,
- 'Mathematics First Mock Minimum, Shared-Scenario Completion Batch (Decision 168/169). Subpart (b) — QT-MR-09, family mock-mr09-runningclub. Reads the SAME shared dataset as subpart (a) but requires a genuinely different reasoning step — computing every pairwise week-on-week difference and identifying the greatest, a search/comparison demand (not the sum-then-multiply of (a), and deliberately not a repeat of mock-mr09-data''s own mean-calculation shape). Answer verified unique: differences +5/−3/+7/−2, single unambiguous maximum. Answer independently recomputed and format chosen for unambiguous deterministic exact-match scoring.', 3, 'mock-mr09-runningclub-02',
+ $json${"id":"mock-mr09-runningclub-02","marks":2,"skill":"data-handling","answer":"Week 3 to Week 4","question":"A school running club recorded how many pupils attended each week during one half-term. Between which two consecutive weeks did attendance increase by the greatest amount? Give your answer in the form \"Week X to Week Y\".","workingSteps":["Week-on-week changes: Week 1→2: +5, Week 2→3: −3, Week 3→4: +7, Week 4→5: −2","The greatest increase is +7, from Week 3 to Week 4"],"stimulus":{"type":"table","caption":"Weekly running club attendance","headers":["Week","Attendance"],"rows":[["Week 1","14"],["Week 2","19"],["Week 3","16"],["Week 4","23"],["Week 5","21"]]}}$json$,
+ 'Mathematics First Mock Minimum, Shared-Scenario Completion Batch (Decision 168/169). Subpart (b) — QT-MR-09, family mock-mr09-runningclub. Reads the SAME shared dataset as subpart (a), delivered via the identical `stimulus` object (the mechanism selectDisplayUnitStimulus() relies on to render it once per grouped experience, not once per subpart) — but requires a genuinely different reasoning step — computing every pairwise week-on-week difference and identifying the greatest, a search/comparison demand (not the sum-then-multiply of (a), and deliberately not a repeat of mock-mr09-data''s own mean-calculation shape). Answer verified unique: differences +5/−3/+7/−2, single unambiguous maximum. Answer independently recomputed and format chosen for unambiguous deterministic exact-match scoring.', 3, 'mock-mr09-runningclub-02',
  'mock-mr09-runningclub', 'angel_original', 'authentic_assessment_candidate', 1, true,
  'Comparing raw weekly attendance values instead of the week-on-week differences, or reporting the single highest-attendance week (Week 4, 23) rather than the week pair with the greatest increase from the week before.',
  'FAR_TRANSFER', 'mock-mr09-runningclub', 2, '(b)', 'deterministic')

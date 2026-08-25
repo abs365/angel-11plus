@@ -186,6 +186,7 @@ test("payloadMatchesQuestion confirms a fetched payload genuinely belongs to the
     questionGroupId: null,
     groupOrder: null,
     subpartLabel: null,
+    stimulus: null,
   };
   assert.equal(payloadMatchesQuestion(payload, "q1"), true);
   assert.equal(payloadMatchesQuestion(payload, "q2"), false);

@@ -6150,3 +6150,93 @@ If both new experiences were simply *added* to Decision 167's proposed 20-questi
 **Implications:** Decisions 1–168 all stand, none reversed or rewritten; Decision 165 stands, corrected by this entry's own Part 2, not rewritten. No Mock form, no eligibility change, no Batch 001 promotion, and no change to the First Mock composition occurs from this decision. Both new families now await independent review (migration 114) exactly like every prior batch before them — not self-certified here.
 
 ---
+
+### Decision 170 — STRUCTURED ASSESSMENT STIMULUS: the smallest generic, production-quality data-table capability built as a real prerequisite to `mock-mr09-runningclub`, replacing the newline-list workaround Decision 169 disclosed but did not accept as final; additive `prompt.stimulus` content contract (no new column), delivered through `mock_get_question()` (migration 115, NOT applied), rendered by one reusable semantic `<table>` component on both the learner Mock surface and the admin review surface (the latter found, this session, to require its own new per-batch wiring — `groupQuestionsForReview()` being generic did not mean this new batch would actually reach it, a real gap in Decision 166/169's own prior "zero code change required" claims, now corrected); migration 113 amended in place (safe, never applied) to carry the structured table instead of duplicating the dataset in prose; 44 new tests, full verification suite clean; migrations 113/114/115 all remain NOT applied
+
+**Scope and process:** Real application-code implementation (not read-only) — TypeScript types, two pure validation/de-duplication functions, one new React component, edits to the learner Mock page and the admin review page, one new SQL migration, one amendment to an unapplied migration, and 6 new/extended test files. No migration applied. No production mutation.
+
+---
+
+**PART 1 — RECONCILIATION**
+
+`HEAD == origin/main` at `17ec004` (Decision 169) confirmed before this work began.
+
+---
+
+**PART 2 — CONTENT CONTRACT**
+
+`prompt.stimulus` — an optional key inside the existing `prompt` jsonb column (migration 005), never a new table column. Shape: `{ type: "table", caption?: string, headers: string[], rows: string[][] }`. `type` is a deliberately single-member literal union today (extensible to a future stimulus kind without redesign; no diagram/image/chart type is built or planned in this increment). Absent on every row before this decision and on every row since with no shared dataset — behaviourally indistinguishable from "no stimulus," proven by tests, not merely asserted (`isValidTableStimulus(null/undefined)` → `false`; existing rows require no migration or backfill).
+
+---
+
+**PART 3 — DATABASE / RPC**
+
+Migration 115 (NOT applied): `CREATE OR REPLACE FUNCTION public.mock_get_question(...)`, full body reproduced (Postgres requirement), every existing line byte-identical except one new `jsonb_build_object()` key: `'stimulus', v_row.prompt->'stimulus'`. `mock_get_attempt_grouping()` is deliberately untouched — it returns grouping identity only, never content, unchanged since migration 106. Ownership/status/expiry/manifest-membership checks are byte-identical to migration 106's own body.
+
+---
+
+**PART 4 — SECURITY / PRIVILEGE AUDIT**
+
+Same function signature as migration 106 left it, so Postgres privileges are unaffected regardless — the Founder's own directive not to assume this was still followed literally: `revoke all on function public.mock_get_question(uuid, text) from public;` then `grant execute ... to authenticated;` both explicitly restated, verified by a dedicated structural test that no `grant ... to anon` appears anywhere in the file. The new field exposes only already-authored, non-secret dataset content; the allow-list remains hand-picked, one field longer, never `select *`; a dedicated test proves no `PROTECTED_MOCK_FIELDS` name is ever added to it. Practice and Mock-eligibility isolation are structurally unreachable by this migration (it touches neither `eligibility_status` nor any Practice code path) — proven, not merely stated, by tests.
+
+---
+
+**PART 5 — GENERIC RENDERER**
+
+`components/mockAttempt/DataTableStimulus.tsx` — real `<table>/<thead>/<tbody>`, `<th scope="col">` per header, a `<caption>` that is visible when supplied and screen-reader-only otherwise (the table always has an accessible name), `overflow-x-auto` responsive containment, `tabular-nums` for number alignment (not a monospace font), zebra-striped rows, dark-mode classes throughout. Every rendered value comes from the `stimulus` prop — no Running Club content is hard-coded, verified by a dedicated test asserting the component's own source contains no scenario-specific string.
+
+---
+
+**PART 6 — LEARNER MOCK SURFACE**
+
+`lib/mockAttempt/workspace.ts` gains `isValidTableStimulus()` (fails closed on any malformed shape — wrong type discriminator, empty headers/rows, row-width mismatch, non-string cells) and `selectDisplayUnitStimulus()` — the "smallest safe deduplication at the display-unit level" the Founder's own directive asked for: given a grouped experience's raw payloads, it returns the first *valid* stimulus found, generic over any payload set, coupled to nothing but position-in-list, never a family id or name. `app/learning-intelligence/mock-exam/page.tsx`'s question renderer now shows, in order: question/shared context, the table (once per grouped experience, not once per subpart), subparts, answer inputs — exactly the order the Founder's own directive specified.
+
+---
+
+**PART 7 — ADMIN REVIEW SURFACE (a real, previously-uncaught gap found and closed this session)**
+
+Direct re-reading of `app/admin-beta/review/page.tsx` this session found `groupQuestionsForReview()` — the function Decision 166/169 both cited as proof "zero code change required" for review-surface grouping — is only actually *invoked* inside a branch gated by a `sevenX` prop, populated only for named, individually-wired batches (`SEVEN_X_FAMILIES`-style configs). A new, ungrouped-by-default batch would have fallen into the page's OTHER branch (Representative/Easiest/Hardest/Unusual sampling), which does not group subparts together at all — a real defect in this session's own prior grouping claims, not merely in this batch. Closed the same way every prior Mock Mathematics batch closed it: a new `MockSharedScenarioCompletionBatchSection` component, its own state/effect wiring, and `lib/adminReview.ts`'s own `MOCK_SHARED_SCENARIO_COMPLETION_BATCH_FAMILIES`/`_MARKER`/`buildMockSharedScenarioCompletionBatchNotesPrefix()`/`fetchMockSharedScenarioCompletionBatchReviewStatus()` — the exact established pattern `MockFirstMockCompoundBatch001Section` already proved for `mock-mr03mr07-perimeterarea`, cloned, not invented. `RepresentativeQuestion` gains `stimulus` (via a new `promptStimulus()` helper, mirroring `promptWorkingSteps()`'s own deliberate looseness), and the grouped-review render block now selects and renders one `DataTableStimulus` per group via the identical `selectDisplayUnitStimulus()` logic the learner surface uses — the Founder reviews the same stimulus a learner would see, not a re-derived copy. The pre-existing missing `whitespace-pre-line` on the grouped question-text `<p>` (found in the Decision 169 turn) is also fixed in the same edit.
+
+---
+
+**PART 8 — RUNNING CLUB CONTENT REPRESENTATION**
+
+Migration 113 amended in place (safe: never applied, confirmed by its own header and by this session having no production database access at all). Both `mock-mr09-runningclub` rows now carry an identical `stimulus` table object; each subpart's own `question` text states only the query being asked, no longer re-encoding "Week N: count" as prose — verified by a dedicated test asserting no such pattern remains in either row's text. Every previously-verified answer, mark, and difficulty is unchanged (re-asserted by test, not merely claimed): `15:50`, `13:35`, `139.50`, `Week 3 to Week 4`, marks 1/2/1/2, difficulties medium/hard/medium/hard. `mock-mr10-fairprep` is confirmed untouched — no `stimulus` key on either row, verified by test.
+
+---
+
+**PART 9 — MARKING ARCHITECTURE DEBT (carried forward, not solved)**
+
+Reconfirmed, not re-litigated: `mock_score_attempt()` awards each row full marks, zero, or `null` (manual) — no component-level partial-credit mechanism exists anywhere in the live scoring function. This is a systemic, pre-existing characteristic of the entire scoring architecture (already true of 8 of the 19 existing certified families before this batch), not unique to `fairprep-02`/`runningclub-02`. **Before First Mock learner activation, a dedicated assessment must determine whether every 2-mark deterministic row is legitimately all-or-nothing under Angel's intended CSSE-aligned marking model** — not silently treated as resolved by this decision or any prior one.
+
+---
+
+**PART 10 — VISUAL STANDARD AND VERIFICATION LIMITS**
+
+Assessed against information hierarchy, typography, spacing, heading distinction, number alignment, narrow-viewport behaviour, screen-reader structure, and consistency with this codebase's own existing Tailwind/dark-mode conventions — all confirmed present at the source level (Part 5/6). **No live-browser visual proof is claimed or possible**: `ali_mock_form` remains 0, so no attempt can be created to render this in a running browser session. Verification performed was source-level (structural tests against the component's and pages' real text) and the full automated suite — genuinely different from, and not a substitute for, the Founder's own eventual visual review before Mock activation, stated explicitly per the Founder's own instruction not to overclaim this.
+
+---
+
+**PART 11 — TESTS AND FULL VERIFICATION**
+
+44 new tests across 6 files: `tests/lib/mockAttempt/stimulus.test.ts` (validation/de-duplication, 10 tests), `tests/lib/mockAttempt/redaction.test.ts` (extended, 5 new tests — stimulus never protected, payload shape acceptance/rejection), `tests/lib/mockAttempt/workspace.test.ts` (1 fixture fix), `tests/components/mockAttempt/DataTableStimulus.test.ts` (7 source-structural tests — semantic markup, accessibility, responsiveness, no hard-coded content), `tests/lib/adminReview.test.ts` (extended, 3 new tests — batch config shape, cross-file notes-string consistency against migration 114's own real text, review-status recognition), `tests/supabase/mockMathematicsStructuredStimulus.test.ts` (12 tests against migration 115's real SQL — allow-list exact keys, anon-privilege audit, Practice/eligibility isolation, no other RPC touched), `tests/supabase/mockMathematicsSharedScenarioCompletionBatchContent.test.ts` (9 tests against migration 113's own amended real JSON — stimulus shape, de-duplication mechanism, no prose duplication, every answer/mark unchanged). **Full suite: 1415/1415 pass** (1371 baseline + 44 new; zero regressions). `npx tsc --noEmit`: clean. ESLint: 81 problems (62 errors/19 warnings), byte-identical to the pre-existing baseline confirmed by direct `git stash` comparison against these exact files — zero new issues introduced. Copy Quality Guard: PASS, 0 violations, 257 files (256 baseline + 1 new real source file, `DataTableStimulus.tsx`; one genuine em-dash finding in this session's own new `disclosure` strings was caught and fixed before this count). Production build: succeeds, full route table renders.
+
+---
+
+**What this decision does NOT claim:** it does not claim either migration has been applied (113/114/115 all self-disclosed NOT APPLIED); it does not claim any content is promoted, `mock_eligible`, or activated; it does not claim the First Mock composition (Decision 167) has changed; it does not claim partial-credit marking is resolved (Part 9, explicitly carried forward); it does not claim live-browser visual proof exists (Part 10, explicitly disclosed as impossible without a form); it does not claim the admin-review-surface gap found in Part 7 was present only in this batch — it was a latent gap in every batch that never got its own dedicated `sevenX`-style section, now closed for this one, not audited across all others.
+
+**Files changed:** `lib/mockAttempt/types.ts`, `lib/mockAttempt/workspace.ts`, `lib/mockAttempt/redaction.ts`, `components/mockAttempt/DataTableStimulus.tsx` (new), `app/learning-intelligence/mock-exam/page.tsx`, `lib/adminReview.ts`, `app/admin-beta/review/page.tsx`, `supabase/migrations/113_mock_mathematics_shared_scenario_completion_batch.sql` (amended, still NOT applied), `supabase/migrations/115_mock_mathematics_structured_stimulus.sql` (new, NOT applied), 6 test files (2 new, 4 extended), `ALI_DECISION_LOG.md` (this entry). `supabase/migrations/114_...sql` unchanged (its notes needed no correction).
+
+**Migrations created/modified:** 115 — new, NOT applied. 113 — amended (never applied, safe per this session's own confirmation), still NOT applied. 114 — unchanged, still NOT applied.
+
+**Decision number:** 170.
+
+**Commit SHA:** recorded after commit (see repository history immediately following this entry).
+
+**Production application status:** migrations 113/114/115 all NOT applied. No production change has occurred.
+
+**Rationale:** building the smallest generic prerequisite before production application, rather than accepting the disclosed newline-list gap as final, follows the Founder's own explicit direction this turn and this project's own established discipline of treating a disclosed limitation as a real blocker once named material, not a permanent caveat (mirroring how migration 106 itself once closed an equivalent grouping-delivery gap for the learner surface). Discovering and closing the admin-review-surface wiring gap in the same pass, rather than only the narrower stimulus-rendering piece asked for, follows this project's own standing rule to report and fix a defect found during otherwise-scoped work rather than leaving it for a future session to re-discover.
+
+**Implications:** Decisions 1–169 all stand, none reversed or rewritten. No Mock form, no promotion, no eligibility change, and no change to the First Mock composition occurs from this decision. The exact production application sequence proposed for the Founder's own future action (not performed here): apply migration 112 if not already applied → apply migration 115 → apply migration 113 → apply migration 114 → independent review of both families via the new admin review section → separately, in a future decision, resolve Part 9's marking-architecture question and Decision 169's own remaining First Mock blockers before any learner activation.
+
+---

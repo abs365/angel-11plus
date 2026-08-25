@@ -28,6 +28,8 @@ import {
   MOCK_MR_BATCH003_FAMILIES, MOCK_MR_BATCH003_TARGET_IDS,
   fetchMockFirstMockCompoundBatch001ReviewStatus, buildMockFirstMockCompoundBatch001NotesPrefix,
   MOCK_FIRSTMOCK_COMPOUND_BATCH001_FAMILIES, MOCK_FIRSTMOCK_COMPOUND_BATCH001_TARGET_IDS,
+  fetchMockSharedScenarioCompletionBatchReviewStatus, buildMockSharedScenarioCompletionBatchNotesPrefix,
+  MOCK_SHARED_SCENARIO_COMPLETION_BATCH_FAMILIES, MOCK_SHARED_SCENARIO_COMPLETION_BATCH_TARGET_IDS,
   fetchMockEnglishPassageBatch001ReviewStatus, submitMockEnglishPassageIndependentReview,
   MOCK_ENGLISH_PASSAGE_BATCH001_TARGET_ID,
   fetchMockWritingBatch001ReviewStatus, buildMockWritingBatch001NotesPrefix, submitMockWritingPromptIndependentReview,
@@ -41,6 +43,8 @@ import { getSelfReflectionCategories, WRONG_ANSWER_CATEGORY_LABEL } from "@/lib/
 import { getMathsTeachingContent, MATHS_MISCONCEPTION_CATEGORY_LABEL, effectiveGuidedRevealStepCount } from "@/lib/learningEngine/mathsTeachingContent";
 import { getWritingTeachingContent } from "@/lib/learningEngine/writingTeachingContent";
 import { WRITING_DIMENSIONS, WRITING_DIMENSION_LABEL } from "@/lib/learningEngine/writingRubric";
+import { isValidTableStimulus } from "@/lib/mockAttempt/workspace";
+import { DataTableStimulus } from "@/components/mockAttempt/DataTableStimulus";
 
 /**
  * Educational Increment 007F, "Reviewer Experience Correction" — the
@@ -691,35 +695,44 @@ function ReviewForm({
             // (question_group_id set) is rendered as ONE coherent unit
             // with its subparts together, never as unrelated flat rows.
             <div className="space-y-4">
-              {groupQuestionsForReview(questions).map((group) => (
-                <div key={group.key} className="border-t border-gray-50 dark:border-gray-800 pt-3 first:border-t-0 first:pt-0">
-                  {group.items.length > 1 && (
-                    <p className="text-[11px] font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-wide mb-1">
-                      One numbered question: {group.items.length} subparts, reviewed together
-                    </p>
-                  )}
-                  <div className={group.items.length > 1 ? "space-y-3 pl-3 border-l-2 border-indigo-100 dark:border-indigo-900" : ""}>
-                    {group.items.map((question) => (
-                      <div key={question.id}>
-                        {question.subpartLabel && (
-                          <p className="text-[11px] font-semibold text-gray-400 dark:text-gray-500">
-                            Subpart {question.subpartLabel}
-                            {question.markingMode ? ` · marking: ${question.markingMode.replace(/_/g, " ")}` : ""}
-                          </p>
-                        )}
-                        <p className="text-sm font-semibold text-gray-800 dark:text-gray-200 mt-1">{question.question}</p>
-                        <p className="text-xs text-gray-500 dark:text-gray-400 mt-1"><strong>Model answer ({question.contentDifficulty} difficulty):</strong> {question.modelAnswer}</p>
-                        {question.addressesMisconception && (
-                          <p className="text-xs text-amber-700 dark:text-amber-300 mt-1"><strong>Common trap:</strong> {question.addressesMisconception}</p>
-                        )}
-                        {question.transferClass && (
-                          <p className="text-[11px] text-gray-400 dark:text-gray-500 mt-1">Transfer demand: {question.transferClass.replace(/_/g, " ").toLowerCase()}</p>
-                        )}
-                      </div>
-                    ))}
+              {groupQuestionsForReview(questions).map((group) => {
+                // Structured Assessment Stimulus (Decision 170) — the
+                // same display-unit-level de-duplication the learner
+                // surface uses (selectDisplayUnitStimulus), so the
+                // Founder reviews one table per grouped numbered
+                // question, never one repeated per subpart.
+                const groupStimulus = group.items.map((q) => q.stimulus).find(isValidTableStimulus) ?? null;
+                return (
+                  <div key={group.key} className="border-t border-gray-50 dark:border-gray-800 pt-3 first:border-t-0 first:pt-0">
+                    {group.items.length > 1 && (
+                      <p className="text-[11px] font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-wide mb-1">
+                        One numbered question: {group.items.length} subparts, reviewed together
+                      </p>
+                    )}
+                    {groupStimulus && <DataTableStimulus stimulus={groupStimulus} />}
+                    <div className={group.items.length > 1 ? "space-y-3 pl-3 border-l-2 border-indigo-100 dark:border-indigo-900" : ""}>
+                      {group.items.map((question) => (
+                        <div key={question.id}>
+                          {question.subpartLabel && (
+                            <p className="text-[11px] font-semibold text-gray-400 dark:text-gray-500">
+                              Subpart {question.subpartLabel}
+                              {question.markingMode ? ` · marking: ${question.markingMode.replace(/_/g, " ")}` : ""}
+                            </p>
+                          )}
+                          <p className="text-sm font-semibold text-gray-800 dark:text-gray-200 mt-1 whitespace-pre-line">{question.question}</p>
+                          <p className="text-xs text-gray-500 dark:text-gray-400 mt-1"><strong>Model answer ({question.contentDifficulty} difficulty):</strong> {question.modelAnswer}</p>
+                          {question.addressesMisconception && (
+                            <p className="text-xs text-amber-700 dark:text-amber-300 mt-1"><strong>Common trap:</strong> {question.addressesMisconception}</p>
+                          )}
+                          {question.transferClass && (
+                            <p className="text-[11px] text-gray-400 dark:text-gray-500 mt-1">Transfer demand: {question.transferClass.replace(/_/g, " ").toLowerCase()}</p>
+                          )}
+                        </div>
+                      ))}
+                    </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           ) : (
             <>
@@ -1954,6 +1967,65 @@ function MockMrBatch003Section({
  * as 4 disconnected flat questions — the same grouped-review mechanism
  * Decision 155 already proved for mock-mr01mr10-costumeschedule.
  */
+/**
+ * Mathematics First Mock Minimum — Shared-Scenario Completion Batch
+ * (Decision 168/169/170) — cloned directly from
+ * MockFirstMockCompoundBatch001Section's own established pattern, the
+ * proven mechanism for reviewing any new grouped Mock Mathematics batch
+ * on this surface with subparts (and now, a structured stimulus)
+ * rendered coherently rather than as unrelated flat sampled rows.
+ */
+function MockSharedScenarioCompletionBatchSection({
+  targets, status, onOpen,
+}: {
+  targets: PendingReviewTarget[];
+  status: Map<string, SevenXReviewStatus>;
+  onOpen: (t: PendingReviewTarget, family: SevenXFamilyConfig) => void;
+}) {
+  const reviewedCount = MOCK_SHARED_SCENARIO_COMPLETION_BATCH_FAMILIES.filter((f) => status.get(f.familyId)?.reviewed).length;
+  const totalQuestions = MOCK_SHARED_SCENARIO_COMPLETION_BATCH_FAMILIES.reduce((n, f) => n + f.newQuestionIds.length, 0);
+  return (
+    <div id="mock-review-shared-scenario-completion-batch" className="bg-white dark:bg-gray-900 rounded-2xl border-2 border-amber-200 dark:border-amber-800 overflow-hidden scroll-mt-4">
+      <div className="px-5 py-4 border-b border-amber-100 dark:border-amber-900 bg-amber-50 dark:bg-amber-950/40">
+        <p className="text-sm font-bold text-amber-900 dark:text-amber-200">Mathematics First Mock Minimum: Shared-Scenario Completion Batch Review</p>
+        <p className="text-xs text-amber-600 dark:text-amber-400 mt-0.5">
+          {reviewedCount} of {MOCK_SHARED_SCENARIO_COMPLETION_BATCH_FAMILIES.length} families reviewed. {totalQuestions} new questions total across 2 families.
+        </p>
+        <div className="mt-2 text-xs text-amber-800 dark:text-amber-300 space-y-0.5">
+          <p>• This is a Mock candidate, not Practice content: it has never been, and will not be, automatically promoted from Practice.</p>
+          <p>• All {totalQuestions} questions are currently <strong>authentic_assessment_candidate</strong>. None is mock_eligible. None is used by any Mock form.</p>
+          <p>• Question Types: QT-MR-10 (mock-mr10-fairprep, no stimulus) and QT-MR-09 (mock-mr09-runningclub, structured table stimulus below). Both families are GROUPED: 1 numbered-question experience of 2 subparts each.</p>
+          <p>• Approving a family here does not activate it: promotion to independently_validated, and any later move to mock_eligible, remain separate, later, Founder-authorised steps.</p>
+        </div>
+      </div>
+      <div className="divide-y divide-gray-50 dark:divide-gray-800">
+        {MOCK_SHARED_SCENARIO_COMPLETION_BATCH_FAMILIES.map((f) => {
+          const s = status.get(f.familyId);
+          const pendingTarget = targets.find((t) => t.id === f.familyId && (t.notes ?? "").includes("MOCK-SHARED-SCENARIO-COMPLETION-BATCH"));
+          return (
+            <button
+              key={f.familyId}
+              disabled={!pendingTarget}
+              onClick={() => pendingTarget && onOpen(pendingTarget, f)}
+              className="w-full text-left px-5 py-3 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors flex items-center justify-between gap-3 disabled:opacity-50"
+            >
+              <div>
+                <p className="text-sm font-medium text-gray-900 dark:text-gray-100">{FAMILY_DISPLAY_NAME[f.familyId] ?? formatFallbackName(f.familyId)}</p>
+                <p className="text-[11px] text-gray-400 dark:text-gray-500 mt-0.5">
+                  {f.newQuestionIds.length} new question{f.newQuestionIds.length === 1 ? "" : "s"}
+                  {s?.reviewed ? ` · reviewed (${s.decision})` : " · not yet reviewed"}
+                  {!pendingTarget ? " · migrations 113/114 not yet applied" : ""}
+                </p>
+              </div>
+              {s?.reviewed ? <CheckCircle2 size={16} className="text-emerald-500 shrink-0" /> : <ArrowRight size={14} className="text-gray-300 dark:text-gray-600 shrink-0" />}
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
 function MockFirstMockCompoundBatch001Section({
   targets, status, onOpen,
 }: {
@@ -2289,18 +2361,21 @@ function ReviewDashboard() {
   const [selectedMockMrBatch003, setSelectedMockMrBatch003] = useState<{ target: PendingReviewTarget; family: SevenXFamilyConfig } | null>(null);
   const [mockFirstMockCompoundBatch001Status, setMockFirstMockCompoundBatch001Status] = useState<Map<string, SevenXReviewStatus>>(new Map());
   const [selectedMockFirstMockCompoundBatch001, setSelectedMockFirstMockCompoundBatch001] = useState<{ target: PendingReviewTarget; family: SevenXFamilyConfig } | null>(null);
+  const [mockSharedScenarioCompletionBatchStatus, setMockSharedScenarioCompletionBatchStatus] = useState<Map<string, SevenXReviewStatus>>(new Map());
+  const [selectedMockSharedScenarioCompletionBatch, setSelectedMockSharedScenarioCompletionBatch] = useState<{ target: PendingReviewTarget; family: SevenXFamilyConfig } | null>(null);
   const [mockEnglishPassageBatch001Status, setMockEnglishPassageBatch001Status] = useState<Map<string, SevenXReviewStatus>>(new Map());
   const [selectedMockEnglishPassageBatch001, setSelectedMockEnglishPassageBatch001] = useState<PendingReviewTarget | null>(null);
   const [mockWritingBatch001Status, setMockWritingBatch001Status] = useState<Map<string, SevenXReviewStatus>>(new Map());
   const [selectedMockWritingBatch001, setSelectedMockWritingBatch001] = useState<{ target: PendingReviewTarget; family: SevenXFamilyConfig } | null>(null);
 
   async function load() {
-    const [pending, reviewed, teachingReviewed, englishTeachingReviewed, writingTeachingReviewed, sevenX, mr04Depth, inc006Depth, mockMrBatch001, mockMrBatch002, mockMrBatch003, mockFirstMockCompoundBatch001, mockEnglishPassageBatch001, mockWritingBatch001] = await Promise.all([
+    const [pending, reviewed, teachingReviewed, englishTeachingReviewed, writingTeachingReviewed, sevenX, mr04Depth, inc006Depth, mockMrBatch001, mockMrBatch002, mockMrBatch003, mockFirstMockCompoundBatch001, mockSharedScenarioCompletionBatch, mockEnglishPassageBatch001, mockWritingBatch001] = await Promise.all([
       fetchPendingReviewTargets(), fetchReviewedTargetIds(), fetchMathsTeachingReviewedFamilyIds(), fetchEnglishTeachingReviewedFamilyIds(), fetchWritingTeachingReviewedFamilyIds(),
       fetchSevenXReviewStatus(SEVEN_X_TARGET_IDS), fetchMr04DepthReviewStatus(MR04_DEPTH_TARGET_IDS), fetchInc006DepthReviewStatus(INC006_DEPTH_TARGET_IDS),
       fetchMockMrBatch001ReviewStatus(MOCK_MR_BATCH001_TARGET_IDS), fetchMockMrBatch002ReviewStatus(MOCK_MR_BATCH002_TARGET_IDS),
       fetchMockMrBatch003ReviewStatus(MOCK_MR_BATCH003_TARGET_IDS),
       fetchMockFirstMockCompoundBatch001ReviewStatus(MOCK_FIRSTMOCK_COMPOUND_BATCH001_TARGET_IDS),
+      fetchMockSharedScenarioCompletionBatchReviewStatus(MOCK_SHARED_SCENARIO_COMPLETION_BATCH_TARGET_IDS),
       fetchMockEnglishPassageBatch001ReviewStatus(), fetchMockWritingBatch001ReviewStatus(MOCK_WRITING_BATCH001_TARGET_IDS),
     ]);
     setTargets(pending);
@@ -2315,6 +2390,7 @@ function ReviewDashboard() {
     setMockMrBatch002Status(mockMrBatch002);
     setMockMrBatch003Status(mockMrBatch003);
     setMockFirstMockCompoundBatch001Status(mockFirstMockCompoundBatch001);
+    setMockSharedScenarioCompletionBatchStatus(mockSharedScenarioCompletionBatch);
     setMockEnglishPassageBatch001Status(mockEnglishPassageBatch001);
     setMockWritingBatch001Status(mockWritingBatch001);
   }
@@ -2440,6 +2516,21 @@ function ReviewDashboard() {
     );
   }
 
+  if (selectedMockSharedScenarioCompletionBatch) {
+    const { target, family } = selectedMockSharedScenarioCompletionBatch;
+    return (
+      <ReviewForm
+        target={target}
+        reviewType="mock_maths_independent_review"
+        onDone={() => { setSelectedMockSharedScenarioCompletionBatch(null); load(); }}
+        sevenX={{
+          questionIds: family.newQuestionIds, reclassified: family.reclassified, disclosure: family.disclosure,
+          notesPrefix: buildMockSharedScenarioCompletionBatchNotesPrefix(target.id, family.newQuestionIds),
+        }}
+      />
+    );
+  }
+
   if (selectedMockEnglishPassageBatch001) {
     return (
       <ReviewForm
@@ -2505,11 +2596,13 @@ function ReviewDashboard() {
           <a href="#mock-review-english-passage-batch001" className="text-xs font-medium px-3 py-1.5 rounded-lg bg-teal-100 dark:bg-teal-900 text-teal-700 dark:text-teal-300 hover:bg-teal-200 dark:hover:bg-teal-800 transition-colors">English Comprehension</a>
           <a href="#mock-review-writing-batch001" className="text-xs font-medium px-3 py-1.5 rounded-lg bg-teal-100 dark:bg-teal-900 text-teal-700 dark:text-teal-300 hover:bg-teal-200 dark:hover:bg-teal-800 transition-colors">Continuous Writing</a>
           <a href="#mock-review-firstmock-compound-batch001" className="text-xs font-medium px-3 py-1.5 rounded-lg bg-amber-100 dark:bg-amber-900 text-amber-700 dark:text-amber-300 hover:bg-amber-200 dark:hover:bg-amber-800 transition-colors">First Mock Compound Batch 001</a>
+          <a href="#mock-review-shared-scenario-completion-batch" className="text-xs font-medium px-3 py-1.5 rounded-lg bg-amber-100 dark:bg-amber-900 text-amber-700 dark:text-amber-300 hover:bg-amber-200 dark:hover:bg-amber-800 transition-colors">Shared-Scenario Completion Batch</a>
         </div>
       </div>
 
       <MockMrBatch003Section targets={targets} status={mockMrBatch003Status} onOpen={(target, family) => setSelectedMockMrBatch003({ target, family })} />
       <MockFirstMockCompoundBatch001Section targets={targets} status={mockFirstMockCompoundBatch001Status} onOpen={(target, family) => setSelectedMockFirstMockCompoundBatch001({ target, family })} />
+      <MockSharedScenarioCompletionBatchSection targets={targets} status={mockSharedScenarioCompletionBatchStatus} onOpen={(target, family) => setSelectedMockSharedScenarioCompletionBatch({ target, family })} />
       <MockEnglishPassageBatch001Section targets={targets} status={mockEnglishPassageBatch001Status} onOpen={setSelectedMockEnglishPassageBatch001} />
       <MockWritingBatch001Section targets={targets} status={mockWritingBatch001Status} onOpen={(target, family) => setSelectedMockWritingBatch001({ target, family })} />
       <FullBacklogSection targets={targets} reviewedIds={reviewedIds} onOpen={setSelected} />

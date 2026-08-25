@@ -785,6 +785,16 @@ export interface RepresentativeQuestion {
   groupOrder: number | null;
   subpartLabel: string | null;
   markingMode: string | null;
+  /**
+   * Structured Assessment Stimulus (Decision 170) — the same optional
+   * `prompt.stimulus` table object the learner's own mock_get_question()
+   * payload carries (lib/mockAttempt/types.ts's MockStimulus), read here
+   * directly from the admin-privileged row so the Founder reviews the
+   * identical stimulus a learner would see. `unknown`, not narrowed here
+   * — callers must validate with isValidTableStimulus() before
+   * rendering, exactly like the learner surface does.
+   */
+  stimulus: unknown;
 }
 
 /** prompt is stored as jsonb (typed `unknown` at the client) — narrows just enough to read the display fields safely, without claiming to know its full shape. */
@@ -800,6 +810,14 @@ function promptWorkingSteps(prompt: unknown): string[] | null {
   if (prompt && typeof prompt === "object" && "workingSteps" in prompt) {
     const value = (prompt as Record<string, unknown>).workingSteps;
     if (Array.isArray(value) && value.every((s) => typeof s === "string")) return value as string[];
+  }
+  return null;
+}
+
+/** Structured Assessment Stimulus (Decision 170) — top-level presence only; deep validation is isValidTableStimulus()'s job at the render site, matching promptWorkingSteps()'s own deliberate looseness. */
+function promptStimulus(prompt: unknown): unknown {
+  if (prompt && typeof prompt === "object" && "stimulus" in prompt) {
+    return (prompt as Record<string, unknown>).stimulus ?? null;
   }
   return null;
 }
@@ -1489,6 +1507,55 @@ export async function fetchMockFirstMockCompoundBatch001ReviewStatus(familyIds: 
 }
 
 /**
+ * Mathematics First Mock Minimum — Shared-Scenario Completion Batch
+ * (Decision 168/169/170). Two new families (mock-mr10-fairprep,
+ * mock-mr09-runningclub, migration 113), made reviewable via the exact
+ * same scoped-batch mechanism as MOCK_FIRSTMOCK_COMPOUND_BATCH001_
+ * FAMILIES above — own array, own marker, own status map, reusing
+ * `review_type = 'mock_maths_independent_review'` and the generalised
+ * deriveBatchReviewStatus()/fetchBatchReviewStatus() helpers unchanged.
+ * Both families are grouped (1 numbered-question experience, 2 subparts
+ * each). mock-mr09-runningclub also carries a structured `prompt.
+ * stimulus` table object (migration 115, Decision 170) — the review
+ * surface renders it via the same DataTableStimulus component and
+ * selectDisplayUnitStimulus() de-duplication the learner surface uses,
+ * so the Founder reviews the identical stimulus a learner would see,
+ * not a re-derived or re-typed copy. Every row's eligibility_status is
+ * authentic_assessment_candidate; approving either family here still
+ * does NOT promote it, and does NOT create or touch any ali_mock_form
+ * row.
+ */
+export const MOCK_SHARED_SCENARIO_COMPLETION_BATCH_MARKER = "MOCK-SHARED-SCENARIO-COMPLETION-BATCH";
+
+export const MOCK_SHARED_SCENARIO_COMPLETION_BATCH_FAMILIES: SevenXFamilyConfig[] = [
+  {
+    familyId: "mock-mr10-fairprep",
+    newQuestionIds: ["mock-mr10-fairprep-01", "mock-mr10-fairprep-02"],
+    disclosure:
+      "This is a brand-new family with no prior review of any kind. It is a genuine shared-scenario compound (Decision 168's own Classification A, verified on real information-sharing, not merely a shared family_id): both subparts reuse the identical stated durations (1 hour 55 minutes, 40 minutes), so subpart (b) is not solvable without those same numbers. Authored specifically to close a structural-fidelity gap found in this project's own existing mock-mr10-forwardschedule/mock-mr10-reverseschedule families, which present forward and reverse elapsed-time reasoning as two fully unrelated numbered questions, never matching the real, directly-evidenced structure (2023/2021/2022 papers, read directly this session). Difficulty: (a) medium, (b) hard, selected on genuine reasoning demand, not defaulted. No table/structured stimulus is used or required by this family. Disclosed for your own judgement, not a recommendation either way.",
+  },
+  {
+    familyId: "mock-mr09-runningclub",
+    newQuestionIds: ["mock-mr09-runningclub-01", "mock-mr09-runningclub-02"],
+    disclosure:
+      "This is a brand-new family with no prior review of any kind. It is a genuine shared-dataset compound: both subparts read the identical 5-value weekly attendance dataset, delivered as a structured `prompt.stimulus` table object (Decision 170, migration 115) and rendered below as a real table, exactly as a learner would see it, not the newline-list workaround an earlier draft of this migration used. Subpart (a) is a two-step sum-then-rate calculation; subpart (b) is a successive-difference search, deliberately two different reasoning shapes over the same data, neither repeating mock-mr09-data's own mean-calculation shape. Difficulty: (a) medium, (b) hard. No partial-credit marking exists for (b)'s 2 marks: mock_score_attempt() scores every row all-or-nothing, a pre-existing characteristic of the whole scoring architecture, not unique to this family (see this session's own Decision 169 finding). Disclosed for your own judgement, not a recommendation either way.",
+  },
+];
+export const MOCK_SHARED_SCENARIO_COMPLETION_BATCH_TARGET_IDS = MOCK_SHARED_SCENARIO_COMPLETION_BATCH_FAMILIES.map((f) => f.familyId);
+
+export function buildMockSharedScenarioCompletionBatchNotesPrefix(familyId: string, questionIds: string[]): string {
+  return `${MOCK_SHARED_SCENARIO_COMPLETION_BATCH_MARKER} new content review: ${familyId} (Question IDs: ${questionIds.join(", ")})`;
+}
+
+export function deriveMockSharedScenarioCompletionBatchReviewStatus(rows: SevenXReviewRow[], familyIds: string[]): Map<string, SevenXReviewStatus> {
+  return deriveBatchReviewStatus(rows, familyIds, MOCK_SHARED_SCENARIO_COMPLETION_BATCH_MARKER, "mock_maths_independent_review");
+}
+
+export async function fetchMockSharedScenarioCompletionBatchReviewStatus(familyIds: string[]): Promise<Map<string, SevenXReviewStatus>> {
+  return fetchBatchReviewStatus(familyIds, MOCK_SHARED_SCENARIO_COMPLETION_BATCH_MARKER, "mock_maths_independent_review");
+}
+
+/**
  * Inserts one real, traceable Mock-content independent-review decision —
  * `review_type = 'mock_maths_independent_review'` (migration 087,
  * Decision 139), explicitly set here exactly as `submitMathsTeachingReview`
@@ -1812,6 +1879,7 @@ function mapQuestionRow(r: {
     workingSteps: promptWorkingSteps(r.prompt),
     questionGroupId: r.question_group_id ?? null, groupOrder: r.group_order ?? null,
     subpartLabel: r.subpart_label ?? null, markingMode: r.marking_mode ?? null,
+    stimulus: promptStimulus(r.prompt),
   };
 }
 

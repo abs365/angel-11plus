@@ -22,12 +22,34 @@ export interface MockAttempt {
 }
 
 /**
+ * Structured Assessment Stimulus (Decision 170) — the smallest additive
+ * content shape for an optional shared data table attached to a
+ * question's own `prompt` jsonb (as `prompt.stimulus`). NOT a new
+ * database column: `prompt` is already jsonb, so an absent/null
+ * `stimulus` key is indistinguishable from "no stimulus," and every
+ * existing row (which never sets this key) behaves exactly as before.
+ * `type` is a discriminator deliberately kept a literal union of one
+ * member today ("table") so a future stimulus kind (never built in this
+ * increment — no diagrams, images, or charts) can be added without
+ * redesigning this shape or any code that already switches on `type`.
+ */
+export interface MockTableStimulus {
+  type: "table";
+  /** Optional visible caption; when absent, callers must still give the table an accessible name (see components/mockAttempt/DataTableStimulus.tsx). */
+  caption?: string;
+  headers: string[];
+  rows: string[][];
+}
+
+export type MockStimulus = MockTableStimulus;
+
+/**
  * The exact, hand-picked field set mock_get_question() (migration 070,
- * extended by migration 106) returns — never a superset. Every field
- * here corresponds to a real column in that function's own
- * jsonb_build_object() call; a field must be added to BOTH places
- * together, never just one, or this type would silently drift from what
- * the server actually returns.
+ * extended by migration 106, extended by migration 115) returns — never
+ * a superset. Every field here corresponds to a real column in that
+ * function's own jsonb_build_object() call; a field must be added to
+ * BOTH places together, never just one, or this type would silently
+ * drift from what the server actually returns.
  */
 export interface MockQuestionPayload {
   questionId: string;
@@ -47,6 +69,20 @@ export interface MockQuestionPayload {
   groupOrder: number | null;
   /** Migration 106 — the subpart's own display label (e.g. "(a)"), or null for a standalone question. */
   subpartLabel: string | null;
+  /**
+   * Migration 115 — optional structured stimulus (currently only a data
+   * table) read from `prompt.stimulus`, `null` for every row that
+   * doesn't set it (every row before this migration, and every row
+   * since that has no shared dataset). NOT answer-adjacent — the
+   * stimulus is the material the question is ABOUT, shown to the
+   * learner before they answer, exactly like `question` itself; it is
+   * deliberately absent from PROTECTED_MOCK_FIELDS below. Unvalidated
+   * at this type level (`unknown`-adjacent by construction, since it
+   * comes straight off jsonb) — see lib/mockAttempt/workspace.ts's own
+   * isValidTableStimulus() for the real, tested validation every render
+   * site must call before trusting this shape.
+   */
+  stimulus: MockStimulus | null;
 }
 
 /**

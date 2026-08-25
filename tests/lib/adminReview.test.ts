@@ -1,5 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
+import fs from "node:fs";
 import {
   validateReviewSubmission, buildNotesWithQualification, sortByDifficulty, computeDifficultyRange,
   REVIEW_CRITERIA, hasNegativeFraming, FAMILY_EDUCATIONAL_CONTEXT, FAMILY_MARKING_BASIS,
@@ -9,6 +10,8 @@ import {
   MOCK_ENGLISH_PASSAGE_BATCH001_MARKER, MOCK_ENGLISH_PASSAGE_BATCH001_TARGET_ID,
   MOCK_WRITING_BATCH001_FAMILIES, MOCK_WRITING_BATCH001_MARKER,
   MOCK_MR_BATCH003_FAMILIES, MOCK_MR_BATCH003_BATCH_MARKER,
+  MOCK_SHARED_SCENARIO_COMPLETION_BATCH_FAMILIES, MOCK_SHARED_SCENARIO_COMPLETION_BATCH_MARKER,
+  MOCK_SHARED_SCENARIO_COMPLETION_BATCH_TARGET_IDS, buildMockSharedScenarioCompletionBatchNotesPrefix,
   type ReviewSubmission, type RepresentativeQuestion, type SevenXReviewRow,
 } from "@/lib/adminReview";
 
@@ -120,6 +123,7 @@ function q(overrides: Partial<RepresentativeQuestion>): RepresentativeQuestion {
     addressesMisconception: null, contentVersion: 1, active: true, provenance: "angel_original",
     eligibilityStatus: "authentic_assessment_candidate", workingSteps: null,
     questionGroupId: null, groupOrder: null, subpartLabel: null, markingMode: null,
+    stimulus: null,
     ...overrides,
   };
 }
@@ -622,4 +626,32 @@ test("deriveBatchReviewStatus with requireMarker explicitly true behaves identic
   const withDefault = deriveBatchReviewStatus(rows, ["some-family"], "SOME-BATCH-MARKER", "content_review");
   const withExplicitTrue = deriveBatchReviewStatus(rows, ["some-family"], "SOME-BATCH-MARKER", "content_review", true);
   assert.deepEqual(withDefault, withExplicitTrue);
+});
+
+/**
+ * Mathematics First Mock Minimum — Shared-Scenario Completion Batch
+ * (Decision 168/169/170).
+ */
+
+test("MOCK_SHARED_SCENARIO_COMPLETION_BATCH_FAMILIES contains exactly the 2 approved families, each grouped (2 question IDs)", () => {
+  assert.deepEqual(MOCK_SHARED_SCENARIO_COMPLETION_BATCH_TARGET_IDS, ["mock-mr10-fairprep", "mock-mr09-runningclub"]);
+  for (const f of MOCK_SHARED_SCENARIO_COMPLETION_BATCH_FAMILIES) {
+    assert.equal(f.newQuestionIds.length, 2, `${f.familyId} must have exactly 2 grouped question IDs`);
+  }
+});
+
+test("buildMockSharedScenarioCompletionBatchNotesPrefix() output exactly matches the real notes string embedded in migration 114 -- a genuine cross-file consistency proof, not merely consistent hand-authoring", () => {
+  const sql114 = fs.readFileSync("supabase/migrations/114_mock_mathematics_shared_scenario_completion_batch_pending_review.sql", "utf8");
+  for (const f of MOCK_SHARED_SCENARIO_COMPLETION_BATCH_FAMILIES) {
+    const built = buildMockSharedScenarioCompletionBatchNotesPrefix(f.familyId, f.newQuestionIds);
+    assert.ok(sql114.includes(built), `migration 114 must contain the exact notes string this builder produces for ${f.familyId}: "${built}"`);
+  }
+});
+
+test("deriveBatchReviewStatus correctly recognises a genuine shared-scenario-completion-batch review using the real marker", () => {
+  const family = MOCK_SHARED_SCENARIO_COMPLETION_BATCH_FAMILIES[0];
+  const notes = buildMockSharedScenarioCompletionBatchNotesPrefix(family.familyId, family.newQuestionIds);
+  const rows = [genuineReviewRow({ family_id: family.familyId, review_type: "mock_maths_independent_review", notes })];
+  const status = deriveBatchReviewStatus(rows, [family.familyId], MOCK_SHARED_SCENARIO_COMPLETION_BATCH_MARKER, "mock_maths_independent_review");
+  assert.equal(status.get(family.familyId)?.reviewed, true);
 });

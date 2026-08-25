@@ -97,3 +97,41 @@ test("Decision 161 — none of the three grouping fields are ever treated as pro
   assert.deepEqual(findLeakedProtectedFields(groupedSubpart), []);
   assert.equal(isPayloadRedactionSafe(groupedSubpart), true);
 });
+
+/**
+ * Structured Assessment Stimulus (Decision 170) — `stimulus` is the
+ * material a question is ABOUT, shown to the learner before they
+ * answer, exactly like `question` itself; it must never be treated as
+ * answer-adjacent, and the real mock-mr09-runningclub payload shape
+ * must validate correctly.
+ */
+const RUNNINGCLUB_STIMULUS = {
+  type: "table",
+  caption: "Weekly running club attendance",
+  headers: ["Week", "Attendance"],
+  rows: [["Week 1", "14"], ["Week 2", "19"], ["Week 3", "16"], ["Week 4", "23"], ["Week 5", "21"]],
+};
+
+test("stimulus is never a protected/leaked field -- the learner payload may contain it but never an answer", () => {
+  const withStimulus = { ...SAFE_PAYLOAD, stimulus: RUNNINGCLUB_STIMULUS };
+  assert.deepEqual(findLeakedProtectedFields(withStimulus), []);
+  assert.equal(isPayloadRedactionSafe(withStimulus), true);
+});
+
+test("isValidMockQuestionPayload accepts a real runningclub-shaped payload with stimulus present", () => {
+  assert.equal(isValidMockQuestionPayload({ ...SAFE_PAYLOAD, stimulus: RUNNINGCLUB_STIMULUS }), true);
+});
+
+test("isValidMockQuestionPayload accepts stimulus: null (the real mock-mr10-fairprep and every pre-Decision-170 row's own value)", () => {
+  assert.equal(isValidMockQuestionPayload({ ...SAFE_PAYLOAD, stimulus: null }), true);
+});
+
+test("isValidMockQuestionPayload accepts a payload where stimulus is entirely absent -- a payload fetched before migration 115 existed must not be rejected outright", () => {
+  assert.equal(isValidMockQuestionPayload(SAFE_PAYLOAD), true);
+  assert.ok(!("stimulus" in SAFE_PAYLOAD));
+});
+
+test("isValidMockQuestionPayload rejects a non-object, non-null stimulus (a genuinely wrong top-level shape, not merely an unvalidated table)", () => {
+  assert.equal(isValidMockQuestionPayload({ ...SAFE_PAYLOAD, stimulus: "not an object" }), false);
+  assert.equal(isValidMockQuestionPayload({ ...SAFE_PAYLOAD, stimulus: 42 }), false);
+});
