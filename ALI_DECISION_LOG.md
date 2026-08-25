@@ -6017,3 +6017,70 @@ The composition is a legitimate, evidence-grounded arrangement of already-certif
 **Implications:** Decisions 1–166 all stand, none reversed or rewritten. No Mock form, no learner activation, and no Batch 001 promotion occurs from this decision. The next step is Founder/independent paper-level review of the exact Part 4 composition — not yet performed, not self-certified here.
 
 ---
+
+### Decision 168 — THREE-YEAR PRIMARY-SOURCE STRUCTURAL AUDIT AND BOUNDED A-TYPE AUTHORING PROPOSAL: direct reading of all three available real CSSE Mathematics papers and mark schemes (2021/2022/2023, `knowledge/csse/official-papers/` + `knowledge/csse/mark-schemes/`, via `pdftotext`, not the framework document or prior Decision prose) classifies all 62 real numbered questions into A (shared-scenario compound) / B (related-skill multi-part) / C (mixed-skill compound) / D (effectively standalone); combined distribution A 30/62 (48.4%) · B 26/62 (41.9%) · C 3/62 (4.8%) · D 3/62 (4.8%) — A is the single largest category, not B, materially firming the compound-coherence gap named in the prior review; every year is exactly 60 marks, 20 or 21 questions, never otherwise; Angel's proposed First Mock (Decision 167) has A=0/20; a minimal, evidence-targeted two-item authoring batch is proposed (not authored) — a shared-scenario elapsed-time forward+reverse compound and a shared-dataset multi-query compound — each closing a specific gap this session's own review chain already named; a Decision 165 append-only correction is drafted (not applied); First Mock Minimum and Rolling Programme requirements kept explicitly separate; recommendation A — author the bounded batch, pending Founder approval; no content authored, no migration, no production mutation
+
+**Scope and process:** Read-only primary-source analysis plus one bounded, unauthored authoring proposal. Extends the prior turn's 2023-only audit to all three available years, materially revising two of its conclusions (§§ below).
+
+---
+
+**PART 1 — RECONCILIATION**
+
+`HEAD == origin/main` at `dc2c986` confirmed before this analysis; no commit since.
+
+---
+
+**PART 2 — THREE-YEAR CLASSIFICATION (full per-question tables in this session's own chat response, not reproduced here in full to keep this entry proportionate)**
+
+2021 (21 Q, 60 marks): A=12 (57.1%), B=8 (38.1%), C=0, D=1 (4.8%). 2022 (21 Q, 60 marks): A=10 (47.6%), B=8 (38.1%), C=2 (9.5%), D=1 (4.8%). 2023 (20 Q, 60 marks, from Decision 167's own Compound-Coherence Gate turn): A=8 (40%), B=10 (50%), C=1 (5%), D=1 (5%). **Combined 62 questions: A=30 (48.4%) · B=26 (41.9%) · C=3 (4.8%) · D=3 (4.8%).** Every one of the three years is exactly 60 marks; question count is 20 or 21 in every year, never fewer or more — a materially tighter, now fully three-year-confirmed bound than the single-year read established.
+
+**Correction to the prior turn's own framing:** A, not B, is the largest real category once all three years are read — the prior turn's "the problem is the mix, not the volume" framing understated the gap; Angel's pool (19 B-type + 1 C-type + 0 A-type + 0 D-type) has zero representation of the single largest real structural category (48.4%).
+
+---
+
+**PART 3 — RECURRING A-TYPE ARCHETYPES**
+
+Six recurring structural forms identified across the three papers (full listing and per-year citations in this session's own chat response): (1) shared rule/machine, forward+reverse — most recurring, present every year; (2) interdependent algebraic system, multiple unknowns from one shared system — 5 instances; (3) shared dataset/chart, multiple derived queries — 3 instances (2021×2, 2022×1; **zero in 2023**, explaining why the prior single-year read found no QT-MR-09 analogue); (4) shared timeline/schedule, several time-based queries — 3 instances, one per year; (5) shared diagram, multiple derived geometric/coordinate facts — 6 instances; (6) shared price-list/menu — 2 instances.
+
+---
+
+**PART 4 — PROPOSED BOUNDED BATCH (NOT AUTHORED)**
+
+Exactly 2 new numbered experiences, 4 new rows, targeting archetypes (1)/(4) and (3) respectively — the two archetypes tied to gaps this session's own review chain already named (the Q8/Q20 elapsed-time fidelity finding, and the QT-MR-09 absence question), not a proportional match to 48%:
+
+1. **Shared-Scenario Elapsed-Time Compound** — one stated task, (a) forward/(b) reverse, QT-MR-10 both subparts, 2 marks, medium/hard, evidenced by real Q9 (2023), Q9 (2021), Q19 (2022) — HIGH confidence, 3-of-3 years. Closes the Q8/Q20 WEAK finding (Decision 167's own Compound-Coherence turn) without touching `forwardschedule`/`reverseschedule`/`costumeschedule`.
+2. **Shared-Dataset Multi-Query Compound** — one small original text-table dataset, (a) direct read/sum, (b) a different derived calculation (e.g. mean) from the same dataset, QT-MR-09/QT-MR-12-adjacent, 2–3 marks, medium, evidenced by real Q15 (2022), Q10 (2021), Q13 (2021). Resolves the QT-MR-09 question without mutating `mock-mr09-data`, whose own Classification D remains separately open.
+
+Neither item's exact question text, numbers, or scenario has been authored. Originality boundary for both: new scenario/dataset, new numbers, no CSSE wording, text-only format (no chart image required).
+
+---
+
+**PART 5 — DECISION 165 APPEND-ONLY CORRECTION (drafted, NOT applied)**
+
+Two inaccuracies identified by direct source re-reading, neither correcting Decision 165's own text in place: (1) costumeschedule's subpart (b) does not, in fact, reuse a resolved value from subpart (a) — both instances' subparts are fully independent (found in the Founder Review Pack turn, restated here for completeness); (2) `mock-mr01mr10-costumeschedule` itself — not merely the framework document Decision 165 Part 2 already corrected — still carries the QT-MR-10+QT-MR-01 mixed-skill split the real 2023 Q9 does not have (real Q9 is QT-MR-10 twice, shared scenario, forward+reverse); the family's correct structural classification is **C**, not **A**. Full correction text drafted in this session's own chat response for a future append-only log entry. Not applied to Decision 165 in this decision.
+
+---
+
+**PART 6 — FIRST MOCK MINIMUM VS. ROLLING PROGRAMME**
+
+Kept explicitly separate. First Mock Minimum = exactly the 2 batch items above. Rolling Programme = archetypes (2)/(5)/(6) above (interdependent systems, shared diagrams, shared menus — all real, evidenced, zero Angel representation) plus the full anti-memorisation/reserve capacity gap already established (Decision 167) — none of this is addressed or narrowed by the 2-item batch.
+
+---
+
+**What this decision does NOT claim:** it does not claim any content has been authored — both batch items are proposals only, no id, prompt, answer, or migration exists for either; it does not claim `mock-mr09-data`'s Classification D is resolved; it does not claim the projected post-batch paper (22 questions/47 rows/≈66 marks, now above the newly-tightened 20–21/60 real bound) has been reconciled — a follow-on recomposition/trim decision is named as required after authoring and review, not resolved here; it does not claim the Decision 165 correction has been applied — drafted only; it does not claim any Mock form, migration, or production change has occurred.
+
+**Files changed:** `ALI_DECISION_LOG.md` (this entry only).
+
+**Migrations created:** none.
+
+**Decision number:** 168.
+
+**Commit SHA:** recorded after commit (see repository history immediately following this entry).
+
+**Production application status:** not applicable — no migration, no production change.
+
+**Rationale:** recording this as a Decision follows the same established precedent as 164/167 — a read-only finding (here, a three-year primary-source audit, a materially reusable evidentiary asset) whose conclusion changes the next governance step (whether and what to author before freezing First Mock). Leaving a three-paper reading exercise only in conversation history would risk a future session re-deriving it from scratch or, worse, reasoning from the framework document's own unverified claims again.
+
+**Implications:** Decisions 1–167 all stand, none reversed or rewritten. Decision 167's own First Mock composition is not altered by this decision. No content is authored, no migration created, no production changed. The next step is Founder approval of the exact 2-item batch in Part 4 before any authoring begins.
+
+---
