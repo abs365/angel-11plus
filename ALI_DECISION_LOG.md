@@ -6290,3 +6290,83 @@ The prior turn's own prose summary ("ten pre-existing rows... 8 of these are alr
 **Implications:** Decisions 1–170 all stand, none reversed or rewritten. No Mock form, no `mock_eligible` promotion, and no marking-architecture change occurs from this decision. The next steps remain distinct and future: Founder application of migration 116, and a separate decision to resolve the Mathematics Marking Integrity Gate before either family — or any of the 20 already-`mock_eligible` rows sharing the same open question — can be considered for a First Mock.
 
 ---
+
+### Decision 172 — MATHEMATICS MARKING INTEGRITY GATE: full evidence-backed audit, read-only, no implementation. **Production update, recorded not rewritten**: migration 116 has since been applied and Founder-verified (`mock-mr10-fairprep-01/-02`, `mock-mr09-runningclub-01/-02` now `independently_validated`; `mock_eligible = 48`, `independently_validated = 8`, `practice_eligible = 194`, `ali_mock_form = 0`) — Decision 171's own "migration 116 NOT applied" line was accurate when written and is not edited here, per this project's own append-only convention. The affected-marks population (22 rows / 12 families) is independently re-derived this session by direct script/grep against real migration source, not carried forward, and exactly reproduces Decision 171's own figure. Primary-source research across all three CSSE mark schemes finds **no confirmed real-paper example of a single final answer legitimately worth 2+ marks all-or-nothing** — every multi-mark subpart found is either the universal 1-mark default, an explicit partial-credit rule (2023 Q7), or a genuinely multi-valued answer (2023 Q20b, Q8). A proposed Angel Mathematics marking principle is set out (§4 of this session's own report, not reproduced in full here). 21 of the 22 audited rows are classified MARKS CORRECTION (2→1); `mock-mr08-rotation` (coordinate-pair answer) is classified STRUCTURAL REMODEL, deferred. **Corrected pool economy: the `mock_eligible` pool's marks fall from 68 to 50 (24 experiences unchanged), avg marks/experience from ≈2.83 to ≈2.08 — genuinely below the authentic ≈2.9 target, not merely cosmetically so.** Decision 167/169's own First Mock composition (built on the uncorrected 68-mark figure) is flagged as **no longer safe to treat as validated**, not re-derived this turn. Verdict: **B — content structure must be expanded before form assembly**, with structural marking-model resolution (`rotation`) as a required parallel track. No migration, no mutation, no marks actually changed.
+
+**Scope and process:** Read-only evidence audit and architecture recommendation only. No implementation of any remediation.
+
+---
+
+**PART 1 — EXACT POPULATION, RE-VERIFIED**
+
+22 rows, 12 families, independently reproduced by direct grep/script against `supabase/migrations/088_mock_mathematics_batch001.sql`, `091_mock_mathematics_batch002.sql`, `095_mock_mathematics_batch003.sql`, `109_...perimeterarea...sql`, and `113_...shared_scenario_completion_batch.sql` this session — not copied from Decision 171's own prose. 20 rows / 10 families already `mock_eligible` (`mock-mr02-twostep` ×3, `mock-mr05-inverse` ×2, `mock-mr04-reversepercent` ×2, `mock-mr06-multiplerelation` ×2, `mock-mr07-isoscelesproperty` ×2, `mock-mr10-reverseschedule` ×2, `mock-mr11-propertysearch` ×2, `mock-mr08-rotation` ×2, `mock-mr12-reversemean` ×2, `mock-mr09-data-03` ×1); 2 rows / 2 families `independently_validated` (`mock-mr10-fairprep-02`, `mock-mr09-runningclub-02`); `mock-mr03mr07-perimeterarea` re-checked, zero qualifying rows. Total mock_eligible marks confirmed by script: exactly 68 across 48 rows, matching Founder-confirmed production exactly.
+
+---
+
+**PART 2 — PRIMARY-SOURCE FINDING**
+
+Across all three CSSE Mathematics mark schemes (2021/2022/2023) read directly this session: the governing convention, stated verbatim in every year's own header ("1 mark for each correct answer"), applies to the overwhelming majority of subparts. Exactly one explicit partial-credit rule was found (2023 Q7: "1 mark if at least one correct pair... 2 marks for both correct pairs"). Multi-mark subparts otherwise resolve to genuinely multiple independently-stated values (2023 Q20b: two named people's amounts; Q8: three separately-derived unknowns) — never a single final value made to be worth more for taking more steps. **No confirmed real-paper analogue exists for Angel's own convention of assigning 2 marks to a single-final-value, multi-step row.**
+
+---
+
+**PART 3 — MARKING PRINCIPLE (proposed, not implemented)**
+
+Deterministic single-response questions should default to 1 mark. 2+ marks requires either genuinely multiple independently-verifiable outputs or an explicit, deliberately-built partial-credit rule — never mere step-count. Separate credit-bearing outputs must be modelled as separate raw rows/subparts, reusing Angel's own existing `question_group_id`/`group_order`/`subpart_label` architecture, no new mechanism required. Method/working credit is not currently appropriate (no working is captured today). An unobservable mark should not be awarded.
+
+---
+
+**PART 4 — AUDIT RESULT**
+
+21 of 22 rows: **MARKS CORRECTION** (2→1), confidence Medium (Medium-High for `mock-mr10-reverseschedule` and `mock-mr10-fairprep-02`, the two rows with the most directly comparable real analogue, 2023 Q9). 1 of 22 (`mock-mr08-rotation`, coordinate-pair answer): **STRUCTURAL REMODEL**, deferred pending a sub-labelling design decision. Zero rows classified INSUFFICIENT EVIDENCE or requiring exclusion — every row received a defensible recommendation.
+
+`mock-mr10-fairprep-02` (13:35) and `mock-mr09-runningclub-02` ("Week 3 to Week 4") both individually assessed: both recommended 2→1; `runningclub-02` additionally flagged as a genuine case of unobservable intermediate reasoning (4 internal differences computed, only one final label reported). Neither family's `independently_validated` status is touched by this finding.
+
+---
+
+**PART 5 — CORRECTED MARK ECONOMY (the central finding)**
+
+| | Raw rows | Numbered experiences | Total marks | Avg marks/experience |
+|---|---|---|---|---|
+| Current `mock_eligible` | 48 | 24 | 68 | ≈2.83 |
+| Corrected `mock_eligible` (21 rows 2→1; rotation unchanged pending its own design) | 48 | 24 | **50** | **≈2.08** |
+| Independently_validated reserve (8 rows) | — | — | 10 → corrected 8 | — |
+
+**The pool's prior apparent closeness to the authentic ≈2.9 marks/experience target (2.83) was materially created by 18 unsupported 2-mark allocations. The corrected density, ≈2.08, is genuinely below target — a real content-capacity shortfall this correction reveals rather than creates.** Decision 167/169's own First Mock composition, built on the uncorrected figure, is not re-derived this turn but is flagged as **no longer safe to treat as validated** without re-examination against the corrected pool.
+
+---
+
+**PART 6 — STRUCTURAL AUTHENTICITY CONCLUSION**
+
+Real compound-question marks density comes from genuinely additional subparts or explicit multi-value/partial-credit structures — never from single-answer mark inflation. This sharpens Decision 168's own shared-scenario-compound archetype finding into a marks-density argument, not merely a structural-authenticity one: reaching ≈60 marks authentically requires more genuine subparts within richer compounds, not a marking-model adjustment.
+
+---
+
+**PART 7 — REMEDIATION ARCHITECTURE AND GOVERNANCE**
+
+A (metadata-only, 21 rows): smallest safe fix, `prompt.marks` 2→1, no content/structure change. B (`mock-mr08-rotation` only): needs a sub-labelling design decision before implementation. C (new answer capture): none required, method credit not pursued. D (exclude pending evidence): none. **Governance finding**: `ali_family_review`'s own criteria set (migration 034) never included an explicit marks-value judgement, so a Category-A correction does not invalidate or require re-litigating the original human review — content correctness/appropriateness/originality are untouched by a 2→1 mark change. `mock-mr08-rotation`'s structural remodel is materially different (changes what a learner can earn credit for) and should receive at least a disclosure-and-acknowledgement step before any future promotion.
+
+---
+
+**PART 8 — CAPACITY VERDICT: B, WITH C AS A REQUIRED PARALLEL TRACK**
+
+Content structure must be expanded before form assembly — the corrected pool cannot reach ≈60 authentic marks through marking-model changes alone. `mock-mr08-rotation`'s own multi-output marking design must also be resolved before that portion of capacity counts reliably. This verdict supersedes any prior First Mock capacity conclusion resting on the uncorrected 68-mark figure.
+
+---
+
+**What this decision does NOT claim:** it does not claim any mark, row, or eligibility status has actually been changed — this is a proposal and audit only; it does not claim `mock-mr08-rotation`'s correct remodel shape has been decided, only that one is needed; it does not claim Decision 167/169's own composition has been re-derived or discarded, only that it can no longer be trusted unexamined; it does not claim the Rolling Programme content gap is addressed; it does not claim any EI/readiness wiring exists or was built.
+
+**Files changed:** `ALI_DECISION_LOG.md` (this entry only).
+
+**Migrations created:** none.
+
+**Decision number:** 172.
+
+**Commit SHA:** recorded after commit (see repository history immediately following this entry).
+
+**Production application status:** not applicable — no migration, no production change. (Migration 116, covered by Decision 171, has separately been applied and Founder-verified, as recorded in this entry's own opening summary above — not a product of this decision.)
+
+**Rationale:** recording this audit as a Decision, despite being read-only, follows this arc's own established precedent (Decisions 164/167/168) for a finding whose conclusion materially changes downstream governance — here, whether the current content pool can support an authentic First Mock at all under honest marking. Leaving a finding of this magnitude in conversation history would risk a future session re-deriving it, or worse, silently reusing the uncorrected 68-mark figure as if it were still valid.
+
+**Implications:** Decisions 1–171 all stand, none reversed or rewritten; Decision 171 stands, its own "migration 116 NOT applied" line understood as accurate-at-time-of-writing, not corrected here since production has since moved past it. Decision 167/169's First Mock composition is not reversed but is flagged as requiring re-examination against the corrected mark economy before further reliance. No content, marks, eligibility, or grouping actually changes from this decision. The next step is a Founder decision on the Category-A metadata-only remediation (§7) as its own small, bounded, future migration.
+
+---
