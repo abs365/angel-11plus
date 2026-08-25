@@ -7520,3 +7520,64 @@ Decision 179's own Migration SQL Guard (`scripts/lib/migrationSqlBalance.mjs`) c
 **Implications:** Decisions 1-186 all stand, none reversed or rewritten; Decision 186's own educational-correction rationale and `mock-mr13-craftstall` approval are entirely unaffected — this was a migration-implementation defect, not a governance, evidence, or content-correctness defect. No content, marks, eligibility, grouping, RPC, RLS, or review-record change occurs from this decision. The next step is unchanged in kind from Decision 186: a fresh Founder application attempt of the now-corrected migration 127, followed by migration 128, then a fresh Founder re-review of the corrected `mock-mr10-bustimetable` family — not begun here.
 
 ---
+
+### Decision 188 — BUS TIMETABLE CORRECTION: INDEPENDENT-VALIDATION CERTIFICATION. Founder production evidence confirms migrations 125-128 fully applied and closed: `mock-mr10-bustimetable-04` carries the corrected, unambiguous wording; the correction re-review (marker `MOCK-BUSTIMETABLE-CORRECTION001`) is approved by Ayobami Lawal, with the review basis explicitly re-confirming the corrected subpart (d) mathematics; the original `MOCK-STRUCTURAL-CAPACITY-WAVE002` approval (uncorrected wording) remains separate, untouched, historical evidence. Mathematics independently re-verified once more: 35 × 0.20 = 7, 35 − 7 = 28, matching the corrected wording ("reduce...journey time by 20%") without ambiguity. All four production rows re-read and re-verified against migrations 125/127's own source: answers 95/7/370/28, marks 1 each, difficulty medium/medium/hard/hard, grouping `question_group_id=mock-mr10-bustimetable`/`group_order` 1-4/`subpart_label` (a)-(d), `sharedStem` and table `stimulus` both intact and unaffected by migration 127's own single-key `question` edit. One new migration (129) is prepared: promotes exactly the 4 named rows from `authentic_assessment_candidate` to `independently_validated` — explicitly not `mock_eligible` — mirroring migration 123's own established certification pattern exactly, gated by a live `ali_family_review` precondition requiring the `MOCK-BUSTIMETABLE-CORRECTION001` marker specifically (the original WAVE002 marker does not satisfy it), using the Decision-182-corrected unanchored `LIKE '%MARKER%'` predicate and accepting any count ≥ 1. Full content-shape preconditions (grouping, difficulty, answers, marks, `sharedStem`, `stimulus`) and explicit exclusion guards for `mock-mr13-craftstall` and `mock-mr03mr07-perimeterarea` are asserted both pre- and post-write. A full pre-write `prompt` snapshot proves every field byte-for-byte unchanged; `mock_eligible` is positively proven absent in both branches. Full verification suite passes (1753/1753 tests, 38 new, including a semantic predicate regression suite proving the corrected marker predicate accepts real, non-anchored evidence and rejects every named failure mode; `tsc` clean; ESLint at established baseline; Copy Quality Guard PASS; Migration SQL Guard PASS, both checks; production build succeeds). Migration 129 NOT applied.
+
+**Scope and process:** Bounded independent-validation certification only — one migration, no other content, no mock-eligibility change, no form assembly.
+
+---
+
+**PART 1 — RECONCILIATION**
+
+`HEAD == origin/main` at `89ebfd0` (Decision 187) confirmed before and after. Founder production evidence: migrations 125, 126, 127, and 128 all confirmed applied; `mock-mr10-bustimetable`'s correction re-review (`MOCK-BUSTIMETABLE-CORRECTION001`) approved by Ayobami Lawal, review basis explicitly re-confirming the corrected mathematics; the original WAVE002 approval preserved, untouched, as separate historical evidence.
+
+---
+
+**PART 2 — MATHEMATICAL RE-VERIFICATION**
+
+35 minutes × 0.20 = 7; 35 − 7 = 28 — re-confirmed a third time this arc (Decision 186's own original finding, re-derived again here). The corrected wording, "The bus company plans to reduce the afternoon Hillview-to-Milltown journey time by 20%," is unambiguous: it names the operation (reduce journey time) and the base value (the current journey time) directly, admitting no alternate mathematically-valid reading — confirmed by direct re-reading of migration 127's own `v_new_question` constant, not assumed.
+
+---
+
+**PART 3 — ALL FOUR ROWS RE-READ AND RE-VERIFIED**
+
+| Row | Answer | Marks | Difficulty | Group order | Subpart |
+|---|---|---|---|---|---|
+| `mock-mr10-bustimetable-01` | 95 | 1 | medium | 1 | (a) |
+| `mock-mr10-bustimetable-02` | 7 | 1 | medium | 2 | (b) |
+| `mock-mr10-bustimetable-03` | 370 | 1 | hard | 3 | (c) |
+| `mock-mr10-bustimetable-04` | 28 | 1 | hard | 4 | (d) |
+
+`question_group_id = mock-mr10-bustimetable` on all four; `sharedStem` identical and unaffected by migration 127's own single-key `question` edit (confirmed: migration 127 only ever touches the `question` key inside `prompt`, proven byte-for-byte for every other key in Decision 187's own tests); table `stimulus` identical and intact on all four.
+
+---
+
+**PART 4 — CERTIFICATION MIGRATION**
+
+`supabase/migrations/129_mock_mathematics_bustimetable_independent_validation.sql` — targets exactly the 4 `mock-mr10-bustimetable` rows, mirroring migration 123's own established independent-validation-promotion pattern exactly. Live preconditions: subject/skill, `marking_mode`, exact grouping shape (VALUES-join, migration 123's own drafting-lesson pattern), exact difficulty shape (medium/medium/hard/hard), exact answers (95/7/370/28 — subpart (d)'s corrected value explicitly re-asserted as still 28), `marks = 1` on all 4, identical `sharedStem`, valid table `stimulus`, non-empty `question` text, and the live `ali_family_review` approval check. **The review-evidence predicate requires the `MOCK-BUSTIMETABLE-CORRECTION001` marker specifically** — the original WAVE002 approval, covering the uncorrected wording, does not satisfy it, confirmed both by the migration's own SQL and by a semantic pure-predicate reconstruction of the real `buildNotesWithQualification()` notes shape in this session's own test suite. Fail-closed, three-state (exactly 4 candidate rows → apply with full preservation proof; exactly 4 already-validated → no-op, re-checked; any other combination → refuse). `mock-mr13-craftstall` and `mock-mr03mr07-perimeterarea` are excluded from the target array by construction, with a dedicated guard refusing the migration outright if either ever appears there, and their own untouched state is re-verified pre-write, post-write, and in the already-applied branch.
+
+---
+
+**PART 5 — VERIFICATION**
+
+38 new tests in `tests/supabase/mockMathematicsBustimetableIndependentValidation.test.ts`: exact 4-row target; family/subject/skill/marking-mode/grouping/difficulty/answers/marks/`sharedStem`/`stimulus` content-shape preconditions; the corrected-marker-specific live review-evidence check with an explicit regression proving no anchored pattern regressed back in; `Craft Stall`/`perimeterarea` exclusion re-verified in every branch; `eligibility_status` as the sole `SET` column; full-prompt preservation proof; `mock_eligible` absence proven in both branches; idempotent no-op structure; fail-closed mixed-state refusal; a full semantic predicate regression suite (reconstructing the real `buildNotesWithQualification()` notes shape) proving the corrected predicate accepts a genuinely non-anchored marker, correctly distinguishes the CORRECTION001 approval from the original WAVE002 approval, and rejects every named failure mode (wrong reviewer, wrong decision, wrong review_type, missing marker, wrong family, pending-only). **Full suite: 1753/1753 pass** (1715 baseline + 38 new; zero regressions). `npx tsc --noEmit`: clean. ESLint: 81 problems (62 errors/19 warnings), identical to baseline. Copy Quality Guard: PASS, 0 violations, 257 files. Migration SQL Guard: PASS, 129 files, both checks (quote-balance and RAISE-arithmetic). Production build: succeeds.
+
+---
+
+**What this decision does NOT claim:** it does not claim migration 129 has been applied (NOT APPLIED); it does not claim `mock-mr10-bustimetable` is `mock_eligible` or included in any Mock form; it does not claim `ali_mock_form` has been created; it does not claim `mock-mr13-craftstall` or `mock-mr03mr07-perimeterarea` were affected in any way; it does not claim any review record has been altered; it does not claim any further Mathematics authoring or First Mock composition has begun.
+
+**Files changed:** `supabase/migrations/129_mock_mathematics_bustimetable_independent_validation.sql` (new, NOT applied), `tests/supabase/mockMathematicsBustimetableIndependentValidation.test.ts` (new), `ALI_DECISION_LOG.md` (this entry).
+
+**Migrations created:** 129 — drafted, tested, NOT applied.
+
+**Decision number:** 188.
+
+**Commit SHA:** recorded after commit (see repository history immediately following this entry).
+
+**Production application status:** migration 129 NOT applied. No production change has occurred.
+
+**Rationale:** certifying independent validation as its own bounded step, gated by review evidence tied specifically to the corrected content rather than the family's own earlier, superseded approval, follows this arc's own established discipline (migration 123's own precedent, Decision 182's own corrected-predicate standard) — a review approval authorises exactly the eligibility transition and exactly the content version it certifies, never a broader promotion by implication.
+
+**Implications:** Decisions 1-187 all stand, none reversed or rewritten. No content, marks, eligibility, grouping, RPC, RLS, or review-record change occurs from this decision. `mock-mr10-bustimetable` remains `authentic_assessment_candidate` until migration 129 is Founder-applied. **Remaining blockers:** none for certification itself. The next steps remain distinct and future: Founder application of migration 129; then, separately, a future mock-eligibility composition decision (not begun here) covering whether `mock-mr10-bustimetable` (alongside `mock-mr13-craftstall`, once its own independent-validation migration is prepared) should enter `mock_eligible`; and, separately again, further bounded Mathematics authoring per Decision 185's own future-variant blueprint — none begun by this certification.
+
+---
