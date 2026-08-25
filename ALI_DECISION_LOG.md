@@ -5858,3 +5858,162 @@ Confirmed structurally, by direct reading of migration 112's own SQL and by dedi
 **Implications:** Decisions 1–165 all stand, none reversed or rewritten. Decision 165 Part 8's own proposal is now implemented in ready-to-apply SQL form, gated on Founder application. No Mock form, no first paper, and no Batch 001 promotion occurs from this decision. The next steps — applying migration 112, separately deciding on migration 111 (Batch 001 promotion), and eventually a form-assembly decision — all remain distinct, future, not-yet-authorised steps.
 
 ---
+
+### Decision 167 — FIRST MATHEMATICS MOCK COMPOSITION AND GOVERNANCE DESIGN: read-only composition of the exact First Mathematics Mock paper from the production-verified 48-row mock_eligible pool (migration 112's own grouping applied) — 20 numbered questions, 43 raw rows, 62 marks, avg ≈3.1 marks/question, ≈50 minutes of estimated working time against a 60-minute target; `mock-mr09-data` excluded from this First Mock (recommendation A, Classification D left unresolved); one of `mock-mr01mr10-costumeschedule`'s two grouped instances used, the other held reserve to avoid presenting the identical compound structure twice in one sitting; authenticity comparison PARTIAL (strong on count/marks/density/pacing, disclosed gaps: 100% of questions are multi-subpart compounds with zero single-item numbered questions in the certified pool, and QT-MR-09 has zero representation); Educational Intelligence readiness mapped and found materially incomplete (fine-grained QT-level breakdown NOT IMPLEMENTED, misconception surfacing NOT IMPLEMENTED, coarse-competency evidence classification IMPLEMENTED BUT UNWIRED); `ali_family_review` found unable to represent form-level review as-is (family-keyed, no form/order/cross-question concept) — a minimal schema addition is genuinely required, not built here; verdict READY FOR FOUNDER PAPER REVIEW; no migration, no production mutation, no form created
+
+**Scope and process:** Read-only analysis and design only, against Founder-supplied production evidence (48 mock_eligible rows / 68 total marks, cross-checked for internal arithmetic consistency against this repository's own migrations — this session has no live Supabase query access, so production state is trusted as Founder-supplied, Level-2 evidence, not independently re-queried).
+
+---
+
+**PART 1 — RECONCILIATION**
+
+`HEAD == origin/main` at commit `841ed95` (Decision 166) confirmed before this analysis began; no commit since. The Founder-supplied production figures (`mock_eligible` = 48 rows / 68 marks; structural normalisation = 41 rows / 19 families / 19 experiences / 60 marks; `costumeschedule` = 4 rows / 2 experiences; `mr09-data` = 3 ungrouped rows; `perimeterarea` = 4 `independently_validated` rows / 2 experiences / 4 marks; `ali_mock_form` = 0) are internally consistent with this repository's own migrations (41+4+3 = 48 rows; 60+4+4 = 68 marks — verified by direct arithmetic, not merely repeated) and are treated as given, not re-derived.
+
+---
+
+**PART 2 — CANDIDATE UNIVERSE**
+
+The 48 current `mock_eligible` Mathematics rows only: 41 rows / 19 families (migration 112's own grouping), `costumeschedule` (4 rows / 2 groups), `mr09-data` (3 ungrouped rows, Classification D). Explicitly excluded from the candidate universe per instruction: `perimeterarea` (4 rows, `independently_validated`, not `mock_eligible`), all Practice/provisional content, English, Writing. No eligibility, grouping, or content column was read as anything other than its current, already-verified value.
+
+---
+
+**PART 3 — MR09-DATA DECISION: EXCLUDE (Recommendation A)**
+
+`mock-mr09-data` remains held out of this First Mock entirely — not grouped, not presented as 3 standalone numbered questions. **Educational justification:** migration 088's own header already discloses its 3 rows as "3 distinct sub-structures, not 3 variants of one structure" with a genuine difficulty escalation (medium/medium/hard) — a heterogeneity Decision 164 flagged as Classification D specifically because it does not confidently match either evidenced real-paper bundling convention. Freezing a Founder-reviewable First Mock is exactly the wrong moment to commit an unresolved structural classification to production content presentation — grouping it now would pre-empt its own still-open resolution (whether it should become one 3-subpart numbered question or 3 permanent standalones), and presenting it as 3 standalones now would need to be silently reversed later if it is later grouped, re-litigating an already-reviewed paper. Excluding it costs nothing against the marks/count target (Part 4 below already lands within the evidenced 20–21/≈60 range without it) and keeps its own resolution fully open for a future, separate decision, exactly as Decision 164/165/166 have consistently deferred it.
+
+---
+
+**PART 4 — PROPOSED FIRST MOCK COMPOSITION (20 numbered questions)**
+
+`costumeschedule`'s two grouped instances are structurally identical (elapsed-time chain + a unit-cost multiplication, differing only in scenario and numbers) — including both in the same single paper would present the identical compound-question shape twice in one sitting, a genuine within-paper repetition a real single exam paper would not have. Only instance 1 is used; instance 2 is held reserve (Part 14).
+
+| # | question_group_id / row id | family_id | raw IDs | QT / skill | marks | difficulty | subparts |
+|---|---|---|---|---|---|---|---|
+| 1 | mock-mr01-directcalc | mock-mr01-directcalc | -01, -02 | QT-MR-01 / arithmetic | 2 | easy | 2 |
+| 2 | mock-mr02-invdiv | mock-mr02-invdiv | -01, -02, -03 | QT-MR-02 / arithmetic | 3 | easy | 3 |
+| 3 | mock-mr03-unitconv | mock-mr03-unitconv | -01, -02, -03 | QT-MR-03 / measurement | 3 | medium | 3 |
+| 4 | mock-mr06-sumdiff | mock-mr06-sumdiff | -01, -02 | QT-MR-06 / algebra | 2 | medium | 2 |
+| 5 | mock-mr07-triangleanglesum | mock-mr07-triangleanglesum | -01, -02 | QT-MR-07 / geometry | 2 | medium | 2 |
+| 6 | mock-mr11-truefalsejudgement | mock-mr11-truefalsejudgement | -01, -02 | QT-MR-11 / number-properties | 2 | medium | 2 |
+| 7 | mock-mr05-forward | mock-mr05-forward | -01, -02 | QT-MR-05 / algebra | 2 | medium | 2 |
+| 8 | mock-mr10-forwardschedule | mock-mr10-forwardschedule | -01, -02 | QT-MR-10 / time | 2 | medium | 2 |
+| 9 | mock-mr13-bestvalue | mock-mr13-bestvalue | -01, -02 | QT-MR-13 / ratio-and-proportion | 2 | medium | 2 |
+| 10 | mock-mr04-percentchange | mock-mr04-percentchange | -01, -02 | QT-MR-04 / percentages | 2 | medium | 2 |
+| 11 | mock-mr08-rotation | mock-mr08-rotation | -01, -02 | QT-MR-08 / geometry | 4 | medium | 2 |
+| 12 | mock-mr02-twostep | mock-mr02-twostep | -01, -02, -03 | QT-MR-02 / arithmetic | 6 | hard | 3 |
+| 13 | mock-mr06-multiplerelation | mock-mr06-multiplerelation | -01, -02 | QT-MR-06 / algebra | 4 | hard | 2 |
+| 14 | mock-mr01mr10-costumeschedule-01 | mock-mr01mr10-costumeschedule | -01a, -01b | QT-MR-10+QT-MR-01 (compound) / time+arithmetic | 2 | hard | 2 |
+| 15 | mock-mr07-isoscelesproperty | mock-mr07-isoscelesproperty | -01, -02 | QT-MR-07 / geometry | 4 | hard | 2 |
+| 16 | mock-mr11-propertysearch | mock-mr11-propertysearch | -01, -02 | QT-MR-11 / number-properties | 4 | hard | 2 |
+| 17 | mock-mr05-inverse | mock-mr05-inverse | -01, -02 | QT-MR-05 / algebra | 4 | hard | 2 |
+| 18 | mock-mr04-reversepercent | mock-mr04-reversepercent | -01, -02 | QT-MR-04 / percentages | 4 | hard | 2 |
+| 19 | mock-mr12-reversemean | mock-mr12-reversemean | -01, -02 | QT-MR-12 / data-handling | 4 | hard | 2 |
+| 20 | mock-mr10-reverseschedule | mock-mr10-reverseschedule | -01, -02 | QT-MR-10 / time | 4 | hard | 2 |
+
+**Totals:** 20 numbered questions, 43 raw rows, 62 marks, ≈3.10 marks/question. Difficulty: easy 2, medium 9, hard 9. QT coverage: 12 of 13 content Question Types represented (QT-MR-01 through QT-MR-08, QT-MR-10 through QT-MR-13; QT-MR-09 absent; QT-MR-14 is a scoring condition, not a content format, correctly never targeted). Compound-question proportion: 20/20 = 100%.
+
+---
+
+**PART 5 — AUTHENTICITY COMPARISON**
+
+| Axis | Verdict | Evidence |
+|---|---|---|
+| Question count (20, vs. evidenced 20–21) | PASS | Exactly at the lower evidenced bound, no tolerance argument needed. |
+| Total marks (62, vs. ≈60 target) | PASS | 2 marks over, within Decision 146's own established tolerance. |
+| Marks density (≈3.10, vs. ≈2.9 authentic target) | PASS | ≈7% over target, close match. |
+| Estimated pacing (≈3000s / 50 min raw working time, vs. a 60-minute paper) | PASS | Summed directly from every row's own `estimated_time_seconds` (migrations 088/091/095) — a ≈10-minute reading/transition/review buffer remains, realistic for a 60-minute sitting. |
+| Difficulty progression | PASS | Clean easy→medium→hard block ramp (2/9/9), matching the general escalating-demand shape of a real paper; no two consecutive questions share a QT (verified directly against Part 4's own table). |
+| Compound-question prevalence | **PARTIAL** | 100% of questions are 2–3-subpart compounds; the certified pool contains no single-item family at all, so a genuine mix of single- and multi-part numbered questions (which Decision 164's own primary-source reading implies real papers plausibly contain alongside convention-(ii) bundles) cannot be represented from current content. A pool-level limitation, not fixable by composition or ordering (instruction 4 forbids splitting an approved group). |
+| QT coverage | **PARTIAL** | 12 of 13 represented; QT-MR-09 (Data Reading, HIGH confidence/EMC-4 in the framework) is entirely absent, a direct, disclosed consequence of Part 3's exclusion decision. |
+| Structural over/under-representation | **PARTIAL, disclosed** | QT-MR-10 is the most-touched type (3 of 20 questions: forwardschedule, the costumeschedule compound, reverseschedule) — evidenced (CSSE-006 Q9's own real precedent), not excessive. QT-MR-01 appears in only 1 pure standalone question despite the framework's own language that it is literally the paper's opening type across all 3 years reviewed — a real, disclosed under-representation inherited from migration 095's own deliberate 2-row-only QT-MR-01 authoring scope (never intended as a volume vehicle).
+
+**Overall: PARTIAL.** Strong on every quantitative target; two genuine, disclosed structural gaps (compound-only shape, QT-MR-09 absence) inherited from the underlying certified content pool, neither fixable at the composition stage without new authoring or re-litigating Part 3's own decision.
+
+---
+
+**PART 6 — COMPOSITION-LEVEL QUALITY FINDINGS (defects reported, none silently fixed)**
+
+1. **Coincidental cross-family answer collisions** (verified by a direct script cross-check of all 48 rows' own `answer` fields, not asserted): the value `9` appears twice (`mock-mr02-invdiv-03`, `mock-mr05-inverse-01`) and the value `12` appears three times (`mock-mr02-invdiv-02`, `mock-mr05-inverse-02`, `mock-mr06-multiplerelation-01`). Low severity — none are adjacent in the Part 4 order (positions 2/17 and 2/13/17 respectively) — but named, not silently normalised away.
+2. **100% compound-question composition** (Part 5) — a pool-level defect, not an ordering one; every numbered question in this First Mock has 2 or 3 subparts, none is a bare single-response item.
+3. **QT-MR-10 density in the back half of the paper**: 3 of the paper's last 9 questions (14, 20, and 8 earlier) touch QT-MR-10 — spaced apart (not adjacent) in Part 4's order, but the type is more concentrated late in the paper than any other. Not a defect requiring re-ordering, named for the Founder's own awareness.
+4. **No terminology inconsistency found**: "Give your answer in 24-hour time" is worded identically across `forwardschedule`, `reverseschedule`, and `costumeschedule`; `bestvalue`'s "rounded to 2 decimal places" instruction is identical across both its rows — checked directly, a positive finding, not assumed.
+5. **No within-question answer leakage found**: every family's own subpart answers are mutually distinct (e.g. `mr02-invdiv`: 8/12/9; `mr02-twostep`: 7/10/6) — several migrations' own authoring comments already record this was deliberately checked at authoring time; re-confirmed directly against Part 4's table, not re-asserted from memory alone.
+
+---
+
+**PART 7 — UNUSED RESERVE AFTER THIS COMPOSITION**
+
+48 total `mock_eligible` rows − 43 used = **5 raw rows held reserve**: `mock-mr01mr10-costumeschedule-02a/02b` (1 grouped experience, 2 marks) + `mock-mr09-data-01/02/03` (3 rows, Classification D, excluded not grouped, 4 marks). Reserve QT coverage: QT-MR-10+QT-MR-01 (1 compound experience) and QT-MR-09 (currently unrepresented anywhere in any composed content).
+
+**Sufficiency verdict:**
+- **A. One alternative Mock — NO.** An alternate ≈60-mark/20-question paper needs comparable volume to this one; only 6 marks / ≤2 experiences remain, nowhere close.
+- **B. Repeated weekly/monthly Mocks — NO.** This pool holds enough certified content for essentially one full sitting only.
+- **C. Long-term anti-memorisation — NO**, confirmed, consistent with every prior decision's own disclosure (Decision 164: "Rolling Programme's own real diversity requirement is entirely unchanged"). This composition consumes 43 of 48 rows (≈90%) of the entire currently-certified Mathematics Mock pool. **This report does not recommend authoring more content to close that gap — it is out of this increment's scope — but names the gap plainly rather than letting a successful-looking First Mock composition imply the reuse problem is solved.**
+
+---
+
+**PART 8 — EDUCATIONAL INTELLIGENCE READINESS**
+
+Traced directly from source this session (`lib/mockAttempt/evidenceAdapter.ts`, `lib/mockAttempt/client.ts`, `app/learning-intelligence/mock-report/[attemptId]/page.tsx`, `app/learning-intelligence/parent/mock-report/[attemptId]/page.tsx`, `lib/mockAttempt/types.ts`'s own `PROTECTED_MOCK_FIELDS`), not assumed from any prior decision's own claims:
+
+**IMPLEMENTED AND WIRED:** raw score (`rawMarksAchieved`/`rawMarksAvailable`/`percentage`, `mock_score_attempt()`, runs automatically on submission); per-question status (correct/incorrect/unanswered/`requires_manual_marking`, `question_outcomes`); admin-gated report release (`mock_release_report()`, requires `scoring_state = 'scored'`).
+
+**IMPLEMENTED BUT UNWIRED:** `lib/mockAttempt/evidenceAdapter.ts`'s own `classifyMockEvidence()`/`summariseStrengthsAndPriorities()` — real, tested, pure functions that classify per-question outcomes into coarse-competency (the same `skill`/`QuestionTypeId` taxonomy Practice already uses, via the shared `QUESTION_TYPE_PRIMARY_COMPETENCY` map) strengths/weaknesses — but confirmed (by direct grep) to have **zero callers anywhere in the application** outside their own file and type definitions. The file's own header discloses why: no `SUPABASE_SERVICE_ROLE_KEY` exists in this deployment and `ali_mock_attempt_report` is sealed by RLS until release, so nothing outside a `SECURITY DEFINER` SQL function can currently run this classification server-side. `ali_mock_attempt_report.strengths`/`weaknesses`/`competency_evidence` stay `NULL` even after a report is scored and released.
+
+**NOT IMPLEMENTED:**
+- **Fine-grained CSSE QT-MR-01..14 breakdown.** No runtime code path preserves the QT-MR-XX classification through scoring or evidence classification — only the coarser `skill` column survives into `question_outcomes.questionTypeId`. This coarse taxonomy conflates several distinct QTs used in this very paper: QT-MR-01/QT-MR-02 both tag `arithmetic`; QT-MR-05/QT-MR-06 both tag `algebra`; QT-MR-07/QT-MR-08 both tag `geometry`. A per-QT (not merely per-coarse-skill) result breakdown is not derivable from any current report data.
+- **Misconception surfacing.** `addresses_misconception` (authored prose per row) exists in the database and is actively protected from premature pre-submission leakage (`PROTECTED_MOCK_FIELDS`), but no report surface — learner or parent — reads or displays it after release; it is currently write-only authoring documentation.
+- **Any feed into durable mastery/readiness.** Deliberately and permanently quarantined by `evidenceAdapter.ts`'s own disclosed Core Principle: Mock evidence never reaches `ali_student_question_history`/`ali_durable_mastery`/`ali_educational_audit`/the Evidence Tier system, pending a future, separately-scoped increment. Not a gap to close casually — a real architectural boundary protecting against Mock/Practice evidence contamination.
+
+---
+
+**PART 9 — FORM GOVERNANCE RECOMMENDATION**
+
+`ali_family_review` (migration 034) **cannot safely represent form-level review as-is**: it is keyed by `family_id` alone, with no `ali_mock_form`/paper identifier, no concept of question order, and no criteria addressing paper-level concerns this report itself had to reason about by hand (cross-question answer-clue risk, QT/difficulty distribution across the whole form, total-form pacing). A genuinely new, minimal, additive construct — e.g. a form-level review table keyed to a specific composed form/content-hash, mirroring `ali_family_review`'s own append-only, non-self-certifying, reviewer-not-author design discipline — is required before COMPOSED can genuinely reach APPROVED/FROZEN. **Not built in this increment**, named as the concrete next governance-infrastructure step.
+
+Proposed path, mapped to this project's own established conventions:
+`COMPOSED` (this report) → `FOUNDER/INDEPENDENT PAPER REVIEW` (a real reviewer, distinct from this report's author, reviewing the assembled order/composition — not merely re-reviewing already-approved individual families) → `APPROVED/FROZEN` (recorded via the new form-review construct above) → `FORM SEED` (a future, bounded, forward-only migration inserting exactly one `ali_mock_form` row referencing exactly these 43 raw IDs in this exact order — mirroring `ali_family_review`'s own "a decision here does not itself change eligibility; a future, separately-authorised step applies it" discipline) → `READINESS/EI TECHNICAL GATES` (a Founder policy decision on whether Part 8's unwired/not-implemented items must close before activation, or whether raw-score-only reporting is an acceptable v1) → `LEARNER ACTIVATION`.
+
+---
+
+**PART 10 — BATCH 001 / PERIMETERAREA**
+
+Left untouched at `independently_validated`, not promoted, per explicit instruction. Assessed as reserve only: `perimeterarea`'s own 2 grouped experiences (4 marks) are, like `costumeschedule`, a genuine convention-(i) shared-scenario compound structure (Decision 163's own authoring) — valuable specifically as a **second** compound-structure source for a *future* alternate form, where it could pair with `costumeschedule`'s own reserved instance 2 without repeating this First Mock's own content. Not recommended for promotion in this increment.
+
+---
+
+**PART 11 — REMAINING BLOCKERS BEFORE LEARNER ACTIVATION**
+
+1. Founder/independent paper-level review of this exact composition (Part 9) — not yet performed.
+2. The form-level review schema gap (Part 9) — a future, separately-authorised, minimal additive migration.
+3. `ali_mock_form` seed migration — not created, not authorised in this increment.
+4. A Founder policy decision on Part 8's gaps — launch with raw-score-only reporting, or require Evidence Adapter wiring / misconception surfacing first.
+5. `mock-mr09-data`'s Classification D — remains open independently of this First Mock's own exclusion decision.
+6. A live-browser walkthrough of the grouped-question learner rendering once a real form/attempt exists — this project's own established pattern (Decision 155's own sequencing-scoring defect, found only by live walkthrough, never by unit tests) means Decision 166's structural/source-level proof is not a substitute for one, and none has occurred (`ali_mock_form` is still 0).
+7. Migration 112's own production application — reported by the Founder as complete; not independently re-verified by live query this session (no DB access tool available).
+
+---
+
+**PART 12 — FINAL VERDICT: A — READY FOR FOUNDER PAPER REVIEW**
+
+The composition is a legitimate, evidence-grounded arrangement of already-certified content — nothing about it is broken, unsafe, or in need of a revision cycle before Founder eyes see it. The disclosed gaps (100%-compound shape, QT-MR-09 absence, unwired/unimplemented EI reporting, thin reserve, the `ali_family_review` schema gap) are exactly the class of finding a Founder paper review exists to weigh, not blockers to reaching that review. Verdict B (revise composition) would apply only if a materially better arrangement of the same 48-row pool were available — it is not: Part 4's own choices (excluding `mr09-data`, using only one `costumeschedule` instance, the QT/answer-collision-aware ordering) already represent the strongest defensible composition from current content. Verdict C (not ready) would apply only if something disqualifying existed — no eligibility, grouping, or content-integrity problem was found.
+
+---
+
+**What this decision does NOT claim:** it does not claim any form exists, any migration was created, or any production state changed; it does not claim migration 112's production application was independently re-verified (Founder-supplied evidence only); it does not claim the disclosed EI/misconception gaps are resolved; it does not claim `mock-mr09-data`'s Classification D is resolved; it does not claim the `ali_family_review` schema gap is closed; it does not claim reserve capacity is adequate for repeat Mocks — it is explicitly found NOT to be.
+
+**Files changed:** `ALI_DECISION_LOG.md` (this entry only).
+
+**Migrations created:** none.
+
+**Decision number:** 167.
+
+**Commit SHA:** recorded after commit (see repository history immediately following this entry).
+
+**Production application status:** not applicable — no migration, no production change, no form created.
+
+**Rationale:** recording this composition as a Decision, despite being read-only, follows this arc's own established precedent (Decisions 164, 166) for a finding whose conclusion materially shapes the next governance step — here, the exact content, order, and disclosed gaps of the paper a future Founder review will actually examine. Leaving this only in conversation history would risk a future session re-deriving (or silently varying) the exact composition rather than reviewing this one.
+
+**Implications:** Decisions 1–166 all stand, none reversed or rewritten. No Mock form, no learner activation, and no Batch 001 promotion occurs from this decision. The next step is Founder/independent paper-level review of the exact Part 4 composition — not yet performed, not self-certified here.
+
+---
