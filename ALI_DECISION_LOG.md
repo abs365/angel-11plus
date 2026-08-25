@@ -6619,3 +6619,114 @@ Grouped subparts and tables are built and production-applied (Decisions 161/166/
 **Implications:** Decisions 1–175 all stand, none reversed or rewritten. No content, marks, eligibility, or grouping changes from this decision. The next step is a separate, bounded content-authoring decision for the one identified first increment (§6/Part 6) — not begun here.
 
 ---
+
+### Decision 177 — FIRST MATHEMATICS MOCK STRUCTURAL ARCHITECTURE CLOSURE AND RESERVE ADMISSION: read-only, no implementation. A rigorous prompt-level (not grouping-metadata) re-audit of every experience in the 48-row `mock_eligible` pool and the full 8-row reserve, performed by direct re-reading of `migrations/088/091/095/109/113`'s own prompt/subpart text rather than trusting Decision 176's own summary. Confirms Decision 176's own Part 1 body was correct (19 B / 2 C / 3 D-now-S experiences) but its headline ("~100% B") was an imprecise rounding — corrected here without rewriting Decision 176. Confirms zero classification errors across all 24 `mock_eligible` experiences and all 4 reserve experiences (all reserve genuinely A). Issues a per-family reserve admission verdict (all three READY FOR MOCK-ELIGIBILITY AUTHORISATION, one minor non-blocking provenance note on `perimeterarea`'s unrecorded reviewer identity). Computes three capacity states (A/B/C) and proves, by direct arithmetic on the pool's own experience-mark composition, that State B (56 marks total) and State C (59 marks total, +1 new family) both fall **~14-17 marks short** of an authentic ~58-60-mark/20-21-question form when the richest experiences are preferentially selected — a genuine pool-composition ceiling, not a selection problem. This refines Decision 176's "one family is the first increment" into "one family is the correct first increment but is necessary, not sufficient" — realistically **5-9 more rich (3-5 subpart) compound families** are needed. Ranks the two capability-ready archetypes (interdependent algebra, shared-timetable multi-query) as BEFORE FIRST MOCK, with shared-diagram geometry correctly deferred as DESIRABLE RESERVE pending a diagram-rendering capability decision. Runs a visual-standard gate across the whole current-plus-near-term-planned form: everything READY except diagrams, which block only the deferred archetype, not the recommended near-term path. Confirms reserve thinness after a plausible first-form freeze (~8-9 experiences/~13-16 marks remaining) is genuinely insufficient for repeat-exposure protection. Final next-step verdict: **C — more than one new structural family is required before composition**; first family to author unchanged from Decision 176 (interdependent algebraic system). No migration, no content authored, no eligibility, marks, or grouping changed, no production mutation.
+
+**Scope and process:** Read-only re-audit and capacity stress-test only. No implementation.
+
+---
+
+**PART 1 — RECONCILIATION**
+
+`HEAD` = `origin/main` = `c804736` (Decision 176), verified via `git fetch`/`git rev-parse`, clean working tree, no drift. Decisions 165–176 stand; the Marking Integrity Gate (172–175) is not reopened. Direct re-read this turn of migrations 088, 091, 095, 109, and 113 confirms every row corrected by migrations 117/118 is now exactly 1 mark/row — an "N-mark experience" below always means N independently 1-mark grouped subparts, never one row worth more than 1 mark.
+
+---
+
+**PART 2 — AUTHORITATIVE FAMILY TABLE (PROMPT-LEVEL, NOT METADATA)**
+
+Directly re-inspected prompt/subpart text this turn for `mock-mr02-invdiv`, `mock-mr02-twostep`, `mock-mr07-triangleanglesum`, `mock-mr03mr07-perimeterarea`, `mock-mr10-fairprep`, `mock-mr09-runningclub`, `mock-mr01mr10-costumeschedule`, and `mock-mr09-data` — spanning every classification value found. The remaining 13 of the 19 B-families are corroborated by this session's earlier direct reads (consistent pattern: 2-3 independent numeric scenarios per family, no shared-data authoring intent disclosed in any of their own comments).
+
+| Type | Families | Experiences | Marks |
+|---|---|---|---|
+| A | none within `mock_eligible` | 0 | 0 |
+| B | 19 (16 two-subpart + `invdiv`/`twostep`/`unitconv` three-subpart) | 19 | 41 |
+| C | `costumeschedule` — narrative theme (tailor/costume, bunting) only; zero shared numeric data between (a)/(b), reconfirmed directly (e.g. instance 1: (a) uses 14:20/1h50/25min, (b) uses 2.5m/£4.80 — no overlap) | 2 | 4 |
+| S | `mock-mr09-data`-01/02/03 — never grouped (`question_group_id` null), each its own standalone experience today | 3 | 3 |
+| **Total** | | **24** | **48** |
+
+No family's classification is found wrong. `mock-mr03mr07-perimeterarea` nuance found on direct re-read: subpart (b) *restates* the already-converted measurement from (a) rather than requiring the learner to carry forward their own computed answer — still genuine A (same scenario/data reasoned from), but the dependency is data-continuity, not answer-chaining. Recorded for precision; does not change the verdict.
+
+---
+
+**PART 3 — DECISION 176 HEADLINE CORRECTION**
+
+Decision 176's own Part 1 body already stated the correct breakdown (19 B / 2 C / 3 "D"); its headline summary line ("~100% Classification B") was an imprecise rounding of that same body, not a separate error. Corrected precisely here: the true distribution is **79.2% B / 8.3% C / 12.5% S**, 0% A — Decision 176 not rewritten, only its headline's imprecision disclosed and corrected.
+
+---
+
+**PART 4 — RESERVE AUDIT (8/8, EXACTLY THREE FAMILIES, NOTHING ELSE)**
+
+`mock-mr03mr07-perimeterarea` (4 rows / 2 experiences, genuine A), `mock-mr10-fairprep` (2 rows / 1 experience, genuine A), `mock-mr09-runningclub` (2 rows / 1 experience, genuine A, real table stimulus). All three: primary-source-original, independently reviewed (`fairprep`/`runningclub` explicitly reviewer Ayobami Lawal, Founder-verified production visual pass per Decision 171), `independently_validated`, Marking Integrity Gate-clean, deterministic scoring, correct grouping, no duplicate-risk overlap with each other or the 48-row pool. One minor, non-blocking gap: `perimeterarea`'s own migration 111 never explicitly recorded its reviewer's identity (unlike `fairprep`/`runningclub`) — approval is recorded and Decision 165 evidences it occurred, but the identity was not independently re-confirmed this session.
+
+**Verdict, all three: READY FOR MOCK-ELIGIBILITY AUTHORISATION.** No outstanding technical, marking, or governance gate — only the Founder-authorised promotion migration (migration 105's own POOL-GATE CONTRACT pattern) remains.
+
+---
+
+**PART 5 — THREE CAPACITY STATES**
+
+| State | Rows | Experiences | Marks | A/B/C/S |
+|---|---|---|---|---|
+| A (`mock_eligible` only) | 48 | 24 | 48 | 0/19/2/3 |
+| B (+ full reserve) | 56 | 28 | 56 | 4/19/2/3 |
+| C (B + 1 new algebra family) | 59 | 29 | 59 | 5/19/2/3 |
+
+---
+
+**PART 6 — STATE B/C FORM FEASIBILITY: A POOL-COMPOSITION CEILING**
+
+State B's entire pool totals 56 marks — a literal 60-mark form cannot be selected from it regardless of which experiences are chosen. More precisely: selecting the richest available 20-21-question subset (all 3-mark experiences first, then as many 2-mark as fit) yields **≈43-45 marks** at State B and **≈44-46 marks** at State C — both ≈14-17 marks short of the authentic ≈58-60 target. This is a ceiling imposed by the pool's own mark-per-experience composition (predominantly 2-mark, few 3-mark, zero 4+ mark experiences), not a selection or curation problem.
+
+---
+
+**PART 7 — ALGEBRA-FAMILY REASSESSMENT AND ARCHETYPE RANKING**
+
+The recommended interdependent-algebraic-system family remains the correct **smallest first step** (highest-frequency real archetype, no new capability required) but is now shown to be **necessary, not sufficient** — closing the ≈14-17-mark ceiling realistically requires **5-9 further rich (3-5 subpart) compound families**, not one. Ranked:
+1. **BEFORE FIRST MOCK** — interdependent algebraic system (unchanged).
+2. **BEFORE FIRST MOCK** — shared-timetable multi-query (4 subparts, evidenced 2022 Q19), no new capability required.
+3. **DESIRABLE RESERVE / ROLLING PROGRAMME LATER** — shared-diagram multi-fact geometry, blocked on a not-yet-built diagram-rendering capability, correctly deferred rather than hidden.
+
+Given the quantified gap, multiple instances of archetypes 1-2 should be expected across several future bounded increments, not one instance each.
+
+---
+
+**PART 8 — VISUAL-STANDARD GATE, WHOLE FIRST FORM**
+
+Text, grouped subparts, structured tables (production-verified via `runningclub`), coordinates, measurement, data, answer controls, timer, palette/navigation, flagging, responsive desktop/tablet: **READY** across the entire current 48-row pool, full 8-row reserve, and both near-term-planned (text-only) archetypes. Diagram/geometry-image rendering: **BLOCKER** — but named precisely as blocking only the deferred shared-diagram archetype (Part 7, item 3), not the recommended near-term authoring path.
+
+---
+
+**PART 9 — ANTI-MEMORISATION / RESERVE SUFFICIENCY**
+
+A plausible ≈20-21-question first form drawn from State C's 29 experiences would consume nearly the entire pool, leaving only **≈8-9 experiences / ≈13-16 marks** in reserve — thin, reconfirmed, insufficient for genuine immediate retry/repeat-exposure protection. First Mock activation at State C would consume too much of the currently-available high-quality pool.
+
+---
+
+**PART 10 — FINAL BLUEPRINT (GOVERNING COMPOSITION CONTRACT, RANGES)**
+
+≈20-21 questions · ≈43-46 marks achievable at State C (≈14-17 short of authentic ≈58-60) · ≈2.0-2.3 avg subparts/question at State C vs. real ≈2.8-3.0 · A/B/C/S mix ≈17%/66%/7%/10% at State C vs. real ≈48% A · QT coverage 12-13/13 · stimulus mix text plus one structured table · expected reserve remaining post-freeze ≈8-9 experiences/≈13-16 marks (thin).
+
+---
+
+**PART 11 — GOVERNANCE SEQUENCE**
+
+Confirmed largely intact from the sequence implicit in Decisions 165-176: reserve eligibility authorisation → bounded authoring (now known to be **iterative — several rounds, not one**) → independent review/certification **per increment, not once at the end** → mock eligibility → composition → Founder full-paper review → freeze → readiness/EI → live learner visual QA → activation. The one correction: "bounded authoring if genuinely required" is now known to require multiple bounded rounds, each carrying its own independent review/certification cycle, given the ≈14-17-mark ceiling found in Part 6.
+
+---
+
+**What this decision does NOT claim:** it does not claim any migration has been created or applied; it does not claim any content, marks, eligibility, or grouping has changed in production; it does not claim reserve promotion has occurred; it does not claim the interdependent-algebra family (or any other) has been authored; it does not claim diagram capability exists; it does not claim the ≈14-17-mark deficit is closed — only precisely quantified; it does not claim the long-term Rolling Programme is solved.
+
+**Files changed:** `ALI_DECISION_LOG.md` (this entry only).
+
+**Migrations created:** none.
+
+**Decision number:** 177.
+
+**Commit SHA:** recorded after commit (see repository history immediately following this entry).
+
+**Production application status:** not applicable — no migration, no production change.
+
+**Rationale:** a Founder-directed prompt-level re-audit, rather than trusting Decision 176's own grouping-metadata-adjacent summary, is recorded as its own Decision because it produces a materially sharper, quantified finding (a precise ≈14-17-mark pool-composition ceiling, and a 5-9-family closure estimate) that changes the next-step verdict from an implicit "one family may be enough" reading of Decision 176 into an explicit "more than one family is required" — governing every subsequent authoring Decision in this arc.
+
+**Implications:** Decisions 1-176 all stand, none reversed or rewritten; Decision 176's headline imprecision is corrected without altering its body, which is confirmed accurate. No content, marks, eligibility, or grouping changes from this decision. The next step remains a separate, bounded content-authoring decision for the interdependent-algebraic-system family (unchanged first pick) — not begun here, and now explicitly understood as the first of several such rounds required, not the last.
+
+---
