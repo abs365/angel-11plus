@@ -1674,6 +1674,56 @@ export async function fetchMockStructuralCapacityWave002ReviewStatus(familyIds: 
 }
 
 /**
+ * Mathematics Structural Capacity, Wave 002 — Bus Timetable Correction
+ * Re-Review (Decision 185/186). A DELIBERATELY SEPARATE marker/config
+ * from MOCK_STRUCTURAL_CAPACITY_WAVE002_FAMILIES above — reusing the
+ * original marker was traced and found unsafe: deriveBatchReviewStatus
+ * () skips pending rows and keeps the last matching APPROVED row's own
+ * status, so a new pending row under the old marker would leave the
+ * family showing "reviewed (approved)" from its own prior, now-
+ * superseded-content approval. This marker/config is scoped to exactly
+ * mock-mr10-bustimetable (all 4 rows, re-reviewed as one family, not
+ * just the corrected subpart) and is entirely independent of the
+ * original WAVE002 status — the original approval remains visible,
+ * unaltered, under its own original section, exactly as historical
+ * evidence should.
+ *
+ * The marker STRING itself is "MOCK-BUSTIMETABLE-CORRECTION001" —
+ * deliberately NOT "MOCK-STRUCTURAL-CAPACITY-WAVE002-CORRECTION001".
+ * The original WAVE002 section's own pending-target lookup (page.tsx)
+ * is a plain `.includes()` substring check; a marker that merely
+ * appended a suffix to the old one would still satisfy that check and
+ * risk the ORIGINAL section's own button non-deterministically picking
+ * up this new pending row, submitting a fresh decision mis-tagged under
+ * the wrong marker. Caught and avoided during drafting.
+ */
+export const MOCK_STRUCTURAL_CAPACITY_WAVE002_CORRECTION001_MARKER = "MOCK-BUSTIMETABLE-CORRECTION001";
+
+export const MOCK_STRUCTURAL_CAPACITY_WAVE002_CORRECTION001_FAMILIES: SevenXFamilyConfig[] = [
+  {
+    familyId: "mock-mr10-bustimetable",
+    newQuestionIds: [
+      "mock-mr10-bustimetable-01", "mock-mr10-bustimetable-02", "mock-mr10-bustimetable-03", "mock-mr10-bustimetable-04",
+    ],
+    disclosure:
+      "RE-REVIEW AFTER CONTENT CORRECTION, not a brand-new family. Founder production visual review found subpart (d)'s original wording ('speed up...by 20%') permitted a second, mathematically valid reading (increase speed by 20%, giving 29.17 minutes) inconsistent with the stored answer (28, which matches a 20% reduction in journey time). Migration 127 corrected the wording to 'reduce...journey time by 20%', unambiguously matching the stored answer -- independently re-verified this session via direct computation (35 x 0.8 = 28; 35 / 1.2 = 29.17, confirmed different). Subparts (a)-(c) and every other field (answer, marks, difficulty, sharedStem, stimulus, grouping) are byte-for-byte unchanged. The family's PRIOR approval (visible in the original Wave 002 section above) covered the uncorrected wording and is not carried forward as approval of this corrected content -- please re-review the complete family fresh. Disclosed for your own judgement, not a recommendation either way.",
+  },
+];
+export const MOCK_STRUCTURAL_CAPACITY_WAVE002_CORRECTION001_TARGET_IDS = MOCK_STRUCTURAL_CAPACITY_WAVE002_CORRECTION001_FAMILIES.map((f) => f.familyId);
+
+export function buildMockStructuralCapacityWave002Correction001NotesPrefix(familyId: string, questionIds: string[]): string {
+  return `${MOCK_STRUCTURAL_CAPACITY_WAVE002_CORRECTION001_MARKER} re-review after content correction: ${familyId} (Question IDs: ${questionIds.join(", ")})`;
+}
+
+export function deriveMockStructuralCapacityWave002Correction001ReviewStatus(rows: SevenXReviewRow[], familyIds: string[]): Map<string, SevenXReviewStatus> {
+  return deriveBatchReviewStatus(rows, familyIds, MOCK_STRUCTURAL_CAPACITY_WAVE002_CORRECTION001_MARKER, "mock_maths_independent_review");
+}
+
+export async function fetchMockStructuralCapacityWave002Correction001ReviewStatus(familyIds: string[]): Promise<Map<string, SevenXReviewStatus>> {
+  return fetchBatchReviewStatus(familyIds, MOCK_STRUCTURAL_CAPACITY_WAVE002_CORRECTION001_MARKER, "mock_maths_independent_review");
+}
+
+/**
  * Inserts one real, traceable Mock-content independent-review decision —
  * `review_type = 'mock_maths_independent_review'` (migration 087,
  * Decision 139), explicitly set here exactly as `submitMathsTeachingReview`

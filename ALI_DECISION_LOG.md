@@ -7380,3 +7380,69 @@ Recomputing the richest-first composition ceiling against this projected 29-expe
 **Implications:** Decisions 1-184 all stand, none reversed or rewritten. No content, marks, eligibility, grouping, RPC, RLS, or review-record change occurs from this decision. The next steps remain distinct and future: Founder review and application of migrations 125/126, independent review of both families, and — separately, later — further bounded authoring rounds (per Part 9's own future-variant blueprint) to continue narrowing the ≈9-13-mark remaining First Mock deficit.
 
 ---
+
+### Decision 186 — WAVE 002 FOUNDER EDUCATIONAL REVIEW REMEDIATION: BUS TIMETABLE SUBPART (d) WORDING CORRECTION. Founder production review of Wave 002 returned split verdicts: `mock-mr13-craftstall` PASS/APPROVED (untouched by this decision); `mock-mr10-bustimetable` CORRECTION REQUIRED — subpart (d)'s stored wording ("speed up the afternoon Hillview-to-Milltown leg by 20%") permits a second, mathematically valid reading (increase speed by 20%) inconsistent with the stored deterministic answer (28). Independently re-verified this session via direct computation: reducing the 35-minute journey time by 20% gives exactly 28 (35 × 0.8); increasing speed by 20% over the same fixed distance gives ≈29.17 (35 ÷ 1.2) — a genuinely different value, confirming the defect is real, not a false alarm. Migration 127 (a new, narrowly-scoped migration — migration 125 was not amended in place, since it has already applied) corrects only subpart (d)'s `question` text to the Founder's own proposed unambiguous wording, with a full byte-for-byte preservation proof for every other field. A real architectural finding, traced from source rather than assumed, shaped the review-governance response: `deriveBatchReviewStatus()` skips pending rows and retains the last matching *approved* row's own status per marker, so a new pending-review row filed under the *same* WAVE002 marker would have left the review surface still showing "reviewed (approved)" from the family's own prior, now-superseded approval — exactly the outcome the Founder's own instruction explicitly forbade. Migration 128 therefore registers the re-review under a genuinely new, non-colliding marker (`MOCK-BUSTIMETABLE-CORRECTION001`, deliberately chosen not to contain the old marker as a substring, since the existing filter is a plain `.includes()` check), wired to its own dedicated review-surface section, entirely independent of the original WAVE002 status — the original approval remains visible, unaltered, as historical evidence. No certification, validation, or promotion is authorised by this decision. Full verification suite passes (1704/1704 tests, 35 new, including a live regression proof of the marker-collision fix; `tsc` clean; ESLint returned to the established baseline after one JSX wording fix; Copy Quality Guard PASS after two em-dash fixes; Migration SQL Guard PASS; production build succeeds). Neither migration applied.
+
+**Scope and process:** One narrowly-scoped content-wording correction plus its own re-review registration, both new migrations (NOT applied). No promotion, no form, no Wave 003.
+
+---
+
+**PART 1 — RECONCILIATION**
+
+`HEAD == origin/main` at `edc2c11` (Decision 185) confirmed before and after. Founder production evidence: migrations 125/126 applied; Founder visual review performed directly against the corrected production surface.
+
+---
+
+**PART 2 — DEFECT VERIFICATION AND MATHEMATICAL PROOF**
+
+Current production wording (re-read directly from migration 125's own stored JSON, not assumed): *"The bus company plans to speed up the afternoon Hillview-to-Milltown leg by 20%. How many minutes should the new afternoon Hillview-to-Milltown leg take?"* Stored answer: `28`. Independently computed this session: 35 minutes × 0.8 (a 20% reduction in time) = **28**, matching the stored answer exactly; 35 minutes ÷ 1.2 (a 20% increase in speed, fixed distance, time = distance/speed) ≈ **29.17**, a materially different value. The word "speed up...by 20%" is colloquially read as the former (intended) but is also a defensible literal reading of the latter (a different operation, a different answer) — a genuine ambiguity-free-wording defect, not a false alarm.
+
+---
+
+**PART 3 — AFFECTED ROW AND CORRECTED WORDING**
+
+`mock-mr10-bustimetable-04` only. Corrected wording (the Founder's own proposed text, verified before writing to remain an exact, literal continuation of the family's unchanged `sharedStem`, with a non-empty tail): *"The bus company plans to reduce the afternoon Hillview-to-Milltown journey time by 20%. How many minutes should the new journey take?"* Answer (`28`), marks (`1`), and difficulty (`hard`) all remain unchanged.
+
+---
+
+**PART 4 — MIGRATION 127: CONTENT CORRECTION**
+
+`supabase/migrations/127_mock_mathematics_bustimetable_subpart_d_wording_correction.sql` — targets exactly `mock-mr10-bustimetable-04`; migration 125 is not amended in place (already applied). Fail-closed three-state (old wording present → apply; new wording already present → no-op; neither → refuse) with live preconditions covering `family_id`/`subject`/`skill`/`active`/`eligibility_status`/`marking_mode`/`content_difficulty`/`question_group_id`/`group_order`/`subpart_label`/`answer`/`marks`/`sharedStem`, all re-verified post-write. Only the `question` key inside `prompt` is ever `SET`, proven by a full pre-write snapshot of `prompt - 'question'` compared byte-for-byte post-write. Subparts (a)-(c) and the entire `mock-mr13-craftstall` family are never referenced anywhere in this migration's own executable SQL.
+
+---
+
+**PART 5 — REVIEW-HISTORY TREATMENT AND THE MARKER-COLLISION FINDING**
+
+The original `MOCK-STRUCTURAL-CAPACITY-WAVE002` approval for `mock-mr10-bustimetable` is untouched — no `ali_family_review` row is ever updated or deleted by either new migration. Traced directly against `lib/adminReview.ts`'s real `deriveBatchReviewStatus()` before designing the re-review registration, not assumed: that function skips any row with `decision = 'pending_independent_review'` and otherwise retains the last matching *approved* row's own status for a given marker — so filing a new pending row under the SAME marker would have left the family showing "reviewed (approved)" from its own superseded approval, directly contrary to the Founder's own explicit instruction. A second, related risk was caught during drafting: a marker that merely appended a suffix to the old one (e.g. `...-WAVE002-CORRECTION001`) would still satisfy the original section's own plain `.includes()` substring filter, risking the *original* section's button non-deterministically picking up the new pending row and mis-tagging a fresh decision under the wrong marker. Migration 128 therefore uses a genuinely distinct marker, `MOCK-BUSTIMETABLE-CORRECTION001`, containing no substring overlap with the old marker, wired to its own dedicated `MockStructuralCapacityWave002Correction001Section`, config array, and status derivation in `lib/adminReview.ts`/`app/admin-beta/review/page.tsx` — entirely independent of the original WAVE002 status.
+
+---
+
+**PART 6 — STATUS**
+
+`mock-mr13-craftstall`: **PASS/APPROVED, untouched.** No corrective action, no re-review required. `mock-mr10-bustimetable`: **content corrected, pending fresh Founder re-review** of the complete family (all 4 rows reviewed together, matching this project's own established "review unit is the family" convention) under the new `MOCK-BUSTIMETABLE-CORRECTION001` marker, once migrations 127/128 are applied. No certification, independent validation, or `mock_eligible` promotion is authorised by this decision for either family.
+
+---
+
+**PART 7 — VERIFICATION**
+
+35 new tests across 4 files: semantic re-derivation of the mathematical defect (28 vs. ≈29.17, confirmed different); exact-row-targeting and no-other-row-touched proofs; live preconditions and post-write structural re-check; byte-for-byte preservation proof; idempotent/fail-closed structure; the pending-review registration's own correctness; and — critically — a live regression proof (against the actual exported marker constants and the real `page.tsx` source, not merely the migration SQL) that the new marker does not collide with the old one and that the original section's filter would never match the new pending row's notes. One ESLint regression (`react/no-unescaped-entities`, from raw apostrophes in new JSX disclosure text) and two Copy Quality Guard em-dash violations were found and fixed before this suite passed. **Full suite: 1704/1704 pass** (1669 baseline + 35 new; zero regressions). `npx tsc --noEmit`: clean. ESLint: 81 problems (62 errors/19 warnings), returned to the established baseline. Copy Quality Guard: PASS, 0 violations, 257 files. Migration SQL Guard: PASS, 128 files — quote-balance only. Production build: succeeds.
+
+---
+
+**What this decision does NOT claim:** it does not claim migration 127 or 128 has been applied (both NOT APPLIED); it does not claim `mock-mr10-bustimetable`'s re-review has occurred; it does not claim `mock-mr13-craftstall` required any change (it did not); it does not claim either family is independently validated or `mock_eligible`; it does not claim the original WAVE002 approval has been altered, deleted, or reinterpreted.
+
+**Files changed:** `supabase/migrations/127_mock_mathematics_bustimetable_subpart_d_wording_correction.sql` (new, NOT applied), `supabase/migrations/128_mock_mathematics_bustimetable_correction_pending_review.sql` (new, NOT applied), `lib/adminReview.ts` (modified — new correction-batch config, unchanged existing exports), `app/admin-beta/review/page.tsx` (modified — new Section component and wiring, unchanged existing sections), 3 new test files, `ALI_DECISION_LOG.md` (this entry).
+
+**Migrations created:** 127 — drafted, tested, NOT applied. 128 — drafted, tested, NOT applied.
+
+**Decision number:** 186.
+
+**Commit SHA:** recorded after commit (see repository history immediately following this entry).
+
+**Production application status:** migrations 127/128 NOT applied. No production change has occurred.
+
+**Rationale:** correcting a genuine ambiguous-wording defect via a new, narrowly-scoped migration (never amending an already-applied migration) and tracing the review-status architecture directly before choosing a re-review marker (rather than assuming a suffix-appended marker would be safe) follows this arc's own established discipline (Decision 179/182's own root-cause-before-correction standard) — a real, non-obvious collision risk was found and avoided before it could ever reach production.
+
+**Implications:** Decisions 1-185 all stand, none reversed or rewritten; Decision 185's own `mock-mr13-craftstall` approval and evidence are entirely unaffected. No content, marks, eligibility, grouping, RPC, RLS, or existing review-record change occurs from this decision. The next steps remain distinct and future: Founder application of migrations 127/128, followed by a fresh Founder re-review of the corrected `mock-mr10-bustimetable` family under the new marker — not begun here.
+
+---
