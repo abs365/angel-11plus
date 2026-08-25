@@ -41,6 +41,42 @@
 -- Subparts (a), (b), (c) and the entire mock-mr13-craftstall family are
 -- never referenced by this migration's own executable SQL.
 --
+-- ============================================================
+-- CORRECTION (Decision 187): first-attempt production compilation
+-- failure, root cause, and fix -- migration 127 has NEVER successfully
+-- applied
+-- ============================================================
+-- The first production attempt failed to compile with "ERROR: 42601:
+-- too few parameters specified for RAISE" (CONTEXT: compilation of
+-- PL/pgSQL function "inline_code_block"). Traced by direct, exhaustive
+-- inspection of every RAISE statement in this file, not from the error
+-- message alone: the RAISE NOTICE announcing a successful correction
+-- (below, in the apply branch) embedded the literal corrected/original
+-- question wording verbatim, including the phrase "20%" TWICE -- in
+-- PL/pgSQL, every unescaped `%` inside a RAISE format string is parsed
+-- as a substitution placeholder requiring a corresponding trailing
+-- parameter, regardless of whether the `%` is semantically a
+-- percent-sign in the message's own prose. That RAISE NOTICE supplied
+-- zero trailing parameters, so PostgreSQL's compiler correctly refused
+-- to compile the whole anonymous DO block: 2 required placeholders, 0
+-- supplied. Every OTHER RAISE statement in this file was individually
+-- re-audited the same way and found correct (each already-existing `%`
+-- placeholder has exactly one matching parameter; every 0-placeholder
+-- message supplies zero parameters). Corrected by escaping both literal
+-- percent signs as `%%` (PL/pgSQL's own literal-percent-sign escape),
+-- matching PostgreSQL's own documented RAISE format-string contract --
+-- the two escaped occurrences are the ONLY change in this file; the
+-- corrected question wording, target ID, answer, marks, difficulty,
+-- grouping, and every precondition/preservation check are byte-for-byte
+-- unchanged from the original draft. Because a PL/pgSQL compilation
+-- failure occurs before the anonymous block's own body begins
+-- executing (confirmed by Postgres's own "compilation of ... function"
+-- error context, a distinct phase from runtime statement execution),
+-- no SELECT, UPDATE, or temporary-table statement inside this block
+-- could have run -- production is unmutated by the first attempt, not
+-- merely assumed to be. Corrected IN PLACE (this migration file, not a
+-- new migration number) because it has never successfully applied.
+--
 -- The corrected question text is verified, before writing, to remain
 -- an exact, literal continuation of the family's own existing
 -- sharedStem (unchanged) -- the same prefix relationship
@@ -160,7 +196,7 @@ begin
       raise exception 'Migration 127 post-write structural verification failed: family_id/active/eligibility_status/marking_mode/content_difficulty/grouping drifted unexpectedly. Rolling back.';
     end if;
 
-    raise notice 'Migration 127: corrected mock-mr10-bustimetable-04''s question wording from an ambiguous "speed up...by 20%" phrasing to an unambiguous "reduce...journey time by 20%" phrasing. Answer (28), marks (1), difficulty (hard), sharedStem, stimulus, and every grouping field proven byte-for-byte unchanged. No other row touched.';
+    raise notice 'Migration 127: corrected mock-mr10-bustimetable-04''s question wording from an ambiguous "speed up...by 20%%" phrasing to an unambiguous "reduce...journey time by 20%%" phrasing. Answer (28), marks (1), difficulty (hard), sharedStem, stimulus, and every grouping field proven byte-for-byte unchanged. No other row touched.';
 
   elsif v_already_corrected_count = 1 then
     raise notice 'Migration 127: mock-mr10-bustimetable-04 already carries the corrected question text -- already applied. No changes made.';

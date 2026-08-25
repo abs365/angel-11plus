@@ -7446,3 +7446,77 @@ The original `MOCK-STRUCTURAL-CAPACITY-WAVE002` approval for `mock-mr10-bustimet
 **Implications:** Decisions 1-185 all stand, none reversed or rewritten; Decision 185's own `mock-mr13-craftstall` approval and evidence are entirely unaffected. No content, marks, eligibility, grouping, RPC, RLS, or existing review-record change occurs from this decision. The next steps remain distinct and future: Founder application of migrations 127/128, followed by a fresh Founder re-review of the corrected `mock-mr10-bustimetable` family under the new marker — not begun here.
 
 ---
+
+### Decision 187 — MIGRATION 127 PRODUCTION COMPILATION FAILURE, ROOT CAUSE AND CORRECTION. The Founder's attempt to apply migration 127 (Decision 186) failed with `ERROR: 42601: too few parameters specified for RAISE`, `CONTEXT: compilation of PL/pgSQL function "inline_code_block"`. Migration 128 was correctly never attempted. Exhaustive, statement-by-statement inspection of every `RAISE` in migration 127 (not inference from the error message alone) finds exactly one defective statement: the `RAISE NOTICE` announcing a successful correction embedded the literal phrase "20%" **twice**, unescaped, inside its own format string — in PL/pgSQL, every unescaped `%` in a RAISE format string is a substitution placeholder regardless of whether it is semantically a percent sign in the message's own prose, and this statement supplied zero trailing parameters against the two it required. Every other `RAISE` in the file was individually re-audited and found correct (each existing `%` placeholder already had exactly one matching parameter). Because PostgreSQL's own error context names "compilation" — a distinct phase that completes, or fails, before any statement inside the anonymous `DO` block begins executing — no `SELECT`, `UPDATE`, or temporary-table statement in migration 127 could have run; production is unmutated by the failed attempt, consistent with (though not solely proven by) the migration's own `begin;`/`commit;` transactional wrapping. Migration 127 is corrected in place (still never successfully applied, so no new migration number) by escaping both literal percent signs as `%%`; the corrected question wording, target row, answer, marks, difficulty, grouping, and every precondition/preservation check are otherwise byte-for-byte unchanged. Migration 128 is exhaustively audited and found to contain **no RAISE statement at all** (a plain `INSERT ... WHERE NOT EXISTS` migration, structurally incapable of this defect class) — left byte-unchanged. A new, permanent guard is added: `scripts/lib/raiseFormatCheck.mjs`, wired into the existing `scripts/migration-sql-guard.mjs` alongside Decision 179's own quote-balance check, proven (via a reconstruction of the exact original defect) to catch this precise class and, run against the full 128-file migration corpus, to produce zero false positives against 184 real, pre-existing `RAISE` statements. Full verification suite passes (1715/1715 tests, 11 new; `tsc` clean; ESLint at established baseline; Copy Quality Guard PASS; Migration SQL Guard PASS, now including the new RAISE check; production build succeeds). Neither migration retried.
+
+**Scope and process:** Migration-failure root-cause, in-place correction, and a new permanent verification guard. No production mutation, no review-record change, no educational content reopened.
+
+---
+
+**PART 1 — RECONCILIATION**
+
+`HEAD == origin/main` at `75bd589` (Decision 186) confirmed before and after. Migration 127 exists but has never successfully applied. Migration 128 has not been applied (and was correctly never attempted, since 127 failed first). Production therefore remains exactly at migrations 125/126: `mock-mr10-bustimetable-04` still carries the original, ambiguous wording; the original `MOCK-STRUCTURAL-CAPACITY-WAVE002` review history is untouched. `ali_mock_form` remains 0 per the most recent Founder evidence (Decision 185/186); no newer evidence was supplied this turn.
+
+---
+
+**PART 2 — EXACT FAILING STATEMENT**
+
+```sql
+raise notice 'Migration 127: corrected mock-mr10-bustimetable-04''s question wording from an ambiguous "speed up...by 20%" phrasing to an unambiguous "reduce...journey time by 20%" phrasing. Answer (28), marks (1), difficulty (hard), sharedStem, stimulus, and every grouping field proven byte-for-byte unchanged. No other row touched.';
+```
+
+Two unescaped `%` (both from the literal phrase "20%", appearing twice), zero trailing parameters supplied. Every other `RAISE` in the file was individually checked the same way and found correct: two `RAISE EXCEPTION` statements each have exactly one `%` and one matching parameter (`v_precondition_count`; the paired `v_pending_old_count, v_already_corrected_count` for the two-placeholder refusal message); the remaining five `RAISE` statements have zero `%` and zero parameters. This statement was the sole defect, confirmed by both manual inspection and an independent script-based scan of the full file.
+
+---
+
+**PART 3 — THE 20% HAZARD, CONFIRMED PRECISELY**
+
+The literal percent sign inside "20%" is not itself the problem — a `%` occurring in ordinary SQL/string values outside a `RAISE` format string (e.g. inside `v_old_question`/`v_new_question`, which also contain "20%" and compiled without incident) has no special meaning. The hazard is specific to `RAISE` format strings, where PostgreSQL's own PL/pgSQL compiler scans for `%` as a placeholder marker unconditionally; `%%` is the documented escape for a literal percent sign in that one context. No global replacement of percent signs was made — only the two occurrences inside the one defective `RAISE NOTICE`'s own format string were changed to `%%`; every other legitimate use of `%` (the two genuine placeholders elsewhere, and every plain-SQL "20%" occurrence) is untouched.
+
+---
+
+**PART 4 — COMPILATION-BEFORE-MUTATION PROOF**
+
+PostgreSQL's own reported error context, `CONTEXT: compilation of PL/pgSQL function "inline_code_block"`, names the compile phase specifically — a documented, distinct stage that processes and validates a `DO` block's full body (including the static arithmetic of every `RAISE` statement's own placeholder/parameter count, which requires no runtime data and can be, and is, checked before execution begins) before the block's first statement ever runs. No `SELECT`, `INSERT`, `UPDATE`, or temporary-table statement anywhere in migration 127 could therefore have executed. This is established directly from PostgreSQL's own documented compilation semantics, not merely inferred from the migration's `begin;`/`commit;` wrapping — though that wrapping is consistent with it. No fresh Founder row query is required to establish this; one is offered below only as optional reassurance, not as a precondition for anything in this Decision.
+
+Optional Founder verification (not required): `select id, (prompt->>'question') from public.ali_question_bank where id = 'mock-mr10-bustimetable-04';` — expected to show the original, uncorrected wording, exactly as before the failed attempt.
+
+---
+
+**PART 5 — CORRECTION AND MIGRATION 128 AUDIT**
+
+Migration 127 corrected in place: `20%` → `20%%` at both occurrences inside the one defective `RAISE NOTICE`. A disclosure block documenting this exact root cause is added to the migration's own header, matching this arc's established practice (Decision 179/182's own precedent). Nothing else in the file changed — the corrected question wording, target ID (`mock-mr10-bustimetable-04` only), answer (`28`), marks (`1`), difficulty (`hard`), `sharedStem`, `stimulus`, grouping, and every precondition/preservation check are byte-for-byte identical to the version Decision 186 already fully verified.
+
+Migration 128 audited exhaustively: it contains **zero `RAISE` statements** of any kind — it is a plain `INSERT ... SELECT ... WHERE NOT EXISTS (...)` migration (mirroring migrations 114/120/126's own established pattern), structurally incapable of this defect class since there is no PL/pgSQL `DO` block, no format string, and no placeholder semantics anywhere in it. The two literal "20%" occurrences inside its own `notes` string are ordinary `=`-comparison SQL text, never a `RAISE` or `LIKE` context, and are therefore inert. **Left byte-unchanged**, confirmed correct rather than assumed safe.
+
+---
+
+**PART 6 — WHY THE EXISTING GUARD MISSED THIS, AND THE NEW GUARD**
+
+Decision 179's own Migration SQL Guard (`scripts/lib/migrationSqlBalance.mjs`) checks single-quote and dollar-quote *balance* only — migration 127's quoting was, and remains, perfectly balanced; the defect is an entirely different class (PL/pgSQL's own `RAISE`-specific placeholder arithmetic), which a quote-balance tokenizer has no way to detect. `scripts/lib/raiseFormatCheck.mjs` closes exactly this gap: it locates every `RAISE [level] '...'` statement in a comment-stripped migration file, extracts its format string (handling `''`-doubled apostrophes correctly), counts unescaped `%` (treating `%%` as one literal percent, excluded from the count), counts the trailing comma-separated parameter expressions (tracking parenthesis depth and nested string literals so an expression like `count(*)` is never miscounted as multiple parameters), and flags any statement where the two counts disagree — the exact PL/pgSQL compile-time rule that rejected migration 127. Wired into `scripts/migration-sql-guard.mjs` alongside the existing balance check, both now running under the same `npm run migration-sql-guard` / `npm run lint` gate. Proven, not merely asserted: a reconstruction of migration 127's own exact original defective statement is detected (2 placeholders, 0 parameters); the corrected equivalent is accepted; and the full 128-file migration corpus (184 real `RAISE`-with-format-string statements) produces zero false positives, confirming the parser's parenthesis/comma/quote handling is sound against this project's own real, diverse usage. **Explicitly restated, not overclaimed:** this remains a RAISE-arithmetic check only, not a PL/pgSQL parser or a substitute for Founder-controlled production application — it cannot validate any other PL/pgSQL construct (a malformed `IF`, an undeclared variable, a type mismatch, a `USING`-clause option).
+
+---
+
+**PART 7 — VERIFICATION**
+
+11 new tests in `tests/supabase/migrationRaiseFormatCheck.test.ts`: the exact reconstructed original defect detected; the corrected equivalent accepted; a genuine escaped-literal-alongside-real-placeholder case correctly counted; genuine under-supply and over-supply cases each flagged; a nested-paren/comma parameter expression correctly counted as one parameter, not several; comments correctly ignored; migration 127 (corrected) and migration 128 (no RAISE at all) individually confirmed clean; and a repository-wide sweep confirming all 128 current migration files are RAISE-arithmetic-correct. Decision 186's own 35 tests re-run and confirmed unaffected by the migration 127 edit (they assert against the `v_old_question`/`v_new_question` constants, never the corrected `RAISE NOTICE` text). **Full suite: 1715/1715 pass** (1704 baseline + 11 new; zero regressions). `npx tsc --noEmit`: clean. ESLint: 81 problems (62 errors/19 warnings), identical to baseline. Copy Quality Guard: PASS, 0 violations, 257 files. Migration SQL Guard: PASS, 128 files, both checks — quote-balance and RAISE-arithmetic only, not a PostgreSQL parser. Production build: succeeds.
+
+---
+
+**What this decision does NOT claim:** it does not claim migration 127 or 128 has been applied or retried (both still NOT APPLIED); it does not claim any row's `question` text or any other field has changed in production (all remain exactly as migrations 125/126 left them); it does not claim `mock-mr10-bustimetable` has been re-reviewed, certified, or promoted; it does not claim `mock-mr13-craftstall` was affected in any way; it does not claim the new guard is a complete PostgreSQL parser or could catch every possible PL/pgSQL defect class.
+
+**Files changed:** `supabase/migrations/127_mock_mathematics_bustimetable_subpart_d_wording_correction.sql` (corrected in place, two percent signs escaped plus a disclosure block, still NOT applied), `scripts/lib/raiseFormatCheck.mjs` (new), `scripts/migration-sql-guard.mjs` (modified — now runs both checks), `tests/supabase/migrationRaiseFormatCheck.test.ts` (new), `ALI_DECISION_LOG.md` (this entry). Migration 128 audited, found already correct, byte-unchanged — not listed as modified.
+
+**Migrations created:** none. Migration 127 corrected in place (still unapplied, never successfully applied). Migration 128 unchanged.
+
+**Decision number:** 187.
+
+**Commit SHA:** recorded after commit (see repository history immediately following this entry).
+
+**Production application status:** migrations 127/128 still NOT applied. No production change has occurred at any point in this correction.
+
+**Rationale:** correcting a genuine PL/pgSQL compile-time defect via exhaustive, statement-by-statement re-derivation rather than trusting the error message's own reported line number, and building a permanent, project-wide guard against the exact defect class rather than only patching the one reported instance, follows this arc's own established discipline (Decision 179's own migration-119 syntax-failure standard, applied here to a structurally different but analogous class of production-rejected migration).
+
+**Implications:** Decisions 1-186 all stand, none reversed or rewritten; Decision 186's own educational-correction rationale and `mock-mr13-craftstall` approval are entirely unaffected — this was a migration-implementation defect, not a governance, evidence, or content-correctness defect. No content, marks, eligibility, grouping, RPC, RLS, or review-record change occurs from this decision. The next step is unchanged in kind from Decision 186: a fresh Founder application attempt of the now-corrected migration 127, followed by migration 128, then a fresh Founder re-review of the corrected `mock-mr10-bustimetable` family — not begun here.
+
+---
