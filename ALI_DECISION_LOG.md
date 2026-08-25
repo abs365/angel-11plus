@@ -6553,3 +6553,69 @@ Fresh script computation against the full corrected dataset (both Phase 1's 20 r
 **Implications:** Decisions 1–174 all stand, none reversed or rewritten. No content, marks, eligibility, or grouping actually changes in production from this decision. The next steps remain distinct and future: Founder review and application of migration 118 (closing the Mathematics Marking Integrity Gate in full once applied), and — separately, later — a content-authoring decision addressing the now-confirmed ≥12-mark structural deficit before any First Mock can be assembled.
 
 ---
+
+### Decision 176 — FIRST MATHEMATICS MOCK STRUCTURAL CAPACITY DESIGN: read-only architecture design, no implementation. The Mathematics Marking Integrity Gate (Decisions 172–175) confirmed production-closed. The corrected `mock_eligible` pool (48 rows / 24 experiences / 48 marks, reconstructed exactly, reconciling to Founder-verified production) is compared against the three-year primary-source architecture (Decision 168's own A/B/C/D classification, 30/26/3/3 of 62 real questions): the deficit is **not** "12 marks" but a **composition and subpart-density problem** — Angel already has more numbered experiences (24) than the authentic target (~20-21), but averages ~2.0 marks/subparts per experience against a real ~2.8-3.0, and is ~100% Classification B within `mock_eligible` against a real 48% Classification A. The mechanism generating authentic 60-mark density is identified precisely: subpart multiplicity (2-5 subparts per numbered question, each independently 1 mark), never per-subpart mark inflation. The 8-mark independently_validated reserve (`perimeterarea`, `fairprep`, `runningclub`) is reconstructed and found to be genuinely Classification A throughout, already satisfying every technical POOL-GATE criterion, blocked only by Founder authorisation, not further evidence. A target First Mock blueprint (~20-21 questions, ~58-60 marks, richer subpart density, ~15-20% genuine A-type) is specified, and the smallest defensible first authoring increment identified: one interdependent-algebraic-system family (3 subparts, 3 marks), the single most-recurring real archetype (5 confirmed instances across all three years), requiring no new visual capability. No migration, no content authored, no production mutation.
+
+**Scope and process:** Read-only architecture and evidence synthesis only. No implementation.
+
+---
+
+**PART 1 — CORRECTED BASELINE, RECONSTRUCTED EXACTLY**
+
+48 rows, 24 numbered experiences, 48 marks, reconstructed directly from `migrations/088/091/095` with Decisions 173/175's corrections applied, reconciling exactly to Founder-verified production. 19 families (18 at 2 marks, 3 at 3 marks: `invdiv`/`twostep`/`unitconv`) are Classification B; `costumeschedule` (2 experiences, 4 marks) is C; `mock-mr09-data` (3 standalone 1-mark experiences) is D. **Zero genuine Classification A experiences exist within `mock_eligible`.** Avg = 48/24 = 2.0 marks/experience exactly.
+
+---
+
+**PART 2 — RESERVE, RECONSTRUCTED**
+
+8 rows / 4 experiences / 8 marks: `mock-mr03mr07-perimeterarea` (2 experiences/4 marks, genuine A — subpart (b) reuses (a)'s own converted value, confirmed directly), `mock-mr10-fairprep` (1/2, genuine A), `mock-mr09-runningclub` (1/2, genuine A, real table stimulus). All three already satisfy migration 105's own POOL-GATE CONTRACT in full; the only remaining gate for each is a Founder-authorised promotion migration, not further review.
+
+---
+
+**PART 3 — THE DENSITY MECHANISM, IDENTIFIED PRECISELY**
+
+All three primary-source mark schemes (re-confirmed): "1 mark for each correct answer," 60 marks, 20/21/21 questions. Decision 168's own three-year classification (30 A / 26 B / 3 C / 3 D of 62) stands. Authentic ~60-mark density in ~20-21 questions is produced almost entirely by **subpart multiplicity** — real numbered questions commonly carry 2-5 lettered subparts, each independently 1 mark (real Q5: 5 subparts from one shared rule; Q19-2022: 4 derived queries from one timetable). No confirmed example anywhere of a single-value answer being worth more than 1 mark for being harder — reconfirming Decision 172/174's own finding at the paper-architecture level, not merely the row level.
+
+---
+
+**PART 4 — TRUE DEFICIT AND TARGET ARCHITECTURE**
+
+Angel's experience *count* (24) already exceeds the authentic target (~20-21) — the actual gap is **subpart density** (2.0 vs ~2.8-3.0 avg) and **type mix** (~100% B/near-0% A vs. real 48% A). No existing unrelated rows are recommended for combination (no evidentiary basis found). `mock-mr09-data`'s own Classification D content is over-represented relative to its authentic ~5% share and recommended held largely in reserve for the first form. The corrective lever is new content: 2-3 genuine Classification-A families with 3-4 subparts each (not 2), matching real archetypes already named in Decision 168 but not yet built: an interdependent algebraic system (3 subparts, evidenced 5 times — 2023 Q8/Q18, 2022 Q6, 2021 Q7/Q20, the single most-recurring real archetype), a shared-diagram multi-fact geometry family (2-3 subparts, requires diagram rendering — not currently built, a genuine future capability gap), and a shared-timetable multi-query family (3-4 subparts, richer than a bare forward/reverse pair, evidenced by 2022 Q19).
+
+---
+
+**PART 5 — POOL VS. FORM, RESERVE SUFFICIENCY**
+
+A defensible pool before freezing a ~20-21/60 form should be ≈1.3-1.5× the form itself (≈28-32 experiences/≈75-80 marks) — the current pool sits below even the form's own target. Reserve promotion plus one new archetype reaches only ≈31 experiences/≈59 marks with a thin (~10-experience) reserve after freezing one form — genuinely insufficient for a true second, non-overlapping sitting (which would need a further ≈20 experiences/≈60 marks in reserve, per Decision 135's own established "parent_override" extra-sitting concept), disclosed honestly, not solved here.
+
+---
+
+**PART 6 — BLUEPRINT AND FIRST INCREMENT**
+
+Target: ≈20-21 questions, ≈58-60 marks, avg ≈2.8-3.0 subparts/question, ≈15-20% genuine A-type, QT coverage 11-12 of 13 (MR-01/MR-10 MUST REPRESENT; MR-08/MR-13 OPTIONAL; `mr09-data`'s own D-type instance BETTER HELD AS RESERVE in favour of `mock-mr09-runningclub`). **Recommended first bounded authoring increment: one interdependent-algebraic-system family — 3 rows, 1 experience, 3 marks, text-only, no new visual capability required.** Projected resulting pool once promoted through the full pipeline: 49 rows / 25 experiences / 51 marks — a small, honest step, not a claimed solution.
+
+---
+
+**PART 7 — VISUAL/EI CAPABILITY**
+
+Grouped subparts and tables are built and production-applied (Decisions 161/166/170). Diagram/image rendering is **not built anywhere** — a genuine, named future blocker for the shared-diagram archetype specifically, but not for the recommended first increment (text-only). EI compatibility unchanged from Decision 170: raw score wired, coarse competency unwired, fine QT-level breakdown and misconception surfacing not implemented — inherited, not newly introduced, by any content following the existing architecture.
+
+---
+
+**What this decision does NOT claim:** it does not claim any content, migration, or production state has changed; it does not claim the reserve promotion has occurred; it does not claim the ≥12-mark/type-mix deficit is closed — a target architecture and one small first step are specified, nothing more; it does not claim diagram capability exists; it does not claim the Rolling Programme or long-term anti-memorisation requirement is solved.
+
+**Files changed:** `ALI_DECISION_LOG.md` (this entry only).
+
+**Migrations created:** none.
+
+**Decision number:** 176.
+
+**Commit SHA:** recorded after commit (see repository history immediately following this entry).
+
+**Production application status:** not applicable — no migration, no production change.
+
+**Rationale:** recording this architecture design as a Decision, despite being read-only, follows this arc's own established precedent (Decisions 164/167/168/172/174) for a finding whose conclusion governs the next real authoring step — here, correcting a materially incomplete prior framing ("12 marks needed") into the actually evidenced problem (composition and density, not quantity), before any further content is written.
+
+**Implications:** Decisions 1–175 all stand, none reversed or rewritten. No content, marks, eligibility, or grouping changes from this decision. The next step is a separate, bounded content-authoring decision for the one identified first increment (§6/Part 6) — not begun here.
+
+---
