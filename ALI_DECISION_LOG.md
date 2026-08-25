@@ -6818,3 +6818,73 @@ If this family later passes independent review, `independently_validated`, and m
 **Implications:** Decisions 1-177 all stand, none reversed or rewritten. No content, marks, eligibility, or grouping actually changes in production from this decision. The next steps remain distinct and future: Founder review and application of migrations 119/120, independent review of `mock-mr06-linkedvalues`, and — separately, later, not begun here — a bounded authoring decision for the shared-timetable family, understood as one of several further rounds still required before Decision 177's own quantified deficit is closed.
 
 ---
+
+### Decision 179 — MIGRATION 119 PRODUCTION SYNTAX FAILURE, ROOT CAUSE AND CORRECTION. The Founder attempted to apply migration 119 to production; PostgreSQL rejected it with `ERROR: 42601: syntax error at or near "s"` before any row was written. Root cause, confirmed by direct inspection and a purpose-built quote-balance tokenizer: subpart (c)'s explanation string contained one unescaped apostrophe ("the real archetype's own pattern") while every other apostrophe in the same file was correctly doubled (`''`) per standard PostgreSQL string-literal escaping — the single quote silently closed the string literal mid-sentence, and everything after it was parsed as bare, invalid SQL tokens, matching the reported error exactly (`s` is the first bare token immediately following the premature close). Migration 119 corrected in place (never applied, so corrected directly, not superseded by a new migration number) by doubling the one offending apostrophe — zero change to question content, answers, marks, difficulty, QT/skill, grouping, eligibility, or governance text. Migration 120 fully audited with the same tokenizer and found already valid (10 clean literals, fully balanced) — left byte-unchanged. The existing test suite's blindness to this defect class is explained precisely, not waved away: every migration test in this repository asserts against substrings of the raw file text, which remain true even when the file's own quoting is broken, because the test never parses or executes the SQL — a substring match cannot detect a self-inconsistent quote. A new, real guard is added: `scripts/lib/migrationSqlBalance.mjs` (a single-quote/dollar-quote state-machine tokenizer, comment-stripped first), exposed via `npm run migration-sql-guard` (wired into `npm run lint`, alongside `copy-guard`) and a new repository-wide test (`tests/supabase/migrationSqlLiteralBalance.test.ts`) that proves the guard catches the exact reconstructed original defect, accepts the corrected equivalent, and confirms all 120 current migration files are quote-balanced. No `psql`/Docker/Postgres-compatible engine or SQL-parsing package is available in this environment; this is disclosed as a genuine residual limitation — the guard proves quote-consistency, not full SQL validity (a missing comma or misspelled keyword would still only be caught by Supabase itself). Full verification suite re-run and passes (1515/1515 tests, 7 new; `tsc` clean; ESLint at established baseline; Copy Quality Guard PASS; Migration SQL Guard PASS; production build succeeds). Decision 178's educational approval is unaffected and stands. Production application of migrations 119/120 remains pending Founder action.
+
+**Scope and process:** Bounded correction of an unapplied migration's SQL syntax, plus one new repository-wide verification guard. No new content authored, no scope broadened.
+
+---
+
+**PART 1 — RECONCILIATION**
+
+`HEAD == origin/main` at `df203d6` (Decision 178) confirmed via `git fetch`/`git rev-parse` before and after this correction. Migration 119 exists (as committed in Decision 178). Migration 120 exists (as committed in Decision 178). Neither has been applied to production — the Founder's own report confirms migration 119's application failed at parse time before any mutation, and migration 120 was never attempted as a result. No Founder manual correction was made to either file. `ali_mock_form` remains untouched (0 rows).
+
+---
+
+**PART 2 — ROOT CAUSE**
+
+Direct inspection of line 206 (the executable line PostgreSQL's own error cited) found: `matching the real archetype's own pattern of an increasingly demanding final subpart (e.g. 2023 Q18(iii)''s own multi-value combined expression)`. `archetype's` carries exactly one apostrophe; `Q18(iii)''s`, four lines earlier in the same file's own convention (`bag''s count`, migration 119's subparts (a)/(b) explanations), carries two. The single, unescaped apostrophe closes the enclosing `'...'` string literal at exactly that point; PostgreSQL then attempts to parse ` own pattern of an increasingly demanding final subpart (e.g. 2023 Q18(iii)` as raw SQL, and the very next token — the bare letter `s` immediately following the premature close — is exactly what production reported: `syntax error at or near "s"`.
+
+A purpose-built tokenizer (`scripts/lib/migrationSqlBalance.mjs`, written for this correction and now a permanent guard) was run against migration 119's full executable region before any fix: it confirmed the parse state was left unbalanced (still inside a string literal) at end of file — independent, mechanical proof of the same defect, not merely a plausible narrative. The same tokenizer was run against every apostrophe-adjacent span in the file's comment header (all before `begin;`, therefore never executed by PostgreSQL and irrelevant to the failure) and against migration 120 in full: migration 120 contains zero apostrophes anywhere in its executable text and tokenizes as fully balanced — audited, confirmed valid, left byte-unchanged.
+
+**Failure occurred before any mutation:** confirmed by the Founder's own report (production rejected the statement at parse time) and consistent with PostgreSQL's own transactional `begin;`/`commit;` wrapping in migration 119 — a parse-time syntax error prevents the transaction from ever starting.
+
+---
+
+**PART 3 — CORRECTION**
+
+Migration 119 corrected directly (never applied, so no new migration number was needed): `archetype's` → `archetype''s`, the same doubling convention already used correctly elsewhere in the same file. Nothing else in the file was touched. Re-run of the full pre-existing content-integrity test suite (`tests/supabase/mockMathematicsStructuralCapacityInc001Content.test.ts`, 17 tests, unmodified) confirms byte-for-byte-identical question content, answers (8/42/20), marks (1/1/1), grouping (`question_group_id`/`group_order`/`subpart_label`/`marking_mode`), QT-MR-06, difficulty (medium/medium/hard), eligibility (`authentic_assessment_candidate`, `active = true`), and every other field — all 17 pass unchanged. The tokenizer confirms the corrected file is now fully balanced (0 remaining unbalanced strings, 3 dollar-quoted `$json$` blocks, matching the 3 rows exactly).
+
+---
+
+**PART 4 — MIGRATION 120 AUDIT**
+
+Fully audited with the same tokenizer: 10 single-quoted literals (`question_family`, `mock-mr06-linkedvalues` ×2, `UNASSIGNED`, `pending_independent_review` ×2, the notes string ×2, `mock_maths_independent_review` ×2), zero apostrophes anywhere, fully balanced at end of file. **Already valid — left byte-unchanged.**
+
+---
+
+**PART 5 — WHY THE EXISTING TESTS MISSED THIS**
+
+Not described as sufficient; the actual mechanism is: every migration test in this repository (including this increment's own 17 content tests) parses the raw `.sql` file as **text**, using `.match()`/`.includes()`/JSON-block regex extraction against the comment-stripped string. None of these tests ever hands the file to a real SQL parser or executor. A substring assertion (e.g. "the explanation mentions `2023 Q18`") remains true whether or not the surrounding quoting is valid SQL, because the characters are still physically present in the file in the same order — the test has no way to observe that PostgreSQL's own tokenizer would treat those same characters as two broken fragments rather than one string. This is a structural gap in the *category* of test this repository has always used for migrations (text-pattern assertion, established for good reason — no local Postgres engine is available), not a defect specific to this increment's own tests, and not something any of Decision 178's other checks (`tsc`, ESLint, Copy Quality Guard, `next build`) could have caught either, since none of them parses embedded SQL string literals.
+
+---
+
+**PART 6 — NEW GUARD**
+
+`scripts/lib/migrationSqlBalance.mjs` exports `checkMigrationSqlBalance(sql)`: strips `--` comments (matching this repository's own established `executable` derivation), tracks `$tag$...$tag$` dollar-quoted blocks as opaque, and tracks `'...'` string literals with standard PostgreSQL `''`-escaping, reporting whether the file ends balanced. `scripts/migration-sql-guard.mjs` runs it against every file in `supabase/migrations/*.sql` and fails (exit 1) if any is unbalanced; wired into `package.json` as `npm run migration-sql-guard`, itself now part of `npm run lint` (`eslint && npm run copy-guard && npm run migration-sql-guard`). `tests/supabase/migrationSqlLiteralBalance.test.ts` (7 tests) proves: the guard detects the reconstructed original defect verbatim; accepts the corrected equivalent; ignores quotes inside comments; confirms migrations 119 and 120 are individually balanced; confirms **all 120 current migration files in the repository** are balanced (repository-wide, not scoped to this one increment); confirms the npm-script wiring exists. **Residual limitation, disclosed, not hidden:** this is a quote-balance check, not a real PostgreSQL parser — it cannot catch a missing comma, a misspelled keyword, or a type mismatch; no `psql`, Docker, or Postgres-compatible engine, and no SQL-parsing npm package, is available in this repository's environment, and installing one was assessed as out of scope for this bounded correction. The guard is the strongest practical, zero-new-dependency check available, and it demonstrably would have caught the exact migration 119 defect before Founder application.
+
+---
+
+**PART 7 — FULL VERIFICATION RE-RUN**
+
+`npm test`: **1515/1515 pass** (1508 Decision-178 baseline + 7 new guard tests; zero regressions). `npx tsc --noEmit`: clean. `npx eslint .`: 81 problems (62 errors/19 warnings), identical to the established baseline. `npm run copy-guard`: PASS, 0 violations, 257 files. `npm run migration-sql-guard`: PASS, 120 migration files, all quote-balanced. `npm run build`: succeeds (exit 0).
+
+---
+
+**What this decision does NOT claim:** it does not claim migration 119 or 120 has now been applied to production (both remain NOT APPLIED, awaiting a fresh Founder application attempt); it does not claim any row's eligibility_status, marks, or grouping has changed; it does not claim Decision 178's educational review is reopened (it is not — the correction is syntax-only, content-identical, proven by the unmodified content-integrity tests); it does not claim this guard proves full SQL validity, only quote-literal balance; it does not claim any other migration in the repository has ever failed in production (only migration 119's own attempted application is known to have failed).
+
+**Files changed:** `supabase/migrations/119_mock_mathematics_structural_capacity_increment001_algebraic_system.sql` (corrected in place, one apostrophe doubled, still NOT applied), `scripts/lib/migrationSqlBalance.mjs` (new), `scripts/migration-sql-guard.mjs` (new), `package.json` (modified — new `migration-sql-guard` script, wired into `lint`), `tests/supabase/migrationSqlLiteralBalance.test.ts` (new), `ALI_DECISION_LOG.md` (this entry). Migration 120 audited, found valid, byte-unchanged — not listed as modified.
+
+**Migrations created:** none. Migration 119 corrected in place (still unapplied). Migration 120 unchanged.
+
+**Decision number:** 179.
+
+**Commit SHA:** recorded after commit (see repository history immediately following this entry).
+
+**Production application status:** migrations 119/120 still NOT applied. No production change has occurred at any point in this correction.
+
+**Rationale:** correcting an unapplied migration directly, rather than creating a new migration solely to patch a syntax defect no production row has ever been touched by, follows this arc's own established discipline of the smallest defensible correction; building a real, mechanically-verified quote-balance guard rather than merely fixing the one reported string follows the same discipline this arc applied to migration 117/118's own re-derivation standard — trust independent verification over a single passing narrative, and make the specific defect class mechanically un-repeatable rather than merely patched once.
+
+**Implications:** Decisions 1-178 all stand, none reversed or rewritten; Decision 178's own educational approval and primary-source evidence are unaffected. No content, marks, eligibility, or grouping changes from this decision. The next step is unchanged from Decision 178: a fresh Founder application attempt of the now-corrected migration 119, followed by migration 120, then independent review — not begun here.
+
+---

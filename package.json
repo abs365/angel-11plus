@@ -6,8 +6,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint && npm run copy-guard",
+    "lint": "eslint && npm run copy-guard && npm run migration-sql-guard",
     "copy-guard": "node scripts/copy-quality-guard.mjs",
+    "migration-sql-guard": "node scripts/migration-sql-guard.mjs",
     "test": "tsx --test tests/**/*.test.ts"
   },
   "dependencies": {
