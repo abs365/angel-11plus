@@ -7210,3 +7210,81 @@ Genuine reasoning: holds — all four reserve families are real interdependent/s
 **Implications:** Decisions 1-182 all stand, none reversed or rewritten. No content, marks, eligibility, grouping, or production state changes from this decision. The next step is a separate, future Founder-authorised mock-eligibility promotion decision for the three bounded families named above — not begun here — followed, separately again, by a bounded authoring decision for a richer shared-timetable family.
 
 ---
+
+### Decision 184 — FIRST MATHEMATICS MOCK, BOUNDED RESERVE ADMISSION IMPLEMENTATION. Prepares migration 124, promoting exactly the 7 rows of the 3 families Decision 183 recommended (`mock-mr10-fairprep`, `mock-mr09-runningclub`, `mock-mr06-linkedvalues`) from `independently_validated` to `mock_eligible`, while `mock-mr03mr07-perimeterarea`'s 4 rows are structurally, provably excluded and remain `independently_validated` reserve. The `mock_eligible` contract is re-read from source (migrations 069/084's own RLS SELECT policies, migration 070's own table creation) rather than assumed: promotion seals a row from ordinary anon/authenticated SELECT (previously readable as `independently_validated`) and makes it reachable to a learner only through the ownership/status/expiry/manifest-gated `mock_get_question()` RPC; no migration anywhere ever auto-inserts into `ali_mock_form`, so promotion cannot activate a form, create an attempt, or expose content by construction; Practice reads via the wholly distinct `practice_eligible` status these rows have never carried. Every family's governance is individually re-audited (active, deterministic marking, correct grouping, 1 mark/subpart, non-empty question, plus family-specific presentation metadata — runningclub's structured table stimulus, linkedvalues' exact `sharedStem` — asserted only where relevant, never on `fairprep`) before the migration's own fail-closed three-state structure runs. Decision 182's own lesson is applied directly, not merely cited: every review-evidence predicate uses an unanchored `LIKE '%MARKER%'` and accepts any count ≥ 1 approved record per family, never an anchored or exactly-one-approval assumption. A full pre-write `prompt` snapshot proves byte-for-byte preservation across all 7 rows; `perimeterarea`'s reserve state is explicitly re-verified both before and after the write, in both the apply and already-applied branches. Projected result if applied: `mock_eligible` 55 rows/27 experiences/55 marks (3A/19B/2C/3S), `independently_validated` reserve 4 rows/2 experiences/4 marks (`perimeterarea` only). Decision 183's own composition-ceiling finding is unchanged and re-confirmed: 44 marks@20 questions / 46 marks@21 questions, still ≈14-16 short of authentic ≈58-60 — First Mock readiness and Rolling Programme readiness both remain NOT READY; this migration changes eligibility only, adds no new content, and does not narrow either gap. Full verification suite passes (1628/1628 tests, 26 new; `tsc` clean; ESLint at established baseline; Copy Quality Guard PASS; Migration SQL Guard PASS — restated: quote-balance only; production build succeeds). Migration 124 NOT applied.
+
+**Scope and process:** One bounded eligibility-admission migration, fully verified, NOT applied. No content authored, no form created, no First Mock composed.
+
+---
+
+**PART 1 — RECONCILIATION**
+
+`HEAD == origin/main` at `dec8f0c` (Decision 183) confirmed before and after. Founder production baseline treated as authoritative: `mock_eligible` 48/48, `independently_validated` 11/11, `ali_mock_form` 0. No migration after 123 already implements this admission.
+
+---
+
+**PART 2 — EXACT ADMISSION SCOPE, DERIVED FROM SOURCE**
+
+Re-derived directly from migrations 113 and 119, not assumed: `mock-mr10-fairprep-01`, `mock-mr10-fairprep-02` (QT-MR-10, 1 experience, 2 marks); `mock-mr09-runningclub-01`, `mock-mr09-runningclub-02` (QT-MR-09, 1 experience, 2 marks); `mock-mr06-linkedvalues-01`, `-02`, `-03` (QT-MR-06, 1 experience, 3 marks). **7 rows, 3 families, 3 numbered experiences, 7 marks — confirmed, matching the expected aggregate exactly.**
+
+---
+
+**PART 3 — EXCLUSION PROOF**
+
+`mock-mr03mr07-perimeterarea-01a/01b/02a/02b` never appears in migration 124's own `v_target_ids` array — confirmed by direct source inspection and by a dedicated migration-level guard (`if exists (select 1 from unnest(v_excluded_ids) e where e = any(v_target_ids)) then raise exception`) that would refuse to run if it ever did. A separate live precondition requires all 4 of `perimeterarea`'s own rows to read `independently_validated` before any write, re-checked again after the write (both in the apply branch and the already-applied no-op branch). Its content, review evidence, grouping, and eligibility are never touched by this migration — confirmed: no `UPDATE`, `SET`, or write of any kind ever targets those 4 ids.
+
+---
+
+**PART 4 — GOVERNANCE AUDIT, PER FAMILY**
+
+All three: independent review complete, `ali_family_review` decision `approved`, `review_type=mock_maths_independent_review`, `reviewer=Ayobami Lawal`, `independently_validated` (migrations 116/123), `active=true`, `marking_mode=deterministic`, correct grouping, 1 mark/subpart, no unresolved content-quality, visual, or marking-integrity blocker. `mock-mr06-linkedvalues`'s production visual closure (Decision 182, shared stem rendered once) and `mock-mr09-runningclub`'s structured table stimulus are asserted as live migration preconditions, not merely referenced. No family failed any gate; none was promoted opportunistically ahead of a failed sibling.
+
+---
+
+**PART 5 — MOCK-ELIGIBILITY CONTRACT, RE-READ**
+
+Migrations 069/084's own RLS `SELECT` policy on `ali_question_bank` (`using (eligibility_status is distinct from 'mock_eligible' or is_current_user_admin())`) confirms promotion *seals* a row from ordinary direct read — it was previously readable as `independently_validated`, and becomes admin-only-direct-read plus RPC-gated. `mock_get_question()` (migrations 070/106/115/122) independently re-enforces attempt ownership, in-progress status, expiry, and assigned-manifest membership, unchanged by this migration. No migration in this repository has ever inserted into `ali_mock_form` (confirmed by repository-wide search); this migration cannot activate a form, create an attempt, or expose content, by construction. Practice reads via the distinct `practice_eligible` status, never touched here. Scoring and mastery evidence pathways read raw component ids/marks, entirely unaffected.
+
+---
+
+**PART 6 — MIGRATION, PRECONDITIONS, IDEMPOTENCY, PRESERVATION**
+
+`supabase/migrations/124_mock_mathematics_bounded_reserve_admission.sql` — targets exactly the 7 ids above; preconditions cover subject/family/active/marking_mode/marks/non-empty-question, exact per-family grouping shape (VALUES-join, following migration 123's own drafting-lesson pattern), `runningclub`'s table-stimulus shape, `linkedvalues`'s exact `sharedStem`, and per-family live review-evidence (unanchored marker, any count ≥1). Fail-closed three-state: exactly 7 `independently_validated` target rows → apply, full pre-write `prompt` snapshot compared byte-for-byte post-write; exactly 7 already `mock_eligible` → no-op notice, with `perimeterarea`'s reserve state re-checked even in this branch; any other combination → `RAISE EXCEPTION`, touching nothing. The only column the `UPDATE` ever names is `eligibility_status`.
+
+---
+
+**PART 7 — PROJECTED POST-ADMISSION STATE, RE-DERIVED**
+
+`mock_eligible`: 48+7 = **55 rows / 24+3=27 experiences / 48+7=55 marks**, Classification 0+3=**3 A** / 19 B / 2 C / 3 S. `independently_validated` reserve: 11−7 = **4 rows / 2 experiences / 4 marks** (`perimeterarea` only). `ali_mock_form`: unchanged, 0. Difficulty impact of the 7 admitted rows: +4 medium, +3 hard, +0 easy. QT coverage unchanged (all 13 already present); QT-09/QT-10/QT-06 each gain their first genuine Classification-A instance in the eligible pool.
+
+---
+
+**PART 8 — FIRST MOCK AND ROLLING PROGRAMME, RE-CONFIRMED UNCHANGED**
+
+Decision 183's own richest-first composition-ceiling reasoning applies identically post-admission, since no new content is created: **44 marks at 20 questions, 46 marks at 21 questions**, still ≈14-16 short of authentic ≈58-60. **First Mock readiness: still NOT READY.** Reserve after this admission (4 rows/2 experiences/4 marks, one archetype) remains thin; every Classification-A archetype remains a single instance. **Rolling Programme readiness: still NOT READY.** This migration is an eligibility transition only — it narrows neither gap, and is not claimed to.
+
+---
+
+**PART 9 — VERIFICATION**
+
+26 new tests in `tests/supabase/mockMathematicsBoundedReserveAdmission.test.ts`, covering: exact 7-row/3-family target; structural and live perimeterarea exclusion/reserve-preservation (both branches); per-family content-shape and grouping preconditions, including family-specific-only stimulus/sharedStem checks; the Decision-182-corrected unanchored review-evidence predicate with an explicit regression proving no anchored pattern regressed back in; acceptance of ≥1 (never exactly 1) approvals; `eligibility_status` as the sole `SET` column; full-prompt preservation proof; idempotent no-op structure; fail-closed mixed-state refusal; no `ali_family_review`/`ali_mock_form`/RPC/RLS/grant/Practice touch. **Full suite: 1628/1628 pass** (1602 baseline + 26 new; zero regressions). `npx tsc --noEmit`: clean. ESLint: 81 problems (62 errors/19 warnings), identical to baseline. Copy Quality Guard: PASS, 0 violations, 257 files. Migration SQL Guard: PASS, 124 files — quote-balance only, not semantic SQL correctness. Production build: succeeds.
+
+---
+
+**What this decision does NOT claim:** it does not claim migration 124 has been applied (NOT APPLIED); it does not claim any row's `eligibility_status` has actually changed in production; it does not claim `perimeterarea` has been altered in any way; it does not claim `ali_mock_form` has been created or any composition performed; it does not claim the First Mock or Rolling Programme deficit is narrowed; it does not claim shared-timetable or price-list/menu has been authored or begun.
+
+**Files changed:** `supabase/migrations/124_mock_mathematics_bounded_reserve_admission.sql` (new, NOT applied), `tests/supabase/mockMathematicsBoundedReserveAdmission.test.ts` (new), `ALI_DECISION_LOG.md` (this entry).
+
+**Migrations created:** 124 — drafted, tested, NOT applied.
+
+**Decision number:** 184.
+
+**Commit SHA:** recorded after commit (see repository history immediately following this entry).
+
+**Production application status:** migration 124 NOT applied. No production change has occurred.
+
+**Rationale:** implementing exactly the bounded scope Decision 183 recommended, re-verifying rather than re-asserting the mock-eligibility contract and the review-evidence predicate lesson from Decision 182, follows this arc's own established discipline of independent re-derivation over trusted carry-forward at every implementation step.
+
+**Implications:** Decisions 1-183 all stand, none reversed or rewritten. No content, marks, eligibility, grouping, RPC, RLS, or review-record change occurs from this decision. The next step is a fresh Founder application of migration 124 — not begun here — followed, separately, by a bounded authoring decision for a richer shared-timetable family (or, per Decision 183's own reassessment, shared price-list/menu, now a roughly co-equal candidate).
+
+---
