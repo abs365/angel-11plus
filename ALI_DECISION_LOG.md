@@ -7288,3 +7288,95 @@ Decision 183's own richest-first composition-ceiling reasoning applies identical
 **Implications:** Decisions 1-183 all stand, none reversed or rewritten. No content, marks, eligibility, grouping, RPC, RLS, or review-record change occurs from this decision. The next step is a fresh Founder application of migration 124 — not begun here — followed, separately, by a bounded authoring decision for a richer shared-timetable family (or, per Decision 183's own reassessment, shared price-list/menu, now a roughly co-equal candidate).
 
 ---
+
+### Decision 185 — MATHEMATICS STRUCTURAL CAPACITY, AUTHORING WAVE 002: SHARED TIMETABLE + SHARED PRICE-LIST/MENU. Founder production baseline confirmed (`mock_eligible` 55/55, `independently_validated` 4/4 — `perimeterarea` reserve, `ali_mock_form` 0). Primary-source evidence re-read directly this session (not from Decision prose): Family A (shared timetable) is evidenced by the real 2022 Q19 — a genuine 4x2 table, 4 subparts, 4 marks — found, on direct re-reading, to be structurally RICHER than the shape `mock-mr10-fairprep`'s own citation grouped it with; Family B (shared price-list) is evidenced by the real 2021 Q6 — a genuine price list, 3 subparts, reverse-reasoning capstone — with 2023 Q16's "restaurant menu" explicitly excluded as evidence (a combinatorics/counting question, no prices, a different archetype honestly distinguished, not conflated). Two original Classification-A families authored: `mock-mr10-bustimetable` (4 rows/1 experience/4 marks, QT-MR-10 reused) and `mock-mr13-craftstall` (3 rows/1 experience/3 marks, QT-MR-13 reused from `mock-mr13-bestvalue`). Every answer independently verified via two methods including exhaustive-search uniqueness proof for the reverse-reasoning subpart; every duration answer stored as a bare number of minutes specifically to keep it deterministically exact-match scorable, rather than authoring an ambiguous free-text duration format. Both families use the established `prompt.stimulus` table contract and an explicit `prompt.sharedStem` (Decision 180's contract), verified byte-for-byte as a genuine prefix relationship before writing. Content migration (125) and pending-review registration (126, marker `MOCK-STRUCTURAL-CAPACITY-WAVE002`) are separated per established precedent; the admin review surface is traced and wired end-to-end, not assumed reachable. Recomputing the composition ceiling — not assuming it rises by the raw 7-mark total — finds a real but modest gain: **47 marks at 20 questions, 49 at 21** (up from 44/46), because the two new families are genuinely richer (3- and 4-mark) experiences that displace lower-value 2-mark filler slots, not because 7 marks were simply added. **First Mock readiness: still NOT READY** (~9-13 marks short of authentic ~58-60) — real, quantified progress, not manufactured readiness. Full verification suite passes (1669/1669 tests, 41 new; `tsc` clean; ESLint at established baseline; Copy Quality Guard PASS; Migration SQL Guard PASS; production build succeeds). Neither migration applied; neither family approved, validated, or made mock-eligible.
+
+**Scope and process:** Two-family bounded authoring wave, full governance/testing discipline, two forward-only migrations (both NOT applied). No promotion, no form, no First Mock composition.
+
+---
+
+**PART 1 — RECONCILIATION**
+
+`HEAD == origin/main` at `171e4d2` (Decision 184) confirmed before and after. Founder production baseline treated as authoritative: `mock_eligible` 55/55, `independently_validated` 4/4 (`perimeterarea` only), `ali_mock_form` 0. No later structural-capacity migration already implements this wave (confirmed: 124 is the last migration before this session's own 125/126).
+
+---
+
+**PART 2 — PRIMARY-SOURCE EVIDENCE LOCK**
+
+**Family A (timetable):** 2022 Q19, re-read directly via `pdftotext` this session — a genuine 4-stop x 2-column (morning/afternoon) table, 4 subparts: (a) single-column total journey time; (b) a cross-column stage-duration comparison; (c) a cross-row/cross-column waiting-time gap; (d) a percentage reduction applied to a derived (not directly read) value. **Correction disclosed, not silently built around:** `mock-mr10-fairprep`'s own migration-113 citation ("2023 Q9/2021 Q9/2022 Q19") grouped this real question with a simpler forward/reverse shape; direct re-reading this session confirms 2022 Q19 is itself the richer, table-based, 4-subpart structure — `fairprep`'s own content and certification are unaffected, but the earlier citation's implicit "3/3-year, same-shape" framing is corrected here: the rich table-timetable archetype has exactly ONE confirmed real instance, honestly disclosed as single-year, not three. Evidence sufficiency verdict: **SUFFICIENT**.
+
+**Family B (price-list/menu):** 2021 Q6, re-read directly — a genuine price list (pack- and per-item-priced goods), 3 subparts: (a) combined cost across items requiring pack-to-quantity conversion; (b) a cheapest-per-quantity comparison across every listed item; (c) reverse reasoning from an exact total to a unique quantity, under a purchase constraint. 2023 Q16 ("restaurant menu") was checked and explicitly excluded: it is a combinatorics/counting question with no prices at all — a different archetype, not conflated with this one. Evidence sufficiency verdict: **SUFFICIENT**.
+
+---
+
+**PART 3 — FAMILY A: `mock-mr10-bustimetable`**
+
+Original scenario (Hillview/Milltown/Riverside/Oakford bus route) — no CSSE place names, service, or numbers reused. 4 rows, `question_group_id=mock-mr10-bustimetable`, `group_order` 1-4, `subpart_label` (a)-(d), `marking_mode=deterministic`, QT-MR-10 (reused, not invented). Answers — 95, 7, 370, 28 (minutes) — independently verified via two methods (manual clock arithmetic and a minutes-since-midnight script) before authoring, and re-verified again in this session's own test suite. Every answer stored as a bare number, not a free-text duration string, specifically because a "N hours M minutes" format admits multiple valid representations incompatible with exact-match scoring — an explicit application of this session's own instruction to redesign rather than author an unsafely-scorable subpart. Difficulty: (a)/(b) medium, (c)/(d) hard, assigned on genuine reasoning demand (cross-column-and-row reasoning for (c); derive-then-apply-percentage for (d), matching 2022 Q19(d)'s own role as that paper's hardest subpart in the family). Classification A proof: one shared table stated once; all 4 subparts read from and reason about that same table; later subparts ((c), (d)) require synthesising information the earlier subparts never needed to combine. Originality: repository-wide search for every place name found zero prior use; checked against `fairprep`/`forwardschedule`/`reverseschedule` — no shared numbers or scenario, and this is the only one of the four using a real table stimulus, cross-stage comparison, or percentage-derived reasoning.
+
+---
+
+**PART 4 — FAMILY B: `mock-mr13-craftstall`**
+
+Original scenario (craft-fair stall selling keyrings/bracelets/stickers) — no CSSE fruits, packs, or numbers reused. 3 rows, `question_group_id=mock-mr13-craftstall`, `group_order` 1-3, `subpart_label` (a)-(c), `marking_mode=deterministic`, QT-MR-13 (Best-Value, reused from `mock-mr13-bestvalue`'s own existing tag — deliberately not a new QT: the organising reasoning demand throughout is unit-value/price-list reasoning). Answers — 18.00, "Stickers", 3 — independently verified via two methods, including an exhaustive whole-pack search proving subpart (c)'s solution is genuinely unique (not assumed): only one whole-pack sticker quantity (3) yields an integer bracelet count (3) matching the stated £8.40 total. Difficulty: (a)/(b) medium, (c) hard (reverse/search reasoning with a uniqueness constraint, matching 2021 Q6(c)'s own role as that family's hardest subpart). Classification A proof: one shared price list stated once; (a) and (c) both require combining information across more than one row of that list; this is `mock-mr13-bestvalue`'s own Question Type represented at genuine Classification-A, 3-subpart depth for the first time (the existing family is a 2-row, Classification-B pair of unrelated comparisons). Originality: repository-wide search for every item/scenario name found zero prior use except one coincidental, unrelated "stickers" mention in an existing Practice ratio problem (checked and cleared — no shared structure); checked against `mock-mr13-bestvalue` and `mock-mr06-sumdiff`/`multiplerelation` for the reverse-reasoning pattern — structurally distinct (exhaustive whole-pack search under a real constraint, not a direct algebraic system).
+
+---
+
+**PART 5 — STRUCTURED STIMULUS, SHARED STEM, VISUAL STANDARD**
+
+Both families use `prompt.stimulus` (Decision 170's table contract), identical across every row in the family so `selectDisplayUnitStimulus()` renders it once per experience, exactly as already proven for `mock-mr09-runningclub`. Both use `prompt.sharedStem` (Decision 180's contract) because each family's intro sentence would otherwise repeat 3-4 times — verified, before writing, that the declared stem is an exact literal prefix of every row's own `question` text with a non-empty tail, the same rule `resolveGroupSharedStem()` enforces at render time (re-confirmed this session against the real authored content, not merely asserted). No new stimulus type or heuristic text-stripping was introduced. No live-browser visual walkthrough is claimed — `ali_mock_form` is 0, so no attempt can exist; visual verification is limited to source-level proof that the same generic, already-production-confirmed rendering mechanism (Decision 180/181/182) applies correctly to these two new shapes, demonstrated directly against the real authored content in this session's own test suite.
+
+---
+
+**PART 6 — EDUCATIONAL INTELLIGENCE**
+
+No new EI engine or capability implemented. Each subpart's correct/incorrect outcome maps to a specific, disclosed reasoning demand (e.g. timetable (c)'s incorrect answer likely indicates conflating same-column times rather than reading the correct cross-column/cross-row pair; craft-stall (c)'s incorrect answer likely indicates ignoring the whole-pack constraint) — captured today only as binary correct/incorrect plus QT/subpart/grouped-experience identity, the same standing architecture every prior grouped family already uses; the finer misconception-specific diagnosis recorded in `addresses_misconception` remains unwired to durable mastery, an existing, disclosed gap, not newly introduced or newly solved here.
+
+---
+
+**PART 7 — REVIEW SURFACE AND LEARNER-RENDERING TRACE**
+
+Traced and wired end-to-end (Decision 170's own lesson, not assumed): `MOCK_STRUCTURAL_CAPACITY_WAVE002_MARKER`/`_FAMILIES`/`_TARGET_IDS`, `buildMockStructuralCapacityWave002NotesPrefix()`, `deriveMockStructuralCapacityWave002ReviewStatus()`, `fetchMockStructuralCapacityWave002ReviewStatus()` added to `lib/adminReview.ts`; `MockStructuralCapacityWave002Section` component, state, `load()` fetch, `ReviewForm` modal branch, and JSX render call added to `app/admin-beta/review/page.tsx`, mirroring `MockStructuralCapacityInc001Section` exactly, using a new, deliberately distinct marker (`MOCK-STRUCTURAL-CAPACITY-WAVE002`). Learner-rendering trace: since `ali_mock_form` is 0, no live walkthrough is claimed; instead, `resolveGroupSharedStem()` and `selectDisplayUnitStimulus()` — the exact pure functions the real learner renderer calls — are exercised directly against both families' real authored content in this session's own test suite, proving each resolves to one shared stem, the correct number of distinct non-empty tails, and one valid table stimulus per experience. Palette/timer/navigation/answer-persistence code is unmodified (no learner-facing code was touched by this migration).
+
+---
+
+**PART 8 — CAPACITY IMPACT AND RECOMPUTED COMPOSITION CEILING**
+
+New content: +7 rows / +2 numbered experiences / +7 marks, both Classification A, +4 medium/+3 hard difficulty. **Projected architecture only if both families were later reviewed, independently validated, and admitted to `mock_eligible` (none of these transitions performed here):** `mock_eligible` would become 62 rows / 29 experiences / 62 marks (5 A / 19 B / 2 C / 3 S); `independently_validated` reserve unchanged at 4 (`perimeterarea` only).
+
+Recomputing the richest-first composition ceiling against this projected 29-experience pool (not assuming a naive +7): the pool now contains 1 four-mark experience (`bustimetable`) and 5 three-mark experiences (`invdiv`/`twostep`/`unitconv`/`linkedvalues`/`craftstall`), plus the same 20 two-mark and 3 one-mark experiences as before. **20-question ceiling: 1×4 + 5×3 + 14×2 = 47 marks. 21-question ceiling: 1×4 + 5×3 + 15×2 = 49 marks.** This is a real, modest gain of +3 marks at both question counts (not +7) — the two new families displace lower-value 2-mark filler slots rather than adding pure surplus, exactly the effect this session's own directive warned must be recomputed, not assumed.
+
+---
+
+**PART 9 — READINESS VERDICTS**
+
+**First Mock readiness: still NOT READY.** 47-49 marks against an authentic ≈58-60 target is a genuine narrowing (from Decision 184's own ≈14-16-mark shortfall to ≈9-13), but the target is not lowered, marks are not inflated, and not every available family is force-included merely because it exists — authenticity is not traded for convenience. **Rolling Programme readiness: still NOT READY.** Both new archetypes now exist as exactly one instance each; genuine sustained-use readiness requires multiple independent variants per archetype.
+
+**Future variant blueprint (planning only, none authored):** Timetable — a two-operator comparison table; a weekday/weekend (rather than morning/afternoon) column split; a deadline-constraint objective ("which service arrives by X"). Price-list — a multi-stall price comparison; a bulk-discount structure; a budget-maximisation objective. Changing only names and numbers is explicitly not a variant.
+
+**Visual capability roadmap:** unchanged from Decision 177/183 — structured table stimulus, `sharedStem`, and grouped subparts remain the full built capability; diagrams, plotted coordinate graphs, geometric figures, and measurement diagrams remain entirely unbuilt, still blocking the shared-diagram archetype (6 real instances) specifically; neither family in this wave needed any of them.
+
+---
+
+**PART 10 — VERIFICATION**
+
+41 new tests across 5 files, covering: exact 7-row/2-family content shape, marks, grouping, QT reuse, candidate-only eligibility; independent semantic re-derivation of every answer (including exhaustive uniqueness proof for craft-stall (c)); stimulus and `sharedStem` correctness (identical-across-rows, exact-prefix, non-empty-tail); pending-review registration with the new marker; full review-surface wiring (config, imports, state, `load()`, modal, render, marker filter); and a learner-rendering trace exercising the real generic render functions against the real authored content. **Full suite: 1669/1669 pass** (1628 baseline + 41 new; zero regressions). `npx tsc --noEmit`: clean. ESLint: 81 problems (62 errors/19 warnings), identical to baseline. Copy Quality Guard: PASS, 0 violations, 257 files. Migration SQL Guard: PASS, 126 files — quote-balance only, not semantic SQL correctness or a PostgreSQL parser; production application remains Founder-controlled after review. Production build: succeeds.
+
+---
+
+**What this decision does NOT claim:** it does not claim either migration has been applied (both NOT APPLIED); it does not claim either family has been reviewed, approved, independently validated, or made `mock_eligible`; it does not claim `ali_mock_form` exists or any composition occurred; it does not claim First Mock or Rolling Programme readiness is achieved — only that the deficit has genuinely, quantifiably narrowed; it does not claim a live-browser visual walkthrough was performed; it does not claim diagram capability exists; it does not claim a third family or any future variant has been authored.
+
+**Files changed:** `supabase/migrations/125_mock_mathematics_structural_capacity_wave002_timetable_pricelist.sql` (new, NOT applied), `supabase/migrations/126_mock_mathematics_structural_capacity_wave002_pending_review.sql` (new, NOT applied), `lib/adminReview.ts` (modified — new batch config, unchanged existing exports), `app/admin-beta/review/page.tsx` (modified — new Section component and wiring, unchanged existing sections), 3 new test files, `ALI_DECISION_LOG.md` (this entry).
+
+**Migrations created:** 125 — drafted, tested, NOT applied. 126 — drafted, tested, NOT applied.
+
+**Decision number:** 185.
+
+**Commit SHA:** recorded after commit (see repository history immediately following this entry).
+
+**Production application status:** migrations 125/126 NOT applied. No production change has occurred.
+
+**Rationale:** authoring exactly the two Founder-authorised families, with primary-source evidence independently re-read and a real citation-grouping imprecision disclosed rather than silently repeated, and recomputing (not assuming) the resulting composition ceiling, follows this arc's own established discipline — a bounded increment stays bounded, and every capacity claim in this entry is either directly tested or directly re-derived.
+
+**Implications:** Decisions 1-184 all stand, none reversed or rewritten. No content, marks, eligibility, grouping, RPC, RLS, or review-record change occurs from this decision. The next steps remain distinct and future: Founder review and application of migrations 125/126, independent review of both families, and — separately, later — further bounded authoring rounds (per Part 9's own future-variant blueprint) to continue narrowing the ≈9-13-mark remaining First Mock deficit.
+
+---

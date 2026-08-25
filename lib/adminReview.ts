@@ -1620,6 +1620,60 @@ export async function fetchMockStructuralCapacityInc001ReviewStatus(familyIds: s
 }
 
 /**
+ * Mathematics First Mock Structural Capacity, Authoring Wave 002 —
+ * Shared Timetable + Shared Price-List/Menu (Decision 184/185). Two new
+ * families (mock-mr10-bustimetable, mock-mr13-craftstall, migration
+ * 125), made reviewable via the exact same scoped-batch mechanism as
+ * MOCK_STRUCTURAL_CAPACITY_INC001_FAMILIES above — own array, own
+ * marker, own status map, reusing `review_type =
+ * 'mock_maths_independent_review'` and the generalised
+ * deriveBatchReviewStatus()/fetchBatchReviewStatus() helpers unchanged.
+ * mock-mr10-bustimetable is grouped: 1 numbered-question experience of
+ * 4 subparts. mock-mr13-craftstall is grouped: 1 numbered-question
+ * experience of 3 subparts. Both carry a real `prompt.stimulus` table
+ * and an explicit `prompt.sharedStem` — the review surface renders both
+ * via the same DataTableStimulus/resolveGroupSharedStem() mechanism the
+ * learner surface uses, so the Founder reviews the identical
+ * presentation a learner would see. Every row's eligibility_status is
+ * authentic_assessment_candidate; approving either family here still
+ * does NOT promote it, and does NOT create or touch any ali_mock_form
+ * row.
+ */
+export const MOCK_STRUCTURAL_CAPACITY_WAVE002_MARKER = "MOCK-STRUCTURAL-CAPACITY-WAVE002";
+
+export const MOCK_STRUCTURAL_CAPACITY_WAVE002_FAMILIES: SevenXFamilyConfig[] = [
+  {
+    familyId: "mock-mr10-bustimetable",
+    newQuestionIds: [
+      "mock-mr10-bustimetable-01", "mock-mr10-bustimetable-02", "mock-mr10-bustimetable-03", "mock-mr10-bustimetable-04",
+    ],
+    disclosure:
+      "This is a brand-new family with no prior review of any kind. It is a genuine shared-timetable compound: a real structured table (4 stops x morning/afternoon) is shown once, and all 4 subparts reason from it. Directly evidenced this session against the real 2022 Q19 (a real 4x2 timetable, 4 subparts, 4 marks) -- independently re-verified, not merely re-cited from prior Decision prose. Materially richer than mock-mr10-fairprep's own simpler forward/reverse pair: this family uses a real table stimulus, a cross-column stage comparison, a cross-row waiting-time gap, and a percentage reduction applied to a derived value. QT-MR-10 is reused, not a new Question Type. Difficulty: (a) medium (single-column read), (b) medium (two-stage read plus comparison), (c) hard (cross-column AND cross-row reasoning), (d) hard (derive an un-stated value, then apply a percentage). No new visual capability required -- the existing structured table stimulus and sharedStem contracts are used exactly as already proven for mock-mr09-runningclub and mock-mr06-linkedvalues. Disclosed for your own judgement, not a recommendation either way.",
+  },
+  {
+    familyId: "mock-mr13-craftstall",
+    newQuestionIds: [
+      "mock-mr13-craftstall-01", "mock-mr13-craftstall-02", "mock-mr13-craftstall-03",
+    ],
+    disclosure:
+      "This is a brand-new family with no prior review of any kind. It is a genuine shared price-list compound: a real structured table (3 items, pack sizes and prices) is shown once, and all 3 subparts reason from it. Directly evidenced this session against the real 2021 Q6 (a real supermarket price list, 3 subparts) -- independently re-verified. QT-MR-13 (Best-Value) is reused from mock-mr13-bestvalue's own existing tag, not a new Question Type -- this family represents the same unit-value reasoning skill at genuine Classification-A, 3-subpart depth for the first time (mock-mr13-bestvalue itself is a 2-row Classification-B family: two unrelated comparisons, never sharing a dataset). Difficulty: (a) medium (multi-item combined cost, requiring pack-to-quantity conversion), (b) medium (three-way unit-value comparison), (c) hard (reverse reasoning from an exact total to a unique quantity, verified unique by exhaustive search, not assumed). No new visual capability required. Disclosed for your own judgement, not a recommendation either way.",
+  },
+];
+export const MOCK_STRUCTURAL_CAPACITY_WAVE002_TARGET_IDS = MOCK_STRUCTURAL_CAPACITY_WAVE002_FAMILIES.map((f) => f.familyId);
+
+export function buildMockStructuralCapacityWave002NotesPrefix(familyId: string, questionIds: string[]): string {
+  return `${MOCK_STRUCTURAL_CAPACITY_WAVE002_MARKER} new content review: ${familyId} (Question IDs: ${questionIds.join(", ")})`;
+}
+
+export function deriveMockStructuralCapacityWave002ReviewStatus(rows: SevenXReviewRow[], familyIds: string[]): Map<string, SevenXReviewStatus> {
+  return deriveBatchReviewStatus(rows, familyIds, MOCK_STRUCTURAL_CAPACITY_WAVE002_MARKER, "mock_maths_independent_review");
+}
+
+export async function fetchMockStructuralCapacityWave002ReviewStatus(familyIds: string[]): Promise<Map<string, SevenXReviewStatus>> {
+  return fetchBatchReviewStatus(familyIds, MOCK_STRUCTURAL_CAPACITY_WAVE002_MARKER, "mock_maths_independent_review");
+}
+
+/**
  * Inserts one real, traceable Mock-content independent-review decision —
  * `review_type = 'mock_maths_independent_review'` (migration 087,
  * Decision 139), explicitly set here exactly as `submitMathsTeachingReview`
