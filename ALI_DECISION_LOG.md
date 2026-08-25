@@ -6240,3 +6240,53 @@ Assessed against information hierarchy, typography, spacing, heading distinction
 **Implications:** Decisions 1–169 all stand, none reversed or rewritten. No Mock form, no promotion, no eligibility change, and no change to the First Mock composition occurs from this decision. The exact production application sequence proposed for the Founder's own future action (not performed here): apply migration 112 if not already applied → apply migration 115 → apply migration 113 → apply migration 114 → independent review of both families via the new admin review section → separately, in a future decision, resolve Part 9's marking-architecture question and Decision 169's own remaining First Mock blockers before any learner activation.
 
 ---
+
+### Decision 171 — SHARED-SCENARIO BATCH INDEPENDENT VALIDATION CERTIFICATION: genuine production approval evidence recorded (both `mock-mr10-fairprep` and `mock-mr09-runningclub` reviewed and approved by Ayobami Lawal, `mock_maths_independent_review`, `MOCK-SHARED-SCENARIO-COMPLETION-BATCH` marker, 2026-08-25, plus a Founder production visual-review PASS for the Running Club semantic table and both families' grouped presentation); migration 116 drafted, tested, NOT applied — promotes exactly the 4 named rows from `authentic_assessment_candidate` to `independently_validated` only, mirroring migration 090/094/101/111's own established assertion-and-refuse pattern exactly; the Mathematics Marking Integrity Gate is formally kept open, and the prior turn's own inconsistent affected-row count ("8 of these... already mock_eligible") is corrected here to the exact, directly-re-derived population: 22 rows across 12 families total, 20 rows across 10 families already `mock_eligible`, plus exactly the 2 rows this migration promotes; no eligibility, mark, content, or grouping change beyond the single intended transition; no mock_eligible promotion; no migration applied
+
+**Scope and process:** One bounded, forward-only certification migration (116, NOT applied), plus a corrected restatement of the marking-integrity finding. No implementation of the marking-integrity remediation itself.
+
+---
+
+**PART 1 — PRODUCTION APPROVAL EVIDENCE, RECORDED**
+
+Per the Founder's own direct read of the real `ali_family_review` rows (not the review screen alone): both `mock-mr10-fairprep` and `mock-mr09-runningclub` carry a genuine row with `reviewer = 'Ayobami Lawal'`, `decision = 'approved'`, `review_type = 'mock_maths_independent_review'`, `notes` containing the `MOCK-SHARED-SCENARIO-COMPLETION-BATCH` marker, `review_date` recorded 2026-08-25 — the same real, independent reviewer this project's own precedent already established (Decision 51, the 007D-007G pilot arc). The original `pending_independent_review` placeholder rows (migration 114) are confirmed preserved, not overwritten. The educational review itself is not reopened or re-litigated.
+
+**Production visual-review PASS recorded** (review-surface only, not a learner Mock walkthrough): the Running Club semantic table, Running Club grouped presentation, Fairprep grouped presentation, and general review-screen usability all passed direct Founder inspection in production.
+
+---
+
+**PART 2 — MIGRATION 116**
+
+Promotes exactly `mock-mr10-fairprep-01`, `mock-mr10-fairprep-02`, `mock-mr09-runningclub-01`, `mock-mr09-runningclub-02` — selected by exact ID, never by `family_id` alone (migration 090/094/101/111's own established discipline: no future sibling could ever be silently swept in). Only `eligibility_status` is ever `SET`, verified by a dedicated test enumerating every `SET` clause in the file; `prompt`/`answer`/`marks`/`stimulus`/`skill`/`content_difficulty`/`family_id`/`question_group_id`/`group_order`/`subpart_label`/`marking_mode`/`active` are read-only, none ever appears as a `SET` target or is otherwise referenced (grouping/stimulus columns are never mentioned anywhere in the file at all). `ali_family_review` and `ali_mock_form` are never referenced. Fails safely on the same assertion-and-refuse pattern as every prior promotion migration: exactly 4 `authentic_assessment_candidate` rows across the 2 named families triggers the promotion; exactly 4 already-`independently_validated` is a clean no-op; anything else raises an exception naming the actual counts, touching nothing.
+
+---
+
+**PART 3 — MATHEMATICS MARKING INTEGRITY GATE: KEPT OPEN, COUNT CORRECTED**
+
+The prior turn's own prose summary ("ten pre-existing rows... 8 of these are already mock_eligible") was internally inconsistent and is corrected here by direct re-derivation from the repository, not carried forward: **22 rows across 12 families in total** carry `marks > 1` under effectively-deterministic scoring — **20 rows across 10 families already `mock_eligible` today** (`mock-mr02-twostep` ×3, `mock-mr05-inverse` ×2, `mock-mr04-reversepercent` ×2, `mock-mr06-multiplerelation` ×2, `mock-mr07-isoscelesproperty` ×2, `mock-mr10-reverseschedule` ×2, `mock-mr11-propertysearch` ×2, `mock-mr08-rotation` ×2, `mock-mr12-reversemean` ×2, `mock-mr09-data-03` ×1), **plus exactly the 2 rows this migration promotes** (`mock-mr10-fairprep-02`, `mock-mr09-runningclub-02`) — not yet `mock_eligible`, and remaining so after this migration. `mock-mr03mr07-perimeterarea` (Batch 001) was directly re-checked and carries zero qualifying rows (all 4 of its own rows are 1 mark). **Certification to `independently_validated` does not resolve, waive, or narrow this gate in any way. Neither `mock-mr10-fairprep` nor `mock-mr09-runningclub` may become `mock_eligible` until the Mathematics Marking Integrity Gate is resolved in its own, separate, future decision.** No mark, answer, or scoring behaviour is changed by this migration.
+
+---
+
+**PART 4 — TESTS AND VERIFICATION**
+
+20 new tests in `tests/supabase/mockMathematicsSharedScenarioCompletionBatchIndependentValidation.test.ts`, mirroring `mockMathematicsFirstMockCompoundBatch001IndependentValidation.test.ts`'s own established convention exactly (migration 111, Decision 165): exact 4-ID/2-family allow-lists, source-status preconditions, single-column-SET proof, grouping/stimulus-column non-reference, no `ali_family_review`/`ali_mock_form` mutation, fail-safe/idempotent structure, zero overlap with any prior batch's IDs, header-level proof that the Founder-supplied approval evidence and the corrected marking-integrity count are both recorded in the migration's own text, and a positive proof that the real, unmodified `isMockEligibleCandidate()` gate still correctly rejects `independently_validated` content. **Full suite: 1435/1435 pass** (1415 baseline + 20 new; zero regressions). `npx tsc --noEmit`: clean. ESLint: 81 problems (62 errors/19 warnings), identical to the established pre-existing baseline. Copy Quality Guard: PASS, 0 violations, 257 files. Production build: succeeds.
+
+---
+
+**What this decision does NOT claim:** it does not claim migration 116 has been applied (self-disclosed `NOT APPLIED`); it does not claim either family is `mock_eligible`; it does not claim the Mathematics Marking Integrity Gate is resolved, narrowed, or waived — it is explicitly and formally kept open; it does not claim any Mock form, learner activation, or Educational Intelligence wiring has occurred; it does not claim the educational review itself was re-examined — it is recorded as genuine, Founder-supplied, production evidence, not re-derived.
+
+**Files changed:** `supabase/migrations/116_mock_mathematics_shared_scenario_completion_batch_independent_validation.sql` (new, NOT applied), `tests/supabase/mockMathematicsSharedScenarioCompletionBatchIndependentValidation.test.ts` (new), `ALI_DECISION_LOG.md` (this entry).
+
+**Migrations created:** 116 — drafted, tested, NOT applied, awaiting Founder application.
+
+**Decision number:** 171.
+
+**Commit SHA:** recorded after commit (see repository history immediately following this entry).
+
+**Production application status:** migration 116 NOT applied. No production change has occurred.
+
+**Rationale:** certifying content review while keeping mock-eligibility separately gated follows this project's own established precedent (migration 105's own POOL-GATE CONTRACT, Decision 160) that content-review certification and marks/marking-mode validity are two distinct gates, not one — recording the correction to the prior turn's own row-count summary in the same decision that performs the certification keeps the audit trail accurate rather than letting an inconsistent figure propagate into a permanent record.
+
+**Implications:** Decisions 1–170 all stand, none reversed or rewritten. No Mock form, no `mock_eligible` promotion, and no marking-architecture change occurs from this decision. The next steps remain distinct and future: Founder application of migration 116, and a separate decision to resolve the Mathematics Marking Integrity Gate before either family — or any of the 20 already-`mock_eligible` rows sharing the same open question — can be considered for a First Mock.
+
+---
