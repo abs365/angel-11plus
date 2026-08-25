@@ -6962,3 +6962,63 @@ Two new migrations were required, and this is disclosed plainly rather than sile
 **Implications:** Decisions 1-179 all stand, none reversed or rewritten. No content, marks, eligibility, difficulty, QT, or grouping changes from this decision. The family remains pending independent review. The next step is a fresh Founder visual re-review of the corrected presentation (after applying migrations 121/122), followed by the still-outstanding independent-review decision — not begun here.
 
 ---
+
+### Decision 181 — MATHEMATICS FIRST MOCK STRUCTURAL CAPACITY, INCREMENT 001: INDEPENDENT VALIDATION CERTIFICATION FOR MOCK-MR06-LINKEDVALUES. Founder production evidence confirms migrations 119, 120, 121, and 122 all applied and verified: `mock-mr06-linkedvalues`'s 3 rows carry the correct grouping (question_group_id/group_order/subpart_label), 1 mark each, deterministic marking, an identical `sharedStem` across all three, and the corrected review presentation (shared scenario once, then (a)/(b)/(c)) is Founder-confirmed PASS in production. Three `ali_family_review` records exist and are all preserved unmodified — one pending placeholder (migration 120) and two `approved` records, both reviewer Ayobami Lawal, review_type `mock_maths_independent_review`, marker `MOCK-STRUCTURAL-CAPACITY-INC001`; the most recent (2026-08-25 18:55:14 UTC) is treated as the authoritative certification evidence, its own review basis explicitly covering the corrected post-presentation-fix production surface. `mock_get_question`'s live privilege state is confirmed: `authenticated`=EXECUTE, `anon`=no grant, consistent across `mock_get_attempt_grouping`/`mock_get_open_cycle`/`mock_get_question`, and `mock_cycle_is_open` correctly has no client-role grant at all. One new migration (123) is prepared: promotes exactly the 3 named rows from `authentic_assessment_candidate` to `independently_validated` — explicitly NOT `mock_eligible`, NOT a Mock-form inclusion — gated by fail-closed preconditions including a LIVE query against `ali_family_review` (not merely trusted from this entry's own prose) requiring a genuine matching approved record to exist, plus content-shape checks (marks, sharedStem, grouping, non-empty question text) that refuse to assume the Marking Integrity Gate or the presentation fix are still intact rather than re-verifying them. A full pre-write `prompt` snapshot is compared byte-for-byte post-write, proving every prompt key, `active`, `family_id`, and every grouping column unchanged; `mock_eligible` is positively proven absent in both the apply and already-applied branches. Projected reserve after certification: 11 rows / 5 experiences / 11 marks, all Classification A (up from 8/4/8) — the Decision 176/177 structural deficit (a pool-composition ceiling of ≈44-46 marks even at full projected State C, ≈14-17 marks short of an authentic 20-21-question/≈58-60-mark form, requiring 5-9 further rich compound families) is unchanged and not addressed by this certification. Full verification suite passes (1589/1589 tests, 23 new; `tsc` clean; ESLint at established baseline; Copy Quality Guard PASS; Migration SQL Guard PASS — explicitly disclosed as a quote-balance check, not a complete PostgreSQL parser; production build succeeds). Migration 123 NOT applied.
+
+**Scope and process:** Bounded independent-validation certification only — one migration, no other content, no mock-eligibility change, no form assembly.
+
+---
+
+**PART 1 — RECONCILIATION**
+
+`HEAD == origin/main` at `a87c9dd` (Decision 180) confirmed via `git fetch`/`git rev-parse` before this work began; clean tree aside from this increment's own new files. Decisions 178-180 confirmed governing, not reopened. Founder production evidence (Level 1): migrations 119 and 120 applied (confirmed in the Decision 180 turn); migrations 121 and 122 applied and verified this turn (`sharedStem` present and identical on all 3 rows, `anon_can_execute = false` / `authenticated_can_execute = true` for `mock_get_question`). No `ali_mock_form` row exists. No prior independent-validation migration exists for `mock-mr06-linkedvalues` — confirmed by a repository-wide search finding only migrations 119-122 reference the family.
+
+---
+
+**PART 2 — REVIEW EVIDENCE, PRESERVED**
+
+Three `ali_family_review` records confirmed by the Founder, none deleted, merged, or rewritten by this decision or migration 123: (1) `UNASSIGNED`/`pending_independent_review` (migration 120's own placeholder, 18:18:57 UTC); (2) Ayobami Lawal/`approved` (18:21:54 UTC); (3) Ayobami Lawal/`approved` (18:55:14 UTC), the authoritative final evidence, whose review basis explicitly records direct inspection of the complete grouped question, the corrected production presentation, answer accuracy, 1-mark-per-subpart integrity, medium-to-hard progression, clarity, age-appropriateness, originality, primary-source structural alignment, and suitability for independent assessment. Migration 123's own live precondition queries `ali_family_review` directly for a matching approved row (family, decision, review_type, reviewer, marker) rather than trusting this narrative alone; it never writes to that table.
+
+---
+
+**PART 3 — VISUAL AND TECHNICAL CLOSURE**
+
+Founder visual re-review of the production surface after migrations 121/122: PASS — the shared marbles-scenario stem now renders exactly once, followed by (a)/(b)/(c) each showing only its own distinguishing text, matching Decision 180's own specified target presentation exactly. The former repeated-stem defect is production-closed. `sharedStem` confirmed present and identical on all 3 rows; every full original `question` remains intact; `eligibility_status`/`active` unchanged by migrations 121/122. `mock_get_question` privilege state confirmed live: `authenticated`=EXECUTE, `anon`=no grant; `mock_get_attempt_grouping`/`mock_get_open_cycle` both `authenticated`-only, no anon; `mock_cycle_is_open` has no client-role grant at all (by design, migration 086). Not altered by this decision or migration 123.
+
+---
+
+**PART 4 — CERTIFICATION SCOPE AND MIGRATION**
+
+`supabase/migrations/123_mock_mathematics_linkedvalues_independent_validation.sql` — targets exactly `mock-mr06-linkedvalues-01/-02/-03`, mirrors migration 116's own established independent-validation-promotion pattern, extended with live preconditions this session's own directive required: subject/skill, `marking_mode`, exact grouping shape (a VALUES-join, not a broken multi-row aggregate — a real bug caught and fixed during drafting, before any test was written against it), `marks = 1` on all 3 (refusing to assume the Marking Integrity Gate remains intact rather than re-checking it), identical `sharedStem` on all 3, non-empty `question` text, and the live `ali_family_review` approval check above. Fail-closed, three-state: exactly 3 `authentic_assessment_candidate` rows → apply, with a full pre-write `prompt` snapshot compared byte-for-byte post-write; exactly 3 already `independently_validated` → no-op notice, with `mock_eligible` absence re-checked even in this branch; any other count → `RAISE EXCEPTION`, touching nothing. The only column the `UPDATE` statement ever names is `eligibility_status`; `mock_eligible` is never set anywhere, positively verified after the write. No `ali_family_review`, `ali_mock_form`, RPC, RLS policy, or grant is touched.
+
+---
+
+**PART 5 — PROJECTED CAPACITY, DECISION 176/177 FRAMING (not mutated by this certification)**
+
+Current `mock_eligible` production pool: 48 rows / 24 experiences / 48 marks (0 A / 19 B / 2 C / 3 S) — unchanged by this decision. `independently_validated` reserve before certification: 8 rows / 4 experiences / 8 marks, all A (`perimeterarea` ×2 experiences, `fairprep` ×1, `runningclub` ×1). This newly certified family, once migration 123 is applied: +3 rows / +1 experience / +3 marks, Classification A. **Projected reserve after certification: 11 rows / 5 experiences / 11 marks, all A** — not mutated here, a projection only. What the pool would become only if a later, separate Founder decision promoted the full projected reserve to `mock_eligible` (Decision 177's own "State C"): 59 rows / 29 experiences / 59 marks (5 A / 19 B / 2 C / 3 S) — **hypothetical, not authorised, not implied by this certification.** Decision 177's own quantified deficit stands entirely unchanged: even at full projected State C, an authentic 20-21-question subset tops out at ≈44-46 marks, ≈14-17 short of ≈58-60, requiring roughly 5-9 further rich (3-5 subpart) compound families — not "12 marks," and not addressed by certifying one already-authored family's eligibility state.
+
+---
+
+**PART 6 — VERIFICATION**
+
+23 new tests in `tests/supabase/mockMathematicsLinkedvaluesIndependentValidation.test.ts`, covering: exact 3-row target; family/subject/skill/marking-mode preconditions; marks/sharedStem/grouping/non-empty-question content-shape checks; the live review-evidence query; no `ali_family_review` mutation; `eligibility_status` as the sole `SET` column; full-prompt preservation proof; `mock_eligible` absence proven in both branches; idempotent no-op structure; fail-closed mixed-state refusal; no RPC/RLS/grant touched; no other family referenced. **Full suite: 1589/1589 pass** (1566 baseline + 23 new; zero regressions). `npx tsc --noEmit`: clean. ESLint: 81 problems (62 errors/19 warnings), identical to baseline. Copy Quality Guard: PASS, 0 violations, 257 files. Migration SQL Guard: PASS, 123 files — **explicitly restated: this checks quote/dollar-quote balance only, not full PostgreSQL syntax validity; production application remains the actual proof.** Production build: succeeds.
+
+---
+
+**What this decision does NOT claim:** it does not claim migration 123 has been applied (self-disclosed NOT APPLIED); it does not claim `mock-mr06-linkedvalues` is `mock_eligible` or included in any Mock form; it does not claim `ali_mock_form` has been created; it does not claim the Decision 176/177 structural deficit is narrowed or closed; it does not claim any review record has been altered; it does not claim shared-timetable or any other future family has been authored or begun.
+
+**Files changed:** `supabase/migrations/123_mock_mathematics_linkedvalues_independent_validation.sql` (new, NOT applied), `tests/supabase/mockMathematicsLinkedvaluesIndependentValidation.test.ts` (new), `ALI_DECISION_LOG.md` (this entry).
+
+**Migrations created:** 123 — drafted, tested, NOT applied.
+
+**Decision number:** 181.
+
+**Commit SHA:** recorded after commit (see repository history immediately following this entry).
+
+**Production application status:** migration 123 NOT applied. No production change has occurred.
+
+**Rationale:** certifying independent validation as its own bounded step, separate from any future mock-eligibility decision, follows this arc's own established discipline (migration 090/094/101/111/116's own precedent) — a review approval authorises exactly the eligibility transition it certifies, never a broader promotion by implication; verifying review evidence LIVE against the database rather than trusting this entry's own narrative follows the same standard this arc applied throughout (Decision 172's re-derivation discipline, Decision 179's mechanical-verification discipline).
+
+**Implications:** Decisions 1-180 all stand, none reversed or rewritten. No content, marks, eligibility, grouping, RPC, RLS, or review-record change occurs from this decision. `mock-mr06-linkedvalues` remains `authentic_assessment_candidate` until migration 123 is Founder-applied. The next steps remain distinct and future: Founder application of migration 123; then, separately, a future mock-eligibility composition decision (not begun here) covering which of the now-11-row projected reserve should enter `mock_eligible`; and, separately again, the shared-timetable authoring increment Decision 177 ranked next — none begun by this certification.
+
+---
