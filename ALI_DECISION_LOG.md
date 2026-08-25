@@ -5761,3 +5761,100 @@ Founder-supplied production evidence: `mock-mr03mr07-perimeterarea` shows "1 of 
 **Implications:** Decisions 1–164 all stand, none reversed or rewritten. Decision 164's own verdict A stands, now with a concrete, prompt-level-verified metadata map ready for Founder approval rather than a family-level estimate. No mutation, promotion, or form creation has actually occurred — migration 111 awaits Founder application, and the Part 8 grouping map awaits separate Founder authorisation before any migration is drafted for it.
 
 ---
+
+### Decision 166 — MATHEMATICS MOCK STRUCTURAL NORMALISATION, IMPLEMENTATION GATE: the Founder approved Decision 165 Part 8's own row-level grouping-metadata map exactly (19 families, 41 rows, 19 resulting numbered-question experiences, 60 marks), for migration preparation only, not production application; migration 112 drafted, tested, NOT applied, implementing exactly and only that approved map as a metadata-only mutation (question_group_id/group_order/subpart_label/marking_mode) against the 41 named rows, fail-closed on 8 live preconditions, idempotent against the two approved production states; zero application-code change required, since Decision 161's own grouped scoring/rendering/attempt pipeline (migrations 104/106/107) already reads these columns generically for whatever ids are actually assigned, confirmed by direct source reading rather than assumed; no mutation performed
+
+**Scope and process:** Analysis plus one bounded, forward-only migration (112, NOT applied), extending Decision 165 Part 8's own family-level proposal to full row-level SQL, mirroring migration 105's own "pure data promotion, zero code change" precedent. No content authored, no eligibility_status touched, no Mock form assembled.
+
+---
+
+**PART 1 — RECONCILIATION**
+
+Confirmed before any file was touched: `HEAD == origin/main` (commit `3c2c61a`), Decision 165 present exactly once as the latest log entry, working tree clean (no uncommitted changes pre-existing), migration 111 present in the repository (drafted, NOT applied, as Decision 165 left it), no grouping metadata mutated by any commit since Decision 164.
+
+---
+
+**PART 2 — GOVERNING APPROVED SCOPE, EXACTLY AS SUPPLIED**
+
+Founder approval is for migration preparation only: 19 existing `mock_eligible` Mathematics families, 41 rows, 19 resulting numbered-question experiences, 60 marks — the identical figures Decision 165 Part 6 independently computed and Part 8 proposed at family level. The row-level map used by migration 112 is the same map returned in the immediately preceding turn's row-level expansion of Decision 165 Part 8, re-verified line-by-line against migrations 088/091/095 before being written into SQL (not re-derived from a different source). `mock-mr09-data`, `mock-mr01mr10-costumeschedule`, `mock-mr03mr07-perimeterarea` (migration 111, still not applied), all Practice content, English, and Writing are excluded — none is referenced anywhere in migration 112's real SQL (verified by direct string-absence test). The two Classification-B candidate pairs (`mr04-percentchange`↔`mr04-reversepercent`, `mr10-forwardschedule`↔`mr10-reverseschedule`) remain two separate single-family `question_group_id` values each — never combined into one cross-family group (verified by a dedicated test).
+
+---
+
+**PART 3 — EXACT METADATA MUTATION ONLY**
+
+Migration 112's own `UPDATE` statement sets exactly 4 columns — `question_group_id`, `group_order`, `subpart_label`, `marking_mode` — on exactly the 41 approved rows, verified by a structural test that extracts the `UPDATE ... SET` clause's own column list and asserts it equals exactly that 4-column set. `question_group_id` is written as `b.family_id` (the row's own existing column value), not a restated literal — Decision 166 Part 6's own "use family_id itself, do not invent an identifier" instruction implemented so literally that no independent copy of the value exists anywhere in the migration to drift out of sync with the row's real `family_id`. `marking_mode` is set to `'deterministic'` only. No other column — `id`, `family_id`, `subject`, `skill`, `prompt` (question/answer/marks/workingSteps), `explanation`, `active`, `eligibility_status`, or any review-evidence table — is ever the target of a `SET` clause anywhere in the file (verified by 9 separate column-absence tests). Every affected row's `eligibility_status` remains `mock_eligible`, unchanged throughout — this migration does not reference that column in any `SET` clause at all.
+
+---
+
+**PART 4 — FAIL-CLOSED PRECONDITIONS**
+
+Before any `UPDATE` runs, the migration proves live, in order: (1) exactly 41 rows match the named ids; (2) all 41 `active = true`; (3) all 41 `subject = 'maths'`; (4) all 41 `eligibility_status = 'mock_eligible'`; (5) all 41 `family_id` exactly matches the approved map (guards against any production drift since Decision 165's own evidence, rather than trusting it un-re-verified); (6) all 41 `marking_mode` is `NULL` or `'deterministic'` already (matching Decision 165 Part 3's own verified evidence); (7) the live `SUM` of `(prompt->>'marks')::numeric` across the 41 ids equals exactly 60; (8) the grouping-column state is checked to determine which of the two valid branches (Part 5) applies. Any assertion failing at steps 1–7 raises an exception naming the actual count observed, before any row is touched — matching migration 105's own established assertion-and-refuse discipline, extended here to a 7-point precondition set rather than a single status check.
+
+---
+
+**PART 5 — IDEMPOTENT TWO-STATE BRANCH**
+
+Exactly two valid production states are supported, verified live at migration time, never assumed: (A) all 41 rows have `question_group_id`/`group_order`/`subpart_label` all `NULL` — the genuine pre-normalisation state left by migration 093 — which triggers the `UPDATE`; (B) all 41 rows already carry exactly the approved post-state values (`question_group_id = family_id`, the exact `group_order`/`subpart_label` per row, `marking_mode = 'deterministic'`) — a clean no-op, no `UPDATE` executed, verified by a structural test asserting no `UPDATE public.ali_question_bank` statement exists inside that branch. Any other combination — partial application, or values that do not match the approved map — falls through to a `RAISE EXCEPTION` naming both observed counts, refusing to guess or partially repair. After a real state-A application, the migration re-verifies live that exactly 41 rows now match the approved post-state (including `family_id` unchanged and `eligibility_status` still `mock_eligible`) and that the marks total is still exactly 60, before its own success `RAISE NOTICE` — a positive post-write proof, not merely trust in the `UPDATE`'s own row count.
+
+---
+
+**PART 6 — WHY NO APPLICATION-CODE CHANGE IS NEEDED (learner-surface compatibility proof)**
+
+Traced directly from source this session, not assumed from Decision 161's own prior claims: `mock_get_question()` and `mock_get_attempt_grouping()` (migration 106) both read `question_group_id`/`group_order`/`subpart_label` live off `ali_question_bank` for whatever ids are actually assigned to an attempt — no hardcoded family list exists anywhere in either function. `mock_score_attempt()` (migration 104) carries the same three columns into every `question_outcomes` entry, and its marks-total loop already sums every assigned id's own `marks` regardless of grouping (migration 104's own header: "no marks-total bug to fix" — confirmed still true, unmodified by this migration). `lib/mockAttempt/workspace.ts`'s `buildDisplayUnits()`/`buildPalette()`/`unansweredUnitIndices()` collapse consecutive same-`questionGroupId` ids into one display unit purely from runtime-supplied grouping data — already proven generic against synthetic (`group-a`/`group-b`) and real (`costumeschedule`) fixtures in `tests/lib/mockAttempt/workspace.test.ts`, extended this session by a new test file (`tests/lib/mockAttempt/structuralNormalisationDisplayUnits.test.ts`) proving the exact real 41-row approved map collapses into exactly 19 display units, in family order, with a 3-subpart family (`mock-mr02-invdiv`) correctly requiring all 3 subparts answered before the unit reads as answered — generalising the existing 2-subpart-only proof. `app/learning-intelligence/mock-exam/page.tsx`'s own "Question N of Total" reads `units.length` (display-unit count) and its palette is built from the same units, never the raw assigned-id count — confirmed by direct line reading, not inferred. `ali_mock_attempt_answer` (migration 070) persists one row per raw `question_id` (`unique(attempt_id, question_id)`) regardless of grouping, so answer persistence and exposure/history recording of every underlying raw id is structurally untouched. `lib/ali/exposureIntelligence.ts`'s `groupingKeyOf()` (the live Practice selection engine) contains zero reference to `question_group_id` anywhere (confirmed by direct grep this session) — Practice exposure/clustering is structurally unreachable by this migration, exactly as migration 093's own original design rationale intended. **Conclusion: this migration is data-only. No live-browser proof is claimed — `ali_mock_form` remains 0, so no attempt can actually be created to observe this in a running browser session; the proof above is a structural/source-level proof, disclosed as such, not a substitute for it.**
+
+---
+
+**PART 7 — RESULTING MOCK-ELIGIBLE POOL (projected, after migration 112's own intended effect, form assembly NOT performed)**
+
+| Set | Raw rows | Numbered experiences | Marks | Avg marks/experience |
+|---|---|---|---|---|
+| Normalised 19-family set (this migration) | 41 | 19 | 60 | ≈3.16 |
+| Existing `costumeschedule` (already grouped, migration 095/105) | 4 | 2 | 4 | 2.00 |
+| **Total `mock_eligible`, post-migration-112** | **45** | **21** | **64** | **≈3.05** |
+| Batch 001 (`perimeterarea`, migration 111) | 4 | — | 4 | independently_validated only, outside `mock_eligible`, not counted above |
+
+QT coverage across the 21 post-migration `mock_eligible` experiences: QT-MR-01 through QT-MR-08, QT-MR-10, QT-MR-11, QT-MR-13 all represented (QT-MR-09 excluded via `mock-mr09-data`'s own unresolved Classification D; QT-MR-12 represented by `mock-mr12-reversemean`; QT-MR-14 is a scoring condition, not a content format, correctly never targeted by any batch). No first paper selected from this pool — that remains a separate, future, not-yet-performed step.
+
+---
+
+**PART 8 — CONTENT-DIVERSITY BOUNDARY**
+
+Recorded explicitly, per the Founder's own Part 9 instruction: this migration improves structural authenticity only. It creates zero new questions, zero new reasoning diversity, and zero additional anti-memorisation capacity. A learner who saw `mock-mr02-invdiv-01/02/03` presented as three separate questions in one sitting would see the identical three problems presented as one numbered question's three subparts after this migration — the underlying content is byte-identical. The Rolling Programme content-diversity requirement, named in Decision 164 and every decision since, remains open and is not narrowed by this migration in any way.
+
+---
+
+**PART 9 — Q9 PROVENANCE**
+
+Unchanged from Decision 165 Part 2: not corrected by this migration. `mock-mr01mr10-costumeschedule` and `CSSE_QUESTION_INTELLIGENCE_FRAMEWORK.md` §6 are not touched by migration 112 (confirmed — neither is referenced anywhere in its real SQL). The Q9 classification discrepancy remains separate, disclosed, not-urgent documentation debt, carried forward unresolved.
+
+---
+
+**PART 10 — SECURITY / ISOLATION PROOF**
+
+Confirmed structurally, by direct reading of migration 112's own SQL and by dedicated tests: no `CREATE POLICY`/`ALTER POLICY`, no `GRANT`/`REVOKE`, no `CREATE OR REPLACE FUNCTION`, no `CREATE TABLE public.*`, no `ALTER TABLE` appears anywhere in the file — it contains exactly one `UPDATE public.ali_question_bank` (the approved 41-row mutation) and one `INSERT` into a session-local temporary table (`tmp_normalisation_map`, `ON COMMIT DROP`, never a real content table). Migration 100's own RLS predicate (`eligibility_status = 'practice_eligible' OR is_current_user_admin()`) already excludes both `mock_eligible` and `independently_validated` rows identically from ordinary anon/authenticated reads; this migration never changes `eligibility_status`, so that exclusion is structurally unaffected either way. No `ali_mock_form` row is created or referenced. No `ali_mock_attempt` row is created or referenced. No Mock Centre activation occurs — Mock Centre's own availability remains governed entirely by whether an active `ali_mock_form` row exists (still zero, unchanged). Practice is unreachable by construction (Part 6 above).
+
+---
+
+**PART 11 — TESTS AND VERIFICATION**
+
+29 new tests across two files: `tests/supabase/mockMathematicsStructuralNormalisationGrouping.test.ts` (21 tests — exact 41-row/19-family map match, group_order/subpart_label sequencing, exclusion of all 3 excluded groups, the two Classification-B pairs kept separate, the `question_group_id = b.family_id` self-reference proof, the 4-column-only `SET` proof, all 7 live preconditions present, the 60-marks check, fail-closed/idempotent structure, post-write re-verification, RLS/grant/function/table-DDL absence, English/Writing absence, single-transaction wrapping, header disclosure) and `tests/lib/mockAttempt/structuralNormalisationDisplayUnits.test.ts` (8 tests — the real approved map collapsing to exactly 19 display units through the genuine, unmodified `buildDisplayUnits()`/`buildPalette()` pipeline, per-family id/order correctness, the 3-subpart-family generalisation, the Classification-B pairs staying separate, the 60-marks cross-check, standalone-id boundary safety). **Full suite: 1371/1371 pass** (1342 baseline + 29 new; zero regressions). `npx tsc --noEmit`: clean. ESLint: 62 pre-existing errors / 19 pre-existing warnings confirmed unchanged at `HEAD` by direct `git stash` comparison before and after this session's changes — zero of them in either new file (independently verified: both new files lint clean, 0 errors, 0 warnings). Copy Quality Guard: PASS, 0 violations, 256 files (identical file count to Decision 165's own run — no content file touched). Production build: succeeds, full route table renders including `/learning-intelligence/mock-exam`.
+
+---
+
+**What this decision does NOT claim:** it does not claim migration 112 has been applied (self-disclosed `NOT APPLIED`); it does not claim any grouping metadata has been mutated in production; it does not claim a live-browser walkthrough of the grouped rendering was performed (`ali_mock_form` remains 0, no attempt can be created); it does not claim the pre-existing 62 ESLint errors/19 warnings are resolved — they are named, unrelated, and explicitly out of this migration's approved scope; it does not claim `mock-mr09-data`'s Classification D is resolved; it does not claim the Q9 provenance discrepancy is corrected; it does not claim any Mock form exists, any first paper is selected, or Mock Centre is available; it does not claim Rolling Programme's own content-diversity requirement is reduced in any way.
+
+**Files changed:** `supabase/migrations/112_mock_mathematics_structural_normalisation_grouping.sql` (new, NOT applied), `tests/supabase/mockMathematicsStructuralNormalisationGrouping.test.ts` (new), `tests/lib/mockAttempt/structuralNormalisationDisplayUnits.test.ts` (new), `ALI_DECISION_LOG.md` (this entry).
+
+**Migrations created:** 112 — drafted, tested, NOT applied, awaiting Founder review and manual application via Supabase Dashboard > SQL Editor.
+
+**Decision number:** 166.
+
+**Commit SHA:** recorded after commit (see repository history immediately following this entry).
+
+**Production application status:** migration 112 NOT applied. No production change has occurred. Supplied to the Founder for manual application following this entry.
+
+**Rationale:** implementing exactly the Founder-approved scope as a single, self-contained, fail-closed, idempotent migration — rather than any broader or reinterpreted scope — follows this arc's own established discipline (Decisions 158/160/165) of treating an approval as bounded to precisely what was reviewed, never expanded opportunistically even where a marginally larger change might seem convenient (e.g. this migration does not also promote Batch 001, though migration 111 sits ready — the Founder's own instruction to keep that separate is followed literally).
+
+**Implications:** Decisions 1–165 all stand, none reversed or rewritten. Decision 165 Part 8's own proposal is now implemented in ready-to-apply SQL form, gated on Founder application. No Mock form, no first paper, and no Batch 001 promotion occurs from this decision. The next steps — applying migration 112, separately deciding on migration 111 (Batch 001 promotion), and eventually a form-assembly decision — all remain distinct, future, not-yet-authorised steps.
+
+---
