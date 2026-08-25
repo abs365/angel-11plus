@@ -6370,3 +6370,64 @@ Content structure must be expanded before form assembly — the corrected pool c
 **Implications:** Decisions 1–171 all stand, none reversed or rewritten; Decision 171 stands, its own "migration 116 NOT applied" line understood as accurate-at-time-of-writing, not corrected here since production has since moved past it. Decision 167/169's First Mock composition is not reversed but is flagged as requiring re-examination against the corrected mark economy before further reliance. No content, marks, eligibility, or grouping actually changes from this decision. The next step is a Founder decision on the Category-A metadata-only remediation (§7) as its own small, bounded, future migration.
 
 ---
+
+### Decision 173 — MATHEMATICS MARKING INTEGRITY GATE, REMEDIATION PHASE 1: **Decision 172's own "21 of 22 rows" figure corrected to 20** — independently re-derived a second time this session, and this time caught precisely: `mock-mr08-rotation` contributes TWO excluded rows (`-01` and `-02`), not one, so 22 total marks=2 rows minus rotation's own 2 leaves 20, not 21 (11 families, not 12). Migration 117 (NOT applied) drafted and tested: `jsonb_set(prompt, '{marks}', '1'::jsonb)` on exactly those 20 rows, positively proving byte-for-byte preservation of every other `prompt` field via a pre-write snapshot compared against the post-write value (not merely trusting `jsonb_set`'s own semantics); zero eligibility change; `mock-mr08-rotation` structurally excluded and proven so; governance re-verified a second time directly against `ali_family_review`'s real schema (still no marks-value criterion); corrected mock_eligible economy 68→50 marks (24 experiences unchanged), independently_validated reserve 10→8 marks; First Mock capacity finding (NOT READY, structure must expand) explicitly reaffirmed, not weakened
+
+**Scope and process:** One bounded, forward-only metadata-only migration (117, NOT applied) plus this record. No implementation of the deferred `mock-mr08-rotation` structural remodel, no form assembly, no content authoring.
+
+---
+
+**PART 1 — THE 21-VS-20 CORRECTION, ITSELF CORRECTED PRECISELY THIS TIME**
+
+The Founder's own instruction this turn explicitly demanded independent re-derivation rather than trusting Decision 172's own "21 rows" summary. Re-running the same script-based derivation used in Decision 172 found that decision's own prose was itself in error: `mock-mr08-rotation-01` and `mock-mr08-rotation-02` are both excluded (STRUCTURAL REMODEL), not one — so the correct MARKS CORRECTION population is **20 rows across 11 families**, confirmed by direct script re-derivation against `supabase/migrations/088/091/095/113`'s own real JSON text this session, and cross-checked a second time against the migration's own `tmp_marks_correction_map` VALUES list (test-enforced: exactly 20 rows, exactly 11 distinct `family_id` values, `mock-mr08-rotation` absent from the map by direct assertion).
+
+---
+
+**PART 2 — MIGRATION 117**
+
+Targets exactly: `mock-mr02-twostep-01/-02/-03`, `mock-mr05-inverse-01/-02`, `mock-mr04-reversepercent-01/-02`, `mock-mr06-multiplerelation-01/-02`, `mock-mr07-isoscelesproperty-01/-02`, `mock-mr10-reverseschedule-01/-02`, `mock-mr11-propertysearch-01/-02`, `mock-mr12-reversemean-01/-02`, `mock-mr09-data-03`, `mock-mr10-fairprep-02`, `mock-mr09-runningclub-02` (18 `mock_eligible`, 2 `independently_validated`). `marks` confirmed NOT a top-level column — it is `prompt->'marks'` (jsonb), read identically by `mock_score_attempt()` (migration 104) and `mock_get_question()` (migration 115). The mutation uses `jsonb_set(prompt, '{marks}', '1'::jsonb)`, and — going beyond trusting that operator's own well-defined semantics — the migration captures a pre-write snapshot of each target row's own `prompt - 'marks'` into a temporary table and, after the write, asserts structural jsonb equality against the live value for all 20 rows, raising an exception and rolling back the whole transaction if even one row's other fields drifted. `eligibility_status` is never a `SET` target (test-enforced); a drift-guard precondition separately re-verifies each row's own expected `eligibility_status` (18 `mock_eligible`, 2 `independently_validated`) still matches before any write.
+
+---
+
+**PART 3 — GOVERNANCE, RE-VERIFIED A SECOND TIME**
+
+`ali_family_review`'s real schema (migration 034) re-read directly again this session: its 10 boolean review criteria (`educational_validity` through `authenticity_confirmed`) contain no marks-value field. No new review row is created; no existing review row is touched. Every affected row's own independent-validation/mock-eligibility provenance stands unquestioned.
+
+---
+
+**PART 4 — CORRECTED MARK ECONOMY, RECOMPUTED**
+
+| | Raw rows | Numbered experiences | Total marks |
+|---|---|---|---|
+| Current `mock_eligible` | 48 | 24 | 68 |
+| Corrected `mock_eligible` | 48 | 24 | **50** |
+| Current independently_validated reserve | 8 | — | 10 |
+| Corrected independently_validated reserve | 8 | — | **8** |
+
+Raw-row and numbered-experience counts are unchanged by construction: a marks-value correction inside `prompt` touches no row, no `question_group_id`, and no `group_order` — grouping and row identity are structurally independent of the `marks` key. **`mock-mr08-rotation`'s own 2 rows / 4 marks are deliberately excluded and unchanged**, carried forward as the one remaining structural marking exception requiring its own future decision (whether to split into independently-credited x/y subparts, adopt another structured-answer contract, or another primary-source-justified treatment — not resolved here). Decision 172's own First Mock capacity finding (structure must expand before form assembly; the corrected pool does not currently support an authentic First Mathematics Mock) is explicitly reaffirmed, not weakened by this migration — no other row's marks is raised to compensate, verified by a dedicated test.
+
+---
+
+**PART 5 — TESTS AND VERIFICATION**
+
+20 new tests in `tests/supabase/mockMathematicsMarkingIntegrityRemediationPhase1.test.ts`: exact 20-row/11-family target set (independently reproduced, not copied), `mock-mr08-rotation` exclusion proof (both from the target map directly and from every other executable SQL reference), the 21-vs-20 correction disclosed in the migration's own header, eligibility-split proof (18/2), `jsonb_set`-not-top-level-column proof, single-column-`SET` proof, `eligibility_status`-never-`SET` proof, the pre/post snapshot byte-for-byte preservation proof, all live preconditions, fail-closed/idempotent structure, no `ali_family_review`/`ali_mock_form`/`ali_mock_attempt` mutation, Practice isolation, no scoring-function change, English/Writing absence, single-transaction wrapping, header disclosure, and the explicit "capacity not restored by raising other marks" proof. **Full suite: 1455/1455 pass** (1435 baseline + 20 new; zero regressions). `npx tsc --noEmit`: clean. ESLint: 81 problems (62 errors/19 warnings), identical to the established baseline. Copy Quality Guard: PASS, 0 violations, 257 files. Production build: succeeds.
+
+---
+
+**What this decision does NOT claim:** it does not claim migration 117 has been applied (self-disclosed NOT APPLIED); it does not claim any mark has actually changed in production; it does not claim `mock-mr08-rotation`'s own structural question is resolved; it does not claim the First Mock is closer to ready — the opposite finding (Decision 172's own capacity verdict) is explicitly reaffirmed; it does not claim eligibility, content, grouping, or stimulus has changed on any row.
+
+**Files changed:** `supabase/migrations/117_mock_mathematics_marking_integrity_remediation_phase1.sql` (new, NOT applied), `tests/supabase/mockMathematicsMarkingIntegrityRemediationPhase1.test.ts` (new), `ALI_DECISION_LOG.md` (this entry).
+
+**Migrations created:** 117 — drafted, tested, NOT applied, awaiting Founder review.
+
+**Decision number:** 173.
+
+**Commit SHA:** recorded after commit (see repository history immediately following this entry).
+
+**Production application status:** migration 117 NOT applied. No production change has occurred.
+
+**Rationale:** correcting Decision 172's own row-count error in the same decision that acts on it, rather than silently carrying the wrong number forward into an executed migration, follows this session's own now-repeated discipline (Decision 171 corrected an earlier inconsistent count the same way) of treating "re-derive, don't trust the summary" as a real, load-bearing instruction rather than a formality.
+
+**Implications:** Decisions 1–172 all stand, none reversed or rewritten; Decision 172's own "21 rows" figure is understood as superseded by this entry's own 20-row re-derivation, not by rewriting Decision 172's historical text. No content, marks, eligibility, or grouping actually changes in production from this decision. The next steps remain distinct and future: Founder review and application of migration 117, and a separate decision addressing `mock-mr08-rotation`'s own structural marking question.
+
+---
