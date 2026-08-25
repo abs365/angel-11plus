@@ -7022,3 +7022,75 @@ Current `mock_eligible` production pool: 48 rows / 24 experiences / 48 marks (0 
 **Implications:** Decisions 1-180 all stand, none reversed or rewritten. No content, marks, eligibility, grouping, RPC, RLS, or review-record change occurs from this decision. `mock-mr06-linkedvalues` remains `authentic_assessment_candidate` until migration 123 is Founder-applied. The next steps remain distinct and future: Founder application of migration 123; then, separately, a future mock-eligibility composition decision (not begun here) covering which of the now-11-row projected reserve should enter `mock_eligible`; and, separately again, the shared-timetable authoring increment Decision 177 ranked next — none begun by this certification.
 
 ---
+
+### Decision 182 — MIGRATION 123 PRODUCTION FAILURE, ROOT CAUSE AND CORRECTION. The Founder's first production attempt at migration 123 (Decision 181) failed closed with "no matching approved ali_family_review record found," despite the Founder's own direct production diagnostic confirming exactly 2 genuinely valid approved records (`matching_approved_review_records = 2`, all four sub-conditions individually true). Traced directly through the real submission code path (`lib/adminReview.ts`'s `submitMockMathsIndependentReview()` → `buildNotesWithQualification()`, and `app/admin-beta/review/page.tsx`'s own `notesPrefix` concatenation), not inferred: every UI-submitted review's stored `notes` value is built as `"Reviewer qualification: {basis}.\n\n{MARKER} new content review: ...\n\n{reviewer's own free text}"` — the marker is never the first character of a real, human-submitted approval's notes (only migration 120's own raw-inserted pending placeholder happens to start with it). Migration 123's original precondition used `notes LIKE 'MARKER%'` (anchored to the start, no leading wildcard), which can never match either real approved record; the Founder's own diagnostic correctly used `LIKE '%MARKER%'` (substring-anywhere). No other condition (family_id, reviewer, decision, review_type) was defective. Production confirmed unmutated: the migration raised its exception before any UPDATE ran, and all 3 rows remain `authentic_assessment_candidate`. Corrected migration 123 in place (one line, plus a disclosure block) — never given a new migration number, since it has never successfully applied. Every other precondition, the fail-closed three-state structure, the byte-for-byte prompt preservation proof, and the `mock_eligible`-absence proof are unchanged, unweakened. Decision 181's own test suite is found to have missed this precisely because it asserted against SQL substrings, never against the real notes-construction shape — 13 new regression tests are added, including a pure re-implementation of both the broken and corrected predicate exercised against the actual `buildNotesWithQualification()` output shape, proving the original anchored predicate fails against the real 2-approval production data and the corrected one accepts it. Full verification suite passes (1602/1602 tests, 13 new; `tsc` clean; ESLint at established baseline; Copy Quality Guard PASS; Migration SQL Guard PASS — restated: quote-balance only, not semantic SQL correctness, exactly the class of defect this failure was; production build succeeds). Migration 123 NOT retried.
+
+**Scope and process:** Migration-failure root-cause and in-place correction only. No production mutation, no review-record change, no educational content reopened.
+
+---
+
+**PART 1 — RECONCILIATION**
+
+`HEAD == origin/main` at `17c58c3` (Decision 181) confirmed before and after. Decisions 178-181 stand, not reopened.
+
+---
+
+**PART 2 — EXACT PRODUCTION FAILURE AND ROLLBACK PROOF**
+
+Migration 123's own `raise exception` fired: *"Migration 123 refused: no matching approved ali_family_review record found for mock-mr06-linkedvalues..."* — raised from inside the review-evidence precondition block, before the `UPDATE public.ali_question_bank` statement is ever reached in this migration's own source order. Postgres aborts the entire enclosing transaction on an unhandled exception inside a `DO $$...$$` block; nothing after the raising statement executes. Founder production re-verification after the failed attempt confirms all 3 target rows remain exactly `authentic_assessment_candidate` — **no partial certification occurred; production is unchanged and safe.**
+
+---
+
+**PART 3 — DIRECT PRODUCTION DIAGNOSTICS**
+
+The Founder's own live query, using `family_id='mock-mr06-linkedvalues'`, `reviewer='Ayobami Lawal'`, `decision::text='approved'`, `review_type='mock_maths_independent_review'`, `notes LIKE '%MOCK-STRUCTURAL-CAPACITY-INC001%'`, returned `matching_approved_review_records = 2`, with every individual sub-predicate (`reviewer_matches`, `decision_matches`, `review_type_matches`, `marker_matches`) independently confirmed `true` for both approved records. This is authoritative, direct production evidence: **valid approval evidence genuinely exists and was never in question** — the defect was entirely in migration 123's own predicate, not in the underlying data or the Founder's own review actions.
+
+---
+
+**PART 4 — ROOT CAUSE, TRACED FROM SOURCE**
+
+Not explained from Decision 181's own prose — traced through the actual code that produced the real `notes` values. `app/admin-beta/review/page.tsx` (the `sevenX` submission path, line ~449) builds `submissionToSend.notes = \`${notesPrefix}\n\n${submission.notes}\`.trim()`. This is then passed into `lib/adminReview.ts`'s `submitMockMathsIndependentReview()`, whose own `insert()` call sets `notes: buildNotesWithQualification(s)`, which is `\`Reviewer qualification: ${basis}.\n\n${s.notes.trim()}\`` — meaning the FINAL stored value is `"Reviewer qualification: {basis}.\n\n{MARKER} new content review: mock-mr06-linkedvalues (...)\n\n{reviewer's own free text, if any}"`. The marker sits after `"Reviewer qualification: {basis}.\n\n"` for every real, UI-submitted review — never at position 0. Migration 123's original precondition, `notes LIKE 'MOCK-STRUCTURAL-CAPACITY-INC001%'` (no leading `%`), is anchored to the start of the string and can therefore never match either approved record. **This is confirmed to be the sole defect**: every other condition in the same predicate (`family_id`, `decision`, `review_type`, `reviewer`) was already individually confirmed correct by the Founder's own diagnostic.
+
+---
+
+**PART 5 — NOT A COUNT-ASSUMPTION BUG**
+
+Explicitly checked, per the Founder's own instruction: migration 123's original code already used `if v_approved_review_count < 1 then ... raise exception`, which correctly accepts any count ≥ 1, including 2. **The migration never assumed exactly one approval was required.** The defect was exclusively the LIKE-anchoring described in Part 4; multiple legitimate approvals were never the problem.
+
+---
+
+**PART 6 — CORRECTION**
+
+`notes LIKE 'MOCK-STRUCTURAL-CAPACITY-INC001%'` → `notes LIKE '%MOCK-STRUCTURAL-CAPACITY-INC001%'` — the one substantive change, made directly in `supabase/migrations/123_mock_mathematics_linkedvalues_independent_validation.sql` (not a new migration number: this migration has never successfully applied to production, so an in-place correction is the correct, established convention for this arc). A disclosure block documenting this exact root cause, the traced code path, and the fact that no other condition required correction is added to the migration's own header, matching this project's own standing practice of recording corrections directly in the corrected file. Every other precondition (family/subject/skill/active/marking_mode/grouping/marks/sharedStem/non-empty-question), the fail-closed three-state structure, the full pre-write `prompt` snapshot and byte-for-byte post-write comparison, and the positive `mock_eligible`-absence proof (both branches) are entirely unchanged and unweakened.
+
+---
+
+**PART 7 — WHY DECISION 181'S OWN TESTS MISSED THIS**
+
+Every one of Decision 181's 23 tests asserted against the migration's own SQL **text** (regex/substring matches confirming the predicate mentions the right column names and literal strings) — none constructed the REAL shape of a UI-submitted `notes` value and evaluated the predicate's actual matching behaviour against it. A substring test confirming `notes like 'MOCK-STRUCTURAL-CAPACITY-INC001%'` appears in the file is satisfied whether or not that pattern is anchored correctly, because the test never reasons about what the pattern actually matches. This is a structural gap in that one test's own design, not a defect specific to any single assertion — corrected here by adding a pure re-implementation of the predicate, exercised against a reconstruction of the real `buildNotesWithQualification()`/`notesPrefix` output shape.
+
+---
+
+**PART 8 — REGRESSION EVIDENCE**
+
+13 new tests in `tests/supabase/mockMathematicsLinkedvaluesIndependentValidation.test.ts`: a corrected substring test proving the unanchored pattern is present and the anchored one is absent; a correction-disclosure test; and a semantic suite that reconstructs the real production notes shape via a faithful `buildRealNotes()` mirror of `buildNotesWithQualification()`, proves the ORIGINAL anchored predicate (re-implemented as `.startsWith()`) returns `false` against that real shape while the CORRECTED predicate (re-implemented as `.includes()`) returns `true`, and exhaustively covers: 0/1/2 valid approvals (all handled correctly, 2 never rejected), pending-only, wrong decision, wrong reviewer, wrong review_type, missing marker, and wrong family_id. **Full suite: 1602/1602 pass** (1589 baseline + 13 new; zero regressions). `npx tsc --noEmit`: clean. ESLint: 81 problems (62 errors/19 warnings), identical to baseline. Copy Quality Guard: PASS, 0 violations, 257 files. Migration SQL Guard: PASS, 123 files — **restated precisely: this checks quote/dollar-quote balance only; it did not and could not have caught this defect, which was a semantic LIKE-pattern error, not a syntax error.** Production build: succeeds.
+
+---
+
+**What this decision does NOT claim:** it does not claim migration 123 has been retried or applied (still NOT APPLIED); it does not claim any row's `eligibility_status` has changed (all 3 remain `authentic_assessment_candidate`, confirmed by the Founder's own post-failure production check); it does not claim any `ali_family_review` record was altered, added, or removed (none was, by this decision or by the failed migration attempt); it does not claim the educational review is reopened; it does not claim Migration SQL Guard could have prevented this class of defect.
+
+**Files changed:** `supabase/migrations/123_mock_mathematics_linkedvalues_independent_validation.sql` (corrected in place, one LIKE pattern fixed plus a disclosure block, still NOT applied), `tests/supabase/mockMathematicsLinkedvaluesIndependentValidation.test.ts` (modified — 1 test corrected, 13 new tests), `ALI_DECISION_LOG.md` (this entry).
+
+**Migrations created:** none. Migration 123 corrected in place (still unapplied, never successfully applied).
+
+**Decision number:** 182.
+
+**Commit SHA:** recorded after commit (see repository history immediately following this entry).
+
+**Production application status:** migration 123 still NOT applied; production remains exactly as the Founder's own post-failure verification found it — all 3 rows `authentic_assessment_candidate`, unchanged.
+
+**Rationale:** tracing a production failure through the actual code path that generated the real data, rather than trusting a prior Decision's own narrative or re-deriving from first principles alone, follows this arc's own established discipline (Decision 179's own migration-119 syntax-failure root-cause standard); adding a semantic regression test that exercises the real predicate logic against reconstructed real-shaped data, not merely the SQL text, closes the specific test-design gap that let this defect reach production once already.
+
+**Implications:** Decisions 1-181 all stand, none reversed or rewritten; Decision 181's own certification scope and educational-approval evidence are unaffected — this was a migration-implementation defect, not a governance or evidence defect. No content, marks, eligibility, grouping, RPC, RLS, or review-record change occurs from this decision. The next step is unchanged in kind from Decision 181: a fresh Founder retry of the now-corrected migration 123 — not begun here.
+
+---

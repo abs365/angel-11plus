@@ -50,6 +50,43 @@
 -- asserted in this comment.
 --
 -- ============================================================
+-- CORRECTION (Decision 182): first-attempt production failure, root
+-- cause, and fix -- migration 123 has NEVER successfully applied
+-- ============================================================
+-- The first production attempt raised "Migration 123 refused: no
+-- matching approved ali_family_review record found," even though two
+-- genuinely valid approved records exist (records 2 and 3 above).
+-- Traced directly through the real submission code path (lib/
+-- adminReview.ts's submitMockMathsIndependentReview() ->
+-- buildNotesWithQualification(), and app/admin-beta/review/page.tsx's
+-- own notesPrefix concatenation), not inferred: every UI-submitted
+-- review's stored `notes` value is built as "Reviewer qualification:
+-- {basis}.\n\n{MARKER} new content review: ...\n\n{reviewer's own free
+-- text}" -- the marker is NEVER the first character of the stored
+-- string for a real, human-submitted approval (only migration 120's own
+-- raw-inserted PENDING placeholder row happens to start with it). The
+-- original precondition used `notes like 'MOCK-STRUCTURAL-CAPACITY-
+-- INC001%'` -- anchored to the START of the string with no leading `%`
+-- -- which can never match either real approved record. Corrected to
+-- `notes like '%MOCK-STRUCTURAL-CAPACITY-INC001%'` (substring-anywhere,
+-- matching this codebase's own established convention elsewhere for the
+-- identical check -- e.g. `(t.notes ?? "").includes(MARKER)` in
+-- page.tsx), matching exactly the predicate the Founder's own direct
+-- production diagnostic used (which correctly found 2 matching
+-- records). Migration 123 raised its exception BEFORE any UPDATE ran
+-- (Postgres aborts the whole transaction on an unhandled exception
+-- inside a DO block, and this repository's own convention places every
+-- content-mutating statement after every precondition check) -- Founder
+-- production re-verification after the failed attempt confirms all 3
+-- rows remained exactly 'authentic_assessment_candidate', unchanged. No
+-- other condition in this migration's own review-evidence check (family_
+-- id, reviewer, decision, review_type) required correction -- the
+-- Founder's own diagnostic confirmed all four already matched both
+-- approved records; only the marker's own LIKE-anchoring was wrong.
+-- Corrected IN PLACE (this migration file, not a new migration number)
+-- because it has never successfully applied to production.
+--
+-- ============================================================
 -- INDEPENDENT-VALIDATION BOUNDARY, NOT MOCK-ELIGIBILITY
 -- ============================================================
 -- This migration moves these 3 rows to 'independently_validated' ONLY.
@@ -189,7 +226,7 @@ begin
       and decision = 'approved'
       and review_type = 'mock_maths_independent_review'
       and reviewer = 'Ayobami Lawal'
-      and notes like 'MOCK-STRUCTURAL-CAPACITY-INC001%';
+      and notes like '%MOCK-STRUCTURAL-CAPACITY-INC001%';
   if v_approved_review_count < 1 then
     raise exception 'Migration 123 refused: no matching approved ali_family_review record found for mock-mr06-linkedvalues (review_type=mock_maths_independent_review, reviewer=Ayobami Lawal, MOCK-STRUCTURAL-CAPACITY-INC001 marker). Certification requires real, live review evidence, not merely a header claim.';
   end if;

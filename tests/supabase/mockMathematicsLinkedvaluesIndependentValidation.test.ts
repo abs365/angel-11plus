@@ -58,8 +58,14 @@ test("live review-evidence precondition: requires an approved ali_family_review 
   assert.match(block, /decision = 'approved'/);
   assert.match(block, /review_type = 'mock_maths_independent_review'/);
   assert.match(block, /reviewer = 'Ayobami Lawal'/);
-  assert.match(block, /notes like 'MOCK-STRUCTURAL-CAPACITY-INC001%'/);
+  assert.match(block, /notes like '%MOCK-STRUCTURAL-CAPACITY-INC001%'/);
   assert.match(block, /v_approved_review_count < 1/);
+});
+
+test("Decision 182 regression: the marker LIKE pattern is UNANCHORED (leading %), never anchored to the start of notes -- the exact production defect that made migration 123 reject 2 genuinely valid approvals", () => {
+  const block = executable.match(/select count\(\*\) into v_approved_review_count[\s\S]*?end if;/)![0];
+  assert.ok(!block.includes("notes like 'MOCK-STRUCTURAL-CAPACITY-INC001%'"), "must never regress to the anchored (no leading %) pattern that broke production");
+  assert.match(block, /notes like '%MOCK-STRUCTURAL-CAPACITY-INC001%'/);
 });
 
 test("no ali_family_review mutation anywhere: only SELECT (via count) ever touches that table, no INSERT/UPDATE/DELETE", () => {
@@ -145,4 +151,146 @@ test("wrapped in a single begin/commit transaction", () => {
 test("not applied disclosure present, documents dependency on migrations 119/120/121/122", () => {
   assert.match(sql, /NOT APPLIED\. Generated for Founder review/);
   assert.match(sql, /migrations 119,\s*\n-- 120, 121, and 122/);
+});
+
+test("correction disclosure present: documents the exact production failure, root cause, and that this is an in-place fix, not a new migration number", () => {
+  const collapsed = sql.replace(/\n--\s?/g, " ");
+  assert.match(collapsed, /CORRECTION \(Decision 182\)/);
+  assert.match(collapsed, /has NEVER successfully applied/);
+  assert.match(collapsed, /marker is NEVER the first character of the stored string/);
+  assert.match(collapsed, /Corrected IN PLACE/);
+});
+
+/**
+ * Decision 182 semantic regression suite — reproduces the REAL
+ * production ali_family_review notes shape (via the actual
+ * buildNotesWithQualification()/notesPrefix concatenation logic,
+ * lib/adminReview.ts and app/admin-beta/review/page.tsx), and exercises
+ * a pure re-implementation of migration 123's own review-evidence
+ * predicate against it -- not merely a substring check against the SQL
+ * text, which is exactly what let the original anchored-LIKE defect
+ * through undetected in Decision 181's own test suite.
+ */
+
+const MARKER = "MOCK-STRUCTURAL-CAPACITY-INC001";
+
+/** Mirrors lib/adminReview.ts's buildNotesWithQualification() exactly. */
+function buildRealNotes(qualificationBasis: string, notesPrefix: string, reviewerFreeText: string): string {
+  const qualificationLine = `Reviewer qualification: ${qualificationBasis.trim()}.`;
+  const combined = reviewerFreeText.trim() ? `${notesPrefix}\n\n${reviewerFreeText}` : notesPrefix;
+  return `${qualificationLine}\n\n${combined.trim()}`;
+}
+
+interface ReviewRecord {
+  familyId: string;
+  reviewer: string;
+  decision: string;
+  reviewType: string;
+  notes: string;
+}
+
+/** Pure re-implementation of migration 123's own corrected predicate: `notes LIKE '%MARKER%'` mirrored as .includes(). */
+function hasApprovedReviewEvidence(records: readonly ReviewRecord[]): boolean {
+  return records.some(
+    (r) =>
+      r.familyId === "mock-mr06-linkedvalues" &&
+      r.decision === "approved" &&
+      r.reviewType === "mock_maths_independent_review" &&
+      r.reviewer === "Ayobami Lawal" &&
+      r.notes.includes(MARKER)
+  );
+}
+
+/** The ORIGINAL, broken predicate (anchored, no leading wildcard) -- kept only to prove it fails against real production shape. */
+function hadApprovedReviewEvidence_BROKEN(records: readonly ReviewRecord[]): boolean {
+  return records.some(
+    (r) =>
+      r.familyId === "mock-mr06-linkedvalues" &&
+      r.decision === "approved" &&
+      r.reviewType === "mock_maths_independent_review" &&
+      r.reviewer === "Ayobami Lawal" &&
+      r.notes.startsWith(MARKER)
+  );
+}
+
+const REAL_NOTES_PREFIX = `${MARKER} new content review: mock-mr06-linkedvalues (Question IDs: mock-mr06-linkedvalues-01, mock-mr06-linkedvalues-02, mock-mr06-linkedvalues-03)`;
+
+const PENDING_PLACEHOLDER: ReviewRecord = {
+  familyId: "mock-mr06-linkedvalues",
+  reviewer: "UNASSIGNED",
+  decision: "pending_independent_review",
+  reviewType: "mock_maths_independent_review",
+  // Migration 120's own raw INSERT -- the marker genuinely IS at position 0 here, unlike every UI-submitted row.
+  notes: REAL_NOTES_PREFIX,
+};
+
+const APPROVED_RECORD_1: ReviewRecord = {
+  familyId: "mock-mr06-linkedvalues",
+  reviewer: "Ayobami Lawal",
+  decision: "approved",
+  reviewType: "mock_maths_independent_review",
+  notes: buildRealNotes("Mathematics content reviewer", REAL_NOTES_PREFIX, ""),
+};
+
+const APPROVED_RECORD_2: ReviewRecord = {
+  familyId: "mock-mr06-linkedvalues",
+  reviewer: "Ayobami Lawal",
+  decision: "approved",
+  reviewType: "mock_maths_independent_review",
+  notes: buildRealNotes(
+    "Mathematics content reviewer",
+    REAL_NOTES_PREFIX,
+    "Re-reviewed after the shared-stem presentation correction (migrations 121/122): shared scenario now renders once, subparts are clear, answers verified."
+  ),
+};
+
+test("the reconstructed REAL production notes shape does NOT start with the marker -- confirming the root cause directly, not merely asserting it", () => {
+  assert.ok(!APPROVED_RECORD_1.notes.startsWith(MARKER));
+  assert.ok(APPROVED_RECORD_1.notes.includes(MARKER));
+  assert.match(APPROVED_RECORD_1.notes, /^Reviewer qualification: /);
+});
+
+test("the ORIGINAL anchored predicate fails against the real 2-approval production shape -- proving this is the actual production defect, not a hypothetical one", () => {
+  assert.equal(hadApprovedReviewEvidence_BROKEN([PENDING_PLACEHOLDER, APPROVED_RECORD_1, APPROVED_RECORD_2]), false);
+});
+
+test("the CORRECTED predicate accepts the real 2-approval production shape (1 pending + 2 legitimate approvals)", () => {
+  assert.equal(hasApprovedReviewEvidence([PENDING_PLACEHOLDER, APPROVED_RECORD_1, APPROVED_RECORD_2]), true);
+});
+
+test("0 valid approvals (pending only) -> reject", () => {
+  assert.equal(hasApprovedReviewEvidence([PENDING_PLACEHOLDER]), false);
+});
+
+test("1 valid approval -> accept", () => {
+  assert.equal(hasApprovedReviewEvidence([PENDING_PLACEHOLDER, APPROVED_RECORD_1]), true);
+});
+
+test("2 valid approvals -> accept (multiple legitimate approvals must never invalidate certification)", () => {
+  assert.equal(hasApprovedReviewEvidence([PENDING_PLACEHOLDER, APPROVED_RECORD_1, APPROVED_RECORD_2]), true);
+});
+
+test("correct reviewer but wrong decision -> reject", () => {
+  const wrongDecision: ReviewRecord = { ...APPROVED_RECORD_1, decision: "approved_with_amendment" };
+  assert.equal(hasApprovedReviewEvidence([wrongDecision]), false);
+});
+
+test("correct decision but wrong reviewer -> reject", () => {
+  const wrongReviewer: ReviewRecord = { ...APPROVED_RECORD_1, reviewer: "Someone Else" };
+  assert.equal(hasApprovedReviewEvidence([wrongReviewer]), false);
+});
+
+test("wrong review_type -> reject", () => {
+  const wrongType: ReviewRecord = { ...APPROVED_RECORD_1, reviewType: "content_review" };
+  assert.equal(hasApprovedReviewEvidence([wrongType]), false);
+});
+
+test("missing marker in notes -> reject", () => {
+  const noMarker: ReviewRecord = { ...APPROVED_RECORD_1, notes: buildRealNotes("Mathematics content reviewer", "Approved, looks good.", "") };
+  assert.equal(hasApprovedReviewEvidence([noMarker]), false);
+});
+
+test("wrong family_id -> reject (defence against a marker collision with a different family's approval)", () => {
+  const wrongFamily: ReviewRecord = { ...APPROVED_RECORD_1, familyId: "mock-mr06-multiplerelation" };
+  assert.equal(hasApprovedReviewEvidence([wrongFamily]), false);
 });
