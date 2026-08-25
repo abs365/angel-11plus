@@ -6497,3 +6497,59 @@ Marks-metadata only (Category A per Decision 173's own established classificatio
 **Implications:** Decisions 1–173 all stand, none reversed or rewritten. No content, marks, eligibility, or grouping actually changes from this decision. The next steps remain distinct and future: a small Founder-reviewed migration completing `mock-mr08-rotation`'s own 2→1 correction, and — separately, later — a content-authoring decision addressing the now precisely-quantified ≥12-mark structural deficit.
 
 ---
+
+### Decision 175 — MATHEMATICS MARKING INTEGRITY GATE, REMEDIATION PHASE 2 (ROTATION CLOSURE): migration 118 (NOT applied) corrects `prompt.marks` 2→1 on exactly `mock-mr08-rotation-01`/`-02`, completing the Mathematics Marking Integrity Gate's own remediation in full, subject only to Founder application and verification. Mirrors migration 117's own proven `jsonb_set` + pre/post byte-for-byte preservation-snapshot pattern exactly, extended with an explicit grouping-metadata drift guard and a post-write structural re-check (eligibility/active/grouping/marking_mode all re-verified unchanged after the write, not merely before it). Governance unchanged from Decision 174: marks-metadata only, no re-review, no new `ali_family_review` row. **Projected, independently re-verified closure baseline: Mathematics `mock_eligible` = 48 rows / 24 numbered experiences / 48 marks; `independently_validated` = 8 rows / 8 marks; zero remaining Mathematics deterministic rows with `marks > 1` in either state** — the required closure condition, confirmed by fresh script computation against the full corrected dataset, not accepted on the Founder's own stated expectation alone. First Mock remains **NOT READY**: the ≥12-mark structural deficit (Decision 174) is unchanged and not addressed here. No migration applied, no production mutation.
+
+**Scope and process:** One bounded, forward-only metadata-only migration (118, NOT applied) plus this record. No content authoring, no form assembly, no learner activation.
+
+---
+
+**PART 1 — MIGRATION 118**
+
+Targets exactly `mock-mr08-rotation-01` and `mock-mr08-rotation-02`. Preconditions verify, live: exactly 2 matching rows; both `active = true`; both `subject = 'maths'`; both `family_id = 'mock-mr08-rotation'`; both `eligibility_status = 'mock_eligible'`; both `marking_mode = 'deterministic'`; both grouping metadata exactly matching the approved shape (`question_group_id = 'mock-mr08-rotation'`, `group_order` 1/2, `subpart_label` (a)/(b) — a drift guard, never written); both `(prompt->>'marks')::numeric = 2`. The mutation: `jsonb_set(prompt, '{marks}', '1'::jsonb)`, identical to migration 117's own proven approach.
+
+**New this migration**, beyond migration 117's own pattern: a **post-write structural re-check** — after the marks write, the migration re-queries and re-asserts `eligibility_status = 'mock_eligible'`, `active = true`, `question_group_id = 'mock-mr08-rotation'`, and `marking_mode = 'deterministic'` are still true for both rows, rolling back if not. This is additive rigor beyond what Phase 1 required, matching this small a scope's own headroom for extra defence-in-depth.
+
+---
+
+**PART 2 — POSITIVE PRESERVATION PROOF**
+
+A pre-write snapshot of each row's own `prompt - 'marks'` is captured into a temporary table; after the write, the live `prompt - 'marks'` is compared for structural jsonb equality against the snapshot for both rows — proving, not merely trusting, that question text, answer, explanation, skill, and every other `prompt` field are byte-for-byte unchanged. `family_id`, `content_difficulty`, `question_group_id`, `group_order`, `subpart_label`, `marking_mode`, `eligibility_status`, and `active` are separately verified as live preconditions and re-verified post-write — never written by this migration at all (test-enforced: the only column ever `SET` is `prompt`).
+
+---
+
+**PART 3 — GOVERNANCE**
+
+Unchanged from Decision 174: this is Category A, marks-metadata only. `ali_family_review` is never referenced anywhere in the file (test-enforced) — no new review row created, no existing evidence touched or superseded. `mock-mr08-rotation`'s own `mock_eligible` provenance remains fully valid.
+
+---
+
+**PART 4 — CLOSURE BASELINE, INDEPENDENTLY RE-VERIFIED**
+
+Fresh script computation against the full corrected dataset (both Phase 1's 20 rows and Phase 2's 2 rows applied): `mock_eligible` = 48 rows / 48 marks; `independently_validated` (`perimeterarea` 4 + `fairprep` 2 + `runningclub` 2) = 8 rows / 8 marks; **zero rows remain with `marks > 1` in either pool** — confirmed directly, not assumed from the Founder's own stated expectation. This is the exact required closure condition for the Mathematics Marking Integrity Gate. Numbered experiences remain 24, unchanged by construction (a marks-only edit inside `prompt` touches no grouping column). Against the authentic ~20–21-experience/~60-mark target, the ≥12-mark structural deficit (Decision 174) stands exactly as quantified, not addressed by this migration, and not compensated for elsewhere (verified: exactly one `jsonb_set` call in the entire file, scoped to exactly these two rows).
+
+---
+
+**PART 5 — TESTS AND VERIFICATION**
+
+19 new tests in `tests/supabase/mockMathematicsMarkingIntegrityRemediationPhase2Rotation.test.ts`, mirroring migration 117's own test file exactly in spirit: exact 2-row/2-family-position target map, grouping-match proof, single-column-`SET` proof, the pre/post byte-for-byte preservation proof, the new post-write structural re-check proof, all live preconditions, fail-closed/idempotent structure, no `ali_family_review`/`ali_mock_form`/`ali_mock_attempt` mutation, no scoring-function change, Practice isolation, no-other-row-reachable proof, single-transaction wrapping, header disclosure, and the closure-baseline/no-compensation-elsewhere proof. **Full suite: 1474/1474 pass** (1455 baseline + 19 new; zero regressions). `npx tsc --noEmit`: clean. ESLint: 81 problems (62 errors/19 warnings), identical to the established baseline. Copy Quality Guard: PASS, 0 violations, 257 files. Production build: succeeds.
+
+---
+
+**What this decision does NOT claim:** it does not claim migration 118 has been applied (self-disclosed NOT APPLIED); it does not claim any mark, row, eligibility, or grouping has actually changed in production; it does not claim the ≥12-mark structural deficit is addressed — it is explicitly unchanged and not in scope; it does not claim the First Mock is closer to activation.
+
+**Files changed:** `supabase/migrations/118_mock_mathematics_marking_integrity_remediation_phase2_rotation.sql` (new, NOT applied), `tests/supabase/mockMathematicsMarkingIntegrityRemediationPhase2Rotation.test.ts` (new), `ALI_DECISION_LOG.md` (this entry).
+
+**Migrations created:** 118 — drafted, tested, NOT applied, awaiting Founder review.
+
+**Decision number:** 175.
+
+**Commit SHA:** recorded after commit (see repository history immediately following this entry).
+
+**Production application status:** migration 118 NOT applied. No production change has occurred.
+
+**Rationale:** completing the Mathematics Marking Integrity Gate's own remediation in a second small, bounded phase, rather than folding it into a larger or differently-scoped change, follows this arc's own established discipline (migration 117 itself, Decision 173) of the smallest defensible increment per correction, with its own independent precondition/preservation proof rather than inheriting Phase 1's own.
+
+**Implications:** Decisions 1–174 all stand, none reversed or rewritten. No content, marks, eligibility, or grouping actually changes in production from this decision. The next steps remain distinct and future: Founder review and application of migration 118 (closing the Mathematics Marking Integrity Gate in full once applied), and — separately, later — a content-authoring decision addressing the now-confirmed ≥12-mark structural deficit before any First Mock can be assembled.
+
+---
