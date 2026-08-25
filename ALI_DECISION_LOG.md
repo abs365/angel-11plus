@@ -6431,3 +6431,69 @@ Raw-row and numbered-experience counts are unchanged by construction: a marks-va
 **Implications:** Decisions 1–172 all stand, none reversed or rewritten; Decision 172's own "21 rows" figure is understood as superseded by this entry's own 20-row re-derivation, not by rewriting Decision 172's historical text. No content, marks, eligibility, or grouping actually changes in production from this decision. The next steps remain distinct and future: Founder review and application of migration 117, and a separate decision addressing `mock-mr08-rotation`'s own structural marking question.
 
 ---
+
+### Decision 174 — MOCK-MR08-ROTATION STRUCTURAL MARKING RESOLUTION: read-only evidence audit, no implementation. Migration 117 confirmed production-applied and Founder-verified (`mock_eligible = 48 rows / 50 marks`, `independently_validated = 8 rows / 8 marks`). The one deferred exception, `mock-mr08-rotation-01`/`-02` (coordinate-pair rotation answers, `marks = 2` each), is resolved on primary-source evidence: the closest real analogue (2022 Q18, a rotation transformation) shows one combined coordinate-pair answer box per subpart, no per-coordinate split, no partial-credit annotation — matching the governing 1-mark default exactly. A different real analogue (2021 Q8, co-linear points) explicitly credits individual coordinates separately, but for a structurally different, multi-point construct that does not transfer to a single rotated point. Angel's own current answer/scoring contract independently confirms the same conclusion: the coordinate pair is captured and scored as one indivisible string (`mock_score_attempt()`'s own string-equality path), with zero present capacity to observe x/y correctness separately. **Selected model: Option A — correct marks 2→1 on both rows, no answer-contract or structural change.** No UI change required. Governance: marks-metadata only, no re-review required, same treatment as migration 117's own 20 rows. **Corrected `mock_eligible` baseline (independently recomputed): 48 rows, 24 experiences, 48 marks — a ≥12-mark deficit against the ~60-mark authentic target, now the dominant, precisely-quantified First Mock blocker.** No migration created. No production mutation.
+
+**Scope and process:** Read-only evidence audit and design recommendation only. No implementation of the resulting migration.
+
+---
+
+**PART 1 — PRODUCTION STATE RECORDED**
+
+`HEAD == origin/main` at `09e5e05` (Decision 173) confirmed before this analysis. Founder-verified: migration 117 applied; `mock_eligible = 48 rows / 50 marks`; `independently_validated = 8 rows / 8 marks`; `ali_mock_form = 0`; the only remaining Mathematics `marks > 1` rows in either eligibility state are `mock-mr08-rotation-01`/`-02`, both `marks = 2`, `marking_mode = 'deterministic'`, correctly grouped (`question_group_id = mock-mr08-rotation`, `group_order` 1/2, `subpart_label` (a)/(b)). The 20 completed corrections from migration 117 are not reopened.
+
+---
+
+**PART 2 — WHY 2 MARKS WAS ORIGINALLY ASSIGNED**
+
+Migration 095's own authoring comment cites CSSE-011 Q18 (2022) as evidence for the rotation *mechanic*, but states no justification of any kind for the *mark value* — confirming, a third time this arc, that marks were an unexamined authoring-time default, not an evidence-derived figure.
+
+---
+
+**PART 3 — PRIMARY-SOURCE EVIDENCE, TWO ANALOGUES CORRECTLY DISTINGUISHED**
+
+Real 2022 Q18 mark scheme, re-extracted directly this session: `18a (8, 0)`, `18b (2, -6)` — one combined coordinate-pair answer box per subpart, no per-coordinate split, no partial-credit note, consistent with the governing "1 mark for each correct answer" default. Real 2021 Q8 (co-linear points A/D on a line) explicitly states "1 mark is awarded for correctly identifying each of the 3 missing co-ordinates" — genuine per-value credit, but for a structurally different, multi-point construct, not a single-point rotation. **No primary-source evidence supports a single coordinate pair being worth 2 marks all-or-nothing (Option E), and the one directly-comparable construct (Q18) affirmatively supports 1 mark per pair over splitting x/y (Option B).**
+
+---
+
+**PART 4 — CURRENT ANSWER/SCORING CONTRACT**
+
+Angel captures the answer as one plain string in the same generic `<textarea>` every deterministic row uses. `mock_score_attempt()` (migration 104, re-confirmed): non-numeric answers fall to `lower(trim(response)) = lower(trim(stored_answer))`, a single indivisible string comparison. Angel today cannot observe x/y correctness separately — architecture and evidence point to the same conclusion independently.
+
+---
+
+**PART 5 — OPTIONS ASSESSED, MODEL SELECTED**
+
+Option A (marks-only 2→1): matches the closest real analogue exactly, matches the current architecture exactly, zero implementation complexity, fully explainable. Option B (x/y split): would require new raw rows or a new component-level marking mode, neither exists; not supported by the directly-comparable analogue. Option C (further subparts): no evidence basis — Q18 is already exactly two lettered subparts, matching Angel's own shape. Option D: none found beyond A. **Selected: Option A.**
+
+---
+
+**PART 6 — CORRECTED BASELINE AND CAPACITY CONSEQUENCE**
+
+Independently recomputed: 50 − 1 − 1 = **48 marks**, 48 rows, 24 experiences (grouping structurally unaffected by a marks-only edit, as with every prior correction). Against the ~20–21-experience/~60-mark authentic target (confirmed identically across all three primary-source years this whole arc): **a ≥12-mark deficit**, requiring roughly 12+ marks' worth of genuinely credit-bearing new subparts, best supplied through further Classification-A shared-scenario compounds (Decision 168's own archetype finding) — `mock_eligible` currently carries essentially none. The 8-row/8-mark independently_validated reserve, even fully promoted, only reaches 56 marks/28 experiences — helps, does not close the gap.
+
+---
+
+**PART 7 — GOVERNANCE AND VISUAL/UX**
+
+Marks-metadata only (Category A per Decision 173's own established classification); no re-review required, same as the 20 already-corrected rows. No UI change required or recommended — the existing single free-text "(x, y)" field already matches the agreed calm/uncluttered/age-appropriate standard; splitting fields (only relevant under the rejected Option B) is correctly avoided.
+
+---
+
+**What this decision does NOT claim:** it does not claim any mark, row, or content has actually changed — this is evidence and design only; it does not claim a migration exists — none was created; it does not claim the ~12-mark content deficit is closed or that any new content has been authored; it does not claim the First Mock is closer to activation.
+
+**Files changed:** `ALI_DECISION_LOG.md` (this entry only).
+
+**Migrations created:** none.
+
+**Decision number:** 174.
+
+**Commit SHA:** recorded after commit (see repository history immediately following this entry).
+
+**Production application status:** not applicable — no migration, no production change.
+
+**Rationale:** resolving the one deferred structural exception on the same primary-source discipline established across Decisions 168/172/173 — reading the actual mark scheme rather than inferring from a number — completes the Mathematics Marking Integrity Gate's own evidence base in full, leaving exactly one small, well-justified, low-risk correction (not yet migrated) between the pool and a fully marks-honest baseline.
+
+**Implications:** Decisions 1–173 all stand, none reversed or rewritten. No content, marks, eligibility, or grouping actually changes from this decision. The next steps remain distinct and future: a small Founder-reviewed migration completing `mock-mr08-rotation`'s own 2→1 correction, and — separately, later — a content-authoring decision addressing the now precisely-quantified ≥12-mark structural deficit.
+
+---
