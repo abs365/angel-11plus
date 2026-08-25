@@ -6084,3 +6084,69 @@ Kept explicitly separate. First Mock Minimum = exactly the 2 batch items above. 
 **Implications:** Decisions 1–167 all stand, none reversed or rewritten. Decision 167's own First Mock composition is not altered by this decision. No content is authored, no migration created, no production changed. The next step is Founder approval of the exact 2-item batch in Part 4 before any authoring begins.
 
 ---
+
+### Decision 169 — MATHEMATICS FIRST MOCK MINIMUM: SHARED-SCENARIO COMPLETION BATCH AUTHORED (Founder-approved, Decision 168): 2 new original numbered-question experiences authored — `mock-mr10-fairprep` (QT-MR-10, genuine shared-scenario forward+reverse elapsed time, closing the Q8/Q20 fidelity gap) and `mock-mr09-runningclub` (QT-MR-09, genuine shared-dataset two-query compound, closing the data-reading gap) — 4 rows, 6 marks, `authentic_assessment_candidate`, migrations 113/114 drafted, tested, NOT applied; the Decision 165 append-only correction (costumeschedule provenance) is now formally recorded; review-surface and grouped-rendering compatibility confirmed generic, zero code change required; visual pre-flight found no blocker; projected post-batch First Mock structure computed but the replacement into the frozen composition is explicitly NOT performed; no migration applied, no production mutation
+
+**Scope and process:** Content authoring plus two bounded, forward-only migrations (113 content, 114 pending-review placeholders), both NOT applied, plus one formally-recorded append-only correction to Decision 165's own prior text (Decision 165 itself not rewritten).
+
+---
+
+**PART 1 — RECONCILIATION**
+
+`HEAD == origin/main` at `94dad8d` (Decision 168) confirmed before this work began; no commit since.
+
+---
+
+**PART 2 — DECISION 165 APPEND-ONLY CORRECTION (now formally recorded, drafted across the two prior review turns)**
+
+Two inaccuracies in Decision 165's own prose, identified by direct source re-reading in later sessions, corrected here without altering Decision 165's own historical text: **(1)** Decision 165 Part 3's claim that costumeschedule's subpart (b) "reuses a resolved value from subpart (a)" does not match the actual content (migration 095) — both instances' (a)/(b) subparts are fully independent computations sharing no value. **(2)** Decision 165 Part 2 correctly diagnosed `CSSE_QUESTION_INTELLIGENCE_FRAMEWORK.md`'s own claim that real 2023 Q9 "combines QT-MR-10 with QT-MR-01" as a source-classification error (real Q9 is QT-MR-10 twice — forward and reverse — from one shared costume-making scenario, reconfirmed by direct primary-source reading in the Decision 168 turn) — but never checked whether Angel's own authored content inherited the same error. It did: `mock-mr01mr10-costumeschedule` still pairs a QT-MR-10 subpart with an unrelated QT-MR-01 fabric-cost subpart, sharing no computed value and no scenario data between them, only a narrative theme (a tailor, costumes). Its correct structural classification is **C (mixed-skill compound under a shared narrative theme)**, not the **A (shared-scenario compound)** it was originally authored to evidence. The family's underlying mathematics remains fully valid and unaffected — this is a structural-provenance correction only, and `mock-mr01mr10-costumeschedule` is not modified by this decision.
+
+---
+
+**PART 3 — CONTENT AUTHORED**
+
+`mock-mr10-fairprep` (2 rows, 3 marks, QT-MR-10, medium/hard) and `mock-mr09-runningclub` (2 rows, 3 marks, QT-MR-09, medium/hard) — full scenarios, answers, and working steps in migration 113's own text. Both are genuine shared-scenario/shared-dataset compounds: `fairprep`'s two subparts reuse the identical stated durations (1h55, 40min), the mechanism (not merely a shared narrative theme) that constitutes a real Classification A structure; `runningclub`'s two subparts read the identical 5-value dataset, applying two genuinely different derived-reasoning steps (sum-then-rate; successive-difference search) rather than repeating the same computation. Every answer independently re-derived twice — once by hand while authoring, once by an independent script this session (`13:15+1h55+40min=15:50`; `16:30−20min−40min−1h55=13:35`; `14+19+16+23+21=93, ×1.50=139.50`; differences `+5/−3/+7/−2`, unique maximum `Week 3 to Week 4`) — both derivations agree.
+
+---
+
+**PART 4 — GROUPING CONTRACT AND REVIEW-SURFACE VERIFICATION**
+
+`question_group_id = family_id`, `group_order` 1/2, `subpart_label` '(a)'/'(b)', `marking_mode = 'deterministic'` on every row, matching migration 112's own established convention exactly (no `-01`/`-02` instance suffix, since each family has exactly one instance). Confirmed by direct source reading, not assumed: `lib/adminReview.ts`'s own `groupQuestionsForReview()` groups purely by `questionGroupId ?? id`, sorted by `groupOrder` — both new families will render as single grouped review targets on the admin review surface with zero code change. The same is true of `mock_get_attempt_grouping()`/`buildDisplayUnits()` (Decision 161/166) for eventual learner rendering.
+
+---
+
+**PART 5 — VISUAL / LEARNER-EXPERIENCE READINESS**
+
+Confirmed by direct reading of `app/learning-intelligence/mock-exam/page.tsx` this session: the learner-facing question renderer displays `question` text via a `<p>` styled `whitespace-pre-line` — literal `\n` line breaks render faithfully, but there is no column-aligned `<table>` markup anywhere in the component. `mock-mr09-runningclub`'s dataset is therefore presented as `\n`-separated "Week N: count" lines (verified this session to parse and render correctly) rather than degraded into one run-on sentence, and rather than inventing an unsupported table format the current UI cannot render. This is the one genuine, disclosed presentation-fidelity gap: a true aligned-grid table is not available; the newline-list is the best fit within the confirmed-working mechanism. Subpart labels, per-subpart answer inputs, the visible `ExamTimer`, the accessible palette (`role="group"`, per-entry `aria-label` describing answered/flagged state), and the pre-submit unanswered/flagged counts were all confirmed present and generic — no blocker found requiring a STOP under this decision's own governing instruction.
+
+---
+
+**PART 6 — DUPLICATE / MEMORISATION AUDIT**
+
+Performed against all 194 Mathematics Practice rows, all 48 current `mock_eligible` rows, the 4 `independently_validated` `perimeterarea` rows, and the two new rows against each other (method: targeted repository-wide text search for both new scenarios' own wording/numbers/answers, plus structural comparison against every existing elapsed-time and data-handling family). No exact or near-duplicate found; no number-substitution relabelling of any existing family; both new families recur an authentically-evidenced real archetype (not a manufactured resemblance to existing Angel content); no cross-collision between the two new families themselves. Full disclosure in migration 113's own header.
+
+---
+
+**PART 7 — PROJECTED FIRST MOCK STRUCTURE (projection only, composition NOT changed)**
+
+If both new experiences were simply *added* to Decision 167's proposed 20-question paper without removing anything: 22 questions, 47 rows, 68 marks, A=2/22 (9.1%), B=19/22 (86.4%), C=1/22 (4.5%), D=0 — and 68 marks moves further above the now-confirmed-exact 60-mark real target (every one of the three primary-source years is exactly 60). **A same-marks-value *replacement* (swapping out roughly 6 marks of existing B-type content for these 2 new A-type experiences) would keep the paper at 20 questions/≈62 marks while moving A-representation from 0% to 10%** — still far below the three-year real rate of 48.4%, but no longer structurally zero on the largest real category. **This batch is explicitly a down payment, not parity** — closing the full gap would need materially more A-type content than this bounded batch, consistent with Decision 168's own "First Mock Minimum, not Rolling Programme" framing. Whether to actually perform that replacement is a future, separate recomposition decision, not made here.
+
+---
+
+**What this decision does NOT claim:** it does not claim either migration has been applied (self-disclosed NOT APPLIED); it does not claim any content is `independently_validated` or `mock_eligible` — both families remain `authentic_assessment_candidate`, pending review; it does not claim the First Mock composition (Decision 167) has changed — it has not; it does not claim the Decision 165 correction alters costumeschedule's own current production state — it remains untouched; it does not claim the visual presentation gap (no aligned table) is resolved, only that a working alternative was used and the gap disclosed; it does not claim any Mock form, migration, or production change has occurred.
+
+**Files changed:** `supabase/migrations/113_mock_mathematics_shared_scenario_completion_batch.sql` (new, NOT applied), `supabase/migrations/114_mock_mathematics_shared_scenario_completion_batch_pending_review.sql` (new, NOT applied), `ALI_DECISION_LOG.md` (this entry).
+
+**Migrations created:** 113, 114 — both drafted, NOT applied, awaiting Founder review and independent reviewer assignment.
+
+**Decision number:** 169.
+
+**Commit SHA:** recorded after commit (see repository history immediately following this entry).
+
+**Production application status:** migrations 113/114 NOT applied. No production change has occurred.
+
+**Rationale:** authoring exactly the Founder-approved 2-item batch, no more, follows this arc's own established discipline of treating an approval as bounded to precisely what was reviewed (Decisions 158/160/165/166 precedent) — a richer, evidence-backed set of archetypes (interdependent systems, shared diagrams, shared menus) was identified in Decision 168 and deliberately not authored here, named instead as Rolling Programme backlog.
+
+**Implications:** Decisions 1–168 all stand, none reversed or rewritten; Decision 165 stands, corrected by this entry's own Part 2, not rewritten. No Mock form, no eligibility change, no Batch 001 promotion, and no change to the First Mock composition occurs from this decision. Both new families now await independent review (migration 114) exactly like every prior batch before them — not self-certified here.
+
+---
