@@ -1556,6 +1556,48 @@ export async function fetchMockSharedScenarioCompletionBatchReviewStatus(familyI
 }
 
 /**
+ * Mathematics First Mock Structural Capacity, Authoring Increment 001 —
+ * Interdependent Algebraic System (Decision 177/178). One new family
+ * (mock-mr06-linkedvalues, migration 119), made reviewable via the exact
+ * same scoped-batch mechanism as MOCK_FIRSTMOCK_COMPOUND_BATCH001_
+ * FAMILIES / MOCK_SHARED_SCENARIO_COMPLETION_BATCH_FAMILIES above — own
+ * array, own marker, own status map, reusing
+ * `review_type = 'mock_maths_independent_review'` and the generalised
+ * deriveBatchReviewStatus()/fetchBatchReviewStatus() helpers unchanged.
+ * The family is grouped: its 3 newQuestionIds are 1 numbered-question
+ * experience of 3 subparts, reviewed as one family decision. No
+ * `prompt.stimulus` is used — purely textual. Every row's
+ * eligibility_status is authentic_assessment_candidate; approving this
+ * family here still does NOT promote it, and does NOT create or touch
+ * any ali_mock_form row.
+ */
+export const MOCK_STRUCTURAL_CAPACITY_INC001_MARKER = "MOCK-STRUCTURAL-CAPACITY-INC001";
+
+export const MOCK_STRUCTURAL_CAPACITY_INC001_FAMILIES: SevenXFamilyConfig[] = [
+  {
+    familyId: "mock-mr06-linkedvalues",
+    newQuestionIds: [
+      "mock-mr06-linkedvalues-01", "mock-mr06-linkedvalues-02", "mock-mr06-linkedvalues-03",
+    ],
+    disclosure:
+      "This is a brand-new family with no prior review of any kind. It is a genuine interdependent-algebraic-system compound (Decision 177's own named first authoring increment): one stated additive relation (blue bag = red bag + 6), one stated multiplicative relation (green bag = 3 x blue bag), and one stated total (64 marbles), all stated once and reused across all three subparts. Directly evidenced this session against the real primary-source papers and mark schemes, not merely prior Decision prose: 2023 Q8 (three-unknown symbol system, 3 marks), 2023 Q18 (four-quantity defined system, 3 marks), 2022 Q6 (two-relation system, 2 marks), 2021 Q7 (two-relation system, 2 marks), 2021 Q20 (three-unknown real-world system, 3 marks); all five independently re-verified. QT-MR-06 (Multiple-Relation reasoning) is reused, not a new Question Type: this family extends the same reasoning skill mock-mr06-multiplerelation already represents at 2-unknown scale, to a 3-unknown, 3-subpart system, disclosed and checked for near-duplication against multiplerelation directly (structurally distinct: an additional additive relation, a third subpart, and a combined-comparison final step neither multiplerelation subpart requires). Difficulty: (a) medium (solve the system for the base unknown), (b) medium (apply both relations forward from (a)), (c) hard (combine all three derived values in a new comparison). No stimulus, diagram, or image is used or required. Disclosed for your own judgement, not a recommendation either way.",
+  },
+];
+export const MOCK_STRUCTURAL_CAPACITY_INC001_TARGET_IDS = MOCK_STRUCTURAL_CAPACITY_INC001_FAMILIES.map((f) => f.familyId);
+
+export function buildMockStructuralCapacityInc001NotesPrefix(familyId: string, questionIds: string[]): string {
+  return `${MOCK_STRUCTURAL_CAPACITY_INC001_MARKER} new content review: ${familyId} (Question IDs: ${questionIds.join(", ")})`;
+}
+
+export function deriveMockStructuralCapacityInc001ReviewStatus(rows: SevenXReviewRow[], familyIds: string[]): Map<string, SevenXReviewStatus> {
+  return deriveBatchReviewStatus(rows, familyIds, MOCK_STRUCTURAL_CAPACITY_INC001_MARKER, "mock_maths_independent_review");
+}
+
+export async function fetchMockStructuralCapacityInc001ReviewStatus(familyIds: string[]): Promise<Map<string, SevenXReviewStatus>> {
+  return fetchBatchReviewStatus(familyIds, MOCK_STRUCTURAL_CAPACITY_INC001_MARKER, "mock_maths_independent_review");
+}
+
+/**
  * Inserts one real, traceable Mock-content independent-review decision —
  * `review_type = 'mock_maths_independent_review'` (migration 087,
  * Decision 139), explicitly set here exactly as `submitMathsTeachingReview`

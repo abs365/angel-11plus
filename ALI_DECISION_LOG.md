@@ -6730,3 +6730,91 @@ Confirmed largely intact from the sequence implicit in Decisions 165-176: reserv
 **Implications:** Decisions 1-176 all stand, none reversed or rewritten; Decision 176's headline imprecision is corrected without altering its body, which is confirmed accurate. No content, marks, eligibility, or grouping changes from this decision. The next step remains a separate, bounded content-authoring decision for the interdependent-algebraic-system family (unchanged first pick) — not begun here, and now explicitly understood as the first of several such rounds required, not the last.
 
 ---
+
+### Decision 178 — FIRST MATHEMATICS MOCK STRUCTURAL CAPACITY, AUTHORING INCREMENT 001: INTERDEPENDENT ALGEBRAIC SYSTEM. Authors exactly the one bounded family Decision 177 named and no other. Primary-source evidence for the archetype (five claimed instances: 2023 Q8/Q18, 2022 Q6, 2021 Q7/Q20) is independently re-verified directly against the real papers and mark schemes (`pdftotext` extraction, not Decision prose) — all five confirmed genuine, none found unsupported. One original Angel family, `mock-mr06-linkedvalues` (3 rows, 1 numbered-question experience, 3 subparts, 3 marks, 1 per subpart), is authored: a marbles-collection scenario with one stated additive relation, one stated multiplicative relation, and one stated total, reusing existing QT-MR-06 (no new Question Type), staged accessible-entry / relationship-reasoning / deeper-inference across (a)/(b)/(c). Every answer independently verified via two methods (direct solution, back-substitution). Duplicate/near-neighbour audit against the full repository finds no exact or near duplication; the one genuine structural neighbour (`mock-mr06-multiplerelation`) is disclosed, not hidden, and found structurally distinct. Content and review-registration migrations are kept separated (119 content-only, 120 pending-review-only), exactly following migration 109/110 and 113/114 precedent. Review-surface reachability is traced end-to-end (not assumed): a dedicated `MOCK_STRUCTURAL_CAPACITY_INC001` config, marker, Section component, and full load/state/modal wiring is added to `lib/adminReview.ts` and `app/admin-beta/review/page.tsx`, mirroring `MockFirstMockCompoundBatch001Section`'s own established single-family pattern. Full verification suite passes (1508/1508 tests, 34 new; `tsc --noEmit` clean; ESLint unchanged at the established 81-problem/62-error/19-warning baseline; Copy Quality Guard PASS after 2 em-dash fixes; production build succeeds). Projected capacity impact if this family later passes all gates: State C becomes 59 rows / 29 experiences / 59 marks (5 A / 19 B / 2 C / 3 S), still short of the ~14-17-mark deficit Decision 177 quantified — explicitly not claimed solved. Shared-timetable and every other archetype remain unauthored. No migration applied, no production mutation.
+
+**Scope and process:** Content authoring plus two bounded, forward-only migrations (119 content, 120 pending-review placeholder), both NOT applied.
+
+---
+
+**PART 1 — RECONCILIATION**
+
+`HEAD == origin/main` at `5e6508a` (Decision 177) confirmed via `git fetch`/`git rev-parse` before and after implementation; clean working tree aside from this increment's own new/modified files. Decision 175 (Mathematics Marking Integrity Gate) confirmed CLOSED, not reopened. Decisions 176/177 confirmed governing. Baseline confirmed unchanged: `mock_eligible` 48 rows/48 marks, `independently_validated` 8 rows/8 marks, `ali_mock_form` 0 rows, classification 0 A / 19 B / 2 C / 3 S. `perimeterarea`/`fairprep`/`runningclub` remain the only `independently_validated` reserve, all Classification A.
+
+---
+
+**PART 2 — PRIMARY-SOURCE EVIDENCE, INDEPENDENTLY RE-VERIFIED**
+
+Read directly this session via `pdftotext -layout` against the real PDFs (`knowledge/csse/official-papers/Maths-Paper-2021/2022/2023-Entry*.pdf`, `knowledge/csse/mark-schemes/Maths-*-Entry-Mark-Scheme.pdf`), not Decision 168/176/177's own prose. All three mark schemes state, identically: "1 mark for each correct answer. Total 60 marks."
+
+| Instance | Year | System | Unknowns sought | Marks |
+|---|---|---|---|---|
+| 1 | 2023 Q8 | Three simultaneous symbol-equations | 3 | 3 (mark scheme confirms 3 distinct entries) |
+| 2 | 2023 Q18 | A=B+3, C=3B, D=B², three derived expressions | 3 | 3 (mark scheme confirms 3 distinct entries) |
+| 3 | 2022 Q6 | B=2A, 2C=A, A+B+C=7 | 2 | 2 (universal 1-mark rule, 2 answer blanks) |
+| 4 | 2021 Q7 | A=2B, B=3C, A+B+C=50 | 2 | 2 (universal 1-mark rule, 2 answer blanks) |
+| 5 | 2021 Q20 | Three combined-purchase equations | 3 | 3 (mark scheme's own page box confirms 3) |
+
+All five verified; none found unsupported. Common structural proof: a system of relationships is stated once, never restated as new information; each subpart requires genuine engagement with the full system; later subparts commonly build on an earlier subpart's own found value; exactly 1 mark per independently correct value; no diagram in any of the five. This is the same reasoning skill Angel's own `mock-mr06-multiplerelation` already represents at 2-unknown scale (QT-MR-06) — this increment extends it, rather than inventing a new Question Type.
+
+---
+
+**PART 3 — AUTHORED FAMILY**
+
+`mock-mr06-linkedvalues` (QT-MR-06, `prompt.skill` = "algebra", 3 rows, 1 experience, 3 marks, 1 per subpart, `eligibility_status = authentic_assessment_candidate`). Original marbles-bag scenario (red/blue/green): blue = red + 6, green = 3 × blue, total = 64. (a) solve for red (medium, entry-level equation-solving) → 8; (b) apply both relations forward to find green (medium, relationship reasoning) → 42; (c) combine all three derived values in a new comparison (hard, deeper inference: green − (red+blue)) → 20. Every answer independently verified via direct solution and back-substitution. No CSSE wording, name, or number system reused; no lettered A/B/C/D system, box symbols, age system, or money-purchase scenario.
+
+---
+
+**PART 4 — ORIGINALITY / DUPLICATE AUDIT**
+
+Repository-wide search for "marble" and "collector": zero prior use anywhere. No exact or textual near-duplication. Genuine near-neighbour `mock-mr06-multiplerelation` disclosed, not hidden: 2-unknown/1-relation-plus-sum vs. this family's 3-unknown/2-relations-plus-sum-plus-combine — structurally richer, not a relabelling. `mock-mr06-sumdiff` also checked: abstract, no multiplicative relation, structurally distinct.
+
+---
+
+**PART 5 — GROUPING, MARKING, GOVERNANCE**
+
+Grouping: single `question_group_id = mock-mr06-linkedvalues`, `group_order` 1/2/3, `subpart_label` (a)/(b)/(c), `marking_mode = deterministic` — the established migration 093/109/113 mechanism, unchanged. Marking: 1 mark per row, 3 total, no partial-credit mechanism (Decision 175 binding). Migrations kept separated: 119 (content only, no `ali_family_review` mention) / 120 (pending-review only, no `ali_question_bank` mention), reviewer `UNASSIGNED`, `decision = pending_independent_review`, `review_type = mock_maths_independent_review`, idempotency guard on family_id+decision+review_type+notes — exact migration 109/110/113/114 pattern.
+
+---
+
+**PART 6 — REVIEW-SURFACE REACHABILITY (traced, not assumed)**
+
+Per Decision 170's own lesson, generic grouping does not by itself make a new batch visible. Traced and wired end-to-end: `MOCK_STRUCTURAL_CAPACITY_INC001_MARKER`/`_FAMILIES`/`_TARGET_IDS`, `buildMockStructuralCapacityInc001NotesPrefix()`, `deriveMockStructuralCapacityInc001ReviewStatus()`, `fetchMockStructuralCapacityInc001ReviewStatus()` added to `lib/adminReview.ts`; `MockStructuralCapacityInc001Section` component, state, `load()` fetch, `ReviewForm` modal branch, and JSX render call added to `app/admin-beta/review/page.tsx`, mirroring `MockFirstMockCompoundBatch001Section` exactly. Rendering itself (`groupQuestionsForReview()`, subpart hierarchy, answer controls, palette, flagging, timer, navigation, persistence, scoring by raw component ID) is unmodified and generic — this family needs no stimulus, so `DataTableStimulus`/`selectDisplayUnitStimulus()` are untouched. No learner-facing code was changed; no blocker was found, so no scope expansion occurred.
+
+---
+
+**PART 7 — EI COMPATIBILITY**
+
+Unchanged from Decision 170's own finding: raw per-row correctness, QT, subpart, and grouped-experience identity are preserved exactly as every prior grouped family already preserves them; no new EI capability is implemented; no educational meaning is lost by current evidence capture for this family's shape.
+
+---
+
+**PART 8 — VERIFICATION**
+
+34 new tests across three files (`tests/supabase/mockMathematicsStructuralCapacityInc001Content.test.ts` — 17, `tests/supabase/mockMathematicsStructuralCapacityInc001PendingReview.test.ts` — 8, `tests/lib/adminReview.mockStructuralCapacityInc001.test.ts` — 9), covering exact row/mark/answer/grouping/QT correctness, candidate-only eligibility, no existing-row mutation, idempotency, and full review-surface reachability (config, imports, state, `load()`, modal, render, marker filter, generic grouping). **Full suite: 1508/1508 pass** (1474 baseline + 34 new; zero regressions). `npx tsc --noEmit`: clean. ESLint: 81 problems (62 errors/19 warnings), identical to the established baseline. Copy Quality Guard: 2 em-dash violations found and fixed (a section heading, a disclosure string), then PASS, 0 violations, 257 files. Production build: succeeds (exit 0).
+
+---
+
+**PART 9 — PROJECTED CAPACITY IMPACT AND REMAINING DEFICIT**
+
+If this family later passes independent review, `independently_validated`, and mock-eligibility promotion in full: State C = 59 rows / 29 experiences / 59 marks (5 A / 19 B / 2 C / 3 S). Decision 177's own ≈14-17-mark pool-composition-ceiling finding (an authentic 20-21-question subset topping out at ≈44-46 marks even at State C) is **unchanged and not claimed solved** by this one family. Decision 177's own estimate — 5-9 further rich families needed — stands. Shared-timetable (Decision 177's own second-ranked, capability-ready archetype) remains the likely next candidate but is explicitly **not authored** in this increment.
+
+---
+
+**What this decision does NOT claim:** it does not claim migration 119 or 120 has been applied (both self-disclosed NOT APPLIED); it does not claim any row's eligibility_status, marks, or grouping has actually changed in production; it does not claim independent review has occurred; it does not claim the ≈14-17-mark deficit is closed; it does not claim the shared-timetable family has been authored or even started; it does not claim any learner-facing or EI capability has changed.
+
+**Files changed:** `supabase/migrations/119_mock_mathematics_structural_capacity_increment001_algebraic_system.sql` (new, NOT applied), `supabase/migrations/120_mock_mathematics_structural_capacity_increment001_pending_review.sql` (new, NOT applied), `lib/adminReview.ts` (modified — new batch config, unchanged existing exports), `app/admin-beta/review/page.tsx` (modified — new Section component and wiring, unchanged existing sections), `tests/supabase/mockMathematicsStructuralCapacityInc001Content.test.ts` (new), `tests/supabase/mockMathematicsStructuralCapacityInc001PendingReview.test.ts` (new), `tests/lib/adminReview.mockStructuralCapacityInc001.test.ts` (new), `ALI_DECISION_LOG.md` (this entry).
+
+**Migrations created:** 119 — drafted, tested, NOT applied. 120 — drafted, tested, NOT applied.
+
+**Decision number:** 178.
+
+**Commit SHA:** recorded after commit (see repository history immediately following this entry).
+
+**Production application status:** migrations 119/120 NOT applied. No production change has occurred.
+
+**Rationale:** authoring exactly the one Founder-authorised family, with primary-source evidence independently re-verified rather than trusted from prior Decision prose, and review-surface reachability traced end-to-end rather than assumed, follows this arc's own established discipline (Decisions 109/110, 113/114/170, migration 117/118's own re-derivation standard) — a bounded increment stays bounded, and every claim in this entry is either directly tested or directly verified against a primary source.
+
+**Implications:** Decisions 1-177 all stand, none reversed or rewritten. No content, marks, eligibility, or grouping actually changes in production from this decision. The next steps remain distinct and future: Founder review and application of migrations 119/120, independent review of `mock-mr06-linkedvalues`, and — separately, later, not begun here — a bounded authoring decision for the shared-timetable family, understood as one of several further rounds still required before Decision 177's own quantified deficit is closed.
+
+---
