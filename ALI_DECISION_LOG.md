@@ -7581,3 +7581,147 @@ Decision 179's own Migration SQL Guard (`scripts/lib/migrationSqlBalance.mjs`) c
 **Implications:** Decisions 1-187 all stand, none reversed or rewritten. No content, marks, eligibility, grouping, RPC, RLS, or review-record change occurs from this decision. `mock-mr10-bustimetable` remains `authentic_assessment_candidate` until migration 129 is Founder-applied. **Remaining blockers:** none for certification itself. The next steps remain distinct and future: Founder application of migration 129; then, separately, a future mock-eligibility composition decision (not begun here) covering whether `mock-mr10-bustimetable` (alongside `mock-mr13-craftstall`, once its own independent-validation migration is prepared) should enter `mock_eligible`; and, separately again, further bounded Mathematics authoring per Decision 185's own future-variant blueprint — none begun by this certification.
 
 ---
+
+### Decision 189 — POST-WAVE 002 RESERVE, COMPOSITION AND NEXT-INVESTMENT DECISION GATE (read-only). Founder-confirmed production baseline after migration 129 re-derived independently from source and matched exactly: `mock_eligible` 55 rows/55 marks/27 experiences (3 A / 19 B / 2 C / 3 S), `independently_validated` reserve 8 rows/8 marks/3 experiences (`mock-mr03mr07-perimeterarea` 4/4/2exp, `mock-mr10-bustimetable` 4/4/1exp, both genuine A), `ali_mock_form` 0. `mock-mr13-craftstall` (3 rows, `authentic_assessment_candidate`, Founder-approved under the original `MOCK-STRUCTURAL-CAPACITY-WAVE002` marker per Decision 186, genuine A, untouched since) confirmed **not independently validated** — no certification migration exists for it, matching this decision's own instruction not to infer its status from prior Decision prose. No migration after 129 exists; no later Mathematics change alters the baseline. Recomputing (not carrying forward) the richest-first composition ceiling across six pool states finds the ceiling is set entirely by the supply of 3-and-4-mark Classification-A experiences, not by the 2-mark B-type filler, which is already in structural surplus: State A (current, no reserve added) = 44/46 marks at 20/21 questions; States B/C/D (adding Bus Timetable and/or Perimeter Area individually or together) = 46/48 marks — **Perimeter Area alone contributes exactly zero marks to the ceiling at either question count**, re-confirming Decision 183's own historical finding still holds after Wave 002, because the 2-mark supply already exceeds what a 20-21-question form can use; States E/F (adding Bus Timetable + Craft Stall, with or without Perimeter Area) = 47/49 marks, exactly reproducing Decision 185's own projected figure with zero drift since nothing about either family's marks or count has changed since then. Best achievable state (F) remains ≈9-11 marks short of the authentic ≈58-60 target. True bottleneck ranked: (1) insufficient 3-4-mark Classification-A experience density — only 5 families ever reach 3+ marks even in the richest available state, against a real ≈48% A-density target; (2) diagram/geometry rendering capability absence, blocking a named, 6-instance-evidenced archetype that would supply exactly this class of rich multi-subpart content; (3) `mock-mr13-craftstall` sitting reviewed-and-approved but uncertified — the cheapest, zero-authoring, zero-engineering lever available, and the sole remaining precondition before a combined Bus-Timetable-plus-Craft-Stall mock-eligibility promotion (the only route to State E/F) can even be considered. Next-archetype ranking (non-diagram, capability-ready, avoiding duplication of the now-two-instance timetable/price-list archetypes per this decision's own explicit instruction): a genuine shared-data-table multi-query family (reusing `mock-mr09-data`'s existing dataset shape but authored as true Classification A with 4-5 derived queries from one shared table) ranks first; a second interdependent-algebraic-system variant (structurally proven safe via `linkedvalues`, but lower originality value) ranks second; a multi-stage percentage/ratio narrative chain ranks third. Visual-capability verdict: **VISUAL-LATER** — diagram capability would unlock real value, but the shared-data-table archetype remains an unexhausted, capability-ready, lower-cost lever that should be authored first, consistent with every prior session's own deferral (Decisions 176/177/185) and this decision's own finding that the immediate bottleneck is procedural (Craft Stall's uncertified status), not visual. Rolling Programme stress test: even at best available State F, every genuine Classification-A archetype (`fairprep`, `runningclub`, `linkedvalues`, `bustimetable`, `perimeterarea`, and — once certified — `craftstall`) exists as exactly one instance; freezing any one First Mock form containing an A-family leaves precisely zero fresh replacement of that same archetype for a second sitting, a severe, already-repeatedly-disclosed anti-memorisation gap this decision does not solve. **Verdict: A — CERTIFY CRAFT STALL NEXT** — the only remaining precondition before the higher-value combined Bus-Timetable-plus-Craft-Stall mock-eligibility promotion (Decision 188's own named next step) can be considered, chosen because the evidence shows it as strictly cheaper and strictly enabling relative to every other option, not because a prior Decision predicted it. No migration created, applied, or drafted; no certification, promotion, authoring, or visual capability performed.
+
+**Scope and process:** Documentation-only decision-gate analysis. No source file, migration, application code, review record, or production data was changed by this decision — this log entry is the only change.
+
+---
+
+**PART 1 — RECONCILIATION**
+
+`HEAD == origin/main` at `793154e` (Decision 188) confirmed before and after via `git status`/`git log`, working tree clean. Migration 129 confirmed present (`supabase/migrations/129_mock_mathematics_bustimetable_independent_validation.sql`) and, per the Founder's own supplied production evidence for this turn, successfully applied. `ls supabase/migrations/` confirms 129 is the highest-numbered migration in the repository — no later Mathematics (or any) migration exists that could alter this baseline. Decisions 165-188 are not reopened; no factual inconsistency was found requiring it.
+
+---
+
+**PART 2 — CURRENT MATHEMATICS INVENTORY, RECONSTRUCTED FROM SOURCE**
+
+Reconstructed directly from migrations 088/091/095/109/113/117/118/119-124/125/127/129 (the full chain establishing, correcting, and transitioning every currently-live row), not from Decision prose, and cross-checked against the Founder's own supplied production baseline — the two match exactly, confirming completeness:
+
+| Pool | Rows | Marks | Experiences | Composition |
+|---|---|---|---|---|
+| `mock_eligible` | 55 | 55 | 27 | 3 A (`fairprep` 2/2, `runningclub` 2/2, `linkedvalues` 3/3) + 19 B (16×2-mark + `invdiv`/`twostep`/`unitconv` ×3-mark = 41 rows/41 marks) + 2 C (`costumeschedule`, 4 rows/4 marks) + 3 S (`mock-mr09-data`-01/02/03, 3 rows/3 marks) |
+| `independently_validated` (reserve) | 8 | 8 | 3 | `mock-mr03mr07-perimeterarea` (4 rows/4 marks/2 experiences, A), `mock-mr10-bustimetable` (4 rows/4 marks/1 experience, A) |
+| `authentic_assessment_candidate` (relevant near-term) | 3 | 3 | 1 | `mock-mr13-craftstall`-01/02/03, A, Founder-approved (WAVE002 marker), not yet independently validated |
+| `ali_mock_form` | 0 | — | — | no migration in this repository has ever inserted into this table (repository-wide search, unchanged since Decision 184) |
+
+Every grouped family is counted as one numbered-question experience, never as raw rows, per this decision's own instruction. Every row in `mock_eligible`/`independently_validated` carries `marks = 1`, `marking_mode = 'deterministic'`, `active = true` (Marking Integrity Gate, Decisions 172-175, remains closed and unregressed). `mock-mr13-craftstall`'s exact fields re-read directly from migration 125: `question_group_id = 'mock-mr13-craftstall'`, `group_order` 1-3, `subpart_label` (a)-(c), difficulty medium/medium/hard, `sharedStem` present and identical across all three rows, table `stimulus` (keyrings/bracelets/stickers price list) identical across all three rows.
+
+---
+
+**PART 3 — RECLASSIFICATION, CURRENT `mock_eligible` POOL**
+
+Every experience re-read at the prompt level this session (not inherited): the three admitted-via-124 families are genuine A (each subpart reasons from one shared table or system — `linkedvalues`' `sharedStem`-declared interdependent system, `runningclub`'s real table stimulus, `fairprep`'s shared scenario); the 19 B-families remain correctly B (independent same-skill items sharing a numbered shell, no shared data — Decision 177's own direct re-reads stand, no discrepancy found this session); `costumeschedule` remains C (shared narrative theme only, zero shared numeric data between subparts, re-confirmed against Decision 177's own worked example); `mock-mr09-data` remains S (never grouped, three permanently standalone experiences). **No reclassification error found anywhere in the 27-experience pool.** Distribution: 11.1% A (3/27) / 70.4% B (19/27) / 7.4% C (2/27) / 11.1% S (3/27) by experience count; by marks: 7/55 A (12.7%) / 41/55 B (74.5%) / 4/55 C (7.3%) / 3/55 S (5.5%). Average marks/subparts per numbered experience: 55/27 ≈ 2.04 — essentially unchanged from Decision 176's own 2.0 baseline, since migration 124's admission added exactly proportionate rows-to-experiences (7 rows/3 experiences ≈ 2.33 avg, only a marginal lift). This remains well below the real ≈2.8-3.0 target and the real ≈48% A-density target (Decision 168/176), confirming the gap Decision 176 identified is still open in the live pool.
+
+---
+
+**PART 4 — RESERVE AUDIT**
+
+`mock-mr03mr07-perimeterarea`: 4 rows/2 experiences/4 marks, `independently_validated`, `active=true`, deterministic, correct grouping, genuine A (subpart (b) reuses (a)'s converted value — Decision 177's own data-continuity nuance re-confirmed, not an answer-chaining dependency), no visual capability requirement (structured-value stimulus only), no unresolved defect. `mock-mr10-bustimetable`: 4 rows/1 experience/4 marks, `independently_validated` (migration 129), `active=true`, deterministic, difficulty medium/medium/hard/hard, answers 95/7/370/28 (subpart (d) carrying the Decision 186/187/188 wording correction, re-verified a fourth time this session: 35 × 0.8 = 28), review certified under `MOCK-BUSTIMETABLE-CORRECTION001` specifically (not the superseded WAVE002 approval), table `stimulus` and `sharedStem` intact, no unresolved defect, no visual capability requirement. No other Mathematics family currently holds `independently_validated` status (confirmed by direct source read of migrations 111/116/123/129, the only four independent-validation migrations in the repository, none superseded or reverted).
+
+---
+
+**PART 5 — CRAFT STALL STATUS**
+
+All three rows (`mock-mr13-craftstall`-01/02/03) confirmed `eligibility_status = 'authentic_assessment_candidate'` — no migration numbered 130 or higher exists, and no migration 125-129 transitions any `craftstall` row's eligibility. Founder educational review evidence: **approved**, recorded under the original `MOCK-STRUCTURAL-CAPACITY-WAVE002` marker (Decision 186, Part 6: "`mock-mr13-craftstall`: PASS/APPROVED, untouched. No corrective action, no re-review required."), reviewer Ayobami Lawal, review basis covering the family's own unaltered content (Decision 186/187/188 never edit any `craftstall` row). No certification migration (the `independently_validated`-promotion pattern established by migrations 111/116/123/129) has ever been drafted or applied for this family — this is the one governance step remaining, not a defect. Answers/marks/difficulty/grouping/stimulus/`sharedStem`/classification exactly as re-read in Part 2 above: 18.00 / "Stickers" / 3, 1 mark each, medium/medium/hard, one shared price-list table, genuine Classification A (subparts (a) and (c) both combine information across more than one price-list row), originality and evidence basis (real 2021 Q6) established and disclosed in Decision 185 Part 4, unchanged. **Determination: since the family is approved but not independently validated, and no defect or blocker of any kind exists, certification (a migration mirroring 111/116/123/129's own established pattern) is the correct, and only remaining, immediate next action for this family** — this determination is analysis only; no such migration is created by this decision (Part 14).
+
+---
+
+**PART 6 — COMPOSITION-CEILING RECOMPUTATION, STATES A-F**
+
+Recomputed directly from Part 2's authoritative inventory (not assumed), using richest-first selection subject to the same balance discipline Decisions 183-185 already applied (no state below is claimed achievable merely because raw marks are high — see Part 7 for the balance caveat).
+
+| State | Pool added | Available experiences | Marks | 20Q ceiling | 21Q ceiling | ≈58-60 achievable? |
+|---|---|---|---|---|---|---|
+| A — `mock_eligible` only | — | 27 | 55 | **44** (4×3 + 16×2) | **46** (4×3 + 17×2) | No |
+| B — + Bus Timetable | +1 exp/4 marks | 28 | 59 | **46** (1×4+4×3+15×2) | **48** (1×4+4×3+16×2) | No |
+| C — + Perimeter Area | +2 exp/4 marks | 29 | 59 | **44** (unchanged — 2-mark supply already saturates 20Q need) | **46** (unchanged) | No |
+| D — + Bus Timetable + Perimeter Area | +3 exp/8 marks | 30 | 63 | **46** (unchanged from B) | **48** (unchanged from B) | No |
+| E — + Bus Timetable + Craft Stall (Craft Stall projected, not certified) | +2 exp/7 marks | 29 | 62 | **47** (1×4+5×3+14×2) | **49** (1×4+5×3+15×2) | No (≈9-11 short) |
+| F — + Bus Timetable + Craft Stall + Perimeter Area | +4 exp/11 marks | 31 | 66 | **47** (unchanged from E) | **49** (unchanged from E) | No (≈9-11 short) |
+
+**Perimeter Area's own zero-marginal-ceiling-impact finding (States C, F) is a genuine, re-derived result, not carried forward uncritically**: the pool already holds 20 (State A/B) or 22 (State C/D) two-mark experiences, more than the 15-17 ever needed to fill a 20-21-question form once the 3-4-mark experiences are seated first, so additional 2-mark supply is pure reserve depth, never ceiling. This is Decision 183's own "identical ceiling" finding, independently reconfirmed here on the current, larger pool. State F is the strongest available composition (47/49 marks) and requires both Craft Stall's certification and a combined promotion decision to become real — neither performed here. Average marks/experience of State F's best 20-question form: 47/20 = 2.35, still below the ≈2.8-3.0 authentic target even at the richest achievable selection.
+
+---
+
+**PART 7 — TRUE BOTTLENECK, RANKED**
+
+1. **Insufficient 3-4-mark Classification-A experience density (highest impact).** Even at the best available composition (State F), only 5 experiences ever reach 3+ marks (`invdiv`, `twostep`, `unitconv`, `linkedvalues`, `craftstall`-if-certified) and only 1 reaches 4 (`bustimetable`); the ≈9-11-mark shortfall against ≈58-60 is arithmetically direct from this scarcity, not from any other factor — adding more 2-mark supply (Perimeter Area) provably adds zero ceiling marks (Part 6). This is the dominant, quantified constraint.
+2. **Diagram/geometry rendering capability absence.** Named across Decisions 176/177/185 as blocking a specific, 6-real-instance-evidenced archetype (shared-diagram geometry) that would supply exactly the class of rich, multi-subpart content bottleneck #1 lacks. Still unbuilt; still not the most cost-effective next lever (Part 9).
+3. **`mock-mr13-craftstall` reviewed-and-approved but uncertified.** Lowest-magnitude of the three (3 marks), but the cheapest and fastest to resolve (zero authoring, zero engineering, one migration mirroring an already-four-times-proven pattern), and the sole remaining precondition before the only route to State E/F (the best available composition) can be considered. Ranked third by raw impact, first by immediate actionability.
+
+Not ranked as comparably significant: the 19-family B-type surplus (a real structural imbalance — Decision 176/177's own finding — but not a *worsening* factor this session, and not actionable without either regrouping already-existing content, which Decision 164 already fully explored and found only reaches ≈60 marks at best, or new authoring); the thin post-freeze reserve (Part 10, a genuine and severe Rolling Programme problem, but downstream of, not independent from, bottleneck #1).
+
+---
+
+**PART 8 — NEXT-ARCHETYPE RANKING**
+
+Wave 002 has now authored one instance each of the two Decision-185-identified non-diagram candidates (shared timetable, shared price-list); per this decision's own instruction, neither is re-authored. Ranked candidates for the next authoring investment, all non-diagram and capability-ready (no new stimulus type or rendering required):
+
+1. **Shared multi-query data-table family (new archetype, not a variant).** Reuses `mock-mr09-data`'s existing dataset-driven shape and the already-built table-`stimulus` contract, but authored from the outset as genuine Classification A (one shared frequency/survey table, 4-5 subparts each deriving a different statistic — mean, range, a comparison, a reverse-lookup — from the same data, matching real Q5/Q19-style multi-query density). Highest architecture value: directly targets bottleneck #1 (a 4-5-mark experience, not 3), highest QT/skill diversification (statistics-adjacent reasoning, currently thin in the A-pool), no implementation cost beyond authoring.
+2. **Second interdependent-algebraic-system variant (proven-pattern variant, not a new archetype).** Reuses `linkedvalues`' own proven-safe `sharedStem`/system shape with a different narrative and unknowns structure. Lower originality value than #1 (a variant of existing architecture, honestly distinguished as such per this decision's own instruction), but fast and low-risk, and directly useful for Rolling Programme depth (a second instance of an archetype that currently has exactly one).
+3. **Multi-stage percentage/ratio narrative chain (new archetype).** A single scenario (e.g., a scaling or growth narrative) with forward-then-reverse percentage subparts sharing one base value, distinct from both `costumeschedule`'s C-type theme-only sharing and `craftstall`/`bustimetable`'s existing shapes. Genuine new QT combination value, but weaker primary-source recurrence evidence than #1 without a fresh, direct re-read of the primary sources (not performed this session) — ranked third pending that evidence check.
+
+Authoring any of these remains a separate, future, bounded decision — none begun here (Part 14).
+
+---
+
+**PART 9 — VISUAL CAPABILITY REASSESSMENT**
+
+Learner and review renderers currently support: structured table `stimulus` (Decision 170), `sharedStem` prefix rendering (Decision 180), grouped multi-subpart numbered questions (Decisions 161/166). Diagram, coordinate-grid, labelled-figure, and spatial-transformation rendering remain entirely unbuilt, confirmed unchanged since Decision 177 (no migration or code change in 178-189 touches rendering). The shared-diagram geometry archetype (6 real instances, Decision 176/177) remains the single largest untapped source of authentic rich content, and bottleneck #1 (Part 7) is a genuine, quantified constraint diagram capability would help relieve. However, Part 8 identifies at least one unexhausted, capability-ready, lower-cost non-diagram archetype (the shared-data-table family) that has not yet been attempted and is evidenced to close comparable ground (a 4-5-mark experience, similar magnitude to what one diagram-based family would add) without any new engineering investment. **Verdict: VISUAL-LATER** — building diagram capability now, before that non-diagram increment is even attempted, would commit a materially larger engineering investment ahead of a smaller, already-available, zero-engineering lever, repeating the exact ordering this arc's own Decisions 176/177/185 have consistently and correctly chosen. This is not a re-assertion of "not yet forever": once the shared-data-table archetype (and, separately, Craft Stall's certification) are exhausted, the calculus should be re-run, since diagram capability is the only remaining lever after that.
+
+---
+
+**PART 10 — ROLLING PROGRAMME STRESS TEST**
+
+Assuming State F's best 20-question form (47 marks) is frozen: **every genuine Classification-A archetype in existence — `fairprep`, `runningclub`, `linkedvalues`, `bustimetable`, `perimeterarea`, and (once certified) `craftstall` — exists as exactly one instance.** Any First Mock form drawing on any A-family for its richest content leaves zero fresh, non-identical replacement of that same archetype for a second sitting; a returning learner would face either the identical A-content repeated or a form composed entirely of B-type filler. Reserve remaining after this freeze: at most ≈8 unused 2-mark B-experiences (from the 20-22 available, minus the 14-16 used) plus the unfrozen `mock-mr09-data` S-experiences (1 mark each) — all of the SAME already-seen archetype shapes as the frozen form's own filler, not new reasoning demands. **Verdict: Angel does not currently have enough Mathematics depth to support weeks-to-months of regular use without meaningful pattern repetition**, specifically and severely at the Classification-A/rich-experience tier — this is a real, quantified, already-repeatedly-disclosed (Decisions 176/177/185) gap this decision does not resolve and does not claim to.
+
+---
+
+**PART 11 — DECISION**
+
+**A — CERTIFY CRAFT STALL NEXT.**
+
+Chosen because it is the only action, among all six named options, that is simultaneously zero-cost (no authoring, no engineering, a migration pattern already proven correct four times — 111/116/123/129), zero-risk (Craft Stall's content, answers, and review evidence are unchanged and fully re-verified in Part 5), and strictly enabling of the highest-value composition state this session's own recomputation identifies (State E/F, 47/49 marks — the best available, per Part 6): a combined Bus-Timetable-plus-Craft-Stall mock-eligibility promotion (Decision 188's own already-named next step) cannot even be considered while Craft Stall remains uncertified. **B (promote Bus Timetable alone)** is rejected: it reaches only State B (46/48 marks), a strictly worse outcome than the State E/F this decision's own Part 6 shows is achievable for comparable governance effort, once Craft Stall is certified first. **C (promote a bounded reserve set)** is rejected for the same reason and because Perimeter Area is now proven (Part 6, States C/F) to add zero ceiling marks — promoting it changes reserve depth only, not First Mock readiness. **D (author a new family)** is rejected as premature: Part 7 ranks Craft Stall's certification above new authoring on cost/impact, and Part 8's own top-ranked candidate is not yet primary-source-verified this session. **E (build diagram capability)** is rejected per Part 9's VISUAL-LATER verdict. **F (further evidence required)** is rejected: this session's own Parts 1-10 supply sufficient, source-verified evidence for a bounded decision — no material uncertainty remains that would justify deferring action.
+
+---
+
+**PART 12 — AUTHORING BLUEPRINT (not authored)**
+
+Not applicable — Part 11 selects certification, not authoring. Part 8's own ranking stands as the blueprint for the *next* authoring decision after certification, not performed here.
+
+---
+
+**PART 13 — VISUAL CAPABILITY SPECIFICATION (not implemented)**
+
+Not applicable — Part 9 returns VISUAL-LATER, not VISUAL-NOW. No specification is drafted.
+
+---
+
+**PART 14 — GOVERNANCE BOUNDARY, CONFIRMED HELD**
+
+No migration was created or applied. No `eligibility_status` was promoted anywhere. `mock-mr13-craftstall` was not certified. `ali_mock_form` was not created. No First Mock was assembled. No question content was authored or modified. No review record was modified. No visual capability was implemented. No scoring logic was altered. The Marking Integrity Gate (Decisions 172-175) was not reopened. Confirmed by `git status` showing only this log entry as a pending change before commit.
+
+---
+
+**PART 15 — DECISION RECORD**
+
+Recorded as this entry, Parts 1-14 above, in full.
+
+**What this decision does NOT claim:** it does not claim `mock-mr13-craftstall` has been certified, independently validated, or promoted; it does not claim `mock-mr10-bustimetable` or `mock-mr03mr07-perimeterarea` has entered `mock_eligible`; it does not claim any migration numbered 130 or higher exists; it does not claim `ali_mock_form` has been created or any First Mock composed; it does not claim the shared-data-table archetype (or any archetype) has been authored; it does not claim diagram/geometry capability exists or has been specified beyond the reasoning in Part 9; it does not claim the Rolling Programme anti-memorisation gap (Part 10) is narrowed in any way; it does not claim States B-F of Part 6 are anything more than recomputed projections against the real current pool — none has been realised in production.
+
+**Files changed:** `ALI_DECISION_LOG.md` (this entry only).
+
+**Migrations created:** none.
+
+**Decision number:** 189.
+
+**Commit SHA:** recorded after commit (see repository history immediately following this entry).
+
+**Production application status:** not applicable — no migration, no production change.
+
+**Rationale:** recording this decision-gate analysis as its own Decision, despite being read-only, follows this arc's own established precedent (Decisions 164/176/177/183) for a finding whose conclusion governs the next real action — here, independently re-deriving (not carrying forward) the composition ceiling across six pool states, confirming Decision 183's own "Perimeter Area adds zero ceiling" finding still holds on the larger post-Wave-002 pool, and identifying Craft Stall's uncertified status as the single cheapest, most-enabling next lever, rather than defaulting to the content family a previous Decision happened to name.
+
+**Implications:** Decisions 1-188 all stand, none reversed or rewritten. No content, marks, eligibility, grouping, RPC, RLS, or review-record change occurs from this decision. The next step is a separate, future, bounded certification decision for `mock-mr13-craftstall` (mirroring migrations 111/116/123/129's own established independent-validation pattern) — not begun here — followed, separately, by the combined Bus-Timetable-plus-Craft-Stall mock-eligibility composition decision Decision 188 already named, and, separately again, a future authoring decision for the shared-data-table archetype identified in Part 8, none begun by this decision.
+
+---
