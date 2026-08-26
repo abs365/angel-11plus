@@ -56,6 +56,31 @@ test("answers are re-derivable independently from the stated frequency table (se
   assert.equal(totalRunners - atOrBelow, 14);
 });
 
+test("subpart (c) explicitly states the rounding convention that makes its stored answer valid -- the mean 74/30=2.4666... is only a defensible exact-match answer of 2.5 because the question itself instructs rounding to 1 decimal place (Founder pre-application finding, Decision 193)", () => {
+  const question = byId("mock-mr09-funrun-03").question;
+  assert.match(question, /1 decimal place/i, "subpart (c) must explicitly instruct rounding -- an unrounded 2.5 would not follow from 74/30");
+  const exactMean = 74 / 30;
+  assert.notEqual(exactMean, 2.5, "sanity check: 74/30 is not itself 2.5 -- the stored answer is only correct because of the explicit rounding instruction verified above");
+  assert.equal(Math.round(exactMean * 10) / 10, 2.5, "2.4666... correctly rounds to 2.5 to 1 decimal place");
+});
+
+test("subpart (d)'s threshold never depends on whether the EXACT mean (2.4666...) or the ROUNDED mean (2.5) is used -- both partition the integer-laps table identically, so no ambiguity is smuggled in by rounding", () => {
+  const laps = [0, 1, 2, 3, 4, 5];
+  const freq = [3, 5, 8, 6, 5, 3];
+  const exactMean = 74 / 30;
+  const roundedMean = 2.5;
+  const aboveExact = laps.reduce((acc, l, i) => acc + (l > exactMean ? freq[i] : 0), 0);
+  const aboveRounded = laps.reduce((acc, l, i) => acc + (l > roundedMean ? freq[i] : 0), 0);
+  assert.equal(aboveExact, 14);
+  assert.equal(aboveRounded, 14);
+  assert.equal(aboveExact, aboveRounded, "exact-mean and rounded-mean thresholds must agree for this integer-laps dataset");
+});
+
+test("subpart (d) is independently credit-bearing: its own stored workingSteps re-derive the mean from the shared table rather than reusing subpart (c)'s stored answer value", () => {
+  const row = byId("mock-mr09-funrun-04");
+  assert.ok(row.workingSteps.some((s: string) => /74.*30|30.*74/.test(s)), "subpart (d) must show its own derivation of the mean from the raw totals, not merely cite subpart (c)'s answer");
+});
+
 test("subpart (d) cannot be solved by repeating (a)/(b)/(c)'s own operation: it requires a derived threshold (the mean) applied as a filter, not a plain sum or a plain division", () => {
   const laps = [0, 1, 2, 3, 4, 5];
   const freq = [3, 5, 8, 6, 5, 3];
