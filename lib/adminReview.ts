@@ -1830,6 +1830,61 @@ export async function fetchMockStructuralCapacityIncrement004ReviewStatus(family
 }
 
 /**
+ * Mathematics Structural Capacity, Authoring Increment 005 — Interdependent
+ * Algebraic-System Classification-A Family, Variant 2 (Decision 198/199).
+ * One new family (mock-mr06-numberpuzzle, migration 137), made reviewable
+ * via the exact same scoped-batch mechanism as
+ * MOCK_STRUCTURAL_CAPACITY_INCREMENT003_FAMILIES/
+ * MOCK_STRUCTURAL_CAPACITY_INCREMENT004_FAMILIES above — own array, own
+ * marker, own status map, reusing `review_type =
+ * 'mock_maths_independent_review'` and the generalised
+ * deriveBatchReviewStatus()/fetchBatchReviewStatus() helpers unchanged.
+ * mock-mr06-numberpuzzle is grouped: 1 numbered-question experience of 4
+ * subparts, sharing one `prompt.sharedStem` across all 4 rows — TEXT-ONLY
+ * abstract number-puzzle content, no `prompt.stimulus` table. The review
+ * surface renders it via the same resolveGroupSharedStem() mechanism the
+ * learner surface uses, so the Founder reviews the identical presentation
+ * a learner would see. Every row's eligibility_status is
+ * authentic_assessment_candidate; approving this family here still does
+ * NOT promote it to independently_validated or mock_eligible, and does
+ * NOT create or touch any ali_mock_form row.
+ *
+ * Marker "MOCK-STRUCTURAL-CAPACITY-INCREMENT005" was deliberately chosen
+ * to share no substring with MOCK-STRUCTURAL-CAPACITY-INC001,
+ * MOCK-STRUCTURAL-CAPACITY-WAVE002, MOCK-BUSTIMETABLE-CORRECTION001,
+ * MOCK-STRUCTURAL-CAPACITY-INCREMENT003, or
+ * MOCK-STRUCTURAL-CAPACITY-INCREMENT004 — verified before writing
+ * migration 138 — so none of those sections' own `.includes()`
+ * pending-target lookups in app/admin-beta/review/page.tsx can
+ * cross-match this new marker.
+ */
+export const MOCK_STRUCTURAL_CAPACITY_INCREMENT005_MARKER = "MOCK-STRUCTURAL-CAPACITY-INCREMENT005";
+
+export const MOCK_STRUCTURAL_CAPACITY_INCREMENT005_FAMILIES: SevenXFamilyConfig[] = [
+  {
+    familyId: "mock-mr06-numberpuzzle",
+    newQuestionIds: [
+      "mock-mr06-numberpuzzle-01", "mock-mr06-numberpuzzle-02", "mock-mr06-numberpuzzle-03", "mock-mr06-numberpuzzle-04",
+    ],
+    disclosure:
+      "This is a brand-new family with no prior review of any kind. It is a genuine interdependent algebraic-system compound, but a MATERIALLY DIFFERENT reasoning graph from mock-mr06-linkedvalues: no numeric total is ever stated, and a hidden positive whole number n is defined only via three derived rules (P = n+9, Q = 9xn, R = nxn) shared once via sharedStem. Subparts (a)-(c) are symbolic substitution-and-simplification exercises in which n algebraically cancels out, true for every positive n (independently re-verified this session by substituting two different concrete values of n and confirming the same constants both times); subpart (d) introduces a genuine reverse-reasoning constraint (R is 70 more than Q) requiring a quadratic equation to be formed and solved by factorisation, then the invalid negative root rejected -- a demand mock-mr06-linkedvalues never makes. Directly evidenced this session against the real 2023 Q18 (independently re-verified against both the real paper and its mark scheme: A=B+3, C=3B, D=B^2, with confirmed answers 9/3/0 for 3A-C / C/(A-3) / AB-C-D), which mock-mr06-linkedvalues (built on the different 2021 Q20 total-constraint shape) does not itself represent. QT-MR-06 (Multiple-Relation/algebraic reasoning) is reused, not a new Question Type. Difficulty: (a) medium (linear-combination substitution), (b) medium (a division-based substitution, a materially different operation from (a)), (c) hard (expanding a product of two expressions containing a squared term, the deepest simplification of the three constant-valued subparts), (d) hard (reverse reasoning: forming and solving a quadratic by factorisation, then rejecting an invalid root under a positivity constraint). Disclosed honestly: this family does not add a further easy-tier row (mock-mr04-campingsale, migration 134, already did that); every label reflects genuine reasoning burden, not estate-statistic padding. No new visual capability required: text-only abstract-algebra content, no stimulus table. Disclosed for your own judgement, not a recommendation either way.",
+  },
+];
+export const MOCK_STRUCTURAL_CAPACITY_INCREMENT005_TARGET_IDS = MOCK_STRUCTURAL_CAPACITY_INCREMENT005_FAMILIES.map((f) => f.familyId);
+
+export function buildMockStructuralCapacityIncrement005NotesPrefix(familyId: string, questionIds: string[]): string {
+  return `${MOCK_STRUCTURAL_CAPACITY_INCREMENT005_MARKER} new content review: ${familyId} (Question IDs: ${questionIds.join(", ")})`;
+}
+
+export function deriveMockStructuralCapacityIncrement005ReviewStatus(rows: SevenXReviewRow[], familyIds: string[]): Map<string, SevenXReviewStatus> {
+  return deriveBatchReviewStatus(rows, familyIds, MOCK_STRUCTURAL_CAPACITY_INCREMENT005_MARKER, "mock_maths_independent_review");
+}
+
+export async function fetchMockStructuralCapacityIncrement005ReviewStatus(familyIds: string[]): Promise<Map<string, SevenXReviewStatus>> {
+  return fetchBatchReviewStatus(familyIds, MOCK_STRUCTURAL_CAPACITY_INCREMENT005_MARKER, "mock_maths_independent_review");
+}
+
+/**
  * Inserts one real, traceable Mock-content independent-review decision —
  * `review_type = 'mock_maths_independent_review'` (migration 087,
  * Decision 139), explicitly set here exactly as `submitMathsTeachingReview`
