@@ -7725,3 +7725,110 @@ Recorded as this entry, Parts 1-14 above, in full.
 **Implications:** Decisions 1-188 all stand, none reversed or rewritten. No content, marks, eligibility, grouping, RPC, RLS, or review-record change occurs from this decision. The next step is a separate, future, bounded certification decision for `mock-mr13-craftstall` (mirroring migrations 111/116/123/129's own established independent-validation pattern) — not begun here — followed, separately, by the combined Bus-Timetable-plus-Craft-Stall mock-eligibility composition decision Decision 188 already named, and, separately again, a future authoring decision for the shared-data-table archetype identified in Part 8, none begun by this decision.
 
 ---
+
+### Decision 190 — CRAFT STALL: INDEPENDENT-VALIDATION CERTIFICATION. Decision 189 authorised preparing exactly this: certification only, no promotion. `mock-mr13-craftstall`'s 3 rows re-read directly from migration 125's own source and re-verified byte-for-byte unchanged: `subject=maths`/`skill=QT-MR-13`, `active=true`, `eligibility_status='authentic_assessment_candidate'`, `marking_mode='deterministic'`, `marks=1` each, `question_group_id='mock-mr13-craftstall'`/`group_order` 1-3/`subpart_label` (a)-(c), difficulty medium/medium/hard, identical `sharedStem` and table `stimulus` (keyrings/bracelets/stickers price list) across all three. Every answer independently re-derived this session from the real stored price-list numbers, not assumed from prior prose: (a) 3 packs keyrings (£6.00) + 6 bracelets (£7.20) + 3 packs stickers (£4.80) = **£18.00**; (b) unit costs £0.40/£1.20/£0.20 for keyrings/bracelets/stickers at quantity 40 — **Stickers** cheapest; (c) `1.20b + 1.60p = 8.40`, `p` whole packs ≥1, `b` bracelets ≥1 — testing `p=1..5` (the only non-negative range), exactly one solution, `p=3, b=3` — **3** bracelets, uniqueness confirmed by exhaustive search. All three independently recomputed answers match both the migration's own stored `answer` values and this session's own directive. One new migration (130) is prepared: promotes exactly the 3 named rows from `authentic_assessment_candidate` to `independently_validated` — explicitly not `mock_eligible` — mirroring migration 129's own established certification pattern, gated by a live `ali_family_review` precondition requiring the reviewer Ayobami Lawal / `decision='approved'` / `review_type='mock_maths_independent_review'` / notes carrying the **original** `MOCK-STRUCTURAL-CAPACITY-WAVE002` marker (the correct marker here, unlike migration 129's `CORRECTION001`, because this family's content was never corrected since its original Wave 002 approval — Decision 186 Part 6: "`mock-mr13-craftstall`: PASS/APPROVED, untouched. No corrective action, no re-review required."), using the Decision-182-corrected unanchored `LIKE '%MARKER%'` predicate and accepting any count ≥ 1. Full content-shape preconditions and explicit exclusion guards for `mock-mr10-bustimetable` and `mock-mr03mr07-perimeterarea` are asserted both pre- and post-write. A full pre-write `prompt` snapshot proves every field byte-for-byte unchanged; `mock_eligible` is positively proven absent in both branches. Full verification suite passes (1790/1790 tests, 37 new; `tsc` clean; ESLint at established baseline, 81 problems/62 errors/19 warnings, identical to Decision 188's own count, neither new file implicated; Copy Quality Guard PASS, 0 violations, 257 files; Migration SQL Guard PASS, 130 files, both checks; production build succeeds). Migration 130 NOT applied. **Disclosed limitation:** this session had no live database read access (no service-role key in this repository, no connected DB tool; the anon key's own view of `ali_family_review` returns 0 visible rows under RLS — confirmed by running `scripts/check-family-review-raw.mjs` this session — which this project's own established evidence discipline treats as "not visible," never as "proof of absence"). Readiness rests on three independent, mutually-consistent prior Decision-log entries (186, 188, 189) plus the migration's own fail-closed live precondition, the same standing basis migration 129 itself was drafted under; the migration will safely refuse to write anything if that live evidence does not in fact exist at Founder-application time.
+
+**Scope and process:** Bounded independent-validation certification only — one migration, no other content, no mock-eligibility change, no form assembly.
+
+---
+
+**PART 1 — RECONCILIATION**
+
+`HEAD == origin/main` at `3437e24` (Decision 189) confirmed before and after. Decision 189 exists exactly once in the log. Migration 129 is the latest migration on disk before this session; no migration numbered 130 or higher existed at session start. `ali_mock_form` remains unreferenced by any migration through 129. No Craft Stall certification migration existed prior to this session.
+
+---
+
+**PART 2 — CONTENT AND GROUPING AUDIT**
+
+Re-read directly from `supabase/migrations/125_mock_mathematics_structural_capacity_wave002_timetable_pricelist.sql` (the sole source of these three rows; no later migration touches them):
+
+| Row | Answer | Marks | Difficulty | Group order | Subpart |
+|---|---|---|---|---|---|
+| `mock-mr13-craftstall-01` | 18.00 | 1 | medium | 1 | (a) |
+| `mock-mr13-craftstall-02` | Stickers | 1 | medium | 2 | (b) |
+| `mock-mr13-craftstall-03` | 3 | 1 | hard | 3 | (c) |
+
+`question_group_id = mock-mr13-craftstall` on all three; `subject='maths'`, `skill='QT-MR-13'`, `marking_mode='deterministic'`, `active=true` on all three; identical `sharedStem` ("A craft fair stall sells keyrings, bracelets and stickers...") and identical table `stimulus` (headers Item/Pack size/Price; keyrings pack-of-5 £2.00, bracelets individual £1.20, stickers pack-of-8 £1.60) across all three; every `question` field non-empty and self-contained.
+
+---
+
+**PART 3 — INDEPENDENT MATHEMATICAL RE-VERIFICATION**
+
+(a) 15 keyrings = 3 packs × £2.00 = £6.00; 6 bracelets = 6 × £1.20 = £7.20; 24 stickers = 3 packs × £1.60 = £4.80; total = £18.00. Matches stored answer.
+
+(b) 40 keyrings = 8 packs × £2.00 = £16.00 (£0.40/unit); 40 bracelets = 40 × £1.20 = £48.00 (£1.20/unit); 40 stickers = 5 packs × £1.60 = £8.00 (£0.20/unit) — cheapest on both total cost and per-unit basis: Stickers. Matches stored answer.
+
+(c) `1.20b + 1.60p = 8.40`, `p` = whole packs of stickers (≥1), `b` = bracelets (≥1, need not be whole packs). Exhaustive check over the only range where the remainder is non-negative (`p` = 1 to 5): `p=1` → `b=5.667` (reject); `p=2` → `b=4.333` (reject); `p=3` → `b=3.000` (accept — check: £3.60 + £4.80 = £8.40 ✓); `p=4` → `b=1.667` (reject); `p=5` → `b=0.333` (reject, also violates `b≥1`). Exactly one integer solution: 3 bracelets. Matches stored answer. All three answers independently confirmed unique and correct from the real stored price-list data, not assumed from this session's own directive or prior Decision prose.
+
+---
+
+**PART 4 — REVIEW-EVIDENCE CONTRACT AND FOUNDER REVIEW STATUS**
+
+Migration 126 registered `mock-mr13-craftstall` for review under `decision='pending_independent_review'`, marker `MOCK-STRUCTURAL-CAPACITY-WAVE002`. No later migration touches this family's review record, and no correction was ever made to its content (contrast `mock-mr10-bustimetable`, whose wording defect required a distinct `MOCK-BUSTIMETABLE-CORRECTION001` re-review, migration 128). Decision 186 Part 6 recorded the Founder's split Wave 002 review verdict: "`mock-mr13-craftstall`: PASS/APPROVED, untouched. No corrective action, no re-review required." Decisions 188 and 189 both independently re-state the same reviewer (Ayobami Lawal), `decision='approved'`, `review_type='mock_maths_independent_review'`, under the original WAVE002 marker, with no defect or blocker ever identified for this family. The visual/educational review basis disclosed by Decision 186 covers: the structured price-list table, the shared scenario, all three grouped subparts, answer accuracy, one-mark-per-subpart integrity, reasoning progression, difficulty, age appropriateness, originality, anti-memorisation quality, CSSE structural alignment, and production presentation — **PASS/APPROVED**, no reopening warranted merely because Bus Timetable separately required a correction.
+
+This session had no live database read access to re-confirm the row exists in `ali_family_review` at this moment (no service-role key, no connected DB tool available; `scripts/check-family-review-raw.mjs` run this session returns 0 anon-visible rows, consistent with RLS blocking anon `SELECT` — per this project's own established discipline, not evidence of absence). Migration 130's own live precondition is therefore the actual gate: it requires the qualifying row to exist at Founder-application time and raises an exception otherwise, exactly the same basis migration 129 itself was drafted under.
+
+---
+
+**PART 5 — CERTIFICATION VERDICT AND MIGRATION**
+
+Certification (`authentic_assessment_candidate` → `independently_validated`) is the correct and only transition this decision authorises — kept entirely separate from any future `independently_validated` → `mock_eligible` promotion, which remains a distinct, not-begun, Founder-authorised composition decision.
+
+`supabase/migrations/130_mock_mathematics_craftstall_independent_validation.sql` — targets exactly the 3 `mock-mr13-craftstall` rows, mirroring migration 129's own established independent-validation-promotion pattern. Live preconditions: subject/skill, `marking_mode`, exact grouping shape (VALUES-join), exact difficulty shape (medium/medium/hard), exact answers (18.00/Stickers/3), `marks = 1` on all 3, identical `sharedStem`, valid table `stimulus`, non-empty `question` text, and the live `ali_family_review` approval check under the original WAVE002 marker. Fail-closed, three-state (exactly 3 candidate rows → apply with full preservation proof; exactly 3 already-validated → no-op, re-checked; any other combination → refuse). `mock-mr10-bustimetable` (expected already `independently_validated` per migration 129) and `mock-mr03mr07-perimeterarea` are excluded from the target array by construction, with a dedicated guard refusing the migration outright if either ever appears there, and their own untouched state is re-verified pre-write, post-write, and in the already-applied branch. Only `eligibility_status` is ever `SET`; a full pre-write `prompt` snapshot proves every other field byte-for-byte unchanged post-write. No `ali_family_review`, `ali_mock_form`, RPC, RLS, or grant statement appears anywhere in the migration.
+
+---
+
+**PART 6 — VERIFICATION**
+
+37 new tests in `tests/supabase/mockMathematicsCraftstallIndependentValidation.test.ts`: exact 3-row target; family/subject/skill/marking-mode/grouping/difficulty/answers/marks/`sharedStem`/`stimulus` content-shape preconditions; the WAVE002-marker-specific live review-evidence check with an explicit regression proving no anchored pattern was introduced; `mock-mr10-bustimetable`/`perimeterarea` exclusion re-verified in every branch; `eligibility_status` as the sole `SET` column; full-prompt preservation proof; `mock_eligible` absence proven in both branches; idempotent no-op structure; fail-closed mixed-state refusal; a full semantic predicate regression suite covering all 8 required cases (no valid approval → reject; one → accept; multiple → accept; marker not at position zero → accept; wrong reviewer → reject; wrong decision → reject; wrong review_type → reject; missing marker → reject; plus wrong family_id → reject). **Full suite: 1790/1790 pass** (1753 baseline + 37 new; zero regressions). `npx tsc --noEmit`: clean. ESLint: 81 problems (62 errors/19 warnings), identical to Decision 188's own baseline count — neither new file appears in the output. Copy Quality Guard: PASS, 0 violations, 257 files (migrations and this log are outside its `.ts`/`.tsx`/static-file scope). Migration SQL Guard: PASS, 130 files, both checks (quote-balance and RAISE-arithmetic) — disclosed limitation unchanged: not a complete PostgreSQL parser. Production build: succeeds.
+
+---
+
+**PART 7 — PROJECTED CAPACITY**
+
+Before this certification (Founder-confirmed production baseline per Decision 189): `mock_eligible` 55 rows/55 marks; `independently_validated` 8 rows/8 marks (`perimeterarea` 4/4, `bustimetable` 4/4); `ali_mock_form` 0. After Founder application of migration 130 (derived, not forced): `independently_validated` becomes **11 rows/11 marks** (adding `craftstall` 3/3); `mock_eligible` remains **55 rows/55 marks**, unchanged; `ali_mock_form` remains **0**. This certification does **not** improve the current active composition ceiling (State A, 44/46 marks at 20/21 questions per Decision 189) by itself — it only makes `craftstall` eligible to be *considered* for a future mock-eligibility promotion (State E/F, 47/49 marks), which is a separate decision, not begun here.
+
+---
+
+**PART 8 — DECISION 189 BOUNDARY**
+
+Decision 189's own conclusion — that Craft Stall certification is the cheapest immediate prerequisite for the strongest currently-projected composition states — is preserved, not extended. This decision does not authorise, imply, or begin: promotion of `mock-mr13-craftstall` to `mock_eligible`; promotion of `mock-mr10-bustimetable` or `mock-mr03mr07-perimeterarea` to anything; creation of `ali_mock_form`; First Mock composition; further authoring; or diagram/geometry capability work. Reserve admission remains a separate, future, bounded decision.
+
+---
+
+**What this decision does NOT claim:** it does not claim migration 130 has been applied (NOT APPLIED); it does not claim `mock-mr13-craftstall` is `mock_eligible` or included in any Mock form; it does not claim `ali_mock_form` has been created; it does not claim `mock-mr10-bustimetable` or `mock-mr03mr07-perimeterarea` were affected in any way; it does not claim any review record has been altered, inserted, or deleted; it does not claim this session obtained live database confirmation of the qualifying `ali_family_review` row beyond the migration's own fail-closed precondition and three independently-consistent prior Decision-log entries; it does not claim any further Mathematics authoring, mock-eligibility promotion, or First Mock composition has begun.
+
+**Files changed:** `supabase/migrations/130_mock_mathematics_craftstall_independent_validation.sql` (new, NOT applied), `tests/supabase/mockMathematicsCraftstallIndependentValidation.test.ts` (new), `ALI_DECISION_LOG.md` (this entry).
+
+**Migrations created:** 130 — drafted, tested, NOT applied.
+
+**Founder application verification SQL (run after applying migration 130):**
+
+```sql
+select id, eligibility_status from public.ali_question_bank
+where id like 'mock-mr13-craftstall%'
+order by id;
+-- expected: all 3 rows eligibility_status = 'independently_validated'
+
+select count(*) from public.ali_question_bank where eligibility_status = 'mock_eligible';
+-- expected: 55 (unchanged)
+
+select count(*) from public.ali_mock_form;
+-- expected: 0 (unchanged)
+```
+
+**Decision number:** 190.
+
+**Commit SHA:** recorded after commit (see repository history immediately following this entry).
+
+**Production application status:** migration 130 NOT applied. No production change has occurred.
+
+**Remaining First Mock blockers (unchanged from Decision 189, not resolved by this certification alone):** insufficient 3-4-mark Classification-A experience density (only 5 families reach 3+ marks even in the best projected state); absence of diagram/geometry rendering capability; and, until a separate future decision, `craftstall`/`bustimetable` remaining outside `mock_eligible` regardless of certification status.
+
+**Recommended next bounded decision:** the combined Bus-Timetable-plus-Craft-Stall mock-eligibility composition decision Decision 188 already named — evaluating whether, once migration 130 is Founder-applied, both newly-certified families should be promoted from `independently_validated` to `mock_eligible` together, reaching projected State F (47/49 marks) — not begun here.
+
+**Rationale:** certifying independent validation as its own bounded step, gated by review evidence tied to the correct marker for this specific family's unaltered content, follows this arc's own established discipline (migrations 123/129's own precedent, Decision 182's own corrected-predicate standard) — a review approval authorises exactly the eligibility transition and exactly the content version it certifies, never a broader promotion by implication.
+
+**Implications:** Decisions 1-189 all stand, none reversed or rewritten. No content, marks, eligibility, grouping, RPC, RLS, or review-record change occurs from this decision. `mock-mr13-craftstall` remains `authentic_assessment_candidate` until migration 130 is Founder-applied. **Final verdict: A — CRAFT STALL CERTIFICATION MIGRATION READY FOR FOUNDER APPLICATION.**
+
+---
