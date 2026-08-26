@@ -1724,6 +1724,58 @@ export async function fetchMockStructuralCapacityWave002Correction001ReviewStatu
 }
 
 /**
+ * Mathematics Structural Capacity, Authoring Increment 003 — Shared
+ * Multi-Row Data Reasoning Family (Decision 191/192). One new family
+ * (mock-mr09-funrun, migration 131), made reviewable via the exact same
+ * scoped-batch mechanism as MOCK_STRUCTURAL_CAPACITY_INC001_FAMILIES/
+ * MOCK_STRUCTURAL_CAPACITY_WAVE002_FAMILIES above — own array, own
+ * marker, own status map, reusing `review_type =
+ * 'mock_maths_independent_review'` and the generalised
+ * deriveBatchReviewStatus()/fetchBatchReviewStatus() helpers unchanged.
+ * mock-mr09-funrun is grouped: 1 numbered-question experience of 4
+ * subparts, sharing one `prompt.stimulus` frequency table and one
+ * `prompt.sharedStem` across all 4 rows — the review surface renders it
+ * via the same DataTableStimulus/resolveGroupSharedStem() mechanism the
+ * learner surface uses, so the Founder reviews the identical
+ * presentation a learner would see. Every row's eligibility_status is
+ * authentic_assessment_candidate; approving this family here still does
+ * NOT promote it to independently_validated or mock_eligible, and does
+ * NOT create or touch any ali_mock_form row.
+ *
+ * Marker "MOCK-STRUCTURAL-CAPACITY-INCREMENT003" was deliberately chosen
+ * to share no substring with MOCK-STRUCTURAL-CAPACITY-INC001,
+ * MOCK-STRUCTURAL-CAPACITY-WAVE002, or MOCK-BUSTIMETABLE-CORRECTION001 —
+ * verified before writing migration 132 — so none of those sections'
+ * own `.includes()` pending-target lookups in
+ * app/admin-beta/review/page.tsx can cross-match this new marker.
+ */
+export const MOCK_STRUCTURAL_CAPACITY_INCREMENT003_MARKER = "MOCK-STRUCTURAL-CAPACITY-INCREMENT003";
+
+export const MOCK_STRUCTURAL_CAPACITY_INCREMENT003_FAMILIES: SevenXFamilyConfig[] = [
+  {
+    familyId: "mock-mr09-funrun",
+    newQuestionIds: [
+      "mock-mr09-funrun-01", "mock-mr09-funrun-02", "mock-mr09-funrun-03", "mock-mr09-funrun-04",
+    ],
+    disclosure:
+      "This is a brand-new family with no prior review of any kind. It is a genuine shared frequency-table compound: a real structured table (6 laps-completed categories, 0-5, each with a runner count) is shown once, and all 4 subparts reason from it. Directly evidenced this session against the real 2021 Q10 (a real bar chart / frequency distribution, 3 subparts: total count, weighted total, derived mean) and corroborated by 2022 Q15 (a real bar chart extended with a further derived-value application) -- both independently re-verified against the real papers, not merely re-cited from prior Decision prose. Structurally distinct from mock-mr09-data (3 unrelated single-scenario rows, no shared dataset) and mock-mr09-runningclub (a flat 5-value list queried twice via sum-then-rate and successive-difference-search): this family uses a frequency TABLE (category, count) queried four ways -- frequency-sum, weighted-sum, derived-mean, and a threshold-conditional count -- none of which repeats runningclub's own two operations. QT-MR-09 (Data Reading) is reused, not a new Question Type. Difficulty: (a) medium (direct frequency-column sum), (b) medium (weighted summation, a materially different operation from (a)), (c) hard (a derived mean combining two independently-derived totals via division and rounding), (d) hard (deriving the unstated mean, then applying it as a filter to sum a subset of the same table -- the deepest, most composed demand of the four, and the one genuinely new reasoning step versus (a)-(c), disclosed as a bounded extension beyond 2021 Q10's own exact 3-subpart shape, modelled on 2022 Q15's own further-application role). No new visual capability required -- the underlying real bar charts are represented as the existing structured table stimulus, exactly as already proven for mock-mr09-runningclub/mock-mr10-bustimetable/mock-mr13-craftstall; this family does not attempt to render a chart, plotted graph, or any diagram. Disclosed for your own judgement, not a recommendation either way.",
+  },
+];
+export const MOCK_STRUCTURAL_CAPACITY_INCREMENT003_TARGET_IDS = MOCK_STRUCTURAL_CAPACITY_INCREMENT003_FAMILIES.map((f) => f.familyId);
+
+export function buildMockStructuralCapacityIncrement003NotesPrefix(familyId: string, questionIds: string[]): string {
+  return `${MOCK_STRUCTURAL_CAPACITY_INCREMENT003_MARKER} new content review: ${familyId} (Question IDs: ${questionIds.join(", ")})`;
+}
+
+export function deriveMockStructuralCapacityIncrement003ReviewStatus(rows: SevenXReviewRow[], familyIds: string[]): Map<string, SevenXReviewStatus> {
+  return deriveBatchReviewStatus(rows, familyIds, MOCK_STRUCTURAL_CAPACITY_INCREMENT003_MARKER, "mock_maths_independent_review");
+}
+
+export async function fetchMockStructuralCapacityIncrement003ReviewStatus(familyIds: string[]): Promise<Map<string, SevenXReviewStatus>> {
+  return fetchBatchReviewStatus(familyIds, MOCK_STRUCTURAL_CAPACITY_INCREMENT003_MARKER, "mock_maths_independent_review");
+}
+
+/**
  * Inserts one real, traceable Mock-content independent-review decision —
  * `review_type = 'mock_maths_independent_review'` (migration 087,
  * Decision 139), explicitly set here exactly as `submitMathsTeachingReview`
