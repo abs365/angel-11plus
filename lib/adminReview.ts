@@ -1776,6 +1776,60 @@ export async function fetchMockStructuralCapacityIncrement003ReviewStatus(family
 }
 
 /**
+ * Mathematics Structural Capacity, Authoring Increment 004 — Percentage/
+ * Ratio Multi-Stage Narrative Family (Decision 195/196). One new family
+ * (mock-mr04-campingsale, migration 134), made reviewable via the exact
+ * same scoped-batch mechanism as MOCK_STRUCTURAL_CAPACITY_INC001_FAMILIES/
+ * MOCK_STRUCTURAL_CAPACITY_INCREMENT003_FAMILIES above — own array, own
+ * marker, own status map, reusing `review_type =
+ * 'mock_maths_independent_review'` and the generalised
+ * deriveBatchReviewStatus()/fetchBatchReviewStatus() helpers unchanged.
+ * mock-mr04-campingsale is grouped: 1 numbered-question experience of 4
+ * subparts, sharing one `prompt.sharedStem` across all 4 rows — TEXT-ONLY
+ * narrative content, no `prompt.stimulus` table, the estate's first such
+ * Classification-A Mock family since mock-mr06-linkedvalues. The review
+ * surface renders it via the same resolveGroupSharedStem() mechanism the
+ * learner surface uses, so the Founder reviews the identical presentation
+ * a learner would see. Every row's eligibility_status is
+ * authentic_assessment_candidate; approving this family here still does
+ * NOT promote it to independently_validated or mock_eligible, and does
+ * NOT create or touch any ali_mock_form row.
+ *
+ * Marker "MOCK-STRUCTURAL-CAPACITY-INCREMENT004" was deliberately chosen
+ * to share no substring with MOCK-STRUCTURAL-CAPACITY-INC001,
+ * MOCK-STRUCTURAL-CAPACITY-WAVE002, MOCK-BUSTIMETABLE-CORRECTION001, or
+ * MOCK-STRUCTURAL-CAPACITY-INCREMENT003 — verified before writing
+ * migration 135 — so none of those sections' own `.includes()`
+ * pending-target lookups in app/admin-beta/review/page.tsx can
+ * cross-match this new marker.
+ */
+export const MOCK_STRUCTURAL_CAPACITY_INCREMENT004_MARKER = "MOCK-STRUCTURAL-CAPACITY-INCREMENT004";
+
+export const MOCK_STRUCTURAL_CAPACITY_INCREMENT004_FAMILIES: SevenXFamilyConfig[] = [
+  {
+    familyId: "mock-mr04-campingsale",
+    newQuestionIds: [
+      "mock-mr04-campingsale-01", "mock-mr04-campingsale-02", "mock-mr04-campingsale-03", "mock-mr04-campingsale-04",
+    ],
+    disclosure:
+      "This is a brand-new family with no prior review of any kind. It is a genuine shared percentage/ratio narrative compound: a single tent-sale scenario is introduced once via sharedStem, and all 4 subparts reason from it (text-only, no stimulus table). Directly evidenced this session against the real 2023 Q4 (direct percentage-of, forward discount, reverse percentage; 3 subparts), 2022 Q14 (a real shared-discount narrative testing the successive-vs-additive percentage misconception directly), and 2021 Q19 (direct percentage-of, forward increase, reverse percentage; 3 subparts), all three independently re-verified against the real papers, not merely re-cited from prior Decision prose. Structurally distinct from mr04-far-percent/mr04-far-recipe (standalone, ungrouped proportional-scaling items) and mr04-compound-percentage (standalone, ungrouped successive-percentage items that never test the misconception as an explicit comparison target and never require reverse reasoning): this family is grouped (one shared scenario, one numbered experience), and its subpart (c) computes the successive-vs-additive discrepancy as its own answer rather than merely computing a third discount. QT-MR-04 (Percentage/Proportional Change) is reused, not a new Question Type. Difficulty: (a) easy (single direct percentage decrease, deliberately easy, addressing Decision 195's own disclosed difficulty-tier imbalance), (b) medium (a second percentage decrease applied to an already-reduced base), (c) hard (an independent hypothetical calculation plus a directional comparison: the real, examined successive-vs-additive misconception as an explicit target), (d) hard (reverse percentage reasoning on a wholly independent second tent: division by the retained-value factor, the one operation of the four with no other grouped Classification-A instance anywhere in the current estate). No new visual capability required: text-only narrative content, no stimulus table. Disclosed for your own judgement, not a recommendation either way.",
+  },
+];
+export const MOCK_STRUCTURAL_CAPACITY_INCREMENT004_TARGET_IDS = MOCK_STRUCTURAL_CAPACITY_INCREMENT004_FAMILIES.map((f) => f.familyId);
+
+export function buildMockStructuralCapacityIncrement004NotesPrefix(familyId: string, questionIds: string[]): string {
+  return `${MOCK_STRUCTURAL_CAPACITY_INCREMENT004_MARKER} new content review: ${familyId} (Question IDs: ${questionIds.join(", ")})`;
+}
+
+export function deriveMockStructuralCapacityIncrement004ReviewStatus(rows: SevenXReviewRow[], familyIds: string[]): Map<string, SevenXReviewStatus> {
+  return deriveBatchReviewStatus(rows, familyIds, MOCK_STRUCTURAL_CAPACITY_INCREMENT004_MARKER, "mock_maths_independent_review");
+}
+
+export async function fetchMockStructuralCapacityIncrement004ReviewStatus(familyIds: string[]): Promise<Map<string, SevenXReviewStatus>> {
+  return fetchBatchReviewStatus(familyIds, MOCK_STRUCTURAL_CAPACITY_INCREMENT004_MARKER, "mock_maths_independent_review");
+}
+
+/**
  * Inserts one real, traceable Mock-content independent-review decision —
  * `review_type = 'mock_maths_independent_review'` (migration 087,
  * Decision 139), explicitly set here exactly as `submitMathsTeachingReview`
