@@ -8112,3 +8112,57 @@ States C, F reproduce Decision 189's own full row-level reselection; States D, H
 **Implications:** Decisions 1-195 all stand, none reversed or rewritten. This is exactly the one bounded authoring increment Decision 195 authorised — no second family, no reserve promotion, no diagram capability, no Mock composition. **Final verdict: A — FAMILY READY FOR FOUNDER APPLICATION AND REVIEW.**
 
 ---
+
+### Decision 197 — CAMPING SALE: INDEPENDENT-VALIDATION CERTIFICATION (prepared, not applied). Continues from Decision 196's authoring of `mock-mr04-campingsale`, and the Founder's own confirmation that migrations 134 (content) and 135 (pending-review registration) have since been applied to production and that a direct production visual/educational review of the family (shared tent-sale narrative, all four subparts, answers, one-mark-per-subpart structure, difficulty progression, wording/11+ suitability, originality, anti-memorisation, structural alignment, learner-facing presentation) has been completed and approved under marker `MOCK-STRUCTURAL-CAPACITY-INCREMENT004`.
+
+**Reconciliation:** `git fetch` confirmed `HEAD == origin/main` at `1ca1268` (Decision 196), clean working tree, before this session's own work began. Decision 196 present exactly once in this log. Migration 135 was the latest file on disk (no migration 136+ existed before this session — the Founder's stated application of 134/135 is a database-side event, not a new repository file, exactly as every prior certification in this arc has established). Migrations 134 and 135 re-read directly from disk this session, not trusted from prior conversational reports. Migrations 129, 130 and 133 re-read as this certification's own structural templates, migration 133 (Fun Run) being the closest in shape and re-used almost verbatim, adapted for a text-only narrative family carrying no `prompt.stimulus`.
+
+**Production evidence tier, disclosed explicitly:** this session has no live database read access (no service-role key present in this repository, no MCP/DB tool connected). The Founder's own assertions that migrations 134/135 are applied and that the family is reviewed/approved are treated as Founder-asserted production evidence, not independently re-queried. The certification migration's own fail-closed live precondition is the actual safety mechanism protecting production, not this session's trust in the report — the same standing discipline established by migrations 129, 130 and 133.
+
+**Live review-evidence contract:** requires at least one live `ali_family_review` row satisfying `family_id='mock-mr04-campingsale'`, `reviewer='Ayobami Lawal'` (the same reviewer identity every prior Mock Mathematics certification in this repository has required — migrations 123, 124, 129, 130, 133 — not invented here), `decision='approved'`, `review_type='mock_maths_independent_review'`, notes containing `MOCK-STRUCTURAL-CAPACITY-INCREMENT004`. Decision 182's lesson applied directly: the predicate uses `notes LIKE '%MARKER%'` (unanchored), never anchored to the start of notes, since migration 135's own registered notes text and every real UI-submitted review both place reviewer-qualification text before the marker in practice. The precondition accepts any count `>= 1`, never exactly 1.
+
+**Content re-audit, independently re-verified this session against migration 134's own stored SQL (not the directive's claims taken on faith):** `subject=maths`, `skill=QT-MR-04`, `family_id=mock-mr04-campingsale`, `active=true`, `marking_mode=deterministic`, 1 mark per row, `question_group_id=mock-mr04-campingsale`, `group_order` 1-4, `subpart_label` (a)-(d), `content_difficulty` easy/medium/hard/hard, identical `sharedStem` ("A camping shop sells tents.") across all 4 rows, and confirmed **no** `prompt.stimulus` key on any row (this family is deliberately text-only narrative, unlike `mock-mr09-funrun`'s table stimulus — the certification migration's own precondition positively asserts this absence rather than merely skipping a check).
+
+**Independent mathematical re-verification (second full independent pass, beyond Decision 196's own two-method derivation), all four answers matched exactly, no discrepancy found:** (a) £120×0.85=£102 (discount-then-subtract: £120−£18=£102 — both agree); (b) £102×0.9=£91.80 (discount-then-subtract: £102−£10.20=£91.80 — both agree); (c) single 25% off £120=£90, actual sequential price=£91.80, difference=£1.80 (combined-multiplier check: 0.85×0.9=0.765 vs. 0.75, gap 0.015×£120=£1.80 — both agree, direction confirmed unambiguous: sequential discounts are strictly less generous, so the actual price is always higher); (d) £136÷0.8=£170 (forward check: £170×0.8=£136 — both agree). Subpart (d) reconfirmed independent of a learner's own answer to (a)-(c): a wholly separate second tent with its own complete given facts, and the certification migration's own answers precondition asserts (d)'s answer against a literal constant, never derived from another subpart's own stored value.
+
+**Certified IDs:** `mock-mr04-campingsale-01`, `mock-mr04-campingsale-02`, `mock-mr04-campingsale-03`, `mock-mr04-campingsale-04`.
+
+**Migration:** `supabase/migrations/136_mock_mathematics_campingsale_independent_validation.sql` — sole business mutation `eligibility_status: authentic_assessment_candidate → independently_validated` for exactly these 4 rows. Structurally mirrors migration 133 exactly: same three-state fail-closed pattern (State A: all 4 candidate + every precondition passes → certify; State B: all 4 already `independently_validated` + `mock_eligible` absence re-checked → safe idempotent no-op; any mixed/missing/malformed state → `RAISE EXCEPTION`, never silently repaired). Preconditions independently assert: exact subject/skill, marking mode, exact grouping shape (VALUES join), exact difficulty sequence (VALUES join), marks=1 via `(prompt->>'marks')::numeric`, exact answers (VALUES join), exact sharedStem, **absence** of any stimulus key, non-empty question text, `active=true`, and the live review-evidence contract above — none weakened relative to the established template.
+
+**Preservation proof:** a full pre-write snapshot of each target row's complete `prompt` value is taken into a temporary table before any write, then re-read and compared byte-for-byte after — proven, not merely asserted, exactly as migration 133 established. `eligibility_status` is the only column any `UPDATE` in this migration ever `SET`s (verified: no `SET` of `prompt`, `active`, `family_id`, `skill`, `content_difficulty`, `question_group_id`, `group_order`, `subpart_label`, or `marking_mode` appears anywhere).
+
+**Exclusion guards:** the migration's target array is proven, by construction and by test, never to contain `mock-mr09-funrun`, `mock-mr13-craftstall`, `mock-mr10-bustimetable`, or `mock-mr03mr07-perimeterarea` IDs. Both `mock-mr09-funrun` (4 rows) and `mock-mr13-craftstall` (3 rows) are explicitly re-verified to remain `independently_validated` and untouched, both pre-write and post-write, in the same style migration 133 established for Craft Stall alone — extended here to also cover Fun Run, since Fun Run's own certification (migration 133) postdates Craft Stall's.
+
+**Tests:** new file `tests/supabase/mockMathematicsCampingsaleIndependentValidation.test.ts`, 41 tests, all passing — exact 4-ID targeting, exact family/subject/skill/grouping/difficulty/marks/answers/sharedStem preconditions, the no-stimulus proof, live review-evidence contract structure, the unanchored-marker regression guard, "accepts any count ≥ 1" regression guard, no-`ali_family_review`-mutation proof, "`eligibility_status` is the only `SET` column" proof, byte-for-byte preservation proof, `mock_eligible`-absence proof (both branches), Fun-Run-exclusion and Craft-Stall-exclusion proofs (pre-write and post-write), Bus-Timetable/Perimeter-Area exclusion-by-construction, idempotent-no-op-has-no-UPDATE proof, mixed-state-refusal proof, table-touch-scope proof, no-`ali_mock_form`-reference proof, no-RPC/RLS/grant proof, transaction-wrapping proof, not-applied-disclosure proof, RAISE format-string arithmetic-correctness proof, an 8-case semantic review-evidence-predicate regression suite (no approval/one/multiple/marker-not-at-start/wrong-reviewer/wrong-decision/wrong-review_type/missing-marker/wrong-family_id), and an independent two-method mathematical re-derivation of all four answers plus the subpart-(d)-independence proof. One test assertion required a minor regex-adjacency fix during authoring (the Craft-Stall-exclusion pattern check), corrected before the file was judged complete — no production-facing content was affected.
+
+**Full verification:** dedicated file 41/41 passing; full suite **1953/1953** passing (1912 prior + 41 new — 39 net new after accounting for the migration-count test file's own contribution to the prior total); `tsc --noEmit` clean; ESLint at the established baseline, **81 problems (62 errors, 19 warnings)**, identical to Decisions 190/194/196's own count, neither new file implicated; Copy Quality Guard PASS (0 violations, 257 files); Migration SQL Guard PASS (**136 migration files**, all quote-balanced, all RAISE statements arithmetic-correct); production build succeeds.
+
+**Files changed:** `supabase/migrations/136_mock_mathematics_campingsale_independent_validation.sql` (new), `tests/supabase/mockMathematicsCampingsaleIndependentValidation.test.ts` (new), `ALI_DECISION_LOG.md` (this entry).
+
+**Migrations created:** 136 (independent-validation certification) — prepared, NOT applied.
+
+**Decision number:** 197.
+
+**Commit SHA:** recorded after commit (see repository history immediately following this entry).
+
+**Production application status:** NOT APPLIED. Migration 136 requires Founder application via the Supabase Dashboard SQL Editor, after migrations 134/135 (already Founder-confirmed applied).
+
+**Founder application sequence:** Supabase Dashboard → SQL Editor → New query → run migration 136 in full (134/135 already applied).
+
+**Post-application verification SQL:**
+```sql
+select id, eligibility_status from public.ali_question_bank
+where id in ('mock-mr04-campingsale-01','mock-mr04-campingsale-02','mock-mr04-campingsale-03','mock-mr04-campingsale-04')
+order by id;
+
+select count(*) from public.ali_mock_form;
+```
+**Expected results:** all 4 rows show `eligibility_status = 'independently_validated'` (none `mock_eligible`); `ali_mock_form` count = 0.
+
+**Remaining governance boundary:** certification alone changes nothing learner-facing and grants no mock-eligibility. A separate, later, Founder-authorised decision remains required before `mock-mr04-campingsale` may enter `mock_eligible`; Mock composition/`ali_mock_form` creation remains a further, distinct, later decision again.
+
+**PART 13/HARD STOP HELD.** Migration 136 not applied to any database or executed against any live connection; the family not approved, certified, or promoted by this session's own action (the Founder's own prior review is reported, not repeated or reopened); no `mock_eligible` value set; no `ali_mock_form` row created; no second authoring family begun; no diagram/geometry capability built; no existing migration, family, or unrelated content modified.
+
+**Implications:** Decisions 1-196 all stand, none reversed or rewritten. **Final verdict: A — CERTIFICATION MIGRATION READY FOR FOUNDER APPLICATION.**
+
+---
