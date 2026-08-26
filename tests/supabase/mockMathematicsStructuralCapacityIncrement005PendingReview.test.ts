@@ -4,9 +4,15 @@ import fs from "node:fs";
 
 /**
  * Mathematics Structural Capacity, Authoring Increment 005 — Pending
- * Review (Decision 198/199). Structural tests against migration 138's
- * own SQL text, mirroring migration 135's own established pending-review
- * placeholder pattern.
+ * Review (Decision 198/199, REMEDIATED per Decision 200/201). Structural
+ * tests against migration 138's own SQL text, mirroring migration 135's
+ * own established pending-review placeholder pattern.
+ *
+ * REMEDIATION: this migration originally referenced 4 question IDs; the
+ * 4th (mock-mr06-numberpuzzle-04) was removed from migration 137 per
+ * Decision 200/201, and this migration was updated in place to reference
+ * the final 3 surviving IDs (never applied to production, so no
+ * data-integrity concern).
  */
 
 const sql = fs.readFileSync("supabase/migrations/138_mock_mathematics_structural_capacity_increment005_pending_review.sql", "utf8");
@@ -50,9 +56,10 @@ test("reviewer is explicitly UNASSIGNED, never a fabricated identity", () => {
   assert.ok(!/Ayobami|'Founder'/.test(executable));
 });
 
-test("notes carry the exact batch marker and all four question IDs", () => {
+test("notes carry the exact batch marker and all three surviving question IDs (not the removed 4th)", () => {
   assert.match(executable, /MOCK-STRUCTURAL-CAPACITY-INCREMENT005 new content review: mock-mr06-numberpuzzle/);
-  assert.match(executable, /mock-mr06-numberpuzzle-01, mock-mr06-numberpuzzle-02, mock-mr06-numberpuzzle-03, mock-mr06-numberpuzzle-04/);
+  assert.match(executable, /mock-mr06-numberpuzzle-01, mock-mr06-numberpuzzle-02, mock-mr06-numberpuzzle-03/);
+  assert.ok(!executable.includes("mock-mr06-numberpuzzle-04"), "the removed 4th ID must never reappear in the review registration");
 });
 
 test("idempotency guard: where not exists checks family_id + decision + review_type + notes together", () => {

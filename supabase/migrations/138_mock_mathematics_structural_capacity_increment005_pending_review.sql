@@ -1,12 +1,23 @@
 -- Angel Digital 11+ — Migration 138
 -- Mathematics Structural Capacity, Authoring Increment 005 — Pending
--- Review (Decision 198/199).
+-- Review (Decision 198/199, REMEDIATED per Decision 200/201).
 --
--- Registers the 1 new family from migration 137 (4 rows, 1 grouped
+-- Registers the 1 new family from migration 137 (3 rows, 1 grouped
 -- numbered-question experience: mock-mr06-numberpuzzle) as awaiting an
 -- independent reviewer, exactly the same placeholder-seeding pattern
 -- migrations 089/092/096/110/114/120/126/128/132/135 already established
 -- for every prior Mock Mathematics batch.
+--
+-- REMEDIATION NOTICE: the original migration 137 (Decision 199) authored
+-- 4 rows for this family; Decision 200's educational evidence audit found
+-- the fourth row (mock-mr06-numberpuzzle-04) had no primary-source
+-- support and removed it (Decision 200/201). This migration was updated
+-- in place (never applied to production, so no data-integrity concern)
+-- to reference the final 3 surviving question IDs only. No review has
+-- occurred yet for this family under any prior version of this migration,
+-- so no correction-review marker is introduced -- the same
+-- MOCK-STRUCTURAL-CAPACITY-INCREMENT005 marker applies to the remediated
+-- 3-row family.
 --
 -- review_type = 'mock_maths_independent_review' (migration 087, applied,
 -- Decision 140) — the same, already-proven review type every prior Mock
@@ -40,7 +51,7 @@
 -- 132/135's own exact convention.
 --
 -- Full review evidence for the target named below lives in migration
--- 137's own header and this session's own Decision 199 entry.
+-- 137's own header and this repository's Decision 199/200/201 entries.
 --
 -- NOT APPLIED. Founder must apply via the Supabase Dashboard SQL Editor,
 -- after (or together with) migration 137.
@@ -51,12 +62,12 @@ insert into public.ali_family_review
 (review_target_type, family_id, reviewer, decision, notes, review_type)
 select 'question_family', 'mock-mr06-numberpuzzle', 'UNASSIGNED',
   'pending_independent_review'::public.family_review_decision,
-  'MOCK-STRUCTURAL-CAPACITY-INCREMENT005 new content review: mock-mr06-numberpuzzle (Question IDs: mock-mr06-numberpuzzle-01, mock-mr06-numberpuzzle-02, mock-mr06-numberpuzzle-03, mock-mr06-numberpuzzle-04)', 'mock_maths_independent_review'
+  'MOCK-STRUCTURAL-CAPACITY-INCREMENT005 new content review: mock-mr06-numberpuzzle (Question IDs: mock-mr06-numberpuzzle-01, mock-mr06-numberpuzzle-02, mock-mr06-numberpuzzle-03)', 'mock_maths_independent_review'
 where not exists (
   select 1 from public.ali_family_review
   where family_id = 'mock-mr06-numberpuzzle' and decision = 'pending_independent_review'
     and review_type = 'mock_maths_independent_review'
-    and notes = 'MOCK-STRUCTURAL-CAPACITY-INCREMENT005 new content review: mock-mr06-numberpuzzle (Question IDs: mock-mr06-numberpuzzle-01, mock-mr06-numberpuzzle-02, mock-mr06-numberpuzzle-03, mock-mr06-numberpuzzle-04)'
+    and notes = 'MOCK-STRUCTURAL-CAPACITY-INCREMENT005 new content review: mock-mr06-numberpuzzle (Question IDs: mock-mr06-numberpuzzle-01, mock-mr06-numberpuzzle-02, mock-mr06-numberpuzzle-03)'
 );
 
 commit;

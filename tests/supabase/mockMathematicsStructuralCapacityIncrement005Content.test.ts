@@ -4,11 +4,20 @@ import fs from "node:fs";
 
 /**
  * Mathematics Structural Capacity, Authoring Increment 005 — Interdependent
- * Algebraic-System Classification-A Family, Variant 2 (Decision 198/199).
- * Parses migration 137's own real JSON blocks and proves the family's
- * shape, marks, grouping, answers, sharedStem, independence, and
- * mathematical correctness -- including a re-derivation directly from
- * the stored rules, not merely asserted stored constants.
+ * Algebraic-System Classification-A Family, Variant 2 (Decision 198/199,
+ * REMEDIATED per Decision 200/201). Parses migration 137's own real JSON
+ * blocks and proves the family's shape, marks, grouping, answers,
+ * sharedStem, independence, and mathematical correctness -- including a
+ * re-derivation directly from the stored rules, not merely asserted
+ * stored constants.
+ *
+ * REMEDIATION: the originally-authored 4th row (mock-mr06-numberpuzzle-04)
+ * required forming and solving a quadratic equation by factorisation and
+ * rejecting a negative root. Decision 200's educational evidence audit
+ * found this had no primary-source support anywhere in the five evidenced
+ * occurrences of this archetype and removed it. This family is now 3
+ * rows/3 marks. These tests assert the FINAL remediated shape and
+ * explicitly guard against the removed subpart ever silently reappearing.
  */
 
 const sql = fs.readFileSync("supabase/migrations/137_mock_mathematics_structural_capacity_increment005_numberpuzzle.sql", "utf8");
@@ -22,7 +31,7 @@ function byId(id: string) {
 }
 
 const NUMBERPUZZLE_IDS = [
-  "mock-mr06-numberpuzzle-01", "mock-mr06-numberpuzzle-02", "mock-mr06-numberpuzzle-03", "mock-mr06-numberpuzzle-04",
+  "mock-mr06-numberpuzzle-01", "mock-mr06-numberpuzzle-02", "mock-mr06-numberpuzzle-03",
 ];
 
 // The stored system, re-derived from scratch (not copied from the SQL
@@ -31,9 +40,14 @@ function P(n: number) { return n + 9; }
 function Q(n: number) { return 9 * n; }
 function R(n: number) { return n * n; }
 
-test("exactly 4 rows parse as valid JSON from migration 137's own real text", () => {
-  assert.equal(jsonBlocks.length, 4);
+test("exactly 3 rows parse as valid JSON from migration 137's own real text (reduced from 4 per Decision 200/201 remediation)", () => {
+  assert.equal(jsonBlocks.length, 3);
   assert.deepEqual(jsonBlocks.map((r) => r.id).sort(), [...NUMBERPUZZLE_IDS].sort());
+});
+
+test("the removed 4th row (mock-mr06-numberpuzzle-04) never reappears", () => {
+  assert.ok(!jsonBlocks.some((r) => r.id === "mock-mr06-numberpuzzle-04"));
+  assert.ok(!executable.includes("mock-mr06-numberpuzzle-04"));
 });
 
 test("every row is exactly 1 mark -- Decision 175 marking integrity is binding", () => {
@@ -42,11 +56,10 @@ test("every row is exactly 1 mark -- Decision 175 marking integrity is binding",
   }
 });
 
-test("independently verified answers: 81, 9, 0, 14", () => {
+test("independently verified answers: 81, 9, 0", () => {
   assert.equal(byId("mock-mr06-numberpuzzle-01").answer, "81");
   assert.equal(byId("mock-mr06-numberpuzzle-02").answer, "9");
   assert.equal(byId("mock-mr06-numberpuzzle-03").answer, "0");
-  assert.equal(byId("mock-mr06-numberpuzzle-04").answer, "14");
 });
 
 test("subpart (a) semantic re-check: 9P - Q is constant (81) for every positive n, re-derived directly from the rules, not asserted", () => {
@@ -76,29 +89,12 @@ test("subpart (a)/(b)/(c) genuinely do not depend on n's value -- the whole poin
   assert.equal(cValues.size, 1, "subpart (c) must yield the same value for every positive n");
 });
 
-test("subpart (d) semantic re-check: R - Q = 70 has a unique positive integer solution, n = 14, found by direct search and confirmed by factorisation", () => {
-  const solutions: number[] = [];
-  for (let n = 1; n <= 200; n++) {
-    if (R(n) - Q(n) === 70) solutions.push(n);
+test("no subpart requires solving a quadratic, forming a non-linear equation, or rejecting a root (Decision 200/201's remediation boundary)", () => {
+  for (const id of NUMBERPUZZLE_IDS) {
+    const row = byId(id);
+    assert.ok(!/quadratic|factoris|reject.*root|negative root/i.test(row.question), `${id} must not require quadratic/root-rejection reasoning`);
+    assert.ok(!Array.isArray(row.workingSteps) || !row.workingSteps.some((s: string) => /factoris|quadratic|reject.*root/i.test(s)));
   }
-  assert.deepEqual(solutions, [14], "n=14 must be the unique positive integer solution in a wide search range");
-  // factorisation check: n^2 - 9n - 70 = (n-14)(n+5)
-  assert.equal((14 - 14) * (14 + 5), 0);
-  assert.equal(-5 + 5, 0, "the rejected root is -5, algebraically valid but not a positive whole number");
-  assert.equal(Q(14), 126);
-  assert.equal(R(14), 196);
-  assert.equal(R(14) - Q(14), 70);
-});
-
-test("subpart (d) does not coincide by dependency with (b): both happen to equal the shared offset/multiplier constant (9) for (b), and a genuinely different constant (14) for (d), not the same value, and neither is derived from the other", () => {
-  const row = byId("mock-mr06-numberpuzzle-04");
-  assert.notEqual(byId("mock-mr06-numberpuzzle-02").answer, row.answer, "subpart (d)'s answer must not equal subpart (b)'s, avoiding any superficial-repeat appearance");
-});
-
-test("subpart (d) is independently credit-bearing: a freshly-stated relationship (R is 70 more than Q), no dependency on (a)-(c)'s stored answers", () => {
-  const row = byId("mock-mr06-numberpuzzle-04");
-  assert.match(row.question, /70 more/i);
-  assert.ok(!row.question.includes("81") && !row.question.includes("(9P") && !row.question.includes("9P −"), "subpart (d) must not reference (a)'s own computed value or expression");
 });
 
 test("subparts (a)/(b)/(c) restate the full shared system directly via sharedStem, never as 'your answer to a previous part'", () => {
@@ -108,7 +104,7 @@ test("subparts (a)/(b)/(c) restate the full shared system directly via sharedSte
   }
 });
 
-test("all 4 rows carry an identical, non-empty sharedStem, and every row's question genuinely starts with it (the exact resolveGroupSharedStem() safety rule)", () => {
+test("all 3 rows carry an identical, non-empty sharedStem, and every row's question genuinely starts with it (the exact resolveGroupSharedStem() safety rule)", () => {
   const stems = NUMBERPUZZLE_IDS.map((id) => byId(id).sharedStem);
   assert.ok(stems[0] && stems[0].length > 0);
   for (const s of stems) assert.equal(s, stems[0]);
@@ -132,29 +128,28 @@ test("no prompt.stimulus table is present anywhere in this family -- deliberatel
   }
 });
 
-test("grouping contract: question_group_id=mock-mr06-numberpuzzle, group_order 1-4, subpart_label (a)-(d), marking_mode deterministic", () => {
+test("grouping contract: question_group_id=mock-mr06-numberpuzzle, group_order 1-3, subpart_label (a)-(c), marking_mode deterministic", () => {
   assert.match(executable, /'mock-mr06-numberpuzzle-01'[\s\S]*?'mock-mr06-numberpuzzle', 1, '\(a\)', 'deterministic'/);
   assert.match(executable, /'mock-mr06-numberpuzzle-02'[\s\S]*?'mock-mr06-numberpuzzle', 2, '\(b\)', 'deterministic'/);
   assert.match(executable, /'mock-mr06-numberpuzzle-03'[\s\S]*?'mock-mr06-numberpuzzle', 3, '\(c\)', 'deterministic'/);
-  assert.match(executable, /'mock-mr06-numberpuzzle-04'[\s\S]*?'mock-mr06-numberpuzzle', 4, '\(d\)', 'deterministic'/);
+  assert.ok(!/'mock-mr06-numberpuzzle', 4, '\(d\)'/.test(executable), "no group_order 4 / subpart (d) may exist");
 });
 
-test("difficulty progression: medium, medium, hard, hard -- honestly labelled, not inflated", () => {
+test("difficulty progression: medium, medium, hard -- honestly labelled, not inflated", () => {
   assert.match(executable, /'mock-mr06-numberpuzzle-01', 'maths', 'QT-MR-06', array\['csse'\], 'medium'/);
   assert.match(executable, /'mock-mr06-numberpuzzle-02', 'maths', 'QT-MR-06', array\['csse'\], 'medium'/);
   assert.match(executable, /'mock-mr06-numberpuzzle-03', 'maths', 'QT-MR-06', array\['csse'\], 'hard'/);
-  assert.match(executable, /'mock-mr06-numberpuzzle-04', 'maths', 'QT-MR-06', array\['csse'\], 'hard'/);
 });
 
-test("QT reuse: QT-MR-06 on all 4 rows -- no new Question Type is created", () => {
+test("QT reuse: QT-MR-06 on all 3 rows -- no new Question Type is created", () => {
   const qtMatches = [...executable.matchAll(/'QT-MR-06'/g)];
-  assert.equal(qtMatches.length, 4);
+  assert.equal(qtMatches.length, 3);
   assert.ok(!/QT-MR-14|QT-MR-15|QT-MR-16/.test(executable), "must not introduce a new Question Type code");
 });
 
-test("candidate eligibility only: authentic_assessment_candidate on all 4 rows, active=true, never mock_eligible/independently_validated/practice_eligible", () => {
+test("candidate eligibility only: authentic_assessment_candidate on all 3 rows, active=true, never mock_eligible/independently_validated/practice_eligible", () => {
   const candidateMatches = [...executable.matchAll(/'authentic_assessment_candidate', 1, true/g)];
-  assert.equal(candidateMatches.length, 4);
+  assert.equal(candidateMatches.length, 3);
   assert.ok(!executable.includes("mock_eligible"));
   assert.ok(!executable.includes("independently_validated"));
   assert.ok(!executable.includes("practice_eligible"));
@@ -178,14 +173,31 @@ test("only public.ali_question_bank is ever inserted into", () => {
   assert.deepEqual(new Set(insertTargets), new Set(["ali_question_bank"]));
 });
 
-test("header discloses the re-verified primary-source instance (2023 Q18) and the NOT APPLIED status", () => {
+test("header discloses the re-verified primary-source instance (2023 Q18), the remediation, and the NOT APPLIED status", () => {
   assert.match(sql, /2023 Q18/);
+  assert.match(sql, /Decision 200\/201/);
   assert.match(sql, /NOT APPLIED\. Generated for/);
 });
 
 test("header discloses the mock-mr06-linkedvalues distinctness proof explicitly", () => {
   assert.match(sql, /mock-mr06-linkedvalues/);
   assert.match(sql, /materially different|MATERIALLY DIFFERENT/i);
+});
+
+test("SOURCE-CONTAINS vs AUTHORED-EXTRAPOLATION traceability improvement (Decision 200/201's minimal guard): every reasoning-demand claim in the header is explicitly tagged", () => {
+  assert.match(sql, /SOURCE-CONTAINS:/);
+  assert.match(sql, /AUTHORED-EXTRAPOLATION:/);
+  const sourceContainsCount = (sql.match(/SOURCE-CONTAINS:/g) || []).length;
+  const extrapolationCount = (sql.match(/AUTHORED-EXTRAPOLATION:/g) || []).length;
+  assert.ok(sourceContainsCount >= 3, "at least one SOURCE-CONTAINS tag per surviving subpart's own evidence claim");
+  assert.ok(extrapolationCount >= 1, "at least one AUTHORED-EXTRAPOLATION tag distinguishing Angel's own original choices from the source");
+});
+
+test("header explicitly re-checks all 5 evidenced occurrences of this archetype for a genuine 4th part and discloses finding none", () => {
+  for (const ref of ["2023 Q8", "2023 Q18", "2022 Q6", "2021 Q7", "2021 Q20"]) {
+    assert.ok(sql.includes(ref), `header must disclose ${ref} was checked`);
+  }
+  assert.match(sql, /maximum[\s\S]{0,20}number of subparts is THREE/i);
 });
 
 test("no second family, no English/Writing content, no diagram/chart archetype is referenced", () => {

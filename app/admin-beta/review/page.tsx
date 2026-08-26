@@ -2363,7 +2363,7 @@ function MockStructuralCapacityIncrement005Section({
         <div className="mt-2 text-xs text-amber-800 dark:text-amber-300 space-y-0.5">
           <p>• This is a Mock candidate, not Practice content: it has never been, and will not be, automatically promoted from Practice.</p>
           <p>• All {totalQuestions} questions are currently <strong>authentic_assessment_candidate</strong>. None is mock_eligible. None is used by any Mock form.</p>
-          <p>• Question Type: QT-MR-06 (mock-mr06-numberpuzzle, text-only abstract number-puzzle, no stimulus table, 1 numbered-question experience of 4 subparts). Uses an explicit sharedStem.</p>
+          <p>• Question Type: QT-MR-06 (mock-mr06-numberpuzzle, text-only abstract number-puzzle, no stimulus table, 1 numbered-question experience of 3 subparts). Uses an explicit sharedStem.</p>
           <p>• Approving this family here does not activate it: promotion to independently_validated, and any later move to mock_eligible, remain separate, later, Founder-authorised steps.</p>
         </div>
       </div>

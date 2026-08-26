@@ -16,10 +16,10 @@ import { resolveGroupSharedStem, selectDisplayUnitStimulus } from "../../lib/moc
  * shape, not a synthetic fixture.
  */
 
-test("lib/adminReview.ts: family config targets exactly the 1 new family with all 4 real question IDs", () => {
+test("lib/adminReview.ts: family config targets exactly the 1 new family with all 3 surviving real question IDs (reduced from 4 per Decision 200/201 remediation)", () => {
   assert.equal(MOCK_STRUCTURAL_CAPACITY_INCREMENT005_FAMILIES.length, 1);
   assert.deepEqual(MOCK_STRUCTURAL_CAPACITY_INCREMENT005_FAMILIES[0].newQuestionIds, [
-    "mock-mr06-numberpuzzle-01", "mock-mr06-numberpuzzle-02", "mock-mr06-numberpuzzle-03", "mock-mr06-numberpuzzle-04",
+    "mock-mr06-numberpuzzle-01", "mock-mr06-numberpuzzle-02", "mock-mr06-numberpuzzle-03",
   ]);
   assert.deepEqual(MOCK_STRUCTURAL_CAPACITY_INCREMENT005_TARGET_IDS, ["mock-mr06-numberpuzzle"]);
 });
@@ -83,28 +83,32 @@ function byId(id: string) {
   return jsonBlocks.find((r) => r.id === id);
 }
 
-test("learner rendering: numberpuzzle's 4 rows resolve to ONE shared stem plus 4 non-empty distinct tails, in group order", () => {
-  const ids = [
-    "mock-mr06-numberpuzzle-01", "mock-mr06-numberpuzzle-02", "mock-mr06-numberpuzzle-03", "mock-mr06-numberpuzzle-04",
-  ];
-  const items = ids.map((id) => { const r = byId(id); return { question: r.question, sharedStem: r.sharedStem }; });
+const REMEDIATED_IDS = [
+  "mock-mr06-numberpuzzle-01", "mock-mr06-numberpuzzle-02", "mock-mr06-numberpuzzle-03",
+];
+
+test("learner rendering: numberpuzzle's 3 rows resolve to ONE shared stem plus 3 non-empty distinct tails, in group order (reduced from 4 per Decision 200/201 remediation)", () => {
+  const items = REMEDIATED_IDS.map((id) => { const r = byId(id); return { question: r.question, sharedStem: r.sharedStem }; });
   const resolved = resolveGroupSharedStem(items);
   assert.ok(resolved);
-  assert.equal(resolved!.tails.length, 4);
+  assert.equal(resolved!.tails.length, 3);
   const uniqueTails = new Set(resolved!.tails);
-  assert.equal(uniqueTails.size, 4, "all 4 subpart tails must be genuinely distinct");
+  assert.equal(uniqueTails.size, 3, "all 3 subpart tails must be genuinely distinct");
   for (const tail of resolved!.tails) assert.ok(tail.length > 0);
 });
 
 test("learner rendering: no stimulus is present on any row -- selectDisplayUnitStimulus() correctly returns null, confirming this family renders as text-only abstract-algebra content, not a table", () => {
-  const payloads = [
-    "mock-mr06-numberpuzzle-01", "mock-mr06-numberpuzzle-02", "mock-mr06-numberpuzzle-03", "mock-mr06-numberpuzzle-04",
-  ].map((id) => ({ stimulus: byId(id).stimulus }));
+  const payloads = REMEDIATED_IDS.map((id) => ({ stimulus: byId(id).stimulus }));
   const stimulus = selectDisplayUnitStimulus(payloads as never);
   assert.equal(stimulus, null);
 });
 
-test("per-row answer identity: each of the 4 raw component IDs is distinct, proving answer persistence/scoring would key correctly per component", () => {
+test("per-row answer identity: each of the 3 raw component IDs is distinct, proving answer persistence/scoring would key correctly per component", () => {
   const allIds = jsonBlocks.map((r) => r.id);
-  assert.equal(new Set(allIds).size, 4);
+  assert.equal(new Set(allIds).size, 3);
+});
+
+test("the removed 4th row (mock-mr06-numberpuzzle-04) is absent from migration 137 and from the review-surface config", () => {
+  assert.ok(!byId("mock-mr06-numberpuzzle-04"));
+  assert.ok(!MOCK_STRUCTURAL_CAPACITY_INCREMENT005_FAMILIES[0].newQuestionIds.includes("mock-mr06-numberpuzzle-04"));
 });
