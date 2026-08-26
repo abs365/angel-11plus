@@ -42,6 +42,8 @@ import {
   MOCK_STRUCTURAL_CAPACITY_INCREMENT004_FAMILIES, MOCK_STRUCTURAL_CAPACITY_INCREMENT004_TARGET_IDS,
   fetchMockStructuralCapacityIncrement005ReviewStatus, buildMockStructuralCapacityIncrement005NotesPrefix,
   MOCK_STRUCTURAL_CAPACITY_INCREMENT005_FAMILIES, MOCK_STRUCTURAL_CAPACITY_INCREMENT005_TARGET_IDS,
+  fetchMockStructuralCapacityIncrement006ReviewStatus, buildMockStructuralCapacityIncrement006NotesPrefix,
+  MOCK_STRUCTURAL_CAPACITY_INCREMENT006_FAMILIES, MOCK_STRUCTURAL_CAPACITY_INCREMENT006_TARGET_IDS,
   fetchMockEnglishPassageBatch001ReviewStatus, submitMockEnglishPassageIndependentReview,
   MOCK_ENGLISH_PASSAGE_BATCH001_TARGET_ID,
   fetchMockWritingBatch001ReviewStatus, buildMockWritingBatch001NotesPrefix, submitMockWritingPromptIndependentReview,
@@ -2395,6 +2397,63 @@ function MockStructuralCapacityIncrement005Section({
   );
 }
 
+/**
+ * Mathematics Structural Capacity, Authoring Increment 006 — Rounding-
+ * Bounds Reasoning Classification-A Family (Decision 205/206), mirroring
+ * MockStructuralCapacityIncrement005Section's own established
+ * single-family pattern exactly (own array, own marker, own status map).
+ */
+function MockStructuralCapacityIncrement006Section({
+  targets, status, onOpen,
+}: {
+  targets: PendingReviewTarget[];
+  status: Map<string, SevenXReviewStatus>;
+  onOpen: (t: PendingReviewTarget, family: SevenXFamilyConfig) => void;
+}) {
+  const reviewedCount = MOCK_STRUCTURAL_CAPACITY_INCREMENT006_FAMILIES.filter((f) => status.get(f.familyId)?.reviewed).length;
+  const totalQuestions = MOCK_STRUCTURAL_CAPACITY_INCREMENT006_FAMILIES.reduce((n, f) => n + f.newQuestionIds.length, 0);
+  return (
+    <div id="mock-review-structural-capacity-increment006" className="bg-white dark:bg-gray-900 rounded-2xl border-2 border-amber-200 dark:border-amber-800 overflow-hidden scroll-mt-4">
+      <div className="px-5 py-4 border-b border-amber-100 dark:border-amber-900 bg-amber-50 dark:bg-amber-950/40">
+        <p className="text-sm font-bold text-amber-900 dark:text-amber-200">Mathematics Structural Capacity, Increment 006 (Rounding-Bounds Reasoning Family) Review</p>
+        <p className="text-xs text-amber-600 dark:text-amber-400 mt-0.5">
+          {reviewedCount} of {MOCK_STRUCTURAL_CAPACITY_INCREMENT006_FAMILIES.length} families reviewed. {totalQuestions} new questions total across 1 family.
+        </p>
+        <div className="mt-2 text-xs text-amber-800 dark:text-amber-300 space-y-0.5">
+          <p>• This is a Mock candidate, not Practice content: it has never been, and will not be, automatically promoted from Practice.</p>
+          <p>• All {totalQuestions} questions are currently <strong>authentic_assessment_candidate</strong>. None is mock_eligible. None is used by any Mock form.</p>
+          <p>• Question Type: QT-MR-11 (mock-mr11-roundingbounds, text-only narrative, no stimulus table, 1 numbered-question experience of 4 subparts). Uses an explicit sharedStem.</p>
+          <p>• Approving this family here does not activate it: promotion to independently_validated, and any later move to mock_eligible, remain separate, later, Founder-authorised steps.</p>
+        </div>
+      </div>
+      <div className="divide-y divide-gray-50 dark:divide-gray-800">
+        {MOCK_STRUCTURAL_CAPACITY_INCREMENT006_FAMILIES.map((f) => {
+          const s = status.get(f.familyId);
+          const pendingTarget = targets.find((t) => t.id === f.familyId && (t.notes ?? "").includes("MOCK-STRUCTURAL-CAPACITY-INCREMENT006"));
+          return (
+            <button
+              key={f.familyId}
+              disabled={!pendingTarget}
+              onClick={() => pendingTarget && onOpen(pendingTarget, f)}
+              className="w-full text-left px-5 py-3 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors flex items-center justify-between gap-3 disabled:opacity-50"
+            >
+              <div>
+                <p className="text-sm font-medium text-gray-900 dark:text-gray-100">{FAMILY_DISPLAY_NAME[f.familyId] ?? formatFallbackName(f.familyId)}</p>
+                <p className="text-[11px] text-gray-400 dark:text-gray-500 mt-0.5">
+                  {f.newQuestionIds.length} new question{f.newQuestionIds.length === 1 ? "" : "s"}
+                  {s?.reviewed ? ` · reviewed (${s.decision})` : " · not yet reviewed"}
+                  {!pendingTarget ? " · migrations 140/141 not yet applied" : ""}
+                </p>
+              </div>
+              {s?.reviewed ? <CheckCircle2 size={16} className="text-emerald-500 shrink-0" /> : <ArrowRight size={14} className="text-gray-300 dark:text-gray-600 shrink-0" />}
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
 function MockFirstMockCompoundBatch001Section({
   targets, status, onOpen,
 }: {
@@ -2744,13 +2803,15 @@ function ReviewDashboard() {
   const [selectedMockStructuralCapacityIncrement004, setSelectedMockStructuralCapacityIncrement004] = useState<{ target: PendingReviewTarget; family: SevenXFamilyConfig } | null>(null);
   const [mockStructuralCapacityIncrement005Status, setMockStructuralCapacityIncrement005Status] = useState<Map<string, SevenXReviewStatus>>(new Map());
   const [selectedMockStructuralCapacityIncrement005, setSelectedMockStructuralCapacityIncrement005] = useState<{ target: PendingReviewTarget; family: SevenXFamilyConfig } | null>(null);
+  const [mockStructuralCapacityIncrement006Status, setMockStructuralCapacityIncrement006Status] = useState<Map<string, SevenXReviewStatus>>(new Map());
+  const [selectedMockStructuralCapacityIncrement006, setSelectedMockStructuralCapacityIncrement006] = useState<{ target: PendingReviewTarget; family: SevenXFamilyConfig } | null>(null);
   const [mockEnglishPassageBatch001Status, setMockEnglishPassageBatch001Status] = useState<Map<string, SevenXReviewStatus>>(new Map());
   const [selectedMockEnglishPassageBatch001, setSelectedMockEnglishPassageBatch001] = useState<PendingReviewTarget | null>(null);
   const [mockWritingBatch001Status, setMockWritingBatch001Status] = useState<Map<string, SevenXReviewStatus>>(new Map());
   const [selectedMockWritingBatch001, setSelectedMockWritingBatch001] = useState<{ target: PendingReviewTarget; family: SevenXFamilyConfig } | null>(null);
 
   async function load() {
-    const [pending, reviewed, teachingReviewed, englishTeachingReviewed, writingTeachingReviewed, sevenX, mr04Depth, inc006Depth, mockMrBatch001, mockMrBatch002, mockMrBatch003, mockFirstMockCompoundBatch001, mockSharedScenarioCompletionBatch, mockStructuralCapacityInc001, mockStructuralCapacityWave002, mockStructuralCapacityWave002Correction001, mockStructuralCapacityIncrement003, mockStructuralCapacityIncrement004, mockStructuralCapacityIncrement005, mockEnglishPassageBatch001, mockWritingBatch001] = await Promise.all([
+    const [pending, reviewed, teachingReviewed, englishTeachingReviewed, writingTeachingReviewed, sevenX, mr04Depth, inc006Depth, mockMrBatch001, mockMrBatch002, mockMrBatch003, mockFirstMockCompoundBatch001, mockSharedScenarioCompletionBatch, mockStructuralCapacityInc001, mockStructuralCapacityWave002, mockStructuralCapacityWave002Correction001, mockStructuralCapacityIncrement003, mockStructuralCapacityIncrement004, mockStructuralCapacityIncrement005, mockStructuralCapacityIncrement006, mockEnglishPassageBatch001, mockWritingBatch001] = await Promise.all([
       fetchPendingReviewTargets(), fetchReviewedTargetIds(), fetchMathsTeachingReviewedFamilyIds(), fetchEnglishTeachingReviewedFamilyIds(), fetchWritingTeachingReviewedFamilyIds(),
       fetchSevenXReviewStatus(SEVEN_X_TARGET_IDS), fetchMr04DepthReviewStatus(MR04_DEPTH_TARGET_IDS), fetchInc006DepthReviewStatus(INC006_DEPTH_TARGET_IDS),
       fetchMockMrBatch001ReviewStatus(MOCK_MR_BATCH001_TARGET_IDS), fetchMockMrBatch002ReviewStatus(MOCK_MR_BATCH002_TARGET_IDS),
@@ -2763,6 +2824,7 @@ function ReviewDashboard() {
       fetchMockStructuralCapacityIncrement003ReviewStatus(MOCK_STRUCTURAL_CAPACITY_INCREMENT003_TARGET_IDS),
       fetchMockStructuralCapacityIncrement004ReviewStatus(MOCK_STRUCTURAL_CAPACITY_INCREMENT004_TARGET_IDS),
       fetchMockStructuralCapacityIncrement005ReviewStatus(MOCK_STRUCTURAL_CAPACITY_INCREMENT005_TARGET_IDS),
+      fetchMockStructuralCapacityIncrement006ReviewStatus(MOCK_STRUCTURAL_CAPACITY_INCREMENT006_TARGET_IDS),
       fetchMockEnglishPassageBatch001ReviewStatus(), fetchMockWritingBatch001ReviewStatus(MOCK_WRITING_BATCH001_TARGET_IDS),
     ]);
     setTargets(pending);
@@ -2784,6 +2846,7 @@ function ReviewDashboard() {
     setMockStructuralCapacityIncrement003Status(mockStructuralCapacityIncrement003);
     setMockStructuralCapacityIncrement004Status(mockStructuralCapacityIncrement004);
     setMockStructuralCapacityIncrement005Status(mockStructuralCapacityIncrement005);
+    setMockStructuralCapacityIncrement006Status(mockStructuralCapacityIncrement006);
     setMockEnglishPassageBatch001Status(mockEnglishPassageBatch001);
     setMockWritingBatch001Status(mockWritingBatch001);
   }
@@ -3014,6 +3077,21 @@ function ReviewDashboard() {
     );
   }
 
+  if (selectedMockStructuralCapacityIncrement006) {
+    const { target, family } = selectedMockStructuralCapacityIncrement006;
+    return (
+      <ReviewForm
+        target={target}
+        reviewType="mock_maths_independent_review"
+        onDone={() => { setSelectedMockStructuralCapacityIncrement006(null); load(); }}
+        sevenX={{
+          questionIds: family.newQuestionIds, reclassified: family.reclassified, disclosure: family.disclosure,
+          notesPrefix: buildMockStructuralCapacityIncrement006NotesPrefix(target.id, family.newQuestionIds),
+        }}
+      />
+    );
+  }
+
   if (selectedMockEnglishPassageBatch001) {
     return (
       <ReviewForm
@@ -3092,6 +3170,7 @@ function ReviewDashboard() {
       <MockStructuralCapacityIncrement003Section targets={targets} status={mockStructuralCapacityIncrement003Status} onOpen={(target, family) => setSelectedMockStructuralCapacityIncrement003({ target, family })} />
       <MockStructuralCapacityIncrement004Section targets={targets} status={mockStructuralCapacityIncrement004Status} onOpen={(target, family) => setSelectedMockStructuralCapacityIncrement004({ target, family })} />
       <MockStructuralCapacityIncrement005Section targets={targets} status={mockStructuralCapacityIncrement005Status} onOpen={(target, family) => setSelectedMockStructuralCapacityIncrement005({ target, family })} />
+      <MockStructuralCapacityIncrement006Section targets={targets} status={mockStructuralCapacityIncrement006Status} onOpen={(target, family) => setSelectedMockStructuralCapacityIncrement006({ target, family })} />
       <MockEnglishPassageBatch001Section targets={targets} status={mockEnglishPassageBatch001Status} onOpen={setSelectedMockEnglishPassageBatch001} />
       <MockWritingBatch001Section targets={targets} status={mockWritingBatch001Status} onOpen={(target, family) => setSelectedMockWritingBatch001({ target, family })} />
       <FullBacklogSection targets={targets} reviewedIds={reviewedIds} onOpen={setSelected} />

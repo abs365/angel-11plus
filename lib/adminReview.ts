@@ -1890,6 +1890,61 @@ export async function fetchMockStructuralCapacityIncrement005ReviewStatus(family
 }
 
 /**
+ * Mathematics Structural Capacity, Authoring Increment 006 — Rounding-
+ * Bounds Reasoning Classification-A Family (Decision 205/206). One new
+ * family (mock-mr11-roundingbounds, migration 140), made reviewable via
+ * the exact same scoped-batch mechanism as
+ * MOCK_STRUCTURAL_CAPACITY_INCREMENT003_FAMILIES/.../INCREMENT005_FAMILIES
+ * above — own array, own marker, own status map, reusing `review_type =
+ * 'mock_maths_independent_review'` and the generalised
+ * deriveBatchReviewStatus()/fetchBatchReviewStatus() helpers unchanged.
+ *
+ * mock-mr11-roundingbounds is grouped: 1 numbered-question experience of
+ * 4 subparts, sharing one `prompt.sharedStem` across all 4 rows —
+ * TEXT-ONLY narrative content, no `prompt.stimulus` table. The review
+ * surface renders it via the same resolveGroupSharedStem() mechanism the
+ * learner surface uses, so the Founder reviews the identical presentation
+ * a learner would see. Every row's eligibility_status is
+ * authentic_assessment_candidate; approving this family here still does
+ * NOT promote it to independently_validated or mock_eligible, and does
+ * NOT create or touch any ali_mock_form row.
+ *
+ * Marker "MOCK-STRUCTURAL-CAPACITY-INCREMENT006" was deliberately chosen
+ * to share no substring with MOCK-STRUCTURAL-CAPACITY-INC001,
+ * MOCK-STRUCTURAL-CAPACITY-WAVE002, MOCK-BUSTIMETABLE-CORRECTION001,
+ * MOCK-STRUCTURAL-CAPACITY-INCREMENT003, MOCK-STRUCTURAL-CAPACITY-
+ * INCREMENT004, or MOCK-STRUCTURAL-CAPACITY-INCREMENT005 — verified
+ * before writing migration 141 — so none of those sections' own
+ * `.includes()` pending-target lookups in app/admin-beta/review/page.tsx
+ * can cross-match this new marker.
+ */
+export const MOCK_STRUCTURAL_CAPACITY_INCREMENT006_MARKER = "MOCK-STRUCTURAL-CAPACITY-INCREMENT006";
+
+export const MOCK_STRUCTURAL_CAPACITY_INCREMENT006_FAMILIES: SevenXFamilyConfig[] = [
+  {
+    familyId: "mock-mr11-roundingbounds",
+    newQuestionIds: [
+      "mock-mr11-roundingbounds-01", "mock-mr11-roundingbounds-02", "mock-mr11-roundingbounds-03", "mock-mr11-roundingbounds-04",
+    ],
+    disclosure:
+      "This is a brand-new family with no prior review of any kind. It tests a reasoning skill absent from every other existing Angel family: deriving the extremal true value(s) consistent with a stated rounded figure (rounded to the nearest 10), then combining those bounds via addition/subtraction. Directly evidenced this session against the real 2022 Q9 (independently re-verified against both the real paper and its mark scheme: X rounds to 350, Y rounds to 320, confirmed answers 354/315/678/21 for largest X / smallest Y / largest X+Y / smallest X-Y), and cross-checked against 2023 Q14's own related but geometric use of the same bound-derivation skill (perimeter/area of a rectangle with rounded dimensions, confirmed answers 39cm/67.5cm2). QT-MR-11 (Number-Property Reasoning, property-satisfying-search sub-format) is reused, not a new Question Type -- disclosed honestly as an extension of its search sub-format to a rounding-consistency property, rather than the existing prime/square property mock-mr11-propertysearch already tests. Difficulty: (a) easy and (b) easy (single-quantity bound extraction in opposite directions, genuinely equal demand), (c) medium (deriving both quantities' bounds and combining by addition), (d) hard (recognising that minimising a difference requires the smallest minuend AND the largest subtrahend simultaneously -- the trickiest of the four subparts). Disclosed honestly: mock-mr03mr07-perimeterarea's own migration header loosely cites the same 2023 Q14 source, but its actual authored content (independently re-read this session) is a plain unit-conversion-then-perimeter/area calculation on exact given dimensions, with no bounds/rounding-range reasoning of any kind -- a citation-fidelity gap in that existing family disclosed here, not corrected (out of this increment's scope). No new visual capability required: text-only narrative content, no stimulus table. Disclosed for your own judgement, not a recommendation either way.",
+  },
+];
+export const MOCK_STRUCTURAL_CAPACITY_INCREMENT006_TARGET_IDS = MOCK_STRUCTURAL_CAPACITY_INCREMENT006_FAMILIES.map((f) => f.familyId);
+
+export function buildMockStructuralCapacityIncrement006NotesPrefix(familyId: string, questionIds: string[]): string {
+  return `${MOCK_STRUCTURAL_CAPACITY_INCREMENT006_MARKER} new content review: ${familyId} (Question IDs: ${questionIds.join(", ")})`;
+}
+
+export function deriveMockStructuralCapacityIncrement006ReviewStatus(rows: SevenXReviewRow[], familyIds: string[]): Map<string, SevenXReviewStatus> {
+  return deriveBatchReviewStatus(rows, familyIds, MOCK_STRUCTURAL_CAPACITY_INCREMENT006_MARKER, "mock_maths_independent_review");
+}
+
+export async function fetchMockStructuralCapacityIncrement006ReviewStatus(familyIds: string[]): Promise<Map<string, SevenXReviewStatus>> {
+  return fetchBatchReviewStatus(familyIds, MOCK_STRUCTURAL_CAPACITY_INCREMENT006_MARKER, "mock_maths_independent_review");
+}
+
+/**
  * Inserts one real, traceable Mock-content independent-review decision —
  * `review_type = 'mock_maths_independent_review'` (migration 087,
  * Decision 139), explicitly set here exactly as `submitMathsTeachingReview`
