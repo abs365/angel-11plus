@@ -2235,6 +2235,95 @@ export async function submitMockWritingPromptIndependentReview(s: ReviewSubmissi
   return { error: error ? error.message : null };
 }
 
+/**
+ * English Content Foundation, Increment 001 (Decision 228, remediated
+ * Decision 229, review-target identifier corrected migration 155) —
+ * the 2 new Comprehension passages, reviewed via the SAME generic
+ * `target.reviewTargetType === "passage"` path in ReviewForm the
+ * existing certified passage already uses (`fetchPassageDetail` +
+ * `fetchQuestionsForPassage(learning_unit_id)`), now that migration 155
+ * has corrected each passage review target's own `family_id` to match
+ * its passage's own `id` — the exact identifier those two fetch
+ * functions require (Decision 231's own confirmed finding). Only a
+ * status lookup and a dedicated submit function (review_type distinct
+ * from ordinary passage content_review) are added below, matching
+ * `MOCK_ENGLISH_PASSAGE_BATCH001`'s own established shape exactly, now
+ * generalised to a target-ID LIST rather than one single target,
+ * because this increment introduces 2 passages, not 1.
+ *
+ * `requireMarker: false`, mirroring Decision 157's own correction for
+ * the existing certified passage, for the identical reason: the plain
+ * `target={...}` ReviewForm submission path (no `sevenX` prop) never
+ * prepends any marker to a submitted review's own notes, and each of
+ * these two ids is brand-new and never reused for any other purpose —
+ * the `family_id` + `reviewType` pair is already unambiguous on its
+ * own.
+ */
+export const MOCK_ENGLISH_INC001_MARKER = "ENGLISH-CONTENT-FOUNDATION-INC001";
+
+export const MOCK_ENGLISH_INC001_PASSAGE_TARGET_IDS = ["eng-inc001-understudy", "eng-inc001-bee-navigation"];
+
+export function deriveMockEnglishInc001PassageReviewStatus(rows: SevenXReviewRow[]): Map<string, SevenXReviewStatus> {
+  return deriveBatchReviewStatus(rows, MOCK_ENGLISH_INC001_PASSAGE_TARGET_IDS, MOCK_ENGLISH_INC001_MARKER, "mock_english_passage_independent_review", false);
+}
+
+export async function fetchMockEnglishInc001PassageReviewStatus(): Promise<Map<string, SevenXReviewStatus>> {
+  return fetchBatchReviewStatus(MOCK_ENGLISH_INC001_PASSAGE_TARGET_IDS, MOCK_ENGLISH_INC001_MARKER, "mock_english_passage_independent_review", false);
+}
+
+/**
+ * The 3 new Continuous Writing candidate prompts (migration 153), each
+ * its own distinct reviewable unit (`review_target_type =
+ * 'writing_prompt'`). Reviewed via the `sevenX` prop mechanism, exactly
+ * like `MOCK_WRITING_BATCH001_FAMILIES` above — `familyId` here is each
+ * prompt's own `ali_question_bank.family_id` COLUMN value (e.g.
+ * `mock-writing-wc01a-newplace`), because migration 154 registered
+ * these three `ali_family_review` rows using that value (unlike the
+ * older Writing batch, which registered `family_id` as each prompt's
+ * own row `id` instead) — independently confirmed by direct grep of
+ * migration 154's own source this session. `newQuestionIds` is each
+ * prompt's own real row `id` (e.g. `mock-writing-newplace-01`), routed
+ * through `fetchQuestionsByIds()` (exact-id lookup), not the
+ * family-level fetch — kept symmetric with the established pattern even
+ * though, for this specific batch, the family-level fetch would also
+ * happen to work today (each family_id currently has exactly one
+ * sibling); the exact-id lookup remains the safer, precedent-consistent
+ * choice against a future sibling ever sharing the same family_id.
+ */
+export const MOCK_ENGLISH_INC001_WRITING_FAMILIES: SevenXFamilyConfig[] = [
+  {
+    familyId: "mock-writing-wc01a-newplace",
+    newQuestionIds: ["mock-writing-newplace-01"],
+    disclosure:
+      "This is a brand-new Continuous Writing prompt with no prior review of any kind. QT-WC-01a (Reflective/Discursive Response Prompt). Prompt shape: place-arrival narrative (unfamiliar-to-familiar structure), genuinely distinct from the existing mindchange/kindness/cookopinion prompts and from this batch's other two prompts. No AI Writing scoring is enabled for this or any prompt. Disclosed for your own judgement, not a recommendation either way.",
+  },
+  {
+    familyId: "mock-writing-wc01a-mistakelearned",
+    newQuestionIds: ["mock-writing-mistakelearned-01"],
+    disclosure:
+      "This is a brand-new Continuous Writing prompt with no prior review of any kind. QT-WC-01a. Prompt shape: error-and-growth narrative (mistake/consequence/changed-approach), centred on a single action and its consequence rather than a shift in opinion or belief. No AI Writing scoring is enabled. Disclosed for your own judgement, not a recommendation either way.",
+  },
+  {
+    familyId: "mock-writing-wc01a-screentime",
+    newQuestionIds: ["mock-writing-screentime-01"],
+    disclosure:
+      "This is a brand-new Continuous Writing prompt with no prior review of any kind. QT-WC-01a. Prompt shape: direct opinion-question format, mirroring the existing cookopinion prompt's own evidenced shape with a genuinely different, age-relevant topic (screen time). No AI Writing scoring is enabled. Disclosed for your own judgement, not a recommendation either way.",
+  },
+];
+export const MOCK_ENGLISH_INC001_WRITING_TARGET_IDS = MOCK_ENGLISH_INC001_WRITING_FAMILIES.map((f) => f.familyId);
+
+export function buildMockEnglishInc001WritingNotesPrefix(promptId: string, questionIds: string[]): string {
+  return `${MOCK_ENGLISH_INC001_MARKER} new content review: Continuous Writing prompt (${promptId}) (Question IDs: ${questionIds.join(", ")})`;
+}
+
+export function deriveMockEnglishInc001WritingReviewStatus(rows: SevenXReviewRow[], familyIds: string[]): Map<string, SevenXReviewStatus> {
+  return deriveBatchReviewStatus(rows, familyIds, MOCK_ENGLISH_INC001_MARKER, "mock_writing_prompt_independent_review");
+}
+
+export async function fetchMockEnglishInc001WritingReviewStatus(familyIds: string[]): Promise<Map<string, SevenXReviewStatus>> {
+  return fetchBatchReviewStatus(familyIds, MOCK_ENGLISH_INC001_MARKER, "mock_writing_prompt_independent_review");
+}
+
 export const DIFFICULTY_RANK: Record<string, number> = { easy: 0, medium: 1, hard: 2 };
 
 /** Pure: true difficulty order (easy -> medium -> hard), not the database's default alphabetical order, which would wrongly place "hard" before "medium". Exported and unit-tested directly (tests/lib/adminReview.test.ts). */

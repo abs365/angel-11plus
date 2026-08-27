@@ -7,6 +7,8 @@ import {
   groupQuestionsForReview,
   deriveBatchReviewStatus, deriveMockEnglishPassageBatch001ReviewStatus, deriveMockWritingBatch001ReviewStatus,
   deriveMockMrBatch003ReviewStatus,
+  deriveMockEnglishInc001PassageReviewStatus, deriveMockEnglishInc001WritingReviewStatus,
+  MOCK_ENGLISH_INC001_MARKER, MOCK_ENGLISH_INC001_PASSAGE_TARGET_IDS, MOCK_ENGLISH_INC001_WRITING_FAMILIES,
   MOCK_ENGLISH_PASSAGE_BATCH001_MARKER, MOCK_ENGLISH_PASSAGE_BATCH001_TARGET_ID,
   MOCK_WRITING_BATCH001_FAMILIES, MOCK_WRITING_BATCH001_MARKER,
   MOCK_MR_BATCH003_FAMILIES, MOCK_MR_BATCH003_BATCH_MARKER,
@@ -598,6 +600,68 @@ test("7. Writing Batch 001 status behaviour is unchanged: still requires the mar
   ];
   const statusWithoutMarker = deriveMockWritingBatch001ReviewStatus(rowsWithoutMarker, [family.familyId]);
   assert.equal(statusWithoutMarker.get(family.familyId)?.reviewed, false, "Writing must still require its own marker -- unaffected by the passage-specific correction");
+});
+
+test("9. English Content Foundation Increment 001 passage review: pending placeholder only -> not yet reviewed, for BOTH new passages independently", () => {
+  for (const id of MOCK_ENGLISH_INC001_PASSAGE_TARGET_IDS) {
+    const rows = [pendingPlaceholderRow(id, "mock_english_passage_independent_review", MOCK_ENGLISH_INC001_MARKER)];
+    const status = deriveMockEnglishInc001PassageReviewStatus(rows);
+    assert.equal(status.get(id)?.reviewed, false);
+  }
+});
+
+test("10. English Content Foundation Increment 001 passage review: a genuine approved decision (no marker required, mirroring Decision 157's own correction for the existing certified passage) is correctly recognised for each passage independently", () => {
+  for (const id of MOCK_ENGLISH_INC001_PASSAGE_TARGET_IDS) {
+    const rows = [
+      pendingPlaceholderRow(id, "mock_english_passage_independent_review", MOCK_ENGLISH_INC001_MARKER),
+      genuineReviewRow({ family_id: id, review_type: "mock_english_passage_independent_review", notes: "Reviewer qualification: KS2 English teaching experience.\n\nNo batch marker in this submission's own notes." }),
+    ];
+    const status = deriveMockEnglishInc001PassageReviewStatus(rows);
+    const s = status.get(id);
+    assert.equal(s?.reviewed, true);
+    assert.equal(s?.decision, "approved");
+    assert.equal(s?.reviewer, "Ayobami Lawal");
+  }
+});
+
+test("11. English Content Foundation Increment 001 passage review: a decision for ONE passage never marks the OTHER passage as reviewed -- no cross-target contamination", () => {
+  const [understudyId, beeId] = MOCK_ENGLISH_INC001_PASSAGE_TARGET_IDS;
+  const rows = [
+    pendingPlaceholderRow(understudyId, "mock_english_passage_independent_review", MOCK_ENGLISH_INC001_MARKER),
+    pendingPlaceholderRow(beeId, "mock_english_passage_independent_review", MOCK_ENGLISH_INC001_MARKER),
+    genuineReviewRow({ family_id: understudyId, review_type: "mock_english_passage_independent_review" }),
+  ];
+  const status = deriveMockEnglishInc001PassageReviewStatus(rows);
+  assert.equal(status.get(understudyId)?.reviewed, true);
+  assert.equal(status.get(beeId)?.reviewed, false, "Bee Navigation must remain unreviewed -- only the Understudy row carried a genuine decision");
+});
+
+test("12. English Content Foundation Increment 001 passage review: a content_review decision for the same family_id (a different review_type) is never read as satisfying the Mock independent review", () => {
+  const [understudyId] = MOCK_ENGLISH_INC001_PASSAGE_TARGET_IDS;
+  const rows = [genuineReviewRow({ family_id: understudyId, review_type: "content_review" })];
+  const status = deriveMockEnglishInc001PassageReviewStatus(rows);
+  assert.equal(status.get(understudyId)?.reviewed, false);
+});
+
+test("13. English Content Foundation Increment 001 Writing review: still requires its own marker, still correctly recognises a properly-tagged review, for all 3 new prompts", () => {
+  for (const family of MOCK_ENGLISH_INC001_WRITING_FAMILIES) {
+    const rows = [
+      genuineReviewRow({ family_id: family.familyId, review_type: "mock_writing_prompt_independent_review", notes: `${MOCK_ENGLISH_INC001_MARKER} new content review: Continuous Writing prompt (${family.familyId})` }),
+    ];
+    const status = deriveMockEnglishInc001WritingReviewStatus(rows, [family.familyId]);
+    assert.equal(status.get(family.familyId)?.reviewed, true);
+
+    const rowsWithoutMarker = [
+      genuineReviewRow({ family_id: family.familyId, review_type: "mock_writing_prompt_independent_review", notes: "Reviewer qualification: no marker here." }),
+    ];
+    const statusWithoutMarker = deriveMockEnglishInc001WritingReviewStatus(rowsWithoutMarker, [family.familyId]);
+    assert.equal(statusWithoutMarker.get(family.familyId)?.reviewed, false, "must still require its own marker");
+  }
+});
+
+test("14. English Content Foundation Increment 001: the 3 target ids are exactly the 3 real writing-prompt family_id column values migration 154 registered, never the prompts' own row ids", () => {
+  const ids = MOCK_ENGLISH_INC001_WRITING_FAMILIES.map((f) => f.familyId).sort();
+  assert.deepEqual(ids, ["mock-writing-wc01a-mistakelearned", "mock-writing-wc01a-newplace", "mock-writing-wc01a-screentime"].sort());
 });
 
 test("8. Mathematics Batch 003 status behaviour is unchanged: still requires the marker, still correctly recognises a properly-tagged review", () => {
