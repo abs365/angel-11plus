@@ -653,5 +653,81 @@
     "question": "At the Oakwood Athletics Meet, the number of adult spectators rounds to 380 to the nearest 10. The number of child spectators rounds to 240 to the nearest 10. What is the smallest possible value of the number of adult spectators minus the number of child spectators?",
     "answer": "131",
     "sharedStem": "At the Oakwood Athletics Meet, the number of adult spectators rounds to 380 to the nearest 10. The number of child spectators rounds to 240 to the nearest 10."
+  },
+  "mock-mr10-fairprep-01": {
+    "question": "A group of students is setting up a robotics display for the school science fair. Assembling the display takes 1 hour 55 minutes, and testing the robots afterwards takes a further 40 minutes. If the students start assembling at 13:15, what time do they finish testing? Give your answer in 24-hour time.",
+    "answer": "15:50"
+  },
+  "mock-mr10-fairprep-02": {
+    "question": "A group of students is setting up a robotics display for the school science fair. Assembling the display takes 1 hour 55 minutes, and testing the robots afterwards takes a further 40 minutes. The science fair opens to visitors at 16:30, and the students want to finish at least 20 minutes before it opens. What is the latest time they can start assembling? Give your answer in 24-hour time.",
+    "answer": "13:35"
+  },
+  "mock-mr09-runningclub-01": {
+    "question": "A school running club recorded how many pupils attended each week during one half-term. Each week, the club charges £1.50 per attending pupil for a hot drink afterwards. How much money was collected in total across all five weeks, in pounds?",
+    "answer": "139.50",
+    "stimulus": {
+      "type": "table",
+      "caption": "Weekly running club attendance",
+      "headers": [
+        "Week",
+        "Attendance"
+      ],
+      "rows": [
+        [
+          "Week 1",
+          "14"
+        ],
+        [
+          "Week 2",
+          "19"
+        ],
+        [
+          "Week 3",
+          "16"
+        ],
+        [
+          "Week 4",
+          "23"
+        ],
+        [
+          "Week 5",
+          "21"
+        ]
+      ]
+    }
+  },
+  "mock-mr09-runningclub-02": {
+    "question": "A school running club recorded how many pupils attended each week during one half-term. Between which two consecutive weeks did attendance increase by the greatest amount? Give your answer in the form \"Week X to Week Y\".",
+    "answer": "Week 3 to Week 4",
+    "stimulus": {
+      "type": "table",
+      "caption": "Weekly running club attendance",
+      "headers": [
+        "Week",
+        "Attendance"
+      ],
+      "rows": [
+        [
+          "Week 1",
+          "14"
+        ],
+        [
+          "Week 2",
+          "19"
+        ],
+        [
+          "Week 3",
+          "16"
+        ],
+        [
+          "Week 4",
+          "23"
+        ],
+        [
+          "Week 5",
+          "21"
+        ]
+      ]
+    }
   }
 }

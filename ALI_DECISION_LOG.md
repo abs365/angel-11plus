@@ -9019,3 +9019,75 @@ No `ali_mock_form` row inserted, no form frozen or activated, no Mock attempt cr
 **Implications:** Decisions 1–212 all stand, none reversed or rewritten. **Final verdict: A — APPROVE CURRENT 21Q/56 CANDIDATE FOR FREEZE PREPARATION.**
 
 ---
+
+### Decision 214 — MATHEMATICS: FIRST MOCK 1 FINAL CURATION AND INACTIVE-FREEZE PREPARATION (Founder-directed, Decision 213's own Recommendation A implemented with two bounded refinements; migration prepared, NOT applied).
+
+**Reconciliation:** `git fetch origin main` confirmed `HEAD == origin/main` at `25888a0` (Decision 213) before this session's work began, clean working tree. Decision 213 present exactly once. Migrations 145 and 146 remained the latest files on disk (no migration 147+ existed before this session). `lib/ali/mockComposition.ts`'s deterministic ordering/tie-break logic re-read directly this session — confirmed unchanged since Decision 212, no modification made or proposed to it here.
+
+## PART 1 — ARCHETYPE-BALANCE SUBSTITUTION (Founder-directed)
+
+`mock-mr06-sumdiff` (2 marks, 2 rows) removed; `mock-mr09-runningclub` (2 marks, 2 rows) added — an explicit manifest curation using the existing `validateManifest()`, never a re-parameterised composer run. Confirmed by live re-validation this session: 21 numbered questions and 56 marks unchanged (both experiences are exactly 2 marks); QT-MR-06 concentration reduces from 4 to 3 instances; QT-MR-09 depth increases from 1 to 2 instances; no eligibility relaxation (Running Club independently re-confirmed `mock_eligible`/`active`); no partial grouped family (both experiences' full 2-row groups are present or absent as a whole); no question content authored or modified anywhere in the estate. `composeCandidateMock()`/`buildExperiences()`/`validateManifest()` (`lib/ali/mockComposition.ts`) remain byte-unchanged.
+
+## PART 2 — EDUCATIONAL-PROGRESSION REORDERING
+
+The same 21 post-substitution experiences resequenced from `composeCandidateMock()`'s own alphabetical `experienceId` order into a Founder-facing examination sequence, designed directly from each experience's own real, inspected `content_difficulty` array (never inferred from family id — every difficulty tag was read from the live pool before ordering). Design goals achieved and verified: gentle opening (Q1-Q2 all-easy), a genuine four-question medium ramp before any hard content (Q3-Q6), a smooth bridge into hard difficulty via Question 7's own internal easy→medium→hard progression, zero adjacent questions sharing a primary QT archetype anywhere across all 21 (verified programmatically, not by inspection alone — the curation script's own `archetypeCollisions` check found 0), a genuine breather/escalation pattern through the harder back section (no more than two fully-hard questions consecutive except Q19-Q20, immediately resolved by Q21's gentler close), and a strong, well-rounded final question (`mock-mr13-craftstall`, medium/medium/hard, a genuine 3-part real-world reasoning arc). Every question's own wording, subparts, marks, and shared stem are byte-unchanged from Decision 212/213 — only the sequence changed, confirmed by the curation script's own self-check that `FINAL_ORDER` contains exactly the same 21 experiences as the post-substitution set.
+
+A genuine, real limitation of Decision 212's own capability was surfaced by actually exercising it with a non-alphabetical order for the first time this session: `renderFounderReviewReport()` internally calls `buildExperiences()`, which always re-derives alphabetical `experienceId` order regardless of manifest order — invisible in Decision 212/213 because those candidates happened to already be alphabetically composed. **Not fixed in this session** — the curation script (`scripts/mock-mathematics-first-mock-curation.mjs`) instead builds its own order-preserving rendering directly from `FINAL_ORDER` and the pool's own real content, never calling `renderFounderReviewReport()` for display, per the governing directive's own boundary against modifying the general composer/report capability for a one-form decision. Disclosed as a named limitation for a future, separately-scoped increment, not silently worked around.
+
+## PART 3 — REVALIDATION
+
+`validateManifest()` (unmodified) confirms, on the final curated-and-reordered 56-id manifest: **VALID**; exactly 21 numbered experiences; exactly 56 marks; every row `active`; every row `mock_eligible`; zero duplicate row IDs; zero partial grouped families; `mock-mr03mr07-perimeterarea` absent; `mock-mr06-sumdiff` absent; `mock-mr09-runningclub` present and complete (2/2 rows); every other approved Decision-213 experience preserved unchanged. Difficulty distribution: easy 8, medium 22, hard 26, challenge 0 (shifted from Decision 213's raw 8/23/25 by exactly the one subpart the substitution changes — Sum/Difference's medium-medium pair for Running Club's medium-hard pair). Archetype distribution: QT-MR-01=3, QT-MR-02=2, QT-MR-03=1, QT-MR-04=3, QT-MR-05=2, QT-MR-06=3, QT-MR-07=2, QT-MR-09=2, QT-MR-10=3, QT-MR-11=1, QT-MR-13=1.
+
+## PART 4 — FINAL FOUNDER LEARNER-PAPER INSPECTION ARTIFACT
+
+Published as `ANGEL_FIRST_MATHEMATICS_MOCK_1_FINAL_CURATION_V1.md` (repo root, new document — Decision 213's own inspection artifact preserved unchanged, never overwritten, since it documents the pre-curation candidates as a separate historical record). Contains: the exact 21-question learner paper in final curated order (real question text, shared stems, stimulus tables, marks — no answers, no internal IDs, no eligibility/reviewer metadata anywhere in that section); a separate Founder audit table (source row IDs, skill, marks, stored answers) for every question; the full difficulty-progression and archetype-distribution reports; and an explicit "would this paper be given to a learner" assessment.
+
+## PART 5 — SHARED INFRASTRUCTURE (justified, per governing directive Part 16)
+
+The 77-row pool-reconstruction logic (previously embedded directly in `scripts/mock-mathematics-composition-report.mjs`) was factored out into `scripts/lib/mockMathematicsPool.mjs`, now imported by both that script and the new `scripts/mock-mathematics-first-mock-curation.mjs`, avoiding a ~200-line duplication. Verified byte-identical output before and after the refactor (`diff` against the pre-refactor script's own captured output). Two content entries (`mock-mr10-fairprep-01/02`, `mock-mr09-runningclub-01/02`) were added to `scripts/mock-mathematics-source-content.json`, extracted via the same disclosed regex pass over migration 113 used for every other entry in that file (Decision 213) — Decision 213's own artifact had discussed these two families by name but never needed their full row content until this session's Running Club substitution required it for the learner-paper view. `lib/ali/mockComposition.ts`, `lib/ali/mockCompositionReport.ts`, and `lib/ali/mockFreezeManifest.ts` (Decision 212's own tested capability) remain byte-unchanged.
+
+## PART 6 — INACTIVE FREEZE PREPARATION
+
+**Migration created:** `supabase/migrations/147_mock_mathematics_first_mock_1_inactive_freeze.sql` — **NOT APPLIED**. Uses the existing, unmodified `buildMockFormInsertPayload()` (Decision 212) to shape the exact row; the migration itself embeds that payload's own `question_manifest` (56 `{question_id, section: "mathematics"}` entries, curated order) and `composition_provenance` (Decision 210 Part 9's own additive column, migration 146) as literal `jsonb` values, re-verified this session against the curation script's own live output before being written into the migration file. Fail-closed, idempotent three-state structure: **PRISTINE** (no row with id `first-mock-mathematics-v1` exists, all 56 target ids live-verified `mock_eligible`/`active`/`maths`, marks sum to 56, every grouped family fully represented, Perimeter Area/Sum-Difference absent, Running Club present-and-complete) → inserts the row with `active = false`. **ALREADY APPLIED** (a row with that id exists and its `question_manifest`/`active`/`subject`/`specification_version`/`attempt_type` all match exactly) → safe no-op. **MIXED/UNEXPECTED** (a row exists but differs in any way, or more than one row exists) → `RAISE EXCEPTION`, nothing written — this migration never overwrites an existing `ali_mock_form` row under any circumstance. `active` is never set to `true` anywhere in this migration; no `ali_mock_attempt` row is created; `mock_create_attempt()`/`mock_create_cycle_attempt()` are never called or referenced; no `ali_question_bank` row is touched; Perimeter Area is not promoted; Increment 007 is not started.
+
+**Tests:** new file `tests/supabase/mockMathematicsFirstMock1InactiveFreeze.test.ts`, 24 tests, all passing — exact 56-id target array with no duplicates, Sum/Difference absence and Running Club presence/completeness both independently guarded, live eligibility/marks-sum/group-completeness preconditions, question_manifest order matches the curated (non-alphabetical) sequence exactly, composition_provenance fidelity, `active` never set `true`, idempotent already-applied branch verifies an exact match before treating as a no-op, mixed-state exception coverage, no `ali_mock_attempt`/`mock_create_attempt`/`ali_question_bank`/`ali_family_review` reference, `RAISE` placeholder-argument arithmetic checks.
+
+**Verification:** full automated test suite **2300/2300 passing** (2276 baseline + 24 new, zero regressions); `npx tsc --noEmit` clean; ESLint at the established baseline — **81 problems (62 errors, 19 warnings), unchanged**; Copy Quality Guard **PASS — 0 violations across 260 files**; Migration SQL Guard **PASS — 147 migration files, all quote-balanced, all RAISE statements arithmetic-correct**; production build succeeds.
+
+## PART 7 — REPORT
+
+**A. Exact final 21-question order:** directcalc, invdiv, unitconv, forward, percentchange, triangleanglesum, campingsale, costumeschedule-01, linkedvalues, inverse, runningclub, reversepercent, roundingbounds, isoscelesproperty, funrun, twostep, numberpuzzle, bustimetable, multiplerelation, costumeschedule-02, craftstall (full text: `ANGEL_FIRST_MATHEMATICS_MOCK_1_FINAL_CURATION_V1.md` §4).
+
+**B. Total marks:** 56.
+
+**C. Difficulty distribution/progression:** easy 8, medium 22, hard 26, challenge 0 — gentle open, four-question medium ramp, smooth bridge into hard via Q7, alternating hard/gentler-opening pattern through Q8-Q20, strong moderate-opening close at Q21 (full table: artifact §3).
+
+**D. QT/archetype distribution:** QT-MR-01=3, QT-MR-02=2, QT-MR-03=1, QT-MR-04=3, QT-MR-05=2, QT-MR-06=3, QT-MR-07=2, QT-MR-09=2, QT-MR-10=3, QT-MR-11=1, QT-MR-13=1.
+
+**E. Running Club substitution confirmed:** `mock-mr06-sumdiff` absent, `mock-mr09-runningclub` present and complete (2/2 rows), 56 marks and 21 questions unchanged, live-verified via `validateManifest()`.
+
+**F. Manifest validation result:** VALID (Part 3, full detail above).
+
+**G. Migration number/path:** `supabase/migrations/147_mock_mathematics_first_mock_1_inactive_freeze.sql`.
+
+**H. Whether any database change occurred:** **NO.** No migration was applied. No `ali_mock_form` row exists in production as a result of this session. `ali_mock_form` count remains 0.
+
+**I. Exact next Founder action:** review `ANGEL_FIRST_MATHEMATICS_MOCK_1_FINAL_CURATION_V1.md` directly (the full 21-question learner paper); if approved, apply migration 147 via the Supabase Dashboard SQL Editor — this inserts the frozen form with `active = false` only, still not exposed to any learner; a separate, later, distinct Founder decision is required to flip `active` to `true` and make the Mock reachable, and a further separate decision is required before any real learner attempt is created against it.
+
+**Would this exact final paper be given to an 11+ learner under timed Mock conditions? YES** — reasoning in artifact §6: genuine accessible opening, real difficulty progression with no archetype repetition anywhere adjacent, one disclosed and defensible design property (Q19-Q20's back-to-back hard tier, immediately resolved by Q21's gentler close), and every underlying answer/mark/wording is already-certified content (Decisions 172-212), unaltered by this curation.
+
+## PART 8 — GOVERNANCE BOUNDARY HELD
+
+No `ali_mock_form` row inserted (migration prepared, not applied). No Mock activated. No attempt created. `mock_eligible` unchanged. No Increment 007 content authored. Perimeter Area not promoted. No general-purpose composition engine or new admin interface built — the curation script is a bounded, one-form tool, and the Founder inspection artifact is a markdown document, not new production UI. `lib/ali/mockComposition.ts`, `lib/ali/mockCompositionReport.ts`, and `lib/ali/mockFreezeManifest.ts` remain byte-unchanged from Decision 212.
+
+**Files/migrations changed:** `supabase/migrations/147_mock_mathematics_first_mock_1_inactive_freeze.sql` (new, NOT APPLIED), `scripts/lib/mockMathematicsPool.mjs` (new, factored out), `scripts/mock-mathematics-composition-report.mjs` (amended to use the shared module, output verified byte-identical), `scripts/mock-mathematics-first-mock-curation.mjs` (new), `scripts/mock-mathematics-source-content.json` (amended, +2 families' content), `tests/supabase/mockMathematicsFirstMock1InactiveFreeze.test.ts` (new), `ANGEL_FIRST_MATHEMATICS_MOCK_1_FINAL_CURATION_V1.md` (new), `ALI_DECISION_LOG.md`.
+
+**Decision number:** 214.
+
+**Commit SHA:** recorded after commit (see repository history immediately following this entry).
+
+**Production application status:** NOT APPLIED. No database has been mutated by this session.
+
+**Implications:** Decisions 1–213 all stand, none reversed or rewritten.
+
+---
