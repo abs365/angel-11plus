@@ -704,6 +704,40 @@ export interface Database {
         Update: Record<string, never>;
         Relationships: [];
       };
+      // Decision 220 (Mathematics Mock 1 report-release and
+      // discoverability increment) — supabase/migrations/070_mock_
+      // attempt_engine.sql's own table, declared here for the first time
+      // so lib/mockAttempt/client.ts's new getSubmittedMockAttempts() can
+      // read it directly via `.from()`, matching ali_mock_attempt_
+      // answer's own established precedent exactly: an attempt's own id/
+      // form_id/status/submitted_at is not sensitive/protected content
+      // (question_manifest/assigned_question_ids are never selected by
+      // that function), and the existing ali_mock_attempt_select_own RLS
+      // policy (migration 070) already scopes every read to the caller's
+      // own attempts regardless of status — no new RPC or policy is
+      // required. No Insert/Update declared here — every real write
+      // already goes exclusively through mock_create_attempt()/
+      // mock_create_cycle_attempt()/mock_start_attempt()/
+      // mock_submit_attempt() (migrations 070/085), never a direct
+      // client write.
+      ali_mock_attempt: {
+        Row: {
+          id: string;
+          profile_id: string;
+          form_id: string;
+          attempt_type: string;
+          status: string;
+          assigned_question_ids: string[];
+          current_section: string | null;
+          started_at: string | null;
+          submitted_at: string | null;
+          expires_at: string | null;
+          created_at: string;
+        };
+        Insert: Record<string, never>;
+        Update: Record<string, never>;
+        Relationships: [];
+      };
       // Programme Increment 008E/008F — supabase/migrations/072_mock_
       // lifecycle_and_reporting_foundation.sql (table) and 074_mock_
       // scoring_and_report_release.sql (marking_version/released_at

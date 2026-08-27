@@ -229,6 +229,37 @@ export async function getMockAttemptAnswers(
 }
 
 /**
+ * Decision 220 (Mathematics Mock 1 report-release and discoverability
+ * increment) — the caller's own past SUBMITTED attempts for one form,
+ * newest first, id and submittedAt only. A direct, RLS-gated `.from()`
+ * read, deliberately, not a wrapping RPC — mirroring
+ * `getMockAttemptAnswers()`'s own established precedent exactly (see
+ * `types/supabase.ts`'s own comment on the `ali_mock_attempt` Table
+ * entry for why). Deliberately distinct from `getResumableMockAttempt()`
+ * (migration 149), which only ever returns an `assigned`/`in_progress`
+ * row: this is how a learner rediscovers a Mock they have already
+ * finished, not one they are mid-way through. Returns an empty array
+ * (not an error) when the caller has never submitted an attempt for this
+ * form — the expected state before a first sitting.
+ */
+export async function getSubmittedMockAttempts(
+  supabase: SupabaseClient<Database>,
+  formId: string
+): Promise<MockClientResult<{ attemptId: string; submittedAt: string }[]>> {
+  const { data, error } = await supabase
+    .from("ali_mock_attempt")
+    .select("id, submitted_at")
+    .eq("form_id", formId)
+    .eq("status", "submitted")
+    .order("submitted_at", { ascending: false });
+  if (error) return { data: null, error: error.message };
+  const attempts = (data ?? [])
+    .filter((row): row is { id: string; submitted_at: string } => row.submitted_at !== null)
+    .map((row) => ({ attemptId: row.id, submittedAt: row.submitted_at }));
+  return { data: attempts, error: null };
+}
+
+/**
  * Migration 107 (Decision 161) — the caller's own currently open Mock
  * cycle id, or null if none. See migration 107's own header for why this
  * exists: mock_start_new_cycle()/mock_authorise_extra_cycle() (migration

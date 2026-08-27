@@ -23,6 +23,7 @@ import {
   setMockFlag,
   getResumableMockAttempt,
   getMockAttemptAnswers,
+  getSubmittedMockAttempts,
 } from "@/lib/mockAttempt/client";
 import type { MockAttemptType, MockQuestionPayload } from "@/lib/mockAttempt/types";
 import {
@@ -157,6 +158,12 @@ export default function MockExamPage() {
   const [answeredQuestionIds, setAnsweredQuestionIds] = useState<Set<string>>(new Set());
   const [flaggedQuestionIds, setFlaggedQuestionIds] = useState<Set<string>>(new Set());
   const [questionLoading, setQuestionLoading] = useState(false);
+  // Decision 220 (Mathematics Mock 1 report-release and discoverability
+  // increment) — the caller's own past submitted attempts for this form,
+  // so a returning learner can find a Mock they already finished, not
+  // only one they are mid-way through (that remains getResumableMockAttempt()'s
+  // own, separate job). Empty until the mount effect below resolves it.
+  const [previousAttempts, setPreviousAttempts] = useState<{ attemptId: string; submittedAt: string }[]>([]);
 
   const supabaseRef = useRef<ReturnType<typeof getSupabaseClient>>(null);
   const submittedRef = useRef(false);
@@ -231,6 +238,14 @@ export default function MockExamPage() {
       supabaseRef.current = supabase;
       const active = await getActiveMockForm(supabase, ATTEMPT_TYPE);
       if (active.error) { setErrorMessage(active.error); setPhase("error"); return; }
+      // Decision 220 — best-effort, and deliberately AFTER the phase
+      // decision below, never gating it: a failure here must never block
+      // the "I'm ready to begin" flow itself, only the optional "previous
+      // Mock" section silently stays empty.
+      if (isMockFormAvailable(active)) {
+        const submitted = await getSubmittedMockAttempts(supabase, active.data.formId);
+        if (!submitted.error && submitted.data) setPreviousAttempts(submitted.data);
+      }
       setPhase(isMockFormAvailable(active) ? "intro" : "unavailable");
     })();
   }, []);
@@ -492,6 +507,24 @@ export default function MockExamPage() {
                 I&apos;m ready to begin
               </Button>
             </InfoCard>
+
+            {previousAttempts.length > 0 && (
+              <InfoCard className="mt-4">
+                <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">Your previous Mock</p>
+                <ul className="mt-2 space-y-1.5">
+                  {previousAttempts.map((attempt) => (
+                    <li key={attempt.attemptId}>
+                      <Link
+                        href={`/learning-intelligence/mock-report/${attempt.attemptId}`}
+                        className="text-xs font-semibold text-purple-600 dark:text-purple-400"
+                      >
+                        Check your Mock report from {new Date(attempt.submittedAt).toLocaleDateString()} →
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </InfoCard>
+            )}
           </div>
         )}
 
@@ -669,7 +702,16 @@ export default function MockExamPage() {
               Your assessment is safely recorded. Marking and analysis is a separate step, and your report will be
               ready once that&apos;s complete, not at the same moment as submitting.
             </p>
-            <ButtonLink href="/learning-intelligence" className="mt-5" variant="outline">
+            {/* Decision 220 — attemptId is already known here; the report
+                page itself (not this screen) is the safe surface that
+                decides whether a report is actually ready to show, so no
+                report_release_state check is duplicated here. */}
+            {attemptId && (
+              <ButtonLink href={`/learning-intelligence/mock-report/${attemptId}`} className="mt-5">
+                Check your Mock report
+              </ButtonLink>
+            )}
+            <ButtonLink href="/learning-intelligence" className="mt-3" variant="outline">
               Back to dashboard
             </ButtonLink>
           </InfoCard>
