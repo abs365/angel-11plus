@@ -5,11 +5,17 @@ import {
   scoreSummarySentence,
   strengthSentence,
   priorSentence,
+  skillEvidenceLevelLabel,
+  skillPerformanceSentence,
+  developmentAreaSentence,
+  nextPracticeSentence,
   OFFICIAL_SCORE_DISCLAIMER,
   ANALYSIS_PENDING_NOTE,
+  NO_STRENGTHS_YET_NOTE,
+  NO_DEVELOPMENT_AREAS_NOTE,
 } from "@/lib/mockAttempt/reportCopy";
 import { COMPETENCIES } from "@/lib/learningEngine/assessmentBrainMap";
-import type { MockOverallResult, MockStrengthOrPriorityEntry } from "@/lib/mockAttempt/types";
+import type { MockNextPracticePriority, MockOverallResult, MockSkillEvidenceEntry, MockStrengthOrPriorityEntry } from "@/lib/mockAttempt/types";
 
 /**
  * Programme Increment 008F, Part 7 — proves the report language rules
@@ -96,4 +102,123 @@ test("priorSentence never uses frightening or judgemental language", () => {
 
 test("ANALYSIS_PENDING_NOTE is honest -- does not claim analysis is complete", () => {
   assert.ok(!/complete|finished|ready now/i.test(ANALYSIS_PENDING_NOTE));
+});
+
+/**
+ * Decision 223 (Mathematics Mock 1 Deterministic Mock Analysis Engine) —
+ * the new Section 3-7 report copy. Same language-safety discipline as
+ * every function above: no "cannot"/"doesn't understand"/"is weak at"
+ * from one sitting, no unsupported certainty, no raw internal codes.
+ */
+
+function skillEntry(overrides: Partial<MockSkillEvidenceEntry> = {}): MockSkillEvidenceEntry {
+  return {
+    questionTypeId: "QT-MR-04",
+    competencyId: "MR-04",
+    marksAchieved: 0,
+    marksAvailable: 0,
+    percentage: null,
+    subpartCount: 0,
+    correctCount: 0,
+    evidenceLevel: "insufficient_evidence",
+    difficultyDistribution: { easy: 0, medium: 0, hard: 0, challenge: 0 },
+    misconceptionNotes: [],
+    ...overrides,
+  };
+}
+
+test("skillEvidenceLevelLabel: insufficient_evidence is never phrased as a negative judgement of the child", () => {
+  const label = skillEvidenceLevelLabel("insufficient_evidence");
+  for (const forbidden of ["fail", "weak", "bad", "poor", "behind", "cannot", "can't"]) {
+    assert.ok(!label.toLowerCase().includes(forbidden));
+  }
+});
+
+test("skillEvidenceLevelLabel covers all four levels with distinct, honest labels", () => {
+  const labels = new Set([
+    skillEvidenceLevelLabel("demonstrated_securely"),
+    skillEvidenceLevelLabel("developing"),
+    skillEvidenceLevelLabel("not_yet_demonstrated"),
+    skillEvidenceLevelLabel("insufficient_evidence"),
+  ]);
+  assert.equal(labels.size, 4);
+});
+
+test("skillPerformanceSentence: demonstrated_securely states marks achieved/available plainly, uses the real competency label, never a raw QT code", () => {
+  const sentence = skillPerformanceSentence(skillEntry({ evidenceLevel: "demonstrated_securely", marksAchieved: 4, marksAvailable: 4, subpartCount: 2, correctCount: 2 }));
+  assert.match(sentence, /4 out of 4 marks/);
+  assert.ok(!sentence.includes("QT-MR-04"));
+  assert.ok(sentence.includes(competencyLabel("MR-04")));
+});
+
+test("skillPerformanceSentence: insufficient_evidence never states a percentage or an achieved/available ratio -- states the plain mark count only", () => {
+  const sentence = skillPerformanceSentence(skillEntry({ evidenceLevel: "insufficient_evidence", marksAvailable: 1, subpartCount: 1, correctCount: 1 }));
+  assert.ok(!sentence.includes("%"));
+  assert.ok(!/\d out of \d marks/.test(sentence));
+  assert.match(sentence, /1 mark available/);
+});
+
+test("skillPerformanceSentence pluralises marksAvailable correctly for insufficient_evidence", () => {
+  const one = skillPerformanceSentence(skillEntry({ evidenceLevel: "insufficient_evidence", marksAvailable: 1, subpartCount: 1 }));
+  const two = skillPerformanceSentence(skillEntry({ evidenceLevel: "insufficient_evidence", marksAvailable: 2, subpartCount: 1 }));
+  assert.match(one, /1 mark available/);
+  assert.match(two, /2 marks available/);
+});
+
+test("NO_STRENGTHS_YET_NOTE is honest and never implies the work itself was judged, only the evidence available", () => {
+  for (const forbidden of ["fail", "weak", "bad", "poor", "behind"]) {
+    assert.ok(!NO_STRENGTHS_YET_NOTE.toLowerCase().includes(forbidden));
+  }
+});
+
+test("developmentAreaSentence: not_yet_demonstrated uses 'not yet demonstrated securely', never 'cannot'/'doesn't understand'/'is weak at'", () => {
+  const sentence = developmentAreaSentence(skillEntry({ evidenceLevel: "not_yet_demonstrated" }));
+  assert.match(sentence, /Not yet demonstrated securely/);
+  for (const forbidden of ["cannot", "can't", "doesn't understand", "is weak at", "fail"]) {
+    assert.ok(!sentence.toLowerCase().includes(forbidden.toLowerCase()));
+  }
+});
+
+test("developmentAreaSentence: developing uses 'needs more practice with... still developing', never a certainty of inability", () => {
+  const sentence = developmentAreaSentence(skillEntry({ evidenceLevel: "developing" }));
+  assert.match(sentence, /Needs more practice with/);
+  assert.match(sentence, /still developing/);
+});
+
+test("developmentAreaSentence: SAFE misconception framing -- 'this question type often involves', never 'you made the mistake of'", () => {
+  const sentence = developmentAreaSentence(skillEntry({ evidenceLevel: "not_yet_demonstrated", misconceptionNotes: ["Subtracting a fixed amount instead of a percentage."] }));
+  assert.match(sentence, /This question type often involves:/);
+  assert.ok(!/you made|you did|your mistake/i.test(sentence));
+});
+
+test("developmentAreaSentence: with no misconception note, the sentence still reads cleanly, nothing invented", () => {
+  const sentence = developmentAreaSentence(skillEntry({ evidenceLevel: "developing", misconceptionNotes: [] }));
+  assert.ok(!sentence.includes("often involves"));
+});
+
+test("NO_DEVELOPMENT_AREAS_NOTE is a plain, honest statement, never overclaiming readiness", () => {
+  for (const forbidden of ["ready", "guarantee", "pass", "admission"]) {
+    assert.ok(!NO_DEVELOPMENT_AREAS_NOTE.toLowerCase().includes(forbidden));
+  }
+});
+
+test("nextPracticeSentence returns null for an empty priority list, never a padded filler sentence", () => {
+  assert.equal(nextPracticeSentence([]), null);
+});
+
+test("nextPracticeSentence deduplicates by competency label -- several question types sharing one competency must never repeat the same label in one sentence", () => {
+  const priorities: MockNextPracticePriority[] = [
+    { questionTypeId: "QT-MR-01", competencyId: "MR-01" },
+    { questionTypeId: "QT-MR-02", competencyId: "MR-01" },
+    { questionTypeId: "QT-MR-04", competencyId: "MR-04" },
+  ];
+  const sentence = nextPracticeSentence(priorities)!;
+  const label = competencyLabel("MR-01");
+  const occurrences = sentence.split(label).length - 1;
+  assert.equal(occurrences, 1, `expected "${label}" to appear exactly once, got: "${sentence}"`);
+});
+
+test("nextPracticeSentence falls back to the raw questionTypeId only when no competencyId is available, never throws", () => {
+  const sentence = nextPracticeSentence([{ questionTypeId: "QT-UNKNOWN", competencyId: null }]);
+  assert.match(sentence!, /QT-UNKNOWN/);
 });

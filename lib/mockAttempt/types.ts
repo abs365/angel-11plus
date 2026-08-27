@@ -221,13 +221,62 @@ export interface MockTimingEvidence {
 }
 
 /**
+ * Decision 223 (Mathematics Mock 1 Deterministic Mock Analysis Engine,
+ * migration 151) — the evidence-strength classification a single
+ * questionTypeId's own observed subparts support, per that migration's
+ * own disclosed, symmetric, minimum-2-observations rule: fewer than 2
+ * observed subparts can never produce `demonstrated_securely` or
+ * `not_yet_demonstrated`/`developing`, regardless of correctness —
+ * `insufficient_evidence` is the only honest classification. Mirrors
+ * `mock_analyse_attempt()`'s own literal string values exactly.
+ */
+export type MockSkillEvidenceLevel = "demonstrated_securely" | "developing" | "not_yet_demonstrated" | "insufficient_evidence";
+
+/**
+ * Decision 223 — one questionTypeId's own full, deterministic evidence
+ * record for a single attempt. `misconceptionNotes` are drawn only from
+ * INCORRECT/unanswered rows' own `ali_question_bank.addresses_
+ * misconception` text, capped at 2, and describe what the QUESTION is
+ * designed to diagnose — never a claim about what the learner actually
+ * did (see migration 151's own header). Never contains a stored correct
+ * answer, `workingSteps`, or the learner's own response text.
+ */
+export interface MockSkillEvidenceEntry {
+  questionTypeId: string;
+  competencyId: string | null;
+  marksAchieved: number;
+  marksAvailable: number;
+  percentage: number | null;
+  subpartCount: number;
+  correctCount: number;
+  evidenceLevel: MockSkillEvidenceLevel;
+  difficultyDistribution: { easy: number; medium: number; hard: number; challenge: number };
+  misconceptionNotes: string[];
+}
+
+/** Decision 223 — a small, deterministic next-practice pointer; not yet wired to any live practice route (migration 151's own disclosed scope boundary). */
+export interface MockNextPracticePriority {
+  questionTypeId: string;
+  competencyId: string | null;
+}
+
+/** Decision 223 — mock_analyse_attempt()'s own full structured output, stored in ali_mock_attempt_report.skill_evidence. */
+export interface MockSkillEvidence {
+  bySkill: MockSkillEvidenceEntry[];
+  nextPracticePriorities: MockNextPracticePriority[];
+}
+
+/**
  * Mirrors ali_mock_attempt_report's own columns exactly. Only ever
  * readable once report_release_state = 'released' (the table's own RLS
  * policy enforces this server-side); every data field stays null until a
  * future scoring/analysis increment populates it — this type does not
  * claim any of these fields are computed today. `practiceComparison`
  * stays null in 008F specifically (named as deferred, not silently
- * omitted — see ALI_DECISION_LOG.md).
+ * omitted — see ALI_DECISION_LOG.md). `skillEvidence`/`analysisVersion`/
+ * `analysedAt` (Decision 223, migration 151) are populated once
+ * `analysisState === "complete"`; null otherwise, exactly like every
+ * other field here before its own populating increment existed.
  */
 export interface MockAttemptReport {
   attemptId: string;
@@ -236,12 +285,15 @@ export interface MockAttemptReport {
   reportReleaseState: MockReportReleaseState;
   releasedAt: string | null;
   markingVersion: number | null;
+  analysisVersion: number | null;
+  analysedAt: string | null;
   overall: MockOverallResult | null;
   subjectBreakdown: MockSubjectBreakdownEntry[] | null;
   questionOutcomes: MockQuestionOutcome[] | null;
   competencyEvidence: MockCompetencyEvidenceEntry[] | null;
   strengths: MockStrengthOrPriorityEntry[] | null;
   weaknesses: MockStrengthOrPriorityEntry[] | null;
+  skillEvidence: MockSkillEvidence | null;
   timingEvidence: MockTimingEvidence | null;
   practiceComparison: unknown | null;
   parentExplanation: string | null;

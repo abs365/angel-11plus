@@ -760,6 +760,12 @@ export interface Database {
           report_release_state: string;
           marking_version: number | null;
           released_at: string | null;
+          // Decision 223 (Mathematics Mock 1 Deterministic Mock Analysis
+          // Engine, migration 151) — additive, nullable, mirroring
+          // marking_version/released_at's own existing pattern exactly.
+          analysis_version: number | null;
+          analysed_at: string | null;
+          skill_evidence: Record<string, unknown> | null;
           overall: Record<string, unknown> | null;
           subject_breakdown: unknown[] | null;
           question_outcomes: unknown[] | null;

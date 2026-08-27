@@ -7,7 +7,17 @@ import PageLayout from "@/components/PageLayout";
 import { InfoCard } from "@/components/ui/Card";
 import { getSupabaseClient } from "@/lib/supabase";
 import { getMockAttemptReport } from "@/lib/mockAttempt/client";
-import { scoreSummarySentence, strengthSentence, OFFICIAL_SCORE_DISCLAIMER, ANALYSIS_PENDING_NOTE } from "@/lib/mockAttempt/reportCopy";
+import {
+  scoreSummarySentence,
+  strengthSentence,
+  developmentAreaSentence,
+  skillPerformanceSentence,
+  nextPracticeSentence,
+  OFFICIAL_SCORE_DISCLAIMER,
+  ANALYSIS_PENDING_NOTE,
+  NO_STRENGTHS_YET_NOTE,
+  NO_DEVELOPMENT_AREAS_NOTE,
+} from "@/lib/mockAttempt/reportCopy";
 import type { MockAttemptReport } from "@/lib/mockAttempt/types";
 
 /**
@@ -84,11 +94,71 @@ export default function MockReportPage() {
               <p className="text-xs text-gray-500 dark:text-gray-400 leading-relaxed">{OFFICIAL_SCORE_DISCLAIMER}</p>
             </InfoCard>
 
-            {report.strengths && report.strengths.length > 0 ? (
-              <InfoCard className="border-emerald-200 dark:border-emerald-900 bg-emerald-50 dark:bg-emerald-950/40">
-                <p className="text-sm font-semibold text-emerald-800 dark:text-emerald-300">What went well</p>
-                <p className="text-sm text-emerald-700 dark:text-emerald-400 mt-1 leading-relaxed">{strengthSentence(report.strengths)}</p>
-              </InfoCard>
+            {report.analysisState === "complete" && report.skillEvidence ? (
+              <>
+                {/* Decision 223 — Skill performance (Section 3): every skill
+                    the paper actually tested, never padded, never a
+                    percentage claimed from insufficient evidence. */}
+                {report.skillEvidence.bySkill.length > 0 && (
+                  <InfoCard>
+                    <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">Skill performance</p>
+                    <ul className="mt-2 space-y-1.5">
+                      {report.skillEvidence.bySkill.map((entry) => (
+                        <li key={entry.questionTypeId} className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
+                          {skillPerformanceSentence(entry)}
+                        </li>
+                      ))}
+                    </ul>
+                  </InfoCard>
+                )}
+
+                {/* What went well (Section 4) — only evidence-supported strengths. */}
+                {report.strengths && report.strengths.length > 0 ? (
+                  <InfoCard className="border-emerald-200 dark:border-emerald-900 bg-emerald-50 dark:bg-emerald-950/40">
+                    <p className="text-sm font-semibold text-emerald-800 dark:text-emerald-300">What went well</p>
+                    <p className="text-sm text-emerald-700 dark:text-emerald-400 mt-1 leading-relaxed">{strengthSentence(report.strengths)}</p>
+                  </InfoCard>
+                ) : (
+                  <InfoCard>
+                    <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">What went well</p>
+                    <p className="text-sm text-gray-500 dark:text-gray-400 mt-1 leading-relaxed">{NO_STRENGTHS_YET_NOTE}</p>
+                  </InfoCard>
+                )}
+
+                {/* What to work on (Section 5) — careful, non-diagnostic language. */}
+                {report.skillEvidence.bySkill.some((e) => e.evidenceLevel === "not_yet_demonstrated" || e.evidenceLevel === "developing") ? (
+                  <InfoCard>
+                    <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">What to work on</p>
+                    <ul className="mt-2 space-y-1.5">
+                      {report.skillEvidence.bySkill
+                        .filter((e) => e.evidenceLevel === "not_yet_demonstrated" || e.evidenceLevel === "developing")
+                        .map((entry) => (
+                          <li key={entry.questionTypeId} className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
+                            {developmentAreaSentence(entry)}
+                          </li>
+                        ))}
+                    </ul>
+                  </InfoCard>
+                ) : (
+                  <InfoCard>
+                    <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">What to work on</p>
+                    <p className="text-sm text-gray-500 dark:text-gray-400 mt-1 leading-relaxed">{NO_DEVELOPMENT_AREAS_NOTE}</p>
+                  </InfoCard>
+                )}
+
+                {/* Next practice (Section 6) — small, deterministic, not yet
+                    routed anywhere (Decision 223's own disclosed scope
+                    boundary) -- renders nothing when there is nothing to
+                    suggest, never a padded filler list. */}
+                {nextPracticeSentence(report.skillEvidence.nextPracticePriorities) && (
+                  <InfoCard>
+                    <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">Next practice</p>
+                    <p className="text-sm text-gray-600 dark:text-gray-400 mt-1 leading-relaxed">
+                      {nextPracticeSentence(report.skillEvidence.nextPracticePriorities)}
+                    </p>
+                  </InfoCard>
+                )}
+              </>
             ) : (
               <InfoCard>
                 <p className="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">{ANALYSIS_PENDING_NOTE}</p>
