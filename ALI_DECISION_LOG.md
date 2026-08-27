@@ -9091,3 +9091,57 @@ No `ali_mock_form` row inserted (migration prepared, not applied). No Mock activ
 **Implications:** Decisions 1–213 all stand, none reversed or rewritten.
 
 ---
+
+### Decision 215 — MATHEMATICS MOCK 1: FINAL PRE-FREEZE WORDING DEFECT INVESTIGATION AND ARTIFACT REMEDIATION (Founder-flagged Q18(d) ambiguity; NO database defect found; local extraction cache corrected; migration 147 confirmed requiring no change).
+
+**Reconciliation:** `git fetch origin main` confirmed `HEAD == origin/main` at `fd96cfd` (Decision 214) before this session's work began, clean working tree. Decision 214 present exactly once. Migration 147 remained the latest file on disk (no migration 148+ existed before this session).
+
+## PART 1 — INVESTIGATION FINDING: THE FOUNDER-FLAGGED DEFECT WAS ALREADY CORRECTED IN PRODUCTION, YEARS BEFORE THIS ARC
+
+The Founder's own review of `ANGEL_FIRST_MATHEMATICS_MOCK_1_FINAL_CURATION_V1.md` correctly identified that Question 18(d)'s displayed wording — "...plans to speed up the afternoon Hillview-to-Milltown leg by 20%..." — is genuinely ambiguous (re-verified independently this session: reducing the 35-minute journey time by 20% gives 35 × 0.8 = 28, matching the stored answer; increasing speed by 20% over the same fixed distance gives 35 ÷ 1.2 ≈ 29.17, a materially different value). **However, direct investigation of the row's own migration history (not assumed from the artifact's own displayed text) found this exact defect was already identified and corrected in production**, via `supabase/migrations/127_mock_mathematics_bustimetable_subpart_d_wording_correction.sql`, authorised by Decision 186 and Founder-confirmed applied by Decision 188 ("Founder production evidence confirms migrations 125-128 fully applied and closed: `mock-mr10-bustimetable-04` carries the corrected, unambiguous wording") — years before Decisions 210-214's Mock-composition arc began. No later migration (125 through 147) touches this row's `question` field again, confirmed by a direct grep across every migration referencing `mock-mr10-bustimetable-04`.
+
+**Root cause of the Founder-visible defect:** `scripts/mock-mathematics-source-content.json` (Decision 213's own extraction cache, backing `scripts/lib/mockMathematicsPool.mjs`) had extracted this row's question text from migration 125 — the row's ORIGINAL authoring migration — without accounting for migration 127's later, superseding correction. This is the exact same class of error the Marking Integrity Gate (migrations 117/118) exists to prevent for `marks` values, now found, for the first time, in this arc's own real question-text extraction: **the live database was correct throughout; only this repository's own local reconstruction artifact, and the two Founder-inspection documents generated from it (Decision 213's and Decision 214's), displayed stale, superseded content.**
+
+## PART 2 — MINIMUM SAFE REMEDIATION PATH
+
+Because the database already carries the correct, unambiguous, Founder-approved wording, **no corrective SQL migration is required or created** — creating one would either be a confusing, unnecessary no-op or, if its own precondition wrongly assumed the ambiguous wording was still live, would itself fail closed against real production. This is the direct, evidence-based answer to the governing directive's own explicit "do not assume" instruction for Part 9: migration 147 was inspected directly and found to reference `mock-mr10-bustimetable-04` **only by its id** inside `question_manifest` (`{"question_id": "mock-mr10-bustimetable-04", "section": "mathematics"}`) — no question text, answer text, or wording of any kind is stored anywhere in that migration, confirmed by a direct grep for the affected phrases returning zero matches across the entire file, including its own header prose. **Migration 147 requires no correction and remains exactly as prepared.**
+
+The actual remediation: `scripts/mock-mathematics-source-content.json`'s `mock-mr10-bustimetable-04.question` field corrected to migration 127's own `v_new_question` literal, verbatim ("...plans to reduce the afternoon Hillview-to-Milltown journey time by 20%. How many minutes should the new journey take?") — the real, already-live, already-Founder-approved wording, re-used exactly rather than the governing directive's own freshly-offered alternative phrasing, per its own explicit "do not blindly use the preferred sentence if repository/source constraints reveal a better formulation" instruction: the repository's own constraint here is that this exact correction already exists, was already Founder-reviewed (Decision 186), and is already live — introducing a third, slightly different wording variant would create needless divergence between the artifact and the one true source of record. `sharedStem`, `answer` (28), `stimulus`, and every other field of this row are unaffected — only the `question` field's own stale cached value was corrected, mirroring migration 127's own original single-field scope exactly.
+
+## PART 3 — MATHEMATICAL RE-VERIFICATION
+
+35-minute journey time (14:15 to 14:50, unchanged) × 0.20 = 7 minutes; 35 − 7 = 28 minutes, confirmed via two independent methods (subtraction and ×0.8) — matches the stored answer exactly, re-confirming Decision 186/188's own original finding a further time. The rejected "increase speed by 20%" misreading: 35 ÷ 1.2 ≈ 29.17 minutes, confirmed a materially different value from 28.
+
+## PART 4 — REMEDIATION APPLIED
+
+`scripts/mock-mathematics-source-content.json`: `mock-mr10-bustimetable-04.question` corrected to the byte-exact value of migration 127's own `v_new_question` constant. `ANGEL_FIRST_MATHEMATICS_MOCK_1_FINAL_CURATION_V1.md`: Question 18(d)'s displayed wording corrected to match; an explicit correction disclosure added to the artifact's own header, naming this Decision, rather than silently editing the text with no trace. **Decision 213's own artifact (`ANGEL_FIRST_MATHEMATICS_MOCK_FOUNDER_CANDIDATE_INSPECTION_V1.md`) is left unedited** — it is a historical record of the pre-curation candidate at the time Decision 213 was made, and this repository's own established discipline (never rewrite a prior Decision's own artifact) applies here exactly as it does to migrations and Decision Log entries themselves; its own inherited staleness for this one field is disclosed here, in this Decision, rather than corrected retroactively.
+
+**Regression guard added:** new test file `tests/scripts/mockMathematicsSourceContentFidelity.test.ts`, 8 tests — the cached wording is proven byte-identical to migration 127's own live `v_new_question` literal (re-read directly from the migration file, not hand-copied); the wording contains "reduce...journey time by 20%" explicitly; the superseded "speed up...leg by 20%" phrasing is proven absent; the word "speed" is proven absent anywhere in the corrected text (closing the ambiguous reading structurally, not just by convention); both mathematical derivations (28 via reduction, ≈29.17 via the rejected misreading) are independently re-verified; `sharedStem`/`answer`/`stimulus` are proven unaffected; the other three Bus Timetable subparts are proven untouched.
+
+## PART 5 — REBUILT FINAL CURATED INSPECTION (post-remediation)
+
+`npx tsx scripts/mock-mathematics-first-mock-curation.mjs` re-run this session. A `diff` against the pre-remediation output confirms **the ONLY change anywhere in the full report is Question 18(d)'s own wording line** (plus the `composedAt` provenance timestamp, which trivially varies per run) — every other question's text, the full 21-question order, and every count are byte-identical to Decision 214's own output. Live-confirmed: `valid=true`; `numberedQuestionCount=21`; `totalMarks=56`; Perimeter Area present=false; Sum/Difference present=false; Running Club present=true, row count=2 (complete group); duplicate question ids=0; adjacent same-primary-archetype collisions=0. No other learner-facing wording changed anywhere in the paper.
+
+## PART 6 — VERIFICATION
+
+Full automated test suite **2308/2308 passing** (2300 baseline + 8 new, zero regressions); `npx tsc --noEmit` clean; ESLint at the established baseline — **81 problems (62 errors, 19 warnings), unchanged**; Copy Quality Guard **PASS — 0 violations across 260 files**; Migration SQL Guard **PASS — 147 migration files** (unchanged — no migration created or modified); production build succeeds.
+
+## PART 7 — GOVERNANCE BOUNDARY HELD
+
+No corrective migration created or applied. Migration 147 not applied, not modified. No `ali_mock_form` row created. No Mock activated. No attempt created. Question selection, order, Running Club substitution, marks, difficulty distribution, archetype distribution, and Mock form identity are all unchanged from Decision 214 — confirmed by direct `diff`, not merely asserted. No other learner content touched. No Increment 007 authored. Perimeter Area not promoted. The general composer (`lib/ali/mockComposition.ts`) was not modified.
+
+**Files changed:** `scripts/mock-mathematics-source-content.json` (one field corrected), `ANGEL_FIRST_MATHEMATICS_MOCK_1_FINAL_CURATION_V1.md` (Q18(d) wording corrected, correction disclosure added to header), `tests/scripts/mockMathematicsSourceContentFidelity.test.ts` (new), `ALI_DECISION_LOG.md`. `supabase/migrations/147_mock_mathematics_first_mock_1_inactive_freeze.sql` is **unchanged** — inspected directly and confirmed to require no correction (no question text stored anywhere in that file).
+
+**Decision number:** 215.
+
+**Commit SHA:** recorded after commit (see repository history immediately following this entry).
+
+**Whether migration 147 changed:** **NO.** Inspected directly; contains no question text of any kind; remains exactly as Decision 214 prepared it.
+
+**Confirmation that no database change occurred:** confirmed. No migration was created or applied this session. `ali_mock_form` remains empty. No live database access was performed or claimed — this investigation was conducted entirely via direct inspection of migration source files and this repository's own local artifacts.
+
+**Exact Founder application order (unchanged from Decision 214):** apply migration 147 via the Supabase Dashboard SQL Editor when ready — this inserts the frozen form with `active = false` only, still not exposed to any learner; a separate, later, distinct Founder decision is required to flip `active` to `true`, and a further separate decision is required before any real learner attempt is created against it.
+
+**Implications:** Decisions 1–214 all stand, none reversed or rewritten. **Final verdict: A — WORDING DEFECT REMEDIATED; CORRECTION AND INACTIVE FREEZE READY FOR FOUNDER APPLICATION.**
+
+---

@@ -315,7 +315,7 @@
     }
   },
   "mock-mr10-bustimetable-04": {
-    "question": "A bus company runs a route from Hillview to Oakford, stopping at Milltown and Riverside. The timetable below shows the morning and afternoon journey times. The bus company plans to speed up the afternoon Hillview-to-Milltown leg by 20%. How many minutes should the new afternoon Hillview-to-Milltown leg take?",
+    "question": "A bus company runs a route from Hillview to Oakford, stopping at Milltown and Riverside. The timetable below shows the morning and afternoon journey times. The bus company plans to reduce the afternoon Hillview-to-Milltown journey time by 20%. How many minutes should the new journey take?",
     "answer": "28",
     "sharedStem": "A bus company runs a route from Hillview to Oakford, stopping at Milltown and Riverside. The timetable below shows the morning and afternoon journey times.",
     "stimulus": {
