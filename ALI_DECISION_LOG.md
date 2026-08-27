@@ -9931,3 +9931,81 @@ Documentation-only session; no code changed. Copy Quality Guard **PASS — 0 vio
 **Final verdict: A — BEGIN ENGLISH EDUCATIONAL CONTENT FOUNDATION.**
 
 ---
+
+### Decision 228 — ENGLISH EDUCATIONAL CONTENT FOUNDATION, INCREMENT 001: COMPREHENSION DEPTH AND WRITING-PROMPT CAPACITY (2 new comprehension passages + 15 questions + 3 new Continuous Writing prompts authored, entered at `authentic_assessment_candidate`; migrations prepared, NOT applied; no promotion, no English Mock, Mathematics untouched).
+
+**Reconciliation:** `git fetch origin main` confirmed `HEAD == origin/main` at `cba0ed3` (Decision 227) before this session's work began, clean working tree. Decision 227 present exactly once. Migration 151 remained the latest file on disk before this session. `ANGEL_ENGLISH_CSSE_PROGRAMME_BLUEPRINT_V1.md`'s own findings were re-read directly, not assumed unchanged: the existing certified passage ("The Boat in the Boathouse," migration 097) and its 13-question set, the RC-01-04 taxonomy, the full QT-RC-01 through QT-RC-10 catalogue, the existing Continuous Writing schema (migration 098) and its 3 prompts, the review-registration pattern (migration 099), and Decision 58's Applied Reasoning exclusion were each re-read directly from their own migration source this session, not carried forward from the blueprint's own prose alone.
+
+## PART 1 — SEQUENCING REFINEMENT HELD
+
+Per this task's own explicit authority, only the passage-depth and Writing-prompt-depth problem was addressed — the picture-stimulus/image pipeline (`QT-WC-01b`) was **not** built, and is not silently substituted with text anywhere in this increment's own content (confirmed by test).
+
+## PART 2 — CURRENT CSSE BOUNDARY HELD
+
+Applied Reasoning is not referenced, authored, or reintroduced anywhere in migrations 152/153/154 — confirmed by dedicated test. The three evidence categories this task required (CURRENT EXAM REQUIREMENT / HISTORICAL SOURCE EVIDENCE / ANGEL-AUTHORED CONTENT) are kept distinct throughout: both new passages and all 18 new question/prompt rows are ANGEL-AUTHORED CONTENT, designed against the CURRENT EXAM REQUIREMENT's own evidenced Question Type catalogue (migration 097's own QT-RC-01 through QT-RC-10, HISTORICAL SOURCE EVIDENCE from the real 2021-2023 papers, re-confirmed unchanged by Decision 227) — no new Question Type was invented.
+
+## PART 3-4 — PASSAGE-FIRST AUTHORING, DIVERSITY
+
+Two passages authored as complete educational units first, questions designed against their own real content afterward: **"The Understudy"** (521 words, contemporary realistic fiction, single-protagonist internal conflict, rival-turned-ally resolution — deliberately distinct in character configuration, conflict type, and resolution mechanism from the existing sibling-pair/inherited-object/family-note passage) and **"How Bees Find Their Way Home"** (528 words, informational/popular-science, present tense, explicit multi-part structure — the first non-narrative `text_type` in the certified estate). Both independently confirmed substantial (well above the task's own "sufficiently substantial" bar, comparable in order of magnitude to the existing passage's own 627 words) and free of any copyrighted source dependency — wholly original Angel content, confirmed by direct authorship this session, not adapted from any external text.
+
+## PART 5-6 — COMPREHENSION REASONING AND QUESTION QUALITY
+
+15 questions authored (7 + 8), reusing the SAME evidenced QT-RC-01 through QT-RC-10 catalogue and QT-to-competency mapping migration 097 already established — no new Question Type invented. Coverage is deliberately uneven per passage (proven by dedicated test showing the two passages' own QT sets are not identical), aggregating to 9 of 10 evidenced types across the combined new+existing portfolio, each now represented at least twice. **QT-RC-07 (Multi-Entity Comparative Attribute Extraction) is honestly not attempted** — neither new passage's own real content supports a genuine two-entity comparison without forcing one; disclosed as a real, deferred gap, not silently skipped. Answer determinacy: every `acceptedAnswers`/`quotationRequired`/`orderedAnswer`/`correctOptions` value was independently verified this session by a dedicated generator script's own self-check (every `quotationRequired` string confirmed an exact, case-insensitive substring of its own passage before the migration file was written) — re-proved independently by `tests/supabase/englishContentFoundationIncrement001.test.ts`, which parses the real stored SQL strings, not a separately hand-typed copy.
+
+## PART 7 — TEACHING VALUE
+
+Every one of the 15 comprehension questions and all 3 Writing prompts carries a real, specific `addresses_misconception` value describing a genuine, plausible misunderstanding — never a generic placeholder, verified by a dedicated test requiring each value to be substantive (>30 characters), not merely present.
+
+## PART 8 — ANTI-MEMORISATION
+
+Verified at three levels, per this task's own explicit structure: **PASSAGE VARIATION** — two genuinely distinct text_types/genres/structures, not cosmetic renaming of the existing passage's own shape (Part 3-4). **REASONING VARIATION** — uneven, content-driven QT coverage per passage, not a mechanically repeated template (Part 5). **QUESTION VARIATION** — every question's own model answer, accepted-answer set, quotation, or ordering was derived from that passage's own specific content, never copied across passages. No proposed passage/question family was found to be a cosmetic variant of existing content — the two new passages' own genre/structure/conflict-type differences from the existing passage and from each other are named explicitly in each migration's own header.
+
+## PART 9 — CONTINUOUS WRITING PROMPT DEPTH
+
+3 new QT-WC-01a prompts authored ("Somewhere New," "A Mistake You Learned From," "Should Children Have Limits on Screen Time?"), bringing the pool from 3 to 6 instances — each a genuinely distinct prompt shape from the 3 existing prompts and from each other (place-arrival narrative; error-and-growth narrative; direct opinion-question mirroring the existing cookopinion format's own evidenced shape with an unrelated topic), confirmed by dedicated test. No fabricated numerical writing score is introduced — `app/api/writing-feedback/route.ts`, `WRITING_CORRECTNESS_THRESHOLD`, and Decision 60's own `supportTier: "supported"` quarantine are untouched (confirmed absent from the migration's own executable SQL by test; named only in the migration's own disclosure comment explaining the boundary is inherited unmodified).
+
+## PART 10 — PICTURE-STIMULUS BOUNDARY
+
+`QT-WC-01b` is named, explained, and explicitly not built anywhere in this increment (confirmed absent from executable SQL by test) — the future increment it requires (an image-asset pipeline, `types/index.ts`'s own `WritingPrompt` interface extended with an image field) is documented in the migration's own header as infrastructure work, not content authoring, matching migration 098's own identical, unresolved disclosure.
+
+## PART 11 — ELIGIBILITY AND REVIEW
+
+Every new row (2 passages, 15 comprehension questions, 3 Writing prompts) carries `eligibility_status = 'authentic_assessment_candidate'` — confirmed by test that no row anywhere in migrations 152/153 is `practice_eligible`, `independently_validated`, or `mock_eligible`. Migration 154 registers exactly 5 pending-review placeholder rows (2 passages, each reviewed as one complete unit with its full question set, matching migration 087/099's own established design; 3 Writing prompts, each its own reviewable unit) — `reviewer = 'UNASSIGNED'`, `decision = 'pending_independent_review'`, no approval granted, no reviewer identity fabricated, confirmed by dedicated test. No English Mock promotion occurs.
+
+## PART 12 — VISUAL QUALITY BOUNDARY
+
+No visual redesign performed. Passage text is stored as plain, paragraph-separated `original_text` (double-newline breaks, no embedded markup) — the same shape the existing certified passage already uses, imposing no new constraint on Decision 227's own named future typography pass.
+
+## PART 13 — CAPACITY IMPACT (pre-review, not yet certified)
+
+Certified-track Comprehension passages: 1 → 3 (2 awaiting review). Comprehension question experiences: 12 → 27 (15 awaiting review). Continuous Writing prompts: 3 → 6 (3 awaiting review). Portfolio QT-RC coverage: 9 of 10 types now represented at least twice, QT-RC-07 remains a named gap. Remaining gap to Decision 227's own MINIMUM target (4-6 passages): 1-3 more passages needed even after this increment's own content is reviewed and promoted — this increment is one bounded step, not the destination, exactly as this task's own instruction anticipated.
+
+## PART 14 — IMPLEMENTATION BOUNDARY HELD
+
+No English Mock built. No content promoted to `mock_eligible`. No picture-stimulus/image pipeline built. No English analysis/reporting built. No Learning Report or Parent Dashboard redesign. No Mathematics file touched (confirmed by dedicated test: zero `ali_mock_form`/`mock_eligible` references anywhere in migrations 152/153/154). No parametric passage generation built. No speculative AI scoring introduced. No broad visual redesign performed.
+
+## PART 15 — TESTS
+
+`tests/supabase/englishContentFoundationIncrement001.test.ts` (new, 29 tests): passage/question row structure and eligibility; portfolio-wide and per-passage QT coverage (including the honest QT-RC-07 absence); answer-determinacy re-verification (quotations, synonym-list word presence, multi-select correctness, ordering) independently re-checked against each passage's own real stored text; Applied-Reasoning-absence; no Mathematics/mock_eligible reference; no existing content read or modified; non-placeholder misconception evidence; transaction/idempotency structure for all three migrations; Writing-prompt structure, distinctness, and QT-WC-01b absence; the AI-scoring-boundary non-reference; the 5-row pending-review registration and its own family-id correctness; migration-sequencing structural sanity (made robust to future, unrelated migrations after this one, correcting a latent forward-compatibility gap found in two pre-existing Decision 224/225 tests during this session's own full-suite run and fixed alongside).
+
+## PART 16 — VERIFICATION
+
+Full automated test suite **2550/2550 passing** (2521 baseline + 29 new, zero regressions — two pre-existing tests from Decisions 224/225 were found to hard-code "latest migration = 151" and were corrected this session to a forward-compatible check, since this decision correctly, intentionally adds migrations beyond 151 for the first time since Decision 223). `npx tsc --noEmit` clean (one real error found and fixed during this session's own verification: an `s`-flag regex requiring a newer ES target than this project's own tsconfig allows, corrected to `[\s\S]*`). ESLint at the established baseline — **81 problems (62 errors, 19 warnings), unchanged**. Copy Quality Guard **PASS — 0 violations across 262 files**. Migration SQL Guard **PASS — 154 migration files, all quote-balanced, all RAISE statements arithmetic-correct**. Production build succeeds.
+
+**Files changed:** `supabase/migrations/152_english_content_foundation_increment001_comprehension.sql` (new, NOT APPLIED), `supabase/migrations/153_english_content_foundation_increment001_writing.sql` (new, NOT APPLIED), `supabase/migrations/154_english_content_foundation_increment001_pending_review.sql` (new, NOT APPLIED), `tests/supabase/englishContentFoundationIncrement001.test.ts` (new), `tests/lib/mockAttempt/mockPriorityTargetedPracticeRouting.test.ts` (one assertion made forward-compatible), `tests/lib/mockAttempt/mockReportAnalysisRendering.test.ts` (one assertion made forward-compatible), `ANGEL_ENGLISH_CONTENT_FOUNDATION_INCREMENT_001_REVIEW.md` (new, Founder review artifact), `ALI_DECISION_LOG.md`.
+
+**Decision number:** 228.
+
+**Commit SHA:** recorded after commit (see repository history immediately following this entry).
+
+**Evidence tiers, explicit:** ANGEL-AUTHORED CONTENT — both new passages, all 15 comprehension questions, all 3 Writing prompts (original, not drawn from any external source). CURRENT EXAM REQUIREMENT / HISTORICAL SOURCE EVIDENCE — the QT-RC-01 through QT-RC-10 catalogue and QT-to-competency mapping reused unchanged from migration 097's own real-paper-evidenced design, re-cited not re-derived this session. AUTOMATED TEST EVIDENCE — 29 new tests plus the full, corrected 2550-test suite. No LIVE FOUNDER EVIDENCE or SIMULATION evidence was applicable to a content-authoring decision — this is prepared content awaiting the Founder's own independent review, not a claim of production behaviour.
+
+**Production application status:** NOT APPLIED. Three migrations created, none applied — no database has been mutated. No English content was promoted to `practice_eligible` or `mock_eligible`. No English Mock was created or promoted toward. Mathematics Mock 1, its analysis engine, and its targeted-practice routing (Decisions 213-226) remain byte-unchanged.
+
+**Exact Founder next action:** review `ANGEL_ENGLISH_CONTENT_FOUNDATION_INCREMENT_001_REVIEW.md` directly (no SQL reading required — every passage, question, expected answer, and Writing prompt is rendered in full); if approved, apply migrations 152, 153, and 154 via the Supabase Dashboard SQL Editor (any order among themselves, after migrations 097-099); a genuinely independent (non-author) review and promotion decision for each family remains a separate, later, distinct step — this migration does not request or imply that promotion should follow automatically.
+
+**Implications:** Decisions 1–227 all stand, none reversed or rewritten. Decision 227's own MINIMUM capacity target (4-6 passages) remains 1-3 passages away even once this increment's own content is reviewed and promoted — this closes one bounded step of the roadmap, not the roadmap itself.
+
+**Final verdict: A — ENGLISH CONTENT FOUNDATION INCREMENT 001 READY FOR FOUNDER REVIEW.**
+
+---

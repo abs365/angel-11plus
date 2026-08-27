@@ -183,8 +183,9 @@ test("this refinement does not touch the parent-facing report page or the legacy
   assert.ok(!PAGE.includes("mockProgress") && !PAGE.includes("getMockResults"));
 });
 
-test("no migration file was introduced by this refinement -- purely a presentation-layer change (structural sanity: latest migration remains 151)", () => {
+test("no migration file was introduced by this refinement -- purely a presentation-layer change (structural sanity: migration 151 still exists, nothing was deleted; later, unrelated decisions may legitimately add further migrations after this one)", () => {
   const migrations = fs.readdirSync("supabase/migrations").filter((f) => f.endsWith(".sql"));
   const numbers = migrations.map((f) => parseInt(f.split("_")[0], 10)).filter((n) => !Number.isNaN(n));
-  assert.equal(Math.max(...numbers), 151);
+  assert.ok(numbers.includes(151), "migration 151 must still exist on disk");
+  assert.ok(Math.max(...numbers) >= 151);
 });
