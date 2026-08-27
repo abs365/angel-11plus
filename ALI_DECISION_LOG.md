@@ -9145,3 +9145,83 @@ No corrective migration created or applied. Migration 147 not applied, not modif
 **Implications:** Decisions 1–214 all stand, none reversed or rewritten. **Final verdict: A — WORDING DEFECT REMEDIATED; CORRECTION AND INACTIVE FREEZE READY FOR FOUNDER APPLICATION.**
 
 ---
+
+### Decision 216 — MATHEMATICS MOCK 1: FINAL PRE-ACTIVATION RELEASE VERIFICATION (release QA, not another composition exercise; two real P1 findings, one remediated, one scoped as future work; activation NOT recommended yet).
+
+**Reconciliation:** `git fetch origin main` confirmed `HEAD == origin/main` at `70a2345` (Decision 215) before this session's work began, clean working tree. Decision 215 present exactly once. Migration 147 remained the latest file on disk (no migration 148+ existed before this session). Founder-confirmed production state accepted as Level-1 evidence: migration 147 applied; `first-mock-mathematics-v1` exists, `subject=mathematics`, `specification_version=1`, `attempt_type=full_mock`, `active=false`; `composition_provenance` confirms 21 questions/56 rows/56 marks/`generatorVersion=mockComposition-v1`; `ali_mock_form` count=1; Running Club present, Sum/Difference absent, Perimeter Area absent.
+
+## PART 1 — FROZEN-FORM VERIFICATION (Section 2 of the governing directive)
+
+Re-ran `scripts/mock-mathematics-first-mock-curation.mjs` against the reconstructed pool this session — matches migration 147's own stored manifest exactly on every check: 56 unique ids, 21 numbered experiences, 56 marks, exact approved order, every id `active`/`mock_eligible`, every grouped family complete, correct `group_order`, consistent shared stems/stimuli, Running Club complete, Sum/Difference and Perimeter Area absent, `validateManifest()` = VALID. No discrepancy found; nothing silently repaired.
+
+## PART 2 — INACTIVE ACCESS CONTROL (Section 3)
+
+Traced every attempt-creation code path directly. `mock_get_active_form()` (migration 072) filters `where active = true` — returns nothing for the inactive frozen form. `mock_create_cycle_attempt()` (the sole `full_mock` path, migration 085, amended by 145) and `mock_create_attempt()` (migration 070, amended by 145) both independently gate their own form lookup on `active = true`, `raise exception`-ing "Form not found or inactive" otherwise. This is **database-enforced, not merely UI-hidden**: a direct RPC call bypassing the UI entirely would be rejected identically. `app/learning-intelligence/mock-exam/page.tsx` additionally re-checks availability twice (on mount, and again immediately before attempt creation) as defence in depth. Verified by direct source inspection and migration 145's own existing 18 structural tests (Decision 212, unchanged) — **not live-exercised against production this session** (no live database access, the standing disclosed limitation since Decision 189).
+
+## PART 3 — MIGRATION 145 ELIGIBILITY ENFORCEMENT (Section 4)
+
+Confirmed migration 145 is the only version of `mock_create_attempt`/`mock_create_cycle_attempt` on disk (no migration 146/147/148 redefines either). Its own `mock_validate_manifest_eligibility()` helper structurally rejects non-`mock_eligible`, `independently_validated`, `authentic_assessment_candidate`, inactive, unknown, duplicate, partial-grouped-family, and malformed-manifest cases (18 existing tests, Decision 212, re-confirmed passing this session). The frozen 56-id manifest independently passes every one of the same checks (Part 1). Structural/SQL-text verification only — not live-exercised.
+
+## PART 4 — LEARNER RENDERING (Section 5) — CODE-TRACED, EXPLICITLY NOT VISUALLY VERIFIED
+
+Per this project's own standing "Visual Gate No Substitute" discipline, no live browser/DOM pass was performed or claimed as a substitute for one (no live database, governing directive prohibits activating the form to test it, and this repository has no rendering test infrastructure — a standing, disclosed characteristic). Code-level findings: `buildDisplayUnits()`/`resolveGroupSharedStem()` (tested, `lib/mockAttempt/workspace.ts`) correctly group and de-duplicate every one of the 21 curated experiences' shared stems; `DataTableStimulus.tsx` uses real semantic `<table>` markup with `overflow-x-auto`, addressing the table-stimulus families (Bus Timetable, Fun Run, Craft Stall) structurally; every question/table cell renders via a plain React text node, so `£`/`×`/`÷`/decimals/percentages render exactly as stored with no escaping risk; `mock_get_question()`'s own hand-picked allow-list never includes `answer`/`explanation`/`workingSteps`/eligibility metadata — server-enforced, not a client convention. Bus Timetable Q18(d) re-confirmed rendering the corrected wording (Decision 215's own fidelity guard, 8 tests, still passing). All 8 named families (Camping Sale, Running Club, Rounding Bounds, Fun Run, Number Puzzle, Bus Timetable, Craft Stall, Costume Schedule) re-inspected — no wording defect found beyond the already-remediated Bus Timetable case.
+
+## PART 5 — TIMER (Section 6)
+
+**60 minutes**, matching the real, documented product authority for a standalone Mathematics paper (`ANGEL_008A_MOCK_EXPERIENCE_AND_EXAM_INTELLIGENCE_PROGRAMME_V1.md`'s own "Maths 60min" model, itself confirmed against the official CSSE Information Guide per this Decision Log's own prior record) — not invented. Server-authoritative (`mock_start_attempt()` sets `expires_at` in the database; the client only renders it). Warning states implemented and tested (`classifyTimerUrgency()`): calm by default, amber at ≤10 minutes, red + `aria-live="assertive"` at ≤1 minute.
+
+## PART 6 — PERSISTENCE, AND THE FIRST P1 FINDING: NO ATTEMPT-RESUME AFTER REFRESH (Section 7)
+
+Per-question answers are safely persisted server-side on every navigation and at submission (`submitMockAnswer()`, idempotent per `(attempt_id, question_id)`). **Genuine, previously-undisclosed finding:** `app/learning-intelligence/mock-exam/page.tsx` holds `attemptId`/`expiresAt` only in React component state — the mount effect only checks form availability, never looks up an existing in-progress attempt; `handleBegin()` always attempts to create a brand-new attempt via `createMockCycleAttempt()`, which the server correctly rejects (`ali_mock_attempt_cycle_subject_unique`, "one attempt per subject per cycle") once one already exists. **A full page refresh during an in-progress attempt strands the learner** — their answers-so-far remain safely stored, but they cannot resume answering remaining questions or cleanly re-submit through this UI. Confirmed by direct code trace (no `resume`/`refresh`/`reload` handling anywhere in the file, and no other resume-lookup RPC exists anywhere in the codebase) and by a repository-wide search of this Decision Log confirming this was never previously identified or discussed in this arc. **Not a data-integrity risk** — the server's own unique constraint prevents any duplicate/overlapping attempt from ever being created, so the failure mode is "stuck, requires manual intervention" (e.g. a Founder `parent_override` extra cycle), never corrupted or double-counted scoring. Classified **P1 — blocks authentic Mock use**. Building a resume capability (a new lookup RPC plus client wiring) is a genuine feature, not a bounded content/data fix, and is explicitly out of scope for this task's own "do not redesign the general Mock engine" boundary — recommended as a separate, future, explicitly-scoped increment, not built here.
+
+## PART 7 — SCORING, AND THE SECOND P1 FINDING: CURRENCY-SYMBOL MARKING DEFECT (Section 8) — REMEDIATED
+
+New `lib/ali/mockScoringSimulation.ts` (16 tests) is a byte-for-byte pure-function port of `mock_score_attempt()`'s own real, live marking logic (migration 104, unchanged — confirmed no later migration redefines it): empty/whitespace response → unanswered; both response and stored answer casting to `numeric` → tolerance comparison (`< 0.0001`); otherwise → exact, case/whitespace-insensitive string comparison. Run via `scripts/mock-mathematics-scoring-simulation.mjs` against the real, frozen 56-row manifest: **all-correct = 56/56 (100%); all-wrong = 0/56 (0%); all-unanswered = 0/56 (56 unanswered)**; representative mixed case scores correctly per-row; `2.5` mean answer accepts `2.50` (numeric tolerance); the corrected Bus Timetable `28`-minute answer scores correct.
+
+**Genuine defect found:** all 4 Camping Sale answers (`£102`/`£91.80`/`£1.80`/`£170`) store a literal "£" prefix — unique among all 56 frozen rows (every other currency answer, Craft Stall's `18.00`, Costume Schedule's `12.00`/`7.35`, stores bare numeric text). Because a "£"-containing string never casts to `numeric` in PostgreSQL, these four rows are permanently locked onto the exact-string path — confirmed this session that even a symbol-included but differently-formatted response ("£102.00") fails against the stored "£102"; only the single literal spelling ever scores correct. A learner who reasonably omits the currency symbol (no subpart's own question text instructs including one) is marked incorrect despite a mathematically correct answer. Classified **P1 — blocks authentic Mock use**.
+
+**Remediated:** `supabase/migrations/148_mock_mathematics_campingsale_answer_currency_symbol_correction.sql` (NEW, NOT APPLIED) strips the "£" prefix from all 4 stored answers, moving them onto the identical numeric-tolerance convention every other currency answer in this Mock already uses successfully — `mock_score_attempt()` itself is deliberately unmodified (per the governing directive's own "do not weaken deterministic marking" instruction: the STORED VALUE's format is corrected to match the engine's existing convention, the engine is not changed to accommodate a non-conforming value). Fail-closed, idempotent, single-field (`prompt.answer` only), full byte-for-byte preservation proof of marks/difficulty/grouping/`sharedStem`/`eligibility_status`/`marking_mode`, mirroring migration 127's own established single-field-correction pattern exactly. Independent of migration 147 (which stores no answer text — re-confirmed directly, matching Decision 215's identical finding for the Bus Timetable wording). 20 new tests (`tests/supabase/mockMathematicsCampingsaleAnswerCurrencySymbolCorrection.test.ts`) prove the defect, the fix, and full field preservation.
+
+## PART 8 — RESULTS EXPERIENCE (Section 9)
+
+`scoreSummarySentence()` (`lib/mockAttempt/reportCopy.ts`) reads `overall.rawMarksAvailable` directly from the live, dynamically-computed scoring result — never a hardcoded total. **The system structurally cannot present this 56-mark Mock as a 60-mark paper**: the report will correctly read "You scored X out of 56 marks." `OFFICIAL_SCORE_DISCLAIMER` is unconditionally rendered, explicitly disclaiming any official-CSSE-score implication. Grouped subpart results are recorded independently per row. Report release remains admin-gated (`mock_release_report()`, `is_current_user_admin()`-restricted) — a learner cannot self-release.
+
+## PART 9 — END-TO-END (Section 10)
+
+No live E2E was run — this repository has no Playwright/Cypress/local-Supabase tooling (confirmed via `package.json`), and the governing directive explicitly prohibits activating the form to test it. The full logical chain (discovery → eligibility-gated creation → grouped/redacted rendering → persisted answers → locked submission → automatic scoring → admin-gated, dynamically-totalled results) was traced through the real source and cross-checked against 2344 existing tests plus 44 new tests this session (20 migration-148, 16 scoring-simulation, plus Decision 215's own 8 wording-fidelity tests re-confirmed passing) — strong code-level confidence, explicitly not equivalent to a live browser-driven E2E pass.
+
+## PART 10 — DEFECT REGISTER
+
+1. **Camping Sale currency-symbol marking defect — P1, blocks authentic Mock use — REMEDIATED** (migration 148, prepared, not applied).
+2. **No attempt-resume-after-refresh — P1, blocks authentic Mock use — NOT remediated this session**, requires a genuine new capability, recommended as a separate future increment, not a data-integrity risk.
+3. **Q19-Q20 back-to-back hard-tier questions before the closer — P3, already disclosed (Decision 213/214), cosmetic ordering only** — no action needed.
+
+No P0 (safety/data-integrity) finding. No further P2 finding beyond what is listed.
+
+## PART 11 — RELEASE EVIDENCE ARTIFACT
+
+Published as `ANGEL_MATHEMATICS_MOCK_1_RELEASE_VERIFICATION_V1.md` (repo root), kept separate from the learner-facing candidate-inspection artifacts per the governing directive's own explicit instruction.
+
+## PART 12 — VERIFICATION
+
+Full automated test suite **2344/2344 passing** (2308 baseline + 20 migration-148 + 16 scoring-simulation, zero regressions); `npx tsc --noEmit` clean; ESLint at the established baseline — **81 problems (62 errors, 19 warnings), unchanged**; Copy Quality Guard **PASS — 0 violations across 261 files**; Migration SQL Guard **PASS — 148 migration files, all quote-balanced, all RAISE statements arithmetic-correct**; production build succeeds. No E2E test framework exists in this repository (disclosed, not a gap introduced by this session).
+
+## PART 13 — GOVERNANCE BOUNDARY HELD
+
+`first-mock-mathematics-v1` was NOT activated. No real learner production attempt was created. The approved 21-question composition, Running Club substitution, marks, and Mock form identity are all unchanged. No new Mathematics question was authored. No Increment 007 started. Perimeter Area not promoted. Mock 2 not begun. English Mock work not begun. The general Mock engine was not redesigned — only one narrowly-scoped, minimal answer-format correction (migration 148) was prepared, and it does not touch `mock_score_attempt()` or any other function. No unrelated cleanup was performed.
+
+**Files/migrations changed:** `supabase/migrations/148_mock_mathematics_campingsale_answer_currency_symbol_correction.sql` (new, NOT APPLIED), `lib/ali/mockScoringSimulation.ts` (new), `scripts/mock-mathematics-scoring-simulation.mjs` (new), `tests/supabase/mockMathematicsCampingsaleAnswerCurrencySymbolCorrection.test.ts` (new, 20 tests), `tests/lib/ali/mockScoringSimulation.test.ts` (new, 16 tests), `ANGEL_MATHEMATICS_MOCK_1_RELEASE_VERIFICATION_V1.md` (new), `ALI_DECISION_LOG.md`.
+
+**Decision number:** 216.
+
+**Commit SHA:** recorded after commit (see repository history immediately following this entry).
+
+**Production application status:** NOT APPLIED. No database has been mutated by this session. `ali_mock_form` remains exactly as Decision 214/215/Founder-application left it — one row, `active = false`.
+
+**Whether Mathematics Mock 1 is READY FOR ACTIVATION:** **NOT YET.** Per the governing directive's own rule that P1 findings must be resolved before activation, and with one of the two real P1 findings (attempt-resume-after-refresh) still genuinely open, unconditional activation is not recommended. The currency-symbol P1 has a ready, minimal, fully-tested fix.
+
+**Exact Founder next action:** (1) apply migration 148 (independent of, and requires no change to, migration 147); (2) decide on the attempt-resume gap — either authorise a separate, explicitly-scoped future increment to build resume capability before activation, or make an informed, explicit decision to activate anyway while accepting the disclosed risk (a stranded learner requiring manual Founder intervention, not a scoring/data-integrity risk); (3) once that decision is made, activation itself (`active = true`) remains a distinct, separate, future Founder decision, not performed by this one.
+
+**Implications:** Decisions 1–215 all stand, none reversed or rewritten. **Final verdict: B — MATHEMATICS MOCK 1 FUNCTIONALLY SOUND; BOUNDED REMEDIATION REQUIRED BEFORE ACTIVATION.**
+
+---
