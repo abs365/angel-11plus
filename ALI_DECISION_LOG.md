@@ -9343,3 +9343,57 @@ Full automated test suite **2376/2376 passing** (unchanged from Decision 217 —
 **Implications:** Decisions 1–217 all stand, none reversed or rewritten. **Final verdict: A — MATHEMATICS MOCK 1 READY FOR FOUNDER-AUTHORISED ACTIVATION.**
 
 ---
+
+### Decision 219 — MATHEMATICS MOCK 1: ACTIVATION MIGRATION PREPARED (Founder authorised Decision 218's verdict A; migration 150 changes only `active: false -> true`; not applied — Founder applies manually).
+
+**Reconciliation:** `git fetch origin main` confirmed `HEAD == origin/main` at `e6425eb` (Decision 218) before this session's work began, clean working tree. Decision 218 present exactly once. Migration 149 remained the latest file on disk (no migration 150+ existed before this session). Per this task's own explicit instruction, migrations 147, 148, and 149 were treated as Founder-confirmed applied and were **not** re-requested from the Founder. Current Founder-confirmed production state re-confirmed from migration 147's own source: `first-mock-mathematics-v1`, `subject = mathematics`, `specification_version = 1`, `attempt_type = full_mock`, `active = false`, 21 numbered questions, 56 marks, Running Club present, Sum/Difference and Perimeter Area absent.
+
+## PART 1 — ACTIVATION PRECONDITIONS DESIGNED
+
+Migration 150 re-verifies, live and never assumed from any past decision's own report: the row exists; `subject`/`specification_version`/`attempt_type`/`question_manifest`/`composition_provenance` match migration 147's own inserted literals byte-for-byte (any drift refuses activation outright, never silently repaired); `composition_provenance` independently reports `numberedQuestionCount = 21`, `totalMarks = 56`, `rawRowCount = 56`; Perimeter Area absent, Sum/Difference absent, Running Club present as a complete 2-row group (re-derived from the manifest's own target ids, not merely trusted from the stored provenance object); every one of the 56 manifest question ids is still `mock_eligible`/`active`/`maths` in `ali_question_bank` at activation time (a question could in principle have been withdrawn since the migration 147 freeze — this is checked, not assumed); every grouped question family is still fully represented (no partial group), using the identical generic-over-`question_group_id` logic migrations 145 and 147 already established.
+
+## PART 2 — ACTIVATION MIGRATION
+
+`supabase/migrations/150_mock_mathematics_first_mock_1_activation.sql` (new). Targets only `first-mock-mathematics-v1`. The only write anywhere in the migration is a single `UPDATE public.ali_mock_form SET active = true WHERE id = v_form_id` — verified via test that the `SET` clause contains no other column. `question_manifest` and `composition_provenance` are read and compared, never assigned. Three-state, fail-closed, idempotent: **PRISTINE** (`active = false`, every precondition holds) → activates. **ALREADY APPLIED** (`active = true`, every precondition still holds) → safe no-op, no `UPDATE` issued (verified via test). **ANY OTHER STATE** (row missing, any literal drift, any live eligibility/grouping/contamination failure) → `RAISE EXCEPTION`, nothing written. No `ali_mock_attempt` row is created; no `ali_question_bank` row is touched; no RPC, RLS policy, or grant is created or altered.
+
+## PART 3 — NO OTHER CHANGE
+
+The 21-question composition, the 56-mark total, question wording, answers, scoring, resume capability, and timer behaviour are all unmodified — this migration cannot alter any of them, since it writes exactly one boolean column on exactly one row it does not otherwise touch. No Increment 007, no Mock 2, no English Mock, no Perimeter Area promotion, no unrelated cleanup. No `ali_mock_attempt` row was created this session — no real or simulated production attempt exists.
+
+## PART 4 — ACTIVATION TESTS
+
+`tests/supabase/mockMathematicsFirstMock1Activation.test.ts` (new, 23 tests, all passing): row-existence refusal; literal-match guards for every structural field; provenance-derived 21/56/56 re-verification; Perimeter Area/Sum-Difference/Running Club proofs; live `mock_eligible`/`active`/`maths` eligibility guard generic over the manifest's own ids; live grouped-family completeness guard proven generic (asserts no hardcoded family-name literal appears in that block); pristine → `UPDATE active=true`; already-applied → no `UPDATE` issued; unexpected-state → `RAISE EXCEPTION`; `UPDATE` `SET` clause proven to touch `active` only; `question_manifest`/`composition_provenance` proven never assigned; no attempt creation; no question-bank mutation; target id array proven identical to migration 147's own, same order; expected `question_manifest`/`composition_provenance` literals proven byte-for-byte identical to migration 147's own inserted literals (cross-file comparison, not merely eyeballed).
+
+## PART 5 — POST-APPLICATION VERIFICATION SQL (Founder, read-only)
+
+```sql
+select id, subject, specification_version, attempt_type, active,
+       composition_provenance, question_manifest
+from public.ali_mock_form
+where id = 'first-mock-mathematics-v1';
+```
+Expected: one row, `active = true`, `composition_provenance` and `question_manifest` unchanged from before application. Minimal row-count check:
+```sql
+select count(*) from public.ali_mock_form;
+```
+Expected: unchanged from before this migration (this migration inserts no row).
+
+## PART 6 — VERIFICATION
+
+Full automated test suite **2399/2399 passing** (2376 baseline + 23 new activation tests, zero regressions); `npx tsc --noEmit` clean; ESLint at the established baseline — **81 problems (62 errors, 19 warnings), unchanged**; Copy Quality Guard **PASS — 0 violations across 261 files**; Migration SQL Guard **PASS — 150 migration files**; production build succeeds.
+
+**Files changed:** `supabase/migrations/150_mock_mathematics_first_mock_1_activation.sql` (new, NOT APPLIED), `tests/supabase/mockMathematicsFirstMock1Activation.test.ts` (new), `ALI_DECISION_LOG.md`.
+
+**Decision number:** 219.
+
+**Commit SHA:** recorded after commit (see repository history immediately following this entry).
+
+**Production application status:** NOT APPLIED. Migration 150 was created but not applied by this session — no database has been mutated. `ali_mock_form` remains exactly as before this session: one row, `active = false`. No `ali_mock_attempt` row was created. Mathematics Mock 1 was **not** activated.
+
+**Readiness distinction (governing this and every future entry until superseded):** this decision records **READY FOR ACTIVATION** — the migration is prepared, tested, and structurally sound. It does **not** record **OPERATIONALLY PROVEN THROUGH REAL LEARNER SITTING** — that remains a separate, later, distinct Founder-authorised step (a controlled first real learner sitting, against a real browser and the real production database) and Mathematics Mock 1 must not be described as fully operational until that sitting succeeds.
+
+**Exact next step after Founder confirms `active = true`:** the Founder-authorised **CONTROLLED FIRST REAL LEARNER SITTING** — the first genuine end-to-end validation of the Mock against an actual browser, an actual production database, and an actual learner lifecycle, closing the one evidence gap Decision 218 explicitly named (its own combined simulation is pure-function, not live, evidence). No production learner attempt was performed in this session.
+
+**Implications:** Decisions 1–218 all stand, none reversed or rewritten. **Final verdict: A — MATHEMATICS MOCK 1 ACTIVATION MIGRATION READY FOR FOUNDER APPLICATION.**
+
+---
