@@ -742,6 +742,31 @@ export interface Database {
         Update: Record<string, never>;
         Relationships: [];
       };
+      // Decision 217 (Mathematics Mock 1 attempt-resume remediation) —
+      // supabase/migrations/070_mock_attempt_engine.sql's own table,
+      // declared here for the first time so lib/mockAttempt/client.ts's
+      // new getMockAttemptAnswers() can read it directly via `.from()`,
+      // matching ali_mock_attempt_report's own established precedent: a
+      // learner's own submitted response text is not sensitive/protected
+      // content the way ali_question_bank's answer/explanation fields
+      // are (it is literally the learner's own input), and the existing
+      // ali_mock_attempt_answer_select_own RLS policy (migration 070)
+      // already scopes every read to the caller's own attempts — no new
+      // RPC or policy is required. No Insert/Update declared here — every
+      // real write already goes exclusively through mock_submit_answer()
+      // (migration 070), never a direct client write.
+      ali_mock_attempt_answer: {
+        Row: {
+          id: string;
+          attempt_id: string;
+          question_id: string;
+          response: Record<string, unknown>;
+          answered_at: string;
+        };
+        Insert: Record<string, never>;
+        Update: Record<string, never>;
+        Relationships: [];
+      };
     };
     Views: Record<string, never>;
     Functions: {
@@ -845,6 +870,15 @@ export interface Database {
       mock_get_open_cycle: {
         Args: Record<string, never>;
         Returns: string | null;
+      };
+      // Decision 217 (Mathematics Mock 1 attempt-resume remediation) —
+      // supabase/migrations/149_mock_attempt_resume_lookup.sql. Not yet
+      // applied to production; declared here so lib/mockAttempt/client.ts
+      // can call it through the typed supabase.rpc() the same way every
+      // other RPC already does.
+      mock_get_resumable_attempt: {
+        Args: { p_form_id: string };
+        Returns: { attempt_id: string; status: string; started_at: string | null; expires_at: string | null; is_expired: boolean }[];
       };
     };
     Enums: {

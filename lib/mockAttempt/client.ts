@@ -8,6 +8,7 @@ import type {
   MockAttemptType,
   MockManifestGroupingEntry,
   MockQuestionPayload,
+  ResumableMockAttempt,
 } from "./types";
 
 /**
@@ -166,6 +167,65 @@ export async function getMockAttemptGrouping(
   const { data, error } = await supabase.rpc("mock_get_attempt_grouping", { p_attempt_id: attemptId });
   if (error) return { data: null, error: error.message };
   return { data: (data as MockManifestGroupingEntry[]) ?? [], error: null };
+}
+
+/**
+ * Migration 149 (Decision 217, Mathematics Mock 1 attempt-resume
+ * remediation) — the caller's own existing "assigned" or "in_progress"
+ * attempt for a specific form, or `{ data: null, error: null }` (not an
+ * error) if none exists — the caller must treat that as "no resumable
+ * attempt, create a new one," the same "absence is not an error"
+ * discipline `getActiveMockForm()` and `getOpenMockCycle()` already
+ * establish. Never accepts or requires any learner-identity argument —
+ * the server derives the caller's own identity from their own session.
+ */
+export async function getResumableMockAttempt(
+  supabase: SupabaseClient<Database>,
+  formId: string
+): Promise<MockClientResult<ResumableMockAttempt | null>> {
+  const { data, error } = await supabase.rpc("mock_get_resumable_attempt", { p_form_id: formId });
+  if (error) return { data: null, error: error.message };
+  const row = Array.isArray(data) ? data[0] : data;
+  if (!row) return { data: null, error: null };
+  if (row.status !== "assigned" && row.status !== "in_progress") {
+    return { data: null, error: "Unexpected attempt status returned by mock_get_resumable_attempt" };
+  }
+  return {
+    data: { attemptId: row.attempt_id, status: row.status, startedAt: row.started_at, expiresAt: row.expires_at, isExpired: row.is_expired },
+    error: null,
+  };
+}
+
+/**
+ * Decision 217 (Mathematics Mock 1 attempt-resume remediation) — the
+ * caller's own already-submitted responses for one attempt, keyed by
+ * question id, value only (the same `{value: string}` shape
+ * `submitMockAnswer()` itself writes). A direct, RLS-gated `.from()`
+ * read, deliberately, not a wrapping RPC — mirroring
+ * `getMockAttemptReport()`'s own established precedent exactly: a
+ * learner's own submitted response text is not sensitive/protected
+ * content (it is literally what they themselves typed), and the
+ * existing `ali_mock_attempt_answer_select_own` RLS policy (migration
+ * 070) already scopes every read to the caller's own attempts, so no
+ * new RPC or policy is required. Returns an empty map (not an error)
+ * for an attempt with no answers yet — the expected state for a
+ * just-started attempt.
+ */
+export async function getMockAttemptAnswers(
+  supabase: SupabaseClient<Database>,
+  attemptId: string
+): Promise<MockClientResult<Map<string, string>>> {
+  const { data, error } = await supabase
+    .from("ali_mock_attempt_answer")
+    .select("question_id, response")
+    .eq("attempt_id", attemptId);
+  if (error) return { data: null, error: error.message };
+  const answers = new Map<string, string>();
+  for (const row of data ?? []) {
+    const value = (row.response as { value?: unknown } | null)?.value;
+    if (typeof value === "string" && value.length > 0) answers.set(row.question_id, value);
+  }
+  return { data: answers, error: null };
 }
 
 /**

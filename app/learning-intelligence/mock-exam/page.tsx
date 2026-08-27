@@ -21,6 +21,8 @@ import {
   submitMockAnswer,
   submitMockAttempt,
   setMockFlag,
+  getResumableMockAttempt,
+  getMockAttemptAnswers,
 } from "@/lib/mockAttempt/client";
 import type { MockAttemptType, MockQuestionPayload } from "@/lib/mockAttempt/types";
 import {
@@ -32,6 +34,8 @@ import {
   selectDisplayUnitStimulus,
   isValidTableStimulus,
   resolveGroupSharedStem,
+  determineMockResumeAction,
+  computeResumeStartIndex,
   type DisplayUnit,
 } from "@/lib/mockAttempt/workspace";
 import { ExamTimer } from "@/components/mockAttempt/ExamTimer";
@@ -156,6 +160,20 @@ export default function MockExamPage() {
 
   const supabaseRef = useRef<ReturnType<typeof getSupabaseClient>>(null);
   const submittedRef = useRef(false);
+  // Decision 217 (attempt-resume remediation) — the caller's own latest
+  // known submitted VALUE per question id, not just whether it was
+  // answered (answeredQuestionIds, above, already tracks that for the
+  // palette). Populated once from getMockAttemptAnswers() on a fresh
+  // start (empty) or a resume (the learner's own real persisted
+  // answers), then kept current as new answers are submitted during the
+  // live session. loadUnit() reads this to pre-fill a revisited
+  // question's own draft — fixing a real, pre-existing gap this session
+  // found: navigating back to an already-answered question previously
+  // always showed a blank field, even within a single unrefreshed
+  // session, because loadUnit() only ever set blank drafts. A ref, not
+  // state: it never needs to trigger a re-render by itself, only to be
+  // read at the moment a unit loads.
+  const answeredValuesRef = useRef<Map<string, string>>(new Map());
 
   const handleSubmit = useCallback(async () => {
     if (submittedRef.current || !attemptId) return;
@@ -228,7 +246,61 @@ export default function MockExamPage() {
       return;
     }
     setCurrentPayloads(results.map((result) => result.data as MockQuestionPayload));
-    setAnswerDrafts(unit.questionIds.map(() => ""));
+    // Pre-fill from the learner's own latest known submitted value, if
+    // any — see answeredValuesRef's own docstring above. Falls back to
+    // an empty draft for a genuinely unanswered question, unchanged.
+    setAnswerDrafts(unit.questionIds.map((id) => answeredValuesRef.current.get(id) ?? ""));
+  }
+
+  // Decision 217 (attempt-resume remediation) — the shared tail of both
+  // the fresh-start and resume paths below: given a real, already-
+  // started attempt id and its own real expiresAt, loads its manifest/
+  // grouping (unchanged), optionally reloads any already-persisted
+  // answers (resume only — a fresh attempt has none), computes a
+  // deterministic starting position, and enters "in-progress". Never
+  // calls mock_start_attempt() itself — the caller decides if/when that
+  // is needed, since it must never be called twice on the same attempt
+  // (see migration 149's own header for why that is already structurally
+  // enforced server-side).
+  async function enterAttempt(
+    supabase: NonNullable<typeof supabaseRef.current>,
+    attemptIdValue: string,
+    expiresAtValue: string,
+    prefillAnswers: Map<string, string>
+  ) {
+    const manifest = await getMockAttemptManifest(supabase, attemptIdValue);
+    if (manifest.error || !manifest.data || manifest.data.length === 0) {
+      setErrorMessage(manifest.error ?? "Could not load this attempt's question list.");
+      setPhase("error");
+      return;
+    }
+
+    const grouping = await getMockAttemptGrouping(supabase, attemptIdValue);
+    if (grouping.error) { setErrorMessage(grouping.error); setPhase("error"); return; }
+
+    const displayUnits = buildDisplayUnits(manifest.data, grouping.data ?? []);
+
+    // Deterministic recovery position (Section 5 of the governing
+    // directive) — see computeResumeStartIndex()'s own docstring
+    // (lib/mockAttempt/workspace.ts) for why no new "last visited
+    // question" state is invented: current_section (migration 070) is
+    // declared but never written by any function, so the first genuinely
+    // unanswered display unit is the defensible, tested default —
+    // byte-identical to unit 0 for a fresh attempt (nothing is answered
+    // yet, so the first unanswered unit IS unit 0).
+    const answeredIds = new Set(prefillAnswers.keys());
+    const startIndex = computeResumeStartIndex(displayUnits, answeredIds);
+
+    answeredValuesRef.current = prefillAnswers;
+    setAttemptId(attemptIdValue);
+    setExpiresAt(expiresAtValue);
+    submittedRef.current = false;
+    setAnsweredQuestionIds(answeredIds);
+    setFlaggedQuestionIds(new Set());
+    setUnits(displayUnits);
+    setCurrentUnitIndex(startIndex);
+    setPhase("in-progress");
+    await loadUnit(supabase, attemptIdValue, displayUnits[startIndex]);
   }
 
   async function handleBegin() {
@@ -246,12 +318,68 @@ export default function MockExamPage() {
     const profileId = await ensureProfile();
     if (!profileId) { setErrorMessage("Could not establish a learner profile."); setPhase("error"); return; }
 
-    // Migration 107 (Decision 161) — a full_mock attempt must be created
-    // through an owned, open Mock cycle. Discover an existing one first;
-    // only start a new one (subject to the ~14-day cadence check that
-    // function itself enforces) if none exists. See this file's own
-    // header for why the old, now-guarded mock_create_attempt() path can
-    // no longer be used for attempt_type "full_mock".
+    // Migration 149 (Decision 217) — before creating a brand-new attempt,
+    // discover whether the caller already has one for this exact form
+    // (e.g. a refresh or lost tab mid-sitting). Absence is not an error —
+    // the existing "no resumable attempt" branch below is byte-identical
+    // to this file's own pre-217 behaviour.
+    const resumable = await getResumableMockAttempt(supabase, active.data.formId);
+    if (resumable.error) { setErrorMessage(resumable.error); setPhase("error"); return; }
+
+    // The actual branching decision is a pure, independently-tested
+    // function (lib/mockAttempt/workspace.ts) — see its own docstring
+    // for the full rationale of each of the four possible outcomes.
+    const resumeAction = determineMockResumeAction(resumable.data);
+
+    if (resumeAction.kind === "finalize_expired") {
+      // Timer integrity (Section 6): an expired attempt is never resumed
+      // as though time remains. mock_get_question()/mock_submit_answer()
+      // would already refuse further reads/writes against it regardless
+      // (they independently re-check now() > expires_at server-side) —
+      // this branch simply closes it out cleanly via the SAME
+      // mock_submit_attempt() the live countdown already calls at expiry,
+      // rather than leaving the learner stuck on a workspace that can
+      // never successfully answer anything.
+      const finalised = await submitMockAttempt(supabase, resumeAction.attemptId);
+      if (finalised.error) { setErrorMessage(finalised.error); setPhase("error"); return; }
+      setAttemptId(resumeAction.attemptId);
+      submittedRef.current = true;
+      setPhase("submitted");
+      return;
+    }
+
+    if (resumeAction.kind === "start_fresh") {
+      // Never started (e.g. the client crashed between creating the
+      // attempt and starting it) — no time has been consumed, so start
+      // it now, exactly as a fresh attempt would be. mock_start_attempt()
+      // itself requires status = 'assigned' and can never be called
+      // again once it succeeds — repeated resume can never re-start, and
+      // therefore never extend, the timer.
+      const started = await startMockAttempt(supabase, resumeAction.attemptId, DURATION_MINUTES);
+      if (started.error || !started.data) { setErrorMessage(started.error ?? "Could not start the attempt."); setPhase("error"); return; }
+      await enterAttempt(supabase, resumeAction.attemptId, started.data.expiresAt, new Map());
+      return;
+    }
+
+    if (resumeAction.kind === "resume_in_progress") {
+      // Genuinely resuming. Never call mock_start_attempt() again (it
+      // would be rejected regardless, since its own precondition
+      // requires status = 'assigned'). Use the real, already-set
+      // expiresAt the lookup itself returned — never recomputed, never
+      // extended.
+      const answers = await getMockAttemptAnswers(supabase, resumeAction.attemptId);
+      if (answers.error) { setErrorMessage(answers.error); setPhase("error"); return; }
+      await enterAttempt(supabase, resumeAction.attemptId, resumeAction.expiresAt, answers.data ?? new Map());
+      return;
+    }
+
+    // resumeAction.kind === "create_new" — unchanged from this file's own pre-217
+    // behaviour. Migration 107 (Decision 161) — a full_mock attempt must
+    // be created through an owned, open Mock cycle. Discover an existing
+    // one first; only start a new one (subject to the ~14-day cadence
+    // check that function itself enforces) if none exists. See this
+    // file's own header for why the old, now-guarded mock_create_attempt()
+    // path can no longer be used for attempt_type "full_mock".
     const openCycle = await getOpenMockCycle(supabase);
     if (openCycle.error) { setErrorMessage(openCycle.error); setPhase("error"); return; }
     let cycleId = openCycle.data;
@@ -271,33 +399,7 @@ export default function MockExamPage() {
     const started = await startMockAttempt(supabase, created.data, DURATION_MINUTES);
     if (started.error || !started.data) { setErrorMessage(started.error ?? "Could not start the attempt."); setPhase("error"); return; }
 
-    // The learner's own attempt manifest — IDs only, in order, never any
-    // question content — via mock_get_attempt_manifest(), plus its
-    // grouping structure via mock_get_attempt_grouping() (migration 106,
-    // Decision 161) so the full display-unit list (and therefore the
-    // correct "Question N of Total" count and palette) can be computed
-    // before the learner has visited a single question.
-    const manifest = await getMockAttemptManifest(supabase, created.data);
-    if (manifest.error || !manifest.data || manifest.data.length === 0) {
-      setErrorMessage(manifest.error ?? "Could not load this attempt's question list.");
-      setPhase("error");
-      return;
-    }
-
-    const grouping = await getMockAttemptGrouping(supabase, created.data);
-    if (grouping.error) { setErrorMessage(grouping.error); setPhase("error"); return; }
-
-    const displayUnits = buildDisplayUnits(manifest.data, grouping.data ?? []);
-
-    setAttemptId(created.data);
-    setExpiresAt(started.data.expiresAt);
-    submittedRef.current = false;
-    setAnsweredQuestionIds(new Set());
-    setFlaggedQuestionIds(new Set());
-    setUnits(displayUnits);
-    setCurrentUnitIndex(0);
-    setPhase("in-progress");
-    await loadUnit(supabase, created.data, displayUnits[0]);
+    await enterAttempt(supabase, created.data, started.data.expiresAt, new Map());
   }
 
   async function handleAnswerAndAdvance(nextUnitIndex: number | null) {
@@ -321,6 +423,10 @@ export default function MockExamPage() {
         const next = new Set(prev);
         newlyAnswered.forEach((id) => next.add(id));
         return next;
+      });
+      currentUnit.questionIds.forEach((id, index) => {
+        const draft = (answerDrafts[index] ?? "").trim();
+        if (draft) answeredValuesRef.current.set(id, draft);
       });
     }
 

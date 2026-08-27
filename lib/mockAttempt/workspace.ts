@@ -11,7 +11,7 @@
  * page component."
  */
 
-import type { MockManifestGroupingEntry, MockQuestionPayload, MockStimulus, MockTableStimulus } from "./types";
+import type { MockManifestGroupingEntry, MockQuestionPayload, MockStimulus, MockTableStimulus, ResumableMockAttempt } from "./types";
 
 /** Never negative — a stale expiresAt in the past reads as 0 remaining, not a negative countdown. */
 export function computeRemainingSeconds(expiresAt: string, now: number = Date.now()): number {
@@ -26,6 +26,58 @@ export function formatRemainingTime(remainingSeconds: number): string {
   const minutes = Math.floor(remainingSeconds / 60);
   const seconds = remainingSeconds % 60;
   return `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+}
+
+/**
+ * Decision 217 (Mathematics Mock 1 attempt-resume remediation) — the
+ * SAME "pull the decision logic out into a pure, testable function"
+ * discipline this file's own header already establishes, applied to the
+ * one genuinely new branch handleBegin() needed: given
+ * `getResumableMockAttempt()`'s own result, which of the four possible
+ * actions should the caller take? A pure function that owns exactly this
+ * decision, so it is testable without any live database or browser.
+ *
+ *   - no resumable attempt exists            -> create_new  (unchanged
+ *                                                pre-217 behaviour)
+ *   - one exists, but its own time is already
+ *     past                                    -> finalize_expired (never
+ *                                                resume as though time
+ *                                                remains — Section 6)
+ *   - one exists, never started (`assigned`)  -> start_fresh (no time
+ *                                                consumed yet, safe to
+ *                                                start now)
+ *   - one exists, already running             -> resume_in_progress
+ *     (`in_progress`, not expired)               (never re-call
+ *                                                mock_start_attempt() —
+ *                                                its own precondition
+ *                                                would reject it anyway)
+ */
+export type MockResumeAction =
+  | { kind: "create_new" }
+  | { kind: "finalize_expired"; attemptId: string }
+  | { kind: "start_fresh"; attemptId: string }
+  | { kind: "resume_in_progress"; attemptId: string; expiresAt: string };
+
+export function determineMockResumeAction(resumable: ResumableMockAttempt | null): MockResumeAction {
+  if (!resumable) return { kind: "create_new" };
+  if (resumable.isExpired) return { kind: "finalize_expired", attemptId: resumable.attemptId };
+  if (resumable.status === "assigned") return { kind: "start_fresh", attemptId: resumable.attemptId };
+  return { kind: "resume_in_progress", attemptId: resumable.attemptId, expiresAt: resumable.expiresAt ?? "" };
+}
+
+/**
+ * Decision 217 — the deterministic recovery position (Section 5): the
+ * first display unit not yet fully answered, reusing the existing,
+ * already-tested `unansweredUnitIndices()` rather than inventing new
+ * "last visited question" state (this codebase's own `ali_mock_attempt.
+ * current_section` column is declared but never actually written by any
+ * function — confirmed this session — so there is genuinely nothing to
+ * restore beyond answer-completeness itself). Falls back to unit 0 when
+ * every unit is already answered (or, equivalently, for a fresh attempt
+ * with no answers at all, where unit 0 IS the first unanswered unit).
+ */
+export function computeResumeStartIndex(units: readonly DisplayUnit[], answeredQuestionIds: ReadonlySet<string>): number {
+  return unansweredUnitIndices(units, answeredQuestionIds)[0] ?? 0;
 }
 
 /**

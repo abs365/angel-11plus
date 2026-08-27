@@ -22,6 +22,23 @@ export interface MockAttempt {
 }
 
 /**
+ * Decision 217 (Mathematics Mock 1 attempt-resume remediation) — mirrors
+ * `mock_get_resumable_attempt()` (migration 149) exactly. `status` is
+ * always `"assigned"` or `"in_progress"` — that RPC's own live query
+ * never returns a `"submitted"` row (see that migration's own header for
+ * why `"ready"`/`"expired"` are schema-permitted but never actually
+ * produced by any real code path). `isExpired` is computed server-side
+ * against the database's own clock, never trusted from any client value.
+ */
+export interface ResumableMockAttempt {
+  attemptId: string;
+  status: "assigned" | "in_progress";
+  startedAt: string | null;
+  expiresAt: string | null;
+  isExpired: boolean;
+}
+
+/**
  * Structured Assessment Stimulus (Decision 170) — the smallest additive
  * content shape for an optional shared data table attached to a
  * question's own `prompt` jsonb (as `prompt.stimulus`). NOT a new

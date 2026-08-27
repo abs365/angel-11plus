@@ -9225,3 +9225,73 @@ Full automated test suite **2344/2344 passing** (2308 baseline + 20 migration-14
 **Implications:** Decisions 1–215 all stand, none reversed or rewritten. **Final verdict: B — MATHEMATICS MOCK 1 FUNCTIONALLY SOUND; BOUNDED REMEDIATION REQUIRED BEFORE ACTIVATION.**
 
 ---
+
+### Decision 217 — MATHEMATICS MOCK 1: ATTEMPT RESUME RELEASE-BLOCKER REMEDIATION (Founder-directed bounded fix for Decision 216's P1 finding; DO NOT accept the risk, DO NOT activate).
+
+**Reconciliation:** `git fetch origin main` confirmed `HEAD == origin/main` at `4c623c6` (Decision 216) before this session's work began, clean working tree. Decision 216 present exactly once. Migration 148 remained the latest file on disk (no migration 149+ existed before this session). **Migration 148's own application status was NOT assumed** — the Founder's own directive explicitly withheld confirmation this session ("Founder will separately confirm migration 148 application before this work proceeds"); this remediation is orthogonal to migration 148 (attempt lifecycle vs. one answer's stored format) and required no assumption about it either way.
+
+## PART 1 — THE RESUMABLE-ATTEMPT CONTRACT (Section 2)
+
+Derived directly from the real schema, not invented. `ali_mock_attempt.status` permits five CHECK-constraint literals; direct inspection of every function that ever writes it (migrations 070/085/104) finds only three actually produced by any real code path: `'assigned'` (creation), `'in_progress'` (`mock_start_attempt()`, gated by `status = 'assigned'` — already structurally impossible to call twice on the same attempt), `'submitted'` (`mock_submit_attempt()`, gated by `status = 'in_progress'`). `'ready'`/`'expired'` are schema-permitted but structurally dead. An attempt is resumable exactly when `status in ('assigned', 'in_progress')` — never `'submitted'`.
+
+## PART 2 — SERVER-SIDE LOOKUP (Section 3)
+
+`supabase/migrations/149_mock_attempt_resume_lookup.sql` (NEW, NOT APPLIED) adds `mock_get_resumable_attempt(p_form_id text)` — a pure, read-only SECURITY DEFINER function, following the identical "narrowly-scoped RPC" precedent `mock_get_open_cycle()` (migration 107) already established for the equivalent cycle-level problem. Takes only a form id — no learner-identity parameter exists in its signature, structurally preventing that whole attack class. Identity derived exclusively from `auth.uid()`; query unconditionally scoped `where a.profile_id = v_profile_id`; unknown/malformed form ids return zero rows, never an exception; never performs `INSERT`/`UPDATE`/`DELETE` of any kind. Does not weaken migration 145's eligibility enforcement (untouched). 20 new structural/security tests (`tests/supabase/mockAttemptResumeLookup.test.ts`).
+
+## PART 3 — START-OR-RESUME BEHAVIOUR AND RACE SAFETY (Section 4)
+
+`app/learning-intelligence/mock-exam/page.tsx`'s `handleBegin()` now calls `getResumableMockAttempt()` before ever attempting creation; the branching decision itself was extracted into a pure, independently-tested function, `determineMockResumeAction()` (`lib/mockAttempt/workspace.ts`, mirroring this file's own established "pull exam logic into pure functions for real test coverage" discipline) — no resumable attempt → `create_new` (byte-identical to pre-217 behaviour); expired → `finalize_expired`; never-started → `start_fresh`; in-progress → `resume_in_progress`. Race safety relies entirely on the **existing** `ali_mock_attempt_cycle_subject_unique` partial unique index (migration 085) — no new locking was added; a concurrent second `mock_create_cycle_attempt()` fails the constraint atomically regardless of any client-side race. This is documented, not duplicated.
+
+## PART 4 — REFRESH RECOVERY (Section 5)
+
+On refresh, `handleBegin()` rediscovers the attempt, reloads persisted answers (Part 6 below), rebuilds display units via the unchanged `getMockAttemptManifest()`/`getMockAttemptGrouping()`/`buildDisplayUnits()`, and lands on the first genuinely unanswered unit via a new pure function, `computeResumeStartIndex()` — a partially-answered grouped unit correctly still counts as unanswered (proven by test). `ali_mock_attempt.current_section` (migration 070) is declared in the schema but confirmed, directly, never written by any function — no new "last visited question" state was invented to fill that gap, per the governing directive's own explicit "do not add unnecessary state merely for convenience" instruction; the recovery position is derived entirely from already-persisted answer completeness.
+
+## PART 5 — TIMER INTEGRITY (Section 6) — VERIFIED, NOT WEAKENED
+
+`expires_at` is set exactly once by `mock_start_attempt()`, gated by `status = 'assigned'` — already structurally impossible to reset by calling it twice. The resume path for an `'in_progress'` attempt never calls `mock_start_attempt()` again; it reads the real, already-set `expires_at` directly. `mock_get_question()`/`mock_submit_answer()` (unchanged) independently re-check `now() > expires_at` against the database's own clock on every read/write, regardless of client-supplied time — this was already sound before this remediation and remains untouched. An expired attempt is never resumed as though time remains — `determineMockResumeAction()` routes it unconditionally to `finalize_expired`, closing it via the same `mock_submit_attempt()` the existing live countdown already calls at expiry. Verified via a full pure-function simulation (`tests/lib/mockAttempt/workspace.test.ts`): a refresh 20 minutes into a 60-minute attempt correctly reports 40 minutes remaining, not a fresh 60. **No deeper timer architecture defect was found** — the pre-existing design was already secure at the actual data-mutation boundary; the only real gap was discoverability, now closed.
+
+## PART 6 — PERSISTENCE, AND A SECOND REAL GAP FOUND AND FIXED (Section 7)
+
+Answers reload via a new, direct, RLS-scoped read, `getMockAttemptAnswers()` (`ali_mock_attempt_answer_select_own`, migration 070, unchanged) — mirroring `getMockAttemptReport()`'s own established "direct `.from()` read, not a wrapping RPC" precedent, since a learner's own submitted text is not sensitive content the way `ali_question_bank`'s answer/explanation fields are. `types/supabase.ts` gained the missing `ali_mock_attempt_answer` table type and the new function type. Editing an answer overwrites via the existing `on conflict ... do update` (unchanged) — never a duplicate. No cross-attempt/cross-learner leakage (exact `attempt_id` scope, further RLS-scoped to the caller's own profile).
+
+**A genuinely pre-existing gap found and fixed as part of this remediation, not introduced by it:** `loadUnit()` previously always reset the draft to blank on every navigation — even within a single unrefreshed session, revisiting an already-answered question via the palette showed a blank field, with no visual trace of the real, already-persisted answer. A new `answeredValuesRef` (populated at start/resume, kept current as new answers are submitted) now pre-fills `loadUnit()`'s drafts from the learner's own latest known value, fixing this for both ordinary back/forward navigation and resume alike, using the same underlying capability.
+
+## PART 7 — SUBMISSION SAFETY (Section 8)
+
+A resumed attempt submits through the unchanged `mock_submit_attempt()`. An already-`'submitted'` attempt can never be resumed for editing — `mock_get_resumable_attempt()`'s own query structurally never returns one. Repeated submission remains safely handled by the pre-existing precondition (unchanged). Scoring remains automatic, server-side, triggered exactly once by the existing report-init trigger — this remediation never calls or references `mock_score_attempt()`.
+
+## PART 8 — INACTIVE-MOCK-DURING-ATTEMPT POLICY (Section 9)
+
+**Not escalated as a fresh Founder policy decision** — an unambiguous, already-documented precedent already resolves it. Migration 070's own header states explicitly that a form's `question_manifest` is "frozen for this attempt's lifetime **even if the form is later edited**"; `mock_get_question()`/`mock_submit_answer()` already never re-check `ali_mock_form.active` for an in-progress attempt. `mock_get_resumable_attempt()` follows the identical precedent — it does not filter on `ali_mock_form.active` at all. A learner with a genuinely in-progress attempt can still discover, resume, and complete it even if an administrator deactivates the form mid-sitting, exactly as they already could before this remediation. Documented explicitly (migration 149's own header, and the release artifact), not silently decided.
+
+## PART 9 — TESTS AND E2E SIMULATION (Sections 10/11)
+
+`tests/supabase/mockAttemptResumeLookup.test.ts` (20 tests) — structural/security proof of migration 149. `tests/lib/mockAttempt/workspace.test.ts` (+12 tests, 25 total) — `determineMockResumeAction()`'s full decision table, `computeResumeStartIndex()`'s recovery logic, and two full end-to-end pure-function simulations: (1) start → answer q1/q2 → simulate refresh → rediscover via `determineMockResumeAction` → restore answers → verify 40 of 60 minutes remain → continue to the grouped unit → edit an earlier answer (proven no duplicate) → finalise; (2) repeated refresh always resolves to the identical single attempt, never a duplicate. No live database/browser E2E was run or claimed — consistent with every prior release-verification session in this arc.
+
+## PART 10 — SCOPE CONTROL AND DATABASE CHANGES
+
+Mathematics Mock 1 was **not** activated. No attempt was created. The approved 21-question composition, marks, and Mock form identity are unchanged. No new question authored, no Increment 007, no Perimeter Area promotion, Mock 2 not begun, English Mock work not begun, the general Mock engine was not redesigned (one new narrowly-scoped lookup function plus the pure decision/persistence logic it required — not a redesign). Scoring rules were not touched. **No database change occurred this session** — migration 149 is prepared, not applied.
+
+## PART 11 — VERIFICATION
+
+Full automated test suite **2376/2376 passing** (2344 baseline + 20 migration-149 + 12 workspace, zero regressions); `npx tsc --noEmit` clean; ESLint at the established baseline — **81 problems (62 errors, 19 warnings), unchanged**; Copy Quality Guard **PASS — 0 violations across 261 files**; Migration SQL Guard **PASS — 149 migration files**; production build succeeds.
+
+**Files/migrations changed:** `supabase/migrations/149_mock_attempt_resume_lookup.sql` (new, NOT APPLIED), `lib/mockAttempt/client.ts` (amended: `getResumableMockAttempt()`, `getMockAttemptAnswers()`), `lib/mockAttempt/types.ts` (amended: `ResumableMockAttempt`), `lib/mockAttempt/workspace.ts` (amended: `determineMockResumeAction()`, `computeResumeStartIndex()`), `app/learning-intelligence/mock-exam/page.tsx` (amended: resume-aware `handleBegin()`, shared `enterAttempt()`, answer-pre-fill via `answeredValuesRef`), `types/supabase.ts` (amended: `ali_mock_attempt_answer` table type, `mock_get_resumable_attempt` function type), `tests/supabase/mockAttemptResumeLookup.test.ts` (new, 20 tests), `tests/lib/mockAttempt/workspace.test.ts` (amended, +12 tests), `ANGEL_MATHEMATICS_MOCK_1_RESUME_REMEDIATION_V1.md` (new), `ALI_DECISION_LOG.md`.
+
+**Decision number:** 217.
+
+**Commit SHA:** recorded after commit (see repository history immediately following this entry).
+
+**Production application status:** NOT APPLIED. No database has been mutated by this session. `ali_mock_form` remains exactly as before — one row, `active = false`.
+
+**Migration application order:** `149_mock_attempt_resume_lookup.sql` is independent of migrations 147/148 (neither reads nor writes anything either touches) — no ordering constraint exists between them; it depends only on migration 085 (already Founder-confirmed applied).
+
+**Whether the attempt-resume capability itself is ready for activation:** **YES.** No new release blocker was found in this session — architecture, security, timer integrity, persistence, and submission safety are all verified via source trace and pure-function/structural tests, and Part 5 explicitly found no deeper timer/attempt architecture defect. The one incidental gap found (blank drafts on question revisit) was fixed as a necessary part of this remediation, not left open. This task's own objective — "implement the minimum production-quality capability required for a learner to resume their existing in-progress Mock attempt safely" — is complete.
+
+**What remains, separately tracked, not a new finding of this session:** migration 148's own application status (Decision 216's currency-symbol correction) was explicitly withheld from this session's evidence by the Founder's own instruction ("Founder will separately confirm migration 148 application before this work proceeds") — its resolution is parallel-tracked, not a blocker this remediation discovered or is responsible for closing.
+
+**Exact Founder next action:** (1) review this remediation and `ANGEL_MATHEMATICS_MOCK_1_RESUME_REMEDIATION_V1.md`; (2) apply migration 149 (independent of 147/148, any order); (3) separately confirm/apply migration 148 per its own already-tracked status; (4) once both are confirmed applied, a final combined release check (re-confirming both remediations together in production) is the natural next step before activation; (5) activation (`active = true`) remains a distinct, separate, later Founder decision, not performed by this one.
+
+**Implications:** Decisions 1–216 all stand, none reversed or rewritten. **Final verdict: A — ATTEMPT RESUME CAPABILITY READY FOR FOUNDER APPLICATION AND FINAL RELEASE VERIFICATION.**
+
+---
