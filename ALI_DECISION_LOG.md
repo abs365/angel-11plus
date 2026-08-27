@@ -8640,3 +8640,45 @@ Each answer is a single deterministic whole number (not a range), matching the r
 **Implications:** Decisions 1–207 all stand, none reversed or rewritten; Decision 206's disclosed concern is now resolved (not merely re-deferred). **Final verdict: B — DOCUMENTATION-ONLY EVIDENCE-FIDELITY DEFECT CONFIRMED.**
 
 ---
+
+### Decision 209 — MATHEMATICS: PERIMETER AREA EVIDENCE-FIDELITY DOCUMENTATION CORRECTION (documentation-only, prepared, still-unapplied migration). Implements Decision 208's own designed-but-not-built remediation: the smallest production-safe correction to the two `explanation` values Decision 208 identified as the exact defect site.
+
+**Reconciliation:** `git fetch origin main` confirmed `HEAD == origin/main` at `fcd860b` (Decision 208) before this session's work began, clean tree. Decision 208 confirmed present exactly once in the log. Founder-supplied production evidence accepted (Level 1, no live DB access this session, same standing limitation as every prior certification/correction decision): migration 142 applied successfully; `mock-mr11-roundingbounds` `independently_validated`; `ali_mock_form` remains 0. Migration 109 re-read directly this session: confirmed the `explanation` column (a top-level column, distinct from the `prompt` jsonb) on rows `mock-mr03mr07-perimeterarea-01a` and `-02a` carries the exact overstated citation Decision 208 identified. Every later migration touching this family (110–142) checked by direct string search: none ever `UPDATE`s the `explanation` column — migration 111 (the only migration that ever writes to this family) sets only `eligibility_status`. This confirms the current production `explanation` values match migration 109's original, unmutated text — the PRISTINE precondition this migration's own fail-closed structure requires.
+
+**Decision 208 authority:** verdict B — DOCUMENTATION-ONLY EVIDENCE-FIDELITY DEFECT CONFIRMED — is the sole authorisation for this correction; Decision 208's own certification-consequence finding (mathematical/content validity SOUND, independent-validation status not withdrawn) is not re-litigated here, only implemented.
+
+**Exact defect corrected, exact affected IDs:** `mock-mr03mr07-perimeterarea-01a` and `mock-mr03mr07-perimeterarea-02a`. Both rows' stored `explanation` text claimed the family represents "the same structural relationship" as 2023 Q14, "independently confirmed against the real 2023 mark scheme's own 2-subpart, 1-mark-each structure," without distinguishing which part of that claim is genuinely source-grounded from which part was authored independently.
+
+**Old vs new evidence meaning:** OLD text presented the family as directly evidenced by 2023 Q14's own structure with no SOURCE-CONTAINS/AUTHORED-EXTRAPOLATION distinction. NEW text explicitly states SOURCE-CONTAINS (2023 Q14 pairs a measurement step with a geometric perimeter/area step, but its measurement step is rounding-bounds derivation), ANGEL-IMPLEMENTS (exact unit conversion followed by ordinary perimeter arithmetic on exact, non-rounded dimensions — no rounding or bounds reasoning), and RELATIONSHIP: PARTIAL/TRANSFORMED GROUNDING (the two-step compound structure is genuinely evidenced by 2023 Q14 and by Decision 163's own independently-proven three-year compound-question norm; the specific rounding-bounds reasoning is not implemented and is not claimed).
+
+**Confirmation learner-facing content is unchanged:** `question`, `answer`, `workingSteps`, `sharedStem`, `marks`, and every other `prompt` jsonb key are byte-for-byte unchanged — proven by a full pre-write snapshot of the complete `prompt` value on both rows, compared post-write. Only the top-level `explanation` column changes.
+
+**Confirmation certification remains valid:** `eligibility_status` remains `independently_validated` on both rows — never referenced in any `SET` clause anywhere in this migration (a structural proof, not merely a prose claim); `ali_family_review` is never inserted, updated, or deleted; no fresh Founder review is created, requested, or implied, per Decision 208's own Part 8 rule that fresh review is required only for verdict C content changes, not verdict B documentation corrections; `mock_eligible` and `ali_mock_form` are untouched.
+
+**Migration filename:** `supabase/migrations/143_mock_mathematics_perimeterarea_evidence_fidelity_correction.sql` (new, NOT applied).
+
+**Fail-closed/idempotency controls:** three-state structure mirroring migration 127's own established single-field-correction pattern, extended to two rows. PRISTINE (both rows carry the exact old `explanation` text) → update both, gated by a live 9-condition structural precondition (family_id/subject/skill/active/eligibility_status/marking_mode/content_difficulty/grouping/answer/marks) requiring exactly 2 matching rows. ALREADY CORRECTED (both rows already carry the exact new text) → safe no-op, no `UPDATE` statement present in that branch. MIXED/UNEXPECTED (anything else) → `RAISE EXCEPTION` naming the actual counts observed, touching nothing.
+
+**Preservation proof:** a full pre-write snapshot of the complete `prompt` jsonb for both rows (temporary table `tmp_perimeterarea_evidence_correction_snapshot`) is compared byte-for-byte against the post-write value; a post-write structural re-check re-verifies `family_id`/`active`/`eligibility_status`/`marking_mode`/`content_difficulty`/grouping unchanged on both rows. Only the `explanation` column is ever `SET` anywhere in this migration (proven by extracting every `SET` clause's column name and asserting the resulting set equals exactly `{explanation}`).
+
+**Tests:** new file `tests/supabase/mockMathematicsPerimeterareaEvidenceFidelityCorrection.test.ts`, 16 tests, all passing — the defect's reality (old text never distinguishes source-grounded from authored content), the corrected text's SOURCE-CONTAINS/ANGEL-IMPLEMENTS/RELATIONSHIP:PARTIAL/TRANSFORMED-GROUNDING structure, a positive proof the corrected text never repeats the overstated "same structural relationship" framing, independent re-derivation of both preserved answers (12.2m, 270cm), exact-ID targeting, single-column-SET proof, live precondition coverage, byte-for-byte prompt preservation, post-write structural re-check, idempotent/mixed-state/fail-closed structure, no `ali_family_review`/`ali_mock_form`/`mock_eligible`/RPC/RLS mutation, an explicit proof `eligibility_status` is never `SET`, and RAISE placeholder-arithmetic checks.
+
+**Verification results:** full automated test suite **2164/2164 passing** (2148 baseline + 16 new, zero regressions); `npx tsc --noEmit` clean; ESLint at the established baseline — **81 problems (62 errors, 19 warnings), unchanged, no new file implicated**; Copy Quality Guard **PASS — 0 violations across 257 files**; Migration SQL Guard **PASS — 143 migration files, all quote-balanced, all RAISE statements arithmetic-correct**; production build succeeds.
+
+**Migration application status:** NOT APPLIED. Prepared for Founder review and manual application via the Supabase Dashboard SQL Editor.
+
+**Remaining blockers:** none. Migration 109 and Decisions 1–208 remain immutable historical evidence, untouched. The adjacent, out-of-scope `explanation`-field systemic-convention observation Decision 208 disclosed (dense internal-authoring-rationale style used identically across the whole Mathematics Mock pool, mitigated by `ali_mock_form`=0) remains a separate, un-actioned item for a future, explicitly scoped session.
+
+**Files changed:** `supabase/migrations/143_mock_mathematics_perimeterarea_evidence_fidelity_correction.sql` (new), `tests/supabase/mockMathematicsPerimeterareaEvidenceFidelityCorrection.test.ts` (new), `ALI_DECISION_LOG.md`.
+
+**Decision number:** 209.
+
+**Commit SHA:** recorded after commit (see repository history immediately following this entry).
+
+**Production application status:** NOT APPLIED. No database has been mutated by this session.
+
+**Governance boundary held:** no learner-facing content altered; `eligibility_status` never changed; no `ali_family_review` row created or modified; no promotion to `mock_eligible`; no `ali_mock_form` row created; no new question authored; Increment 007 not started; migration 109 and Decisions 1–208 left unrewritten.
+
+**Implications:** Decisions 1–208 all stand, none reversed or rewritten. **Final verdict: A — PERIMETER AREA DOCUMENTATION CORRECTION READY FOR FOUNDER APPLICATION.**
+
+---
