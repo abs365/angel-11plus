@@ -119,3 +119,116 @@ export function nextPracticeSentence(priorities: MockNextPracticePriority[]): st
   const labels = [...new Set(priorities.map((p) => (p.competencyId ? competencyLabel(p.competencyId) : p.questionTypeId)))];
   return `Next, it could help to practise: ${labels.join(", ")}.`;
 }
+
+/**
+ * Decision 224 (Mock Report Experience Refinement) — an even plainer,
+ * child-facing rename of the real Assessment Brain competency names
+ * (`COMPETENCIES`, unmodified — those names stay the internal/parent-
+ * facing vocabulary, e.g. "Multi-Step Word-Problem Interpretation"). Only
+ * the 6 Mathematics competencies are named here (the only ones a
+ * Mathematics Mock can ever surface) — anything else falls back to the
+ * real, existing `competencyLabel()`, never blank, never a raw id.
+ */
+const CHILD_FRIENDLY_COMPETENCY_LABELS: Partial<Record<CompetencyId, string>> = {
+  "MR-01": "Number calculations",
+  "MR-02": "Algebra and problem-solving",
+  "MR-03": "Shapes and angles",
+  "MR-04": "Multi-step word problems",
+  "MR-05": "Number properties",
+  "MR-06": "Careful, exact answers",
+};
+
+export function childFriendlySkillLabel(competencyId: string | null, fallbackId: string): string {
+  if (!competencyId) return fallbackId;
+  return CHILD_FRIENDLY_COMPETENCY_LABELS[competencyId as CompetencyId] ?? competencyLabel(competencyId);
+}
+
+/** Section 2 ("Your performance today") — frames the Mock as one piece of evidence, never a comparison, prediction, or readiness claim. */
+export const PERFORMANCE_CONTEXT_NOTE =
+  "This Mock is one piece of evidence. Angel mainly uses it to work out what to practise next, not to compare you with anyone else.";
+
+/**
+ * Section 3 ("What you showed") empty-state — refined wording matching
+ * this refinement's own suggested phrasing exactly: some skills may be
+ * developing, but Angel needs stronger evidence before calling any of
+ * them a secure strength. Never a manufactured compliment.
+ */
+export const NO_SECURE_STRENGTHS_NOTE =
+  "Some skills may be developing, but Angel needs stronger evidence from more questions before calling any of them a secure strength yet.";
+
+/**
+ * Section 4 ("Your 3 priorities") card status — one short, honest line
+ * per card, never a percentage from insufficient evidence (priorities are
+ * only ever drawn from developing/not_yet_demonstrated skills, which
+ * always have 2+ observed subparts by construction — see migration 151's
+ * own Decision-223 threshold — so a plain mark count is always fair here).
+ */
+export function priorityStatusSentence(entry: MockSkillEvidenceEntry): string {
+  if (entry.evidenceLevel === "not_yet_demonstrated") {
+    return "Not yet shown correctly in this Mock.";
+  }
+  return `Got ${entry.correctCount} of ${entry.subpartCount} right in this Mock, still building confidence here.`;
+}
+
+/**
+ * Section 4/6 — "one short explanation" per priority card. Reuses the
+ * SAME safe, question-designed framing `developmentAreaSentence()`
+ * already established (never a claim the learner made a specific
+ * mistake) when a real misconception note exists; an honest, generic
+ * fallback otherwise. Deliberately only ever called for the top 3
+ * priority cards, never for every skill — the exact "repeated
+ * misconception paragraphs" complaint this refinement exists to fix.
+ */
+export function priorityExplanationSentence(entry: MockSkillEvidenceEntry): string {
+  const note = entry.misconceptionNotes[0];
+  return note ? `This question type often involves: ${note}` : "A little more practice here will help build confidence.";
+}
+
+/**
+ * Section 5 ("Other skills to keep developing") — short chip text, never
+ * the longer skillEvidenceLevelLabel() sentence form. "not_yet_
+ * demonstrated" is deliberately labelled the same neutral "Developing"
+ * as a mixed result at chip level (the fuller, honest distinction stays
+ * available in priorityStatusSentence() for the 3 skills that actually
+ * get a dedicated card) -- a compact scan of many chips is not the right
+ * place for a nuanced sentence, and collapsing the two here is never a
+ * false claim, only a coarser one.
+ */
+export function skillEvidenceChipLabel(level: MockSkillEvidenceLevel): string {
+  switch (level) {
+    case "demonstrated_securely":
+      return "Secure";
+    case "developing":
+    case "not_yet_demonstrated":
+      return "Developing";
+    case "insufficient_evidence":
+      return "Limited evidence";
+  }
+}
+
+/** Same chip grouping as skillEvidenceChipLabel() -- "warning" (amber), never "error" (red), for a not-yet-secure skill: anti-shame, never alarming. */
+export function skillEvidenceChipTone(level: MockSkillEvidenceLevel): "success" | "warning" | "neutral" {
+  switch (level) {
+    case "demonstrated_securely":
+      return "success";
+    case "developing":
+    case "not_yet_demonstrated":
+      return "warning";
+    case "insufficient_evidence":
+      return "neutral";
+  }
+}
+
+/**
+ * Section 4/7 — the one, existing, safe Mathematics practice route.
+ * Subject-level, not skill-specific: `generatePersonalisedSession()`
+ * (lib/learningEngine/sessionGenerator.ts) already accepts an optional
+ * `familyFocusCompetencyId` for exactly this kind of targeting, but its
+ * only real caller today is the Founder-validation family-choice pilot,
+ * not this learner-facing practice route — wiring that through was
+ * judged out of this refinement's own bounded scope (see
+ * ALI_DECISION_LOG.md Decision 224), named as a real, safe, ready-made
+ * next step rather than invented here.
+ */
+export const MATHEMATICS_PRACTICE_ROUTE = "/learning-intelligence/practice/mathematics";
+export const PRACTICE_ACTION_LABEL = "Practise Mathematics";
