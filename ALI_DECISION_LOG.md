@@ -9839,3 +9839,49 @@ Full automated test suite **2521/2521 passing** (2496 baseline + 25 new, zero re
 **Final verdict: A — MOCK-TO-TARGETED-PRACTICE LOOP READY.**
 
 ---
+
+### Decision 226 — MATHEMATICS ROLLING PROGRAMME CAPACITY PLAN (investigation/quantification/planning only; no content authored, no Mock 2 composed, no migration; capacity roadmap artifact published).
+
+**Reconciliation:** `git fetch origin main` confirmed `HEAD == origin/main` at `96df856` (Decision 225) before this session's work began, clean working tree. Decision 225 present exactly once. Migration 151 remained the latest file on disk before and after this session (unchanged). Mock 1's own composition/activation/scoring/analysis/report/routing capability (Decisions 213-225) was not touched, per this task's own explicit "do not continue polishing Mock 1" instruction.
+
+## PART 1 — METHOD
+
+A dedicated research fork was used to build the raw inventory (live-computing the real 77/4-row certified pool via `scripts/lib/mockMathematicsPool.mjs`, diffing it against migration 147's own literal 56-id Mock 1 manifest, re-reading real question text for structural-variant judgement, and re-locating Decision 205's own primary-source audit directly in `ALI_DECISION_LOG.md`) so its own extensive grep/read output did not bloat this session's working context — its findings are reported and cited in full in the artifact below, each explicitly tagged **RE-VERIFIED THIS SESSION** or **INHERITED** (cited from Decision 205 without independent re-derivation), matching this task's own explicit "do not carry old aggregate figures forward without re-verifying" instruction.
+
+## PART 2 — HEADLINE FINDINGS
+
+**Re-verified, not assumed**: the certified Mock-track pool is genuinely 81 rows (77 `mock_eligible` + 4 `independently_validated`), 33 numbered experiences across 31 families; Mock 1 consumed exactly 56 rows/21 experiences with zero partial families, leaving a 21-mark reserve across 10 untouched families (medium 13/hard 8/easy 0); the general `practice_eligible` Mathematics estate is separately, much larger (≈199 rows, a heuristic estimate this session could not fully row-verify, disclosed as such); **MR-06 (Precision Under Exact-Match) has zero rows anywhere in the certified pool** — a genuine, previously-uncharacterised-in-these-exact-terms competency-coverage gap; **no `challenge`-tier content exists anywhere** in the 81-row pool; the large majority of the 31 families are single-instance archetypes with zero cross-family structural variant. **Inherited, re-cited not re-derived**: Decision 205's own 62-question/180-mark exhaustive primary-source ceiling (the entire available CSSE Maths corpus, not a sample), its own ≈5%/≤6-mark visual-content finding (confirmed still current, no new evidence changes it), and its own 14-21-instance-per-archetype depth estimate.
+
+## PART 3 — ARTIFACT
+
+`ANGEL_MATHEMATICS_ROLLING_PROGRAMME_CAPACITY_V1.md` (repo root, new) — the full 13-part roadmap this task's own Section 13 required: verified inventory; Mock 1 consumption; Practice capacity (expressed as ranges across 3/5/daily session frequencies × 4/8/12 weeks, explicitly not a precise prediction, per instruction); the archetype depth matrix; anti-memorisation assessment (CRITICAL: MR-06; THIN: MR-03 and the general single-instance pattern; UNREPRESENTED: 5 confirmed-evidenced gap archetypes); future Mock capacity (21-mark reserve, ≥35-45 additional marks needed for a genuine Mock 2, reuse of Mock 1's own rows ruled out by policy until retirement-tracking exists — Decision 222 Part 8's own standing prerequisite, re-cited unchanged); content gaps; difficulty gaps; primary-source opportunities; a recommended authoring model (evaluated against all 4 options this task named, with reasoning for rejecting each alternative); minimum/healthy/strong capacity targets expressed in experiences/variants/coverage, never raw row count alone; a 4-phase sequenced roadmap; and explicit STOP/GO gates.
+
+## PART 4 — DECISION
+
+Evaluated against evidence, not preference, per this task's own instruction: **(B) deepen-only** would leave MR-06 permanently uncovered and all 5 confirmed-evidenced archetypes unclaimed indefinitely. **(C) parametric generation first** is premature — the primary-source ceiling (Section 9 of the artifact) means most future depth requires genuine educational authoring judgement, not mechanical substitution, and this task's own instruction explicitly forbids building generation capability this session. **(A) one-family-at-a-time**, this arc's own proven Mock-1-era pattern, is not rejected but is shown (Decision 205's own inherited finding, re-cited) to have diminishing Mock-ceiling returns at programme scale specifically, distinct from its proven success at Mock-1 scale. **Recommended: a balanced multi-family batch**, sequenced to close the 5 highest-confidence (SOURCE-CONTAINS), highest-structural-need (MR-06/MR-03 competency gaps) items first, with archetype-deepening as an explicit second priority inside the same programme, not a separate initiative.
+
+## PART 5 — SCOPE HELD
+
+No question authored. No Mock 2 composed. No migration created. No `eligibility_status` changed. No Mock 1 file touched. This is documentation only.
+
+## PART 6 — VERIFICATION
+
+Documentation-only session; no code changed. Copy Quality Guard **PASS — 0 violations across 262 files**. Migration SQL Guard **PASS — 151 migration files, unchanged** (no new migration). Full test suite, `tsc --noEmit`, ESLint, and production build remain at their exact Decision 225 state — nothing in the repository's own code changed, so nothing needed re-running beyond the two guards above.
+
+**Files changed:** `ANGEL_MATHEMATICS_ROLLING_PROGRAMME_CAPACITY_V1.md` (new), `ALI_DECISION_LOG.md`.
+
+**Decision number:** 226.
+
+**Commit SHA:** recorded after commit (see repository history immediately following this entry).
+
+**Evidence tiers, explicit:** CODE/SCHEMA EVIDENCE, RE-VERIFIED THIS SESSION — the 81-row pool composition, Mock 1's exact consumption/reserve, competency/difficulty breakdowns, all live-computed against real migration source this session, not carried forward from memory. INHERITED EVIDENCE, explicitly disclosed as not re-derived — Decision 205's own primary-source audit, its visual-content finding, and its 14-21-instance depth estimate. No LIVE FOUNDER EVIDENCE or SIMULATION evidence was applicable to a planning-only decision.
+
+**Production application status:** NO DATABASE CHANGE. No migration. No content authored. No eligibility changed. Mathematics Mock 1 remains exactly as Decision 225 left it.
+
+**What remains deliberately deferred (per this task's own explicit instruction):** the actual first authoring increment (Phase 1 of the roadmap) is not begun — it requires a separate, explicit Founder authorisation. Parametric/automated generation capability is not designed or built. Mock 2 is not composed. Visual/diagram capability is not built (confirmed still correctly lower priority). Retirement-tracking is not built (remains Decision 222 Part 8's own standing, still-open prerequisite).
+
+**Implications:** Decisions 1–225 all stand, none reversed or rewritten. Mathematics Mock 1 remains operational, unmodified, and un-reopened. The Mathematics rolling programme's own next investment is now evidence-based and roadmapped, not yet authorised or begun.
+
+**Final verdict: A — BEGIN BALANCED MULTI-FAMILY AUTHORING PROGRAMME.**
+
+---
