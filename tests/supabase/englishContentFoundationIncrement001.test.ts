@@ -153,6 +153,104 @@ test("How Bees Find Their Way Home Q5 (QT-RC-04 synonym list) references exactly
   }
 });
 
+// === Decision 229 remediation: Understudy defects ==========================
+
+test("REMEDIATION: Understudy Q5's stored answer contract is complete for all 5 requested words, including 'hoarse' -- modelAnswer explicitly restates item (a), and acceptedAnswers includes valid hoarse synonyms", () => {
+  const q = comprehensionPrompts.find((p) => p.id === "eng-inc001-understudy-q05")!;
+  assert.match(q.modelAnswer!, /\(a\) hoarse:/, "modelAnswer must explicitly restate item (a) 'hoarse', not only items (b)-(e)");
+  const accepted = (q.acceptedAnswers ?? []).map((a) => a.toLowerCase());
+  const hoarseSynonyms = ["rough", "croaky", "husky", "raspy"];
+  assert.ok(hoarseSynonyms.some((s) => accepted.includes(s)), "acceptedAnswers must include at least one valid synonym for 'hoarse'");
+  // Marks remain 4 -- (a) is the worked example, unscored, matching the established migration 097 Q5 convention.
+  assert.equal(q.marks, 4);
+});
+
+test("REMEDIATION: Understudy Q1's expected answer matches precisely what the note itself states (laryngitis), not the narrator's separate 'hoarse whisper' description", () => {
+  const q = comprehensionPrompts.find((p) => p.id === "eng-inc001-understudy-q01")!;
+  assert.match(q.modelAnswer!, /laryngitis/i);
+  assert.doesNotMatch(q.modelAnswer!, /hoarse whisper/i, "modelAnswer must not conflate the note's own diagnosis with the narrator's separate description of Isla's voice");
+  for (const a of q.acceptedAnswers ?? []) {
+    assert.doesNotMatch(a, /hoarse whisper/i, `acceptedAnswers entry "${a}" must not restate the narrator's own separate description as if it were the note's content`);
+  }
+});
+
+// === Decision 229 remediation: Bee passage factual defects =================
+
+test("REMEDIATION: the inaccurate '1960s' waggle-dance-decoding claim no longer appears in either passage's stored text or any question's own question/modelAnswer/acceptedAnswers content -- '1960s' may still appear inside an explanation column's own disclosure text describing what was corrected, which is legitimate and expected, not a defect", () => {
+  assert.doesNotMatch(understudyText, /1960s/);
+  assert.doesNotMatch(beeText, /1960s/);
+  for (const p of comprehensionPrompts) {
+    assert.doesNotMatch(p.question, /1960s/i, `question ${p.id} must not reference the 1960s claim`);
+    if (p.modelAnswer) assert.doesNotMatch(p.modelAnswer, /1960s/i, `modelAnswer for ${p.id} must not reference the 1960s claim`);
+    for (const a of p.acceptedAnswers ?? []) assert.doesNotMatch(a, /1960s/i, `acceptedAnswers for ${p.id} must not reference the 1960s claim`);
+  }
+});
+
+test("REMEDIATION: the corrected passage names Karl von Frisch and the verified 1946 publication year for the waggle dance's decoded meaning", () => {
+  assert.match(beeText, /von Frisch/);
+  assert.match(beeText, /1946/);
+});
+
+test("REMEDIATION: Bee Q2 now asks about, and correctly answers, the verified 1946 publication year rather than the inaccurate '1960s' decade claim", () => {
+  const q = comprehensionPrompts.find((p) => p.id === "eng-inc001-bee-q02")!;
+  assert.match(q.question, /1946|year did Karl von Frisch/);
+  assert.equal(q.modelAnswer, "1946.");
+  assert.ok((q.acceptedAnswers ?? []).some((a) => a.includes("1946")));
+  assert.doesNotMatch(q.question, /1960s|which decade/i);
+});
+
+test("REMEDIATION: the magnetic-navigation paragraph no longer presents magnetic sensitivity as an equally-established third system -- it states real evidence while flagging genuine uncertainty about its navigational role", () => {
+  assert.doesNotMatch(beeText, /The third, and perhaps the most surprising, is a sensitivity/, "must no longer be introduced as an equally-numbered third system alongside sun-compass and landmark memory");
+  assert.match(beeText, /still being investigated/i);
+  assert.match(beeText, /least understood/i);
+  // The real, evidenced mechanism (iron-rich particles / interference) is retained, not deleted outright.
+  assert.match(beeText, /iron-rich particles/i);
+});
+
+test("REMEDIATION: Bee Q7 no longer claims 'three navigation systems' as equally established -- reworded to 'things the passage describes bees using or sensing', with the magnetic item carrying its own hedge in the model answer", () => {
+  const q = comprehensionPrompts.find((p) => p.id === "eng-inc001-bee-q07")!;
+  assert.doesNotMatch(q.question, /three navigation systems/i);
+  assert.match(q.question, /three things the passage describes/i);
+  assert.match(q.modelAnswer!, /still investigating|investigated/i, "the model answer's own magnetic item must carry the passage's own uncertainty hedge");
+});
+
+test("REMEDIATION dependency audit: every OTHER bee question (Q1, Q3, Q4, Q6, Q8) remains fully valid against the corrected passage -- none of their required quotations or answers fall inside either corrected paragraph", () => {
+  const q1 = comprehensionPrompts.find((p) => p.id === "eng-inc001-bee-q01")!;
+  assert.ok(beeText.toLowerCase().includes("more than a mile"));
+  assert.equal(q1.modelAnswer, "More than a mile.");
+
+  const q3 = comprehensionPrompts.find((p) => p.id === "eng-inc001-bee-q03")!;
+  for (const quote of q3.quotationRequired ?? []) {
+    assert.ok(beeText.toLowerCase().includes(quote.toLowerCase()), `Q3 quotation "${quote}" must still be an exact substring of the corrected passage`);
+  }
+
+  const q4 = comprehensionPrompts.find((p) => p.id === "eng-inc001-bee-q04")!;
+  assert.match(q4.question, /'remarkable'/);
+  assert.ok(beeText.includes("remarkable"));
+
+  const q6 = comprehensionPrompts.find((p) => p.id === "eng-inc001-bee-q06")!;
+  assert.deepEqual(q6.orderedAnswer, ["the bee finds a good source of food", "the bee flies back to the hive", "the bee performs the waggle dance", "other bees follow the pattern with their antennae"]);
+
+  const q8 = comprehensionPrompts.find((p) => p.id === "eng-inc001-bee-q08")!;
+  assert.deepEqual(q8.correctOptions, ["2", "3"]);
+  assert.ok(beeText.includes("entirely in darkness, deep inside the hive"));
+});
+
+// === Decision 229: smallest standing factual-verification control ==========
+
+test("REMEDIATION: the migration header discloses a FACTUAL VERIFICATION CONTROL section with SOURCE-CONTAINS / ANGEL-SIMPLIFICATION / FACTUAL-CONFIDENCE / UNRESOLVED-CONTESTED-CLAIMS tags for the informational bee passage -- a lightweight, testable convention, not a new governance framework", () => {
+  assert.match(sql152, /FACTUAL VERIFICATION CONTROL/);
+  assert.match(sql152, /SOURCE-CONTAINS:/);
+  assert.match(sql152, /ANGEL-SIMPLIFICATION:/);
+  assert.match(sql152, /FACTUAL-CONFIDENCE:/);
+  assert.match(sql152, /UNRESOLVED-CONTESTED-CLAIMS:/);
+});
+
+test("REMEDIATION: the migration header explains the migration-correction policy applied (direct in-place correction of never-applied, never-reviewed content), distinct from the standing 'immutable once applied' rule", () => {
+  assert.match(sql152, /MIGRATION CORRECTION POLICY/);
+  assert.match(sql152, /immutable once applied/i);
+});
+
 test("How Bees Find Their Way Home Q8 (QT-RC-09 multi-select) correctOptions are independently verifiable against the passage", () => {
   const q = comprehensionPrompts.find((p) => p.id === "eng-inc001-bee-q08")!;
   assert.deepEqual(q.correctOptions, ["2", "3"]);

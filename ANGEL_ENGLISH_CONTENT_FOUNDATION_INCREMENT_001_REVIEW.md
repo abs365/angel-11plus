@@ -1,15 +1,37 @@
-# English Content Foundation — Increment 001 — Founder Review (Decision 228)
+# English Content Foundation — Increment 001 — Founder Review (Decision 228, remediated Decision 229)
 
-Companion artifact to `ALI_DECISION_LOG.md` Decision 228. Migrations 152/153/154
-are **prepared, NOT applied**. Every row below carries `eligibility_status =
-'authentic_assessment_candidate'` — awaiting your own independent review, not
-promoted to `practice_eligible` or `mock_eligible` by this increment. Nothing
-here requires reading SQL to understand.
+Companion artifact to `ALI_DECISION_LOG.md` Decisions 228 and 229. Migrations
+152/153/154 are **prepared, NOT applied**. Every row below carries
+`eligibility_status = 'authentic_assessment_candidate'` — awaiting your own
+independent review, not promoted to `practice_eligible` or `mock_eligible` by
+this increment. Nothing here requires reading SQL to understand.
 
 **Current CSSE boundary held throughout:** Applied Reasoning does not appear
 anywhere below — it is correctly excluded from the current English paper
 (Decision 58), and older papers are used only as historical evidence for
 comprehension reasoning demands, never as a justification for reintroducing it.
+
+---
+
+## REMEDIATION SUMMARY (Decision 229)
+
+Your review of the original (Decision 228) content identified real defects.
+All corrections below are reflected in the passage text and question tables
+further down this document — this section is a concise summary so you do not
+need to compare versions yourself.
+
+| # | Defect found | Correction made | Dependent questions affected | Factual evidence basis | Passage meaning changed? | Marks/QT/competency changed? |
+|---|---|---|---|---|---|---|
+| 1 | Understudy Q5's stored answer contract omitted a valid answer for "hoarse" (item (a), the worked example) | `modelAnswer` now explicitly restates item (a); `acceptedAnswers` now includes valid hoarse synonyms | None | N/A (internal consistency, not factual) | No | No — marks stay 4; (a) remains the unscored worked example, matching the already-certified migration 097 Q5 convention |
+| 2 | Understudy Q1 conflated the note's own diagnosis (laryngitis) with the narrator's separate description ("a hoarse whisper") | `modelAnswer`/`acceptedAnswers` now answer precisely what the note states: laryngitis alone | None | N/A (internal consistency, not factual) | No | No |
+| 3 | Bee passage claimed the waggle dance was "first decoded... in the 1960s" — factually inaccurate | Replaced with an original sentence naming Karl von Frisch and his verified 1946 publication | Q2 (below) | SOURCE-CONTAINS/FACTUAL-CONFIDENCE HIGH — see Factual Verification Control section | Yes, one sentence (final paragraph) | No |
+| 4 | Bee Q2 asked for the (now-incorrect) decade | Retained as a corrected retrieval question, now asking for the verified 1946 publication year rather than being replaced with an unrelated fact | — | Same as #3 | N/A | No — same QT/competency/marks |
+| 5 | Magnetic-navigation paragraph presented magnetic sensitivity as an established third system, equivalent in certainty to the sun-compass and landmark systems | Rewritten to state the real evidence (iron-rich particles, interference experiments) while accurately conveying that its role in everyday navigation is still being investigated | Q7 (below) | SOURCE-CONTAINS/FACTUAL-CONFIDENCE MEDIUM — see Factual Verification Control section | Yes, one paragraph | No |
+| 6 | Bee Q7 ("list the three navigation systems") implied all three were equally established | Retained as a 3-item list question (the corrected passage still supports one), reworded to "things the passage describes bees using or sensing", with the model answer's magnetic item carrying the passage's own hedge | — | Same as #5 | N/A | No — same QT/competency/marks |
+
+**Dependency audit:** every other question in both passages (Understudy Q2/3/4/6/7; Bee Q1/3/4/5/6/8) was re-checked against the corrected passage text and remains fully valid, unchanged. Full detail in `ALI_DECISION_LOG.md` Decision 229.
+
+**Writing prompts:** unchanged — no defect was found in "Somewhere New", "A Mistake You Learned From", or "Should Children Have Limits on Screen Time?"; all three are approved as-is per your own instruction.
 
 ---
 
@@ -84,11 +106,11 @@ conflict type, different resolution mechanism.
 
 | # | Type | Competency | Marks | Question | Expected answer |
 |---|---|---|---|---|---|
-| 1 | QT-RC-01 (literal retrieval) | RC-01 | 1 | Why was Isla unable to perform, per her mother's note? | Laryngitis (hoarse whisper). |
+| 1 | QT-RC-01 (literal retrieval) | RC-01 | 1 | Why was Isla unable to perform, per her mother's note? | Laryngitis. *(Remediated: the original answer conflated the note's own diagnosis with the narrator's separate "hoarse whisper" description — corrected to answer precisely what the note itself states.)* |
 | 2 | QT-RC-01 | RC-01 | 1 | When did Ruby audition for the part? | Back in September. |
 | 3 | QT-RC-02 (yes/no + justify) | RC-02 | 4 | Does Maya feel confident when first asked to step in? | No — "not at all sure she agreed"; "two entirely different skills". |
 | 4 | QT-RC-03 (vocabulary-in-context) | RC-03 | 1 | What does "made no secret" mean? | She was open about it, didn't hide it. |
-| 5 | QT-RC-04 (synonym list) | RC-03 | 4 | Synonyms for hoarse/ceremony/resented/admitted/genuinely | formality; felt bitter about; confessed; truly. |
+| 5 | QT-RC-04 (synonym list) | RC-03 | 4 | Synonyms for hoarse/ceremony/resented/admitted/genuinely | (a) hoarse: rough/croaky *(worked example, unscored)*; ceremony: formality; resented: felt bitter about; admitted: confessed; genuinely: truly. *(Remediated: the stored answer contract now explicitly covers "hoarse" too, not only the 4 scored items.)* |
 | 6 | QT-RC-05 (quotation + explanation) | RC-02 | 2 | Quote showing Ruby's feelings changed since September | "that was months ago, and this isn't about September anymore." |
 | 7 | QT-RC-10 (word-choice effect) | RC-02 | 2 | Why "still shaking slightly" rather than just "nervous"? | Shows nervousness physically rather than naming it; makes it feel real; sets up the contrast that follows. |
 
@@ -105,7 +127,7 @@ migration.
 
 ## PASSAGE 2 — "How Bees Find Their Way Home"
 
-**Genre:** Informational / popular-science explanation. **Word count:** 528. **Difficulty:** medium.
+**Genre:** Informational / popular-science explanation. **Word count:** 570. **Difficulty:** medium.
 
 **Why this passage adds genuine diversity:** the first informational,
 non-narrative text in the certified estate — present tense, explicit
@@ -121,7 +143,7 @@ distinct `text_type` from both existing passages.
 > perfectly straight line, and then tells the rest of the colony exactly
 > where to go.
 >
-> Bees rely on several different navigation systems at once, and
+> Bees rely on several different navigation methods at once, and
 > scientists have only fully understood some of them in the last hundred
 > years.
 >
@@ -131,17 +153,18 @@ distinct `text_type` from both existing passages.
 > is hidden, bees can often still detect its position using patterns of
 > polarised light in the sky that are invisible to human eyes.
 >
-> The second system is memory of landmarks. Experienced bees build up a
+> The second is memory of landmarks. Experienced bees build up a
 > detailed mental map of the area around their hive, learning to recognise
 > particular trees, rooftops or unusual rock formations. Younger, less
 > experienced bees rely more heavily on the sun-compass method, gradually
 > building their own landmark memory as they make repeated trips.
 >
-> The third, and perhaps the most surprising, is a sensitivity to the
-> Earth's magnetic field. Tiny particles inside a bee's body are thought to
-> act almost like an internal compass needle, giving her a rough sense of
-> direction even when neither the sun nor familiar landmarks are
-> available.
+> Scientists have also found real evidence that bees can sense the
+> Earth's magnetic field: tiny iron-rich particles inside a bee's abdomen
+> appear to act almost like a compass needle, and interfering with them
+> changes how well a bee can find her way. Exactly how much this magnetic
+> sense contributes to everyday navigation, though, is still being
+> investigated — it is one of the least understood of a bee's senses.
 >
 > Once a bee returns to the hive with news of a good food source, she
 > performs what scientists call the waggle dance. Moving in a distinctive
@@ -161,8 +184,10 @@ distinct `text_type` from both existing passages.
 > the faint vibrations the dancing bee produces, reconstructing a mental
 > map of a location none of them have ever visited from movement alone.
 >
-> Scientists first decoded the basic meaning of the waggle dance in the
-> 1960s, though researchers continue to discover new details about it even
+> An Austrian scientist named Karl von Frisch spent decades studying
+> honeybees, and in 1946 he published his full account of what the waggle
+> dance actually meant — work that later earned him a Nobel Prize.
+> Researchers continue to discover new details about the dance even
 > today. What is already clear is that a creature with a brain smaller
 > than a grain of rice is capable of communicating precise distance and
 > direction information almost as effectively as a written map — a
@@ -173,21 +198,52 @@ distinct `text_type` from both existing passages.
 | # | Type | Competency | Marks | Question | Expected answer |
 |---|---|---|---|---|---|
 | 1 | QT-RC-01 | RC-01 | 1 | How far might a bee travel from her hive? | More than a mile. |
-| 2 | QT-RC-01 | RC-01 | 1 | Which decade was the waggle dance first decoded? | The 1960s. |
+| 2 | QT-RC-01 | RC-01 | 1 | In what year did Karl von Frisch publish his full account of the waggle dance's meaning? | 1946. *(Remediated: the original question/answer, "which decade... the 1960s", was factually inaccurate — corrected to a verified, single-year fact from the corrected passage.)* |
 | 3 | QT-RC-02 | RC-02 | 4 | Do young bees rely mainly on landmark memory? | No — young bees rely more on the sun-compass; landmark memory builds gradually with experience. |
 | 4 | QT-RC-03 | RC-03 | 1 | What does "remarkable" mean here? | Very impressive/surprising. |
 | 5 | QT-RC-04 | RC-03 | 4 | Synonyms for detect/distinctive/crowd/reconstructing/astonishing | notice; recognisable; gather; rebuilding; amazing. |
 | 6 | QT-RC-06 (sequencing) | RC-04 | 4 | Order 4 events in the waggle-dance process | Find food → fly back → perform dance → other bees follow with antennae. |
-| 7 | QT-RC-08 (list extraction) | RC-01 | 3 | List the 3 navigation systems | Sun/polarised light; landmark memory; magnetic field sensitivity. |
+| 7 | QT-RC-08 (list extraction) | RC-01 | 3 | List the 3 things the passage describes bees using or sensing to find their way home | Sun/polarised light; landmark memory; sensing the Earth's magnetic field (passage notes its role is still being investigated). *(Remediated: reworded from "three navigation systems" so the magnetic item is no longer implied to be equally established.)* |
 | 8 | QT-RC-09 (multi-select) | RC-01 | 2 | Tick the 2 true statements about the waggle dance (of 4) | Direction to fly; how far away the food is. |
 
 **Teaching evidence:** every question carries a real, specific
 `addresses_misconception` note.
 
-**Anti-memorisation rationale:** wholly original explanatory content — a
-genuine, accurate simplification of well-established, publicly-known biology
-(honeybee navigation and the waggle dance), not copied or adapted from any
-single source text.
+**Anti-memorisation rationale:** wholly original explanatory content — not
+copied or adapted from any single source text.
+
+**Factual Verification Control (Decision 229) — new standing convention for
+Angel-authored non-fiction:** automated tests prove internal consistency
+(answers match the stored passage) but cannot by themselves prove a
+real-world claim is true. Both real-world factual claims in this passage were
+independently verified this session against multiple authoritative sources
+before correction:
+
+- **Waggle-dance decoding (Karl von Frisch, 1946):** SOURCE-CONTAINS —
+  multiple independent, authoritative sources (Springer/*Insectes Sociaux*
+  "The dance legacy of Karl von Frisch"; *Bee Craft* "How Karl von Frisch
+  deciphered the waggle dance"; EBSCO Research Starters) describe von
+  Frisch's full published account as 1946 ("Die Tänze der Bienen"), with a
+  Nobel Prize awarded in 1973 for this body of work. ANGEL-SIMPLIFICATION —
+  the passage names von Frisch and 1946 as one clean, memorable retrieval
+  fact, mentioning the Nobel Prize only briefly without a specific year.
+  FACTUAL-CONFIDENCE — HIGH. UNRESOLVED-CONTESTED-CLAIMS — none identified.
+- **Magnetic sensitivity in bees:** SOURCE-CONTAINS — peer-reviewed sources
+  (Springer/*Animal Cognition* and PMC, "Magnetoreception in Hymenoptera";
+  *Nature Scientific Reports*, "Magnetic Sensing through the Abdomen of the
+  Honey Bee") document iron-rich granules in the abdomen, experiments
+  showing interference disrupts navigation, and explicitly describe this as
+  "one of the least understood senses" in bees. ANGEL-SIMPLIFICATION — the
+  passage states the real evidence without naming trophocytes/magnetite, and
+  explicitly flags that its navigational role is still being investigated.
+  FACTUAL-CONFIDENCE — MEDIUM (sensitivity is well evidenced; its precise
+  role and mechanism remain open questions). UNRESOLVED-CONTESTED-CLAIMS —
+  whether the abdominal iron granules are the true magnetoreceptor organ, or
+  serve a different (e.g. iron-storage) function, is genuinely unresolved in
+  the cited literature — the passage deliberately avoids asserting a
+  mechanism for this reason.
+
+Full source list is recorded in `ALI_DECISION_LOG.md` Decision 229.
 
 ---
 
