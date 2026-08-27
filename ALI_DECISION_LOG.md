@@ -9295,3 +9295,51 @@ Full automated test suite **2376/2376 passing** (2344 baseline + 20 migration-14
 **Implications:** Decisions 1–216 all stand, none reversed or rewritten. **Final verdict: A — ATTEMPT RESUME CAPABILITY READY FOR FOUNDER APPLICATION AND FINAL RELEASE VERIFICATION.**
 
 ---
+
+### Decision 218 — MATHEMATICS MOCK 1: FINAL COMBINED PRODUCTION RELEASE GATE (both Decision-216 P1 findings independently re-verified CLOSED; no new blocker found; activation not performed, remains a separate Founder decision).
+
+**Reconciliation:** `git fetch origin main` confirmed `HEAD == origin/main` at `f48696c` (Decision 217) before this session's work began, clean working tree. Decision 217 present exactly once. Migration 149 remained the latest file on disk (no migration 150+ existed before this session). Per this task's own explicit instruction, migrations 147, 148, and 149 were treated as Founder-confirmed applied and were **not** re-requested from the Founder.
+
+## PART 1 — LOCAL CACHE DRIFT FOUND AND CORRECTED (before any verification could proceed)
+
+Re-running the existing scoring simulation against the Founder-confirmed post-migration-148 production state immediately surfaced that `scripts/mock-mathematics-source-content.json` (this repository's own local extraction cache, unchanged since Decision 213) still held the pre-fix, `£`-prefixed Camping Sale answer values — exactly the same class of drift Decision 215 found and corrected for the Bus Timetable wording, now recurring for a different field on a different family, for the identical reason: the Founder's own production application of a prepared migration is not automatically reflected in this repository's own local artifacts, and must be re-synced explicitly each time. Corrected this session: the four Camping Sale answer values updated to `102`/`91.80`/`1.80`/`170`, matching migration 148's own `v_new_answers` literal exactly. `scripts/mock-mathematics-scoring-simulation.mjs` itself amended to self-check for, and throw on, any remaining `£`-prefixed answer — turning this exact drift class into a fail-closed guard for any future session. `ANGEL_FIRST_MATHEMATICS_MOCK_1_FINAL_CURATION_V1.md`'s own audit table (§5) and header updated to reflect the corrected values, with an explicit correction disclosure added (matching Decision 215's own established pattern) — the learner-facing question text was never affected, only the internal stored answer format.
+
+## PART 2 — P1-A RE-VERIFIED CLOSED: CAMPING SALE CURRENCY-SYMBOL DEFECT
+
+`scoreMockResponse()`/`scoreMockAttempt()` (`lib/ali/mockScoringSimulation.ts`, Decision 216, unchanged) re-run against the corrected values: `102`/`91.80`/`1.80`/`170` all score correct against their own bare-numeric equivalents; the self-checking script confirms **zero** `£`-prefixed answers remain anywhere in the 56-row frozen manifest. `tests/supabase/mockMathematicsCampingsaleAnswerCurrencySymbolCorrection.test.ts` (20 tests, Decision 216) re-confirmed passing — those tests target the migration's own SQL structure, correctly unaffected by its application status. **P1-A: CLOSED**, independently re-verified.
+
+## PART 3 — P1-B RE-VERIFIED CLOSED: ATTEMPT RESUME
+
+Full Decision-217 architecture re-inspected directly (no drift found): `mock_get_resumable_attempt()`'s own signature/security model, `determineMockResumeAction()`/`computeResumeStartIndex()`, and `handleBegin()`'s resume-aware flow all unchanged and correct. `tests/supabase/mockAttemptResumeLookup.test.ts` (20 tests) and the resume-specific portion of `tests/lib/mockAttempt/workspace.test.ts` (12 tests) re-confirmed passing. **P1-B: CLOSED**, independently re-verified.
+
+## PART 4 — COMBINED FINAL-GATE SIMULATION (Section 11's own "strongest available" requirement)
+
+New `scripts/mock-mathematics-final-release-gate-simulation.mjs` — one script tying together every real, unmodified capability across Decisions 212-217 into a single end-to-end narrative against the REAL frozen manifest and REAL current (post-148) answers: frozen-form integrity check → discover (no resumable attempt, `create_new`) → start → answer 7 questions through Camping Sale, confirming the corrected `91.80` bare-numeric answer is used → simulate a full refresh → rediscover via `determineMockResumeAction` (`resume_in_progress`, same attempt id, real `expiresAt` carried through) → **35 of the original 60 minutes correctly remain** (not a fresh 60) → restore the exact same deterministic recovery position → continue, editing an earlier answer (proven no duplicate created) → complete all 56 → submit → score → **56/56, 100%**, with Camping Sale and the corrected Bus Timetable answer (`28`) both individually re-confirmed correct within the same run. All 27 of its own assertions pass. Explicitly disclosed as pure-function simulation, not live browser/database evidence — no live database connection or browser-E2E framework exists in this environment (unchanged since every prior release-verification session in this arc), and no new framework was built for this gate, per the governing directive's own explicit instruction against manufacturing unnecessary work.
+
+## PART 5 — REMAINING SECTIONS RE-CONFIRMED, NO DRIFT
+
+Frozen-form integrity (21 questions, 56 marks, exact curated order, Running Club present, Sum/Difference and Perimeter Area absent, `validateManifest()` = VALID, no manifest mutation since freeze — migration 147's own `question_manifest` stores ids only, untouched by 148/149) — unchanged from Decision 216/217. Inactive access boundary (database-enforced `active = true` gate inside every attempt-creation RPC, migration 149 adds no new attempt-creation path) — unchanged. Timer integrity (60-minute documented duration, server-authoritative `expires_at`, structurally impossible to reset) — unchanged. Results (dynamically-computed 56-mark total, never presentable as 60, admin-gated release) — unchanged. No scoring rule was changed during this gate — no blocker required it.
+
+## PART 6 — DEFECT REGISTER
+
+**No new defect found.** Both of Decision 216's P1 findings are independently re-verified closed. No P0. No P2. No P3 worth naming beyond Decision 213/214's own already-accepted, non-blocking difficulty-ordering property.
+
+## PART 7 — RELEASE READINESS ANSWERS
+
+1. Both Decision-216 P1 blockers closed? **Yes**, independently re-verified. 2. Frozen 21Q/56-mark Mock intact? **Yes.** 3. Inactive access server-enforced? **Yes.** 4. Resume secure? **Yes.** 5. Timer integrity preserved? **Yes.** 6. Answers persisted and restored? **Yes.** 7. Scoring correct? **Yes.** 8. Results correct? **Yes.** 9. Unresolved P0/P1 defects? **None.** 10. Would activation now be authorised, if accountable for production release quality? **Yes**, subject to the Founder's own final go/no-go — every technical gate this session and Decisions 216/217 could verify has passed; the remaining decision is commercial/timing judgement, not a further technical blocker.
+
+## PART 8 — VERIFICATION
+
+Full automated test suite **2376/2376 passing** (unchanged from Decision 217 — no new test file this session, only data/documentation corrections plus one new simulation script; zero regressions); `npx tsc --noEmit` clean; ESLint at the established baseline — **81 problems (62 errors, 19 warnings), unchanged**; Copy Quality Guard **PASS — 0 violations across 261 files**; Migration SQL Guard **PASS — 149 migration files** (unchanged, no new migration); production build succeeds.
+
+**Files changed:** `scripts/mock-mathematics-source-content.json` (4 Camping Sale answer values corrected), `scripts/mock-mathematics-scoring-simulation.mjs` (amended: post-migration-148 framing, self-checking guard), `scripts/mock-mathematics-final-release-gate-simulation.mjs` (new), `ANGEL_FIRST_MATHEMATICS_MOCK_1_FINAL_CURATION_V1.md` (audit table + header corrected, correction disclosure added), `ANGEL_MATHEMATICS_MOCK_1_RELEASE_VERIFICATION_V2.md` (new, final combined artifact, V1 preserved unchanged), `ALI_DECISION_LOG.md`. No new migration.
+
+**Decision number:** 218.
+
+**Commit SHA:** recorded after commit (see repository history immediately following this entry).
+
+**Production application status:** NOT APPLIED — no migration was created or applied this session. No `ali_mock_form` row was created, modified, or activated. No Mock attempt was created.
+
+**Implications:** Decisions 1–217 all stand, none reversed or rewritten. **Final verdict: A — MATHEMATICS MOCK 1 READY FOR FOUNDER-AUTHORISED ACTIVATION.**
+
+---

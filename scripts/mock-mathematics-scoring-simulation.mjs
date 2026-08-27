@@ -71,16 +71,18 @@ console.log("\n=== Scenario 4: representative mixed case + targeted checks ===")
   console.log(`rawAchieved=${result.rawAchieved} rawAvailable=${result.rawAvailable} percentage=${result.percentage} correct=${result.correctCount} incorrect=${result.incorrectCount}`);
   console.log("funrun-03 (2.50 vs stored 2.5):", result.outcomes.find((o) => o.questionId === "mock-mr09-funrun-03"));
   console.log("bustimetable-04 (28, corrected wording answer):", result.outcomes.find((o) => o.questionId === "mock-mr10-bustimetable-04"));
-  console.log("campingsale-02 (91.80, NO currency symbol, CURRENT stored answer is '£91.80'):", result.outcomes.find((o) => o.questionId === "mock-mr04-campingsale-02"));
+  console.log("campingsale-02 (91.80, NO currency symbol, post-migration-148 stored answer is '91.80'):", result.outcomes.find((o) => o.questionId === "mock-mr04-campingsale-02"));
 }
 
-console.log("\n=== FINDING (pre-migration-148): currency-symbol-prefixed stored answers reject bare-numeric responses ===");
+console.log("\n=== POST-MIGRATION-148 CONFIRMATION (Decision 218): no currency-symbol-prefixed answer remains ===");
 {
   const currencyAnswerRows = rows.filter((r) => r.answer.includes("£"));
-  console.log(`${currencyAnswerRows.length} of 56 rows currently store a "£"-prefixed answer:`, currencyAnswerRows.map((r) => `${r.id}=${r.answer}`));
-  for (const r of currencyAnswerRows) {
-    const bareNumeric = r.answer.replace("£", "");
-    console.log(`  ${r.id}: stored="${r.answer}", bare-numeric response="${bareNumeric}" -> ${scoreMockResponse(r.answer, bareNumeric).toUpperCase()}`);
+  console.log(`${currencyAnswerRows.length} of 56 rows store a "£"-prefixed answer (expected 0 -- migration 148 Founder-confirmed applied)`, currencyAnswerRows.map((r) => `${r.id}=${r.answer}`));
+  if (currencyAnswerRows.length !== 0) {
+    throw new Error("Self-check FAILED: migration 148 is Founder-confirmed applied, but a £-prefixed answer was still found -- scripts/mock-mathematics-source-content.json is out of sync with production.");
   }
-  console.log("Migration 148 (prepared, NOT applied) corrects these 4 stored answers to bare-numeric form -- see that migration and its own tests.");
+  for (const id of ["mock-mr04-campingsale-01", "mock-mr04-campingsale-02", "mock-mr04-campingsale-03", "mock-mr04-campingsale-04"]) {
+    const row = rows.find((r) => r.id === id);
+    console.log(`  ${id}: stored="${row.answer}", bare-numeric equivalent response -> ${scoreMockResponse(row.answer, row.answer).toUpperCase()}`);
+  }
 }

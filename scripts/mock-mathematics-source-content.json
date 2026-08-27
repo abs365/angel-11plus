@@ -601,22 +601,22 @@
   },
   "mock-mr04-campingsale-01": {
     "question": "A camping shop sells tents. One tent has an original price of £120. For a summer sale, the shop reduces this tent's price by 15%. What is the tent's price during the summer sale?",
-    "answer": "£102",
+    "answer": "102",
     "sharedStem": "A camping shop sells tents."
   },
   "mock-mr04-campingsale-02": {
     "question": "A camping shop sells tents. A tent that was reduced by 15% to £102 is then given a further 10% off for loyalty-card customers. What does the loyalty-card customer pay for the tent?",
-    "answer": "£91.80",
+    "answer": "91.80",
     "sharedStem": "A camping shop sells tents."
   },
   "mock-mr04-campingsale-03": {
     "question": "A camping shop sells tents. Some customers think a 15% discount followed by a 10% discount is the same as a single 25% discount. A tent originally priced at £120 actually costs £91.80 after the two discounts are applied in order. How much MORE is this than the price a single 25% discount straight off the £120 original price would give?",
-    "answer": "£1.80",
+    "answer": "1.80",
     "sharedStem": "A camping shop sells tents."
   },
   "mock-mr04-campingsale-04": {
     "question": "A camping shop sells tents. A different tent is sold after a single 20% discount is applied to its own original price, making its sale price £136. What was that tent's original price before the discount?",
-    "answer": "£170",
+    "answer": "170",
     "sharedStem": "A camping shop sells tents."
   },
   "mock-mr06-numberpuzzle-01": {
