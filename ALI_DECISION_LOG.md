@@ -8682,3 +8682,151 @@ Each answer is a single deterministic whole number (not a range), matching the r
 **Implications:** Decisions 1–208 all stand, none reversed or rewritten. **Final verdict: A — PERIMETER AREA DOCUMENTATION CORRECTION READY FOR FOUNDER APPLICATION.**
 
 ---
+
+### Decision 210 — MATHEMATICS: POST-INCREMENT-006 FIRST MOCK STRUCTURAL DECISION GATE (read-only, post-Rounding-Bounds-certification and post-Perimeter-Area-documentation-audit). Continues from Decisions 203–209. Fresh evidence-based recompute of First Mock readiness — no authoring, no migration, no eligibility change, no tooling built.
+
+**Reconciliation:** `git fetch origin main` confirmed `HEAD == origin/main` at `eee5f0d` (Decision 209) before this session's work began, clean working tree. Migration 143 remains the latest file on disk (no migration 144+ exists — consistent with the Founder-supplied production events below, which are database-side, not new repository files). Decisions 203–209 re-read directly from this log and reconciled; none rewritten. Founder-supplied production events accepted as Level-1 evidence (no live database access in this environment, same disclosed limitation as every decision since 189): migration 142 applied — `mock-mr11-roundingbounds-01/02/03/04` `independently_validated`; migration 143 documentation correction applied and production-verified; `mock-mr03mr07-perimeterarea` remains `independently_validated`; `ali_mock_form` remains 0; no reserve family promoted to `mock_eligible`; Increment 007 not begun. Every migration from 140–143 re-read directly from disk this session (not assumed from Decision-log prose) to independently confirm row counts, marks, and `content_difficulty` for Rounding Bounds and Perimeter Area (see Part 2/3 below) — this recovered one correction to prior framing: `mock-mr03mr07-perimeterarea`'s four rows are tagged `content_difficulty = 'hard'` on all four (migration 109, lines 169/176/183/190), not the mixed easy/medium tier some earlier decisions' shorthand descriptions might imply; this does not change any prior decision's marginal-value finding (0 marginal marks), only sharpens the difficulty-distribution accounting below.
+
+## PART 1 — MATHEMATICS-ONLY, NOT CROSS-SUBJECT
+
+All counts below are Mathematics (`subject='maths'`) only, drawn from `ali_question_bank` rows and the Decision-log's own Founder-confirmed baselines, cross-checked against direct migration reads. No English/Writing row is included anywhere in this decision's arithmetic.
+
+## PART 2 — THE MATHEMATICS ESTATE, RECONSTRUCTED
+
+**A. `mock_eligible` Mathematics content:** 55 rows / 55 marks / 27 numbered-question experiences (3 Classification A, 19 B, 2 C, 3 S) — unchanged since Decision 189, re-confirmed this session by grepping every migration 131–143 for `set eligibility_status` writes: none targets `mock_eligible`. Difficulty distribution: predominantly medium (Decision 195's own direct primary-source finding stands unchanged — only 3 of the 27 named families carry any `easy` row at all; only one family carries any `hard` row).
+
+**B. `independently_validated` Mathematics reserve:** 7 families, 26 rows, 26 marks, 8 experiences, all Classification A:
+
+| Family | Rows | Marks | Experiences | Difficulty |
+|---|---|---|---|---|
+| `mock-mr10-bustimetable` | 4 | 4 | 1 | medium, medium, hard, hard |
+| `mock-mr13-craftstall` | 3 | 3 | 1 | medium, medium, hard |
+| `mock-mr09-funrun` | 4 | 4 | 1 | medium, medium, hard, hard |
+| `mock-mr04-campingsale` | 4 | 4 | 1 | easy, medium, hard, hard |
+| `mock-mr06-numberpuzzle` | 3 | 3 | 1 | medium, medium, hard |
+| `mock-mr11-roundingbounds` | 4 | 4 | 1 | easy, easy, medium, hard |
+| `mock-mr03mr07-perimeterarea` | 4 | 4 | 2 | hard, hard, hard, hard |
+
+Row/mark figures re-derived directly from migrations 125, 137, 134, 131, 140, 109 this session (not carried forward from prose) — `mock-mr06-numberpuzzle` confirmed still 3 rows/3 marks (Decision 200/201's remediation, not the originally-designed 4), `mock-mr11-roundingbounds` confirmed 4 rows/4 marks exactly as authored (no remediation event occurred for this family, unlike Number Puzzle).
+
+**C. `authentic_assessment_candidate` Mathematics content:** **zero.** Every family that entered this status since Decision 195 (Bus Timetable, Craft Stall, Fun Run, Camping Sale, Number Puzzle, Rounding Bounds) has since completed its independent-validation certification; none remains at this intermediate stage.
+
+**D. Pending/rejected/otherwise unavailable:** `mock-mr09-data` remains Classification D, unresolved (migration 112's own exclusion note, unchanged). Decision 204's two rejected authoring candidates (best-value/unit-price — exhausted; work-backwards/reverse-arithmetic — moderate-to-high overlap) remain not viable; no new evidence surfaced this session to reopen either, so neither is resurrected, per the directive's own instruction.
+
+## PART 3 — RECOMPUTED COMPOSITION CEILING (independent, not carried forward)
+
+Same richest-first marginal-swap mechanic verified across Decisions 183/189/191/195/196/198/203 (a new Classification-A experience displaces the weakest currently-included 2-mark filler; marginal ceiling gain ≈ the new experience's own marks minus 2 per experience, since 19 such 2-mark fillers exist in surplus in the `mock_eligible` pool):
+
+| Reserve family | Marks | Experiences | Marginal gain |
+|---|---|---|---|
+| Bus Timetable | 4 | 1 | +2 |
+| Craft Stall | 3 | 1 | +1 |
+| Fun Run | 4 | 1 | +2 |
+| Camping Sale | 4 | 1 | +2 |
+| Number Puzzle | 3 | 1 | +1 |
+| Rounding Bounds | 4 | 1 | **+2** |
+| Perimeter Area | 4 | 2 | **+0** |
+
+**Rounding Bounds recomputed independently, not carried forward from Decision 206's pre-certification projection:** this session re-derived +2 from Decision 207's own re-verified, production-confirmed row count (4 rows/4 marks/1 experience, unchanged from authoring — no correction event occurred, unlike Number Puzzle's 4→3 remediation). The figure happens to match Decision 206's original estimate, but is arrived at here by applying the swap-mechanic arithmetic to the confirmed *certified* figure, not by trusting the pre-certification prose.
+
+**Perimeter Area reconfirmed, not assumed zero:** re-derived directly from migration 109's own rows this session (2 experiences of 2 marks each). Under the swap mechanic, two 2-mark experiences displace two 2-mark fillers 1-for-1 — net zero marginal ceiling gain, a **fifth** consecutive independent reconfirmation (Decisions 183, 189, 195, 198, now 210), unaffected by Decision 208/209's documentation-only correction (content, marks, and structure were never touched by migration 143).
+
+**Ceilings:**
+- **`mock_eligible`-only ceiling (State A):** 44 marks @ 20 questions, 46 marks @ 21 questions — unchanged baseline (Decision 189).
+- **Ceiling with each useful reserve family individually:** Bus Timetable 46/48, Craft Stall 45/47, Fun Run 46/48, Camping Sale 46/48, Number Puzzle 45/47, Rounding Bounds 46/48 (all @20Q/@21Q); Perimeter Area 44/46 (no change).
+- **Best combined ceiling (all six useful reserve families; Perimeter Area excluded as zero-value):** **44 + 10 = 54 marks @ 20 questions; 46 + 10 = 56 marks @ 21 questions.**
+- **Raw vs. composable:** raw marks if every reserve family (including Perimeter Area) were promoted = 55 + 26 = 81; only 54/56 of that is structurally composable into one defensible 20/21-question form under the swap mechanic.
+- **Remaining deficit against the ~58–60-mark authentic target: 4–6 marks @ 20 questions, 2–4 marks @ 21 questions.** This is the narrowest deficit recorded at any decision gate in this arc (Decision 195: 9–11; Decision 198: 7–9; Decision 203/205: 6–8/4–6) — Rounding Bounds' real, certified +2 marginal gain closes exactly the gap Decision 205 flagged as the next lever.
+
+## PART 4 — FIRST MOCK READINESS GATE
+
+**Total marks:** 54–56 of an authentic ~58–60 target (90–97% of target, tightest yet). **Numbered-question count:** 33 combined experiences (27 pool + 6 useful reserve) comfortably exceed the 20/21 needed — no supply-count constraint. **Grouped-question structure:** fully supported end-to-end — `question_group_id`/`group_order`/`subpart_label` populated on every reserve family (migration 112 precedent), learner-facing rendering and scoring already generic and grouping-aware (migrations 104/106/107), re-confirmed by direct source read this session, not assumed. **Archetype diversity:** 9 effective Classification-A archetypes usable in one composition (3 in-pool + 6 useful reserve; Perimeter Area's archetype is real but contributes no additional composable value) against 27–33 total numbered experiences ≈ 27–33% A-share by experience count, or ≈43–45% of a 20/21-question form if every effective A-archetype is selected (9/21≈43%, 9/20=45%) — materially closer to Decision 189's own ~48% authenticity benchmark than any prior state in this arc (Decision 195: ~33%; Decision 198: ~26% effective). **Difficulty balance:** reserve skews hard (13 of 26 reserve rows, 50%) with a thin but real easy tier (3 of 26 reserve rows: Camping Sale (a), Rounding Bounds (a)/(b)) against a pool that is itself predominantly medium — combined, this produces a more genuine easy→medium→hard spread than the pool alone ever could, though absolute easy-tier depth (an estimated 6–8 easy rows across the full ~81-row combined estate) remains thin relative to an authentic paper's own opening-questions convention. **Curriculum coverage:** per Decision 205's 62-question/180-mark primary-source audit, WELL/PARTIALLY REPRESENTED reasoning shapes now include rounding-bounds (closed this arc), leaving only number-pyramid, combinatorics, age-narrative, Frobenius-scores (each single-occurrence, unauthored) and the weighted-differential-rate mean extension as remaining unmined text/table-representable archetypes — none of these gaps blocks composing a defensible First Mock from what already exists. **Over-concentration:** QT-MR-09 (data/frequency-table reasoning) remains the most-repeated QT among A-families (3 instances: `mock-mr09-data`, `-runningclub`, `-funrun`) — a disclosed, not worsening, concentration risk; no single QT would need to appear more than 3 times in a composed form. **Anti-memorisation:** addressed separately under Rolling Programme (Part 5) — not a First Mock blocker for a single sitting. **Authentic-paper resemblance:** a composed 21-question, 56-mark form with 9 effective A-experiences, hard-tier depth from the reserve, and a genuine (if thin) easy-tier opening is now structurally closer to the real ~60-mark, mixed-difficulty CSSE paper than any previously evaluated state.
+
+**Verdict: NEAR-READY.** Quantitatively: a 2–4 mark deficit at 21 questions (90–97% of authentic target), full grouping/scoring infrastructure already proven in production, and A-density approaching the authentic benchmark are not, together, a "NOT READY" profile by this arc's own established thresholds (which have consistently used a double-digit or high-single-digit deficit, materially below 90% of target, to justify NOT READY at Decisions 195/198/203/205). It is not "READY" because: (1) none of the six useful reserve families has actually been promoted to `mock_eligible` — every mark above remains theoretical until that mechanical step occurs; (2) no actual row-level composition/reselection has been run — the ceilings above rest on the same disclosed swap-mechanic estimate this arc has used throughout, not an exhaustive selection; (3) `ali_mock_form` remains empty — no manifest has ever been assembled, tested, or reviewed even as a draft.
+
+## PART 5 — ROLLING PROGRAMME GATE (kept separate from First Mock readiness)
+
+10 distinct Classification-A archetypes now exist (`fairprep`, `runningclub`, `linkedvalues` in-pool; `perimeterarea`, `bustimetable`, `craftstall`, `funrun`, `campingsale`, `numberpuzzle`, `roundingbounds` in reserve), each still exactly one instance, against the established 14–21-instance minimum (2–3 per archetype) for genuine multi-month anti-memorisation depth — **48–71% of minimum depth**, an improvement in ratio from Decision 198's 38–57% but still short of the threshold, and still single-instance throughout: a learner sitting one First Mock would exhaust all 9–10 distinct A-reasoning-shapes in that single sitting, leaving zero fresh A-variety for Mock 2. **Verdict: NOT STRUCTURALLY READY.** This is independent of Part 4's NEAR-READY First Mock verdict, exactly as the directive requires — a legitimate single First Mock is not blocked by the Rolling Programme's own separate, larger depth requirement.
+
+## PART 6 — RESERVE STATUS DECISION (no promotion performed)
+
+- **Bus Timetable, Craft Stall, Fun Run, Camping Sale, Number Puzzle, Rounding Bounds → PROMOTE-NOW.** The argument used at every prior gate (Decisions 195/198/203/205 — "promotion is mechanical and reversible but creates no learner-facing value while `ali_mock_form` is empty and no composition process exists") **no longer holds unmodified**, per the directive's own Part 6 prompt. With the deficit now at 2–4 marks @ 21Q and no further content gap identified as the dominant blocker, the next real step toward a learner-facing Mock *is* composition — and composition cannot legitimately draw on `independently_validated` reserve content without first promoting it, because `eligibility_status = mock_eligible` is this codebase's own intended authorization boundary for Mock content (migration 070's own header: "mock_eligible" is the eligibility check the codebase's design assumes at composition time), and Decision 59's own precedent in this programme (Mock Content Firewall) established that relying on convention rather than a structural eligibility gate is exactly the anti-pattern this programme does not accept. Promoting these six families is therefore now purposeful, not merely mechanical — it is the specific unblocking step composition depends on.
+- **Perimeter Area → HOLD-IN-RESERVE**, unchanged, for a distinct and still-valid reason: zero marginal composition value (Part 3, reconfirmed a fifth time). Promoting it purchases nothing for this composition and only spends certified reserve that could instead serve a later Mock 2/3 cycle's own archetype-diversity need. Not NOT-YET-USEFUL — its content is sound and independently_validated (Decision 208/209) — simply not useful for *this* composition's mark ceiling.
+
+## PART 7 — COMPOSITION TOOLING DECISION
+
+Re-assessed, not defaulted from Decision 195/198/205's prior "TOOLING-LATER" verdicts. Direct source inspection this session of `lib/learningEngine/adaptiveMockPaperBuilder.ts`, migrations 104/106/107/112, and `ali_mock_form`'s own schema (migration 070) finds:
+
+- **Atomic grouped-family selection:** NOT automated anywhere — no code selects "all rows of a family or none." Existing grouping metadata (`question_group_id`/`family_id`) makes this *safe to do correctly by hand* (a manifest author can enumerate a family's full row-id set), but nothing enforces it programmatically today.
+- **Preserving numbered-question grouping at render/score time:** YES, already built and proven in production (migrations 104/106/107/112) — this is real, existing capability, not something a "Mock engine" would need to build from scratch.
+- **Calculating marks:** NOT automated — a human composer must sum the `marks` column by hand or via a small ad hoc script; no dedicated calculator exists.
+- **Enforcing question count / difficulty / skill constraints:** NOT automated — manual only.
+- **Freezing a form:** mechanically available today — `ali_mock_form` has an admin-write RLS policy (`is_current_user_admin()`); an authorised admin can `INSERT` a `question_manifest` and set `active = true`. There is no schema-level immutability lock beyond `active`/`specification_version` — "frozen" is currently a social convention (don't `UPDATE` a live form), not a structural guarantee, an honest limitation disclosed here, not overlooked.
+- **Preventing accidental reuse or partial-family selection:** NOT enforced anywhere — no `CHECK` constraint or trigger on `ali_mock_form.question_manifest` validates completeness, uniqueness, or eligibility of its contents.
+- **A separate, disclosed technical fact surfaced this session (not previously recorded in the log):** `mock_create_attempt()` (migration 070) does **not** itself require every manifest question to carry `eligibility_status = 'mock_eligible'` — the manifest, not the eligibility flag, is the function's actual authorization boundary at read time, per that migration's own explicit disclosed design note. This makes `eligibility_status = mock_eligible` a governance convention this codebase has not yet hardened into a database-level gate, not a currently-enforced technical prerequisite — which strengthens, rather than weakens, the case for promoting deliberately (Part 6) rather than composing directly against `independently_validated` rows: doing the latter would exploit a known, disclosed gap instead of using the intended eligibility signal, the same category of defect Decision 59 closed elsewhere in this programme.
+
+**Verdict: minimum required capability is a small, bounded validation/assembly script — not a general Mock engine.** The concrete gaps (mark summation, count/difficulty reporting, atomic-family completeness check, duplicate-id check, `mock_eligible`-only enforcement) are each a few lines against data that already carries every field needed; nothing here requires new schema, new stimulus types, or new RPC surface. Building this is appropriately sequenced *after* Part 6's promotion (so it validates against the real, final composable pool, not a hypothetical one) — not chosen as this decision's own next investment (Part 10), but confirmed materially smaller in scope than any prior decision's "TOOLING-LATER" framing assumed.
+
+## PART 8 — ARCHETYPE GAP ANALYSIS (reconciled against Decision 205's 62-question baseline)
+
+**Closed since Decision 205:** rounding-bounds reasoning (2022 Q9, 2023 Q14) — was the #1-ranked NOT-REPRESENTED archetype, now authored and certified (`mock-mr11-roundingbounds`).
+
+**Still NOT-REPRESENTED, unauthored, no new evidence found this session (Decision 204's rejected candidates not resurrected):** number-pyramid/triangle-of-circles (2023 Q6, 1 occurrence, 3 subparts); combinatorics/systematic counting (2023 Q16, 1 occurrence); age-based narrative algebra (2023 Q17, 1 occurrence, 3 subparts); Frobenius-style impossible-score number theory (2022 Q5, 1 occurrence, 3 subparts).
+
+**Still PARTIALLY REPRESENTED:** weighted-differential-rate mean extension (2022 Q15) — the basic frequency-table/mean shape is covered three times over (`mock-mr09-data`/`-runningclub`/`-funrun`); the differentially-priced-total layer remains unauthored.
+
+**Adequately represented:** percentage/proportional reasoning (direct, reverse, successive-discount), linked-quantity algebraic systems (4 distinct instances), angle/triangle geometry, coordinate rotation, time/schedule arithmetic, and now rounding-bounds — six of the ten archetype families this arc has pursued are text/table-representable and already landed.
+
+**Genuinely capability-blocked (unchanged, re-confirmed, `MockStimulus` still a single-member union):** spatial cube-net/shape-identity matching (2 occurrences) and graph point-plotting (1 occurrence) — ≈5% of the 62-question corpus, ≤6 marks, unchanged from Decision 205.
+
+## PART 9 — DIFFICULTY BALANCE (recomputed after Rounding Bounds, row-level not label-level)
+
+Reserve-wide: 3 easy (11.5%) / 10 medium (38.5%) / 13 hard (50%) across the 26 reserve rows (table in Part 2). Rounding Bounds contributed 2 of the reserve's 3 easy rows — a genuine, not cosmetic, addition (Decision 195 found only 1 easy row existed across the *entire* reserve before Rounding Bounds; that figure has tripled). Combined with the `mock_eligible` pool's own medium concentration (Decision 195's direct primary-source finding: only 3 of 27 pool families carry any easy row, only 1 carries any hard row), the reserve's hard-heavy, now-slightly-easy-supplemented profile is a genuine structural complement to the pool, not a duplicate of its own imbalance. **Verdict: the easy-tier deficit is materially reduced but not resolved** — an estimated 6–8 easy rows exist across the full ~81-row combined estate, thin relative to an authentic paper's own opening-questions convention, but no longer the single most severe quantified gap in the estate (that status has shifted to the still-open 4–6/2–4-mark ceiling deficit, Part 3). Not optimised or relabelled artificially — figures are drawn directly from each migration's own stored `content_difficulty` column, re-read this session, not estimated.
+
+## PART 10 — NEXT INVESTMENT, RANKED
+
+1. **C — PROMOTE THE USEFUL CERTIFIED RESERVE BEFORE COMPOSITION (WINNER).** Cheapest, safest, fully reversible, structurally proven six times over (migrations 105/124/129/130/133/136/139/142's own precedent — pure `eligibility_status` transitions, zero content risk, zero schema change). Directly unblocks both further composition work and the small validation/assembly script identified in Part 7, without either of those depending on speculative future content. Matches this session's own reassessment (Part 6) that promotion is no longer value-free — it is the specific next unblocking action. Uses the codebase's own intended `mock_eligible` authorization signal rather than the disclosed, unenforced manifest-only boundary in `mock_create_attempt()` (Part 7) — the governance-correct sequencing, not merely a convenient one.
+2. **D — build the minimum First-Mock composition/freeze tooling.** Genuinely smaller in scope than any prior decision assumed (Part 7), and a natural second step — but properly sequenced *after* promotion, so it validates against the real final pool rather than a hypothetical one. Not chosen as this decision's own single next step for that sequencing reason alone, not because it lacks merit.
+3. **A — begin First Mock composition now.** Not chosen: nothing beyond the already-known ceiling figures exists to compose *from* until the reserve is promoted; composing directly against `independently_validated` rows today would rely on the disclosed unenforced manifest-boundary gap in `mock_create_attempt()` rather than the intended eligibility gate (Part 7) — precisely the "convention, not structure" defect class this programme has previously treated as unacceptable (Decision 59).
+4. **B — author one more existing-capability Classification-A family.** Demoted from its four-consecutive-cycle dominance (Decisions 195/198/203/205 all selected B): marginal per-family gain has settled at +1/+2 marks and the deficit is now single-digit and closing faster than the authoring cadence alone would justify pursuing further before promotion/composition are attempted. Not rejected outright — remains a credible option for a *future* cycle if promotion+composition reveals a residual gap larger than currently estimated, or for Rolling Programme depth (Part 5) regardless of First Mock timing.
+5. **E — build a new content/rendering capability (diagram/visual).** Lowest-ranked, unchanged verdict across six consecutive decisions (189/191/195/198/205/210): capability-blocked content remains ≈5% of the corpus/≤6 marks, no evidence anywhere in the primary-source base shows diagram content would carry higher marks-per-experience than the already-proven text/table families, while engineering cost remains categorically larger.
+
+**Selected: C.** It produces the greatest immediate progress toward a real learner-ready First Mock because it is the one action that converts today's theoretical 54–56-mark ceiling into an actually composable pool, at zero content risk and using a mechanism this programme has already proven safe six times.
+
+## PART 11 — B DOES NOT WIN; NO TOP-3 AUTHORING CANDIDATES OFFERED
+
+Per the directive's own instruction, Part 11's candidate ranking applies "only if B genuinely wins." It does not (Part 10) — no top-3 authoring candidates are identified or ranked in this decision.
+
+## PART 12 — BOUNDED NEXT IMPLEMENTATION INCREMENT (C wins; not implemented here)
+
+The smallest bounded next step: **one migration promoting exactly the six named families (22 rows total: Bus Timetable 4, Craft Stall 3, Fun Run 4, Camping Sale 4, Number Puzzle 3, Rounding Bounds 4) from `independently_validated` to `mock_eligible`**, explicitly excluding `mock-mr03mr07-perimeterarea` (Part 6). This should follow the exact fail-closed, idempotent, precondition-gated, byte-for-byte-preservation pattern this arc's own promotion/certification migrations have already established (e.g. migrations 129/130/133/136/139/142) — a pure `eligibility_status` `UPDATE` on named rows, no content, schema, `ali_family_review`, or `ali_mock_form` change. **Founder/engineering action required next:** authorise a future, explicitly-scoped session to draft this migration (candidate number 144) for Founder review and manual application via the Supabase Dashboard SQL Editor — not drafted in this decision, per Part 14's governance boundary. Only after that promotion is confirmed applied should the next decision gate assess Part 7's small validation/assembly script (Option D) and, subsequently, actual composition (Option A).
+
+## PART 13 — FIRST MOCK VS. ROLLING PROGRAMME (two independent gates)
+
+**FIRST MATHEMATICS MOCK: NEAR-READY.**
+
+**ROLLING MATHEMATICS PROGRAMME: NOT READY.**
+
+## PART 14 — GOVERNANCE BOUNDARY HELD
+
+No migration created or applied; no `eligibility_status` changed; no `ali_mock_form` row created; no question authored, modified, or reclassified; no review evidence altered; no composition/freeze tooling built; Increment 007 not started. Only `ALI_DECISION_LOG.md` is changed by this decision.
+
+**Files changed:** `ALI_DECISION_LOG.md` (this entry only).
+
+**Migrations created:** none.
+
+**Decision number:** 210.
+
+**Commit SHA:** recorded after commit (see repository history immediately following this entry).
+
+**Production application status:** NOT APPLICABLE — no migration, no production mutation, no database access performed or claimed this session.
+
+**What this decision does NOT claim:** it does not claim any reserve family is now `mock_eligible`; it does not claim `ali_mock_form` has been created or a Mock composed, drafted, or previewed; it does not claim the composition/freeze validation script (Part 7) has been built; it does not claim the 54–56-mark ceiling has been exhaustively row-level-reselected rather than swap-mechanic-estimated; it does not claim Rolling Programme depth is adequate.
+
+**Remaining First Mock blockers:** the six useful reserve families remain `independently_validated`, not `mock_eligible`; no manifest has ever been assembled even as a draft; the ceiling remains a disclosed estimate, not an exhaustive reselection.
+
+**Recommended next bounded decision:** a Founder-authorised promotion migration for the six named families (Part 12), followed by a subsequent decision gate reassessing Part 7's small validation/assembly script once the real final pool is confirmed live.
+
+**Implications:** Decisions 1–209 all stand, none reversed or rewritten. **Final verdict: C — PROMOTE THE USEFUL CERTIFIED RESERVE BEFORE COMPOSITION.**
+
+---
