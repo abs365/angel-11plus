@@ -13,6 +13,10 @@ import {
   ANALYSIS_PENDING_NOTE,
   NO_STRENGTHS_YET_NOTE,
   NO_DEVELOPMENT_AREAS_NOTE,
+  practiceRouteFor,
+  practiceActionLabelFor,
+  MATHEMATICS_PRACTICE_ROUTE,
+  PRACTICE_ACTION_LABEL,
 } from "@/lib/mockAttempt/reportCopy";
 import { COMPETENCIES } from "@/lib/learningEngine/assessmentBrainMap";
 import type { MockNextPracticePriority, MockOverallResult, MockSkillEvidenceEntry, MockStrengthOrPriorityEntry } from "@/lib/mockAttempt/types";
@@ -221,4 +225,35 @@ test("nextPracticeSentence deduplicates by competency label -- several question 
 test("nextPracticeSentence falls back to the raw questionTypeId only when no competencyId is available, never throws", () => {
   const sentence = nextPracticeSentence([{ questionTypeId: "QT-UNKNOWN", competencyId: null }]);
   assert.match(sentence!, /QT-UNKNOWN/);
+});
+
+/**
+ * Decision 225 (Mock Priority -> Targeted Practice Routing) —
+ * practiceRouteFor()/practiceActionLabelFor() are the exact pairing that
+ * decides whether a priority card can honestly claim "Practise this
+ * skill" (genuinely targeted) or must fall back to the honest, general
+ * "Practise Mathematics" (Decision 224's own original, still-correct
+ * fallback for a skill this refinement cannot safely target).
+ */
+
+test("practiceRouteFor: with a real competencyId, builds a genuinely targeted URL using the real, established query parameter name", () => {
+  assert.equal(practiceRouteFor("MR-04"), `${MATHEMATICS_PRACTICE_ROUTE}?focus=MR-04`);
+});
+
+test("practiceRouteFor: with null, falls back to the plain, general Mathematics practice route -- never a broken or half-built URL", () => {
+  assert.equal(practiceRouteFor(null), MATHEMATICS_PRACTICE_ROUTE);
+});
+
+test("practiceRouteFor: different competencies produce genuinely different URLs -- the routing is not hardcoded to any single skill", () => {
+  const routes = new Set(["MR-01", "MR-02", "MR-03", "MR-04", "MR-05"].map((id) => practiceRouteFor(id)));
+  assert.equal(routes.size, 5);
+});
+
+test("practiceRouteFor URL-encodes its input -- never trusts a competencyId to be URL-safe by construction alone", () => {
+  assert.equal(practiceRouteFor("weird id"), `${MATHEMATICS_PRACTICE_ROUTE}?focus=weird%20id`);
+});
+
+test("practiceActionLabelFor: 'Practise this skill' only when genuinely targeted, the honest general label otherwise -- never overclaims precision the route doesn't have", () => {
+  assert.equal(practiceActionLabelFor("MR-04"), "Practise this skill");
+  assert.equal(practiceActionLabelFor(null), PRACTICE_ACTION_LABEL);
 });

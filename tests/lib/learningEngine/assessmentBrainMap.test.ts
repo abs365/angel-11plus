@@ -4,6 +4,7 @@ import {
   COMPETENCIES,
   ALL_COMPETENCY_IDS,
   ALL_ASSESSMENT_COMPONENTS,
+  isValidCompetencyId,
 } from "../../../lib/learningEngine/assessmentBrainMap";
 import { computeComponentReadiness } from "../../../lib/learningEngine/readiness";
 import { computeDiagnosticFindings } from "../../../lib/learningEngine/diagnostics";
@@ -61,4 +62,30 @@ test("Decision 58: computeDiagnosticFindings never lists AR-01 as a coverage gap
     false,
     "AR-01 must never appear in the 'Not Yet Evidenced (coverage gap, not a finding)' chip list shown to parents/children"
   );
+});
+
+/**
+ * Decision 225 (Mock Priority -> Targeted Practice Routing) —
+ * isValidCompetencyId() is the one gate between an arbitrary,
+ * caller-supplied string (a URL query parameter) and a value trusted
+ * enough to cast to CompetencyId and pass into
+ * generatePersonalisedSession()'s own familyFocusCompetencyId parameter.
+ */
+test("isValidCompetencyId accepts every real competency id, including AR-01 (unlike ALL_COMPETENCY_IDS, this validates against the true complete set)", () => {
+  for (const id of Object.keys(COMPETENCIES)) {
+    assert.equal(isValidCompetencyId(id), true, `expected ${id} to validate`);
+  }
+  assert.equal(isValidCompetencyId("AR-01"), true);
+});
+
+test("isValidCompetencyId rejects an unrecognised string, never throws", () => {
+  assert.equal(isValidCompetencyId("NOT-A-REAL-ID"), false);
+  assert.equal(isValidCompetencyId(""), false);
+  assert.equal(isValidCompetencyId("mr-01"), false, "must be case-sensitive, never a fuzzy match");
+});
+
+test("isValidCompetencyId rejects prototype-pollution-shaped input safely (hasOwnProperty guard, not a bare `in` check)", () => {
+  assert.equal(isValidCompetencyId("constructor"), false);
+  assert.equal(isValidCompetencyId("toString"), false);
+  assert.equal(isValidCompetencyId("hasOwnProperty"), false);
 });

@@ -139,10 +139,10 @@ test("HIGH/MIXED performance: a securely-demonstrated skill renders as a genuine
 
 // === 9. Priority actions only link to a genuinely supported existing route ===
 
-test("every priority card and the closing action link to MATHEMATICS_PRACTICE_ROUTE (the real, existing, subject-level practice page) -- never an invented per-skill URL", () => {
-  const practiceLinks = [...PAGE.matchAll(/href=\{MATHEMATICS_PRACTICE_ROUTE\}/g)];
-  assert.ok(practiceLinks.length >= 2, "expected both the priority card action and the closing action to use the same real route");
-  assert.ok(!/href=\{`\/learning-intelligence\/practice\/\$\{/.test(PAGE), "must never construct a per-skill practice URL that the practice route cannot actually honour yet");
+test("the priority card action routes through practiceRouteFor(entry.competencyId) (Decision 225's own genuinely-targeted route where safe, honest fallback otherwise) and the closing action uses the general MATHEMATICS_PRACTICE_ROUTE (spans potentially several skills) -- never an ad-hoc, hand-built per-skill URL", () => {
+  assert.match(PAGE, /href=\{practiceRouteFor\(entry\.competencyId\)\}/);
+  assert.match(PAGE, /href=\{MATHEMATICS_PRACTICE_ROUTE\}/);
+  assert.ok(!/href=\{`\/learning-intelligence\/practice\/\$\{/.test(PAGE), "must never construct a per-skill practice URL by hand -- practiceRouteFor() is the single, tested source of that URL shape");
 });
 
 test("MATHEMATICS_PRACTICE_ROUTE points at the real, existing practice area page, not an invented path", () => {

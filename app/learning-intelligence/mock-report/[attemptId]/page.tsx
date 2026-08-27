@@ -24,6 +24,8 @@ import {
   PERFORMANCE_CONTEXT_NOTE,
   MATHEMATICS_PRACTICE_ROUTE,
   PRACTICE_ACTION_LABEL,
+  practiceRouteFor,
+  practiceActionLabelFor,
 } from "@/lib/mockAttempt/reportCopy";
 import type { MockAttemptReport, MockSkillEvidenceEntry } from "@/lib/mockAttempt/types";
 
@@ -201,8 +203,8 @@ function MockAnalysisSections({ report }: { report: MockAttemptReport }) {
                 </div>
                 <p className="text-sm text-gray-600 dark:text-gray-400 mt-1.5 leading-relaxed">{priorityStatusSentence(entry)}</p>
                 <p className="text-xs text-gray-500 dark:text-gray-500 mt-1 leading-relaxed">{priorityExplanationSentence(entry)}</p>
-                <ButtonLink href={MATHEMATICS_PRACTICE_ROUTE} variant="outline" size="sm" className="mt-3">
-                  {PRACTICE_ACTION_LABEL}
+                <ButtonLink href={practiceRouteFor(entry.competencyId)} variant="outline" size="sm" className="mt-3">
+                  {practiceActionLabelFor(entry.competencyId)}
                 </ButtonLink>
               </InfoCard>
             ))}

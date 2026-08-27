@@ -12,8 +12,9 @@ import { recordPresentation, recordOutcome } from "@/lib/ali/history";
 import { completeLesson, recordSkillResult, getSelectedPathwayId, setSelectedPathway } from "@/lib/progress";
 import { fetchLearnerIntelligenceProfile } from "@/lib/learningEngine/profile";
 import { recordReadinessSnapshot } from "@/lib/learningEngine/learningHistory";
-import { QUESTION_TYPE_PRIMARY_COMPETENCY } from "@/lib/learningEngine/assessmentBrainMap";
-import { generatePersonalisedSession } from "@/lib/learningEngine/sessionGenerator";
+import { QUESTION_TYPE_PRIMARY_COMPETENCY, isValidCompetencyId } from "@/lib/learningEngine/assessmentBrainMap";
+import { generatePersonalisedSession, type FamilyFocusSessionInfo } from "@/lib/learningEngine/sessionGenerator";
+import { childFriendlySkillLabel } from "@/lib/mockAttempt/reportCopy";
 import {
   getEducationalIntelligence,
   processEvidenceForCompetency,
@@ -61,11 +62,27 @@ type Mode = "intro" | "loading" | "error" | "unavailable" | "session" | "results
  * a schema change (ali_student_question_history.source is a plain,
  * open-ended text column by design).
  */
-export default function PracticeSessionPage({ params }: { params: Promise<{ area: string }> }) {
+export default function PracticeSessionPage({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ area: string }>;
+  searchParams: Promise<{ focus?: string }>;
+}) {
   const { area: areaId } = use(params);
   const area = getPracticeArea(areaId);
+  // Decision 225 (Mock Priority -> Targeted Practice Routing) -- an
+  // optional, caller-supplied competency focus (e.g. from the Mock
+  // report's "Practise this skill" action). Validated against the real,
+  // complete competency set before ever being cast to CompetencyId --
+  // an unrecognised or missing value is silently `undefined`, never an
+  // error, matching generatePersonalisedSession()'s own established
+  // "absent is not an error" precedent for every other optional signal.
+  const { focus } = use(searchParams);
+  const requestedFocus = focus && isValidCompetencyId(focus) ? focus : undefined;
 
   const [mode, setMode] = useState<Mode>("intro");
+  const [familyFocus, setFamilyFocus] = useState<FamilyFocusSessionInfo | undefined>(undefined);
   const [errorMessage, setErrorMessage] = useState("");
   const [activities, setActivities] = useState<BankQuestion[]>([]);
   const [index, setIndex] = useState(0);
@@ -187,10 +204,11 @@ export default function PracticeSessionPage({ params }: { params: Promise<{ area
       if (getSelectedPathwayId() !== "csse") setSelectedPathway("csse");
 
       const session = await withTimeout(
-        generatePersonalisedSession(supabase, profileId, area!.id, new Date()),
+        generatePersonalisedSession(supabase, profileId, area!.id, new Date(), requestedFocus),
         10000,
         "today's activities"
       );
+      setFamilyFocus(session.familyFocus);
       const tagged = session.activities.map((a) => a.question);
 
       // Educational Increment 007U, Part 3 (Problem B) — a real, expected
@@ -589,6 +607,18 @@ export default function PracticeSessionPage({ params }: { params: Promise<{ area
 
         {mode === "session" && current && (
           <div>
+            {/* Decision 225 -- an understandable indication of what the
+                learner is practising, reusing the existing, real
+                familyFocus.applied signal (never claimed unless the
+                session generator itself actually honoured it) and the
+                same child-friendly labelling Decision 224 already
+                established for the Mock report, rather than inventing a
+                second wording. */}
+            {familyFocus?.applied && (
+              <p className="text-xs font-semibold text-purple-600 dark:text-purple-400 mb-1">
+                Focusing on: {childFriendlySkillLabel(familyFocus.competencyId, familyFocus.label)}
+              </p>
+            )}
             <p className="text-xs text-gray-400 dark:text-gray-500">
               Question {index + 1} of {activities.length}
             </p>

@@ -221,14 +221,33 @@ export function skillEvidenceChipTone(level: MockSkillEvidenceLevel): "success" 
 
 /**
  * Section 4/7 — the one, existing, safe Mathematics practice route.
- * Subject-level, not skill-specific: `generatePersonalisedSession()`
- * (lib/learningEngine/sessionGenerator.ts) already accepts an optional
- * `familyFocusCompetencyId` for exactly this kind of targeting, but its
- * only real caller today is the Founder-validation family-choice pilot,
- * not this learner-facing practice route — wiring that through was
- * judged out of this refinement's own bounded scope (see
- * ALI_DECISION_LOG.md Decision 224), named as a real, safe, ready-made
- * next step rather than invented here.
+ * Decision 224 found this was subject-level only; Decision 225 wired the
+ * real, already-built `familyFocusCompetencyId` targeting mechanism
+ * (`lib/learningEngine/sessionGenerator.ts`) through to it via a `focus`
+ * query parameter (`app/learning-intelligence/practice/[area]/page.tsx`,
+ * validated with `isValidCompetencyId()` before ever being trusted) — see
+ * `practiceRouteFor()` below for the targeted variant.
  */
 export const MATHEMATICS_PRACTICE_ROUTE = "/learning-intelligence/practice/mathematics";
 export const PRACTICE_ACTION_LABEL = "Practise Mathematics";
+
+/**
+ * Decision 225 (Mock Priority -> Targeted Practice Routing) — a genuine,
+ * competency-targeted route, closing the loop `familyFocusCompetencyId`
+ * already existed to support but had no learner-facing caller for.
+ * `competencyId` is the SAME real identifier the analysis engine
+ * (migration 151) already resolves per priority via
+ * `mock_question_type_competency()`/`questionTypeCompetency()` — never a
+ * re-derivation, never a QuestionTypeId mistaken for a CompetencyId.
+ * Falls back to the honest, general Mathematics route when no
+ * competencyId is available (never an invented per-skill URL for a skill
+ * this refinement cannot genuinely target).
+ */
+export function practiceRouteFor(competencyId: string | null): string {
+  return competencyId ? `${MATHEMATICS_PRACTICE_ROUTE}?focus=${encodeURIComponent(competencyId)}` : MATHEMATICS_PRACTICE_ROUTE;
+}
+
+/** Pairs with practiceRouteFor() — "Practise this skill" only when the route is genuinely targeted, "Practise Mathematics" otherwise. Never claims precision the route doesn't have. */
+export function practiceActionLabelFor(competencyId: string | null): string {
+  return competencyId ? "Practise this skill" : PRACTICE_ACTION_LABEL;
+}

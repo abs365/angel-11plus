@@ -109,6 +109,20 @@ export const COMPONENT_SUBJECT: Record<AssessmentComponent, "english" | "writing
  * components/learningEngine/DiagnosticOverview.tsx) before this fix.
  */
 export const ALL_COMPETENCY_IDS = (Object.keys(COMPETENCIES) as CompetencyId[]).filter((id) => id !== "AR-01");
+
+/**
+ * Decision 225 (Mock Priority -> Targeted Practice Routing) — validates an
+ * arbitrary, caller-supplied string (e.g. a URL query parameter) against
+ * the real, complete competency set (including AR-01, unlike
+ * `ALL_COMPETENCY_IDS` above, which excludes it for an unrelated
+ * "Not Yet Evidenced" display reason) before it is ever cast to
+ * `CompetencyId` and passed into `generatePersonalisedSession()`'s own
+ * `familyFocusCompetencyId` parameter. Never trusts unvalidated input --
+ * an unrecognised value returns `false`, never throws, never guesses.
+ */
+export function isValidCompetencyId(value: string): value is CompetencyId {
+  return Object.prototype.hasOwnProperty.call(COMPETENCIES, value);
+}
 export const ALL_QUESTION_TYPE_IDS = Object.keys(QUESTION_TYPE_PRIMARY_COMPETENCY) as QuestionTypeId[];
 export const ALL_ASSESSMENT_COMPONENTS: AssessmentComponent[] = [
   "English Comprehension",
