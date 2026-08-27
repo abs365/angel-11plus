@@ -8959,3 +8959,63 @@ Neither candidate is assessed on marks alone. **Question count:** both 20 and 21
 **Implications:** Decisions 1–211 all stand, none reversed or rewritten. **Final verdict: A — FIRST MOCK COMPOSITION/FREEZE CAPABILITY READY; CANDIDATE READY FOR FOUNDER REVIEW.**
 
 ---
+
+### Decision 213 — MATHEMATICS: FIRST MOCK FOUNDER CANDIDATE INSPECTION (Decision 212's own real candidates, fully inspected; recommendation only — no freeze, no activation, no code/algorithm change).
+
+**Reconciliation:** `git fetch origin main` confirmed `HEAD == origin/main` at `5c156bf` (Decision 212) before this session's work began, clean working tree. Decision 212 present exactly once. Migrations 145 and 146 remained the latest files on disk (no migration 147+ existed before this session). Founder-confirmed production evidence accepted as Level-1 (no live database access this session): migration 145 applied before migration 146, migration 146 applied, `ali_mock_form.composition_provenance` confirmed `jsonb`, `ali_mock_form` count 0, the six Decision-211 reserve families remain `mock_eligible`, Perimeter Area remains `independently_validated`. `lib/ali/mockComposition.ts`'s deterministic ordering/tie-break logic re-read directly this session, unchanged since Decision 212 — confirmed richest-first-by-marks, ties broken by `experienceId` ascending, no modification made or proposed to this logic in this decision.
+
+## PART 1 — REGENERATED ACTUAL CANDIDATES (real composer, no manual substitution, no post-generation optimisation)
+
+`npx tsx scripts/mock-mathematics-composition-report.mjs` re-run this session against the same, unmodified `composeCandidateMock()`. Structural output byte-identical to Decision 212's own run: **20Q = 20 numbered questions / 54 raw rows / 54 marks**; **21Q = 21 numbered questions / 56 raw rows / 56 marks**, both `VALID`, Perimeter Area never selected (re-confirmed by a live negative-proof run). This session additionally sourced the REAL, currently-stored question/answer/`sharedStem`/stimulus text for every row in both candidates — Decision 212's own script had used the row id as placeholder text, sufficient for structural verification but not for a genuine learner-paper inspection. Real content was extracted verbatim via a disclosed, one-off regex pass over each source migration's own `$json$...$json$` prompt literal (migrations 088/091/095/113/119/125/131/134/137/140), written to the new `scripts/mock-mathematics-source-content.json`, and wired into the existing script (`scripts/mock-mathematics-composition-report.mjs`, amended) — `lib/ali/mockComposition.ts` itself, the actual composer/validator, is untouched. `mock-mr06-linkedvalues`'s own `sharedStem` (added by migration 121, confirmed Founder-applied since migration 123's own live certification precondition required it) was patched in separately, its exact value re-verified against migration 121's own `v_stem` literal, not retyped from memory.
+
+## PART 2 — FOUNDER INSPECTION ARTIFACT
+
+Both candidates' complete learner-paper view (real question text, shared stems, stimulus tables, marks — no answers, no explanations, no internal IDs, no eligibility metadata) and Founder audit view (source row IDs, skill, difficulty, marks, grouped/standalone, Classification A/B/C/S, stored answers) published as `ANGEL_FIRST_MATHEMATICS_MOCK_FOUNDER_CANDIDATE_INSPECTION_V1.md` (repo root, matching this project's own established `ANGEL_*_V1.md` documentation convention) — kept out of this Decision Log entry per the governing directive's own explicit instruction not to let a long learner-paper rendering make the log unwieldy. The 20Q candidate is rendered by reference (byte-identical to the 21Q paper minus Question 17, a real, code-verified property, not an approximation) rather than duplicated in full, to keep the artifact readable without omitting any real content.
+
+## PART 3 — MARKS, DIFFICULTY, ARCHETYPE PROFILE (see artifact §3/§4 for full detail)
+
+20Q: easy 8 / medium 21 / hard 25, 11 QT archetypes, 19 families, 7 Classification-A experiences (35% A-density). 21Q: easy 8 / medium 23 / hard 25, 11 QT archetypes, 20 families, same 7 Classification-A experiences (33% A-density) — the sole difference from 20Q is one additional geometry experience (`mock-mr07-triangleanglesum`, QT-MR-07, 2 marks, medium/medium). No dimension favours 20Q over 21Q (artifact §4's own comparison table).
+
+## PART 4 — TIE-BREAK AUDIT (artifact §5, full detail)
+
+All 9 experiences displaced from the top 11 of the 20 tied 2-mark experiences identified and classified. Focused audit on the two Classification-A displacements the governing directive named: **Fair Prep excluded → BENIGN** (its own archetype, QT-MR-10 elapsed-time/scheduling, already has 3 instances in both candidates without it — `mock-mr01mr10-costumeschedule` ×2, `mock-mr10-bustimetable`). **Running Club excluded → MATERIALLY WORSE, mildly** (its own archetype, QT-MR-09 data/frequency reasoning, drops from a possible 2 instances to 1 — `mock-mr09-funrun` alone — a real, if small, reduction in archetype depth for a reasoning shape genuinely under-represented relative to QT-MR-06's own 4-instance concentration, Decision 195's own standing flag). The other 7 displacements (rotation, forwardschedule, reverseschedule, propertysearch, truefalsejudgement, reversemean, bestvalue) are each BENIGN — their own archetypes are either already represented by a winning alternative or fill no gap the paper is currently missing.
+
+## PART 5 — COUNTERFACTUAL ARCHETYPE-AWARE ANALYSIS (artifact §6, analysis only, not implemented)
+
+A one-experience swap — `mock-mr09-runningclub` in place of `mock-mr06-sumdiff` (both 2 marks) — would preserve total marks and question count exactly, reduce QT-MR-06 concentration from 4 to 3 instances, and raise QT-MR-09 depth from 1 to 2 instances, at zero eligibility compromise. No comparably clean substitution exists for Fair Prep (every currently-selected QT-MR-10 alternative is itself Classification A or C, so displacing one would trade a stronger experience for a weaker one). This analysis did not modify the composer's tie-break logic or any manifest.
+
+## PART 6 — STRICT 21Q READINESS REVIEW (artifact §7, full checklist)
+
+One real, actual issue found (not hypothetical): **difficulty-ordering jaggedness in the opening questions** (easy → hard → hard → easy → hard across Questions 1-5) — a genuine presentation defect, since the composer orders experiences alphabetically by `experienceId`, which has no relationship to intended difficulty sequencing. Every other checked item (repetitive scenarios, ambiguous wording, presentation problems, inappropriate content, suspiciously easy marks, unsupported hard content, weak final question) returned **no issue** on direct inspection of the real paper text. The QT-MR-06 4-instance concentration is disclosed as a known, not new, finding (Decision 195), each instance using a genuinely distinct structure, not a reskin.
+
+## PART 7 — DEFICIT ASSESSMENT
+
+**ACCEPTABLE VARIATION** for the 21Q candidate (56/58-60 ≈ 93-97% of target) — the closest this arc has ever produced (previous best ≈82-84%, Decision 195), with no sign of the deficit being papered over by low-value filler (every question is a genuine grouped multi-subpart family). MATERIAL DEFICIT was considered and rejected: no missing subject area, no truncated paper length a learner would notice.
+
+## PART 8 — RECOMMENDATION, RANKED
+
+1. **A — Approve the current 21Q/56 candidate for freeze preparation** (winner). The candidate is defensible, the deficit is acceptable variation, and the one real defect found (difficulty ordering) is cosmetic, not a content or eligibility defect.
+2. **B — Curate 21Q/56 with the one bounded, evidence-backed substitution** (Running Club for Sum/Difference) — closely ranked second, reasonable but not necessary; closes the one real archetype-depth gap at zero cost.
+3. **D — Use 20Q/54 instead** — ranked third, strictly weaker than 21Q on every measured dimension.
+4. **C — One final content increment before freeze** — ranked fourth; not required to reach a freezable candidate, available for a future sitting.
+5. **E — Neither candidate is educationally ready** — rejected; no finding rises to "not ready."
+
+## PART 9 — GOVERNANCE BOUNDARY HELD
+
+No `ali_mock_form` row inserted, no form frozen or activated, no Mock attempt created, `mock_eligible` unchanged, no Increment 007 content authored, no migration applied. `lib/ali/mockComposition.ts` (the actual composer/validator) is byte-unchanged this session — only `scripts/mock-mathematics-composition-report.mjs`'s own display layer was amended (to source real content instead of placeholder text), justified per the governing directive's own Part 16 allowance since it changes what the report SHOWS, never what the composer SELECTS.
+
+**Verification (justified per Part 16, since one executable file was amended):** full automated test suite **2276/2276 passing** (unchanged from Decision 212 — no new test file, `scripts/*.mjs` is not covered by `node:test` in this repository's own established convention, matching `scripts/coverage-matrix.mjs`/`scripts/verify-mock-attempt-engine.mjs`'s own precedent; the underlying, tested capability, `lib/ali/mockComposition.ts`, is unchanged); `npx tsc --noEmit` clean; ESLint at the established baseline — **81 problems (62 errors, 19 warnings), unchanged**; Copy Quality Guard **PASS — 0 violations across 260 files**; Migration SQL Guard **PASS — 146 migration files** (unchanged, no migration created); production build succeeds.
+
+**Files changed:** `ANGEL_FIRST_MATHEMATICS_MOCK_FOUNDER_CANDIDATE_INSPECTION_V1.md` (new, the Founder inspection artifact), `scripts/mock-mathematics-composition-report.mjs` (amended, real content wiring), `scripts/mock-mathematics-source-content.json` (new, extracted real question content), `ALI_DECISION_LOG.md`.
+
+**Decision number:** 213.
+
+**Commit SHA:** recorded after commit (see repository history immediately following this entry).
+
+**Production application status:** NOT APPLICABLE — no migration, no production mutation, no database access performed or claimed this session.
+
+**Exact Founder next action:** review `ANGEL_FIRST_MATHEMATICS_MOCK_FOUNDER_CANDIDATE_INSPECTION_V1.md` directly; if Recommendation A is accepted, authorise a separate, future, explicitly-scoped session to (1) optionally apply the Part 5 Running Club/Sum-Difference substitution via explicit manifest curation (validated by the existing, unmodified `validateManifest()` — no new algorithm required), (2) build the exact `ali_mock_form` insert payload via the existing, unmodified `buildMockFormInsertPayload()`, and (3) insert it with `active: false`, with activation remaining a distinct, later, separately-authorised step.
+
+**Implications:** Decisions 1–212 all stand, none reversed or rewritten. **Final verdict: A — APPROVE CURRENT 21Q/56 CANDIDATE FOR FREEZE PREPARATION.**
+
+---

@@ -26,11 +26,30 @@
  * kind. This is the "smallest practical Founder inspection surface"
  * for a candidate composition (Decision 210 Part 10) -- see this
  * script's own printed report.
+ *
+ * Decision 213 update: real question/answer/sharedStem/stimulus text is
+ * now sourced from `mock-mathematics-source-content.json`, extracted
+ * verbatim (via a one-off, disclosed regex pass over each source
+ * migration's own `$json$...$json$` prompt literal, never hand-retyped)
+ * from migrations 088/091/095/119/125/131/134/137/140 -- the prior
+ * version of this script used the row id itself as placeholder question
+ * text, sufficient for structural/marks verification but not for a real
+ * Founder learner-paper inspection. `mock-mr06-linkedvalues`'s own
+ * `sharedStem` (absent from migration 119's original content, added by
+ * migration 121 -- confirmed Founder-applied, since migration 123's own
+ * live certification precondition required it) is patched in separately,
+ * exact value re-verified against migration 121's own `v_stem` literal.
  */
+import { readFileSync } from "node:fs";
+import { fileURLToPath } from "node:url";
+import { dirname, join } from "node:path";
 import { composeCandidateMock, validateManifest } from "../lib/ali/mockComposition.ts";
 import { renderFounderReviewReport } from "../lib/ali/mockCompositionReport.ts";
 
 /** @typedef {import("../types/ali/questionBank.ts").BankQuestion} BankQuestion */
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
+const SOURCE_CONTENT = JSON.parse(readFileSync(join(__dirname, "mock-mathematics-source-content.json"), "utf8"));
 
 const BASE = {
   subject: "maths",
@@ -49,14 +68,22 @@ const BASE = {
   markingMode: "deterministic",
 };
 
+/** Real question/answer/sharedStem/stimulus for `id` if extracted, else an honest placeholder (never fabricated) for any row this script's own extraction pass did not cover. */
+function contentFor(id) {
+  const real = SOURCE_CONTENT[id];
+  if (real) return real;
+  return { question: `(source content not extracted for ${id} -- not needed by either candidate)`, answer: "n/a" };
+}
+
 /** One standalone row (no grouping). */
 function row(id, skill, difficulty, familyId) {
+  const content = contentFor(id);
   return {
     ...BASE,
     id,
     skill,
     contentDifficulty: difficulty,
-    prompt: { id, question: id, answer: "n/a", marks: 1, skill },
+    prompt: { id, question: content.question, answer: content.answer, marks: 1, skill, ...(content.sharedStem ? { sharedStem: content.sharedStem } : {}), ...(content.stimulus ? { stimulus: content.stimulus } : {}) },
     learningUnitId: id,
     familyId,
   };

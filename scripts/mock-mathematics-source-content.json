@@ -1,0 +1,657 @@
+{
+  "mock-mr02-invdiv-01": {
+    "question": "72 ÷ ___ = 9. What number belongs in the blank?",
+    "answer": "8"
+  },
+  "mock-mr02-invdiv-02": {
+    "question": "84 ÷ ___ = 7. What number belongs in the blank?",
+    "answer": "12"
+  },
+  "mock-mr02-invdiv-03": {
+    "question": "108 ÷ ___ = 12. What number belongs in the blank?",
+    "answer": "9"
+  },
+  "mock-mr02-twostep-01": {
+    "question": "___ × 7 − 18 = 31. What number belongs in the blank?",
+    "answer": "7"
+  },
+  "mock-mr02-twostep-02": {
+    "question": "___ × 5 + 12 = 62. What number belongs in the blank?",
+    "answer": "10"
+  },
+  "mock-mr02-twostep-03": {
+    "question": "___ × 9 − 24 = 30. What number belongs in the blank?",
+    "answer": "6"
+  },
+  "mock-mr03-unitconv-01": {
+    "question": "A recipe needs 750ml of milk per cake. How many litres of milk are needed for 6 cakes?",
+    "answer": "4.5"
+  },
+  "mock-mr03-unitconv-02": {
+    "question": "A fence is built from 6 identical wooden planks, each 85cm long, placed end to end. What is the total length of the fence, in metres?",
+    "answer": "5.1"
+  },
+  "mock-mr03-unitconv-03": {
+    "question": "A box contains 8 identical bags of flour, each weighing 375g. What is the total weight of the box's contents, in kilograms?",
+    "answer": "3"
+  },
+  "mock-mr09-data-01": {
+    "question": "Four classes took part in a reading challenge. Class A read 24 books, Class B read 31 books, Class C read 18 books, and Class D read 27 books. What is the difference between the number of books read by the class that read the most and the class that read the fewest?",
+    "answer": "13"
+  },
+  "mock-mr09-data-02": {
+    "question": "The midday temperature was recorded for five days: Monday 14°C, Tuesday 19°C, Wednesday 11°C, Thursday 17°C, Friday 9°C. What was the mean temperature across the five days, in °C?",
+    "answer": "14"
+  },
+  "mock-mr09-data-03": {
+    "question": "A school fair sold three types of ticket: Adult tickets at £8 each (45 sold), Child tickets at £5 each (32 sold), and Senior tickets at £6 each (18 sold). How much money in total was raised from ticket sales, in pounds?",
+    "answer": "628"
+  },
+  "mock-mr05-forward-01": {
+    "question": "A function machine multiplies a number by 3, then adds 4. What is the output when the input is 7?",
+    "answer": "25"
+  },
+  "mock-mr05-forward-02": {
+    "question": "A function machine multiplies a number by 5, then subtracts 6. What is the output when the input is 9?",
+    "answer": "39"
+  },
+  "mock-mr05-inverse-01": {
+    "question": "A function machine multiplies a number by 3, then adds 4. The output is 31. What was the input?",
+    "answer": "9"
+  },
+  "mock-mr05-inverse-02": {
+    "question": "A function machine multiplies a number by 4, then subtracts 7. The output is 41. What was the input?",
+    "answer": "12"
+  },
+  "mock-mr13-bestvalue-01": {
+    "question": "Juice is sold in two sizes: a 750ml bottle for £1.80, or a 2 litre bottle for £4.20. What is the lower price per litre, in pounds, rounded to 2 decimal places?",
+    "answer": "2.10"
+  },
+  "mock-mr13-bestvalue-02": {
+    "question": "Rice is sold in two bags: a 2kg bag for £3.20, or a 5kg bag for £7.50. What is the lower price per kilogram, in pounds, rounded to 2 decimal places?",
+    "answer": "1.50"
+  },
+  "mock-mr04-percentchange-01": {
+    "question": "A shop increases the price of an £80 jacket by 25%, then reduces the new price by 20% in a sale. What is the final price, in pounds?",
+    "answer": "80"
+  },
+  "mock-mr04-percentchange-02": {
+    "question": "A laptop originally costs £600. Its price is reduced by 15% in a sale, then a loyalty discount reduces the sale price by a further 10%. What is the final price, in pounds?",
+    "answer": "459"
+  },
+  "mock-mr04-reversepercent-01": {
+    "question": "After a 20% discount, a jacket costs £52. What was the original price, in pounds?",
+    "answer": "65"
+  },
+  "mock-mr04-reversepercent-02": {
+    "question": "A shop increases all its prices by 15%. A bike now costs £115. What was its price before the increase, in pounds?",
+    "answer": "100"
+  },
+  "mock-mr06-sumdiff-01": {
+    "question": "The sum of two numbers is 58. Their difference is 12. What is the larger number?",
+    "answer": "35"
+  },
+  "mock-mr06-sumdiff-02": {
+    "question": "The sum of two numbers is 74. Their difference is 18. What is the smaller number?",
+    "answer": "28"
+  },
+  "mock-mr06-multiplerelation-01": {
+    "question": "A rope is cut into two pieces. One piece is 3 times as long as the other. Together the two pieces measure 48 metres. How long is the shorter piece, in metres?",
+    "answer": "12"
+  },
+  "mock-mr06-multiplerelation-02": {
+    "question": "Two tanks together hold 90 litres of water. The larger tank holds 4 times as much as the smaller tank. How many litres does the larger tank hold?",
+    "answer": "72"
+  },
+  "mock-mr07-triangleanglesum-01": {
+    "question": "In a triangle, the three angles are x degrees, (x + 10) degrees, and (x + 20) degrees. What is the value of x?",
+    "answer": "50"
+  },
+  "mock-mr07-triangleanglesum-02": {
+    "question": "In a quadrilateral, the four angles are y degrees, y degrees, (y + 30) degrees, and (y + 30) degrees. What is the value of y?",
+    "answer": "75"
+  },
+  "mock-mr07-isoscelesproperty-01": {
+    "question": "An isosceles triangle has an apex angle of 38 degrees (the angle between the two equal sides). What is the size of each base angle, in degrees?",
+    "answer": "71"
+  },
+  "mock-mr07-isoscelesproperty-02": {
+    "question": "An isosceles triangle has a base angle of 63 degrees. The apex angle (the angle between the two equal sides) is then split exactly in half by a line of symmetry. What is the size of each half, in degrees?",
+    "answer": "27"
+  },
+  "mock-mr10-forwardschedule-01": {
+    "question": "A coach journey has two legs. The first leg takes 1 hour 45 minutes and the second leg takes 2 hours 20 minutes, with a 15-minute stop between them. If the coach departs at 09:10, what time does it arrive? Give your answer in 24-hour time (e.g. 13:30).",
+    "answer": "13:30"
+  },
+  "mock-mr10-forwardschedule-02": {
+    "question": "A train journey has two legs. The first leg takes 55 minutes and the second leg takes 1 hour 40 minutes, with a 10-minute connection between them. If the train departs at 14:25, what time does it arrive? Give your answer in 24-hour time.",
+    "answer": "17:10"
+  },
+  "mock-mr10-reverseschedule-01": {
+    "question": "A flight has two legs and lands at 18:05. The second leg takes 2 hours 10 minutes, preceded by a 20-minute stopover, preceded by a first leg taking 1 hour 35 minutes. What time did the flight depart? Give your answer in 24-hour time.",
+    "answer": "14:00"
+  },
+  "mock-mr10-reverseschedule-02": {
+    "question": "A delivery van must arrive at 16:40. The final leg of its route takes 45 minutes, preceded by a 15-minute loading stop, preceded by a first leg taking 1 hour 10 minutes. What time must the van set off? Give your answer in 24-hour time.",
+    "answer": "14:30"
+  },
+  "mock-mr11-truefalsejudgement-01": {
+    "question": "True or false: \"The sum of any two odd numbers is always even.\" Answer with true or false.",
+    "answer": "true"
+  },
+  "mock-mr11-truefalsejudgement-02": {
+    "question": "True or false: \"The product of any two prime numbers is always odd.\" Answer with true or false.",
+    "answer": "false"
+  },
+  "mock-mr11-propertysearch-01": {
+    "question": "Find a prime number that is exactly one more than a perfect square, and is between 20 and 50.",
+    "answer": "37"
+  },
+  "mock-mr11-propertysearch-02": {
+    "question": "Find a number between 50 and 100 that is both a perfect square and an odd number.",
+    "answer": "81"
+  },
+  "mock-mr01-directcalc-01": {
+    "question": "Work out: 6.4 × 7",
+    "answer": "44.8"
+  },
+  "mock-mr01-directcalc-02": {
+    "question": "Work out: 3/5 of 145",
+    "answer": "87"
+  },
+  "mock-mr08-rotation-01": {
+    "question": "The point (3, 5) is rotated 90° clockwise about the origin (0, 0). What are the coordinates of the new point? Give your answer in the form (x, y).",
+    "answer": "(5, -3)"
+  },
+  "mock-mr08-rotation-02": {
+    "question": "The point (-2, 6) is rotated 180° about the origin (0, 0). What are the coordinates of the new point? Give your answer in the form (x, y).",
+    "answer": "(2, -6)"
+  },
+  "mock-mr12-reversemean-01": {
+    "question": "After 5 tests, a student's mean score was 72. After a sixth test, the mean rose to 74. What was the score on the sixth test?",
+    "answer": "84"
+  },
+  "mock-mr12-reversemean-02": {
+    "question": "After 4 matches, a team's mean score was 58. After a fifth match, the mean fell to 55. What was the team's score in the fifth match?",
+    "answer": "43"
+  },
+  "mock-mr01mr10-costumeschedule-01a": {
+    "question": "A tailor starts making a costume at 14:20. Sewing takes 1 hour 50 minutes, and finishing touches take a further 25 minutes. What time is the costume finished? Give your answer in 24-hour time.",
+    "answer": "16:35"
+  },
+  "mock-mr01mr10-costumeschedule-01b": {
+    "question": "Each costume uses 2.5 metres of fabric costing £4.80 per metre. What is the cost of fabric for one costume?",
+    "answer": "12.00"
+  },
+  "mock-mr01mr10-costumeschedule-02a": {
+    "question": "A group starts making bunting at 10:15. They work for 1 hour 40 minutes, then take a 15-minute tea break, then work for a further 55 minutes. What time do they finish? Give your answer in 24-hour time.",
+    "answer": "13:05"
+  },
+  "mock-mr01mr10-costumeschedule-02b": {
+    "question": "Each metre of bunting uses 6 triangular flags, and 3.5 metres of bunting are made. Each flag costs £0.35 to make. What is the total cost of the flags?",
+    "answer": "7.35"
+  },
+  "mock-mr06-linkedvalues-01": {
+    "question": "A collector has three bags of marbles: red, blue and green. The blue bag has 6 more marbles than the red bag. The green bag has 3 times as many marbles as the blue bag. Altogether, the three bags contain 64 marbles. How many marbles are in the red bag?",
+    "answer": "8",
+    "sharedStem": "A collector has three bags of marbles: red, blue and green. The blue bag has 6 more marbles than the red bag. The green bag has 3 times as many marbles as the blue bag. Altogether, the three bags contain 64 marbles."
+  },
+  "mock-mr06-linkedvalues-02": {
+    "question": "A collector has three bags of marbles: red, blue and green. The blue bag has 6 more marbles than the red bag. The green bag has 3 times as many marbles as the blue bag. Altogether, the three bags contain 64 marbles. How many marbles are in the green bag?",
+    "answer": "42",
+    "sharedStem": "A collector has three bags of marbles: red, blue and green. The blue bag has 6 more marbles than the red bag. The green bag has 3 times as many marbles as the blue bag. Altogether, the three bags contain 64 marbles."
+  },
+  "mock-mr06-linkedvalues-03": {
+    "question": "A collector has three bags of marbles: red, blue and green. The blue bag has 6 more marbles than the red bag. The green bag has 3 times as many marbles as the blue bag. Altogether, the three bags contain 64 marbles. How many more marbles are in the green bag than in the red and blue bags combined?",
+    "answer": "20",
+    "sharedStem": "A collector has three bags of marbles: red, blue and green. The blue bag has 6 more marbles than the red bag. The green bag has 3 times as many marbles as the blue bag. Altogether, the three bags contain 64 marbles."
+  },
+  "mock-mr10-bustimetable-01": {
+    "question": "A bus company runs a route from Hillview to Oakford, stopping at Milltown and Riverside. The timetable below shows the morning and afternoon journey times. How many minutes does the morning bus take to travel from Hillview to Oakford?",
+    "answer": "95",
+    "sharedStem": "A bus company runs a route from Hillview to Oakford, stopping at Milltown and Riverside. The timetable below shows the morning and afternoon journey times.",
+    "stimulus": {
+      "type": "table",
+      "caption": "Hillview to Oakford bus timetable",
+      "headers": [
+        "Stop",
+        "Morning",
+        "Afternoon"
+      ],
+      "rows": [
+        [
+          "Hillview",
+          "08:00",
+          "14:15"
+        ],
+        [
+          "Milltown",
+          "08:40",
+          "14:50"
+        ],
+        [
+          "Riverside",
+          "09:05",
+          "15:22"
+        ],
+        [
+          "Oakford",
+          "09:35",
+          "15:50"
+        ]
+      ]
+    }
+  },
+  "mock-mr10-bustimetable-02": {
+    "question": "A bus company runs a route from Hillview to Oakford, stopping at Milltown and Riverside. The timetable below shows the morning and afternoon journey times. How many minutes longer does the afternoon bus take from Milltown to Riverside than the morning bus takes for the same stage?",
+    "answer": "7",
+    "sharedStem": "A bus company runs a route from Hillview to Oakford, stopping at Milltown and Riverside. The timetable below shows the morning and afternoon journey times.",
+    "stimulus": {
+      "type": "table",
+      "caption": "Hillview to Oakford bus timetable",
+      "headers": [
+        "Stop",
+        "Morning",
+        "Afternoon"
+      ],
+      "rows": [
+        [
+          "Hillview",
+          "08:00",
+          "14:15"
+        ],
+        [
+          "Milltown",
+          "08:40",
+          "14:50"
+        ],
+        [
+          "Riverside",
+          "09:05",
+          "15:22"
+        ],
+        [
+          "Oakford",
+          "09:35",
+          "15:50"
+        ]
+      ]
+    }
+  },
+  "mock-mr10-bustimetable-03": {
+    "question": "A bus company runs a route from Hillview to Oakford, stopping at Milltown and Riverside. The timetable below shows the morning and afternoon journey times. Someone takes the morning bus to Milltown, then waits, then takes the afternoon bus onward from Milltown. How many minutes could they spend at Milltown?",
+    "answer": "370",
+    "sharedStem": "A bus company runs a route from Hillview to Oakford, stopping at Milltown and Riverside. The timetable below shows the morning and afternoon journey times.",
+    "stimulus": {
+      "type": "table",
+      "caption": "Hillview to Oakford bus timetable",
+      "headers": [
+        "Stop",
+        "Morning",
+        "Afternoon"
+      ],
+      "rows": [
+        [
+          "Hillview",
+          "08:00",
+          "14:15"
+        ],
+        [
+          "Milltown",
+          "08:40",
+          "14:50"
+        ],
+        [
+          "Riverside",
+          "09:05",
+          "15:22"
+        ],
+        [
+          "Oakford",
+          "09:35",
+          "15:50"
+        ]
+      ]
+    }
+  },
+  "mock-mr10-bustimetable-04": {
+    "question": "A bus company runs a route from Hillview to Oakford, stopping at Milltown and Riverside. The timetable below shows the morning and afternoon journey times. The bus company plans to speed up the afternoon Hillview-to-Milltown leg by 20%. How many minutes should the new afternoon Hillview-to-Milltown leg take?",
+    "answer": "28",
+    "sharedStem": "A bus company runs a route from Hillview to Oakford, stopping at Milltown and Riverside. The timetable below shows the morning and afternoon journey times.",
+    "stimulus": {
+      "type": "table",
+      "caption": "Hillview to Oakford bus timetable",
+      "headers": [
+        "Stop",
+        "Morning",
+        "Afternoon"
+      ],
+      "rows": [
+        [
+          "Hillview",
+          "08:00",
+          "14:15"
+        ],
+        [
+          "Milltown",
+          "08:40",
+          "14:50"
+        ],
+        [
+          "Riverside",
+          "09:05",
+          "15:22"
+        ],
+        [
+          "Oakford",
+          "09:35",
+          "15:50"
+        ]
+      ]
+    }
+  },
+  "mock-mr13-craftstall-01": {
+    "question": "A craft fair stall sells keyrings, bracelets and stickers. Keyrings are sold in packs of 5 for £2.00 each pack. Bracelets are sold individually for £1.20 each. Stickers are sold in packs of 8 for £1.60 each pack. What is the total cost of 15 keyrings, 6 bracelets and 24 stickers? Give your answer in pounds, using 2 decimal places.",
+    "answer": "18.00",
+    "sharedStem": "A craft fair stall sells keyrings, bracelets and stickers. Keyrings are sold in packs of 5 for £2.00 each pack. Bracelets are sold individually for £1.20 each. Stickers are sold in packs of 8 for £1.60 each pack.",
+    "stimulus": {
+      "type": "table",
+      "caption": "Craft fair stall price list",
+      "headers": [
+        "Item",
+        "Pack size",
+        "Price"
+      ],
+      "rows": [
+        [
+          "Keyrings",
+          "Pack of 5",
+          "£2.00"
+        ],
+        [
+          "Bracelets",
+          "Sold individually",
+          "£1.20"
+        ],
+        [
+          "Stickers",
+          "Pack of 8",
+          "£1.60"
+        ]
+      ]
+    }
+  },
+  "mock-mr13-craftstall-02": {
+    "question": "A craft fair stall sells keyrings, bracelets and stickers. Keyrings are sold in packs of 5 for £2.00 each pack. Bracelets are sold individually for £1.20 each. Stickers are sold in packs of 8 for £1.60 each pack. If someone wanted to buy 40 of the same item, which item would work out cheapest?",
+    "answer": "Stickers",
+    "sharedStem": "A craft fair stall sells keyrings, bracelets and stickers. Keyrings are sold in packs of 5 for £2.00 each pack. Bracelets are sold individually for £1.20 each. Stickers are sold in packs of 8 for £1.60 each pack.",
+    "stimulus": {
+      "type": "table",
+      "caption": "Craft fair stall price list",
+      "headers": [
+        "Item",
+        "Pack size",
+        "Price"
+      ],
+      "rows": [
+        [
+          "Keyrings",
+          "Pack of 5",
+          "£2.00"
+        ],
+        [
+          "Bracelets",
+          "Sold individually",
+          "£1.20"
+        ],
+        [
+          "Stickers",
+          "Pack of 8",
+          "£1.60"
+        ]
+      ]
+    }
+  },
+  "mock-mr13-craftstall-03": {
+    "question": "A craft fair stall sells keyrings, bracelets and stickers. Keyrings are sold in packs of 5 for £2.00 each pack. Bracelets are sold individually for £1.20 each. Stickers are sold in packs of 8 for £1.60 each pack. A customer spent exactly £8.40 buying only bracelets and stickers, with at least one of each. How many bracelets did they buy?",
+    "answer": "3",
+    "sharedStem": "A craft fair stall sells keyrings, bracelets and stickers. Keyrings are sold in packs of 5 for £2.00 each pack. Bracelets are sold individually for £1.20 each. Stickers are sold in packs of 8 for £1.60 each pack.",
+    "stimulus": {
+      "type": "table",
+      "caption": "Craft fair stall price list",
+      "headers": [
+        "Item",
+        "Pack size",
+        "Price"
+      ],
+      "rows": [
+        [
+          "Keyrings",
+          "Pack of 5",
+          "£2.00"
+        ],
+        [
+          "Bracelets",
+          "Sold individually",
+          "£1.20"
+        ],
+        [
+          "Stickers",
+          "Pack of 8",
+          "£1.60"
+        ]
+      ]
+    }
+  },
+  "mock-mr09-funrun-01": {
+    "question": "Riverside Primary School held a sponsored fun run. The table below shows how many laps each runner completed. How many runners took part in the fun run in total?",
+    "answer": "30",
+    "sharedStem": "Riverside Primary School held a sponsored fun run. The table below shows how many laps each runner completed.",
+    "stimulus": {
+      "type": "table",
+      "caption": "Riverside Primary School fun run results",
+      "headers": [
+        "Laps completed",
+        "Number of runners"
+      ],
+      "rows": [
+        [
+          "0",
+          "3"
+        ],
+        [
+          "1",
+          "5"
+        ],
+        [
+          "2",
+          "8"
+        ],
+        [
+          "3",
+          "6"
+        ],
+        [
+          "4",
+          "5"
+        ],
+        [
+          "5",
+          "3"
+        ]
+      ]
+    }
+  },
+  "mock-mr09-funrun-02": {
+    "question": "Riverside Primary School held a sponsored fun run. The table below shows how many laps each runner completed. What was the total number of laps completed by all runners combined?",
+    "answer": "74",
+    "sharedStem": "Riverside Primary School held a sponsored fun run. The table below shows how many laps each runner completed.",
+    "stimulus": {
+      "type": "table",
+      "caption": "Riverside Primary School fun run results",
+      "headers": [
+        "Laps completed",
+        "Number of runners"
+      ],
+      "rows": [
+        [
+          "0",
+          "3"
+        ],
+        [
+          "1",
+          "5"
+        ],
+        [
+          "2",
+          "8"
+        ],
+        [
+          "3",
+          "6"
+        ],
+        [
+          "4",
+          "5"
+        ],
+        [
+          "5",
+          "3"
+        ]
+      ]
+    }
+  },
+  "mock-mr09-funrun-03": {
+    "question": "Riverside Primary School held a sponsored fun run. The table below shows how many laps each runner completed. What was the mean (average) number of laps completed per runner? Give your answer to 1 decimal place.",
+    "answer": "2.5",
+    "sharedStem": "Riverside Primary School held a sponsored fun run. The table below shows how many laps each runner completed.",
+    "stimulus": {
+      "type": "table",
+      "caption": "Riverside Primary School fun run results",
+      "headers": [
+        "Laps completed",
+        "Number of runners"
+      ],
+      "rows": [
+        [
+          "0",
+          "3"
+        ],
+        [
+          "1",
+          "5"
+        ],
+        [
+          "2",
+          "8"
+        ],
+        [
+          "3",
+          "6"
+        ],
+        [
+          "4",
+          "5"
+        ],
+        [
+          "5",
+          "3"
+        ]
+      ]
+    }
+  },
+  "mock-mr09-funrun-04": {
+    "question": "Riverside Primary School held a sponsored fun run. The table below shows how many laps each runner completed. A certificate is awarded to any runner who completed more laps than the mean (average) number of laps per runner. How many runners received a certificate?",
+    "answer": "14",
+    "sharedStem": "Riverside Primary School held a sponsored fun run. The table below shows how many laps each runner completed.",
+    "stimulus": {
+      "type": "table",
+      "caption": "Riverside Primary School fun run results",
+      "headers": [
+        "Laps completed",
+        "Number of runners"
+      ],
+      "rows": [
+        [
+          "0",
+          "3"
+        ],
+        [
+          "1",
+          "5"
+        ],
+        [
+          "2",
+          "8"
+        ],
+        [
+          "3",
+          "6"
+        ],
+        [
+          "4",
+          "5"
+        ],
+        [
+          "5",
+          "3"
+        ]
+      ]
+    }
+  },
+  "mock-mr04-campingsale-01": {
+    "question": "A camping shop sells tents. One tent has an original price of £120. For a summer sale, the shop reduces this tent's price by 15%. What is the tent's price during the summer sale?",
+    "answer": "£102",
+    "sharedStem": "A camping shop sells tents."
+  },
+  "mock-mr04-campingsale-02": {
+    "question": "A camping shop sells tents. A tent that was reduced by 15% to £102 is then given a further 10% off for loyalty-card customers. What does the loyalty-card customer pay for the tent?",
+    "answer": "£91.80",
+    "sharedStem": "A camping shop sells tents."
+  },
+  "mock-mr04-campingsale-03": {
+    "question": "A camping shop sells tents. Some customers think a 15% discount followed by a 10% discount is the same as a single 25% discount. A tent originally priced at £120 actually costs £91.80 after the two discounts are applied in order. How much MORE is this than the price a single 25% discount straight off the £120 original price would give?",
+    "answer": "£1.80",
+    "sharedStem": "A camping shop sells tents."
+  },
+  "mock-mr04-campingsale-04": {
+    "question": "A camping shop sells tents. A different tent is sold after a single 20% discount is applied to its own original price, making its sale price £136. What was that tent's original price before the discount?",
+    "answer": "£170",
+    "sharedStem": "A camping shop sells tents."
+  },
+  "mock-mr06-numberpuzzle-01": {
+    "question": "A number puzzle uses a hidden positive whole number, n. Three other values are defined by these rules: P = n + 9, Q = 9 x n, and R = n x n. What is the value of 9P − Q?",
+    "answer": "81",
+    "sharedStem": "A number puzzle uses a hidden positive whole number, n. Three other values are defined by these rules: P = n + 9, Q = 9 x n, and R = n x n."
+  },
+  "mock-mr06-numberpuzzle-02": {
+    "question": "A number puzzle uses a hidden positive whole number, n. Three other values are defined by these rules: P = n + 9, Q = 9 x n, and R = n x n. What is the value of Q ÷ (P − 9)?",
+    "answer": "9",
+    "sharedStem": "A number puzzle uses a hidden positive whole number, n. Three other values are defined by these rules: P = n + 9, Q = 9 x n, and R = n x n."
+  },
+  "mock-mr06-numberpuzzle-03": {
+    "question": "A number puzzle uses a hidden positive whole number, n. Three other values are defined by these rules: P = n + 9, Q = 9 x n, and R = n x n. What is the value of (P × n) − Q − R?",
+    "answer": "0",
+    "sharedStem": "A number puzzle uses a hidden positive whole number, n. Three other values are defined by these rules: P = n + 9, Q = 9 x n, and R = n x n."
+  },
+  "mock-mr11-roundingbounds-01": {
+    "question": "At the Oakwood Athletics Meet, the number of adult spectators rounds to 380 to the nearest 10. The number of child spectators rounds to 240 to the nearest 10. What is the largest possible number of adult spectators?",
+    "answer": "384",
+    "sharedStem": "At the Oakwood Athletics Meet, the number of adult spectators rounds to 380 to the nearest 10. The number of child spectators rounds to 240 to the nearest 10."
+  },
+  "mock-mr11-roundingbounds-02": {
+    "question": "At the Oakwood Athletics Meet, the number of adult spectators rounds to 380 to the nearest 10. The number of child spectators rounds to 240 to the nearest 10. What is the smallest possible number of child spectators?",
+    "answer": "235",
+    "sharedStem": "At the Oakwood Athletics Meet, the number of adult spectators rounds to 380 to the nearest 10. The number of child spectators rounds to 240 to the nearest 10."
+  },
+  "mock-mr11-roundingbounds-03": {
+    "question": "At the Oakwood Athletics Meet, the number of adult spectators rounds to 380 to the nearest 10. The number of child spectators rounds to 240 to the nearest 10. What is the largest possible total number of spectators, adults and children added together?",
+    "answer": "628",
+    "sharedStem": "At the Oakwood Athletics Meet, the number of adult spectators rounds to 380 to the nearest 10. The number of child spectators rounds to 240 to the nearest 10."
+  },
+  "mock-mr11-roundingbounds-04": {
+    "question": "At the Oakwood Athletics Meet, the number of adult spectators rounds to 380 to the nearest 10. The number of child spectators rounds to 240 to the nearest 10. What is the smallest possible value of the number of adult spectators minus the number of child spectators?",
+    "answer": "131",
+    "sharedStem": "At the Oakwood Athletics Meet, the number of adult spectators rounds to 380 to the nearest 10. The number of child spectators rounds to 240 to the nearest 10."
+  }
+}
