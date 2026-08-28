@@ -286,10 +286,10 @@ test("7. if q02b/c/d/e already exist in a partial (1-3 row) state, the migration
   }
 });
 
-test("8. all 4 replacement rows carry skill = 'QT-RC-04' and question_type = 'short-answer' in their own SQL column tuples (not swapped)", () => {
+test("8. all 4 replacement rows carry skill = 'QT-RC-04' and question_type = 'short-answer' in their own SQL column tuples (not swapped), with subject/content_difficulty explicitly cast to their canonical enum types", () => {
   for (const letter of ["b", "c", "d", "e"]) {
-    const re = new RegExp(`'eng-inc002-roboticsfinal-q02${letter}', 'english', 'QT-RC-04', array\\['csse'\\], 'medium', 'short-answer', 60,`);
-    assert.match(sql163, re, `eng-inc002-roboticsfinal-q02${letter}'s own column tuple must carry skill='QT-RC-04', question_type='short-answer'`);
+    const re = new RegExp(`'eng-inc002-roboticsfinal-q02${letter}', 'english'::public\\.subject_type, 'QT-RC-04', array\\['csse'\\], 'medium'::public\\.content_difficulty, 'short-answer', 60,`);
+    assert.match(sql163, re, `eng-inc002-roboticsfinal-q02${letter}'s own column tuple must carry skill='QT-RC-04', question_type='short-answer', and explicit enum casts on subject/content_difficulty`);
   }
 });
 
@@ -307,6 +307,129 @@ test("10. The Loose Connection's passage total remains 22 after the correction (
 test("11. review registration (ali_family_review) and eligibility_status remain untouched by the correction", () => {
   assert.ok(!executable163.includes("ali_family_review"));
   assert.ok(!/set\s+eligibility_status/i.test(executable163));
+});
+
+// === SQL TYPE CONTRACT REGRESSION (second correction: 42804 enum error) ====
+// LIMITATION, STATED EXPLICITLY: this test environment has no real or
+// simulated PostgreSQL available (no `pg`, `pg-mem`, or live Supabase
+// connection anywhere in this repo's test suite -- confirmed by search).
+// These tests CANNOT execute migration 163 against a real database and
+// cannot themselves prove PostgreSQL will accept the INSERT. What they DO
+// prove, statically, from source: (a) the INSERT uses the exact same
+// `insert into ... values (...) on conflict (id) do nothing` form every
+// other content migration in this codebase (161 included) already uses
+// without ever hitting this error class, not the subquery form that
+// caused it; (b) `subject` and `content_difficulty` are explicitly cast
+// to their real, migration-verified PostgreSQL enum type names; (c) the
+// literal values used are members of those enums' own declared value
+// sets, not arbitrary strings; (d) the INSERT's column list and each
+// VALUES tuple have the same length and positional order. This is the
+// strongest guard available without a live database, and is not claimed
+// to be a substitute for the Founder's own live re-application.
+
+const insertColumnListMatch = executable163.match(/insert into public\.ali_question_bank\s*\n\s*\(([^)]+)\)\s*\n\s*values/);
+const insertColumnList = insertColumnListMatch ? insertColumnListMatch[1].split(",").map((c) => c.trim()) : [];
+
+const subjectTypeEnumValues = fs.readFileSync("supabase/migrations/001_initial_schema.sql", "utf8")
+  .match(/create type public\.subject_type as enum \(([\s\S]*?)\);/)![1]
+  .split(",").map((v) => v.trim().replace(/^'|'$/g, "")).filter(Boolean);
+
+const contentDifficultyEnumValues = fs.readFileSync("supabase/migrations/005_ali_question_bank.sql", "utf8")
+  .match(/create type public\.content_difficulty as enum \(([\s\S]*?)\);/)![1]
+  .split(",").map((v) => v.trim().replace(/^'|'$/g, "")).filter(Boolean);
+
+test("T1. the INSERT uses the proven `values (...) on conflict (id) do nothing` form -- never the `select * from (values ...) where not exists` form that caused the 42804 enum error", () => {
+  assert.match(executable163, /insert into public\.ali_question_bank\s*\n\s*\([^)]+\)\s*\n\s*values\s*\n\('eng-inc002-roboticsfinal-q02b'/);
+  assert.match(executable163, /'NEAR_TRANSFER'\)\s*\n\s*on conflict \(id\) do nothing;/);
+  assert.ok(!executable163.includes("select * from (values"), "the subquery-wrapped VALUES form that broke PostgreSQL's target-list type inference must not reappear");
+  assert.ok(!executable163.includes("as new_rows"), "the removed subquery alias must not reappear");
+});
+
+test("T2/T3. subject is explicitly cast to public.subject_type, and content_difficulty to public.content_difficulty, in all 4 new-row tuples (both confirmed real enum types via migrations 001 and 005)", () => {
+  for (const letter of ["b", "c", "d", "e"]) {
+    const re = new RegExp(`'eng-inc002-roboticsfinal-q02${letter}', '(\\w+)'::public\\.subject_type, 'QT-RC-04', array\\['csse'\\], '(\\w+)'::public\\.content_difficulty,`);
+    const m = sql163.match(re);
+    assert.ok(m, `eng-inc002-roboticsfinal-q02${letter} must cast subject::public.subject_type and content_difficulty::public.content_difficulty`);
+    assert.ok(subjectTypeEnumValues.includes(m![1]), `subject literal '${m![1]}' must be a real member of public.subject_type (${subjectTypeEnumValues.join(", ")})`);
+    assert.ok(contentDifficultyEnumValues.includes(m![2]), `content_difficulty literal '${m![2]}' must be a real member of public.content_difficulty (${contentDifficultyEnumValues.join(", ")})`);
+  }
+});
+
+test("T4. pathway remains a plain array['csse'] literal (text[], matching the column's own declared type from migration 005 -- no cast needed, none added)", () => {
+  for (const letter of ["b", "c", "d", "e"]) {
+    assert.match(sql163, new RegExp(`eng-inc002-roboticsfinal-q02${letter}.*array\\['csse'\\]`));
+  }
+});
+
+test("T5. prompt is passed as a dollar-quoted string directly in the VALUES tuple (the same jsonb-column form migration 161 already uses successfully for the same column) -- not routed through a subquery that would strip its target-column context", () => {
+  for (const p of newSubparts) {
+    assert.ok(sql163.includes(`"id":"${p.id}"`), `${p.id}'s prompt JSON must be present as a direct dollar-quoted literal`);
+  }
+  assert.equal((sql163.match(/\$json\$/g) || []).length, 8, "4 new rows, each with one opening and one closing $json$ delimiter");
+});
+
+test("T6. integer/smallint numeric literals (estimated_time_seconds, mastery_threshold, content_version) are unquoted numeric literals, not strings -- correct for their declared integer/smallint columns", () => {
+  for (const letter of ["b", "c", "d", "e"]) {
+    assert.match(sql163, new RegExp(`array\\['csse'\\], '\\w+'::public\\.content_difficulty, 'short-answer', 60,`), `eng-inc002-roboticsfinal-q02${letter} estimated_time_seconds must be the unquoted literal 60`);
+  }
+  assert.equal((sql163.match(/,\s*2,\s*'eng-inc002-roboticsfinal'/g) || []).length, 4, "all 4 rows' mastery_threshold literal (2) must be unquoted");
+  assert.equal((sql163.match(/'authentic_assessment_candidate', 1, true,/g) || []).length, 4, "all 4 rows' content_version (1) must be unquoted, immediately followed by the unquoted boolean active literal");
+});
+
+test("T7. active is the unquoted boolean literal `true` (not the string 'true') in all 4 tuples -- correct for the column's declared boolean type", () => {
+  assert.equal((sql163.match(/'authentic_assessment_candidate', 1, true,/g) || []).length, 4);
+  assert.ok(!sql163.includes("'true'"), "active must never be passed as a quoted string");
+});
+
+test("T8. all 4 new-row tuples share an identical, consistent type shape for every positional column (same cast pattern, same literal kinds in the same column positions)", () => {
+  const tuplePattern = /'eng-inc002-roboticsfinal-q02([b-e])', '(\w+)'::public\.subject_type, '([\w-]+)', array\['csse'\], '(\w+)'::public\.content_difficulty, '([\w-]+)', (\d+),/g;
+  const matches = [...sql163.matchAll(tuplePattern)];
+  assert.equal(matches.length, 4, "all 4 tuples must match the identical typed-column shape");
+  const letters = matches.map((m) => m[1]).sort();
+  assert.deepEqual(letters, ["b", "c", "d", "e"]);
+  for (const m of matches) {
+    assert.equal(m[2], "english");
+    assert.equal(m[3], "QT-RC-04");
+    assert.equal(m[4], "medium");
+    assert.equal(m[5], "short-answer");
+    assert.equal(m[6], "60");
+  }
+});
+
+test("T9. the INSERT's column list and each VALUES tuple's positional literal count match exactly (18 columns declared, 18 top-level values per tuple)", () => {
+  assert.equal(insertColumnList.length, 18, `expected 18 declared columns, found ${insertColumnList.length}: ${insertColumnList.join(", ")}`);
+  assert.deepEqual(insertColumnList, [
+    "id", "subject", "skill", "pathway", "content_difficulty", "question_type", "estimated_time_seconds",
+    "prompt", "explanation", "mastery_threshold", "learning_unit_id",
+    "family_id", "provenance", "eligibility_status", "content_version", "active", "addresses_misconception",
+    "transfer_class",
+  ]);
+  // Explanation text (one of the trailing fields) legitimately contains
+  // commas of its own ("GROUPED numbered question, subpart (b)."), so
+  // trailing-field order is checked as a sequence of ordered substring
+  // positions rather than one comma-sensitive regex.
+  for (const p of newSubparts) {
+    const jsonEnd = sql163.indexOf(`"id":"${p.id}"`);
+    assert.ok(jsonEnd !== -1, `${p.id}'s prompt JSON must be present`);
+    const tupleTail = sql163.slice(jsonEnd, jsonEnd + 5000);
+    const expectedInOrder = [
+      "$json$,", ", 2, 'eng-inc002-roboticsfinal',",
+      "'eng-inc002-qt-rc-04-roboticsfinal', 'angel_original', 'authentic_assessment_candidate', 1, true,",
+      "'NEAR_TRANSFER')",
+    ];
+    let cursor = 0;
+    for (const marker of expectedInOrder) {
+      const idx = tupleTail.indexOf(marker, cursor);
+      assert.ok(idx !== -1 && idx >= cursor, `${p.id}'s tuple must carry "${marker}" in the expected trailing-column order`);
+      cursor = idx + marker.length;
+    }
+  }
+});
+
+test("T10. no residual text-vs-enum mismatch: no unqualified 'english' or 'medium' literal remains in the new-row tuples (every occurrence is cast)", () => {
+  const q02Tuples = sql163.slice(sql163.indexOf("insert into public.ali_question_bank"), sql163.indexOf("on conflict (id) do nothing;") + "on conflict (id) do nothing;".length);
+  assert.ok(!/, 'english', /.test(q02Tuples), "an uncast 'english' literal must not remain in the new-row tuples");
+  assert.ok(!/, 'medium', /.test(q02Tuples), "an uncast 'medium' literal must not remain in the new-row tuples");
 });
 
 test("the migration is idempotent: if the 4 new rows already exist, it is a verified no-op; if a mixed state is found, it refuses rather than guessing", () => {
