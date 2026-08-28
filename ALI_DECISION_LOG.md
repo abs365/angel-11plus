@@ -10821,3 +10821,121 @@ The Educational Review surface currently renders substantial engineering/provena
 **Final verdict: A — Q2 CORRECTIVE MIGRATION READY FOR FOUNDER APPLICATION.** The old defective row's replacement is fail-closed, idempotent, narrowly scoped, fully tested, and verified consistent with Decision 238's own established architecture. Migration 163 remains unapplied; no review decision was submitted; no content is certified.
 
 ---
+
+### Decision 240 — PROGRAMME-WIDE UK REPRESENTATION, NAMING AND CULTURAL CONTEXT AUDIT. Triggered by the Founder noticing "Mr Adeyemi", "Ade", "Nisha" (all in The Loose Connection) and asking whether Angel's authored content has unintentionally clustered around Yoruba/Nigerian/African naming. AUDIT ONLY — no content mutated, no migration created, no review submitted, no certification, no Increment 003. Read-only extraction and analysis across the full content estate, with reproducible evidence files committed to the repository.
+
+**Reconciliation:** `git fetch origin main` confirmed `HEAD == origin/main` before this audit began (same commit as Decision 239's second follow-up correction — the migration 163 enum type-cast fix), clean working tree except this decision's own new, additive `docs/audits/` files.
+
+## A. EXECUTIVE FINDING
+
+**African-associated naming is NOT disproportionate across the estate in aggregate (~9% of 55 distinct fictional character names, plausible for contemporary UK demographics).** The Founder's concern is real but is better explained by **clustering within specific individual authoring batches and repeated reuse of specific name-roots across independent sessions**, not by a programme-wide systemic skew. Two concrete, source-confirmed patterns were found: (1) migration 044 (a single 6-passage English authoring batch) carries a Yoruba/West-African-associated lead in 2 of its 6 passages (33%, well above the ~9% estate average); (2) the name-root "Ade" was independently reused for three unrelated fictional characters across two separate migrations/sessions (migration 044's "Race Day"; migration 161/163's "The Loose Connection" — where it is in fact two different people, the student "Ade" and the teacher "Mr Adeyemi"), and the surname "Okafor" was independently reused for two unrelated characters (migration 049; migration 063). No stereotyping, no confusing same-unit name pairs, and no UK-context-inappropriate content were found anywhere in the estate. No dedicated naming/representation authoring policy currently exists.
+
+## B. SCOPE ACTUALLY SEARCHED
+
+All 163 migrations were checked for `$json$`-quoted `prompt`/passage content; **35 files contained learner-facing narrative or word-problem content** (469 `$json$` blocks parsed, 0 JSON-parse failures). Every block's actual passage/question/explanation/model-answer text was read directly from source (not inferred) before any name was classified. `scripts/*.mjs` content-authoring files, `docs/` (19 files matched a diversity/representation/ethnic keyword search), and `QUESTION_AUTHORING_STANDARD.md` were searched for generation mechanisms and existing policy. Developer names, git metadata, package dependencies, test-author names, and admin/auth data were explicitly excluded, per the directive's own boundary.
+
+## C. CHARACTER/NAME INVENTORY SUMMARY
+
+**56 distinct confirmed character names** (manually verified against source context; automated regex candidates were hand-filtered, not taken as final). 55 are fictional characters; 1 (Karl von Frisch, migration 152, honeybee waggle-dance research) is a real historical figure and is excluded from the cultural-distribution analysis. Full per-passage cast list, by migration, is in `docs/audits/decision240-uk-representation-audit/character-name-inventory.md`. Per the directive's explicit instruction, related-but-distinct identities were never silently merged: "Ade" and "Mr Adeyemi" within The Loose Connection are recorded as two different people (student vs. teacher), and "Ade" (migration 044) vs. "Ade" (migration 161/163) are recorded as two unrelated characters in unrelated passages that happen to share a name.
+
+## D. CULTURAL DISTRIBUTION ANALYSIS
+
+Of 55 fictional names, using analytical-association categories only (never a claim about a fictional character's actual, undepicted ethnicity): broadly common/contemporary UK ~45% (25 names); culturally ambiguous/cross-cultural, deliberately left unclassified ~15% (8 names); South Asian association ~5% (3 names); Middle Eastern/South Asian Muslim-diaspora overlap ~7% (4 names); African association (Yoruba/Nigerian, Akan/Ghanaian, Igbo/Nigerian) ~9% (5 names: Ade, Adeyemi/Mr Adeyemi, Femi, Kofi, Mrs Okafor). The aggregate African-association figure is plausible against 2021 England & Wales census data for this age cohort and is not, by itself, evidence of bias. The material finding is the migration-044 batch clustering (33% in one 6-passage batch) and the Ade-root (×3) / Okafor-root (×2) repeat-name pattern described in Section A. Full table and reasoning in `cultural-distribution-analysis.md`.
+
+## E. UK-CONTEXT ANALYSIS
+
+Every setting/cultural-context reference inspected (place names, currency, school terminology, institutions, family terms, nonfiction historical/scientific content) classified as A (naturally UK appropriate) or A/B (internationally neutral and appropriate for genuine nonfiction). Currency is £ exclusively across every Maths word problem inspected. UK school terminology ("secondary school", "break time") is already explicitly required over US equivalents by `QUESTION_AUTHORING_STANDARD.md` line 128. No content was classified D (questionable for UK selective-school prep) or E (clearly inappropriate). No stereotyping was found anywhere — no name/cultural-background pairing was found tied to a trait, occupation, or behaviour.
+
+## F. FOUNDER-CONTEXT LEAKAGE INVESTIGATION
+
+**No name-selection generator, name pool, or randomisation mechanism exists anywhere in the repository** — the two scripts matching a name-related search (`scripts/generate-english-wave1.mjs`, `scripts/generate-007t-english-rc10.mjs`) are hand-authored content files with names typed directly into the final passage text, not selected at runtime from any list. **No evidence was found that the Founder's own identity or background ever entered a content-generation prompt** — no persona/bio injection mechanism, no reference to Founder details in any authoring script or migration. `QUESTION_AUTHORING_STANDARD.md` line 38 already contains a general cultural-neutrality principle, but it is scoped to Verbal Reasoning analogy content, not personal-name distribution — confirmed as a genuine policy gap, not an inference. The best evidence-consistent explanation offered for the Ade/Okafor repetition (labelled explicitly as REASONED-PROOF EVIDENCE, not proven fact) is the absence of any cross-session "names already used" ledger in the authoring tooling, combined with the well-documented tendency of independent LLM-assisted generations to reconverge on a narrower set of names absent an explicit instruction to avoid repetition — a general property of language-model output distributions, distinguished explicitly from, and not evidence for, literal Founder-identity leakage. Full writeup in `founder-context-leakage-findings.md`.
+
+## G. SUBJECT/STATUS BREAKDOWN
+
+English carries the large majority of named fictional characters (~53 of 56), concentrated in migrations 044, 049/051, 063, 097 (Mock-track), 152 (Increment 001, independently-validated/candidate), and 161/163 (Increment 002, candidate/pending-review). Mathematics carries a small, separate name-pool (13 names, migrations 039/040, algebra sum-difference word-problem template) that is, in an inverse asymmetry to the English clustering finding, **entirely broadly-common-UK/cross-cultural with zero South Asian, African, or Middle-Eastern-associated names** — representation exists across the estate overall but is unevenly distributed BETWEEN subjects. The 12 Mock Mathematics structural-capacity batches (migrations 088/091/095/109/113/119/122/125/131/134/137/140, ~200+ blocks) use place/business names (Milltown, Riverside, Oakford) and impersonal framing rather than human character names — automated scan found zero name candidates, not individually hand-verified block-by-block (stated as a limitation, Section M).
+
+## H. SPECIFIC AFFECTED CONTENT
+
+- Migration 044, "Race Day" (`wave1-eng-raceday`) — protagonist "Ade"; part of the batch-clustering finding.
+- Migration 044, "The Kite Maker" — "Grandad Owusu", "Femi"; part of the batch-clustering finding.
+- Migration 049, "The Understudy" (`w2-understudy-*`) — "Daniel Okafor"; Okafor-root repeat instance 1.
+- Migration 063, "The Storm at the Harbour" — "Mrs Okafor"; Okafor-root repeat instance 2.
+- Migration 161/163, "The Loose Connection" (`eng-inc002-roboticsfinal`) — "Mr Adeyemi", "Ade", "Nisha"; the Founder's own trigger passage; Ade-root repeat instance.
+- Migrations 039/040 (algebra sum-difference word problems) — 13-name pool with zero South Asian/African/Middle-Eastern representation; the inverse-asymmetry finding.
+
+## I. THE LOOSE CONNECTION FINDING IN PROGRAMME CONTEXT
+
+The Loose Connection remains exactly as the Founder left it — **Mr Adeyemi, Ade, and Nisha are NOT renamed by this decision.** The previously proposed candidate remediation (Mr Adeyemi → Mr Carter; Ade → Daniel; Nisha unchanged) is confirmed as only a candidate, not implemented, pending the Founder's own balancing decision informed by this audit. This audit's own finding adds one relevant fact for that future decision: "Ade" is not unique to this passage — it is independently reused elsewhere in the estate (migration 044) — which is evidence FOR varying the specific name choice on repetition grounds, not evidence for removing a Yoruba/African name on cultural grounds; the two are different justifications and should not be conflated when the Founder makes that decision. Separately, and independently of the naming audit, **Q2(d)'s accepted answer "gloating" is recorded as a questionable deterministic synonym for "triumphant"** (a vocabulary-quality finding, not a cultural one) — logged here per the Founder's explicit instruction, not mutated, not investigated further by this audit.
+
+## J. PROPOSED ANGEL UK REPRESENTATION, NAMING AND CULTURAL CONTEXT STANDARD v1.0
+
+Proposed for Founder adoption (a documentation change to `QUESTION_AUTHORING_STANDARD.md` or a new standalone standard file — not yet implemented by this decision):
+
+1. **Natural representation.** Character names should reflect the range of backgrounds present in contemporary UK schools — British, Irish, European, African, Caribbean, South Asian, East Asian, Middle Eastern, and others — as a matter of course, not as a deliberate insertion exercise per passage.
+2. **No accidental default.** No single cultural/naming association should become the unexamined default for any recurring content family (e.g. every grandparent-figure, every "new pupil" character) — checked by the periodic distribution audit below, not by a per-passage quota.
+3. **No Founder/authoring-context leakage.** Content-generation processes must not draw character names, backgrounds, or details from the Founder's or any author's personal identity, background, or private conversation context.
+4. **Name variety across the programme.** A cross-session "names already used" reference should exist (even a simple running list) so independently authored batches do not unknowingly repeat the same name-root, as happened with "Ade" and "Okafor".
+5. **No confusingly similar names within one assessment or passage.** (No violation found to date, but the rule should be explicit going forward.)
+6. **Age-appropriate, readable names.** Names should be straightforward for an 11+ candidate to read fluently under timed conditions.
+7. **Culturally authentic contexts**, not tokenistic insertion — a name's cultural association should not be paired with an unrelated stereotyped trait, occupation, or plot device.
+8. **Avoidance of stereotyping**, explicitly: no name/ethnicity pairing tied to a trait, ability, or occupation.
+9. **Avoidance of tokenistic diversity** — diversity should read as natural background variation, not an inserted checkbox per unit.
+10. **UK spelling and terminology** throughout (already substantially enforced via `QUESTION_AUTHORING_STANDARD.md` line 128; this standard extends the same principle to naming).
+11. **International contexts** remain appropriate where educationally genuine (real historical/scientific nonfiction, e.g. the Great Western steamship or Karl von Frisch's research) — this standard does not require every passage to be fictional or Essex-specific.
+12. **Periodic portfolio-level distribution audit** — a lightweight repeat of this Decision 240 methodology at defined content-growth intervals (e.g. every ~10 new passages), not a one-off.
+13. **Authoring QA** — a name-repetition/clustering check added to the pre-migration authoring checklist alongside existing factual-verification and copy-quality checks.
+14. **Independent review expectations** — the existing educational-review pipeline (`ali_family_review`) may, at the Founder's discretion, be extended to prompt a reviewer to flag naming/cultural concerns, in addition to its current academic-quality scope.
+
+This standard explicitly does **NOT**: ban Yoruba/Nigerian/African names; mandate traditionally English names; use ethnicity quotas mechanically; infer a fictional character's actual ethnicity from their name; copy CSSE past-paper characters or settings; or reduce diversity in any direction.
+
+## K. PRIORITISED REMEDIATION REGISTER (recorded, NOT implemented)
+
+| # | Content ID | Current content | Issue | Evidence | Severity | Proposed correction | Dependency impact | Already live? | Migration required? |
+|---|---|---|---|---|---|---|---|---|---|
+| 1 | N/A — process | No naming/representation policy exists | Confirmed policy gap | `founder-context-leakage-findings.md`, §F above | **P1** | Adopt Standard v1.0 above (documentation only) | None — governs future authoring only | N/A | No — doc change only |
+| 2 | `wave1-eng-raceday` (044) + `eng-inc002-roboticsfinal` (161/163) | "Ade" used independently in both | Repeated name-root across unrelated, independently-authored units | Source-read, both passages | **P1** | Factor into the Founder's still-pending Loose Connection rename decision (Section I) — not a standalone action | Loose Connection rename already under Founder consideration; no new dependency | 044 presumed live (not independently re-verified — see Limitations); 161/163 candidate/pending review | If 044 is ever touched: yes, additive, per Decision 218 convention |
+| 3 | `eng-inc002-roboticsfinal-q02d` (161/163) | acceptedAnswers includes "gloating" for "triumphant" | Questionable as a deterministic synonym | Founder's own live-review finding, Section I | **P1** | Record only, per explicit Founder instruction; do not mutate now | None — separate vocabulary-quality track from this audit | Candidate, pending review | Would require an additive migration if later corrected |
+| 4 | `w2-understudy-*` (049) + `w3-rc10-am-*` (063) | "Daniel Okafor" / "Mrs Okafor" | Repeated surname-root across unrelated units | Source-read, both passages | **P2** | Consider during planned content maintenance; no urgency (surnames, different first names/contexts, not confusing in-unit) | None | Presumed live (not independently re-verified) | Yes, additive, if ever touched |
+| 5 | Migration 044 (whole batch) | 2 of 6 passages carry a Yoruba/West-African-associated lead | Single-batch clustering (33% vs. ~9% estate average) | `cultural-distribution-analysis.md` §Clustering finding 1 | **P2** | Note for future authoring guidance; not a retroactive-edit trigger by itself | None | Presumed live | Yes, additive, if ever touched |
+| 6 | Migrations 039/040 (algebra word-problem name pool) | 13 names, zero South Asian/African/Middle-Eastern association | Inverse-asymmetry: subject-level representation gap | `cultural-distribution-analysis.md` §Clustering finding 3 | **P2/P3** | Diversify pool during planned Maths content maintenance | None | Presumed live | Yes, additive, if ever touched |
+| 7 | Whole estate | No same-unit confusingly-similar name pairs found | Observation only | Full inventory cross-check | **P3** | No correction needed | — | — | — |
+| 8 | Whole estate | No stereotyping found | Observation only | Full inventory + settings audit | **P3** | No correction needed | — | — | — |
+
+**Totals: P0 = 0, P1 = 3, P2 = 3 (one item spans P2/P3), P3 = 2.**
+
+## L. EXACT COUNTS
+
+- Total migrations checked for content markers: **163** (all).
+- Migrations containing learner-facing narrative/scenario content (`$json$` blocks): **35**.
+- Total `$json$` prompt blocks parsed: **469**, 0 JSON-parse failures.
+- Distinct passages/units identified: **38** (per the reproducible extraction pipeline in `docs/audits/decision240-uk-representation-audit/`; a manual independent cross-check of the inventory table found ~29-30 distinct passage titles — the gap is understood to be the pipeline additionally counting revised/re-authored versions of the same title, e.g. two separately-authored "The Understudy" texts, as distinct units, which is the methodologically correct treatment since their content differs — see Limitations).
+- Distinct confirmed character names: **56** (55 fictional + 1 real historical figure, excluded from distribution analysis).
+- Names recurring across 2+ separate migrations: **25 of 56 (~45%)** — the large majority of this is legitimate reuse of common names (e.g. "Priya", "Ben", "Tom"); the two material repeat-root cases are Ade (×3 characters, 2 migrations) and Okafor (×2 characters, 2 migrations).
+- Distribution by subject: English ≈53 distinct names; Mathematics 13 distinct names (039/040 pool) plus scattered singles.
+- Units with detected clustering: **1** (migration 044, 33% vs. ~9% estate average).
+- Same-unit confusing-name pairs: **0**.
+- P0/P1/P2/P3 findings: **0 / 3 / 3 / 2** (see Section K).
+
+## M. LIMITATIONS / UNCERTAINTY
+
+- This environment has no live Supabase access (unchanged since Decision 234) — "already live" status for migrations below 161 (044, 049, 051, 063, 097, 152) is **presumed from migration-number ordering convention, not independently re-verified against production** in this audit.
+- The 12 Mock Mathematics structural-capacity batches (~200+ blocks) were scanned by automated heuristic only, not hand-verified block-by-block; zero name candidates were found, but this is not an exhaustive manual guarantee.
+- Cultural/ethnic association classifications are inherently approximate analytical signals, not verified facts about any real population or the (nonexistent) "actual" ethnicity of a fictional character — every classification defaults to "uncertain/cross-cultural" where genuine ambiguity exists, per the directive's own instruction, and percentages throughout are stated as approximate (~) for this reason.
+- "Total character-name occurrences" (as opposed to distinct names) was not reduced to one meaningful number, since a name occurs once per `$json$` block referencing its passage, making a raw occurrence count roughly proportional to question-count-per-passage rather than a useful distribution metric — the per-name, per-file breakdown in `_merged-name-table.json` is the reproducible source of truth instead.
+- No historical authoring-prompt logs exist in this repository, so the Founder-context-leakage mechanism proposed in Section F is offered as the most evidence-consistent explanation available, explicitly labelled as inference, not proof.
+
+## N. RECOMMENDATION FOR FOUNDER DECISION
+
+Adopt the proposed Standard v1.0 (Section J) as a documentation change (no content mutation) as the immediate next step — this closes the confirmed policy gap for all future authoring regardless of what is decided about existing content. For The Loose Connection specifically, proceed with the Founder's own balancing decision on the previously proposed candidate rename, now informed by the fact that "Ade" is independently reused elsewhere in the estate (a repetition-based reason to vary the name) as distinct from any suggestion that a Yoruba/African name is itself a defect (it is not). The P2 items (Okafor repetition, migration 044 batch clustering, Maths name-pool asymmetry) do not require urgent action and can be addressed during planned content-maintenance windows, per this project's own additive-migration convention, if and when those specific units are next revisited for other reasons.
+
+**Files changed:** `docs/audits/decision240-uk-representation-audit/` (new directory: `character-name-inventory.md`, `cultural-distribution-analysis.md`, `founder-context-leakage-findings.md`, `raw-evidence-log.md`, plus reproducibility tooling and raw extraction data — `_extract.mjs`, `_digest.mjs`, `_name_candidates.mjs`, `_name_candidates_pass2.mjs`, `_merge_names.mjs`, `_raw-json-corpus.json`, `_text-digest.md`, `_name-candidates.json`, `_name-candidates-pass2.json`, `_merged-name-table.json`), `ALI_DECISION_LOG.md`. No migration file, test file, application code, or educational content was touched.
+
+**Decision number:** 240.
+
+**Commit SHA:** recorded after commit (see repository history immediately following this entry).
+
+**Evidence tiers, explicit:** LIVE FOUNDER EVIDENCE (Level 1) — the Founder's own observation that triggered this audit, and the Q2(d) "gloating" finding recorded in Section I. SOURCE-READ EVIDENCE — every character name and cultural-context reference in this report was read directly from the actual migration source text, spot-verified independently in this session for the Ade/Okafor/Owusu-Femi findings before being reported as fact. REASONED-PROOF EVIDENCE — the Founder-context-leakage mechanism proposed in Section F, explicitly labelled as inference throughout. No AUTOMATED TEST EVIDENCE applies (this is a documentation/analysis decision, not a code change). No LIVE PRODUCTION EVIDENCE applies — nothing in this decision touched production, and this audit did not require or use live database access.
+
+**Final verdict: B — LOCAL CORRECTIONS REQUIRED.** The evidence gathered is sufficient for a safe conclusion (ruling out D). No programme-wide systemic bias was found — the aggregate distribution is plausible for UK demographics, ruling out C. But the evidence is not clean enough to conclude no material issue exists either, ruling out A: two concrete, source-confirmed local patterns (the Ade-root and Okafor-root repetitions, and the migration-044 batch clustering) require correction, alongside adopting the proposed Standard v1.0 to close the confirmed policy gap going forward. Nothing has been remediated, migrated, reviewed, or certified by this decision. The Loose Connection remains exactly as the Founder left it, pending their own balancing decision informed by this audit.
+
+---

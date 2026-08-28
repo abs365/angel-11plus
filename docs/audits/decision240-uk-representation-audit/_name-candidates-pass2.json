@@ -1,0 +1,1989 @@
+[
+  {
+    "name": "Explain",
+    "count": 27,
+    "fileCount": 7,
+    "files": [
+      "021_founder_validation_csse_assessment.sql",
+      "044_english_wave1_content.sql",
+      "049_english_wave2_content.sql",
+      "051_english_wave2_completion_content.sql",
+      "097_mock_english_passage_content_foundation.sql",
+      "152_english_content_foundation_increment001_comprehension.sql",
+      "161_english_content_foundation_increment002_comprehension.sql"
+    ],
+    "idCount": 27,
+    "samples": [
+      "picking the apples carefully. Explain what the quotation shows.",
+      "Explain what you think the word 'unhurried' means as Grandad"
+    ]
+  },
+  {
+    "name": "Tick",
+    "count": 26,
+    "fileCount": 7,
+    "files": [
+      "021_founder_validation_csse_assessment.sql",
+      "044_english_wave1_content.sql",
+      "049_english_wave2_content.sql",
+      "051_english_wave2_completion_content.sql",
+      "097_mock_english_passage_content_foundation.sql",
+      "152_english_content_foundation_increment001_comprehension.sql",
+      "161_english_content_foundation_increment002_comprehension.sql"
+    ],
+    "idCount": 26,
+    "samples": [
+      "hed picking apples carefully? Tick Yes or No, then give two reasons for your answer.",
+      "st attempt at the kite frame? Tick Yes or No, then give two reasons for your answer, using"
+    ]
+  },
+  {
+    "name": "Using",
+    "count": 20,
+    "fileCount": 7,
+    "files": [
+      "036_mathematics_wave2_content.sql",
+      "039_mathematics_wave3_content.sql",
+      "044_english_wave1_content.sql",
+      "049_english_wave2_content.sql",
+      "051_english_wave2_completion_content.sql",
+      "161_english_content_foundation_increment002_comprehension.sql",
+      "163_english_content_foundation_increment002_loose_connection_q2_grouped_scoring_correction.sql"
+    ],
+    "idCount": 20,
+    "samples": [
+      " that cost £20 now costs £15. Using the same reduction, what is the new price of a jacket ",
+      " that cost £50 now costs £40. Using the same reduction, what is the new price of a jacket "
+    ]
+  },
+  {
+    "name": "Priya",
+    "count": 18,
+    "fileCount": 4,
+    "files": [
+      "040_mathematics_wave3b_content.sql",
+      "044_english_wave1_content.sql",
+      "049_english_wave2_content.sql",
+      "097_mock_english_passage_content_foundation.sql"
+    ],
+    "idCount": 16,
+    "samples": [
+      "Priya has £8 more than Sam in savings. Together they have £3",
+      "What had Priya rehearsed before school that day?"
+    ]
+  },
+  {
+    "name": "Does",
+    "count": 16,
+    "fileCount": 6,
+    "files": [
+      "021_founder_validation_csse_assessment.sql",
+      "044_english_wave1_content.sql",
+      "049_english_wave2_content.sql",
+      "097_mock_english_passage_content_foundation.sql",
+      "152_english_content_foundation_increment001_comprehension.sql",
+      "161_english_content_foundation_increment002_comprehension.sql"
+    ],
+    "idCount": 16,
+    "samples": [
+      "Does the passage suggest that Ben approached picking apples ",
+      "Does Grandad seem pleased with Femi's first attempt at the k"
+    ]
+  },
+  {
+    "name": "Option",
+    "count": 16,
+    "fileCount": 2,
+    "files": [
+      "040_mathematics_wave3b_content.sql",
+      "078_mr04_content_depth_foundation.sql"
+    ],
+    "idCount": 8,
+    "samples": [
+      "Apples: Option A is 3 for £1.20. Option B is 5 for £2.25. Which opti",
+      "les: Option A is 3 for £1.20. Option B is 5 for £2.25. Which option is better value, A or "
+    ]
+  },
+  {
+    "name": "True",
+    "count": 13,
+    "fileCount": 3,
+    "files": [
+      "031_mathematics_wave1_content_scale.sql",
+      "040_mathematics_wave3b_content.sql",
+      "091_mock_mathematics_batch002.sql"
+    ],
+    "idCount": 9,
+    "samples": [
+      "True or False: 17 is a prime number. \n True",
+      "alse: 17 is a prime number. \n True"
+    ]
+  },
+  {
+    "name": "Ben",
+    "count": 11,
+    "fileCount": 4,
+    "files": [
+      "021_founder_validation_csse_assessment.sql",
+      "039_mathematics_wave3_content.sql",
+      "040_mathematics_wave3b_content.sql",
+      "049_english_wave2_content.sql"
+    ],
+    "idCount": 8,
+    "samples": [
+      "Does the passage suggest that Ben approached picking apples carefully? Tick Yes or No, the",
+      "Find a quotation that shows Ben was more concerned with the weather than with picking th"
+    ]
+  },
+  {
+    "name": "False",
+    "count": 10,
+    "fileCount": 2,
+    "files": [
+      "031_mathematics_wave1_content_scale.sql",
+      "040_mathematics_wave3b_content.sql"
+    ],
+    "idCount": 7,
+    "samples": [
+      "True or False: 17 is a prime number. \n True",
+      "True or False: 51 is a prime number. \n False"
+    ]
+  },
+  {
+    "name": "According",
+    "count": 10,
+    "fileCount": 3,
+    "files": [
+      "097_mock_english_passage_content_foundation.sql",
+      "152_english_content_foundation_increment001_comprehension.sql",
+      "161_english_content_foundation_increment002_comprehension.sql"
+    ],
+    "idCount": 10,
+    "samples": [
+      "According to their grandfather's note, how many thin coats o",
+      "According to her mother's note, why was Isla Bennett unable "
+    ]
+  },
+  {
+    "name": "Milltown",
+    "count": 10,
+    "fileCount": 1,
+    "files": [
+      "125_mock_mathematics_structural_capacity_wave002_timetable_pricelist.sql"
+    ],
+    "idCount": 4,
+    "samples": [
+      "lview to Oakford, stopping at Milltown and Riverside. The timetable below shows the mornin",
+      "lview to Oakford, stopping at Milltown and Riverside. The timetable below shows the mornin"
+    ]
+  },
+  {
+    "name": "After",
+    "count": 9,
+    "fileCount": 4,
+    "files": [
+      "021_founder_validation_csse_assessment.sql",
+      "078_mr04_content_depth_foundation.sql",
+      "091_mock_mathematics_batch002.sql",
+      "095_mock_mathematics_batch003.sql"
+    ],
+    "idCount": 7,
+    "samples": [
+      "After 5 quiz rounds, Priya's average (mean) score is 14. (a)",
+      "increases every price by 20%. After the increase, a jacket costs £96. What was the price b"
+    ]
+  },
+  {
+    "name": "Tom",
+    "count": 9,
+    "fileCount": 3,
+    "files": [
+      "039_mathematics_wave3_content.sql",
+      "040_mathematics_wave3b_content.sql",
+      "063_qt_mr01_and_qt_rc10_first_batch.sql"
+    ],
+    "idCount": 5,
+    "samples": [
+      "am has twice as much money as Tom. Between them they have £36. If Tom then spends £4, how ",
+      "etween them they have £36. If Tom then spends £4, how much does Tom have left? \n 8"
+    ]
+  },
+  {
+    "name": "Riverside",
+    "count": 9,
+    "fileCount": 2,
+    "files": [
+      "125_mock_mathematics_structural_capacity_wave002_timetable_pricelist.sql",
+      "131_mock_mathematics_structural_capacity_increment003_funrun.sql"
+    ],
+    "idCount": 8,
+    "samples": [
+      "ord, stopping at Milltown and Riverside. The timetable below shows the morning and afterno",
+      "ord, stopping at Milltown and Riverside. The timetable below shows the morning and afterno"
+    ]
+  },
+  {
+    "name": "Ade",
+    "count": 8,
+    "fileCount": 2,
+    "files": [
+      "044_english_wave1_content.sql",
+      "161_english_content_foundation_increment002_comprehension.sql"
+    ],
+    "idCount": 7,
+    "samples": [
+      "What did Ade do in the two hours before the relay?",
+      "Find two quotations that show Ade feels increasingly uncomfortable by the end of the passa"
+    ]
+  },
+  {
+    "name": "Leo",
+    "count": 7,
+    "fileCount": 3,
+    "files": [
+      "013_wave2_illustrative_practice_content.sql",
+      "040_mathematics_wave3b_content.sql",
+      "051_english_wave2_completion_content.sql"
+    ],
+    "idCount": 5,
+    "samples": [
+      "oes this simile tell us about Leo?",
+      "Leo has £6 more than Mia in pocket money. Together they have"
+    ]
+  },
+  {
+    "name": "Answer",
+    "count": 7,
+    "fileCount": 3,
+    "files": [
+      "036_mathematics_wave2_content.sql",
+      "040_mathematics_wave3b_content.sql",
+      "091_mock_mathematics_batch002.sql"
+    ],
+    "idCount": 7,
+    "samples": [
+      "ess than, or equal to 5n − 3? Answer Greater, Less, or Equal. \n Equal",
+      "ess than, or equal to 4n + 1? Answer Greater, Less, or Equal. \n Greater"
+    ]
+  },
+  {
+    "name": "Point",
+    "count": 7,
+    "fileCount": 2,
+    "files": [
+      "039_mathematics_wave3_content.sql",
+      "081_inc006_structural_depth.sql"
+    ],
+    "idCount": 7,
+    "samples": [
+      "Point A is at (3, 5). It is reflected in the x-axis. What ar",
+      "Point B is at (4, -2). It is reflected in the y-axis. What a"
+    ]
+  },
+  {
+    "name": "Together",
+    "count": 7,
+    "fileCount": 3,
+    "files": [
+      "039_mathematics_wave3_content.sql",
+      "040_mathematics_wave3b_content.sql",
+      "091_mock_mathematics_batch002.sql"
+    ],
+    "idCount": 7,
+    "samples": [
+      " length of the shorter piece. Together they measure 60cm. If 3cm is then cut from the shor",
+      " £8 more than Sam in savings. Together they have £36. How much does Sam have? \n £14"
+    ]
+  },
+  {
+    "name": "Three",
+    "count": 7,
+    "fileCount": 3,
+    "files": [
+      "040_mathematics_wave3b_content.sql",
+      "081_inc006_structural_depth.sql",
+      "137_mock_mathematics_structural_capacity_increment005_numberpuzzle.sql"
+    ],
+    "idCount": 7,
+    "samples": [
+      "Three angles around a point are in the ratio 1:2:3. What is ",
+      "Three angles around a point are in the ratio 2:3:4. What is "
+    ]
+  },
+  {
+    "name": "Marcus",
+    "count": 7,
+    "fileCount": 2,
+    "files": [
+      "044_english_wave1_content.sql",
+      "049_english_wave2_content.sql"
+    ],
+    "idCount": 7,
+    "samples": [
+      "Why had Marcus wanted to open the attic door for eleven days?",
+      "Find two quotations that show Marcus is cautious as he explores the attic, and explain wha"
+    ]
+  },
+  {
+    "name": "Kabir",
+    "count": 7,
+    "fileCount": 1,
+    "files": [
+      "097_mock_english_passage_content_foundation.sql"
+    ],
+    "idCount": 6,
+    "samples": [
+      "randfather promised Priya and Kabir, before he died?",
+      "ans as it is used to describe Kabir in the passage."
+    ]
+  },
+  {
+    "name": "Hillview",
+    "count": 7,
+    "fileCount": 1,
+    "files": [
+      "125_mock_mathematics_structural_capacity_wave002_timetable_pricelist.sql"
+    ],
+    "idCount": 4,
+    "samples": [
+      "bus company runs a route from Hillview to Oakford, stopping at Milltown and Riverside. The",
+      "rning bus take to travel from Hillview to Oakford? \n 95"
+    ]
+  },
+  {
+    "name": "Dara",
+    "count": 6,
+    "fileCount": 1,
+    "files": [
+      "044_english_wave1_content.sql"
+    ],
+    "idCount": 6,
+    "samples": [
+      "Why does Dara say the market noise confused her in the first week?",
+      "Explain what Dara means when she says she misses home 'slightly less loud"
+    ]
+  },
+  {
+    "name": "Freya",
+    "count": 6,
+    "fileCount": 2,
+    "files": [
+      "049_english_wave2_content.sql",
+      "051_english_wave2_completion_content.sql"
+    ],
+    "idCount": 3,
+    "samples": [
+      "o describe the first few bars Freya played.",
+      "How does Freya feel in the recital hall in the minutes before she is "
+    ]
+  },
+  {
+    "name": "Maya",
+    "count": 6,
+    "fileCount": 2,
+    "files": [
+      "063_qt_mr01_and_qt_rc10_first_batch.sql",
+      "152_english_content_foundation_increment001_comprehension.sql"
+    ],
+    "idCount": 5,
+    "samples": [
+      "description suggest about how Maya is feeling?",
+      "hoose to end the passage with Maya \"listening to nothing at all\" just before she turns the"
+    ]
+  },
+  {
+    "name": "Zara",
+    "count": 5,
+    "fileCount": 3,
+    "files": [
+      "040_mathematics_wave3b_content.sql",
+      "049_english_wave2_content.sql",
+      "051_english_wave2_completion_content.sql"
+    ],
+    "idCount": 3,
+    "samples": [
+      "Zara has £10 more than Tom in birthday money. Together they ",
+      "How does Zara feel by the end of the passage, and why?"
+    ]
+  },
+  {
+    "name": "Oliver",
+    "count": 5,
+    "fileCount": 2,
+    "files": [
+      "049_english_wave2_content.sql",
+      "051_english_wave2_completion_content.sql"
+    ],
+    "idCount": 5,
+    "samples": [
+      "Why did Oliver suddenly need to perform the lead role?",
+      "Find two quotations that show Oliver had genuinely prepared for this role, even though he "
+    ]
+  },
+  {
+    "name": "Iris",
+    "count": 5,
+    "fileCount": 2,
+    "files": [
+      "049_english_wave2_content.sql",
+      "051_english_wave2_completion_content.sql"
+    ],
+    "idCount": 4,
+    "samples": [
+      "Explain what Iris means when she says their two sides of the family have ",
+      "Does Iris fully disapprove of what Grandad did? Tick Yes or No, t"
+    ]
+  },
+  {
+    "name": "Freya's",
+    "count": 5,
+    "fileCount": 2,
+    "files": [
+      "049_english_wave2_content.sql",
+      "051_english_wave2_completion_content.sql"
+    ],
+    "idCount": 4,
+    "samples": [
+      "What did Freya's teacher say to her after the performance?",
+      "Does Freya's performance improve as the piece goes on? Tick Yes o"
+    ]
+  },
+  {
+    "name": "Oakford",
+    "count": 5,
+    "fileCount": 1,
+    "files": [
+      "125_mock_mathematics_structural_capacity_wave002_timetable_pricelist.sql"
+    ],
+    "idCount": 4,
+    "samples": [
+      "runs a route from Hillview to Oakford, stopping at Milltown and Riverside. The timetable b",
+      "ke to travel from Hillview to Oakford? \n 95"
+    ]
+  },
+  {
+    "name": "Priya's",
+    "count": 4,
+    "fileCount": 3,
+    "files": [
+      "021_founder_validation_csse_assessment.sql",
+      "049_english_wave2_content.sql",
+      "097_mock_english_passage_content_foundation.sql"
+    ],
+    "idCount": 4,
+    "samples": [
+      "After 5 quiz rounds, Priya's average (mean) score is 14. (a) What is her total sc",
+      "What is Priya's usual patrol order? Write the four stops in order."
+    ]
+  },
+  {
+    "name": "Greater",
+    "count": 4,
+    "fileCount": 1,
+    "files": [
+      "036_mathematics_wave2_content.sql"
+    ],
+    "idCount": 3,
+    "samples": [
+      "n, or equal to 5n − 3? Answer Greater, Less, or Equal. \n Equal",
+      "n, or equal to 4n + 1? Answer Greater, Less, or Equal. \n Greater"
+    ]
+  },
+  {
+    "name": "Less",
+    "count": 4,
+    "fileCount": 1,
+    "files": [
+      "036_mathematics_wave2_content.sql"
+    ],
+    "idCount": 3,
+    "samples": [
+      "al to 5n − 3? Answer Greater, Less, or Equal. \n Equal",
+      "al to 4n + 1? Answer Greater, Less, or Equal. \n Greater"
+    ]
+  },
+  {
+    "name": "Equal",
+    "count": 4,
+    "fileCount": 1,
+    "files": [
+      "036_mathematics_wave2_content.sql"
+    ],
+    "idCount": 3,
+    "samples": [
+      "− 3? Answer Greater, Less, or Equal. \n Equal",
+      "er Greater, Less, or Equal. \n Equal"
+    ]
+  },
+  {
+    "name": "Amy",
+    "count": 4,
+    "fileCount": 2,
+    "files": [
+      "039_mathematics_wave3_content.sql",
+      "040_mathematics_wave3b_content.sql"
+    ],
+    "idCount": 3,
+    "samples": [
+      "Amy has three times as many stickers as Ben. Between them th",
+      "Books read this month. Amy: 7, Ben: 4, Cara: 9, Dan: 6. What is the total read by A"
+    ]
+  },
+  {
+    "name": "Cara",
+    "count": 4,
+    "fileCount": 1,
+    "files": [
+      "040_mathematics_wave3b_content.sql"
+    ],
+    "idCount": 2,
+    "samples": [
+      "d this month. Amy: 7, Ben: 4, Cara: 9, Dan: 6. What is the total read by Amy and Cara? \n 1",
+      " is the total read by Amy and Cara? \n 16"
+    ]
+  },
+  {
+    "name": "Two",
+    "count": 4,
+    "fileCount": 2,
+    "files": [
+      "040_mathematics_wave3b_content.sql",
+      "091_mock_mathematics_batch002.sql"
+    ],
+    "idCount": 4,
+    "samples": [
+      "Two angles on a straight line are in the ratio 2:3. What is ",
+      "Two angles on a straight line are in the ratio 5:4. What is "
+    ]
+  },
+  {
+    "name": "Femi",
+    "count": 4,
+    "fileCount": 1,
+    "files": [
+      "044_english_wave1_content.sql"
+    ],
+    "idCount": 4,
+    "samples": [
+      "Why was Femi not allowed to touch the bamboo before this Saturday?",
+      "w Grandad believes in letting Femi learn by working things out for himself, rather than be"
+    ]
+  },
+  {
+    "name": "Jayden",
+    "count": 4,
+    "fileCount": 1,
+    "files": [
+      "063_qt_mr01_and_qt_rc10_first_batch.sql"
+    ],
+    "idCount": 2,
+    "samples": [
+      "Jayden \"spent the whole morning walking very deliberately pa",
+      "t does this suggest about how Jayden felt about his new trainers?"
+    ]
+  },
+  {
+    "name": "Class",
+    "count": 4,
+    "fileCount": 1,
+    "files": [
+      "088_mock_mathematics_batch001.sql"
+    ],
+    "idCount": 1,
+    "samples": [
+      " part in a reading challenge. Class A read 24 books, Class B read 31 books, Class C read 1",
+      "lenge. Class A read 24 books, Class B read 31 books, Class C read 18 books, and Class D re"
+    ]
+  },
+  {
+    "name": "Each",
+    "count": 4,
+    "fileCount": 2,
+    "files": [
+      "095_mock_mathematics_batch003.sql",
+      "113_mock_mathematics_shared_scenario_completion_batch.sql"
+    ],
+    "idCount": 3,
+    "samples": [
+      "Each costume uses 2.5 metres of fabric costing £4.80 per met",
+      "Each metre of bunting uses 6 triangular flags, and 3.5 metre"
+    ]
+  },
+  {
+    "name": "Put",
+    "count": 4,
+    "fileCount": 3,
+    "files": [
+      "097_mock_english_passage_content_foundation.sql",
+      "152_english_content_foundation_increment001_comprehension.sql",
+      "161_english_content_foundation_increment002_comprehension.sql"
+    ],
+    "idCount": 4,
+    "samples": [
+      "Put these three repair steps in the order Priya and Kabir ac",
+      "Put these four events in the order they happen, according to"
+    ]
+  },
+  {
+    "name": "Week",
+    "count": 4,
+    "fileCount": 1,
+    "files": [
+      "113_mock_mathematics_shared_scenario_completion_batch.sql"
+    ],
+    "idCount": 1,
+    "samples": [
+      "Give your answer in the form \"Week X to Week Y\". \n Week 3 to Week 4",
+      "answer in the form \"Week X to Week Y\". \n Week 3 to Week 4"
+    ]
+  },
+  {
+    "name": "Stickers",
+    "count": 4,
+    "fileCount": 1,
+    "files": [
+      "125_mock_mathematics_structural_capacity_wave002_timetable_pricelist.sql"
+    ],
+    "idCount": 3,
+    "samples": [
+      " individually for £1.20 each. Stickers are sold in packs of 8 for £1.60 each pack. What is",
+      " individually for £1.20 each. Stickers are sold in packs of 8 for £1.60 each pack. If some"
+    ]
+  },
+  {
+    "name": "Primary",
+    "count": 4,
+    "fileCount": 1,
+    "files": [
+      "131_mock_mathematics_structural_capacity_increment003_funrun.sql"
+    ],
+    "idCount": 4,
+    "samples": [
+      "Riverside Primary School held a sponsored fun run. The table below sho",
+      "Riverside Primary School held a sponsored fun run. The table below sho"
+    ]
+  },
+  {
+    "name": "Oakwood",
+    "count": 4,
+    "fileCount": 1,
+    "files": [
+      "140_mock_mathematics_structural_capacity_increment006_roundingbounds.sql"
+    ],
+    "idCount": 4,
+    "samples": [
+      "At the Oakwood Athletics Meet, the number of adult spectators round",
+      "At the Oakwood Athletics Meet, the number of adult spectators round"
+    ]
+  },
+  {
+    "name": "Athletics",
+    "count": 4,
+    "fileCount": 1,
+    "files": [
+      "140_mock_mathematics_structural_capacity_increment006_roundingbounds.sql"
+    ],
+    "idCount": 4,
+    "samples": [
+      "At the Oakwood Athletics Meet, the number of adult spectators rounds to 380",
+      "At the Oakwood Athletics Meet, the number of adult spectators rounds to 380"
+    ]
+  },
+  {
+    "name": "Meet",
+    "count": 4,
+    "fileCount": 1,
+    "files": [
+      "140_mock_mathematics_structural_capacity_increment006_roundingbounds.sql"
+    ],
+    "idCount": 4,
+    "samples": [
+      "At the Oakwood Athletics Meet, the number of adult spectators rounds to 380 to the ne",
+      "At the Oakwood Athletics Meet, the number of adult spectators rounds to 380 to the ne"
+    ]
+  },
+  {
+    "name": "Nisha",
+    "count": 4,
+    "fileCount": 2,
+    "files": [
+      "161_english_content_foundation_increment002_comprehension.sql",
+      "163_english_content_foundation_increment002_loose_connection_q2_grouped_scoring_correction.sql"
+    ],
+    "idCount": 4,
+    "samples": [
+      " the wires instead of letting Nisha swap the motor? Tick Yes or No, then give two reasons ",
+      "or near the battery terminal; Nisha says she is going to swap the motor for the spare; the"
+    ]
+  },
+  {
+    "name": "Nadia",
+    "count": 3,
+    "fileCount": 1,
+    "files": [
+      "021_founder_validation_csse_assessment.sql"
+    ],
+    "idCount": 3,
+    "samples": [
+      "How many apples had Nadia counted in the east row that morning?",
+      "would rush\" suggest about how Nadia experiences the weather?"
+    ]
+  },
+  {
+    "name": "Sam",
+    "count": 3,
+    "fileCount": 2,
+    "files": [
+      "039_mathematics_wave3_content.sql",
+      "040_mathematics_wave3b_content.sql"
+    ],
+    "idCount": 2,
+    "samples": [
+      "Sam has twice as much money as Tom. Between them they have £",
+      "Priya has £8 more than Sam in savings. Together they have £36. How much does Sam ha"
+    ]
+  },
+  {
+    "name": "Between",
+    "count": 3,
+    "fileCount": 2,
+    "files": [
+      "039_mathematics_wave3_content.sql",
+      "113_mock_mathematics_shared_scenario_completion_batch.sql"
+    ],
+    "idCount": 3,
+    "samples": [
+      "s twice as much money as Tom. Between them they have £36. If Tom then spends £4, how much ",
+      "imes as many stickers as Ben. Between them they have 48 stickers. If Ben then gives away 5"
+    ]
+  },
+  {
+    "name": "Mon",
+    "count": 3,
+    "fileCount": 1,
+    "files": [
+      "040_mathematics_wave3b_content.sql"
+    ],
+    "idCount": 3,
+    "samples": [
+      "Umbrellas sold by day. Mon: 12, Tue: 18, Wed: 9, Thu: 15, Fri: 21. What is the tota",
+      "Umbrellas sold by day. Mon: 12, Tue: 18, Wed: 9, Thu: 15, Fri: 21. How many more we"
+    ]
+  },
+  {
+    "name": "Tue",
+    "count": 3,
+    "fileCount": 1,
+    "files": [
+      "040_mathematics_wave3b_content.sql"
+    ],
+    "idCount": 3,
+    "samples": [
+      "brellas sold by day. Mon: 12, Tue: 18, Wed: 9, Thu: 15, Fri: 21. What is the total number ",
+      "brellas sold by day. Mon: 12, Tue: 18, Wed: 9, Thu: 15, Fri: 21. How many more were sold o"
+    ]
+  },
+  {
+    "name": "Wed",
+    "count": 3,
+    "fileCount": 1,
+    "files": [
+      "040_mathematics_wave3b_content.sql"
+    ],
+    "idCount": 3,
+    "samples": [
+      "old by day. Mon: 12, Tue: 18, Wed: 9, Thu: 15, Fri: 21. What is the total number sold from",
+      "old by day. Mon: 12, Tue: 18, Wed: 9, Thu: 15, Fri: 21. How many more were sold on Friday "
+    ]
+  },
+  {
+    "name": "Thu",
+    "count": 3,
+    "fileCount": 1,
+    "files": [
+      "040_mathematics_wave3b_content.sql"
+    ],
+    "idCount": 3,
+    "samples": [
+      "ay. Mon: 12, Tue: 18, Wed: 9, Thu: 15, Fri: 21. What is the total number sold from Monday ",
+      "ay. Mon: 12, Tue: 18, Wed: 9, Thu: 15, Fri: 21. How many more were sold on Friday than on "
+    ]
+  },
+  {
+    "name": "Fri",
+    "count": 3,
+    "fileCount": 1,
+    "files": [
+      "040_mathematics_wave3b_content.sql"
+    ],
+    "idCount": 3,
+    "samples": [
+      "12, Tue: 18, Wed: 9, Thu: 15, Fri: 21. What is the total number sold from Monday to Wednes",
+      "12, Tue: 18, Wed: 9, Thu: 15, Fri: 21. How many more were sold on Friday than on Wednesday"
+    ]
+  },
+  {
+    "name": "Ade's",
+    "count": 3,
+    "fileCount": 2,
+    "files": [
+      "044_english_wave1_content.sql",
+      "161_english_content_foundation_increment002_comprehension.sql"
+    ],
+    "idCount": 3,
+    "samples": [
+      "from the passage, explain how Ade's and Cass's approaches to the race differ.",
+      "narrator initially agree with Ade's decision to check the wires instead of letting Nisha s"
+    ]
+  },
+  {
+    "name": "Robyn's",
+    "count": 3,
+    "fileCount": 2,
+    "files": [
+      "049_english_wave2_content.sql",
+      "051_english_wave2_completion_content.sql"
+    ],
+    "idCount": 3,
+    "samples": [
+      "rom both letters, explain how Robyn's and Iris's reactions to the fence story differ.",
+      "Find two quotations from Robyn's letter that show she finds the whole event funny rat"
+    ]
+  },
+  {
+    "name": "Ben's",
+    "count": 3,
+    "fileCount": 2,
+    "files": [
+      "049_english_wave2_content.sql",
+      "051_english_wave2_completion_content.sql"
+    ],
+    "idCount": 3,
+    "samples": [
+      "from the passage, explain how Ben's and Zara's approaches to the science fair differ.",
+      "about the judges' reaction to Ben's demonstration."
+    ]
+  },
+  {
+    "name": "Zara's",
+    "count": 3,
+    "fileCount": 2,
+    "files": [
+      "049_english_wave2_content.sql",
+      "051_english_wave2_completion_content.sql"
+    ],
+    "idCount": 3,
+    "samples": [
+      "assage, explain how Ben's and Zara's approaches to the science fair differ.",
+      "Does Ben seem confident about Zara's chances at the fair before the judging happens? Tick "
+    ]
+  },
+  {
+    "name": "Theo",
+    "count": 3,
+    "fileCount": 1,
+    "files": [
+      "049_english_wave2_content.sql"
+    ],
+    "idCount": 2,
+    "samples": [
+      " flattened the trampoline. B. Theo helped carry the bins. C. Mum closed and checked the wi",
+      " lost power before dinner. F. Theo was frightened by the storm. G. Dad made a final trip t"
+    ]
+  },
+  {
+    "name": "Fenwick",
+    "count": 3,
+    "fileCount": 1,
+    "files": [
+      "063_qt_mr01_and_qt_rc10_first_batch.sql"
+    ],
+    "idCount": 2,
+    "samples": [
+      "Mr Fenwick carried the sack \"as though it weighed nothing more ",
+      "s comparison suggest about Mr Fenwick?"
+    ]
+  },
+  {
+    "name": "One",
+    "count": 3,
+    "fileCount": 3,
+    "files": [
+      "066_007x_mathematics_depth_expansion.sql",
+      "091_mock_mathematics_batch002.sql",
+      "134_mock_mathematics_structural_capacity_increment004_campingsale.sql"
+    ],
+    "idCount": 3,
+    "samples": [
+      "round has a perimeter of 54m. One side is 15m. What is the area? \n 180",
+      " rope is cut into two pieces. One piece is 3 times as long as the other. Together the two "
+    ]
+  },
+  {
+    "name": "Four",
+    "count": 3,
+    "fileCount": 2,
+    "files": [
+      "081_inc006_structural_depth.sql",
+      "088_mock_mathematics_batch001.sql"
+    ],
+    "idCount": 3,
+    "samples": [
+      "ore across five games was 18. Four of the scores were 15, 20, 12, 22. What was the fifth s",
+      " Maya's mean savings was £14. Four of the weekly amounts were £10, £18, £9, £16. How much "
+    ]
+  },
+  {
+    "name": "Their",
+    "count": 3,
+    "fileCount": 2,
+    "files": [
+      "091_mock_mathematics_batch002.sql",
+      "097_mock_english_passage_content_foundation.sql"
+    ],
+    "idCount": 3,
+    "samples": [
+      "The sum of two numbers is 58. Their difference is 12. What is the larger number? \n 35",
+      "The sum of two numbers is 74. Their difference is 18. What is the smaller number? \n 28"
+    ]
+  },
+  {
+    "name": "Altogether",
+    "count": 3,
+    "fileCount": 1,
+    "files": [
+      "119_mock_mathematics_structural_capacity_increment001_algebraic_system.sql"
+    ],
+    "idCount": 3,
+    "samples": [
+      "many marbles as the blue bag. Altogether, the three bags contain 64 marbles. How many marb",
+      "many marbles as the blue bag. Altogether, the three bags contain 64 marbles. How many marb"
+    ]
+  },
+  {
+    "name": "Keyrings",
+    "count": 3,
+    "fileCount": 1,
+    "files": [
+      "125_mock_mathematics_structural_capacity_wave002_timetable_pricelist.sql"
+    ],
+    "idCount": 3,
+    "samples": [
+      "ings, bracelets and stickers. Keyrings are sold in packs of 5 for £2.00 each pack. Bracele",
+      "ings, bracelets and stickers. Keyrings are sold in packs of 5 for £2.00 each pack. Bracele"
+    ]
+  },
+  {
+    "name": "Bracelets",
+    "count": 3,
+    "fileCount": 1,
+    "files": [
+      "125_mock_mathematics_structural_capacity_wave002_timetable_pricelist.sql"
+    ],
+    "idCount": 3,
+    "samples": [
+      "cks of 5 for £2.00 each pack. Bracelets are sold individually for £1.20 each. Stickers are",
+      "cks of 5 for £2.00 each pack. Bracelets are sold individually for £1.20 each. Stickers are"
+    ]
+  },
+  {
+    "name": "Leo's",
+    "count": 2,
+    "fileCount": 2,
+    "files": [
+      "013_wave2_illustrative_practice_content.sql",
+      "051_english_wave2_completion_content.sql"
+    ],
+    "idCount": 2,
+    "samples": [
+      "What impression do you get of Leo's character from this passage? Use at least two pieces o",
+      "ssage, explain how Kofi's and Leo's attitudes to keeping the party secret differ."
+    ]
+  },
+  {
+    "name": "Thomas",
+    "count": 2,
+    "fileCount": 2,
+    "files": [
+      "013_wave2_illustrative_practice_content.sql",
+      "016_educational_identity_batch1_english_maths.sql"
+    ],
+    "idCount": 2,
+    "samples": [
+      "How does Thomas try to reassure his mother throughout the letter? Fin",
+      "What does Thomas mean when he says he 'no longer recognises the young "
+    ]
+  },
+  {
+    "name": "Umbrellas",
+    "count": 2,
+    "fileCount": 1,
+    "files": [
+      "040_mathematics_wave3b_content.sql"
+    ],
+    "idCount": 2,
+    "samples": [
+      "Umbrellas sold by day. Mon: 12, Tue: 18, Wed: 9, Thu: 15, Fr",
+      "Umbrellas sold by day. Mon: 12, Tue: 18, Wed: 9, Thu: 15, Fr"
+    ]
+  },
+  {
+    "name": "Books",
+    "count": 2,
+    "fileCount": 1,
+    "files": [
+      "040_mathematics_wave3b_content.sql"
+    ],
+    "idCount": 2,
+    "samples": [
+      "Books read this month. Amy: 7, Ben: 4, Cara: 9, Dan: 6. What",
+      "Books read this month. Amy: 7, Ben: 4, Cara: 9, Dan: 6. How "
+    ]
+  },
+  {
+    "name": "Dan",
+    "count": 2,
+    "fileCount": 1,
+    "files": [
+      "040_mathematics_wave3b_content.sql"
+    ],
+    "idCount": 2,
+    "samples": [
+      "nth. Amy: 7, Ben: 4, Cara: 9, Dan: 6. What is the total read by Amy and Cara? \n 16",
+      "nth. Amy: 7, Ben: 4, Cara: 9, Dan: 6. How many fewer did Ben read than Cara? \n 5"
+    ]
+  },
+  {
+    "name": "Mia",
+    "count": 2,
+    "fileCount": 1,
+    "files": [
+      "040_mathematics_wave3b_content.sql"
+    ],
+    "idCount": 1,
+    "samples": [
+      "Leo has £6 more than Mia in pocket money. Together they have £24. How much does M",
+      " they have £24. How much does Mia have? \n £9"
+    ]
+  },
+  {
+    "name": "Ava",
+    "count": 2,
+    "fileCount": 1,
+    "files": [
+      "040_mathematics_wave3b_content.sql"
+    ],
+    "idCount": 1,
+    "samples": [
+      "Noah has £12 more than Ava in prize money. Together they have £50. How much does Av",
+      " they have £50. How much does Ava have? \n £19"
+    ]
+  },
+  {
+    "name": "Nia",
+    "count": 2,
+    "fileCount": 1,
+    "files": [
+      "040_mathematics_wave3b_content.sql"
+    ],
+    "idCount": 1,
+    "samples": [
+      "Ellis has £5 more than Nia in collected coins. Together they have £25. How much doe",
+      " they have £25. How much does Nia have? \n £10"
+    ]
+  },
+  {
+    "name": "For",
+    "count": 2,
+    "fileCount": 2,
+    "files": [
+      "044_english_wave1_content.sql",
+      "134_mock_mathematics_structural_capacity_increment004_campingsale.sql"
+    ],
+    "idCount": 2,
+    "samples": [
+      "r than being told the answer. For each quotation, explain what it shows.",
+      "as an original price of £120. For a summer sale, the shop reduces this tent's price by 15%"
+    ]
+  },
+  {
+    "name": "Cass's",
+    "count": 2,
+    "fileCount": 1,
+    "files": [
+      "044_english_wave1_content.sql"
+    ],
+    "idCount": 2,
+    "samples": [
+      "d in checking' suggests about Cass's attitude to racing.",
+      "assage, explain how Ade's and Cass's approaches to the race differ."
+    ]
+  },
+  {
+    "name": "Yasmin",
+    "count": 2,
+    "fileCount": 1,
+    "files": [
+      "049_english_wave2_content.sql"
+    ],
+    "idCount": 2,
+    "samples": [
+      "Does Yasmin seem frustrated with Marcus by the end of the passage",
+      "sees the gap in the box after Yasmin takes two slices, and why?"
+    ]
+  },
+  {
+    "name": "Kofi",
+    "count": 2,
+    "fileCount": 1,
+    "files": [
+      "051_english_wave2_completion_content.sql"
+    ],
+    "idCount": 1,
+    "samples": [
+      "streamer to the doorframe. B. Kofi hid the banner somewhere even he might forget. C. Leo a",
+      "re dimmed at five o'clock. E. Kofi checked the group chat only once. F. Everyone hid behin"
+    ]
+  },
+  {
+    "name": "Robyn",
+    "count": 2,
+    "fileCount": 1,
+    "files": [
+      "051_english_wave2_completion_content.sql"
+    ],
+    "idCount": 1,
+    "samples": [
+      "e family worries too much. F. Robyn wrote her letter the same night the fence came down. G",
+      "ermission first. H. Iris told Robyn to say well done to Grandad anyway."
+    ]
+  },
+  {
+    "name": "Sam's",
+    "count": 2,
+    "fileCount": 1,
+    "files": [
+      "063_qt_mr01_and_qt_rc10_first_batch.sql"
+    ],
+    "idCount": 1,
+    "samples": [
+      "Sam's father checked his watch \"as though the numbers might ",
+      "t does this suggest about how Sam's father is feeling?"
+    ]
+  },
+  {
+    "name": "Over",
+    "count": 2,
+    "fileCount": 1,
+    "files": [
+      "081_inc006_structural_depth.sql"
+    ],
+    "idCount": 2,
+    "samples": [
+      "Over four days, the mean temperature was 17°C. Three of the ",
+      "Over five weeks, Maya's mean savings was £14. Four of the we"
+    ]
+  },
+  {
+    "name": "Maya's",
+    "count": 2,
+    "fileCount": 2,
+    "files": [
+      "081_inc006_structural_depth.sql",
+      "152_english_content_foundation_increment001_comprehension.sql"
+    ],
+    "idCount": 2,
+    "samples": [
+      "Over five weeks, Maya's mean savings was £14. Four of the weekly amounts were",
+      "The passage describes Maya's hands as being 'still shaking slightly' just before s"
+    ]
+  },
+  {
+    "name": "Kabir's",
+    "count": 2,
+    "fileCount": 1,
+    "files": [
+      "097_mock_english_passage_content_foundation.sql"
+    ],
+    "idCount": 2,
+    "samples": [
+      "n from the passage that shows Kabir's approach to repairing the boat was different from Pr",
+      "The passage describes Kabir's and Priya's different working styles. Write down one"
+    ]
+  },
+  {
+    "name": "Any",
+    "count": 2,
+    "fileCount": 2,
+    "files": [
+      "097_mock_english_passage_content_foundation.sql",
+      "152_english_content_foundation_increment001_comprehension.sql"
+    ],
+    "idCount": 2,
+    "samples": [
+      "gave for repairing the boat. (Any order.)",
+      "to help find their way home. (Any order.)"
+    ]
+  },
+  {
+    "name": "Convert",
+    "count": 2,
+    "fileCount": 1,
+    "files": [
+      "109_mock_mathematics_firstmock_compound_batch001.sql"
+    ],
+    "idCount": 2,
+    "samples": [
+      "ong and 250 centimetres wide. Convert the width to metres, then find the perimeter of the ",
+      "ong and 450 millimetres wide. Convert the width to centimetres, then find the perimeter of"
+    ]
+  },
+  {
+    "name": "Assembling",
+    "count": 2,
+    "fileCount": 1,
+    "files": [
+      "113_mock_mathematics_shared_scenario_completion_batch.sql"
+    ],
+    "idCount": 2,
+    "samples": [
+      " for the school science fair. Assembling the display takes 1 hour 55 minutes, and testing ",
+      " for the school science fair. Assembling the display takes 1 hour 55 minutes, and testing "
+    ]
+  },
+  {
+    "name": "Ruby",
+    "count": 2,
+    "fileCount": 1,
+    "files": [
+      "152_english_content_foundation_increment001_comprehension.sql"
+    ],
+    "idCount": 2,
+    "samples": [
+      "ding to the passage, when did Ruby Adeyemi audition for the part of the Narrator?",
+      "eans, as used to describe how Ruby felt about losing the part in September."
+    ]
+  },
+  {
+    "name": "Adeyemi",
+    "count": 2,
+    "fileCount": 2,
+    "files": [
+      "152_english_content_foundation_increment001_comprehension.sql",
+      "161_english_content_foundation_increment002_comprehension.sql"
+    ],
+    "idCount": 2,
+    "samples": [
+      "to the passage, when did Ruby Adeyemi audition for the part of the Narrator?",
+      "all the team's number when Mr Adeyemi first spoke?"
+    ]
+  },
+  {
+    "name": "Coventry",
+    "count": 1,
+    "fileCount": 1,
+    "files": [
+      "016_educational_identity_batch1_english_maths.sql"
+    ],
+    "idCount": 1,
+    "samples": [
+      "gnises the young man who left Coventry in September'? What has changed?"
+    ]
+  },
+  {
+    "name": "Describe",
+    "count": 1,
+    "fileCount": 1,
+    "files": [
+      "021_founder_validation_csse_assessment.sql"
+    ],
+    "idCount": 1,
+    "samples": [
+      " approach picking the apples? Describe both, using evidence from the text."
+    ]
+  },
+  {
+    "name": "Equilateral",
+    "count": 1,
+    "fileCount": 1,
+    "files": [
+      "036_mathematics_wave2_content.sql"
+    ],
+    "idCount": 1,
+    "samples": [
+      "es, equilateral or scalene? \n Equilateral"
+    ]
+  },
+  {
+    "name": "Isosceles",
+    "count": 1,
+    "fileCount": 1,
+    "files": [
+      "036_mathematics_wave2_content.sql"
+    ],
+    "idCount": 1,
+    "samples": [
+      "es, equilateral or scalene? \n Isosceles"
+    ]
+  },
+  {
+    "name": "Scalene",
+    "count": 1,
+    "fileCount": 1,
+    "files": [
+      "036_mathematics_wave2_content.sql"
+    ],
+    "idCount": 1,
+    "samples": [
+      "es, equilateral or scalene? \n Scalene"
+    ]
+  },
+  {
+    "name": "Daily",
+    "count": 1,
+    "fileCount": 1,
+    "files": [
+      "040_mathematics_wave3b_content.sql"
+    ],
+    "idCount": 1,
+    "samples": [
+      "Daily temperature in degrees Celsius. Mon: 14, Tue: 17, Wed:"
+    ]
+  },
+  {
+    "name": "Celsius",
+    "count": 1,
+    "fileCount": 1,
+    "files": [
+      "040_mathematics_wave3b_content.sql"
+    ],
+    "idCount": 1,
+    "samples": [
+      "Daily temperature in degrees Celsius. Mon: 14, Tue: 17, Wed: 12, Thu: 19, Fri: 15. What i"
+    ]
+  },
+  {
+    "name": "Preparation",
+    "count": 1,
+    "fileCount": 1,
+    "files": [
+      "040_mathematics_wave3b_content.sql"
+    ],
+    "idCount": 1,
+    "samples": [
+      "aking recipe starts at 15:40. Preparation takes 25 minutes, followed by 55 minutes of baki"
+    ]
+  },
+  {
+    "name": "Amy's",
+    "count": 1,
+    "fileCount": 1,
+    "files": [
+      "040_mathematics_wave3b_content.sql"
+    ],
+    "idCount": 1,
+    "samples": [
+      "Amy's scores in four games were 14, 18, 22, 26. What was the"
+    ]
+  },
+  {
+    "name": "Five",
+    "count": 1,
+    "fileCount": 1,
+    "files": [
+      "040_mathematics_wave3b_content.sql"
+    ],
+    "idCount": 1,
+    "samples": [
+      "Five days of temperature readings were 18, 21, 15, 22, 19. W"
+    ]
+  },
+  {
+    "name": "Weekly",
+    "count": 1,
+    "fileCount": 1,
+    "files": [
+      "040_mathematics_wave3b_content.sql"
+    ],
+    "idCount": 1,
+    "samples": [
+      "Weekly savings amounts over four weeks were £12, £15, £9, £2"
+    ]
+  },
+  {
+    "name": "Distances",
+    "count": 1,
+    "fileCount": 1,
+    "files": [
+      "040_mathematics_wave3b_content.sql"
+    ],
+    "idCount": 1,
+    "samples": [
+      "Distances run (km) over five days were 5, 7, 6, 8, 9. What w"
+    ]
+  },
+  {
+    "name": "Noah",
+    "count": 1,
+    "fileCount": 1,
+    "files": [
+      "040_mathematics_wave3b_content.sql"
+    ],
+    "idCount": 1,
+    "samples": [
+      "Noah has £12 more than Ava in prize money. Together they hav"
+    ]
+  },
+  {
+    "name": "Ellis",
+    "count": 1,
+    "fileCount": 1,
+    "files": [
+      "040_mathematics_wave3b_content.sql"
+    ],
+    "idCount": 1,
+    "samples": [
+      "Ellis has £5 more than Nia in collected coins. Together they"
+    ]
+  },
+  {
+    "name": "Apples",
+    "count": 1,
+    "fileCount": 1,
+    "files": [
+      "040_mathematics_wave3b_content.sql"
+    ],
+    "idCount": 1,
+    "samples": [
+      "Apples: Option A is 3 for £1.20. Option B is 5 for £2.25. Wh"
+    ]
+  },
+  {
+    "name": "Notebooks",
+    "count": 1,
+    "fileCount": 1,
+    "files": [
+      "040_mathematics_wave3b_content.sql"
+    ],
+    "idCount": 1,
+    "samples": [
+      "Notebooks: Option A is 4 for £3.60. Option B is 6 for £4.80."
+    ]
+  },
+  {
+    "name": "Pencils",
+    "count": 1,
+    "fileCount": 1,
+    "files": [
+      "040_mathematics_wave3b_content.sql"
+    ],
+    "idCount": 1,
+    "samples": [
+      "Pencils: Option A is 10 for £2. Option B is 6 for £1.50. Whi"
+    ]
+  },
+  {
+    "name": "Bottled",
+    "count": 1,
+    "fileCount": 1,
+    "files": [
+      "040_mathematics_wave3b_content.sql"
+    ],
+    "idCount": 1,
+    "samples": [
+      "Bottled water: Option A is 6 for £3. Option B is 8 for £4.40"
+    ]
+  },
+  {
+    "name": "Femi's",
+    "count": 1,
+    "fileCount": 1,
+    "files": [
+      "044_english_wave1_content.sql"
+    ],
+    "idCount": 1,
+    "samples": [
+      "oes Grandad seem pleased with Femi's first attempt at the kite frame? Tick Yes or No, then"
+    ]
+  },
+  {
+    "name": "Yusra's",
+    "count": 1,
+    "fileCount": 1,
+    "files": [
+      "044_english_wave1_content.sql"
+    ],
+    "idCount": 1,
+    "samples": [
+      "quotations that show Dara and Yusra's friendship formed easily, and explain what each one "
+    ]
+  },
+  {
+    "name": "Marcus's",
+    "count": 1,
+    "fileCount": 1,
+    "files": [
+      "049_english_wave2_content.sql"
+    ],
+    "idCount": 1,
+    "samples": [
+      "from the passage, explain how Marcus's and Yasmin's approaches to sharing the pizza differ"
+    ]
+  },
+  {
+    "name": "Yasmin's",
+    "count": 1,
+    "fileCount": 1,
+    "files": [
+      "049_english_wave2_content.sql"
+    ],
+    "idCount": 1,
+    "samples": [
+      "age, explain how Marcus's and Yasmin's approaches to sharing the pizza differ."
+    ]
+  },
+  {
+    "name": "Oliver's",
+    "count": 1,
+    "fileCount": 1,
+    "files": [
+      "049_english_wave2_content.sql"
+    ],
+    "idCount": 1,
+    "samples": [
+      "ted manoeuvre' suggests about Oliver's stomach."
+    ]
+  },
+  {
+    "name": "Daniel",
+    "count": 1,
+    "fileCount": 1,
+    "files": [
+      "049_english_wave2_content.sql"
+    ],
+    "idCount": 1,
+    "samples": [
+      "Does Oliver feel guilty about Daniel losing his voice? Tick Yes or No, then give two reaso"
+    ]
+  },
+  {
+    "name": "Iris's",
+    "count": 1,
+    "fileCount": 1,
+    "files": [
+      "049_english_wave2_content.sql"
+    ],
+    "idCount": 1,
+    "samples": [
+      "ters, explain how Robyn's and Iris's reactions to the fence story differ."
+    ]
+  },
+  {
+    "name": "Walked",
+    "count": 1,
+    "fileCount": 1,
+    "files": [
+      "049_english_wave2_content.sql"
+    ],
+    "idCount": 1,
+    "samples": [
+      "rator did on the way home. A. Walked down Kestrel Road first. B. Waited at the bus stop th"
+    ]
+  },
+  {
+    "name": "Kestrel",
+    "count": 1,
+    "fileCount": 1,
+    "files": [
+      "049_english_wave2_content.sql"
+    ],
+    "idCount": 1,
+    "samples": [
+      " the way home. A. Walked down Kestrel Road first. B. Waited at the bus stop the whole time"
+    ]
+  },
+  {
+    "name": "Road",
+    "count": 1,
+    "fileCount": 1,
+    "files": [
+      "049_english_wave2_content.sql"
+    ],
+    "idCount": 1,
+    "samples": [
+      " home. A. Walked down Kestrel Road first. B. Waited at the bus stop the whole time. C. She"
+    ]
+  },
+  {
+    "name": "Waited",
+    "count": 1,
+    "fileCount": 1,
+    "files": [
+      "049_english_wave2_content.sql"
+    ],
+    "idCount": 1,
+    "samples": [
+      "d down Kestrel Road first. B. Waited at the bus stop the whole time. C. Sheltered at the p"
+    ]
+  },
+  {
+    "name": "Sheltered",
+    "count": 1,
+    "fileCount": 1,
+    "files": [
+      "049_english_wave2_content.sql"
+    ],
+    "idCount": 1,
+    "samples": [
+      "e bus stop the whole time. C. Sheltered at the park bus shelter. D. Bought a bike from the"
+    ]
+  },
+  {
+    "name": "Bought",
+    "count": 1,
+    "fileCount": 1,
+    "files": [
+      "049_english_wave2_content.sql"
+    ],
+    "idCount": 1,
+    "samples": [
+      "d at the park bus shelter. D. Bought a bike from the corner shop. E. Cut through the alley"
+    ]
+  },
+  {
+    "name": "Cut",
+    "count": 1,
+    "fileCount": 1,
+    "files": [
+      "049_english_wave2_content.sql"
+    ],
+    "idCount": 1,
+    "samples": [
+      "bike from the corner shop. E. Cut through the alley behind the launderette. F. Stopped at "
+    ]
+  },
+  {
+    "name": "Stopped",
+    "count": 1,
+    "fileCount": 1,
+    "files": [
+      "049_english_wave2_content.sql"
+    ],
+    "idCount": 1,
+    "samples": [
+      "ey behind the launderette. F. Stopped at the corner shop for crisps. G. Took a taxi for pa"
+    ]
+  },
+  {
+    "name": "Took",
+    "count": 1,
+    "fileCount": 1,
+    "files": [
+      "049_english_wave2_content.sql"
+    ],
+    "idCount": 1,
+    "samples": [
+      "he corner shop for crisps. G. Took a taxi for part of the way. H. Crossed the main road at"
+    ]
+  },
+  {
+    "name": "Crossed",
+    "count": 1,
+    "fileCount": 1,
+    "files": [
+      "049_english_wave2_content.sql"
+    ],
+    "idCount": 1,
+    "samples": [
+      " taxi for part of the way. H. Crossed the main road at the pelican crossing."
+    ]
+  },
+  {
+    "name": "Kofi's",
+    "count": 1,
+    "fileCount": 1,
+    "files": [
+      "051_english_wave2_completion_content.sql"
+    ],
+    "idCount": 1,
+    "samples": [
+      "from the passage, explain how Kofi's and Leo's attitudes to keeping the party secret diffe"
+    ]
+  },
+  {
+    "name": "Mum's",
+    "count": 1,
+    "fileCount": 1,
+    "files": [
+      "051_english_wave2_completion_content.sql"
+    ],
+    "idCount": 1,
+    "samples": [
+      "might forget. C. Leo answered Mum's sister's video call. D. The lights were dimmed at five"
+    ]
+  },
+  {
+    "name": "Everyone",
+    "count": 1,
+    "fileCount": 1,
+    "files": [
+      "051_english_wave2_completion_content.sql"
+    ],
+    "idCount": 1,
+    "samples": [
+      " the group chat only once. F. Everyone hid behind the sofa. G. Mum arrived exactly at four"
+    ]
+  },
+  {
+    "name": "Dad's",
+    "count": 1,
+    "fileCount": 1,
+    "files": [
+      "051_english_wave2_completion_content.sql"
+    ],
+    "idCount": 1,
+    "samples": [
+      "s, the rain turning sideways, Dad's final trip to check the trampoline."
+    ]
+  },
+  {
+    "name": "Henderson",
+    "count": 1,
+    "fileCount": 1,
+    "files": [
+      "051_english_wave2_completion_content.sql"
+    ],
+    "idCount": 1,
+    "samples": [
+      "t seven in the morning. B. Mr Henderson thanked Grandad for fixing the fence. C. The ice c"
+    ]
+  },
+  {
+    "name": "Henderson's",
+    "count": 1,
+    "fileCount": 1,
+    "files": [
+      "051_english_wave2_completion_content.sql"
+    ],
+    "idCount": 1,
+    "samples": [
+      "ame down. G. Grandad asked Mr Henderson's permission first. H. Iris told Robyn to say well"
+    ]
+  },
+  {
+    "name": "Tom's",
+    "count": 1,
+    "fileCount": 1,
+    "files": [
+      "063_qt_mr01_and_qt_rc10_first_batch.sql"
+    ],
+    "idCount": 1,
+    "samples": [
+      " What does this suggest about Tom's feelings towards his grandad's return?"
+    ]
+  },
+  {
+    "name": "Cheese",
+    "count": 1,
+    "fileCount": 1,
+    "files": [
+      "078_mr04_content_depth_foundation.sql"
+    ],
+    "idCount": 1,
+    "samples": [
+      "Cheese: Option A is 250g for £2.00. Option B is 1kg for £7.6"
+    ]
+  },
+  {
+    "name": "Pasta",
+    "count": 1,
+    "fileCount": 1,
+    "files": [
+      "078_mr04_content_depth_foundation.sql"
+    ],
+    "idCount": 1,
+    "samples": [
+      "Pasta: Option A is 500g for £0.75. Option B is 1.2kg for £2."
+    ]
+  },
+  {
+    "name": "Adult",
+    "count": 1,
+    "fileCount": 1,
+    "files": [
+      "088_mock_mathematics_batch001.sql"
+    ],
+    "idCount": 1,
+    "samples": [
+      "r sold three types of ticket: Adult tickets at £8 each (45 sold), Child tickets at £5 each"
+    ]
+  },
+  {
+    "name": "Child",
+    "count": 1,
+    "fileCount": 1,
+    "files": [
+      "088_mock_mathematics_batch001.sql"
+    ],
+    "idCount": 1,
+    "samples": [
+      "tickets at £8 each (45 sold), Child tickets at £5 each (32 sold), and Senior tickets at £6"
+    ]
+  },
+  {
+    "name": "Senior",
+    "count": 1,
+    "fileCount": 1,
+    "files": [
+      "088_mock_mathematics_batch001.sql"
+    ],
+    "idCount": 1,
+    "samples": [
+      "ets at £5 each (32 sold), and Senior tickets at £6 each (18 sold). How much money in total"
+    ]
+  },
+  {
+    "name": "Sewing",
+    "count": 1,
+    "fileCount": 1,
+    "files": [
+      "095_mock_mathematics_batch003.sql"
+    ],
+    "idCount": 1,
+    "samples": [
+      "ts making a costume at 14:20. Sewing takes 1 hour 50 minutes, and finishing touches take a"
+    ]
+  },
+  {
+    "name": "Before",
+    "count": 1,
+    "fileCount": 1,
+    "files": [
+      "097_mock_english_passage_content_foundation.sql"
+    ],
+    "idCount": 1,
+    "samples": [
+      "Question 12(a). Before finding the note, does Kabir already seem to sense th"
+    ]
+  },
+  {
+    "name": "Someone",
+    "count": 1,
+    "fileCount": 1,
+    "files": [
+      "125_mock_mathematics_structural_capacity_wave002_timetable_pricelist.sql"
+    ],
+    "idCount": 1,
+    "samples": [
+      " and afternoon journey times. Someone takes the morning bus to Milltown, then waits, then "
+    ]
+  },
+  {
+    "name": "Some",
+    "count": 1,
+    "fileCount": 1,
+    "files": [
+      "134_mock_mathematics_structural_capacity_increment004_campingsale.sql"
+    ],
+    "idCount": 1,
+    "samples": [
+      "A camping shop sells tents. Some customers think a 15% discount followed by a 10% discou"
+    ]
+  },
+  {
+    "name": "Isla",
+    "count": 1,
+    "fileCount": 1,
+    "files": [
+      "152_english_content_foundation_increment001_comprehension.sql"
+    ],
+    "idCount": 1,
+    "samples": [
+      "to her mother's note, why was Isla Bennett unable to perform on Thursday?"
+    ]
+  },
+  {
+    "name": "Bennett",
+    "count": 1,
+    "fileCount": 1,
+    "files": [
+      "152_english_content_foundation_increment001_comprehension.sql"
+    ],
+    "idCount": 1,
+    "samples": [
+      "r mother's note, why was Isla Bennett unable to perform on Thursday?"
+    ]
+  },
+  {
+    "name": "Narrator",
+    "count": 1,
+    "fileCount": 1,
+    "files": [
+      "152_english_content_foundation_increment001_comprehension.sql"
+    ],
+    "idCount": 1,
+    "samples": [
+      " audition for the part of the Narrator?"
+    ]
+  },
+  {
+    "name": "Ferris",
+    "count": 1,
+    "fileCount": 1,
+    "files": [
+      "152_english_content_foundation_increment001_comprehension.sql"
+    ],
+    "idCount": 1,
+    "samples": [
+      "eing able to perform, when Mr Ferris first asks her to step in? Tick Yes or No, then give "
+    ]
+  },
+  {
+    "name": "Ruby's",
+    "count": 1,
+    "fileCount": 1,
+    "files": [
+      "152_english_content_foundation_increment001_comprehension.sql"
+    ],
+    "idCount": 1,
+    "samples": [
+      "n from the passage that shows Ruby's feelings about Maya had changed since September. Expl"
+    ]
+  },
+  {
+    "name": "Karl",
+    "count": 1,
+    "fileCount": 1,
+    "files": [
+      "152_english_content_foundation_increment001_comprehension.sql"
+    ],
+    "idCount": 1,
+    "samples": [
+      "the passage, in what year did Karl von Frisch publish his full account of what the waggle "
+    ]
+  },
+  {
+    "name": "Frisch",
+    "count": 1,
+    "fileCount": 1,
+    "files": [
+      "152_english_content_foundation_increment001_comprehension.sql"
+    ],
+    "idCount": 1,
+    "samples": [
+      "ge, in what year did Karl von Frisch publish his full account of what the waggle dance act"
+    ]
+  },
+  {
+    "name": "Western's",
+    "count": 1,
+    "fileCount": 1,
+    "files": [
+      "161_english_content_foundation_increment002_comprehension.sql"
+    ],
+    "idCount": 1,
+    "samples": [
+      "y how many days did the Great Western's first voyage from Bristol to New York take?"
+    ]
+  }
+]

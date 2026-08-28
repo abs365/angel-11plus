@@ -1,0 +1,546 @@
+[
+  {
+    "name": "Priya",
+    "occurrences": 87,
+    "files": [
+      "013_wave2_illustrative_practice_content.sql",
+      "021_founder_validation_csse_assessment.sql",
+      "040_mathematics_wave3b_content.sql",
+      "044_english_wave1_content.sql",
+      "049_english_wave2_content.sql",
+      "063_qt_mr01_and_qt_rc10_first_batch.sql",
+      "097_mock_english_passage_content_foundation.sql"
+    ],
+    "fileCount": 7,
+    "approxDistinctIds": 34
+  },
+  {
+    "name": "Ben",
+    "occurrences": 58,
+    "files": [
+      "021_founder_validation_csse_assessment.sql",
+      "039_mathematics_wave3_content.sql",
+      "040_mathematics_wave3b_content.sql",
+      "049_english_wave2_content.sql",
+      "051_english_wave2_completion_content.sql"
+    ],
+    "fileCount": 5,
+    "approxDistinctIds": 13
+  },
+  {
+    "name": "Ade",
+    "occurrences": 108,
+    "files": [
+      "044_english_wave1_content.sql",
+      "161_english_content_foundation_increment002_comprehension.sql",
+      "163_english_content_foundation_increment002_loose_connection_q2_grouped_scoring_correction.sql"
+    ],
+    "fileCount": 3,
+    "approxDistinctIds": 20
+  },
+  {
+    "name": "Maya",
+    "occurrences": 53,
+    "files": [
+      "063_qt_mr01_and_qt_rc10_first_batch.sql",
+      "081_inc006_structural_depth.sql",
+      "152_english_content_foundation_increment001_comprehension.sql"
+    ],
+    "fileCount": 3,
+    "approxDistinctIds": 12
+  },
+  {
+    "name": "Zara",
+    "occurrences": 33,
+    "files": [
+      "040_mathematics_wave3b_content.sql",
+      "049_english_wave2_content.sql",
+      "051_english_wave2_completion_content.sql"
+    ],
+    "fileCount": 3,
+    "approxDistinctIds": 8
+  },
+  {
+    "name": "Leo",
+    "occurrences": 29,
+    "files": [
+      "013_wave2_illustrative_practice_content.sql",
+      "040_mathematics_wave3b_content.sql",
+      "051_english_wave2_completion_content.sql"
+    ],
+    "fileCount": 3,
+    "approxDistinctIds": 7
+  },
+  {
+    "name": "Tom",
+    "occurrences": 17,
+    "files": [
+      "039_mathematics_wave3_content.sql",
+      "040_mathematics_wave3b_content.sql",
+      "063_qt_mr01_and_qt_rc10_first_batch.sql"
+    ],
+    "fileCount": 3,
+    "approxDistinctIds": 5
+  },
+  {
+    "name": "Adeyemi",
+    "occurrences": 15,
+    "files": [
+      "152_english_content_foundation_increment001_comprehension.sql",
+      "161_english_content_foundation_increment002_comprehension.sql",
+      "163_english_content_foundation_increment002_loose_connection_q2_grouped_scoring_correction.sql"
+    ],
+    "fileCount": 3,
+    "approxDistinctIds": 13
+  },
+  {
+    "name": "Sam",
+    "occurrences": 11,
+    "files": [
+      "039_mathematics_wave3_content.sql",
+      "040_mathematics_wave3b_content.sql",
+      "063_qt_mr01_and_qt_rc10_first_batch.sql"
+    ],
+    "fileCount": 3,
+    "approxDistinctIds": 4
+  },
+  {
+    "name": "Nisha",
+    "occurrences": 110,
+    "files": [
+      "161_english_content_foundation_increment002_comprehension.sql",
+      "163_english_content_foundation_increment002_loose_connection_q2_grouped_scoring_correction.sql"
+    ],
+    "fileCount": 2,
+    "approxDistinctIds": 13
+  },
+  {
+    "name": "Freya",
+    "occurrences": 30,
+    "files": [
+      "049_english_wave2_content.sql",
+      "051_english_wave2_completion_content.sql"
+    ],
+    "fileCount": 2,
+    "approxDistinctIds": 7
+  },
+  {
+    "name": "Mr Henderson",
+    "occurrences": 28,
+    "files": [
+      "049_english_wave2_content.sql",
+      "051_english_wave2_completion_content.sql"
+    ],
+    "fileCount": 2,
+    "approxDistinctIds": 8
+  },
+  {
+    "name": "Marcus",
+    "occurrences": 26,
+    "files": [
+      "044_english_wave1_content.sql",
+      "049_english_wave2_content.sql"
+    ],
+    "fileCount": 2,
+    "approxDistinctIds": 8
+  },
+  {
+    "name": "Oliver",
+    "occurrences": 22,
+    "files": [
+      "049_english_wave2_content.sql",
+      "051_english_wave2_completion_content.sql"
+    ],
+    "fileCount": 2,
+    "approxDistinctIds": 7
+  },
+  {
+    "name": "Mr Adeyemi",
+    "occurrences": 14,
+    "files": [
+      "161_english_content_foundation_increment002_comprehension.sql",
+      "163_english_content_foundation_increment002_loose_connection_q2_grouped_scoring_correction.sql"
+    ],
+    "fileCount": 2,
+    "approxDistinctIds": 13
+  },
+  {
+    "name": "Mrs Fennimore",
+    "occurrences": 14,
+    "files": [
+      "049_english_wave2_content.sql",
+      "051_english_wave2_completion_content.sql"
+    ],
+    "fileCount": 2,
+    "approxDistinctIds": 7
+  },
+  {
+    "name": "Henderson",
+    "occurrences": 11,
+    "files": [
+      "049_english_wave2_content.sql",
+      "051_english_wave2_completion_content.sql"
+    ],
+    "fileCount": 2,
+    "approxDistinctIds": 8
+  },
+  {
+    "name": "Daniel",
+    "occurrences": 9,
+    "files": [
+      "049_english_wave2_content.sql",
+      "051_english_wave2_completion_content.sql"
+    ],
+    "fileCount": 2,
+    "approxDistinctIds": 7
+  },
+  {
+    "name": "Robyn",
+    "occurrences": 9,
+    "files": [
+      "049_english_wave2_content.sql",
+      "051_english_wave2_completion_content.sql"
+    ],
+    "fileCount": 2,
+    "approxDistinctIds": 4
+  },
+  {
+    "name": "Iris",
+    "occurrences": 9,
+    "files": [
+      "049_english_wave2_content.sql",
+      "051_english_wave2_completion_content.sql"
+    ],
+    "fileCount": 2,
+    "approxDistinctIds": 4
+  },
+  {
+    "name": "Mira",
+    "occurrences": 8,
+    "files": [
+      "013_wave2_illustrative_practice_content.sql",
+      "016_educational_identity_batch1_english_maths.sql"
+    ],
+    "fileCount": 2,
+    "approxDistinctIds": 4
+  },
+  {
+    "name": "Hendersons'",
+    "occurrences": 8,
+    "files": [
+      "049_english_wave2_content.sql",
+      "051_english_wave2_completion_content.sql"
+    ],
+    "fileCount": 2,
+    "approxDistinctIds": 8
+  },
+  {
+    "name": "Fennimore",
+    "occurrences": 7,
+    "files": [
+      "049_english_wave2_content.sql",
+      "051_english_wave2_completion_content.sql"
+    ],
+    "fileCount": 2,
+    "approxDistinctIds": 7
+  },
+  {
+    "name": "Amy",
+    "occurrences": 7,
+    "files": [
+      "039_mathematics_wave3_content.sql",
+      "040_mathematics_wave3b_content.sql"
+    ],
+    "fileCount": 2,
+    "approxDistinctIds": 3
+  },
+  {
+    "name": "Thomas",
+    "occurrences": 2,
+    "files": [
+      "013_wave2_illustrative_practice_content.sql",
+      "016_educational_identity_batch1_english_maths.sql"
+    ],
+    "fileCount": 2,
+    "approxDistinctIds": 2
+  },
+  {
+    "name": "Femi",
+    "occurrences": 66,
+    "files": [
+      "044_english_wave1_content.sql"
+    ],
+    "fileCount": 1,
+    "approxDistinctIds": 7
+  },
+  {
+    "name": "Kabir",
+    "occurrences": 63,
+    "files": [
+      "097_mock_english_passage_content_foundation.sql"
+    ],
+    "fileCount": 1,
+    "approxDistinctIds": 13
+  },
+  {
+    "name": "Yasmin",
+    "occurrences": 40,
+    "files": [
+      "049_english_wave2_content.sql"
+    ],
+    "fileCount": 1,
+    "approxDistinctIds": 7
+  },
+  {
+    "name": "Ruby",
+    "occurrences": 26,
+    "files": [
+      "152_english_content_foundation_increment001_comprehension.sql"
+    ],
+    "fileCount": 1,
+    "approxDistinctIds": 7
+  },
+  {
+    "name": "Cass",
+    "occurrences": 21,
+    "files": [
+      "044_english_wave1_content.sql"
+    ],
+    "fileCount": 1,
+    "approxDistinctIds": 7
+  },
+  {
+    "name": "Mr Ferris",
+    "occurrences": 15,
+    "files": [
+      "152_english_content_foundation_increment001_comprehension.sql"
+    ],
+    "fileCount": 1,
+    "approxDistinctIds": 7
+  },
+  {
+    "name": "Jayden",
+    "occurrences": 15,
+    "files": [
+      "063_qt_mr01_and_qt_rc10_first_batch.sql"
+    ],
+    "fileCount": 1,
+    "approxDistinctIds": 2
+  },
+  {
+    "name": "Nadia",
+    "occurrences": 14,
+    "files": [
+      "021_founder_validation_csse_assessment.sql"
+    ],
+    "fileCount": 1,
+    "approxDistinctIds": 5
+  },
+  {
+    "name": "Kofi",
+    "occurrences": 13,
+    "files": [
+      "051_english_wave2_completion_content.sql"
+    ],
+    "fileCount": 1,
+    "approxDistinctIds": 4
+  },
+  {
+    "name": "Fenwick",
+    "occurrences": 11,
+    "files": [
+      "063_qt_mr01_and_qt_rc10_first_batch.sql"
+    ],
+    "fileCount": 1,
+    "approxDistinctIds": 2
+  },
+  {
+    "name": "Mr Fenwick",
+    "occurrences": 10,
+    "files": [
+      "063_qt_mr01_and_qt_rc10_first_batch.sql"
+    ],
+    "fileCount": 1,
+    "approxDistinctIds": 2
+  },
+  {
+    "name": "Isla",
+    "occurrences": 8,
+    "files": [
+      "152_english_content_foundation_increment001_comprehension.sql"
+    ],
+    "fileCount": 1,
+    "approxDistinctIds": 7
+  },
+  {
+    "name": "Dara",
+    "occurrences": 6,
+    "files": [
+      "044_english_wave1_content.sql"
+    ],
+    "fileCount": 1,
+    "approxDistinctIds": 6
+  },
+  {
+    "name": "Connor",
+    "occurrences": 4,
+    "files": [
+      "063_qt_mr01_and_qt_rc10_first_batch.sql"
+    ],
+    "fileCount": 1,
+    "approxDistinctIds": 2
+  },
+  {
+    "name": "Theo",
+    "occurrences": 4,
+    "files": [
+      "049_english_wave2_content.sql"
+    ],
+    "fileCount": 1,
+    "approxDistinctIds": 2
+  },
+  {
+    "name": "Cara",
+    "occurrences": 4,
+    "files": [
+      "040_mathematics_wave3b_content.sql"
+    ],
+    "fileCount": 1,
+    "approxDistinctIds": 2
+  },
+  {
+    "name": "Mr Ahmed",
+    "occurrences": 3,
+    "files": [
+      "063_qt_mr01_and_qt_rc10_first_batch.sql"
+    ],
+    "fileCount": 1,
+    "approxDistinctIds": 3
+  },
+  {
+    "name": "Ahmed",
+    "occurrences": 3,
+    "files": [
+      "063_qt_mr01_and_qt_rc10_first_batch.sql"
+    ],
+    "fileCount": 1,
+    "approxDistinctIds": 3
+  },
+  {
+    "name": "Mrs Okafor",
+    "occurrences": 3,
+    "files": [
+      "063_qt_mr01_and_qt_rc10_first_batch.sql"
+    ],
+    "fileCount": 1,
+    "approxDistinctIds": 3
+  },
+  {
+    "name": "Okafor",
+    "occurrences": 3,
+    "files": [
+      "063_qt_mr01_and_qt_rc10_first_batch.sql"
+    ],
+    "fileCount": 1,
+    "approxDistinctIds": 3
+  },
+  {
+    "name": "Noah",
+    "occurrences": 2,
+    "files": [
+      "040_mathematics_wave3b_content.sql"
+    ],
+    "fileCount": 1,
+    "approxDistinctIds": 1
+  },
+  {
+    "name": "Ellis",
+    "occurrences": 2,
+    "files": [
+      "040_mathematics_wave3b_content.sql"
+    ],
+    "fileCount": 1,
+    "approxDistinctIds": 1
+  },
+  {
+    "name": "Yusra",
+    "occurrences": 2,
+    "files": [
+      "044_english_wave1_content.sql"
+    ],
+    "fileCount": 1,
+    "approxDistinctIds": 1
+  },
+  {
+    "name": "Dan",
+    "occurrences": 2,
+    "files": [
+      "040_mathematics_wave3b_content.sql"
+    ],
+    "fileCount": 1,
+    "approxDistinctIds": 2
+  },
+  {
+    "name": "Mia",
+    "occurrences": 2,
+    "files": [
+      "040_mathematics_wave3b_content.sql"
+    ],
+    "fileCount": 1,
+    "approxDistinctIds": 1
+  },
+  {
+    "name": "Ava",
+    "occurrences": 2,
+    "files": [
+      "040_mathematics_wave3b_content.sql"
+    ],
+    "fileCount": 1,
+    "approxDistinctIds": 1
+  },
+  {
+    "name": "Nia",
+    "occurrences": 2,
+    "files": [
+      "040_mathematics_wave3b_content.sql"
+    ],
+    "fileCount": 1,
+    "approxDistinctIds": 1
+  },
+  {
+    "name": "Bennett",
+    "occurrences": 1,
+    "files": [
+      "152_english_content_foundation_increment001_comprehension.sql"
+    ],
+    "fileCount": 1,
+    "approxDistinctIds": 1
+  },
+  {
+    "name": "Ferris",
+    "occurrences": 1,
+    "files": [
+      "152_english_content_foundation_increment001_comprehension.sql"
+    ],
+    "fileCount": 1,
+    "approxDistinctIds": 1
+  },
+  {
+    "name": "Karl",
+    "occurrences": 1,
+    "files": [
+      "152_english_content_foundation_increment001_comprehension.sql"
+    ],
+    "fileCount": 1,
+    "approxDistinctIds": 1
+  },
+  {
+    "name": "Frisch",
+    "occurrences": 1,
+    "files": [
+      "152_english_content_foundation_increment001_comprehension.sql"
+    ],
+    "fileCount": 1,
+    "approxDistinctIds": 1
+  }
+]
