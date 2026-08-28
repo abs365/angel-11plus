@@ -5,6 +5,7 @@ import {
   MOCK_ENGLISH_INC001_MARKER, MOCK_ENGLISH_INC001_PASSAGE_TARGET_IDS,
   MOCK_ENGLISH_INC001_WRITING_FAMILIES, MOCK_ENGLISH_INC001_WRITING_TARGET_IDS,
   buildMockEnglishInc001WritingNotesPrefix,
+  ENGLISH_INC001_AMENDMENT_VERIFICATION_TARGETS, ENGLISH_INC001_AMENDMENT_VERIFICATION_TARGET_IDS,
 } from "../../lib/adminReview";
 
 /**
@@ -97,4 +98,65 @@ test("does not change any UNRELATED review flow's own review_type wiring -- Math
   assert.match(existingEnglishPassageBlock, /reviewType="mock_english_passage_independent_review"/);
   const existingWritingBlock = pageSource.match(/if \(selectedMockWritingBatch001\) \{[\s\S]*?\n {2}\}/)![0];
   assert.match(existingWritingBlock, /reviewType="mock_writing_prompt_independent_review"/);
+});
+
+// === Decision 235 -- Amendment Verification wiring =========================
+
+test("Decision 235: ReviewForm's reviewType prop union includes amendment_verification", () => {
+  assert.match(pageSource, /reviewType\?: "content_review" \| "english_teaching_review" \| "mock_maths_independent_review" \| "mock_english_passage_independent_review" \| "mock_writing_prompt_independent_review" \| "amendment_verification";/);
+});
+
+test("Decision 235: handleSubmit() routes amendment_verification to the dedicated submitEnglishInc001AmendmentVerification function, never the generic submitReview fallback (the exact defect class Decision 230/231 found and fixed for the original Inc001 targets)", () => {
+  const dispatchBlock = pageSource.match(/const \{ error \} =\s*\n([\s\S]*?)await submitReview\(submissionToSend\);/)![1];
+  assert.match(dispatchBlock, /reviewType === "amendment_verification" \? await submitEnglishInc001AmendmentVerification\(submissionToSend\)/);
+});
+
+test("Decision 235: page.tsx imports submitEnglishInc001AmendmentVerification and the amendment-verification config exports", () => {
+  assert.match(pageSource, /fetchEnglishInc001AmendmentVerificationStatus, buildEnglishInc001AmendmentVerificationNotesPrefix/);
+  assert.match(pageSource, /submitEnglishInc001AmendmentVerification, ENGLISH_INC001_AMENDMENT_VERIFICATION_TARGETS/);
+});
+
+test("Decision 235: page.tsx defines a dedicated EnglishInc001AmendmentVerificationSection component", () => {
+  assert.match(pageSource, /function EnglishInc001AmendmentVerificationSection\(/);
+});
+
+test("Decision 235: page.tsx wires the amendment-verification selection state, fetches its own status map in load(), and stores it via its own setter", () => {
+  assert.match(pageSource, /selectedEnglishInc001AmendmentVerification, setSelectedEnglishInc001AmendmentVerification/);
+  assert.match(pageSource, /fetchEnglishInc001AmendmentVerificationStatus\(ENGLISH_INC001_AMENDMENT_VERIFICATION_TARGET_IDS\)/);
+  assert.match(pageSource, /setEnglishInc001AmendmentVerificationStatus\(englishInc001AmendmentVerification\)/);
+});
+
+test("Decision 235: the amendment-verification modal branch passes reviewType=amendment_verification and routes Writing targets through the sevenX exact-id path (never the family-wide fetch)", () => {
+  assert.match(pageSource, /if \(selectedEnglishInc001AmendmentVerification\) \{/);
+  const modalBlock = pageSource.match(/if \(selectedEnglishInc001AmendmentVerification\) \{[\s\S]*?\n {2}\}/)![0];
+  assert.match(modalBlock, /reviewType="amendment_verification"/);
+  assert.match(modalBlock, /t\.sevenXQuestionIds/);
+  assert.match(modalBlock, /buildEnglishInc001AmendmentVerificationNotesPrefix/);
+});
+
+test("Decision 235: the new section is actually rendered in the review list", () => {
+  assert.match(pageSource, /<EnglishInc001AmendmentVerificationSection status=\{englishInc001AmendmentVerificationStatus\} onOpen=\{setSelectedEnglishInc001AmendmentVerification\}/);
+});
+
+test("Decision 235: the submitted-decision panel gives amendment_verification its own explanatory copy, distinct from the promotion-related copy shown for an original independent review", () => {
+  const panelBlock = pageSource.match(/\{reviewType === "amendment_verification"[\s\S]*?\}\s*\n\s*<\/p>/)![0];
+  assert.match(panelBlock, /does not overwrite, and is never confused with, the original approved_with_amendment decision/);
+  assert.match(panelBlock, /does not itself convert that decision to approved/);
+});
+
+test("Decision 235: exactly 4 verification targets are configured, and none is A Mistake You Learned From (the approved control case)", () => {
+  assert.equal(ENGLISH_INC001_AMENDMENT_VERIFICATION_TARGETS.length, 4);
+  assert.ok(!ENGLISH_INC001_AMENDMENT_VERIFICATION_TARGET_IDS.includes("mock-writing-wc01a-mistakelearned"));
+});
+
+test("Decision 235: QuestionOrWritingTaskBody renders question.authorNote (ali_question_bank.explanation) for deterministic content when present -- the same class of 'field exists but invisible to a reviewer' gap Decision 232 fixed for provenance/notes", () => {
+  const bodyFn = pageSource.match(/function QuestionOrWritingTaskBody\([\s\S]*?\n\}/)![0];
+  assert.match(bodyFn, /\{question\.authorNote && \(/);
+  assert.match(bodyFn, /Marking \/ educational note:.*\{question\.authorNote\}/);
+});
+
+test("Decision 235: QUESTION_SELECT_COLUMNS now selects explanation, and mapQuestionRow populates authorNote from it", () => {
+  const libSource = fs.readFileSync("lib/adminReview.ts", "utf8");
+  assert.match(libSource, /const QUESTION_SELECT_COLUMNS = "id, subject, skill, prompt, family_id, learning_unit_id, content_difficulty, transfer_class, addresses_misconception, content_version, active, provenance, eligibility_status, question_group_id, group_order, subpart_label, marking_mode, explanation";/);
+  assert.match(libSource, /authorNote: r\.explanation \?\? null,/);
 });

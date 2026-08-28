@@ -9,6 +9,9 @@ import {
   deriveMockMrBatch003ReviewStatus,
   deriveMockEnglishInc001PassageReviewStatus, deriveMockEnglishInc001WritingReviewStatus,
   MOCK_ENGLISH_INC001_MARKER, MOCK_ENGLISH_INC001_PASSAGE_TARGET_IDS, MOCK_ENGLISH_INC001_WRITING_FAMILIES,
+  deriveEnglishInc001AmendmentVerificationStatus, buildEnglishInc001AmendmentVerificationNotesPrefix,
+  ENGLISH_INC001_AMENDMENT_VERIFICATION_TARGETS, ENGLISH_INC001_AMENDMENT_VERIFICATION_TARGET_IDS,
+  ENGLISH_INC001_AMENDMENT_REGISTER,
   MOCK_ENGLISH_PASSAGE_BATCH001_MARKER, MOCK_ENGLISH_PASSAGE_BATCH001_TARGET_ID,
   MOCK_WRITING_BATCH001_FAMILIES, MOCK_WRITING_BATCH001_MARKER,
   MOCK_MR_BATCH003_FAMILIES, MOCK_MR_BATCH003_BATCH_MARKER,
@@ -61,8 +64,17 @@ test("a rejected decision WITH notes passes validation", () => {
   assert.equal(err, null);
 });
 
-test("approved_with_amendment and requires_revalidation do not require notes to pass this guard", () => {
-  assert.equal(validateReviewSubmission(baseSubmission({ decision: "approved_with_amendment", notes: "" })), null);
+test("Decision 235 -- an approved_with_amendment decision without notes is blocked, matching the database's own extended check constraint (migration 157)", () => {
+  const err = validateReviewSubmission(baseSubmission({ decision: "approved_with_amendment", notes: "" }));
+  assert.ok(err && err.toLowerCase().includes("approved_with_amendment decision requires notes"));
+});
+
+test("Decision 235 -- an approved_with_amendment decision WITH notes passes validation", () => {
+  const err = validateReviewSubmission(baseSubmission({ decision: "approved_with_amendment", notes: "Q1 needs an explicit accepted-answer marking policy." }));
+  assert.equal(err, null);
+});
+
+test("Decision 235 -- requires_revalidation still does not require notes to pass this guard (only rejected and approved_with_amendment do)", () => {
   assert.equal(validateReviewSubmission(baseSubmission({ decision: "requires_revalidation", notes: "" })), null);
 });
 
@@ -125,7 +137,7 @@ function q(overrides: Partial<RepresentativeQuestion>): RepresentativeQuestion {
     addressesMisconception: null, contentVersion: 1, active: true, provenance: "angel_original",
     eligibilityStatus: "authentic_assessment_candidate", workingSteps: null,
     questionGroupId: null, groupOrder: null, subpartLabel: null, markingMode: null,
-    stimulus: null, sharedStem: null, writingTask: null,
+    stimulus: null, sharedStem: null, writingTask: null, authorNote: null,
     ...overrides,
   };
 }
@@ -662,6 +674,57 @@ test("13. English Content Foundation Increment 001 Writing review: still require
 test("14. English Content Foundation Increment 001: the 3 target ids are exactly the 3 real writing-prompt family_id column values migration 154 registered, never the prompts' own row ids", () => {
   const ids = MOCK_ENGLISH_INC001_WRITING_FAMILIES.map((f) => f.familyId).sort();
   assert.deepEqual(ids, ["mock-writing-wc01a-mistakelearned", "mock-writing-wc01a-newplace", "mock-writing-wc01a-screentime"].sort());
+});
+
+// === Decision 235 -- Amendment Register + Amendment Verification ===========
+
+test("Decision 235: the amendment register carries exactly the 4 approved_with_amendment targets, in the correct target/decision pairing -- Mistake Learned (approved, no amendment) is absent", () => {
+  const ids = ENGLISH_INC001_AMENDMENT_REGISTER.map((e) => e.targetId).sort();
+  assert.deepEqual(ids, ["eng-inc001-bee-navigation", "eng-inc001-understudy", "mock-writing-wc01a-newplace", "mock-writing-wc01a-screentime"].sort());
+  assert.ok(!ids.includes("mock-writing-wc01a-mistakelearned"), "A Mistake You Learned From is the approved control case and must never appear in the amendment register");
+  for (const entry of ENGLISH_INC001_AMENDMENT_REGISTER) {
+    assert.equal(entry.originalDecision, "approved_with_amendment");
+    assert.ok(entry.requiredCorrection.length > 0);
+    assert.ok(entry.verificationCriterion.length > 0);
+  }
+});
+
+test("Decision 235: the Bee register entry discloses AUDITED/NO CONTENT CHANGE, not a fabricated correction -- the amendment was already satisfied by Decision 229", () => {
+  const bee = ENGLISH_INC001_AMENDMENT_REGISTER.find((e) => e.targetId === "eng-inc001-bee-navigation");
+  assert.ok(bee?.requiredCorrection.includes("AUDITED, NO CONTENT CHANGE REQUIRED"));
+  assert.equal(bee?.affectedContent, "none (verified unchanged: ali_passage_bank.eng-inc001-bee-navigation; ali_question_bank.eng-inc001-bee-q01 through q08)");
+});
+
+test("Decision 235: amendment verification targets are exactly the 4 amended family/passage ids, with the 2 Writing targets correctly routed through their own real row id (sevenXQuestionIds), never a family-wide fetch", () => {
+  assert.deepEqual(ENGLISH_INC001_AMENDMENT_VERIFICATION_TARGET_IDS.sort(), ["eng-inc001-bee-navigation", "eng-inc001-understudy", "mock-writing-wc01a-newplace", "mock-writing-wc01a-screentime"].sort());
+  const newplace = ENGLISH_INC001_AMENDMENT_VERIFICATION_TARGETS.find((t) => t.id === "mock-writing-wc01a-newplace");
+  assert.equal(newplace?.reviewTargetType, "writing_prompt");
+  assert.deepEqual(newplace?.sevenXQuestionIds, ["mock-writing-newplace-01"]);
+  const understudy = ENGLISH_INC001_AMENDMENT_VERIFICATION_TARGETS.find((t) => t.id === "eng-inc001-understudy");
+  assert.equal(understudy?.reviewTargetType, "passage");
+  assert.equal(understudy?.sevenXQuestionIds, undefined);
+});
+
+test("Decision 235: amendment verification status is a genuinely separate review_type from the original independent review -- a completed ORIGINAL review alone never counts as verified", () => {
+  const id = "eng-inc001-understudy";
+  const rows = [genuineReviewRow({ family_id: id, review_type: "mock_english_passage_independent_review", decision: "approved_with_amendment" })];
+  const status = deriveEnglishInc001AmendmentVerificationStatus(rows, [id]);
+  assert.equal(status.get(id)?.reviewed, false, "the original independent-review row must never be misread as amendment-verification evidence");
+});
+
+test("Decision 235: amendment verification status correctly recognises a genuine amendment_verification decision, independently per target, with no cross-target contamination", () => {
+  const [understudyId, beeId] = ["eng-inc001-understudy", "eng-inc001-bee-navigation"];
+  const rows = [genuineReviewRow({ family_id: understudyId, review_type: "amendment_verification", decision: "approved" })];
+  const status = deriveEnglishInc001AmendmentVerificationStatus(rows, [understudyId, beeId]);
+  assert.equal(status.get(understudyId)?.reviewed, true);
+  assert.equal(status.get(understudyId)?.decision, "approved");
+  assert.equal(status.get(beeId)?.reviewed, false, "Bee must remain unverified -- only the Understudy row carried a genuine amendment_verification decision");
+});
+
+test("Decision 235: the notes-prefix builder embeds the correct target title and the exact required correction is available from the shared register (no second, hand-typed copy)", () => {
+  const prefix = buildEnglishInc001AmendmentVerificationNotesPrefix("mock-writing-wc01a-newplace");
+  assert.match(prefix, /^AMENDMENT-VERIFICATION \(Decision 235\): Somewhere New/);
+  assert.match(prefix, /does not itself convert approved_with_amendment to approved/);
 });
 
 test("8. Mathematics Batch 003 status behaviour is unchanged: still requires the marker, still correctly recognises a properly-tagged review", () => {

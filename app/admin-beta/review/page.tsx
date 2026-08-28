@@ -51,8 +51,12 @@ import {
   fetchMockEnglishInc001PassageReviewStatus, MOCK_ENGLISH_INC001_PASSAGE_TARGET_IDS,
   fetchMockEnglishInc001WritingReviewStatus, buildMockEnglishInc001WritingNotesPrefix,
   MOCK_ENGLISH_INC001_WRITING_FAMILIES, MOCK_ENGLISH_INC001_WRITING_TARGET_IDS,
+  fetchEnglishInc001AmendmentVerificationStatus, buildEnglishInc001AmendmentVerificationNotesPrefix,
+  submitEnglishInc001AmendmentVerification, ENGLISH_INC001_AMENDMENT_VERIFICATION_TARGETS,
+  ENGLISH_INC001_AMENDMENT_VERIFICATION_TARGET_IDS, ENGLISH_INC001_AMENDMENT_REGISTER,
   type PendingReviewTarget, type RepresentativeQuestion, type PassageDetail, type ReviewDecision, type ReviewSubmission,
   type TargetSummary, type MathsTeachingReviewSubmission, type SevenXReviewStatus, type SevenXFamilyConfig,
+  type AmendmentVerificationTarget,
 } from "@/lib/adminReview";
 import { getExamStrategyHint, getWorkedExample } from "@/lib/learningEngine/englishExamStrategies";
 import { getGuidedScaffoldKind, getGuidedInstructionText } from "@/lib/learningEngine/guidedPractice";
@@ -383,6 +387,9 @@ function QuestionOrWritingTaskBody({ question, displayText }: { question: Repres
     <>
       <p className="text-sm font-semibold text-gray-800 dark:text-gray-200 mt-1 whitespace-pre-line">{displayText ?? question.question}</p>
       <p className="text-xs text-gray-500 dark:text-gray-400 mt-1"><strong>Model answer ({question.contentDifficulty} difficulty):</strong> {question.modelAnswer}</p>
+      {question.authorNote && (
+        <p className="text-xs text-teal-700 dark:text-teal-300 mt-1"><strong>Marking / educational note:</strong> {question.authorNote}</p>
+      )}
     </>
   );
 }
@@ -394,7 +401,7 @@ function ReviewForm({
 }: {
   target: PendingReviewTarget;
   onDone: () => void;
-  reviewType?: "content_review" | "english_teaching_review" | "mock_maths_independent_review" | "mock_english_passage_independent_review" | "mock_writing_prompt_independent_review";
+  reviewType?: "content_review" | "english_teaching_review" | "mock_maths_independent_review" | "mock_english_passage_independent_review" | "mock_writing_prompt_independent_review" | "amendment_verification";
   /**
    * Educational Increment 007X, Founder Review-Surface Correction — when
    * set, this review is scoped to a specific, newly authored batch of
@@ -544,6 +551,7 @@ function ReviewForm({
       : reviewType === "mock_maths_independent_review" ? await submitMockMathsIndependentReview(submissionToSend)
       : reviewType === "mock_english_passage_independent_review" ? await submitMockEnglishPassageIndependentReview(submissionToSend)
       : reviewType === "mock_writing_prompt_independent_review" ? await submitMockWritingPromptIndependentReview(submissionToSend)
+      : reviewType === "amendment_verification" ? await submitEnglishInc001AmendmentVerification(submissionToSend)
       : await submitReview(submissionToSend);
     setSubmitting(false);
     if (error) {
@@ -561,7 +569,9 @@ function ReviewForm({
           {reviewType === "english_teaching_review" ? "Teaching review" : "Review"} recorded for {displayName}
         </p>
         <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-          {reviewType === "mock_maths_independent_review" || reviewType === "mock_english_passage_independent_review" || reviewType === "mock_writing_prompt_independent_review"
+          {reviewType === "amendment_verification"
+            ? "Decision: " + submission.decision + ". This is additive verification evidence only -- it does not overwrite, and is never confused with, the original approved_with_amendment decision it verifies, and does not itself convert that decision to approved."
+            : reviewType === "mock_maths_independent_review" || reviewType === "mock_english_passage_independent_review" || reviewType === "mock_writing_prompt_independent_review"
             ? "Decision: " + submission.decision + ". This does not promote any question, passage, or prompt to independently_validated or mock_eligible, and does not activate any Mock form: those remain separate, controlled steps."
             : "Decision: " + submission.decision + ". This does not change Practice Eligibility, since that is a separate, controlled activation step."}
         </p>
@@ -2854,6 +2864,73 @@ function EnglishInc001WritingSection({
 }
 
 /**
+ * Decision 235, Section 10/11 — Amendment Verification. The 4 targets
+ * whose original independent review was recorded `approved_with_
+ * amendment` (Understudy, Bee, Somewhere New, Screen Time; A Mistake You
+ * Learned From is `approved` and deliberately absent, per Section 9's own
+ * control case). Each row shows the canonical required correction
+ * (`ENGLISH_INC001_AMENDMENT_REGISTER`, Section 4) directly, so the
+ * Founder does not need to re-read raw SQL or this decision's own log
+ * entry to see what was required before opening the content itself.
+ * Opening a target reuses the EXACT SAME content-fetch path the original
+ * independent-review sections already use (passage: fetchPassageDetail +
+ * fetchQuestionsForPassage; writing: the `sevenX` exact-id path) — the
+ * Founder compares the required correction against the SAME live content
+ * a learner or a fresh reviewer would see, never a separate copy. This is
+ * intentionally NOT "a duplicate full review": `ReviewForm`'s ~18
+ * criterion checkboxes are all optional (`boolean | null`, never required
+ * by validateReviewSubmission), so the Founder can record reviewer name,
+ * qualification, a decision (`approved` = resolved, `requires_
+ * revalidation` = not resolved is the intended usage; the full
+ * ReviewDecision set remains available since restricting it would be new,
+ * unrequested logic), and notes, without being forced to re-answer every
+ * original criterion.
+ */
+function EnglishInc001AmendmentVerificationSection({
+  status, onOpen,
+}: {
+  status: Map<string, SevenXReviewStatus>;
+  onOpen: (target: AmendmentVerificationTarget) => void;
+}) {
+  const verifiedCount = ENGLISH_INC001_AMENDMENT_VERIFICATION_TARGETS.filter((t) => status.get(t.id)?.reviewed).length;
+  return (
+    <div id="english-inc001-amendment-verification" className="bg-white dark:bg-gray-900 rounded-2xl border-2 border-amber-200 dark:border-amber-800 overflow-hidden scroll-mt-4">
+      <div className="px-5 py-4 border-b border-amber-100 dark:border-amber-900 bg-amber-50 dark:bg-amber-950/40">
+        <p className="text-sm font-bold text-amber-900 dark:text-amber-200">English Content Foundation Increment 001: Amendment Verification</p>
+        <p className="text-xs text-amber-600 dark:text-amber-400 mt-0.5">{verifiedCount} of {ENGLISH_INC001_AMENDMENT_VERIFICATION_TARGETS.length} amendments verified</p>
+        <div className="mt-2 text-xs text-amber-800 dark:text-amber-300 space-y-0.5">
+          <p>• Each of these 4 targets was independently reviewed and recorded <strong>approved_with_amendment</strong>; Decision 235 implemented the required correction shown below each title.</p>
+          <p>• Verifying here records ADDITIVE evidence only (review_type = amendment_verification): the original approved_with_amendment decision is never overwritten, and is never automatically converted to approved.</p>
+          <p>• A Mistake You Learned From is not listed: it was recorded plain approved, with no amendment required.</p>
+        </div>
+      </div>
+      <div className="divide-y divide-gray-50 dark:divide-gray-800">
+        {ENGLISH_INC001_AMENDMENT_VERIFICATION_TARGETS.map((t) => {
+          const s = status.get(t.id);
+          const entry = ENGLISH_INC001_AMENDMENT_REGISTER.find((e) => e.targetId === t.id);
+          return (
+            <button
+              key={t.id}
+              onClick={() => onOpen(t)}
+              className="w-full text-left px-5 py-3 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors flex items-start justify-between gap-3"
+            >
+              <div>
+                <p className="text-sm font-medium text-gray-900 dark:text-gray-100">{t.title}</p>
+                {entry && <p className="text-xs text-gray-600 dark:text-gray-400 mt-1 max-w-2xl">{entry.requiredCorrection}</p>}
+                <p className="text-[11px] text-gray-400 dark:text-gray-500 mt-1">
+                  {s?.reviewed ? `verified · ${s.decision}` : "not yet verified"}
+                </p>
+              </div>
+              {s?.reviewed ? <CheckCircle2 size={16} className="text-emerald-500 shrink-0 mt-1" /> : <ArrowRight size={14} className="text-gray-300 dark:text-gray-600 shrink-0 mt-1" />}
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+/**
  * Educational Increment 007T, Migration 064 Review-Surface Reconciliation
  * Part 6 correction — `reviewedIds` (now scoped to review_type =
  * 'content_review', see fetchReviewedTargetIds()) is cross-referenced
@@ -3052,9 +3129,11 @@ function ReviewDashboard() {
   const [selectedEnglishInc001Passage, setSelectedEnglishInc001Passage] = useState<PendingReviewTarget | null>(null);
   const [englishInc001WritingStatus, setEnglishInc001WritingStatus] = useState<Map<string, SevenXReviewStatus>>(new Map());
   const [selectedEnglishInc001Writing, setSelectedEnglishInc001Writing] = useState<{ target: PendingReviewTarget; family: SevenXFamilyConfig } | null>(null);
+  const [englishInc001AmendmentVerificationStatus, setEnglishInc001AmendmentVerificationStatus] = useState<Map<string, SevenXReviewStatus>>(new Map());
+  const [selectedEnglishInc001AmendmentVerification, setSelectedEnglishInc001AmendmentVerification] = useState<AmendmentVerificationTarget | null>(null);
 
   async function load() {
-    const [pending, reviewed, teachingReviewed, englishTeachingReviewed, writingTeachingReviewed, sevenX, mr04Depth, inc006Depth, mockMrBatch001, mockMrBatch002, mockMrBatch003, mockFirstMockCompoundBatch001, mockSharedScenarioCompletionBatch, mockStructuralCapacityInc001, mockStructuralCapacityWave002, mockStructuralCapacityWave002Correction001, mockStructuralCapacityIncrement003, mockStructuralCapacityIncrement004, mockStructuralCapacityIncrement005, mockStructuralCapacityIncrement006, mockEnglishPassageBatch001, mockWritingBatch001, englishInc001Passage, englishInc001Writing] = await Promise.all([
+    const [pending, reviewed, teachingReviewed, englishTeachingReviewed, writingTeachingReviewed, sevenX, mr04Depth, inc006Depth, mockMrBatch001, mockMrBatch002, mockMrBatch003, mockFirstMockCompoundBatch001, mockSharedScenarioCompletionBatch, mockStructuralCapacityInc001, mockStructuralCapacityWave002, mockStructuralCapacityWave002Correction001, mockStructuralCapacityIncrement003, mockStructuralCapacityIncrement004, mockStructuralCapacityIncrement005, mockStructuralCapacityIncrement006, mockEnglishPassageBatch001, mockWritingBatch001, englishInc001Passage, englishInc001Writing, englishInc001AmendmentVerification] = await Promise.all([
       fetchPendingReviewTargets(), fetchReviewedTargetIds(), fetchMathsTeachingReviewedFamilyIds(), fetchEnglishTeachingReviewedFamilyIds(), fetchWritingTeachingReviewedFamilyIds(),
       fetchSevenXReviewStatus(SEVEN_X_TARGET_IDS), fetchMr04DepthReviewStatus(MR04_DEPTH_TARGET_IDS), fetchInc006DepthReviewStatus(INC006_DEPTH_TARGET_IDS),
       fetchMockMrBatch001ReviewStatus(MOCK_MR_BATCH001_TARGET_IDS), fetchMockMrBatch002ReviewStatus(MOCK_MR_BATCH002_TARGET_IDS),
@@ -3070,6 +3149,7 @@ function ReviewDashboard() {
       fetchMockStructuralCapacityIncrement006ReviewStatus(MOCK_STRUCTURAL_CAPACITY_INCREMENT006_TARGET_IDS),
       fetchMockEnglishPassageBatch001ReviewStatus(), fetchMockWritingBatch001ReviewStatus(MOCK_WRITING_BATCH001_TARGET_IDS),
       fetchMockEnglishInc001PassageReviewStatus(), fetchMockEnglishInc001WritingReviewStatus(MOCK_ENGLISH_INC001_WRITING_TARGET_IDS),
+      fetchEnglishInc001AmendmentVerificationStatus(ENGLISH_INC001_AMENDMENT_VERIFICATION_TARGET_IDS),
     ]);
     setTargets(pending);
     setReviewedIds(reviewed);
@@ -3095,6 +3175,7 @@ function ReviewDashboard() {
     setMockWritingBatch001Status(mockWritingBatch001);
     setEnglishInc001PassageStatus(englishInc001Passage);
     setEnglishInc001WritingStatus(englishInc001Writing);
+    setEnglishInc001AmendmentVerificationStatus(englishInc001AmendmentVerification);
   }
 
   useEffect(() => { load(); }, []);
@@ -3388,6 +3469,23 @@ function ReviewDashboard() {
     );
   }
 
+  if (selectedEnglishInc001AmendmentVerification) {
+    const t = selectedEnglishInc001AmendmentVerification;
+    const entry = ENGLISH_INC001_AMENDMENT_REGISTER.find((e) => e.targetId === t.id);
+    const target: PendingReviewTarget = { id: t.id, reviewTargetType: t.reviewTargetType, notes: null };
+    return (
+      <ReviewForm
+        target={target}
+        reviewType="amendment_verification"
+        onDone={() => { setSelectedEnglishInc001AmendmentVerification(null); load(); }}
+        sevenX={t.sevenXQuestionIds ? {
+          questionIds: t.sevenXQuestionIds, disclosure: entry ? `Required correction: ${entry.requiredCorrection}` : "Verify whether the recorded amendment was resolved.",
+          notesPrefix: buildEnglishInc001AmendmentVerificationNotesPrefix(t.id),
+        } : undefined}
+      />
+    );
+  }
+
   if (targets === null) return <p className="text-sm text-gray-400 dark:text-gray-500">Loading review pilot…</p>;
 
   return (
@@ -3446,6 +3544,7 @@ function ReviewDashboard() {
       <MockWritingBatch001Section targets={targets} status={mockWritingBatch001Status} onOpen={(target, family) => setSelectedMockWritingBatch001({ target, family })} />
       <EnglishInc001PassageSection targets={targets} status={englishInc001PassageStatus} onOpen={setSelectedEnglishInc001Passage} />
       <EnglishInc001WritingSection targets={targets} status={englishInc001WritingStatus} onOpen={(target, family) => setSelectedEnglishInc001Writing({ target, family })} />
+      <EnglishInc001AmendmentVerificationSection status={englishInc001AmendmentVerificationStatus} onOpen={setSelectedEnglishInc001AmendmentVerification} />
       <FullBacklogSection targets={targets} reviewedIds={reviewedIds} onOpen={setSelected} />
       </>
       )}

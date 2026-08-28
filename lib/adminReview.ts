@@ -17,7 +17,7 @@ import { getSupabaseClient } from "./supabase";
 
 export type ReviewTargetType = "passage" | "question_family" | "writing_prompt";
 
-/** Every review_type value the live ali_family_review_review_type_check constraint permits (migrations 034/059/060/061/087). */
+/** Every review_type value the live ali_family_review_review_type_check constraint permits (migrations 034/059/060/061/087/157). */
 export type ReviewType =
   | "content_review"
   | "maths_teaching_review"
@@ -25,7 +25,9 @@ export type ReviewType =
   | "writing_teaching_review"
   | "mock_maths_independent_review"
   | "mock_english_passage_independent_review"
-  | "mock_writing_prompt_independent_review";
+  | "mock_writing_prompt_independent_review"
+  | "founder_amendment_clarification"
+  | "amendment_verification";
 export type ReviewDecision = "approved" | "approved_with_amendment" | "rejected" | "requires_revalidation";
 
 /**
@@ -824,6 +826,8 @@ export interface RepresentativeQuestion {
    * never treat the fallback text as evidence of missing content.
    */
   writingTask: { title: string; prompt: string; checklist: string[]; timeMinutes: number | null } | null;
+  /** Decision 235 -- `ali_question_bank.explanation`, the author's own per-question note (REMEDIATION rationale, marking-policy clarification). Previously never selected or rendered (same class of gap Decision 232 fixed for `provenance`/`notes`) -- now selected via QUESTION_SELECT_COLUMNS and rendered in QuestionOrWritingTaskBody so amendment verification does not require re-reading raw SQL. null when the row has no explanation, or for any caller not using mapQuestionRow (e.g. fetchQuestionsForPassage always does). */
+  authorNote: string | null;
 }
 
 /** prompt is stored as jsonb (typed `unknown` at the client) — narrows just enough to read the display fields safely, without claiming to know its full shape. */
@@ -2276,6 +2280,67 @@ export async function submitMockWritingPromptIndependentReview(s: ReviewSubmissi
 }
 
 /**
+ * Decision 235, Section 11 — Amendment Verification. Inserts one new,
+ * additive `ali_family_review` row (`review_type =
+ * 'amendment_verification'`, migration 157) recording whether a
+ * previously-recorded `approved_with_amendment` decision's required
+ * correction was satisfactorily resolved after remediation. Deliberately
+ * a SEPARATE `review_type` from the original independent review it
+ * verifies — never overwrites, updates, or is confused with that
+ * original decision row (Section 9's own "review history must remain
+ * immutable" requirement); `deriveBatchReviewStatus`'s own exact
+ * `review_type` equality filter (this file, `deriveBatchReviewStatus`)
+ * means a verification row can never be picked up by
+ * `fetchMockEnglishInc001PassageReviewStatus`/`WritingReviewStatus` and
+ * so can never appear to silently flip or replace the original decision
+ * those functions surface. This function's OWN existence is itself part
+ * of the fix for the SAME class of defect Decision 230/231 found and
+ * fixed for the original Inc001 review targets: routing a review through
+ * the page's own generic `submitReview()` fallback silently records
+ * `review_type = 'content_review'` (the database's own default, migration
+ * 059) instead of the type actually intended, which is why this
+ * dedicated function — not the generic path — is wired to
+ * `reviewType === "amendment_verification"` in
+ * `app/admin-beta/review/page.tsx`'s own `handleSubmit()`.
+ */
+export async function submitEnglishInc001AmendmentVerification(s: ReviewSubmission): Promise<SubmitReviewResult> {
+  const validationError = validateReviewSubmission(s);
+  if (validationError) return { error: validationError };
+  if (!s.decision) return { error: "Choose a decision: this is never chosen for you." };
+  const supabase = getSupabaseClient();
+  if (!supabase) return { error: "Not connected" };
+  const { error } = await supabase.from("ali_family_review").insert({
+    review_target_type: s.reviewTargetType,
+    review_type: "amendment_verification",
+    family_id: s.targetId,
+    reviewer: s.reviewer.trim(),
+    decision: s.decision,
+    notes: buildNotesWithQualification(s),
+    evidence_reference: s.evidenceReference.trim() || null,
+    provenance_reference: s.provenanceReference.trim() || null,
+    educational_validity: s.educationalValidity,
+    competency_validity: s.competencyValidity,
+    wording_quality: s.wordingQuality,
+    age_appropriate: s.ageAppropriate,
+    ambiguity_free: s.ambiguityFree,
+    difficulty_appropriate: s.difficultyAppropriate,
+    misconception_quality: s.misconceptionQuality,
+    explanation_quality: s.explanationQuality,
+    variation_boundaries_sound: s.variationBoundariesSound,
+    authenticity_confirmed: s.authenticityConfirmed,
+    question_type_alignment: s.questionTypeAlignment,
+    answer_correctness_verified: s.answerCorrectnessVerified,
+    transfer_validity: s.transferValidity,
+    teaching_quality: s.teachingQuality,
+    exam_strategy_quality: s.examStrategyQuality,
+    validation_behaviour_sound: s.validationBehaviourSound,
+    originality_confirmed: s.originalityConfirmed,
+    copyright_risk_clear: s.copyrightRiskClear,
+  });
+  return { error: error ? error.message : null };
+}
+
+/**
  * English Content Foundation, Increment 001 (Decision 228, remediated
  * Decision 229, review-target identifier corrected migration 155) —
  * the 2 new Comprehension passages, reviewed via the SAME generic
@@ -2364,6 +2429,134 @@ export async function fetchMockEnglishInc001WritingReviewStatus(familyIds: strin
   return fetchBatchReviewStatus(familyIds, MOCK_ENGLISH_INC001_MARKER, "mock_writing_prompt_independent_review");
 }
 
+/**
+ * Decision 235 — Post-Decision-234 Amendment Remediation. The canonical
+ * four-target amendment register (Section 4), sourced directly from the
+ * production `ali_family_review` evidence the Founder supplied this
+ * decision (Understudy/Bee/Screen Time: the recorded `notes` on each
+ * target's own `mock_english_passage_independent_review`/
+ * `mock_writing_prompt_independent_review` row; Somewhere New: the
+ * Founder's own supplementary clarification, since the recorded row's
+ * notes read only "Founder review with caution." — see migration 158's
+ * own `founder_amendment_clarification` row for the full, verbatim text
+ * this register's `requiredCorrection` field summarises). Static content,
+ * not fetched — this IS the documentation Section 4 requires, exported so
+ * both the review surface (Section 10/11) and this file's own tests can
+ * render/assert it from one shared source rather than two independently
+ * hand-typed copies.
+ */
+export interface AmendmentRegisterEntry {
+  targetId: string;
+  targetTitle: string;
+  reviewer: string;
+  originalDecision: ReviewDecision;
+  educationalIssue: string;
+  requiredCorrection: string;
+  affectedContent: string;
+  verificationCriterion: string;
+}
+
+export const ENGLISH_INC001_AMENDMENT_REGISTER: AmendmentRegisterEntry[] = [
+  {
+    targetId: "eng-inc001-understudy",
+    targetTitle: "The Understudy",
+    reviewer: "Ayobami Lawal",
+    originalDecision: "approved_with_amendment",
+    educationalIssue:
+      "Q1 asks specifically what Isla's mother's note stated, but the passage separately describes Isla's voice as 'a hoarse whisper' -- the stored answer contract needed an explicit marking policy distinguishing the note's own diagnosis from that later narrative description, and stating whether a semantically reasonable paraphrase (e.g. 'she had lost her voice') should be credited.",
+    requiredCorrection:
+      "Canonical answer remains 'laryngitis'. acceptedAnswers extended to explicitly credit reasonable paraphrases of the note's own diagnosis (e.g. 'she had lost her voice' / 'she lost her voice'), matched via the real TIER2_ACCEPTED_SET token-sequence scorer (checkAcceptedAnswerSet), not a cosmetic addition. A quotation of only 'a hoarse whisper', with no reference to illness or voice loss, remains uncredited on its own, since that is the narrator's later description, not what the note itself stated.",
+    affectedContent: "ali_question_bank.eng-inc001-understudy-q01 (prompt.acceptedAnswers)",
+    verificationCriterion: "acceptedAnswers includes at least one reasonable 'lost her voice' paraphrase alongside 'laryngitis'; modelAnswer and the other 6 Understudy questions are byte-unchanged.",
+  },
+  {
+    targetId: "eng-inc001-bee-navigation",
+    targetTitle: "How Bees Find Their Way Home",
+    reviewer: "Ayobami Lawal",
+    originalDecision: "approved_with_amendment",
+    educationalIssue:
+      "Magnetic-field sensitivity must remain explicitly cautious (real evidence of sensitivity exists; the precise mechanism and its natural navigational role remain uncertain) and must not be presented as an established primary navigation system equivalent to the sun-compass or landmark methods. Q7's 'using or sensing' wording must be retained.",
+    requiredCorrection:
+      "AUDITED, NO CONTENT CHANGE REQUIRED: Decision 229's own prior correction already states this exact cautious framing verbatim ('Exactly how much this magnetic sense contributes to everyday navigation, though, is still being investigated -- it is one of the least understood of a bee's senses'), and Q7 already reads 'the three things the passage describes bees using or sensing'. Independently re-confirmed this session by direct re-read of migration 152's live passage/Q7/Q2 text and a full re-grep of the migration for stale 'established'/'three navigation systems' wording -- none found in live content. This target's amendment is satisfied by preservation, not further correction.",
+    affectedContent: "none (verified unchanged: ali_passage_bank.eng-inc001-bee-navigation; ali_question_bank.eng-inc001-bee-q01 through q08)",
+    verificationCriterion: "Passage's magnetic-sensing paragraph and Q7's wording remain byte-identical to their post-Decision-229 form; no stale 'established third system' wording anywhere in the family.",
+  },
+  {
+    targetId: "mock-writing-wc01a-newplace",
+    targetTitle: "Somewhere New",
+    reviewer: "Ayobami Lawal (original decision); Founder (supplementary clarification, see migration 158)",
+    originalDecision: "approved_with_amendment",
+    educationalIssue:
+      "The recorded review decision's own notes read only 'Founder review with caution.' -- non-blank, but not an amendment. The Founder separately clarified (post-Decision-234): the prompt/checklist required a real personal experience and forced a 'feelings changed' formula, both narrower than the task's real assessment target (writing quality, not autobiographical truth or one fixed emotional arc).",
+    requiredCorrection:
+      "Prompt and checklist now explicitly allow a genuine personal experience OR a plausible imagined situation (never testing autobiographical truth), and require development of thoughts/impressions/feelings over the response rather than forcing a single 'change' formula. Place-arrival concept, sensory specificity, coherent sequencing, reflective development, and qualitative (no deterministic model answer) assessment are all preserved unchanged.",
+    affectedContent: "ali_question_bank.mock-writing-newplace-01 (prompt.prompt, prompt.checklist, addresses_misconception)",
+    verificationCriterion: "Prompt/checklist no longer require the place to be a real personal experience or force an emotional 'change'; QT-WC-01a shape, timeMinutes, and the no-deterministic-model-answer contract are unchanged.",
+  },
+  {
+    targetId: "mock-writing-wc01a-screentime",
+    targetTitle: "Should Children Have Limits on Screen Time?",
+    reviewer: "Ayobami Lawal",
+    originalDecision: "approved_with_amendment",
+    educationalIssue:
+      "Guidance needed to clarify this is a personal opinion / reflective-discursive response, not a formal debate speech, without categorically prohibiting legitimate techniques (rhetorical questions, deliberate emphasis, appropriate reader engagement); the checklist's 'genuinely experienced or noticed' wording created an unnecessary authenticity gate that could disadvantage a learner with a strong response built on reasonable examples.",
+    requiredCorrection:
+      "Checklist's genre-guidance line now explicitly permits a rhetorical question or moment of emphasis within a personal-opinion voice, while still distinguishing that from shifting into a formal persuasive-speech register (e.g. audience address). The 'genuinely experienced/noticed' requirement is replaced with a requirement for specific, convincing examples or reasoning -- dropping the authenticity test, not the requirement for real support. Clear opinion, developed reasoning, consideration of another viewpoint, coherent organisation, and qualitative assessment are all preserved unchanged.",
+    affectedContent: "ali_question_bank.mock-writing-screentime-01 (prompt.checklist, addresses_misconception)",
+    verificationCriterion: "Checklist no longer requires examples to be 'genuinely' experienced/noticed and no longer reads as categorically prohibiting rhetorical questions/emphasis; misconception note narrows to genre-shift (formal speech register), not technique use.",
+  },
+];
+
+/**
+ * Decision 235, Section 11 — the 4 amended targets (Understudy, Bee,
+ * Somewhere New, Screen Time), each reachable through the SAME content
+ * fetch the original independent-review sections already use
+ * (`reviewTargetType: "passage"` -> fetchPassageDetail/
+ * fetchQuestionsForPassage; `"writing_prompt"` -> the `sevenX` exact-id
+ * path, reusing each prompt's own real row id, identical to
+ * `MOCK_ENGLISH_INC001_WRITING_FAMILIES` above), so the Founder compares
+ * the SAME content a learner or a fresh reviewer would see, not a
+ * separate copy. A Mistake You Learned From is deliberately absent: it
+ * is `approved` with no recorded amendment, so there is nothing to
+ * verify (Section 9's own control case).
+ */
+export interface AmendmentVerificationTarget {
+  id: string;
+  title: string;
+  reviewTargetType: ReviewTargetType;
+  sevenXQuestionIds?: string[];
+}
+
+export const ENGLISH_INC001_AMENDMENT_VERIFICATION_TARGETS: AmendmentVerificationTarget[] = [
+  { id: "eng-inc001-understudy", title: "The Understudy", reviewTargetType: "passage" },
+  { id: "eng-inc001-bee-navigation", title: "How Bees Find Their Way Home", reviewTargetType: "passage" },
+  { id: "mock-writing-wc01a-newplace", title: "Somewhere New", reviewTargetType: "writing_prompt", sevenXQuestionIds: ["mock-writing-newplace-01"] },
+  { id: "mock-writing-wc01a-screentime", title: "Should Children Have Limits on Screen Time?", reviewTargetType: "writing_prompt", sevenXQuestionIds: ["mock-writing-screentime-01"] },
+];
+
+export const ENGLISH_INC001_AMENDMENT_VERIFICATION_TARGET_IDS = ENGLISH_INC001_AMENDMENT_VERIFICATION_TARGETS.map((t) => t.id);
+
+export function buildEnglishInc001AmendmentVerificationNotesPrefix(targetId: string): string {
+  const entry = ENGLISH_INC001_AMENDMENT_REGISTER.find((e) => e.targetId === targetId);
+  return `AMENDMENT-VERIFICATION (Decision 235): ${entry?.targetTitle ?? targetId} -- confirms whether the required correction above was satisfactorily resolved. Does not re-run the original full independent review, and does not itself convert approved_with_amendment to approved.`;
+}
+
+/**
+ * `requireMarker: false` — same reasoning as
+ * `deriveMockEnglishInc001PassageReviewStatus` above: every one of these
+ * 4 `family_id` values is unique to this specific verification purpose
+ * (`review_type = 'amendment_verification'` exists for no other purpose
+ * anywhere in this codebase), so the marker is not needed to disambiguate
+ * against an unrelated historical row for the same family_id.
+ */
+export function deriveEnglishInc001AmendmentVerificationStatus(rows: SevenXReviewRow[], familyIds: string[]): Map<string, SevenXReviewStatus> {
+  return deriveBatchReviewStatus(rows, familyIds, MOCK_ENGLISH_INC001_MARKER, "amendment_verification", false);
+}
+
+export async function fetchEnglishInc001AmendmentVerificationStatus(familyIds: string[]): Promise<Map<string, SevenXReviewStatus>> {
+  return fetchBatchReviewStatus(familyIds, MOCK_ENGLISH_INC001_MARKER, "amendment_verification", false);
+}
+
 export const DIFFICULTY_RANK: Record<string, number> = { easy: 0, medium: 1, hard: 2 };
 
 /** Pure: true difficulty order (easy -> medium -> hard), not the database's default alphabetical order, which would wrongly place "hard" before "medium". Exported and unit-tested directly (tests/lib/adminReview.test.ts). */
@@ -2385,6 +2578,7 @@ function mapQuestionRow(r: {
   content_difficulty: string; transfer_class: string | null; addresses_misconception: string | null;
   content_version: number; active: boolean; provenance: string | null; eligibility_status: string;
   question_group_id?: string | null; group_order?: number | null; subpart_label?: string | null; marking_mode?: string | null;
+  explanation?: string | null;
 }): RepresentativeQuestion {
   return {
     id: r.id, subject: r.subject, skill: r.skill,
@@ -2400,10 +2594,12 @@ function mapQuestionRow(r: {
     stimulus: promptStimulus(r.prompt),
     sharedStem: promptSharedStem(r.prompt),
     writingTask: promptWritingTask(r.prompt),
+    authorNote: r.explanation ?? null,
   };
 }
 
-const QUESTION_SELECT_COLUMNS = "id, subject, skill, prompt, family_id, learning_unit_id, content_difficulty, transfer_class, addresses_misconception, content_version, active, provenance, eligibility_status, question_group_id, group_order, subpart_label, marking_mode";
+/** Decision 235 -- `explanation` added (previously never selected, Decision 232's own confirmed finding for `provenance`/`notes` applies identically here: a field that exists but is invisible to a reviewer cannot support genuine amendment verification). This is the author's own per-question note (REMEDIATION rationale, marking-policy clarification), distinct from the `explanation_quality` REVIEW CRITERION field, which is unrelated. */
+const QUESTION_SELECT_COLUMNS = "id, subject, skill, prompt, family_id, learning_unit_id, content_difficulty, transfer_class, addresses_misconception, content_version, active, provenance, eligibility_status, question_group_id, group_order, subpart_label, marking_mode, explanation";
 
 /** Up to `limit` real questions for a family — the reviewer's representative + boundary sample (Operating Model §3), not the full sibling set. */
 export async function fetchRepresentativeQuestions(familyId: string, limit = 8): Promise<RepresentativeQuestion[]> {
@@ -2499,6 +2695,17 @@ export interface SubmitReviewResult {
  * Pure validation, independent of any Supabase connection, so it can be
  * unit-tested directly (tests/lib/adminReview.test.ts). Returns the
  * error message to show, or null when the submission is valid.
+ *
+ * Decision 235 — Review-Governance Gap Closed: `approved_with_amendment`
+ * previously required nothing beyond the decision itself, so a reviewer
+ * could record it with completely blank notes (the "Somewhere New"
+ * production row this decision remediates recorded only "Founder review
+ * with caution.", satisfying the OLD rule trivially since it is
+ * non-blank, but never actually stating what needed to change). This
+ * mirrors the existing `rejected` requirement exactly, extended to a
+ * second decision value, never imposed on plain `approved` (Section 2's
+ * own explicit instruction). Mirrored at the database level by migration
+ * 157's own extension of `ali_family_review_decision_requires_notes`.
  */
 export function validateReviewSubmission(s: ReviewSubmission): string | null {
   if (!s.reviewer.trim()) return "Reviewer name is required, a review cannot be recorded anonymously.";
@@ -2506,6 +2713,9 @@ export function validateReviewSubmission(s: ReviewSubmission): string | null {
   if (!s.decision) return "Choose a decision: this is never chosen for you.";
   if (s.decision === "rejected" && !s.notes.trim()) {
     return "A rejected decision requires notes explaining why (enforced by the database itself, but checked here for a clearer message).";
+  }
+  if (s.decision === "approved_with_amendment" && !s.notes.trim()) {
+    return "An approved_with_amendment decision requires notes stating the exact amendment/correction required -- it cannot be recorded with blank notes, and reviewer qualification alone does not satisfy this (enforced by the database itself, but checked here for a clearer message).";
   }
   return null;
 }

@@ -245,7 +245,8 @@ export interface Database {
           originality_confirmed: boolean | null;
           copyright_risk_clear: boolean | null;
           /** Migration 059, extended migration 060/061/087. */
-          review_type: "content_review" | "maths_teaching_review" | "english_teaching_review" | "writing_teaching_review" | "mock_maths_independent_review" | "mock_english_passage_independent_review" | "mock_writing_prompt_independent_review";
+          /** Migration 157. */
+          review_type: "content_review" | "maths_teaching_review" | "english_teaching_review" | "writing_teaching_review" | "mock_maths_independent_review" | "mock_english_passage_independent_review" | "mock_writing_prompt_independent_review" | "founder_amendment_clarification" | "amendment_verification";
           teaching_content_version: string | null;
           teaching_mathematically_correct: boolean | null;
           teaching_model_understandable: boolean | null;
@@ -289,8 +290,8 @@ export interface Database {
           validation_behaviour_sound?: boolean | null;
           originality_confirmed?: boolean | null;
           copyright_risk_clear?: boolean | null;
-          /** Migration 059, extended migration 060. */
-          review_type?: "content_review" | "maths_teaching_review" | "english_teaching_review" | "writing_teaching_review" | "mock_maths_independent_review" | "mock_english_passage_independent_review" | "mock_writing_prompt_independent_review";
+          /** Migration 059, extended migration 060/157. */
+          review_type?: "content_review" | "maths_teaching_review" | "english_teaching_review" | "writing_teaching_review" | "mock_maths_independent_review" | "mock_english_passage_independent_review" | "mock_writing_prompt_independent_review" | "founder_amendment_clarification" | "amendment_verification";
           teaching_content_version?: string | null;
           teaching_mathematically_correct?: boolean | null;
           teaching_model_understandable?: boolean | null;
