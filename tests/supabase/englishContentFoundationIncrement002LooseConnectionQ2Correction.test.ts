@@ -172,15 +172,141 @@ test("the DELETE targets only the old pooled eng-inc002-roboticsfinal-q02 row, n
   assert.equal(deleteMatches[0][1], "eng-inc002-roboticsfinal-q02");
 });
 
-test("the precondition requires the OLD row's exact known signature (QT-RC-04, 4 marks, all 5 words named, 16 pooled accepted answers) before deleting, and refuses otherwise", () => {
-  assert.match(executable163, /question_type = 'QT-RC-04'/);
-  assert.match(executable163, /marks'\)::int = 4/);
+test("the precondition requires the OLD row's exact known signature (skill = QT-RC-04, question_type = short-answer, 4 marks, all 5 words named, 16 pooled accepted answers) before deleting, and refuses otherwise", () => {
+  assert.match(executable163, /skill, question_type, \(prompt ->> 'marks'\)::int/);
+  assert.match(executable163, /v_live_marks is distinct from 4/);
   assert.match(executable163, /like '%frustrating%'/);
   assert.match(executable163, /like '%disbelieving%'/);
   assert.match(executable163, /like '%triumphant%'/);
   assert.match(executable163, /like '%uselessly%'/);
-  assert.match(executable163, /v_old_accepted_len != 16/);
+  assert.match(executable163, /v_live_accepted_len is distinct from 16/);
   assert.match(sql163, /Migration 163 refused/);
+});
+
+// === CORRECTION REGRESSION: skill/question_type precondition fix ===========
+// Decision 239 follow-up. Production evidence proved the migration's FIRST
+// precondition tested `question_type = 'QT-RC-04'`, but the canonical
+// schema (migration 005's own base ali_question_bank definition; the
+// known-good row shape in migration 161) stores the QT-RC competency code
+// in `skill`, with `question_type` holding the separate generic label
+// 'short-answer'. This corrected the predicate to check BOTH fields
+// independently and rewrote the refusal diagnostics to report every live
+// field value by name instead of a misleading NULL.
+
+test("C0. the corrected precondition checks skill = 'QT-RC-04' AND question_type = 'short-answer' independently, and the defective original clause is gone from the executable SQL", () => {
+  assert.match(executable163, /v_live_skill is distinct from 'QT-RC-04'/);
+  assert.match(executable163, /v_live_question_type is distinct from 'short-answer'/);
+  assert.ok(!executable163.includes("question_type = 'QT-RC-04'"), "the defective precondition clause (question_type tested against the QT-RC code) must no longer be present");
+});
+
+test("C0b. a base-identity lookup (id + learning_unit_id only) runs before the signature check, and refuses with a distinct, explicit message if no row is found at all -- never a silent NULL-filled refusal", () => {
+  assert.match(executable163, /where id = 'eng-inc002-roboticsfinal-q02'\s*\n\s*and learning_unit_id = 'eng-inc002-roboticsfinal';/);
+  assert.match(executable163, /if not found then/);
+  assert.match(sql163, /no row found with id = eng-inc002-roboticsfinal-q02 and learning_unit_id = eng-inc002-roboticsfinal/);
+});
+
+test("C0c. the refusal-on-mismatch message reports every live field by name (skill, question_type, marks, acceptedAnswers type, acceptedAnswers count, eligibility_status, active, question text) -- proving the fix to the misleading-NULL diagnostic", () => {
+  for (const token of ["skill:", "question_type:", "marks:", "acceptedAnswers type:", "acceptedAnswers count:", "eligibility_status:", "active:", "question text contains all 4 target words:"]) {
+    assert.ok(sql163.includes(token), `refusal diagnostic message must report live "${token}"`);
+  }
+});
+
+// JS mirror of the corrected DO block's OR-condition (migration 163, lines
+// verified present by C0/C0c above). Used only to exercise pristine-vs-not
+// scenarios the SQL predicate itself is responsible for; not a substitute
+// for the live database actually enforcing it.
+interface OldQ2RowSnapshot {
+  skill: string;
+  questionType: string;
+  marks: number;
+  acceptedType: string;
+  acceptedLen: number;
+  eligibilityStatus: string;
+  active: boolean;
+  questionText: string;
+}
+
+const canonicalOldRow: OldQ2RowSnapshot = {
+  skill: "QT-RC-04",
+  questionType: "short-answer",
+  marks: 4,
+  acceptedType: "array",
+  acceptedLen: 16,
+  eligibilityStatus: "authentic_assessment_candidate",
+  active: true,
+  questionText: "...frustrating... ...disbelieving... ...triumphant... ...uselessly...",
+};
+
+function violatesPristinePredicate(row: OldQ2RowSnapshot): boolean {
+  return (
+    row.skill !== "QT-RC-04" ||
+    row.questionType !== "short-answer" ||
+    row.marks !== 4 ||
+    row.acceptedType !== "array" ||
+    row.acceptedLen !== 16 ||
+    row.eligibilityStatus !== "authentic_assessment_candidate" ||
+    row.active !== true ||
+    !row.questionText.includes("frustrating") ||
+    !row.questionText.includes("disbelieving") ||
+    !row.questionText.includes("triumphant") ||
+    !row.questionText.includes("uselessly")
+  );
+}
+
+test("1. canonical old row (skill='QT-RC-04', question_type='short-answer', all other fields matching) satisfies the pristine predicate", () => {
+  assert.equal(violatesPristinePredicate(canonicalOldRow), false);
+});
+
+test("2. the ORIGINAL swap (skill='short-answer', question_type='QT-RC-04') does NOT satisfy the corrected predicate", () => {
+  assert.equal(violatesPristinePredicate({ ...canonicalOldRow, skill: "short-answer", questionType: "QT-RC-04" }), true);
+});
+
+test("3. wrong skill (any value other than 'QT-RC-04') refuses", () => {
+  assert.equal(violatesPristinePredicate({ ...canonicalOldRow, skill: "vocabulary" }), true);
+});
+
+test("4. wrong question_type (any value other than 'short-answer') refuses", () => {
+  assert.equal(violatesPristinePredicate({ ...canonicalOldRow, questionType: "multiple-choice" }), true);
+});
+
+test("5. wrong marks (anything other than 4) refuses", () => {
+  assert.equal(violatesPristinePredicate({ ...canonicalOldRow, marks: 3 }), true);
+});
+
+test("6. wrong acceptedAnswers count (anything other than 16) refuses", () => {
+  assert.equal(violatesPristinePredicate({ ...canonicalOldRow, acceptedLen: 15 }), true);
+});
+
+test("7. if q02b/c/d/e already exist in a partial (1-3 row) state, the migration refuses as a mixed, unexpected state rather than attempting a replacement", () => {
+  assert.match(executable163, /if v_new_rows_count != 0 then/);
+  assert.match(sql163, /Production is in a mixed, unexpected state -- re-verify before proceeding/);
+  for (const partialCount of [1, 2, 3]) {
+    const isMixedState = partialCount !== 0 && partialCount !== 4;
+    assert.equal(isMixedState, true, `a count of ${partialCount} must be treated as mixed/unexpected, not silently accepted`);
+  }
+});
+
+test("8. all 4 replacement rows carry skill = 'QT-RC-04' and question_type = 'short-answer' in their own SQL column tuples (not swapped)", () => {
+  for (const letter of ["b", "c", "d", "e"]) {
+    const re = new RegExp(`'eng-inc002-roboticsfinal-q02${letter}', 'english', 'QT-RC-04', array\\['csse'\\], 'medium', 'short-answer', 60,`);
+    assert.match(sql163, re, `eng-inc002-roboticsfinal-q02${letter}'s own column tuple must carry skill='QT-RC-04', question_type='short-answer'`);
+  }
+});
+
+test("9. the 4 new rows retain isolated, non-overlapping one-mark answer sets after the correction (re-confirmed against the corrected file)", () => {
+  assert.equal(newSubparts.length, 4);
+  for (const p of newSubparts) assert.equal(p.marks, 1);
+});
+
+test("10. The Loose Connection's passage total remains 22 after the correction (re-confirmed against the corrected file)", () => {
+  const unaffectedMarks = allInc001RoboticsPrompts.filter((p) => p.id !== "eng-inc002-roboticsfinal-q02").reduce((sum, p) => sum + p.marks, 0);
+  const newQ2Marks = newSubparts.reduce((sum, p) => sum + p.marks, 0);
+  assert.equal(unaffectedMarks + newQ2Marks, 22);
+});
+
+test("11. review registration (ali_family_review) and eligibility_status remain untouched by the correction", () => {
+  assert.ok(!executable163.includes("ali_family_review"));
+  assert.ok(!/set\s+eligibility_status/i.test(executable163));
 });
 
 test("the migration is idempotent: if the 4 new rows already exist, it is a verified no-op; if a mixed state is found, it refuses rather than guessing", () => {

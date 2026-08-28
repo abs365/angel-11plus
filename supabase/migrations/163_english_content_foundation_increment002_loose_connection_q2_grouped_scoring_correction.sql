@@ -94,10 +94,12 @@
 -- SAFETY
 -- ============================================================
 -- Fail-closed: the precondition requires the OLD row to exist with its
--- exact known signature (id, question_type, 4 marks, the specific
--- question text naming all 5 words, the specific 16-item accepted-
--- answer count) before anything is touched; if it does not match
--- exactly, this migration refuses and writes nothing. Idempotent: if
+-- exact known signature (id, learning_unit_id, skill = 'QT-RC-04',
+-- question_type = 'short-answer', 4 marks, the specific question text
+-- naming all 5 words, the specific 16-item accepted-answer count,
+-- eligibility_status, active) before anything is touched; if it does not
+-- match exactly, this migration refuses and writes nothing, reporting
+-- every live field value by name (never a misleading NULL). Idempotent: if
 -- all 4 new rows already exist, this migration is a verified no-op
 -- (and does not attempt to re-delete a row that is already gone).
 -- Targets ONLY this one question -- no other Increment 002 row (either
@@ -109,14 +111,41 @@
 --
 -- NOT APPLIED. Generated for Founder application via Supabase Dashboard
 -- > SQL Editor > New query, after migrations 161/162 (already applied).
+--
+-- ============================================================
+-- CORRECTION HISTORY (this migration has never successfully applied,
+-- so it is corrected in place, per Decision 218/229's own convention)
+-- ============================================================
+-- First Founder application attempt FAILED CLOSED in production with:
+-- "expected exactly 1 pristine old Q2 row ... found 0 matching rows
+-- with <NULL>s accepted answers." Founder-run read-only diagnostic
+-- confirmed live root cause: the precondition tested
+-- `question_type = 'QT-RC-04'`, but the canonical schema (verified from
+-- migration 005's own base ali_question_bank definition) stores the
+-- QT-RC competency code in `skill`, with `question_type` holding the
+-- separate generic label 'short-answer'. Every other inspected live
+-- field on the old row matched the expected Decision 238 signature
+-- exactly, and no partial application (no q02b/c/d/e) was found.
+-- Corrected below to check `skill = 'QT-RC-04' and question_type =
+-- 'short-answer'` independently, and the refusal diagnostics were
+-- rewritten to report every live field value by name instead of
+-- producing a misleading NULL when the combined predicate matches zero
+-- rows. No other part of this migration's logic, new-row content, or
+-- grouping columns changed.
 
 begin;
 
 do $$
 declare
-  v_old_pristine_count int;
   v_new_rows_count int;
-  v_old_accepted_len int;
+  v_live_skill text;
+  v_live_question_type text;
+  v_live_marks int;
+  v_live_accepted_type text;
+  v_live_accepted_len int;
+  v_live_eligibility_status text;
+  v_live_active boolean;
+  v_live_question_text text;
 begin
   -- Idempotency check first: if all 4 new rows already exist, this
   -- migration has already been applied -- verified no-op, and the old
@@ -138,23 +167,55 @@ begin
   end if;
 
   -- Pristine-state precondition: the OLD pooled row must exist with its
-  -- exact known signature before it is deleted.
-  select count(*), max(jsonb_array_length(prompt -> 'acceptedAnswers'))
-    into v_old_pristine_count, v_old_accepted_len
+  -- exact known signature before it is deleted. This is deliberately
+  -- split into two stages so a refusal ALWAYS reports the row's ACTUAL
+  -- live field values -- never NULLs standing in for "zero rows matched
+  -- the combined predicate", which is exactly the misleading diagnostic
+  -- this migration produced when it first failed in production. Stage 1
+  -- locates the row by identity alone (id + learning_unit_id); stage 2
+  -- checks every other field independently and reports each one by name.
+  --
+  -- The QT-RC competency code lives in the `skill` column (confirmed via
+  -- migration 005's own base ali_question_bank definition and the known-
+  -- good row shape in migration 161); `question_type` holds the separate
+  -- generic label 'short-answer'. The migration's first production
+  -- attempt incorrectly tested `question_type = 'QT-RC-04'`, which no
+  -- live row can ever satisfy -- confirmed root cause, live Founder
+  -- diagnostic evidence, Decision 239 follow-up.
+  select
+    skill, question_type, (prompt ->> 'marks')::int,
+    jsonb_typeof(prompt -> 'acceptedAnswers'),
+    case when jsonb_typeof(prompt -> 'acceptedAnswers') = 'array'
+      then jsonb_array_length(prompt -> 'acceptedAnswers') else null end,
+    eligibility_status, active, prompt ->> 'question'
+    into v_live_skill, v_live_question_type, v_live_marks,
+         v_live_accepted_type, v_live_accepted_len,
+         v_live_eligibility_status, v_live_active, v_live_question_text
   from public.ali_question_bank
   where id = 'eng-inc002-roboticsfinal-q02'
-    and learning_unit_id = 'eng-inc002-roboticsfinal'
-    and question_type = 'QT-RC-04'
-    and (prompt ->> 'marks')::int = 4
-    and prompt ->> 'question' like '%frustrating%'
-    and prompt ->> 'question' like '%disbelieving%'
-    and prompt ->> 'question' like '%triumphant%'
-    and prompt ->> 'question' like '%uselessly%'
-    and eligibility_status = 'authentic_assessment_candidate'
-    and active = true;
+    and learning_unit_id = 'eng-inc002-roboticsfinal';
 
-  if v_old_pristine_count != 1 or v_old_accepted_len != 16 then
-    raise exception 'Migration 163 refused: expected exactly 1 pristine old Q2 row matching the known Decision 238 pooled-answer signature (marks=4, QT-RC-04, all 5 words named, 16 pooled acceptedAnswers) -- found % matching rows with %s accepted answers. Re-verify production state before proceeding; this migration will not guess.', v_old_pristine_count, v_old_accepted_len;
+  if not found then
+    raise exception 'Migration 163 refused: no row found with id = eng-inc002-roboticsfinal-q02 and learning_unit_id = eng-inc002-roboticsfinal. Re-verify production state before proceeding; this migration will not guess.';
+  end if;
+
+  if v_live_skill is distinct from 'QT-RC-04'
+    or v_live_question_type is distinct from 'short-answer'
+    or v_live_marks is distinct from 4
+    or v_live_accepted_type is distinct from 'array'
+    or v_live_accepted_len is distinct from 16
+    or v_live_eligibility_status is distinct from 'authentic_assessment_candidate'
+    or v_live_active is distinct from true
+    or v_live_question_text not like '%frustrating%'
+    or v_live_question_text not like '%disbelieving%'
+    or v_live_question_text not like '%triumphant%'
+    or v_live_question_text not like '%uselessly%'
+  then
+    raise exception 'Migration 163 refused: old Q2 row (eng-inc002-roboticsfinal-q02) exists but does not match the known Decision 238 pristine signature. Live values -- skill: % (expected QT-RC-04), question_type: % (expected short-answer), marks: % (expected 4), acceptedAnswers type: % (expected array), acceptedAnswers count: % (expected 16), eligibility_status: % (expected authentic_assessment_candidate), active: % (expected true), question text contains all 4 target words: %. Re-verify production state before proceeding; this migration will not guess.',
+      v_live_skill, v_live_question_type, v_live_marks, v_live_accepted_type, v_live_accepted_len,
+      v_live_eligibility_status, v_live_active,
+      (v_live_question_text like '%frustrating%' and v_live_question_text like '%disbelieving%'
+        and v_live_question_text like '%triumphant%' and v_live_question_text like '%uselessly%');
   end if;
 
   -- The old row is confirmed pristine and matches exactly -- safe to
