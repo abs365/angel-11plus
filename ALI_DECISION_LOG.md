@@ -10320,3 +10320,79 @@ Full automated test suite **2642/2642 passing** (2616 baseline + 26 new, zero re
 **Final verdict: A — ALL INCREMENT 001 CONTENT IS NOW GENUINELY REVIEWABLE.** No database content defect was found for any of the four symptoms — all content genuinely exists (independently re-verified against real stored JSON), so verdict B (which specifically names a remaining database content defect) would misstate this decision's own findings. C/D are fully, definitively remediated at the code level, proven directly. For A/B, the specific network/timing event that produced the Founder's own screenshots could not be independently reproduced from source alone (no live database or authenticated browser access exists in this environment) — but the CODE DEFECT that made such a hang possible (a fetch with no error handling, no explicit failure state) is definitively fixed: every review target will now either display its content or show a specific, visible "Content unavailable" message with decision submission disabled, never an indeterminate spinner. "Genuinely reviewable" is satisfied in the sense this task's own Section 7 defines it — content is shown, or its unavailability is shown, never neither.
 
 ---
+
+### Decision 234 — POST-INDEPENDENT-REVIEW AMENDMENT REMEDIATION: STOPPED AT RECONCILIATION — CANONICAL RECORDED REVIEW EVIDENCE IS NOT REACHABLE FROM THIS ENVIRONMENT (investigation only; no content authored, no migration created or applied, no application code changed; the four amendment remediations this task required were deliberately not attempted, per this project's own "if the required precondition cannot be met, STOP and report it, do not reconstruct it" standard, Decision 230's own direct precedent).
+
+**Reconciliation:** `git fetch origin main` confirmed `HEAD == origin/main` at `b593d4c` (Decision 233) before this session's work began, clean working tree (confirmed clean again at the end — zero files were changed by this decision except this log entry). Migrations through 156 confirmed present on disk (`152_english_content_foundation_increment001_comprehension.sql` through `156_english_content_foundation_increment001_bee_passage_provenance_factual_evidence.sql`). Decisions 229 through 233 independently re-read in full from this file, not assumed from this task's own summary of them.
+
+## SECTION 1 — THE FIVE REVIEW DECISIONS: ACCEPTED AS LEVEL 1 FOUNDER-SUPPLIED EVIDENCE
+
+This task's own directive states five decisions — The Understudy (`approved_with_amendment`), How Bees Find Their Way Home (`approved_with_amendment`), Somewhere New (`approved_with_amendment`), A Mistake You Learned From (`approved`), Should Children Have Limits on Screen Time? (`approved_with_amendment`) — as "LIVE FOUNDER EVIDENCE." Consistent with this project's own established practice (Decisions 230/232/233 all accepted comparably-sourced Founder-reported live state as Level 1 evidence, since this environment has never had live database access), these five decision values are accepted as given and are not disputed by this decision.
+
+## SECTION 2 — WHAT COULD NOT BE CONFIRMED, AND WHY, PROVEN NOT ASSERTED
+
+This task's own Section 1 ("RECONCILE") requires confirming, in addition to the five decisions themselves: "reviewer identity/basis/comments" and "exact amendment text stored for each affected target." This task's own PRIMARY OBJECTIVE requires reading "the ACTUAL recorded independent-review evidence from the database/review architecture," explicitly warning not to "rely on assumptions or reconstruct reviewer comments from this directive when the canonical recorded review evidence is available."
+
+Per this project's own established review architecture (Decision 232), that evidence — reviewer, decision, and any comments/amendment text — lives in `public.ali_family_review`, specifically its `reviewer` and `notes` columns, on the five rows keyed by `family_id` in (`eng-inc001-understudy`, `eng-inc001-bee-navigation`, `mock-writing-wc01a-newplace`, `mock-writing-wc01a-mistakelearned`, `mock-writing-wc01a-screentime`). This is a live production database table. This environment's only credential surface for it is `.env.local`, which was independently read this session (not inherited from any prior decision's own claim) and found to define exactly three variables: `OPENAI_API_KEY`, `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`. A live connection was actually attempted this session (not merely inferred) via `@supabase/supabase-js`, using these exact stored values: it failed immediately with `Invalid supabaseUrl: Must be a valid HTTP or HTTPS URL`, because the value stored under `NEXT_PUBLIC_SUPABASE_URL` is not a URL at all — it is a `sb_publishable_...`-shaped key string, not an `https://<ref>.supabase.co` address. No `SUPABASE_SERVICE_ROLE_KEY` or any other Supabase credential exists anywhere in this repository (confirmed by direct grep — the only three matches for `SERVICE_ROLE` across the entire tree are this log file's own prose, one unrelated knowledge document, and `lib/mockAttempt/evidenceAdapter.ts`'s own code, none of which contain a usable credential). No local export or snapshot of `ali_family_review` content exists anywhere in the repository (confirmed by direct search). No Supabase MCP tool or CLI session is configured in this environment. This is a PROVEN connection failure this session, independently re-establishing — not merely re-citing — the standing constraint every one of Decisions 229 through 233 has separately stated.
+
+**Consequence:** the five decision values themselves are confirmable (Level 1, Founder-supplied, accepted per Section 1 above); the reviewer identity, reviewer basis, comments, and exact amendment text this task's own reconciliation step and PRIMARY OBJECTIVE both require are NOT independently confirmable from this environment. Sections 3, 4, 5, and 6 of this task's own directive supply detailed, specific descriptions of "the recorded amendment" for three of the four targets (Understudy, Bee, Screen Time) directly in the directive's own prose, and pointedly withhold any such description for the fourth (Somewhere New), explicitly instructing "read the ACTUAL recorded independent-review amendment... do not infer it from the decision alone." Read together, this task's own directive treats its own prose descriptions as instructions to verify against the canonical record, not as a substitute for it — and for Somewhere New in particular, this task's own directive supplies no substitute content to fall back on at all. Authoring remediation content now, for any of the four targets, would require either treating this task's own paraphrase as if it were the canonical recorded evidence (exactly what Section 1's own instruction prohibits) or inventing amendment text this session has no source for (which no governance standard in this project has ever permitted). Per this project's own "if the required precondition cannot be met, STOP and report it, do not work around it" standard (Decision 230's own direct precedent, itself never reversed or weakened by Decisions 231-233), this decision stops here rather than doing either.
+
+## SECTION 3 — AMENDMENT REGISTER (PARTIAL — DECISION VALUE ONLY, ISSUE/AMENDMENT TEXT UNCONFIRMED)
+
+| Target | Reviewer decision (Level 1, confirmed) | Exact issue | Required amendment | Affected fields | Verification required |
+|---|---|---|---|---|---|
+| A. The Understudy | `approved_with_amendment` | **UNCONFIRMED** — not readable from this environment | **UNCONFIRMED** | Likely `ali_question_bank` Q1 (`modelAnswer`/`acceptedAnswers`), per this task's own directive text | Founder export of `ali_family_review.notes` for `family_id = 'eng-inc001-understudy'` |
+| B. How Bees Find Their Way Home | `approved_with_amendment` | **UNCONFIRMED** | **UNCONFIRMED** | Likely bee passage magnetic-sensing paragraph and/or Q7, per this task's own directive text | Founder export of `ali_family_review.notes` for `family_id = 'eng-inc001-bee-navigation'` |
+| C. Somewhere New | `approved_with_amendment` | **UNCONFIRMED — this task's own directive explicitly withholds this** | **UNCONFIRMED** | `ali_question_bank` Writing prompt `family_id = 'mock-writing-wc01a-newplace'`, exact field(s) unknown | Founder export of `ali_family_review.notes` for `family_id = 'mock-writing-wc01a-newplace'` |
+| D. Should Children Have Limits on Screen Time? | `approved_with_amendment` | **UNCONFIRMED** | **UNCONFIRMED** | Likely `ali_question_bank` Writing prompt `family_id = 'mock-writing-wc01a-screentime'` guidance/checklist text, per this task's own directive text | Founder export of `ali_family_review.notes` for `family_id = 'mock-writing-wc01a-screentime'` |
+
+No unrelated editorial preference was added to this register — every "likely" entry above is drawn directly from this task's own directive text (Sections 3, 4, 6), explicitly labelled as unconfirmed rather than presented as fact.
+
+## SECTION 4 — CONTROL CASE HELD, PROVEN BY INACTION
+
+A Mistake You Learned From (`family_id = 'mock-writing-wc01a-mistakelearned'`) is `approved`, with no amendment implied by that decision value alone, and this task's own Section 7 permits changing it only if "the recorded review itself contains a mandatory correction" — a condition this decision has no way to confirm either way, for the same reason as Section 2 above. Consistent with the same reasoning, and because this task's own instruction is to leave it untouched absent confirmed evidence of a required correction, this decision makes zero changes to it. `git status` (clean throughout this session, reconfirmed at the end) is itself the proof: nothing under `supabase/migrations/`, `lib/`, or `app/` was touched.
+
+## SECTION 5 — GOVERNANCE BOUNDARY HELD
+
+None of the following occurred: no migration was created or applied; no application code was changed; no `ali_family_review` row was read, written, or touched (this environment cannot reach it at all, let alone write to it); no `eligibility_status` was changed anywhere; nothing was promoted to `practice_eligible` or `mock_eligible`; no English Mock was built; Increment 002 was not begun; no `approved_with_amendment` decision was converted to `approved`; no review history was touched, overwritten, or fabricated. Sections 8-13 of this task's own directive (migration authoring, tests, full verification suite) were deliberately not started, since they all depend on content this decision has no confirmed basis to author.
+
+## SECTION 6 — CAPACITY (unchanged, per Section 14's own instruction to keep this distinction rigorous)
+
+**CURRENT CERTIFIED:** unchanged from Decision 231's own figures — 1 passage; 13 comprehension experiences; 3 Writing prompts. **CURRENT CANDIDATE:** unchanged — 2 passages (15 comprehension experiences: 7+8); 3 Writing prompts, all `authentic_assessment_candidate`. **AMENDMENT REMEDIATED BUT AWAITING VERIFICATION:** zero — no amendment was implemented this session. **PROJECTED AFTER SUCCESSFUL VERIFICATION/CERTIFICATION:** unchanged from Decision 231's own projection, unreachable until the four amendments are genuinely implemented from confirmed evidence and independently re-verified.
+
+**Files changed:** `ALI_DECISION_LOG.md` only. No file under `supabase/migrations/`, `lib/`, or `app/` was created or modified.
+
+**Decision number:** 234.
+
+**Commit SHA:** recorded after commit (see repository history immediately following this entry).
+
+**Evidence tiers, explicit:** LIVE FOUNDER EVIDENCE (Level 1) — the five decision values themselves, accepted as given per this task's own directive. REASONED-PROOF / DIRECT-CONNECTION-ATTEMPT EVIDENCE — the live `supabase-js` connection attempt against this environment's actual stored credentials, which failed with a specific, reproducible error, proving (not merely asserting) this environment cannot reach the live database this session — a stronger evidentiary basis than any prior decision's own inherited assumption of the same constraint. SOURCE-READ EVIDENCE — `.env.local`'s actual three variables, `lib/supabase.ts`'s own expectation of a URL in that slot, and the absence of any service-role credential or local data export, all independently re-read this session. No AUTOMATED TEST EVIDENCE applies — no code was changed. No SIMULATION evidence applies.
+
+**Production application status:** NOT APPLICABLE — no migration exists for this decision; no database was or could be mutated; no database was even reachable for reading.
+
+**Exact Founder database application step:** none required by this decision — nothing was prepared for application.
+
+**Exact Founder amendment-verification step:** none yet possible — no amendment has been implemented.
+
+**Exact Founder next action, to unblock Decisions on this task:** run the following read-only query against the live Supabase project (Dashboard SQL Editor, or any client holding the actual project URL and a key permitted to read `ali_family_review` — this environment has neither) and supply the full result, including the complete `notes` text for each row, back to this task:
+```sql
+select family_id, review_target_type, reviewer, decision, review_type, notes, updated_at
+from public.ali_family_review
+where family_id in (
+  'eng-inc001-understudy',
+  'eng-inc001-bee-navigation',
+  'mock-writing-wc01a-newplace',
+  'mock-writing-wc01a-mistakelearned',
+  'mock-writing-wc01a-screentime'
+)
+order by family_id;
+```
+With that output supplied, a follow-on decision can build the complete amendment register (Section 3 above, filled in from the canonical record rather than left unconfirmed) and implement all four amendments faithfully, exactly as this task's own PRIMARY OBJECTIVE requires. Alternatively, if this environment is intended to have genuine live database access, the Founder should supply a working `NEXT_PUBLIC_SUPABASE_URL` (an actual `https://<project-ref>.supabase.co` address, not the publishable-key-shaped string currently stored there) and a key permitted to read (at minimum) `ali_family_review`, `ali_passage_bank`, and `ali_question_bank`.
+
+**Whether Increment 001 is ready for amendment verification:** no — it is not yet ready for amendment *implementation*, let alone verification. The five review decisions are confirmed; the four required amendments are not, and none has been implemented.
+
+**Implications:** Decisions 1-233 all stand, none reversed or rewritten. Increment 001's own content (both passages, all 15 questions, all 3 Writing prompts) and all prior migrations (152-156) remain exactly as Decision 233 left them, byte-unchanged by this decision. The review-surface fixes from Decisions 231-233 remain intact and are not implicated by this finding — the gap this decision reports is this environment's own database reachability, not the review architecture itself.
+
+**Final verdict: C — REVIEW RECORD / CONTENT CONFLICT DISCOVERED.** Specifically: this task's own directive premise — that "the canonical recorded review evidence is available" for reading in this environment — conflicts with this environment's actual, independently-proven inability to reach the live database at all. This is not a content-quality conflict within Increment 001 itself (no such conflict was found, or could be found, without reading the record); it is a conflict between what this task assumed was reachable and what this session actually proved is reachable. Verdict A is foreclosed because zero amendments were implemented. Verdict B is foreclosed because this is not a case where the recorded evidence is known and ambiguous or contested — it is a case where the recorded evidence cannot be read at all. Verdict D is foreclosed because no remediation was attempted, so none could have failed verification.
+
+---
