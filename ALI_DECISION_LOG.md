@@ -10745,3 +10745,79 @@ Re-inspect the remediated content (this decision's own log entry, Sections A-G a
 **Final verdict: A — INCREMENT 002 REMEDIATED AND READY FOR FOUNDER RE-INSPECTION.** All 8 named amendments are implemented, verified against the passage text, and test-proven; the one additional tokeniser defect found during the audit is fixed everywhere it occurred, not only where flagged; the factual register is complete; the full verification suite passes cleanly. Migration 161 remains unapplied, migration 162 unchanged, no content certified, no Mock 1, no Increment 003, Mathematics untouched.
 
 ---
+
+### Decision 239 — INCREMENT 002 LIVE REVIEW DEFECT: The Loose Connection Q2 Grouped-Scoring Correction. Migrations 161/162 are Founder-confirmed applied; live Founder review (before any independent-review decision was recorded) surfaced that Q2 was never given the same pooled-answer-to-grouped-subpart fix Decision 238 already applied to Sail and Steam Q5. A new, additive corrective migration (163, UNAPPLIED) DELETEs the single defective row and INSERTs 4 independently-scored grouped subpart rows. No review decision submitted, no certification, no Mock 1, no Increment 003.
+
+**Reconciliation:** `git fetch origin main` confirmed `HEAD == origin/main` at `ba523d5` (Decision 238) before this session's work began, clean working tree. Migrations 161 and 162 accepted as Founder-confirmed applied (Level 1, this task's own directive) — this environment's own standing inability to independently query production (unchanged since Decision 234) means this is accepted evidence, not independently re-verified live.
+
+## A. ROOT CAUSE
+
+Decision 238's own remediation applied the grouped-subpart fix to Sail and Steam Q5 (the pooled-answer defect the Founder had explicitly named) but never re-examined Loose Connection's own Q2 — itself a Decision 238 replacement, authored in the very same remediation session, sharing the IDENTICAL structural defect (one pooled `acceptedAnswers` array across 4 scored words, checked via a single `TIER2_ACCEPTED_SET` call, meaning one correct synonym for any one word could award all 4 marks without addressing the other three). This was a genuine scope oversight in Decision 238, not a new or different defect — surfaced by the Founder's own live review of the newly-applied content, before either passage's independent review was recorded.
+
+## B. CORRECTIVE MIGRATION NUMBER
+
+`supabase/migrations/163_english_content_foundation_increment002_loose_connection_q2_grouped_scoring_correction.sql` — new, additive, **UNAPPLIED**. Migration 161 was NOT edited (it is live/applied; editing it would violate this project's own "migrations are immutable once applied" convention, re-affirmed explicitly by this task's own directive).
+
+## C. EXACT OLD Q2 TREATMENT
+
+DELETEd, not soft-retired. Independently verified this session, from source: `fetchQuestionsForPassage()` (`lib/adminReview.ts`, the exact function the Educational Review surface uses) filters ONLY by `learning_unit_id = passageId` — no `active` filter, no `eligibility_status` filter exists in that query. Marking the old row `active = false` would therefore NOT have hidden it from the review surface — a reviewer would have seen both the old pooled Question 2 and the new grouped Question 2 simultaneously, exactly the "duplicate learner-visible content" this task's own directive prohibited. DELETE is judged the safer of the two real options (the alternative being a permanently-orphaned, relabelled row) because: no `ali_family_review` row has ever referenced this specific question id (that table only ever references the PASSAGE's own id), no Practice or Mock pathway has ever read it (`eligibility_status` remained `authentic_assessment_candidate` throughout), and it existed in this exact defective shape for less than the lifetime of two decisions. This reasoning is scoped exclusively to this one row and does not establish a general precedent for deleting applied content.
+
+## D. EXACT NEW GROUPED Q2 STRUCTURE
+
+4 new rows — `eng-inc002-roboticsfinal-q02b/c/d/e` — mirroring migration 093's own established grouped-question mechanism and Decision 238's own Sail-and-Steam-Q5 pattern exactly: 1 mark each (frustrating, disbelieving, triumphant, uselessly), `question_group_id = 'eng-inc002-roboticsfinal-q02'`, `group_order` 1-4, `subpart_label` '(b)'-'(e)', `marking_mode = 'deterministic'`, each rendering as "Question 2(b)" through "Question 2(e)" — one numbered Question 2 with four scored subparts. Item (a) 'reassuring' remains the unscored worked example, referenced in subpart (b)'s own question text for context only (matching the identical Sail-and-Steam-Q5b precedent, which also states the worked example once, not on every subpart), never given its own row.
+
+## E. ACCEPTED-ANSWER ISOLATION PROOF
+
+Each subpart's own `acceptedAnswers` set is independently authored and non-overlapping: frustrating→{annoying, irritating, exasperating, aggravating}; disbelieving→{not believing, doubtful, incredulous, skeptical}; triumphant→{victorious, celebratory, proud of winning, gloating}; uselessly→{pointlessly, ineffectively, to no purpose, in vain}. Test-proven (`tests/supabase/englishContentFoundationIncrement002LooseConnectionQ2Correction.test.ts`) via pairwise-intersection checks across all 6 pairs, plus the 4 explicit adjacent-pair checks this task's own directive named by name (frustrating cannot score disbelieving; disbelieving cannot score triumphant; triumphant cannot score uselessly; uselessly cannot score frustrating).
+
+## F. TOTAL-MARK PRESERVATION PROOF
+
+The 4 new subparts sum to 4 marks (1 each), matching the original pooled row's own 4 marks exactly — test-proven, and additionally asserted LIVE by the migration's own post-write verification block (`v_total_marks != 4` raises an exception if the invariant does not hold in the actual database after the correction runs, not merely in this session's own tests). The Loose Connection's own passage-wide total remains 22 marks, unchanged from Decision 238's own figure (18 marks across the 8 untouched questions, confirmed unmodified in migration 161's own live-but-immutable file, plus Q2's own 4).
+
+## G. REVIEW-REGISTRATION PRESERVATION
+
+Migration 163 never mentions `ali_family_review` anywhere in its real SQL (test-proven) — migration 162's own 2 pending-review placeholder rows are completely untouched. No independent review decision was submitted, modified, or simulated by this decision, per this task's own explicit "do not submit reviews" instruction — both Increment 002 passages remain exactly as unreviewed as before this correction.
+
+## H. ELIGIBILITY-ISOLATION PROOF
+
+No `eligibility_status`, `practice_eligible`, or `mock_eligible` mutation anywhere in migration 163 (test-proven directly against its own real SQL) — every new row is `authentic_assessment_candidate`, matching the row it replaces exactly. No `ali_mock_form` reference. No certification of any kind.
+
+## I. TESTS / FULL VERIFICATION
+
+New test file `tests/supabase/englishContentFoundationIncrement002LooseConnectionQ2Correction.test.ts` (22 tests) covers all 14 items this task's own directive named by number, plus additional structural proofs: the DELETE's exact narrow scope, the precondition's exact known-signature check (and refusal otherwise), idempotency, that no other Increment 002 question (either passage) is referenced, and the single begin/commit transaction wrapping. `tests/lib/learningEngine/englishAnswerValidation.test.ts` re-run and confirmed passing unmodified (43 tests, untouched by this correction).
+
+Full automated test suite **2768/2768 passing** (2746 baseline + 22 new, zero regressions). `npx tsc --noEmit` clean. ESLint at the established baseline — **81 problems (62 errors, 19 warnings), unchanged**. Copy Quality Guard **PASS — 0 violations across 262 files**. Migration SQL Guard **PASS — 163 migration files, all quote-balanced, all RAISE statements arithmetic-correct** (a real column-order defect was found and fixed mid-authoring this session: the `skill`/`question_type` columns were initially swapped in the new rows' own VALUES tuples — `skill` actually holds the QT-RC code, `question_type` holds the generic `'short-answer'` response-format label, confirmed against every other row in this codebase before the fix, not assumed). Production build succeeds, all 56 static pages generated.
+
+**Files changed:** `supabase/migrations/163_english_content_foundation_increment002_loose_connection_q2_grouped_scoring_correction.sql` (new, NOT APPLIED), `tests/supabase/englishContentFoundationIncrement002LooseConnectionQ2Correction.test.ts` (new), `ALI_DECISION_LOG.md`. Migrations 161/162 read and re-verified, not modified (161 cannot be — it is live).
+
+**Decision number:** 239.
+
+**Commit SHA:** recorded after commit (see repository history immediately following this entry).
+
+**Evidence tiers, explicit:** LIVE FOUNDER EVIDENCE (Level 1) — the Founder's own live-review finding that Q2 was never given the Q5-equivalent fix, and the confirmation that migrations 161/162 are applied. SOURCE-READ EVIDENCE — `fetchQuestionsForPassage()`'s own real, unfiltered `learning_unit_id`-only query, independently re-read this session before deciding DELETE was the safer correction mechanism (an inference proven by tracing the actual code, not asserted). AUTOMATED TEST EVIDENCE — 22 new tests plus the full, otherwise-unmodified 2768-test suite. No SIMULATION evidence applies. No further LIVE PRODUCTION EVIDENCE applies beyond what the Founder directly supplied — migration 163 remains unapplied; nothing in this decision touched production.
+
+## J. EXACT FOUNDER SQL APPLICATION INSTRUCTION
+
+Apply `supabase/migrations/163_english_content_foundation_increment002_loose_connection_q2_grouped_scoring_correction.sql` via the Supabase Dashboard SQL Editor. No ordering dependency on any other unapplied migration. Before and after, the read-only verification query embedded in the migration's own header may be run:
+```sql
+select id, question_group_id, group_order, subpart_label, marking_mode,
+  prompt ->> 'question' as question_text, prompt -> 'acceptedAnswers' as accepted_answers,
+  (prompt ->> 'marks')::int as marks, eligibility_status, active
+from public.ali_question_bank
+where learning_unit_id = 'eng-inc002-roboticsfinal'
+order by id;
+```
+
+## K. EXACT LIVE VERIFICATION EXPECTED AFTER APPLICATION
+
+The query above should return 12 rows for `eng-inc002-roboticsfinal` (was 9 before this correction: +3 net, since 1 row became 4). `eng-inc002-roboticsfinal-q02` (the old pooled row) must no longer appear at all. `eng-inc002-roboticsfinal-q02b/c/d/e` must each appear with `marking_mode = 'deterministic'`, `question_group_id = 'eng-inc002-roboticsfinal-q02'`, `group_order` 1-4, `subpart_label` '(b)'-'(e)', `marks = 1` each, and `eligibility_status = 'authentic_assessment_candidate'` throughout. At `/admin-beta/review`, re-opening "The Loose Connection" under the "English Content Foundation Increment 002: Passage Review" section should now show Question 2 as one numbered question with 4 distinct sub-answer fields (b)-(e), never the old single pooled synonym-list box.
+
+**Implications:** Decisions 1-238 all stand, none reversed or rewritten. This is a direct, narrow completion of Decision 238's own scope, not a new finding about Decision 238's own reasoning, passage text, or any other question — the identical fix already applied to Sail and Steam Q5 is simply now also applied to its sibling.
+
+## REVIEW UI OBSERVATION (recorded, not acted on, per this task's own explicit "do not redesign the review UI now" instruction)
+
+The Educational Review surface currently renders substantial engineering/provenance/migration-remediation detail (explanation text, family_id, migration history) directly inside the primary educational review flow, alongside the passage/question/model-answer/marking-guidance/misconception content a reviewer actually needs to make an educational judgement. This may warrant a future, separate reviewer-experience improvement visually prioritising PRIMARY content (passage, question, model answer, marking guidance, misconception, educational evidence) with technical provenance/migration/remediation history moved to a secondary or expandable position. Not implemented, not scoped, not begun by this decision.
+
+**Final verdict: A — Q2 CORRECTIVE MIGRATION READY FOR FOUNDER APPLICATION.** The old defective row's replacement is fail-closed, idempotent, narrowly scoped, fully tested, and verified consistent with Decision 238's own established architecture. Migration 163 remains unapplied; no review decision was submitted; no content is certified.
+
+---
