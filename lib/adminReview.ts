@@ -808,6 +808,22 @@ export interface RepresentativeQuestion {
    * trusting it, exactly like the learner surface does.
    */
   sharedStem: string | null;
+  /**
+   * Decision 233 — Continuous Writing (`subject = 'writing'`, QT-WC-01a)
+   * rows store their authored task under an entirely different jsonb
+   * shape than deterministic comprehension/Mathematics questions
+   * (`title`/`prompt`/`checklist`/`timeMinutes`/`type`/`difficulty` —
+   * confirmed identical across both migration 098's existing certified
+   * prompts and migration 153's new candidate prompts — never
+   * `question`/`modelAnswer`, which do not exist on any Writing row).
+   * `null` for every non-writing row. `question`/`modelAnswer` above
+   * remain populated with their own honest "(no ... found)" fallback
+   * text for a writing row (unchanged, since removing them would be a
+   * breaking type change for other callers) — the review UI must read
+   * `writingTask` for a writing row instead of `question`/`modelAnswer`,
+   * never treat the fallback text as evidence of missing content.
+   */
+  writingTask: { title: string; prompt: string; checklist: string[]; timeMinutes: number | null } | null;
 }
 
 /** prompt is stored as jsonb (typed `unknown` at the client) — narrows just enough to read the display fields safely, without claiming to know its full shape. */
@@ -817,6 +833,30 @@ function promptText(prompt: unknown, key: "question" | "modelAnswer"): string {
     if (typeof value === "string") return value;
   }
   return key === "question" ? "(no question text found)" : "(no model answer found)";
+}
+
+/**
+ * Decision 233 — the canonical Continuous Writing content contract,
+ * independently confirmed against migration 098 (existing certified
+ * prompts) AND migration 153 (Increment 001 candidate prompts): a
+ * genuine writing task carries `title` (string), `prompt` (string, the
+ * actual learner-facing task text), and `checklist` (string[]).
+ * `timeMinutes` is present on every real row but treated as optional
+ * here for resilience. Returns `null` for any row that doesn't match
+ * this shape (i.e. every non-writing row) — never guesses, never
+ * fabricates a title/prompt/checklist that isn't genuinely stored.
+ */
+export function promptWritingTask(prompt: unknown): { title: string; prompt: string; checklist: string[]; timeMinutes: number | null } | null {
+  if (!prompt || typeof prompt !== "object") return null;
+  const p = prompt as Record<string, unknown>;
+  if (typeof p.title !== "string" || typeof p.prompt !== "string") return null;
+  if (!Array.isArray(p.checklist) || !p.checklist.every((c) => typeof c === "string")) return null;
+  return {
+    title: p.title,
+    prompt: p.prompt,
+    checklist: p.checklist as string[],
+    timeMinutes: typeof p.timeMinutes === "number" ? p.timeMinutes : null,
+  };
 }
 
 function promptWorkingSteps(prompt: unknown): string[] | null {
@@ -2359,6 +2399,7 @@ function mapQuestionRow(r: {
     subpartLabel: r.subpart_label ?? null, markingMode: r.marking_mode ?? null,
     stimulus: promptStimulus(r.prompt),
     sharedStem: promptSharedStem(r.prompt),
+    writingTask: promptWritingTask(r.prompt),
   };
 }
 

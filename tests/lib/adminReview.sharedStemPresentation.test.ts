@@ -34,13 +34,15 @@ test("A: the stem, when present, is rendered exactly once per group (outside the
   assert.equal(stemRenderCount, 1);
 });
 
-test("C: each subpart's own remaining tail is shown when a shared stem resolves, full question text otherwise -- both paths reachable, never silently dropped", () => {
-  assert.match(reviewSource, /\{sharedStem \? sharedStem\.tails\[index\] : question\.question\}/);
+test("C: each subpart's own remaining tail is shown when a shared stem resolves, full question text (via QuestionOrWritingTaskBody's own displayText fallback) otherwise -- both paths reachable, never silently dropped (Decision 233 — extracted into a shared component so Continuous Writing content renders correctly too, same displayText contract, unchanged behaviour for deterministic content)", () => {
+  assert.match(reviewSource, /<QuestionOrWritingTaskBody question=\{question\} displayText=\{sharedStem \? sharedStem\.tails\[index\] : undefined\} \/>/);
 });
 
-test("D: model answer, common trap, transfer demand, and subpart label are still rendered per component, unaffected by the stem change", () => {
+test("D: model answer, common trap, transfer demand, and subpart label are still rendered per component, unaffected by the stem change (Decision 233 — model answer now rendered via the shared QuestionOrWritingTaskBody component, same content, same conditions)", () => {
   const block = reviewSource.match(/\{group\.items\.map\(\(question, index\) => \([\s\S]*?\)\)\}/)![0];
-  assert.match(block, /Model answer \(\{question\.contentDifficulty\} difficulty\):.*\{question\.modelAnswer\}/);
+  assert.match(block, /<QuestionOrWritingTaskBody question=\{question\}/);
+  const bodyBlock = reviewSource.match(/function QuestionOrWritingTaskBody\([\s\S]*?\n}/)![0];
+  assert.match(bodyBlock, /Model answer \(\{question\.contentDifficulty\} difficulty\):.*\{question\.modelAnswer\}/);
   assert.match(block, /Common trap:.*\{question\.addressesMisconception\}/);
   assert.match(block, /Transfer demand:.*\{question\.transferClass/);
   assert.match(block, /Subpart \{question\.subpartLabel\}/);

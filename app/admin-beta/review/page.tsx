@@ -345,6 +345,48 @@ function SectionTitle({ letter, title }: { letter: string; title: string }) {
   );
 }
 
+/**
+ * Decision 233 — Continuous Writing (`subject === "writing"`) rows store
+ * their authored task under a genuinely different jsonb shape than
+ * deterministic questions (see `writingTask` on `RepresentativeQuestion`,
+ * `lib/adminReview.ts`) — reading `question.question`/`question.
+ * modelAnswer` for a writing row was always going to hit their own
+ * honest "(no question text found)"/"(no model answer found)" fallback
+ * text, which a reviewer could easily misread as evidence of MISSING
+ * CONTENT rather than a renderer reading the wrong field. This
+ * component is the single place that decides which shape to render, so
+ * every question-list site in ReviewForm (the grouped/passage branch
+ * and the family-sample branch) shows the real content for both
+ * content types, never invents a deterministic model answer for
+ * Writing, and never shows misleading fallback text for content that
+ * genuinely exists.
+ */
+function QuestionOrWritingTaskBody({ question, displayText }: { question: RepresentativeQuestion; displayText?: string }) {
+  if (question.subject === "writing" && question.writingTask) {
+    const w = question.writingTask;
+    return (
+      <>
+        <p className="text-sm font-semibold text-gray-800 dark:text-gray-200 mt-1 whitespace-pre-line">{w.prompt}</p>
+        <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+          <strong>{w.title}</strong> · QT-WC-01a (Reflective/Discursive Response Prompt) · {question.contentDifficulty} difficulty{w.timeMinutes ? ` · ${w.timeMinutes} min` : ""}
+        </p>
+        {w.checklist.length > 0 && (
+          <ul className="text-xs text-gray-600 dark:text-gray-400 mt-1 list-disc list-inside space-y-0.5">
+            {w.checklist.map((item, i) => <li key={i}>{item}</li>)}
+          </ul>
+        )}
+        <p className="text-[11px] text-gray-400 dark:text-gray-500 mt-1 italic">No deterministic model answer is stored for Continuous Writing: this is a qualitative writing review, judged against the checklist above and your own educational judgement, not marked against a fixed answer.</p>
+      </>
+    );
+  }
+  return (
+    <>
+      <p className="text-sm font-semibold text-gray-800 dark:text-gray-200 mt-1 whitespace-pre-line">{displayText ?? question.question}</p>
+      <p className="text-xs text-gray-500 dark:text-gray-400 mt-1"><strong>Model answer ({question.contentDifficulty} difficulty):</strong> {question.modelAnswer}</p>
+    </>
+  );
+}
+
 // ─── Full review form (per Founder's A-F ordering) ─────────────────────────
 
 function ReviewForm({
@@ -384,6 +426,17 @@ function ReviewForm({
   const [passage, setPassage] = useState<PassageDetail | null>(null);
   const [questions, setQuestions] = useState<RepresentativeQuestion[]>([]);
   const [loading, setLoading] = useState(true);
+  /**
+   * Decision 233 — no review target may remain indefinitely on "Loading
+   * content…". A thrown/rejected fetch previously left `loading` stuck
+   * true forever (no try/catch around the async work below), which is
+   * indistinguishable, from the reviewer's own point of view, from a
+   * genuinely slow network — they cannot tell whether to wait or give
+   * up. `fetchError` makes failure an explicit, visible, third state
+   * (LOADING / LOADED / ERROR), distinct from both loading and from a
+   * successful load that happens to find no content.
+   */
+  const [fetchError, setFetchError] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState("");
   const [submitted, setSubmitted] = useState(false);
@@ -416,28 +469,42 @@ function ReviewForm({
   useEffect(() => {
     (async () => {
       setLoading(true);
-      if (sevenX) {
-        // Educational Increment 007X, Founder Review-Surface Correction —
-        // exact-ID-scoped, never the family-wide fetch: a family can
-        // contain long-approved siblings alongside these newly authored
-        // ones, and this view must show only the latter (plus, separately,
-        // any reclassified-but-unchanged row).
-        const [newQs, reclassifiedQs] = await Promise.all([
-          fetchQuestionsByIds(sevenX.questionIds),
-          sevenX.reclassified && sevenX.reclassified.length > 0
-            ? fetchQuestionsByIds(sevenX.reclassified.map((r) => r.id))
-            : Promise.resolve([]),
-        ]);
-        setQuestions(newQs);
-        setReclassifiedQuestions(reclassifiedQs);
-      } else if (target.reviewTargetType === "passage") {
-        const [p, qs] = await Promise.all([fetchPassageDetail(target.id), fetchQuestionsForPassage(target.id)]);
-        setPassage(p);
-        setQuestions(qs);
-      } else {
-        setQuestions(await fetchRepresentativeQuestions(target.id));
+      setFetchError("");
+      try {
+        if (sevenX) {
+          // Educational Increment 007X, Founder Review-Surface Correction —
+          // exact-ID-scoped, never the family-wide fetch: a family can
+          // contain long-approved siblings alongside these newly authored
+          // ones, and this view must show only the latter (plus, separately,
+          // any reclassified-but-unchanged row).
+          const [newQs, reclassifiedQs] = await Promise.all([
+            fetchQuestionsByIds(sevenX.questionIds),
+            sevenX.reclassified && sevenX.reclassified.length > 0
+              ? fetchQuestionsByIds(sevenX.reclassified.map((r) => r.id))
+              : Promise.resolve([]),
+          ]);
+          if (newQs.length === 0) {
+            setFetchError(`No content could be retrieved for this review target (expected ${sevenX.questionIds.length} question(s), found 0). Review cannot proceed until this is resolved.`);
+          }
+          setQuestions(newQs);
+          setReclassifiedQuestions(reclassifiedQs);
+        } else if (target.reviewTargetType === "passage") {
+          const [p, qs] = await Promise.all([fetchPassageDetail(target.id), fetchQuestionsForPassage(target.id)]);
+          if (!p) {
+            setFetchError("The passage for this review target could not be found. Review cannot proceed until this is resolved.");
+          } else if (qs.length === 0) {
+            setFetchError(`The passage "${p.title}" loaded, but no attached questions were found. Review cannot proceed until this is resolved.`);
+          }
+          setPassage(p);
+          setQuestions(qs);
+        } else {
+          setQuestions(await fetchRepresentativeQuestions(target.id));
+        }
+      } catch (err) {
+        setFetchError(`Content could not be loaded (${err instanceof Error ? err.message : "unknown error"}). Review cannot proceed until this is resolved.`);
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
     })();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [target.id]);
@@ -447,6 +514,10 @@ function ReviewForm({
   }, [reviewerName]);
 
   async function handleSubmit() {
+    if (fetchError) {
+      setSubmitError("Cannot submit: the content for this review target could not be loaded. No decision can be recorded for content you have not been able to inspect.");
+      return;
+    }
     if (!submission.decision) {
       setSubmitError("Choose a decision before submitting: this is your judgement to make, not a default.");
       return;
@@ -531,6 +602,14 @@ function ReviewForm({
       )}
 
       {loading && <p className="text-sm text-gray-400 dark:text-gray-500">Loading content…</p>}
+
+      {!loading && fetchError && (
+        <Card>
+          <p className="text-sm font-bold text-red-700 dark:text-red-400">Content unavailable</p>
+          <p className="text-xs text-red-600 dark:text-red-400 mt-1">{fetchError}</p>
+          <p className="text-[11px] text-gray-500 dark:text-gray-400 mt-2">No educational decision can be recorded for content you cannot inspect. Decision submission below is disabled until this is resolved.</p>
+        </Card>
+      )}
 
       {!loading && sevenX && reclassifiedQuestions.length > 0 && (
         <Card>
@@ -765,8 +844,7 @@ function ReviewForm({
                               {question.markingMode ? ` · marking: ${question.markingMode.replace(/_/g, " ")}` : ""}
                             </p>
                           )}
-                          <p className="text-sm font-semibold text-gray-800 dark:text-gray-200 mt-1 whitespace-pre-line">{sharedStem ? sharedStem.tails[index] : question.question}</p>
-                          <p className="text-xs text-gray-500 dark:text-gray-400 mt-1"><strong>Model answer ({question.contentDifficulty} difficulty):</strong> {question.modelAnswer}</p>
+                          <QuestionOrWritingTaskBody question={question} displayText={sharedStem ? sharedStem.tails[index] : undefined} />
                           {question.addressesMisconception && (
                             <p className="text-xs text-amber-700 dark:text-amber-300 mt-1"><strong>Common trap:</strong> {question.addressesMisconception}</p>
                           )}
@@ -792,8 +870,7 @@ function ReviewForm({
                 return (
                   <div key={`${label}-${question.id}`} className="border-t border-gray-50 dark:border-gray-800 pt-3 mt-3 first:border-t-0 first:pt-0 first:mt-0">
                     <p className="text-[11px] font-semibold text-purple-600 dark:text-purple-400 uppercase tracking-wide">{label as string}</p>
-                    <p className="text-sm font-semibold text-gray-800 dark:text-gray-200 mt-1">{question.question}</p>
-                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-1"><strong>Model answer ({question.contentDifficulty} difficulty):</strong> {question.modelAnswer}</p>
+                    <QuestionOrWritingTaskBody question={question} />
                     {question.addressesMisconception && (
                       <p className="text-xs text-amber-700 dark:text-amber-300 mt-1"><strong>Common trap:</strong> {question.addressesMisconception}</p>
                     )}
@@ -809,8 +886,7 @@ function ReviewForm({
                   <div className="space-y-3 mt-2">
                     {otherExamples.map((q) => (
                       <div key={q.id} className="border-t border-gray-50 dark:border-gray-800 pt-3">
-                        <p className="text-sm font-semibold text-gray-800 dark:text-gray-200">{q.question}</p>
-                        <p className="text-xs text-gray-500 dark:text-gray-400 mt-1"><strong>Model answer ({q.contentDifficulty}):</strong> {q.modelAnswer}</p>
+                        <QuestionOrWritingTaskBody question={q} />
                       </div>
                     ))}
                   </div>
@@ -821,7 +897,7 @@ function ReviewForm({
         </Card>
       )}
 
-      {!loading && questions.length === 0 && !passage && (
+      {!loading && !fetchError && questions.length === 0 && !passage && (
         <p className="text-sm text-amber-600 dark:text-amber-400">No content found for this target: nothing to review yet.</p>
       )}
 
@@ -918,11 +994,12 @@ function ReviewForm({
 
           <button
             onClick={handleSubmit}
-            disabled={submitting || !reviewerName.trim() || !submission.qualificationBasis.trim()}
+            disabled={submitting || !reviewerName.trim() || !submission.qualificationBasis.trim() || !!fetchError}
             className="w-full flex items-center justify-center gap-2 bg-purple-600 hover:bg-purple-700 disabled:opacity-40 text-white font-semibold py-3 rounded-xl text-sm transition-colors"
           >
             {submitting ? "Submitting…" : (<>Submit {reviewType === "english_teaching_review" ? "teaching " : ""}review <ArrowRight size={16} /></>)}
           </button>
+          {fetchError && <p className="text-[11px] text-red-500 mt-1">Submission disabled: content for this target could not be loaded.</p>}
 
           {reviewType === "english_teaching_review" && (
             <p className="text-[10px] text-gray-300 dark:text-gray-600">Reviewing teaching-content version: {ENGLISH_TEACHING_CONTENT_VERSION}</p>
