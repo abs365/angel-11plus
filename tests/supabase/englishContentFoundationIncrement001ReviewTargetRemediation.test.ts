@@ -146,31 +146,64 @@ test("no question anywhere in migration 152 carries a learning_unit_id that is m
   assert.deepEqual(distinct, new Set(["eng-inc001-understudy", "eng-inc001-bee-navigation"]));
 });
 
-// === Migration 156: bee passage provenance evidence pointer =================
+// === Migration 156 (CORRECTED, Decision 232): bee factual evidence lives ===
+// === in ali_family_review.notes, never ali_passage_bank.provenance =========
 
-test("migration 156 targets only the bee-navigation passage, by exact id, never the Understudy passage", () => {
-  assert.match(executable156, /v_target_id constant text := 'eng-inc001-bee-navigation';/);
-  assert.ok(!executable156.includes("eng-inc001-understudy'"), "must never reference the Understudy passage's own id");
+test("REGRESSION (Decision 232): migration 156 never sets ali_passage_bank.provenance, or updates ali_passage_bank at all -- the original design error (writing free-text evidence into a closed CHECK-constrained classification enum) can never recur", () => {
+  assert.ok(!/update\s+public\.ali_passage_bank/i.test(executable156), "migration 156 must never UPDATE ali_passage_bank");
+  assert.ok(!/set\s+provenance\s*=/i.test(executable156), "migration 156 must never SET provenance");
 });
 
-test("migration 156 updates only ali_passage_bank.provenance -- no other column is ever SET", () => {
+test("REGRESSION: migration 156's own header discloses the real Founder-reported live failure (error 23514, ali_passage_bank_provenance_check) and root-causes it as a closed classification enum, not free text", () => {
+  assert.match(sql156, /23514/);
+  assert.match(sql156, /ali_passage_bank_provenance_check/);
+  assert.match(sql156, /closed CHECK constraint/i);
+});
+
+test("migration 156 targets only the bee-navigation passage's own pending review row, by exact family_id (the POST-migration-155 value), never the Understudy row", () => {
+  assert.match(executable156, /v_family_id constant text := 'eng-inc001-bee-navigation';/);
+  assert.ok(!executable156.includes("'eng-inc001-understudy'"), "must never reference the Understudy passage's own review target");
+});
+
+test("migration 156 updates only ali_family_review.notes -- no other column is ever SET", () => {
   const setClauses = [...executable156.matchAll(/set\s+(\w+)\s*=/gi)].map((m) => m[1]);
-  assert.deepEqual(new Set(setClauses), new Set(["provenance"]));
+  assert.deepEqual(new Set(setClauses), new Set(["notes"]));
+  const updateTargets = [...executable156.matchAll(/update\s+public\.(\w+)/gi)].map((m) => m[1]);
+  assert.deepEqual(new Set(updateTargets), new Set(["ali_family_review"]));
 });
 
-test("migration 156's new provenance value names both factual corrections and their evidence-tier basis, without dumping full research prose (a concise pointer, not a research-management system)", () => {
+test("migration 156's new notes value APPENDS to, never replaces, the original migration-154 placeholder text", () => {
+  assert.match(sql156, /v_new_notes constant text := v_old_notes \|\| v_evidence_suffix;/);
+  assert.match(sql156, /v_old_notes constant text := 'ENGLISH-CONTENT-FOUNDATION-INC001 new content review: passage "How Bees Find Their Way Home"/);
+});
+
+test("migration 156's evidence suffix names both factual corrections and their evidence-tier basis, without dumping full research prose (a concise pointer, not a research-management system)", () => {
   assert.match(sql156, /von Frisch/);
   assert.match(sql156, /1946/);
   assert.match(sql156, /magnetic-field sensitivity/);
   assert.match(sql156, /SOURCE-CONTAINS/);
   assert.match(sql156, /FACTUAL-CONFIDENCE/);
-  const newValueLine = sql156.match(/v_new_provenance constant text := '([^;]*)';/)?.[1] ?? "";
-  assert.ok(newValueLine.length < 2000, "the provenance pointer must remain concise, not a full research dump");
+  // The suffix legitimately contains internal semicolons (used as clause separators), so it is
+  // extracted up to the line immediately preceding v_new_notes's own declaration, not up to the
+  // first semicolon.
+  const suffixLine = sql156.match(/v_evidence_suffix constant text := E'([\s\S]*?)';\s*\n\s*v_new_notes/)?.[1] ?? "";
+  assert.ok(suffixLine.length > 0 && suffixLine.length < 4000, `the evidence pointer must remain concise, not a full research dump (found ${suffixLine.length} chars)`);
 });
 
-test("migration 156 requires the bee passage's own 8-question membership as a live precondition before writing", () => {
+test("migration 156 requires migration 155 to have already applied -- its own precondition checks for the POST-155 family_id, and its own refusal message explains a 0/0 result may mean 155 is not yet applied", () => {
+  assert.match(sql156, /REQUIRES migration 155[\s\S]{0,10}to have already been applied/);
+  assert.match(executable156, /If both counts are 0, migration 155 may not yet be applied here/);
+});
+
+test("migration 156 requires the bee passage's own 8-question membership, and its own untouched provenance, as live preconditions before writing", () => {
   assert.match(executable156, /v_expected_question_count constant int := 8;/);
-  assert.match(executable156, /learning_unit_id = v_target_id and eligibility_status = 'authentic_assessment_candidate' and active = true/);
+  assert.match(executable156, /learning_unit_id = v_passage_id and eligibility_status = 'authentic_assessment_candidate' and active = true/);
+  assert.match(executable156, /where id = v_passage_id and provenance = 'angel_original' and eligibility_status = 'authentic_assessment_candidate' and active = true/);
+});
+
+test("migration 156 refuses if a genuine, non-pending decision already exists for this family_id -- an already-approved review is never silently touched", () => {
+  assert.match(executable156, /where family_id = v_family_id and review_type = 'mock_english_passage_independent_review'\s*\n\s*and decision <> 'pending_independent_review'/);
+  assert.match(executable156, /if v_non_pending_decisions <> 0 then/);
 });
 
 test("migration 156: pristine/already-corrected/refuse structure present, idempotent, wrapped in a single transaction", () => {
@@ -183,12 +216,31 @@ test("migration 156: pristine/already-corrected/refuse structure present, idempo
   assert.equal((executable156.match(/\bcommit;/g) || []).length, 1);
 });
 
-test("migration 156 never touches eligibility_status, active, original_text, title, or ali_mock_form", () => {
+test("migration 156's post-write verification re-checks the Bee passage's own provenance is STILL exactly angel_original -- proving the passage's own classification is provably untouched, not merely assumed", () => {
+  assert.match(executable156, /select count\(\*\) into v_post_write_count\s*\n\s*from public\.ali_passage_bank where id = v_passage_id and provenance = 'angel_original';/);
+  assert.match(executable156, /the Bee passage''s own provenance must remain exactly angel_original, unchanged by this migration/);
+});
+
+test("migration 156 never touches decision, reviewer, review_type, review_target_type, eligibility_status, active, original_text, title, or ali_mock_form", () => {
+  assert.ok(!/set\s+decision\s*=/i.test(executable156));
+  assert.ok(!/set\s+reviewer\s*=/i.test(executable156));
+  assert.ok(!/set\s+review_type\s*=/i.test(executable156));
+  assert.ok(!/set\s+review_target_type\s*=/i.test(executable156));
   assert.ok(!/set\s+eligibility_status/i.test(executable156));
   assert.ok(!/set\s+active/i.test(executable156));
   assert.ok(!/set\s+original_text/i.test(executable156));
   assert.ok(!/set\s+title/i.test(executable156));
   assert.ok(!executable156.includes("ali_mock_form"));
+});
+
+test("migration 156 includes read-only Founder verification SQL in its own header, clearly marked as mutating nothing", () => {
+  assert.match(sql156, /READ-ONLY FOUNDER VERIFICATION/);
+  assert.match(sql156, /select family_id, review_target_type, reviewer, decision, review_type, notes/);
+  assert.match(sql156, /select id, provenance from public\.ali_passage_bank where id = 'eng-inc001-bee-navigation';/);
+});
+
+test("migration 156: NOT APPLIED disclosure present", () => {
+  assert.match(sql156, /NOT APPLIED\. Generated for Founder review/);
 });
 
 // === Migration SQL guard sanity (redundant with scripts/migration-sql-guard.mjs, kept as a direct in-suite check) ===

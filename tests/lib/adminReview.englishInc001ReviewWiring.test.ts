@@ -84,6 +84,12 @@ test("SEMANTIC: the generic ReviewForm's own reviewType prop defaults to content
   assert.match(pageSource, /reviewType = "content_review", sevenX,/);
 });
 
+test("REGRESSION (Decision 232): ReviewForm's passage Card now renders target.notes directly beneath the copyright/provenance line -- the factual-verification evidence migration 156 writes to ali_family_review.notes is actually visible to a reviewer, not merely present in the database", () => {
+  const passageCardBlock = pageSource.match(/\{!loading && passage && \([\s\S]*?\)\}\s*\n\s*\n\s*\{!loading && questions\.length > 0/)![0];
+  assert.match(passageCardBlock, /\{target\.notes && \(/);
+  assert.match(passageCardBlock, /Review notes:.*\{target\.notes\}/);
+});
+
 test("does not change any UNRELATED review flow's own review_type wiring -- Mathematics Batch 001-003, Structural Capacity 001-006, SevenX, Mr04Depth, Inc006Depth, and the existing English/Writing Batch 001 sections all still pass their own, original reviewType values, byte-unchanged", () => {
   assert.match(pageSource, /reviewType="mock_maths_independent_review"/);
   assert.match(pageSource, /reviewType="english_teaching_review"/);

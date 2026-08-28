@@ -695,6 +695,23 @@ function ReviewForm({
             {passage.originalText}
           </p>
           <p className="text-[11px] text-gray-400 dark:text-gray-500 mt-2">{passage.copyrightStatus}. Provenance: {passage.provenance}.</p>
+          {/*
+            Decision 232 — target.notes (ali_family_review.notes on this
+            target's own pending review row) is the correct home for
+            review-support evidence (e.g. Decision 229's factual-
+            verification pointer for the Bee passage), never
+            passage.provenance (a closed classification enum, not free
+            text — see migration 156's own header for the live failure
+            this correction addresses). Rendered here, additively, so
+            data already fetched into PendingReviewTarget.notes is
+            actually visible to a reviewer, not merely present in the
+            database.
+          */}
+          {target.notes && (
+            <p className="text-[11px] text-gray-500 dark:text-gray-400 mt-2 whitespace-pre-line border-t border-gray-50 dark:border-gray-800 pt-2">
+              <strong>Review notes:</strong> {target.notes}
+            </p>
+          )}
         </Card>
       )}
 

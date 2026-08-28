@@ -1,135 +1,223 @@
 -- Angel Digital 11+ — Migration 156
--- English Content Foundation, Increment 001 — Bee Passage Provenance
--- Factual-Evidence Pointer (Decision 231).
+-- English Content Foundation, Increment 001 — Bee Passage Factual-
+-- Evidence Pointer, CORRECTED (Decision 232, remediating the original
+-- migration 156's live FAILURE reported by the Founder).
 --
 -- ============================================================
--- WHY THIS MIGRATION EXISTS
+-- FOUNDER LIVE FAILURE EVIDENCE, AND WHY THIS VERSION IS DIFFERENT
 -- ============================================================
--- Decision 231's own investigation of the independent-review experience
--- found that the admin review surface (`app/admin-beta/review/page.tsx`)
--- already renders `ali_passage_bank.provenance` directly beneath a
--- passage's title and full text (`{passage.copyrightStatus}.
--- Provenance: {passage.provenance}.`, independently re-confirmed
--- present at this exact source location this session) — but Decision
--- 229's own factual-verification evidence for "How Bees Find Their Way
--- Home" (Karl von Frisch / 1946; honeybee magnetic-field sensitivity
--- and its genuinely uncertain navigational role) exists only as a SQL
--- comment inside migration 152's own header and as prose in
--- `ANGEL_ENGLISH_CONTENT_FOUNDATION_INCREMENT_001_REVIEW.md` — neither
--- of which an independent reviewer using the live admin review page
--- would ever see. `ali_question_bank.explanation` (which DOES carry a
--- brief per-question remediation note, e.g. Bee Q2's own "REMEDIATION
--- (Decision 229): ...") is not even selected by the review surface's
--- own `QUESTION_SELECT_COLUMNS` (independently re-confirmed absent from
--- that constant this session) — so the smallest, already-existing,
--- already-rendered field capable of carrying this evidence to a
--- reviewer without any code change is the passage's own `provenance`.
+-- The Founder applied migration 155 successfully, then attempted this
+-- migration's original version and received:
+--   ERROR: 23514 new row for relation "ali_passage_bank" violates check
+--   constraint "ali_passage_bank_provenance_check"
+-- Root cause, independently re-confirmed this session directly from
+-- migration 043's own source: `ali_passage_bank.provenance` is NOT free
+-- text. It carries a closed CHECK constraint
+-- (`ali_passage_bank_provenance_check`) restricting it to exactly one
+-- of six coarse CLASSIFICATION values: 'angel_original',
+-- 'generated_original', 'licensed', 'public_domain',
+-- 'authorised_import', 'evidence_only'. Migration 043's own inline
+-- comment on the neighbouring `copyright_status` column already
+-- distinguishes this explicitly: "distinct from provenance's coarse
+-- category." The original migration 156 incorrectly treated this
+-- closed classification field as if it were free-text narrative
+-- evidence — a genuine design error, not a database defect.
+-- PostgreSQL correctly rejected the write; the constraint is correct
+-- and is NOT weakened, broadened, or dropped by this correction.
+--
+-- Because the UPDATE statement's own CHECK-constraint violation raised
+-- a genuine PostgreSQL error inside this migration's own explicit
+-- `begin;...commit;` transaction, before `commit;` was ever reached,
+-- the entire transaction was aborted and rolled back by PostgreSQL's
+-- own standard atomicity semantics — no partial write, no mutation of
+-- any kind was left behind. (This is a reasoned proof from well-
+-- established PostgreSQL transaction semantics, not a live-queried
+-- confirmation, since this environment has no live database access;
+-- the read-only verification query in this migration's own Founder-
+-- facing decision record independently re-confirms it directly.)
+-- Migration 156 has therefore never successfully applied, and is
+-- corrected IN PLACE here — no migration 157 is created to repair it,
+-- per this project's own "migrations are immutable once applied"
+-- convention (Decision 218/229), which does not apply to a migration
+-- that has never once successfully applied.
 --
 -- ============================================================
--- THE FIX, AND WHY IT IS THE MINIMUM SAFE CORRECTION
+-- THE CORRECTED FIX
 -- ============================================================
--- Extends ONLY `ali_passage_bank.provenance`, on ONLY the one bee-
--- navigation passage row, from its current value ('angel_original') to
--- a concise evidence POINTER (not a research dump — per this task's
--- own explicit "do not turn the admin surface into a research-
--- management system" instruction): naming both factual corrections,
--- their evidence-tier basis, and where the reviewer can find the full,
--- cited detail if they want it. `original_text`, every question row,
--- `copyright_status`, `eligibility_status`, `active`, and every other
--- column on this and every other row are untouched and re-verified
--- unchanged after the write. "The Understudy" (fiction, no real-world
--- factual claims) is not touched — Decision 229's own factual-
--- verification convention is scoped to informational/non-fiction
--- passages only.
+-- The Bee factual-verification evidence is REVIEW SUPPORT EVIDENCE,
+-- not a change to the passage's own originality/rights classification
+-- — it must never be confused with, or concatenated into, `provenance`.
+-- `ali_passage_bank.provenance` is UNCHANGED by this corrected
+-- migration and remains its original, semantically valid value
+-- ('angel_original') throughout.
+--
+-- The correct home, traced directly from this project's own existing
+-- review architecture: `ali_family_review.notes` — a genuinely
+-- unconstrained `text` column (migration 034; the only check on this
+-- table requires notes to be present for a REJECTED decision, entirely
+-- unrelated to this migration), already used throughout this codebase
+-- to carry free-text review context. This migration extends ONLY the
+-- Bee passage's own PENDING independent-review placeholder row's
+-- `notes` (the same row migration 155 already corrected to
+-- `family_id = 'eng-inc001-bee-navigation'`), appending the factual-
+-- verification evidence after its own original placeholder text —
+-- never replacing it.
+--
+-- `ali_family_review.notes` was independently re-confirmed, this
+-- session, to be fetched into `PendingReviewTarget.notes`
+-- (`fetchPendingReviewTargets()`) but NEVER rendered anywhere in
+-- `ReviewForm`'s own UI (zero matches for `target.notes` in any JSX
+-- across `app/admin-beta/review/page.tsx`) — a real, separate gap from
+-- the original migration 156's own genuine root cause. This migration
+-- is paired with a small, additive application-code change (not a
+-- database migration) rendering `target.notes` directly beneath a
+-- passage's title/text/provenance line in `ReviewForm`, so the
+-- evidence this migration writes is actually visible to a reviewer,
+-- not merely present in the database. No new column or table was
+-- created — the existing `notes` mechanism was sufficient once
+-- rendered.
 --
 -- ============================================================
 -- SAFETY GUARDS
 -- ============================================================
--- Verifies, before writing: exactly 1 row with id = 'eng-inc001-bee-
--- navigation', text_type = 'informational', eligibility_status =
--- 'authentic_assessment_candidate', active = true, and provenance
--- equal to EITHER the exact original value (pristine) or the exact new
--- value (already corrected) — refuses on any other value. After
--- writing, re-verifies `original_text`, `title`, `word_count`,
--- `eligibility_status`, and `active` are all byte-for-byte/value
--- unchanged, and that the question count for this passage
--- (`learning_unit_id = 'eng-inc001-bee-navigation'`) is still exactly
--- 8, mirroring migration 148's own established single-field-correction,
--- pre/post-verification pattern.
+-- Verifies, before writing: exactly 1 `ali_family_review` row with
+-- `family_id = 'eng-inc001-bee-navigation'` (the POST-migration-155
+-- value — this migration explicitly requires migration 155 to have
+-- already applied, and refuses otherwise), `review_target_type =
+-- 'passage'`, `reviewer = 'UNASSIGNED'`, `decision =
+-- 'pending_independent_review'`, `review_type =
+-- 'mock_english_passage_independent_review'`, and `notes` equal to
+-- EITHER the exact original migration-154 placeholder text (pristine)
+-- or the exact already-extended text (already corrected) — refuses on
+-- any other state, including if no row carries the new family_id at
+-- all (meaning migration 155 has not yet been applied here). Also
+-- re-verifies, as a live precondition, that the Bee passage genuinely
+-- exists with its own complete 8-question membership via
+-- `learning_unit_id`, and that no OTHER, non-pending decision already
+-- exists for this family_id + review_type (an already-approved review
+-- must never be silently touched). After writing, re-verifies
+-- `ali_passage_bank.provenance` for the Bee passage is STILL exactly
+-- its original, untouched value, and that `decision`/`reviewer`/
+-- `review_type`/`review_target_type` on the corrected row are all
+-- unchanged — only `notes` was ever set.
 --
 -- ============================================================
 -- WHAT THIS MIGRATION DOES NOT DO
 -- ============================================================
--- Does not change `original_text`, `title`, `copyright_status`,
--- `eligibility_status`, or `active` on any row. Does not touch "The
--- Understudy" or any question row. Does not touch `ali_family_review`
--- or `ali_mock_form`. Does not certify, approve, or independently
--- validate any factual claim — it makes the evidence Decision 229
--- already produced visible to a genuine independent reviewer; the
--- reviewer's own judgement of that evidence remains entirely theirs.
+-- Does not touch `ali_passage_bank` in any way (no UPDATE against that
+-- table anywhere in this file). Does not change `decision`, `reviewer`,
+-- `review_type`, or `review_target_type` on any row. Does not touch
+-- "The Understudy" or any question row. Does not touch `ali_mock_form`.
+-- Does not certify, approve, or independently validate any factual
+-- claim, or the passage itself — it makes Decision 229's own evidence
+-- visible to a genuine independent reviewer; the reviewer's own
+-- judgement of that evidence, and their own separate decision, remain
+-- entirely theirs.
+--
+-- ============================================================
+-- READ-ONLY FOUNDER VERIFICATION (run before AND after applying this
+-- migration; mutates nothing)
+-- ============================================================
+-- select family_id, review_target_type, reviewer, decision, review_type, notes
+-- from public.ali_family_review
+-- where family_id in ('eng-inc001-understudy', 'eng-inc001-bee-navigation')
+-- order by family_id;
+-- -- Expect (both before and after this migration): family_id =
+-- -- 'eng-inc001-understudy' and 'eng-inc001-bee-navigation' (proving
+-- -- migration 155 already applied); reviewer = 'UNASSIGNED' on both;
+-- -- decision = 'pending_independent_review' on both; review_type =
+-- -- 'mock_english_passage_independent_review' on both. Only the Bee
+-- -- row's own `notes` should differ before vs. after this migration.
+--
+-- select id, provenance from public.ali_passage_bank where id = 'eng-inc001-bee-navigation';
+-- -- Expect, both before AND after this migration: provenance =
+-- -- 'angel_original', unchanged.
 --
 -- NOT APPLIED. Generated for Founder review and manual application via
--- Supabase Dashboard > SQL Editor > New query, after migrations
--- 152/153/154 (Founder-confirmed applied). Independent of migration 155
--- — no ordering dependency between them.
+-- Supabase Dashboard > SQL Editor > New query. REQUIRES migration 155
+-- to have already been applied (Founder-confirmed) — this migration's
+-- own precondition explicitly checks for, and refuses without, that.
 
 begin;
 
 do $$
 declare
-  v_target_id constant text := 'eng-inc001-bee-navigation';
-  v_old_provenance constant text := 'angel_original';
-  v_new_provenance constant text := 'angel_original. FACTUAL VERIFICATION (Decision 229): two real-world claims in this passage were independently verified against multiple authoritative sources before correction -- (1) Karl von Frisch published his full account of the waggle dance''s meaning in 1946, later earning a Nobel Prize (SOURCE-CONTAINS: Springer/Insectes Sociaux "The dance legacy of Karl von Frisch", Bee Craft, EBSCO Research Starters; FACTUAL-CONFIDENCE: HIGH); (2) honeybees show real evidence of magnetic-field sensitivity via iron-rich abdominal particles, but their precise navigational role remains genuinely under investigation (SOURCE-CONTAINS: Springer/Animal Cognition and PMC "Magnetoreception in Hymenoptera", Nature Scientific Reports; FACTUAL-CONFIDENCE: MEDIUM; UNRESOLVED-CONTESTED-CLAIMS: whether abdominal iron granules are the true magnetoreceptor organ). Full citation list and ANGEL-SIMPLIFICATION notes: this migration''s own header (152) and ANGEL_ENGLISH_CONTENT_FOUNDATION_INCREMENT_001_REVIEW.md.';
+  v_family_id constant text := 'eng-inc001-bee-navigation';
+  v_passage_id constant text := 'eng-inc001-bee-navigation';
+  v_old_notes constant text := 'ENGLISH-CONTENT-FOUNDATION-INC001 new content review: passage "How Bees Find Their Way Home" + its complete 8-numbered-question comprehension set (eng-inc001-bee-q01..q08)';
+  v_evidence_suffix constant text := E'\n\nFACTUAL VERIFICATION EVIDENCE (Decision 229/232), for the independent reviewer''s own assessment -- not a certification of these claims: two real-world claims in this passage were independently verified against multiple authoritative sources before correction. (1) Karl von Frisch published his full account of the waggle dance''s meaning in 1946, later earning a Nobel Prize. SOURCE-CONTAINS: Springer/Insectes Sociaux "The dance legacy of Karl von Frisch"; Bee Craft "How Karl von Frisch deciphered the waggle dance"; EBSCO Research Starters. ANGEL-SIMPLIFICATION: the passage names von Frisch and 1946 as one clean retrieval fact, mentioning the Nobel Prize briefly without a specific year. FACTUAL-CONFIDENCE: HIGH. UNRESOLVED-CONTESTED-CLAIMS: none identified. (2) Honeybees show real evidence of magnetic-field sensitivity via iron-rich abdominal particles, but their precise navigational role remains genuinely under investigation. SOURCE-CONTAINS: Springer/Animal Cognition and PMC "Magnetoreception in Hymenoptera"; Nature Scientific Reports "Magnetic Sensing through the Abdomen of the Honey Bee". ANGEL-SIMPLIFICATION: the passage states the real evidence (iron-rich particles, interference experiments) while explicitly flagging that its navigational role is still being investigated, not presented as an equally-established third system. FACTUAL-CONFIDENCE: MEDIUM. UNRESOLVED-CONTESTED-CLAIMS: whether abdominal iron granules are the true magnetoreceptor organ, versus an alternative location or a non-sensory function, is explicitly unresolved in the cited literature. Full citation list: migration 152''s own header and ANGEL_ENGLISH_CONTENT_FOUNDATION_INCREMENT_001_REVIEW.md.';
+  v_new_notes constant text := v_old_notes || v_evidence_suffix;
   v_expected_question_count constant int := 8;
+  v_non_pending_decisions int;
+  v_passage_exists int;
+  v_question_count int;
   v_pristine_count int;
   v_already_corrected_count int;
-  v_question_count int;
   v_post_write_count int;
 begin
+  select count(*) into v_non_pending_decisions
+    from public.ali_family_review
+    where family_id = v_family_id and review_type = 'mock_english_passage_independent_review'
+      and decision <> 'pending_independent_review';
+  if v_non_pending_decisions <> 0 then
+    raise exception 'Migration 156 refused: found % row(s) with a genuine, non-pending decision already recorded for family_id = % -- a real review may already exist. This migration must never silently touch a row a reviewer has already acted on.', v_non_pending_decisions, v_family_id;
+  end if;
+
+  select count(*) into v_passage_exists
+    from public.ali_passage_bank
+    where id = v_passage_id and provenance = 'angel_original' and eligibility_status = 'authentic_assessment_candidate' and active = true;
+  if v_passage_exists <> 1 then
+    raise exception 'Migration 156 refused: expected exactly 1 authentic_assessment_candidate, active passage row with id = % and its original, untouched provenance (found %). This migration never modifies provenance -- if this check fails, provenance may already have been changed by something else and must be investigated before proceeding.', v_passage_id, v_passage_exists;
+  end if;
+
   select count(*) into v_question_count
     from public.ali_question_bank
-    where learning_unit_id = v_target_id and eligibility_status = 'authentic_assessment_candidate' and active = true;
+    where learning_unit_id = v_passage_id and eligibility_status = 'authentic_assessment_candidate' and active = true;
   if v_question_count <> v_expected_question_count then
-    raise exception 'Migration 156 refused: expected exactly % authentic_assessment_candidate, active questions with learning_unit_id = % (found %). Refusing to touch the passage row while its own question membership does not match the expected shape.', v_expected_question_count, v_target_id, v_question_count;
+    raise exception 'Migration 156 refused: expected exactly % authentic_assessment_candidate, active questions with learning_unit_id = % (found %).', v_expected_question_count, v_passage_id, v_question_count;
   end if;
 
   select count(*) into v_pristine_count
-    from public.ali_passage_bank
-    where id = v_target_id and text_type = 'informational' and eligibility_status = 'authentic_assessment_candidate'
-      and active = true and provenance = v_old_provenance;
+    from public.ali_family_review
+    where family_id = v_family_id and review_target_type = 'passage' and reviewer = 'UNASSIGNED'
+      and decision = 'pending_independent_review' and review_type = 'mock_english_passage_independent_review'
+      and notes = v_old_notes;
 
   select count(*) into v_already_corrected_count
-    from public.ali_passage_bank
-    where id = v_target_id and text_type = 'informational' and eligibility_status = 'authentic_assessment_candidate'
-      and active = true and provenance = v_new_provenance;
+    from public.ali_family_review
+    where family_id = v_family_id and review_target_type = 'passage' and reviewer = 'UNASSIGNED'
+      and decision = 'pending_independent_review' and review_type = 'mock_english_passage_independent_review'
+      and notes = v_new_notes;
 
   if v_pristine_count = 1 and v_already_corrected_count = 0 then
-    update public.ali_passage_bank
-    set provenance = v_new_provenance
-    where id = v_target_id and provenance = v_old_provenance;
+    update public.ali_family_review
+    set notes = v_new_notes
+    where family_id = v_family_id and review_target_type = 'passage' and reviewer = 'UNASSIGNED'
+      and decision = 'pending_independent_review' and review_type = 'mock_english_passage_independent_review'
+      and notes = v_old_notes;
 
     select count(*) into v_post_write_count
-      from public.ali_passage_bank
-      where id = v_target_id and provenance = v_new_provenance and eligibility_status = 'authentic_assessment_candidate'
-        and active = true and text_type = 'informational';
+      from public.ali_family_review
+      where family_id = v_family_id and notes = v_new_notes and review_target_type = 'passage'
+        and reviewer = 'UNASSIGNED' and decision = 'pending_independent_review'
+        and review_type = 'mock_english_passage_independent_review';
     if v_post_write_count <> 1 then
-      raise exception 'Migration 156 post-write verification failed: expected 1 row with the new provenance value and every other guarded field unchanged, found %. Rolling back.', v_post_write_count;
+      raise exception 'Migration 156 post-write verification failed: expected 1 row with the extended notes and every other field unchanged, found %. Rolling back.', v_post_write_count;
     end if;
 
     select count(*) into v_post_write_count
-      from public.ali_question_bank
-      where learning_unit_id = v_target_id and eligibility_status = 'authentic_assessment_candidate' and active = true;
-    if v_post_write_count <> v_expected_question_count then
-      raise exception 'Migration 156 post-write verification failed: question membership changed from % to % -- rolling back.', v_expected_question_count, v_post_write_count;
+      from public.ali_passage_bank where id = v_passage_id and provenance = 'angel_original';
+    if v_post_write_count <> 1 then
+      raise exception 'Migration 156 post-write verification failed: the Bee passage''s own provenance must remain exactly angel_original, unchanged by this migration -- found %. Rolling back.', v_post_write_count;
     end if;
 
-    raise notice 'Migration 156: extended the Bee Navigation passage''s provenance field with a concise factual-verification evidence pointer (Decision 229), rendered directly by the existing admin review page. original_text, title, eligibility_status, active, and the 8-question membership all re-verified unchanged.';
+    raise notice 'Migration 156 (corrected): appended a factual-verification evidence pointer (Decision 229/232) to the Bee passage''s own pending independent-review row notes, never touching ali_passage_bank.provenance. Passage provenance and 8-question membership both re-verified unchanged.';
 
   elsif v_already_corrected_count = 1 and v_pristine_count = 0 then
-    raise notice 'Migration 156: the Bee Navigation passage already carries the factual-verification provenance pointer -- already applied. No changes made.';
+    raise notice 'Migration 156 (corrected): the Bee passage review row already carries the extended notes -- already applied. No changes made.';
 
   else
-    raise exception 'Migration 156 refused: expected exactly 1 pristine row (provenance = %, found %) XOR exactly 1 already-corrected row (found %). Re-verify production state before proceeding.', v_old_provenance, v_pristine_count, v_already_corrected_count;
+    raise exception 'Migration 156 refused: expected exactly 1 pristine row (original notes, found %) XOR exactly 1 already-corrected row (found %) for family_id = %. If both counts are 0, migration 155 may not yet be applied here -- re-verify production state before proceeding.', v_pristine_count, v_already_corrected_count, v_family_id;
   end if;
 end $$;
 
