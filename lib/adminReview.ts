@@ -2377,6 +2377,32 @@ export async function fetchMockEnglishInc001PassageReviewStatus(): Promise<Map<s
 }
 
 /**
+ * English Content Foundation, Increment 002 (Decision 237, migrations
+ * 161/162) — 2 further new Comprehension passages, reviewed via the
+ * SAME `review_type = "mock_english_passage_independent_review"` value
+ * Increment 001 already used (not a new type), disambiguated by its own
+ * marker and target-id list, mirroring `MOCK_ENGLISH_INC001_MARKER`/
+ * `MOCK_ENGLISH_INC001_PASSAGE_TARGET_IDS` exactly. Migration 162's own
+ * pending-review registration was authored with the Decision 230/231
+ * lesson already applied — `family_id` is each passage's own `id` from
+ * the very first application, never `passage_family_id` — so no
+ * migration-155-equivalent correction should ever be needed for this
+ * increment. `requireMarker: false`, same reasoning as Increment 001:
+ * both ids are brand-new and never reused for any other purpose.
+ */
+export const MOCK_ENGLISH_INC002_MARKER = "ENGLISH-CONTENT-FOUNDATION-INC002";
+
+export const MOCK_ENGLISH_INC002_PASSAGE_TARGET_IDS = ["eng-inc002-roboticsfinal", "eng-inc002-sailandsteam"];
+
+export function deriveMockEnglishInc002PassageReviewStatus(rows: SevenXReviewRow[]): Map<string, SevenXReviewStatus> {
+  return deriveBatchReviewStatus(rows, MOCK_ENGLISH_INC002_PASSAGE_TARGET_IDS, MOCK_ENGLISH_INC002_MARKER, "mock_english_passage_independent_review", false);
+}
+
+export async function fetchMockEnglishInc002PassageReviewStatus(): Promise<Map<string, SevenXReviewStatus>> {
+  return fetchBatchReviewStatus(MOCK_ENGLISH_INC002_PASSAGE_TARGET_IDS, MOCK_ENGLISH_INC002_MARKER, "mock_english_passage_independent_review", false);
+}
+
+/**
  * The 3 new Continuous Writing candidate prompts (migration 153), each
  * its own distinct reviewable unit (`review_target_type =
  * 'writing_prompt'`). Reviewed via the `sevenX` prop mechanism, exactly

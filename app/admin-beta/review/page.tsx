@@ -49,6 +49,7 @@ import {
   fetchMockWritingBatch001ReviewStatus, buildMockWritingBatch001NotesPrefix, submitMockWritingPromptIndependentReview,
   MOCK_WRITING_BATCH001_FAMILIES, MOCK_WRITING_BATCH001_TARGET_IDS,
   fetchMockEnglishInc001PassageReviewStatus, MOCK_ENGLISH_INC001_PASSAGE_TARGET_IDS,
+  fetchMockEnglishInc002PassageReviewStatus, MOCK_ENGLISH_INC002_PASSAGE_TARGET_IDS,
   fetchMockEnglishInc001WritingReviewStatus, buildMockEnglishInc001WritingNotesPrefix,
   MOCK_ENGLISH_INC001_WRITING_FAMILIES, MOCK_ENGLISH_INC001_WRITING_TARGET_IDS,
   fetchEnglishInc001AmendmentVerificationStatus, buildEnglishInc001AmendmentVerificationNotesPrefix,
@@ -2801,6 +2802,69 @@ function EnglishInc001PassageSection({
 }
 
 /**
+ * English Content Foundation, Increment 002 (Decision 237) — mirrors
+ * EnglishInc001PassageSection exactly, for the 2 further new passages
+ * migration 161 authored. Registered from the very first application
+ * using the CORRECTED family_id = passage id convention (migration
+ * 162), so no "migration N not yet applied" disabled-state caveat is
+ * needed here the way Increment 001's own section still carries one for
+ * the pre-migration-155 window.
+ */
+function EnglishInc002PassageSection({
+  targets, status, onOpen,
+}: {
+  targets: PendingReviewTarget[];
+  status: Map<string, SevenXReviewStatus>;
+  onOpen: (t: PendingReviewTarget) => void;
+}) {
+  const passages: { id: string; title: string; questionCount: number }[] = [
+    { id: "eng-inc002-roboticsfinal", title: "The Loose Connection", questionCount: 8 },
+    { id: "eng-inc002-sailandsteam", title: "Crossing the Atlantic: Sail and Steam", questionCount: 7 },
+  ];
+  const reviewedCount = passages.filter((p) => status.get(p.id)?.reviewed).length;
+  return (
+    <div id="english-inc002-passage-review" className="bg-white dark:bg-gray-900 rounded-2xl border-2 border-indigo-200 dark:border-indigo-800 overflow-hidden scroll-mt-4">
+      <div className="px-5 py-4 border-b border-indigo-100 dark:border-indigo-900 bg-indigo-50 dark:bg-indigo-950/40">
+        <p className="text-sm font-bold text-indigo-900 dark:text-indigo-200">English Content Foundation Increment 002: Passage Review</p>
+        <p className="text-xs text-indigo-600 dark:text-indigo-400 mt-0.5">{reviewedCount} of {passages.length} passages reviewed</p>
+        <div className="mt-2 text-xs text-indigo-800 dark:text-indigo-300 space-y-0.5">
+          <p>• These are Mock candidates, not Practice content: neither has ever been, or will be, automatically promoted from Practice.</p>
+          <p>• Both passages and their complete attached question sets are currently <strong>authentic_assessment_candidate</strong>. Neither is mock_eligible. Neither is used by any Mock form.</p>
+          <p>• Each passage is reviewed as ONE unit: the passage together with all of its attached questions, never by reviewing individual questions in isolation.</p>
+          <p>• &quot;The Loose Connection&quot;&apos;s Question 7 is this codebase&apos;s first QT-RC-07 (Multi-Entity Comparative Attribute Extraction) question: a genuine two-subpart grouped question (7a/7b), one separately-scored field per named character.</p>
+          <p>• &quot;Crossing the Atlantic: Sail and Steam&quot; is informational content with two real-world factual claims independently verified this programme (the Great Western&apos;s 1838 crossing time; typical sailing-ship crossing times): see the passage&apos;s own Provenance line, shown below its text, for the evidence summary and where to find full citations.</p>
+          <p>• Approving a passage here does not activate it: promotion to independently_validated, and any later move to mock_eligible, remain separate, later, Founder-authorised steps.</p>
+        </div>
+      </div>
+      <div className="divide-y divide-gray-50 dark:divide-gray-800">
+        {passages.map((p) => {
+          const s = status.get(p.id);
+          const pendingTarget = targets.find((t) => t.id === p.id && t.reviewTargetType === "passage");
+          return (
+            <button
+              key={p.id}
+              disabled={!pendingTarget}
+              onClick={() => pendingTarget && onOpen(pendingTarget)}
+              className="w-full text-left px-5 py-3 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors flex items-center justify-between gap-3 disabled:opacity-50"
+            >
+              <div>
+                <p className="text-sm font-medium text-gray-900 dark:text-gray-100">{p.title}</p>
+                <p className="text-[11px] text-gray-400 dark:text-gray-500 mt-0.5">
+                  {p.questionCount} question{p.questionCount === 1 ? "" : "s"}
+                  {s?.reviewed ? ` · reviewed (${s.decision})` : " · not yet reviewed"}
+                  {!pendingTarget ? " · migration 162 not yet applied" : ""}
+                </p>
+              </div>
+              {s?.reviewed ? <CheckCircle2 size={16} className="text-emerald-500 shrink-0" /> : <ArrowRight size={14} className="text-gray-300 dark:text-gray-600 shrink-0" />}
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+/**
  * English Content Foundation, Increment 001 — the 3 new Continuous
  * Writing candidate prompts, structurally identical to
  * `MockWritingBatch001Section` above (own array, own marker, own status
@@ -2958,6 +3022,11 @@ function FullBacklogSection({ targets, reviewedIds, onOpen }: { targets: Pending
     // can ever leak into this generic backlog (and its wrong content_review default)
     // during the window before migration 155 has been applied.
     t.id !== "eng-inc001-understudy-narrative" && t.id !== "eng-inc001-bee-navigation-informational" &&
+    // Decision 237 — Increment 002's own migration 162 registered both passage
+    // targets using the corrected family_id = passage id convention from the
+    // very first application (never passage_family_id), so only one exclusion
+    // form is needed here, unlike Increment 001's own two-form exclusion above.
+    !MOCK_ENGLISH_INC002_PASSAGE_TARGET_IDS.includes(t.id) &&
     !reviewedIds.has(t.id));
 
   return (
@@ -3127,13 +3196,15 @@ function ReviewDashboard() {
   const [selectedMockWritingBatch001, setSelectedMockWritingBatch001] = useState<{ target: PendingReviewTarget; family: SevenXFamilyConfig } | null>(null);
   const [englishInc001PassageStatus, setEnglishInc001PassageStatus] = useState<Map<string, SevenXReviewStatus>>(new Map());
   const [selectedEnglishInc001Passage, setSelectedEnglishInc001Passage] = useState<PendingReviewTarget | null>(null);
+  const [englishInc002PassageStatus, setEnglishInc002PassageStatus] = useState<Map<string, SevenXReviewStatus>>(new Map());
+  const [selectedEnglishInc002Passage, setSelectedEnglishInc002Passage] = useState<PendingReviewTarget | null>(null);
   const [englishInc001WritingStatus, setEnglishInc001WritingStatus] = useState<Map<string, SevenXReviewStatus>>(new Map());
   const [selectedEnglishInc001Writing, setSelectedEnglishInc001Writing] = useState<{ target: PendingReviewTarget; family: SevenXFamilyConfig } | null>(null);
   const [englishInc001AmendmentVerificationStatus, setEnglishInc001AmendmentVerificationStatus] = useState<Map<string, SevenXReviewStatus>>(new Map());
   const [selectedEnglishInc001AmendmentVerification, setSelectedEnglishInc001AmendmentVerification] = useState<AmendmentVerificationTarget | null>(null);
 
   async function load() {
-    const [pending, reviewed, teachingReviewed, englishTeachingReviewed, writingTeachingReviewed, sevenX, mr04Depth, inc006Depth, mockMrBatch001, mockMrBatch002, mockMrBatch003, mockFirstMockCompoundBatch001, mockSharedScenarioCompletionBatch, mockStructuralCapacityInc001, mockStructuralCapacityWave002, mockStructuralCapacityWave002Correction001, mockStructuralCapacityIncrement003, mockStructuralCapacityIncrement004, mockStructuralCapacityIncrement005, mockStructuralCapacityIncrement006, mockEnglishPassageBatch001, mockWritingBatch001, englishInc001Passage, englishInc001Writing, englishInc001AmendmentVerification] = await Promise.all([
+    const [pending, reviewed, teachingReviewed, englishTeachingReviewed, writingTeachingReviewed, sevenX, mr04Depth, inc006Depth, mockMrBatch001, mockMrBatch002, mockMrBatch003, mockFirstMockCompoundBatch001, mockSharedScenarioCompletionBatch, mockStructuralCapacityInc001, mockStructuralCapacityWave002, mockStructuralCapacityWave002Correction001, mockStructuralCapacityIncrement003, mockStructuralCapacityIncrement004, mockStructuralCapacityIncrement005, mockStructuralCapacityIncrement006, mockEnglishPassageBatch001, mockWritingBatch001, englishInc001Passage, englishInc001Writing, englishInc001AmendmentVerification, englishInc002Passage] = await Promise.all([
       fetchPendingReviewTargets(), fetchReviewedTargetIds(), fetchMathsTeachingReviewedFamilyIds(), fetchEnglishTeachingReviewedFamilyIds(), fetchWritingTeachingReviewedFamilyIds(),
       fetchSevenXReviewStatus(SEVEN_X_TARGET_IDS), fetchMr04DepthReviewStatus(MR04_DEPTH_TARGET_IDS), fetchInc006DepthReviewStatus(INC006_DEPTH_TARGET_IDS),
       fetchMockMrBatch001ReviewStatus(MOCK_MR_BATCH001_TARGET_IDS), fetchMockMrBatch002ReviewStatus(MOCK_MR_BATCH002_TARGET_IDS),
@@ -3150,6 +3221,7 @@ function ReviewDashboard() {
       fetchMockEnglishPassageBatch001ReviewStatus(), fetchMockWritingBatch001ReviewStatus(MOCK_WRITING_BATCH001_TARGET_IDS),
       fetchMockEnglishInc001PassageReviewStatus(), fetchMockEnglishInc001WritingReviewStatus(MOCK_ENGLISH_INC001_WRITING_TARGET_IDS),
       fetchEnglishInc001AmendmentVerificationStatus(ENGLISH_INC001_AMENDMENT_VERIFICATION_TARGET_IDS),
+      fetchMockEnglishInc002PassageReviewStatus(),
     ]);
     setTargets(pending);
     setReviewedIds(reviewed);
@@ -3176,6 +3248,7 @@ function ReviewDashboard() {
     setEnglishInc001PassageStatus(englishInc001Passage);
     setEnglishInc001WritingStatus(englishInc001Writing);
     setEnglishInc001AmendmentVerificationStatus(englishInc001AmendmentVerification);
+    setEnglishInc002PassageStatus(englishInc002Passage);
   }
 
   useEffect(() => { load(); }, []);
@@ -3454,6 +3527,16 @@ function ReviewDashboard() {
     );
   }
 
+  if (selectedEnglishInc002Passage) {
+    return (
+      <ReviewForm
+        target={selectedEnglishInc002Passage}
+        reviewType="mock_english_passage_independent_review"
+        onDone={() => { setSelectedEnglishInc002Passage(null); load(); }}
+      />
+    );
+  }
+
   if (selectedEnglishInc001Writing) {
     const { target, family } = selectedEnglishInc001Writing;
     return (
@@ -3543,6 +3626,7 @@ function ReviewDashboard() {
       <MockEnglishPassageBatch001Section targets={targets} status={mockEnglishPassageBatch001Status} onOpen={setSelectedMockEnglishPassageBatch001} />
       <MockWritingBatch001Section targets={targets} status={mockWritingBatch001Status} onOpen={(target, family) => setSelectedMockWritingBatch001({ target, family })} />
       <EnglishInc001PassageSection targets={targets} status={englishInc001PassageStatus} onOpen={setSelectedEnglishInc001Passage} />
+      <EnglishInc002PassageSection targets={targets} status={englishInc002PassageStatus} onOpen={setSelectedEnglishInc002Passage} />
       <EnglishInc001WritingSection targets={targets} status={englishInc001WritingStatus} onOpen={(target, family) => setSelectedEnglishInc001Writing({ target, family })} />
       <EnglishInc001AmendmentVerificationSection status={englishInc001AmendmentVerificationStatus} onOpen={setSelectedEnglishInc001AmendmentVerification} />
       <FullBacklogSection targets={targets} reviewedIds={reviewedIds} onOpen={setSelected} />
