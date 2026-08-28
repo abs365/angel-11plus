@@ -35,7 +35,7 @@ Every field a question must carry, what it means, and how to determine it. Field
 1. **One skill per question.** A question shouldn't simultaneously test vocabulary *and* code-breaking — pick the competency (§3) and write cleanly to it. If a question naturally tests two things, that's a sign it should be split into two questions.
 2. **Exactly one unambiguous correct answer**, or an explicit, complete `alternatives` list covering every reasonable equivalent phrasing (see the existing pattern: `answer: "freezing", alternatives: ["icy", "frozen"]`). If you can imagine a reasonable student giving a correct-but-unlisted answer, either add it to `alternatives` or rewrite the question to remove the ambiguity.
 3. **Age-appropriate vocabulary and subject matter.** Written for a Year 5/6 candidate (typically age 9–11). Avoid subject matter requiring adult life experience (mortgages, workplace jargon) or niche specialist knowledge (obscure scientific terms) unless the question is explicitly a vocabulary-stretch item at `challenge` difficulty.
-4. **Cultural neutrality.** Avoid assuming a specific religious, regional (beyond general UK), or family-structure background. Animals, everyday objects, school life, and nature are the safest, most-used domains in the existing bank for good reason.
+4. **Cultural neutrality.** Avoid assuming a specific religious, regional (beyond general UK), or family-structure background. Animals, everyday objects, school life, and nature are the safest, most-used domains in the existing bank for good reason. For named human characters specifically (English/Maths narrative and word-problem content), see §16, the Angel UK Representation, Naming and Cultural Context Standard.
 5. **Consistent formatting within a category.** Blanks are always `___` (three underscores). Analogies always follow the `A is to B as C is to ___` structure. Codes always state the rule explicitly before asking the question (never expect the student to infer the rule itself unless "infer the rule" *is* the skill being tested — see §3's Letter Code entries, which always state the rule).
 6. **No trick questions.** Ambiguity, double negatives, or "gotcha" phrasing are not the same as difficulty. Difficulty should come from the reasoning required, not from confusing wording — a `challenge`-tier question should still be perfectly clear about what it's asking.
 7. **Marks field.** Currently always `1` in the existing bank (`marks: 1`) — keep this convention unless there's a specific reason (e.g. a multi-part question) to deviate, and flag any deviation for review since nothing downstream currently handles `marks > 1` differently.
@@ -215,6 +215,7 @@ Mastery (implementation plan §1.4) requires correct answers across `mastery_thr
 - [ ] Checked against §6/§7 originality and copyright requirements
 - [ ] `mastery_threshold` left at default unless §8's raise-conditions apply
 - [ ] `pathway` set deliberately, not defaulted without thought
+- [ ] Any named human character checked against §16 (no unnecessary repeat-root reuse, no confusingly similar same-unit names, no stereotyping)
 
 ---
 
@@ -397,3 +398,42 @@ Baselines are extrapolated from the general rubric (§4.1) and the relative reas
 ## 15. WP-01 Scope Note
 
 Per `IWP-001` §1, this work package extends the taxonomy, difficulty calibration, and timing baselines only — it does **not** perform the real hand-tagging pass on the 119 existing NVR/Spatial/Mathematical Reasoning questions (that is WP-02, a separate, human-owned authoring task per this standard's own standing "do not automate metadata generation" principle, Decision 3), and it does not touch `ali_question_bank`, any migration, or any application code. The worked examples in §12.4/§13.4/§14.4 are illustrative training material for reviewers, identical in status to §9 and §11.5 — not the production tagging pass.
+
+## 16. Angel UK Representation, Naming and Cultural Context Standard (v1.0)
+
+**Status:** Permanent, canonical authoring and educational QA policy, adopted Decision 241, evidenced by Decision 240's programme-wide read-only audit (`docs/audits/decision240-uk-representation-audit/`). Governs how named human characters, and the settings/cultural context around them, are chosen for every subject's narrative and word-problem content — English comprehension passages, Writing prompts, Maths word problems, and any other learner-facing content naming a person.
+
+**Why this exists:** Decision 240 found no programme-wide ethnic/cultural overrepresentation in Angel 11+'s content estate (African-associated naming was ~9% of 55 distinct fictional character names, plausible for UK demographics) — but it did find two concrete, source-confirmed local defects: a name-root ("Ade") independently reused for three unrelated characters across two separate authoring sessions with no shared "names already used" record, and a single 6-passage authoring batch (migration 044) where 2 of 6 passages (33%) carried a Yoruba/West-African-associated lead, well above the estate average. No dedicated naming/representation policy existed to prevent either. This standard closes that gap.
+
+### 16.1 The 14 provisions
+
+1. **Natural representation.** Character names should reflect the range of backgrounds present in contemporary UK schools — British, Irish, European, African, Caribbean, South Asian, East Asian, Middle Eastern, and others — as a matter of course, not as a deliberate insertion exercise per passage.
+2. **No accidental default.** No single cultural/naming association should become the unexamined default for any recurring content family (e.g. every grandparent-figure, every "new pupil" character) — checked by the periodic distribution audit (§16.4), not by a per-passage quota.
+3. **No Founder/authoring-context leakage.** Content-generation processes must not draw character names, backgrounds, or details from the Founder's or any author's personal identity, background, or private conversation context.
+4. **Name variety across the programme.** Before finalising a new character name, check it against recently-authored content for unnecessary repeat-root reuse (the exact defect Decision 240 found with "Ade" and "Okafor") — even an informal check against the last several authored units is sufficient; there is no requirement for tooling before this can be followed.
+5. **No confusingly similar names within one assessment or passage.** Two names in the same unit must not differ only by a common short form, a single letter, or an easily-confused sound.
+6. **Age-appropriate, readable names.** Names should be straightforward for an 11+ candidate to read fluently under timed conditions.
+7. **Culturally authentic contexts, not tokenistic insertion.** A name's cultural association must never be paired with an unrelated stereotyped trait, occupation, ability, or plot device.
+8. **Avoidance of stereotyping**, explicitly: no name/ethnicity pairing tied to a trait, ability, or occupation.
+9. **Avoidance of tokenistic diversity.** Diversity should read as natural background variation, not an inserted checkbox per unit.
+10. **UK spelling and terminology** throughout (already substantially enforced by §5 and §2 item 4's "beyond general UK" rule; this provision extends the same principle explicitly to naming).
+11. **International contexts remain legitimate** where educationally genuine — real historical/scientific nonfiction (e.g. the Great Western steamship, Karl von Frisch's bee-navigation research) is not required to be Essex-specific or even fictional, and this standard never reduces that.
+12. **Periodic portfolio-level distribution audit.** A lightweight repeat of Decision 240's own methodology at defined content-growth intervals (e.g. every ~10 new narrative/word-problem passages), not a one-off exercise.
+13. **Authoring QA.** A name-repetition/clustering check belongs on the same pre-migration checklist as the existing factual-verification and Copy Quality Guard checks (see §10 Review Checklist).
+14. **Independent review expectations.** The existing educational-review pipeline (`ali_family_review`) may, at the Founder's discretion, be extended to prompt a reviewer to flag naming/cultural concerns, in addition to its current academic-quality scope.
+
+### 16.2 Explicit non-goals
+
+This standard does **NOT**: ban Yoruba/Nigerian/African names or any other cultural-association group; mandate traditionally English names; use ethnicity quotas mechanically; infer a fictional character's actual ethnicity from their name as fact (an analytical association is not an ethnicity claim); copy CSSE past-paper characters or settings; or reduce diversity in any direction. A Yoruba, Nigerian, or African name is not, and has never been, a defect under this standard — only unintended repetition, clustering, leakage, or stereotyping are.
+
+### 16.3 Analytical-association categories (for any future distribution audit)
+
+When a name has a reasonably recognisable cultural/linguistic association, record it as an analytical signal, never a statement of a fictional character's actual, undepicted ethnicity: broadly common/contemporary UK; African association; South Asian association; East Asian association; European association; Middle Eastern association; Caribbean association where reasonably evidenced; culturally ambiguous/widely cross-cultural; uncertain/do not classify. Default to "uncertain" liberally rather than forcing a classification.
+
+### 16.4 Periodic audit cadence
+
+A repeat of Decision 240's own methodology (character/name inventory → cultural-distribution analysis → settings/context audit → Founder-context-leakage check) should run at defined content-growth intervals, not only when a Founder observation triggers one. Until a specific cadence is set by the Founder, treat "roughly every 10 newly-authored narrative/word-problem passages" as the working default.
+
+### 16.5 Known open items (Decision 240 P2 register, not remediated by Decision 241)
+
+Recorded here for authoring-QA visibility, not urgent: the "Okafor" surname independently reused for two unrelated characters (migrations 049, 063); migration 044's own single-batch clustering (2 of 6 passages Yoruba/West-African-associated); the Mathematics algebra word-problem name-pool (migrations 039/040, 13 names) carrying zero South Asian/African/Middle-Eastern association. None block any current content; each is a candidate for the next planned maintenance touch of its respective migration.
