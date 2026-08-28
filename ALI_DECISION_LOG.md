@@ -10489,3 +10489,93 @@ After applying 157/158/159 and deploying this decision's application-code change
 **Final verdict: A — AMENDMENTS REMEDIATED AND GOVERNANCE GAP CLOSED; READY FOR FOUNDER APPLICATION.** All four amendments are implemented against live content (or confirmed already-satisfied, for Bee) via fail-closed, idempotent, additive migrations; the review-governance gap that allowed an unstated amendment is closed at both the application and database layers; the original review history is provably immutable throughout; an amendment-verification path is built and reachable without requiring a duplicate full review; and the full verification suite passes cleanly. Nothing is applied to production, nothing is certified, and nothing is promoted — those remain the Founder's own next, separate steps.
 
 ---
+
+### Decision 236 — POST-AMENDMENT-VERIFICATION CERTIFICATION GATE: English Content Foundation Increment 001's review cycle closed; independent-validation certification migration prepared (migration 160, UNAPPLIED) promoting 2 passages + 15 attached questions + 3 Writing prompts (18 rows) from authentic_assessment_candidate to independently_validated ONLY — no practice_eligible, no mock_eligible, no English Mock 1, no Increment 002.
+
+**Reconciliation:** `git fetch origin main` confirmed `HEAD == origin/main` at `0b0d57a` (Decision 235) before this session's work began, clean working tree. Migrations through 159 confirmed present on disk. Migrations 157/158/159 accepted as Founder-confirmed applied (Level 1, this task's own directive). This session did not attempt to reconnect to production Supabase (this environment's own inability to reach it was independently proven in Decision 234 and not re-tested here, since nothing about that constraint could plausibly have changed). Per this task's own "do not rely solely on Founder summary if repository architecture can validate the expected record structure" instruction: repository architecture (`deriveBatchReviewStatus`'s exact `review_type` equality filter, independently re-read this session) structurally guarantees an `amendment_verification` decision can only ever be recorded against the correct target and can never be conflated with the original independent review — this was verified from source, not merely trusted from the Founder's summary. The underlying row *values* themselves (which this environment cannot read) remain Level 1 Founder-supplied evidence; a precise read-only verification query is provided in Section M below rather than guessed at.
+
+## A. FIVE-TARGET REVIEW CLOSURE PROOF
+
+All 5 targets: independent review recorded (4 `approved_with_amendment` + 1 plain `approved`, reviewer Ayobami Lawal throughout, re-confirmed unchanged from Decision 235's own register). The 4 `approved_with_amendment` targets: amendment remediation completed and Founder-confirmed applied (migrations 157/158/159). Mistake Learned: no amendment required, by its own recorded decision value alone — nothing further was ever required of it, and this task's own Section 9 precondition ("legitimately required no amendment verification") is satisfied by that fact alone, not by any additional evidence this session needed to produce.
+
+## B. FOUR AMENDMENT-VERIFICATION CLOSURE PROOF
+
+Founder confirms all 4 amendment-verification reviews (Understudy, Bee, Somewhere New, Screen Time) are complete and resolved via the dedicated Amendment Verification section built in Decision 235 (`review_type = 'amendment_verification'`). Accepted as Level 1 Founder-supplied live evidence, consistent with this project's own established practice throughout Decisions 230-235. **No unresolved educational review remains in Increment 001** — 5 of 5 independent reviews complete, 4 of 4 required amendment verifications complete, 0 targets outstanding.
+
+## C. CANONICAL POST-REVIEW CERTIFICATION STATE
+
+`independently_validated` — the SAME transition, and the SAME assertion-and-refuse pattern, migrations 102 (English Comprehension Batch 001, Decision 158 Phase A) and 103 (Continuous Writing Batch 001) already established as this codebase's only prior precedent for promoting English content this way. No new eligibility state was invented, per this task's own explicit instruction. `review passed` is not equated with `practice_eligible` or `mock_eligible` anywhere in migration 160 — both are explicitly, deliberately absent from its own SET clauses (proven by test).
+
+## D. PASSAGE ELIGIBILITY RECOMMENDATION
+
+**A: `independently_validated` only, preserved as future Mock reserve — for both The Understudy and How Bees Find Their Way Home.** Both were authored, from their very first migration (152), directly as `authentic_assessment_candidate` — the Mock track — never as `provisional`/`practice_eligible` (the separate Practice track). The review surface's own disclosure, shown to every reviewer of this content, states explicitly: "These are Mock candidates, not Practice content: neither has ever been, or will be, automatically promoted from Practice." Promoting either into `practice_eligible` now would let a learner practise on a passage that must later appear, unseen, in a real Mock — breaking passage-level anti-memorisation isolation, which this task's own directive names as mandatory. Migration 160 therefore promotes both passages and their complete attached question sets (7 + 8 questions, atomically, mirroring migration 102's own two-block-per-family pattern exactly) to `independently_validated` only.
+
+## E. WRITING ELIGIBILITY RECOMMENDATION
+
+**A: `independently_validated` only, for Somewhere New, A Mistake You Learned From, and Should Children Have Limits on Screen Time?** — identical reasoning to D, and identical to migration 153/098's own original authoring intent ("eligibility_status = 'authentic_assessment_candidate' on every row -- NOT 'independently_validated', NOT 'mock_eligible'" — migration 153's own header, never contradicted). All 3 promoted together in one block, mirroring migration 103's own established shape exactly.
+
+## F. PRACTICE/MOCK ISOLATION DECISION
+
+No row touched by migration 160 is, or becomes, `practice_eligible` — confirmed by test (`practice_eligible` does not appear anywhere in the migration's executable SQL). No content is reused across the Practice and Mock tracks. This decision does not reinterpret or weaken RELEASE_1_ASSESSMENT_ELIGIBILITY_MODEL.md's two-track separation; it applies it exactly as already established for the one prior English precedent (migrations 102/103).
+
+## G. CERTIFICATION MIGRATION
+
+`supabase/migrations/160_english_content_foundation_increment001_independent_validation.sql` (new, **UNAPPLIED**). Five independent, fail-closed, idempotent `do $$` blocks: Understudy questions (7, scoped by `learning_unit_id`), Understudy passage (1), Bee questions (8, scoped by `learning_unit_id`), Bee passage (1), Writing prompts (3, scoped by `subject = 'writing'`) — 18 rows total. Each block's own precondition requires the exact expected count of live `authentic_assessment_candidate`/`active` rows before promoting; an already-`independently_validated` count matching exactly is a verified no-op; any other state raises an exception naming the actual counts observed, touching nothing. **Deliberately does not query `ali_family_review`** — mirroring migration 102/103's own explicit, documented precedent ("does NOT touch ali_family_review in any way," stated as a positive safety property in both migrations' own headers): that table has no unique-per-target invariant a runtime query could safely rely on, and the review/amendment-verification evidence is instead verified by this session from the Founder's own direct report (Sections A-B above), exactly as migration 102/103's own "Founder-supplied evidence" header sections already did for their own precedent. Preserves review history (no `ali_family_review` row touched), preserves provenance (`provenance` column never SET), performs no Practice activation (`practice_eligible` never SET) and no Mock-eligible promotion (`mock_eligible` never SET, `ali_mock_form` never referenced) — all confirmed by test directly against the migration's own real SQL, not asserted from prose.
+
+## H. EXACT ELIGIBILITY CHANGES PROPOSED
+
+18 rows, `authentic_assessment_candidate` → `independently_validated`: `eng-inc001-understudy` (passage) + `eng-inc001-understudy-q01`..`q07` (7 questions); `eng-inc001-bee-navigation` (passage) + `eng-inc001-bee-q01`..`q08` (8 questions); `mock-writing-newplace-01`, `mock-writing-mistakelearned-01`, `mock-writing-screentime-01` (3 Writing prompts). No other column, on any of these rows or any other row, is changed.
+
+## I. CAPACITY
+
+**CERTIFIED BEFORE INCREMENT 001** (unchanged, migrations 102/103, Decision 158 Phase A): 1 passage ("The Boat in the Boathouse"); 13 comprehension experiences (12 numbered questions: 11 standalone + 1 grouped 2-subpart); 3 Writing prompts (QT-WC-01a: mindchange, kindness, cookopinion).
+
+**NEWLY REVIEW-COMPLETE BUT NOT YET CERTIFIED** (migration 160, prepared, not applied): 2 passages (The Understudy, How Bees Find Their Way Home); 15 comprehension experiences (7 + 8); 3 Writing prompts (QT-WC-01a: Somewhere New, A Mistake You Learned From, Should Children Have Limits on Screen Time?).
+
+**PROJECTED AFTER PROPOSED CERTIFICATION** (once migration 160 is applied): 3 certified passages; 28 certified comprehension experiences; 6 certified Writing prompts.
+
+**Comprehension detail:** passage count 1 -> 3. Genre diversity: 2 distinct narrative-extract configurations (the existing sibling-pair-restoring-an-object shape; the new single-protagonist-internal-conflict shape) plus 1 informational/popular-science configuration (the first informational text in the certified estate) — still only 2 `text_type` values overall (`narrative-extract`, `informational`). QT coverage: unchanged from Decision 231's own figure — 9 of 10 evidenced Comprehension Question Types represented at least twice; QT-RC-07 (Multi-Entity Comparative Attribute Extraction) remains a named, disclosed, zero-coverage gap, not attempted by this or any prior Increment 001 migration. Passage-family depth: still exactly 1 (every one of the 3 certified passages, both before and after this certification, is a singleton family with zero sibling variants) — a genuine, disclosed anti-memorisation ceiling: once used once in a Mock, each passage is exhausted, unlike a Mathematics family's own variant-depth model.
+
+**Writing detail:** prompt count 3 -> 6. Prompt-shape diversity: 5 genuinely distinct underlying shapes across 6 prompts (mindchange/opinion-shift; kindness/relationship-emotion; cookopinion and screentime intentionally share one evidenced direct-opinion-question shape, per migration 153's own header disclosure, not a defect; newplace/place-arrival; mistakelearned/error-and-growth). QT-WC-01a depth: 6 instances (up from 3) — reasonable near-term depth for the one evidenced Writing Question Type. QT-WC-01b (Picture-Stimulus Narrative Prompt): still 0 — a genuine, disclosed, deferred INFRASTRUCTURE gap (no image-asset pipeline exists anywhere in this codebase, re-confirmed unchanged since migration 098/153's own identical finding), not a content-authoring gap.
+
+## J. REMAINING ENGLISH CONTENT GAPS
+
+Comprehension: even after this certification, still 1-3 passages short of Decision 227's own MINIMUM target (4-6 passages), and 7-12 short of HEALTHY (10-15 passages); QT-RC-07 remains wholly unattempted; passage-family depth (sibling variants per passage) remains 1 everywhere, a structural anti-memorisation constraint no Increment 001 migration has addressed. Writing: QT-WC-01b requires an image-asset pipeline (infrastructure work) before any content authoring can begin; only one Writing Question Type (QT-WC-01a) has ever been evidenced or attempted in this codebase.
+
+## K. INCREMENT 002 READINESS
+
+**Not begun by this decision, per this task's own explicit instruction.** Once the Founder applies migration 160, Increment 002 may reasonably begin, but should be scoped against the specific, disclosed gaps in Section J above, not "add more content" undirected: (1) closing more of the passage-count gap toward Decision 227's own MINIMUM; (2) QT-RC-07, deferred twice now across Decisions 228/229 and this one; (3) whether future passages should be authored with genuine sibling variants (Mathematics-family-style depth) rather than more singleton passages, to build real per-passage Mock-reserve depth rather than only breadth; (4) QT-WC-01b's own prerequisite infrastructure work, which is not a content-authoring task and should likely be scoped as its own, separate increment; (5) how much independently_validated inventory a real future English Mock 1 actually requires — a specification this session's own scope does not extend to and has not attempted to invent.
+
+## L. TESTS / FULL VERIFICATION
+
+New test file `tests/supabase/englishContentFoundationIncrement001IndependentValidation.test.ts` (18 tests), mirroring `mockEnglishComprehensionBatch001IndependentValidation.test.ts`/`mockWritingBatch001IndependentValidation.test.ts`'s own established discipline exactly: the exact 7/8/3-id allow-lists; the `learning_unit_id`/`subject`-scoped preconditions; passage atomicity; that `independently_validated` is the only value ever SET (5 statements, across all 5 blocks); no `practice_eligible`/`mock_eligible` transition; no content-field (prompt/checklist/passage-text/provenance/family_id/content_version/active) mutation; no `ali_family_review`/`ali_mock_form` mutation; exactly 5 `RAISE EXCEPTION` / 10 `RAISE NOTICE` statements; single begin/commit; the migration's own explicit disclosure of why it never queries `ali_family_review` and of the Practice/Mock isolation rationale; and a proof against the real, unmodified `isMockEligibleCandidate()` function that `independently_validated` content is still correctly rejected by the Mock-eligibility gate for all 18 promoted rows.
+
+Full automated test suite **2703/2703 passing** (2685 baseline + 18 new, zero regressions). `npx tsc --noEmit` clean. ESLint at the established baseline — **81 problems (62 errors, 19 warnings), unchanged**. Copy Quality Guard **PASS — 0 violations across 262 files**. Migration SQL Guard **PASS — 160 migration files, all quote-balanced, all RAISE statements arithmetic-correct**. Production build succeeds, all 56 static pages generated.
+
+**Files changed:** `supabase/migrations/160_english_content_foundation_increment001_independent_validation.sql` (new, NOT APPLIED), `tests/supabase/englishContentFoundationIncrement001IndependentValidation.test.ts` (new), `ALI_DECISION_LOG.md`. No application code (`lib/`, `app/`) was changed by this decision — a pure content-eligibility migration and its own tests.
+
+**Decision number:** 236.
+
+**Commit SHA:** recorded after commit (see repository history immediately following this entry).
+
+**Evidence tiers, explicit:** LIVE FOUNDER EVIDENCE (Level 1) — the 5 review closures and 4 amendment-verification resolutions, directly reported by the Founder from the production review interface. SOURCE-READ EVIDENCE — `deriveBatchReviewStatus`'s own exact `review_type` filtering (re-read this session, proving structural isolation between an original review and its amendment-verification row), migrations 102/103's own real SQL (re-read as this decision's own direct precedent), and `RELEASE_1_ASSESSMENT_ELIGIBILITY_MODEL.md`'s own Practice/Mock track definitions. AUTOMATED TEST EVIDENCE — 18 new tests plus the full, otherwise-unmodified 2703-test suite. No SIMULATION evidence applies. No LIVE PRODUCTION EVIDENCE beyond what the Founder directly supplied applies — this environment did not attempt to reconnect to production Supabase, consistent with Decision 234's own standing finding.
+
+## M. EXACT FOUNDER MIGRATION/APPLICATION STEP
+
+Apply `supabase/migrations/160_english_content_foundation_increment001_independent_validation.sql` via the Supabase Dashboard SQL Editor, after migrations 157/158/159 (already applied, per this task's own directive). Before and after, the Founder may run the read-only verification query embedded in migration 160's own header:
+```sql
+select id, eligibility_status from public.ali_passage_bank
+  where id in ('eng-inc001-understudy', 'eng-inc001-bee-navigation') order by id;
+
+select id, learning_unit_id, eligibility_status from public.ali_question_bank
+  where learning_unit_id in ('eng-inc001-understudy', 'eng-inc001-bee-navigation')
+     or id in ('mock-writing-newplace-01', 'mock-writing-mistakelearned-01', 'mock-writing-screentime-01')
+  order by learning_unit_id, id;
+```
+Expected after application: all 18 rows show `eligibility_status = 'independently_validated'`; every other column unchanged. No further step is required to close Increment 001's own review/certification gate — `mock_eligible` promotion, English Mock 1 assembly, and Increment 002 all remain separate, later, Founder-authorised decisions.
+
+**Implications:** Decisions 1-235 all stand, none reversed or rewritten. Decision 235's own governance fix, amendment register, and amendment-verification architecture are all confirmed working as designed — this decision is their direct, successful conclusion, not a correction of anything found wrong in them.
+
+**Final verdict: A — INCREMENT 001 REVIEW CYCLE CLOSED; CERTIFICATION MIGRATION READY.** All 5 independent reviews and all 4 required amendment verifications are complete, per Level 1 Founder-supplied evidence this session independently cross-checked against repository architecture where architecture could validate it. The canonical certification state (`independently_validated`, matching this codebase's only prior English precedent) is unambiguous. A fail-closed, idempotent, atomic certification migration is prepared and fully tested, but **UNAPPLIED**. No Practice activation, no Mock-eligible promotion, no English Mock 1, and no Increment 002 have occurred.
+
+---
