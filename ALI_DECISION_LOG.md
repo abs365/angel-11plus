@@ -11001,3 +11001,101 @@ The migration's own post-write `DO` block should raise the `NOTICE`: *"Migration
 **Final verdict: DECISION 241 READY FOR FOUNDER APPLICATION.** Standard v1.0 is adopted and discoverable; The Loose Connection's naming and Q2(d) vocabulary corrections are complete, dependency-audited, fail-closed, fully tested, and verified; no Decision 240 P1 finding remains unresolved; the P2 register is explicitly preserved, not silently dropped. Migration 164 remains unapplied; no review decision was submitted; no content is certified.
 
 ---
+
+### Decision 242 — INDEPENDENT VALIDATION CERTIFICATION: English Content Foundation Increment 002's review cycle closed on Founder-reported evidence; independent-validation certification migration prepared (migration 165, UNAPPLIED) promoting 2 passages + 22 attached question rows (15 numbered comprehension experiences) from authentic_assessment_candidate to independently_validated ONLY — no practice_eligible, no mock_eligible, no Mock, no Increment 003.
+
+**Reconciliation:** `git status`/`git log` confirmed the working tree clean on `main` @ `b26bd9e` (Decision 241) before this session's work began. Migrations 161-164 accepted as Founder-confirmed applied, matching this task's own directive and this project's own established convention (migration 160/163/164's own headers all accept equivalent Founder reports as Level 1 evidence rather than requiring an independent database read).
+
+## A. LIVE REVIEW EVIDENCE INTERPRETATION
+
+The directive's own "LIVE FOUNDER EVIDENCE CONFIRMS" section (2 of 2 passages reviewed, both `approved`) is accepted as Level 1 evidence under this project's own established precedent — the SAME evidentiary standard migration 160's header used for Decision 236's five review closures, and migration 164 used for Decision 241's rename instruction: a Founder direct report from the authenticated production Educational Review interface, which bypasses the RLS this session's own anon-key access cannot. This session independently attempted a live re-verification beyond what any prior Decision in this chain attempted: a real, network-reachable query (via `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `scripts/check-family-review-raw.mjs`'s own established pattern) against `ali_family_review` for `family_id in (eng-inc002-roboticsfinal, eng-inc002-sailandsteam)`, against `ali_passage_bank` for both target passage IDs, and against `ali_question_bank` for both `learning_unit_id`s — all three returned empty arrays (HTTP 200). This is **not evidence the rows are absent**: a control probe this session ran in parallel confirms `ali_passage_bank` is completely invisible to the anon key even with no filter at all (0 rows returned unconditionally), and `ali_question_bank` is visible to the anon key only for `eligibility_status = 'practice_eligible'` rows (3 real unrelated rows returned on an unfiltered probe) — Increment 002's rows are `authentic_assessment_candidate`, a status this session's own coverage-matrix re-run independently confirmed returns `0` via `count=exact` against the WHOLE table (314 total rows), not merely this Increment's own rows. This reconfirms, with a live 2026-08-29 data point rather than a cited assumption, the same RLS-opacity limitation Decision 234 first documented — network reachability itself has changed since the 2026-07 sandbox-network-block memory, but the RLS boundary has not. **The Founder's own review report remains Level 1 by this project's established convention, not independently re-verified by this session's own database access** — disclosed plainly, not silently upgraded to a stronger evidentiary tier.
+
+## B. CERTIFICATION SCOPE
+
+`independently_validated` — the SAME transition and the SAME assertion-and-refuse pattern migrations 102/103/160 already established. Both passages and their complete attached question sets are promoted atomically (questions first, then the passage, per family), mirroring migration 160's own two-block-per-family shape exactly, extended to 2 families instead of migration 160's 2 passage families + 1 combined Writing block (Increment 002 has no Writing content). No new eligibility state is invented. `practice_eligible`/`mock_eligible` are both absent from migration 165's own SET clauses (test-proven).
+
+## C. EXACT PASSAGE IDS
+
+`eng-inc002-roboticsfinal` ("The Loose Connection"), `eng-inc002-sailandsteam` ("Crossing the Atlantic: Sail and Steam") — both independently re-derived this session directly from migration 161's own real INSERT statements (`supabase/migrations/161_english_content_foundation_increment002_comprehension.sql:312`, `:350`), not from memory or this task's own directive text.
+
+## D. EXACT ATTACHED-QUESTION IDS/COUNTS
+
+**The Loose Connection — 12 physical rows, 8 numbered experiences:** `eng-inc002-roboticsfinal-q01` (1 mark), `q02b`/`q02c`/`q02d`/`q02e` (1 mark each, Q2 = 4 marks, migration 163's grouped-subpart replacement of the original pooled `q02` row), `q03` (4), `q04` (1), `q05` (2), `q06` (4), `q07a`/`q07b` (2 marks each, Q7 = 4 marks, QT-RC-07 grouped pair), `q08` (2). Total 22 marks (independently summed this session from migration 161/163's own real `"marks"` fields, matching the directive's own stated total).
+
+**Crossing the Atlantic: Sail and Steam — 10 physical rows, 7 numbered experiences:** `eng-inc002-sailandsteam-q01` (1), `q02` (1), `q03` (4, redesigned per migration 161's own header for genuine cross-paragraph synthesis — evidence from paragraphs 1 and 3 about each mode of travel), `q04` (1), `q05b`/`q05c`/`q05d`/`q05e` (1 mark each, Q5 = 4 marks, grouped vocabulary subparts), `q06` (4), `q07` (2, TIER5_NAMED_COMPONENT_PLUS_EXPLANATION — the open interpretive marking boundary, matching Loose Connection Q8's own architecture). Total 17 marks (independently summed this session; the directive did not state an expected Sail and Steam total).
+
+Both ID lists and every marks value above are re-derived directly from migration 161/163's own real SQL text (`grep`/`Read`, this session), not copied from this task's own directive or from any prior memory summary.
+
+## E. MIGRATION NUMBER/FILE
+
+`supabase/migrations/165_english_content_foundation_increment002_independent_validation.sql` (new, **UNAPPLIED**). Confirmed 164 is the current highest migration on disk (`ls supabase/migrations/` this session) before authoring 165.
+
+## F. PRECONDITIONS
+
+Four independent, fail-closed, idempotent `do $$` blocks (Loose Connection questions scoped by `learning_unit_id = 'eng-inc002-roboticsfinal'`, Loose Connection passage scoped by `id`, Sail and Steam questions scoped by `learning_unit_id = 'eng-inc002-sailandsteam'`, Sail and Steam passage scoped by `id`) — each requires the exact expected count of live `authentic_assessment_candidate`/`active` rows before promoting; an already-`independently_validated` count matching exactly is a verified no-op; any other state raises an exception naming the actual counts observed, touching nothing. Structural content preconditions named in the directive's own Section 4 (grouped Q2/Q5 shape, marks, character presence) were verified this session directly against migration 161/163/164's own real SQL rather than assumed — see Section D above and Section H below. Migration 165 itself does not re-derive these structural facts at runtime (the same deliberate scope migration 160 established: eligibility_status/active preconditions only, not a content-shape re-validation) — they are proven once, here and by the new test file, against the migrations that actually created that shape.
+
+## G. MUTATION
+
+Two `update public.ali_question_bank set eligibility_status = 'independently_validated' where id = any(...) and eligibility_status = 'authentic_assessment_candidate'` statements (one per family) and two equivalent `update public.ali_passage_bank` statements (one per passage) — 4 SET statements total, test-proven to be the only SETs in the file, and `eligibility_status` proven to be the only column any of them ever sets. No `insert`/`delete` anywhere. No mention of `ali_family_review` or `ali_mock_form` anywhere in the file (test-proven), matching migration 160/163's own established convention exactly.
+
+## H. POST-WRITE ASSERTIONS
+
+Migration 165 follows migration 160's own established shape: each block's own precondition IS its post-write guarantee (an exact-count `UPDATE ... WHERE` clause makes partial promotion structurally impossible, not merely checked-and-hoped), and the file's own trailing comment provides three read-only verification queries — passage `eligibility_status` for both IDs, full question-row `eligibility_status`/grouping detail for both `learning_unit_id`s, and a `sum((prompt ->> 'marks')::int)` check per family (expected 22 and 17) — for the Founder to run before and after applying. Unlike migration 164 (which mutates content and therefore needs its own in-transaction `raise exception` invariant re-checks), migration 165 only ever moves `eligibility_status`, so its own exact-count preconditions already are the complete safety proof; no separate post-write `DO` block was added, matching migration 160's own precedent, not migration 164's (a different migration shape for a different kind of mutation).
+
+## I. PRACTICE/MOCK ISOLATION PROOF
+
+Test-proven directly against migration 165's own real SQL: `mock_eligible`/`practice_eligible` never appear; `ali_mock_form`/`ali_family_review` never appear; the only column ever `SET` anywhere is `eligibility_status`; `prompt`/`original_text`/`provenance`/`family_id`/`learning_unit_id`/`question_group_id`/`content_version`/`active`/`review_state` are all proven never `SET`. Additionally, `isMockEligibleCandidate()` (the real, unmodified production gate function) is proven, in the new test file, to still reject every one of the 22 promoted question rows once their `eligibilityStatus` becomes `independently_validated` — the same proof migration 160's own test file established for Increment 001.
+
+## J. REVIEW-HISTORY PRESERVATION
+
+`ali_family_review` is never referenced anywhere in migration 165's real SQL (test-proven) — the same deliberate, disclosed non-interaction migration 160's own header establishes as a positive safety property, not an omission, for the same reason: that table has no unique-per-target invariant a runtime precondition could safely rely on, and its own review rows are append-only and untouched by this or any prior certification migration in this codebase.
+
+## K. TEST RESULTS
+
+New test file `tests/supabase/englishContentFoundationIncrement002IndependentValidation.test.ts` (22 tests), mirroring `englishContentFoundationIncrement001IndependentValidation.test.ts`'s own established discipline exactly, extended with: an explicit proof that the Loose Connection allow-list uses the post-migration-163 grouped Q2 shape (old pooled `q02` absent, `q02b`-`q02e` present) and that the Sail and Steam allow-list uses the grouped Q5 shape (`q05` absent, `q05b`-`q05e` present); a check that the migration's own header discloses this session's own live RLS re-test, not merely a cited assumption; and independent marks-total proofs (22 for Loose Connection, 17 for Sail and Steam, each summed from a hand-typed `marksById` map cross-checked against Section D above, not read back from the migration text itself, to avoid a test that could not catch a wrong marks value in the SQL).
+
+Full automated test suite: **2837/2837 passing** (2815 baseline + 22 new, zero regressions). `npx tsc --noEmit`: clean. ESLint: baseline unchanged — **83 problems (62 errors, 21 warnings)**, none in either new file (confirmed by running ESLint against the new test file alone — 0 problems — and by `git status` showing only 2 new untracked files, nothing modified). Copy Quality Guard: **PASS — 0 violations across 262 files**. Migration SQL Guard: **PASS — 165 migration files, all quote-balanced, all RAISE statements arithmetic-correct**. Production build: succeeds, all routes render.
+
+## L. CAPACITY RECONCILIATION
+
+**CERTIFIED BEFORE INCREMENT 002** (Decision 236 figures, accepted Founder-confirmed, not independently re-queryable this session per Section A above): 3 independently_validated passages; 28 comprehension experiences; 6 Writing prompts.
+
+**NEWLY REVIEW-COMPLETE BUT NOT YET CERTIFIED** (migration 165, prepared, not applied): 2 passages (The Loose Connection, Crossing the Atlantic: Sail and Steam); **15 numbered comprehension experiences** (8 + 7 — grouped Q2/Q5/Q7 subparts each count as ONE numbered experience, not one per subpart, per this task's own explicit "do not count grouped vocabulary subparts as separate numbered questions" instruction); **22 physical question rows** (12 + 10 — the number that differs from the numbered-experience count specifically because of the 3 grouped families: Q2 four-subpart, Q7 two-subpart on Loose Connection; Q5 four-subpart on Sail and Steam).
+
+**PROJECTED AFTER PROPOSED CERTIFICATION** (once migration 165 is applied): **5 independently validated passages; 43 numbered comprehension experiences (28 + 15); 6 Writing prompts (unchanged — Increment 002 authored no Writing content).**
+
+**Physical question-row count where grouped questions make this different:** stated above per family; combined estate-wide physical-row total is not restated here since Decision 236's own baseline was reported in numbered-experience terms only, not physical-row terms, and this session did not re-derive Increment 001's own physical-row count from scratch (out of this Decision's own scope — Increment 001 is untouched by migration 165 and re-confirmed unchanged, Section below).
+
+**QT-RC family coverage:** QT-RC-07 (Multi-Entity Comparative Attribute Extraction) — the single named, disclosed zero-coverage gap Decision 236 carried forward — receives its first-ever coverage in this codebase (Loose Connection Q7a/Q7b), once certified. QT-RC-08 (List-N-Items Extraction) remains explicitly, deliberately deferred (migration 161's own header: no validation tier in `lib/learningEngine/englishAnswerValidation.ts` genuinely fits its shape) — not attempted by Increment 002, not resolved by this certification.
+
+**Remaining passage-family singleton risk:** both new passages remain singleton families (zero sibling variants), unchanged from Decision 236's own disclosed structural anti-memorisation ceiling — every one of the (projected) 5 certified passages is still a one-shot Mock reserve with no variant depth.
+
+**Remaining English foundation gaps** (re-confirmed unchanged by this Decision, not newly discovered): passage count still short of Decision 227's own HEALTHY target even at 5; QT-WC-01b (picture-stimulus Writing) still blocked on a wholly unbuilt image-asset pipeline, per Section M below; Writing prompt count (6) and shape diversity unchanged since Decision 236, since Increment 002 never touched Writing.
+
+## M. QT-WC-01b DEPENDENCY
+
+Deliberately not solved by this Decision, per the directive's own explicit instruction. Recorded accurately: QT-WC-01b (picture-stimulus Writing) requires a genuine, separate architecture increment covering an image pipeline, image storage, rights/licensing for any real stimulus image, accessibility (alt-text/description for a non-visual learner), and review-surface rendering support for an image-bearing prompt — none of which exists anywhere in this codebase today (re-confirmed unchanged since migration 098/153/161's own identical prior disclosures). Not attempted, not scoped further, not begun.
+
+## N. HEAD/ORIGIN/MAIN/TREE STATE
+
+Before this session's work: `main` @ `b26bd9e` (Decision 241), matching `origin/main`, clean working tree. After this session's work (pending the user's own commit decision): 3 new/changed files — `supabase/migrations/165_english_content_foundation_increment002_independent_validation.sql` (new, UNAPPLIED), `tests/supabase/englishContentFoundationIncrement002IndependentValidation.test.ts` (new), `ALI_DECISION_LOG.md` (this entry appended) — matching the exact file-shape precedent of the migration 160/163/164 commits. No application code (`lib/`, `app/`) changed. Not pushed to `origin`.
+
+## O. EXACT FOUNDER APPLICATION INSTRUCTION
+
+Apply `supabase/migrations/165_english_content_foundation_increment002_independent_validation.sql` via the Supabase Dashboard SQL Editor, after migrations 161-164 (Founder-confirmed already applied). No other ordering dependency. Before and after, the three read-only verification queries embedded in the migration's own trailing comment may be run.
+
+## P. EXPECTED LIVE VERIFICATION
+
+Re-querying `ali_passage_bank` for `eng-inc002-roboticsfinal`/`eng-inc002-sailandsteam` should show `eligibility_status = 'independently_validated'` for both, all other columns unchanged. Re-querying `ali_question_bank` for both `learning_unit_id`s should show all 22 rows at `eligibility_status = 'independently_validated'`, with `question_group_id`/`subpart_label` grouping (`q02b`-`q02e`, `q07a`-`q07b`, `q05b`-`q05e`) intact and unchanged. The two `sum((prompt ->> 'marks')::int)` verification queries should return 22 (Loose Connection) and 17 (Sail and Steam). No `practice_eligible`/`mock_eligible` row should exist anywhere in either family. No `ali_mock_form` row should reference either passage. `ali_family_review` should show exactly the same 2 `approved` rows (plus any prior `pending_independent_review` history) it showed before applying — untouched by this migration.
+
+**Decision number:** 242.
+
+**Commit SHA:** recorded after commit (see repository history immediately following this entry).
+
+**Evidence tiers, explicit:** LIVE FOUNDER EVIDENCE (Level 1, per this project's own established convention) — the two review closures (`approved`/`approved`), directly reported by the Founder from the production Educational Review interface, and the report that migrations 161-164 are already applied. SOURCE-READ EVIDENCE — every passage ID, question ID, marks value, and structural precondition in Sections C/D above independently re-derived this session directly from migration 161/163/164's own real SQL text, not assumed from this task's own directive or from any prior memory summary. LIVE RE-VERIFICATION ATTEMPT (new this session, disclosed as inconclusive, not upgraded to Level 1) — a real anon-key query against `ali_family_review`/`ali_passage_bank`/`ali_question_bank`, returning empty results that this session's own parallel RLS-visibility control probe confirms are consistent with the established RLS-opacity limitation (Decision 234), not evidence either for or against the Founder's own reported state. AUTOMATED TEST EVIDENCE — 22 new tests plus the full, otherwise-unmodified 2815-test suite (2837 total). No SIMULATION evidence applies. No LIVE PRODUCTION EVIDENCE beyond what the Founder directly supplied applies — migration 165 remains unapplied; nothing in this decision touched production.
+
+**Implications:** Decisions 1-241 all stand, none reversed or rewritten. Decision 241's own naming/vocabulary remediation and Decision 239's own grouped-Q2 correction are both confirmed, structurally, by this decision's own precondition design (the 12-row Loose Connection allow-list is exactly the post-163/164 shape) — not re-litigated or reopened.
+
+**Final verdict: INCREMENT 002 CERTIFICATION READY FOR FOUNDER APPLICATION.**
+
+---
