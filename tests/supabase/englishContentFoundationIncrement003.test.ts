@@ -121,9 +121,10 @@ test("5. Passage C is a genuine sibling of the certified Bee Navigation passage:
   assert.match(passageCText, /salmon/i);
   assert.doesNotMatch(passageCText, /\bbee\b/i, "Passage C must not reference bees -- fully distinct phenomenon");
   assert.doesNotMatch(passageCText, /waggle dance|von frisch/i, "Passage C must not reuse any bee-passage-specific fact or term");
-  // sequential-handover structure (genuinely different reasoning route from the bees' parallel-methods structure)
-  assert.match(passageCText, /handing over from one system to the next/i);
-  assert.match(passageCText, /Neither sense alone could get a salmon all the way home/);
+  // sequential-handover structure (genuinely different reasoning route from the bees' parallel-methods structure),
+  // amended by Decision 246 to hedge the mechanism rather than assert a clean switch (see Section 22 below)
+  assert.match(passageCText, /relies mainly on different senses at different stages/i);
+  assert.match(passageCText, /On its own, neither sense seems able to explain the whole journey/);
 });
 
 // === 6. QT-RC-07 coverage ====================================================
@@ -288,4 +289,91 @@ test("Writing prompt candidate-only: never practice_eligible or mock_eligible, a
   assert.doesNotMatch(executable167, /'practice_eligible'|'mock_eligible'/);
   assert.match(executable167, /on conflict \(id\) do nothing;/);
   assert.match(sql167, /'authentic_assessment_candidate', 1, true,/);
+});
+
+// === Decision 246 — Founder review remediation regression tests ============
+
+test("19. no accepted-answer entry anywhere in this migration contains raw slash shorthand", () => {
+  for (const p of questionPrompts) {
+    const allAnswers = [...(p.acceptedAnswers ?? []), ...(p.quotationRequired ?? []), ...(p.orderedAnswer ?? [])];
+    for (const a of allAnswers) {
+      assert.doesNotMatch(a, /\//, `${p.id} accepted-answer entry "${a}" must not contain a raw "/" (Decision 246 §3)`);
+    }
+  }
+});
+
+test("20. Pepper's Breakfast Q4c no longer accepts 'looking puzzled' as a synonym for 'frowning', and Q4e no longer accepts 'calm' for 'unbothered'", () => {
+  const q4c = questionPrompts.find((p) => p.id === "eng-inc003-peppersbreakfast-q04c");
+  const q4e = questionPrompts.find((p) => p.id === "eng-inc003-peppersbreakfast-q04e");
+  assert.ok(q4c && q4e);
+  assert.ok(!q4c!.acceptedAnswers!.includes("looking puzzled"), "Q4c must not accept 'looking puzzled' (Decision 246 §1)");
+  assert.ok(q4c!.acceptedAnswers!.length >= 1, "Q4c must retain at least one defensible synonym");
+  assert.ok(!q4e!.acceptedAnswers!.includes("calm"), "Q4e must not accept 'calm' (Decision 246 §1, judged over-broad in context)");
+  assert.ok(q4e!.acceptedAnswers!.length >= 1, "Q4e must retain at least one defensible synonym");
+});
+
+test("21. question-stem variation is a genuine per-instance judgement, not a mechanical find-and-replace: some 'According to <specific source>' stems are kept, some generic 'According to the passage' stems are reworded", () => {
+  const accordingToCount = questionPrompts.filter((p) => /^According to/i.test(p.question)).length;
+  assert.ok(accordingToCount < 7, `stem-repetition count should drop below Decision 245's flagged 7/21 (found ${accordingToCount})`);
+  assert.ok(accordingToCount > 0, "at least one specific-source attribution stem (e.g. 'According to Mrs Novak') should be retained, not mechanically stripped everywhere");
+  // specific-source attributions retained (precision-improving, per Decision 246 §2 header)
+  assert.match(sql166, /According to Mrs Novak/);
+  assert.match(sql166, /According to the care card/);
+  assert.match(sql166, /According to the noticeboard history sheet/);
+  // generic low-information STEM-OPENING "According to the passage" reworded away (Decision 245's
+  // finding I counted stem-openers specifically; the incidental mid-sentence "...in the order they
+  // happen, according to the passage" phrasing on the three sequencing questions is a different,
+  // out-of-scope usage per Decision 246 §2's own "do not mechanically replace every occurrence")
+  const stemOpeners = questionPrompts.filter((p) => /^According to the passage/i.test(p.question));
+  assert.equal(stemOpeners.length, 0, "no question should still OPEN with the generic 'According to the passage' stem");
+});
+
+test("22. Salmon passage's scientific wording is amended per Decision 246 §5: categorical over-claims softened, dilution/precision-limit claims left intact", () => {
+  assert.doesNotMatch(passageCText, /takes over\./, "the absolute 'takes over' claim must be replaced with a hedged equivalent");
+  assert.doesNotMatch(passageCText, /pinpoint a single stream perfectly/, "'perfectly' must be removed as an unsupported absolute claim");
+  assert.match(passageCText, /is thought to become important/);
+  assert.match(passageCText, /still being studied/);
+  assert.match(passageCText, /around the point where they first enter the sea/);
+  // claims independently corroborated by fetched sources this session remain unchanged
+  assert.match(passageCText, /not precise enough to pinpoint one particular stream/);
+  assert.match(passageCText, /too diluted in the vast ocean to follow/);
+});
+
+test("23. every Salmon question/answer is internally consistent with the amended passage: quotations are exact substrings, vocabulary targets still present, chronology unambiguous", () => {
+  const salmonQuestions = questionPrompts.filter((p) => p.id.startsWith("eng-inc003-salmonnavigation"));
+  for (const p of salmonQuestions) {
+    if (p.quotationRequired) {
+      for (const q of p.quotationRequired) {
+        assert.ok(passageCText.includes(q), `${p.id}'s required quotation "${q}" must be an exact substring of the amended Salmon passage`);
+      }
+    }
+  }
+  for (const word of ["remarkable", "reliable", "distinctive", "pinpoint", "diluted"]) {
+    assert.ok(passageCText.includes(word), `synonym target word "${word}" must still appear verbatim in the amended passage`);
+  }
+  const q6 = questionPrompts.find((p) => p.id === "eng-inc003-salmonnavigation-q06");
+  assert.ok(q6 && q6.question.includes("On its own, neither sense seems able to explain the whole journey"), "Q6's quoted sentence must match the amended passage exactly");
+});
+
+test("24. Founder review-status separation: migration header records all four distinct Decision 245 outcomes without collapsing approved_with_amendment/requires_revalidation into approved", () => {
+  const normalized = sql166
+    .split("\n")
+    .map((line) => line.replace(/^--\s?/, ""))
+    .join(" ")
+    .replace(/\s+/g, " ");
+  assert.match(normalized, /Pepper's Breakfast = approved_with_amendment/);
+  assert.match(normalized, /Compass Rose Challenge = approved_with_amendment/);
+  assert.match(normalized, /Way Home = requires_revalidation/);
+  assert.match(normalized, /An Invented Place \(migration 167\) = approved/);
+  assert.match(normalized, /Salmon remains requires_revalidation regardless of how the fresh factual revalidation/);
+  assert.doesNotMatch(normalized, /Salmon[\s\S]{0,80}= independently_validated/);
+});
+
+test("25. Practice/Mock isolation still holds after remediation: no eligibility_status other than authentic_assessment_candidate anywhere, Compass Rose still excluded from Practice", () => {
+  const eligibilityValues = [...sql166.matchAll(/eligibility_status\s*=\s*'(\w+)'/g), ...sql166.matchAll(/'(authentic_assessment_candidate|practice_eligible|independently_validated|mock_eligible)', (true|false), '[\w-]+', null\)/g)]
+    .map((m) => m[1])
+    .filter((v) => ["authentic_assessment_candidate", "practice_eligible", "independently_validated", "mock_eligible"].includes(v));
+  assert.ok(eligibilityValues.length > 0);
+  for (const v of eligibilityValues) assert.equal(v, "authentic_assessment_candidate");
+  assert.match(sql166, /PASSAGE B STRUCTURAL RESERVATION/);
 });

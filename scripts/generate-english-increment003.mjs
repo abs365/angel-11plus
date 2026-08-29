@@ -70,7 +70,7 @@ const qA = [
     n: 2, id: `${passageA_id}-q02`, skill: "QT-RC-01", difficulty: "easy", type: "short-answer", time: 45, marks: 1,
     question: "According to the care card, what should Jack check about the water bottle every morning?",
     modelAnswer: "That the little ball inside isn't stuck, so it moves freely.",
-    acceptedAnswers: ["that the little ball inside isn't stuck", "that the ball inside moves freely", "the ball isn't blocked/stuck"],
+    acceptedAnswers: ["that the little ball inside isn't stuck", "that the ball inside moves freely", "the ball inside isn't blocked"],
     misconception: "Answering with a general 'check the water bottle is full' rather than the specific mechanism (the ball inside) the card actually names.",
     transfer: "ROUTINE",
   },
@@ -89,9 +89,9 @@ const qA = [
     example: { label: "(a)", word: "laminated", answer: "covered in a thin layer of plastic" },
     subparts: [
       { label: "(b)", word: "completely", accepted: ["totally", "entirely", "fully"] },
-      { label: "(c)", word: "frowning", accepted: ["scowling", "looking puzzled", "grimacing"] },
-      { label: "(d)", word: "relieved", accepted: ["glad", "reassured", "reassured/glad it wasn't serious"] },
-      { label: "(e)", word: "unbothered", accepted: ["unconcerned", "calm", "not worried"] },
+      { label: "(c)", word: "frowning", accepted: ["scowling", "grimacing"] },
+      { label: "(d)", word: "relieved", accepted: ["glad", "reassured", "glad it wasn't serious"] },
+      { label: "(e)", word: "unbothered", accepted: ["unconcerned", "not worried"] },
     ],
     misconception: "Guessing a synonym from a word's sound or a loosely related idea rather than the meaning the word actually carries in its specific sentence context.",
     transfer: "NEAR_TRANSFER",
@@ -155,7 +155,7 @@ const passageB_words = passageB_text.split(/\s+/).filter(Boolean).length;
 const qB = [
   {
     n: 1, id: `${passageB_id}-q01`, skill: "QT-RC-01", difficulty: "medium", type: "short-answer", time: 50, marks: 1,
-    question: "According to the passage, how many minutes did the four friends have in total to reach the hidden marker?",
+    question: "How many minutes in total did the four friends have to reach the hidden marker?",
     modelAnswer: "Twenty minutes.",
     acceptedAnswers: ["twenty minutes", "20 minutes"],
     misconception: "Confusing the ten-minutes-alone rule with the total twenty-minute time limit for the whole challenge.",
@@ -230,22 +230,22 @@ const passageC_id = "eng-inc003-salmonnavigation";
 const passageC_title = "How Salmon Find Their Way Home";
 const passageC_text = `A single salmon may begin its life in a small stream far from the sea, then travel thousands of miles out into the open ocean to feed and grow -- before turning around, years later, and finding its way back to that exact same stream to lay its own eggs. For a fish with no map and no memory of ever having made the outward journey consciously, this is one of the most remarkable feats of natural navigation scientists have studied.
 
-Unlike some animals, which use several senses at once throughout a journey, a salmon appears to rely on different senses at different stages, handing over from one system to the next as it gets closer to home.
+Unlike some animals, which use several senses at once throughout a journey, scientists believe a salmon relies mainly on different senses at different stages of its journey, with one sense becoming more important than the other as it gets closer to home.
 
-Out in the open ocean, hundreds or even thousands of miles from any coastline, a salmon has no smell, no landmark, and no sun-compass reliable enough to guide it home across such vast, featureless water. Instead, scientists have found that young salmon imprint on the Earth's magnetic field at the exact point where they first enter the sea, remembering its particular strength and angle the way a person might remember a specific address. Adult salmon returning years later appear to use this remembered magnetic address as a kind of map, steering themselves back toward the right general region of ocean, even after years of travelling through open water with nothing else to guide them.
+Out in the open ocean, hundreds or even thousands of miles from any coastline, a salmon has no smell, no landmark, and no sun-compass reliable enough to guide it home across such vast, featureless water. Instead, scientists have found that young salmon imprint on the Earth's magnetic field around the point where they first enter the sea, remembering its particular strength and angle the way a person might remember a specific address. Adult salmon returning years later appear to use this remembered magnetic address as a kind of map, steering themselves back toward the right general region of ocean, even after years of travelling through open water with nothing else to guide them.
 
-A magnetic sense this broad, however, is not precise enough to pinpoint one particular stream once a salmon finally reaches the coast. This is where a second, completely different sense takes over. While still swimming in its home stream as a young fish, a salmon imprints on the stream's own distinctive chemical scent -- a unique mixture that comes from the local soil, plants and rock the water has passed over. Scientists Arthur Hasler and Warren Wisby first proposed this idea in 1951, and later research confirmed that returning adult salmon can detect and follow this remembered scent through a river system, choosing the correct tributary at each fork purely by smell, even among many similar-looking waterways.
+A magnetic sense this broad, however, is not precise enough to pinpoint one particular stream once a salmon finally reaches the coast. This is where a second, completely different sense is thought to become important. While still swimming in its home stream as a young fish, a salmon imprints on the stream's own distinctive chemical scent -- a unique mixture that comes from the local soil, plants and rock the water has passed over. Scientists Arthur Hasler and Warren Wisby first proposed this idea in 1951, and later research confirmed that returning adult salmon can detect and follow this remembered scent through a river system, choosing the correct tributary at each fork purely by smell, even among many similar-looking waterways.
 
-What makes this two-part system so effective is exactly where each half stops being useful. The magnetic sense works over enormous distances but cannot pinpoint a single stream; the scent sense can pinpoint a single stream perfectly but is too faint to detect from far out at sea, where the smell has long since become too diluted in the vast ocean to follow. Neither sense alone could get a salmon all the way home -- it is only by using the magnetic sense first, then handing over to the scent sense once close enough to detect it, that the whole journey becomes possible.
+Scientists think this two-part system is what makes salmon navigation so effective, though exactly how the two senses work together is still being studied. The magnetic sense seems to work well over enormous distances but cannot pinpoint a single stream; the scent sense seems able to guide a salmon to the exact stream once it is close enough, but is too faint to detect from far out at sea, where the smell has long since become too diluted in the vast ocean to follow. On its own, neither sense seems able to explain the whole journey -- researchers think a salmon relies mainly on its magnetic sense out in the open ocean, and mainly on its sense of smell once close to home, although exactly how, and how completely, one sense takes over from the other is still being studied.
 
-Researchers continue to study exactly how a salmon's brain manages this handover between two entirely different senses. What is already clear is that a creature with no map, no memory of its outward journey, and no way to ask for directions is nonetheless capable of finding one precise stream among thousands, guided first by the Earth's own magnetism and finally by the water it once called home.`;
+Researchers continue to study exactly how a salmon's brain manages this handover between two entirely different senses. What is already clear is that a creature with no map, no memory of its outward journey, and no way to ask for directions is nonetheless capable of finding its way back to one precise stream among thousands, guided first by the Earth's own magnetism and finally by the water it once called home.`;
 
 const passageC_words = passageC_text.split(/\s+/).filter(Boolean).length;
 
 const qC = [
   {
     n: 1, id: `${passageC_id}-q01`, skill: "QT-RC-01", difficulty: "easy", type: "short-answer", time: 45, marks: 1,
-    question: "According to the passage, in what year did scientists first propose that salmon imprint on their home stream's scent?",
+    question: "In what year did scientists first propose that salmon imprint on their home stream's scent?",
     modelAnswer: "1951.",
     acceptedAnswers: ["1951"],
     misconception: "Confusing the 1951 scent-imprinting proposal with the unspecified, undated point at which the magnetic-sense research is described.",
@@ -253,7 +253,7 @@ const qC = [
   },
   {
     n: 2, id: `${passageC_id}-q02`, skill: "QT-RC-01", difficulty: "easy", type: "short-answer", time: 45, marks: 1,
-    question: "According to the passage, what do young salmon imprint on at the exact point where they first enter the sea?",
+    question: "What do young salmon imprint on around the point where they first enter the sea?",
     modelAnswer: "The Earth's magnetic field -- its particular strength and angle at that point.",
     acceptedAnswers: ["the earth's magnetic field", "the magnetic field's strength and angle at that point"],
     misconception: "Answering with the home stream's scent (which is imprinted earlier, while still in the stream) instead of the magnetic field imprinted at the point of entering the sea.",
@@ -262,8 +262,8 @@ const qC = [
   {
     n: 3, id: `${passageC_id}-q03`, skill: "QT-RC-02", difficulty: "medium", type: "short-answer", time: 100, marks: 3,
     question: "Is the magnetic sense alone enough to guide a salmon all the way back to its home stream? Tick Yes or No, then give two reasons for your answer, using evidence from the passage.",
-    modelAnswer: "No. The passage says the magnetic sense is 'not precise enough to pinpoint one particular stream', and that 'neither sense alone could get a salmon all the way home' -- both show the magnetic sense needs the scent sense to finish the journey.",
-    quotationRequired: ["not precise enough to pinpoint one particular stream", "Neither sense alone could get a salmon all the way home"],
+    modelAnswer: "No. The passage says the magnetic sense is 'not precise enough to pinpoint one particular stream', and that 'on its own, neither sense seems able to explain the whole journey' -- both show the magnetic sense needs the scent sense to finish the journey.",
+    quotationRequired: ["not precise enough to pinpoint one particular stream", "neither sense seems able to explain the whole journey"],
     tier: "TIER3_QUOTATION_PLUS_EXPLANATION",
     misconception: "Assuming that because the magnetic sense is described first and works over huge distances, it must be the more important or sufficient sense on its own.",
     transfer: "MIXED_TRANSFER",
@@ -284,12 +284,12 @@ const qC = [
   {
     n: 5, id: `${passageC_id}-q05`, skill: "QT-RC-06", difficulty: "hard", type: "short-answer", time: 130, marks: 4,
     question: "Put these four events in the order they really happen in a salmon's life, according to the passage's explanation (not necessarily the order the passage explains them in).",
-    modelAnswer: "1. A young salmon imprints on its home stream's scent. 2. The salmon imprints on the Earth's magnetic field as it enters the sea. 3. The adult salmon uses its magnetic sense to navigate the open ocean. 4. The salmon switches to following the remembered scent to find the exact stream.",
+    modelAnswer: "1. A young salmon imprints on its home stream's scent. 2. The salmon imprints on the Earth's magnetic field as it enters the sea. 3. The adult salmon relies mainly on its magnetic sense to navigate the open ocean. 4. The salmon relies mainly on the remembered scent to find the exact stream.",
     orderedAnswer: [
       "a young salmon imprints on its home stream's scent",
       "the salmon imprints on the earth's magnetic field as it enters the sea",
-      "the adult salmon uses its magnetic sense to navigate the open ocean",
-      "the salmon switches to following the remembered scent to find the exact stream",
+      "the adult salmon relies mainly on its magnetic sense to navigate the open ocean",
+      "the salmon relies mainly on the remembered scent to find the exact stream",
     ],
     tier: "TIER4_ORDERED_LIST",
     misconception: "Ordering the two senses by the order the passage explains them in (magnetic sense described before scent sense) rather than working out the real chronological order of a salmon's own life, in which stream-scent imprinting actually happens first.",
@@ -297,10 +297,10 @@ const qC = [
   },
   {
     n: 6, id: `${passageC_id}-q06`, skill: "QT-RC-10", difficulty: "hard", type: "short-answer", time: 120, marks: 2,
-    question: "The passage states plainly that 'Neither sense alone could get a salmon all the way home.' Why might the writer have included this sentence?",
+    question: "The passage states that, 'On its own, neither sense seems able to explain the whole journey.' Why might the writer have included this sentence?",
     acceptedAnswers: [
-      "it emphasises that both systems are equally necessary, not just backup options",
-      "it helps the reader understand why the handover between senses matters",
+      "it emphasises that both systems seem necessary, not just backup options",
+      "it helps the reader understand why the relationship between the two senses matters",
       "it summarises the two-stage explanation in one clear, memorable sentence",
       "it stops the reader from thinking one sense is more important than the other",
     ],
@@ -310,9 +310,9 @@ const qC = [
   },
   {
     n: 7, id: `${passageC_id}-q07`, skill: "QT-RC-01", difficulty: "easy", type: "short-answer", time: 45, marks: 1,
-    question: "According to the passage, what happens to a home stream's scent by the time a salmon is far out at sea?",
+    question: "What happens to a home stream's scent by the time a salmon is far out at sea?",
     modelAnswer: "It becomes too diluted in the vast ocean for the salmon to detect or follow.",
-    acceptedAnswers: ["it becomes too diluted to follow", "it is too faint/diluted to detect that far out"],
+    acceptedAnswers: ["it becomes too diluted to follow", "it becomes too faint to detect that far out"],
     misconception: "Confusing why the scent sense fails at long range (dilution) with why the magnetic sense fails at short range (lack of precision) -- the two are opposite limitations of the two different senses.",
     transfer: "ROUTINE",
   },

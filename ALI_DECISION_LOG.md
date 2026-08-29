@@ -11099,3 +11099,124 @@ Re-querying `ali_passage_bank` for `eng-inc002-roboticsfinal`/`eng-inc002-sailan
 **Final verdict: INCREMENT 002 CERTIFICATION READY FOR FOUNDER APPLICATION.**
 
 ---
+
+# DECISION 246 — ENGLISH CONTENT FOUNDATION INCREMENT 003, FOUNDER REVIEW REMEDIATION + SCIENTIFIC REVALIDATION
+
+**Disclosed gap:** Decisions 243 (coverage/depth analysis), 244 (Increment 003 authoring, migrations 166/167), and 245 (Founder inspection pack) were completed but never independently appended to this log by the sessions that produced them — they exist only as reports relayed to the Founder. Decision 244/245's real outcomes (migrations 166/167 prepared, unapplied; Decision 245's P0-free/one-P1 defect register) are treated here as established fact per those reports, not re-derived from scratch, consistent with [[feedback_verify_memory_claims_against_git_log]]'s standing discipline (re-checked directly against the real migration 166/167 SQL this session, not merely recalled).
+
+## A. FOUNDER DECISIONS RECORDED (exact vocabulary, per `family_review_decision` enum, migration 034)
+
+1. **Pepper's Breakfast — `approved_with_amendment`**
+2. **The Compass Rose Challenge — `approved_with_amendment`**
+3. **How Salmon Find Their Way Home — `requires_revalidation`**
+4. **An Invented Place — `approved`**
+
+Not collapsed into one another. No `public.ali_family_review` row is inserted for any of the four — submitting a formal independent review remains a separate, later, explicitly-authorised step (Decision 246 itself forbids it: "Do not submit independent reviews"). These four decisions are recorded here as documentation only.
+
+## B. PEPPER'S BREAKFAST AMENDMENT
+
+`"looking puzzled"` removed as an accepted synonym for `"frowning"` (Q4c) — contextual relationship judged insufficient for deterministic equivalence, exactly as directed. Remaining accepted answers (`"scowling"`, `"grimacing"`) re-inspected and retained as defensible literal synonyms. `"unbothered"` → `"calm"` (Q4e) removed on this session's own judgement (not merely because Decision 245 flagged it): `"calm"` describes a general temperament, not specifically "undisturbed by the events just described" the way `"unconcerned"`/`"not worried"` do in the actual sentence — judged over-broad in context, not deterministically defensible.
+
+## C. QUESTION-STEM CHANGES, BEFORE → AFTER
+
+Of 7 "According to..." stem-openers Decision 245 flagged (33% of 21 questions): **3 kept** (specific-source attribution judged precision-improving) — Pepper's Breakfast Q1 "According to Mrs Novak...", Q2 "According to the care card...", Compass Rose Q7 "According to the noticeboard history sheet...". **4 reworded** (generic, low-information "According to the passage" stem):
+- Compass Rose Q1: "According to the passage, how many minutes did the four friends have in total to reach the hidden marker?" → "How many minutes in total did the four friends have to reach the hidden marker?"
+- Salmon Q1: "According to the passage, in what year did scientists first propose..." → "In what year did scientists first propose..."
+- Salmon Q2: "According to the passage, what do young salmon imprint on at the exact point..." → "What do young salmon imprint on around the point..." (also carries the Section F magnetic-imprinting-precision amendment)
+- Salmon Q7: "According to the passage, what happens to a home stream's scent..." → "What happens to a home stream's scent..."
+
+A per-instance judgement, not a mechanical find-and-replace — competency, difficulty, evidence demand and marks unchanged in all 4 reworded questions. (The 3 sequencing questions' own incidental mid-sentence "...in the order they happen, according to the passage" phrasing was left alone — a different, out-of-scope usage, not one of the 7 flagged stem-openers.)
+
+## D. SLASH-SHORTHAND CORRECTIONS
+
+All 3 instances removed, replaced with explicit unambiguous entries:
+- Pepper Q2: `"the ball isn't blocked/stuck"` → `"the ball inside isn't blocked"`
+- Pepper Q4d: `"reassured/glad it wasn't serious"` → `"glad it wasn't serious"`
+- Salmon Q7: `"it is too faint/diluted to detect that far out"` → `"it becomes too faint to detect that far out"`
+
+Decision 245 already confirmed (via direct review of `lib/learningEngine/englishAnswerValidation.ts`) that the prior slash entries produced no wrong grade — this is a formatting-compliance fix, not a scoring-correctness fix. Re-run answer-validation tests (`tests/lib/learningEngine/englishAnswerValidation.test.ts` and the full suite) pass unchanged.
+
+## E. FRESH SALMON FACTUAL EVIDENCE REGISTER (live web search + direct source fetch this session, not snippets)
+
+| # | Claim area | Source(s) actually fetched/read | Type | Confidence | Direct/synthesis | Wording justified? |
+|---|---|---|---|---|---|---|
+| A/B/C | Magnetic-map imprinting near sea-entry; open-ocean navigation | Putman et al., "An Inherited Magnetic Map Guides Ocean Navigation in Juvenile Pacific Salmon" (peer-reviewed, located via search, content corroborated across multiple independent abstracts); related Current Biology/ScienceDirect geomagnetic-imprinting literature | Peer-reviewed | HIGH | Direct | Yes, unchanged |
+| D/E/F | Olfactory home-stream imprinting; Hasler & Wisby; 1951 | **Directly fetched** https://www.journals.uchicago.edu/doi/abs/10.1086/281672 — exact citation confirmed: Hasler, A.D. & Wisby, W.J., "Discrimination of Stream Odors by Fishes and Its Relation to Parent Stream Behavior," *The American Naturalist*, vol. 85, no. 823, 1 July 1951, pp. 223-238 | Peer-reviewed, primary | HIGH | Direct | Yes, unchanged |
+| G | Tributary-choice by smell | Same Hasler/Wisby lineage (classic olfactory-ablation homing experiments) | Peer-reviewed | HIGH | Direct | Yes, unchanged |
+| H | Olfactory cues too diluted far from coast | **Directly fetched** Alaska Dept. of Fish and Game, "How Salmon Find Their Way" — quoted verbatim: "As salmon get farther away from their home stream, the smells they have imprinted on are simply too diluted to detect" | Government fisheries | HIGH | Direct | Yes, unchanged |
+| I | Magnetic sense precision (broad region, not single stream) | **Directly fetched** Geophysical Institute (UAF), "Do Salmon Navigate by the Earth's Magnetic Field?" — describes magnetic field guiding to only "the general area," fine-scale selection left to smell | University research institution | HIGH (corroborated by 2 independent sources) | Direct | Yes, unchanged |
+| J | Sequential magnetic→olfactory "handover" | **Directly fetched** Eos.org/AGU, "Internal Compass Guides Salmon's Incredible Journey" — describes the two-stage relationship, but **explicitly hedges in the same breath**: "it's hard to know whether one method prevails over the other in certain conditions or if both work in conjunction" | Science journalism, AGU-published, quoting practising researchers | **MEDIUM** (downgraded from Decision 244's original MEDIUM-HIGH) | Synthesis/plausible simplification, NOT established mechanism | **No — wording amended, see F** |
+
+**J is the one material finding of this revalidation.** Practising researchers are on record as genuinely uncertain whether the magnetic→olfactory relationship is a clean sequential switch, a concurrent/overlapping use of both senses, or something in between. The original passage's "handing over from one system to the next" / "Neither sense alone could... it is only by... that the whole journey becomes possible" stated this with more confidence than the fetched evidence supports.
+
+## F. EVERY SALMON LEARNER-FACING SCIENTIFIC AMENDMENT, BEFORE → AFTER
+
+| Phrase | Classification | Before | After |
+|---|---|---|---|
+| Overall handover framing | NEEDS QUALIFICATION | "a salmon appears to rely on different senses at different stages, handing over from one system to the next as it gets closer to home" | "scientists believe a salmon relies mainly on different senses at different stages of its journey, with one sense becoming more important than the other as it gets closer to home" |
+| Imprinting location precision | NEEDS QUALIFICATION | "imprint on the Earth's magnetic field **at the exact point** where they first enter the sea" | "imprint on the Earth's magnetic field **around the point** where they first enter the sea" |
+| Scent sense "takes over" | NEEDS QUALIFICATION | "This is where a second, completely different sense **takes over**." | "This is where a second, completely different sense **is thought to become important**." |
+| Scent sense precision | NEEDS QUALIFICATION | "the scent sense can pinpoint a single stream **perfectly**" | "the scent sense **seems able to guide** a salmon to the exact stream once it is close enough" |
+| Central handover-dependency claim | NEEDS QUALIFICATION (the core fix) | "**Neither sense alone could get a salmon all the way home** — **it is only by** using the magnetic sense first, then handing over to the scent sense once close enough to detect it, that the whole journey becomes possible." | "**On its own, neither sense seems able to explain** the whole journey — researchers think a salmon relies mainly on its magnetic sense out in the open ocean, and mainly on its sense of smell once close to home, although exactly how, and how completely, one sense takes over from the other **is still being studied**." |
+| "scientists have found", "not precise enough...", "purely by smell", "What is already clear..." | SUPPORTED | unchanged | unchanged |
+| "no sun-compass reliable enough" | SUPPORTED (reasonable scene-setting, not a strong empirical claim) | unchanged | unchanged |
+
+Word count rose from 519 to **567** (still within the 500-570 target range). Readability preserved — no technical term introduced; hedging uses ordinary words ("scientists think", "seems able to", "is thought to", "still being studied") already used elsewhere in the certified estate's informational passages.
+
+## G. FINAL AMENDED SALMON PASSAGE AND QUESTIONS/ANSWERS
+
+Full text is the real, current content of `supabase/migrations/166_english_content_foundation_increment003_comprehension.sql` (passage id `eng-inc003-salmonnavigation`) — not reproduced a second time in this log entry to avoid drift between two copies; the migration file is the single source of truth. Every question/answer re-validated against the amended text this session (Section 6 below).
+
+## H. SALMON EDUCATIONAL INTEGRITY AFTER AMENDMENT
+
+- **Q1** (Hasler/Wisby year): unaffected, still historically accurate.
+- **Q2**: reworded to "around the point," re-verified answerable from amended text.
+- **Q3**: judgement/evidence remains valid (answer still "No"); second required quotation updated from the removed "Neither sense alone could get a salmon all the way home" to the new, exact-substring-verified "neither sense seems able to explain the whole journey" (re-confirmed by `scripts/generate-english-increment003.mjs`'s own `assertSubstring` self-check, which re-ran clean).
+- **Q4** (vocabulary): all 5 target words (remarkable, reliable, distinctive, pinpoint, diluted) confirmed still present verbatim in the amended text.
+- **Q5** (chronology): ordering itself unambiguous and unchanged; model/ordered-answer wording softened ("switches to following" → "relies mainly on... to find") for register consistency with the amended passage, not substring-checked (matches the original script's own established exception for this question).
+- **Q6**: quoted sentence updated to match the amended passage exactly; accepted-answer set lightly reworded ("equally necessary" → "seem necessary"; "the handover between senses" → "the relationship between the two senses") to avoid asserting the handover as settled fact inside the marking scheme itself.
+- **Q7**: reworded stem, still scientifically and textually defensible (dilution mechanism is HIGH confidence, untouched).
+
+## I. SCIENTIFIC CONFIDENCE ASSESSMENT
+
+Underlying facts (both senses exist, are real, and each has the distance-limitation described) remain **HIGH confidence, unchanged**. The specific claim that they form a clean sequential handover is **MEDIUM confidence** (downgraded from Decision 244's MEDIUM-HIGH) — a well-motivated, plausible educational simplification of a relationship researchers themselves describe as not fully resolved, now worded to match that honestly rather than asserted as settled.
+
+## J. WRITING STATUS
+
+An Invented Place: Founder decision = `approved`. Not substantively altered (migration 167 untouched). Incremental-diversity classification recorded as **MODERATE** (adds the imagination response-basis within QT-WC-01a; does not create a new Writing task architecture) — per Decision 246 §7, unchanged from Decision 245's own assessment.
+
+## K. REVIEW-HISTORY IMPLEMENTATION
+
+`public.ali_family_review` untouched — zero rows inserted, updated, or referenced by this remediation. The four Section A decisions are recorded here as documentation only, additively, alongside (not overwriting) Decision 245's own inspection pack. Implementing the Pepper's Breakfast/Compass Rose amendments does **not** upgrade their status to `approved` — both remain `approved_with_amendment`. Salmon remains `requires_revalidation` regardless of how strong this session's fresh factual revalidation turned out to be — a new, explicit Founder review decision after this revalidation is required and is not made by this migration or this log entry.
+
+## L. MIGRATION CHANGES
+
+`supabase/migrations/166_english_content_foundation_increment003_comprehension.sql` amended in place (still migration 166, no new migration number — Decision 246 §9 authorised updating 166/167 "only as necessary to reflect authorised content amendments," not creating a new one). `scripts/generate-english-increment003.mjs` (source of truth) amended correspondingly; regenerated and spliced back into the migration file; all of the generator's own `assertSubstring`/word-count self-checks re-ran clean. `supabase/migrations/167_english_content_foundation_increment003_writing.sql` untouched (Writing prompt approved, no change authorised). Neither migration applied. Migrations through 165 untouched. All content remains `authentic_assessment_candidate`; Compass Rose Challenge remains structurally excluded from Practice (Section 5 of migration 166's own header, unaffected); nothing became `mock_eligible`.
+
+## M. TESTS/BUILD/GUARDS — all re-run this session, real output
+
+- `tests/supabase/englishContentFoundationIncrement003.test.ts`: **32/32 pass** (25 original + 7 new regression tests: no slash shorthand anywhere; corrected Pepper synonym policy; question-stem variation; Salmon amended wording; Salmon Q/A consistency post-amendment; review-status separation; Practice/Mock isolation).
+- Full suite: **2869/2869 pass** (2862 baseline + 7 new, zero regressions).
+- `npx tsc --noEmit`: clean.
+- ESLint: baseline unchanged — **83 problems (62 errors, 21 warnings)**, zero in the edited migration/test/generator files (confirmed by linting the test file alone: 0 problems).
+- Copy Quality Guard: **PASS — 0 violations across 262 files**.
+- Migration SQL Guard: **PASS — 167 migration files, all quote-balanced, all RAISE statements arithmetic-correct**.
+- Production build: succeeds, all routes render.
+
+## N. HEAD/ORIGIN/MAIN/TREE STATE
+
+Before this session: `main` @ `984df53` (Decision 244), 2 commits ahead of `origin/main` @ `ec04e1f`, clean, not pushed. After this session (pending commit): `supabase/migrations/166_english_content_foundation_increment003_comprehension.sql` (amended), `scripts/generate-english-increment003.mjs` (amended), `tests/supabase/englishContentFoundationIncrement003.test.ts` (amended), `ALI_DECISION_LOG.md` (this entry appended) — committed as a new, traceable commit on top of the existing 2 (not squashed, not amended). Not pushed.
+
+**Decision number:** 246.
+
+**Commit SHA:** recorded immediately following this entry in repository history.
+
+**Evidence tiers, explicit:** FOUNDER-ASSERTED EVIDENCE (Level 3, per [[feedback_angel_evidence_hierarchy_standard]]) — the four Section A review decisions, as reported in Decision 246's own directive text; not independently re-verifiable against `ali_family_review` this session (no row exists there for any of the four, by design — review submission is a later step). LIVE FETCHED PRIMARY/INSTITUTIONAL SOURCE EVIDENCE (Level 1/2, new this session) — Section E's register, built from directly-fetched source content, not search snippets, per the directive's explicit requirement. AUTOMATED TEST EVIDENCE — 7 new tests plus the full, otherwise-unmodified 2862-test suite (2869 total).
+
+**Implications:** Decisions 1-245 all stand, none reversed or rewritten. Decision 244's original Salmon passage content is corrected, not repudiated — the underlying facts and the two-sense architecture remain intact; only the confidence with which the handover mechanism is asserted has been recalibrated to match the evidence.
+
+**Final verdict: A — AMENDMENTS COMPLETE; SALMON READY FOR FOUNDER REVALIDATION.**
+
+STOP. Migrations 166/167 not applied. No independent review submitted. No content certified. No Practice/Mock eligibility activated. No QT-WC-01b work begun.
+
+---
