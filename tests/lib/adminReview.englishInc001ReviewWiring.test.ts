@@ -5,7 +5,8 @@ import {
   MOCK_ENGLISH_INC001_MARKER, MOCK_ENGLISH_INC001_PASSAGE_TARGET_IDS,
   MOCK_ENGLISH_INC001_WRITING_FAMILIES, MOCK_ENGLISH_INC001_WRITING_TARGET_IDS,
   buildMockEnglishInc001WritingNotesPrefix,
-  ENGLISH_INC001_AMENDMENT_VERIFICATION_TARGETS, ENGLISH_INC001_AMENDMENT_VERIFICATION_TARGET_IDS,
+  deriveAmendmentVerificationEligibleTargets,
+  type FamilyReviewHistoryRow,
 } from "../../lib/adminReview";
 
 /**
@@ -100,42 +101,55 @@ test("does not change any UNRELATED review flow's own review_type wiring -- Math
   assert.match(existingWritingBlock, /reviewType="mock_writing_prompt_independent_review"/);
 });
 
-// === Decision 235 -- Amendment Verification wiring =========================
+// === Decision 235/251 -- Amendment Verification wiring =====================
+//
+// Decision 251, Part B replaced the Increment-001-only hardcoded target
+// array (ENGLISH_INC001_AMENDMENT_VERIFICATION_TARGETS) with a generic,
+// review-history-derived capability (deriveAmendmentVerificationEligibleTargets
+// / fetchAmendmentVerificationEligibleTargets) reusable by any increment.
+// The wiring proofs below were updated to the new generic names; the
+// underlying guarantees they check (dedicated submit function, own
+// selection state, own status fetch, distinct explanatory copy) are
+// unchanged.
 
-test("Decision 235: ReviewForm's reviewType prop union includes amendment_verification", () => {
+test("Decision 235/251: ReviewForm's reviewType prop union includes amendment_verification", () => {
   assert.match(pageSource, /reviewType\?: "content_review" \| "english_teaching_review" \| "mock_maths_independent_review" \| "mock_english_passage_independent_review" \| "mock_writing_prompt_independent_review" \| "amendment_verification";/);
 });
 
-test("Decision 235: handleSubmit() routes amendment_verification to the dedicated submitEnglishInc001AmendmentVerification function, never the generic submitReview fallback (the exact defect class Decision 230/231 found and fixed for the original Inc001 targets)", () => {
+test("Decision 235/251: handleSubmit() routes amendment_verification to the dedicated submitAmendmentVerification function, never the generic submitReview fallback (the exact defect class Decision 230/231 found and fixed for the original Inc001 targets)", () => {
   const dispatchBlock = pageSource.match(/const \{ error \} =\s*\n([\s\S]*?)await submitReview\(submissionToSend\);/)![1];
-  assert.match(dispatchBlock, /reviewType === "amendment_verification" \? await submitEnglishInc001AmendmentVerification\(submissionToSend\)/);
+  assert.match(dispatchBlock, /reviewType === "amendment_verification" \? await submitAmendmentVerification\(submissionToSend\)/);
 });
 
-test("Decision 235: page.tsx imports submitEnglishInc001AmendmentVerification and the amendment-verification config exports", () => {
-  assert.match(pageSource, /fetchEnglishInc001AmendmentVerificationStatus, buildEnglishInc001AmendmentVerificationNotesPrefix/);
-  assert.match(pageSource, /submitEnglishInc001AmendmentVerification, ENGLISH_INC001_AMENDMENT_VERIFICATION_TARGETS/);
+test("Decision 251: page.tsx imports the generic amendment-verification fetch/submit/notes-prefix functions", () => {
+  assert.match(pageSource, /fetchAmendmentVerificationEligibleTargets, fetchAmendmentVerificationStatus, buildAmendmentVerificationNotesPrefix/);
+  assert.match(pageSource, /submitAmendmentVerification, ENGLISH_INC001_AMENDMENT_REGISTER/);
 });
 
-test("Decision 235: page.tsx defines a dedicated EnglishInc001AmendmentVerificationSection component", () => {
-  assert.match(pageSource, /function EnglishInc001AmendmentVerificationSection\(/);
+test("Decision 251: page.tsx defines a generic AmendmentVerificationSection component (not increment-specific)", () => {
+  assert.match(pageSource, /function AmendmentVerificationSection\(/);
 });
 
-test("Decision 235: page.tsx wires the amendment-verification selection state, fetches its own status map in load(), and stores it via its own setter", () => {
-  assert.match(pageSource, /selectedEnglishInc001AmendmentVerification, setSelectedEnglishInc001AmendmentVerification/);
-  assert.match(pageSource, /fetchEnglishInc001AmendmentVerificationStatus\(ENGLISH_INC001_AMENDMENT_VERIFICATION_TARGET_IDS\)/);
-  assert.match(pageSource, /setEnglishInc001AmendmentVerificationStatus\(englishInc001AmendmentVerification\)/);
+test("Decision 251: page.tsx wires the amendment-verification selection state and its own targets+status state, populated by the generic eligible-target fetch in load()", () => {
+  assert.match(pageSource, /selectedAmendmentVerification, setSelectedAmendmentVerification/);
+  assert.match(pageSource, /amendmentVerificationTargets, setAmendmentVerificationTargets/);
+  assert.match(pageSource, /amendmentVerificationStatus, setAmendmentVerificationStatus/);
+  assert.match(pageSource, /const amendmentTargets = await fetchAmendmentVerificationEligibleTargets\(\);/);
+  assert.match(pageSource, /const amendmentStatus = await fetchAmendmentVerificationStatus\(amendmentTargets\.map\(\(t\) => t\.id\)\);/);
+  assert.match(pageSource, /setAmendmentVerificationTargets\(amendmentTargets\);/);
+  assert.match(pageSource, /setAmendmentVerificationStatus\(amendmentStatus\);/);
 });
 
-test("Decision 235: the amendment-verification modal branch passes reviewType=amendment_verification and routes Writing targets through the sevenX exact-id path (never the family-wide fetch)", () => {
-  assert.match(pageSource, /if \(selectedEnglishInc001AmendmentVerification\) \{/);
-  const modalBlock = pageSource.match(/if \(selectedEnglishInc001AmendmentVerification\) \{[\s\S]*?\n {2}\}/)![0];
+test("Decision 251: the amendment-verification modal branch passes reviewType=amendment_verification and routes Writing targets through the sevenX exact-id path (never the family-wide fetch)", () => {
+  assert.match(pageSource, /if \(selectedAmendmentVerification\) \{/);
+  const modalBlock = pageSource.match(/if \(selectedAmendmentVerification\) \{[\s\S]*?\n {2}\}/)![0];
   assert.match(modalBlock, /reviewType="amendment_verification"/);
   assert.match(modalBlock, /t\.sevenXQuestionIds/);
-  assert.match(modalBlock, /buildEnglishInc001AmendmentVerificationNotesPrefix/);
+  assert.match(modalBlock, /buildAmendmentVerificationNotesPrefix/);
 });
 
-test("Decision 235: the new section is actually rendered in the review list", () => {
-  assert.match(pageSource, /<EnglishInc001AmendmentVerificationSection status=\{englishInc001AmendmentVerificationStatus\} onOpen=\{setSelectedEnglishInc001AmendmentVerification\}/);
+test("Decision 251: the section is rendered in the review list, fed the dynamically discovered targets list (not a fixed array)", () => {
+  assert.match(pageSource, /<AmendmentVerificationSection targets=\{amendmentVerificationTargets\} status=\{amendmentVerificationStatus\} onOpen=\{setSelectedAmendmentVerification\}/);
 });
 
 test("Decision 235: the submitted-decision panel gives amendment_verification its own explanatory copy, distinct from the promotion-related copy shown for an original independent review", () => {
@@ -144,9 +158,17 @@ test("Decision 235: the submitted-decision panel gives amendment_verification it
   assert.match(panelBlock, /does not itself convert that decision to approved/);
 });
 
-test("Decision 235: exactly 4 verification targets are configured, and none is A Mistake You Learned From (the approved control case)", () => {
-  assert.equal(ENGLISH_INC001_AMENDMENT_VERIFICATION_TARGETS.length, 4);
-  assert.ok(!ENGLISH_INC001_AMENDMENT_VERIFICATION_TARGET_IDS.includes("mock-writing-wc01a-mistakelearned"));
+test("Decision 251: the generic derivation, fed review history shaped exactly like the real 4 Increment 001 targets, reproduces exactly those 4 and excludes A Mistake You Learned From (the approved control case) -- proves the generic replacement preserves Increment 001 behaviour", () => {
+  const rows: FamilyReviewHistoryRow[] = [
+    { family_id: "eng-inc001-understudy", review_type: "mock_english_passage_independent_review", decision: "approved_with_amendment", reviewer: "Ayobami Lawal", notes: null, created_at: "2026-08-01T00:00:00Z", review_target_type: "passage" },
+    { family_id: "eng-inc001-bee-navigation", review_type: "mock_english_passage_independent_review", decision: "approved_with_amendment", reviewer: "Ayobami Lawal", notes: null, created_at: "2026-08-01T00:00:00Z", review_target_type: "passage" },
+    { family_id: "mock-writing-wc01a-newplace", review_type: "mock_writing_prompt_independent_review", decision: "approved_with_amendment", reviewer: "Ayobami Lawal", notes: null, created_at: "2026-08-01T00:00:00Z", review_target_type: "writing_prompt" },
+    { family_id: "mock-writing-wc01a-screentime", review_type: "mock_writing_prompt_independent_review", decision: "approved_with_amendment", reviewer: "Ayobami Lawal", notes: null, created_at: "2026-08-01T00:00:00Z", review_target_type: "writing_prompt" },
+    { family_id: "mock-writing-wc01a-mistakelearned", review_type: "mock_writing_prompt_independent_review", decision: "approved", reviewer: "Ayobami Lawal", notes: null, created_at: "2026-08-01T00:00:00Z", review_target_type: "writing_prompt" },
+  ];
+  const eligible = deriveAmendmentVerificationEligibleTargets(rows);
+  assert.deepEqual(eligible.map((t) => t.id).sort(), ["eng-inc001-bee-navigation", "eng-inc001-understudy", "mock-writing-wc01a-newplace", "mock-writing-wc01a-screentime"].sort());
+  assert.ok(!eligible.some((t) => t.id === "mock-writing-wc01a-mistakelearned"));
 });
 
 test("Decision 235: QuestionOrWritingTaskBody renders question.authorNote (ali_question_bank.explanation) for deterministic content when present -- the same class of 'field exists but invisible to a reviewer' gap Decision 232 fixed for provenance/notes", () => {
@@ -159,4 +181,32 @@ test("Decision 235: QUESTION_SELECT_COLUMNS now selects explanation, and mapQues
   const libSource = fs.readFileSync("lib/adminReview.ts", "utf8");
   assert.match(libSource, /const QUESTION_SELECT_COLUMNS = "id, subject, skill, prompt, family_id, learning_unit_id, content_difficulty, transfer_class, addresses_misconception, content_version, active, provenance, eligibility_status, question_group_id, group_order, subpart_label, marking_mode, explanation";/);
   assert.match(libSource, /authorNote: r\.explanation \?\? null,/);
+});
+
+// === Decision 251, Part F -- proofs 6/7: verification never changes eligibility, never activates Practice/Mock ===
+
+test("Decision 251: submitAmendmentVerification's own body writes ONLY to ali_family_review via .insert -- never .update, never ali_question_bank, never ali_passage_bank, so it structurally cannot change eligibility_status or activate Practice/Mock", () => {
+  const libSource = fs.readFileSync("lib/adminReview.ts", "utf8");
+  const fnBody = libSource.match(/export async function submitAmendmentVerification\([\s\S]*?\n\}/)![0];
+  assert.match(fnBody, /supabase\.from\("ali_family_review"\)\.insert\(/);
+  assert.ok(!fnBody.includes(".update("), "submitAmendmentVerification must never call .update() on any table");
+  assert.ok(!fnBody.includes("ali_question_bank"), "submitAmendmentVerification must never reference ali_question_bank");
+  assert.ok(!fnBody.includes("ali_passage_bank"), "submitAmendmentVerification must never reference ali_passage_bank");
+  assert.ok(!fnBody.includes("eligibility_status"), "submitAmendmentVerification must never set eligibility_status");
+});
+
+test("Decision 251: submitReview (the generic path every original formal review, including the fresh Increment 003 reviews, is submitted through) is likewise insert-only against ali_family_review", () => {
+  const libSource = fs.readFileSync("lib/adminReview.ts", "utf8");
+  const fnBody = libSource.match(/export async function submitReview\([\s\S]*?\n\}/)![0];
+  assert.match(fnBody, /supabase\.from\("ali_family_review"\)\.insert\(/);
+  assert.ok(!fnBody.includes(".update("), "submitReview must never call .update() on any table");
+  assert.ok(!fnBody.includes("ali_mock_form"), "submitReview must never touch ali_mock_form (Mock activation is a separate, controlled step)");
+});
+
+test("Decision 251: fetchAmendmentVerificationEligibleTargets only ever SELECTs (ali_family_review, ali_question_bank) -- it discovers eligibility, it never writes a decision or promotes anything itself", () => {
+  const libSource = fs.readFileSync("lib/adminReview.ts", "utf8");
+  const fnBody = libSource.match(/export async function fetchAmendmentVerificationEligibleTargets\([\s\S]*?\n\}/)![0];
+  assert.ok(!fnBody.includes(".insert("), "the discovery function must never write a review row itself");
+  assert.ok(!fnBody.includes(".update("));
+  assert.match(fnBody, /\.select\("family_id, review_type, decision, reviewer, notes, created_at, review_target_type"\)/);
 });

@@ -9,15 +9,15 @@ import {
   deriveMockMrBatch003ReviewStatus,
   deriveMockEnglishInc001PassageReviewStatus, deriveMockEnglishInc001WritingReviewStatus,
   MOCK_ENGLISH_INC001_MARKER, MOCK_ENGLISH_INC001_PASSAGE_TARGET_IDS, MOCK_ENGLISH_INC001_WRITING_FAMILIES,
-  deriveEnglishInc001AmendmentVerificationStatus, buildEnglishInc001AmendmentVerificationNotesPrefix,
-  ENGLISH_INC001_AMENDMENT_VERIFICATION_TARGETS, ENGLISH_INC001_AMENDMENT_VERIFICATION_TARGET_IDS,
+  deriveAmendmentVerificationStatus, buildAmendmentVerificationNotesPrefix,
+  deriveLatestOriginalReviewDecision, deriveAmendmentVerificationEligibleTargets, ORIGINAL_CONTENT_REVIEW_TYPES,
   ENGLISH_INC001_AMENDMENT_REGISTER,
   MOCK_ENGLISH_PASSAGE_BATCH001_MARKER, MOCK_ENGLISH_PASSAGE_BATCH001_TARGET_ID,
   MOCK_WRITING_BATCH001_FAMILIES, MOCK_WRITING_BATCH001_MARKER,
   MOCK_MR_BATCH003_FAMILIES, MOCK_MR_BATCH003_BATCH_MARKER,
   MOCK_SHARED_SCENARIO_COMPLETION_BATCH_FAMILIES, MOCK_SHARED_SCENARIO_COMPLETION_BATCH_MARKER,
   MOCK_SHARED_SCENARIO_COMPLETION_BATCH_TARGET_IDS, buildMockSharedScenarioCompletionBatchNotesPrefix,
-  type ReviewSubmission, type RepresentativeQuestion, type SevenXReviewRow,
+  type ReviewSubmission, type RepresentativeQuestion, type SevenXReviewRow, type FamilyReviewHistoryRow,
 } from "@/lib/adminReview";
 
 /**
@@ -695,36 +695,119 @@ test("Decision 235: the Bee register entry discloses AUDITED/NO CONTENT CHANGE, 
   assert.equal(bee?.affectedContent, "none (verified unchanged: ali_passage_bank.eng-inc001-bee-navigation; ali_question_bank.eng-inc001-bee-q01 through q08)");
 });
 
-test("Decision 235: amendment verification targets are exactly the 4 amended family/passage ids, with the 2 Writing targets correctly routed through their own real row id (sevenXQuestionIds), never a family-wide fetch", () => {
-  assert.deepEqual(ENGLISH_INC001_AMENDMENT_VERIFICATION_TARGET_IDS.sort(), ["eng-inc001-bee-navigation", "eng-inc001-understudy", "mock-writing-wc01a-newplace", "mock-writing-wc01a-screentime"].sort());
-  const newplace = ENGLISH_INC001_AMENDMENT_VERIFICATION_TARGETS.find((t) => t.id === "mock-writing-wc01a-newplace");
-  assert.equal(newplace?.reviewTargetType, "writing_prompt");
-  assert.deepEqual(newplace?.sevenXQuestionIds, ["mock-writing-newplace-01"]);
-  const understudy = ENGLISH_INC001_AMENDMENT_VERIFICATION_TARGETS.find((t) => t.id === "eng-inc001-understudy");
-  assert.equal(understudy?.reviewTargetType, "passage");
-  assert.equal(understudy?.sevenXQuestionIds, undefined);
-});
-
 test("Decision 235: amendment verification status is a genuinely separate review_type from the original independent review -- a completed ORIGINAL review alone never counts as verified", () => {
   const id = "eng-inc001-understudy";
   const rows = [genuineReviewRow({ family_id: id, review_type: "mock_english_passage_independent_review", decision: "approved_with_amendment" })];
-  const status = deriveEnglishInc001AmendmentVerificationStatus(rows, [id]);
+  const status = deriveAmendmentVerificationStatus(rows, [id]);
   assert.equal(status.get(id)?.reviewed, false, "the original independent-review row must never be misread as amendment-verification evidence");
 });
 
 test("Decision 235: amendment verification status correctly recognises a genuine amendment_verification decision, independently per target, with no cross-target contamination", () => {
   const [understudyId, beeId] = ["eng-inc001-understudy", "eng-inc001-bee-navigation"];
   const rows = [genuineReviewRow({ family_id: understudyId, review_type: "amendment_verification", decision: "approved" })];
-  const status = deriveEnglishInc001AmendmentVerificationStatus(rows, [understudyId, beeId]);
+  const status = deriveAmendmentVerificationStatus(rows, [understudyId, beeId]);
   assert.equal(status.get(understudyId)?.reviewed, true);
   assert.equal(status.get(understudyId)?.decision, "approved");
   assert.equal(status.get(beeId)?.reviewed, false, "Bee must remain unverified -- only the Understudy row carried a genuine amendment_verification decision");
 });
 
 test("Decision 235: the notes-prefix builder embeds the correct target title and the exact required correction is available from the shared register (no second, hand-typed copy)", () => {
-  const prefix = buildEnglishInc001AmendmentVerificationNotesPrefix("mock-writing-wc01a-newplace");
+  const prefix = buildAmendmentVerificationNotesPrefix("mock-writing-wc01a-newplace");
   assert.match(prefix, /^AMENDMENT-VERIFICATION \(Decision 235\): Somewhere New/);
   assert.match(prefix, /does not itself convert approved_with_amendment to approved/);
+});
+
+// === Decision 251, Part B -- generic, history-derived Amendment Verification eligibility ===
+
+function historyRow(overrides: Partial<FamilyReviewHistoryRow> & { family_id: string; review_type: string; decision: string; created_at: string }): FamilyReviewHistoryRow {
+  return { reviewer: "Ayobami Lawal", notes: "Genuine reviewer notes.", review_target_type: "passage", ...overrides };
+}
+
+test("Decision 251: ORIGINAL_CONTENT_REVIEW_TYPES excludes amendment_verification, founder_amendment_clarification, and every *_teaching_review type", () => {
+  assert.ok(!ORIGINAL_CONTENT_REVIEW_TYPES.includes("amendment_verification"));
+  assert.ok(!ORIGINAL_CONTENT_REVIEW_TYPES.includes("founder_amendment_clarification"));
+  assert.ok(!ORIGINAL_CONTENT_REVIEW_TYPES.includes("maths_teaching_review"));
+  assert.ok(!ORIGINAL_CONTENT_REVIEW_TYPES.includes("english_teaching_review"));
+  assert.ok(!ORIGINAL_CONTENT_REVIEW_TYPES.includes("writing_teaching_review"));
+});
+
+test("Decision 251: deriveAmendmentVerificationEligibleTargets reproduces exactly the same 4 real Increment 001 targets the old hardcoded list named, from real-shaped review history alone -- Mistake Learned (approved, no amendment) correctly excluded, matching the register's own control case", () => {
+  const rows: FamilyReviewHistoryRow[] = [
+    historyRow({ family_id: "eng-inc001-understudy", review_type: "mock_english_passage_independent_review", decision: "approved_with_amendment", created_at: "2026-08-01T00:00:00Z", review_target_type: "passage" }),
+    historyRow({ family_id: "eng-inc001-bee-navigation", review_type: "mock_english_passage_independent_review", decision: "approved_with_amendment", created_at: "2026-08-01T00:00:00Z", review_target_type: "passage" }),
+    historyRow({ family_id: "mock-writing-wc01a-newplace", review_type: "mock_writing_prompt_independent_review", decision: "approved_with_amendment", created_at: "2026-08-01T00:00:00Z", review_target_type: "writing_prompt" }),
+    historyRow({ family_id: "mock-writing-wc01a-screentime", review_type: "mock_writing_prompt_independent_review", decision: "approved_with_amendment", created_at: "2026-08-01T00:00:00Z", review_target_type: "writing_prompt" }),
+    historyRow({ family_id: "mock-writing-wc01a-mistakelearned", review_type: "mock_writing_prompt_independent_review", decision: "approved", created_at: "2026-08-01T00:00:00Z", review_target_type: "writing_prompt" }),
+  ];
+  const eligible = deriveAmendmentVerificationEligibleTargets(rows);
+  assert.deepEqual(eligible.map((t) => t.id).sort(), ["eng-inc001-bee-navigation", "eng-inc001-understudy", "mock-writing-wc01a-newplace", "mock-writing-wc01a-screentime"].sort());
+  assert.ok(!eligible.some((t) => t.id === "mock-writing-wc01a-mistakelearned"), "plain approved with no amendment must never become eligible");
+  const understudy = eligible.find((t) => t.id === "eng-inc001-understudy");
+  assert.equal(understudy?.reviewTargetType, "passage");
+  const newplace = eligible.find((t) => t.id === "mock-writing-wc01a-newplace");
+  assert.equal(newplace?.reviewTargetType, "writing_prompt");
+});
+
+test("Decision 251: a brand-new increment's target becomes eligible automatically once its own formal review is recorded approved_with_amendment -- zero hardcoded-list membership required", () => {
+  const rows: FamilyReviewHistoryRow[] = [
+    historyRow({ family_id: "eng-inc003-peppersbreakfast", review_type: "content_review", decision: "approved_with_amendment", created_at: "2026-08-30T00:00:00Z", review_target_type: "passage" }),
+  ];
+  const eligible = deriveAmendmentVerificationEligibleTargets(rows);
+  assert.deepEqual(eligible.map((t) => t.id), ["eng-inc003-peppersbreakfast"]);
+});
+
+test("Decision 251: Approved does not require amendment verification -- a plain approved decision never appears as eligible", () => {
+  const rows: FamilyReviewHistoryRow[] = [
+    historyRow({ family_id: "eng-inc003-writing-wc01a-imaginedplace", review_type: "content_review", decision: "approved", created_at: "2026-08-30T00:00:00Z", review_target_type: "writing_prompt" }),
+  ];
+  assert.deepEqual(deriveAmendmentVerificationEligibleTargets(rows), []);
+});
+
+test("Decision 251: Requires revalidation does not masquerade as amendment verification -- Salmon's own history shape (requires_revalidation, later Approved) is never eligible at either stage", () => {
+  const stillRevalidating: FamilyReviewHistoryRow[] = [
+    historyRow({ family_id: "eng-inc003-salmonnavigation", review_type: "content_review", decision: "requires_revalidation", created_at: "2026-08-30T00:00:00Z", review_target_type: "passage" }),
+  ];
+  assert.deepEqual(deriveAmendmentVerificationEligibleTargets(stillRevalidating), []);
+  const laterApproved: FamilyReviewHistoryRow[] = [
+    ...stillRevalidating,
+    historyRow({ family_id: "eng-inc003-salmonnavigation", review_type: "content_review", decision: "approved", created_at: "2026-08-31T00:00:00Z", review_target_type: "passage" }),
+  ];
+  assert.deepEqual(deriveAmendmentVerificationEligibleTargets(laterApproved), []);
+});
+
+test("Decision 251: Rejected cannot progress into amendment verification eligibility", () => {
+  const rows: FamilyReviewHistoryRow[] = [
+    historyRow({ family_id: "some-family", review_type: "content_review", decision: "rejected", notes: "A rejection note.", created_at: "2026-08-30T00:00:00Z", review_target_type: "passage" }),
+  ];
+  assert.deepEqual(deriveAmendmentVerificationEligibleTargets(rows), []);
+});
+
+test("Decision 251: only the LATEST original-review decision governs eligibility -- an earlier approved_with_amendment superseded by a later formal Approved decision is correctly no longer eligible (the reviewer is allowed to decide the current live content is now satisfactory, per Decision 251 Part C)", () => {
+  const rows: FamilyReviewHistoryRow[] = [
+    historyRow({ family_id: "eng-inc003-peppersbreakfast", review_type: "content_review", decision: "approved_with_amendment", created_at: "2026-08-30T00:00:00Z", review_target_type: "passage" }),
+    historyRow({ family_id: "eng-inc003-peppersbreakfast", review_type: "content_review", decision: "approved", created_at: "2026-08-30T01:00:00Z", review_target_type: "passage" }),
+  ];
+  assert.deepEqual(deriveAmendmentVerificationEligibleTargets(rows), []);
+});
+
+test("Decision 251: a pending placeholder row and an UNASSIGNED reviewer are both ignored when deriving the latest original-review decision, exactly as deriveBatchReviewStatus already established for every other batch", () => {
+  const rows: FamilyReviewHistoryRow[] = [
+    historyRow({ family_id: "eng-inc003-writing-wc01a-imaginedplace", review_type: "content_review", decision: "pending_independent_review", reviewer: "UNASSIGNED", created_at: "2026-08-29T00:00:00Z", review_target_type: "writing_prompt" }),
+    historyRow({ family_id: "eng-inc003-writing-wc01a-imaginedplace", review_type: "content_review", decision: "approved_with_amendment", reviewer: "UNASSIGNED", created_at: "2026-08-30T00:00:00Z", review_target_type: "writing_prompt" }),
+  ];
+  assert.equal(deriveLatestOriginalReviewDecision(rows, "eng-inc003-writing-wc01a-imaginedplace"), null, "an UNASSIGNED reviewer must never count as a real formal decision");
+});
+
+test("Decision 251: amendment_verification and *_teaching_review rows are never treated as a fresh original decision, even when they are the most recent row for a family", () => {
+  const rows: FamilyReviewHistoryRow[] = [
+    historyRow({ family_id: "eng-inc001-understudy", review_type: "mock_english_passage_independent_review", decision: "approved_with_amendment", created_at: "2026-08-01T00:00:00Z", review_target_type: "passage" }),
+    historyRow({ family_id: "eng-inc001-understudy", review_type: "amendment_verification", decision: "approved", created_at: "2026-08-02T00:00:00Z", review_target_type: "passage" }),
+    historyRow({ family_id: "eng-inc001-understudy", review_type: "english_teaching_review", decision: "approved", created_at: "2026-08-03T00:00:00Z", review_target_type: "passage" }),
+  ];
+  const latest = deriveLatestOriginalReviewDecision(rows, "eng-inc001-understudy");
+  assert.equal(latest?.review_type, "mock_english_passage_independent_review", "amendment_verification and teaching-review rows must not shadow the real original decision");
+  assert.equal(latest?.decision, "approved_with_amendment");
+  assert.deepEqual(deriveAmendmentVerificationEligibleTargets(rows).map((t) => t.id), ["eng-inc001-understudy"]);
 });
 
 test("8. Mathematics Batch 003 status behaviour is unchanged: still requires the marker, still correctly recognises a properly-tagged review", () => {

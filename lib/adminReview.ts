@@ -2302,8 +2302,14 @@ export async function submitMockWritingPromptIndependentReview(s: ReviewSubmissi
  * dedicated function — not the generic path — is wired to
  * `reviewType === "amendment_verification"` in
  * `app/admin-beta/review/page.tsx`'s own `handleSubmit()`.
+ *
+ * Decision 251, Part B — genuinely generic across every increment: this
+ * function never referenced Increment 001 in its own body (only its old
+ * name did); no change was needed to make it reusable for any review
+ * target's amendment verification. Renamed from
+ * `submitEnglishInc001AmendmentVerification` to reflect that.
  */
-export async function submitEnglishInc001AmendmentVerification(s: ReviewSubmission): Promise<SubmitReviewResult> {
+export async function submitAmendmentVerification(s: ReviewSubmission): Promise<SubmitReviewResult> {
   const validationError = validateReviewSubmission(s);
   if (validationError) return { error: validationError };
   if (!s.decision) return { error: "Choose a decision: this is never chosen for you." };
@@ -2548,39 +2554,165 @@ export const ENGLISH_INC001_AMENDMENT_REGISTER: AmendmentRegisterEntry[] = [
  */
 export interface AmendmentVerificationTarget {
   id: string;
-  title: string;
+  title?: string;
   reviewTargetType: ReviewTargetType;
   sevenXQuestionIds?: string[];
+  /** The reviewer who recorded the latest original approved_with_amendment decision this target is eligible against — for display only, never re-used as a submission default. */
+  latestReviewer?: string;
+  /** That decision's own recorded notes — used as a disclosure fallback when no hand-authored ENGLISH_INC001_AMENDMENT_REGISTER entry exists for this target (Decision 251, Part B/C: a fresh formal review's own notes ARE the required-correction record for content this register was never written to cover; never fabricated). */
+  latestNotes?: string | null;
 }
 
-export const ENGLISH_INC001_AMENDMENT_VERIFICATION_TARGETS: AmendmentVerificationTarget[] = [
-  { id: "eng-inc001-understudy", title: "The Understudy", reviewTargetType: "passage" },
-  { id: "eng-inc001-bee-navigation", title: "How Bees Find Their Way Home", reviewTargetType: "passage" },
-  { id: "mock-writing-wc01a-newplace", title: "Somewhere New", reviewTargetType: "writing_prompt", sevenXQuestionIds: ["mock-writing-newplace-01"] },
-  { id: "mock-writing-wc01a-screentime", title: "Should Children Have Limits on Screen Time?", reviewTargetType: "writing_prompt", sevenXQuestionIds: ["mock-writing-screentime-01"] },
+/**
+ * Decision 251, Part B — review_type values whose `decision` represents a
+ * formal educational content-correctness judgement on a review target
+ * (passage / question family / writing prompt): an "original review" a
+ * later Amendment Verification event can follow. Every value here shares
+ * the same `ReviewDecision` vocabulary (approved / approved_with_amendment
+ * / requires_revalidation / rejected) via the one shared `DECISIONS` UI
+ * array (app/admin-beta/review/page.tsx). Deliberately excludes:
+ *   - 'amendment_verification' itself — a verification EVENT, not a
+ *     judgement to verify; including it would let a verification's own
+ *     decision be misread as a fresh "original" one, an infinite-chain
+ *     defect.
+ *   - 'founder_amendment_clarification' — Founder pre-application
+ *     commentary (e.g. migration 158, and Decision 246's own informal
+ *     Increment 003 record), never a formal independent decision; Decision
+ *     251 explicitly requires this history stay distinct from the formal
+ *     review lifecycle, not silently promoted into it.
+ *   - the three `*_teaching_review` types — a distinct governance
+ *     question (how to TEACH already-certified content) from whether the
+ *     content itself is correct.
+ */
+export const ORIGINAL_CONTENT_REVIEW_TYPES: ReviewType[] = [
+  "content_review",
+  "mock_maths_independent_review",
+  "mock_english_passage_independent_review",
+  "mock_writing_prompt_independent_review",
 ];
 
-export const ENGLISH_INC001_AMENDMENT_VERIFICATION_TARGET_IDS = ENGLISH_INC001_AMENDMENT_VERIFICATION_TARGETS.map((t) => t.id);
+export interface FamilyReviewHistoryRow {
+  family_id: string;
+  review_type: string;
+  decision: string;
+  reviewer: string;
+  notes: string | null;
+  created_at: string;
+  review_target_type: string;
+}
 
-export function buildEnglishInc001AmendmentVerificationNotesPrefix(targetId: string): string {
+/**
+ * Pure. The latest (by created_at) real, assigned original-review
+ * decision recorded for one family_id — same exclusion rules as
+ * `deriveBatchReviewStatus` (skip still-pending placeholders, skip an
+ * UNASSIGNED reviewer), generalised across every
+ * `ORIGINAL_CONTENT_REVIEW_TYPES` value instead of one fixed type passed
+ * in by the caller. Returns null if no real original review exists yet
+ * for this family. Unit-tested directly (tests/lib/adminReview.test.ts).
+ */
+export function deriveLatestOriginalReviewDecision(rows: FamilyReviewHistoryRow[], familyId: string): FamilyReviewHistoryRow | null {
+  let latest: FamilyReviewHistoryRow | null = null;
+  for (const row of rows) {
+    if (row.family_id !== familyId) continue;
+    if (!ORIGINAL_CONTENT_REVIEW_TYPES.includes(row.review_type as ReviewType)) continue;
+    if (row.decision === "pending_independent_review") continue;
+    if (!row.reviewer || row.reviewer === "UNASSIGNED") continue;
+    if (!latest || row.created_at > latest.created_at) latest = row;
+  }
+  return latest;
+}
+
+/**
+ * Pure core of the generic Amendment Verification eligibility rule
+ * (Decision 251, Part B's "Preferred architecture"): a review target is
+ * eligible iff its LATEST formal original-review decision is exactly
+ * `approved_with_amendment` — derived from live review history, not from
+ * an increment-specific hardcoded target-ID list. Scans every distinct
+ * `family_id` present in `rows`, so no pre-known candidate-ID list is
+ * required at all: a brand-new increment becomes eligible automatically
+ * the moment its own formal review is recorded as approved_with_amendment,
+ * with zero code change. `rows` is assumed already scoped to
+ * `ORIGINAL_CONTENT_REVIEW_TYPES` (the real caller does this server-side);
+ * this function re-checks it anyway as a defensive second guard, same
+ * convention as `deriveBatchReviewStatus`'s own `review_type` re-check.
+ */
+export function deriveAmendmentVerificationEligibleTargets(rows: FamilyReviewHistoryRow[]): AmendmentVerificationTarget[] {
+  const familyIds = Array.from(new Set(rows.map((r) => r.family_id)));
+  const eligible: AmendmentVerificationTarget[] = [];
+  for (const familyId of familyIds) {
+    const latest = deriveLatestOriginalReviewDecision(rows, familyId);
+    if (latest?.decision === "approved_with_amendment") {
+      eligible.push({
+        id: familyId,
+        reviewTargetType: latest.review_target_type as ReviewTargetType,
+        latestReviewer: latest.reviewer,
+        latestNotes: latest.notes,
+      });
+    }
+  }
+  return eligible;
+}
+
+/**
+ * I/O wrapper. Queries every `ORIGINAL_CONTENT_REVIEW_TYPES` row once,
+ * derives eligible targets (pure function above), then — for any target
+ * whose `reviewTargetType !== "passage"` (Writing prompts, and any future
+ * `question_family` target) — resolves its real underlying
+ * `ali_question_bank` row id(s) via `family_id`, because a Writing
+ * prompt's review `family_id` is never its own `ali_question_bank.id`
+ * (migration 154/167's own established convention; a passage's
+ * `family_id` IS its own `ali_passage_bank.id` under the corrected
+ * convention migration 162 established, so needs no such lookup) — this
+ * keeps `ReviewForm`'s existing `sevenX.questionIds` content-fetch path
+ * working unchanged for every target this discovers, exactly as it does
+ * for the 2 original Increment 001 Writing prompts today.
+ */
+export async function fetchAmendmentVerificationEligibleTargets(): Promise<AmendmentVerificationTarget[]> {
+  const supabase = getSupabaseClient();
+  if (!supabase) return [];
+  const { data, error } = await supabase
+    .from("ali_family_review")
+    .select("family_id, review_type, decision, reviewer, notes, created_at, review_target_type")
+    .in("review_type", ORIGINAL_CONTENT_REVIEW_TYPES)
+    .order("created_at", { ascending: true });
+  if (error || !data) return [];
+  const eligible = deriveAmendmentVerificationEligibleTargets(data);
+  if (eligible.length === 0) return eligible;
+  const nonPassageIds = eligible.filter((t) => t.reviewTargetType !== "passage").map((t) => t.id);
+  if (nonPassageIds.length === 0) return eligible;
+  const { data: qRows } = await supabase.from("ali_question_bank").select("id, family_id").in("family_id", nonPassageIds);
+  const questionIdsByFamily = new Map<string, string[]>();
+  for (const q of qRows ?? []) {
+    if (!q.family_id || !q.id) continue;
+    const list = questionIdsByFamily.get(q.family_id) ?? [];
+    list.push(q.id);
+    questionIdsByFamily.set(q.family_id, list);
+  }
+  return eligible.map((t) => (t.reviewTargetType === "passage" ? t : { ...t, sevenXQuestionIds: questionIdsByFamily.get(t.id) }));
+}
+
+export function buildAmendmentVerificationNotesPrefix(targetId: string): string {
   const entry = ENGLISH_INC001_AMENDMENT_REGISTER.find((e) => e.targetId === targetId);
   return `AMENDMENT-VERIFICATION (Decision 235): ${entry?.targetTitle ?? targetId} -- confirms whether the required correction above was satisfactorily resolved. Does not re-run the original full independent review, and does not itself convert approved_with_amendment to approved.`;
 }
 
 /**
- * `requireMarker: false` — same reasoning as
- * `deriveMockEnglishInc001PassageReviewStatus` above: every one of these
- * 4 `family_id` values is unique to this specific verification purpose
- * (`review_type = 'amendment_verification'` exists for no other purpose
- * anywhere in this codebase), so the marker is not needed to disambiguate
- * against an unrelated historical row for the same family_id.
+ * `requireMarker: false` — every `family_id` eligible for Amendment
+ * Verification is, by `deriveAmendmentVerificationEligibleTargets`'s own
+ * construction, one whose latest original review is
+ * `approved_with_amendment`; `review_type = 'amendment_verification'`
+ * exists for no other purpose anywhere in this codebase, so the marker is
+ * not needed to disambiguate against an unrelated historical row for the
+ * same family_id. The `marker` parameter itself is unused when
+ * `requireMarker` is false (see `deriveBatchReviewStatus`), so an empty
+ * string is passed rather than inventing a new one.
  */
-export function deriveEnglishInc001AmendmentVerificationStatus(rows: SevenXReviewRow[], familyIds: string[]): Map<string, SevenXReviewStatus> {
-  return deriveBatchReviewStatus(rows, familyIds, MOCK_ENGLISH_INC001_MARKER, "amendment_verification", false);
+export function deriveAmendmentVerificationStatus(rows: SevenXReviewRow[], familyIds: string[]): Map<string, SevenXReviewStatus> {
+  return deriveBatchReviewStatus(rows, familyIds, "", "amendment_verification", false);
 }
 
-export async function fetchEnglishInc001AmendmentVerificationStatus(familyIds: string[]): Promise<Map<string, SevenXReviewStatus>> {
-  return fetchBatchReviewStatus(familyIds, MOCK_ENGLISH_INC001_MARKER, "amendment_verification", false);
+export async function fetchAmendmentVerificationStatus(familyIds: string[]): Promise<Map<string, SevenXReviewStatus>> {
+  return fetchBatchReviewStatus(familyIds, "", "amendment_verification", false);
 }
 
 export const DIFFICULTY_RANK: Record<string, number> = { easy: 0, medium: 1, hard: 2 };

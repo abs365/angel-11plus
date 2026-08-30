@@ -52,9 +52,8 @@ import {
   fetchMockEnglishInc002PassageReviewStatus, MOCK_ENGLISH_INC002_PASSAGE_TARGET_IDS,
   fetchMockEnglishInc001WritingReviewStatus, buildMockEnglishInc001WritingNotesPrefix,
   MOCK_ENGLISH_INC001_WRITING_FAMILIES, MOCK_ENGLISH_INC001_WRITING_TARGET_IDS,
-  fetchEnglishInc001AmendmentVerificationStatus, buildEnglishInc001AmendmentVerificationNotesPrefix,
-  submitEnglishInc001AmendmentVerification, ENGLISH_INC001_AMENDMENT_VERIFICATION_TARGETS,
-  ENGLISH_INC001_AMENDMENT_VERIFICATION_TARGET_IDS, ENGLISH_INC001_AMENDMENT_REGISTER,
+  fetchAmendmentVerificationEligibleTargets, fetchAmendmentVerificationStatus, buildAmendmentVerificationNotesPrefix,
+  submitAmendmentVerification, ENGLISH_INC001_AMENDMENT_REGISTER,
   type PendingReviewTarget, type RepresentativeQuestion, type PassageDetail, type ReviewDecision, type ReviewSubmission,
   type TargetSummary, type MathsTeachingReviewSubmission, type SevenXReviewStatus, type SevenXFamilyConfig,
   type AmendmentVerificationTarget,
@@ -261,6 +260,19 @@ const FAMILY_DISPLAY_NAME: Record<string, string> = {
   "mock-mr10-reverseschedule": "Mock: Reverse Elapsed Time",
   "mock-mr11-truefalsejudgement": "Mock: Number-Property True/False",
   "mock-mr11-propertysearch": "Mock: Number-Property Search",
+  // Decision 251, Part B — curated titles preserved for the generic, history-derived
+  // Amendment Verification section (these 4 ids no longer come from a hardcoded target
+  // array, so their display names live here instead, exactly like every other target
+  // this map already covers).
+  "eng-inc001-understudy": "The Understudy",
+  "eng-inc001-bee-navigation": "How Bees Find Their Way Home",
+  "mock-writing-wc01a-newplace": "Somewhere New",
+  "mock-writing-wc01a-screentime": "Should Children Have Limits on Screen Time?",
+  // English Content Foundation, Increment 003 (Decision 244/251).
+  "eng-inc003-peppersbreakfast": "Pepper's Breakfast",
+  "eng-inc003-compassrosechallenge": "The Compass Rose Challenge",
+  "eng-inc003-salmonnavigation": "How Salmon Find Their Way Home",
+  "eng-inc003-writing-wc01a-imaginedplace": "An Invented Place",
 };
 
 /** Graceful fallback for any family/passage not in the curated name map above — never shows a raw dash-separated ID as the primary label. */
@@ -552,7 +564,7 @@ function ReviewForm({
       : reviewType === "mock_maths_independent_review" ? await submitMockMathsIndependentReview(submissionToSend)
       : reviewType === "mock_english_passage_independent_review" ? await submitMockEnglishPassageIndependentReview(submissionToSend)
       : reviewType === "mock_writing_prompt_independent_review" ? await submitMockWritingPromptIndependentReview(submissionToSend)
-      : reviewType === "amendment_verification" ? await submitEnglishInc001AmendmentVerification(submissionToSend)
+      : reviewType === "amendment_verification" ? await submitAmendmentVerification(submissionToSend)
       : await submitReview(submissionToSend);
     setSubmitting(false);
     if (error) {
@@ -2950,37 +2962,54 @@ function EnglishInc001WritingSection({
  * unrequested logic), and notes, without being forced to re-answer every
  * original criterion.
  */
-function EnglishInc001AmendmentVerificationSection({
-  status, onOpen,
+/**
+ * Decision 251, Part B — generic, history-derived Amendment Verification
+ * section. `targets` is no longer a hardcoded per-increment array: it is
+ * whatever `fetchAmendmentVerificationEligibleTargets()` discovers live
+ * from `ali_family_review` (any target whose LATEST formal original
+ * review decision is `approved_with_amendment`), so a brand-new
+ * increment's target appears here automatically the moment its own
+ * formal review is recorded that way — no code change required. The
+ * curated `ENGLISH_INC001_AMENDMENT_REGISTER` still supplies richer,
+ * hand-authored context for the 4 targets it documents; any other
+ * eligible target falls back to that review's own recorded notes
+ * (`t.latestNotes`), never fabricated copy.
+ */
+function AmendmentVerificationSection({
+  targets, status, onOpen,
 }: {
+  targets: AmendmentVerificationTarget[];
   status: Map<string, SevenXReviewStatus>;
   onOpen: (target: AmendmentVerificationTarget) => void;
 }) {
-  const verifiedCount = ENGLISH_INC001_AMENDMENT_VERIFICATION_TARGETS.filter((t) => status.get(t.id)?.reviewed).length;
+  if (targets.length === 0) return null;
+  const verifiedCount = targets.filter((t) => status.get(t.id)?.reviewed).length;
   return (
-    <div id="english-inc001-amendment-verification" className="bg-white dark:bg-gray-900 rounded-2xl border-2 border-amber-200 dark:border-amber-800 overflow-hidden scroll-mt-4">
+    <div id="amendment-verification" className="bg-white dark:bg-gray-900 rounded-2xl border-2 border-amber-200 dark:border-amber-800 overflow-hidden scroll-mt-4">
       <div className="px-5 py-4 border-b border-amber-100 dark:border-amber-900 bg-amber-50 dark:bg-amber-950/40">
-        <p className="text-sm font-bold text-amber-900 dark:text-amber-200">English Content Foundation Increment 001: Amendment Verification</p>
-        <p className="text-xs text-amber-600 dark:text-amber-400 mt-0.5">{verifiedCount} of {ENGLISH_INC001_AMENDMENT_VERIFICATION_TARGETS.length} amendments verified</p>
+        <p className="text-sm font-bold text-amber-900 dark:text-amber-200">Amendment Verification</p>
+        <p className="text-xs text-amber-600 dark:text-amber-400 mt-0.5">{verifiedCount} of {targets.length} amendments verified</p>
         <div className="mt-2 text-xs text-amber-800 dark:text-amber-300 space-y-0.5">
-          <p>• Each of these 4 targets was independently reviewed and recorded <strong>approved_with_amendment</strong>; Decision 235 implemented the required correction shown below each title.</p>
+          <p>• Every target below is here because its LATEST formal review decision is recorded <strong>approved_with_amendment</strong>, derived live from review history, not a fixed list.</p>
           <p>• Verifying here records ADDITIVE evidence only (review_type = amendment_verification): the original approved_with_amendment decision is never overwritten, and is never automatically converted to approved.</p>
-          <p>• A Mistake You Learned From is not listed: it was recorded plain approved, with no amendment required.</p>
+          <p>• A target whose formal review recorded plain approved (no amendment) never appears here.</p>
         </div>
       </div>
       <div className="divide-y divide-gray-50 dark:divide-gray-800">
-        {ENGLISH_INC001_AMENDMENT_VERIFICATION_TARGETS.map((t) => {
+        {targets.map((t) => {
           const s = status.get(t.id);
           const entry = ENGLISH_INC001_AMENDMENT_REGISTER.find((e) => e.targetId === t.id);
+          const title = t.title ?? FAMILY_DISPLAY_NAME[t.id] ?? formatFallbackName(t.id);
+          const context = entry?.requiredCorrection ?? t.latestNotes;
           return (
             <button
               key={t.id}
-              onClick={() => onOpen(t)}
+              onClick={() => onOpen({ ...t, title })}
               className="w-full text-left px-5 py-3 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors flex items-start justify-between gap-3"
             >
               <div>
-                <p className="text-sm font-medium text-gray-900 dark:text-gray-100">{t.title}</p>
-                {entry && <p className="text-xs text-gray-600 dark:text-gray-400 mt-1 max-w-2xl">{entry.requiredCorrection}</p>}
+                <p className="text-sm font-medium text-gray-900 dark:text-gray-100">{title}</p>
+                {context && <p className="text-xs text-gray-600 dark:text-gray-400 mt-1 max-w-2xl">{context}</p>}
                 <p className="text-[11px] text-gray-400 dark:text-gray-500 mt-1">
                   {s?.reviewed ? `verified · ${s.decision}` : "not yet verified"}
                 </p>
@@ -3200,11 +3229,12 @@ function ReviewDashboard() {
   const [selectedEnglishInc002Passage, setSelectedEnglishInc002Passage] = useState<PendingReviewTarget | null>(null);
   const [englishInc001WritingStatus, setEnglishInc001WritingStatus] = useState<Map<string, SevenXReviewStatus>>(new Map());
   const [selectedEnglishInc001Writing, setSelectedEnglishInc001Writing] = useState<{ target: PendingReviewTarget; family: SevenXFamilyConfig } | null>(null);
-  const [englishInc001AmendmentVerificationStatus, setEnglishInc001AmendmentVerificationStatus] = useState<Map<string, SevenXReviewStatus>>(new Map());
-  const [selectedEnglishInc001AmendmentVerification, setSelectedEnglishInc001AmendmentVerification] = useState<AmendmentVerificationTarget | null>(null);
+  const [amendmentVerificationTargets, setAmendmentVerificationTargets] = useState<AmendmentVerificationTarget[]>([]);
+  const [amendmentVerificationStatus, setAmendmentVerificationStatus] = useState<Map<string, SevenXReviewStatus>>(new Map());
+  const [selectedAmendmentVerification, setSelectedAmendmentVerification] = useState<AmendmentVerificationTarget | null>(null);
 
   async function load() {
-    const [pending, reviewed, teachingReviewed, englishTeachingReviewed, writingTeachingReviewed, sevenX, mr04Depth, inc006Depth, mockMrBatch001, mockMrBatch002, mockMrBatch003, mockFirstMockCompoundBatch001, mockSharedScenarioCompletionBatch, mockStructuralCapacityInc001, mockStructuralCapacityWave002, mockStructuralCapacityWave002Correction001, mockStructuralCapacityIncrement003, mockStructuralCapacityIncrement004, mockStructuralCapacityIncrement005, mockStructuralCapacityIncrement006, mockEnglishPassageBatch001, mockWritingBatch001, englishInc001Passage, englishInc001Writing, englishInc001AmendmentVerification, englishInc002Passage] = await Promise.all([
+    const [pending, reviewed, teachingReviewed, englishTeachingReviewed, writingTeachingReviewed, sevenX, mr04Depth, inc006Depth, mockMrBatch001, mockMrBatch002, mockMrBatch003, mockFirstMockCompoundBatch001, mockSharedScenarioCompletionBatch, mockStructuralCapacityInc001, mockStructuralCapacityWave002, mockStructuralCapacityWave002Correction001, mockStructuralCapacityIncrement003, mockStructuralCapacityIncrement004, mockStructuralCapacityIncrement005, mockStructuralCapacityIncrement006, mockEnglishPassageBatch001, mockWritingBatch001, englishInc001Passage, englishInc001Writing, englishInc002Passage] = await Promise.all([
       fetchPendingReviewTargets(), fetchReviewedTargetIds(), fetchMathsTeachingReviewedFamilyIds(), fetchEnglishTeachingReviewedFamilyIds(), fetchWritingTeachingReviewedFamilyIds(),
       fetchSevenXReviewStatus(SEVEN_X_TARGET_IDS), fetchMr04DepthReviewStatus(MR04_DEPTH_TARGET_IDS), fetchInc006DepthReviewStatus(INC006_DEPTH_TARGET_IDS),
       fetchMockMrBatch001ReviewStatus(MOCK_MR_BATCH001_TARGET_IDS), fetchMockMrBatch002ReviewStatus(MOCK_MR_BATCH002_TARGET_IDS),
@@ -3220,9 +3250,16 @@ function ReviewDashboard() {
       fetchMockStructuralCapacityIncrement006ReviewStatus(MOCK_STRUCTURAL_CAPACITY_INCREMENT006_TARGET_IDS),
       fetchMockEnglishPassageBatch001ReviewStatus(), fetchMockWritingBatch001ReviewStatus(MOCK_WRITING_BATCH001_TARGET_IDS),
       fetchMockEnglishInc001PassageReviewStatus(), fetchMockEnglishInc001WritingReviewStatus(MOCK_ENGLISH_INC001_WRITING_TARGET_IDS),
-      fetchEnglishInc001AmendmentVerificationStatus(ENGLISH_INC001_AMENDMENT_VERIFICATION_TARGET_IDS),
       fetchMockEnglishInc002PassageReviewStatus(),
     ]);
+    // Decision 251, Part B — the amendment-verification target list is
+    // derived live from review history (not a fixed array), so its own
+    // status fetch has to wait until the eligible-target ids are known,
+    // rather than joining the Promise.all above.
+    const amendmentTargets = await fetchAmendmentVerificationEligibleTargets();
+    const amendmentStatus = await fetchAmendmentVerificationStatus(amendmentTargets.map((t) => t.id));
+    setAmendmentVerificationTargets(amendmentTargets);
+    setAmendmentVerificationStatus(amendmentStatus);
     setTargets(pending);
     setReviewedIds(reviewed);
     setTeachingReviewedIds(teachingReviewed);
@@ -3247,7 +3284,6 @@ function ReviewDashboard() {
     setMockWritingBatch001Status(mockWritingBatch001);
     setEnglishInc001PassageStatus(englishInc001Passage);
     setEnglishInc001WritingStatus(englishInc001Writing);
-    setEnglishInc001AmendmentVerificationStatus(englishInc001AmendmentVerification);
     setEnglishInc002PassageStatus(englishInc002Passage);
   }
 
@@ -3552,18 +3588,19 @@ function ReviewDashboard() {
     );
   }
 
-  if (selectedEnglishInc001AmendmentVerification) {
-    const t = selectedEnglishInc001AmendmentVerification;
+  if (selectedAmendmentVerification) {
+    const t = selectedAmendmentVerification;
     const entry = ENGLISH_INC001_AMENDMENT_REGISTER.find((e) => e.targetId === t.id);
     const target: PendingReviewTarget = { id: t.id, reviewTargetType: t.reviewTargetType, notes: null };
+    const disclosure = entry ? `Required correction: ${entry.requiredCorrection}` : t.latestNotes ? `Recorded review notes: ${t.latestNotes}` : "Verify whether the recorded amendment was resolved.";
     return (
       <ReviewForm
         target={target}
         reviewType="amendment_verification"
-        onDone={() => { setSelectedEnglishInc001AmendmentVerification(null); load(); }}
+        onDone={() => { setSelectedAmendmentVerification(null); load(); }}
         sevenX={t.sevenXQuestionIds ? {
-          questionIds: t.sevenXQuestionIds, disclosure: entry ? `Required correction: ${entry.requiredCorrection}` : "Verify whether the recorded amendment was resolved.",
-          notesPrefix: buildEnglishInc001AmendmentVerificationNotesPrefix(t.id),
+          questionIds: t.sevenXQuestionIds, disclosure,
+          notesPrefix: buildAmendmentVerificationNotesPrefix(t.id),
         } : undefined}
       />
     );
@@ -3628,7 +3665,7 @@ function ReviewDashboard() {
       <EnglishInc001PassageSection targets={targets} status={englishInc001PassageStatus} onOpen={setSelectedEnglishInc001Passage} />
       <EnglishInc002PassageSection targets={targets} status={englishInc002PassageStatus} onOpen={setSelectedEnglishInc002Passage} />
       <EnglishInc001WritingSection targets={targets} status={englishInc001WritingStatus} onOpen={(target, family) => setSelectedEnglishInc001Writing({ target, family })} />
-      <EnglishInc001AmendmentVerificationSection status={englishInc001AmendmentVerificationStatus} onOpen={setSelectedEnglishInc001AmendmentVerification} />
+      <AmendmentVerificationSection targets={amendmentVerificationTargets} status={amendmentVerificationStatus} onOpen={setSelectedAmendmentVerification} />
       <FullBacklogSection targets={targets} reviewedIds={reviewedIds} onOpen={setSelected} />
       </>
       )}
