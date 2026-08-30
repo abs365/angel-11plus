@@ -35,6 +35,7 @@ test("notes prefix builder embeds the exact ENGLISH-CONTENT-FOUNDATION-INC001 ma
 });
 
 const pageSource = fs.readFileSync("app/admin-beta/review/page.tsx", "utf8");
+const libSource = fs.readFileSync("lib/adminReview.ts", "utf8");
 
 test("page.tsx imports the fetch functions and both config exports for Increment 001", () => {
   assert.match(pageSource, /fetchMockEnglishInc001PassageReviewStatus, MOCK_ENGLISH_INC001_PASSAGE_TARGET_IDS/);
@@ -112,8 +113,16 @@ test("does not change any UNRELATED review flow's own review_type wiring -- Math
 // selection state, own status fetch, distinct explanatory copy) are
 // unchanged.
 
-test("Decision 235/251: ReviewForm's reviewType prop union includes amendment_verification", () => {
-  assert.match(pageSource, /reviewType\?: "content_review" \| "english_teaching_review" \| "mock_maths_independent_review" \| "mock_english_passage_independent_review" \| "mock_writing_prompt_independent_review" \| "amendment_verification";/);
+test("Decision 235/251/253: ReviewForm's reviewType prop union includes amendment_verification", () => {
+  // Decision 253 widened this from a hand-copied literal union (which had
+  // to be manually extended every time a new review_type value was added
+  // -- exactly the maintenance gap this test was originally written to
+  // guard against) to the canonical ReviewType type imported from
+  // lib/adminReview.ts, which already includes amendment_verification (and
+  // every other real review_type value) permanently, with no drift risk.
+  assert.match(pageSource, /reviewType\?: ReviewType;/);
+  assert.match(pageSource, /type AmendmentVerificationTarget, type ReviewType,/);
+  assert.match(libSource, /"mock_writing_prompt_independent_review"\s*\r?\n\s*\| "founder_amendment_clarification"\s*\r?\n\s*\| "amendment_verification";/);
 });
 
 test("Decision 235/251: handleSubmit() routes amendment_verification to the dedicated submitAmendmentVerification function, never the generic submitReview fallback (the exact defect class Decision 230/231 found and fixed for the original Inc001 targets)", () => {

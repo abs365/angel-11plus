@@ -763,6 +763,23 @@ export interface PendingReviewTarget {
   id: string; // the family_id column's value — either a real family id or a passage id
   reviewTargetType: ReviewTargetType;
   notes: string | null;
+  /**
+   * Decision 253 — the row's own `review_type` column, read straight off
+   * `ali_family_review` (previously never selected here). Optional so
+   * every existing hand-built `PendingReviewTarget` literal elsewhere in
+   * this file/page.tsx (a dedicated batch's own target, a synthetic
+   * teaching-review target with no real pending row behind it) still
+   * type-checks unchanged. Its one real purpose: letting the generic
+   * `FullBacklogSection` -> `<ReviewForm target={selected} />` path (the
+   * only path with no dedicated, hand-built section of its own) pass the
+   * row's REAL review_type into ReviewForm instead of silently falling
+   * through to its `"content_review"` default — see Decision 253's own
+   * finding that this fallback would otherwise submit e.g. an
+   * `eng-inc003-*` passage review with the WRONG review_type, exactly the
+   * "must never be conflated" failure mode this file guards against
+   * everywhere else via dedicated `submitXxx` functions.
+   */
+  reviewType?: ReviewType;
 }
 
 export interface RepresentativeQuestion {
@@ -936,17 +953,35 @@ export interface ReviewSubmission {
   copyrightRiskClear: boolean | null;
 }
 
-/** Every target currently awaiting review, per review_target_type. Empty array (not an error) if the calling session is not an admin — the RLS policy simply returns no rows. */
-export async function fetchPendingReviewTargets(): Promise<PendingReviewTarget[]> {
+/**
+ * Every target currently awaiting review, per review_target_type. An
+ * empty `targets` array with `fetchFailed: false` means a genuinely-not-
+ * an-admin session (the RLS policy simply returns no rows) or a
+ * genuinely empty backlog — both real, unremarkable states.
+ *
+ * Decision 253 — `fetchFailed: true` is a NEW, distinct third state: the
+ * query itself errored (a real Supabase/network/RLS-misconfiguration
+ * failure), which the old code silently collapsed into the same empty
+ * array as "nothing pending," making a genuine failure indistinguishable
+ * from a genuinely quiet backlog at every call site. Only the query
+ * failing sets this — an unconfigured client (`!supabase`) is a distinct,
+ * separately-visible app state (the whole page's connection banner),
+ * not this specific ambiguity.
+ */
+export async function fetchPendingReviewTargets(): Promise<{ targets: PendingReviewTarget[]; fetchFailed: boolean }> {
   const supabase = getSupabaseClient();
-  if (!supabase) return [];
+  if (!supabase) return { targets: [], fetchFailed: false };
   const { data, error } = await supabase
     .from("ali_family_review")
-    .select("family_id, review_target_type, notes")
+    .select("family_id, review_target_type, review_type, notes")
     .eq("decision", "pending_independent_review")
     .order("review_target_type", { ascending: true });
-  if (error || !data) return [];
-  return data.map((r) => ({ id: r.family_id, reviewTargetType: r.review_target_type, notes: r.notes }));
+  if (error) return { targets: [], fetchFailed: true };
+  if (!data) return { targets: [], fetchFailed: false };
+  return {
+    targets: data.map((r) => ({ id: r.family_id, reviewTargetType: r.review_target_type, reviewType: r.review_type, notes: r.notes })),
+    fetchFailed: false,
+  };
 }
 
 /**

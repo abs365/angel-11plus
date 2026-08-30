@@ -56,7 +56,7 @@ import {
   submitAmendmentVerification, ENGLISH_INC001_AMENDMENT_REGISTER,
   type PendingReviewTarget, type RepresentativeQuestion, type PassageDetail, type ReviewDecision, type ReviewSubmission,
   type TargetSummary, type MathsTeachingReviewSubmission, type SevenXReviewStatus, type SevenXFamilyConfig,
-  type AmendmentVerificationTarget,
+  type AmendmentVerificationTarget, type ReviewType,
 } from "@/lib/adminReview";
 import { getExamStrategyHint, getWorkedExample } from "@/lib/learningEngine/englishExamStrategies";
 import { getGuidedScaffoldKind, getGuidedInstructionText } from "@/lib/learningEngine/guidedPractice";
@@ -414,7 +414,22 @@ function ReviewForm({
 }: {
   target: PendingReviewTarget;
   onDone: () => void;
-  reviewType?: "content_review" | "english_teaching_review" | "mock_maths_independent_review" | "mock_english_passage_independent_review" | "mock_writing_prompt_independent_review" | "amendment_verification";
+  /**
+   * Decision 253 — widened from a hand-copied narrower literal union to
+   * the real `ReviewType` (lib/adminReview.ts) so the generic
+   * FullBacklogSection path can pass a target's OWN, DB-read review_type
+   * (`selected.reviewType`, which can legitimately be any ReviewType
+   * value) without a type error. handleSubmit()'s own dispatch below is
+   * unchanged: it only special-cases the values it already recognises
+   * and falls through to the generic submitReview() (content_review)
+   * otherwise — a value like "maths_teaching_review" or
+   * "writing_teaching_review" is never actually produced by
+   * fetchPendingReviewTargets() in practice (those two review types are
+   * never inserted with decision = 'pending_independent_review' — they
+   * use their own static TARGET_IDS-driven flow, never this placeholder
+   * mechanism), so the fallback is defensive, not a live code path.
+   */
+  reviewType?: ReviewType;
   /**
    * Educational Increment 007X, Founder Review-Surface Correction — when
    * set, this review is scoped to a specific, newly authored batch of
@@ -3037,7 +3052,6 @@ function AmendmentVerificationSection({
  * excluded by fetchReviewedTargetIds()'s own scope).
  */
 function FullBacklogSection({ targets, reviewedIds, onOpen }: { targets: PendingReviewTarget[]; reviewedIds: Set<string>; onOpen: (t: PendingReviewTarget) => void }) {
-  const [open, setOpen] = useState(false);
   const backlogTargets = targets.filter((t) =>
     !PILOT_TARGET_IDS.includes(t.id) && !BATCH2_TARGET_IDS.includes(t.id) && !BATCH3_TARGET_IDS.includes(t.id) &&
     !BATCH4_TARGET_IDS.includes(t.id) && !SEVEN_T_TARGET_IDS.includes(t.id) && !SEVEN_X_TARGET_IDS.includes(t.id) &&
@@ -3057,9 +3071,21 @@ function FullBacklogSection({ targets, reviewedIds, onOpen }: { targets: Pending
     // form is needed here, unlike Increment 001's own two-form exclusion above.
     !MOCK_ENGLISH_INC002_PASSAGE_TARGET_IDS.includes(t.id) &&
     !reviewedIds.has(t.id));
+  // Decision 253 — this section previously always started collapsed, with
+  // no jump-link and no distinct label, so a genuinely new, unreviewed
+  // target routed here (any target Decision 251 relied on this generic
+  // path for, e.g. eng-inc003-*) was real, present, correctly fetched
+  // DATA that was nonetheless never actually SEEN by the Founder without
+  // first noticing and clicking an easy-to-overlook, generically-labelled
+  // header at the very bottom of a very long page. Starting open whenever
+  // it is genuinely non-empty on first load fixes exactly that, without
+  // changing behaviour for the common case (nothing outstanding here).
+  // Lazy initializer -- read once on mount, not re-forced shut/open every
+  // re-render, so the Founder's own manual toggle is still respected.
+  const [open, setOpen] = useState(() => backlogTargets.length > 0);
 
   return (
-    <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 overflow-hidden">
+    <div id="full-review-backlog" className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 overflow-hidden scroll-mt-4">
       <button
         onClick={() => setOpen((v) => !v)}
         className="w-full flex items-center justify-between px-5 py-3 text-left"
@@ -3181,6 +3207,8 @@ function EnglishTeachingSection({ reviewedIds, onOpen }: { reviewedIds: Set<stri
 
 function ReviewDashboard() {
   const [targets, setTargets] = useState<PendingReviewTarget[] | null>(null);
+  /** Decision 253 — true only when fetchPendingReviewTargets()'s own query errored, distinct from a genuinely empty/not-admin result. See PendingReviewSection's own error banner below. */
+  const [pendingFetchFailed, setPendingFetchFailed] = useState(false);
   const [reviewedIds, setReviewedIds] = useState<Set<string>>(new Set());
   const [selected, setSelected] = useState<PendingReviewTarget | null>(null);
   const [teachingReviewedIds, setTeachingReviewedIds] = useState<Set<string>>(new Set());
@@ -3234,7 +3262,7 @@ function ReviewDashboard() {
   const [selectedAmendmentVerification, setSelectedAmendmentVerification] = useState<AmendmentVerificationTarget | null>(null);
 
   async function load() {
-    const [pending, reviewed, teachingReviewed, englishTeachingReviewed, writingTeachingReviewed, sevenX, mr04Depth, inc006Depth, mockMrBatch001, mockMrBatch002, mockMrBatch003, mockFirstMockCompoundBatch001, mockSharedScenarioCompletionBatch, mockStructuralCapacityInc001, mockStructuralCapacityWave002, mockStructuralCapacityWave002Correction001, mockStructuralCapacityIncrement003, mockStructuralCapacityIncrement004, mockStructuralCapacityIncrement005, mockStructuralCapacityIncrement006, mockEnglishPassageBatch001, mockWritingBatch001, englishInc001Passage, englishInc001Writing, englishInc002Passage] = await Promise.all([
+    const [pendingResult, reviewed, teachingReviewed, englishTeachingReviewed, writingTeachingReviewed, sevenX, mr04Depth, inc006Depth, mockMrBatch001, mockMrBatch002, mockMrBatch003, mockFirstMockCompoundBatch001, mockSharedScenarioCompletionBatch, mockStructuralCapacityInc001, mockStructuralCapacityWave002, mockStructuralCapacityWave002Correction001, mockStructuralCapacityIncrement003, mockStructuralCapacityIncrement004, mockStructuralCapacityIncrement005, mockStructuralCapacityIncrement006, mockEnglishPassageBatch001, mockWritingBatch001, englishInc001Passage, englishInc001Writing, englishInc002Passage] = await Promise.all([
       fetchPendingReviewTargets(), fetchReviewedTargetIds(), fetchMathsTeachingReviewedFamilyIds(), fetchEnglishTeachingReviewedFamilyIds(), fetchWritingTeachingReviewedFamilyIds(),
       fetchSevenXReviewStatus(SEVEN_X_TARGET_IDS), fetchMr04DepthReviewStatus(MR04_DEPTH_TARGET_IDS), fetchInc006DepthReviewStatus(INC006_DEPTH_TARGET_IDS),
       fetchMockMrBatch001ReviewStatus(MOCK_MR_BATCH001_TARGET_IDS), fetchMockMrBatch002ReviewStatus(MOCK_MR_BATCH002_TARGET_IDS),
@@ -3260,7 +3288,8 @@ function ReviewDashboard() {
     const amendmentStatus = await fetchAmendmentVerificationStatus(amendmentTargets.map((t) => t.id));
     setAmendmentVerificationTargets(amendmentTargets);
     setAmendmentVerificationStatus(amendmentStatus);
-    setTargets(pending);
+    setTargets(pendingResult.targets);
+    setPendingFetchFailed(pendingResult.fetchFailed);
     setReviewedIds(reviewed);
     setTeachingReviewedIds(teachingReviewed);
     setEnglishTeachingReviewedIds(englishTeachingReviewed);
@@ -3303,7 +3332,14 @@ function ReviewDashboard() {
   }
 
   if (selected) {
-    return <ReviewForm target={selected} onDone={() => { setSelected(null); load(); }} />;
+    // Decision 253 — must pass the target's OWN review_type explicitly.
+    // Every other entry point into ReviewForm does this via a hardcoded
+    // literal because it has its own dedicated section; this is the one
+    // generic path (FullBacklogSection), so it reads the value straight
+    // off the fetched row instead. Omitting this silently fell through to
+    // ReviewForm's "content_review" default, which would have submitted
+    // e.g. an eng-inc003-* passage review with the wrong review_type.
+    return <ReviewForm target={selected} reviewType={selected.reviewType} onDone={() => { setSelected(null); load(); }} />;
   }
 
   if (selectedSevenX) {
@@ -3610,6 +3646,23 @@ function ReviewDashboard() {
 
   return (
     <div className="space-y-5">
+      {/**
+       * Decision 253 — a genuine fetchPendingReviewTargets() query failure
+       * (RLS misconfiguration, network error) previously collapsed into
+       * the exact same empty-array shape as "genuinely nothing pending,"
+       * so a real failure was indistinguishable from a quiet backlog at
+       * every section below. This banner is the one place that
+       * distinction is now shown, so a future failure of this kind reads
+       * as "something is wrong," never as "there are simply no reviews."
+       */}
+      {pendingFetchFailed && (
+        <div className="bg-red-50 dark:bg-red-950 border border-red-200 dark:border-red-800 rounded-2xl px-5 py-4">
+          <p className="text-sm font-semibold text-red-800 dark:text-red-300">Could not load pending review targets</p>
+          <p className="text-xs text-red-600 dark:text-red-400 mt-1">
+            The query to ali_family_review failed. This is NOT the same as &quot;no reviews are pending&quot;: every section below may be showing stale or incomplete data. Refresh, and if this persists, check the browser console and Supabase RLS/auth state before concluding a backlog is genuinely empty.
+          </p>
+        </div>
+      )}
       <MathsTeachingSection reviewedIds={teachingReviewedIds} onOpen={setSelectedTeachingFamilyId} />
       <EnglishTeachingSection reviewedIds={englishTeachingReviewedIds} onOpen={setSelectedEnglishTeachingFamilyId} />
       <WritingTeachingSection reviewedIds={writingTeachingReviewedIds} onOpen={setSelectedWritingTeachingFamilyId} />
@@ -3647,6 +3700,12 @@ function ReviewDashboard() {
           <a href="#mock-review-writing-batch001" className="text-xs font-medium px-3 py-1.5 rounded-lg bg-teal-100 dark:bg-teal-900 text-teal-700 dark:text-teal-300 hover:bg-teal-200 dark:hover:bg-teal-800 transition-colors">Continuous Writing</a>
           <a href="#mock-review-firstmock-compound-batch001" className="text-xs font-medium px-3 py-1.5 rounded-lg bg-amber-100 dark:bg-amber-900 text-amber-700 dark:text-amber-300 hover:bg-amber-200 dark:hover:bg-amber-800 transition-colors">First Mock Compound Batch 001</a>
           <a href="#mock-review-shared-scenario-completion-batch" className="text-xs font-medium px-3 py-1.5 rounded-lg bg-amber-100 dark:bg-amber-900 text-amber-700 dark:text-amber-300 hover:bg-amber-200 dark:hover:bg-amber-800 transition-colors">Shared-Scenario Completion Batch</a>
+          {/* Decision 253 — a permanent, content-agnostic link, unlike the
+              increment-specific ones above: any target the generic
+              FullBacklogSection is relied on for (any future increment
+              that never gets its own dedicated section) is reachable from
+              here without this card ever needing another manual edit. */}
+          <a href="#full-review-backlog" className="text-xs font-medium px-3 py-1.5 rounded-lg bg-gray-200 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-700 transition-colors">Full Review Backlog</a>
         </div>
       </div>
 
