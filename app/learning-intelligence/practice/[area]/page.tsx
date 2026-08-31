@@ -43,6 +43,7 @@ import type { LearnerIntelligenceProfile } from "@/lib/learningEngine/types";
 import type { WritingFeedback } from "@/types/writing-feedback";
 import { getWritingTeachingContent, getWritingTaskFamilyForPromptType } from "@/lib/learningEngine/writingTeachingContent";
 import { WRITING_DIMENSION_LABEL } from "@/lib/learningEngine/writingRubric";
+import { presentWritingChecklistForContext, isWritingFamilyGuidedEligible, writingSupportContextForGuidedToggle } from "@/lib/writing/supportLevelPolicy";
 import type { EnglishComprehensionPrompt } from "@/types/ali/questionBank";
 import type { MathsQuestion } from "@/types/index";
 
@@ -156,6 +157,13 @@ export default function PracticeSessionPage({
   // FAMILY_SCAFFOLD. A family is removed the first time the learner
   // answers it correctly under guidance this session.
   const mathsGuidedFamiliesRef = useRef<Set<string>>(new Set());
+  // Decision 257 — mirrors guidedFamiliesRef/mathsGuidedFamiliesRef exactly,
+  // for Continuous Writing. "Has real teaching content for this family"
+  // reuses the same getWritingTeachingContent/getWritingTaskFamilyForPromptType
+  // signal WritingActivity already computes per-item (see its `teachingContent`
+  // constant below) — no new concept invented. This governs the checklist
+  // support level (Decision 256's policy), not just the worked-example toggle.
+  const writingGuidedFamiliesRef = useRef<Set<string>>(new Set());
   // Remembers whether the just-submitted (non-auto-verified) attempt was
   // made under Guided Practice, across the async gap until the learner
   // responds to self-assessment.
@@ -266,6 +274,17 @@ export default function PracticeSessionPage({
         tagged
           .map((q) => q.familyId)
           .filter((id): id is string => Boolean(id) && Boolean(getMathsTeachingContent(id)))
+      );
+      writingGuidedFamiliesRef.current = new Set(
+        tagged
+          .filter((q) =>
+            isWritingFamilyGuidedEligible(
+              q.familyId,
+              (q.prompt as { type?: string } | undefined)?.type,
+              (promptType) => Boolean(getWritingTeachingContent(getWritingTaskFamilyForPromptType(promptType)))
+            )
+          )
+          .map((q) => q.familyId as string)
       );
 
       setActivities(tagged);
@@ -669,7 +688,10 @@ export default function PracticeSessionPage({
 
             {area.id === "continuous-writing" && (
               <WritingActivity
+                key={current.id}
+                promptId={current.id}
                 prompt={current.prompt as { title: string; prompt: string; checklist: string[]; type?: string }}
+                guidedAvailable={Boolean(current.familyId && writingGuidedFamiliesRef.current.has(current.familyId))}
                 answer={answer}
                 setAnswer={setAnswer}
                 checkedItems={checkedItems}
@@ -1268,9 +1290,11 @@ function MathsActivity({
 }
 
 function WritingActivity({
-  prompt, answer, setAnswer, checkedItems, setCheckedItems, submitted, submitting, feedback, feedbackError, onSubmit, onNext, isLast,
+  promptId, prompt, guidedAvailable, answer, setAnswer, checkedItems, setCheckedItems, submitted, submitting, feedback, feedbackError, onSubmit, onNext, isLast,
 }: {
+  promptId: string;
   prompt: { title: string; prompt: string; checklist: string[]; type?: string };
+  guidedAvailable: boolean;
   answer: string;
   setAnswer: (v: string) => void;
   checkedItems: Set<string>;
@@ -1292,6 +1316,18 @@ function WritingActivity({
   // is falsely attached to a non-CSSE-evidenced prompt.
   const taskFamily = getWritingTaskFamilyForPromptType(prompt.type);
   const teachingContent = getWritingTeachingContent(taskFamily);
+  // Decision 257 — Increment 003 Writing amendment, wired end to end.
+  // Same toggle pattern as Reading/Maths' Guided Practice (guidedMode
+  // defaults from guidedAvailable, re-evaluated each question via the
+  // `key={current.id}` remount at the call site). This is the real,
+  // existing session-context signal — no new concept invented. There is
+  // no live Mock renderer for Continuous Writing yet (app/mocks/[pathway]
+  // explicitly excludes Writing content), so only teaching/independent
+  // are reachable here; "mock" stays available in the shared policy for
+  // whenever a Mock Writing renderer exists.
+  const [guidedMode, setGuidedMode] = useState(guidedAvailable);
+  const supportContext = writingSupportContextForGuidedToggle(guidedMode);
+  const visibleChecklist = presentWritingChecklistForContext(promptId, prompt.checklist, supportContext);
 
   // Stage 2 — focuses the feedback region (score + dimensions + strengths),
   // not the Next button directly, once feedback successfully loads: the
@@ -1336,6 +1372,20 @@ function WritingActivity({
         </div>
       )}
 
+      {/* Decision 257 — Guided Practice toggle for Continuous Writing,
+          same control and copy as Reading/Maths (Educational Increment
+          007C/007L). Only shown where a real teaching/support difference
+          exists for this task type (teachingContent), matching the exact
+          same gate as writingGuidedFamiliesRef's seeding above. */}
+      {teachingContent && !submitted && (
+        <button
+          onClick={() => setGuidedMode((v) => !v)}
+          className="mt-2 text-xs text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950 hover:bg-emerald-100 dark:hover:bg-emerald-900 px-3 py-1.5 rounded-lg font-medium transition-colors"
+        >
+          {guidedMode ? "Switch to independent practice" : "Try with guidance"}
+        </button>
+      )}
+
       <textarea
         value={answer}
         onChange={(e) => setAnswer(e.target.value)}
@@ -1347,7 +1397,7 @@ function WritingActivity({
       <p className="text-[11px] text-gray-400 dark:text-gray-500 mt-1">{wordCount} words</p>
 
       <div className="mt-3 space-y-1.5">
-        {prompt.checklist.map((item) => (
+        {visibleChecklist.map((item) => (
           <label key={item} className="flex items-start gap-2 text-xs text-gray-600 dark:text-gray-400">
             <input
               type="checkbox"

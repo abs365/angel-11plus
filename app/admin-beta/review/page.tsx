@@ -5,7 +5,7 @@ import Link from "next/link";
 import { CheckCircle2, ArrowLeft, ArrowRight, ShieldAlert, LogOut, Mail, ChevronDown, ChevronUp } from "lucide-react";
 import { useAuth } from "@/components/providers/AuthProvider";
 import { checkIsAdmin } from "@/lib/feedback";
-import { checklistItemSupportLevel } from "@/lib/writing/supportLevelPolicy";
+import { checklistItemSupportLevel, presentWritingChecklistForContext } from "@/lib/writing/supportLevelPolicy";
 import {
   fetchPendingReviewTargets, fetchReviewedTargetIds, fetchRepresentativeQuestions, fetchQuestionsForPassage,
   fetchPassageDetail, fetchTargetSummary, submitReview,
@@ -452,6 +452,30 @@ function QuestionOrWritingTaskBody({ question, displayText }: { question: Repres
                 </li>
               ))}
             </ul>
+            {/* Decision 257, Part G — reads only lib/writing/supportLevelPolicy.ts
+                (the same pure function the real learner-facing renderer,
+                app/learning-intelligence/practice/[area]/page.tsx's
+                WritingActivity, calls). Nothing here writes to the
+                database or changes review/certification state. */}
+            <details className="mt-1.5">
+              <summary className="text-[11px] font-semibold text-gray-400 dark:text-gray-500 cursor-pointer select-none">
+                Preview: what the learner would see, by context
+              </summary>
+              <div className="mt-1 space-y-2 pl-3 border-l-2 border-gray-100 dark:border-gray-800">
+                {(["teaching", "independent", "mock"] as const).map((ctx) => (
+                  <div key={ctx}>
+                    <p className="text-[11px] font-semibold text-gray-500 dark:text-gray-400 capitalize">
+                      {ctx === "mock" ? "Mock / formal assessment (no live renderer yet)" : ctx}
+                    </p>
+                    <ul className="text-[11px] text-gray-500 dark:text-gray-400 list-disc list-inside">
+                      {presentWritingChecklistForContext(question.id, w.checklist, ctx).map((item, i) => (
+                        <li key={i}>{item}</li>
+                      ))}
+                    </ul>
+                  </div>
+                ))}
+              </div>
+            </details>
           </>
         )}
         <p className="text-[11px] text-gray-400 dark:text-gray-500 mt-1 italic">No deterministic model answer is stored for Continuous Writing: this is a qualitative writing review, judged against the checklist above and your own educational judgement, not marked against a fixed answer.</p>

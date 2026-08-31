@@ -24,7 +24,7 @@ test("page.tsx: the review surface explicitly warns that coaching items are redu
 });
 
 test("page.tsx: imports and uses the Decision 256 support-level classifier, keyed by the question's own id (ali_question_bank.id)", () => {
-  assert.match(pageSource, /import \{ checklistItemSupportLevel \} from "@\/lib\/writing\/supportLevelPolicy";/);
+  assert.match(pageSource, /import \{ checklistItemSupportLevel,? ?[\s\S]{0,60}\} from "@\/lib\/writing\/supportLevelPolicy";/);
   const block = writingBlock();
   assert.match(block, /checklistItemSupportLevel\(question\.id, i\)/);
 });

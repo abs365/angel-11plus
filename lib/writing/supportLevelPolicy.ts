@@ -113,3 +113,37 @@ export function presentWritingChecklistForContext(
   const hasCoaching = checklist.some((_, i) => checklistItemSupportLevel(promptId, i) === "coaching");
   return hasCoaching ? [...core, INDEPENDENT_PRACTICE_REMINDER] : core;
 }
+
+/**
+ * Decision 257 — the real, existing "does a Guided Practice difference
+ * exist for this family" signal, reused unchanged from the same
+ * getWritingTeachingContent/getWritingTaskFamilyForPromptType pair
+ * WritingActivity already calls for its worked-example toggle. Extracted
+ * here (rather than left inline in the page component) so the eligibility
+ * rule that seeds the session's guided-families set is unit-testable
+ * without a DOM/React harness, matching this repo's existing convention
+ * (see lib/learningEngine/practiceInteractionGuard.ts).
+ */
+export function isWritingFamilyGuidedEligible(
+  familyId: string | null | undefined,
+  promptType: string | null | undefined,
+  hasTeachingContentForType: (promptType: string | null | undefined) => boolean
+): boolean {
+  return Boolean(familyId) && hasTeachingContentForType(promptType);
+}
+
+/**
+ * Maps the real, existing Guided Practice toggle (identical control to
+ * Reading/Maths) to a WritingSupportContext. Only two of the three
+ * contexts are reachable through this mapping: there is no live Mock
+ * renderer for Continuous Writing yet (app/mocks/[pathway] explicitly
+ * excludes Writing content — "we don't yet have enough original English
+ * comprehension and writing content to honestly represent a full CSSE
+ * English paper"), so "mock" is never produced here. It remains a valid
+ * WritingSupportContext for whenever a Mock Writing renderer exists, and
+ * for the admin review preview, which can show all three without a live
+ * route.
+ */
+export function writingSupportContextForGuidedToggle(guidedMode: boolean): WritingSupportContext {
+  return guidedMode ? "teaching" : "independent";
+}
