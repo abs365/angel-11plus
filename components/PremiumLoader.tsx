@@ -45,8 +45,8 @@ export default function PremiumLoader({ message, progressMessages, icon: Icon = 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-950 flex items-center justify-center px-4">
       <div className="flex flex-col items-center gap-5">
-        <div className="w-16 h-16 rounded-3xl bg-purple-100 dark:bg-purple-950 flex items-center justify-center animate-pulse">
-          <Icon size={28} className="text-purple-500 dark:text-purple-400" />
+        <div className="w-16 h-16 rounded-3xl bg-blue-100 dark:bg-blue-950 flex items-center justify-center animate-pulse">
+          <Icon size={28} className="text-blue-500 dark:text-blue-400" />
         </div>
         <p
           className="text-gray-600 dark:text-gray-300 text-sm font-medium"
@@ -56,9 +56,9 @@ export default function PremiumLoader({ message, progressMessages, icon: Icon = 
           {allMessages[step]}
         </p>
         <div className="flex gap-1.5">
-          <span className="w-1.5 h-1.5 rounded-full bg-purple-400 dark:bg-purple-500 animate-bounce [animation-delay:-0.3s]" />
-          <span className="w-1.5 h-1.5 rounded-full bg-purple-400 dark:bg-purple-500 animate-bounce [animation-delay:-0.15s]" />
-          <span className="w-1.5 h-1.5 rounded-full bg-purple-400 dark:bg-purple-500 animate-bounce" />
+          <span className="w-1.5 h-1.5 rounded-full bg-blue-400 dark:bg-blue-500 animate-bounce [animation-delay:-0.3s]" />
+          <span className="w-1.5 h-1.5 rounded-full bg-blue-400 dark:bg-blue-500 animate-bounce [animation-delay:-0.15s]" />
+          <span className="w-1.5 h-1.5 rounded-full bg-blue-400 dark:bg-blue-500 animate-bounce" />
         </div>
       </div>
     </div>

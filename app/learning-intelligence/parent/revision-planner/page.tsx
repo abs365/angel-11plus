@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { ClipboardList, MapPin, Clock, ArrowRight } from "lucide-react";
+import { MapPin, Clock, ArrowRight } from "lucide-react";
 import PageLayout from "@/components/PageLayout";
 import { InfoCard } from "@/components/ui/Card";
 import { getSelectedPathwayId } from "@/lib/progress";
@@ -49,9 +49,6 @@ export default function RevisionPlannerPage() {
     >
       <div className="max-w-3xl mx-auto px-4 py-6 md:px-8 md:py-8">
         <div className="flex items-center gap-3 mb-2">
-          <div className="bg-purple-100 dark:bg-purple-900 p-3 rounded-2xl">
-            <ClipboardList size={22} className="text-purple-600 dark:text-purple-400" />
-          </div>
           <div>
             <h1 className="text-gray-900 dark:text-gray-100 font-bold text-2xl">Revision Planner</h1>
             <p className="text-gray-400 dark:text-gray-500 text-sm">This week&apos;s focus, prioritised and explained</p>
@@ -60,7 +57,7 @@ export default function RevisionPlannerPage() {
 
         {pathwayEligible === false && (
           <InfoCard className="mt-6 flex items-start gap-3">
-            <MapPin size={18} className="text-purple-400 mt-0.5 shrink-0" />
+            <MapPin size={18} className="text-blue-400 mt-0.5 shrink-0" />
             <p className="text-sm text-gray-700 dark:text-gray-300">Available for the CSSE pathway only.</p>
           </InfoCard>
         )}
@@ -82,7 +79,7 @@ export default function RevisionPlannerPage() {
         {pathwayEligible && plan && plan.items.length > 0 && (
           <div className="mt-6">
             <InfoCard className="mb-4 flex items-center gap-2">
-              <Clock size={16} className="text-purple-500 shrink-0" />
+              <Clock size={16} className="text-blue-500 shrink-0" />
               <p className="text-sm text-gray-700 dark:text-gray-300">
                 About <span className="font-semibold">{plan.totalMinutes} minutes</span> this week, across {plan.items.length} focus area
                 {plan.items.length === 1 ? "" : "s"}.
@@ -100,7 +97,7 @@ export default function RevisionPlannerPage() {
                   {item.practiceAreaId && (
                     <Link
                       href={`/learning-intelligence/practice/${item.practiceAreaId}`}
-                      className="inline-flex items-center gap-1 text-xs font-semibold text-purple-600 dark:text-purple-400 mt-2"
+                      className="inline-flex items-center gap-1 text-xs font-semibold text-blue-600 dark:text-blue-400 mt-2"
                     >
                       Start this now <ArrowRight size={12} />
                     </Link>

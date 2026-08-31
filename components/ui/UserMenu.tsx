@@ -28,7 +28,7 @@ export default function UserMenu({ email, loading, onSignOut }: UserMenuProps) {
     return (
       <Link
         href="/login"
-        className="flex items-center gap-2 w-full text-xs text-indigo-600 dark:text-indigo-400 font-medium py-1.5 px-2 rounded-lg hover:bg-indigo-50 dark:hover:bg-indigo-950 transition-colors motion-reduce:transition-none"
+        className="flex items-center gap-2 w-full text-xs text-slate-600 dark:text-slate-400 font-medium py-1.5 px-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-950 transition-colors motion-reduce:transition-none"
       >
         <LogIn size={13} aria-hidden="true" />
         Sign in to sync progress
@@ -43,7 +43,7 @@ export default function UserMenu({ email, loading, onSignOut }: UserMenuProps) {
       <div className="flex items-center gap-2 mb-2">
         <div
           aria-hidden="true"
-          className="w-7 h-7 rounded-full bg-indigo-100 dark:bg-indigo-900 flex items-center justify-center shrink-0 text-xs font-semibold text-indigo-600 dark:text-indigo-300"
+          className="w-7 h-7 rounded-full bg-slate-100 dark:bg-slate-900 flex items-center justify-center shrink-0 text-xs font-semibold text-slate-600 dark:text-slate-300"
         >
           {initial}
         </div>

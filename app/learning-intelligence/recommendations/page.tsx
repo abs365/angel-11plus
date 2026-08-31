@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { ClipboardList, MapPin } from "lucide-react";
+import { MapPin } from "lucide-react";
 import PageLayout from "@/components/PageLayout";
 import { InfoCard } from "@/components/ui/Card";
 import { getSelectedPathwayId } from "@/lib/progress";
@@ -30,9 +30,6 @@ export default function RecommendationCentrePage() {
     <PageLayout breadcrumbs={[{ label: "Learning Report", href: "/learning-intelligence" }, { label: "Recommendations" }]}>
       <div className="max-w-3xl mx-auto px-4 py-6 md:px-8 md:py-8">
         <div className="flex items-center gap-3 mb-2">
-          <div className="bg-purple-100 dark:bg-purple-900 p-3 rounded-2xl">
-            <ClipboardList size={22} className="text-purple-600 dark:text-purple-400" />
-          </div>
           <div>
             <h1 className="text-gray-900 dark:text-gray-100 font-bold text-2xl">Recommendation Centre</h1>
             <p className="text-gray-400 dark:text-gray-500 text-sm">What to focus on next, based on your recorded evidence</p>
@@ -49,7 +46,7 @@ export default function RecommendationCentrePage() {
 
         {profile && !profile.pathwayEligible && (
           <InfoCard className="mt-6 flex items-start gap-3">
-            <MapPin size={18} className="text-purple-400 mt-0.5 shrink-0" />
+            <MapPin size={18} className="text-blue-400 mt-0.5 shrink-0" />
             <p className="text-sm text-gray-700 dark:text-gray-300">Available for the CSSE pathway only.</p>
           </InfoCard>
         )}
@@ -60,7 +57,7 @@ export default function RecommendationCentrePage() {
             {/* WP4D (FD-022) — one clear primary next step; this page had none before. */}
             <Link
               href="/learning-intelligence/practice"
-              className="inline-block bg-purple-600 hover:bg-purple-700 text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-colors mt-6"
+              className="inline-block bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-colors mt-6"
             >
               Practice now →
             </Link>

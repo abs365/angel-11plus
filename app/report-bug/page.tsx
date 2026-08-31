@@ -87,7 +87,7 @@ export default function ReportBugPage() {
           </p>
           <button
             onClick={() => { setSubmitted(false); setPage(""); setIssueType(""); setDescription(""); setErrors({}); }}
-            className="mt-6 text-sm text-purple-600 dark:text-purple-400 font-semibold hover:underline"
+            className="mt-6 text-sm text-blue-600 dark:text-blue-400 font-semibold hover:underline"
           >
             Report another bug
           </button>

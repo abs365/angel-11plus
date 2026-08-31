@@ -64,12 +64,12 @@ const SUBJECT_ICONS: Record<string, React.ComponentType<{ size?: number; classNa
 };
 
 const SUBJECT_COLORS: Record<string, { bar: string; bg: string; text: string }> = {
-  english: { bar: "bg-purple-500", bg: "bg-purple-50 dark:bg-purple-950", text: "text-purple-700 dark:text-purple-300" },
+  english: { bar: "bg-yellow-500", bg: "bg-yellow-50 dark:bg-yellow-950", text: "text-yellow-700 dark:text-yellow-300" },
   maths: { bar: "bg-blue-500", bg: "bg-blue-50 dark:bg-blue-950", text: "text-blue-700 dark:text-blue-300" },
   vocabulary: { bar: "bg-green-500", bg: "bg-green-50 dark:bg-green-950", text: "text-green-700 dark:text-green-300" },
   writing: { bar: "bg-orange-500", bg: "bg-orange-50 dark:bg-orange-950", text: "text-orange-700 dark:text-orange-300" },
   "mock-test": { bar: "bg-pink-500", bg: "bg-pink-50 dark:bg-pink-950", text: "text-pink-700 dark:text-pink-300" },
-  "verbal-reasoning": { bar: "bg-violet-500", bg: "bg-violet-50 dark:bg-violet-950", text: "text-violet-700 dark:text-violet-300" },
+  "verbal-reasoning": { bar: "bg-lime-500", bg: "bg-lime-50 dark:bg-lime-950", text: "text-lime-700 dark:text-lime-300" },
   "non-verbal-reasoning": { bar: "bg-cyan-500", bg: "bg-cyan-50 dark:bg-cyan-950", text: "text-cyan-700 dark:text-cyan-300" },
   "spatial-reasoning": { bar: "bg-teal-500", bg: "bg-teal-50 dark:bg-teal-950", text: "text-teal-700 dark:text-teal-300" },
   "numerical-reasoning": { bar: "bg-rose-500", bg: "bg-rose-50 dark:bg-rose-950", text: "text-rose-700 dark:text-rose-300" },
@@ -99,8 +99,8 @@ function InsightIcon({ type }: { type: "positive" | "attention" | "action" }) {
 function EmptyState() {
   return (
     <div className="flex flex-col items-center justify-center py-20 px-6 text-center">
-      <div className="w-16 h-16 rounded-full bg-purple-100 dark:bg-purple-900 flex items-center justify-center mb-4">
-        <BookOpen size={28} className="text-purple-600 dark:text-purple-400" />
+      <div className="w-16 h-16 rounded-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center mb-4">
+        <BookOpen size={28} className="text-blue-600 dark:text-blue-400" />
       </div>
       <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-2">No data yet</h2>
       <p className="text-gray-500 dark:text-gray-400 text-sm max-w-xs">
@@ -108,7 +108,7 @@ function EmptyState() {
       </p>
       <Link
         href="/dashboard"
-        className="mt-6 inline-flex items-center gap-2 bg-purple-600 text-white text-sm font-semibold px-5 py-2.5 rounded-xl"
+        className="mt-6 inline-flex items-center gap-2 bg-blue-600 text-white text-sm font-semibold px-5 py-2.5 rounded-xl"
       >
         Go to Student App
         <ChevronRight size={16} />
@@ -200,7 +200,7 @@ export function LegacyPathwayParentContent() {
           Improvement Areas" below, not a fabricated substitute. */}
       <Link
         href={primaryNextHref}
-        className="inline-block bg-purple-600 hover:bg-purple-700 text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-colors"
+        className="inline-block bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-colors"
       >
         {primaryNextLabel}
       </Link>
@@ -248,7 +248,7 @@ export function LegacyPathwayParentContent() {
           <div>
             <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1">Next Recommended Focus</p>
             {report.focusAreas[0] ? (
-              <Link href={report.focusAreas[0].href} className="text-sm font-semibold text-purple-700 dark:text-purple-300 hover:underline">
+              <Link href={report.focusAreas[0].href} className="text-sm font-semibold text-blue-700 dark:text-blue-300 hover:underline">
                 {report.focusAreas[0].label} →
               </Link>
             ) : (
@@ -273,7 +273,7 @@ export function LegacyPathwayParentContent() {
             {readinessCfg.label}: {readinessCfg.description}
           </p>
           <p className="flex items-start gap-1.5">
-            <Flag size={13} className="text-purple-500 shrink-0 mt-0.5" />
+            <Flag size={13} className="text-blue-500 shrink-0 mt-0.5" />
             <span>
               <span className="font-semibold text-gray-800 dark:text-gray-100">Next milestone:</span>{" "}
               {nextMilestone ? nextMilestone.label : "All current milestones reached. More are on the way."}
@@ -284,7 +284,7 @@ export function LegacyPathwayParentContent() {
 
       <section>
         <div className="grid grid-cols-3 gap-3">
-          <StatCard label="Total Sessions" value={String(report.totalSessions)} icon={<Target size={16} className="text-purple-500" />} />
+          <StatCard label="Total Sessions" value={String(report.totalSessions)} icon={<Target size={16} className="text-blue-500" />} />
           <StatCard
             label="Overall Score"
             value={report.overallScore > 0 ? `${report.overallScore}%` : "N/A"}
@@ -303,8 +303,8 @@ export function LegacyPathwayParentContent() {
           Learning Pathway
         </h2>
         <Link href="/pathways" className="bg-white dark:bg-gray-900 rounded-xl p-4 flex items-center gap-3 hover:shadow-sm transition-shadow block">
-          <div className="w-9 h-9 rounded-lg bg-purple-50 dark:bg-purple-950 flex items-center justify-center shrink-0">
-            <MapPin size={17} className="text-purple-600 dark:text-purple-400" />
+          <div className="w-9 h-9 rounded-lg bg-blue-50 dark:bg-blue-950 flex items-center justify-center shrink-0">
+            <MapPin size={17} className="text-blue-600 dark:text-blue-400" />
           </div>
           <div className="flex-1 min-w-0">
             {pathway ? (
@@ -312,7 +312,7 @@ export function LegacyPathwayParentContent() {
                 <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">{pathway.name}</p>
                 <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5 leading-relaxed">{pathway.subjects.join(" · ")}</p>
                 {pathwayFocusAreas.length > 0 && (
-                  <p className="text-xs text-purple-600 dark:text-purple-400 mt-1 font-medium">
+                  <p className="text-xs text-blue-600 dark:text-blue-400 mt-1 font-medium">
                     {pathwayFocusAreas.length} of your priority area{pathwayFocusAreas.length === 1 ? "" : "s"} relate{pathwayFocusAreas.length === 1 ? "s" : ""} directly to this pathway
                   </p>
                 )}
@@ -546,7 +546,7 @@ export function LegacyPathwayParentContent() {
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between mb-1">
                     <span className="text-sm font-semibold text-gray-900 dark:text-gray-100">{area.label}</span>
-                    <span className="text-xs text-purple-600 dark:text-purple-400 font-medium bg-purple-50 dark:bg-purple-950 px-2 py-0.5 rounded-full shrink-0 ml-2">
+                    <span className="text-xs text-blue-600 dark:text-blue-400 font-medium bg-blue-50 dark:bg-blue-950 px-2 py-0.5 rounded-full shrink-0 ml-2">
                       {area.frequency}
                     </span>
                   </div>
@@ -591,14 +591,14 @@ export function LegacyPathwayParentContent() {
         </section>
       )}
 
-      <section className="bg-purple-50 dark:bg-purple-950 rounded-2xl p-5">
+      <section className="bg-blue-50 dark:bg-blue-950 rounded-2xl p-5">
         <div className="flex items-start gap-3">
-          <div className="w-8 h-8 rounded-full bg-purple-100 dark:bg-purple-900 flex items-center justify-center shrink-0">
-            <Trophy size={15} className="text-purple-600 dark:text-purple-400" />
+          <div className="w-8 h-8 rounded-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center shrink-0">
+            <Trophy size={15} className="text-blue-600 dark:text-blue-400" />
           </div>
           <div>
-            <p className="text-sm font-semibold text-purple-900 dark:text-purple-100 mb-1">More on the way</p>
-            <p className="text-xs text-purple-700 dark:text-purple-300 leading-relaxed">
+            <p className="text-sm font-semibold text-blue-900 dark:text-blue-100 mb-1">More on the way</p>
+            <p className="text-xs text-blue-700 dark:text-blue-300 leading-relaxed">
               We&apos;re adding more detailed reporting, email summaries, and exam countdown features soon.
               Your feedback helps shape what we build next.
             </p>

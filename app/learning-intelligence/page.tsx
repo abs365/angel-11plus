@@ -77,9 +77,6 @@ export default function LearningIntelligencePage() {
     <PageLayout breadcrumbs={[{ label: "Learning Report" }]}>
       <div className="max-w-3xl mx-auto px-4 py-6 md:px-8 md:py-8">
         <div className="flex items-center gap-3 mb-2">
-          <div className="bg-purple-100 dark:bg-purple-900 p-3 rounded-2xl">
-            <Brain size={22} className="text-purple-600 dark:text-purple-400" />
-          </div>
           <div>
             <h1 className="text-gray-900 dark:text-gray-100 font-bold text-2xl">Learning Report</h1>
             <p className="text-gray-400 dark:text-gray-500 text-sm">CSSE skills evidence, diagnostics and readiness</p>
@@ -98,17 +95,17 @@ export default function LearningIntelligencePage() {
 
         {profile && !profile.pathwayEligible && (
           <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-6 mt-6 flex items-start gap-3">
-            <MapPin size={18} className="text-purple-400 mt-0.5 shrink-0" />
+            <MapPin size={18} className="text-blue-400 mt-0.5 shrink-0" />
             <div>
               <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">
                 Your learning report is available for the CSSE pathway
               </p>
               <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">
                 {pathway ? `Your current pathway is ${pathway.name}.` : "Choose CSSE as your target pathway to see this."}{" "}
-                It is built entirely from CSSE&apos;s own official exam evidence (Assessment Brain V1), so it does not
+                It is built entirely from CSSE&apos;s own official exam evidence, so it does not
                 yet apply to GL, CEM, ISEB, or Independent preparation.
               </p>
-              <Link href="/pathways" className="inline-block text-xs font-semibold text-purple-600 dark:text-purple-400 mt-3">
+              <Link href="/pathways" className="inline-block text-xs font-semibold text-blue-600 dark:text-blue-400 mt-3">
                 Review School Intelligence →
               </Link>
             </div>
@@ -119,11 +116,11 @@ export default function LearningIntelligencePage() {
           <div className="space-y-8 mt-6">
             <Link
               href="/learning-intelligence/practice"
-              className="flex items-center justify-between gap-3 bg-purple-600 hover:bg-purple-700 text-white rounded-2xl px-5 py-4 transition-colors"
+              className="flex items-center justify-between gap-3 bg-blue-600 hover:bg-blue-700 text-white rounded-2xl px-5 py-4 transition-colors"
             >
               <div>
                 <p className="text-sm font-bold">Practice now</p>
-                <p className="text-xs text-purple-100 mt-0.5">
+                <p className="text-xs text-blue-100 mt-0.5">
                   Complete a Reading Comprehension, Mathematics or Continuous Writing activity to update this profile.
                 </p>
               </div>
@@ -134,7 +131,7 @@ export default function LearningIntelligencePage() {
                 admissions journey (Learning -> Evidence -> Admissions
                 Readiness -> ... ); the other links stay a flat secondary row. */}
             <div>
-              <Link href="/learning-intelligence/parent" className="text-sm font-semibold text-purple-600 dark:text-purple-400">
+              <Link href="/learning-intelligence/parent" className="text-sm font-semibold text-blue-600 dark:text-blue-400">
                 Parent Dashboard →
               </Link>
               <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">
@@ -143,25 +140,25 @@ export default function LearningIntelligencePage() {
             </div>
 
             <div className="flex items-center gap-4 flex-wrap text-xs font-semibold">
-              <Link href="/learning-intelligence/recommendations" className="text-purple-600 dark:text-purple-400">
+              <Link href="/learning-intelligence/recommendations" className="text-blue-600 dark:text-blue-400">
                 Recommendation Centre →
               </Link>
-              <Link href="/learning-intelligence/timeline" className="text-purple-600 dark:text-purple-400">
+              <Link href="/learning-intelligence/timeline" className="text-blue-600 dark:text-blue-400">
                 Progress Timeline →
               </Link>
-              <Link href="/learning-intelligence/parent/weekly-report" className="text-purple-600 dark:text-purple-400">
+              <Link href="/learning-intelligence/parent/weekly-report" className="text-blue-600 dark:text-blue-400">
                 Weekly Report →
               </Link>
-              <Link href="/learning-intelligence/parent/revision-planner" className="text-purple-600 dark:text-purple-400">
+              <Link href="/learning-intelligence/parent/revision-planner" className="text-blue-600 dark:text-blue-400">
                 Revision Planner →
               </Link>
-              <Link href="/learning-intelligence/mock-exam" className="text-purple-600 dark:text-purple-400">
+              <Link href="/learning-intelligence/mock-exam" className="text-blue-600 dark:text-blue-400">
                 CSSE mock exam →
               </Link>
               {/* Sprint 3, Increment 5 — same row, same weight as every
                   link above; explains how they all connect rather than
                   adding a new destination of its own. */}
-              <Link href="/learning-intelligence/parent/journey" className="text-purple-600 dark:text-purple-400">
+              <Link href="/learning-intelligence/parent/journey" className="text-blue-600 dark:text-blue-400">
                 How this all fits together →
               </Link>
             </div>

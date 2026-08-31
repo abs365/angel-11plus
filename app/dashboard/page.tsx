@@ -542,28 +542,31 @@ export default function DashboardPage() {
             strip's own link and meaning as plain text, instead of a
             second full-width bordered rectangle immediately above it. */}
         <section>
+          {/* Premium Frontend programme (2026-08-31) — the icon-box beside
+              this heading was the exact H2 "generic page-header pattern"
+              instance on the homepage's own primary section: the heading is
+              already fully self-explanatory (fails the icon cover-test,
+              ANGEL_EXPERIENCE_SYSTEM_V1.md §K), so it is removed rather than
+              carried forward. Typography/spacing alone now carry the
+              hierarchy here, consistent with Stage 1A's own "why does this
+              need a [element]?" discipline applied one level down. */}
           <div className="flex items-center justify-between mb-3">
-            <div className="flex items-center gap-2.5">
-              <div className="w-9 h-9 rounded-xl bg-sky-100 dark:bg-sky-900 flex items-center justify-center shrink-0">
-                <Target size={17} className="text-sky-700 dark:text-sky-400" />
-              </div>
-              <div>
-                <h2 className="text-gray-900 dark:text-gray-100 font-bold text-2xl leading-tight">Today&apos;s Admission Mission</h2>
-                {pathway ? (
-                  <Link
-                    href="/pathways"
-                    className="inline-flex items-center gap-1 text-xs text-sky-700 dark:text-sky-400 font-medium mt-0.5 hover:underline"
-                  >
-                    {pathway.shortName} pathway · School Intelligence
-                    <ChevronRight size={11} aria-hidden="true" />
-                  </Link>
-                ) : (
-                  <Link href="/pathways" className="inline-flex items-center gap-1 text-xs text-sky-700 dark:text-sky-400 font-medium mt-0.5 hover:underline">
-                    Choose your target pathway
-                    <ChevronRight size={11} aria-hidden="true" />
-                  </Link>
-                )}
-              </div>
+            <div>
+              <h2 className="text-gray-900 dark:text-gray-100 font-bold text-2xl leading-tight">Today&apos;s Admission Mission</h2>
+              {pathway ? (
+                <Link
+                  href="/pathways"
+                  className="inline-flex items-center gap-1 text-xs text-sky-700 dark:text-sky-400 font-medium mt-0.5 hover:underline"
+                >
+                  {pathway.shortName} pathway · School Intelligence
+                  <ChevronRight size={11} aria-hidden="true" />
+                </Link>
+              ) : (
+                <Link href="/pathways" className="inline-flex items-center gap-1 text-xs text-sky-700 dark:text-sky-400 font-medium mt-0.5 hover:underline">
+                  Choose your target pathway
+                  <ChevronRight size={11} aria-hidden="true" />
+                </Link>
+              )}
             </div>
             {mission && mission.items.length > 0 && (
               <div className="flex items-center gap-1.5 text-gray-400 dark:text-gray-500 bg-gray-50 dark:bg-gray-800 px-3 py-1.5 rounded-full">
@@ -606,7 +609,7 @@ export default function DashboardPage() {
               <div className="p-5">
                 <Link
                   href={mission.items[0].href}
-                  className="flex items-center justify-center gap-2.5 w-full bg-purple-600 hover:bg-purple-700 active:scale-[0.98] dark:bg-purple-600 dark:hover:bg-purple-500 text-white rounded-xl py-3.5 font-semibold text-sm transition-all motion-reduce:transition-none shadow-sm shadow-purple-200 dark:shadow-purple-950"
+                  className="flex items-center justify-center gap-2.5 w-full bg-blue-600 hover:bg-blue-700 active:scale-[0.98] dark:bg-blue-600 dark:hover:bg-blue-500 text-white rounded-xl py-3.5 font-semibold text-sm transition-all motion-reduce:transition-none shadow-sm shadow-blue-200 dark:shadow-blue-950"
                 >
                   <Play size={16} aria-hidden="true" />
                   Start Today&apos;s Mission
@@ -637,7 +640,7 @@ export default function DashboardPage() {
                   already applies to the top nav's own Learn link. */}
               <Link
                 href={getSelectedPathwayId() === "csse" ? "/learning-intelligence/learn" : "/english"}
-                className="inline-flex items-center gap-2 bg-purple-600 hover:bg-purple-700 active:scale-[0.98] text-white rounded-xl px-5 py-2.5 font-semibold text-sm transition-all motion-reduce:transition-none"
+                className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 active:scale-[0.98] text-white rounded-xl px-5 py-2.5 font-semibold text-sm transition-all motion-reduce:transition-none"
               >
                 <Play size={14} aria-hidden="true" />
                 Start Learning

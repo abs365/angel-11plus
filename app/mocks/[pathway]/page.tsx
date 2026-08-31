@@ -97,7 +97,7 @@ const MOCK_CONFIGS: Record<MockPathwayId, MockConfig> = {
     pathwayName: "CEM Practice Mock",
     badge: "CEM",
     color: "indigo",
-    headerBg: "bg-indigo-700",
+    headerBg: "bg-slate-700",
     description: "Two core sections covering the CEM Verbal and Numerical format.",
     totalMinutes: 30,
     xpReward: 80,
@@ -128,7 +128,7 @@ const MOCK_CONFIGS: Record<MockPathwayId, MockConfig> = {
     pathwayName: "CSSE Practice Mock",
     badge: "CSSE",
     color: "purple",
-    headerBg: "bg-purple-700",
+    headerBg: "bg-blue-700",
     // AEP-001 Phase 3 correction — this section previously drew "English &
     // Language" from the Verbal Reasoning bank and "Mathematics" from the
     // Numerical Reasoning bank, even though CSSE's own pathway description
@@ -303,7 +303,7 @@ export default function MockPage({
         <div className="text-center">
           <p className="text-gray-500 dark:text-gray-400 mb-4">Mock not found.</p>
           {/* ARC-001A — this "not found" link isn't pathway-specific (it renders regardless of which pathway 404'd), so it's generic chrome, not assessment identity — moved to the muted-indigo accent used app-wide. */}
-          <Link href="/mocks" className="text-indigo-600 dark:text-indigo-400 font-medium">Back to mocks</Link>
+          <Link href="/mocks" className="text-slate-600 dark:text-slate-400 font-medium">Back to mocks</Link>
         </div>
       </div>
     );
@@ -638,12 +638,16 @@ export default function MockPage({
                 placeholder="Type your answer…"
                 // ARC-001A — this input sets focus:outline-none, so this
                 // manual ring is its ONLY focus indicator (the app's global
-                // plum :focus-visible outline never reaches it) — recoloured
-                // to match that same restrained-plum focus system (#8b5a7c,
-                // see globals.css) rather than left on a generic leftover
-                // blue, not just for consistency but to keep it a real,
-                // deliberate focus treatment rather than an accidental one.
-                className="w-full rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 px-4 py-3.5 text-base text-gray-900 dark:text-gray-100 placeholder-gray-300 dark:placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-[#8b5a7c]/30 focus:border-[#8b5a7c]"
+                // :focus-visible outline never reaches it). Zero-Purple
+                // final closure pass (2026-08-31) — this was a live,
+                // rendering reference to the retired plum focus colour
+                // (#8b5a7c, itself purple-family), missed by every earlier
+                // named-Tailwind-class sweep because it's an arbitrary hex
+                // value, not a `ring-purple-*` class. Recoloured to match
+                // the app's actual current global focus colour (#1d4ed8,
+                // blue-700 — see globals.css :focus-visible) rather than
+                // a second one-off hue.
+                className="w-full rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 px-4 py-3.5 text-base text-gray-900 dark:text-gray-100 placeholder-gray-300 dark:placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-[#1d4ed8]/30 focus:border-[#1d4ed8]"
               />
               <button
                 onClick={submitAnswer}

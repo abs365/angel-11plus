@@ -68,7 +68,7 @@ export default function ContactPage() {
             {
               href: "/feedback",
               icon: MessageSquare,
-              color: "bg-purple-50 dark:bg-purple-950 text-purple-600 dark:text-purple-400",
+              color: "bg-blue-50 dark:bg-blue-950 text-blue-600 dark:text-blue-400",
               title: "Send feedback",
               desc: "Suggestions, positive feedback or general comments",
             },

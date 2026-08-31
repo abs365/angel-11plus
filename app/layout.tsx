@@ -56,7 +56,7 @@ export const metadata: Metadata = {
     siteName: "Angel 11+",
     title: "Angel 11+: Smart UK 11+ Preparation",
     description:
-      "Original exam-style practice for UK 11+ preparation. Adaptive learning across English, Maths, Reasoning, Writing and Reading Fluency.",
+      "Original exam-style practice for UK 11+ preparation. Personalised practice across English, Maths, Reasoning, Writing and Reading Fluency.",
     url: APP_URL,
     // og:image — add /og-image.png (1200×630) once brand assets are ready
     // images: [{ url: "/og-image.png", width: 1200, height: 630 }],
@@ -66,7 +66,7 @@ export const metadata: Metadata = {
     card: "summary",
     title: "Angel 11+: Smart UK 11+ Preparation",
     description:
-      "Original exam-style 11+ practice for GL, CEM, CSSE, ISEB and Independent pathways. Adaptive learning, Smart Feedback.",
+      "Original exam-style 11+ practice for GL, CEM, CSSE, ISEB and Independent pathways. Personalised practice, Smart Feedback.",
     // images: ["/og-image.png"],  // uncomment when brand asset exists
   },
 
@@ -89,7 +89,14 @@ export const viewport: Viewport = {
   // failing WCAG 2.1 SC 1.4.4 (Resize Text — must allow zoom to at least
   // 200%). Removed; the app's own layout already tolerates zoom (rem-based
   // type scale, no fixed-width containers found on the audited surfaces).
-  themeColor: "#7c3aed",
+  // Zero-Purple final closure pass (2026-08-31) — this was a live,
+  // rendering purple (Tailwind purple-600) controlling the mobile browser
+  // chrome/status-bar colour and the PWA splash screen when installed to
+  // a home screen — genuinely the highest-visibility remaining purple
+  // found in this whole programme, and missed by every earlier Tailwind
+  // class-name search since it's a plain metadata string, not a CSS
+  // class. Now matches --color-primary (app/globals.css, blue-600).
+  themeColor: "#2563eb",
   // Needed for iOS safe-area env() variables to work correctly in standalone mode.
   viewportFit: "cover",
 };

@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Users } from "lucide-react";
 import PageLayout from "@/components/PageLayout";
 import { getSelectedPathwayId } from "@/lib/progress";
 import { getMockResults } from "@/lib/mockProgress";
@@ -38,10 +37,10 @@ export default function ParentDashboardPage() {
   return (
     <PageLayout breadcrumbs={[{ label: "Parent Dashboard" }]}>
       <div className="max-w-3xl mx-auto px-4 py-6 md:px-8 md:py-8">
+        {/* Stage 5 pass (2026-08-31): icon-box removed — same cover-test
+            failure as /progress and the dashboard's own prior fix
+            (heading + subtitle already fully explain the page). */}
         <div className="flex items-center gap-3 mb-2">
-          <div className="bg-purple-100 dark:bg-purple-900 p-3 rounded-2xl">
-            <Users size={22} className="text-purple-600 dark:text-purple-400" />
-          </div>
           <div>
             <h1 className="text-gray-900 dark:text-gray-100 font-bold text-2xl">Parent Dashboard</h1>
             <p className="text-gray-400 dark:text-gray-500 text-sm">

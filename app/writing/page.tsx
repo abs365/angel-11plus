@@ -9,7 +9,6 @@ import {
   ArrowLeft,
   Timer,
   CheckCircle,
-  Sparkles,
   AlertCircle,
 } from "lucide-react";
 import PageLayout from "@/components/PageLayout";
@@ -37,7 +36,7 @@ type FeedbackState = "idle" | "loading" | "ready" | "error";
 const typeColors: Record<string, string> = {
   narrative: "bg-orange-100 dark:bg-orange-900 text-orange-700 dark:text-orange-300",
   descriptive: "bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300",
-  persuasive: "bg-purple-100 dark:bg-purple-900 text-purple-700 dark:text-purple-300",
+  persuasive: "bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300",
 };
 
 export default function WritingPage() {
@@ -206,17 +205,16 @@ export default function WritingPage() {
           {feedbackState === "idle" && (
             <button
               onClick={requestAIFeedback}
-              className="w-full mb-5 flex items-center justify-center gap-2.5 bg-indigo-600 text-white rounded-xl py-4 font-semibold text-sm hover:bg-indigo-700 transition-colors motion-reduce:transition-none"
+              className="w-full mb-5 flex items-center justify-center bg-slate-600 text-white rounded-xl py-4 font-semibold text-sm hover:bg-slate-700 transition-colors motion-reduce:transition-none"
             >
-              <Sparkles size={16} aria-hidden="true" />
               Get Angel Smart Feedback
             </button>
           )}
 
           {feedbackState === "loading" && (
-            <div className="w-full mb-5 flex items-center justify-center gap-3 bg-indigo-50 dark:bg-indigo-950 border border-indigo-100 dark:border-indigo-900 rounded-xl py-5">
+            <div className="w-full mb-5 flex items-center justify-center gap-3 bg-slate-50 dark:bg-slate-950 border border-slate-100 dark:border-slate-900 rounded-xl py-5">
               <svg
-                className="animate-spin h-4 w-4 text-indigo-500"
+                className="animate-spin h-4 w-4 text-slate-500"
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
                 viewBox="0 0 24 24"
@@ -235,7 +233,7 @@ export default function WritingPage() {
                   d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
                 />
               </svg>
-              <p className="text-indigo-600 dark:text-indigo-400 text-sm font-medium">Preparing Angel Smart Feedback…</p>
+              <p className="text-slate-600 dark:text-slate-400 text-sm font-medium">Preparing Angel Smart Feedback…</p>
             </div>
           )}
 
@@ -460,9 +458,8 @@ export default function WritingPage() {
         </div>
 
         {/* Smart coaching note */}
-        <div className="flex items-center gap-2.5 bg-indigo-50 dark:bg-indigo-950 border border-indigo-100 dark:border-indigo-900 rounded-xl px-4 py-3 mb-5">
-          <Sparkles size={14} aria-hidden="true" className="text-indigo-500 shrink-0" />
-          <p className="text-indigo-700 dark:text-indigo-300 text-sm">
+        <div className="bg-slate-50 dark:bg-slate-950 border border-slate-100 dark:border-slate-900 rounded-xl px-4 py-3 mb-5">
+          <p className="text-slate-700 dark:text-slate-300 text-sm">
             After submitting, you can request{" "}
             <strong>Angel Smart Feedback</strong>: tailored analysis of your technique, strengths, and
             one specific improvement.

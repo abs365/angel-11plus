@@ -56,8 +56,8 @@ export default function BetaFamilyPage() {
     return (
       <SupportLayout backHref="/dashboard" backLabel="Student App">
         <div className="flex flex-col items-center justify-center py-16 text-center">
-          <div className="w-16 h-16 rounded-full bg-purple-100 dark:bg-purple-900 flex items-center justify-center mb-4">
-            <CheckCircle size={30} className="text-purple-600 dark:text-purple-400" />
+          <div className="w-16 h-16 rounded-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center mb-4">
+            <CheckCircle size={30} className="text-blue-600 dark:text-blue-400" />
           </div>
           <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-2">
             Welcome to the beta!
@@ -65,9 +65,9 @@ export default function BetaFamilyPage() {
           <p className="text-gray-500 dark:text-gray-400 text-sm max-w-xs leading-relaxed mb-6">
             Thank you for registering. We&apos;ll be in touch at the email address you provided with next steps.
           </p>
-          <div className="bg-purple-50 dark:bg-purple-950 rounded-2xl border border-purple-100 dark:border-purple-900 p-5 max-w-sm text-left">
-            <p className="text-sm font-semibold text-purple-900 dark:text-purple-100 mb-2">While you wait…</p>
-            <ul className="space-y-1.5 text-xs text-purple-700 dark:text-purple-300 leading-relaxed">
+          <div className="bg-blue-50 dark:bg-blue-950 rounded-2xl border border-blue-100 dark:border-blue-900 p-5 max-w-sm text-left">
+            <p className="text-sm font-semibold text-blue-900 dark:text-blue-100 mb-2">While you wait…</p>
+            <ul className="space-y-1.5 text-xs text-blue-700 dark:text-blue-300 leading-relaxed">
               <li>• Start practising now: the full platform is available immediately</li>
               <li>• Choose a pathway to personalise your experience</li>
               <li>• Progress is saved on this device automatically</li>
@@ -75,7 +75,7 @@ export default function BetaFamilyPage() {
           </div>
           <a
             href="/dashboard"
-            className="mt-6 inline-flex items-center gap-2 bg-purple-600 hover:bg-purple-700 text-white font-semibold px-5 py-2.5 rounded-xl text-sm transition-colors"
+            className="mt-6 inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold px-5 py-2.5 rounded-xl text-sm transition-colors"
           >
             Start learning now
           </a>
@@ -87,8 +87,8 @@ export default function BetaFamilyPage() {
   return (
     <SupportLayout backHref="/beta" backLabel="Beta Info">
       <div className="mb-8">
-        <div className="w-12 h-12 rounded-2xl bg-purple-100 dark:bg-purple-900 flex items-center justify-center mb-4">
-          <Star size={22} className="text-purple-600 dark:text-purple-400" />
+        <div className="w-12 h-12 rounded-2xl bg-blue-100 dark:bg-blue-900 flex items-center justify-center mb-4">
+          <Star size={22} className="text-blue-600 dark:text-blue-400" />
         </div>
         <h1 className="text-2xl sm:text-3xl font-black text-gray-900 dark:text-gray-100 mb-2">
           Join as a Beta Family
@@ -99,10 +99,10 @@ export default function BetaFamilyPage() {
       </div>
 
       {/* What you get */}
-      <div className="bg-purple-50 dark:bg-purple-950 rounded-2xl border border-purple-100 dark:border-purple-900 p-5 mb-6">
+      <div className="bg-blue-50 dark:bg-blue-950 rounded-2xl border border-blue-100 dark:border-blue-900 p-5 mb-6">
         <div className="flex items-center gap-2 mb-3">
-          <Users size={16} className="text-purple-600 dark:text-purple-400" />
-          <p className="text-sm font-semibold text-purple-900 dark:text-purple-100">Beta family benefits</p>
+          <Users size={16} className="text-blue-600 dark:text-blue-400" />
+          <p className="text-sm font-semibold text-blue-900 dark:text-blue-100">Beta family benefits</p>
         </div>
         <ul className="space-y-1.5">
           {[
@@ -112,8 +112,8 @@ export default function BetaFamilyPage() {
             "Priority onboarding for future paid features",
           ].map((item) => (
             <li key={item} className="flex items-start gap-2">
-              <CheckCircle size={13} className="text-purple-500 shrink-0 mt-0.5" />
-              <span className="text-xs text-purple-700 dark:text-purple-300 leading-relaxed">{item}</span>
+              <CheckCircle size={13} className="text-blue-500 shrink-0 mt-0.5" />
+              <span className="text-xs text-blue-700 dark:text-blue-300 leading-relaxed">{item}</span>
             </li>
           ))}
         </ul>
@@ -134,7 +134,7 @@ export default function BetaFamilyPage() {
             placeholder="First name is fine"
             autoComplete="name"
             aria-describedby={errors.parentName ? "parentName-error" : undefined}
-            className="w-full bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl px-4 py-3 text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-transparent"
+            className="w-full bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl px-4 py-3 text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent"
           />
           <ErrorState id="parentName-error" message={errors.parentName} />
         </div>
@@ -149,7 +149,7 @@ export default function BetaFamilyPage() {
             value={yearGroup}
             onChange={(e) => { setYearGroup(e.target.value); setErrors((p) => ({ ...p, yearGroup: "" })); }}
             aria-describedby={errors.yearGroup ? "yearGroup-error" : undefined}
-            className="w-full bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl px-4 py-3 text-sm text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-transparent appearance-none"
+            className="w-full bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl px-4 py-3 text-sm text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent appearance-none"
           >
             <option value="">Select year group…</option>
             {YEAR_GROUPS.map((y) => <option key={y} value={y}>{y}</option>)}
@@ -167,7 +167,7 @@ export default function BetaFamilyPage() {
             value={pathway}
             onChange={(e) => { setPathway(e.target.value); setErrors((p) => ({ ...p, pathway: "" })); }}
             aria-describedby={errors.pathway ? "pathway-error" : undefined}
-            className="w-full bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl px-4 py-3 text-sm text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-transparent appearance-none"
+            className="w-full bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl px-4 py-3 text-sm text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent appearance-none"
           >
             <option value="">Select pathway…</option>
             {PATHWAYS.map((p) => (
@@ -190,7 +190,7 @@ export default function BetaFamilyPage() {
             placeholder="your@email.com"
             autoComplete="email"
             aria-describedby={errors.email ? "email-error" : undefined}
-            className="w-full bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl px-4 py-3 text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-transparent"
+            className="w-full bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl px-4 py-3 text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent"
           />
           <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">We&apos;ll use this to follow up on your beta registration only.</p>
           <ErrorState id="email-error" message={errors.email} />
@@ -205,7 +205,7 @@ export default function BetaFamilyPage() {
                 checked={contactPermission}
                 onChange={(e) => { setContactPermission(e.target.checked); setErrors((p) => ({ ...p, contactPermission: "" })); }}
                 aria-describedby={errors.contactPermission ? "contactPermission-error" : undefined}
-                className="w-4 h-4 rounded border-gray-300 dark:border-gray-600 text-purple-600 focus:ring-purple-500"
+                className="w-4 h-4 rounded border-gray-300 dark:border-gray-600 text-blue-600 focus:ring-blue-500"
               />
             </div>
             <span className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed">
@@ -218,7 +218,7 @@ export default function BetaFamilyPage() {
         <button
           type="submit"
           disabled={submitting}
-          className="w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3.5 rounded-xl text-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3.5 rounded-xl text-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {submitting ? "Registering…" : "Register as Beta Family"}
         </button>

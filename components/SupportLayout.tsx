@@ -17,7 +17,7 @@ export default function SupportLayout({ children, backHref = "/dashboard", backL
         <div className="max-w-3xl mx-auto px-4 h-14 flex items-center justify-between">
           <Link
             href="/dashboard"
-            className="text-purple-700 dark:text-purple-400 font-bold text-base"
+            className="text-blue-700 dark:text-blue-400 font-bold text-base"
           >
             Angel 11+
           </Link>

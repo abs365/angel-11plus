@@ -28,7 +28,7 @@ export function MockHistorySection({ mockResults }: { mockResults: MockResult[] 
             </p>
             <Link
               href="/mocks"
-              className="inline-flex items-center gap-1.5 text-xs font-semibold text-purple-600 dark:text-purple-400 bg-purple-50 dark:bg-purple-950 px-3 py-1.5 rounded-lg hover:bg-purple-100 dark:hover:bg-purple-900 transition-colors"
+              className="inline-flex items-center gap-1.5 text-xs font-semibold text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950 px-3 py-1.5 rounded-lg hover:bg-blue-100 dark:hover:bg-blue-900 transition-colors"
             >
               <Play size={12} />
               Start a Practice Mock
@@ -61,7 +61,7 @@ export function MockHistorySection({ mockResults }: { mockResults: MockResult[] 
           <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 overflow-hidden">
             <div className="px-4 py-3 border-b border-gray-50 dark:border-gray-800 flex items-center justify-between">
               <p className="text-sm font-semibold text-gray-800 dark:text-gray-100">Recent Mocks</p>
-              <Link href="/mocks" className="text-xs text-purple-600 dark:text-purple-400 font-medium">View all</Link>
+              <Link href="/mocks" className="text-xs text-blue-600 dark:text-blue-400 font-medium">View all</Link>
             </div>
             <div className="divide-y divide-gray-50 dark:divide-gray-800">
               {mockResults.slice(-3).reverse().map((r) => (

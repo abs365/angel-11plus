@@ -30,15 +30,19 @@ const ICON_MAP: Record<string, React.ElementType> = {
   Target,
 };
 
+// Zero-Purple pass (2026-08-31): "purple" key rendered identical classes to
+// the live "blue" key below after the mechanical purple→blue sweep — a real
+// collision, since both are genuinely distinct badge-colour options here.
+// Moved to cyan instead, which nothing else in this map already uses.
 const EARNED_ICON_CLASS: Record<BadgeDefinition["color"], string> = {
   orange: "bg-orange-100 dark:bg-orange-900 text-orange-500 dark:text-orange-300",
   red: "bg-red-100 dark:bg-red-900 text-red-500 dark:text-red-300",
   rose: "bg-rose-100 dark:bg-rose-900 text-rose-500 dark:text-rose-300",
-  purple: "bg-purple-100 dark:bg-purple-900 text-purple-600 dark:text-purple-300",
+  purple: "bg-cyan-100 dark:bg-cyan-900 text-cyan-600 dark:text-cyan-300",
   blue: "bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-300",
   green: "bg-green-100 dark:bg-green-900 text-green-600 dark:text-green-300",
   amber: "bg-amber-100 dark:bg-amber-900 text-amber-600 dark:text-amber-300",
-  indigo: "bg-indigo-100 dark:bg-indigo-900 text-indigo-600 dark:text-indigo-300",
+  indigo: "bg-slate-100 dark:bg-slate-900 text-slate-600 dark:text-slate-300",
   pink: "bg-pink-100 dark:bg-pink-900 text-pink-600 dark:text-pink-300",
   gray: "bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400",
 };

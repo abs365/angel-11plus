@@ -28,7 +28,7 @@ export default function NotificationArea({ notifications = [] }: { notifications
           <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">Notifications</p>
         </div>
         {unreadCount > 0 && (
-          <span className="text-[10px] font-bold bg-purple-100 dark:bg-purple-900 text-purple-600 dark:text-purple-300 px-2 py-0.5 rounded-full">
+          <span className="text-[10px] font-bold bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-300 px-2 py-0.5 rounded-full">
             {unreadCount} new
           </span>
         )}
@@ -42,7 +42,7 @@ export default function NotificationArea({ notifications = [] }: { notifications
       ) : (
         <ul className="max-h-96 overflow-y-auto divide-y divide-gray-100 dark:divide-gray-800">
           {notifications.map((n) => (
-            <li key={n.id} className={n.read ? "px-4 py-3" : "px-4 py-3 bg-purple-50/50 dark:bg-purple-950/30"}>
+            <li key={n.id} className={n.read ? "px-4 py-3" : "px-4 py-3 bg-blue-50/50 dark:bg-blue-950/30"}>
               <p className="text-sm font-medium text-gray-900 dark:text-gray-100">{n.title}</p>
               <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">{n.body}</p>
             </li>

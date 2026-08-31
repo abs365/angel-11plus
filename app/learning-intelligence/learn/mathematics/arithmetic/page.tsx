@@ -443,7 +443,7 @@ export default function MathematicsArithmeticLessonPage() {
             </p>
             <button
               onClick={() => void loadLesson()}
-              className="mt-4 bg-purple-600 hover:bg-purple-700 text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-colors"
+              className="mt-4 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-colors"
             >
               Start the lesson
             </button>
@@ -468,7 +468,7 @@ export default function MathematicsArithmeticLessonPage() {
               <h1 className="text-gray-900 dark:text-gray-100 font-bold text-2xl">Adding and Subtracting Big Numbers</h1>
             </div>
             <InfoCard className="flex items-center gap-3">
-              <Target size={16} className="text-indigo-500 shrink-0" />
+              <Target size={16} className="text-slate-500 shrink-0" />
               <div>
                 <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">{progression.label}</p>
                 <p className="text-xs text-gray-500 dark:text-gray-400">{progression.description}</p>
@@ -544,7 +544,7 @@ export default function MathematicsArithmeticLessonPage() {
                             key={colIdx}
                             className={`rounded-lg py-2 text-sm font-semibold ${
                               step.changed.includes(colIdx)
-                                ? "bg-indigo-100 dark:bg-indigo-900/40 text-indigo-700 dark:text-indigo-300 ring-1 ring-indigo-300 dark:ring-indigo-700"
+                                ? "bg-slate-100 dark:bg-slate-900/40 text-slate-700 dark:text-slate-300 ring-1 ring-slate-300 dark:ring-slate-700"
                                 : "bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-400"
                             }`}
                           >
@@ -586,17 +586,17 @@ export default function MathematicsArithmeticLessonPage() {
                 {hintsShown > 0 && (
                   <div className="mt-2 space-y-1.5">
                     {hintsShown >= 1 && (
-                      <p className="text-xs text-indigo-600 dark:text-indigo-400 flex items-start gap-1.5">
+                      <p className="text-xs text-slate-600 dark:text-slate-400 flex items-start gap-1.5">
                         <Lightbulb size={13} className="mt-0.5 shrink-0" /> Start with the ones column. What&apos;s 2 + 9?
                       </p>
                     )}
                     {hintsShown >= 2 && (
-                      <p className="text-xs text-indigo-600 dark:text-indigo-400 flex items-start gap-1.5">
+                      <p className="text-xs text-slate-600 dark:text-slate-400 flex items-start gap-1.5">
                         <Lightbulb size={13} className="mt-0.5 shrink-0" /> That&apos;s 11, so write the 1 and carry the 1 to the tens column.
                       </p>
                     )}
                     {hintsShown >= 3 && (
-                      <p className="text-xs text-indigo-600 dark:text-indigo-400 flex items-start gap-1.5">
+                      <p className="text-xs text-slate-600 dark:text-slate-400 flex items-start gap-1.5">
                         <Lightbulb size={13} className="mt-0.5 shrink-0" /> Now the tens column: 5 + 7, plus the 1 you carried.
                       </p>
                     )}
@@ -605,7 +605,7 @@ export default function MathematicsArithmeticLessonPage() {
                 {guidedLadderStage === "attempt-1" && hintsShown < 3 && (
                   <button
                     onClick={() => setHintsShown((h) => h + 1)}
-                    className="mt-2 text-xs font-semibold text-indigo-600 dark:text-indigo-400"
+                    className="mt-2 text-xs font-semibold text-slate-600 dark:text-slate-400"
                   >
                     Need a hint?
                   </button>
@@ -623,7 +623,7 @@ export default function MathematicsArithmeticLessonPage() {
                     <button
                       onClick={() => void submitGuidedAttempt1()}
                       disabled={!guidedAnswer.trim()}
-                      className="mt-3 bg-purple-600 hover:bg-purple-700 disabled:opacity-40 text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-colors"
+                      className="mt-3 bg-blue-600 hover:bg-blue-700 disabled:opacity-40 text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-colors"
                     >
                       Submit
                     </button>
@@ -637,7 +637,7 @@ export default function MathematicsArithmeticLessonPage() {
                       <XCircle size={16} /> Not quite yet. Let&apos;s look again.
                     </p>
                     <p className="text-xs text-gray-600 dark:text-gray-400 mt-1.5 flex items-start gap-1.5">
-                      <Lightbulb size={13} className="mt-0.5 shrink-0 text-indigo-500" />
+                      <Lightbulb size={13} className="mt-0.5 shrink-0 text-slate-500" />
                       {classifyWrongAnswer(guidedAttempt1.answer, GUIDED_KNOWN_MISCONCEPTIONS) ??
                         "Go back to the ones column and work through each column one at a time. Remember to carry if a column adds to 10 or more."}
                     </p>
@@ -655,7 +655,7 @@ export default function MathematicsArithmeticLessonPage() {
                     <button
                       onClick={() => void submitGuidedAttempt2()}
                       disabled={!guidedAnswer.trim()}
-                      className="mt-3 bg-purple-600 hover:bg-purple-700 disabled:opacity-40 text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-colors"
+                      className="mt-3 bg-blue-600 hover:bg-blue-700 disabled:opacity-40 text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-colors"
                     >
                       Submit
                     </button>
@@ -693,7 +693,7 @@ export default function MathematicsArithmeticLessonPage() {
                     <button
                       onClick={() => void submitGuidedAttempt3()}
                       disabled={!guidedAnswer.trim()}
-                      className="mt-3 bg-purple-600 hover:bg-purple-700 disabled:opacity-40 text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-colors"
+                      className="mt-3 bg-blue-600 hover:bg-blue-700 disabled:opacity-40 text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-colors"
                     >
                       Submit
                     </button>
@@ -747,7 +747,7 @@ export default function MathematicsArithmeticLessonPage() {
                       <button
                         onClick={() => void submitIndependentAttempt1()}
                         disabled={!independentAnswer.trim()}
-                        className="mt-3 bg-purple-600 hover:bg-purple-700 disabled:opacity-40 text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-colors"
+                        className="mt-3 bg-blue-600 hover:bg-blue-700 disabled:opacity-40 text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-colors"
                       >
                         Submit
                       </button>
@@ -761,7 +761,7 @@ export default function MathematicsArithmeticLessonPage() {
                         <XCircle size={16} /> Not quite yet. Have another look.
                       </p>
                       <p className="text-xs text-gray-600 dark:text-gray-400 mt-1.5 flex items-start gap-1.5">
-                        <Lightbulb size={13} className="mt-0.5 shrink-0 text-indigo-500" />
+                        <Lightbulb size={13} className="mt-0.5 shrink-0 text-slate-500" />
                         {classifyWrongAnswer(independentAttempt1.answer, INDEPENDENT_KNOWN_MISCONCEPTIONS) ??
                           "Think about which column needs to borrow, and where that borrow can actually come from. Try again."}
                       </p>
@@ -779,7 +779,7 @@ export default function MathematicsArithmeticLessonPage() {
                       <button
                         onClick={() => void submitIndependentAttempt2()}
                         disabled={!independentAnswer.trim()}
-                        className="mt-3 bg-purple-600 hover:bg-purple-700 disabled:opacity-40 text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-colors"
+                        className="mt-3 bg-blue-600 hover:bg-blue-700 disabled:opacity-40 text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-colors"
                       >
                         Submit
                       </button>
@@ -816,7 +816,7 @@ export default function MathematicsArithmeticLessonPage() {
                           setIndependentLadderStage("resolved");
                           setCheckStage("independent");
                         }}
-                        className="mt-3 bg-purple-600 hover:bg-purple-700 text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-colors"
+                        className="mt-3 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-colors"
                       >
                         Continue
                       </button>
@@ -842,7 +842,7 @@ export default function MathematicsArithmeticLessonPage() {
                           <button
                             onClick={() => void submitIndependentFresh()}
                             disabled={!independentFreshAnswer.trim()}
-                            className="mt-3 bg-purple-600 hover:bg-purple-700 disabled:opacity-40 text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-colors"
+                            className="mt-3 bg-blue-600 hover:bg-blue-700 disabled:opacity-40 text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-colors"
                           >
                             Submit
                           </button>
@@ -889,7 +889,7 @@ export default function MathematicsArithmeticLessonPage() {
                   {independentUltimatelyCorrect ? (
                     <Link
                       href="/learning-intelligence/practice/mathematics"
-                      className="inline-flex items-center gap-1.5 bg-purple-600 hover:bg-purple-700 text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-colors"
+                      className="inline-flex items-center gap-1.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-colors"
                     >
                       You&apos;re ready to practise this properly <ArrowRight size={14} />
                     </Link>
@@ -901,7 +901,7 @@ export default function MathematicsArithmeticLessonPage() {
                     // more honest destination than a blanket full-lesson reset.
                     <Link
                       href="/learning-intelligence/practice/mathematics"
-                      className="inline-flex items-center gap-1.5 bg-purple-600 hover:bg-purple-700 text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-colors"
+                      className="inline-flex items-center gap-1.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-colors"
                     >
                       Practise borrowing across zero again <ArrowRight size={14} />
                     </Link>

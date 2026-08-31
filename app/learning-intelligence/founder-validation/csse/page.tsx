@@ -368,7 +368,7 @@ function FounderValidationCsseAssessmentInner() {
               </p>
               <button
                 onClick={loadAndStart}
-                className="mt-4 bg-purple-600 hover:bg-purple-700 text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-colors"
+                className="mt-4 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-colors"
               >
                 Start Founder Validation Assessment
               </button>
@@ -389,7 +389,7 @@ function FounderValidationCsseAssessmentInner() {
             <div className="flex items-center justify-center gap-4 mt-4">
               <button
                 onClick={loadAndStart}
-                className="min-h-[44px] inline-flex items-center gap-1 text-xs font-semibold text-purple-600 dark:text-purple-400 px-2"
+                className="min-h-[44px] inline-flex items-center gap-1 text-xs font-semibold text-blue-600 dark:text-blue-400 px-2"
               >
                 <RotateCcw size={14} /> Try again
               </button>
@@ -442,14 +442,14 @@ function FounderValidationCsseAssessmentInner() {
                 {index + 1 < activities.length ? (
                   <button
                     onClick={() => setIndex((i) => i + 1)}
-                    className="bg-purple-600 hover:bg-purple-700 text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-colors"
+                    className="bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-colors"
                   >
                     Next
                   </button>
                 ) : (
                   <button
                     onClick={submitExam}
-                    className="bg-purple-600 hover:bg-purple-700 text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-colors"
+                    className="bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-colors"
                   >
                     Submit assessment
                   </button>
@@ -482,7 +482,7 @@ function FounderValidationCsseAssessmentInner() {
             <div className="mt-8">
               <Link
                 href="/learning-intelligence"
-                className="inline-block bg-purple-600 hover:bg-purple-700 text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-colors"
+                className="inline-block bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-colors"
               >
                 Back to Learning Report →
               </Link>

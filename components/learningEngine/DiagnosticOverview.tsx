@@ -13,7 +13,7 @@ import type { CompetencyId, DiagnosticFindings } from "@/lib/learningEngine/type
  */
 const SECTIONS: { key: keyof DiagnosticFindings; label: string; icon: typeof Award; iconTone: string; bgTone: string }[] = [
   { key: "strengths", label: "Strengths", icon: Award, iconTone: "text-emerald-600 dark:text-emerald-400", bgTone: "bg-emerald-50 dark:bg-emerald-950" },
-  { key: "masteredSkills", label: "Mastered Skills", icon: TrendingUp, iconTone: "text-purple-600 dark:text-purple-400", bgTone: "bg-purple-50 dark:bg-purple-950" },
+  { key: "masteredSkills", label: "Mastered Skills", icon: TrendingUp, iconTone: "text-blue-600 dark:text-blue-400", bgTone: "bg-blue-50 dark:bg-blue-950" },
   { key: "emergingSkills", label: "Emerging Skills", icon: Sprout, iconTone: "text-sky-600 dark:text-sky-400", bgTone: "bg-sky-50 dark:bg-sky-950" },
   { key: "developmentAreas", label: "Development Areas", icon: AlertCircle, iconTone: "text-amber-600 dark:text-amber-400", bgTone: "bg-amber-50 dark:bg-amber-950" },
   { key: "lowConfidenceAreas", label: "Low Confidence Areas", icon: HelpCircle, iconTone: "text-gray-600 dark:text-gray-400", bgTone: "bg-gray-100 dark:bg-gray-800" },

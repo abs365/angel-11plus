@@ -47,10 +47,10 @@ const MOCK_CARDS: {
     name: "CEM",
     badge: "CEM",
     totalMinutes: 30,
-    bg: "bg-indigo-50 dark:bg-indigo-950",
-    border: "border-indigo-100 dark:border-indigo-900",
-    badgeBg: "bg-indigo-100 dark:bg-indigo-900",
-    badgeText: "text-indigo-700 dark:text-indigo-300",
+    bg: "bg-slate-50 dark:bg-slate-950",
+    border: "border-slate-100 dark:border-slate-900",
+    badgeBg: "bg-slate-100 dark:bg-slate-900",
+    badgeText: "text-slate-700 dark:text-slate-300",
   },
   {
     pathway: "iseb",
@@ -224,7 +224,7 @@ export default function MocksPage() {
             imply a mock is available. */}
         {isCsse && readiness && (
           <InfoCard className="flex items-start gap-3">
-            <Target size={18} className="text-indigo-500 mt-0.5 shrink-0" />
+            <Target size={18} className="text-slate-500 mt-0.5 shrink-0" />
             <div className="min-w-0 flex-1">
               <div className="flex items-center gap-2 mb-1">
                 <p className="text-sm font-bold text-gray-900 dark:text-gray-100">{readinessDisplay(readiness).label}</p>
@@ -232,11 +232,11 @@ export default function MocksPage() {
               </div>
               <p className="text-xs text-gray-500 dark:text-gray-400 leading-relaxed mb-2">{readiness.assessment.explanation}</p>
               {readiness.assessment.nextAction.href === "/learning-intelligence/mock-exam" && !csseMockAvailable ? (
-                <Link href="/learning-intelligence/practice" className="inline-flex items-center gap-1 text-xs font-semibold text-purple-600 dark:text-purple-400">
+                <Link href="/learning-intelligence/practice" className="inline-flex items-center gap-1 text-xs font-semibold text-blue-600 dark:text-blue-400">
                   <TrendingUp size={13} /> See practice areas →
                 </Link>
               ) : (
-                <Link href={readiness.assessment.nextAction.href} className="inline-flex items-center gap-1 text-xs font-semibold text-purple-600 dark:text-purple-400">
+                <Link href={readiness.assessment.nextAction.href} className="inline-flex items-center gap-1 text-xs font-semibold text-blue-600 dark:text-blue-400">
                   <TrendingUp size={13} /> {readiness.assessment.nextAction.label}
                 </Link>
               )}
@@ -257,10 +257,10 @@ export default function MocksPage() {
 
           {isCsse ? (
             <>
-              <div className="rounded-2xl border border-purple-100 dark:border-purple-900 bg-purple-50 dark:bg-purple-950 p-5">
+              <div className="rounded-2xl border border-blue-100 dark:border-blue-900 bg-blue-50 dark:bg-blue-950 p-5">
                 <div className="flex items-start justify-between mb-2">
                   <div className="flex items-center gap-2.5">
-                    <span className="text-xs font-bold px-2.5 py-1 rounded-lg bg-purple-100 dark:bg-purple-900 text-purple-700 dark:text-purple-300">CSSE</span>
+                    <span className="text-xs font-bold px-2.5 py-1 rounded-lg bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300">CSSE</span>
                     <h3 className="text-base font-bold text-gray-900 dark:text-gray-100">Full CSSE Mock</h3>
                   </div>
                   <StatusIndicator tone={csseMockAvailable ? "success" : "neutral"} label={csseMockAvailable ? "Available" : "Not ready yet"} />
@@ -268,7 +268,14 @@ export default function MocksPage() {
                 <p className="text-xs text-gray-500 dark:text-gray-400 mb-2">English: 60 min, 60 marks · Mathematics: 60 min, 60 marks · ~10 min between papers</p>
                 <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed mb-3">
                   {csseMockAvailable
-                    ? "Choose a full Standard sitting or a shorter Adaptive paper weighted to your recorded evidence. Today's content is still expanding toward this complete structure."
+                    // Stage 5 pass (2026-08-31) — "Adaptive" was visible,
+                    // user-facing copy, a direct ALI-invisible violation
+                    // (ANGEL_DESIGN_LANGUAGE.md §7 names it explicitly).
+                    // "Personalised" is the term this app already uses for
+                    // the same underlying idea elsewhere (the adaptive mock
+                    // pages' own "Personalised" badge), reused here rather
+                    // than inventing a new word for the same concept.
+                    ? "Choose a full Standard sitting or a shorter, personalised paper weighted to your recorded evidence. Today's content is still expanding toward this complete structure."
                     : "A full mock is not available right now. Angel does not yet have a complete, reviewed set of exam questions to draw from. Practice stays available in the meantime, and reflects the same real evidence about how your child is progressing."}
                 </p>
                 <div className="flex items-center justify-between">
@@ -308,12 +315,12 @@ export default function MocksPage() {
               <SimpleMockCard
                 badge="CSSE"
                 name="Full CSSE Mock"
-                bg="bg-purple-50 dark:bg-purple-950"
-                border="border-purple-100 dark:border-purple-900"
-                badgeBg="bg-purple-100 dark:bg-purple-900"
-                badgeText="text-purple-700 dark:text-purple-300"
+                bg="bg-blue-50 dark:bg-blue-950"
+                border="border-blue-100 dark:border-blue-900"
+                badgeBg="bg-blue-100 dark:bg-blue-900"
+                badgeText="text-blue-700 dark:text-blue-300"
                 minutesLabel="Varies by mode"
-                description="Choose Standard for the full sitting, or Adaptive for a shorter paper weighted to your recorded evidence."
+                description="Choose Standard for the full sitting, or Personalised for a shorter paper weighted to your recorded evidence."
                 href="/learning-intelligence/mock-exam"
                 best={bestScores.csse}
                 available={csseMockAvailable}

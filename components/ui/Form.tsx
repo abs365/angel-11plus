@@ -8,14 +8,14 @@ import ErrorState from "@/components/ErrorState";
  * Every input's base className below is the exact existing pattern already
  * repeated across /login, /beta-family, /feedback, /report-bug,
  * /feature-request, /testimonial (`border-gray-200 rounded-xl px-4 py-3
- * focus:ring-2 focus:ring-purple-400`, etc.) — consolidated into one real
+ * focus:ring-2 focus:ring-blue-400`, etc.) — consolidated into one real
  * component rather than six independent copies. Validation messages reuse
  * `ErrorState` (AEI-001) unmodified — this file does not reintroduce a
  * second error-presentation pattern.
  */
 
 const FIELD_BASE =
-  "w-full bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl px-4 py-3 text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-transparent transition-all disabled:opacity-50 disabled:cursor-not-allowed";
+  "w-full bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl px-4 py-3 text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all disabled:opacity-50 disabled:cursor-not-allowed";
 
 interface FieldWrapperProps {
   label?: string;
@@ -150,7 +150,7 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(function Che
             id={fieldId}
             type="checkbox"
             aria-describedby={error ? `${fieldId}-error` : undefined}
-            className={cn("w-4 h-4 rounded border-gray-300 dark:border-gray-600 text-purple-600 focus:ring-purple-500", className)}
+            className={cn("w-4 h-4 rounded border-gray-300 dark:border-gray-600 text-blue-600 focus:ring-blue-500", className)}
             {...rest}
           />
         </div>
@@ -190,7 +190,7 @@ export function RadioGroup({ name, legend, options, value, onChange, error }: Ra
               value={o.value}
               checked={value === o.value}
               onChange={() => onChange(o.value)}
-              className="w-4 h-4 border-gray-300 dark:border-gray-600 text-purple-600 focus:ring-purple-500"
+              className="w-4 h-4 border-gray-300 dark:border-gray-600 text-blue-600 focus:ring-blue-500"
             />
             <span className="text-sm text-gray-700 dark:text-gray-300">{o.label}</span>
           </label>

@@ -84,7 +84,7 @@ export default function MockReportPage() {
             <p className="text-sm text-gray-500 dark:text-gray-400 mt-2 leading-relaxed">
               Your Mock is being prepared. Check back soon.
             </p>
-            <Link href="/learning-intelligence" className="inline-block mt-4 text-xs font-semibold text-purple-600 dark:text-purple-400">
+            <Link href="/learning-intelligence" className="inline-block mt-4 text-xs font-semibold text-blue-600 dark:text-blue-400">
               Back to dashboard
             </Link>
           </InfoCard>
@@ -112,7 +112,7 @@ export default function MockReportPage() {
               </InfoCard>
             )}
 
-            <Link href="/learning-intelligence" className="inline-block text-xs font-semibold text-purple-600 dark:text-purple-400">
+            <Link href="/learning-intelligence" className="inline-block text-xs font-semibold text-blue-600 dark:text-blue-400">
               Back to dashboard
             </Link>
           </div>
@@ -194,7 +194,7 @@ function MockAnalysisSections({ report }: { report: MockAttemptReport }) {
           <p className="text-sm font-semibold text-gray-900 dark:text-gray-100 mb-2">Your priorities</p>
           <div className="space-y-3">
             {priorityEntries.map((entry) => (
-              <InfoCard key={entry.questionTypeId} className="border-purple-200 dark:border-purple-900">
+              <InfoCard key={entry.questionTypeId} className="border-blue-200 dark:border-blue-900">
                 <div className="flex items-center justify-between gap-2">
                   <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">
                     {childFriendlySkillLabel(entry.competencyId, entry.questionTypeId)}
@@ -232,9 +232,9 @@ function MockAnalysisSections({ report }: { report: MockAttemptReport }) {
 
       {/* Section 7 — WHAT ANGEL RECOMMENDS NEXT. One closing action, reusing the existing, tested nextPracticeSentence() rather than a new engine. */}
       {nextPracticeSentence(nextPracticePriorities) && (
-        <InfoCard className="border-purple-200 dark:border-purple-900 bg-purple-50 dark:bg-purple-950/40">
-          <p className="text-sm font-semibold text-purple-800 dark:text-purple-300">What to do now</p>
-          <p className="text-sm text-purple-700 dark:text-purple-400 mt-1 leading-relaxed">{nextPracticeSentence(nextPracticePriorities)}</p>
+        <InfoCard className="border-blue-200 dark:border-blue-900 bg-blue-50 dark:bg-blue-950/40">
+          <p className="text-sm font-semibold text-blue-800 dark:text-blue-300">What to do now</p>
+          <p className="text-sm text-blue-700 dark:text-blue-400 mt-1 leading-relaxed">{nextPracticeSentence(nextPracticePriorities)}</p>
           <ButtonLink href={MATHEMATICS_PRACTICE_ROUTE} className="mt-3">
             {PRACTICE_ACTION_LABEL}
           </ButtonLink>

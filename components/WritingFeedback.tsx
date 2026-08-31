@@ -86,7 +86,7 @@ export default function WritingFeedback({ feedback }: WritingFeedbackProps) {
       {/* Suggested upgrade */}
       <div className="px-5 py-4 border-b border-gray-50 dark:border-gray-800">
         <div className="flex items-center gap-2 mb-3">
-          <ArrowRight size={15} className="text-purple-500 shrink-0" />
+          <ArrowRight size={15} className="text-blue-500 shrink-0" />
           <p className="text-gray-800 dark:text-gray-100 font-semibold text-sm">Suggested Upgrade</p>
         </div>
         <div className="space-y-2">
@@ -113,14 +113,14 @@ export default function WritingFeedback({ feedback }: WritingFeedbackProps) {
       </div>
 
       {/* Tutor tip */}
-      <div className="px-5 py-4 bg-indigo-50 dark:bg-indigo-950">
+      <div className="px-5 py-4 bg-slate-50 dark:bg-slate-950">
         <div className="flex items-start gap-2.5">
-          <Lightbulb size={15} className="text-indigo-500 dark:text-indigo-400 mt-0.5 shrink-0" />
+          <Lightbulb size={15} className="text-slate-500 dark:text-slate-400 mt-0.5 shrink-0" />
           <div>
-            <p className="text-indigo-700 dark:text-indigo-300 text-xs font-semibold uppercase tracking-wide mb-1">
+            <p className="text-slate-700 dark:text-slate-300 text-xs font-semibold uppercase tracking-wide mb-1">
               Tutor Tip: apply this next time
             </p>
-            <p className="text-indigo-900 dark:text-indigo-100 text-sm leading-relaxed font-medium">
+            <p className="text-slate-900 dark:text-slate-100 text-sm leading-relaxed font-medium">
               {feedback.tutorTip}
             </p>
           </div>

@@ -7,6 +7,7 @@ import PageLayout from "@/components/PageLayout";
 import { completeLesson, recordSkillResult, getProgress } from "@/lib/progress";
 import { computeAnalytics } from "@/lib/analytics";
 import SessionInfoBar from "@/components/SessionInfoBar";
+import { ProgressBar } from "@/components/ui/Progress";
 import {
   SUBJECT_ESTIMATED_MINUTES,
   SUBJECT_LEARNING_OBJECTIVE,
@@ -29,26 +30,31 @@ import type { AnalyticsReport, SubjectKey } from "@/types/analytics";
 // white across all four themes (measured 5.36–7.10:1). This is the same
 // class of correction this codebase already made once (Sprint 1's
 // --color-success emerald-600→700) and again for Vocabulary's Word of the
-// Day card (AN-105) — applied here for the first time to violet/cyan/teal/
-// rose. `bar` (in-session progress fill) and `xpBadge` are unchanged in
-// colour; `xpBadge` itself is no longer used in markup (see the done
-// screen below) but the token is left defined here in case a future
-// package wants the same treatment for something else.
+// Day card (AN-105) — applied here for the first time to lime/cyan/teal/
+// rose. `xpBadge` is unchanged in colour and no longer used in markup (see
+// the done screen below) but the token is left defined here in case a
+// future package wants the same treatment for something else. `bar` was
+// removed (Stage 3, 2026-08-31) once the in-session progress fill moved to
+// the shared `ProgressBar` component below — see PROGRESS_BAR_COLOR.
+// Zero-Purple pass (2026-08-31): key stays "violet" (matches the caller,
+// app/verbal-reasoning/page.tsx's themeColor="violet", and ThemeKey =
+// keyof typeof THEME) — only the rendered classes moved to lime, per the
+// established convention of not renaming internal identifiers across call
+// sites (ANGEL_DESIGN_LANGUAGE.md §2's implementation note).
 const THEME = {
   violet: {
-    header: "bg-violet-100 dark:bg-violet-900",
-    icon: "text-violet-600 dark:text-violet-400",
-    pill: "bg-violet-50 dark:bg-violet-950",
-    pillText: "text-violet-700 dark:text-violet-300",
-    skills: "bg-violet-50 dark:bg-violet-950",
-    skillsTitle: "text-violet-700 dark:text-violet-300",
-    skillsBadge: "bg-violet-100 text-violet-700 dark:bg-violet-900 dark:text-violet-300",
-    bar: "bg-violet-500",
-    button: "bg-violet-700 hover:bg-violet-800",
-    working: "bg-violet-50 dark:bg-violet-950",
-    workingText: "text-violet-600 dark:text-violet-400",
+    header: "bg-lime-100 dark:bg-lime-900",
+    icon: "text-lime-600 dark:text-lime-400",
+    pill: "bg-lime-50 dark:bg-lime-950",
+    pillText: "text-lime-700 dark:text-lime-300",
+    skills: "bg-lime-50 dark:bg-lime-950",
+    skillsTitle: "text-lime-700 dark:text-lime-300",
+    skillsBadge: "bg-lime-100 text-lime-700 dark:bg-lime-900 dark:text-lime-300",
+    button: "bg-lime-700 hover:bg-lime-800",
+    working: "bg-lime-50 dark:bg-lime-950",
+    workingText: "text-lime-600 dark:text-lime-400",
     back: "text-gray-400 hover:text-gray-700 dark:text-gray-500 dark:hover:text-gray-300",
-    xpBadge: "bg-violet-50 text-violet-700 dark:bg-violet-950 dark:text-violet-300",
+    xpBadge: "bg-lime-50 text-lime-700 dark:bg-lime-950 dark:text-lime-300",
   },
   cyan: {
     header: "bg-cyan-100 dark:bg-cyan-900",
@@ -58,7 +64,6 @@ const THEME = {
     skills: "bg-cyan-50 dark:bg-cyan-950",
     skillsTitle: "text-cyan-700 dark:text-cyan-300",
     skillsBadge: "bg-cyan-100 text-cyan-700 dark:bg-cyan-900 dark:text-cyan-300",
-    bar: "bg-cyan-500",
     button: "bg-cyan-700 hover:bg-cyan-800",
     working: "bg-cyan-50 dark:bg-cyan-950",
     workingText: "text-cyan-600 dark:text-cyan-400",
@@ -73,7 +78,6 @@ const THEME = {
     skills: "bg-teal-50 dark:bg-teal-950",
     skillsTitle: "text-teal-700 dark:text-teal-300",
     skillsBadge: "bg-teal-100 text-teal-700 dark:bg-teal-900 dark:text-teal-300",
-    bar: "bg-teal-500",
     button: "bg-teal-700 hover:bg-teal-800",
     working: "bg-teal-50 dark:bg-teal-950",
     workingText: "text-teal-600 dark:text-teal-400",
@@ -88,7 +92,6 @@ const THEME = {
     skills: "bg-rose-50 dark:bg-rose-950",
     skillsTitle: "text-rose-700 dark:text-rose-300",
     skillsBadge: "bg-rose-100 text-rose-700 dark:bg-rose-900 dark:text-rose-300",
-    bar: "bg-rose-500",
     button: "bg-rose-700 hover:bg-rose-800",
     working: "bg-rose-50 dark:bg-rose-950",
     workingText: "text-rose-600 dark:text-rose-400",
@@ -98,6 +101,20 @@ const THEME = {
 };
 
 type ThemeKey = keyof typeof THEME;
+
+// Stage 3 (Shared Question Shell, 2026-08-31) — maps this component's own
+// theme keys onto the shared `ProgressBar` component's colour prop, now
+// that Progress.tsx supports the full subject-identity palette. Only
+// "violet" needs a real mapping (its theme key is unchanged from before
+// the Zero-Purple pass, per ANGEL_DESIGN_LANGUAGE.md §2's implementation
+// note, but the colour it renders is lime); the other three theme keys
+// already share their name with the ProgressBar colour they need.
+const PROGRESS_BAR_COLOR: Record<ThemeKey, "lime" | "cyan" | "teal" | "rose"> = {
+  violet: "lime",
+  cyan: "cyan",
+  teal: "teal",
+  rose: "rose",
+};
 
 // ─── Answer normalisation ─────────────────────────────────────────────────────
 
@@ -240,6 +257,15 @@ export default function ReasoningSession({
             </p>
           </div>
 
+          {/* Stage 3 (Question Experience Audit, 2026-08-31) — wrong-answer
+              feedback here previously used red/green, while the Practice
+              runner's equivalent (SubmitOrNext, same file family, same
+              underlying meaning) deliberately uses amber/emerald and never
+              red — red is reserved app-wide for genuine error/danger states
+              (ANGEL_DESIGN_LANGUAGE.md §5), not a wrong practice answer.
+              This was an accidental inconsistency, not a pedagogical one —
+              nothing about scoring, evidence recording, or the underlying
+              correct/incorrect logic changes here, only the colour. */}
           <div className="flex flex-col gap-3 mb-6">
             {questions.map((q) => {
               const wasCorrect = checked[q.id];
@@ -248,24 +274,24 @@ export default function ReasoningSession({
                   key={q.id}
                   className={`rounded-xl p-4 border ${
                     wasCorrect === true
-                      ? "border-green-200 dark:border-green-800 bg-green-50 dark:bg-green-950"
+                      ? "border-emerald-200 dark:border-emerald-800 bg-emerald-50 dark:bg-emerald-950"
                       : wasCorrect === false
-                      ? "border-red-100 dark:border-red-900 bg-red-50 dark:bg-red-950"
+                      ? "border-amber-100 dark:border-amber-900 bg-amber-50 dark:bg-amber-950"
                       : "bg-white dark:bg-gray-900 border-gray-100 dark:border-gray-800"
                   }`}
                 >
                   <p className="text-gray-800 dark:text-gray-100 text-sm font-medium mb-2 whitespace-pre-line">{q.question}</p>
                   <div className="flex items-start gap-2">
                     {wasCorrect === true ? (
-                      <CheckCircle size={14} aria-hidden="true" className="text-green-500 mt-0.5 shrink-0" />
+                      <CheckCircle size={14} aria-hidden="true" className="text-emerald-500 mt-0.5 shrink-0" />
                     ) : wasCorrect === false ? (
-                      <XCircle size={14} aria-hidden="true" className="text-red-400 mt-0.5 shrink-0" />
+                      <XCircle size={14} aria-hidden="true" className="text-amber-400 mt-0.5 shrink-0" />
                     ) : null}
                     <div className="flex-1">
                       <p className="text-gray-500 dark:text-gray-400 text-xs">
                         Answer: <strong className="text-gray-800 dark:text-gray-100">{q.answer}</strong>
                         {answers[q.id] && wasCorrect === false && (
-                          <> · You wrote: <span className="text-red-500">{answers[q.id]}</span></>
+                          <> · You wrote: <span className="text-amber-500">{answers[q.id]}</span></>
                         )}
                       </p>
                       <p className="text-gray-400 dark:text-gray-500 text-xs mt-1 leading-relaxed">{q.explanation}</p>
@@ -392,24 +418,21 @@ export default function ReasoningSession({
           >
             ← {subjectName}
           </button>
-          {/* AN-107: kept as its own markup (this component's `bar` colour
-              varies per theme — violet/cyan/teal/rose — none matching the
-              shared ProgressBar component's purple/emerald/amber palette,
-              the same constraint AN-105 documented for Maths/Vocabulary/
-              Writing); only real ARIA progress semantics were added. */}
-          <div
-            role="progressbar"
-            aria-valuenow={Math.round(((currentIndex + 1) / questions.length) * 100)}
-            aria-valuemin={0}
-            aria-valuemax={100}
-            aria-label="Question progress"
-            className="flex-1 bg-gray-100 dark:bg-gray-800 rounded-full h-2"
-          >
-            <div
-              className={`h-full rounded-full transition-all motion-reduce:transition-none ${t.bar}`}
-              style={{ width: `${((currentIndex + 1) / questions.length) * 100}%` }}
-            />
-          </div>
+          {/* Stage 3 (Shared Question Shell, 2026-08-31) — this had been its
+              own hand-rolled markup since AN-107, specifically because the
+              shared ProgressBar component's palette (then purple/emerald/
+              amber) couldn't express this component's per-theme colour.
+              Progress.tsx now supports the full subject-identity palette
+              (lime/cyan/teal/rose included), closing that gap — this is a
+              genuine adoption of the shared component, not a new one, and
+              renders the identical colour/width/transition as before
+              (verified against the removed markup above). */}
+          <ProgressBar
+            percent={((currentIndex + 1) / questions.length) * 100}
+            color={PROGRESS_BAR_COLOR[themeColor]}
+            label="Question progress"
+            className="flex-1"
+          />
           <span className="text-gray-400 dark:text-gray-500 text-sm shrink-0">
             {currentIndex + 1}/{questions.length}
           </span>
@@ -462,20 +485,20 @@ export default function ReasoningSession({
               className={`w-full rounded-xl px-4 py-3.5 text-base font-medium focus:outline-none focus:ring-2 transition-all motion-reduce:transition-none ${
                 isChecked
                   ? isCorrect
-                    ? "bg-green-50 dark:bg-green-950 border-2 border-green-400 dark:border-green-600 text-green-700 dark:text-green-300"
-                    : "bg-red-50 dark:bg-red-950 border-2 border-red-300 dark:border-red-700 text-red-700 dark:text-red-300"
-                  : "bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-600 focus:ring-violet-400 focus:border-transparent"
+                    ? "bg-emerald-50 dark:bg-emerald-950 border-2 border-emerald-400 dark:border-emerald-600 text-emerald-700 dark:text-emerald-300"
+                    : "bg-amber-50 dark:bg-amber-950 border-2 border-amber-300 dark:border-amber-700 text-amber-700 dark:text-amber-300"
+                  : "bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-600 focus:ring-lime-400 focus:border-transparent"
               }`}
             />
 
             {isChecked && (
-              <div className={`mt-3 rounded-xl p-3 flex items-start gap-2 ${isCorrect ? "bg-green-50 dark:bg-green-950" : "bg-red-50 dark:bg-red-950"}`}>
+              <div className={`mt-3 rounded-xl p-3 flex items-start gap-2 ${isCorrect ? "bg-emerald-50 dark:bg-emerald-950" : "bg-amber-50 dark:bg-amber-950"}`}>
                 {isCorrect ? (
-                  <CheckCircle size={16} aria-hidden="true" className="text-green-500 mt-0.5 shrink-0" />
+                  <CheckCircle size={16} aria-hidden="true" className="text-emerald-500 mt-0.5 shrink-0" />
                 ) : (
-                  <XCircle size={16} aria-hidden="true" className="text-red-400 mt-0.5 shrink-0" />
+                  <XCircle size={16} aria-hidden="true" className="text-amber-400 mt-0.5 shrink-0" />
                 )}
-                <p className={`text-sm font-medium ${isCorrect ? "text-green-700 dark:text-green-300" : "text-red-600 dark:text-red-400"}`}>
+                <p className={`text-sm font-medium ${isCorrect ? "text-emerald-700 dark:text-emerald-300" : "text-amber-600 dark:text-amber-400"}`}>
                   {isCorrect ? "Correct!" : `Incorrect. Answer: ${current.answer}`}
                 </p>
               </div>

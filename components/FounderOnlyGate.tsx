@@ -44,8 +44,8 @@ export default function FounderOnlyGate({ children }: { children: React.ReactNod
     return (
       <div className="min-h-screen bg-gray-50 dark:bg-gray-950 flex items-center justify-center p-6">
         <div className="w-full max-w-sm">
-          <div className="w-14 h-14 rounded-2xl bg-purple-100 dark:bg-purple-900 flex items-center justify-center mx-auto mb-4">
-            <ShieldAlert size={24} className="text-purple-600 dark:text-purple-400" />
+          <div className="w-14 h-14 rounded-2xl bg-blue-100 dark:bg-blue-900 flex items-center justify-center mx-auto mb-4">
+            <ShieldAlert size={24} className="text-blue-600 dark:text-blue-400" />
           </div>
           <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100 text-center">Founder sign-in required</h1>
           <p className="text-sm text-gray-500 dark:text-gray-400 mt-2 mb-6 text-center leading-relaxed">
@@ -80,14 +80,14 @@ export default function FounderOnlyGate({ children }: { children: React.ReactNod
                   autoComplete="email"
                   autoFocus
                   required
-                  className="w-full bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl pl-10 pr-4 py-3 text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-purple-400"
+                  className="w-full bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl pl-10 pr-4 py-3 text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-400"
                 />
               </div>
               {sendState === "error" && <p className="text-xs text-red-500">{sendError}</p>}
               <button
                 type="submit"
                 disabled={sendState === "sending" || !email.trim()}
-                className="w-full flex items-center justify-center gap-2 bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3 rounded-xl text-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-xl text-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {sendState === "sending" ? "Sending…" : (<>Send magic link <ArrowRight size={16} /></>)}
               </button>

@@ -14,7 +14,7 @@ import { cn } from "@/lib/cn";
 interface ProgressBarProps {
   /** 0-100. Per AXT-003 §12: the caller must trace this to a real Derived State Hierarchy layer — this component only renders, never computes or invents. */
   percent: number;
-  color?: "purple" | "emerald" | "amber";
+  color?: "purple" | "emerald" | "amber" | "blue" | "yellow" | "lime" | "cyan" | "teal" | "rose" | "slate";
   className?: string;
   label?: string;
 }
@@ -26,10 +26,31 @@ interface ProgressBarProps {
 // read as a second brand colour rather than the calm, distinct "routine
 // interaction" blue the Founder asked for. The prop key is left as
 // "purple" to avoid a churny rename across every call site.
+//
+// Experience Transformation, Stage 3 (2026-08-31) — the palette below was
+// extended from 3 colours (purple/emerald/amber) to the full set of
+// subject-identity colours (ANGEL_DESIGN_LANGUAGE.md §2), specifically to
+// close a documented gap: `components/ReasoningSession.tsx` had its own
+// hand-rolled progress-bar markup because this component couldn't express
+// lime/cyan/teal/rose (AN-107's own comment recorded this as a known
+// constraint, not an oversight). This is additive only — every existing
+// caller's colour and rendered output is unchanged; only new colours were
+// added so ReasoningSession (and any future subject-specific surface) can
+// adopt this one shared component instead of maintaining a parallel copy.
 const BAR_COLOR: Record<NonNullable<ProgressBarProps["color"]>, string> = {
   purple: "bg-sky-600",
   emerald: "bg-emerald-500",
   amber: "bg-amber-500",
+  blue: "bg-blue-600",
+  yellow: "bg-yellow-600",
+  // lime/cyan/teal/rose match ReasoningSession's THEME.bar values exactly
+  // (bg-{colour}-500), so adopting this shared component is a genuine
+  // zero-visual-change migration, not a recolour.
+  lime: "bg-lime-500",
+  cyan: "bg-cyan-500",
+  teal: "bg-teal-500",
+  rose: "bg-rose-500",
+  slate: "bg-slate-600",
 };
 
 export function ProgressBar({ percent, color = "purple", className, label }: ProgressBarProps) {

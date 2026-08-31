@@ -42,7 +42,7 @@ const SUBJECTS: {
   color: string;
   iconBg: string;
 }[] = [
-  { key: "english", href: "/english", label: "English Comprehension", icon: BookOpen, color: "text-purple-600 dark:text-purple-400", iconBg: "bg-purple-100 dark:bg-purple-900" },
+  { key: "english", href: "/english", label: "English Comprehension", icon: BookOpen, color: "text-yellow-600 dark:text-yellow-400", iconBg: "bg-yellow-100 dark:bg-yellow-900" },
   { key: "maths", href: "/maths", label: "Mathematics", icon: Calculator, color: "text-blue-600 dark:text-blue-400", iconBg: "bg-blue-100 dark:bg-blue-900" },
   { key: "vocabulary", href: "/vocabulary", label: "Vocabulary Builder", icon: BookMarked, color: "text-emerald-600 dark:text-emerald-400", iconBg: "bg-emerald-100 dark:bg-emerald-900" },
   { key: "writing", href: "/writing", label: "Creative Writing", icon: Pencil, color: "text-amber-600 dark:text-amber-400", iconBg: "bg-amber-100 dark:bg-amber-900" },
@@ -79,10 +79,10 @@ export default function LearningHubPage() {
             AN-108: hub-chrome strip (not subject-specific) moved from purple
             to the muted-indigo educational accent. */}
         {learnMissionItem && (
-          <div className="bg-indigo-50 dark:bg-indigo-950 border border-indigo-100 dark:border-indigo-900 rounded-2xl p-4 mb-6 flex items-center justify-between gap-3 flex-wrap">
+          <div className="bg-slate-50 dark:bg-slate-950 border border-slate-100 dark:border-slate-900 rounded-2xl p-4 mb-6 flex items-center justify-between gap-3 flex-wrap">
             <div className="flex items-center gap-2.5 min-w-0">
-              <Compass size={16} aria-hidden="true" className="text-indigo-500 shrink-0" />
-              <p className="text-sm text-indigo-800 dark:text-indigo-200 min-w-0 truncate">
+              <Compass size={16} aria-hidden="true" className="text-slate-500 shrink-0" />
+              <p className="text-sm text-slate-800 dark:text-slate-200 min-w-0 truncate">
                 Continue where you left off: <span className="font-semibold">{learnMissionItem.label}</span>
               </p>
             </div>

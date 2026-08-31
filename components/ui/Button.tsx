@@ -20,20 +20,20 @@ export type ButtonVariant = "primary" | "secondary" | "outline" | "ghost" | "dan
 export type ButtonSize = "sm" | "md" | "lg";
 
 /**
- * New Angel Visual System (colour remediation): AN-108 had recoloured
- * "primary" from purple to a deep forest green. That left this component
- * as the one outlier against the rest of the product, which had already
- * settled on purple-600 as its de facto primary-action colour everywhere
- * else (PathwaySwitcher, Beta, Testimonial, Mock Centre, and more) — the
- * actual root cause of the "visually isolated" saturated-colour patches
- * the Founder flagged. Restored to purple-600, matching every other
- * primary CTA already in the product and the Founder's explicit "PRIMARY
- * BRAND: Angel purple" direction. purple-600 against white is ~5.5:1,
- * comfortably AA for normal text; used as the base shade in both modes.
+ * AN-108 had recoloured "primary" from purple to a deep forest green, then
+ * a later pass moved it to blue-600 (this component's own de facto choice
+ * even while `--color-primary` in `app/globals.css` was still purple at the
+ * time — a real, if minor, pre-existing inconsistency, not introduced by
+ * the Zero-Purple pass). Zero-Purple pass (2026-08-31, Founder directive):
+ * purple/violet/indigo retired Angel-wide; blue-600 is now also the token
+ * layer's own `--color-primary` value, so this component's colour and the
+ * token finally agree — see ANGEL_DESIGN_LANGUAGE.md §0a for the full
+ * decision record. blue-600 against white is ~5.17:1, comfortably AA for
+ * normal text; used as the base shade in both modes.
  */
 const VARIANT_CLASSES: Record<ButtonVariant, string> = {
   primary:
-    "bg-purple-600 hover:bg-purple-700 dark:bg-purple-600 dark:hover:bg-purple-500 text-white shadow-sm",
+    "bg-blue-600 hover:bg-blue-700 dark:bg-blue-600 dark:hover:bg-blue-500 text-white shadow-sm",
   secondary:
     "bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300",
   outline:

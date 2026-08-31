@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import {
-  BarChart2,
   Star,
   CheckCircle,
   Target,
@@ -81,9 +80,6 @@ export default function ProgressPage() {
       <PageLayout>
         <div className="max-w-3xl mx-auto px-4 py-6 md:px-8 md:py-8">
           <div className="flex items-center gap-3 mb-6">
-            <div className="bg-indigo-100 dark:bg-indigo-900 p-3 rounded-2xl">
-              <BarChart2 size={22} className="text-indigo-600 dark:text-indigo-400" />
-            </div>
             <div>
               <h1 className="text-gray-900 dark:text-gray-100 font-bold text-2xl">My Progress</h1>
               <p className="text-gray-400 dark:text-gray-500 text-sm">Track your 11+ journey</p>
@@ -109,12 +105,18 @@ export default function ProgressPage() {
   return (
     <PageLayout>
       <div className="max-w-3xl mx-auto px-4 py-6 md:px-8 md:py-8">
-        {/* Header */}
+        {/* Header — Stage 5 pass (2026-08-31): the BarChart2 icon-box
+            beside this heading was removed. Unlike a subject-hub page
+            (English/Maths/etc.), which uses its icon+colour to help a
+            learner arriving from a coloured subject card confirm they're
+            in the right place, /progress is a single utility page with
+            nothing else to distinguish it from — the icon added no
+            information the heading + subtitle didn't already carry
+            (fails the cover-test, same pattern already corrected on
+            the dashboard). Removed from both this header and its
+            loading-skeleton mirror above, so the two stay consistent. */}
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-3">
-            <div className="bg-indigo-100 dark:bg-indigo-900 p-3 rounded-2xl">
-              <BarChart2 size={22} className="text-indigo-600 dark:text-indigo-400" />
-            </div>
             <div>
               <h1 className="text-gray-900 dark:text-gray-100 font-bold text-2xl">My Progress</h1>
               <p className="text-gray-400 dark:text-gray-500 text-sm">Track your 11+ journey</p>
@@ -308,10 +310,17 @@ export default function ProgressPage() {
                 two existing competency sections below (Learning Confidence,
                 Skill Analysis), presenting them as one connected picture
                 rather than two isolated charts. Neither section's own data
-                or calculation changes. */}
+                or calculation changes. Zero-Purple/Stage 5 pass (2026-08-31):
+                the visible heading itself was the internal term "Competency"
+                leaking into a real parent/child-facing surface — a direct
+                ALI-invisible violation (ANGEL_DESIGN_LANGUAGE.md §7: never
+                show "Competency" to the user). Renamed to "Skills Progress",
+                which the section's own existing subtitle already describes
+                in plain language ("by subject and skill") — no new wording
+                invented, just promoted to the heading. */}
             {((adaptiveProfile && adaptiveProfile.subjectConfidence.some((c) => c.score > 0)) || report.skills.length > 0) && (
               <div className="mb-1">
-                <h2 className="text-gray-900 dark:text-gray-100 font-bold text-lg">Competency Progress</h2>
+                <h2 className="text-gray-900 dark:text-gray-100 font-bold text-lg">Skills Progress</h2>
                 <p className="text-gray-400 dark:text-gray-500 text-xs mt-0.5 mb-3">
                   How confident and accurate your child is becoming, by subject and skill.
                 </p>
@@ -475,7 +484,7 @@ export default function ProgressPage() {
             {report.nextRecommendation && (
               <a
                 href={report.nextRecommendation.href}
-                className="block w-full bg-purple-600 text-white text-center rounded-xl py-3.5 font-semibold text-sm hover:bg-purple-700 transition-colors mb-4"
+                className="block w-full bg-blue-600 text-white text-center rounded-xl py-3.5 font-semibold text-sm hover:bg-blue-700 transition-colors mb-4"
               >
                 {report.nextRecommendation.label} →
               </a>
@@ -488,7 +497,7 @@ export default function ProgressPage() {
           <div className="mt-4">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-2">
-                <Award size={18} className="text-indigo-500" />
+                <Award size={18} className="text-slate-500" />
                 <h2 className="text-gray-900 dark:text-gray-100 font-bold text-lg">Achievements</h2>
               </div>
               <span className="text-gray-400 dark:text-gray-500 text-sm">
@@ -512,7 +521,7 @@ export default function ProgressPage() {
                       i < gamification.weeklyGoal.sessions
                         ? gamification.weeklyGoal.isComplete
                           ? "bg-emerald-400"
-                          : "bg-indigo-400"
+                          : "bg-slate-400"
                         : "bg-gray-200 dark:bg-gray-700"
                     }`}
                   />

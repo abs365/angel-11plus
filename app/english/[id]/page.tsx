@@ -82,12 +82,12 @@ interface Props {
 }
 
 const skillColors: Record<string, string> = {
-  inference: "bg-purple-100 dark:bg-purple-900 text-purple-700 dark:text-purple-300",
+  inference: "bg-yellow-100 dark:bg-yellow-900 text-yellow-700 dark:text-yellow-300",
   evidence: "bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300",
   vocabulary: "bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300",
   atmosphere: "bg-orange-100 dark:bg-orange-900 text-orange-700 dark:text-orange-300",
   character: "bg-pink-100 dark:bg-pink-900 text-pink-700 dark:text-pink-300",
-  explanation: "bg-indigo-100 dark:bg-indigo-900 text-indigo-700 dark:text-indigo-300",
+  explanation: "bg-slate-100 dark:bg-slate-900 text-slate-700 dark:text-slate-300",
   structure: "bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300",
 };
 
@@ -153,8 +153,8 @@ export default function EnglishLessonPage({ params }: Props) {
       <PageLayout>
         <div className="max-w-2xl mx-auto px-4 py-12 md:px-8">
           <div className="text-center mb-8">
-            <div className="inline-flex items-center justify-center w-16 h-16 bg-purple-100 dark:bg-purple-900 rounded-full mb-4">
-              <CheckCircle size={32} aria-hidden="true" className="text-purple-600 dark:text-purple-400" />
+            <div className="inline-flex items-center justify-center w-16 h-16 bg-yellow-100 dark:bg-yellow-900 rounded-full mb-4">
+              <CheckCircle size={32} aria-hidden="true" className="text-yellow-600 dark:text-yellow-400" />
             </div>
             <h1 className="text-gray-900 dark:text-gray-100 font-bold text-2xl mb-2">Lesson Complete!</h1>
             <p className="text-gray-500 dark:text-gray-400">
@@ -199,7 +199,7 @@ export default function EnglishLessonPage({ params }: Props) {
           <div className="flex gap-3 mt-6">
             <button
               onClick={() => router.push("/english")}
-              className="flex-1 bg-purple-600 text-white rounded-xl py-3.5 font-semibold text-sm hover:bg-purple-700 transition-colors motion-reduce:transition-none"
+              className="flex-1 bg-yellow-800 text-white rounded-xl py-3.5 font-semibold text-sm hover:bg-yellow-900 transition-colors motion-reduce:transition-none"
             >
               Back to English
             </button>
@@ -285,7 +285,7 @@ export default function EnglishLessonPage({ params }: Props) {
                 }
                 placeholder="Write your answer here..."
                 rows={4}
-                className="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl px-4 py-3 text-sm text-gray-800 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-600 resize-none focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-transparent transition-all motion-reduce:transition-none"
+                className="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl px-4 py-3 text-sm text-gray-800 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-600 resize-none focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent transition-all motion-reduce:transition-none"
               />
 
               {/* Hint toggle button */}
@@ -334,7 +334,7 @@ export default function EnglishLessonPage({ params }: Props) {
               {answeredCount} of {lesson.questions.length} answered
             </p>
             {/* AN-105: adopted the shared ProgressBar (colour="purple",
-                already an exact match for this bar's previous bg-purple-500
+                already an exact match for this bar's previous bg-yellow-500
                 fill — no colour change) in place of a hand-rolled div.
                 Real accessibility gain: role="progressbar" + aria-valuenow/
                 min/max, none of which the previous markup had. Same
@@ -351,7 +351,7 @@ export default function EnglishLessonPage({ params }: Props) {
           <button
             onClick={handleSubmit}
             disabled={answeredCount === 0}
-            className="w-full bg-purple-600 text-white rounded-xl py-4 font-semibold text-base hover:bg-purple-700 disabled:opacity-40 disabled:cursor-not-allowed transition-colors motion-reduce:transition-none"
+            className="w-full bg-yellow-800 text-white rounded-xl py-4 font-semibold text-base hover:bg-yellow-900 disabled:opacity-40 disabled:cursor-not-allowed transition-colors motion-reduce:transition-none"
           >
             Submit Answers
           </button>

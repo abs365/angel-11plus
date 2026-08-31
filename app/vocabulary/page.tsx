@@ -203,7 +203,7 @@ export default function VocabularyPage() {
             <div className="p-8 text-center">
               <span className={`text-xs font-semibold px-3 py-1 rounded-full mb-4 inline-block ${
                 currentWord.category === "literary"
-                  ? "bg-purple-100 dark:bg-purple-900 text-purple-700 dark:text-purple-300"
+                  ? "bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300"
                   : currentWord.category === "tier3"
                   ? "bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-300"
                   : "bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300"

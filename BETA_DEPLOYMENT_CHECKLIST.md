@@ -82,7 +82,7 @@ Open browser DevTools → Application → Local Storage and verify after each su
 - [ ] Installed PWA opens in standalone mode (no browser chrome)
 - [ ] Installed PWA shows correct icon (not generic browser icon)
 - [ ] Installed PWA shows `Angel 11+` as app name
-- [ ] Splash screen shows purple theme colour `#7c3aed`
+- [ ] Splash screen shows blue theme colour `#2563eb` (updated from purple `#7c3aed` — Zero-Purple pass, 2026-08-31)
 
 ### 2.2 Offline Support
 

@@ -17,13 +17,18 @@ export function EvidenceTierBadge({ tier, className }: { tier: EvidenceTier; cla
   const reachedIndex = EVIDENCE_TIER_ORDER.indexOf(tier);
   return (
     <div className={cn("inline-flex items-center gap-2", className)}>
-      <div className="flex items-center gap-0.5" role="img" aria-label={`Evidence tier: ${EVIDENCE_TIER_LABEL[tier]}`}>
+      {/* Stage 5 pass (2026-08-31) — the aria-label previously said
+          "Evidence tier: {label}", exposing the internal "tier" term to
+          screen-reader users even though the visible label beside it never
+          shows it. A parity fix: assistive-tech users get the same
+          plain-language framing sighted users already do. */}
+      <div className="flex items-center gap-0.5" role="img" aria-label={`Evidence level: ${EVIDENCE_TIER_LABEL[tier]}`}>
         {EVIDENCE_TIER_ORDER.map((step, i) => (
           <span
             key={step}
             className={cn(
               "w-2.5 h-2.5 rounded-sm",
-              i <= reachedIndex && i > 0 ? "bg-purple-500 dark:bg-purple-400" : "bg-gray-200 dark:bg-gray-700"
+              i <= reachedIndex && i > 0 ? "bg-blue-500 dark:bg-blue-400" : "bg-gray-200 dark:bg-gray-700"
             )}
           />
         ))}

@@ -90,9 +90,9 @@ export default function CsseLearnPage() {
 
         <div className="grid gap-3 mt-6">
           <Link href="/learning-intelligence/learn/mathematics/arithmetic">
-            <InfoCard className="flex items-center gap-4 hover:border-purple-300 dark:hover:border-purple-700 transition-colors border-purple-200 dark:border-purple-800">
-              <div className="bg-purple-100 dark:bg-purple-900 p-3 rounded-2xl shrink-0">
-                <Calculator size={20} className="text-purple-600 dark:text-purple-400" />
+            <InfoCard className="flex items-center gap-4 hover:border-blue-300 dark:hover:border-blue-700 transition-colors border-blue-200 dark:border-blue-800">
+              <div className="bg-blue-100 dark:bg-blue-900 p-3 rounded-2xl shrink-0">
+                <Calculator size={20} className="text-blue-600 dark:text-blue-400" />
               </div>
               <div className="min-w-0 flex-1">
                 <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">Mathematics: Adding and Subtracting Big Numbers</p>
@@ -108,9 +108,9 @@ export default function CsseLearnPage() {
           </Link>
 
           <Link href="/learning-intelligence/learn/mathematics/percentages">
-            <InfoCard className="flex items-center gap-4 hover:border-purple-300 dark:hover:border-purple-700 transition-colors border-purple-200 dark:border-purple-800">
-              <div className="bg-purple-100 dark:bg-purple-900 p-3 rounded-2xl shrink-0">
-                <Percent size={20} className="text-purple-600 dark:text-purple-400" />
+            <InfoCard className="flex items-center gap-4 hover:border-blue-300 dark:hover:border-blue-700 transition-colors border-blue-200 dark:border-blue-800">
+              <div className="bg-blue-100 dark:bg-blue-900 p-3 rounded-2xl shrink-0">
+                <Percent size={20} className="text-blue-600 dark:text-blue-400" />
               </div>
               <div className="min-w-0 flex-1">
                 <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">Mathematics: Finding a Percentage of a Number</p>

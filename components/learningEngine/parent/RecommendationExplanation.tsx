@@ -43,7 +43,7 @@ export function RecommendationExplanation({
 
         return (
           <InfoCard key={candidate.competencyCode} className="flex items-start gap-3">
-            <Lightbulb size={16} className="text-purple-500 mt-0.5 shrink-0" />
+            <Lightbulb size={16} className="text-blue-500 mt-0.5 shrink-0" />
             <p className="text-sm text-gray-700 dark:text-gray-300">{parentExplanation.text}</p>
           </InfoCard>
         );

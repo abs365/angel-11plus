@@ -3,14 +3,20 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
-  <meta name="theme-color" content="#7c3aed" />
+  <meta name="theme-color" content="#2563eb" />
   <title>Offline: Angel 11+</title>
+  <!-- Zero-Purple final closure pass (2026-08-31): this standalone static
+       page (the service worker's offline fallback) had its own hardcoded
+       purple (#7c3aed) and pre-Zero-Purple lavender background (#f8f7ff),
+       missed by every earlier sweep since it lives outside app/components
+       entirely. Recoloured to match --color-primary and --background from
+       app/globals.css. -->
   <style>
     *, *::before, *::after { box-sizing: border-box; }
     body {
       margin: 0;
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
-      background: #f8f7ff;
+      background: #faf8f4;
       min-height: 100svh;
       display: flex;
       align-items: center;
@@ -35,7 +41,7 @@
     }
     .btn {
       display: inline-block;
-      background: #7c3aed; color: #fff;
+      background: #2563eb; color: #fff;
       text-decoration: none; font-size: 0.9rem; font-weight: 600;
       padding: 0.8rem 1.75rem; border-radius: 0.75rem;
     }
@@ -47,7 +53,7 @@
       font-size: 0.8125rem; color: #374151; line-height: 1.6;
       text-align: left;
     }
-    .tip strong { color: #7c3aed; }
+    .tip strong { color: #2563eb; }
     .brand { margin-top: 2rem; font-size: 0.75rem; color: #9ca3af; }
   </style>
 </head>

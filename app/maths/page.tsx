@@ -8,7 +8,6 @@ import {
   XCircle,
   ChevronDown,
   ChevronUp,
-  Sparkles,
   RefreshCw,
   Play,
 } from "lucide-react";
@@ -33,7 +32,7 @@ function normalizeNumeric(raw: string): number | null {
 
 const skillColors: Record<string, string> = {
   arithmetic: "bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300",
-  reasoning: "bg-purple-100 dark:bg-purple-900 text-purple-700 dark:text-purple-300",
+  reasoning: "bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300",
   "word-problem": "bg-orange-100 dark:bg-orange-900 text-orange-700 dark:text-orange-300",
   fractions: "bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300",
   pattern: "bg-pink-100 dark:bg-pink-900 text-pink-700 dark:text-pink-300",
@@ -263,8 +262,7 @@ export default function MathsPage() {
                 </div>
                 <div className="flex items-center gap-2">
                   {recommendedMode === "reasoning" && (
-                    <span className="bg-purple-100 dark:bg-purple-900 text-purple-600 dark:text-purple-400 text-xs font-semibold px-2.5 py-1 rounded-full flex items-center gap-1">
-                      <Sparkles size={10} aria-hidden="true" />
+                    <span className="bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-400 text-xs font-semibold px-2.5 py-1 rounded-full">
                       Recommended
                     </span>
                   )}
@@ -297,8 +295,7 @@ export default function MathsPage() {
                 </div>
                 <div className="flex items-center gap-2">
                   {recommendedMode === "arithmetic" && (
-                    <span className="bg-purple-100 dark:bg-purple-900 text-purple-600 dark:text-purple-400 text-xs font-semibold px-2.5 py-1 rounded-full flex items-center gap-1">
-                      <Sparkles size={10} aria-hidden="true" />
+                    <span className="bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-400 text-xs font-semibold px-2.5 py-1 rounded-full">
                       Recommended
                     </span>
                   )}

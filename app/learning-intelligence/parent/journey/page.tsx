@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import {
-  Route, PenLine, Trophy, Brain, Target, ClipboardList, CalendarClock, GraduationCap, ArrowRight,
+  PenLine, Trophy, FileText, Target, ClipboardList, CalendarClock, GraduationCap, ArrowRight,
 } from "lucide-react";
 import PageLayout from "@/components/PageLayout";
 import { InfoCard } from "@/components/ui/Card";
@@ -26,7 +26,7 @@ import { InfoCard } from "@/components/ui/Card";
  */
 
 interface Stage {
-  icon: typeof Route;
+  icon: typeof PenLine;
   name: string;
   whatHappened: string;
   whyItMatters: string;
@@ -46,22 +46,22 @@ const STAGES: Stage[] = [
     whatsNext: "Educational Insights update automatically as soon as you finish a session.",
     href: "/learning-intelligence/practice",
     linkLabel: "Go to Practice",
-    iconBg: "bg-violet-100 dark:bg-violet-900",
-    iconText: "text-violet-600 dark:text-violet-400",
+    iconBg: "bg-blue-100 dark:bg-blue-900",
+    iconText: "text-blue-600 dark:text-blue-400",
   },
   {
     icon: Trophy,
     name: "Mock Examination",
-    whatHappened: "A timed, real exam-condition sitting: Standard (the full paper) or Adaptive (a shorter paper weighted to your recorded evidence). No feedback until you submit, just like exam day.",
+    whatHappened: "A timed, real exam-condition sitting: Standard (the full paper) or Personalised (a shorter paper weighted to your recorded evidence). No feedback until you submit, just like exam day.",
     whyItMatters: "The exact same evidence pipeline as Practice, gathered under real conditions. It's not a separate, disconnected score.",
     whatsNext: "Results feed straight into Educational Insights and Readiness below, plus a Historical Context comparison against CSSE's own published admissions facts.",
     href: "/learning-intelligence/mock-exam",
     linkLabel: "Go to Mock Examination",
-    iconBg: "bg-purple-100 dark:bg-purple-900",
-    iconText: "text-purple-600 dark:text-purple-400",
+    iconBg: "bg-teal-100 dark:bg-teal-900",
+    iconText: "text-teal-600 dark:text-teal-400",
   },
   {
-    icon: Brain,
+    icon: FileText,
     name: "Educational Insights",
     whatHappened: "Your child's real skills profile: which competencies have evidence, how much, and what it shows.",
     whyItMatters: "This is the one place every stage's evidence is shown together. Nothing here is estimated or invented.",
@@ -112,8 +112,8 @@ const STAGES: Stage[] = [
     whatsNext: "Optional. Worth checking in on occasionally, not a step you need every week.",
     href: "/learning-intelligence/parent/admissions-readiness",
     linkLabel: "Go to Admissions Readiness",
-    iconBg: "bg-indigo-100 dark:bg-indigo-900",
-    iconText: "text-indigo-600 dark:text-indigo-400",
+    iconBg: "bg-slate-100 dark:bg-slate-900",
+    iconText: "text-slate-600 dark:text-slate-400",
   },
 ];
 
@@ -128,9 +128,6 @@ export default function EducationalJourneyPage() {
     >
       <div className="max-w-3xl mx-auto px-4 py-6 md:px-8 md:py-8">
         <div className="flex items-center gap-3 mb-2">
-          <div className="bg-purple-100 dark:bg-purple-900 p-3 rounded-2xl">
-            <Route size={22} className="text-purple-600 dark:text-purple-400" />
-          </div>
           <div>
             <h1 className="text-gray-900 dark:text-gray-100 font-bold text-2xl">Your Learning Journey</h1>
             <p className="text-gray-400 dark:text-gray-500 text-sm">How Practice, Mock Exams, Insights, Readiness and Revision all connect</p>
@@ -176,7 +173,7 @@ export default function EducationalJourneyPage() {
                   </dl>
                   <Link
                     href={stage.href}
-                    className="inline-flex items-center gap-1 text-xs font-semibold text-purple-600 dark:text-purple-400 mt-2.5"
+                    className="inline-flex items-center gap-1 text-xs font-semibold text-blue-600 dark:text-blue-400 mt-2.5"
                   >
                     {stage.linkLabel} <ArrowRight size={12} />
                   </Link>

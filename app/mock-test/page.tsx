@@ -120,8 +120,8 @@ export default function MockTestPage() {
             </div>
             <div className="p-5 flex flex-col gap-4">
               <div className="flex items-start gap-3">
-                <div className="bg-purple-100 p-2 rounded-lg shrink-0">
-                  <ClipboardList size={16} className="text-purple-600" />
+                <div className="bg-blue-100 p-2 rounded-lg shrink-0">
+                  <ClipboardList size={16} className="text-blue-600" />
                 </div>
                 <div>
                   <p className="text-gray-800 font-medium text-sm">Section 1: English Comprehension</p>
@@ -262,7 +262,7 @@ export default function MockTestPage() {
           <div className="flex items-center justify-between mb-4 bg-white rounded-xl px-4 py-2.5 border border-gray-100">
             <p className="text-gray-600 text-sm font-medium">Section 1: English</p>
             <div className={`flex items-center gap-1.5 font-bold text-sm px-3 py-1 rounded-full ${
-              timeWarning ? "bg-red-100 text-red-600" : "bg-purple-100 text-purple-700"
+              timeWarning ? "bg-red-100 text-red-600" : "bg-blue-100 text-blue-700"
             }`}>
               <Timer size={14} />
               {formatTime(timeLeft)}
@@ -293,7 +293,7 @@ export default function MockTestPage() {
                   }
                   placeholder="Write your answer..."
                   rows={3}
-                  className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-purple-400"
+                  className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-blue-400"
                 />
               </div>
             ))}
@@ -301,7 +301,7 @@ export default function MockTestPage() {
 
           <button
             onClick={finishEnglish}
-            className="w-full bg-purple-600 text-white rounded-xl py-4 font-semibold hover:bg-purple-700 transition-colors"
+            className="w-full bg-blue-600 text-white rounded-xl py-4 font-semibold hover:bg-blue-700 transition-colors"
           >
             Submit English → Continue to Maths
           </button>

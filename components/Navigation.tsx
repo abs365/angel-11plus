@@ -15,9 +15,9 @@ import {
   HelpCircle,
   MessageSquare,
   Mail,
-  Sparkles,
+  Star,
   Crown,
-  Brain,
+  FileText,
   ChevronDown,
   MoreHorizontal,
   X,
@@ -99,7 +99,7 @@ const journeySection: NavSection = {
     // Product Experience Standard V1 §7 — "Learning Intelligence" used a
     // word this platform's calm-tone rule forbids showing to users;
     // route/component names are unchanged, only this label reads plainly.
-    { href: "/learning-intelligence", label: "Learning Report", icon: Brain },
+    { href: "/learning-intelligence", label: "Learning Report", icon: FileText },
     { href: "/pathways", label: "School Intelligence", icon: MapPin },
   ],
 };
@@ -119,7 +119,7 @@ const familySection: NavSection = {
 const supportItems: NavItem[] = [
   { href: "/getting-started", label: "Getting Started", icon: HelpCircle },
   { href: "/feedback", label: "Send Feedback", icon: MessageSquare },
-  { href: "/testimonial", label: "Share Experience", icon: Sparkles },
+  { href: "/testimonial", label: "Share Experience", icon: Star },
   { href: "/contact", label: "Contact", icon: Mail },
 ];
 
@@ -526,11 +526,13 @@ export default function Navigation() {
             not a false positive. A <span> inside the brand <Link> carries
             the same accessible name (via the link's text content) without
             asserting a document-structure claim it doesn't own. Colour
-            corrected from indigo (the navigation/wayfinding accent) to
-            purple — the brand mark is Angel's identity, not a nav state,
-            per the Founder's "PURPLE = Angel brand identity" direction. */}
+            corrected from indigo (the navigation/wayfinding accent) to the
+            brand-primary colour — the brand mark is Angel's identity, not a
+            nav state. Zero-Purple pass (2026-08-31): brand-primary itself
+            moved from purple to blue-700 (see ANGEL_DESIGN_LANGUAGE.md
+            §0a); the wordmark follows the same token, unchanged in role. */}
         <Link href="/dashboard" className="flex items-center gap-2 shrink-0 mr-1 lg:mr-2">
-          <span className="text-xl font-bold text-purple-700 dark:text-purple-400">
+          <span className="text-xl font-bold text-blue-700 dark:text-blue-400">
             <span className="lg:hidden" aria-hidden="true">A11+</span>
             <span className="hidden lg:inline">Angel 11+</span>
           </span>

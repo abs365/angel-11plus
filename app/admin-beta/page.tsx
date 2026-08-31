@@ -183,7 +183,7 @@ function PathwayBar({ label, count, max }: { label: string; count: number; max: 
         <span className="text-xs font-bold text-gray-500 dark:text-gray-400">{count}</span>
       </div>
       <div className="h-1.5 bg-gray-100 dark:bg-gray-800 rounded-full overflow-hidden">
-        <div className="h-full bg-purple-500 rounded-full transition-all duration-500" style={{ width: `${pct}%` }} />
+        <div className="h-full bg-blue-500 rounded-full transition-all duration-500" style={{ width: `${pct}%` }} />
       </div>
     </div>
   );
@@ -237,8 +237,8 @@ function AdminDashboard({ data }: { data: AdminData }) {
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
         <StatCard
           label="Beta Families" value={families.length}
-          icon={<Users size={15} className="text-purple-600 dark:text-purple-400" />}
-          color="bg-purple-50 dark:bg-purple-950"
+          icon={<Users size={15} className="text-blue-600 dark:text-blue-400" />}
+          color="bg-blue-50 dark:bg-blue-950"
         />
         <StatCard
           label="Feedback" value={feedback.length}
@@ -264,8 +264,8 @@ function AdminDashboard({ data }: { data: AdminData }) {
         <StatCard
           label="Mocks Completed" value={mockResults.length}
           sub={bestMock !== null ? `Best: ${bestMock}%` : undefined}
-          icon={<Target size={15} className="text-indigo-600 dark:text-indigo-400" />}
-          color="bg-indigo-50 dark:bg-indigo-950"
+          icon={<Target size={15} className="text-slate-600 dark:text-slate-400" />}
+          color="bg-slate-50 dark:bg-slate-950"
         />
       </div>
 
@@ -354,7 +354,7 @@ function AdminDashboard({ data }: { data: AdminData }) {
                   <div className="flex items-center gap-2 flex-wrap">
                     <span className="text-sm font-semibold text-gray-900 dark:text-gray-100">{f.parentName}</span>
                     <span className="text-xs text-gray-400 dark:text-gray-500">{f.yearGroup}</span>
-                    <span className="text-xs bg-purple-50 dark:bg-purple-950 text-purple-600 dark:text-purple-300 px-2 py-0.5 rounded-full font-medium">
+                    <span className="text-xs bg-blue-50 dark:bg-blue-950 text-blue-600 dark:text-blue-300 px-2 py-0.5 rounded-full font-medium">
                       {PATHWAY_LABELS[f.pathway] ?? f.pathway}
                     </span>
                   </div>
@@ -373,7 +373,7 @@ function AdminDashboard({ data }: { data: AdminData }) {
 
       <Section title="Testimonials" count={testimonials.length}>
         {testimonials.length === 0 ? (
-          <p className="px-5 py-4 text-sm text-gray-400 dark:text-gray-500">No testimonials yet. <Link href="/testimonial" className="text-purple-600 dark:text-purple-400 hover:underline">Submit one</Link>.</p>
+          <p className="px-5 py-4 text-sm text-gray-400 dark:text-gray-500">No testimonials yet. <Link href="/testimonial" className="text-blue-600 dark:text-blue-400 hover:underline">Submit one</Link>.</p>
         ) : (
           <div className="divide-y divide-gray-50 dark:divide-gray-800">
             {testimonials.map((t) => (
@@ -485,7 +485,7 @@ function AdminDashboard({ data }: { data: AdminData }) {
             <div className="divide-y divide-gray-50 dark:divide-gray-800">
               {[...events].reverse().slice(0, 30).map((e) => (
                 <div key={e.id} className="px-5 py-2.5 flex items-start gap-3">
-                  <span className="text-xs font-mono text-purple-600 dark:text-purple-400 shrink-0 mt-0.5">
+                  <span className="text-xs font-mono text-blue-600 dark:text-blue-400 shrink-0 mt-0.5">
                     {e.type}
                   </span>
                   <div className="flex-1 min-w-0">
@@ -544,8 +544,8 @@ function AdminSignIn() {
     <div className="min-h-screen bg-gray-50 dark:bg-gray-950 flex items-center justify-center p-6">
       <div className="w-full max-w-sm">
         <div className="text-center mb-8">
-          <div className="w-14 h-14 rounded-2xl bg-purple-100 dark:bg-purple-900 flex items-center justify-center mx-auto mb-4">
-            <BarChart2 size={24} className="text-purple-600 dark:text-purple-400" />
+          <div className="w-14 h-14 rounded-2xl bg-blue-100 dark:bg-blue-900 flex items-center justify-center mx-auto mb-4">
+            <BarChart2 size={24} className="text-blue-600 dark:text-blue-400" />
           </div>
           <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100">Beta Admin</h1>
           <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Founder-only access — sign in required</p>
@@ -569,14 +569,14 @@ function AdminSignIn() {
                 autoComplete="email"
                 autoFocus
                 required
-                className="w-full bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl pl-10 pr-4 py-3 text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-purple-400"
+                className="w-full bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl pl-10 pr-4 py-3 text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-400"
               />
             </div>
             {state === "error" && <p className="text-xs text-red-500">{errorMsg}</p>}
             <button
               type="submit"
               disabled={state === "sending" || !email.trim()}
-              className="w-full flex items-center justify-center gap-2 bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3 rounded-xl text-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-xl text-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {state === "sending" ? "Sending…" : (<>Send magic link <ArrowRight size={16} /></>)}
             </button>
@@ -677,7 +677,7 @@ export default function AdminBetaPage() {
       <header className="bg-white dark:bg-gray-900 border-b border-gray-100 dark:border-gray-800 sticky top-0 z-20">
         <div className="max-w-5xl mx-auto px-4 h-14 flex items-center justify-between">
           <div className="flex items-center gap-3 min-w-0">
-            <Link href="/dashboard" className="text-purple-700 dark:text-purple-400 font-bold text-base shrink-0">
+            <Link href="/dashboard" className="text-blue-700 dark:text-blue-400 font-bold text-base shrink-0">
               Angel 11+
             </Link>
             <span className="text-gray-300 dark:text-gray-700 shrink-0">·</span>

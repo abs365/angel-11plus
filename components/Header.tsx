@@ -76,9 +76,9 @@ export default function Header({ breadcrumbs }: HeaderProps) {
               <button
                 {...props}
                 aria-label="Account menu"
-                className="w-9 h-9 rounded-full bg-indigo-100 dark:bg-indigo-900 flex items-center justify-center hover:bg-indigo-200 dark:hover:bg-indigo-800 transition-colors"
+                className="w-9 h-9 rounded-full bg-slate-100 dark:bg-slate-900 flex items-center justify-center hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors"
               >
-                <User size={16} className="text-indigo-600 dark:text-indigo-300" />
+                <User size={16} className="text-slate-600 dark:text-slate-300" />
               </button>
             )}
           >
@@ -96,7 +96,7 @@ export default function Header({ breadcrumbs }: HeaderProps) {
           !loading && (
             <Link
               href="/login"
-              className="flex items-center gap-1.5 text-sm font-medium text-indigo-600 dark:text-indigo-400 hover:underline shrink-0"
+              className="flex items-center gap-1.5 text-sm font-medium text-slate-600 dark:text-slate-400 hover:underline shrink-0"
             >
               <LogIn size={15} />
               <span className="hidden sm:inline">Sign in</span>

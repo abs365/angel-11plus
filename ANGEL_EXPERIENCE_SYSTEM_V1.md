@@ -79,7 +79,7 @@ Correctness feedback for Practice: clear, immediate, calm — no celebratory ani
 **This is the single highest-priority interaction fix identified in the entire benchmark.** Canonical pattern, for every appropriate question type:
 
 - **Numeric/short-text answer:** type → **Enter** submits/advances. No mouse required for the core loop.
-- **Multiple choice:** number or letter keys (1/2/3/4 or A/B/C/D) select an option; arrow keys move focus between options; Enter/Space activates the focused option. Visible focus ring at all times (already a real, working pattern: `:focus-visible { outline: 2px solid #8b5a7c }`, `app/globals.css:255` — reuse it, don't reinvent).
+- **Multiple choice:** number or letter keys (1/2/3/4 or A/B/C/D) select an option; arrow keys move focus between options; Enter/Space activates the focused option. Visible focus ring at all times (already a real, working pattern: `:focus-visible { outline: 2px solid #1d4ed8 }`, `app/globals.css` — reuse it, don't reinvent; updated from the retired plum `#8b5a7c` by the Zero-Purple pass, 2026-08-31).
 - **Multi-select:** Space toggles a focused option; Enter submits the set — Enter must never fire on a single toggle within a multi-select group.
 - **Passage/comprehension questions:** Tab moves between passage and question panes predictably; Enter inside a single-line answer submits; **Enter must never submit inside a multiline field** (Continuous Writing, extended answers) — Shift+Enter or a dedicated Submit button only, exactly the distinction 008F's own directive already named as a requirement.
 - **Mock workspace:** already has the right foundation (real `<button>` elements, `aria-pressed`/`aria-current`) — extend with the same Enter/number-key patterns above once real Mock content exists.

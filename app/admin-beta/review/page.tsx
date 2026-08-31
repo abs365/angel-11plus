@@ -358,7 +358,7 @@ function Card({ children }: { children: React.ReactNode }) {
 
 function SectionTitle({ letter, title }: { letter: string; title: string }) {
   return (
-    <p className="text-xs font-semibold text-purple-600 dark:text-purple-400 uppercase tracking-wide mb-2">
+    <p className="text-xs font-semibold text-blue-600 dark:text-blue-400 uppercase tracking-wide mb-2">
       {letter}. {title}
     </p>
   );
@@ -691,7 +691,7 @@ function ReviewForm({
             ? "Decision: " + submission.decision + ". This does not promote any question, passage, or prompt to independently_validated or mock_eligible, and does not activate any Mock form: those remain separate, controlled steps."
             : "Decision: " + submission.decision + ". This does not change Practice Eligibility, since that is a separate, controlled activation step."}
         </p>
-        <button onClick={onDone} className="mt-4 text-sm font-semibold text-purple-600 dark:text-purple-400">
+        <button onClick={onDone} className="mt-4 text-sm font-semibold text-blue-600 dark:text-blue-400">
           Back to {reviewType === "english_teaching_review" ? "English Teaching Review" : "review pilot"}
         </button>
       </div>
@@ -729,7 +729,7 @@ function ReviewForm({
       </button>
 
       <Card>
-        <p className="text-xs font-semibold text-purple-600 dark:text-purple-400 uppercase tracking-wide">
+        <p className="text-xs font-semibold text-blue-600 dark:text-blue-400 uppercase tracking-wide">
           {target.reviewTargetType === "passage" ? "Reading passage" : "Question family"}
         </p>
         <h1 className="text-lg font-bold text-gray-900 dark:text-gray-100 mt-1 break-words">{displayName}</h1>
@@ -785,7 +785,7 @@ function ReviewForm({
                   <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed mt-0.5">{educationalContext.confirmedFromEvidence}</p>
                 </div>
                 <div>
-                  <p className="text-[11px] font-semibold text-purple-700 dark:text-purple-300 uppercase tracking-wide">Angel's original teaching content</p>
+                  <p className="text-[11px] font-semibold text-blue-700 dark:text-blue-300 uppercase tracking-wide">Angel's original teaching content</p>
                   <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed mt-0.5">{educationalContext.angelExtension}</p>
                 </div>
                 <div>
@@ -972,7 +972,7 @@ function ReviewForm({
                 return (
                   <div key={group.key} className="border-t border-gray-50 dark:border-gray-800 pt-3 first:border-t-0 first:pt-0">
                     {group.items.length > 1 && (
-                      <p className="text-[11px] font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-wide mb-1">
+                      <p className="text-[11px] font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wide mb-1">
                         One numbered question: {group.items.length} subparts, reviewed together
                       </p>
                     )}
@@ -980,7 +980,7 @@ function ReviewForm({
                     {sharedStem && (
                       <p className="text-sm font-semibold text-gray-800 dark:text-gray-200 whitespace-pre-line">{sharedStem.stem}</p>
                     )}
-                    <div className={group.items.length > 1 ? "space-y-3 pl-3 border-l-2 border-indigo-100 dark:border-indigo-900" : ""}>
+                    <div className={group.items.length > 1 ? "space-y-3 pl-3 border-l-2 border-slate-100 dark:border-slate-900" : ""}>
                       {group.items.map((question, index) => (
                         <div key={question.id}>
                           {question.subpartLabel && (
@@ -1003,7 +1003,7 @@ function ReviewForm({
                 const question = q as RepresentativeQuestion;
                 return (
                   <div key={`${label}-${question.id}`} className="border-t border-gray-50 dark:border-gray-800 pt-3 mt-3 first:border-t-0 first:pt-0 first:mt-0">
-                    <p className="text-[11px] font-semibold text-purple-600 dark:text-purple-400 uppercase tracking-wide">{label as string}</p>
+                    <p className="text-[11px] font-semibold text-blue-600 dark:text-blue-400 uppercase tracking-wide">{label as string}</p>
                     <QuestionOrWritingTaskBody question={question} />
                   </div>
                 );
@@ -1107,12 +1107,12 @@ function ReviewForm({
                   onClick={() => setSubmission((s) => ({ ...s, decision: d.value }))}
                   className={`text-left p-3 rounded-xl border transition-colors ${
                     submission.decision === d.value
-                      ? "bg-purple-600 border-purple-600 text-white"
+                      ? "bg-blue-600 border-blue-600 text-white"
                       : "bg-gray-50 dark:bg-gray-800 border-gray-100 dark:border-gray-700 text-gray-700 dark:text-gray-300"
                   }`}
                 >
                   <p className="text-xs font-semibold">{d.label}</p>
-                  <p className={`text-[11px] mt-0.5 ${submission.decision === d.value ? "text-purple-100" : "text-gray-400 dark:text-gray-500"}`}>{d.hint}</p>
+                  <p className={`text-[11px] mt-0.5 ${submission.decision === d.value ? "text-blue-100" : "text-gray-400 dark:text-gray-500"}`}>{d.hint}</p>
                 </button>
               ))}
             </div>
@@ -1123,7 +1123,7 @@ function ReviewForm({
           <button
             onClick={handleSubmit}
             disabled={submitting || !reviewerName.trim() || !submission.qualificationBasis.trim() || !!fetchError}
-            className="w-full flex items-center justify-center gap-2 bg-purple-600 hover:bg-purple-700 disabled:opacity-40 text-white font-semibold py-3 rounded-xl text-sm transition-colors"
+            className="w-full flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 disabled:opacity-40 text-white font-semibold py-3 rounded-xl text-sm transition-colors"
           >
             {submitting ? "Submitting…" : (<>Submit {reviewType === "english_teaching_review" ? "teaching " : ""}review <ArrowRight size={16} /></>)}
           </button>
@@ -1203,7 +1203,7 @@ function MathsTeachingReviewForm({ familyId, onDone }: { familyId: string; onDon
         <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
           Decision: {submission.decision}. This is a separate evidence record from any earlier content review of this family, and does not change Practice Eligibility.
         </p>
-        <button onClick={onDone} className="mt-4 text-sm font-semibold text-purple-600 dark:text-purple-400">Back to Mathematics Teaching Review</button>
+        <button onClick={onDone} className="mt-4 text-sm font-semibold text-blue-600 dark:text-blue-400">Back to Mathematics Teaching Review</button>
       </div>
     );
   }
@@ -1217,7 +1217,7 @@ function MathsTeachingReviewForm({ familyId, onDone }: { familyId: string; onDon
       </button>
 
       <Card>
-        <p className="text-xs font-semibold text-purple-600 dark:text-purple-400 uppercase tracking-wide">Mathematics Teaching Review</p>
+        <p className="text-xs font-semibold text-blue-600 dark:text-blue-400 uppercase tracking-wide">Mathematics Teaching Review</p>
         <h1 className="text-lg font-bold text-gray-900 dark:text-gray-100 mt-1 break-words">{displayName}</h1>
         <p className="text-[11px] text-gray-300 dark:text-gray-600 mt-1 font-mono break-all">{familyId}</p>
         {metadata && (
@@ -1368,12 +1368,12 @@ function MathsTeachingReviewForm({ familyId, onDone }: { familyId: string; onDon
                   onClick={() => setSubmission((s) => ({ ...s, decision: d.value }))}
                   className={`text-left p-3 rounded-xl border transition-colors ${
                     submission.decision === d.value
-                      ? "bg-purple-600 border-purple-600 text-white"
+                      ? "bg-blue-600 border-blue-600 text-white"
                       : "bg-gray-50 dark:bg-gray-800 border-gray-100 dark:border-gray-700 text-gray-700 dark:text-gray-300"
                   }`}
                 >
                   <p className="text-xs font-semibold">{d.label}</p>
-                  <p className={`text-[11px] mt-0.5 ${submission.decision === d.value ? "text-purple-100" : "text-gray-400 dark:text-gray-500"}`}>{d.hint}</p>
+                  <p className={`text-[11px] mt-0.5 ${submission.decision === d.value ? "text-blue-100" : "text-gray-400 dark:text-gray-500"}`}>{d.hint}</p>
                 </button>
               ))}
             </div>
@@ -1384,7 +1384,7 @@ function MathsTeachingReviewForm({ familyId, onDone }: { familyId: string; onDon
           <button
             onClick={handleSubmit}
             disabled={submitting || !submission.reviewer.trim() || !submission.qualificationBasis.trim()}
-            className="w-full flex items-center justify-center gap-2 bg-purple-600 hover:bg-purple-700 disabled:opacity-40 text-white font-semibold py-3 rounded-xl text-sm transition-colors"
+            className="w-full flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 disabled:opacity-40 text-white font-semibold py-3 rounded-xl text-sm transition-colors"
           >
             {submitting ? "Submitting…" : (<>Submit teaching review <ArrowRight size={16} /></>)}
           </button>
@@ -1471,7 +1471,7 @@ function WritingTeachingReviewForm({ familyId, onDone }: { familyId: string; onD
         <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
           Decision: {submission.decision}. This is a design/proof review, not a content-eligibility decision: no Writing content is Practice Eligible or Mock Eligible as a result.
         </p>
-        <button onClick={onDone} className="mt-4 text-sm font-semibold text-purple-600 dark:text-purple-400">Back to Continuous Writing Teaching Review</button>
+        <button onClick={onDone} className="mt-4 text-sm font-semibold text-blue-600 dark:text-blue-400">Back to Continuous Writing Teaching Review</button>
       </div>
     );
   }
@@ -1480,7 +1480,7 @@ function WritingTeachingReviewForm({ familyId, onDone }: { familyId: string; onD
     return (
       <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-6 text-center">
         <p className="text-sm text-amber-600 dark:text-amber-400">No teaching content found for {familyId}.</p>
-        <button onClick={onDone} className="mt-4 text-sm font-semibold text-purple-600 dark:text-purple-400">Back</button>
+        <button onClick={onDone} className="mt-4 text-sm font-semibold text-blue-600 dark:text-blue-400">Back</button>
       </div>
     );
   }
@@ -1492,7 +1492,7 @@ function WritingTeachingReviewForm({ familyId, onDone }: { familyId: string; onD
       </button>
 
       <Card>
-        <p className="text-xs font-semibold text-purple-600 dark:text-purple-400 uppercase tracking-wide">Continuous Writing Teaching Review</p>
+        <p className="text-xs font-semibold text-blue-600 dark:text-blue-400 uppercase tracking-wide">Continuous Writing Teaching Review</p>
         <h1 className="text-lg font-bold text-gray-900 dark:text-gray-100 mt-1 break-words">{displayName}</h1>
         <p className="text-[11px] text-gray-300 dark:text-gray-600 mt-1 font-mono break-all">{familyId}</p>
         <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">CSSE Continuous Writing, Question 1 pattern (reflective/discursive). No live DB question exists for this family yet, so this reviews the design and bounded-proof code directly, per Phase D&apos;s own bounded-scope instruction not to author new content merely to populate a review pack.</p>
@@ -1613,12 +1613,12 @@ function WritingTeachingReviewForm({ familyId, onDone }: { familyId: string; onD
                   onClick={() => setSubmission((s) => ({ ...s, decision: d.value }))}
                   className={`text-left p-3 rounded-xl border transition-colors ${
                     submission.decision === d.value
-                      ? "bg-purple-600 border-purple-600 text-white"
+                      ? "bg-blue-600 border-blue-600 text-white"
                       : "bg-gray-50 dark:bg-gray-800 border-gray-100 dark:border-gray-700 text-gray-700 dark:text-gray-300"
                   }`}
                 >
                   <p className="text-xs font-semibold">{d.label}</p>
-                  <p className={`text-[11px] mt-0.5 ${submission.decision === d.value ? "text-purple-100" : "text-gray-400 dark:text-gray-500"}`}>{d.hint}</p>
+                  <p className={`text-[11px] mt-0.5 ${submission.decision === d.value ? "text-blue-100" : "text-gray-400 dark:text-gray-500"}`}>{d.hint}</p>
                 </button>
               ))}
             </div>
@@ -1629,7 +1629,7 @@ function WritingTeachingReviewForm({ familyId, onDone }: { familyId: string; onD
           <button
             onClick={handleSubmit}
             disabled={submitting || !submission.reviewer.trim() || !submission.qualificationBasis.trim()}
-            className="w-full flex items-center justify-center gap-2 bg-purple-600 hover:bg-purple-700 disabled:opacity-40 text-white font-semibold py-3 rounded-xl text-sm transition-colors"
+            className="w-full flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 disabled:opacity-40 text-white font-semibold py-3 rounded-xl text-sm transition-colors"
           >
             {submitting ? "Submitting…" : (<>Submit teaching review <ArrowRight size={16} /></>)}
           </button>
@@ -1710,10 +1710,10 @@ function PilotSection({ targets, reviewedIds, onOpen }: { targets: PendingReview
   const reviewedCount = PILOT_TARGET_IDS.filter((id) => reviewedIds.has(id)).length;
 
   return (
-    <div className="bg-white dark:bg-gray-900 rounded-2xl border-2 border-purple-200 dark:border-purple-800 overflow-hidden">
-      <div className="px-5 py-4 border-b border-purple-100 dark:border-purple-900 bg-purple-50 dark:bg-purple-950/40">
-        <p className="text-sm font-bold text-purple-900 dark:text-purple-200">First Educational Review Pilot</p>
-        <p className="text-xs text-purple-600 dark:text-purple-400 mt-0.5">{reviewedCount} of {PILOT_TARGET_IDS.length} reviewed</p>
+    <div className="bg-white dark:bg-gray-900 rounded-2xl border-2 border-blue-200 dark:border-blue-800 overflow-hidden">
+      <div className="px-5 py-4 border-b border-blue-100 dark:border-blue-900 bg-blue-50 dark:bg-blue-950/40">
+        <p className="text-sm font-bold text-blue-900 dark:text-blue-200">First Educational Review Pilot</p>
+        <p className="text-xs text-blue-600 dark:text-blue-400 mt-0.5">{reviewedCount} of {PILOT_TARGET_IDS.length} reviewed</p>
       </div>
       {pilotTargets.length === 0 ? (
         <p className="px-5 py-4 text-sm text-gray-400 dark:text-gray-500">
@@ -2053,13 +2053,13 @@ function MockMrBatch001Section({
   const reviewedCount = MOCK_MR_BATCH001_FAMILIES.filter((f) => status.get(f.familyId)?.reviewed).length;
   const totalQuestions = MOCK_MR_BATCH001_FAMILIES.reduce((n, f) => n + f.newQuestionIds.length, 0);
   return (
-    <div className="bg-white dark:bg-gray-900 rounded-2xl border-2 border-indigo-200 dark:border-indigo-800 overflow-hidden">
-      <div className="px-5 py-4 border-b border-indigo-100 dark:border-indigo-900 bg-indigo-50 dark:bg-indigo-950/40">
-        <p className="text-sm font-bold text-indigo-900 dark:text-indigo-200">Mock Mathematics Batch 001 Review</p>
-        <p className="text-xs text-indigo-600 dark:text-indigo-400 mt-0.5">
+    <div className="bg-white dark:bg-gray-900 rounded-2xl border-2 border-slate-200 dark:border-slate-800 overflow-hidden">
+      <div className="px-5 py-4 border-b border-slate-100 dark:border-slate-900 bg-slate-50 dark:bg-slate-950/40">
+        <p className="text-sm font-bold text-slate-900 dark:text-slate-200">Mock Mathematics Batch 001 Review</p>
+        <p className="text-xs text-slate-600 dark:text-slate-400 mt-0.5">
           {reviewedCount} of {MOCK_MR_BATCH001_FAMILIES.length} families reviewed. {totalQuestions} new questions total across 7 families.
         </p>
-        <div className="mt-2 text-xs text-indigo-800 dark:text-indigo-300 space-y-0.5">
+        <div className="mt-2 text-xs text-slate-800 dark:text-slate-300 space-y-0.5">
           <p>• These are Mock candidates, not Practice questions: none has ever been, or will be, automatically promoted from Practice.</p>
           <p>• All {totalQuestions} questions are currently <strong>authentic_assessment_candidate</strong>. None is mock_eligible. None is used by any Mock form.</p>
           <p>• {totalQuestions} rows represent approximately 9 genuinely distinct reasoning structures: several families contain hand-verified variants of the same underlying structure, not independent experiences. Each card discloses which.</p>
@@ -2116,13 +2116,13 @@ function MockMrBatch002Section({
   const reviewedCount = MOCK_MR_BATCH002_FAMILIES.filter((f) => status.get(f.familyId)?.reviewed).length;
   const totalQuestions = MOCK_MR_BATCH002_FAMILIES.reduce((n, f) => n + f.newQuestionIds.length, 0);
   return (
-    <div className="bg-white dark:bg-gray-900 rounded-2xl border-2 border-indigo-200 dark:border-indigo-800 overflow-hidden">
-      <div className="px-5 py-4 border-b border-indigo-100 dark:border-indigo-900 bg-indigo-50 dark:bg-indigo-950/40">
-        <p className="text-sm font-bold text-indigo-900 dark:text-indigo-200">Mock Mathematics Batch 002 Review</p>
-        <p className="text-xs text-indigo-600 dark:text-indigo-400 mt-0.5">
+    <div className="bg-white dark:bg-gray-900 rounded-2xl border-2 border-slate-200 dark:border-slate-800 overflow-hidden">
+      <div className="px-5 py-4 border-b border-slate-100 dark:border-slate-900 bg-slate-50 dark:bg-slate-950/40">
+        <p className="text-sm font-bold text-slate-900 dark:text-slate-200">Mock Mathematics Batch 002 Review</p>
+        <p className="text-xs text-slate-600 dark:text-slate-400 mt-0.5">
           {reviewedCount} of {MOCK_MR_BATCH002_FAMILIES.length} families reviewed. {totalQuestions} new questions total across 10 families.
         </p>
-        <div className="mt-2 text-xs text-indigo-800 dark:text-indigo-300 space-y-0.5">
+        <div className="mt-2 text-xs text-slate-800 dark:text-slate-300 space-y-0.5">
           <p>• These are Mock candidates, not Practice questions: none has ever been, or will be, automatically promoted from Practice.</p>
           <p>• All {totalQuestions} questions are currently <strong>authentic_assessment_candidate</strong>. None is mock_eligible. None is used by any Mock form.</p>
           <p>• {totalQuestions} rows represent 10 genuinely distinct reasoning structures, 2 per family: a foundational structure paired with a genuinely harder reverse/inverse/search structure. Each card discloses its own pair.</p>
@@ -2168,13 +2168,13 @@ function MockMrBatch003Section({
   const reviewedCount = MOCK_MR_BATCH003_FAMILIES.filter((f) => status.get(f.familyId)?.reviewed).length;
   const totalQuestions = MOCK_MR_BATCH003_FAMILIES.reduce((n, f) => n + f.newQuestionIds.length, 0);
   return (
-    <div id="mock-review-mr-batch003" className="bg-white dark:bg-gray-900 rounded-2xl border-2 border-indigo-200 dark:border-indigo-800 overflow-hidden scroll-mt-4">
-      <div className="px-5 py-4 border-b border-indigo-100 dark:border-indigo-900 bg-indigo-50 dark:bg-indigo-950/40">
-        <p className="text-sm font-bold text-indigo-900 dark:text-indigo-200">Mock Mathematics Batch 003 Review</p>
-        <p className="text-xs text-indigo-600 dark:text-indigo-400 mt-0.5">
+    <div id="mock-review-mr-batch003" className="bg-white dark:bg-gray-900 rounded-2xl border-2 border-slate-200 dark:border-slate-800 overflow-hidden scroll-mt-4">
+      <div className="px-5 py-4 border-b border-slate-100 dark:border-slate-900 bg-slate-50 dark:bg-slate-950/40">
+        <p className="text-sm font-bold text-slate-900 dark:text-slate-200">Mock Mathematics Batch 003 Review</p>
+        <p className="text-xs text-slate-600 dark:text-slate-400 mt-0.5">
           {reviewedCount} of {MOCK_MR_BATCH003_FAMILIES.length} families reviewed. {totalQuestions} new questions total across 4 families.
         </p>
-        <div className="mt-2 text-xs text-indigo-800 dark:text-indigo-300 space-y-0.5">
+        <div className="mt-2 text-xs text-slate-800 dark:text-slate-300 space-y-0.5">
           <p>• These are Mock candidates, not Practice questions: none has ever been, or will be, automatically promoted from Practice.</p>
           <p>• All {totalQuestions} questions are currently <strong>authentic_assessment_candidate</strong>. None is mock_eligible. None is used by any Mock form.</p>
           <p>• Question Types: QT-MR-01, QT-MR-08, QT-MR-10, QT-MR-12 (one family, mock-mr01mr10-costumeschedule, is a GROUPED family: 2 numbered-question instances of 2 subparts each, using migration 093&apos;s grouping columns for the first time).</p>
@@ -2940,11 +2940,11 @@ function EnglishInc002PassageSection({
   ];
   const reviewedCount = passages.filter((p) => status.get(p.id)?.reviewed).length;
   return (
-    <div id="english-inc002-passage-review" className="bg-white dark:bg-gray-900 rounded-2xl border-2 border-indigo-200 dark:border-indigo-800 overflow-hidden scroll-mt-4">
-      <div className="px-5 py-4 border-b border-indigo-100 dark:border-indigo-900 bg-indigo-50 dark:bg-indigo-950/40">
-        <p className="text-sm font-bold text-indigo-900 dark:text-indigo-200">English Content Foundation Increment 002: Passage Review</p>
-        <p className="text-xs text-indigo-600 dark:text-indigo-400 mt-0.5">{reviewedCount} of {passages.length} passages reviewed</p>
-        <div className="mt-2 text-xs text-indigo-800 dark:text-indigo-300 space-y-0.5">
+    <div id="english-inc002-passage-review" className="bg-white dark:bg-gray-900 rounded-2xl border-2 border-slate-200 dark:border-slate-800 overflow-hidden scroll-mt-4">
+      <div className="px-5 py-4 border-b border-slate-100 dark:border-slate-900 bg-slate-50 dark:bg-slate-950/40">
+        <p className="text-sm font-bold text-slate-900 dark:text-slate-200">English Content Foundation Increment 002: Passage Review</p>
+        <p className="text-xs text-slate-600 dark:text-slate-400 mt-0.5">{reviewedCount} of {passages.length} passages reviewed</p>
+        <div className="mt-2 text-xs text-slate-800 dark:text-slate-300 space-y-0.5">
           <p>• These are Mock candidates, not Practice content: neither has ever been, or will be, automatically promoted from Practice.</p>
           <p>• Both passages and their complete attached question sets are currently <strong>authentic_assessment_candidate</strong>. Neither is mock_eligible. Neither is used by any Mock form.</p>
           <p>• Each passage is reviewed as ONE unit: the passage together with all of its attached questions, never by reviewing individual questions in isolation.</p>
@@ -3235,11 +3235,11 @@ function TeachingTargetCard({ familyId, subtitle, reviewed, onOpen }: { familyId
 function MathsTeachingSection({ reviewedIds, onOpen }: { reviewedIds: Set<string>; onOpen: (familyId: string) => void }) {
   const reviewedCount = MATHS_TEACHING_REVIEW_TARGET_IDS.filter((id) => reviewedIds.has(id)).length;
   return (
-    <div className="bg-white dark:bg-gray-900 rounded-2xl border-2 border-indigo-200 dark:border-indigo-800 overflow-hidden">
-      <div className="px-5 py-4 border-b border-indigo-100 dark:border-indigo-900 bg-indigo-50 dark:bg-indigo-950/40">
-        <p className="text-sm font-bold text-indigo-900 dark:text-indigo-200">Mathematics Teaching Review</p>
-        <p className="text-xs text-indigo-600 dark:text-indigo-400 mt-0.5">{reviewedCount} of {MATHS_TEACHING_REVIEW_TARGET_IDS.length} reviewed</p>
-        <p className="text-[11px] text-indigo-500 dark:text-indigo-500 mt-1.5 leading-relaxed">
+    <div className="bg-white dark:bg-gray-900 rounded-2xl border-2 border-slate-200 dark:border-slate-800 overflow-hidden">
+      <div className="px-5 py-4 border-b border-slate-100 dark:border-slate-900 bg-slate-50 dark:bg-slate-950/40">
+        <p className="text-sm font-bold text-slate-900 dark:text-slate-200">Mathematics Teaching Review</p>
+        <p className="text-xs text-slate-600 dark:text-slate-400 mt-0.5">{reviewedCount} of {MATHS_TEACHING_REVIEW_TARGET_IDS.length} reviewed</p>
+        <p className="text-[11px] text-slate-500 dark:text-slate-500 mt-1.5 leading-relaxed">
           Judges the MODEL, Guided Practice, and remediation teaching content added for these 22 Mathematics families (CSSE Completion Programme Phase B). This is separate from, and does not reuse, any earlier content review of the underlying questions.
         </p>
       </div>
@@ -3785,7 +3785,7 @@ function ReviewDashboard() {
       <div className="bg-gray-50 dark:bg-gray-900/60 border border-gray-200 dark:border-gray-800 rounded-2xl px-5 py-3">
         <p className="text-[11px] font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-2">Jump to current review (Increment 006)</p>
         <div className="flex flex-wrap gap-2">
-          <a href="#mock-review-mr-batch003" className="text-xs font-medium px-3 py-1.5 rounded-lg bg-indigo-100 dark:bg-indigo-900 text-indigo-700 dark:text-indigo-300 hover:bg-indigo-200 dark:hover:bg-indigo-800 transition-colors">Mathematics Batch 003</a>
+          <a href="#mock-review-mr-batch003" className="text-xs font-medium px-3 py-1.5 rounded-lg bg-slate-100 dark:bg-slate-900 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors">Mathematics Batch 003</a>
           <a href="#mock-review-english-passage-batch001" className="text-xs font-medium px-3 py-1.5 rounded-lg bg-teal-100 dark:bg-teal-900 text-teal-700 dark:text-teal-300 hover:bg-teal-200 dark:hover:bg-teal-800 transition-colors">English Comprehension</a>
           <a href="#mock-review-writing-batch001" className="text-xs font-medium px-3 py-1.5 rounded-lg bg-teal-100 dark:bg-teal-900 text-teal-700 dark:text-teal-300 hover:bg-teal-200 dark:hover:bg-teal-800 transition-colors">Continuous Writing</a>
           <a href="#mock-review-firstmock-compound-batch001" className="text-xs font-medium px-3 py-1.5 rounded-lg bg-amber-100 dark:bg-amber-900 text-amber-700 dark:text-amber-300 hover:bg-amber-200 dark:hover:bg-amber-800 transition-colors">First Mock Compound Batch 001</a>
@@ -3843,8 +3843,8 @@ function AdminSignIn() {
     <div className="min-h-screen bg-gray-50 dark:bg-gray-950 flex items-center justify-center p-6">
       <div className="w-full max-w-sm">
         <div className="text-center mb-8">
-          <div className="w-14 h-14 rounded-2xl bg-purple-100 dark:bg-purple-900 flex items-center justify-center mx-auto mb-4">
-            <CheckCircle2 size={24} className="text-purple-600 dark:text-purple-400" />
+          <div className="w-14 h-14 rounded-2xl bg-blue-100 dark:bg-blue-900 flex items-center justify-center mx-auto mb-4">
+            <CheckCircle2 size={24} className="text-blue-600 dark:text-blue-400" />
           </div>
           <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100">Educational Review</h1>
           <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Admin-only access, sign in required</p>
@@ -3862,13 +3862,13 @@ function AdminSignIn() {
               <input
                 type="email" value={email} onChange={(e) => { setEmail(e.target.value); setState("idle"); }}
                 placeholder="you@example.com" autoComplete="email" autoFocus required
-                className="w-full bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl pl-10 pr-4 py-3 text-sm text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-purple-400"
+                className="w-full bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl pl-10 pr-4 py-3 text-sm text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-400"
               />
             </div>
             {state === "error" && <p className="text-xs text-red-500">{errorMsg}</p>}
             <button
               type="submit" disabled={state === "sending" || !email.trim()}
-              className="w-full flex items-center justify-center gap-2 bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3 rounded-xl text-sm transition-colors disabled:opacity-50"
+              className="w-full flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-xl text-sm transition-colors disabled:opacity-50"
             >
               {state === "sending" ? "Sending…" : (<>Send magic link <ArrowRight size={16} /></>)}
             </button>
@@ -3928,7 +3928,7 @@ export default function AdminReviewPage() {
       <header className="bg-white dark:bg-gray-900 border-b border-gray-100 dark:border-gray-800 sticky top-0 z-20">
         <div className="max-w-3xl mx-auto px-4 h-14 flex items-center justify-between">
           <div className="flex items-center gap-3 min-w-0">
-            <Link href="/admin-beta" className="text-purple-700 dark:text-purple-400 font-bold text-base shrink-0">Angel 11+</Link>
+            <Link href="/admin-beta" className="text-blue-700 dark:text-blue-400 font-bold text-base shrink-0">Angel 11+</Link>
             <span className="text-gray-300 dark:text-gray-700 shrink-0">·</span>
             <span className="text-sm font-semibold text-gray-900 dark:text-gray-100 truncate">Educational Review</span>
           </div>

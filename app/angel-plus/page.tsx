@@ -50,7 +50,7 @@ function journeyLinksFor(isCsse: boolean) {
     description: "Guided practice across English, Maths, Vocabulary and Writing, with real progress tracked as you go.",
     badge: "Free",
     icon: BookOpen,
-    color: "bg-purple-50 dark:bg-purple-950 text-purple-600 dark:text-purple-300",
+    color: "bg-blue-50 dark:bg-blue-950 text-blue-600 dark:text-blue-300",
   },
   {
     href: isCsse ? "/learning-intelligence/practice" : "/reasoning",
@@ -58,7 +58,7 @@ function journeyLinksFor(isCsse: boolean) {
     description: "Verbal, Non-Verbal, Spatial and Numerical Reasoning, each connected to the competency it strengthens.",
     badge: "Free",
     icon: Puzzle,
-    color: "bg-violet-50 dark:bg-violet-950 text-violet-600 dark:text-violet-300",
+    color: "bg-lime-50 dark:bg-lime-950 text-lime-600 dark:text-lime-300",
   },
   {
     href: "/mocks",
@@ -111,8 +111,8 @@ export default function AngelPlusPage() {
             content, not colour volume"). */}
         <PremiumCard className="mb-8">
           <div className="flex items-start gap-4">
-            <div className="w-12 h-12 rounded-2xl bg-purple-50 dark:bg-purple-950 flex items-center justify-center shrink-0">
-              <Crown size={24} className="text-purple-600 dark:text-purple-400" />
+            <div className="w-12 h-12 rounded-2xl bg-blue-50 dark:bg-blue-950 flex items-center justify-center shrink-0">
+              <Crown size={24} className="text-blue-600 dark:text-blue-400" />
             </div>
             <div>
               <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-1.5">Angel Plus</h1>

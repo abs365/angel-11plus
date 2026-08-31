@@ -5,6 +5,7 @@ import Link from "next/link";
 import { CheckCircle2, XCircle, ArrowRight, RotateCcw, Loader2 } from "lucide-react";
 import PageLayout from "@/components/PageLayout";
 import { InfoCard } from "@/components/ui/Card";
+import { ProgressBar } from "@/components/ui/Progress";
 import { getSupabaseClient } from "@/lib/supabase";
 import { ensureProfile } from "@/lib/supabaseProgress";
 import { withTimeout } from "@/lib/withTimeout";
@@ -48,6 +49,18 @@ import type { EnglishComprehensionPrompt } from "@/types/ali/questionBank";
 import type { MathsQuestion } from "@/types/index";
 
 type Mode = "intro" | "loading" | "error" | "unavailable" | "session" | "results";
+
+// Stage 3 (Shared Question Shell, 2026-08-31) — matches each practice
+// area's subject-identity colour (ANGEL_DESIGN_LANGUAGE.md §2: English =
+// yellow/gold, Maths = blue, Writing = amber) for the in-session progress
+// bar, the same subject-colour discipline SubjectCard/SubjectBreakdown
+// already apply elsewhere. Reading Comprehension is English's own
+// competency-set, hence "yellow" here.
+const AREA_PROGRESS_COLOR: Record<string, "yellow" | "blue" | "amber"> = {
+  "reading-comprehension": "yellow",
+  mathematics: "blue",
+  "continuous-writing": "amber",
+};
 
 /**
  * Capability 3, Wave 2 — Practice Experience session runner. One dynamic
@@ -185,7 +198,7 @@ export default function PracticeSessionPage({
         <div className="max-w-3xl mx-auto px-4 py-6 md:px-8 md:py-8">
           <InfoCard>
             <p className="text-sm text-gray-500 dark:text-gray-400">Unknown practice area.</p>
-            <Link href="/learning-intelligence/practice" className="text-xs font-semibold text-purple-600 dark:text-purple-400 mt-2 inline-block">
+            <Link href="/learning-intelligence/practice" className="text-xs font-semibold text-blue-600 dark:text-blue-400 mt-2 inline-block">
               Back to practice
             </Link>
           </InfoCard>
@@ -580,7 +593,7 @@ export default function PracticeSessionPage({
               </p>
               <button
                 onClick={loadAndStart}
-                className="mt-4 bg-purple-600 hover:bg-purple-700 text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-colors"
+                className="mt-4 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-colors"
               >
                 Start practice
               </button>
@@ -599,7 +612,7 @@ export default function PracticeSessionPage({
             <div className="flex items-center justify-center gap-4 mt-4">
               <button
                 onClick={loadAndStart}
-                className="min-h-[44px] inline-flex items-center gap-1 text-xs font-semibold text-purple-600 dark:text-purple-400 px-2"
+                className="min-h-[44px] inline-flex items-center gap-1 text-xs font-semibold text-blue-600 dark:text-blue-400 px-2"
               >
                 <RotateCcw size={14} /> Try again
               </button>
@@ -617,7 +630,7 @@ export default function PracticeSessionPage({
               It does not have questions ready for practice yet. Please check back soon, or continue with another subject in the meantime.
             </p>
             <div className="flex items-center justify-center mt-4">
-              <Link href="/learning-intelligence/practice" className="min-h-[44px] inline-flex items-center text-xs font-semibold text-purple-600 dark:text-purple-400 px-2">
+              <Link href="/learning-intelligence/practice" className="min-h-[44px] inline-flex items-center text-xs font-semibold text-blue-600 dark:text-blue-400 px-2">
                 Back to practice
               </Link>
             </div>
@@ -634,16 +647,30 @@ export default function PracticeSessionPage({
                 established for the Mock report, rather than inventing a
                 second wording. */}
             {familyFocus?.applied && (
-              <p className="text-xs font-semibold text-purple-600 dark:text-purple-400 mb-1">
+              <p className="text-xs font-semibold text-blue-600 dark:text-blue-400 mb-1">
                 Focusing on: {childFriendlySkillLabel(familyFocus.competencyId, familyFocus.label)}
               </p>
             )}
-            <p className="text-xs text-gray-400 dark:text-gray-500">
-              Question {index + 1} of {activities.length}
-            </p>
+            {/* Stage 3 (Shared Question Shell, 2026-08-31) — previously
+                plain text only, no visual progress indicator, unlike
+                ReasoningSession and the English lesson page. Adopts the
+                same shared ProgressBar component both of those use,
+                closing that inconsistency rather than inventing a third
+                treatment. */}
+            <div className="flex items-center gap-3">
+              <ProgressBar
+                percent={((index + 1) / activities.length) * 100}
+                color={AREA_PROGRESS_COLOR[area.id] ?? "blue"}
+                label="Question progress"
+                className="flex-1"
+              />
+              <span className="text-gray-400 dark:text-gray-500 text-xs shrink-0">
+                {index + 1} of {activities.length}
+              </span>
+            </div>
 
             {activityExplanations.get(current.id) && (
-              <p className="text-xs text-purple-600 dark:text-purple-400 mt-2 mb-3">
+              <p className="text-xs text-blue-600 dark:text-blue-400 mt-2 mb-3">
                 {activityExplanations.get(current.id)}
               </p>
             )}
@@ -756,7 +783,7 @@ export default function PracticeSessionPage({
             <div className="mt-8">
               <Link
                 href="/learning-intelligence/practice"
-                className="inline-block bg-purple-600 hover:bg-purple-700 text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-colors"
+                className="inline-block bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-colors"
               >
                 Keep practising →
               </Link>
@@ -867,7 +894,7 @@ function ReadingActivity({
         {workedExample && !submitted && (
           <button
             onClick={() => setShowWorkedExample((v) => !v)}
-            className="text-xs text-purple-700 dark:text-purple-300 bg-purple-50 dark:bg-purple-950 hover:bg-purple-100 dark:hover:bg-purple-900 px-3 py-1.5 rounded-lg font-medium transition-colors"
+            className="text-xs text-blue-700 dark:text-blue-300 bg-blue-50 dark:bg-blue-950 hover:bg-blue-100 dark:hover:bg-blue-900 px-3 py-1.5 rounded-lg font-medium transition-colors"
           >
             {showWorkedExample ? "Hide worked example" : "See a worked example"}
           </button>
@@ -891,7 +918,7 @@ function ReadingActivity({
         </p>
       )}
       {showWorkedExample && !submitted && workedExample && (
-        <div className="mt-2 text-xs text-purple-700 dark:text-purple-300 bg-purple-50 dark:bg-purple-950 rounded-xl p-3 space-y-1.5">
+        <div className="mt-2 text-xs text-blue-700 dark:text-blue-300 bg-blue-50 dark:bg-blue-950 rounded-xl p-3 space-y-1.5">
           <p><strong>Example: </strong>{workedExample.scenario}</p>
           <p><strong>How to think about it: </strong>{workedExample.modelReasoning}</p>
           <p><strong>A weaker answer: </strong>{workedExample.weakAnswerLooksLike}</p>
@@ -1156,7 +1183,7 @@ function MathsActivity({
           {guidedMode && (
             <button
               onClick={() => setShowModel((v) => !v)}
-              className="text-xs text-purple-700 dark:text-purple-300 bg-purple-50 dark:bg-purple-950 hover:bg-purple-100 dark:hover:bg-purple-900 px-3 py-1.5 rounded-lg font-medium transition-colors"
+              className="text-xs text-blue-700 dark:text-blue-300 bg-blue-50 dark:bg-blue-950 hover:bg-blue-100 dark:hover:bg-blue-900 px-3 py-1.5 rounded-lg font-medium transition-colors"
             >
               {showModel ? "Hide worked example" : "See a worked example"}
             </button>
@@ -1167,7 +1194,7 @@ function MathsActivity({
       {/* MODEL — Part 3A: a fixed, safe, non-live worked example, never
           the current question's own numbers. */}
       {guidedMode && showModel && !submitted && teachingContent && (
-        <div className="mt-2 text-xs text-purple-700 dark:text-purple-300 bg-purple-50 dark:bg-purple-950 rounded-xl p-3 space-y-1.5">
+        <div className="mt-2 text-xs text-blue-700 dark:text-blue-300 bg-blue-50 dark:bg-blue-950 rounded-xl p-3 space-y-1.5">
           <p><strong>What to notice: </strong>{teachingContent.model.whatToNotice}</p>
           <p><strong>The rule: </strong>{teachingContent.model.relationship}</p>
           <p><strong>Worked example: </strong>{teachingContent.model.scenario}</p>
@@ -1348,12 +1375,12 @@ function WritingActivity({
         <div className="mt-2">
           <button
             onClick={() => setShowModel((v) => !v)}
-            className="text-xs text-purple-700 dark:text-purple-300 bg-purple-50 dark:bg-purple-950 hover:bg-purple-100 dark:hover:bg-purple-900 px-3 py-1.5 rounded-lg font-medium transition-colors"
+            className="text-xs text-blue-700 dark:text-blue-300 bg-blue-50 dark:bg-blue-950 hover:bg-blue-100 dark:hover:bg-blue-900 px-3 py-1.5 rounded-lg font-medium transition-colors"
           >
             {showModel ? "Hide worked example" : "See a worked example and planning questions"}
           </button>
           {showModel && (
-            <div className="mt-2 text-xs text-purple-700 dark:text-purple-300 bg-purple-50 dark:bg-purple-950 rounded-xl p-3 space-y-2">
+            <div className="mt-2 text-xs text-blue-700 dark:text-blue-300 bg-blue-50 dark:bg-blue-950 rounded-xl p-3 space-y-2">
               <p><strong>What to notice: </strong>{teachingContent.model.whatToNotice}</p>
               <p><strong>Approach: </strong>{teachingContent.model.approach}</p>
               <p><strong>Worked example topic (not this question): </strong>{teachingContent.model.topic}</p>
@@ -1420,7 +1447,7 @@ function WritingActivity({
           onClick={onSubmit}
           disabled={wordCount < 10 || submitting}
           aria-busy={submitting}
-          className="mt-4 bg-purple-600 hover:bg-purple-700 disabled:opacity-40 text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-colors inline-flex items-center gap-2"
+          className="mt-4 bg-blue-600 hover:bg-blue-700 disabled:opacity-40 text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-colors inline-flex items-center gap-2"
         >
           {submitting && <Loader2 size={14} className="animate-spin motion-reduce:animate-none" aria-hidden="true" />}
           {submitting ? "Getting feedback…" : "Submit for feedback"}
@@ -1469,7 +1496,7 @@ function WritingActivity({
           </div>
           <button
             onClick={onNext}
-            className="bg-purple-600 hover:bg-purple-700 text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-colors inline-flex items-center gap-1.5"
+            className="bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-colors inline-flex items-center gap-1.5"
           >
             {isLast ? "See updated profile" : "Next"} <ArrowRight size={14} />
           </button>
@@ -1506,7 +1533,7 @@ function SubmitOrNext({
       <button
         onClick={onSubmit}
         disabled={disabled}
-        className="mt-3 bg-purple-600 hover:bg-purple-700 disabled:opacity-40 text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-colors"
+        className="mt-3 bg-blue-600 hover:bg-blue-700 disabled:opacity-40 text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-colors"
       >
         Submit
       </button>
@@ -1531,7 +1558,7 @@ function SubmitOrNext({
       </span>
       <button
         onClick={onNext}
-        className="bg-purple-600 hover:bg-purple-700 text-white text-sm font-semibold px-4 py-2 rounded-xl transition-colors inline-flex items-center gap-1.5"
+        className="bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold px-4 py-2 rounded-xl transition-colors inline-flex items-center gap-1.5"
       >
         {isLast ? "See updated profile" : "Next"} <ArrowRight size={14} />
       </button>

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { Target, MapPin, Info } from "lucide-react";
+import { MapPin, Info } from "lucide-react";
 import PageLayout from "@/components/PageLayout";
 import { InfoCard } from "@/components/ui/Card";
 import { getSelectedPathwayId } from "@/lib/progress";
@@ -91,9 +91,6 @@ export default function MockReadinessPage() {
     >
       <div className="max-w-3xl mx-auto px-4 py-6 md:px-8 md:py-8">
         <div className="flex items-center gap-3 mb-2">
-          <div className="bg-purple-100 dark:bg-purple-900 p-3 rounded-2xl">
-            <Target size={22} className="text-purple-600 dark:text-purple-400" />
-          </div>
           <div>
             <h1 className="text-gray-900 dark:text-gray-100 font-bold text-2xl">Mock Readiness</h1>
             <p className="text-gray-400 dark:text-gray-500 text-sm">Is another mock exam worthwhile right now?</p>
@@ -102,7 +99,7 @@ export default function MockReadinessPage() {
 
         {pathwayEligible === false && (
           <InfoCard className="mt-6 flex items-start gap-3">
-            <MapPin size={18} className="text-purple-400 mt-0.5 shrink-0" />
+            <MapPin size={18} className="text-blue-400 mt-0.5 shrink-0" />
             <p className="text-sm text-gray-700 dark:text-gray-300">Available for the CSSE pathway only.</p>
           </InfoCard>
         )}
@@ -117,7 +114,7 @@ export default function MockReadinessPage() {
 
         {pathwayEligible && profile && !profile.pathwayEligible && (
           <InfoCard className="mt-6 flex items-start gap-3">
-            <MapPin size={18} className="text-purple-400 mt-0.5 shrink-0" />
+            <MapPin size={18} className="text-blue-400 mt-0.5 shrink-0" />
             <p className="text-sm text-gray-700 dark:text-gray-300">
               This section is built entirely from CSSE&apos;s own official exam evidence.
             </p>
@@ -167,7 +164,7 @@ export default function MockReadinessPage() {
                   conclusion above, never a second competing option. */}
               <Link
                 href={assessment.nextAction.href}
-                className="inline-block bg-purple-600 hover:bg-purple-700 text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-colors"
+                className="inline-block bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-colors"
               >
                 {assessment.nextAction.label}
               </Link>

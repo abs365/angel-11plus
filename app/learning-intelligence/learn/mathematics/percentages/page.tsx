@@ -333,7 +333,7 @@ export default function MathematicsPercentagesLessonPage() {
             </p>
             <button
               onClick={() => void loadLesson()}
-              className="mt-4 bg-purple-600 hover:bg-purple-700 text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-colors"
+              className="mt-4 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-colors"
             >
               Start the lesson
             </button>
@@ -467,7 +467,7 @@ export default function MathematicsPercentagesLessonPage() {
                     <button
                       onClick={() => void submitGuidedAttempt1()}
                       disabled={!guidedAnswer.trim()}
-                      className="mt-3 bg-purple-600 hover:bg-purple-700 disabled:opacity-40 text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-colors"
+                      className="mt-3 bg-blue-600 hover:bg-blue-700 disabled:opacity-40 text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-colors"
                     >
                       Submit
                     </button>
@@ -499,7 +499,7 @@ export default function MathematicsPercentagesLessonPage() {
                     <button
                       onClick={() => void submitGuidedAttempt2()}
                       disabled={!guidedAnswer.trim()}
-                      className="mt-3 bg-purple-600 hover:bg-purple-700 disabled:opacity-40 text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-colors"
+                      className="mt-3 bg-blue-600 hover:bg-blue-700 disabled:opacity-40 text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-colors"
                     >
                       Submit
                     </button>
@@ -536,7 +536,7 @@ export default function MathematicsPercentagesLessonPage() {
                     <button
                       onClick={() => void submitGuidedAttempt3()}
                       disabled={!guidedAnswer.trim()}
-                      className="mt-3 bg-purple-600 hover:bg-purple-700 disabled:opacity-40 text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-colors"
+                      className="mt-3 bg-blue-600 hover:bg-blue-700 disabled:opacity-40 text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-colors"
                     >
                       Submit
                     </button>
@@ -590,7 +590,7 @@ export default function MathematicsPercentagesLessonPage() {
                       <button
                         onClick={() => void submitIndependentAttempt1()}
                         disabled={!independentAnswer.trim()}
-                        className="mt-3 bg-purple-600 hover:bg-purple-700 disabled:opacity-40 text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-colors"
+                        className="mt-3 bg-blue-600 hover:bg-blue-700 disabled:opacity-40 text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-colors"
                       >
                         Submit
                       </button>
@@ -622,7 +622,7 @@ export default function MathematicsPercentagesLessonPage() {
                       <button
                         onClick={() => void submitIndependentAttempt2()}
                         disabled={!independentAnswer.trim()}
-                        className="mt-3 bg-purple-600 hover:bg-purple-700 disabled:opacity-40 text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-colors"
+                        className="mt-3 bg-blue-600 hover:bg-blue-700 disabled:opacity-40 text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-colors"
                       >
                         Submit
                       </button>
@@ -656,7 +656,7 @@ export default function MathematicsPercentagesLessonPage() {
                           setIndependentLadderStage("resolved");
                           setCheckStage("independent");
                         }}
-                        className="mt-3 bg-purple-600 hover:bg-purple-700 text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-colors"
+                        className="mt-3 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-colors"
                       >
                         Continue
                       </button>
@@ -682,7 +682,7 @@ export default function MathematicsPercentagesLessonPage() {
                           <button
                             onClick={() => void submitIndependentFresh()}
                             disabled={!independentFreshAnswer.trim()}
-                            className="mt-3 bg-purple-600 hover:bg-purple-700 disabled:opacity-40 text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-colors"
+                            className="mt-3 bg-blue-600 hover:bg-blue-700 disabled:opacity-40 text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-colors"
                           >
                             Submit
                           </button>
@@ -729,14 +729,14 @@ export default function MathematicsPercentagesLessonPage() {
                   {independentUltimatelyCorrect ? (
                     <Link
                       href="/learning-intelligence/practice/mathematics"
-                      className="inline-flex items-center gap-1.5 bg-purple-600 hover:bg-purple-700 text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-colors"
+                      className="inline-flex items-center gap-1.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-colors"
                     >
                       You&apos;re ready to practise this properly <ArrowRight size={14} />
                     </Link>
                   ) : (
                     <Link
                       href="/learning-intelligence/practice/mathematics"
-                      className="inline-flex items-center gap-1.5 bg-purple-600 hover:bg-purple-700 text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-colors"
+                      className="inline-flex items-center gap-1.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-colors"
                     >
                       Practise percentages again <ArrowRight size={14} />
                     </Link>

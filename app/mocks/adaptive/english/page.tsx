@@ -5,7 +5,7 @@ import Link from "next/link";
 import dynamic from "next/dynamic";
 import {
   ArrowLeft, Clock, CheckCircle, ChevronDown, ChevronUp,
-  Lightbulb, AlertCircle, Sparkles, BookOpen,
+  Lightbulb, AlertCircle, BookOpen,
 } from "lucide-react";
 import PremiumLoader from "@/components/PremiumLoader";
 import { withTimeout } from "@/lib/withTimeout";
@@ -284,15 +284,14 @@ export default function AdaptiveEnglishMockPage() {
   if (mode === "intro") {
     return (
       <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
-        <header className="bg-purple-700 text-white">
+        <header className="bg-blue-700 text-white">
           <div className="max-w-2xl mx-auto px-4 pt-4 pb-6">
             <Link href="/mocks" className="flex items-center gap-1.5 text-white/80 text-sm mb-4 hover:text-white transition">
               <ArrowLeft size={16} />
               Back to Mocks
             </Link>
             <div className="flex items-center gap-3 mb-2">
-              <span className="text-xs font-bold bg-white/20 px-2.5 py-1 rounded-lg flex items-center gap-1">
-                <Sparkles size={12} />
+              <span className="text-xs font-bold bg-white/20 px-2.5 py-1 rounded-lg">
                 Personalised
               </span>
               <h1 className="text-xl font-bold">Reading Practice</h1>
@@ -325,7 +324,7 @@ export default function AdaptiveEnglishMockPage() {
 
           <button
             onClick={loadAndStart}
-            className="w-full bg-purple-700 text-white font-semibold py-4 rounded-2xl text-base transition-opacity hover:opacity-90"
+            className="w-full bg-blue-700 text-white font-semibold py-4 rounded-2xl text-base transition-opacity hover:opacity-90"
           >
             Start Practice
           </button>
@@ -353,11 +352,11 @@ export default function AdaptiveEnglishMockPage() {
           <div className="flex items-center justify-center gap-4">
             <button
               onClick={loadAndStart}
-              className="bg-purple-700 text-white font-semibold text-sm px-4 py-2 rounded-xl hover:opacity-90 transition-opacity"
+              className="bg-blue-700 text-white font-semibold text-sm px-4 py-2 rounded-xl hover:opacity-90 transition-opacity"
             >
               Try Again
             </button>
-            <Link href="/mocks" className="text-purple-600 dark:text-purple-400 font-medium text-sm">Back to practice</Link>
+            <Link href="/mocks" className="text-blue-600 dark:text-blue-400 font-medium text-sm">Back to practice</Link>
           </div>
         </div>
       </div>
@@ -369,9 +368,8 @@ export default function AdaptiveEnglishMockPage() {
       <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
         <header className="bg-white dark:bg-gray-900 border-b border-gray-100 dark:border-gray-800 sticky top-0 z-20">
           <div className="max-w-2xl mx-auto px-4 h-14 flex items-center gap-3">
-            <span className="text-sm font-semibold text-gray-900 dark:text-gray-100 flex-1 flex items-center gap-1.5">
+            <span className="text-sm font-semibold text-gray-900 dark:text-gray-100 flex-1">
               Reading Practice
-              <Sparkles size={12} className="text-purple-500" />
             </span>
           </div>
         </header>
@@ -423,7 +421,7 @@ export default function AdaptiveEnglishMockPage() {
                   onChange={(e) => setAnswers((prev) => ({ ...prev, [prompt.id]: e.target.value }))}
                   placeholder="Write your answer here..."
                   rows={4}
-                  className="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl px-4 py-3 text-sm text-gray-800 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-600 resize-none focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-transparent transition-all"
+                  className="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl px-4 py-3 text-sm text-gray-800 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-600 resize-none focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all"
                 />
 
                 {prompt.hint && (
@@ -462,7 +460,7 @@ export default function AdaptiveEnglishMockPage() {
               </p>
               <div className="flex-1 mx-4 bg-gray-100 dark:bg-gray-800 rounded-full h-1.5">
                 <div
-                  className="bg-purple-500 h-full rounded-full transition-all"
+                  className="bg-blue-500 h-full rounded-full transition-all"
                   style={{ width: `${(answeredCount / Math.max(questions.length, 1)) * 100}%` }}
                 />
               </div>
@@ -470,7 +468,7 @@ export default function AdaptiveEnglishMockPage() {
             <button
               onClick={handleSubmit}
               disabled={answeredCount === 0}
-              className="w-full bg-purple-700 text-white rounded-xl py-4 font-semibold text-base hover:opacity-90 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+              className="w-full bg-blue-700 text-white rounded-xl py-4 font-semibold text-base hover:opacity-90 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
             >
               Submit Answers
             </button>
@@ -488,7 +486,7 @@ export default function AdaptiveEnglishMockPage() {
 
     return (
       <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
-        <header className="bg-purple-700 text-white">
+        <header className="bg-blue-700 text-white">
           <div className="max-w-2xl mx-auto px-4 pt-4 pb-6">
             <h1 className="text-lg font-bold mb-0.5">Practice Complete</h1>
             <p className="text-sm text-white/80">Reading Practice</p>
@@ -514,7 +512,7 @@ export default function AdaptiveEnglishMockPage() {
             <div key={r.prompt.id} className="bg-white dark:bg-gray-900 rounded-2xl p-5 border border-gray-100 dark:border-gray-800">
               <div className="flex items-center gap-2 mb-3">
                 {r.isCorrect ? (
-                  <CheckCircle size={16} className="text-green-500" />
+                  <CheckCircle size={16} className="text-emerald-500" />
                 ) : (
                   <span className="text-xs text-gray-400 dark:text-gray-500">{r.earnedMarks}/{r.prompt.marks} marks</span>
                 )}
@@ -544,7 +542,7 @@ export default function AdaptiveEnglishMockPage() {
             </Link>
             <button
               onClick={loadAndStart}
-              className="bg-purple-700 text-white font-semibold py-3.5 rounded-2xl text-sm hover:opacity-90 transition-opacity"
+              className="bg-blue-700 text-white font-semibold py-3.5 rounded-2xl text-sm hover:opacity-90 transition-opacity"
             >
               New Session
             </button>

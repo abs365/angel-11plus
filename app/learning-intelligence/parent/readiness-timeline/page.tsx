@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { History, MapPin, ClipboardList, Target } from "lucide-react";
+import { MapPin, ClipboardList, Target } from "lucide-react";
 import PageLayout from "@/components/PageLayout";
 import { InfoCard } from "@/components/ui/Card";
 import { getSelectedPathwayId } from "@/lib/progress";
@@ -54,9 +54,6 @@ export default function ReadinessTimelinePage() {
     >
       <div className="max-w-3xl mx-auto px-4 py-6 md:px-8 md:py-8">
         <div className="flex items-center gap-3 mb-2">
-          <div className="bg-purple-100 dark:bg-purple-900 p-3 rounded-2xl">
-            <History size={22} className="text-purple-600 dark:text-purple-400" />
-          </div>
           <div>
             <h1 className="text-gray-900 dark:text-gray-100 font-bold text-2xl">Readiness Timeline</h1>
             <p className="text-gray-400 dark:text-gray-500 text-sm">Why readiness has changed, in your child&apos;s own real evidence</p>
@@ -65,7 +62,7 @@ export default function ReadinessTimelinePage() {
 
         {pathwayEligible === false && (
           <InfoCard className="mt-6 flex items-start gap-3">
-            <MapPin size={18} className="text-purple-400 mt-0.5 shrink-0" />
+            <MapPin size={18} className="text-blue-400 mt-0.5 shrink-0" />
             <p className="text-sm text-gray-700 dark:text-gray-300">Available for the CSSE pathway only.</p>
           </InfoCard>
         )}
@@ -94,7 +91,7 @@ export default function ReadinessTimelinePage() {
                     compete. */}
                 <Link
                   href="/learning-intelligence/parent/mock-readiness"
-                  className="inline-flex items-center gap-1.5 bg-purple-600 hover:bg-purple-700 text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-colors"
+                  className="inline-flex items-center gap-1.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-colors"
                 >
                   <Target size={14} /> Is Another Mock Worthwhile? →
                 </Link>

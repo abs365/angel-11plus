@@ -17,13 +17,17 @@ const colorMap = {
   // AN-108 — "purple" is this map's fallback default (`?? colorMap.purple`
   // below) for an unmatched insight colour, so it's the same "purple as
   // dominant default" pattern corrected elsewhere in the card/button/
-  // progress system — now renders the muted-indigo educational accent.
+  // progress system. Zero-Purple pass (2026-08-31): now renders slate,
+  // same value as the separate "indigo" key below — the two were already
+  // duplicates of each other pre-Zero-Purple (both indigo-family), so
+  // this preserves that existing relationship rather than introducing a
+  // new distinction that wasn't there before.
   purple: {
-    bg: "bg-indigo-50 dark:bg-indigo-950",
-    border: "border-indigo-100 dark:border-indigo-900",
-    icon: "bg-indigo-100 dark:bg-indigo-900 text-indigo-600 dark:text-indigo-300",
-    title: "text-indigo-900 dark:text-indigo-100",
-    body: "text-indigo-700 dark:text-indigo-300",
+    bg: "bg-slate-50 dark:bg-slate-950",
+    border: "border-slate-100 dark:border-slate-900",
+    icon: "bg-slate-100 dark:bg-slate-900 text-slate-600 dark:text-slate-300",
+    title: "text-slate-900 dark:text-slate-100",
+    body: "text-slate-700 dark:text-slate-300",
   },
   green: {
     bg: "bg-emerald-50 dark:bg-emerald-950",
@@ -54,11 +58,11 @@ const colorMap = {
     body: "text-blue-700 dark:text-blue-300",
   },
   indigo: {
-    bg: "bg-indigo-50 dark:bg-indigo-950",
-    border: "border-indigo-100 dark:border-indigo-900",
-    icon: "bg-indigo-100 dark:bg-indigo-900 text-indigo-600 dark:text-indigo-300",
-    title: "text-indigo-900 dark:text-indigo-100",
-    body: "text-indigo-700 dark:text-indigo-300",
+    bg: "bg-slate-50 dark:bg-slate-950",
+    border: "border-slate-100 dark:border-slate-900",
+    icon: "bg-slate-100 dark:bg-slate-900 text-slate-600 dark:text-slate-300",
+    title: "text-slate-900 dark:text-slate-100",
+    body: "text-slate-700 dark:text-slate-300",
   },
   pink: {
     bg: "bg-pink-50 dark:bg-pink-950",

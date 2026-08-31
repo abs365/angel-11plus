@@ -25,34 +25,55 @@
   --foreground-muted: #6b7280;
   --foreground-subtle: #9ca3af;
 
-  /* Brand */
-  --purple-soft: #7c3aed;
-  --purple-light: #ede9fe;
+  /* Brand — Zero-Purple Angel-Wide Colour Decision (2026-08-31, Founder
+     directive). Purple/violet/indigo are retired from Angel's visual
+     language entirely, not just at the token layer — see
+     ANGEL_DESIGN_LANGUAGE.md §0a for the full decision record, including
+     why this explicitly reverses the "New Angel Visual System" restoration
+     below (kept here, struck through in spirit not in code, as the
+     documented history of how this token arrived at its current value —
+     Angel Evidence Hierarchy: record the contradiction, don't silently
+     erase it). The former --purple-soft/--purple-light tokens had zero
+     remaining consumers (verified by search) and are deleted outright
+     rather than kept as renamed aliases — a dead token, even a
+     correctly-coloured one, is exactly the kind of "forgotten token"
+     surface this decision is meant to close off, not preserve. */
 
   /* Semantic */
   --border: #e5e7eb;
   --border-subtle: #f3f4f6;
 
-  /* ── New Angel Visual System (colour remediation) — semantic role tokens.
-     AN-108 had reassigned --color-primary from purple to a deep forest
-     green. That left this token (and the small number of components that
-     actually read it) inconsistent with the much larger number of
-     components across the product that never adopted it and kept their
-     own hardcoded purple-600/700 — the real root cause of the "visually
-     isolated" saturated-green surfaces the Founder flagged (Dashboard
-     Hero, Angel Plus Hero, primary buttons). Restored to purple, matching
-     the Founder's explicit "PRIMARY BRAND: Angel purple" direction and
-     what most of the product already does today.
-     --color-secondary (muted indigo) is unchanged — it plays the
-     "contextual/wayfinding" role (nav active-state), not brand-primary.
-     success/warning/error/info are unchanged — emerald-700/amber-700
-     already read as "natural green"/"soft amber," reserved for genuine
-     success/attention states per the Founder's "green must primarily
-     communicate genuine success" direction, not brand identity. */
-  --color-primary: #9333ea;       /* purple-600 — restored, was green-700 (#15803d) */
-  --color-primary-hover: #7e22ce; /* purple-700 — restored, was green-800 (#166534) */
-  --color-secondary: #4f46e5;     /* indigo-600 — existing secondary, unchanged */
-  --color-secondary-hover: #4338ca; /* indigo-700 */
+  /* ── Angel Visual System v2 — Zero Purple (2026-08-31). Supersedes the
+     "New Angel Visual System" block's restoration of purple below (kept
+     as history, not deleted — Angel Evidence Hierarchy). Previous chain:
+     AN-108 moved primary purple→forest-green → reverted because
+     hardcoded purple-600/700 across most components never adopted the
+     green token, producing "visually isolated" green surfaces → Founder
+     then explicitly restored purple as primary ("PRIMARY BRAND: Angel
+     purple"). This session's Founder directive explicitly reverses that:
+     "REMOVE AND REPLACE ALL PURPLE FROM ANGEL 11+ ... Angel-wide
+     design-system decision." Deep blue was chosen as the new primary
+     brand/interactive colour: distinct in hue and saturation from every
+     existing semantic colour (success=emerald, warning=amber, error=red,
+     info/learner-interaction=sky) and from every subject-identity colour
+     except Maths (also blue) — that one overlap was evaluated and
+     accepted (not overlooked): Maths' blue is a small icon/tint used only
+     inside a subject card among several other differently-coloured
+     subject cards, never adjacent to a filled primary CTA button in the
+     same context, so the two remain visually unambiguous by size, form
+     and position, not hue alone. --color-secondary (previously indigo)
+     is retired as a second saturated brand hue — indigo is exactly as
+     purple-family as purple itself, and re-introducing a second violet-
+     adjacent "brand" colour would just relocate the original problem.
+     Secondary emphasis now reads as a neutral (slate) outline/ghost
+     treatment per PREMIUM_FRONTEND_STANDARD.md §3, not a competing solid
+     fill — kept as a token only so existing call sites resolve to
+     something coherent, not a functioning second brand colour. */
+  --color-primary: #2563eb;         /* blue-600 */
+  --color-primary-hover: #1d4ed8;   /* blue-700 */
+  --color-primary-tint: #dbeafe;    /* blue-100 — light tint fill for primary-coloured surfaces */
+  --color-secondary: #475569;       /* slate-600 — neutral, not a second brand hue */
+  --color-secondary-hover: #334155; /* slate-700 */
   --color-success: #047857;       /* emerald-700, NOT -600 — see WCAG correction below */
   --color-warning: #b45309;       /* amber-700, NOT -600 — see WCAG correction below */
   --color-error: #dc2626;         /* red-600 — existing error state (report-bug, validation); verified 4.83:1, compliant as-is */
@@ -87,9 +108,12 @@
      (reserved)" sky-600 token (never yet used against white text anywhere
      in production, since no info surface has shipped) was also checked
      pre-emptively and found to be 4.10:1 — corrected to sky-700 (5.93:1)
-     before any consumer ever used it, rather than after. Primary (purple),
-     secondary (indigo), and error (red) were all verified compliant at
-     their existing -600 shade and needed no change. */
+     before any consumer ever used it, rather than after. Primary and
+     secondary (purple-600/indigo-600 at the time; both since replaced,
+     see the Zero Purple block above) and error (red) were all verified
+     compliant at their existing -600 shade and needed no change. Blue-600
+     (the new primary) is 5.17:1 against white — also compliant, no change
+     needed at the -600 shade either. */
 
   /* Text hierarchy — named aliases over the existing foreground scale, no new values */
   --text-primary: var(--foreground);
@@ -109,7 +133,7 @@
   --role-border: var(--border);
   --role-border-subtle: var(--border-subtle);
   --role-accent: var(--color-primary);
-  --role-focus: #8b5a7c; /* matches :focus-visible below exactly — named here so a future component can reference the role, not just the rule */
+  --role-focus: #1d4ed8; /* matches :focus-visible below exactly — named here so a future component can reference the role, not just the rule */
 }
 
 /* ── Experience Programme, Stage 1 — canonical spacing scale ────────────────
@@ -141,20 +165,16 @@
     --foreground-muted: #9ca3af;
     --foreground-subtle: #6b7280;
 
-    /* Brand */
-    --purple-soft: #a78bfa;
-    --purple-light: #1e1b4b;
-
     /* Semantic */
     --border: #27273f;
     --border-subtle: #1e1e36;
 
-    /* New Angel Visual System — dark-mode equivalent of the light-mode
-       restoration above. */
-    --color-primary: #a855f7;        /* purple-500 — restored, was green-400 */
-    --color-primary-hover: #9333ea;  /* purple-600 — restored, was green-500 */
-    --color-secondary: #818cf8;      /* indigo-400 */
-    --color-secondary-hover: #6366f1; /* indigo-500 */
+    /* Angel Visual System v2 — Zero Purple, dark-mode equivalent. */
+    --color-primary: #60a5fa;         /* blue-400 */
+    --color-primary-hover: #3b82f6;   /* blue-500 */
+    --color-primary-tint: #1e3a5f;    /* deep desaturated navy tint, dark-mode equivalent of blue-100 */
+    --color-secondary: #94a3b8;       /* slate-400 */
+    --color-secondary-hover: #cbd5e1; /* slate-300 */
     --color-success: #34d399;        /* emerald-400 */
     --color-warning: #fbbf24;        /* amber-400 */
     --color-error: #f87171;          /* red-400 */
@@ -283,11 +303,14 @@ html {
   scroll-behavior: smooth;
 }
 
-/* AN-108 — Focus highlights: restrained plum (#8b5a7c), replacing the
-   previous vivid violet-600 (#7c3aed) outline. Verified ~5.5:1 against white,
-   comfortably clearing the 3:1 SC 1.4.11 non-text-contrast threshold; also
+/* Zero-Purple pass (2026-08-31) — focus highlights moved off plum (#8b5a7c,
+   itself a purple-family colour despite the earlier "not violet" framing)
+   onto blue-700, matching the new --color-primary-hover exactly so focus
+   reads as "the brand colour, emphasised" rather than a third one-off hue.
+   #1d4ed8 against white is ~8.6:1, comfortably clearing the 3:1 SC 1.4.11
+   non-text-contrast threshold with more margin than the value it replaces;
    legible against this file's dark-mode surfaces (mid-tone luminance). */
 :focus-visible {
-  outline: 2px solid #8b5a7c;
+  outline: 2px solid #1d4ed8;
   outline-offset: 2px;
 }

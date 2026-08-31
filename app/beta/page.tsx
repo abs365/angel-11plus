@@ -37,9 +37,9 @@ const PATHWAYS = [
     shortName: "CEM",
     badge: "Grammar Schools",
     desc: "Used by selective schools in Birmingham, Kent, Buckinghamshire and others.",
-    color: "text-indigo-600 dark:text-indigo-400",
-    bg: "bg-indigo-50 dark:bg-indigo-950",
-    border: "border-indigo-100 dark:border-indigo-900",
+    color: "text-slate-600 dark:text-slate-400",
+    bg: "bg-slate-50 dark:bg-slate-950",
+    border: "border-slate-100 dark:border-slate-900",
   },
   {
     id: "csse",
@@ -47,9 +47,9 @@ const PATHWAYS = [
     shortName: "CSSE",
     badge: "Essex",
     desc: "Essex grammar schools: extended written responses and maths.",
-    color: "text-purple-600 dark:text-purple-400",
-    bg: "bg-purple-50 dark:bg-purple-950",
-    border: "border-purple-100 dark:border-purple-900",
+    color: "text-blue-600 dark:text-blue-400",
+    bg: "bg-blue-50 dark:bg-blue-950",
+    border: "border-blue-100 dark:border-blue-900",
   },
   {
     id: "iseb",
@@ -136,7 +136,7 @@ export default function BetaPage() {
         <div className="flex flex-wrap gap-3 justify-center">
           <Link
             href="/dashboard"
-            className="inline-flex items-center gap-2 bg-purple-600 hover:bg-purple-700 text-white font-semibold px-6 py-3 rounded-2xl text-sm transition-colors"
+            className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-2xl text-sm transition-colors"
           >
             Start Learning
             <ArrowRight size={15} />
@@ -240,7 +240,7 @@ export default function BetaPage() {
           </p>
           <Link
             href="/beta-family"
-            className="inline-flex items-center gap-2 bg-purple-600 hover:bg-purple-700 text-white font-semibold text-sm px-5 py-2.5 rounded-xl transition-colors"
+            className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold text-sm px-5 py-2.5 rounded-xl transition-colors"
           >
             Register as a Beta Family
             <ArrowRight size={14} />
@@ -334,7 +334,7 @@ function ExistingFamilyBetaPage({ pathway }: { pathway: Pathway }) {
       <div className="flex flex-wrap gap-3 mb-8">
         <Link
           href="/dashboard"
-          className="inline-flex items-center gap-2 bg-purple-600 hover:bg-purple-700 text-white font-semibold px-5 py-2.5 rounded-xl text-sm transition-colors"
+          className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold px-5 py-2.5 rounded-xl text-sm transition-colors"
         >
           Continue to Dashboard
           <ArrowRight size={14} />

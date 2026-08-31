@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Puzzle, Shapes, Compass, Hash, Play, Sparkles, Clock } from "lucide-react";
+import { Puzzle, Shapes, Compass, Hash, Play, Clock } from "lucide-react";
 import PageLayout from "@/components/PageLayout";
 import SubjectCard from "@/components/SubjectCard";
 import { ButtonLink } from "@/components/ui/Button";
@@ -93,10 +93,10 @@ const personalisedPracticeCards: {
     title: "GL Verbal Reasoning",
     description: "Verbal Reasoning questions matched to your practice level.",
     minutes: "35 min",
-    bg: "bg-violet-50 dark:bg-violet-950",
-    border: "border-violet-100 dark:border-violet-900",
-    badgeBg: "bg-violet-100 dark:bg-violet-900",
-    badgeText: "text-violet-700 dark:text-violet-300",
+    bg: "bg-lime-50 dark:bg-lime-950",
+    border: "border-lime-100 dark:border-lime-900",
+    badgeBg: "bg-lime-100 dark:bg-lime-900",
+    badgeText: "text-lime-700 dark:text-lime-300",
   },
   {
     href: "/mocks/adaptive/maths",
@@ -113,10 +113,10 @@ const personalisedPracticeCards: {
     title: "Reading Practice",
     description: "One passage at a time, with every question that belongs to it.",
     minutes: "10-15 min",
-    bg: "bg-purple-50 dark:bg-purple-950",
-    border: "border-purple-100 dark:border-purple-900",
-    badgeBg: "bg-purple-100 dark:bg-purple-900",
-    badgeText: "text-purple-700 dark:text-purple-300",
+    bg: "bg-yellow-50 dark:bg-yellow-950",
+    border: "border-yellow-100 dark:border-yellow-900",
+    badgeBg: "bg-yellow-100 dark:bg-yellow-900",
+    badgeText: "text-yellow-700 dark:text-yellow-300",
   },
   {
     href: "/mocks/adaptive/vocabulary",
@@ -165,11 +165,11 @@ export default function ReasoningHubPage() {
           </p>
         </div>
 
-        {/* AN-108: hub-chrome strip (not subject-specific) moved from purple to the muted-indigo educational accent. */}
+        {/* AN-108: hub-chrome strip (not subject-specific) moved from purple to the muted-slate educational accent. */}
         {practiceMissionItem && (
-          <div className="bg-indigo-50 dark:bg-indigo-950 border border-indigo-100 dark:border-indigo-900 rounded-2xl p-4 mb-6 flex items-center justify-between gap-3 flex-wrap">
+          <div className="bg-slate-50 dark:bg-slate-950 border border-slate-100 dark:border-slate-900 rounded-2xl p-4 mb-6 flex items-center justify-between gap-3 flex-wrap">
             <div className="min-w-0">
-              <p className="text-sm text-indigo-800 dark:text-indigo-200 min-w-0">
+              <p className="text-sm text-slate-800 dark:text-slate-200 min-w-0">
                 Continue where you left off: <span className="font-semibold">{practiceMissionItem.label}</span>
               </p>
             </div>
@@ -214,8 +214,7 @@ export default function ReasoningHubPage() {
             <div key={card.href} className={`rounded-2xl border ${card.bg} ${card.border} p-5`}>
               <div className="flex items-start justify-between mb-3">
                 <div className="flex items-center gap-2.5">
-                  <span className={`text-xs font-bold px-2.5 py-1 rounded-lg ${card.badgeBg} ${card.badgeText} flex items-center gap-1`}>
-                    <Sparkles size={12} />
+                  <span className={`text-xs font-bold px-2.5 py-1 rounded-lg ${card.badgeBg} ${card.badgeText}`}>
                     Personalised
                   </span>
                   <h3 className="text-base font-bold text-gray-900 dark:text-gray-100">{card.title}</h3>

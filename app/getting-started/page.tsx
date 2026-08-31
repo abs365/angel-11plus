@@ -20,7 +20,7 @@ const STEPS = [
     step: "1",
     icon: MapPin,
     title: "Choose your pathway",
-    color: "bg-purple-50 dark:bg-purple-950 text-purple-600 dark:text-purple-400",
+    color: "bg-blue-50 dark:bg-blue-950 text-blue-600 dark:text-blue-400",
     content: (
       <>
         <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed mb-3">
@@ -32,7 +32,7 @@ const STEPS = [
         </p>
         <Link
           href="/pathways"
-          className="inline-flex items-center gap-1.5 text-sm text-purple-600 dark:text-purple-400 font-semibold hover:underline"
+          className="inline-flex items-center gap-1.5 text-sm text-blue-600 dark:text-blue-400 font-semibold hover:underline"
         >
           Choose a pathway <ChevronRight size={14} />
         </Link>
@@ -69,7 +69,7 @@ const STEPS = [
         </ul>
         <Link
           href="/dashboard"
-          className="inline-flex items-center gap-1.5 text-sm text-purple-600 dark:text-purple-400 font-semibold hover:underline"
+          className="inline-flex items-center gap-1.5 text-sm text-blue-600 dark:text-blue-400 font-semibold hover:underline"
         >
           Open student dashboard <ChevronRight size={14} />
         </Link>
@@ -92,7 +92,7 @@ const STEPS = [
         </p>
         <Link
           href="/learning-intelligence/parent"
-          className="inline-flex items-center gap-1.5 text-sm text-purple-600 dark:text-purple-400 font-semibold hover:underline"
+          className="inline-flex items-center gap-1.5 text-sm text-blue-600 dark:text-blue-400 font-semibold hover:underline"
         >
           Open Parent Dashboard <ChevronRight size={14} />
         </Link>
@@ -119,7 +119,7 @@ const STEPS = [
         </div>
         <Link
           href="/mocks"
-          className="inline-flex items-center gap-1.5 text-sm text-purple-600 dark:text-purple-400 font-semibold hover:underline"
+          className="inline-flex items-center gap-1.5 text-sm text-blue-600 dark:text-blue-400 font-semibold hover:underline"
         >
           View mock exams <ChevronRight size={14} />
         </Link>
@@ -158,8 +158,8 @@ export default function GettingStartedPage() {
     <SupportLayout backHref="/learning-intelligence/parent" backLabel="Parent Dashboard">
       {/* Header */}
       <div className="mb-8">
-        <div className="w-12 h-12 rounded-2xl bg-purple-100 dark:bg-purple-900 flex items-center justify-center mb-4">
-          <Users size={22} className="text-purple-600 dark:text-purple-400" />
+        <div className="w-12 h-12 rounded-2xl bg-blue-100 dark:bg-blue-900 flex items-center justify-center mb-4">
+          <Users size={22} className="text-blue-600 dark:text-blue-400" />
         </div>
         <h1 className="text-2xl sm:text-3xl font-black text-gray-900 dark:text-gray-100 mb-2">
           Getting Started
@@ -197,7 +197,7 @@ export default function GettingStartedPage() {
           <ul className="space-y-3">
             {TIPS.map((tip) => (
               <li key={tip} className="flex items-start gap-2.5">
-                <CheckCircle size={14} className="text-purple-500 shrink-0 mt-0.5" />
+                <CheckCircle size={14} className="text-blue-500 shrink-0 mt-0.5" />
                 <span className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed">{tip}</span>
               </li>
             ))}
@@ -208,7 +208,7 @@ export default function GettingStartedPage() {
       {/* Contact / feedback */}
       <section className="bg-gray-100 dark:bg-gray-800 rounded-2xl p-5 mb-4">
         <div className="flex items-start gap-3">
-          <MessageSquare size={18} className="text-purple-500 shrink-0 mt-0.5" />
+          <MessageSquare size={18} className="text-blue-500 shrink-0 mt-0.5" />
           <div>
             <p className="text-sm font-semibold text-gray-900 dark:text-gray-100 mb-1">Questions or feedback?</p>
             <p className="text-xs text-gray-500 dark:text-gray-400 leading-relaxed mb-3">
@@ -217,7 +217,7 @@ export default function GettingStartedPage() {
             <div className="flex flex-wrap gap-2">
               <Link
                 href="/feedback"
-                className="inline-flex items-center gap-1.5 text-xs font-semibold text-purple-600 dark:text-purple-400 bg-white dark:bg-gray-900 px-3 py-1.5 rounded-lg border border-gray-200 dark:border-gray-700 hover:bg-purple-50 dark:hover:bg-purple-950 transition-colors"
+                className="inline-flex items-center gap-1.5 text-xs font-semibold text-blue-600 dark:text-blue-400 bg-white dark:bg-gray-900 px-3 py-1.5 rounded-lg border border-gray-200 dark:border-gray-700 hover:bg-blue-50 dark:hover:bg-blue-950 transition-colors"
               >
                 Send feedback
               </Link>

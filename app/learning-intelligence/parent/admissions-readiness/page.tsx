@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { GraduationCap, MapPin, ClipboardList } from "lucide-react";
+import { MapPin, ClipboardList } from "lucide-react";
 import PageLayout from "@/components/PageLayout";
 import { InfoCard } from "@/components/ui/Card";
 import { getSelectedPathwayId } from "@/lib/progress";
@@ -76,9 +76,6 @@ export default function AdmissionsReadinessPage() {
     >
       <div className="max-w-3xl mx-auto px-4 py-6 md:px-8 md:py-8">
         <div className="flex items-center gap-3 mb-2">
-          <div className="bg-purple-100 dark:bg-purple-900 p-3 rounded-2xl">
-            <GraduationCap size={22} className="text-purple-600 dark:text-purple-400" />
-          </div>
           <div>
             <h1 className="text-gray-900 dark:text-gray-100 font-bold text-2xl">Admissions Readiness</h1>
             <p className="text-gray-400 dark:text-gray-500 text-sm">
@@ -89,7 +86,7 @@ export default function AdmissionsReadinessPage() {
 
         {pathwayEligible === false && (
           <InfoCard className="mt-6 flex items-start gap-3">
-            <MapPin size={18} className="text-purple-400 mt-0.5 shrink-0" />
+            <MapPin size={18} className="text-blue-400 mt-0.5 shrink-0" />
             <p className="text-sm text-gray-700 dark:text-gray-300">Available for the CSSE pathway only.</p>
           </InfoCard>
         )}
@@ -104,7 +101,7 @@ export default function AdmissionsReadinessPage() {
 
         {pathwayEligible && profile && !profile.pathwayEligible && (
           <InfoCard className="mt-6 flex items-start gap-3">
-            <MapPin size={18} className="text-purple-400 mt-0.5 shrink-0" />
+            <MapPin size={18} className="text-blue-400 mt-0.5 shrink-0" />
             <p className="text-sm text-gray-700 dark:text-gray-300">
               This section is built entirely from CSSE&apos;s own official exam evidence.
             </p>
@@ -121,7 +118,7 @@ export default function AdmissionsReadinessPage() {
               <ReadinessSummary readiness={profile.readiness} />
               {/* Sprint 5 (WP5B) — secondary link; the page's one primary
                   action (Revision Planner, below) is unchanged. */}
-              <Link href="/learning-intelligence/parent/readiness-timeline" className="inline-block text-xs font-semibold text-purple-600 dark:text-purple-400 mt-2">
+              <Link href="/learning-intelligence/parent/readiness-timeline" className="inline-block text-xs font-semibold text-blue-600 dark:text-blue-400 mt-2">
                 See how this changed over time →
               </Link>
             </section>
@@ -150,7 +147,7 @@ export default function AdmissionsReadinessPage() {
             <div>
               <Link
                 href="/learning-intelligence/parent/revision-planner"
-                className="inline-flex items-center gap-1.5 bg-purple-600 hover:bg-purple-700 text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-colors"
+                className="inline-flex items-center gap-1.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-colors"
               >
                 <ClipboardList size={14} /> See This Week&apos;s Revision Plan →
               </Link>

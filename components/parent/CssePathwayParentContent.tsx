@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { CalendarDays, ClipboardList, HelpCircle, GraduationCap, Route, ChevronDown, Target, Sparkles } from "lucide-react";
+import { CalendarDays, ClipboardList, GraduationCap, Route, ChevronDown } from "lucide-react";
 import { InfoCard } from "@/components/ui/Card";
 import { getSelectedPathwayId } from "@/lib/progress";
 import { getSupabaseClient } from "@/lib/supabase";
@@ -127,7 +127,7 @@ export function CssePathwayParentContent() {
     thisWeek: topCandidateLabel ? (
       <>
         Focus on <span className="font-medium">{topCandidateLabel}</span>. See the{" "}
-        <Link href="/learning-intelligence/parent/revision-planner" className="text-purple-600 dark:text-purple-400 font-semibold">
+        <Link href="/learning-intelligence/parent/revision-planner" className="text-blue-600 dark:text-blue-400 font-semibold">
           Revision Planner
         </Link>{" "}
         for this week&apos;s full plan.
@@ -191,28 +191,25 @@ export function CssePathwayParentContent() {
             <h2 className="text-gray-500 dark:text-gray-400 font-semibold text-xs uppercase tracking-wide mb-2">
               What needs attention?
             </h2>
-            <InfoCard className="flex items-start gap-3">
-              <Sparkles size={16} className="text-purple-500 mt-0.5 shrink-0" />
-              <div className="min-w-0">
-                <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">
-                  {topCandidateLabel ? <>Angel recommends: {topCandidateLabel}</> : "No specific focus yet"}
-                </p>
-                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 leading-relaxed">
-                  {topParentReason ?? "This fills in once there's evidence to respond to."}
-                </p>
-                {/* Mathematics Reference Vertical — a real, working lesson
-                    now exists for MR-01 specifically; link to it directly
-                    rather than only the general Revision Planner, reusing
-                    the recommendation data this card already computed. */}
-                {topCandidate?.competencyCode === "MR-01" && (
-                  <Link
-                    href="/learning-intelligence/learn/mathematics/arithmetic"
-                    className="inline-block text-xs font-semibold text-purple-600 dark:text-purple-400 mt-2"
-                  >
-                    Start this lesson →
-                  </Link>
-                )}
-              </div>
+            <InfoCard>
+              <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">
+                {topCandidateLabel ? <>Angel recommends: {topCandidateLabel}</> : "No specific focus yet"}
+              </p>
+              <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 leading-relaxed">
+                {topParentReason ?? "This fills in once there's evidence to respond to."}
+              </p>
+              {/* Mathematics Reference Vertical — a real, working lesson
+                  now exists for MR-01 specifically; link to it directly
+                  rather than only the general Revision Planner, reusing
+                  the recommendation data this card already computed. */}
+              {topCandidate?.competencyCode === "MR-01" && (
+                <Link
+                  href="/learning-intelligence/learn/mathematics/arithmetic"
+                  className="inline-block text-xs font-semibold text-blue-600 dark:text-blue-400 mt-2"
+                >
+                  Start this lesson →
+                </Link>
+              )}
             </InfoCard>
           </section>
 
@@ -222,7 +219,7 @@ export function CssePathwayParentContent() {
             </h2>
             <Link
               href="/learning-intelligence/parent/revision-planner"
-              className="inline-flex items-center gap-1.5 bg-purple-600 hover:bg-purple-700 text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-colors"
+              className="inline-flex items-center gap-1.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-colors"
             >
               <ClipboardList size={14} /> See This Week&apos;s Revision Plan →
             </Link>
@@ -232,33 +229,30 @@ export function CssePathwayParentContent() {
             <h2 className="text-gray-500 dark:text-gray-400 font-semibold text-xs uppercase tracking-wide mb-2">
               Are they ready for a mock?
             </h2>
-            <InfoCard className="flex items-start gap-3">
-              <Target size={16} className="text-indigo-500 mt-0.5 shrink-0" />
-              <div className="min-w-0 flex-1">
-                {mockReadiness === undefined ? (
-                  <p className="text-sm text-gray-400 dark:text-gray-500" aria-live="polite">Checking…</p>
-                ) : (
-                  <>
-                    <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">
-                      {{
-                        "practice-first": "Keep preparing",
-                        "first-mock-valuable": "A first mock would be valuable",
-                        "mock-valuable": "A mock would be valuable",
-                      }[mockReadiness.verdict]}
-                    </p>
-                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 leading-relaxed">{mockReadiness.explanation}</p>
-                    {mockReadiness.nextAction.href === "/learning-intelligence/mock-exam" && !csseMockAvailable ? (
-                      <Link href="/learning-intelligence/practice" className="inline-block text-xs font-semibold text-purple-600 dark:text-purple-400 mt-2">
-                        See practice areas →
-                      </Link>
-                    ) : (
-                      <Link href={mockReadiness.nextAction.href} className="inline-block text-xs font-semibold text-purple-600 dark:text-purple-400 mt-2">
-                        {mockReadiness.nextAction.label}
-                      </Link>
-                    )}
-                  </>
-                )}
-              </div>
+            <InfoCard>
+              {mockReadiness === undefined ? (
+                <p className="text-sm text-gray-400 dark:text-gray-500" aria-live="polite">Checking…</p>
+              ) : (
+                <>
+                  <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">
+                    {{
+                      "practice-first": "Keep preparing",
+                      "first-mock-valuable": "A first mock would be valuable",
+                      "mock-valuable": "A mock would be valuable",
+                    }[mockReadiness.verdict]}
+                  </p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 leading-relaxed">{mockReadiness.explanation}</p>
+                  {mockReadiness.nextAction.href === "/learning-intelligence/mock-exam" && !csseMockAvailable ? (
+                    <Link href="/learning-intelligence/practice" className="inline-block text-xs font-semibold text-blue-600 dark:text-blue-400 mt-2">
+                      See practice areas →
+                    </Link>
+                  ) : (
+                    <Link href={mockReadiness.nextAction.href} className="inline-block text-xs font-semibold text-blue-600 dark:text-blue-400 mt-2">
+                      {mockReadiness.nextAction.label}
+                    </Link>
+                  )}
+                </>
+              )}
             </InfoCard>
           </section>
 
@@ -267,7 +261,7 @@ export function CssePathwayParentContent() {
           <div className="flex items-center gap-4 flex-wrap pt-1">
             <button
               onClick={() => setShowDetails((v) => !v)}
-              className="inline-flex items-center gap-1 text-xs font-semibold text-purple-600 dark:text-purple-400"
+              className="inline-flex items-center gap-1 text-xs font-semibold text-blue-600 dark:text-blue-400"
             >
               {showDetails ? "Hide detailed progress" : "View detailed progress"}
               <ChevronDown size={13} className={showDetails ? "rotate-180 transition-transform" : "transition-transform"} />
@@ -297,7 +291,7 @@ export function CssePathwayParentContent() {
                   ? "No practice evidence recorded yet. This fills in as your child completes practice activities."
                   : `${evidencedCount} of ${totalCount} CSSE skills now have some recorded evidence.`}
               </p>
-              <Link href="/learning-intelligence/practice" className="inline-block text-xs font-semibold text-purple-600 dark:text-purple-400 mt-2">
+              <Link href="/learning-intelligence/practice" className="inline-block text-xs font-semibold text-blue-600 dark:text-blue-400 mt-2">
                 See practice areas →
               </Link>
             </InfoCard>
@@ -314,7 +308,7 @@ export function CssePathwayParentContent() {
                   : `${weekActivityCount} activit${weekActivityCount === 1 ? "y" : "ies"} this week` +
                     (weekMilestoneCount > 0 ? `, ${weekMilestoneCount} milestone${weekMilestoneCount === 1 ? "" : "s"} reached.` : ".")}
               </p>
-              <Link href="/learning-intelligence/parent/weekly-report" className="inline-block text-xs font-semibold text-purple-600 dark:text-purple-400 mt-2">
+              <Link href="/learning-intelligence/parent/weekly-report" className="inline-block text-xs font-semibold text-blue-600 dark:text-blue-400 mt-2">
                 Full weekly report →
               </Link>
             </InfoCard>
@@ -332,16 +326,13 @@ export function CssePathwayParentContent() {
             {/* WP4C — moved here from the page's bottom so the explainer sits
                 right where a parent is reading a recommendation and asking
                 "why," instead of being isolated at the end of the page. */}
-            <InfoCard className="flex items-start gap-3 mt-3">
-              <HelpCircle size={16} className="text-gray-400 mt-0.5 shrink-0" />
-              <div>
-                <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">How Angel decides what to recommend</p>
-                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 leading-relaxed">
-                  Every suggestion here comes from what your child has actually done in practice, real evidence of what
-                  they can do confidently and what still needs work, never a fixed script. It updates as new evidence
-                  comes in, and always explains why a particular skill was chosen.
-                </p>
-              </div>
+            <InfoCard className="mt-3">
+              <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">How Angel decides what to recommend</p>
+              <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 leading-relaxed">
+                Every suggestion here comes from what your child has actually done in practice, real evidence of what
+                they can do confidently and what still needs work, never a fixed script. It updates as new evidence
+                comes in, and always explains why a particular skill was chosen.
+              </p>
             </InfoCard>
           </section>
 

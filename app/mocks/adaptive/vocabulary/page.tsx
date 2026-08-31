@@ -4,7 +4,7 @@ import { useState, useRef } from "react";
 import Link from "next/link";
 import {
   ArrowLeft, CheckCircle, XCircle, ChevronRight,
-  AlertCircle, Sparkles, BookMarked,
+  AlertCircle, BookMarked,
 } from "lucide-react";
 import PremiumLoader from "@/components/PremiumLoader";
 import { withTimeout } from "@/lib/withTimeout";
@@ -230,8 +230,7 @@ export default function AdaptiveVocabularyMockPage() {
               Back to Mocks
             </Link>
             <div className="flex items-center gap-3 mb-2">
-              <span className="text-xs font-bold bg-white/20 px-2.5 py-1 rounded-lg flex items-center gap-1">
-                <Sparkles size={12} />
+              <span className="text-xs font-bold bg-white/20 px-2.5 py-1 rounded-lg">
                 Personalised
               </span>
               <h1 className="text-xl font-bold">Vocabulary Practice</h1>
@@ -305,9 +304,8 @@ export default function AdaptiveVocabularyMockPage() {
       <div className="min-h-screen bg-gray-50 dark:bg-gray-950 flex flex-col">
         <header className="bg-white dark:bg-gray-900 border-b border-gray-100 dark:border-gray-800 sticky top-0 z-20">
           <div className="max-w-2xl mx-auto px-4 h-14 flex items-center gap-3">
-            <span className="text-sm font-semibold text-gray-900 dark:text-gray-100 flex-1 flex items-center gap-1.5">
+            <span className="text-sm font-semibold text-gray-900 dark:text-gray-100 flex-1">
               {word}
-              <Sparkles size={12} className="text-emerald-500" />
             </span>
           </div>
           <div className="h-1 bg-gray-100 dark:bg-gray-800">
@@ -337,8 +335,8 @@ export default function AdaptiveVocabularyMockPage() {
               const isSelected = selected === option;
               const isCorrectOption = option === currentItem.prompt.correctAnswer;
               let styling = "bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-700 text-gray-800 dark:text-gray-100";
-              if (answered && isCorrectOption) styling = "bg-green-50 dark:bg-green-950 border-green-300 dark:border-green-800 text-green-700 dark:text-green-300";
-              else if (answered && isSelected) styling = "bg-red-50 dark:bg-red-950 border-red-300 dark:border-red-800 text-red-600 dark:text-red-400";
+              if (answered && isCorrectOption) styling = "bg-emerald-50 dark:bg-emerald-950 border-emerald-300 dark:border-emerald-800 text-emerald-700 dark:text-emerald-300";
+              else if (answered && isSelected) styling = "bg-amber-50 dark:bg-amber-950 border-amber-300 dark:border-amber-800 text-amber-600 dark:text-amber-400";
 
               return (
                 <button
@@ -354,14 +352,14 @@ export default function AdaptiveVocabularyMockPage() {
           </div>
 
           {answered && (
-            <div className={`rounded-2xl border p-5 ${currentItem.prompt.correctAnswer === selected ? "bg-green-50 dark:bg-green-950 border-green-100 dark:border-green-900" : "bg-red-50 dark:bg-red-950 border-red-100 dark:border-red-900"}`}>
+            <div className={`rounded-2xl border p-5 ${currentItem.prompt.correctAnswer === selected ? "bg-emerald-50 dark:bg-emerald-950 border-emerald-100 dark:border-emerald-900" : "bg-amber-50 dark:bg-amber-950 border-amber-100 dark:border-amber-900"}`}>
               <div className="flex items-start gap-2.5 mb-2">
                 {selected === currentItem.prompt.correctAnswer ? (
-                  <CheckCircle size={18} className="text-green-500 shrink-0 mt-0.5" />
+                  <CheckCircle size={18} className="text-emerald-500 shrink-0 mt-0.5" />
                 ) : (
-                  <XCircle size={18} className="text-red-400 shrink-0 mt-0.5" />
+                  <XCircle size={18} className="text-amber-400 shrink-0 mt-0.5" />
                 )}
-                <p className={`text-sm font-semibold ${selected === currentItem.prompt.correctAnswer ? "text-green-700 dark:text-green-300" : "text-red-600 dark:text-red-400"}`}>
+                <p className={`text-sm font-semibold ${selected === currentItem.prompt.correctAnswer ? "text-emerald-700 dark:text-emerald-300" : "text-amber-600 dark:text-amber-400"}`}>
                   {selected === currentItem.prompt.correctAnswer ? "Correct!" : `Incorrect. The answer is "${currentItem.prompt.correctAnswer}"`}
                 </p>
               </div>

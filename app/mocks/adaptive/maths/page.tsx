@@ -4,7 +4,7 @@ import { useState, useRef, useCallback, useEffect } from "react";
 import Link from "next/link";
 import {
   ArrowLeft, Clock, CheckCircle, XCircle, ChevronRight,
-  AlertCircle, Sparkles, Calculator,
+  AlertCircle, Calculator,
 } from "lucide-react";
 import PremiumLoader from "@/components/PremiumLoader";
 import { withTimeout } from "@/lib/withTimeout";
@@ -300,8 +300,7 @@ export default function AdaptiveMathsMockPage() {
               Back to Mocks
             </Link>
             <div className="flex items-center gap-3 mb-2">
-              <span className="text-xs font-bold bg-white/20 px-2.5 py-1 rounded-lg flex items-center gap-1">
-                <Sparkles size={12} />
+              <span className="text-xs font-bold bg-white/20 px-2.5 py-1 rounded-lg">
                 Personalised
               </span>
               <h1 className="text-xl font-bold">Mathematics Practice</h1>
@@ -380,9 +379,8 @@ export default function AdaptiveMathsMockPage() {
       <div className="min-h-screen bg-gray-50 dark:bg-gray-950 flex flex-col">
         <header className="bg-white dark:bg-gray-900 border-b border-gray-100 dark:border-gray-800 sticky top-0 z-20">
           <div className="max-w-2xl mx-auto px-4 h-14 flex items-center gap-3">
-            <span className="text-sm font-semibold text-gray-900 dark:text-gray-100 flex-1 flex items-center gap-1.5">
+            <span className="text-sm font-semibold text-gray-900 dark:text-gray-100 flex-1">
               {SECTION.name}
-              <Sparkles size={12} className="text-blue-500" />
             </span>
             <div className={`flex items-center gap-1 text-sm font-bold ${isLow ? "text-red-500" : "text-gray-700 dark:text-gray-300"}`}>
               <Clock size={15} />
@@ -412,21 +410,21 @@ export default function AdaptiveMathsMockPage() {
           </div>
 
           {answered ? (
-            <div className={`rounded-2xl border p-5 ${wasCorrect ? "bg-green-50 dark:bg-green-950 border-green-100 dark:border-green-900" : "bg-red-50 dark:bg-red-950 border-red-100 dark:border-red-900"}`}>
+            <div className={`rounded-2xl border p-5 ${wasCorrect ? "bg-emerald-50 dark:bg-emerald-950 border-emerald-100 dark:border-emerald-900" : "bg-amber-50 dark:bg-amber-950 border-amber-100 dark:border-amber-900"}`}>
               <div className="flex items-start gap-2.5">
                 {wasCorrect ? (
-                  <CheckCircle size={18} className="text-green-500 shrink-0 mt-0.5" />
+                  <CheckCircle size={18} className="text-emerald-500 shrink-0 mt-0.5" />
                 ) : (
-                  <XCircle size={18} className="text-red-400 shrink-0 mt-0.5" />
+                  <XCircle size={18} className="text-amber-400 shrink-0 mt-0.5" />
                 )}
-                <p className={`text-sm font-semibold ${wasCorrect ? "text-green-700 dark:text-green-300" : "text-red-600 dark:text-red-400"}`}>
+                <p className={`text-sm font-semibold ${wasCorrect ? "text-emerald-700 dark:text-emerald-300" : "text-amber-600 dark:text-amber-400"}`}>
                   {wasCorrect ? "Correct!" : `Incorrect. Answer: ${currentQuestion.answer}`}
                 </p>
               </div>
               <button
                 onClick={nextQuestion}
                 className={`w-full mt-4 flex items-center justify-center gap-2 py-3 rounded-xl font-semibold text-sm transition-opacity hover:opacity-90 ${
-                  wasCorrect ? "bg-green-600 text-white" : "bg-gray-700 text-white"
+                  wasCorrect ? "bg-emerald-600 text-white" : "bg-gray-700 text-white"
                 }`}
               >
                 {questionIdx + 1 < questions.length ? "Next Question" : "See Results"}

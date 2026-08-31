@@ -35,7 +35,7 @@ export function EvidenceComposition({ competencies }: { competencies: Competency
           <div key={tier} className="flex items-center gap-2">
             <span className="text-xs text-gray-500 dark:text-gray-400 w-24 shrink-0">{label}</span>
             <div className="flex-1 h-2 rounded-full bg-gray-100 dark:bg-gray-800 overflow-hidden">
-              <div className="h-full bg-purple-500 dark:bg-purple-400" style={{ width: `${(count / total) * 100}%` }} />
+              <div className="h-full bg-blue-500 dark:bg-blue-400" style={{ width: `${(count / total) * 100}%` }} />
             </div>
             <span className="text-xs text-gray-400 dark:text-gray-500 w-6 text-right shrink-0">{count}</span>
           </div>

@@ -126,7 +126,7 @@ export default function ParentMockReportPage() {
               )}
             </InfoCard>
 
-            <Link href="/learning-intelligence/parent" className="inline-block text-xs font-semibold text-purple-600 dark:text-purple-400">
+            <Link href="/learning-intelligence/parent" className="inline-block text-xs font-semibold text-blue-600 dark:text-blue-400">
               Back to Parent Dashboard
             </Link>
           </>

@@ -194,7 +194,7 @@ export default function PassagePlayer({ passage }: Props) {
         {hasTTS && listenState === "idle" && recordState !== "recording" && (
           <button
             onClick={startListening}
-            className="flex items-center gap-1.5 text-xs font-semibold text-purple-700 dark:text-purple-300 bg-purple-50 dark:bg-purple-950 hover:bg-purple-100 dark:hover:bg-purple-900 px-3 py-1.5 rounded-lg transition-colors"
+            className="flex items-center gap-1.5 text-xs font-semibold text-blue-700 dark:text-blue-300 bg-blue-50 dark:bg-blue-950 hover:bg-blue-100 dark:hover:bg-blue-900 px-3 py-1.5 rounded-lg transition-colors"
           >
             <Volume2 size={13} />
             Listen
@@ -205,11 +205,11 @@ export default function PassagePlayer({ passage }: Props) {
           <>
             <button
               onClick={pauseListening}
-              className="flex items-center gap-1.5 text-xs font-semibold text-purple-700 dark:text-purple-300 bg-purple-100 dark:bg-purple-900 hover:bg-purple-200 dark:hover:bg-purple-800 px-3 py-1.5 rounded-lg transition-colors"
+              className="flex items-center gap-1.5 text-xs font-semibold text-blue-700 dark:text-blue-300 bg-blue-100 dark:bg-blue-900 hover:bg-blue-200 dark:hover:bg-blue-800 px-3 py-1.5 rounded-lg transition-colors"
             >
               <span className="flex gap-0.5">
-                <span className="w-1 h-3 bg-purple-600 dark:bg-purple-400 rounded-sm inline-block" />
-                <span className="w-1 h-3 bg-purple-600 dark:bg-purple-400 rounded-sm inline-block" />
+                <span className="w-1 h-3 bg-blue-600 dark:bg-blue-400 rounded-sm inline-block" />
+                <span className="w-1 h-3 bg-blue-600 dark:bg-blue-400 rounded-sm inline-block" />
               </span>
               Pause
             </button>
@@ -220,7 +220,7 @@ export default function PassagePlayer({ passage }: Props) {
               <Square size={10} className="fill-current" />
               Stop
             </button>
-            <span className="text-xs text-purple-500 dark:text-purple-400 animate-pulse font-medium">Reading…</span>
+            <span className="text-xs text-blue-500 dark:text-blue-400 animate-pulse font-medium">Reading…</span>
           </>
         )}
 
@@ -228,7 +228,7 @@ export default function PassagePlayer({ passage }: Props) {
           <>
             <button
               onClick={resumeListening}
-              className="flex items-center gap-1.5 text-xs font-semibold text-purple-700 dark:text-purple-300 bg-purple-50 dark:bg-purple-950 hover:bg-purple-100 dark:hover:bg-purple-900 px-3 py-1.5 rounded-lg transition-colors"
+              className="flex items-center gap-1.5 text-xs font-semibold text-blue-700 dark:text-blue-300 bg-blue-50 dark:bg-blue-950 hover:bg-blue-100 dark:hover:bg-blue-900 px-3 py-1.5 rounded-lg transition-colors"
             >
               <Volume2 size={13} />
               Resume
@@ -328,7 +328,7 @@ export default function PassagePlayer({ passage }: Props) {
       {recordState === "done" && !result && (
         <div className="mt-2 flex items-center gap-2">
           <span className="text-xs text-gray-400 dark:text-gray-500">No speech detected.</span>
-          <button onClick={resetReading} className="text-xs text-purple-600 dark:text-purple-400 hover:underline">
+          <button onClick={resetReading} className="text-xs text-blue-600 dark:text-blue-400 hover:underline">
             Try again
           </button>
         </div>

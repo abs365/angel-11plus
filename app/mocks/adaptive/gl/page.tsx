@@ -421,15 +421,14 @@ export default function AdaptiveGlMockPage() {
   if (mode === "intro") {
     return (
       <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
-        <header className="bg-violet-700 text-white">
+        <header className="bg-blue-700 text-white">
           <div className="max-w-2xl mx-auto px-4 pt-4 pb-6">
             <Link href="/mocks" className="flex items-center gap-1.5 text-white/80 text-sm mb-4 hover:text-white transition">
               <ArrowLeft size={16} />
               Back to Mocks
             </Link>
             <div className="flex items-center gap-3 mb-2">
-              <span className="text-xs font-bold bg-white/20 px-2.5 py-1 rounded-lg flex items-center gap-1">
-                <Sparkles size={12} />
+              <span className="text-xs font-bold bg-white/20 px-2.5 py-1 rounded-lg">
                 Personalised
               </span>
               <h1 className="text-xl font-bold">GL Verbal Reasoning</h1>
@@ -449,9 +448,9 @@ export default function AdaptiveGlMockPage() {
             <div className="space-y-2">
               <p className="text-sm font-semibold text-gray-700 dark:text-gray-300">Sections</p>
               <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
-                <span className="w-5 h-5 rounded-full bg-violet-100 dark:bg-violet-900 flex items-center justify-center text-xs font-bold text-violet-600 dark:text-violet-300">1</span>
+                <span className="w-5 h-5 rounded-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center text-xs font-bold text-blue-600 dark:text-blue-300">1</span>
                 <span className="flex-1">{VR_SECTION.name}</span>
-                <Sparkles size={12} className="text-violet-500" />
+                <Sparkles size={12} className="text-blue-500" />
                 <span className="text-xs text-gray-400 dark:text-gray-500">{VR_SECTION.count} questions · {VR_SECTION.minutes} min</span>
               </div>
               {STATIC_SECTIONS.map((s, i) => (
@@ -477,7 +476,7 @@ export default function AdaptiveGlMockPage() {
 
           <button
             onClick={loadAndStart}
-            className="w-full bg-violet-700 text-white font-semibold py-4 rounded-2xl text-base transition-opacity hover:opacity-90"
+            className="w-full bg-blue-700 text-white font-semibold py-4 rounded-2xl text-base transition-opacity hover:opacity-90"
           >
             Start Practice
           </button>
@@ -505,11 +504,11 @@ export default function AdaptiveGlMockPage() {
           <div className="flex items-center justify-center gap-4">
             <button
               onClick={loadAndStart}
-              className="bg-violet-700 text-white font-semibold text-sm px-4 py-2 rounded-xl hover:opacity-90 transition-opacity"
+              className="bg-blue-700 text-white font-semibold text-sm px-4 py-2 rounded-xl hover:opacity-90 transition-opacity"
             >
               Try Again
             </button>
-            <Link href="/mocks" className="text-violet-600 dark:text-violet-400 font-medium text-sm">Back to practice</Link>
+            <Link href="/mocks" className="text-blue-600 dark:text-blue-400 font-medium text-sm">Back to practice</Link>
           </div>
         </div>
       </div>
@@ -527,7 +526,7 @@ export default function AdaptiveGlMockPage() {
           <div className="max-w-2xl mx-auto px-4 h-14 flex items-center gap-3">
             <span className="text-sm font-semibold text-gray-900 dark:text-gray-100 flex-1 flex items-center gap-1.5">
               {currentSection.name}
-              {currentSection.adaptive && <Sparkles size={12} className="text-violet-500" />}
+              {currentSection.adaptive && <Sparkles size={12} className="text-blue-500" />}
               <span className="text-xs text-gray-400 dark:text-gray-500 ml-2 font-normal">
                 Section {sectionIdx + 1}/{sections.length}
               </span>
@@ -538,7 +537,7 @@ export default function AdaptiveGlMockPage() {
             </div>
           </div>
           <div className="h-1 bg-gray-100 dark:bg-gray-800">
-            <div className="h-1 transition-all duration-300 bg-violet-700" style={{ width: `${progress}%` }} />
+            <div className="h-1 transition-all duration-300 bg-blue-700" style={{ width: `${progress}%` }} />
           </div>
         </header>
 
@@ -563,15 +562,15 @@ export default function AdaptiveGlMockPage() {
           </div>
 
           {answered ? (
-            <div className={`rounded-2xl border p-5 ${wasCorrect ? "bg-green-50 dark:bg-green-950 border-green-100 dark:border-green-900" : "bg-red-50 dark:bg-red-950 border-red-100 dark:border-red-900"}`}>
+            <div className={`rounded-2xl border p-5 ${wasCorrect ? "bg-emerald-50 dark:bg-emerald-950 border-emerald-100 dark:border-emerald-900" : "bg-amber-50 dark:bg-amber-950 border-amber-100 dark:border-amber-900"}`}>
               <div className="flex items-start gap-2.5">
                 {wasCorrect ? (
-                  <CheckCircle size={18} className="text-green-500 shrink-0 mt-0.5" />
+                  <CheckCircle size={18} className="text-emerald-500 shrink-0 mt-0.5" />
                 ) : (
-                  <XCircle size={18} className="text-red-400 shrink-0 mt-0.5" />
+                  <XCircle size={18} className="text-amber-400 shrink-0 mt-0.5" />
                 )}
                 <div className="flex-1">
-                  <p className={`text-sm font-semibold mb-1 ${wasCorrect ? "text-green-700 dark:text-green-300" : "text-red-600 dark:text-red-400"}`}>
+                  <p className={`text-sm font-semibold mb-1 ${wasCorrect ? "text-emerald-700 dark:text-emerald-300" : "text-amber-600 dark:text-amber-400"}`}>
                     {wasCorrect ? "Correct!" : `Incorrect. Answer: ${currentQuestion.answer}`}
                   </p>
                   <p className="text-xs text-gray-600 dark:text-gray-400 leading-relaxed">{currentQuestion.explanation}</p>
@@ -580,7 +579,7 @@ export default function AdaptiveGlMockPage() {
               <button
                 onClick={nextQuestion}
                 className={`w-full mt-4 flex items-center justify-center gap-2 py-3 rounded-xl font-semibold text-sm transition-opacity hover:opacity-90 ${
-                  wasCorrect ? "bg-green-600 text-white" : "bg-gray-700 text-white"
+                  wasCorrect ? "bg-emerald-600 text-white" : "bg-gray-700 text-white"
                 }`}
               >
                 {questionIdx + 1 < currentSection.questions.length ? "Next Question" : "End Section"}
@@ -596,14 +595,14 @@ export default function AdaptiveGlMockPage() {
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && input.trim() && submitAnswer()}
                 placeholder="Type your answer…"
-                className="w-full rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 px-4 py-3.5 text-base text-gray-900 dark:text-gray-100 placeholder-gray-300 dark:placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-violet-200 focus:border-violet-300"
+                className="w-full rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 px-4 py-3.5 text-base text-gray-900 dark:text-gray-100 placeholder-gray-300 dark:placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-300"
               />
               <button
                 onClick={submitAnswer}
                 disabled={!input.trim()}
                 className={`w-full py-3.5 rounded-2xl font-semibold text-sm transition-all ${
                   input.trim()
-                    ? "bg-violet-700 text-white hover:opacity-90"
+                    ? "bg-blue-700 text-white hover:opacity-90"
                     : "bg-gray-100 dark:bg-gray-800 text-gray-400 dark:text-gray-500 cursor-not-allowed"
                 }`}
               >
@@ -631,7 +630,7 @@ export default function AdaptiveGlMockPage() {
 
         <main className="max-w-2xl mx-auto px-4 py-8 space-y-5">
           <div className="text-center">
-            <div className="w-20 h-20 rounded-full bg-violet-700 flex items-center justify-center mx-auto mb-4">
+            <div className="w-20 h-20 rounded-full bg-blue-700 flex items-center justify-center mx-auto mb-4">
               <span className="text-2xl font-bold text-white">{lastResult?.score ?? 0}%</span>
             </div>
             <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-1">{currentSection.name} done</h2>
@@ -654,7 +653,7 @@ export default function AdaptiveGlMockPage() {
 
           <button
             onClick={nextSection}
-            className="w-full bg-violet-700 text-white font-semibold py-4 rounded-2xl text-base flex items-center justify-center gap-2 hover:opacity-90 transition-opacity"
+            className="w-full bg-blue-700 text-white font-semibold py-4 rounded-2xl text-base flex items-center justify-center gap-2 hover:opacity-90 transition-opacity"
           >
             {isLastSection ? (
               <>
@@ -682,7 +681,7 @@ export default function AdaptiveGlMockPage() {
 
     return (
       <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
-        <header className="bg-violet-700 text-white">
+        <header className="bg-blue-700 text-white">
           <div className="max-w-2xl mx-auto px-4 pt-4 pb-6">
             <h1 className="text-lg font-bold mb-0.5">Practice Complete</h1>
             <p className="text-sm text-white/80">GL Verbal Reasoning</p>
@@ -708,7 +707,7 @@ export default function AdaptiveGlMockPage() {
                   <div className="flex-1">
                     <p className="text-sm font-medium text-gray-800 dark:text-gray-100 flex items-center gap-1.5">
                       {r.sectionName}
-                      {r.adaptive && <Sparkles size={11} className="text-violet-500" />}
+                      {r.adaptive && <Sparkles size={11} className="text-blue-500" />}
                     </p>
                     <div className="mt-1.5 h-1.5 bg-gray-100 dark:bg-gray-800 rounded-full overflow-hidden">
                       <div
@@ -737,7 +736,7 @@ export default function AdaptiveGlMockPage() {
             </Link>
             <button
               onClick={loadAndStart}
-              className="bg-violet-700 text-white font-semibold py-3.5 rounded-2xl text-sm hover:opacity-90 transition-opacity"
+              className="bg-blue-700 text-white font-semibold py-3.5 rounded-2xl text-sm hover:opacity-90 transition-opacity"
             >
               Try Again
             </button>

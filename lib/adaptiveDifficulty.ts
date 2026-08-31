@@ -25,8 +25,8 @@ export const TIER_CONFIG: Record<
   advanced: {
     label: "Advanced",
     description: "Above exam standard. Focus on precision and consistency.",
-    bgClass: "bg-purple-100",
-    textClass: "text-purple-700",
+    bgClass: "bg-blue-100",
+    textClass: "text-blue-700",
   },
   challenge: {
     label: "Challenge",

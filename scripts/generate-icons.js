@@ -1,7 +1,12 @@
 #!/usr/bin/env node
 // Generates icon-192.png and icon-512.png for Angel 11+ PWA
 // Uses only Node.js built-ins (zlib, fs) — no npm packages required.
-// Purple background (#7c3aed), white "A" lettermark, centred.
+// Blue background (#2563eb, matching --color-primary), white "A" lettermark,
+// centred. Zero-Purple final closure pass (2026-08-31): was purple
+// (#7c3aed) — the actual generated app icon shown on a user's home screen
+// when Angel is installed as a PWA, missed by every earlier Tailwind/CSS
+// sweep since this script bakes the colour directly into PNG pixel data,
+// not a class or token. Regenerated, not just recoloured in source.
 
 const zlib = require("zlib");
 const fs = require("fs");
@@ -65,8 +70,8 @@ function generatePNG(size) {
   ihdrData[9] = 2; // colour type: RGB
   // bytes 10-12: compression=0, filter=0, interlace=0
 
-  // Background: #7c3aed  Foreground: #ffffff
-  const BG = [124, 62, 237];
+  // Background: #2563eb  Foreground: #ffffff
+  const BG = [37, 99, 235];
   const FG = [255, 255, 255];
 
   // Scale letter to 62% of icon width

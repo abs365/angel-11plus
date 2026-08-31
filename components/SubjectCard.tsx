@@ -16,17 +16,22 @@ interface SubjectCardProps {
   progressNote?: string;
 }
 
+// Zero-Purple pass (2026-08-31): the "purple"/"violet"/"indigo" keys below
+// render yellow/lime/slate respectively, matching ANGEL_DESIGN_LANGUAGE.md
+// §2's English/Verbal Reasoning/Progress colour reassignment. Keys are left
+// named as they were to avoid a churny rename across every SubjectCard
+// call site — they are internal identifiers, not rendered colour.
 const colorMap = {
   purple: {
-    bg: "bg-purple-50 dark:bg-purple-950",
-    strip: "bg-purple-300 dark:bg-purple-700",
-    icon: "bg-purple-100 dark:bg-purple-900 text-purple-600 dark:text-purple-300",
-    title: "text-purple-900 dark:text-purple-100",
-    desc: "text-purple-600 dark:text-purple-400",
-    border: "border-purple-100 dark:border-purple-900",
-    hover: "hover:bg-purple-100 dark:hover:bg-purple-900",
-    badge: "bg-purple-100 dark:bg-purple-900 text-purple-700 dark:text-purple-300",
-    arrow: "text-purple-300 dark:text-purple-700 group-hover:text-purple-500 dark:group-hover:text-purple-400",
+    bg: "bg-yellow-50 dark:bg-yellow-950",
+    strip: "bg-yellow-300 dark:bg-yellow-700",
+    icon: "bg-yellow-100 dark:bg-yellow-900 text-yellow-600 dark:text-yellow-300",
+    title: "text-yellow-900 dark:text-yellow-100",
+    desc: "text-yellow-600 dark:text-yellow-400",
+    border: "border-yellow-100 dark:border-yellow-900",
+    hover: "hover:bg-yellow-100 dark:hover:bg-yellow-900",
+    badge: "bg-yellow-100 dark:bg-yellow-900 text-yellow-700 dark:text-yellow-300",
+    arrow: "text-yellow-300 dark:text-yellow-700 group-hover:text-yellow-500 dark:group-hover:text-yellow-400",
   },
   blue: {
     bg: "bg-blue-50 dark:bg-blue-950",
@@ -73,26 +78,26 @@ const colorMap = {
     arrow: "text-pink-300 dark:text-pink-700 group-hover:text-pink-500 dark:group-hover:text-pink-400",
   },
   indigo: {
-    bg: "bg-indigo-50 dark:bg-indigo-950",
-    strip: "bg-indigo-300 dark:bg-indigo-700",
-    icon: "bg-indigo-100 dark:bg-indigo-900 text-indigo-600 dark:text-indigo-300",
-    title: "text-indigo-900 dark:text-indigo-100",
-    desc: "text-indigo-600 dark:text-indigo-400",
-    border: "border-indigo-100 dark:border-indigo-900",
-    hover: "hover:bg-indigo-100 dark:hover:bg-indigo-900",
-    badge: "bg-indigo-100 dark:bg-indigo-900 text-indigo-700 dark:text-indigo-300",
-    arrow: "text-indigo-300 dark:text-indigo-700 group-hover:text-indigo-500 dark:group-hover:text-indigo-400",
+    bg: "bg-slate-50 dark:bg-slate-950",
+    strip: "bg-slate-300 dark:bg-slate-700",
+    icon: "bg-slate-100 dark:bg-slate-900 text-slate-600 dark:text-slate-300",
+    title: "text-slate-900 dark:text-slate-100",
+    desc: "text-slate-600 dark:text-slate-400",
+    border: "border-slate-100 dark:border-slate-900",
+    hover: "hover:bg-slate-100 dark:hover:bg-slate-900",
+    badge: "bg-slate-100 dark:bg-slate-900 text-slate-700 dark:text-slate-300",
+    arrow: "text-slate-300 dark:text-slate-700 group-hover:text-slate-500 dark:group-hover:text-slate-400",
   },
   violet: {
-    bg: "bg-violet-50 dark:bg-violet-950",
-    strip: "bg-violet-300 dark:bg-violet-700",
-    icon: "bg-violet-100 dark:bg-violet-900 text-violet-600 dark:text-violet-300",
-    title: "text-violet-900 dark:text-violet-100",
-    desc: "text-violet-600 dark:text-violet-400",
-    border: "border-violet-100 dark:border-violet-900",
-    hover: "hover:bg-violet-100 dark:hover:bg-violet-900",
-    badge: "bg-violet-100 dark:bg-violet-900 text-violet-700 dark:text-violet-300",
-    arrow: "text-violet-300 dark:text-violet-700 group-hover:text-violet-500 dark:group-hover:text-violet-400",
+    bg: "bg-lime-50 dark:bg-lime-950",
+    strip: "bg-lime-300 dark:bg-lime-700",
+    icon: "bg-lime-100 dark:bg-lime-900 text-lime-600 dark:text-lime-300",
+    title: "text-lime-900 dark:text-lime-100",
+    desc: "text-lime-600 dark:text-lime-400",
+    border: "border-lime-100 dark:border-lime-900",
+    hover: "hover:bg-lime-100 dark:hover:bg-lime-900",
+    badge: "bg-lime-100 dark:bg-lime-900 text-lime-700 dark:text-lime-300",
+    arrow: "text-lime-300 dark:text-lime-700 group-hover:text-lime-500 dark:group-hover:text-lime-400",
   },
   teal: {
     bg: "bg-teal-50 dark:bg-teal-950",

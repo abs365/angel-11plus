@@ -53,7 +53,7 @@ export default function FeedbackPage() {
           </p>
           <button
             onClick={() => { setSubmitted(false); setSubject(""); setMessage(""); }}
-            className="mt-6 text-sm text-purple-600 dark:text-purple-400 font-semibold hover:underline"
+            className="mt-6 text-sm text-blue-600 dark:text-blue-400 font-semibold hover:underline"
           >
             Send more feedback
           </button>
@@ -65,8 +65,8 @@ export default function FeedbackPage() {
   return (
     <SupportLayout backHref="/dashboard" backLabel="Back">
       <div className="mb-8">
-        <div className="w-12 h-12 rounded-2xl bg-purple-100 dark:bg-purple-900 flex items-center justify-center mb-4">
-          <MessageSquare size={22} className="text-purple-600 dark:text-purple-400" />
+        <div className="w-12 h-12 rounded-2xl bg-blue-100 dark:bg-blue-900 flex items-center justify-center mb-4">
+          <MessageSquare size={22} className="text-blue-600 dark:text-blue-400" />
         </div>
         <h1 className="text-2xl sm:text-3xl font-black text-gray-900 dark:text-gray-100 mb-2">
           Feedback
@@ -91,22 +91,22 @@ export default function FeedbackPage() {
                 onClick={() => setType(id)}
                 className={`w-full flex items-center gap-3 p-3.5 rounded-xl border text-left transition-all ${
                   type === id
-                    ? "border-purple-400 dark:border-purple-600 bg-purple-50 dark:bg-purple-950"
+                    ? "border-blue-400 dark:border-blue-600 bg-blue-50 dark:bg-blue-950"
                     : "border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 hover:border-gray-300 dark:hover:border-gray-600"
                 }`}
               >
                 <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${
-                  type === id ? "bg-purple-100 dark:bg-purple-900" : "bg-gray-100 dark:bg-gray-800"
+                  type === id ? "bg-blue-100 dark:bg-blue-900" : "bg-gray-100 dark:bg-gray-800"
                 }`}>
-                  <Icon size={15} className={type === id ? "text-purple-600 dark:text-purple-400" : "text-gray-400 dark:text-gray-500"} />
+                  <Icon size={15} className={type === id ? "text-blue-600 dark:text-blue-400" : "text-gray-400 dark:text-gray-500"} />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className={`text-sm font-semibold ${type === id ? "text-purple-700 dark:text-purple-300" : "text-gray-700 dark:text-gray-300"}`}>
+                  <p className={`text-sm font-semibold ${type === id ? "text-blue-700 dark:text-blue-300" : "text-gray-700 dark:text-gray-300"}`}>
                     {label}
                   </p>
                   <p className="text-xs text-gray-400 dark:text-gray-500">{desc}</p>
                 </div>
-                {type === id && <div className="w-2 h-2 rounded-full bg-purple-500 shrink-0" />}
+                {type === id && <div className="w-2 h-2 rounded-full bg-blue-500 shrink-0" />}
               </button>
             ))}
           </div>
@@ -124,7 +124,7 @@ export default function FeedbackPage() {
             onChange={(e) => setSubject(e.target.value)}
             placeholder="e.g. Maths sessions, Dark mode, Progress page…"
             maxLength={100}
-            className="w-full bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl px-4 py-3 text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-transparent"
+            className="w-full bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl px-4 py-3 text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent"
           />
         </div>
 
@@ -140,7 +140,7 @@ export default function FeedbackPage() {
             placeholder="Share your thoughts, ideas or experience…"
             rows={5}
             aria-describedby={error ? "message-error" : undefined}
-            className="w-full bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl px-4 py-3 text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-600 resize-none focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-transparent"
+            className="w-full bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl px-4 py-3 text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-600 resize-none focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent"
           />
           <ErrorState id="message-error" message={error} />
         </div>
@@ -148,7 +148,7 @@ export default function FeedbackPage() {
         <button
           type="submit"
           disabled={submitting}
-          className="w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3.5 rounded-xl text-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3.5 rounded-xl text-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {submitting ? "Sending…" : "Send Feedback"}
         </button>

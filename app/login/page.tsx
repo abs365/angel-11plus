@@ -109,11 +109,11 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#f8f7ff] dark:bg-gray-950 flex items-center justify-center px-4 py-12">
+    <div className="min-h-screen bg-[var(--background)] flex items-center justify-center px-4 py-12">
       <div className="w-full max-w-md">
         {/* Brand */}
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-14 h-14 bg-purple-600 rounded-2xl mb-4 shadow-lg shadow-purple-200">
+          <div className="inline-flex items-center justify-center w-14 h-14 bg-blue-600 rounded-2xl mb-4 shadow-lg shadow-blue-200">
             <BookOpen size={26} className="text-white" />
           </div>
           <h1 className="text-gray-900 dark:text-gray-100 font-bold text-2xl">Angel 11+</h1>
@@ -137,7 +137,7 @@ export default function LoginPage() {
                 No email? Check your spam folder, or{" "}
                 <button
                   onClick={() => setState("idle")}
-                  className="text-purple-600 font-medium underline underline-offset-2"
+                  className="text-blue-600 font-medium underline underline-offset-2"
                 >
                   try again
                 </button>
@@ -176,7 +176,7 @@ export default function LoginPage() {
                       autoFocus
                       required
                       aria-describedby={state === "error" ? "login-error" : undefined}
-                      className="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl pl-10 pr-4 py-3.5 text-sm text-gray-800 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-transparent transition-all"
+                      className="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl pl-10 pr-4 py-3.5 text-sm text-gray-800 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all"
                     />
                   </div>
                 </div>
@@ -186,7 +186,7 @@ export default function LoginPage() {
                 <button
                   type="submit"
                   disabled={state === "sending" || !email.trim() || secondsLeft > 0}
-                  className="flex items-center justify-center gap-2 w-full bg-purple-600 text-white rounded-xl py-4 font-semibold text-base hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  className="flex items-center justify-center gap-2 w-full bg-blue-600 text-white rounded-xl py-4 font-semibold text-base hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                 >
                   {state === "sending" ? (
                     <>

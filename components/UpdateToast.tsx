@@ -36,7 +36,7 @@ export default function UpdateToast() {
 
       <button
         onClick={handleRefresh}
-        className="flex items-center gap-1.5 bg-purple-600 hover:bg-purple-700 text-white text-xs font-semibold px-3 py-1.5 rounded-lg transition-colors shrink-0"
+        className="flex items-center gap-1.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold px-3 py-1.5 rounded-lg transition-colors shrink-0"
       >
         <RefreshCw size={12} aria-hidden="true" />
         Refresh

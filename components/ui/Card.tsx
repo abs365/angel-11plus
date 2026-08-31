@@ -46,7 +46,7 @@ const ELEVATION_CLASSES: Record<NonNullable<SurfaceCardProps["elevation"]>, stri
 
 const ACCENT_CLASSES: Record<NonNullable<SurfaceCardProps["accent"]>, string> = {
   none: "",
-  primary: "border-l-4 border-l-purple-400 dark:border-l-purple-600",
+  primary: "border-l-4 border-l-blue-400 dark:border-l-blue-600",
   success: "border-l-4 border-l-emerald-400 dark:border-l-emerald-600",
   warning: "border-l-4 border-l-amber-400 dark:border-l-amber-600",
   info: "border-l-4 border-l-sky-300 dark:border-l-sky-700",
@@ -262,11 +262,13 @@ interface RecommendationCardProps extends CardBaseProps {
 // 5-category legend (RecommendationSummary.tsx's CATEGORY_COLOR: Practice
 // and Review already use "blue", Consolidation uses "purple") — not a
 // generic unlabelled default competing with brand purple. Collapsing both
-// to the same sky value would erase a real distinction the legend depends
-// on, so "purple" keeps its pre-existing muted-indigo value here rather
-// than following the sky migration applied above.
+// to the same value would erase a real distinction the legend depends on.
+// Zero-Purple pass (2026-08-31): "purple" now renders slate — distinct from
+// the other three live categories (blue/emerald/amber) in this legend,
+// consistent with slate's role elsewhere as the calm/neutral replacement
+// for indigo-family colours (ANGEL_DESIGN_LANGUAGE.md §0a).
 const RECOMMENDATION_COLOR: Record<NonNullable<RecommendationCardProps["color"]>, string> = {
-  purple: "bg-indigo-50 dark:bg-indigo-950 border-indigo-100 dark:border-indigo-900 text-indigo-600 dark:text-indigo-300",
+  purple: "bg-slate-50 dark:bg-slate-950 border-slate-100 dark:border-slate-900 text-slate-600 dark:text-slate-300",
   emerald: "bg-emerald-50 dark:bg-emerald-950 border-emerald-100 dark:border-emerald-900 text-emerald-600 dark:text-emerald-300",
   blue: "bg-blue-50 dark:bg-blue-950 border-blue-100 dark:border-blue-900 text-blue-600 dark:text-blue-300",
   amber: "bg-amber-50 dark:bg-amber-950 border-amber-100 dark:border-amber-900 text-amber-600 dark:text-amber-300",
@@ -297,23 +299,29 @@ export function RecommendationCard({ icon: Icon, title, reason, color = "purple"
 /**
  * Premium card — the Hero card treatment, reusable for any premium/hero
  * moment. New Angel Visual System (colour remediation): the previous
- * saturated purple-600/700 gradient, and later the AN-108 solid green-800
+ * saturated blue-600/700 gradient, and later the AN-108 solid green-800
  * fill, both made this card read as visually isolated from the rest of the
  * product — a large saturated colour block competing with, rather than
  * belonging to, the surrounding white/neutral surfaces. Per the Founder's
  * explicit "PRIMARY SURFACES: white and restrained warm/light neutral
  * surfaces... communicate value through hierarchy and content, not colour
- * volume" direction: this card is now a light surface with a soft purple
- * accent border, matching the canonical surface/brand-accent roles used
+ * volume" direction: this card is now a light surface with a soft accent
+ * border, matching the canonical surface/brand-accent roles used
  * everywhere else in the product, rather than a full-bleed colour fill.
  * Callers supply their own text colours (dark-on-light now, not
  * white-on-dark) — see app/dashboard/page.tsx and app/angel-plus/page.tsx.
+ * Zero-Purple pass (2026-08-31): accent border moved from soft purple to
+ * soft blue, matching the new primary brand colour (ANGEL_DESIGN_LANGUAGE.md
+ * §0a). This also corrects a stale reference in ANGEL_DESIGN_LANGUAGE.md's
+ * own Hero card table row, which still described a gradient fill this
+ * component had already moved away from before this pass — doc now matches
+ * what actually renders.
  */
 export function PremiumCard({ children, className }: CardBaseProps) {
   return (
     <div
       className={cn(
-        "bg-white dark:bg-gray-900 border border-purple-100 dark:border-purple-900 rounded-2xl px-6 py-5 shadow-lg",
+        "bg-white dark:bg-gray-900 border border-blue-100 dark:border-blue-900 rounded-2xl px-6 py-5 shadow-lg",
         className
       )}
     >

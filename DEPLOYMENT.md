@@ -170,7 +170,7 @@ The app will launch in standalone mode (no browser chrome) using the config in `
 - [x] `manifest.json` present at `/manifest.json`
 - [x] `icon-192.png` — 192×192 PNG in `/public/`
 - [x] `icon-512.png` — 512×512 PNG in `/public/`
-- [x] `theme_color` matches brand purple (`#7c3aed`)
+- [x] `theme_color` matches brand blue (`#2563eb` — updated from purple `#7c3aed`, Zero-Purple pass 2026-08-31)
 - [x] `display: standalone` in manifest
 - [x] `<meta name="theme-color">` via Next.js `viewport` export
 - [ ] Service Worker (Phase 9 — offline support)

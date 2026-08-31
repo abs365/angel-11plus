@@ -80,7 +80,7 @@ function recommendedNextAction(conclusionType: ConclusionType): string {
 function milestoneIcon(conclusionType: ConclusionType) {
   switch (conclusionType) {
     case "durable-mastery":
-      return <ShieldCheck size={16} className="text-purple-500 shrink-0" />;
+      return <ShieldCheck size={16} className="text-blue-500 shrink-0" />;
     case "mastery":
       return <Award size={16} className="text-emerald-500 shrink-0" />;
     case "wellbeing-veto":

@@ -54,7 +54,7 @@ export default function PathwaySwitchConfirmDialog({
           </button>
           <button
             onClick={onConfirm}
-            className="text-sm font-semibold text-white bg-purple-600 hover:bg-purple-700 px-4 py-2 rounded-xl transition-colors"
+            className="text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-xl transition-colors"
           >
             Switch to {to.name}
           </button>

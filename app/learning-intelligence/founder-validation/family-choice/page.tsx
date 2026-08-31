@@ -301,7 +301,7 @@ function FamilyChoicePilotPageInner() {
             </p>
             <button
               onClick={() => void loadPage()}
-              className="mt-4 bg-purple-600 hover:bg-purple-700 text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-colors"
+              className="mt-4 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-colors"
             >
               View my recommendation & choose a focus
             </button>
@@ -320,7 +320,7 @@ function FamilyChoicePilotPageInner() {
             <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">{errorMessage}</p>
             <button
               onClick={() => void loadPage()}
-              className="mt-4 text-xs font-semibold text-purple-600 dark:text-purple-400"
+              className="mt-4 text-xs font-semibold text-blue-600 dark:text-blue-400"
             >
               Try again
             </button>
@@ -331,7 +331,7 @@ function FamilyChoicePilotPageInner() {
           <div className="space-y-5 mt-6">
             <InfoCard>
               <div className="flex items-center gap-2 mb-2">
-                <Sparkles size={16} className="text-purple-500" />
+                <Sparkles size={16} className="text-blue-500" />
                 <p className="text-sm font-bold text-gray-900 dark:text-gray-100">Angel Recommends</p>
               </div>
               {angelView.topExplanation ? (
@@ -392,7 +392,7 @@ function FamilyChoicePilotPageInner() {
 
             <button
               onClick={startSession}
-              className="bg-purple-600 hover:bg-purple-700 text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-colors"
+              className="bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-colors"
             >
               Start Mathematics practice session
             </button>
@@ -416,7 +416,7 @@ function FamilyChoicePilotPageInner() {
               </InfoCard>
             )}
             {explanations.get(current.id) && (
-              <p className="text-xs text-purple-600 dark:text-purple-400 mt-2 mb-3">{explanations.get(current.id)}</p>
+              <p className="text-xs text-blue-600 dark:text-blue-400 mt-2 mb-3">{explanations.get(current.id)}</p>
             )}
             <InfoCard className="mt-3">
               <p className="text-sm font-semibold text-gray-800 dark:text-gray-200">
@@ -433,7 +433,7 @@ function FamilyChoicePilotPageInner() {
                 <button
                   onClick={submit}
                   disabled={!answer.trim()}
-                  className="mt-3 bg-purple-600 hover:bg-purple-700 disabled:opacity-40 text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-colors"
+                  className="mt-3 bg-blue-600 hover:bg-blue-700 disabled:opacity-40 text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-colors"
                 >
                   Submit
                 </button>
@@ -452,7 +452,7 @@ function FamilyChoicePilotPageInner() {
                   </span>
                   <button
                     onClick={next}
-                    className="bg-purple-600 hover:bg-purple-700 text-white text-sm font-semibold px-4 py-2 rounded-xl transition-colors inline-flex items-center gap-1.5"
+                    className="bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold px-4 py-2 rounded-xl transition-colors inline-flex items-center gap-1.5"
                   >
                     {index + 1 === activities.length ? "See results" : "Next"} <ArrowRight size={14} />
                   </button>
@@ -485,7 +485,7 @@ function FamilyChoicePilotPageInner() {
             <div className="flex items-center gap-4">
               <button
                 onClick={() => void loadPage()}
-                className="bg-purple-600 hover:bg-purple-700 text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-colors"
+                className="bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-colors"
               >
                 Back to focus choice
               </button>

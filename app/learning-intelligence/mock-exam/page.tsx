@@ -516,7 +516,7 @@ export default function MockExamPage() {
                     <li key={attempt.attemptId}>
                       <Link
                         href={`/learning-intelligence/mock-report/${attempt.attemptId}`}
-                        className="text-xs font-semibold text-purple-600 dark:text-purple-400"
+                        className="text-xs font-semibold text-blue-600 dark:text-blue-400"
                       >
                         Check your Mock report from {new Date(attempt.submittedAt).toLocaleDateString()} →
                       </Link>
@@ -541,7 +541,7 @@ export default function MockExamPage() {
               Angel would rather tell you that plainly than run a mock from content that hasn&apos;t been through full
               review yet. Practice is unaffected, since it uses a wider, evidence-tagged content set.
             </p>
-            <Link href="/learning-intelligence" className="inline-block mt-4 text-xs font-semibold text-purple-600 dark:text-purple-400">
+            <Link href="/learning-intelligence" className="inline-block mt-4 text-xs font-semibold text-blue-600 dark:text-blue-400">
               Back to dashboard
             </Link>
           </InfoCard>
@@ -554,7 +554,7 @@ export default function MockExamPage() {
             <div className="flex items-center justify-center gap-4 mt-4">
               <button
                 onClick={() => setPhase("intro")}
-                className="min-h-[44px] inline-flex items-center gap-1 text-xs font-semibold text-purple-600 dark:text-purple-400 px-2"
+                className="min-h-[44px] inline-flex items-center gap-1 text-xs font-semibold text-blue-600 dark:text-blue-400 px-2"
               >
                 <RotateCcw size={14} /> Start over
               </button>
@@ -630,7 +630,7 @@ export default function MockExamPage() {
                   <p className="text-xs font-semibold text-gray-500 dark:text-gray-400">Question overview</p>
                   <button
                     onClick={() => { void handleAnswerAndAdvance(null); setPhase("reviewing"); }}
-                    className="text-xs font-semibold text-purple-600 dark:text-purple-400"
+                    className="text-xs font-semibold text-blue-600 dark:text-blue-400"
                   >
                     Review &amp; submit
                   </button>

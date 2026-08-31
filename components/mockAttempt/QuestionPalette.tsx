@@ -28,7 +28,7 @@ export function QuestionPalette({
           className={cn(
             "relative h-10 rounded-lg text-xs font-semibold flex items-center justify-center border transition-colors",
             entry.current
-              ? "border-purple-600 ring-2 ring-purple-200 dark:ring-purple-900"
+              ? "border-blue-600 ring-2 ring-blue-200 dark:ring-blue-900"
               : "border-gray-200 dark:border-gray-700",
             entry.answered
               ? "bg-gray-800 text-white dark:bg-gray-200 dark:text-gray-900"
