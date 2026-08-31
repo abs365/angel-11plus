@@ -8,7 +8,8 @@ import { checkIsAdmin } from "@/lib/feedback";
 import {
   fetchPendingReviewTargets, fetchReviewedTargetIds, fetchRepresentativeQuestions, fetchQuestionsForPassage,
   fetchPassageDetail, fetchTargetSummary, submitReview,
-  REVIEW_CRITERIA, FAMILY_EDUCATIONAL_CONTEXT, FAMILY_MARKING_BASIS,
+  REVIEW_CRITERIA, WRITING_REVIEW_CRITERIA, FAMILY_EDUCATIONAL_CONTEXT, FAMILY_MARKING_BASIS,
+  writingResponseShapeLabel, QUESTION_TYPE_NAME,
   fetchMathsTeachingReviewedFamilyIds, submitMathsTeachingReview,
   MATHS_TEACHING_REVIEW_CRITERIA, MATHS_TEACHING_REVIEW_METADATA, MATHS_TEACHING_CONTENT_VERSION,
   MATHS_TEACHING_REVIEW_TARGET_IDS,
@@ -378,6 +379,37 @@ function SectionTitle({ letter, title }: { letter: string; title: string }) {
  * Writing, and never shows misleading fallback text for content that
  * genuinely exists.
  */
+/**
+ * Decision 254, Section 3 — internal/authoring classification metadata
+ * (taxonomy code + canonical Question Type name, the recorded
+ * misconception, and transfer-demand classification), previously shown
+ * inline at full prominence alongside the learner-facing content it
+ * describes. Founder feedback: this reads as engineering noise when
+ * judging the child's educational experience. Nothing here is removed
+ * — the Founder can still see and audit every field, just inside a
+ * clearly labelled, collapsed-by-default disclosure, generic across
+ * every subject and target type (not special-cased to Writing).
+ */
+function TechnicalDetail({ skill, transferClass, addressesMisconception }: { skill: string; transferClass: string | null; addressesMisconception: string | null }) {
+  const canonicalName = QUESTION_TYPE_NAME[skill];
+  return (
+    <details className="mt-1.5">
+      <summary className="text-[11px] font-semibold text-gray-400 dark:text-gray-500 cursor-pointer select-none">Technical / authoring detail</summary>
+      <div className="mt-1 space-y-1 pl-3 border-l-2 border-gray-100 dark:border-gray-800">
+        <p className="text-[11px] text-gray-400 dark:text-gray-500 font-mono">
+          {skill}{canonicalName ? ` (${canonicalName}, the canonical Question Type name; see this item's own response shape above for what it actually asks for)` : ""}
+        </p>
+        {addressesMisconception && (
+          <p className="text-xs text-amber-700 dark:text-amber-300"><strong>Common trap:</strong> {addressesMisconception}</p>
+        )}
+        {transferClass && (
+          <p className="text-[11px] text-gray-400 dark:text-gray-500">Transfer demand: {transferClass.replace(/_/g, " ").toLowerCase()}</p>
+        )}
+      </div>
+    </details>
+  );
+}
+
 function QuestionOrWritingTaskBody({ question, displayText }: { question: RepresentativeQuestion; displayText?: string }) {
   if (question.subject === "writing" && question.writingTask) {
     const w = question.writingTask;
@@ -385,14 +417,24 @@ function QuestionOrWritingTaskBody({ question, displayText }: { question: Repres
       <>
         <p className="text-sm font-semibold text-gray-800 dark:text-gray-200 mt-1 whitespace-pre-line">{w.prompt}</p>
         <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-          <strong>{w.title}</strong> · QT-WC-01a (Reflective/Discursive Response Prompt) · {question.contentDifficulty} difficulty{w.timeMinutes ? ` · ${w.timeMinutes} min` : ""}
+          {/* Decision 254, Section 1 — the taxonomy code's canonical name
+              ("Reflective/Discursive Response Prompt") does not describe
+              every QT-WC-01a item (e.g. "An Invented Place" is
+              narrative/imaginative, not reflective/discursive). This
+              item's own real response shape is shown here instead; the
+              taxonomy code itself moves to the technical detail below. */}
+          <strong>{w.title}</strong> · Response shape: {writingResponseShapeLabel(w.responseType)} · {question.contentDifficulty} difficulty{w.timeMinutes ? ` · ${w.timeMinutes} min` : ""}
         </p>
         {w.checklist.length > 0 && (
-          <ul className="text-xs text-gray-600 dark:text-gray-400 mt-1 list-disc list-inside space-y-0.5">
-            {w.checklist.map((item, i) => <li key={i}>{item}</li>)}
-          </ul>
+          <>
+            <p className="text-[11px] font-semibold text-gray-400 dark:text-gray-500 mt-2 uppercase tracking-wide">Checklist shown to the learner</p>
+            <ul className="text-xs text-gray-600 dark:text-gray-400 mt-1 list-disc list-inside space-y-0.5">
+              {w.checklist.map((item, i) => <li key={i}>{item}</li>)}
+            </ul>
+          </>
         )}
         <p className="text-[11px] text-gray-400 dark:text-gray-500 mt-1 italic">No deterministic model answer is stored for Continuous Writing: this is a qualitative writing review, judged against the checklist above and your own educational judgement, not marked against a fixed answer.</p>
+        <TechnicalDetail skill={question.skill} transferClass={question.transferClass} addressesMisconception={question.addressesMisconception} />
       </>
     );
   }
@@ -403,6 +445,7 @@ function QuestionOrWritingTaskBody({ question, displayText }: { question: Repres
       {question.authorNote && (
         <p className="text-xs text-teal-700 dark:text-teal-300 mt-1"><strong>Marking / educational note:</strong> {question.authorNote}</p>
       )}
+      <TechnicalDetail skill={question.skill} transferClass={question.transferClass} addressesMisconception={question.addressesMisconception} />
     </>
   );
 }
@@ -614,6 +657,25 @@ function ReviewForm({
   const hardest = questions.length > 1 ? questions[questions.length - 1] : undefined;
   const unusual = questions.find((q) => q.transferClass === "FAR_TRANSFER" && q !== easiest && q !== hardest);
   const otherExamples = questions.filter((q) => q !== easiest && q !== hardest && q !== unusual);
+  /**
+   * Decision 254, Section 2 — a family with exactly one reviewed item
+   * (every Writing prompt family reviewed to date) previously rendered
+   * the SAME item twice, once labelled "Representative example" and
+   * once "Easiest example", implying a range of items when none exists.
+   * Generic on `questions.length`, not specific to any one target: a
+   * genuine multi-item family is completely unaffected and still shows
+   * real representative/easiest/hardest/unusual range evidence.
+   */
+  const rangeExamples: [string, RepresentativeQuestion | undefined][] = questions.length === 1
+    ? [["Reviewed example (only item in this family)", easiest]]
+    : [
+        ["Representative example", questions[Math.floor(questions.length / 2)]],
+        ["Easiest example", easiest],
+        ["Hardest example", hardest],
+        ["Unusual / transfer example", unusual],
+      ];
+  /** Decision 254, Section 6 — Continuous Writing gets its own reworded criteria set (see WRITING_REVIEW_CRITERIA); every other target type is unaffected. */
+  const criteria = target.reviewTargetType === "writing_prompt" ? WRITING_REVIEW_CRITERIA : REVIEW_CRITERIA;
 
   return (
     <div className="space-y-5 max-w-full overflow-x-hidden">
@@ -883,12 +945,6 @@ function ReviewForm({
                             </p>
                           )}
                           <QuestionOrWritingTaskBody question={question} displayText={sharedStem ? sharedStem.tails[index] : undefined} />
-                          {question.addressesMisconception && (
-                            <p className="text-xs text-amber-700 dark:text-amber-300 mt-1"><strong>Common trap:</strong> {question.addressesMisconception}</p>
-                          )}
-                          {question.transferClass && (
-                            <p className="text-[11px] text-gray-400 dark:text-gray-500 mt-1">Transfer demand: {question.transferClass.replace(/_/g, " ").toLowerCase()}</p>
-                          )}
                         </div>
                       ))}
                     </div>
@@ -898,23 +954,12 @@ function ReviewForm({
             </div>
           ) : (
             <>
-              {[
-                ["Representative example", easiest && questions.length === 1 ? easiest : questions[Math.floor(questions.length / 2)]],
-                ["Easiest example", easiest],
-                ["Hardest example", hardest],
-                ["Unusual / transfer example", unusual],
-              ].filter(([, q]) => q).map(([label, q]) => {
+              {rangeExamples.filter(([, q]) => q).map(([label, q]) => {
                 const question = q as RepresentativeQuestion;
                 return (
                   <div key={`${label}-${question.id}`} className="border-t border-gray-50 dark:border-gray-800 pt-3 mt-3 first:border-t-0 first:pt-0 first:mt-0">
                     <p className="text-[11px] font-semibold text-purple-600 dark:text-purple-400 uppercase tracking-wide">{label as string}</p>
                     <QuestionOrWritingTaskBody question={question} />
-                    {question.addressesMisconception && (
-                      <p className="text-xs text-amber-700 dark:text-amber-300 mt-1"><strong>Common trap:</strong> {question.addressesMisconception}</p>
-                    )}
-                    {question.transferClass && (
-                      <p className="text-[11px] text-gray-400 dark:text-gray-500 mt-1">Transfer demand: {question.transferClass.replace(/_/g, " ").toLowerCase()}</p>
-                    )}
                   </div>
                 );
               })}
@@ -983,7 +1028,7 @@ function ReviewForm({
           </div>
 
           <div className="space-y-2">
-            {REVIEW_CRITERIA.map(({ key, question }) => (
+            {criteria.map(({ key, question }) => (
               <div key={key} className="flex items-center justify-between gap-3">
                 <span className="text-xs text-gray-600 dark:text-gray-400">{question}</span>
                 <TriState
@@ -1489,7 +1534,7 @@ function WritingTeachingReviewForm({ familyId, onDone }: { familyId: string; onD
           </div>
 
           <div className="space-y-2">
-            {REVIEW_CRITERIA.map(({ key, question }) => (
+            {WRITING_REVIEW_CRITERIA.map(({ key, question }) => (
               <div key={key} className="flex items-center justify-between gap-3">
                 <span className="text-xs text-gray-600 dark:text-gray-400">{question}</span>
                 <TriState

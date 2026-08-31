@@ -21,12 +21,12 @@ import { promptWritingTask } from "../../lib/adminReview";
 
 // === promptWritingTask(): pure-function contract ============================
 
-test("promptWritingTask() extracts title/prompt/checklist/timeMinutes from a genuine writing-shaped prompt object", () => {
+test("promptWritingTask() extracts title/prompt/checklist/timeMinutes/responseType from a genuine writing-shaped prompt object", () => {
   const result = promptWritingTask({
     id: "x", title: "My Title", prompt: "Write about something.", type: "descriptive",
     difficulty: "year6-exam", timeMinutes: 25, checklist: ["Do this", "Do that"],
   });
-  assert.deepEqual(result, { title: "My Title", prompt: "Write about something.", checklist: ["Do this", "Do that"], timeMinutes: 25 });
+  assert.deepEqual(result, { title: "My Title", prompt: "Write about something.", checklist: ["Do this", "Do that"], timeMinutes: 25, responseType: "descriptive" });
 });
 
 test("promptWritingTask() returns null for a deterministic comprehension/Mathematics-shaped prompt (question/modelAnswer, no title/checklist)", () => {
@@ -49,7 +49,12 @@ test("promptWritingTask() returns null if checklist is missing or not a string a
 
 test("promptWritingTask() tolerates a missing/non-numeric timeMinutes -- returns null for that field alone, not for the whole result", () => {
   const result = promptWritingTask({ title: "T", prompt: "P", checklist: ["a"] });
-  assert.deepEqual(result, { title: "T", prompt: "P", checklist: ["a"], timeMinutes: null });
+  assert.deepEqual(result, { title: "T", prompt: "P", checklist: ["a"], timeMinutes: null, responseType: null });
+});
+
+test("promptWritingTask() tolerates a missing/non-string type -- responseType is null for that field alone, not for the whole result", () => {
+  const result = promptWritingTask({ title: "T", prompt: "P", checklist: ["a"], type: 42 });
+  assert.deepEqual(result, { title: "T", prompt: "P", checklist: ["a"], timeMinutes: null, responseType: null });
 });
 
 // === Proven against REAL stored content (migrations 098 and 153) ===========

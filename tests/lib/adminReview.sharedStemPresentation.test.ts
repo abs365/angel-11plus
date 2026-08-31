@@ -38,14 +38,16 @@ test("C: each subpart's own remaining tail is shown when a shared stem resolves,
   assert.match(reviewSource, /<QuestionOrWritingTaskBody question=\{question\} displayText=\{sharedStem \? sharedStem\.tails\[index\] : undefined\} \/>/);
 });
 
-test("D: model answer, common trap, transfer demand, and subpart label are still rendered per component, unaffected by the stem change (Decision 233 — model answer now rendered via the shared QuestionOrWritingTaskBody component, same content, same conditions)", () => {
+test("D: model answer, common trap, transfer demand, and subpart label are still rendered per component, unaffected by the stem change (Decision 233 — model answer now rendered via the shared QuestionOrWritingTaskBody component, same content, same conditions; Decision 254 — common trap/transfer demand moved INSIDE QuestionOrWritingTaskBody's own TechnicalDetail disclosure, no longer rendered separately at this call site, but still genuinely rendered, per component, for every question)", () => {
   const block = reviewSource.match(/\{group\.items\.map\(\(question, index\) => \([\s\S]*?\)\)\}/)![0];
   assert.match(block, /<QuestionOrWritingTaskBody question=\{question\}/);
+  assert.match(block, /Subpart \{question\.subpartLabel\}/);
   const bodyBlock = reviewSource.match(/function QuestionOrWritingTaskBody\([\s\S]*?\n}/)![0];
   assert.match(bodyBlock, /Model answer \(\{question\.contentDifficulty\} difficulty\):.*\{question\.modelAnswer\}/);
-  assert.match(block, /Common trap:.*\{question\.addressesMisconception\}/);
-  assert.match(block, /Transfer demand:.*\{question\.transferClass/);
-  assert.match(block, /Subpart \{question\.subpartLabel\}/);
+  assert.match(bodyBlock, /<TechnicalDetail skill=\{question\.skill\} transferClass=\{question\.transferClass\} addressesMisconception=\{question\.addressesMisconception\} \/>/);
+  const technicalDetailBlock = reviewSource.match(/function TechnicalDetail\([\s\S]*?\n}/)![0];
+  assert.match(technicalDetailBlock, /Common trap:.*\{addressesMisconception\}/);
+  assert.match(technicalDetailBlock, /Transfer demand:.*\{transferClass/);
 });
 
 test("F: structured stimulus resolution (runningclub) is untouched and independent of the new shared-stem resolution", () => {

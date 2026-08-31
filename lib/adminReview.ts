@@ -67,7 +67,12 @@ export const REVIEW_CRITERIA: ReviewCriterion[] = [
   { key: "difficultyAppropriate", question: "Is the difficulty appropriate for its stated level?", polarity: "yes-is-good" },
   { key: "transferValidity", question: "Is the transfer demand (how far this asks the learner to generalise) honestly classified?", polarity: "yes-is-good" },
   { key: "misconceptionQuality", question: "Is the recorded misconception a real, plausible mistake a child would make?", polarity: "yes-is-good" },
-  { key: "variationBoundariesSound", question: "Do the easiest and hardest examples you saw genuinely represent the family's range?", polarity: "yes-is-good" },
+  // Decision 254 — reworded generically (not Writing-specific) so a
+  // single-item family (e.g. every Writing prompt family reviewed to
+  // date, which each have exactly one row) doesn't force a reviewer to
+  // answer a question that presupposes a range that doesn't exist yet.
+  // A multi-item family still answers this exactly as before.
+  { key: "variationBoundariesSound", question: "Where this family has more than one reviewed example, do they genuinely represent its range? (N/A for a single-item family)", polarity: "yes-is-good" },
   { key: "teachingQuality", question: "Does the teaching support genuinely help the learner, where one exists?", polarity: "yes-is-good" },
   { key: "examStrategyQuality", question: "Is the exam strategy shown to learners useful and safe advice?", polarity: "yes-is-good" },
   { key: "explanationQuality", question: "Where a model answer is shown, does it actually explain, not just restate?", polarity: "yes-is-good" },
@@ -76,6 +81,35 @@ export const REVIEW_CRITERIA: ReviewCriterion[] = [
   { key: "originalityConfirmed", question: "Is the content sufficiently original?", polarity: "yes-is-good" },
   { key: "copyrightRiskClear", question: "Is the content free of any copyright concern?", polarity: "yes-is-good" },
 ];
+
+/**
+ * Decision 254, Section 6 — Continuous Writing (`review_target_type ===
+ * "writing_prompt"`) has no deterministic answer key, no source passage,
+ * and no CSSE "question pattern" in the comprehension sense (it is a
+ * free-composition prompt matched against QT-WC-01a's own format, not a
+ * question/answer pair) — three REVIEW_CRITERIA questions are phrased in
+ * terms that presuppose those things and would force a Writing reviewer
+ * to answer as though they applied. Same `key` set as REVIEW_CRITERIA
+ * (so ReviewSubmission / the ali_family_review boolean columns are
+ * unchanged, no migration required), only these three questions'
+ * wording is reworded to what they are actually asking for Writing
+ * content; every other criterion (including the just-reworded
+ * `variationBoundariesSound`, which already generalises) is reused
+ * unmodified. Mirrors the established MATHS_TEACHING_REVIEW_CRITERIA
+ * pattern of a parallel, target-type-specific criteria array.
+ */
+export const WRITING_REVIEW_CRITERIA: ReviewCriterion[] = REVIEW_CRITERIA.map((c) => {
+  if (c.key === "questionTypeAlignment") {
+    return { ...c, question: "Does it match a genuine CSSE Continuous Writing prompt pattern (a single reflective/discursive/imaginative prompt, always Question 1)?" };
+  }
+  if (c.key === "answerCorrectnessVerified") {
+    return { ...c, question: "Are the marking expectations (the checklist shown to the learner) correct and complete?" };
+  }
+  if (c.key === "ambiguityFree") {
+    return { ...c, question: "Does the checklist genuinely accept every reasonable, valid way a learner could satisfy this prompt?" };
+  }
+  return c;
+});
 
 /**
  * Heuristic guard against reintroducing negative framing: a "yes-is-good"
@@ -842,7 +876,7 @@ export interface RepresentativeQuestion {
    * `writingTask` for a writing row instead of `question`/`modelAnswer`,
    * never treat the fallback text as evidence of missing content.
    */
-  writingTask: { title: string; prompt: string; checklist: string[]; timeMinutes: number | null } | null;
+  writingTask: { title: string; prompt: string; checklist: string[]; timeMinutes: number | null; responseType: string | null } | null;
   /** Decision 235 -- `ali_question_bank.explanation`, the author's own per-question note (REMEDIATION rationale, marking-policy clarification). Previously never selected or rendered (same class of gap Decision 232 fixed for `provenance`/`notes`) -- now selected via QUESTION_SELECT_COLUMNS and rendered in QuestionOrWritingTaskBody so amendment verification does not require re-reading raw SQL. null when the row has no explanation, or for any caller not using mapQuestionRow (e.g. fetchQuestionsForPassage always does). */
   authorNote: string | null;
 }
@@ -867,7 +901,7 @@ function promptText(prompt: unknown, key: "question" | "modelAnswer"): string {
  * this shape (i.e. every non-writing row) — never guesses, never
  * fabricates a title/prompt/checklist that isn't genuinely stored.
  */
-export function promptWritingTask(prompt: unknown): { title: string; prompt: string; checklist: string[]; timeMinutes: number | null } | null {
+export function promptWritingTask(prompt: unknown): { title: string; prompt: string; checklist: string[]; timeMinutes: number | null; responseType: string | null } | null {
   if (!prompt || typeof prompt !== "object") return null;
   const p = prompt as Record<string, unknown>;
   if (typeof p.title !== "string" || typeof p.prompt !== "string") return null;
@@ -877,8 +911,66 @@ export function promptWritingTask(prompt: unknown): { title: string; prompt: str
     prompt: p.prompt,
     checklist: p.checklist as string[],
     timeMinutes: typeof p.timeMinutes === "number" ? p.timeMinutes : null,
+    // Decision 254, Section 1 — the stored `type` field (e.g.
+    // "descriptive", "narrative") is each item's OWN actual response
+    // shape, already present on every real writing row (migrations
+    // 098/153/167) but previously never read here, so the review
+    // surface fell back to one hardcoded taxonomy-level label for every
+    // item regardless of its real shape. See
+    // writingResponseShapeLabel() for the display mapping.
+    responseType: typeof p.type === "string" ? p.type : null,
   };
 }
+
+/**
+ * Decision 254, Section 1 — QT-WC-01a's own canonical Measurement
+ * Purpose (docs/intelligence/CSSE_QUESTION_INTELLIGENCE_FRAMEWORK.md
+ * §5) legitimately spans "own experience, opinion, or imagination": the
+ * taxonomy code is correct for every one of the 7 real QT-WC-01a rows
+ * (migrations 098, 153, 167), but its canonical name
+ * ("Reflective/Discursive Response Prompt") is NOT an accurate
+ * description of every individual item's actual response shape — it
+ * previously was displayed as if it were, for every writing item, which
+ * is exactly what misled the Founder's review of "An Invented Place"
+ * (`type: "narrative"`, not reflective/discursive). This maps each
+ * item's own stored `responseType` to an honest, item-specific label,
+ * independent of (never replacing) the taxonomy code itself, which
+ * remains available as secondary/technical detail (see
+ * QUESTION_TYPE_CANONICAL_NAME below). Audited against all 7 real rows:
+ * migrations 098+153 (6 rows) all store "descriptive" — each grounded in
+ * the candidate's own real experience or stated opinion, never
+ * storybook/generic invention — hence "Personal Experience / Opinion";
+ * migration 167 (1 row, "An Invented Place") stores "narrative" — the
+ * one genuinely imagination-based prompt — hence "Narrative /
+ * Imaginative". An unrecognised or missing value falls back to a
+ * visibly-honest placeholder rather than silently reusing either label,
+ * so a future new response type is never misrepresented by this map.
+ */
+export const WRITING_RESPONSE_SHAPE_LABEL: Record<string, string> = {
+  descriptive: "Personal Experience / Opinion",
+  narrative: "Narrative / Imaginative",
+};
+
+export function writingResponseShapeLabel(responseType: string | null): string {
+  if (!responseType) return "Not recorded";
+  return WRITING_RESPONSE_SHAPE_LABEL[responseType] ?? `Not yet catalogued (${responseType})`;
+}
+
+/**
+ * Decision 254, Section 3 — the raw taxonomy code and its canonical
+ * Question Type name (QUESTION_TYPE_NAME) are internal/authoring
+ * classification, moved to the review surface's secondary "Technical /
+ * authoring detail" disclosure rather than shown as if it individually
+ * described this item (that was the exact defect Section 1 found).
+ * Named generically (not "WRITING_...") since this is intended to cover
+ * any skill code the review surface may need to annotate, not only
+ * QT-WC-01a; only QT-WC-01a is populated today because it is the only
+ * code with a canonical name distinct enough from its own code to be
+ * worth spelling out.
+ */
+export const QUESTION_TYPE_NAME: Record<string, string> = {
+  "QT-WC-01a": "Reflective/Discursive Response Prompt",
+};
 
 function promptWorkingSteps(prompt: unknown): string[] | null {
   if (prompt && typeof prompt === "object" && "workingSteps" in prompt) {
