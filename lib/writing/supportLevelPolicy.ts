@@ -42,10 +42,15 @@ export type ChecklistItemSupportLevel = "core" | "coaching";
  *
  * Classification is index-aligned with each prompt's own stored
  * `checklist` array (never re-ordered, never re-worded). Every one of the
- * 7 real QT-WC-01a rows (migrations 098, 153, 167 — the complete set;
- * confirmed by grep, no other QT-WC-01a rows exist) is classified below,
- * item by item, against its own actual checklist text. An unlisted prompt
- * id, or an index beyond a listed prompt's classified length, defaults to
+ * 7 real, live QT-WC-01a rows (migrations 098, 153, 167 — the complete
+ * live set; confirmed by grep, no other applied QT-WC-01a rows exist) is
+ * classified below, item by item, against its own actual checklist text.
+ * Two further ids (migration 169, Decision 259) are also classified here
+ * even though that migration is NOT applied — the id is `authentic_
+ * assessment_candidate`-only, unreachable content until a human promotes
+ * it, but classifying it now means no unaudited-content default is ever
+ * relied on once it does become reachable. An unlisted prompt id, or an
+ * index beyond a listed prompt's classified length, defaults to
  * `coaching` (see `checklistItemSupportLevel`) — new or unaudited content
  * is never assumed safe for Mock; a human author must explicitly record
  * an item as `core`.
@@ -67,6 +72,13 @@ export const WRITING_CHECKLIST_ITEM_SUPPORT_LEVELS: Record<string, ChecklistItem
   // classified `core`, unlike every other coaching-shaped item.
   "mock-writing-mistakelearned-01": ["core", "coaching", "coaching", "coaching", "core", "core"],
   "mock-writing-screentime-01": ["core", "coaching", "coaching", "coaching", "coaching", "coaching", "core"],
+
+  // Migration 169 — Decision 259 Writing depth extension (candidate
+  // content, `authentic_assessment_candidate` only; classified here on
+  // authoring so no unaudited-content default is ever relied on for
+  // these two ids).
+  "eng-inc003-writing-favouriteplace-01": ["core", "coaching", "coaching", "coaching", "coaching", "core"],
+  "eng-inc003-writing-pocketmoney-01": ["core", "coaching", "coaching", "coaching", "coaching", "coaching", "core"],
 };
 
 export function checklistItemSupportLevel(promptId: string | null, index: number): ChecklistItemSupportLevel {
