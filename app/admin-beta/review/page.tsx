@@ -5,6 +5,7 @@ import Link from "next/link";
 import { CheckCircle2, ArrowLeft, ArrowRight, ShieldAlert, LogOut, Mail, ChevronDown, ChevronUp } from "lucide-react";
 import { useAuth } from "@/components/providers/AuthProvider";
 import { checkIsAdmin } from "@/lib/feedback";
+import { checklistItemSupportLevel } from "@/lib/writing/supportLevelPolicy";
 import {
   fetchPendingReviewTargets, fetchReviewedTargetIds, fetchRepresentativeQuestions, fetchQuestionsForPassage,
   fetchPassageDetail, fetchTargetSummary, submitReview,
@@ -427,9 +428,29 @@ function QuestionOrWritingTaskBody({ question, displayText }: { question: Repres
         </p>
         {w.checklist.length > 0 && (
           <>
-            <p className="text-[11px] font-semibold text-gray-400 dark:text-gray-500 mt-2 uppercase tracking-wide">Checklist shown to the learner</p>
+            <p className="text-[11px] font-semibold text-gray-400 dark:text-gray-500 mt-2 uppercase tracking-wide">Stored instructional checklist</p>
+            {/* Decision 256, Section 5 — the full checklist below is
+                stored instructional/coaching content, not a guarantee of
+                what a learner sees in every context: "core" items
+                (length, technical accuracy) are authentic task
+                instructions shown in every context, but "coaching" items
+                are prescriptive writing-technique scaffolding that
+                Independent Practice reduces and Mock/formal assessment
+                presentation suppresses (lib/writing/supportLevelPolicy.ts),
+                so the reviewer does not mistake this list for what Mock
+                will necessarily display. */}
+            <p className="text-[11px] text-gray-400 dark:text-gray-500 mt-0.5 italic">
+              Full teaching checklist as authored. Items marked <span className="not-italic font-semibold text-amber-700 dark:text-amber-300">Coaching</span> are reduced for Independent Practice and suppressed for Mock/formal assessment presentation; unmarked items are authentic task instructions shown in every context.
+            </p>
             <ul className="text-xs text-gray-600 dark:text-gray-400 mt-1 list-disc list-inside space-y-0.5">
-              {w.checklist.map((item, i) => <li key={i}>{item}</li>)}
+              {w.checklist.map((item, i) => (
+                <li key={i}>
+                  {item}
+                  {checklistItemSupportLevel(question.id, i) === "coaching" && (
+                    <span className="ml-1.5 text-[10px] font-semibold uppercase tracking-wide text-amber-700 dark:text-amber-300">Coaching</span>
+                  )}
+                </li>
+              ))}
             </ul>
           </>
         )}

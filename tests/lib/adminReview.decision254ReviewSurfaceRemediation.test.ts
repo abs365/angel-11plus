@@ -143,9 +143,9 @@ test("page.tsx: 'Common trap'/'Transfer demand' are no longer duplicated inline 
 
 // === Section 4: learner-facing checklist is explicitly labelled as such (real content, correctly presented -- not a data leak) ===
 
-test("page.tsx: the Writing checklist is explicitly labelled as shown to the learner, so a reviewer cannot mistake it for internal/reviewer-only guidance", () => {
+test("page.tsx: the Writing checklist is explicitly labelled as stored instructional content, so a reviewer cannot mistake it for internal/reviewer-only guidance (reworded by Decision 256 §5 — see adminReview.decision256WritingScaffoldingAmendment.test.ts for the assessment-mode-suppression clarification this label now also carries)", () => {
   const block = pageSource.match(/function QuestionOrWritingTaskBody\([\s\S]*?\n}/)![0];
-  assert.match(block, /Checklist shown to the learner/);
+  assert.match(block, /Stored instructional checklist/);
 });
 
 // === Section 6: the review questionnaire adapts by target type ===
