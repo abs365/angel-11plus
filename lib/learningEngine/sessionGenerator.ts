@@ -262,6 +262,34 @@ function fallbackExplanation(reason: string): string {
   }
 }
 
+/**
+ * Decision 258 (Continuous Writing Practice Delivery Gap) — a real, live
+ * check for whether a Practice area currently has ANY practice_eligible
+ * content, reusing the exact same eligibility-filtered fetchQuestionBank()
+ * call and "QT-" tagging predicate generatePersonalisedSession() below
+ * already applies before its own noContentAvailable early-return. Exists
+ * so app/learning-intelligence/practice/page.tsx (the area SELECTOR, one
+ * step before a session is ever generated) can show an honest "being
+ * prepared" state instead of presenting an area as available when it
+ * cannot deliver anything — proven necessary because Continuous Writing's
+ * 7 real QT-WC-01a prompts are all on the Mock-governance track
+ * (authentic_assessment_candidate / independently_validated), never
+ * practice_eligible (see fetchQuestionBank()'s own docstring, corrected
+ * Decision 152). Generic across all three areas, not special-cased to
+ * Writing: any area with zero practice_eligible tagged content reports
+ * false here, and this reverses automatically the moment a Founder
+ * decision actually promotes real content onto the Practice track.
+ */
+export async function areaHasPracticeContent(
+  supabase: SupabaseClient<Database>,
+  areaId: PracticeAreaId
+): Promise<boolean> {
+  const area = getPracticeArea(areaId);
+  if (!area) return false;
+  const bank = await fetchQuestionBank(supabase, area.subject, "csse");
+  return bank.some((q) => q.skill.startsWith("QT-"));
+}
+
 export async function generatePersonalisedSession(
   supabase: SupabaseClient<Database>,
   profileId: string,
