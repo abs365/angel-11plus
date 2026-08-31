@@ -498,7 +498,7 @@ function QuestionOrWritingTaskBody({ question, displayText }: { question: Repres
 // ─── Full review form (per Founder's A-F ordering) ─────────────────────────
 
 function ReviewForm({
-  target, onDone, reviewType = "content_review", sevenX,
+  target, onDone, reviewType = "content_review", sevenX, amendmentDisclosure,
 }: {
   target: PendingReviewTarget;
   onDone: () => void;
@@ -543,6 +543,18 @@ function ReviewForm({
     disclosure: string;
     notesPrefix: string;
   };
+  /**
+   * IMPORTANT FRONTEND BASELINE increment — the required-correction text
+   * for an `amendment_verification` review. Passed independently of
+   * `sevenX` because `sevenX` is never set for a passage-type target
+   * (lib/adminReview.ts's eligible-target derivation deliberately leaves
+   * `sevenXQuestionIds` undefined for `reviewTargetType === "passage"`,
+   * since a passage's content-fetch path doesn't need it) — without this,
+   * the two passage-type amendment-verification targets ("The
+   * Understudy", "How Bees Find Their Way Home") silently never showed
+   * their required correction inside the opened review form at all.
+   */
+  amendmentDisclosure?: string;
 }) {
   const [reviewerName, setReviewerName] = useState("");
   const [submission, setSubmission] = useState<ReviewSubmission>(() => emptySubmission(target, ""));
@@ -736,7 +748,31 @@ function ReviewForm({
         <p className="text-[11px] text-gray-300 dark:text-gray-600 mt-1 font-mono break-all">{target.id}</p>
       </Card>
 
-      {sevenX && (
+      {reviewType === "amendment_verification" ? (
+        // IMPORTANT FRONTEND BASELINE increment — this target's own
+        // history already guarantees its latest formal decision is
+        // exactly `approved_with_amendment` (the only way
+        // fetchAmendmentVerificationEligibleTargets ever surfaces a
+        // target at all — lib/adminReview.ts's
+        // deriveAmendmentVerificationEligibleTargets), so that line is
+        // never fabricated. Deliberately does NOT reuse the sevenX
+        // banner below ("Reviewing newly authored content only") — that
+        // copy is specific to 007X's newly-authored-batch scenario and
+        // is false here: this is a re-check of existing, previously
+        // reviewed content, not new content. Rendered independent of
+        // `sevenX` so it also appears for passage-type targets, which
+        // never carry a `sevenX` prop.
+        <div className="bg-amber-50 dark:bg-amber-950/40 border-2 border-amber-200 dark:border-amber-800 rounded-2xl p-4">
+          <p className="text-xs font-bold text-amber-900 dark:text-amber-200 uppercase tracking-wide">Amendment verification</p>
+          <p className="text-sm font-bold text-amber-900 dark:text-amber-200 mt-1">Previous decision: Approved with amendment</p>
+          <p className="text-xs text-amber-800 dark:text-amber-300 mt-2 leading-relaxed">
+            <span className="font-semibold">Required amendment: </span>{amendmentDisclosure}
+          </p>
+          <p className="text-xs text-amber-800 dark:text-amber-300 mt-2 font-semibold leading-relaxed">
+            Purpose: confirm the required amendment has now been implemented satisfactorily. This does not re-run the original independent review, and does not itself convert this decision to approved.
+          </p>
+        </div>
+      ) : sevenX && (
         <div className="bg-amber-50 dark:bg-amber-950/40 border-2 border-amber-200 dark:border-amber-800 rounded-2xl p-4">
           <p className="text-sm font-bold text-amber-900 dark:text-amber-200">Reviewing newly authored content only</p>
           <p className="text-xs text-amber-800 dark:text-amber-300 mt-1 leading-relaxed">{sevenX.disclosure}</p>
@@ -3718,14 +3754,19 @@ function ReviewDashboard() {
     const t = selectedAmendmentVerification;
     const entry = ENGLISH_INC001_AMENDMENT_REGISTER.find((e) => e.targetId === t.id);
     const target: PendingReviewTarget = { id: t.id, reviewTargetType: t.reviewTargetType, notes: null };
-    const disclosure = entry ? `Required correction: ${entry.requiredCorrection}` : t.latestNotes ? `Recorded review notes: ${t.latestNotes}` : "Verify whether the recorded amendment was resolved.";
+    // IMPORTANT FRONTEND BASELINE increment — computed once, unconditional
+    // on target type, and passed via the dedicated `amendmentDisclosure`
+    // prop (not only `sevenX.disclosure`) so it reaches the review form
+    // for passage-type targets too, which never receive a `sevenX` prop.
+    const requiredAmendment = entry ? entry.requiredCorrection : t.latestNotes ? `Recorded review notes: ${t.latestNotes}` : "Verify whether the recorded amendment was resolved.";
     return (
       <ReviewForm
         target={target}
         reviewType="amendment_verification"
         onDone={() => { setSelectedAmendmentVerification(null); load(); }}
+        amendmentDisclosure={requiredAmendment}
         sevenX={t.sevenXQuestionIds ? {
-          questionIds: t.sevenXQuestionIds, disclosure,
+          questionIds: t.sevenXQuestionIds, disclosure: requiredAmendment,
           notesPrefix: buildAmendmentVerificationNotesPrefix(t.id),
         } : undefined}
       />
