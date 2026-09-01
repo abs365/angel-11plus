@@ -158,7 +158,12 @@ test("Decision 251: the amendment-verification modal branch passes reviewType=am
 });
 
 test("Decision 251: the section is rendered in the review list, fed the dynamically discovered targets list (not a fixed array)", () => {
-  assert.match(pageSource, /<AmendmentVerificationSection targets=\{amendmentVerificationTargets\} status=\{amendmentVerificationStatus\} onOpen=\{setSelectedAmendmentVerification\}/);
+  // Decision 261A widened the onOpen callback beyond a bare
+  // setSelectedAmendmentVerification reference (it now also resets the
+  // re-verification confirmation gate), so this only pins down what the
+  // test name actually asserts: targets/status are fed from the
+  // dynamically discovered state, never a fixed array.
+  assert.match(pageSource, /<AmendmentVerificationSection targets=\{amendmentVerificationTargets\} status=\{amendmentVerificationStatus\} onOpen=\{/);
 });
 
 test("Decision 235: the submitted-decision panel gives amendment_verification its own explanatory copy, distinct from the promotion-related copy shown for an original independent review", () => {

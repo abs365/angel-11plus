@@ -312,6 +312,27 @@ const DECISIONS: { value: ReviewDecision; label: string; hint: string }[] = [
   { value: "rejected", label: "Rejected", hint: "Should not be activated as it stands." },
 ];
 
+/**
+ * Decision 261A — a dedicated, two-option vocabulary for
+ * `amendment_verification`, deliberately distinct from the four formal
+ * educational review decisions above (never shown together; ReviewForm
+ * renders exactly one of the two sets, gated on `reviewType`). Maps onto
+ * the SAME existing `family_review_decision` database enum -- no new
+ * database value is introduced. The mapping itself is not invented here:
+ * it is Decision 235's own documented Founder journey
+ * (ALI_DECISION_LOG.md, Decision 235 Section Q -- "approved is the
+ * intended 'resolved' signal, requires_revalidation the intended 'not
+ * resolved' signal"). `approved_with_amendment` and `rejected` are
+ * deliberately unreachable through this control: an amendment
+ * verification never re-amends or rejects the underlying content --
+ * that judgement, if ever needed, belongs to a fresh formal review, not
+ * to this additive check.
+ */
+const AMENDMENT_VERIFICATION_DECISIONS: { value: ReviewDecision; label: string; hint: string }[] = [
+  { value: "approved", label: "Verified", hint: "The required amendment has been implemented satisfactorily." },
+  { value: "requires_revalidation", label: "Not yet verified", hint: "The amendment is incomplete, or further correction is required." },
+];
+
 function emptySubmission(target: PendingReviewTarget, reviewerName: string): ReviewSubmission {
   return {
     reviewTargetType: target.reviewTargetType, targetId: target.id, reviewer: reviewerName,
@@ -698,7 +719,7 @@ function ReviewForm({
         </p>
         <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
           {reviewType === "amendment_verification"
-            ? "Decision: " + submission.decision + ". This is additive verification evidence only -- it does not overwrite, and is never confused with, the original approved_with_amendment decision it verifies, and does not itself convert that decision to approved."
+            ? "Outcome: " + (submission.decision === "approved" ? "Verified" : "Not yet verified") + ". This is additive verification evidence only -- it does not overwrite, and is never confused with, the original approved_with_amendment decision it verifies, and does not itself convert that decision to approved."
             : reviewType === "mock_maths_independent_review" || reviewType === "mock_english_passage_independent_review" || reviewType === "mock_writing_prompt_independent_review"
             ? "Decision: " + submission.decision + ". This does not promote any question, passage, or prompt to independently_validated or mock_eligible, and does not activate any Mock form: those remain separate, controlled steps."
             : "Decision: " + submission.decision + ". This does not change Practice Eligibility, since that is a separate, controlled activation step."}
@@ -1080,7 +1101,7 @@ function ReviewForm({
       )}
 
       <Card>
-        <SectionTitle letter="F" title="Your judgement" />
+        <SectionTitle letter="F" title={reviewType === "amendment_verification" ? "Your verification" : "Your judgement"} />
 
         <div className="space-y-4">
           <div>
@@ -1108,35 +1129,39 @@ function ReviewForm({
             </p>
           </div>
 
-          <div className="space-y-2">
-            {criteria.map(({ key, question }) => (
-              <div key={key} className="flex items-center justify-between gap-3">
-                <span className="text-xs text-gray-600 dark:text-gray-400">{question}</span>
-                <TriState
-                  value={submission[key] as boolean | null}
-                  onChange={(v) => setSubmission((s) => ({ ...s, [key]: v }))}
-                />
-              </div>
-            ))}
-          </div>
+          {reviewType !== "amendment_verification" && (
+            <div className="space-y-2">
+              {criteria.map(({ key, question }) => (
+                <div key={key} className="flex items-center justify-between gap-3">
+                  <span className="text-xs text-gray-600 dark:text-gray-400">{question}</span>
+                  <TriState
+                    value={submission[key] as boolean | null}
+                    onChange={(v) => setSubmission((s) => ({ ...s, [key]: v }))}
+                  />
+                </div>
+              ))}
+            </div>
+          )}
 
           <div>
             <label className="text-xs font-semibold text-gray-700 dark:text-gray-300">
-              Findings / notes {submission.decision === "rejected" && "(required for a rejection)"}
+              {reviewType === "amendment_verification" ? "Verification basis / notes" : "Findings / notes"} {submission.decision === "rejected" && "(required for a rejection)"}
             </label>
             <textarea
               value={submission.notes}
               onChange={(e) => setSubmission((s) => ({ ...s, notes: e.target.value }))}
               rows={4}
               className="w-full mt-1 text-sm rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-2.5"
-              placeholder="What you checked, what you found, any amendment needed…"
+              placeholder={reviewType === "amendment_verification" ? "What you inspected, and why it does or does not satisfy the required amendment…" : "What you checked, what you found, any amendment needed…"}
             />
           </div>
 
           <div>
-            <label className="text-xs font-semibold text-gray-700 dark:text-gray-300">Your decision (required, choose one)</label>
+            <label className="text-xs font-semibold text-gray-700 dark:text-gray-300">
+              {reviewType === "amendment_verification" ? "Has the required amendment been implemented satisfactorily? (required, choose one)" : "Your decision (required, choose one)"}
+            </label>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-1">
-              {DECISIONS.map((d) => (
+              {(reviewType === "amendment_verification" ? AMENDMENT_VERIFICATION_DECISIONS : DECISIONS).map((d) => (
                 <button
                   key={d.value}
                   type="button"
@@ -1161,7 +1186,9 @@ function ReviewForm({
             disabled={submitting || !reviewerName.trim() || !submission.qualificationBasis.trim() || !!fetchError}
             className="w-full flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 disabled:opacity-40 text-white font-semibold py-3 rounded-xl text-sm transition-colors"
           >
-            {submitting ? "Submitting…" : (<>Submit {reviewType === "english_teaching_review" ? "teaching " : ""}review <ArrowRight size={16} /></>)}
+            {submitting ? "Submitting…" : (<>
+              {reviewType === "amendment_verification" ? "Submit verification" : reviewType === "english_teaching_review" ? "Submit teaching review" : "Submit review"} <ArrowRight size={16} />
+            </>)}
           </button>
           {fetchError && <p className="text-[11px] text-red-500 mt-1">Submission disabled: content for this target could not be loaded.</p>}
 
@@ -3095,13 +3122,23 @@ function EnglishInc001WritingSection({
  * Founder compares the required correction against the SAME live content
  * a learner or a fresh reviewer would see, never a separate copy. This is
  * intentionally NOT "a duplicate full review": `ReviewForm`'s ~18
- * criterion checkboxes are all optional (`boolean | null`, never required
- * by validateReviewSubmission), so the Founder can record reviewer name,
- * qualification, a decision (`approved` = resolved, `requires_
- * revalidation` = not resolved is the intended usage; the full
- * ReviewDecision set remains available since restricting it would be new,
- * unrequested logic), and notes, without being forced to re-answer every
- * original criterion.
+ * criterion checkboxes are hidden entirely in this mode (they were always
+ * optional, `boolean | null`, never required by validateReviewSubmission
+ * — Decision 261A hides them outright rather than leaving them present-
+ * but-unrequired, since their mere presence read as "another formal
+ * review" to the Founder in production). Decision 261A also replaced the
+ * four formal educational decisions with a dedicated two-option
+ * VERIFIED/NOT YET VERIFIED control for this reviewType specifically
+ * (`AMENDMENT_VERIFICATION_DECISIONS`) — an earlier version of this
+ * comment reasoned the full `ReviewDecision` set should stay reachable
+ * here "since restricting it would be new, unrequested logic"; the
+ * Founder's own production inspection (Decision 261A) found that
+ * unrestricted set semantically indistinguishable from a fresh
+ * educational review and requested exactly this restriction. The
+ * underlying `family_review_decision` database enum is unchanged —
+ * VERIFIED still persists as `approved`, NOT YET VERIFIED as
+ * `requires_revalidation` (Decision 235's own documented mapping,
+ * ALI_DECISION_LOG.md Section Q), so no new database value exists either.
  */
 /**
  * Decision 251, Part B — generic, history-derived Amendment Verification
@@ -3386,6 +3423,10 @@ function ReviewDashboard() {
   const [amendmentVerificationTargets, setAmendmentVerificationTargets] = useState<AmendmentVerificationTarget[]>([]);
   const [amendmentVerificationStatus, setAmendmentVerificationStatus] = useState<Map<string, SevenXReviewStatus>>(new Map());
   const [selectedAmendmentVerification, setSelectedAmendmentVerification] = useState<AmendmentVerificationTarget | null>(null);
+  // Decision 261A — reset whenever a (possibly different) target is
+  // opened; set true only by the explicit "Record another verification
+  // anyway" action below, never implicitly.
+  const [amendmentReverifyConfirmed, setAmendmentReverifyConfirmed] = useState(false);
 
   async function load() {
     const [pendingResult, reviewed, teachingReviewed, englishTeachingReviewed, writingTeachingReviewed, sevenX, mr04Depth, inc006Depth, mockMrBatch001, mockMrBatch002, mockMrBatch003, mockFirstMockCompoundBatch001, mockSharedScenarioCompletionBatch, mockStructuralCapacityInc001, mockStructuralCapacityWave002, mockStructuralCapacityWave002Correction001, mockStructuralCapacityIncrement003, mockStructuralCapacityIncrement004, mockStructuralCapacityIncrement005, mockStructuralCapacityIncrement006, mockEnglishPassageBatch001, mockWritingBatch001, englishInc001Passage, englishInc001Writing, englishInc002Passage] = await Promise.all([
@@ -3759,11 +3800,44 @@ function ReviewDashboard() {
     // prop (not only `sevenX.disclosure`) so it reaches the review form
     // for passage-type targets too, which never receive a `sevenX` prop.
     const requiredAmendment = entry ? entry.requiredCorrection : t.latestNotes ? `Recorded review notes: ${t.latestNotes}` : "Verify whether the recorded amendment was resolved.";
+    const existingStatus = amendmentVerificationStatus.get(t.id);
+    const title = t.title ?? FAMILY_DISPLAY_NAME[t.id] ?? formatFallbackName(t.id);
+
+    // Decision 261A — a target already carrying a recorded verification
+    // must not reopen straight into another submittable form. Additive
+    // rows are safe at the database layer (never overwritten, never
+    // auto-converted), so this is a UI confirmation gate only, not new
+    // database policy: it never blocks anything the database itself
+    // permits, it only requires the reviewer to say so on purpose.
+    if (existingStatus?.reviewed && !amendmentReverifyConfirmed) {
+      return (
+        <div className="space-y-5">
+          <button onClick={() => setSelectedAmendmentVerification(null)} className="text-xs font-semibold text-gray-500 dark:text-gray-400 inline-flex items-center gap-1">
+            <ArrowLeft size={13} /> Back to review pilot
+          </button>
+          <Card>
+            <p className="text-xs font-bold text-amber-900 dark:text-amber-200 uppercase tracking-wide">Already verified</p>
+            <h1 className="text-lg font-bold text-gray-900 dark:text-gray-100 mt-1 break-words">{title}</h1>
+            <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">
+              A verification is already recorded for this target: <strong>{existingStatus.decision === "approved" ? "Verified" : existingStatus.decision === "requires_revalidation" ? "Not yet verified" : existingStatus.decision}</strong>
+              {existingStatus.reviewer ? ` by ${existingStatus.reviewer}` : ""}.
+            </p>
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
+              Recording a second verification is not blocked -- it can be correct if you are re-checking after further changes -- but it should be a deliberate choice, not an accidental reopen.
+            </p>
+            <button onClick={() => setAmendmentReverifyConfirmed(true)} className="mt-4 text-sm font-semibold text-blue-600 dark:text-blue-400">
+              Record another verification anyway
+            </button>
+          </Card>
+        </div>
+      );
+    }
+
     return (
       <ReviewForm
         target={target}
         reviewType="amendment_verification"
-        onDone={() => { setSelectedAmendmentVerification(null); load(); }}
+        onDone={() => { setSelectedAmendmentVerification(null); setAmendmentReverifyConfirmed(false); load(); }}
         amendmentDisclosure={requiredAmendment}
         sevenX={t.sevenXQuestionIds ? {
           questionIds: t.sevenXQuestionIds, disclosure: requiredAmendment,
@@ -3855,7 +3929,7 @@ function ReviewDashboard() {
       <EnglishInc001PassageSection targets={targets} status={englishInc001PassageStatus} onOpen={setSelectedEnglishInc001Passage} />
       <EnglishInc002PassageSection targets={targets} status={englishInc002PassageStatus} onOpen={setSelectedEnglishInc002Passage} />
       <EnglishInc001WritingSection targets={targets} status={englishInc001WritingStatus} onOpen={(target, family) => setSelectedEnglishInc001Writing({ target, family })} />
-      <AmendmentVerificationSection targets={amendmentVerificationTargets} status={amendmentVerificationStatus} onOpen={setSelectedAmendmentVerification} />
+      <AmendmentVerificationSection targets={amendmentVerificationTargets} status={amendmentVerificationStatus} onOpen={(target) => { setAmendmentReverifyConfirmed(false); setSelectedAmendmentVerification(target); }} />
       <FullBacklogSection targets={targets} reviewedIds={reviewedIds} onOpen={setSelected} />
       </>
       )}
