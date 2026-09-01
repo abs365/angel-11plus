@@ -410,3 +410,112 @@ test("verified auto-scored tiers (Tier 2/4/6) remain unaffected by this investig
   assert.equal(tier6.automaticallyVerified, true);
   assert.equal(tier6.multiSelectDetail?.marks, 4);
 });
+
+// ===========================================================================
+// Gate 4/5 Founder Handoff — Assessment Integrity Correction (this session).
+// Content defect: 26 acceptedAnswers strings across the question bank used
+// "/" to mean "either word here" (e.g. "jogged/warmed up..."), which
+// checkAcceptedAnswerSet's token-sequence matcher cannot interpret as an
+// alternative — it tokenises straight through the slash, producing a
+// required sequence no real answer will ever contain. Fixed at the source
+// (supabase/migrations/183_reading_accepted_answer_slash_alternate_correction.sql),
+// not in this matching code, which is correct and unchanged. These tests
+// prove the OLD content genuinely failed (so the live incident is not
+// mischaracterised) and the NEW, migration-183 content now succeeds against
+// the exact answer submitted live during the walkthrough.
+// ===========================================================================
+
+test("w1-raceday-01 (LIVE, walkthrough-confirmed defect): the pre-migration-183 acceptedAnswers array rejects a genuinely correct, fuller answer", () => {
+  const liveAnswer =
+    "He jogged slow, deliberate laps to loosen his muscles, checked his spikes four times, practised his handover with an imaginary baton, and read the laminated card listing his split times from the last six meets twice.";
+  assert.equal(
+    checkAcceptedAnswerSet(liveAnswer, RACEDAY_01_TIER2.acceptedAnswers!).correct,
+    false,
+    "reproduces the live defect exactly: 'practised his handover' cannot match 'practised the handover', and the malformed 'jogged/warmed up...' phrase can never match any real answer"
+  );
+});
+
+test("w1-raceday-01: the migration-183 corrected acceptedAnswers array accepts the same live answer", () => {
+  const liveAnswer =
+    "He jogged slow, deliberate laps to loosen his muscles, checked his spikes four times, practised his handover with an imaginary baton, and read the laminated card listing his split times from the last six meets twice.";
+  const corrected = [
+    "jogged up and checked his spikes",
+    "warmed up and checked his spikes",
+    "practised the handover",
+    "practised his handover",
+    "warmed up thoroughly",
+  ];
+  assert.equal(checkAcceptedAnswerSet(liveAnswer, corrected).correct, true);
+  // a genuinely wrong answer (Cass's routine, not Ade's) must remain rejected
+  assert.equal(checkAcceptedAnswerSet("she ate half a banana and lay on the grass", corrected).correct, false);
+});
+
+test("w3-rc10-wc-01 ('unusual care', this session's own walkthrough answer): the pre-migration-183 acceptedAnswers array rejects it", () => {
+  const liveAnswer =
+    "It suggests the chairs were arranged deliberately and neatly, in a way that felt out of the ordinary, hinting that someone had planned or prepared the room carefully rather than tidying it in the usual rushed way, which adds to the strange, unsettling atmosphere.";
+  const preFix = [
+    "someone arranged the room deliberately/carefully, which is unusual",
+    "it hints that something out of the ordinary has occurred",
+    "it shows the tidiness is not accidental",
+  ];
+  assert.equal(checkAcceptedAnswerSet(liveAnswer, preFix).correct, false);
+});
+
+test("w3-rc10-wc-01: the migration-183 corrected acceptedAnswers array accepts the same walkthrough answer", () => {
+  const liveAnswer =
+    "It suggests the chairs were arranged deliberately and neatly, in a way that felt out of the ordinary, hinting that someone had planned or prepared the room carefully rather than tidying it in the usual rushed way, which adds to the strange, unsettling atmosphere.";
+  const corrected = [
+    "someone arranged the room deliberately, which is unusual",
+    "someone arranged the room carefully, which is unusual",
+    "planned or prepared the room carefully",
+    "it hints that something out of the ordinary has occurred",
+    "it shows the tidiness is not accidental",
+    "the arrangement was deliberate and planned, not accidental tidying",
+  ];
+  assert.equal(checkAcceptedAnswerSet(liveAnswer, corrected).correct, true);
+  // a genuinely wrong / off-topic answer must remain rejected
+  assert.equal(checkAcceptedAnswerSet("the chairs were made of wood", corrected).correct, false);
+});
+
+test("w3-rc10-am-06 (Storm at the Harbour, LIVE, walkthrough-confirmed defect): the pre-migration-184 acceptedAnswers array rejects a genuinely correct answer -- no slash malformation here, a pure coverage gap", () => {
+  const liveAnswer =
+    "This suggests a tense, anxious atmosphere that people are trying to hide. Nobody says 'storm' out loud, showing they are avoiding voicing their fear directly, yet their faster movements and lack of smiling reveal that underneath the surface everyone is worried and on edge about the boats still out at sea.";
+  const preFix = [
+    "there is a hidden or unspoken worry among everyone present",
+    "people are anxious but trying not to show it openly",
+    "the tension is felt but not directly discussed",
+  ];
+  assert.equal(checkAcceptedAnswerSet(liveAnswer, preFix).correct, false);
+});
+
+test("w3-rc10-am-06: the migration-184 corrected acceptedAnswers array accepts the same live answer", () => {
+  const liveAnswer =
+    "This suggests a tense, anxious atmosphere that people are trying to hide. Nobody says 'storm' out loud, showing they are avoiding voicing their fear directly, yet their faster movements and lack of smiling reveal that underneath the surface everyone is worried and on edge about the boats still out at sea.";
+  const corrected = [
+    "there is a hidden or unspoken worry among everyone present",
+    "people are anxious but trying not to show it openly",
+    "the tension is felt but not directly discussed",
+    "avoiding voicing their fear directly",
+  ];
+  assert.equal(checkAcceptedAnswerSet(liveAnswer, corrected).correct, true);
+  // an off-topic / materially wrong answer must remain rejected
+  assert.equal(checkAcceptedAnswerSet("it suggests a calm, relaxed atmosphere with nothing to worry about", corrected).correct, false);
+});
+
+test("regression: no accepted-answer string anywhere in the two families touched by migration 183 still contains a slash — the defect class cannot silently reappear in these rows", () => {
+  const allCorrectedArrays: string[][] = [
+    ["from scared to relieved", "fear to relief", "anxious to happy", "anxious to laughing"],
+    ["a sentence about moving from leicester", "an opening line about leicester", "an opening line about disinfectant"],
+    ["it had been forgotten for a long time", "personification of the padlock waiting", "suggests it has been neglected", "suggests it has been abandoned"],
+    ["jogged up and checked his spikes", "warmed up and checked his spikes", "practised the handover", "practised his handover", "warmed up thoroughly"],
+    ["she is very relaxed about winning", "she is very unbothered about winning", "she doesn't worry about the result", "casual, confident attitude"],
+    ["it creates suspense before the reveal", "it creates tension before the reveal", "it shows her hesitating, delaying the moment of finding out", "it emphasises the anticipation building throughout the passage"],
+    ["someone arranged the room deliberately, which is unusual", "someone arranged the room carefully, which is unusual", "planned or prepared the room carefully", "it hints that something out of the ordinary has occurred", "it shows the tidiness is not accidental", "the arrangement was deliberate and planned, not accidental tidying"],
+    ["she is not fully sure whose handwriting it is, only partly familiar", "it creates uncertainty about the sender", "it creates mystery about the sender", "she has some recognition but cannot place it exactly"],
+  ];
+  for (const arr of allCorrectedArrays) {
+    for (const answer of arr) {
+      assert.equal(answer.includes("/"), false, `"${answer}" must not contain a slash after correction`);
+    }
+  }
+});

@@ -268,3 +268,10 @@ test("undefined and empty input return an empty string, never a fabricated messa
 test("a slug already ending mid-word with no trailing period still gets exactly one added, never doubled", () => {
   assert.equal(humanizeMisconceptionText("misreading-the-question"), "Misreading the question.");
 });
+
+test("Gate 4/5 walkthrough defect: the exact live-observed raw slug (Storm at the Harbour, w3-rc10-am-06) now humanizes correctly -- the function itself already worked, it was only never called on the Reading render path (fixed in app/learning-intelligence/practice/[area]/page.tsx)", () => {
+  assert.equal(
+    humanizeMisconceptionText("focuses-only-on-the-physical-action-of-moving-faster-missing-the-implied-unspoken-fear"),
+    "Focuses only on the physical action of moving faster missing the implied unspoken fear."
+  );
+});

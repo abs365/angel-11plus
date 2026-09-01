@@ -1088,11 +1088,21 @@ function ReadingActivity({
               identically (submitted && !lastCorrect): for the 3
               self-assessed families this only becomes reachable once the
               learner has judged their own answer "Not quite" and
-              lastCorrect resolves to false, never before. */}
+              lastCorrect resolves to false, never before.
+              Gate 4/5 walkthrough defect: this render call was passing
+              that value straight through unhumanized, so any row authored
+              (like migration 063's whole QT-RC-10 batch) with a kebab-
+              case slug value rendered that raw slug verbatim to the
+              learner. MathsActivity's own equivalent block already guards
+              against exactly this via a shared humaniser (lib/
+              learningEngine/practiceInteractionGuard.ts) -- applying the
+              same existing, already-tested function here, rather than
+              hand-editing individual content rows, fixes every current
+              and future slug-shaped value generically. */}
           {shouldRenderMisconceptionNote(submitted, lastCorrect, addressesMisconception) && (
             <div className="text-xs text-blue-700 dark:text-blue-300 bg-blue-50 dark:bg-blue-950 rounded-xl p-3 mt-3">
               <p className="font-semibold">A common mistake with this kind of question:</p>
-              <p className="mt-1">{addressesMisconception}</p>
+              <p className="mt-1">{humanizeMisconceptionText(addressesMisconception)}</p>
             </div>
           )}
           {submitted && prompt.modelAnswer && (

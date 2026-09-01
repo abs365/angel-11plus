@@ -150,3 +150,37 @@ test("Wave 2: no question declares its own eligibility_status in content data", 
     assert.ok(!("eligibilityStatus" in it), `${it.id} must not declare its own eligibility_status in content data`);
   }
 });
+
+test("Gate 4/5 walkthrough correction (w2-morningpatrol-08, live production defect): exactly 4 of the 8 tick options are true against the passage's own text, matching correctOptions and the 'Tick 4' instruction", () => {
+  const item = items.find((i) => i.id === "w2-morningpatrol-08");
+  assert.ok(item, "w2-morningpatrol-08 must exist");
+  const passage = passages.find((p) => p.id === item!.passageId);
+  assert.ok(passage, "its passage must exist");
+  const text = passage!.originalText;
+
+  // Each option's own truth value, independently re-derived from the
+  // passage text -- not copied from correctOptions -- so this test would
+  // catch a future edit that reintroduces a mismatch between the option
+  // set and reality, not just re-assert today's stored answer key.
+  const optionTruth: Record<string, boolean> = {
+    A: false, // she abandoned the greenhouse this Tuesday, did not check it first
+    B: text.includes("The gate was already open"),
+    C: text.toLowerCase().includes("skipping her usual duck count"), // she skipped it, did not count as usual
+    D: text.includes("went straight to the rose beds"),
+    E: false, // she "considered waking him immediately, then reconsidered"
+    F: text.includes("a tent, badly pitched"),
+    G: text.includes("The rose beds were untouched"), // corrected option: true that they were untouched, so "found them disturbed" is false
+    H: text.includes("went back to the greenhouse to do her actual job first"),
+  };
+  // C and G are worded as the FALSE claim in the question (she did NOT
+  // count the ducks as usual; she did NOT find the rose beds disturbed),
+  // so their own passage-support flags above (which prove the opposite
+  // fact) must be inverted before comparing against correctOptions.
+  const trueOptions = Object.entries(optionTruth)
+    .map(([letter, supportsOppositeOfClaim]) => [letter, letter === "C" || letter === "G" ? !supportsOppositeOfClaim : supportsOppositeOfClaim] as const)
+    .filter(([, isTrue]) => isTrue)
+    .map(([letter]) => letter);
+
+  assert.deepEqual(trueOptions.sort(), [...item!.correctOptions!].sort(), "exactly the stored correctOptions must be true against the passage, no more, no fewer");
+  assert.equal(trueOptions.length, 4, "exactly 4 options must be true, matching the 'Tick 4' instruction and requiredSelectionCount");
+});

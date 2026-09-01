@@ -80,7 +80,15 @@ const LOCATE_INSTRUCTION_TEXT: Partial<Record<string, string>> = {
 
 export function getGuidedInstructionText(familyId?: string | null, kind?: GuidedScaffoldKind): string {
   if (kind === "selection-count-check") {
-    return "Tick as you go. Angel will warn you here, before you submit, if you have ticked more than the number asked for.";
+    // Gate 4/5 walkthrough finding: the question text itself deliberately
+    // keeps the real exam's own "Tick N boxes" wording (authentic to the
+    // paper format this mirrors), but there is no on-screen tick-box
+    // control -- the answer is typed as letters. The previous hint said
+    // "Tick as you go", which described a control that does not exist on
+    // this digital surface and could leave a learner looking for boxes to
+    // click. This corrects the HINT to explain the actual interaction,
+    // without changing the authentic exam-style question wording itself.
+    return "Type the letters of your answers, separated by commas or one per line (for example: B, D, F, H). Angel will warn you here, before you submit, if you have entered more than the number asked for.";
   }
   if (kind === "sequence-anchor") {
     return "The first item is given below to get you started. Work out where the remaining items belong.";

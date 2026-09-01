@@ -53,6 +53,12 @@ test("every family's instruction text is non-empty and family-specific, not one 
   assert.equal(locateTexts.size, locateFamilies.length, "locate-instruction families must not all share identical text");
 });
 
+test("Gate 4/5 walkthrough finding (w2-morningpatrol-08, live): the multi-select instruction no longer tells the learner to 'tick' a control that does not exist on this digital surface", () => {
+  const text = getGuidedInstructionText("wave2-fam-multiselect", "selection-count-check");
+  assert.ok(!/\btick\b/i.test(text), `instruction still says "tick" despite there being no tick-box control: "${text}"`);
+  assert.match(text, /type the letters/i, "instruction must explain the actual free-text interaction");
+});
+
 test("multiselect live count: under the required count is not over limit", () => {
   const r = checkLiveSelectionCount("A, B", 4);
   assert.equal(r.selectedCount, 2);

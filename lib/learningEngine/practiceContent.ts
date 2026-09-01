@@ -157,6 +157,64 @@ export function parseNumberWithUnit(raw: string): ParsedMeasurement | null {
   return Number.isFinite(bare) ? { value: bare, unit: null } : null;
 }
 
+/**
+ * Gate 4/5 walkthrough defect (live production, "A 17m plank is cut into 6
+ * equal pieces... Give your answer as an exact fraction of a metre, in its
+ * simplest form"): the correct answer was stored as the mixed number "2
+ * 5/6", and checkMathsAnswer() had no concept of fraction syntax at all --
+ * normalizeNumeric() calls plain `Number()`, which cannot parse "17/6" or
+ * "2 5/6" (space-stripping collapses the latter to the nonsense token
+ * "25/6"), so BOTH forms fell straight through to the exact-text fallback.
+ * A learner who correctly answered "17/6" -- a fully-reduced, exact
+ * fraction that satisfies the question's own instruction to the letter --
+ * was told they were wrong, with the UI incorrectly implying they had
+ * given "a rounded decimal approximation" instead.
+ *
+ * Root-cause fix, not a per-question patch: parses both canonical fraction
+ * syntaxes (`a/b` and the mixed-number `a b/c`) into their exact rational
+ * value. Deliberately only a value parser, not a general numeric one --
+ * this must never become a second, looser way to accept a rounded decimal
+ * for an MR-06 precision-under-exact-match item (checkMathsAnswer's
+ * existing 0.0001-tolerance numeric path already exists for genuine
+ * decimal answers; this function is not a substitute for it and is not
+ * consulted unless the stored answer itself is fraction-formatted).
+ */
+function gcd(a: number, b: number): number {
+  let x = Math.abs(a);
+  let y = Math.abs(b);
+  while (y !== 0) {
+    [x, y] = [y, x % y];
+  }
+  return x;
+}
+
+export interface ParsedFraction {
+  value: number;
+  /** False for a numerator/denominator sharing a common factor > 1 (e.g. "4/6") -- a question requiring "simplest form" must not accept an unreduced fraction merely because its value happens to match; that is a materially different, non-compliant answer, not a formatting difference. */
+  inLowestTerms: boolean;
+}
+
+export function parseExactFraction(raw: string): ParsedFraction | null {
+  const cleaned = raw.trim().replace(/\s+/g, " ");
+  const mixed = cleaned.match(/^(-?\d+)\s(\d+)\/(\d+)$/);
+  if (mixed) {
+    const whole = Number(mixed[1]);
+    const numerator = Number(mixed[2]);
+    const denominator = Number(mixed[3]);
+    if (denominator === 0) return null;
+    const sign = whole < 0 ? -1 : 1;
+    return { value: whole + sign * (numerator / denominator), inLowestTerms: gcd(numerator, denominator) === 1 };
+  }
+  const simple = cleaned.match(/^(-?\d+)\/(\d+)$/);
+  if (simple) {
+    const numerator = Number(simple[1]);
+    const denominator = Number(simple[2]);
+    if (denominator === 0) return null;
+    return { value: numerator / denominator, inLowestTerms: gcd(numerator, denominator) === 1 };
+  }
+  return null;
+}
+
 export function checkMathsAnswer(userAnswer: string, correctAnswer: string): boolean {
   const userTrimmed = userAnswer.trim();
   const correctTrimmed = correctAnswer.trim();
@@ -171,6 +229,23 @@ export function checkMathsAnswer(userAnswer: string, correctAnswer: string): boo
   const correctNum = normalizeNumeric(correctFirstAlt);
   if (userNum !== null && correctNum !== null) {
     return Math.abs(userNum - correctNum) < 0.0001;
+  }
+
+  // Fraction/mixed-number equivalence (see parseExactFraction doc comment
+  // above). Only activates when the STORED answer is itself fraction-
+  // formatted, and only accepts a user answer that is ALSO given in exact
+  // fraction syntax AND already in lowest terms -- a decimal-only user
+  // answer (e.g. "2.83") or an unreduced fraction (e.g. "4/6") is
+  // deliberately left to fall through to the text path below, where it
+  // will continue to be rejected, preserving both MR-06's "exact form
+  // required, no rounded decimal" intent and any question's own "simplest
+  // form" instruction unchanged.
+  const correctFraction = parseExactFraction(correctFirstAlt);
+  if (correctFraction !== null) {
+    const userFraction = parseExactFraction(userTrimmed);
+    if (userFraction !== null && userFraction.inLowestTerms) {
+      return Math.abs(userFraction.value - correctFraction.value) < 1e-9;
+    }
   }
 
   // Educational Increment 007K — unit-aware path. Only activates when the

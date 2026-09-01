@@ -372,11 +372,20 @@ items.push(
   q({
     id: "w2-morningpatrol-08", passageId: "wave2-eng-morningpatrol", family: "wave2-fam-multiselect",
     competency: "RC-01", qType: "QT-RC-09", legacySkill: "evidence", marks: 4,
-    question: "Tick 4 boxes that accurately describe things Priya did in the passage. A. She checked the greenhouse first, as usual. B. She found the gate already open. C. She counted the ducks as usual. D. She went straight to the rose beds. E. She woke the boy immediately. F. She found a tent at the old oak. G. She skipped her usual duck count. H. She returned to the greenhouse before dealing with the boy.",
+    // Gate 4/5 live production walkthrough (Assessment Integrity
+    // Correction, this session) found the original option G, "She skipped
+    // her usual duck count," is ALSO directly true per the passage ("skipping
+    // her usual duck count in her hurry") -- making 5 of the 8 options true
+    // against a "Tick 4"/correctOptions-of-4 contract, an unanswerable
+    // exact-match question. Corrected to a genuinely false, same-style
+    // direct-contradiction distractor (mirrors option E's own failure
+    // mode), matching supabase/migrations/185_morning_patrol_tick_selection_answer_key_correction.sql.
+    // Passage, modelAnswer, correctOptions and every other option unchanged.
+    question: "Tick 4 boxes that accurately describe things Priya did in the passage. A. She checked the greenhouse first, as usual. B. She found the gate already open. C. She counted the ducks as usual. D. She went straight to the rose beds. E. She woke the boy immediately. F. She found a tent at the old oak. G. She found the rose beds disturbed. H. She returned to the greenhouse before dealing with the boy.",
     modelAnswer: "B, D, F, H: the gate was open; she went to the rose beds first; she found the tent at the oak; she returned to the greenhouse before dealing with the boy.",
     correctOptions: ["B", "D", "F", "H"], requiredSelectionCount: 4,
     transferClass: "MIXED_TRANSFER", validation: "TIER6_MULTI_SELECT",
-    misconception: "Selecting A or C, which describe her USUAL routine rather than what actually happened this disrupted Tuesday; or selecting E, which the passage explicitly says she did not do.",
+    misconception: "Selecting A or C, which describe her USUAL routine rather than what actually happened this disrupted Tuesday; selecting E, which the passage explicitly says she did not do; or selecting G, since the passage states the rose beds were untouched.",
   })
 );
 

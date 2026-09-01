@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { checkMathsAnswer, parseNumberWithUnit, scoreEnglishAnswer } from "../../../lib/learningEngine/practiceContent";
+import { checkMathsAnswer, parseExactFraction, parseNumberWithUnit, scoreEnglishAnswer } from "../../../lib/learningEngine/practiceContent";
 
 // --- Stage 2 Educational Integrity Correction: scoreEnglishAnswer (legacy
 // English heuristic, reached with NO self-assessment step at all — its
@@ -254,6 +254,42 @@ test("regression: MR-06 precision (fraction and 2-decimal-place) answers unaffec
   assert.equal(checkMathsAnswer("3.2", "3.17"), false, "a wrongly rounded answer must not become accepted by this fix");
   assert.equal(checkMathsAnswer("3 1/3", "3 1/3"), true);
   assert.equal(checkMathsAnswer("3 1/2", "3 1/3"), false);
+});
+
+test("Gate 4/5 live defect: precision-frac-03 (17m plank / 6, answer stored as '2 5/6') now accepts the equivalent exact improper fraction", () => {
+  const correct = "2 5/6";
+  assert.equal(checkMathsAnswer("2 5/6", correct), true, "the exact stored form must keep working");
+  assert.equal(checkMathsAnswer("17/6", correct), true, "the live-reported defect: a correct, fully-reduced improper fraction must no longer be rejected");
+  assert.equal(checkMathsAnswer("2 5/7", correct), false, "a genuinely wrong mixed number must remain rejected");
+  assert.equal(checkMathsAnswer("18/6", correct), false, "a wrong-value improper fraction must remain rejected");
+  assert.equal(checkMathsAnswer("2.83", correct), false, "a rounded decimal approximation must remain rejected -- MR-06's exact-match intent is preserved");
+  assert.equal(checkMathsAnswer("34/12", correct), false, "an unreduced (non-simplest-form) fraction must remain rejected even though its value matches");
+});
+
+test("fraction/mixed-number equivalence generalises to every other stored mixed-number Mathematics answer, not just the one reported question", () => {
+  assert.equal(checkMathsAnswer("10/3", "3 1/3"), true);
+  assert.equal(checkMathsAnswer("20/7", "2 6/7"), true);
+  assert.equal(checkMathsAnswer("3/2", "1 1/2"), true);
+  assert.equal(checkMathsAnswer("45/4", "11 1/4"), true);
+  assert.equal(checkMathsAnswer("29/24", "1 5/24"), true);
+  // and the reverse direction: a mixed-number user answer against a
+  // stored improper-fraction correct answer must also now be accepted.
+  assert.equal(checkMathsAnswer("2 5/6", "17/6"), true);
+});
+
+test("fraction equivalence never weakens simplest-form or wrong-value rejection for proper (<1) fraction answers", () => {
+  assert.equal(checkMathsAnswer("2/3", "2/3"), true);
+  assert.equal(checkMathsAnswer("4/6", "2/3"), false, "unreduced fraction, must not be accepted merely because the value matches");
+  assert.equal(checkMathsAnswer("1/3", "2/3"), false);
+});
+
+test("parseExactFraction: value and lowest-terms detection", () => {
+  assert.deepEqual(parseExactFraction("17/6"), { value: 17 / 6, inLowestTerms: true });
+  assert.deepEqual(parseExactFraction("2 5/6"), { value: 17 / 6, inLowestTerms: true });
+  assert.deepEqual(parseExactFraction("4/6"), { value: 2 / 3, inLowestTerms: false });
+  assert.equal(parseExactFraction("2.83"), null, "a decimal must not be misread as a fraction");
+  assert.equal(parseExactFraction("abc"), null);
+  assert.equal(parseExactFraction("5/0"), null, "division by zero must never be evaluated");
 });
 
 test("regression: existing semicolon-delimited accepted alternatives still take priority and are unaffected", () => {

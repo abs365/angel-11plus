@@ -55,11 +55,28 @@ test("ReadingActivity renders addressesMisconception, gated via the shared shoul
   );
 });
 
-test("ReadingActivity's remediation block actually interpolates the real addressesMisconception value, not a hardcoded placeholder", () => {
+test("ReadingActivity's remediation block actually interpolates the real addressesMisconception value (via the shared humaniser, matching MathsActivity), not a hardcoded placeholder", () => {
+  // Gate 4/5 walkthrough fix: a raw {addressesMisconception} interpolation
+  // rendered migration 063's kebab-case slug values verbatim to real
+  // learners (e.g. "focuses-only-on-the-physical-action-of-moving-faster-
+  // missing-the-implied-unspoken-fear"). Now wrapped in the same
+  // humanizeMisconceptionText() MathsActivity's own block already used --
+  // still the real prop value, just presentation-normalised, never a
+  // hardcoded string (see practiceInteractionGuard.test.ts for the
+  // humaniser's own pass-through-on-real-prose / slug-shape-only
+  // behaviour).
   const src = readingActivitySource();
-  const blockMatch = src.match(/\{shouldRenderMisconceptionNote\(submitted, lastCorrect, addressesMisconception\) && \(([\s\S]*?)\)\}/);
-  assert.ok(blockMatch, "remediation block not found");
-  assert.match(blockMatch![1], /\{addressesMisconception\}/, "the block must render the real prop value");
+  // The shared block-extraction regex used by the tests below is
+  // non-greedy and stops at the first ")}" it finds -- which, unlike the
+  // old bare `{addressesMisconception}` form, now falls INSIDE
+  // `{humanizeMisconceptionText(addressesMisconception)}` itself (the "n)"
+  // then "}" of its own closing parenthesis+brace), truncating the
+  // captured block early. A direct substring check on the gated section's
+  // start avoids that regex artifact rather than fighting it.
+  const gateIndex = src.indexOf("shouldRenderMisconceptionNote(submitted, lastCorrect, addressesMisconception) && (");
+  assert.ok(gateIndex !== -1, "remediation block not found");
+  const nearby = src.slice(gateIndex, gateIndex + 600);
+  assert.match(nearby, /\{humanizeMisconceptionText\(addressesMisconception\)\}/, "the block must render the real prop value through the shared humaniser");
 });
 
 test("the remediation framing never claims to know the specific learner's own reasoning (no 'you probably thought' / 'you assumed' phrasing)", () => {
