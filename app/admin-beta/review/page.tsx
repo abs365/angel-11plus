@@ -56,6 +56,11 @@ import {
   MOCK_ENGLISH_INC001_WRITING_FAMILIES, MOCK_ENGLISH_INC001_WRITING_TARGET_IDS,
   fetchAmendmentVerificationEligibleTargets, fetchAmendmentVerificationStatus, buildAmendmentVerificationNotesPrefix,
   submitAmendmentVerification, ENGLISH_INC001_AMENDMENT_REGISTER,
+  fetchMathIncrement007to009ReviewStatus, buildMathIncrement007to009NotesPrefix,
+  MATH_INCREMENT007_009_FAMILIES, MATH_INCREMENT007_009_TARGET_IDS,
+  fetchReadingRemediationReviewStatus,
+  fetchWritingDepthExtensionReviewStatus, buildWritingDepthExtensionNotesPrefix,
+  WRITING_DEPTH_EXTENSION_FAMILIES, WRITING_DEPTH_EXTENSION_TARGET_IDS,
   type PendingReviewTarget, type RepresentativeQuestion, type PassageDetail, type ReviewDecision, type ReviewSubmission,
   type TargetSummary, type MathsTeachingReviewSubmission, type SevenXReviewStatus, type SevenXFamilyConfig,
   type AmendmentVerificationTarget, type ReviewType,
@@ -192,6 +197,14 @@ const SEVEN_T_TARGET_IDS = [...SEVEN_T_MATHS_TARGET_IDS, ...SEVEN_T_ENGLISH_TARG
 // drift apart.
 
 const FAMILY_DISPLAY_NAME: Record<string, string> = {
+  "mock-mr11-impossibletotal": "Impossible-Total Reasoning (Frobenius/Coin-Problem)",
+  "mock-mr05-numberpyramid": "Number-Pyramid Deduction",
+  "mock-mr13-toppingcombos": "Combinatorial Counting",
+  "mock-mr06-agenarrative": "Age-Narrative Algebra",
+  "mock-mr12-weightedmeancombine": "Two-Group Weighted Mean",
+  "mock-mr12-weightedmeanreverse": "Two-Group Weighted Mean (Reverse)",
+  "eng-inc003-writing-wc01a-favouriteplace": "Your Favourite Place to Be",
+  "eng-inc003-writing-wc01a-pocketmoney": "Pocket Money or Helping Anyway?",
   "wave2-fam-multiselect": "Selecting Multiple Correct Statements",
   "wave1-fam-sequencing": "Sequencing Events and Evidence",
   "wave1-fam-quote-explain": "Quotation and Explanation",
@@ -2742,6 +2755,195 @@ function MockStructuralCapacityIncrement006Section({
   );
 }
 
+/**
+ * Founder Completion and Readiness Programme — Mathematics Structural
+ * Capacity, Increments 007-009 (migrations 170/174/176). All five of
+ * Decision 226's confirmed gap archetypes, one consolidated section
+ * spanning three underlying migration markers (see
+ * fetchMathIncrement007to009ReviewStatus in lib/adminReview.ts).
+ */
+function MathIncrement007to009Section({
+  targets, status, onOpen,
+}: {
+  targets: PendingReviewTarget[];
+  status: Map<string, SevenXReviewStatus>;
+  onOpen: (t: PendingReviewTarget, family: SevenXFamilyConfig) => void;
+}) {
+  const reviewedCount = MATH_INCREMENT007_009_FAMILIES.filter((f) => status.get(f.familyId)?.reviewed).length;
+  const totalQuestions = MATH_INCREMENT007_009_FAMILIES.reduce((n, f) => n + f.newQuestionIds.length, 0);
+  const markerByFamily: Record<string, string> = {
+    "mock-mr11-impossibletotal": "MOCK-STRUCTURAL-CAPACITY-INCREMENT007",
+    "mock-mr05-numberpyramid": "MOCK-STRUCTURAL-CAPACITY-INCREMENT008",
+    "mock-mr13-toppingcombos": "MOCK-STRUCTURAL-CAPACITY-INCREMENT008",
+    "mock-mr06-agenarrative": "MOCK-STRUCTURAL-CAPACITY-INCREMENT008",
+    "mock-mr12-weightedmeancombine": "MOCK-STRUCTURAL-CAPACITY-INCREMENT009",
+    "mock-mr12-weightedmeanreverse": "MOCK-STRUCTURAL-CAPACITY-INCREMENT009",
+  };
+  return (
+    <div id="math-review-increment007-009" className="bg-white dark:bg-gray-900 rounded-2xl border-2 border-amber-200 dark:border-amber-800 overflow-hidden scroll-mt-4">
+      <div className="px-5 py-4 border-b border-amber-100 dark:border-amber-900 bg-amber-50 dark:bg-amber-950/40">
+        <p className="text-sm font-bold text-amber-900 dark:text-amber-200">Mathematics Structural Capacity, Increments 007-009 Review (all 5 Decision 226 gap archetypes)</p>
+        <p className="text-xs text-amber-600 dark:text-amber-400 mt-0.5">
+          {reviewedCount} of {MATH_INCREMENT007_009_FAMILIES.length} families reviewed. {totalQuestions} new questions total across 6 families.
+        </p>
+        <div className="mt-2 text-xs text-amber-800 dark:text-amber-300 space-y-0.5">
+          <p>• Mock candidates, not Practice content: none has ever been, or will be, automatically promoted from Practice.</p>
+          <p>• All {totalQuestions} questions are currently <strong>authentic_assessment_candidate</strong>. None is mock_eligible. None is used by any Mock form.</p>
+          <p>• Every answer independently re-verified against the real CSSE primary-source paper/mark scheme by two hand methods, plus a third, code-based check (scripts/verify-increment007-009-mathematics-answers.mjs): all 13 rows pass.</p>
+          <p>• One citation error was found and corrected: mock-mr12-weightedmeancombine&apos;s/-reverse&apos;s real source is 2023 Q19, not Decision 226&apos;s original &quot;2022 Q15&quot; citation. See that family&apos;s own disclosure below.</p>
+          <p>• Approving a family here does not activate it: promotion to independently_validated, and any later move to mock_eligible, remain separate, later, Founder-authorised steps.</p>
+        </div>
+      </div>
+      <div className="divide-y divide-gray-50 dark:divide-gray-800">
+        {MATH_INCREMENT007_009_FAMILIES.map((f) => {
+          const s = status.get(f.familyId);
+          const marker = markerByFamily[f.familyId];
+          const pendingTarget = targets.find((t) => t.id === f.familyId && (t.notes ?? "").includes(marker));
+          return (
+            <button
+              key={f.familyId}
+              disabled={!pendingTarget}
+              onClick={() => pendingTarget && onOpen(pendingTarget, f)}
+              className="w-full text-left px-5 py-3 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors flex items-center justify-between gap-3 disabled:opacity-50"
+            >
+              <div>
+                <p className="text-sm font-medium text-gray-900 dark:text-gray-100">{FAMILY_DISPLAY_NAME[f.familyId] ?? formatFallbackName(f.familyId)}</p>
+                <p className="text-[11px] text-gray-400 dark:text-gray-500 mt-0.5">
+                  {f.newQuestionIds.length} new question{f.newQuestionIds.length === 1 ? "" : "s"}
+                  {s?.reviewed ? ` · reviewed (${s.decision})` : " · not yet reviewed"}
+                  {!pendingTarget ? " · review registration migration (171/175/177) not yet applied" : ""}
+                </p>
+              </div>
+              {s?.reviewed ? <CheckCircle2 size={16} className="text-emerald-500 shrink-0" /> : <ArrowRight size={14} className="text-gray-300 dark:text-gray-600 shrink-0" />}
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+/**
+ * Founder Completion and Readiness Programme — Reading Practice
+ * Remediation (migrations 178/179). 11 passages, each with 2 NEW
+ * additive companion questions fixing Wave 1's fixed-sequence defect or
+ * Wave 3's QT-RC-10 monoculture — every existing question on these
+ * passages is untouched and keeps its own prior approval; this review
+ * judges only whether the 2 new companion questions per passage
+ * genuinely fix the structural defect.
+ */
+function ReadingRemediationSection({
+  targets, status, onOpen,
+}: {
+  targets: PendingReviewTarget[];
+  status: Map<string, SevenXReviewStatus>;
+  onOpen: (t: PendingReviewTarget) => void;
+}) {
+  const passages: { id: string; title: string; wave: 1 | 3; newQuestions: string[] }[] = [
+    { id: "wave1-eng-kitemaker", title: "The Kite Maker", wave: 1, newQuestions: ["RC-10 effect-of-language", "RC-02 motive-inference"] },
+    { id: "wave1-eng-lastbus", title: "The Last Bus", wave: 1, newQuestions: ["RC-10 effect-of-language", "RC-07 comparative"] },
+    { id: "wave1-eng-newgirl", title: "The New Girl", wave: 1, newQuestions: ["RC-07 comparative", "RC-02 motive-inference"] },
+    { id: "wave1-eng-atticdoor", title: "The Attic Door", wave: 1, newQuestions: ["RC-10 effect-of-language", "RC-02 motive-inference"] },
+    { id: "wave1-eng-raceday", title: "Race Day", wave: 1, newQuestions: ["RC-07 comparative", "RC-10 effect-of-language"] },
+    { id: "wave1-eng-lettertonana", title: "A Letter to Nana", wave: 1, newQuestions: ["RC-07 comparative", "RC-02 motive-inference"] },
+    { id: "wave3-eng-emptyclassroom", title: "The Empty Classroom", wave: 3, newQuestions: ["RC-01 retrieval", "RC-08 emotion"] },
+    { id: "wave3-eng-bakersapprentice", title: "The Baker's Apprentice", wave: 3, newQuestions: ["RC-01 retrieval", "RC-07 comparative"] },
+    { id: "wave3-eng-lettertograndad", title: "Letter to Grandad", wave: 3, newQuestions: ["RC-01 retrieval", "RC-06 sequencing"] },
+    { id: "wave3-eng-stormharbour", title: "The Storm at the Harbour", wave: 3, newQuestions: ["RC-01 retrieval", "RC-08 emotion"] },
+    { id: "wave3-eng-newtrainers", title: "The New Trainers", wave: 3, newQuestions: ["RC-01 retrieval", "RC-07 comparative"] },
+  ];
+  const reviewedCount = passages.filter((p) => status.get(p.id)?.reviewed).length;
+  return (
+    <div id="reading-remediation-review" className="bg-white dark:bg-gray-900 rounded-2xl border-2 border-slate-200 dark:border-slate-800 overflow-hidden scroll-mt-4">
+      <div className="px-5 py-4 border-b border-slate-100 dark:border-slate-900 bg-slate-50 dark:bg-slate-950/40">
+        <p className="text-sm font-bold text-slate-900 dark:text-slate-200">Reading Practice Remediation Review (Wave 1 + Wave 3)</p>
+        <p className="text-xs text-slate-600 dark:text-slate-400 mt-0.5">{reviewedCount} of {passages.length} passages reviewed · 22 new companion questions total</p>
+        <div className="mt-2 text-xs text-slate-800 dark:text-slate-300 space-y-0.5">
+          <p>• Wave 1&apos;s 6 passages previously shared an identical 7-question-type sequence in the same order every time; Wave 3&apos;s 5 passages were exclusively QT-RC-10. Both defects are addressed additively: every existing question is untouched and keeps its own prior approval.</p>
+          <p>• Judge whether the 2 new companion questions per passage arise naturally from that passage&apos;s own text, improve reasoning diversity, remain selective-standard, and have unambiguous, textually-grounded answers.</p>
+          <p>• All 22 new questions are currently <strong>provisional</strong> (matching each wave&apos;s own original convention). None is practice_eligible. The wave1-fam-tick-justify family is NOT included anywhere in this batch: it remains deliberately excluded pending a separate self-assessment-validity mechanism fix.</p>
+          <p>• Anti-memorisation, honestly assessed: risk moved from HIGH/MEDIUM-HIGH toward LOW-MEDIUM, not fully to LOW. The specific pair of new types repeats across 2 passages each (3 distinct pairs across the 6 Wave 1 passages), and every Wave 3 passage gets exactly one RC-01 companion. Content is passage-specific throughout even where the type-pair label repeats.</p>
+        </div>
+      </div>
+      <div className="divide-y divide-gray-50 dark:divide-gray-800">
+        {passages.map((p) => {
+          const s = status.get(p.id);
+          const pendingTarget = targets.find((t) => t.id === p.id && t.reviewTargetType === "passage" && (t.notes ?? "").includes("READING-REMEDIATION"));
+          return (
+            <button
+              key={p.id}
+              disabled={!pendingTarget}
+              onClick={() => pendingTarget && onOpen(pendingTarget)}
+              className="w-full text-left px-5 py-3 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors flex items-center justify-between gap-3 disabled:opacity-50"
+            >
+              <div>
+                <p className="text-sm font-medium text-gray-900 dark:text-gray-100">{p.title} <span className="text-[10px] font-normal text-gray-400">(Wave {p.wave})</span></p>
+                <p className="text-[11px] text-gray-400 dark:text-gray-500 mt-0.5">
+                  +{p.newQuestions.join(", ")}
+                  {s?.reviewed ? ` · reviewed (${s.decision})` : " · not yet reviewed"}
+                  {!pendingTarget ? " · migration 180 not yet applied" : ""}
+                </p>
+              </div>
+              {s?.reviewed ? <CheckCircle2 size={16} className="text-emerald-500 shrink-0" /> : <ArrowRight size={14} className="text-gray-300 dark:text-gray-600 shrink-0" />}
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+/**
+ * Founder Completion and Readiness Programme — Continuous Writing,
+ * "Your Favourite Place to Be" (unchanged) + "Pocket Money or Helping
+ * Anyway?" (checklist corrected, migration 173).
+ */
+function WritingDepthExtensionSection({
+  targets, status, onOpen,
+}: {
+  targets: PendingReviewTarget[];
+  status: Map<string, SevenXReviewStatus>;
+  onOpen: (t: PendingReviewTarget, family: SevenXFamilyConfig) => void;
+}) {
+  const reviewedCount = WRITING_DEPTH_EXTENSION_FAMILIES.filter((f) => status.get(f.familyId)?.reviewed).length;
+  return (
+    <div id="writing-depth-extension-review" className="bg-white dark:bg-gray-900 rounded-2xl border-2 border-amber-200 dark:border-amber-800 overflow-hidden scroll-mt-4">
+      <div className="px-5 py-4 border-b border-amber-100 dark:border-amber-900 bg-amber-50 dark:bg-amber-950/40">
+        <p className="text-sm font-bold text-amber-900 dark:text-amber-200">Continuous Writing, Depth Extension Review (Decision 259)</p>
+        <p className="text-xs text-amber-600 dark:text-amber-400 mt-0.5">{reviewedCount} of {WRITING_DEPTH_EXTENSION_FAMILIES.length} prompts reviewed</p>
+        <div className="mt-2 text-xs text-amber-800 dark:text-amber-300 space-y-0.5">
+          <p>• &quot;Pocket Money or Helping Anyway?&quot;&apos;s checklist previously reused two coaching-tier items near-verbatim from mock-writing-cookopinion-01; migration 173 rewrites both to reflect this prompt&apos;s own genuine two-position-engagement demand. Confirm the CORRECTED checklist reads as prompt-specific, not merely reworded.</p>
+          <p>• &quot;Your Favourite Place to Be&quot; is unchanged since Decision 259, no defect found.</p>
+          <p>• Both remain <strong>authentic_assessment_candidate</strong>. Approving here does not activate Writing Practice, that remains a separate, later, Founder-authorised step (Decision 258&apos;s own standing finding).</p>
+        </div>
+      </div>
+      <div className="divide-y divide-gray-50 dark:divide-gray-800">
+        {WRITING_DEPTH_EXTENSION_FAMILIES.map((f) => {
+          const s = status.get(f.familyId);
+          const pendingTarget = targets.find((t) => t.id === f.familyId && (t.notes ?? "").includes("WRITING-DEPTH-EXTENSION-DECISION259"));
+          return (
+            <button
+              key={f.familyId}
+              disabled={!pendingTarget}
+              onClick={() => pendingTarget && onOpen(pendingTarget, f)}
+              className="w-full text-left px-5 py-3 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors flex items-center justify-between gap-3 disabled:opacity-50"
+            >
+              <div>
+                <p className="text-sm font-medium text-gray-900 dark:text-gray-100">{FAMILY_DISPLAY_NAME[f.familyId] ?? formatFallbackName(f.familyId)}</p>
+                <p className="text-[11px] text-gray-400 dark:text-gray-500 mt-0.5">
+                  {s?.reviewed ? `reviewed (${s.decision})` : "not yet reviewed"}
+                  {!pendingTarget ? " · migration 172 not yet applied" : ""}
+                </p>
+              </div>
+              {s?.reviewed ? <CheckCircle2 size={16} className="text-emerald-500 shrink-0" /> : <ArrowRight size={14} className="text-gray-300 dark:text-gray-600 shrink-0" />}
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
 function MockFirstMockCompoundBatch001Section({
   targets, status, onOpen,
 }: {
@@ -3410,6 +3612,15 @@ function ReviewDashboard() {
   const [selectedMockStructuralCapacityIncrement005, setSelectedMockStructuralCapacityIncrement005] = useState<{ target: PendingReviewTarget; family: SevenXFamilyConfig } | null>(null);
   const [mockStructuralCapacityIncrement006Status, setMockStructuralCapacityIncrement006Status] = useState<Map<string, SevenXReviewStatus>>(new Map());
   const [selectedMockStructuralCapacityIncrement006, setSelectedMockStructuralCapacityIncrement006] = useState<{ target: PendingReviewTarget; family: SevenXFamilyConfig } | null>(null);
+
+  const [mathIncrement007to009Status, setMathIncrement007to009Status] = useState<Map<string, SevenXReviewStatus>>(new Map());
+  const [selectedMathIncrement007to009, setSelectedMathIncrement007to009] = useState<{ target: PendingReviewTarget; family: SevenXFamilyConfig } | null>(null);
+
+  const [readingRemediationStatus, setReadingRemediationStatus] = useState<Map<string, SevenXReviewStatus>>(new Map());
+  const [selectedReadingRemediation, setSelectedReadingRemediation] = useState<PendingReviewTarget | null>(null);
+
+  const [writingDepthExtensionStatus, setWritingDepthExtensionStatus] = useState<Map<string, SevenXReviewStatus>>(new Map());
+  const [selectedWritingDepthExtension, setSelectedWritingDepthExtension] = useState<{ target: PendingReviewTarget; family: SevenXFamilyConfig } | null>(null);
   const [mockEnglishPassageBatch001Status, setMockEnglishPassageBatch001Status] = useState<Map<string, SevenXReviewStatus>>(new Map());
   const [selectedMockEnglishPassageBatch001, setSelectedMockEnglishPassageBatch001] = useState<PendingReviewTarget | null>(null);
   const [mockWritingBatch001Status, setMockWritingBatch001Status] = useState<Map<string, SevenXReviewStatus>>(new Map());
@@ -3429,7 +3640,7 @@ function ReviewDashboard() {
   const [amendmentReverifyConfirmed, setAmendmentReverifyConfirmed] = useState(false);
 
   async function load() {
-    const [pendingResult, reviewed, teachingReviewed, englishTeachingReviewed, writingTeachingReviewed, sevenX, mr04Depth, inc006Depth, mockMrBatch001, mockMrBatch002, mockMrBatch003, mockFirstMockCompoundBatch001, mockSharedScenarioCompletionBatch, mockStructuralCapacityInc001, mockStructuralCapacityWave002, mockStructuralCapacityWave002Correction001, mockStructuralCapacityIncrement003, mockStructuralCapacityIncrement004, mockStructuralCapacityIncrement005, mockStructuralCapacityIncrement006, mockEnglishPassageBatch001, mockWritingBatch001, englishInc001Passage, englishInc001Writing, englishInc002Passage] = await Promise.all([
+    const [pendingResult, reviewed, teachingReviewed, englishTeachingReviewed, writingTeachingReviewed, sevenX, mr04Depth, inc006Depth, mockMrBatch001, mockMrBatch002, mockMrBatch003, mockFirstMockCompoundBatch001, mockSharedScenarioCompletionBatch, mockStructuralCapacityInc001, mockStructuralCapacityWave002, mockStructuralCapacityWave002Correction001, mockStructuralCapacityIncrement003, mockStructuralCapacityIncrement004, mockStructuralCapacityIncrement005, mockStructuralCapacityIncrement006, mockEnglishPassageBatch001, mockWritingBatch001, englishInc001Passage, englishInc001Writing, englishInc002Passage, mathIncrement007to009, readingRemediation, writingDepthExtension] = await Promise.all([
       fetchPendingReviewTargets(), fetchReviewedTargetIds(), fetchMathsTeachingReviewedFamilyIds(), fetchEnglishTeachingReviewedFamilyIds(), fetchWritingTeachingReviewedFamilyIds(),
       fetchSevenXReviewStatus(SEVEN_X_TARGET_IDS), fetchMr04DepthReviewStatus(MR04_DEPTH_TARGET_IDS), fetchInc006DepthReviewStatus(INC006_DEPTH_TARGET_IDS),
       fetchMockMrBatch001ReviewStatus(MOCK_MR_BATCH001_TARGET_IDS), fetchMockMrBatch002ReviewStatus(MOCK_MR_BATCH002_TARGET_IDS),
@@ -3446,6 +3657,9 @@ function ReviewDashboard() {
       fetchMockEnglishPassageBatch001ReviewStatus(), fetchMockWritingBatch001ReviewStatus(MOCK_WRITING_BATCH001_TARGET_IDS),
       fetchMockEnglishInc001PassageReviewStatus(), fetchMockEnglishInc001WritingReviewStatus(MOCK_ENGLISH_INC001_WRITING_TARGET_IDS),
       fetchMockEnglishInc002PassageReviewStatus(),
+      fetchMathIncrement007to009ReviewStatus(MATH_INCREMENT007_009_TARGET_IDS),
+      fetchReadingRemediationReviewStatus(),
+      fetchWritingDepthExtensionReviewStatus(WRITING_DEPTH_EXTENSION_TARGET_IDS),
     ]);
     // Decision 251, Part B — the amendment-verification target list is
     // derived live from review history (not a fixed array), so its own
@@ -3481,6 +3695,9 @@ function ReviewDashboard() {
     setEnglishInc001PassageStatus(englishInc001Passage);
     setEnglishInc001WritingStatus(englishInc001Writing);
     setEnglishInc002PassageStatus(englishInc002Passage);
+    setMathIncrement007to009Status(mathIncrement007to009);
+    setReadingRemediationStatus(readingRemediation);
+    setWritingDepthExtensionStatus(writingDepthExtension);
   }
 
   useEffect(() => { load(); }, []);
@@ -3731,6 +3948,46 @@ function ReviewDashboard() {
     );
   }
 
+  if (selectedMathIncrement007to009) {
+    const { target, family } = selectedMathIncrement007to009;
+    return (
+      <ReviewForm
+        target={target}
+        reviewType="mock_maths_independent_review"
+        onDone={() => { setSelectedMathIncrement007to009(null); load(); }}
+        sevenX={{
+          questionIds: family.newQuestionIds, reclassified: family.reclassified, disclosure: family.disclosure,
+          notesPrefix: buildMathIncrement007to009NotesPrefix(target.id, family.newQuestionIds),
+        }}
+      />
+    );
+  }
+
+  if (selectedReadingRemediation) {
+    return (
+      <ReviewForm
+        target={selectedReadingRemediation}
+        reviewType="mock_english_passage_independent_review"
+        onDone={() => { setSelectedReadingRemediation(null); load(); }}
+      />
+    );
+  }
+
+  if (selectedWritingDepthExtension) {
+    const { target, family } = selectedWritingDepthExtension;
+    return (
+      <ReviewForm
+        target={target}
+        reviewType="mock_writing_prompt_independent_review"
+        onDone={() => { setSelectedWritingDepthExtension(null); load(); }}
+        sevenX={{
+          questionIds: family.newQuestionIds, reclassified: family.reclassified, disclosure: family.disclosure,
+          notesPrefix: buildWritingDepthExtensionNotesPrefix(target.id, family.newQuestionIds),
+        }}
+      />
+    );
+  }
+
   if (selectedMockEnglishPassageBatch001) {
     return (
       <ReviewForm
@@ -3924,6 +4181,9 @@ function ReviewDashboard() {
       <MockStructuralCapacityIncrement004Section targets={targets} status={mockStructuralCapacityIncrement004Status} onOpen={(target, family) => setSelectedMockStructuralCapacityIncrement004({ target, family })} />
       <MockStructuralCapacityIncrement005Section targets={targets} status={mockStructuralCapacityIncrement005Status} onOpen={(target, family) => setSelectedMockStructuralCapacityIncrement005({ target, family })} />
       <MockStructuralCapacityIncrement006Section targets={targets} status={mockStructuralCapacityIncrement006Status} onOpen={(target, family) => setSelectedMockStructuralCapacityIncrement006({ target, family })} />
+      <MathIncrement007to009Section targets={targets} status={mathIncrement007to009Status} onOpen={(target, family) => setSelectedMathIncrement007to009({ target, family })} />
+      <ReadingRemediationSection targets={targets} status={readingRemediationStatus} onOpen={setSelectedReadingRemediation} />
+      <WritingDepthExtensionSection targets={targets} status={writingDepthExtensionStatus} onOpen={(target, family) => setSelectedWritingDepthExtension({ target, family })} />
       <MockEnglishPassageBatch001Section targets={targets} status={mockEnglishPassageBatch001Status} onOpen={setSelectedMockEnglishPassageBatch001} />
       <MockWritingBatch001Section targets={targets} status={mockWritingBatch001Status} onOpen={(target, family) => setSelectedMockWritingBatch001({ target, family })} />
       <EnglishInc001PassageSection targets={targets} status={englishInc001PassageStatus} onOpen={setSelectedEnglishInc001Passage} />

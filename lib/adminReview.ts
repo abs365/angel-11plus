@@ -2116,6 +2116,154 @@ export async function fetchMockStructuralCapacityIncrement006ReviewStatus(family
 }
 
 /**
+ * Founder Completion and Readiness Programme, Mathematics Structural
+ * Capacity, Increments 007-009 (migrations 170/174/176, all five of
+ * Decision 226's confirmed gap archetypes — the fifth, weighted-mean,
+ * authored against a corrected citation, see migration 176's own
+ * header). Three markers, not one, since each migration's own
+ * pending-review registration (171/175/177) used a distinct marker per
+ * increment — this batch's fetch function composes all three so the
+ * review UI shows one consolidated section without conflating their
+ * separate migration provenance. Same review_type
+ * ("mock_maths_independent_review") as every prior Mock Mathematics
+ * batch — no new mechanism.
+ */
+export const MATH_INCREMENT007_MARKER = "MOCK-STRUCTURAL-CAPACITY-INCREMENT007";
+export const MATH_INCREMENT008_MARKER = "MOCK-STRUCTURAL-CAPACITY-INCREMENT008";
+export const MATH_INCREMENT009_MARKER = "MOCK-STRUCTURAL-CAPACITY-INCREMENT009";
+
+export const MATH_INCREMENT007_009_FAMILIES: SevenXFamilyConfig[] = [
+  {
+    familyId: "mock-mr11-impossibletotal",
+    newQuestionIds: ["mock-mr11-impossibletotal-01", "mock-mr11-impossibletotal-02", "mock-mr11-impossibletotal-03"],
+    disclosure:
+      "SOURCE-CONTAINS: structural analogue of 2022 Q5 (Frobenius/coin-problem impossible-total reasoning), independently re-read against the real paper and mark scheme this session, answers 11/21/(3 goals+7 penalties) independently re-verified. Original 'Mo's Bakery' bags-of-5-or-8 scenario, not the source's goals/penalties framing. Reuses QT-MR-11 (Number-Property Reasoning). Row -03's answer format (a compound two-part answer, terse form '8, 5') deliberately reuses the proven mock-mr08-rotation/Decision 174 contract for compound answers, corrected in-file this session after an initial prose-format draft was found incompatible with the live scoring path. Every answer independently re-verified by two hand methods plus a third, code-based brute-force check (scripts/verify-increment007-009-mathematics-answers.mjs, 13/13 pass). Text-only, no diagram/stimulus.",
+  },
+  {
+    familyId: "mock-mr05-numberpyramid",
+    newQuestionIds: ["mock-mr05-numberpyramid-01", "mock-mr05-numberpyramid-02", "mock-mr05-numberpyramid-03"],
+    disclosure:
+      "SOURCE-CONTAINS: structural analogue of 2023 Q6 (additive number-pyramid deduction + multiplicative-pyramid zero-guarantee reasoning), independently re-verified against the real paper/mark scheme (answers 6/[3,6]/B). Original pyramid built forward from a fresh bottom row (5,6,2,7,3), not the source's numbers. No single sharedStem across all 3 subparts (disclosed deviation: the source itself shifts from an additive to a multiplicative pyramid rule between subparts, so a forced shared stem would misrepresent the source's own structure). Reuses QT-MR-05. All three answers independently re-verified by two hand methods plus code (verify script, 3/3 pass).",
+  },
+  {
+    familyId: "mock-mr13-toppingcombos",
+    newQuestionIds: ["mock-mr13-toppingcombos-01", "mock-mr13-toppingcombos-02"],
+    disclosure:
+      "SOURCE-CONTAINS: structural analogue of 2023 Q16 (basic counting principle + choose-2-without-order combination counting), independently re-verified (answers 12/18 in the source; 10/20 in this original pizza-stall scenario, 2 bases/5 toppings). First-ever instantiation of QT-MR-13's own documented but previously-unclaimed combinatorial-counting sub-format. Both answers independently re-verified by two hand methods plus code (2/2 pass).",
+  },
+  {
+    familyId: "mock-mr06-agenarrative",
+    newQuestionIds: ["mock-mr06-agenarrative-01", "mock-mr06-agenarrative-02", "mock-mr06-agenarrative-03"],
+    disclosure:
+      "SOURCE-CONTAINS: structural analogue of 2023 Q17 (age-narrative algebra: shared-unknown-year across two linear age expressions), independently re-verified (source answers 1994/2006/'1966 or 2011'). Original Priya/Tom scenario, 24-year gap (source: 32 years), not the source's numbers. Subpart (c) deliberately reworded to ask for the EARLIEST of its own two valid years (2010, with 2034 shown as the other) rather than reproducing the source's 'accept either answer' shape, which this repository's single-string exact-match scoring contract has no mechanism for. A disclosed question-design correction, not a simplification of the underlying mathematics (both years are derived and shown in workingSteps). All three answers independently re-verified by two hand methods plus code (3/3 pass).",
+  },
+  {
+    familyId: "mock-mr12-weightedmeancombine",
+    newQuestionIds: ["mock-mr12-weightedmean-01"],
+    disclosure:
+      "SOURCE-CONTAINS, with a disclosed CITATION CORRECTION: Decision 226 cited '2022 Q15' for this archetype ('weighted-differential-rate mean'); direct re-reading of the real 2022 Q15 text this session found it does not match (a museum-visitor bar-chart mean question with no weighted-group-combination structure). The actual source is 2023 Q19(b) (five boys mean 7, ten girls mean 10, combined mean 9, independently re-verified). Original two-class quiz-score scenario (Class 5A/5B), not the source's boys/girls framing. Deliberately authored as its OWN single-row family (not grouped with weightedmeanreverse below) since the two are genuinely independent scenarios, matching this project's own family-counting discipline for anti-memorisation tracking. Reuses QT-MR-12. Answer independently re-verified by two hand methods plus code.",
+  },
+  {
+    familyId: "mock-mr12-weightedmeanreverse",
+    newQuestionIds: ["mock-mr12-weightedmean-02"],
+    disclosure:
+      "The algebraic reverse of mock-mr12-weightedmeancombine (SOURCE-CONTAINS: 2023 Q19(c), independently re-verified: two boys mean 6, girls mean 10, combined mean 9, answer 8 total children). Original scenario ('a different quiz' with different Class 5A/5B numbers, deliberately not reusing the -combine family's own numbers to avoid an unnecessary numeric coincidence). Reuses QT-MR-12. Answer independently re-verified by two hand methods plus code.",
+  },
+];
+export const MATH_INCREMENT007_009_TARGET_IDS = MATH_INCREMENT007_009_FAMILIES.map((f) => f.familyId);
+
+const MATH_INCREMENT007_009_MARKER_BY_FAMILY: Record<string, string> = {
+  "mock-mr11-impossibletotal": MATH_INCREMENT007_MARKER,
+  "mock-mr05-numberpyramid": MATH_INCREMENT008_MARKER,
+  "mock-mr13-toppingcombos": MATH_INCREMENT008_MARKER,
+  "mock-mr06-agenarrative": MATH_INCREMENT008_MARKER,
+  "mock-mr12-weightedmeancombine": MATH_INCREMENT009_MARKER,
+  "mock-mr12-weightedmeanreverse": MATH_INCREMENT009_MARKER,
+};
+
+export function buildMathIncrement007to009NotesPrefix(familyId: string, questionIds: string[]): string {
+  const marker = MATH_INCREMENT007_009_MARKER_BY_FAMILY[familyId] ?? MATH_INCREMENT007_MARKER;
+  return `${marker} new content review: ${familyId} (Question IDs: ${questionIds.join(", ")})`;
+}
+
+export async function fetchMathIncrement007to009ReviewStatus(familyIds: string[]): Promise<Map<string, SevenXReviewStatus>> {
+  const byMarker = new Map<string, string[]>();
+  for (const id of familyIds) {
+    const marker = MATH_INCREMENT007_009_MARKER_BY_FAMILY[id];
+    if (!marker) continue;
+    const existing = byMarker.get(marker);
+    if (existing) existing.push(id); else byMarker.set(marker, [id]);
+  }
+  const result = new Map<string, SevenXReviewStatus>(familyIds.map((id) => [id, { reviewed: false, decision: null, reviewer: null }]));
+  for (const [marker, ids] of byMarker) {
+    const partial = await fetchBatchReviewStatus(ids, marker, "mock_maths_independent_review");
+    for (const [id, status] of partial) result.set(id, status);
+  }
+  return result;
+}
+
+/**
+ * Founder Completion and Readiness Programme, Reading Practice
+ * Remediation (migrations 178/179, pending-review registration 180) —
+ * 11 passages, each with 2 NEW additive companion questions (Wave 1's
+ * fixed 7-type-sequence defect and Wave 3's QT-RC-10 monoculture, both
+ * found and remediated this session). Reviewed as passages (matching
+ * this project's own established "review the passage + its complete
+ * attached question set as one unit" convention) — but since the
+ * EXISTING questions on each passage already carry their own separate,
+ * untouched prior approval, the reviewer's real job here is judging
+ * whether the 2 NEW companion questions per passage genuinely fix the
+ * structural defect, not re-approving content that was never touched.
+ * One marker ("READING-REMEDIATION") matches both migration 180 note
+ * variants ("READING-REMEDIATION-WAVE1"/"-WAVE3") via substring match.
+ */
+export const READING_REMEDIATION_MARKER = "READING-REMEDIATION";
+export const READING_REMEDIATION_TARGET_IDS = [
+  "wave1-eng-kitemaker", "wave1-eng-lastbus", "wave1-eng-newgirl", "wave1-eng-atticdoor", "wave1-eng-raceday", "wave1-eng-lettertonana",
+  "wave3-eng-emptyclassroom", "wave3-eng-bakersapprentice", "wave3-eng-lettertograndad", "wave3-eng-stormharbour", "wave3-eng-newtrainers",
+];
+
+export function deriveReadingRemediationReviewStatus(rows: SevenXReviewRow[]): Map<string, SevenXReviewStatus> {
+  return deriveBatchReviewStatus(rows, READING_REMEDIATION_TARGET_IDS, READING_REMEDIATION_MARKER, "mock_english_passage_independent_review", false);
+}
+
+export async function fetchReadingRemediationReviewStatus(): Promise<Map<string, SevenXReviewStatus>> {
+  return fetchBatchReviewStatus(READING_REMEDIATION_TARGET_IDS, READING_REMEDIATION_MARKER, "mock_english_passage_independent_review", false);
+}
+
+/**
+ * Founder Completion and Readiness Programme, Continuous Writing —
+ * "Your Favourite Place to Be" (unchanged since Decision 259) and
+ * "Pocket Money or Helping Anyway?" (checklist-overlap defect corrected
+ * by migration 173 — see its own header). Marker matches migration
+ * 172's note prefix.
+ */
+export const WRITING_DEPTH_EXTENSION_MARKER = "WRITING-DEPTH-EXTENSION-DECISION259";
+export const WRITING_DEPTH_EXTENSION_FAMILIES: SevenXFamilyConfig[] = [
+  {
+    familyId: "eng-inc003-writing-wc01a-favouriteplace",
+    newQuestionIds: ["eng-inc003-writing-favouriteplace-01"],
+    disclosure:
+      "Unchanged since Decision 259. Descriptive-justificatory reflection prompt, evidenced against CSSE-004/014 ('favourite place... to relax' / 'favourite building'). No defect found this session, proceeding to review as originally authored.",
+  },
+  {
+    familyId: "eng-inc003-writing-wc01a-pocketmoney",
+    newQuestionIds: ["eng-inc003-writing-pocketmoney-01"],
+    disclosure:
+      "Founder-identified defect, corrected: the original checklist (migration 169) reused two of mock-writing-cookopinion-01's coaching-tier items near-verbatim ('support your view/opinion with your own experience...' and the identical 'not a formal debate speech' sentence). Migration 173 (fail-closed, three-state, mirrors migration 148's own single-key-correction discipline) rewrites both to reflect this prompt's own genuine two-position-engagement demand. Reviewer should assess the CORRECTED checklist, not the original.",
+  },
+];
+export const WRITING_DEPTH_EXTENSION_TARGET_IDS = WRITING_DEPTH_EXTENSION_FAMILIES.map((f) => f.familyId);
+
+export function buildWritingDepthExtensionNotesPrefix(familyId: string, questionIds: string[]): string {
+  return `${WRITING_DEPTH_EXTENSION_MARKER} new content review: ${familyId} (Question ID: ${questionIds.join(", ")})`;
+}
+
+export async function fetchWritingDepthExtensionReviewStatus(familyIds: string[]): Promise<Map<string, SevenXReviewStatus>> {
+  return fetchBatchReviewStatus(familyIds, WRITING_DEPTH_EXTENSION_MARKER, "mock_writing_prompt_independent_review");
+}
+
+/**
  * Inserts one real, traceable Mock-content independent-review decision —
  * `review_type = 'mock_maths_independent_review'` (migration 087,
  * Decision 139), explicitly set here exactly as `submitMathsTeachingReview`
