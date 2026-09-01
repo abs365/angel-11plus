@@ -11220,3 +11220,69 @@ Before this session: `main` @ `984df53` (Decision 244), 2 commits ahead of `orig
 STOP. Migrations 166/167 not applied. No independent review submitted. No content certified. No Practice/Mock eligibility activated. No QT-WC-01b work begun.
 
 ---
+
+### Decision 261A — AMENDMENT VERIFICATION SEMANTIC UI CORRECTION + ESLINT SCOPE RECONCILIATION: the amendment-verification decision interaction (previously the ordinary four formal educational decisions) replaced with a dedicated VERIFIED / NOT YET VERIFIED control for `reviewType === "amendment_verification"` only, mapped onto the existing `family_review_decision` enum per Decision 235's own documented journey; a reopen-guard added so an already-verified target requires a deliberate action before a second submission; the "5 errors" vs "62/64 errors" ESLint figures reconciled as different scopes, not contradictory baselines. Committed `e6be010` (code) on top of `55f1311` (the immediately preceding disclosure-banner fix, same increment); this entry appended, no further code change.
+
+**Reconciliation:** This entry continues directly from the immediately preceding session's own work (commit `55f1311`, "fix(admin-review): surface amendment context in verification form" — added the required-amendment disclosure banner, independent of `sevenX`, so it also reaches passage-type targets). The Founder inspected that deployed change against real production content ("An Invented Place") and found the disclosure banner alone insufficient: the decision interaction directly below it still presented the ordinary four formal educational decisions (`Approved` / `Approved with amendment` / `Requires revalidation` / `Rejected`) with their Practice-activation hint text, semantically indistinguishable from performing a fresh educational review of the content rather than checking whether an already-recorded amendment was implemented. This entry records the correction and, separately, resolves an ESLint-scope question the Founder's own directive raised by name.
+
+## A. RENDER-STATE TRACE
+
+Family `eng-inc003-writing-wc01a-imaginedplace` (`review_target_type = "writing_prompt"`, `review_type = "mock_writing_prompt_independent_review"`, migrations 167/168) is a non-passage target, so `lib/adminReview.ts`'s `fetchAmendmentVerificationEligibleTargets` (line ~2818) populates its `sevenXQuestionIds`, meaning both `sevenX` and the newly added `amendmentDisclosure` prop reach `ReviewForm`. The disclosure banner added by `55f1311` is gated only on `reviewType === "amendment_verification"`, independent of `sevenX`/target type, so it traces as rendering above the portion the Founder's screenshot showed (render-state option 1, not option 2) — a source-level trace, not a live-authenticated screenshot: this environment has no production Supabase/admin credentials, the same disclosed limitation `tests/lib/adminReview.decision256AmendmentEligibility.test.ts` already carries ("SYNTHETIC (no live DB read available)").
+
+## B. DECISION INTERACTION CORRECTED
+
+`app/admin-beta/review/page.tsx` — new `AMENDMENT_VERIFICATION_DECISIONS` constant (two entries: `approved`/"Verified", `requires_revalidation`/"Not yet verified"), rendered by `ReviewForm`'s decision-button block in place of `DECISIONS` whenever `reviewType === "amendment_verification"`; `DECISIONS` itself, and every other `reviewType`'s use of it, is unchanged. The ~18-criterion original-review questionnaire (`criteria.map(...)`) is now hidden outright in this mode, not merely left optional. Submit-button and submitted-outcome copy reworded for this mode ("Submit verification", "Outcome: Verified"/"Outcome: Not yet verified") rather than reusing "Submit review"/"Decision: approved".
+
+## C. DATABASE MAPPING — DERIVED, NOT INVENTED
+
+No new `family_review_decision` enum value, no schema change. The mapping is Decision 235's own already-documented Founder journey (this file, Decision 235 Section Q): *"a decision (approved is the intended 'resolved' signal, requires_revalidation the intended 'not resolved' signal)."* `AMENDMENT_VERIFICATION_DECISIONS` implements exactly that pairing; `approved_with_amendment` and `rejected` are deliberately unreachable through this control.
+
+## D. ADDITIVE GOVERNANCE — UNCHANGED
+
+`submitAmendmentVerification` (`lib/adminReview.ts`) was not touched: still exactly one `.insert()` against `ali_family_review` with `review_type: "amendment_verification"`, no `.update()` anywhere in the function (confirmed by test, this entry's Section G). The original `approved_with_amendment` row is never overwritten or auto-converted, matching Decision 235 Section K's own standing rule.
+
+## E. FAILED-VERIFICATION OUTCOME — NO GAP FOUND
+
+Section E of the governing directive required stopping and reporting rather than inventing policy if existing governance did not safely define a failed-verification outcome. It does: `requires_revalidation` recorded via an additive-only insert, with no `eligibility_status`/other-row mutation anywhere in the write path, is already Decision 235's own documented "not resolved" signal. No gap; nothing was invented; nothing was stopped short of implementation.
+
+## F. FORM CONTENT — MINIMISED, NOT DUPLICATED
+
+Retained: reviewer name (required), basis for reviewing (required), verification basis/notes (relabelled from "Findings / notes" in this mode), the VERIFIED/NOT YET VERIFIED control. Removed for this mode only: the ~18 original-review criterion checkboxes. The full questionnaire is completely unchanged for every other `reviewType`.
+
+## G. GENERIC IMPLEMENTATION + DUPLICATE-VERIFICATION GUARD
+
+No family ID, increment number, or subject is hardcoded anywhere in this fix — every branch is keyed on `reviewType === "amendment_verification"` or on the dynamically-derived eligibility/status maps already established by Decision 251. New: a target already carrying a recorded verification (`amendmentVerificationStatus.get(t.id)?.reviewed`) now renders an "Already verified" interstitial (prior outcome + reviewer shown) requiring an explicit "Record another verification anyway" click (`amendmentReverifyConfirmed`, reset on every fresh `onOpen`) before the submittable form appears — a UI confirmation gate only, never a new database restriction; the database already permitted, and still permits, a second additive row.
+
+## H. TESTS
+
+New file `tests/lib/adminReview.decision261aAmendmentVerificationSemantics.test.ts` (8 tests): the two-option set's exact values/labels and the two values deliberately excluded from it; the four formal decisions verbatim-unchanged; `ReviewForm`'s single decision-button control switches vocabulary by `reviewType` (no stale second control left behind); the criterion questionnaire hidden in this mode; the reopen-guard's exact gating condition and confirm action; `onOpen` resets the guard for every fresh target; `submitAmendmentVerification`'s dispatch and additive-only insert unchanged; and a direct logic test of `deriveAmendmentVerificationEligibleTargets` proving the LATEST decision by `created_at` (not array order) determines eligibility, in both directions (superseded-to-amendment becomes eligible; superseded-to-approved stops being eligible). One pre-existing test (`adminReview.englishInc001ReviewWiring.test.ts`, the `onOpen={setSelectedAmendmentVerification}` source-text assertion) corrected — not weakened — to match the new, intentional `onOpen` callback while preserving the actual guarantee that test names: `targets`/`status` are fed from dynamically-discovered state, never a fixed array.
+
+**Full verification, this session:** `npx tsc --noEmit` clean. Copy Quality Guard **PASS — 0 violations across 263 files**. Full suite **3025/3025 passing** (3017 baseline + 8 new, 1 corrected not weakened, zero regressions). Production build succeeds, all routes render.
+
+## I. ESLINT SCOPE RECONCILIATION
+
+The Founder's own directive named an apparent conflict: this session's own prior report cited "5 pre-existing errors," against an independently-tracked assurance history of `9b4c30a` baseline = 62 errors, Decision 257 = 64 errors (+2), Decision 258 = 0 additional, Decision 259 = 0 additional. Investigated rather than assumed:
+
+- **Exact command used for the "5" figure:** `npx eslint app/admin-beta/review/page.tsx` — single-file scope, run to diff this session's own edit against a pre-edit baseline of the same one file.
+- **Exact command matching this project's own canonical lint gate:** bare `npx eslint` (no path argument) — this is exactly what `package.json`'s own `"lint"` script invokes (`"eslint && npm run copy-guard && npm run migration-sql-guard"`), i.e. the repository-wide scope every prior Decision's own "62/64 errors" figure was necessarily reporting, since no prior decision's assurance section named a single-file scope.
+- **Result of the canonical, repo-wide command, run fresh this session:** **88 problems (64 errors, 24 warnings)** — matching Decision 257's own recorded 64-error figure exactly, and Decision 258/259's own "0 additional" exactly (64 is still 64).
+- **Before/after this session's own two commits (`55f1311`, `e6be010`), same repo-wide command:** identical both times — `git stash` (removing both commits' changes) → 88 problems (64 errors, 24 warnings); `git stash pop` (restoring them) → 88 problems (64 errors, 24 warnings). Zero new errors or warnings introduced by either commit.
+- **Conclusion:** 5 and 64 are not competing repository baselines and were never in conflict — they measure different scopes (one file, deliberately, to verify a single edit's own blast radius; vs. the whole repository, the canonical gate every other decision's figure already meant). The single-file "5" figure is a strict subset of the repo-wide "64," all five being among the pre-existing, unrelated `react-hooks/set-state-in-effect`/`react/no-unescaped-entities` errors already present in `app/admin-beta/review/page.tsx` before this increment began. No lint configuration was changed to reconcile this — the reconciliation is scope clarification only.
+
+## J. DEPLOYMENT
+
+Scope-checked before each commit (only the intended files staged; `scripts/verify-decision248-migration166-production.mjs` remained untouched throughout, confirmed via `git status`/`git diff` each time); pre-commit secret/credential scan clean both times. `55f1311` and `e6be010` committed as two separate, non-squashed commits (never amended), each pushed to `origin/main` individually, each auto-deployed by Vercel's existing Git-integration path (no manual `vercel deploy`), each verified via `vercel inspect --logs` to have been built from the exact pushed commit SHA, each confirmed `● Ready` and aliased to `https://angel-11plus.vercel.app`, each smoke-checked via a plain HTTP 200 against `/admin-beta/review` (the route is admin-gated and client-rendered, so this confirms reachability only, not the authenticated visual result). This log entry itself is a third, code-free commit.
+
+**Decision number:** 261A.
+
+**Commit SHA:** `55f1311` (disclosure banner), `e6be010` (verification control correction); this entry's own commit SHA recorded immediately following it in repository history.
+
+**Evidence tiers, explicit:** SOURCE-READ EVIDENCE — every claim about `app/admin-beta/review/page.tsx`, `lib/adminReview.ts`, and migrations 167/168's own real content, independently re-read this session. AUTOMATED TEST EVIDENCE — 8 new tests plus the full, otherwise-unmodified 3017-test suite (3025 total), and the repo-wide ESLint command re-run twice (stashed/unstashed) for the Section I reconciliation. FOUNDER-REPORTED EVIDENCE (Level 2/3) — the observed production defect (ordinary four-decision UI shown for An Invented Place) is the Founder's own direct production inspection, not independently re-verified against a live authenticated screenshot by this environment (Section A's own disclosed limitation). No SIMULATION evidence applies.
+
+**Implications:** Decisions 1-260 all stand, none reversed or rewritten. Decision 235's own amendment-verification architecture and Decision 251's own generalisation of it are both preserved intact — this decision corrects the decision-interaction's presentation layer only, not the underlying additive-evidence model either of them established.
+
+**Final verdict: A — AMENDMENT VERIFICATION SEMANTICS CORRECTED AND DEPLOYED; READY FOR FOUNDER PRODUCTION VERIFICATION.**
+
+STOP. No review submitted on the Founder's behalf. No migration applied. No content certified. No eligibility changed. Founder must inspect the real production amendment-verification interaction (including An Invented Place) before submitting anything through it.
+
+---
