@@ -1,6 +1,10 @@
 -- Angel Digital 11+ — Migration 183
 -- Reading Comprehension Assessment Integrity Correction, Part 1:
--- acceptedAnswers slash-alternate formatting defect.
+-- acceptedAnswers slash-alternate formatting defect, PLUS 2 individually
+-- verified additive paraphrase corrections discovered during the same
+-- inspection (Founder pre-application review; see the CLASS A / CLASS B
+-- breakdown below -- this migration is not uniformly mechanical, and is
+-- not described as such).
 --
 -- ============================================================
 -- ROOT CAUSE (Gate 4/5 live production walkthrough)
@@ -34,24 +38,58 @@
 -- systemic, not a one-question fluke.
 --
 -- ============================================================
--- FIX: mechanical, additive-only content correction
+-- FIX: additive-only content correction -- NOT uniformly mechanical
 -- ============================================================
--- Every affected accepted-answer string is replaced with two (or more)
--- separate, fully-formed accepted-answer strings, one per alternate
--- reading -- e.g. "jogged/warmed up and checked his spikes" becomes the
--- two independent entries "jogged up and checked his spikes" and "warmed
--- up and checked his spikes". This can only ADD matchable phrasing
--- (a strict superset of what each row's own author already intended and
--- disclosed via the "/" shorthand) -- it never removes an existing
--- accepted phrase, never touches `question`, `modelAnswer`, `passageText`,
--- `marks`, or `validationTier`, and cannot cause a previously-accepted
--- answer to stop being accepted.
+-- Founder pre-application review correction: this migration is NOT a
+-- uniform mechanical slash-split. Every one of the 26 rows was inspected
+-- individually and classified:
 --
--- Each split was read and judged individually against its own sentence,
--- not derived by blind regex substitution -- a purely mechanical "/" split
--- would corrupt several of these (e.g. "bus was late/never arrived" is
--- NOT "bus was late" + "bus was never arrived"; the grammatically correct
--- reading is "bus was late" + "bus never arrived").
+-- CLASS A (24 rows) -- mechanical expansion of the author's own existing
+-- slash shorthand: each affected accepted-answer string is replaced with
+-- two (or more) separate, fully-formed strings, one per alternate
+-- reading already named by the author -- e.g. "jogged/warmed up and
+-- checked his spikes" becomes "jogged up and checked his spikes" and
+-- "warmed up and checked his spikes". No vocabulary or idea is
+-- introduced beyond what the "/" shorthand already named.
+--   Rows 1, 2, 3, 5, 6, 8, 9, 10, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21,
+--   22, 23, 24, 25, 26 are plain splits.
+--   Row 7 (w2-longwalk-01) required a grammatical correction, not a
+--   byte-identical split -- "bus was late/never arrived" cannot be
+--   mechanically spliced ("bus was late" + "bus was never arrived" is
+--   ungrammatical); reconstructed as "bus was late" + "bus never
+--   arrived". Both words ("late", "never arrived") were already
+--   explicitly present in the author's own shorthand; only the grammar
+--   joining them to "bus was" needed correcting. No new vocabulary or
+--   concept beyond what the shorthand already named -- classified A, but
+--   flagged here explicitly since it is not a literal split like the
+--   other 23.
+--
+-- CLASS B (2 rows, 3 additions) -- genuinely new accepted-answer
+-- paraphrase coverage, each individually verified against the real
+-- question, passage, model answer, skill, and validation tier before
+-- inclusion (not merely asserted):
+--   - Row 4 (w1-raceday-01): adds "practised his handover" alongside the
+--     existing "practised the handover". Verified: a determiner-only
+--     substitution ("the" -> "his"); Ade is the sole subject of the
+--     sentence and the passage names no other handover "his" could refer
+--     to, so both phrases assert the identical real-world fact. Cannot
+--     admit any answer that is not already true.
+--   - Row 11 (w3-rc10-wc-01): adds "planned or prepared the room
+--     carefully" and "the arrangement was deliberate and planned, not
+--     accidental tidying". Verified against the model answer ("someone
+--     deliberately and carefully rearranged the room") and this
+--     question's own documented misconception ("treats unusual care as
+--     simply meaning tidy without noting the implied deliberateness"):
+--     both new phrases explicitly require the deliberateness/planning
+--     idea, so neither would match a student who merely writes "the room
+--     was tidy" -- the addition recognises a genuinely correct
+--     paraphrase without admitting the wrong reading the question is
+--     designed to catch.
+--
+-- Every UPDATE below still only ever ADDS matchable phrasing (a superset
+-- of the original array) -- no existing accepted phrase is ever removed,
+-- and `question`, `modelAnswer`, `passageText`, `marks`, and
+-- `validationTier` are never touched by this migration.
 --
 -- ============================================================
 -- SCOPE AND STATUS OF EACH ROW

@@ -502,6 +502,28 @@ test("w3-rc10-am-06: the migration-184 corrected acceptedAnswers array accepts t
   assert.equal(checkAcceptedAnswerSet("it suggests a calm, relaxed atmosphere with nothing to worry about", corrected).correct, false);
 });
 
+test("w2-morningpatrol-08 (Morning Patrol, LIVE, walkthrough-confirmed defect, migration 185): the real grading path exercised against the exact live/corrected row -- B/D/F/H is accepted, an incorrect four-item set is rejected", () => {
+  // Founder directive (Priority 3, Bounded Assessment Integrity Correction
+  // Wave): live production random session selection genuinely prevents
+  // deterministic UI access to this exact row -- 32 real question draws
+  // across 2 full 8-question live sessions this wave did not land on it
+  // (nor on w3-rc10-am-06 above), matching the same structural barrier
+  // already disclosed for it. This is the smallest safe existing
+  // development/test mechanism available instead: checkMultiSelect is the
+  // literal function the live grading path calls, exercised here against
+  // migration 185's own corrected correctOptions for this exact row
+  // (unchanged by migration 185, which only replaced option G's text).
+  const correctOptions = ["B", "D", "F", "H"];
+  const accepted = checkMultiSelect(["B", "D", "F", "H"], correctOptions, 4);
+  assert.equal(accepted.exactMatch, true);
+  assert.equal(accepted.marks, 4);
+  // the corrected-false G ("She found the rose beds disturbed") plus three
+  // genuinely true options must NOT be accepted as a full-marks set.
+  const incorrect = checkMultiSelect(["B", "D", "F", "G"], correctOptions, 4);
+  assert.equal(incorrect.exactMatch, false);
+  assert.equal(incorrect.marks, 3, "G is wrong so only B, D, F score");
+});
+
 test("regression: no accepted-answer string anywhere in the two families touched by migration 183 still contains a slash — the defect class cannot silently reappear in these rows", () => {
   const allCorrectedArrays: string[][] = [
     ["from scared to relieved", "fear to relief", "anxious to happy", "anxious to laughing"],

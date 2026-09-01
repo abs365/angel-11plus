@@ -184,3 +184,63 @@ test("Gate 4/5 walkthrough correction (w2-morningpatrol-08, live production defe
   assert.deepEqual(trueOptions.sort(), [...item!.correctOptions!].sort(), "exactly the stored correctOptions must be true against the passage, no more, no fewer");
   assert.equal(trueOptions.length, 4, "exactly 4 options must be true, matching the 'Tick 4' instruction and requiredSelectionCount");
 });
+
+test("Gate 4/5 walkthrough correction (w2-longwalk-02, live production defect): exactly 4 of the 8 tick options are true against the passage's own text, matching correctOptions and the 'Tick 4' instruction", () => {
+  const item = items.find((i) => i.id === "w2-longwalk-02");
+  assert.ok(item, "w2-longwalk-02 must exist");
+  const passage = passages.find((p) => p.id === item!.passageId);
+  assert.ok(passage, "its passage must exist");
+  const text = passage!.originalText;
+
+  const optionTruth: Record<string, boolean> = {
+    A: text.includes("I set off down Kestrel Road first"),
+    B: false, // she walked; the bus never came, so she never "waited at the stop the whole time"
+    C: text.includes("went straight past the park"), // corrected option: false, she DID stop -- checked as the literal (false) claim
+    D: false, // she bought crisps, not a bike; the shopkeeper only asked if she'd consider one
+    E: text.includes("I cut through the alley behind the launderette"),
+    F: text.includes("I stopped at the corner shop to buy a bag of crisps"),
+    G: false, // no taxi mentioned anywhere
+    H: text.includes("I crossed the main road at the pelican crossing"),
+  };
+  // C is worded as the corrected FALSE claim ("went straight past... without
+  // stopping"), so its own passage-support flag (which is naturally false,
+  // since that exact phrase never appears) already reads correctly as
+  // "not true" -- no inversion needed, unlike Morning Patrol's C/G.
+  const trueOptions = Object.entries(optionTruth)
+    .filter(([, isTrue]) => isTrue)
+    .map(([letter]) => letter);
+
+  assert.deepEqual(trueOptions.sort(), [...item!.correctOptions!].sort(), "exactly the stored correctOptions must be true against the passage, no more, no fewer");
+  assert.equal(trueOptions.length, 4, "exactly 4 options must be true, matching the 'Tick 4' instruction and requiredSelectionCount");
+});
+
+test("Gate 4/5 walkthrough correction (w2-stormwarning-02, live production defect): exactly 4 of the 8 tick options are true against the passage's own text, matching correctOptions and the 'Tick 4' instruction", () => {
+  const item = items.find((i) => i.id === "w2-stormwarning-02");
+  assert.ok(item, "w2-stormwarning-02 must exist");
+  const passage = passages.find((p) => p.id === item!.passageId);
+  assert.ok(passage, "its passage must exist");
+  const text = passage!.originalText;
+
+  // Option E's own claim is "Mum trusted the window to stay shut on its
+  // own". The passage states the opposite, so E is false -- assert the
+  // contradicting phrase is genuinely present (not a typo'd assumption)
+  // rather than deriving E's truth value from its presence directly.
+  assert.ok(text.includes("didn't quite trust it to stay shut on its own"), "passage must contradict option E's claim");
+
+  const optionTruth: Record<string, boolean> = {
+    A: text.includes("hauling the trampoline flat"),
+    B: false, // the narrator was given the bins, not Theo; Theo watched from the window
+    C: text.includes("closing every window and checking each latch twice"),
+    D: text.includes("I dragged both wheelie bins into the side passage"),
+    E: false, // passage states the opposite -- see assertion above
+    F: false, // Theo "shriek[ed] with delight" and called it "the best part so far" -- excited, not frightened
+    G: text.includes("made one final trip to check the trampoline"),
+    H: false, // "We ate dinner by torchlight" at home, not a restaurant
+  };
+  const trueOptions = Object.entries(optionTruth)
+    .filter(([, isTrue]) => isTrue)
+    .map(([letter]) => letter);
+
+  assert.deepEqual(trueOptions.sort(), [...item!.correctOptions!].sort(), "exactly the stored correctOptions must be true against the passage, no more, no fewer");
+  assert.equal(trueOptions.length, 4, "exactly 4 options must be true, matching the 'Tick 4' instruction and requiredSelectionCount");
+});

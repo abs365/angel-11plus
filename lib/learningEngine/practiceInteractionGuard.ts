@@ -123,16 +123,34 @@ export function shouldRenderMisconceptionNote(
  * where this formatting mistake was made.
  *
  * A presentation-only reformatting, never a content change: detects the
- * exact whole-string slug shape (lowercase words joined only by hyphens,
- * no spaces or punctuation) and converts it to matching prose. Any text
- * that is already real prose (contains a space, punctuation, or mixed
- * case — every pre-existing family, and any future correctly-authored
- * one) is returned completely unchanged. The stored database value is
- * never modified; this only affects what is rendered.
+ * slug shape and converts it to matching prose. Any text that is
+ * already real prose is returned completely unchanged. The stored
+ * database value is never modified; this only affects what is
+ * rendered.
+ *
+ * Gate 4/5 walkthrough correction (this session) — the original
+ * detection required the WHOLE string to be lowercase
+ * (`/^[a-z0-9]+(-[a-z0-9]+)+$/`), on the assumption real prose always
+ * has mixed case. Four migration-063 slugs disproved that assumption:
+ * they embed a capitalised proper noun mid-slug (e.g.
+ * "reads-the-description-as-simply-about-untidy-plants-not-Toms-feelings"),
+ * so the all-lowercase regex silently rejected them as "already prose"
+ * and rendered them raw. The real, reliable signal distinguishing a
+ * slug from prose in this codebase's own content is not case at all —
+ * it is the presence of a space: every genuine prose misconception in
+ * the bank has at least one space; no genuine slug ever does (kebab-
+ * case cannot contain one). Detection is now exactly that: no spaces,
+ * plus at least one hyphen (so a single bare word without any hyphen —
+ * which no real row uses today — is left untouched rather than
+ * needlessly re-punctuated). A capitalised fragment surviving the
+ * hyphen-to-space conversion (e.g. "not Toms feelings") is not
+ * regrammared into a possessive ("Tom's") — this function only ever
+ * reformats punctuation and casing of the first letter, never rewrites
+ * the words themselves, so it cannot silently alter meaning.
  */
 export function humanizeMisconceptionText(text: string | undefined): string {
   if (!text) return "";
-  const looksLikeSlug = /^[a-z0-9]+(-[a-z0-9]+)+$/.test(text);
+  const looksLikeSlug = !text.includes(" ") && text.includes("-");
   if (!looksLikeSlug) return text;
   const sentence = text.split("-").join(" ");
   const capitalized = sentence.charAt(0).toUpperCase() + sentence.slice(1);

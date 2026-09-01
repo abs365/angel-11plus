@@ -517,13 +517,23 @@ items.push(
     misconception: "Confusing this reason with a later decision made during the walk itself, such as cutting through the alley.",
   }),
   q({
+    // Gate 4/5 live production walkthrough (Assessment Integrity
+    // Correction, this session) found option C, "Sheltered at the park
+    // bus shelter," is ALSO directly true per the passage ("ducked under
+    // the bus shelter there instead, the working one") -- making 5 of
+    // the 8 options true against a "Tick 4"/correctOptions-of-4
+    // contract, the same defect class as w2-morningpatrol-08 (Decision
+    // 263). Corrected to a genuinely false, same-style distractor
+    // (mirrors option B/D/G's own direct-contradiction shape), matching
+    // supabase/migrations/187_multiselect_family_integrity_correction.sql.
+    // Passage, correctOptions and every other option unchanged.
     id: "w2-longwalk-02", passageId: "wave2-eng-longwalk", family: "wave2-fam-multiselect",
     competency: "RC-01", qType: "QT-RC-09", legacySkill: "evidence", marks: 4,
-    question: "Tick 4 boxes that accurately describe things the narrator did on the way home. A. Walked down Kestrel Road first. B. Waited at the bus stop the whole time. C. Sheltered at the park bus shelter. D. Bought a bike from the corner shop. E. Cut through the alley behind the launderette. F. Stopped at the corner shop for crisps. G. Took a taxi for part of the way. H. Crossed the main road at the pelican crossing.",
-    modelAnswer: "A, C, E, F, H are all things the narrator did, but exactly 4 must be ticked; A, E, F, H is one fully correct combination (Kestrel Road first, the alley, the corner shop, the pelican crossing).",
+    question: "Tick 4 boxes that accurately describe things the narrator did on the way home. A. Walked down Kestrel Road first. B. Waited at the bus stop the whole time. C. Went straight past the park without stopping. D. Bought a bike from the corner shop. E. Cut through the alley behind the launderette. F. Stopped at the corner shop for crisps. G. Took a taxi for part of the way. H. Crossed the main road at the pelican crossing.",
+    modelAnswer: "A, E, F, H: she walked down Kestrel Road first, cut through the alley behind the launderette, stopped at the corner shop for crisps, and crossed the main road at the pelican crossing.",
     correctOptions: ["A", "E", "F", "H"], requiredSelectionCount: 4,
     transferClass: "MIXED_TRANSFER", validation: "TIER6_MULTI_SELECT",
-    misconception: "Selecting B, D or G, which the passage explicitly contradicts (the bus never came, no bike was bought, no taxi is mentioned).",
+    misconception: "Selecting B, D or G, which the passage explicitly contradicts (the bus never came, no bike was bought, no taxi is mentioned), or C, since she did stop at the park to shelter from the rain.",
   }),
   q({
     id: "w2-longwalk-03", passageId: "wave2-eng-longwalk", family: "wave1-fam-sequencing",
@@ -624,13 +634,28 @@ items.push(
     misconception: "Confusing the narrator's job with Dad's (the trampoline) or Mum's (the windows).",
   }),
   q({
+    // Gate 4/5 live production walkthrough (Assessment Integrity
+    // Correction, this session) found option E, "The family lost power
+    // before dinner," is ALSO directly true per the passage ("We lost
+    // power just after six... We ate dinner by torchlight" only makes
+    // sense if power was already out) -- the same defect class as
+    // w2-morningpatrol-08 and w2-longwalk-02 (Decision 263). The row's
+    // own modelAnswer had hedged this as "true depending on the
+    // definition of 'before dinner'" -- the hedge was itself evidence
+    // the row needed correcting, not evidence the ambiguity was
+    // acceptable. Corrected to a genuinely false, same-style distractor
+    // ("Mum trusted the window to stay shut on its own" -- directly
+    // contradicted: she is shown "watching the window... as if she
+    // didn't quite trust it to stay shut on its own"), matching
+    // supabase/migrations/187_multiselect_family_integrity_correction.sql.
+    // Passage, correctOptions and every other option unchanged.
     id: "w2-stormwarning-02", passageId: "wave2-eng-stormwarning", family: "wave2-fam-multiselect",
     competency: "RC-01", qType: "QT-RC-09", legacySkill: "evidence", marks: 4,
-    question: "Tick 4 boxes that accurately describe things that happened in the passage. A. Dad flattened the trampoline. B. Theo helped carry the bins. C. Mum closed and checked the windows. D. The narrator secured the wheelie bins. E. The family lost power before dinner. F. Theo was frightened by the storm. G. Dad made a final trip to check the trampoline. H. They ate dinner in a restaurant.",
-    modelAnswer: "A, C, D, G are all directly stated; E is also true depending on the definition of 'before dinner' but the clearest four are A, C, D, G.",
+    question: "Tick 4 boxes that accurately describe things that happened in the passage. A. Dad flattened the trampoline. B. Theo helped carry the bins. C. Mum closed and checked the windows. D. The narrator secured the wheelie bins. E. Mum trusted the window to stay shut on its own. F. Theo was frightened by the storm. G. Dad made a final trip to check the trampoline. H. They ate dinner in a restaurant.",
+    modelAnswer: "A, C, D, G: Dad flattened the trampoline, Mum closed and checked the windows, the narrator secured the wheelie bins, and Dad made a final trip to check the trampoline.",
     correctOptions: ["A", "C", "D", "G"], requiredSelectionCount: 4,
     transferClass: "MIXED_TRANSFER", validation: "TIER6_MULTI_SELECT",
-    misconception: "Selecting B or H, which the passage does not support (Theo gave commentary, not help with bins; dinner was eaten at home by torchlight), or F, since Theo is shown to be excited rather than frightened.",
+    misconception: "Selecting B or H, which the passage does not support (Theo gave commentary, not help with bins; dinner was eaten at home by torchlight), F, since Theo is shown to be excited rather than frightened, or E, since Mum is shown watching the window as though she did not trust it to stay shut.",
   }),
   q({
     id: "w2-stormwarning-03", passageId: "wave2-eng-stormwarning", family: "wave1-fam-sequencing",

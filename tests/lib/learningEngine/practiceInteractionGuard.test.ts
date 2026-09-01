@@ -275,3 +275,53 @@ test("Gate 4/5 walkthrough defect: the exact live-observed raw slug (Storm at th
     "Focuses only on the physical action of moving faster missing the implied unspoken fear."
   );
 });
+
+// ---------------------------------------------------------------------
+// Production regression wave (this session): the all-lowercase detection
+// regex silently rejected any slug containing a capitalised proper noun,
+// leaving 4 real migration-063 rows rendering raw in production. Detection
+// is now "no spaces, has a hyphen" -- the real, reliable signal in this
+// codebase's actual content, not case. Each of the 4 live-affected rows
+// gets its own named regression test, plus a lowercase-slug and a
+// real-prose control to prove neither direction broke.
+// ---------------------------------------------------------------------
+
+test("regression (w3-rc10-am-01, live production defect): a slug with an embedded capitalised proper noun now humanizes, preserving the name unchanged", () => {
+  assert.equal(
+    humanizeMisconceptionText("reads-the-sentence-as-literally-about-volume-not-Mayas-inner-state"),
+    "Reads the sentence as literally about volume not Mayas inner state."
+  );
+});
+
+test("regression (w3-rc10-am-03, live production defect, directly reproduced this session)", () => {
+  assert.equal(
+    humanizeMisconceptionText("reads-the-description-as-simply-about-untidy-plants-not-Toms-feelings"),
+    "Reads the description as simply about untidy plants not Toms feelings."
+  );
+});
+
+test("regression (w3-rc10-wc-04, live production defect, directly reproduced this session)", () => {
+  assert.equal(
+    humanizeMisconceptionText("treats-whistling-as-only-showing-happiness-missing-the-contrast-with-Priyas-effort"),
+    "Treats whistling as only showing happiness missing the contrast with Priyas effort."
+  );
+});
+
+test("regression (w3-rc10-wc-08, live production defect)", () => {
+  assert.equal(
+    humanizeMisconceptionText("notices-the-actions-changed-but-does-not-connect-it-to-the-shift-in-Jaydens-feelings"),
+    "Notices the actions changed but does not connect it to the shift in Jaydens feelings."
+  );
+});
+
+test("control: a plain all-lowercase slug still humanizes exactly as before (no regression from broadening detection)", () => {
+  assert.equal(
+    humanizeMisconceptionText("describes-the-colour-literally-without-linking-it-to-the-implied-threat"),
+    "Describes the colour literally without linking it to the implied threat."
+  );
+});
+
+test("control: real prose containing capitalised proper nouns and spaces is still left completely unchanged", () => {
+  const realProseWithNames = "Assuming Maya or Priya's reaction reflects the whole class's mood, rather than her own private feeling.";
+  assert.equal(humanizeMisconceptionText(realProseWithNames), realProseWithNames);
+});
