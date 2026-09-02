@@ -35,6 +35,15 @@ test("migration 191 registers exactly 6 questions, all TIER2_ACCEPTED_SET", () =
   for (const id of ids) assert.equal(PROMPTS[id].validationTier, "TIER2_ACCEPTED_SET");
 });
 
+test("Increment 003 mark-contract correction: Q4 (QT-RC-07, 'give ONE way they differed') is worth 1 mark, not 2 -- the question asks for a single difference, not two", () => {
+  assert.equal(PROMPTS["eng-pc001-anning-q04"].marks, 1);
+});
+
+test("total marks across the 6-question set is 10 (1+1+2+1+2+3), consistent with each question's own cognitive demand", () => {
+  const total = Object.values(PROMPTS).reduce((sum: number, p: any) => sum + p.marks, 0);
+  assert.equal(total, 10);
+});
+
 test("every question's stored passageText is byte-identical to the passage row's own original_text", () => {
   for (const id of Object.keys(PROMPTS)) {
     assert.equal(PROMPTS[id].passageText, PASSAGE_TEXT, `${id} passageText must match ali_passage_bank.original_text exactly`);

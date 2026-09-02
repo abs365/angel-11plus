@@ -47,9 +47,9 @@ const QUESTIONS = [
     modelAnswer: "It means the family genuinely needed the money fossil-selling brought in to survive, so searching the cliffs was no longer just an enjoyable pastime but something they had to do.",
     acceptedAnswers: ["they needed the money", "they needed money", "the family needed the money", "money was needed", "it was necessary for them to survive", "something they had to do", "essential for the family", "they had no choice", "not just a hobby anymore", "vital for the family's survival"],
     misconception: "Treating 'necessity' as simply meaning 'they enjoyed it more', missing that the phrase marks a shift from choice to genuine financial need." },
-  { id: "eng-pc001-anning-q04", questionType: "QT-RC-07", difficulty: "medium", skill: "evidence", marks: 2, seconds: 120, transferClass: "MIXED_TRANSFER",
+  { id: "eng-pc001-anning-q04", questionType: "QT-RC-07", difficulty: "medium", skill: "evidence", marks: 1, seconds: 120, transferClass: "MIXED_TRANSFER",
     question: "The passage describes two of Mary Anning's major fossil discoveries: the skeleton found in 1811 and the skeleton found in 1823. Using details from the passage, give ONE way these two discoveries were different from each other.",
-    modelAnswer: "The 1811 skeleton (the ichthyosaur) had rows of pointed teeth and enormous eye sockets and was over five metres long, while the 1823 skeleton (the plesiosaur) had an extraordinarily long neck, a small head and four broad paddle-like limbs. Alternatively: the ichthyosaur was accepted as genuine without dispute, while Cuvier initially suspected the plesiosaur skeleton might be a fake.",
+    modelAnswer: "For example: the 1823 skeleton (the plesiosaur) had an extraordinarily long neck and four broad paddle-like limbs, unlike the 1811 skeleton (the ichthyosaur). Any one genuine difference is enough for full marks -- for example, naming a physical feature unique to one creature, or noting that the ichthyosaur was accepted as genuine without dispute while Cuvier initially suspected the plesiosaur skeleton might be a fake.",
     acceptedAnswers: ["long neck", "a long neck", "four paddle-like limbs", "paddle-like limbs", "pointed teeth", "enormous eye sockets", "over five metres long", "cuvier thought it might be a fake", "cuvier suspected it was a fake", "cuvier doubted it was real", "one was doubted and the other was not", "the plesiosaur was thought to be fake"],
     misconception: "Restating that both were fossil discoveries (a similarity) instead of identifying a genuine textual difference between the two creatures or their reception." },
   { id: "eng-pc001-anning-q05", questionType: "QT-RC-10", difficulty: "medium", skill: "inference", marks: 2, seconds: 120, transferClass: "ROUTINE",
@@ -143,10 +143,20 @@ const migration191 = `-- Angel Digital 11+ — Migration 191
 -- over hitting an arbitrary count" precedent (Decision 227/228):
 --   Q1/Q2 — QT-RC-01 (direct retrieval)
 --   Q3    — QT-RC-03 (phrase meaning in context)
---   Q4    — QT-RC-07 (comparative attribute extraction — THE closes the
---           named gap; a genuine two-entity comparison of Anning's two
---           major fossil finds, in ordinary prose, not the templated
---           "explain how X's and Y's [noun] differ" sentence)
+--   Q4    — QT-RC-07 (comparative attribute extraction — closes the named
+--           gap; a genuine two-entity comparison of Anning's two major
+--           fossil finds, in ordinary prose, not the templated "explain
+--           how X's and Y's [noun] differ" sentence). MARK CONTRACT
+--           (Founder correction, Increment 003): the question asks for
+--           ONE valid difference, so it is worth exactly 1 mark, not 2 —
+--           0 marks for no genuine textual difference (e.g. restating a
+--           similarity, or an invented/unsupported claim), 1 mark for any
+--           ONE difference genuinely grounded in the passage (a named
+--           physical feature unique to one creature, or the differing
+--           scientific reception). The original 2-mark draft would have
+--           required manufacturing a second scoring requirement the
+--           question itself never asks for -- corrected to the smaller,
+--           honest allocation instead.
 --   Q5    — QT-RC-10 (word-choice/detail effect)
 --   Q6    — QT-RC-02 (justified interpretation), phrased as a free-
 --           response question rather than the "tick Yes/No + reasons"
