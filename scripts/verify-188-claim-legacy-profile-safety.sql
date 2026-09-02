@@ -131,7 +131,33 @@ begin
     raise notice 'FAIL 5/5: refused-claim profile''s evidence was altered';
   end if;
 
-  raise notice '=== RESULT: % / % checks passed ===', v_pass, v_check;
+  raise notice '=== RESULT: % / % checks passed (behavioural) ===', v_pass, v_check;
 end $$;
 
 rollback;
+
+-- Check 6 (separate from the rollback-wrapped behavioural checks above --
+-- this is a pure, non-mutating read of function metadata, not affected by
+-- rollback either way): confirms the LIVE deployed function's own source
+-- text actually contains all six evidence-table guards, not just that it
+-- happens to behave correctly against these three fixtures. Guards
+-- against a partial paste, a stale cached definition, or a function body
+-- that passes checks 1-5 by coincidence rather than by containing the
+-- intended NOT EXISTS conditions for every evidence table migration 020
+-- secured.
+select
+  case
+    when pg_get_functiondef(p.oid) ilike '%auth_user_id is null%'
+     and pg_get_functiondef(p.oid) ilike '%public.user_stats%'
+     and pg_get_functiondef(p.oid) ilike '%public.lesson_progress%'
+     and pg_get_functiondef(p.oid) ilike '%public.ali_student_adaptive_state%'
+     and pg_get_functiondef(p.oid) ilike '%public.ali_student_question_history%'
+     and pg_get_functiondef(p.oid) ilike '%public.ali_durable_mastery%'
+     and pg_get_functiondef(p.oid) ilike '%public.ali_educational_audit%'
+    then 'PASS 6/6: live function definition contains the auth_user_id-is-null guard AND all six evidence-table NOT EXISTS guards'
+    else 'FAIL 6/6: live function definition is missing at least one expected guard -- inspect pg_get_functiondef output directly'
+  end as check_6_result,
+  pg_get_functiondef(p.oid) as live_function_source
+from pg_proc p
+join pg_namespace n on n.oid = p.pronamespace
+where n.nspname = 'public' and p.proname = 'claim_legacy_profile';
