@@ -31,6 +31,32 @@ function isRateLimitError(msg: string) {
   return /rate.?limit|only request this after/i.test(msg);
 }
 
+/**
+ * Gate 3 production defect (this session) — extracted as a pure,
+ * directly-testable predicate for the same reason
+ * lib/learningEngine/practiceInteractionGuard.ts's
+ * shouldRenderMisconceptionNote() is: this repository's test suite has
+ * no DOM/React rendering harness, but the actual defect found live in
+ * production was exactly this decision, not the surrounding JSX.
+ *
+ * Angel bootstraps a real, genuine Supabase Auth anonymous session
+ * automatically the moment any page loads with none yet
+ * (components/providers/AuthProvider.tsx, lib/learnerIdentity.ts's
+ * ensureLearnerSession()) — a deliberate, desired part of anonymous-
+ * first learning. That anonymous session is still a real `user` object
+ * (`user.is_anonymous === true`, not null/undefined), so a bare
+ * `Boolean(user)` check treats ANY session, anonymous or permanent, as
+ * "already signed in" — making this page's own email magic-link form
+ * unreachable for exactly the learner it exists for: someone who has
+ * been using Angel anonymously and now wants to create their permanent
+ * account. Only a genuinely permanent (non-anonymous) session should
+ * redirect away from this page; an anonymous session, or no session at
+ * all, must still reach the sign-in form.
+ */
+export function isPermanentlyAuthenticated(user: { is_anonymous?: boolean } | null | undefined): boolean {
+  return Boolean(user) && !user!.is_anonymous;
+}
+
 const DEBOUNCE_MS = 2_000;
 
 export default function LoginPage() {
@@ -60,7 +86,7 @@ export default function LoginPage() {
     return () => clearInterval(id);
   }, [rateLimitUntil]);
 
-  if (user) {
+  if (isPermanentlyAuthenticated(user)) {
     router.replace("/dashboard");
     return null;
   }
