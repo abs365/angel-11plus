@@ -56,9 +56,9 @@ select 2, '184.2: acceptedAnswers exact post-state match (4 entries, order-sensi
 from check_184
 
 union all
-select 3, '184.3: eligibility unchanged (not practice_eligible/mock_eligible)', 'true',
-  bool_and(eligibility_status not in ('practice_eligible','mock_eligible'))::text,
-  case when bool_and(eligibility_status not in ('practice_eligible','mock_eligible')) then 'PASS' else 'FAIL' end
+select 3, '184.3: eligibility unchanged (still practice_eligible -- promoted by migration 065, untouched by 184)', 'true',
+  bool_and(eligibility_status = 'practice_eligible')::text,
+  case when bool_and(eligibility_status = 'practice_eligible') then 'PASS' else 'FAIL' end
 from check_184
 
 union all
@@ -86,9 +86,9 @@ select 7, '185.4: correctOptions untouched (still B, D, F, H)', 'true',
 from check_185
 
 union all
-select 8, '185.5: eligibility unchanged (not practice_eligible/mock_eligible)', 'true',
-  bool_and(eligibility_status not in ('practice_eligible','mock_eligible'))::text,
-  case when bool_and(eligibility_status not in ('practice_eligible','mock_eligible')) then 'PASS' else 'FAIL' end
+select 8, '185.5: eligibility unchanged (still practice_eligible -- promoted by migration 055, untouched by 185)', 'true',
+  bool_and(eligibility_status = 'practice_eligible')::text,
+  case when bool_and(eligibility_status = 'practice_eligible') then 'PASS' else 'FAIL' end
 from check_185
 
 order by ord;
