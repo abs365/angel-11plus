@@ -229,39 +229,63 @@ export async function computeRealRecommendationOrchestration(
   const candidates: RecommendationCandidate[] = [];
   const wellbeingResults = new Map<string, WellbeingSignalResult>();
 
-  for (const competencyCode of competencyCodes) {
-    const skillCodes = resolveSkillCodes(competencyCode);
-    const educationalState = await computeRealEducationalState(supabase, profileId, competencyCode, skillCodes);
-    const triggerReason = deriveTriggerReason(educationalState);
-    if (!triggerReason) continue; // Judgement call 3 — mastered/durably-mastered, no honest trigger.
+  // Gate 5 (Parent Journey Completion) performance correction — this loop
+  // previously awaited each competency's full evaluation (2-4 real DB round
+  // trips) before starting the next, for all 12 competencies in
+  // ALL_COMPETENCY_IDS, one at a time. Measured on the Parent Dashboard:
+  // several seconds of pure sequential I/O with no data dependency between
+  // competencies to justify it — competency N's evaluation never reads
+  // competency N-1's result, only `candidates`/`wellbeingResults`, which are
+  // never read back inside the loop itself (only after it completes).
+  // Per-competency evaluation is run concurrently via Promise.all; each
+  // competency's OWN internal step order and short-circuit (no evidence/
+  // recent-attempts fetch once a competency is found mastered, per
+  // Judgement call 3) are completely unchanged. Results are collected into
+  // an array indexed by the original `competencyCodes` order, then that
+  // array — not completion order — is what populates `candidates` and
+  // `wellbeingResults` below, so the exact same candidate set, in the exact
+  // same order, is produced as before; only wall-clock time changes.
+  const evaluations = await Promise.all(
+    competencyCodes.map(async (competencyCode) => {
+      const skillCodes = resolveSkillCodes(competencyCode);
+      const educationalState = await computeRealEducationalState(supabase, profileId, competencyCode, skillCodes);
+      const triggerReason = deriveTriggerReason(educationalState);
+      if (!triggerReason) return null; // Judgement call 3 — mastered/durably-mastered, no honest trigger.
 
-    const evidence = await fetchCompetencyEvidence(supabase, profileId, skillCodes);
-    const confidenceTier = computeCompetencyConfidence({ competencyCode, questions: evidence });
+      const evidence = await fetchCompetencyEvidence(supabase, profileId, skillCodes);
+      const confidenceTier = computeCompetencyConfidence({ competencyCode, questions: evidence });
 
-    const candidate: RecommendationCandidate = {
-      competencyCode,
-      basis: "direct-evidence",
-      educationalState,
-      confidenceTier,
-      triggerReason,
-    };
-    candidates.push(candidate);
+      const candidate: RecommendationCandidate = {
+        competencyCode,
+        basis: "direct-evidence",
+        educationalState,
+        confidenceTier,
+        triggerReason,
+      };
 
-    const recentAttempts = await fetchRecentAttemptSignalsForCompetency(
-      supabase,
-      profileId,
-      competencyCode,
-      skillCodes
-    );
-    const wellbeingInput: WellbeingSignalInput = {
-      learnerId: profileId,
-      competencyCode,
-      recentAttempts,
-      currentEducationalState: educationalState,
-      learningGainTrend: learningGainTrendByCompetency[competencyCode] ?? null,
-      sessionAbandonmentCount: undefined,
-    };
-    wellbeingResults.set(competencyCode, computeWellbeingSignal(wellbeingInput));
+      const recentAttempts = await fetchRecentAttemptSignalsForCompetency(
+        supabase,
+        profileId,
+        competencyCode,
+        skillCodes
+      );
+      const wellbeingInput: WellbeingSignalInput = {
+        learnerId: profileId,
+        competencyCode,
+        recentAttempts,
+        currentEducationalState: educationalState,
+        learningGainTrend: learningGainTrendByCompetency[competencyCode] ?? null,
+        sessionAbandonmentCount: undefined,
+      };
+
+      return { candidate, wellbeingResult: computeWellbeingSignal(wellbeingInput) };
+    })
+  );
+
+  for (const evaluation of evaluations) {
+    if (!evaluation) continue;
+    candidates.push(evaluation.candidate);
+    wellbeingResults.set(evaluation.candidate.competencyCode, evaluation.wellbeingResult);
   }
 
   // Tier 0 predicate consumed exactly as WP-09 defined it (sync, per-candidate)
