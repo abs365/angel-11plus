@@ -70,14 +70,29 @@ begin
   -- === Simulate v_user_b calling claim_legacy_profile as themselves ===
   -- Deliberately NOT switching the actual Postgres role here: SECURITY
   -- DEFINER already runs the function with its owner's privileges
-  -- regardless of caller role, auth.uid() reads only request.jwt.claims
-  -- (role-independent), and staying as this session's own privileged role
-  -- throughout means checks 4-5 below read the true underlying data state
-  -- directly rather than through v_user_b's own RLS-filtered view (which
-  -- would wrongly report v_user_a's row as "not found" simply because
-  -- v_user_b has no SELECT permission on it, not because the data is
-  -- actually wrong).
+  -- regardless of caller role, and staying as this session's own
+  -- privileged role throughout means checks 4-5 below read the true
+  -- underlying data state directly rather than through v_user_b's own
+  -- RLS-filtered view (which would wrongly report v_user_a's row as "not
+  -- found" simply because v_user_b has no SELECT permission on it, not
+  -- because the data is actually wrong).
+  --
+  -- auth.uid() reads request.jwt.claims in current Supabase projects, but
+  -- earlier project generations defined it against the older, separate
+  -- request.jwt.claim.sub setting instead -- rather than assume which
+  -- this project has, set both, then PROVE the simulation actually
+  -- worked by calling this project's own real auth.uid() and comparing
+  -- it to v_user_b before trusting anything that follows. If this
+  -- precondition fails, every check below would otherwise report
+  -- misleading FAILs (or accidental PASSes) that are really just "the
+  -- caller was never actually simulated," not a finding about
+  -- claim_legacy_profile itself.
   perform set_config('request.jwt.claims', json_build_object('sub', v_user_b, 'role', 'authenticated')::text, true);
+  perform set_config('request.jwt.claim.sub', v_user_b::text, true);
+
+  if auth.uid() is distinct from v_user_b then
+    raise exception 'SIMULATION FAILED: auth.uid() resolved to % instead of the intended simulated caller % -- this project''s auth.uid() definition does not read request.jwt.claims/request.jwt.claim.sub the way this script assumes. Inspect auth.uid()''s actual definition (\df+ auth.uid) before trusting any check below; none of them ran.', auth.uid(), v_user_b;
+  end if;
 
   -- Check 1: genuinely empty profile CAN still be claimed (legitimate
   -- anonymous-to-real continuity, the one case this function exists for).
@@ -158,6 +173,16 @@ rollback;
 -- guard (e.g. the total_xp > 0 / questions_presented_count > 0
 -- thresholds on user_stats / ali_student_adaptive_state) -- that
 -- narrower behaviour is what checks 1-5 above already exercise directly.
+--
+-- Word-boundary note: Postgres's regex engine (Advanced Regular
+-- Expressions, used by ~/~*) does NOT define \b as a word-boundary the
+-- way JavaScript/PCRE do -- \b there is a character-entry escape
+-- (backspace), not a constraint escape, so using it here would either
+-- error or silently fail to constrain the match. The correct ARE
+-- constraint escape for "end of word" is \M (see Postgres docs, Table
+-- 9.20, Regular Expression Constraint Escapes) -- used below after each
+-- table name so e.g. "public.user_stats" cannot be satisfied by a
+-- same-prefixed but different table name.
 select
   g.user_stats_guard,
   g.lesson_progress_guard,
@@ -182,11 +207,11 @@ from (
 ) src
 cross join lateral (
   select
-    src.live_function_source ~* 'not\s+exists\s*\(\s*select\s+1\s+from\s+public\.user_stats\b' as user_stats_guard,
-    src.live_function_source ~* 'not\s+exists\s*\(\s*select\s+1\s+from\s+public\.lesson_progress\b' as lesson_progress_guard,
-    src.live_function_source ~* 'not\s+exists\s*\(\s*select\s+1\s+from\s+public\.ali_student_adaptive_state\b' as adaptive_state_guard,
-    src.live_function_source ~* 'not\s+exists\s*\(\s*select\s+1\s+from\s+public\.ali_student_question_history\b' as question_history_guard,
-    src.live_function_source ~* 'not\s+exists\s*\(\s*select\s+1\s+from\s+public\.ali_durable_mastery\b' as durable_mastery_guard,
-    src.live_function_source ~* 'not\s+exists\s*\(\s*select\s+1\s+from\s+public\.ali_educational_audit\b' as educational_audit_guard,
+    src.live_function_source ~* 'not\s+exists\s*\(\s*select\s+1\s+from\s+public\.user_stats\M' as user_stats_guard,
+    src.live_function_source ~* 'not\s+exists\s*\(\s*select\s+1\s+from\s+public\.lesson_progress\M' as lesson_progress_guard,
+    src.live_function_source ~* 'not\s+exists\s*\(\s*select\s+1\s+from\s+public\.ali_student_adaptive_state\M' as adaptive_state_guard,
+    src.live_function_source ~* 'not\s+exists\s*\(\s*select\s+1\s+from\s+public\.ali_student_question_history\M' as question_history_guard,
+    src.live_function_source ~* 'not\s+exists\s*\(\s*select\s+1\s+from\s+public\.ali_durable_mastery\M' as durable_mastery_guard,
+    src.live_function_source ~* 'not\s+exists\s*\(\s*select\s+1\s+from\s+public\.ali_educational_audit\M' as educational_audit_guard,
     src.live_function_source ~* 'where\s+device_id\s*=\s*p_device_id\s+and\s+auth_user_id\s+is\s+null' as auth_user_id_null_guard
 ) g;
