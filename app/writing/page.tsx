@@ -12,11 +12,14 @@ import {
   AlertCircle,
 } from "lucide-react";
 import PageLayout from "@/components/PageLayout";
-import { writingPrompts } from "@/data/writing";
+import { InfoCard } from "@/components/ui/Card";
+import { ButtonLink } from "@/components/ui/Button";
 import { completeLesson, getProgress } from "@/lib/progress";
 import { computeAnalytics } from "@/lib/analytics";
+import { getSupabaseClient } from "@/lib/supabase";
 import { recordLegacyPracticeEvidence, recordLegacyPracticeSessionCompletion } from "@/lib/learningEngine/legacyPracticeEvidence";
 import { WRITING_CORRECTNESS_THRESHOLD } from "@/lib/learningEngine/practiceContent";
+import { fetchEligibleWritingPrompts, isWritingPracticeReady } from "@/lib/learningEngine/writingPracticeContent";
 import SessionInfoBar from "@/components/SessionInfoBar";
 import { SUBJECT_ESTIMATED_MINUTES, SUBJECT_LEARNING_OBJECTIVE, SUBJECT_EXPECTED_BENEFIT } from "@/lib/subjectMeta";
 import dynamic from "next/dynamic";
@@ -50,9 +53,26 @@ export default function WritingPage() {
   const [report, setReport] = useState<AnalyticsReport | null>(null);
   const [evidenceSessionId] = useState<string>(() => crypto.randomUUID());
 
+  // Programme Completion Increment 004 (Founder-authorised) — real content
+  // source (ali_question_bank, practice_eligible only), never the static
+  // fixture. Starts unresolved (never a false "ready" flash) and only ever
+  // becomes ready once fetchEligibleWritingPrompts()/isWritingPracticeReady()
+  // — the same authoritative signal a future activation decision will
+  // simply add content against, not re-engineer — genuinely confirms
+  // enough reviewed, shape-diverse content exists to deliver real Practice.
+  const [prompts, setPrompts] = useState<WritingPrompt[]>([]);
+  const [promptsLoaded, setPromptsLoaded] = useState(false);
+
   useEffect(() => {
     setReport(computeAnalytics(getProgress()));
+    const supabase = getSupabaseClient();
+    fetchEligibleWritingPrompts(supabase)
+      .then(setPrompts)
+      .catch(() => setPrompts([]))
+      .finally(() => setPromptsLoaded(true));
   }, []);
+
+  const ready = promptsLoaded && isWritingPracticeReady(prompts);
 
   const wordCount = writingText.trim().split(/\s+/).filter((w) => w.length > 0).length;
   const checkedCount = Object.values(checklist).filter(Boolean).length;
@@ -421,6 +441,46 @@ export default function WritingPage() {
     );
   }
 
+  // ── Not ready yet ─────────────────────────────────────────────────────────────
+  // Completion Assurance discipline (matching the Mock Centre's own
+  // isMockFormAvailable() pattern) — never render exam-instructions-shaped
+  // content, and never claim Practice is ready, until the real signal
+  // confirms it. Loading and "not enough reviewed content yet" render the
+  // same honest state deliberately: a learner must never see a difference
+  // between "still checking" and "nothing ready" that could look like a
+  // bug.
+  if (!ready) {
+    return (
+      <PageLayout>
+        <div className="max-w-2xl mx-auto px-4 py-8 md:px-8">
+          <div className="flex items-center gap-3 mb-5">
+            <div className="bg-orange-100 dark:bg-orange-900 p-3 rounded-2xl">
+              <Pencil size={22} aria-hidden="true" className="text-orange-600 dark:text-orange-400" />
+            </div>
+            <h1 className="text-gray-900 dark:text-gray-100 font-bold text-2xl">Creative Writing</h1>
+          </div>
+          <InfoCard className="text-center py-8">
+            <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">
+              {promptsLoaded ? "Writing Practice isn't ready yet" : "Checking for available Writing Practice…"}
+            </p>
+            {promptsLoaded && (
+              <>
+                <p className="text-xs text-gray-400 dark:text-gray-500 mt-2 leading-relaxed max-w-sm mx-auto">
+                  Angel doesn&apos;t yet have enough reviewed Writing prompts to offer real practice here. Other
+                  subjects stay available in the meantime, and reflect the same real evidence about how your child
+                  is progressing.
+                </p>
+                <ButtonLink href="/learning-intelligence/practice" variant="outline" size="sm" className="mt-4">
+                  Go to Practice
+                </ButtonLink>
+              </>
+            )}
+          </InfoCard>
+        </div>
+      </PageLayout>
+    );
+  }
+
   // ── Prompt list ──────────────────────────────────────────────────────────────
   return (
     <PageLayout>
@@ -468,7 +528,7 @@ export default function WritingPage() {
 
         {/* Prompts */}
         <div className="grid gap-4">
-          {writingPrompts.map((prompt) => (
+          {prompts.map((prompt) => (
             <button
               key={prompt.id}
               onClick={() => startPrompt(prompt)}

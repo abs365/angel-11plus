@@ -20,7 +20,7 @@ const MIGRATIONS_DIR = join(__dirname, "..", "supabase", "migrations");
 const PARAGRAPHS = [
   `On the crumbling cliffs above the English seaside town of Lyme Regis, winter storms have always done a strange and useful kind of damage. Each time a section of cliff collapses onto the beach below, it can expose something that has been hidden inside the rock for millions of years: the fossilised remains of creatures that swam in a warm sea long before dinosaurs walked on land. Mary Anning, born in Lyme Regis in 1799, grew up learning to read these cliffs the way other children read books.`,
   `Her father, Richard Anning, was a cabinetmaker by trade, but he earned useful extra money selling fossils he collected from the shore to visitors who came to admire the coastline. He taught Mary and her brother Joseph how to search safely among the loose rock for these "curiosities," as fossils were often called at the time. When Richard died in 1810, leaving the family with very little money, searching the cliffs stopped being a hobby and became something closer to necessity. Mary was only about eleven.`,
-  `The following year, Joseph spotted something unusual poking out of the rock: a skull over a metre long, with rows of pointed teeth and enormous eye sockets. Mary spent months carefully freeing the rest of the skeleton from the cliff, working with hammers and chisels far too heavy for her hands to have found comfortable. What emerged was the almost complete skeleton of a creature more than five metres in length, unlike anything then known to science. It would later be recognised as an ichthyosaur, an ancient sea reptile, and it was sold to help support the Anning family.`,
+  `The following year, Joseph spotted something unusual poking out of the rock: a skull over a metre long, with rows of pointed teeth and enormous eye sockets. Mary spent months carefully freeing the rest of the skeleton from the cliff, working for hours at a time with hammers and chisels that left her hands raw and blistered. What emerged was the almost complete skeleton of a creature more than five metres in length, unlike anything then known to science. It would later be recognised as an ichthyosaur, an ancient sea reptile, and it was sold to help support the Anning family.`,
   `Mary's discoveries did not stop there. In 1823, after years of further searching, she uncovered the first complete skeleton of a plesiosaur: a creature with an extraordinarily long neck, a small head, and four broad paddle-like limbs. It looked so strange that the celebrated French scientist Georges Cuvier initially suspected the skeleton might be a fake, cleverly built from several different animals. Only after examining detailed drawings and measurements was he persuaded that the discovery was genuine, and remarkable.`,
   `Despite this expertise, built entirely from years of patient, dangerous fieldwork -- Mary once narrowly escaped a landslide that killed her dog, Tray -- she was never permitted to join the Geological Society of London. Women were not admitted as full members of the Society until many years after her death. Wealthy male collectors often bought fossils directly from her, then published scientific papers describing them without mentioning her name at all.`,
   `Mary Anning died in Lyme Regis in 1847. It is sometimes said that the well-known tongue-twister "she sells seashells by the seashore" was inspired by her, though no one has ever definitely proven this connection, and some historians doubt it. What is certain is her scientific legacy: in 2010, the Royal Society named her one of the ten most influential British women in the history of science, more than two centuries after her first great discovery on the cliffs above Lyme Regis.`,
@@ -42,7 +42,7 @@ const QUESTIONS = [
     modelAnswer: "In 1823.",
     acceptedAnswers: ["1823", "in 1823", "the year 1823"],
     misconception: "Confusing 1823 (the plesiosaur) with 1811 (the year the ichthyosaur skeleton was found) or 1810 (her father's death)." },
-  { id: "eng-pc001-anning-q03", questionType: "QT-RC-03", difficulty: "medium", skill: "vocabulary", marks: 2, seconds: 90, transferClass: "ROUTINE",
+  { id: "eng-pc001-anning-q03", questionType: "QT-RC-03", difficulty: "medium", skill: "vocabulary", marks: 1, seconds: 90, transferClass: "ROUTINE",
     question: "Explain what you think the phrase 'closer to necessity' means, as used to describe why Mary and her brother continued searching the cliffs after their father's death.",
     modelAnswer: "It means the family genuinely needed the money fossil-selling brought in to survive, so searching the cliffs was no longer just an enjoyable pastime but something they had to do.",
     acceptedAnswers: ["they needed the money", "they needed money", "the family needed the money", "money was needed", "it was necessary for them to survive", "something they had to do", "essential for the family", "they had no choice", "not just a hobby anymore", "vital for the family's survival"],
@@ -53,10 +53,10 @@ const QUESTIONS = [
     acceptedAnswers: ["long neck", "a long neck", "four paddle-like limbs", "paddle-like limbs", "pointed teeth", "enormous eye sockets", "over five metres long", "cuvier thought it might be a fake", "cuvier suspected it was a fake", "cuvier doubted it was real", "one was doubted and the other was not", "the plesiosaur was thought to be fake"],
     misconception: "Restating that both were fossil discoveries (a similarity) instead of identifying a genuine textual difference between the two creatures or their reception." },
   { id: "eng-pc001-anning-q05", questionType: "QT-RC-10", difficulty: "medium", skill: "inference", marks: 2, seconds: 120, transferClass: "ROUTINE",
-    question: "The passage describes Mary working with hammers and chisels 'far too heavy for her hands to have found comfortable', rather than simply saying the work was difficult. What effect does this specific detail have on the reader?",
-    modelAnswer: "It makes the hardship and physical effort feel real and specific rather than just being told in the abstract that the work was hard -- picturing tools too heavy for her hands helps the reader imagine how demanding the work truly was.",
-    acceptedAnswers: ["makes it feel real", "shows how hard the work was", "the work was hard", "shows the work was hard", "makes the reader imagine how difficult it was", "makes it more vivid", "shows the effort involved", "helps the reader picture how hard it was", "makes the hardship feel real", "shows how physically demanding it was"],
-    misconception: "Describing WHAT the detail says (the tools were heavy) rather than the EFFECT it has on the reader's understanding of the hardship." },
+    question: "The passage says the hammers and chisels 'left her hands raw and blistered', rather than simply saying the work was difficult. What effect does this specific detail have on the reader?",
+    modelAnswer: "It makes the hardship and physical effort feel real and specific rather than just being told in the abstract that the work was hard -- picturing her raw, blistered hands helps the reader imagine how demanding the work truly was.",
+    acceptedAnswers: ["makes it feel real", "shows how hard the work was", "the work was hard", "shows the work was hard", "makes the reader imagine how difficult it was", "makes it more vivid", "shows the effort involved", "helps the reader picture how hard it was", "makes the hardship feel real", "shows how physically demanding it was", "raw and blistered", "her hands were raw and blistered", "shows how painful it was"],
+    misconception: "Describing WHAT the detail says (her hands were sore) rather than the EFFECT it has on the reader's understanding of the hardship." },
   { id: "eng-pc001-anning-q06", questionType: "QT-RC-02", difficulty: "medium", skill: "inference", marks: 3, seconds: 150, transferClass: "MIXED_TRANSFER",
     question: "What does the passage suggest about how Mary Anning's contribution to science was treated during her own lifetime? Use evidence from the passage to support your answer.",
     modelAnswer: "It suggests she was not properly valued or credited: despite her skill and expertise, she was never permitted to join the Geological Society of London because women were not admitted as members, and male collectors published scientific papers about her discoveries without mentioning her name.",
@@ -142,7 +142,15 @@ const migration191 = `-- Angel Digital 11+ — Migration 191
 -- targets, per the Founder's own "prefer quality and structural diversity
 -- over hitting an arbitrary count" precedent (Decision 227/228):
 --   Q1/Q2 — QT-RC-01 (direct retrieval)
---   Q3    — QT-RC-03 (phrase meaning in context)
+--   Q3    — QT-RC-03 (phrase meaning in context). MARK CONTRACT (Founder
+--           correction, Increment 004): reduced from 2 marks to 1 -- a
+--           single "explain what you think this phrase means" demand does
+--           not cleanly decompose into two independently observable
+--           scoring elements, and inventing an artificial second element
+--           merely to justify 2 marks would be exactly the "artificial
+--           mark inflation" the Founder's directive named. 0 marks for no
+--           genuine sense of financial necessity conveyed; 1 mark for
+--           conveying it, in the learner's own words.
 --   Q4    — QT-RC-07 (comparative attribute extraction — closes the named
 --           gap; a genuine two-entity comparison of Anning's two major
 --           fossil finds, in ordinary prose, not the templated "explain
@@ -157,13 +165,27 @@ const migration191 = `-- Angel Digital 11+ — Migration 191
 --           required manufacturing a second scoring requirement the
 --           question itself never asks for -- corrected to the smaller,
 --           honest allocation instead.
---   Q5    — QT-RC-10 (word-choice/detail effect)
+--   Q5    — QT-RC-10 (word-choice/detail effect). AMENDMENT (Founder
+--           correction, Increment 004): the passage's own third paragraph
+--           was rewritten -- "working with hammers and chisels far too
+--           heavy for her hands to have found comfortable" (unnatural
+--           prose, manufactured specifically to give this question
+--           something to ask about) is now "working for hours at a time
+--           with hammers and chisels that left her hands raw and
+--           blistered" -- a naturally-written sentence a real author would
+--           write for its own sake, which also happens to support a
+--           genuine word-choice/detail-effect question. Q5 itself is
+--           rewritten to test this real sentence, not the old manufactured
+--           one.
 --   Q6    — QT-RC-02 (justified interpretation), phrased as a free-
 --           response question rather than the "tick Yes/No + reasons"
 --           shape — the Founder's directive explicitly named the 11
 --           excluded tick-justify rows' unresolved self-assessment-
 --           validity concern; this migration deliberately does not
 --           reproduce that shape.
+-- TOTAL MARKS after all Founder corrections: 1+1+1+1+2+3 = 9 (was 11 at
+-- first authoring, then 10 after the Increment 003 Q4 correction, now 9
+-- after the Increment 004 Q3 correction).
 -- Every question uses \`validationTier: "TIER2_ACCEPTED_SET"\` (checked,
 -- contiguous-substring matching against a curated, generous accepted-
 -- answer list) — the same well-established, low-risk shape used for 10 of

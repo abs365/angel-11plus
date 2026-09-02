@@ -39,9 +39,19 @@ test("Increment 003 mark-contract correction: Q4 (QT-RC-07, 'give ONE way they d
   assert.equal(PROMPTS["eng-pc001-anning-q04"].marks, 1);
 });
 
-test("total marks across the 6-question set is 10 (1+1+2+1+2+3), consistent with each question's own cognitive demand", () => {
+test("total marks across the 6-question set is 9 (1+1+1+1+2+3) after the Increment 004 Q3 correction", () => {
   const total = Object.values(PROMPTS).reduce((sum: number, p: any) => sum + p.marks, 0);
-  assert.equal(total, 10);
+  assert.equal(total, 9);
+});
+
+test("Increment 004 mark-contract correction: Q3 (QT-RC-03, phrase meaning) is worth 1 mark, not 2 -- a single explain-the-meaning demand does not cleanly decompose into two observable scoring elements", () => {
+  assert.equal(PROMPTS["eng-pc001-anning-q03"].marks, 1);
+});
+
+test("Increment 004 amendment: Q5 now tests the genuinely-rewritten sentence ('raw and blistered'), not the old manufactured phrase", () => {
+  assert.match(PROMPTS["eng-pc001-anning-q05"].question, /raw and blistered/);
+  assert.match(PASSAGE_TEXT, /left her hands raw and blistered/);
+  assert.ok(!PASSAGE_TEXT.includes("far too heavy for her hands to have found comfortable"), "the old manufactured sentence must be fully replaced");
 });
 
 test("every question's stored passageText is byte-identical to the passage row's own original_text", () => {

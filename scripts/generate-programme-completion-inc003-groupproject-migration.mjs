@@ -16,7 +16,7 @@ const MIGRATIONS_DIR = join(__dirname, "..", "supabase", "migrations");
 const PARAGRAPHS = [
   `Zara dropped her folder onto the table with a satisfying thud. "I've already sketched out the model," she said. "Cardboard houses, real flames -- well, orange tissue paper, obviously -- and I found a map of Pudding Lane from 1666. We could build the whole street."`,
   `Ben didn't look up from his phone. "Or," he said, "we could just... write it. Miss Okafor said a report was fine."`,
-  `"A report is fine if you want a B," Zara said. "A model gets an A. You want an A, don't you?"`,
+  `"A report's fine if you want it to look like everyone else's," Zara said. "A model's what actually gets remembered. Don't you want ours to stand out?"`,
   `"I want a weekend," Ben muttered.`,
   `Zara frowned. "What's that supposed to mean?"`,
   `"Nothing." He finally put the phone down, but he didn't quite meet her eyes. "I just don't have loads of spare time right now, that's all."`,
@@ -28,7 +28,7 @@ const PARAGRAPHS = [
   `"Three. She doesn't nap unless someone reads to her four times in a row, and she definitely doesn't sit still for cardboard house building." He almost smiled. "I wasn't trying to get out of it. I just can't promise a whole Saturday."`,
   `Zara was quiet for a moment. "Why didn't you just say that at the start?"`,
   `"Because 'I want a weekend' sounded better than 'my life's a bit much right now,'" Ben said, and shrugged like it didn't matter, even though it clearly did.`,
-  `"Okay." Zara pulled the folder back towards her and turned to a blank page. "New plan. What if I build the model at mine, and you do the writing whenever you actually get five minutes -- on the bus, in the evenings, whatever works? You know more about the actual history anyway, you did that whole thing on the Monument in Year 5."`,
+  `"Okay." Zara pulled the folder back towards her and turned to a blank page. "New plan. What if I build the model at mine, and you do the writing whenever you actually get five minutes -- on the bus, in the evenings, whatever works? You know more about the actual history anyway, you did that whole project on the Great Fire last term."`,
   `Ben looked at her properly for the first time since she'd sat down. "You'd really do the whole model yourself?"`,
   `"I like building things. You clearly don't have time to argue about it right now." She was already sketching a rough elevation of Pudding Lane. "Just don't disappear on the writing. Deal?"`,
   `"Deal," Ben said. Then, after a pause: "Thanks. For not just deciding I was being lazy."`,
@@ -195,14 +195,31 @@ const migration193 = `-- Angel Digital 11+ — Migration 193
 -- ============================================================
 -- Wholly original Angel writing; no real person, published work, or CSSE
 -- passage was used as a source. Contemporary British English throughout
--- (Year 6 school setting, "Miss Okafor", "Pudding Lane", "the Monument in
--- Year 5" — a real, ordinary KS2 history-topic detail, not invented
--- trivia). The family's situation (a parent's hospital check-ups,
--- childcare pressure on an older sibling) is handled gently and
--- reassuringly ("Just check-ups... She's fine") — a plausible, age-
--- appropriate source of real-world pressure without distressing content.
--- Balanced, ordinary contemporary names; no stereotype, no quota-driven
--- naming pattern.
+-- (Year 6 school setting, "Miss Okafor", "Pudding Lane"). The family's
+-- situation (a parent's hospital check-ups, childcare pressure on an older
+-- sibling) is handled gently and reassuringly ("Just check-ups... She's
+-- fine") — a plausible, age-appropriate source of real-world pressure
+-- without distressing content. Balanced, ordinary contemporary names; no
+-- stereotype, no quota-driven naming pattern.
+--
+-- AMENDMENTS (Founder correction, Increment 004):
+--   1. Zara's opening line originally read "A report is fine if you want a
+--      B... A model gets an A. You want an A, don't you?" — American-style
+--      letter grading, not how UK Year 6 classwork is discussed. Rewritten
+--      to "A report's fine if you want it to look like everyone else's...
+--      A model's what actually gets remembered. Don't you want ours to
+--      stand out?" — preserves the exact same underlying disagreement
+--      (Zara believes the model will be a stronger, more impressive
+--      project; Ben initially prefers the simpler report) without any
+--      letter-grade framing.
+--   2. "you did that whole thing on the Monument in Year 5" assumed
+--      specific knowledge of a particular London landmark a non-London
+--      CSSE candidate may never have encountered, and named a school year
+--      not otherwise relevant. Rewritten to "you did that whole project on
+--      the Great Fire last term" — ties directly to the topic already
+--      established in the passage's own opening line (Pudding Lane, 1666),
+--      so no assumed knowledge beyond what the passage itself provides is
+--      required to understand it.
 --
 -- eligibility_status = 'authentic_assessment_candidate' on the passage and
 -- all 6 questions, matching migration 152/191's own established entry

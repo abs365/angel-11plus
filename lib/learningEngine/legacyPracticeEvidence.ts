@@ -80,6 +80,42 @@ export type BankEvidenceContext =
   | { found: true; masteryThreshold: number; competencyId: CompetencyId | undefined };
 
 /**
+ * Programme Completion Increment 004 (Founder-authorised integrity
+ * correction) — the one real query this module issues before it can ever
+ * write evidence, extracted into its own small, independently-testable
+ * function (accepting `supabase` as a parameter, matching this codebase's
+ * own established stub-client testing pattern) so the fix below can be
+ * regression-tested directly, not merely asserted from source text.
+ *
+ * Requires `eligibility_status = 'practice_eligible'` explicitly, on top
+ * of the RLS policy (migration 100, `ali_question_bank_select_all`:
+ * "eligibility_status = 'practice_eligible' OR is_current_user_admin()")
+ * that already enforces this for every non-admin caller. The explicit
+ * filter here closes the one gap RLS alone does not: an admin session
+ * calling this same code path would otherwise be able to read (and
+ * therefore record durable evidence for) provisional/candidate content,
+ * since RLS's own `OR is_current_user_admin()` clause exists for review
+ * tooling, not for evidence generation. Returns `null` for "no matching
+ * practice_eligible row" exactly as `.maybeSingle()` already would for
+ * "no row at all" — the caller (recordLegacyPracticeEvidence, below)
+ * cannot and must not distinguish "doesn't exist" from "exists but isn't
+ * eligible yet"; both are correctly treated as untagged-question.
+ */
+export async function fetchPracticeEligibleBankRow(
+  supabase: ReturnType<typeof getSupabaseClient>,
+  questionId: string
+): Promise<{ data: { id: string; skill: string; mastery_threshold: number } | null; error: unknown }> {
+  if (!supabase) return { data: null, error: null };
+  const { data, error } = await supabase
+    .from("ali_question_bank")
+    .select("id, skill, mastery_threshold")
+    .eq("id", questionId)
+    .eq("eligibility_status", "practice_eligible")
+    .maybeSingle();
+  return { data: data ?? null, error };
+}
+
+/**
  * Pure, no I/O, independently testable — the one piece of real decision
  * logic in this module: whether a question is a genuine ali_question_bank
  * row and, if so, which competency (if any) it resolves to. Never invents
@@ -112,11 +148,7 @@ export async function recordLegacyPracticeEvidence(
     const profileId = await ensureProfile().catch(() => null);
     if (!profileId) return { recorded: false, outcome: "no-profile" };
 
-    const { data: bankRow, error: bankError } = await supabase
-      .from("ali_question_bank")
-      .select("id, skill, mastery_threshold")
-      .eq("id", params.questionId)
-      .maybeSingle();
+    const { data: bankRow, error: bankError } = await fetchPracticeEligibleBankRow(supabase, params.questionId);
     if (bankError) return { recorded: false, outcome: "untagged-question" };
 
     const context = resolveBankEvidenceContext(bankRow);

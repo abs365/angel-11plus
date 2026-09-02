@@ -85,6 +85,16 @@ test("a genuinely wrong answer is correctly rejected for each question", () => {
   }
 });
 
+test("Increment 004 amendment: no American-style letter grading (A/B) remains -- the disagreement is preserved through natural British dialogue instead", () => {
+  assert.ok(!/want a B|gets an A|want an A/.test(PASSAGE_TEXT), "letter-grade framing must be fully removed");
+  assert.match(PASSAGE_TEXT, /gets remembered|stand out/, "Zara's underlying belief that the model is more impressive must still come through");
+});
+
+test("Increment 004 amendment: 'the Monument' assumed-knowledge reference is replaced with a self-explanatory tie back to the passage's own established topic", () => {
+  assert.ok(!PASSAGE_TEXT.includes("the Monument"), "must not require knowledge of a specific London landmark");
+  assert.match(PASSAGE_TEXT, /the Great Fire/, "the replacement must tie to the topic already established in the passage's own opening (Pudding Lane, 1666)");
+});
+
 test("total marks is 11 (1+1+2+2+2+3)", () => {
   const total = Object.values(PROMPTS).reduce((sum: number, p: any) => sum + p.marks, 0);
   assert.equal(total, 11);
