@@ -524,6 +524,30 @@ test("w2-morningpatrol-08 (Morning Patrol, LIVE, walkthrough-confirmed defect, m
   assert.equal(incorrect.marks, 3, "G is wrong so only B, D, F score");
 });
 
+test("Gate 4 Bounded Reading Scoring Correction (migration 190) — w3-rc10-am-02: the exact rejected live production answer now passes, and the pre-fix false negative is proven", () => {
+  const preFix = ["it creates suspense before the reveal", "it creates tension before the reveal", "it shows her hesitating, delaying the moment of finding out", "it emphasises the anticipation building throughout the passage"];
+  const postFix = [...preFix, "build suspense and tension"];
+  const rejectedLearnerAnswer = "To build suspense and tension, showing how nervous and alert Maya feels in the unnerving silence before she finds out what is in the envelope.";
+
+  assert.equal(checkAcceptedAnswerSet(rejectedLearnerAnswer, preFix).correct, false, "proves the pre-fix false negative actually occurred, not assumed");
+  assert.equal(checkAcceptedAnswerSet(rejectedLearnerAnswer, postFix).correct, true, "the exact live production answer must now be accepted");
+
+  // The Tier 2 rule itself (exact contiguous token sequence) is unchanged
+  // by this fix — a genuinely different, incorrect answer must still fail.
+  assert.equal(checkAcceptedAnswerSet("It was very loud in the classroom.", postFix).correct, false);
+});
+
+test("Gate 4 Bounded Reading Scoring Correction (migration 190) — w3-rc10-wc-07: the exact rejected live production answer now passes, and the pre-fix false negative is proven", () => {
+  const preFix = ["he was proud and wanted to show them off", "he wanted people to notice his new trainers", "he felt excited and eager for attention"];
+  const postFix = [...preFix, "he was proud of his new trainers and wanted people to notice and admire them"];
+  const rejectedLearnerAnswer = "It suggests he was proud of his new trainers and wanted people to notice and admire them.";
+
+  assert.equal(checkAcceptedAnswerSet(rejectedLearnerAnswer, preFix).correct, false, "proves the pre-fix false negative actually occurred, not assumed");
+  assert.equal(checkAcceptedAnswerSet(rejectedLearnerAnswer, postFix).correct, true, "the exact live production answer must now be accepted");
+
+  assert.equal(checkAcceptedAnswerSet("He didn't care what anyone thought of his trainers.", postFix).correct, false);
+});
+
 test("regression: no accepted-answer string anywhere in the two families touched by migration 183 still contains a slash — the defect class cannot silently reappear in these rows", () => {
   const allCorrectedArrays: string[][] = [
     ["from scared to relieved", "fear to relief", "anxious to happy", "anxious to laughing"],
