@@ -1,10 +1,35 @@
 -- Angel Digital 11+ — Migration 188
--- Identity / Evidence Isolation Correction (Gate 3 blocker, this session).
+-- Identity / Evidence Isolation — DEFENCE-IN-DEPTH correction (Gate 3,
+-- this session).
 --
 -- ============================================================
--- ROOT CAUSE (proven from code + migration history; DB-level confirmation
--- requested in the companion verification script below, since this agent
--- has no direct database credentials -- see that script's own header)
+-- CLASSIFICATION (Founder-reviewed) -- read this before the rationale
+-- below
+-- ============================================================
+-- This migration is DEFENCE IN DEPTH, not a root-cause fix for any
+-- specific observed incident. The Profile A/B session that originally
+-- prompted this investigation was traced, with database confirmation, to
+-- a browser/session-state issue (the browser never actually switched
+-- Supabase identity away from a single long-lived anonymous session) --
+-- not to claim_legacy_profile() reassigning a profile across two
+-- distinct authenticated accounts. That theory was formally withdrawn.
+-- No production evidence exists of a profile ever having been
+-- successfully claimed away from one authenticated learner by another.
+--
+-- This migration is still worth applying on its own architectural
+-- merits, described below: the underlying WHERE clause weakness it
+-- closes is real, independent of whether it has yet been observed to
+-- fire in production. It intentionally defers automatic recovery of
+-- evidence-bearing anonymous history in favour of learner-identity
+-- safety, rather than risking one learner ever inheriting another's
+-- educational record. It is not, and must not be presented as, permanent
+-- completion of anonymous-to-authenticated continuity -- see the
+-- companion note in ALI_DECISION_LOG.md / the Gate 3 Founder Handoff for
+-- the deferred "secure anonymous-to-authenticated continuity" follow-up.
+--
+-- ============================================================
+-- RATIONALE (the architectural weakness this closes, independent of any
+-- one incident)
 -- ============================================================
 -- Migration 019 introduced claim_legacy_profile(p_device_id) so a learner
 -- who used the app anonymously before signing up could keep their XP/
@@ -17,28 +42,21 @@
 -- identity" as equivalent to "safe for anyone on this device to inherit."
 -- Those are not the same thing. A profile can sit unclaimed for a long
 -- time while still accumulating substantial real evidence under a
--- long-lived anonymous session (or, as observed this session, a device
--- reused across genuinely different test/family accounts where the first
--- profile was never linked to a distinct real identity at all). The
--- function had no way to distinguish "this unclaimed profile is genuinely
--- mine from five minutes ago, nothing has happened yet" from "this
--- unclaimed profile belongs to a completely different person's
--- substantial prior activity, and I only share their device_id."
---
--- Observed this session: a fresh, genuinely distinct authenticated
--- account ("Profile B"), first authenticated action on a browser
--- previously used for extensive unrelated activity ("Profile A"),
--- inherited that unrelated activity's entire evidence history (dozens of
--- attempts across multiple competencies) via exactly this path. Every
--- evidence table (user_stats, lesson_progress, ali_student_adaptive_state,
--- ali_student_question_history, ali_durable_mastery, ali_educational_audit
--- -- migration 020) is correctly RLS-scoped to `profiles.auth_user_id =
--- auth.uid()`, so once a profile is wrongly claimed, every one of those
--- policies faithfully -- and wrongly -- treats the new owner as entitled
--- to the old owner's entire history. The RLS layer was never bypassed; it
--- enforced the wrong ownership fact, which is exactly why this had to be
--- fixed at the one place ownership is decided, not by touching any RLS
--- policy.
+-- long-lived anonymous session, or under a device genuinely reused across
+-- different people where the first profile was never linked to a
+-- distinct real identity at all. The function has no way to distinguish
+-- "this unclaimed profile is genuinely mine from five minutes ago,
+-- nothing has happened yet" from "this unclaimed profile belongs to a
+-- completely different person's substantial prior activity, and I only
+-- share their device_id." Every evidence table (user_stats,
+-- lesson_progress, ali_student_adaptive_state, ali_student_question_
+-- history, ali_durable_mastery, ali_educational_audit -- migration 020)
+-- is correctly RLS-scoped to `profiles.auth_user_id = auth.uid()`, so if
+-- a profile were ever wrongly claimed, every one of those policies would
+-- faithfully -- and wrongly -- treat the new owner as entitled to the
+-- old owner's entire history. The RLS layer itself is not the gap; it
+-- would simply enforce whatever ownership fact claim_legacy_profile hands
+-- it, which is why the correction belongs at that one decision point.
 --
 -- ============================================================
 -- FIX
