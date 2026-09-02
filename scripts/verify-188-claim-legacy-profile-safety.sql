@@ -36,22 +36,56 @@ declare
   v_check int := 0;
   v_pass int := 0;
 begin
-  select id into v_user_a from auth.users order by created_at asc limit 1;
-  select id into v_user_b from auth.users where id <> v_user_a order by created_at asc limit 1;
+  -- v_user_a / v_user_b must be real auth.users rows that currently have
+  -- NO linked profiles row at all -- profiles.auth_user_id is UNIQUE
+  -- (migration 002), so borrowing any already-linked identity to
+  -- fabricate a fixture profile would violate that constraint against a
+  -- REAL learner's own row, exactly as a live run of this script
+  -- correctly did (23505 on profiles_auth_user_id_key) when this
+  -- selection was too permissive. Fabricating a profile for an unlinked
+  -- auth user, entirely inside this rollback-wrapped transaction, is
+  -- safe: it creates that user's first-ever profile row for the
+  -- duration of the test only, never touches or reuses any existing row.
+  select id into v_user_a from auth.users u
+    where not exists (select 1 from public.profiles p where p.auth_user_id = u.id)
+    order by created_at asc limit 1;
+  select id into v_user_b from auth.users u
+    where not exists (select 1 from public.profiles p where p.auth_user_id = u.id)
+      and u.id <> v_user_a
+    order by created_at asc limit 1;
 
+  -- Explicit precondition, proving all three required facts before any
+  -- fixture is created: both ids exist (the selects above already
+  -- guarantee this trivially, since a null result means no such row was
+  -- found), both are distinct, and neither already owns a profiles row.
   if v_user_a is null or v_user_b is null then
     -- A DO block cannot issue ROLLBACK itself (not valid inside PL/pgSQL);
     -- raising forces the enclosing transaction to abort instead, which
     -- undoes nothing since no fixture has been inserted yet at this point.
     -- The outer `rollback;` below still runs afterward and is a safe
     -- no-op in that case.
-    raise exception 'SKIPPED: fewer than 2 auth.users rows exist — cannot simulate two distinct callers. Apply migration 188 and rely on the live two-account browser sequence instead.';
+    raise exception 'SKIPPED: fewer than 2 auth.users rows exist with no existing profiles.auth_user_id link — cannot safely fabricate an "already-owned" fixture without borrowing a real learner''s identity and violating their own unique-constraint-protected row. Apply migration 188 and rely on the live two-account browser sequence instead.';
+  end if;
+
+  if v_user_a = v_user_b then
+    raise exception 'INTERNAL: v_user_a and v_user_b resolved to the same id (%) — fixture selection logic error, aborting rather than proceeding with an invalid test.', v_user_a;
+  end if;
+
+  perform 1 from public.profiles where auth_user_id = v_user_a;
+  if found then
+    raise exception 'INTERNAL: selected v_user_a % unexpectedly already has a linked profile — fixture selection logic error, aborting rather than risking that real row.', v_user_a;
+  end if;
+
+  perform 1 from public.profiles where auth_user_id = v_user_b;
+  if found then
+    raise exception 'INTERNAL: selected v_user_b % unexpectedly already has a linked profile — fixture selection logic error, aborting rather than risking that real row.', v_user_b;
   end if;
 
   -- Test fixtures: three unowned legacy profiles on three distinct
   -- fabricated device ids. v_user_a's real id is pre-attached to the
-  -- "owned" one below to simulate an already-claimed profile; it is never
-  -- attached to v_user_a's own real profile row (untouched throughout).
+  -- "owned" one below to simulate an already-claimed profile -- this
+  -- creates v_user_a's first-ever profile row, confirmed above to not
+  -- yet exist, entirely inside this rollback-wrapped transaction.
   insert into public.profiles (device_id, name, auth_user_id)
     values ('TEST-188-EMPTY-DEVICE', 'Test Empty', null)
     returning id into v_profile_empty;
@@ -127,9 +161,11 @@ begin
     raise notice 'FAIL 3/5 (behavioural): already-owned profile was wrongly reassigned (got %) — this would be a NEW, more severe defect', v_claim_result;
   end if;
 
-  -- Check 4: v_user_a's own real, pre-existing profile (their genuine
-  -- account) is untouched by any of the above — still owned by v_user_a,
-  -- auth_user_id never overwritten.
+  -- Check 4: the fabricated "already-owned" fixture profile (v_user_a's
+  -- own genuine auth identity, now attached to its first-ever profile
+  -- row by this test's own setup step) is untouched by v_user_b's
+  -- refused claim attempt above — still owned by v_user_a, auth_user_id
+  -- never overwritten.
   v_check := v_check + 1;
   perform 1 from public.profiles where auth_user_id = v_user_a and id = v_profile_owned;
   if found then
