@@ -126,6 +126,46 @@ const NUMBER_WITH_POWER_UNIT_PATTERN = new RegExp(
 );
 const CANONICAL_EXPONENT: Record<string, string> = { "2": "²", "²": "²", "3": "³", "³": "³" };
 
+/**
+ * Gate 3 Assessment System Completion (18°C defect) — RECOGNISED_MEASUREMENT_UNITS
+ * above is a plain-letter unit list (m, kg, l...); normalizeNumeric already
+ * strips a bare "°" as pure decoration (matching Educational Increment
+ * 004's "95°" precedent, an angle with no letter suffix), so a stored
+ * answer like "18°C" was NEVER reaching either existing path: the plain
+ * numeric path fails because "18C" (after ° is stripped) isn't a number,
+ * and the unit-aware path above failed because "c"/"f" were never
+ * recognised units, since "°" strips to nothing before the letter is
+ * even considered — "18°C" and "18C" are indistinguishable by the time
+ * `cleaned` is built. Both then fell through to the brittle exact-text
+ * fallback, which only accepted a user answer that was a byte-for-byte
+ * match of the stored degree-symbol form, silently rejecting the
+ * semantically identical "18" a learner would actually type.
+ *
+ * Temperature units are NOT folded into RECOGNISED_MEASUREMENT_UNITS
+ * (length/mass/volume) because "c"/"f" are single letters carrying real
+ * meaning distinct from any measurement-unit letter already in that
+ * list -- keeping them a separate, explicit pattern makes the °C/°F
+ * distinction (and non-collision with the existing unit list) visible in
+ * the code rather than folded into a generic "any letter is a unit"
+ * rule, which is exactly the kind of permissive normalisation this fix
+ * must not introduce. The canonical unit returned is "°c"/"°f" (with the
+ * degree symbol reintroduced), never a bare "c"/"f", so a °C answer can
+ * never silently match a °F question. A number immediately followed by a
+ * bare "c" or "f" (with or without an actual "°" character present — the
+ * symbol is optional on both the stored and typed side, matching the
+ * existing "no natural keyboard equivalent" precedent) is always treated
+ * as a temperature, the same way a number followed by "m" is always
+ * treated as metres by the existing pattern above — a deliberate,
+ * disclosed choice, not an oversight, and confirmed by direct query
+ * against every `answer` field in the production Mathematics bank to
+ * collide with zero existing non-temperature content today.
+ */
+const RECOGNISED_TEMPERATURE_UNITS = ["c", "f"];
+const NUMBER_WITH_TEMPERATURE_UNIT_PATTERN = new RegExp(
+  `^(-?\\d+(?:\\.\\d+)?)(${RECOGNISED_TEMPERATURE_UNITS.join("|")})$`,
+  "i"
+);
+
 export interface ParsedMeasurement {
   value: number;
   /** null when the input was a bare number with no unit suffix at all. */
@@ -153,6 +193,8 @@ export function parseNumberWithUnit(raw: string): ParsedMeasurement | null {
   }
   const withUnit = cleaned.match(NUMBER_WITH_UNIT_PATTERN);
   if (withUnit) return { value: Number(withUnit[1]), unit: withUnit[2].toLowerCase() };
+  const withTemperatureUnit = cleaned.match(NUMBER_WITH_TEMPERATURE_UNIT_PATTERN);
+  if (withTemperatureUnit) return { value: Number(withTemperatureUnit[1]), unit: "°" + withTemperatureUnit[2].toLowerCase() };
   const bare = Number(cleaned);
   return Number.isFinite(bare) ? { value: bare, unit: null } : null;
 }

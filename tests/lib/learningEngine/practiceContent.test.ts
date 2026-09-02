@@ -223,6 +223,52 @@ test("parseNumberWithUnit: malformed input returns null", () => {
   assert.equal(parseNumberWithUnit("m"), null, "a unit with no number attached is not a valid measurement");
 });
 
+test("parseNumberWithUnit: temperature units (°C/°F) parse to a distinct, degree-prefixed unit token", () => {
+  assert.deepEqual(parseNumberWithUnit("18°C"), { value: 18, unit: "°c" });
+  assert.deepEqual(parseNumberWithUnit("18C"), { value: 18, unit: "°c" }, "the degree symbol is optional, matching the existing no-keyboard-key precedent");
+  assert.deepEqual(parseNumberWithUnit("18°F"), { value: 18, unit: "°f" });
+  assert.notDeepEqual(parseNumberWithUnit("18°C"), parseNumberWithUnit("18°F"), "°C and °F must remain distinct units, never treated as equivalent");
+});
+
+// ─── Gate 3 Assessment System Completion: 18°C degree+letter unit defect ──
+
+test("Gate 3 live defect (mr01-revmean-02, stored answer '18°C'): a bare number now correctly matches a degree+letter unit answer", () => {
+  const correct = "18°C";
+  assert.equal(checkMathsAnswer("18", correct), true, "the exact live-reported defect: a bare correct number must not be rejected for omitting the unit");
+  assert.equal(checkMathsAnswer("18°C", correct), true, "the exact stored form must keep working");
+  assert.equal(checkMathsAnswer("18 °C", correct), true, "a space before the degree symbol must not matter");
+  assert.equal(checkMathsAnswer("18C", correct), true, "the degree symbol itself is optional, matching the existing no-keyboard-key precedent for other units");
+});
+
+test("Gate 3: °C and °F remain genuinely distinct units, never silently equivalent", () => {
+  assert.equal(checkMathsAnswer("18°F", "18°C"), false, "a different temperature scale is a real error, not a formatting difference");
+  assert.equal(checkMathsAnswer("18F", "18°C"), false);
+  assert.equal(checkMathsAnswer("18°C", "18°F"), false, "the reverse direction must also stay rejected");
+});
+
+test("Gate 3: a wrong temperature value with the correct unit is still rejected", () => {
+  assert.equal(checkMathsAnswer("19°C", "18°C"), false);
+  assert.equal(checkMathsAnswer("17.9°C", "18°C"), false);
+});
+
+test("Gate 3: bare-degree (angle) answers with no letter unit are unaffected by the temperature-unit fix", () => {
+  assert.equal(checkMathsAnswer("95", "95°"), true);
+  assert.equal(checkMathsAnswer("95°", "95°"), true);
+  assert.equal(checkMathsAnswer("94", "95°"), false);
+});
+
+test("Gate 3: recent exact-fraction correction does not regress alongside the temperature-unit fix", () => {
+  assert.equal(checkMathsAnswer("17/6", "2 5/6"), true);
+  assert.equal(checkMathsAnswer("2.83", "2 5/6"), false, "a rounded decimal approximation must remain rejected");
+  assert.equal(checkMathsAnswer("18/6", "2 5/6"), false, "a wrong-value improper fraction must remain rejected");
+});
+
+test("Gate 3: existing length/mass/volume unit distinctions are unaffected by the temperature-unit addition", () => {
+  assert.equal(checkMathsAnswer("4.25kg", "4.25m"), false, "cross-unit-family mismatch must remain rejected");
+  assert.equal(checkMathsAnswer("942cm2", "942cm³"), false, "cm² for a cm³ question must remain rejected");
+  assert.equal(checkMathsAnswer("942cm3", "942cm³"), true, "the existing ASCII-digit cubic-unit equivalence must keep working");
+});
+
 // ─── Bank-wide regression: every other answer shape must be unaffected ────
 
 test("regression: currency (£) unaffected", () => {
