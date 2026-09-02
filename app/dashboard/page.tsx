@@ -513,7 +513,11 @@ export default function DashboardPage() {
 
         {newBadgeIds.length > 0 && (
           <div className="mt-5">
-            <NewBadgeBanner newlyEarnedIds={newBadgeIds} onDismiss={handleDismissBanner} />
+            <NewBadgeBanner
+              newlyEarnedIds={newBadgeIds}
+              onDismiss={handleDismissBanner}
+              progressHref={getSelectedPathwayId() === "csse" ? "/learning-intelligence" : "/progress"}
+            />
           </div>
         )}
 
@@ -696,7 +700,12 @@ export default function DashboardPage() {
                           : `${weeklyGoal.sessions} of ${weeklyGoal.target} sessions this week`}
                       </p>
                     )}
-                    <ButtonLink href="/progress" variant="outline" size="sm" className="w-full justify-center">
+                    <ButtonLink
+                      href={getSelectedPathwayId() === "csse" ? "/learning-intelligence" : "/progress"}
+                      variant="outline"
+                      size="sm"
+                      className="w-full justify-center"
+                    >
                       View full progress →
                     </ButtonLink>
                   </div>

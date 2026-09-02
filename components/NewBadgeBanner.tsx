@@ -6,6 +6,15 @@ import { BADGE_DEFINITIONS } from "@/lib/gamification";
 interface NewBadgeBannerProps {
   newlyEarnedIds: string[];
   onDismiss: () => void;
+  /**
+   * Gate 4 — defaults to the legacy /progress page (unchanged behaviour for
+   * any other caller), but the Dashboard passes the CSSE-aware destination
+   * so a CSSE learner's achievements link lands on their real Educational
+   * Intelligence evidence, matching the same fix already applied to the
+   * primary nav's Progress tab and the Dashboard's own "View full progress"
+   * button.
+   */
+  progressHref?: string;
 }
 
 /**
@@ -14,7 +23,7 @@ interface NewBadgeBannerProps {
  * notice the visual banner. Accessibility-only addition; appearance
  * unchanged.
  */
-export default function NewBadgeBanner({ newlyEarnedIds, onDismiss }: NewBadgeBannerProps) {
+export default function NewBadgeBanner({ newlyEarnedIds, onDismiss, progressHref = "/progress" }: NewBadgeBannerProps) {
   if (newlyEarnedIds.length === 0) return null;
 
   const badges = newlyEarnedIds
@@ -44,7 +53,7 @@ export default function NewBadgeBanner({ newlyEarnedIds, onDismiss }: NewBadgeBa
         <p className="text-slate-500 dark:text-slate-400 text-sm font-medium truncate">{names}</p>
       </div>
       <a
-        href="/progress"
+        href={progressHref}
         onClick={onDismiss}
         className="flex items-center gap-1 text-slate-600 dark:text-slate-400 text-xs font-semibold shrink-0 hover:text-slate-800 dark:hover:text-slate-200 transition-colors"
       >
