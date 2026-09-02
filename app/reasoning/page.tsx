@@ -75,8 +75,18 @@ const reasoningSubjects: {
  * runners below, confirmed by direct source read) that was previously the
  * first thing every pathway's "Mock" nav click reached, including CSSE
  * families. This is its correct home: the existing, unchanged Practise hub
- * for the pathway it actually belongs to. The four routes themselves are
- * completely unchanged (NEW_ANGEL_LEGACY_EXPERIENCE_AUDIT.md §4).
+ * for the pathway it actually belongs to.
+ *
+ * Gate 3 Closure Wave, Defect D (2026-09-02) — the Mathematics and Reading
+ * Practice cards now link directly to their CSSE-scoped, evidence-recording
+ * successors (/learning-intelligence/practice/mathematics and
+ * .../reading-comprehension) instead of the retired /mocks/adaptive/{maths,
+ * english} routes, which silently bypassed the Educational Intelligence
+ * evidence pipeline for any non-GL learner (see those two routes' own
+ * retirement doc comments). GL Verbal Reasoning and Vocabulary Practice are
+ * unchanged — GL genuinely is GL-only content by design, and Vocabulary has
+ * no CSSE-scoped successor to redirect to, so it was fixed in place instead
+ * (see app/mocks/adaptive/vocabulary/page.tsx).
  */
 const personalisedPracticeCards: {
   href: string;
@@ -99,7 +109,7 @@ const personalisedPracticeCards: {
     badgeText: "text-lime-700 dark:text-lime-300",
   },
   {
-    href: "/mocks/adaptive/maths",
+    href: "/learning-intelligence/practice/mathematics",
     title: "Mathematics Practice",
     description: "Maths questions matched to your practice level.",
     minutes: "12 min",
@@ -109,7 +119,7 @@ const personalisedPracticeCards: {
     badgeText: "text-blue-700 dark:text-blue-300",
   },
   {
-    href: "/mocks/adaptive/english",
+    href: "/learning-intelligence/practice/reading-comprehension",
     title: "Reading Practice",
     description: "One passage at a time, with every question that belongs to it.",
     minutes: "10-15 min",

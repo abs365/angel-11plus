@@ -46,12 +46,23 @@ interface InsertResult {
 interface StubConfig {
   sessionUserId: string | null;
   existingProfileId?: string | null;
+  /**
+   * Gate 3 Closure Wave, Defect C — when provided, each successive
+   * select().eq().maybeSingle() call on "profiles" consumes the next entry
+   * here (clamped to the last entry once exhausted), instead of the static
+   * `existingProfileId`. Lets a test simulate the pre-insert lookup finding
+   * nothing, then the post-race re-read (after an auth_user_id collision)
+   * finding the row a concurrent call just created — a single fixed value
+   * cannot express that sequence.
+   */
+  lookupSequence?: (string | null)[];
   claimResult?: { data: string | null; error: { message: string } | null };
   insertResults: InsertResult[];
 }
 
-function makeStubClient(cfg: StubConfig): { client: SupabaseClient<Database>; insertCallCount: () => number } {
+function makeStubClient(cfg: StubConfig): { client: SupabaseClient<Database>; insertCallCount: () => number; lookupCallCount: () => number } {
   let insertCallIndex = 0;
+  let lookupCallIndex = 0;
   const client = {
     auth: {
       getSession: async () => ({
@@ -71,10 +82,17 @@ function makeStubClient(cfg: StubConfig): { client: SupabaseClient<Database>; in
       return {
         select: () => ({
           eq: () => ({
-            maybeSingle: async () => ({
-              data: cfg.existingProfileId ? { id: cfg.existingProfileId } : null,
-              error: null,
-            }),
+            maybeSingle: async () => {
+              let id: string | null;
+              if (cfg.lookupSequence) {
+                const idx = Math.min(lookupCallIndex, cfg.lookupSequence.length - 1);
+                id = cfg.lookupSequence[idx];
+              } else {
+                id = cfg.existingProfileId ?? null;
+              }
+              lookupCallIndex += 1;
+              return { data: id ? { id } : null, error: null };
+            },
           }),
         }),
         insert: () => ({
@@ -92,7 +110,7 @@ function makeStubClient(cfg: StubConfig): { client: SupabaseClient<Database>; in
       };
     },
   } as unknown as SupabaseClient<Database>;
-  return { client, insertCallCount: () => insertCallIndex };
+  return { client, insertCallCount: () => insertCallIndex, lookupCallCount: () => lookupCallIndex };
 }
 
 test("ensureProfile: an existing owned profile resolves directly, no claim or insert attempted", async () => {
@@ -136,10 +154,36 @@ test("Gate 3 fix: a device_id collision on the first insert (same device, differ
   assert.equal(insertCallCount(), 2, "exactly one retry, not a loop");
 });
 
-test("ensureProfile: a collision on auth_user_id (not device_id) is NOT retried — that is a different, unconfirmed scenario, not silently papered over", async () => {
-  const { client, insertCallCount } = makeStubClient({
+test("Gate 3 Closure Wave, Defect C — a collision on auth_user_id re-reads and converges on the profile a concurrent call already created", async () => {
+  // Confirmed in production console output during the Gate 3 regression:
+  // multiple components on one page each call ensureProfile() for the same
+  // brand-new authenticated user; both pass the initial "no existing
+  // profile" lookup before either has inserted, so the loser's INSERT
+  // collides on profiles_auth_user_id_key. lookupSequence models this: the
+  // FIRST lookup (before either insert) finds nothing, the SECOND lookup
+  // (this call's post-collision re-read) finds the row the winner just
+  // created.
+  const { client, insertCallCount, lookupCallCount } = makeStubClient({
     sessionUserId: "user-e",
-    existingProfileId: null,
+    lookupSequence: [null, "profile-from-concurrent-winner"],
+    claimResult: { data: null, error: null },
+    insertResults: [
+      {
+        data: null,
+        error: { code: "23505", message: 'duplicate key value violates unique constraint "profiles_auth_user_id_key"' },
+      },
+    ],
+  });
+  const result = await ensureProfile("Angel", client);
+  assert.equal(result, "profile-from-concurrent-winner", "the losing call must converge on the winner's profile, not return null");
+  assert.equal(insertCallCount(), 1, "must not retry the INSERT itself — only device_id collisions retry the insert");
+  assert.equal(lookupCallCount(), 2, "exactly one post-collision re-read, not a loop");
+});
+
+test("Gate 3 Closure Wave, Defect C — an auth_user_id collision with no row found on re-read (genuinely unexpected) fails closed, not looped", async () => {
+  const { client, insertCallCount } = makeStubClient({
+    sessionUserId: "user-e2",
+    lookupSequence: [null, null],
     claimResult: { data: null, error: null },
     insertResults: [
       {
@@ -150,7 +194,7 @@ test("ensureProfile: a collision on auth_user_id (not device_id) is NOT retried 
   });
   const result = await ensureProfile("Angel", client);
   assert.equal(result, null);
-  assert.equal(insertCallCount(), 1, "must not retry for a constraint this fix was never proven to address");
+  assert.equal(insertCallCount(), 1);
 });
 
 test("ensureProfile: a non-unique-violation insert error is not retried and returns null", async () => {

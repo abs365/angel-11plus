@@ -77,16 +77,24 @@ export function getDeviceId(): string {
 // still used, preserving exactly the same future claim_legacy_profile()
 // continuity this mechanism has always provided.
 //
-// Deliberately NOT handled here (out of scope for this proven defect,
-// disclosed rather than silently ignored): a collision on
-// profiles_auth_user_id_key specifically — i.e. two concurrent
-// ensureProfile() calls for the same brand-new authenticated user
-// racing each other — is a different, unconfirmed scenario this session
-// explicitly investigated and could not prove occurred; it is not
-// speculatively "fixed" alongside this proven device_id defect.
+// Gate 3 Closure Wave, Defect C (2026-09-02) — profiles_auth_user_id_key
+// collisions were previously disclosed above as "investigated, could not
+// prove occurred" and left unhandled. They are now directly confirmed in
+// production console output during the Gate 3 regression: multiple
+// components on the same page each call ensureProfile() independently, and
+// when two calls for the SAME brand-new authenticated user both pass the
+// "existing profile" lookup above before either has inserted, the second
+// INSERT collides on auth_user_id (already unique since migration 002).
+// The fix below (mirroring the device_id retry immediately above it, same
+// shape, different constraint) re-reads and converges on whichever profile
+// the winning call created, rather than returning null to the loser. This
+// changes no ownership, creates no second profile, and does not touch
+// profiles_auth_user_id's own uniqueness — that constraint is exactly what
+// makes the re-read safe: at most one row can ever own this auth_user_id.
 // ----------------------------------------------------------------
 
 const PROFILES_DEVICE_ID_UNIQUE_VIOLATION = "profiles_device_id_key";
+const PROFILES_AUTH_USER_ID_UNIQUE_VIOLATION = "profiles_auth_user_id_key";
 
 /**
  * `injectedClient` is test-support only, mirroring ensureLearnerSession()'s
@@ -145,6 +153,32 @@ export async function ensureProfile(
     // auth_user_id (already validated above to have no existing row)
     // remains this new profile's real, unambiguous owner either way.
     ({ data: created, error: insertError } = await insertProfile(crypto.randomUUID()));
+  }
+
+  if (insertError?.code === "23505" && insertError.message.includes(PROFILES_AUTH_USER_ID_UNIQUE_VIOLATION)) {
+    // Gate 3 Closure Wave, Defect C — a concurrent ensureProfile() call for
+    // this exact auth_user_id won the race and already inserted its row
+    // between this call's lookup above and this INSERT (whether that was
+    // the first insert attempt or the device_id retry immediately above).
+    // Converge on that same row instead of failing: profiles_auth_user_id
+    // is unique, so at most one row can own this auth_user_id, and this
+    // read finds precisely it.
+    const { data: resolved, error: resolveError } = await supabase
+      .from("profiles")
+      .select("id")
+      .eq("auth_user_id", authUserId)
+      .maybeSingle();
+    if (resolveError) {
+      console.warn("[Supabase] ensureProfile post-race re-read failed:", resolveError.message);
+      return null;
+    }
+    if (resolved) return resolved.id;
+    // The constraint violation guarantees a row exists for this
+    // auth_user_id; finding none here is genuinely unexpected (not a race
+    // this function can resolve by retrying) — fail closed rather than
+    // guess or loop.
+    console.warn("[Supabase] ensureProfile: auth_user_id collision reported but no owning profile found on re-read");
+    return null;
   }
 
   if (insertError) {

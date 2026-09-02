@@ -99,15 +99,20 @@ test("4. Mock Eligible = 0 produces zero genuine Mock questions", async () => {
 });
 
 test("5. No still-client-fetched Mock route can silently fall back to the general question bank (source check)", () => {
-  // These four routes are unchanged by Programme Increment 008E (out of
-  // its named scope — see ANGEL_008V's own Part 13 taxonomy: these are
+  // These routes are unchanged by Programme Increment 008E (out of its
+  // named scope — see ANGEL_008V's own Part 13 taxonomy: these are
   // adaptive PRACTICE runners, not the formal Mock Exam entry point 008E
   // targeted) and still retrieve content the pre-008E way, so this
   // decision's original rule still applies to them unmodified.
+  //
+  // Gate 3 Closure Wave, Defect D (2026-09-02) — app/mocks/adaptive/maths
+  // and .../english were RETIRED (each now just redirects to its
+  // CSSE-scoped /learning-intelligence/practice/* successor) and no longer
+  // fetch content at all, so they no longer belong in this list; a
+  // separate test below confirms each redirects. gl and vocabulary are
+  // unchanged/fixed-in-place and remain in scope here.
   for (const file of [
     "app/mocks/adaptive/gl/page.tsx",
-    "app/mocks/adaptive/english/page.tsx",
-    "app/mocks/adaptive/maths/page.tsx",
     "app/mocks/adaptive/vocabulary/page.tsx",
   ]) {
     const src = readFileSync(file, "utf8");
@@ -201,4 +206,37 @@ test("regression: active=false rows never enter Mock even if mock_eligible", asy
   const rows = [{ ...baseRow, id: "retired", subject: "maths", pathway: ["csse"], eligibility_status: "mock_eligible", active: false }];
   const result = await fetchMockEligibleQuestionBank(fakeSupabase(rows), "maths", "csse");
   assert.deepEqual(result, [], "a retired (active=false) row must never enter Mock, even if it carries mock_eligible");
+});
+
+test("Gate 3 Closure Wave, Defect D — retired maths/english adaptive routes redirect to their CSSE-scoped successors and no longer fetch content", () => {
+  const cases: [string, string][] = [
+    ["app/mocks/adaptive/maths/page.tsx", "/learning-intelligence/practice/mathematics"],
+    ["app/mocks/adaptive/english/page.tsx", "/learning-intelligence/practice/reading-comprehension"],
+  ];
+  for (const [file, target] of cases) {
+    const src = readFileSync(file, "utf8");
+    assert.match(
+      src,
+      new RegExp(`router\\.replace\\(["']${target.replace(/\//g, "\\/")}["']\\)`),
+      `${file} must redirect to ${target}`
+    );
+    assert.ok(
+      !/from\s*["']@\/lib\/ali\/questionBank["']/.test(src),
+      `${file} is retired and must no longer fetch content from lib/ali/questionBank at all`
+    );
+  }
+});
+
+test("Gate 3 Closure Wave, Defect D — vocabulary route resolves the learner's real pathway and no longer hardcodes 'gl' or silently substitutes synthetic content", () => {
+  const file = "app/mocks/adaptive/vocabulary/page.tsx";
+  const src = readFileSync(file, "utf8");
+  assert.ok(
+    !/fetchMockEligibleQuestionBank\(supabase,\s*"vocabulary",\s*"gl"\)/.test(src),
+    `${file} must not hardcode pathway "gl"`
+  );
+  assert.match(src, /getSelectedPathwayId/, `${file} must resolve the learner's real selected pathway`);
+  assert.ok(
+    !/from\s*["']@\/data\/ali\/vocabularySyntheticFixture["']/.test(src),
+    `${file} must no longer import the synthetic fixture it used to silently fall back to`
+  );
 });

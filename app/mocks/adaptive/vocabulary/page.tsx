@@ -8,7 +8,6 @@ import {
 } from "lucide-react";
 import PremiumLoader from "@/components/PremiumLoader";
 import { withTimeout } from "@/lib/withTimeout";
-import { vocabularySyntheticFixture } from "@/data/ali/vocabularySyntheticFixture";
 import { getSupabaseClient } from "@/lib/supabase";
 import { ensureProfile } from "@/lib/supabaseProgress";
 import { fetchMockEligibleQuestionBank } from "@/lib/ali/questionBank";
@@ -18,10 +17,11 @@ import { deriveWeakCompetencies, deriveCompetencySignal } from "@/lib/ali/weakne
 import { applyAttemptOutcome } from "@/lib/ali/mastery";
 import { computeLearningGainDelta, updateLearningGain } from "@/lib/ali/learningGain";
 import { computeLearningProfile } from "@/lib/ali/learningProfile";
-import { getProgress, recordSkillResult, completeLesson, recordAliCompetencySignal, recordAliLearningGain, recordAliLearningProfile } from "@/lib/progress";
+import { getProgress, getSelectedPathwayId, recordSkillResult, completeLesson, recordAliCompetencySignal, recordAliLearningGain, recordAliLearningProfile } from "@/lib/progress";
 import { trackEvent } from "@/lib/betaTracking";
 import type { BankQuestion, VocabularyPrompt } from "@/types/ali/questionBank";
 import type { StudentQuestionHistoryRow } from "@/types/ali/history";
+import type { MockPathwayId } from "@/types/mock";
 
 // Phase ALI 2.2 — Vocabulary, the fourth ALI-covered subject and the second
 // (after Reading Comprehension) to use a Learning Unit spanning more than
@@ -36,10 +36,43 @@ import type { StudentQuestionHistoryRow } from "@/types/ali/history";
 // needed (Decision 37 doesn't apply to a single-answer MCQ item).
 // The existing flashcard/self-report activity (app/vocabulary/page.tsx) is
 // completely untouched.
+//
+// Gate 3 Closure Wave, Defect D (2026-09-02) — this route hardcoded
+// pathway = "gl" when fetching eligible content, regardless of the
+// learner's actual selected pathway (lib/progress.ts's
+// getSelectedPathwayId(), set by /pathways). For any other pathway that
+// query returned zero eligible rows, and the page silently fell back to a
+// local-only synthetic fixture that bypassed recordPresentation/
+// recordOutcome entirely (Mock Content Firewall's own existing rule),
+// while still fully grading and displaying results as genuine
+// evidence-bearing personalised Practice.
+//
+// Unlike the Mathematics and Reading Comprehension adaptive routes (see
+// their own retirement doc comments), this subject has no CSSE-scoped
+// successor in /learning-intelligence/practice/* to redirect to (that
+// engine covers Reading Comprehension, Mathematics, and Continuous Writing
+// only), so this route is fixed in place rather than retired: the
+// learner's real selected pathway is now resolved and used for content
+// retrieval, and an unavailable/unresolved pathway fails visibly (a clear
+// "no practice available" state) instead of silently substituting
+// non-evidence-bearing synthetic content.
 
 const XP_REWARD = 40;
 
-type Mode = "intro" | "loading" | "error" | "section" | "results";
+/**
+ * Gate 3 Closure Wave, Defect D — the only pathways `ali_question_bank` can
+ * be filtered by (types/mock.ts's MockPathwayId). lib/pathways.ts's own
+ * PATHWAYS list additionally includes "independent", "core-foundation" and
+ * "not-sure" — none of those are exam-board content pathways, so a learner
+ * on one of them (or with no pathway selected at all) has no valid content
+ * to resolve here; that must fail visibly, not silently default to "gl".
+ */
+const VALID_MOCK_PATHWAYS: readonly MockPathwayId[] = ["gl", "cem", "csse", "iseb"];
+function isValidMockPathway(id: string | undefined): id is MockPathwayId {
+  return id !== undefined && (VALID_MOCK_PATHWAYS as readonly string[]).includes(id);
+}
+
+type Mode = "intro" | "loading" | "error" | "no-pathway" | "section" | "results";
 
 interface AnsweredItem {
   bankQuestion: BankQuestion;
@@ -51,7 +84,6 @@ interface AnsweredItem {
 export default function AdaptiveVocabularyMockPage() {
   const [mode, setMode] = useState<Mode>("intro");
   const [errorMessage, setErrorMessage] = useState("");
-  const [usingSyntheticFixture, setUsingSyntheticFixture] = useState(false);
 
   const [word, setWord] = useState("");
   const [items, setItems] = useState<{ bankQuestion: BankQuestion; prompt: VocabularyPrompt }[]>([]);
@@ -89,21 +121,32 @@ export default function AdaptiveVocabularyMockPage() {
       }
       profileIdRef.current = profileId;
 
+      // Gate 3 Closure Wave, Defect D — resolve the learner's real selected
+      // pathway instead of hardcoding "gl". An unresolved/invalid pathway
+      // fails visibly (mode "no-pathway") rather than silently defaulting.
+      const selectedPathwayId = getSelectedPathwayId();
+      if (!isValidMockPathway(selectedPathwayId)) {
+        setMode("no-pathway");
+        return;
+      }
+
       // Mock Content Firewall (CSSE Completion Programme Phase A, Decision 59)
       // — this route persists a real MockResult; must only draw from
       // fetchMockEligibleQuestionBank(), never the general fetchQuestionBank().
-      let bank = await withTimeout(fetchMockEligibleQuestionBank(supabase, "vocabulary", "gl"), 10000, "today's word");
-      let synthetic = false;
+      const bank = await withTimeout(fetchMockEligibleQuestionBank(supabase, "vocabulary", selectedPathwayId), 10000, "today's word");
       if (bank.length === 0) {
-        bank = vocabularySyntheticFixture;
-        synthetic = true;
+        // Gate 3 Closure Wave, Defect D — previously fell back to a local
+        // synthetic fixture here, silently, while still presenting the
+        // session as genuine evidence-bearing Practice. Fail visibly
+        // instead: no feature may bypass the Educational Intelligence
+        // evidence pipeline.
+        setErrorMessage("No Vocabulary practice is available for your pathway right now. Please try again shortly.");
+        setMode("error");
+        return;
       }
-      setUsingSyntheticFixture(synthetic);
 
-      const history: Map<string, StudentQuestionHistoryRow> = synthetic
-        ? new Map()
-        : await withTimeout(fetchStudentHistory(supabase, profileId), 10000, "your progress");
-      const currentSequence = synthetic ? 0 : await withTimeout(ensureAdaptiveState(supabase, profileId), 10000, "your progress");
+      const history: Map<string, StudentQuestionHistoryRow> = await withTimeout(fetchStudentHistory(supabase, profileId), 10000, "your progress");
+      const currentSequence = await withTimeout(ensureAdaptiveState(supabase, profileId), 10000, "your progress");
 
       const units = groupQuestionsByLearningUnit(bank);
       const weakSkills = deriveWeakCompetencies(bank, history);
@@ -118,9 +161,7 @@ export default function AdaptiveVocabularyMockPage() {
       bankRef.current = bank;
       historyRef.current = new Map(history);
 
-      if (!synthetic) {
-        await withTimeout(recordPresentation(supabase, profileId, selectedQuestions.map((q) => q.id)), 10000, "today's word");
-      }
+      await withTimeout(recordPresentation(supabase, profileId, selectedQuestions.map((q) => q.id)), 10000, "today's word");
 
       const withPrompts = selectedQuestions.map((q) => ({ bankQuestion: q, prompt: q.prompt as VocabularyPrompt }));
       setWord(withPrompts[0].prompt.word);
@@ -155,7 +196,7 @@ export default function AdaptiveVocabularyMockPage() {
 
     const supabase = getSupabaseClient();
     const profileId = profileIdRef.current;
-    if (supabase && profileId && !usingSyntheticFixture) {
+    if (supabase && profileId) {
       recordOutcome(
         supabase, profileId, currentItem.bankQuestion.id, isCorrect,
         sessionIdRef.current, currentItem.bankQuestion.masteryThreshold
@@ -298,6 +339,24 @@ export default function AdaptiveVocabularyMockPage() {
     );
   }
 
+  // Gate 3 Closure Wave, Defect D — a real, expected "no target pathway
+  // chosen yet (or an internal, non-content pathway like 'independent')"
+  // state, distinct from a genuine error: retrying cannot fix it, so it
+  // gets its own mode/copy rather than the generic error UI's "Try Again".
+  if (mode === "no-pathway") {
+    return (
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-950 flex items-center justify-center px-4">
+        <div className="text-center max-w-sm">
+          <p className="text-gray-900 dark:text-gray-100 font-semibold mb-2">Choose a target pathway first</p>
+          <p className="text-gray-700 dark:text-gray-300 mb-5 text-sm">Vocabulary Practice needs a target exam pathway (GL, CEM, CSSE or ISEB) to choose the right questions for you.</p>
+          <Link href="/pathways" className="inline-block bg-emerald-700 text-white font-semibold text-sm px-4 py-2 rounded-xl hover:opacity-90 transition-opacity">
+            Choose your pathway
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
   if (mode === "section" && currentItem) {
     const progress = (itemIdx / items.length) * 100;
     return (
@@ -312,12 +371,6 @@ export default function AdaptiveVocabularyMockPage() {
             <div className="h-1 transition-all duration-300 bg-emerald-700" style={{ width: `${progress}%` }} />
           </div>
         </header>
-
-        {usingSyntheticFixture && (
-          <div className="bg-amber-50 dark:bg-amber-950 text-amber-700 dark:text-amber-300 text-xs text-center py-1.5">
-            Sample word: not yet your full personalised set
-          </div>
-        )}
 
         <main className="flex-1 max-w-2xl mx-auto w-full px-4 py-6 flex flex-col gap-5">
           <span className="text-xs text-gray-400 dark:text-gray-500">

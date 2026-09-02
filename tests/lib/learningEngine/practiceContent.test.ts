@@ -152,10 +152,12 @@ test("mr04-far-06 (provisional): 160g", () => {
 
 // ─── 007L post-closure fix: cubic/squared unit answers ─────────────────────
 // Confirmed by direct production scan (264 rows, both subjects, every
-// status): exactly one live row uses a power unit -- mth-009, "942 cm³".
-// No cm², m², mm², m³, or mm³ answer exists anywhere in the bank today;
-// these tests cover the full recognised-unit contract (mm/cm/km/m, squared
-// and cubed) so the fix is exercised beyond just the one live instance.
+// status) at the time of that fix: exactly one live row used a power unit
+// -- mth-009, "942 cm³". Migration 189 (Gate 3 Closure Wave, Defect B)
+// later corrected mr03-mix-04 to "180 m²" (see below), so an m² answer now
+// also exists live -- these tests still cover the full recognised-unit
+// contract (mm/cm/km/m, squared and cubed) beyond just those two live
+// instances.
 
 test("mth-009 (LIVE, practice_eligible): 942 cm³ (Unicode superscript stored form)", () => {
   const correct = "942 cm³";
@@ -189,6 +191,28 @@ test("checkMathsAnswer: squared-area answers (no live row today, contract still 
   assert.equal(checkMathsAnswer("49", "48 m²"), false);
   assert.equal(checkMathsAnswer("48cm²", "48 m²"), false, "correct number + wrong length unit must be rejected");
   assert.equal(checkMathsAnswer("48m", "48 m²"), false, "linear m is a different quantity to area and must be rejected");
+});
+
+test("Gate 3 Closure Wave, Defect B — mr03-mix-04 (LIVE, migration 189): 180 m² (area-answer unit correction)", () => {
+  // Production regression finding: this question's stored answer was
+  // originally the bare "180" (no unit) despite asking "What is its
+  // area?" and its own workingSteps computing "180 m²" -- so a genuinely
+  // correct, properly-unit-labelled learner response ("180 m2") was
+  // rejected in production. Migration 189 corrected the stored answer to
+  // "180 m²", matching this family's and mth-009's existing square/cubed-
+  // unit convention. checkMathsAnswer() itself was not changed for this
+  // fix -- these assertions exist to prove the existing 007K/007L
+  // unit-aware contract now covers this exact live row, not to test new
+  // logic.
+  const correct = "180 m²";
+  assert.equal(checkMathsAnswer("180", correct), true, "bare number must still be accepted");
+  assert.equal(checkMathsAnswer("180 m2", correct), true, "the exact production input that was wrongly rejected must now be accepted");
+  assert.equal(checkMathsAnswer("180m2", correct), true, "no-space ASCII form must be accepted");
+  assert.equal(checkMathsAnswer("180m²", correct), true, "no-space Unicode form must be accepted");
+  assert.equal(checkMathsAnswer("180 M2", correct), true, "case must not matter");
+  assert.equal(checkMathsAnswer("179", correct), false, "wrong number must remain rejected");
+  assert.equal(checkMathsAnswer("180cm²", correct), false, "correct number + wrong length unit must be rejected");
+  assert.equal(checkMathsAnswer("180m", correct), false, "linear m is a different quantity to area and must be rejected");
 });
 
 test("regression: mass and liquid-volume units are never treated as power-unit-eligible", () => {
