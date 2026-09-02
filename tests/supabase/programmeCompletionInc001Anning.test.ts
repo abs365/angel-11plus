@@ -78,6 +78,19 @@ test("a genuinely wrong answer is correctly rejected for each question (no accid
   }
 });
 
+test("resilience pass: additional natural paraphrases a real learner might use are also accepted, not just the primary phrasing", () => {
+  const extraLearnerAnswers: Record<string, string> = {
+    "eng-pc001-anning-q01": "He made furniture for a living.",
+    "eng-pc001-anning-q03": "They needed money because her father had died.",
+    "eng-pc001-anning-q05": "It shows the work was hard for her.",
+    "eng-pc001-anning-q06": "No one gave her credit even though she found the fossils.",
+  };
+  for (const [id, answer] of Object.entries(extraLearnerAnswers)) {
+    const result = checkAcceptedAnswerSet(answer, PROMPTS[id].acceptedAnswers);
+    assert.equal(result.correct, true, `${id}: expected the paraphrase "${answer}" to be accepted`);
+  }
+});
+
 test("every acceptedAnswers phrase for the QT-RC-07 (comparative) question is independently grounded in the passage's own stored text, not invented", () => {
   const q04 = PROMPTS["eng-pc001-anning-q04"];
   const lowerPassage = PASSAGE_TEXT.toLowerCase();
