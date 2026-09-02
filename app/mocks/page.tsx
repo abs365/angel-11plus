@@ -64,8 +64,20 @@ const MOCK_CARDS: {
   },
 ];
 
-/** Named, honest categories that don't exist as separate experiences yet — MOCK_CENTRE_EXPERIENCE_BLUEPRINT.md §"Your Exam". Not clickable. */
-const COMING_LATER = ["Mathematics Mock", "English Mock", "Continuous Writing", "Focused Assessment"];
+/**
+ * Named, honest categories that don't exist as separate experiences yet —
+ * MOCK_CENTRE_EXPERIENCE_BLUEPRINT.md §"Your Exam". Not clickable.
+ *
+ * Gate 6 presentation correction (Founder decision, Mathematics Mock 1
+ * provenance investigation) — "Mathematics Mock" removed from this list:
+ * as of migration 150 (Decision 219), Mathematics Mock 1 is genuinely
+ * active and shown above as available, so listing it here as "coming
+ * later" directly contradicted the card above it. "Full CSSE Mock
+ * (English + Mathematics together)" added so a learner/parent can see,
+ * explicitly, that today's available Mathematics Mock is not yet that
+ * complete experience — the exact distinction the Founder required.
+ */
+const COMING_LATER = ["English Mock", "Full CSSE Mock (English + Mathematics together)", "Continuous Writing", "Focused Assessment"];
 
 function readinessDisplay(readiness: CsseMockReadiness): { label: string; tone: StatusTone } {
   if (readiness.assessment.verdict === "practice-first") {
@@ -98,7 +110,7 @@ function LegacyMockCard({ card, best }: { card: (typeof MOCK_CARDS)[number]; bes
  * no-pathway-selected CSSE entry below — same visual weight as the other
  * three in that specific view (mandate §16: "preserve all pathway
  * capabilities" applies even when Angel doesn't yet know which pathway to
- * prioritise). The pathway-prioritised "Full CSSE Mock" card (used when
+ * prioritise). The pathway-prioritised "Mathematics Mock 1" card (used when
  * CSSE is the learner's own selected pathway) is deliberately its own,
  * richer treatment — not this component — since it is the primary card in
  * that case, not one of several equal options.
@@ -261,21 +273,20 @@ export default function MocksPage() {
                 <div className="flex items-start justify-between mb-2">
                   <div className="flex items-center gap-2.5">
                     <span className="text-xs font-bold px-2.5 py-1 rounded-lg bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300">CSSE</span>
-                    <h3 className="text-base font-bold text-gray-900 dark:text-gray-100">Full CSSE Mock</h3>
+                    {/* Gate 6 presentation correction (Founder decision) — the
+                        active form is Mathematics-only (migration 150, Decision
+                        219), never a combined English+Mathematics paper. The
+                        heading must name what is actually being offered. */}
+                    <h3 className="text-base font-bold text-gray-900 dark:text-gray-100">Mathematics Mock 1</h3>
                   </div>
                   <StatusIndicator tone={csseMockAvailable ? "success" : "neutral"} label={csseMockAvailable ? "Available" : "Not ready yet"} />
                 </div>
-                <p className="text-xs text-gray-500 dark:text-gray-400 mb-2">English: 60 min, 60 marks · Mathematics: 60 min, 60 marks · ~10 min between papers</p>
+                {csseMockAvailable && (
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mb-2">Mathematics · 21 questions · 56 marks · 60 minutes</p>
+                )}
                 <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed mb-3">
                   {csseMockAvailable
-                    // Stage 5 pass (2026-08-31) — "Adaptive" was visible,
-                    // user-facing copy, a direct ALI-invisible violation
-                    // (ANGEL_DESIGN_LANGUAGE.md §7 names it explicitly).
-                    // "Personalised" is the term this app already uses for
-                    // the same underlying idea elsewhere (the adaptive mock
-                    // pages' own "Personalised" badge), reused here rather
-                    // than inventing a new word for the same concept.
-                    ? "Choose a full Standard sitting or a shorter, personalised paper weighted to your recorded evidence. Today's content is still expanding toward this complete structure."
+                    ? "A real, timed Mathematics assessment, marked and reported just like the real exam. The complete CSSE Mock, with English and Mathematics together, is still being built."
                     : "A full mock is not available right now. Angel does not yet have a complete, reviewed set of exam questions to draw from. Practice stays available in the meantime, and reflects the same real evidence about how your child is progressing."}
                 </p>
                 <div className="flex items-center justify-between">
@@ -312,15 +323,19 @@ export default function MocksPage() {
           ) : (
             // No pathway selected — every pathway shown with equal weight, honestly (MOCK_CENTRE_INFORMATION_ARCHITECTURE.md).
             <div className="space-y-3">
+              {/* Gate 6 presentation correction (Founder decision) — same
+                  correction as the pathway-prioritised card above: the
+                  active form is Mathematics-only (migration 150), so this
+                  entry point must not claim a complete CSSE sitting either. */}
               <SimpleMockCard
                 badge="CSSE"
-                name="Full CSSE Mock"
+                name="Mathematics Mock 1"
                 bg="bg-blue-50 dark:bg-blue-950"
                 border="border-blue-100 dark:border-blue-900"
                 badgeBg="bg-blue-100 dark:bg-blue-900"
                 badgeText="text-blue-700 dark:text-blue-300"
-                minutesLabel="Varies by mode"
-                description="Choose Standard for the full sitting, or Personalised for a shorter paper weighted to your recorded evidence."
+                minutesLabel="60 min"
+                description="Mathematics · 21 questions · 56 marks. A real, timed sitting. The complete CSSE Mock, including English, is still being built."
                 href="/learning-intelligence/mock-exam"
                 best={bestScores.csse}
                 available={csseMockAvailable}

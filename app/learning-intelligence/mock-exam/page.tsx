@@ -489,9 +489,12 @@ export default function MockExamPage() {
       <div className="max-w-3xl mx-auto px-4 py-6 md:px-8 md:py-8">
         {phase === "intro" && (
           <div>
-            <h1 className="text-gray-900 dark:text-gray-100 font-bold text-2xl">Full CSSE Mock</h1>
+            {/* Gate 6 presentation correction (Founder decision) — the active
+                form is Mathematics-only (migration 150, Decision 219); this
+                heading must never claim a combined English+Mathematics sitting. */}
+            <h1 className="text-gray-900 dark:text-gray-100 font-bold text-2xl">Mathematics Mock 1</h1>
             <p className="text-gray-400 dark:text-gray-500 text-sm mt-1">
-              A timed, sealed sitting. You will not see whether an answer is correct until your report is ready.
+              A timed, sealed Mathematics sitting. You will not see whether an answer is correct until your report is ready.
             </p>
 
             <InfoCard className="mt-5">
