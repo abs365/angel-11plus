@@ -34,6 +34,16 @@ type NavItem = {
   label: string;
   icon: LucideIcon;
   badge?: string;
+  /**
+   * Gate 4 — when true, this item is only "active" on an exact pathname
+   * match, never a prefix match. Needed for CSSE_PROGRESS_HREF
+   * ("/learning-intelligence"), which is a path ancestor of
+   * CSSE_LEARN_HREF/CSSE_PRACTISE_HREF's own destinations
+   * (/learning-intelligence/learn, /learning-intelligence/practice) — without
+   * this, "Progress" would highlight as active on every CSSE Learn/Practise
+   * subpage too, alongside whichever of those is genuinely current.
+   */
+  exact?: boolean;
 };
 
 type NavSection = {
@@ -60,14 +70,25 @@ type NavSection = {
  */
 const CSSE_LEARN_HREF = "/learning-intelligence/learn";
 const CSSE_PRACTISE_HREF = "/learning-intelligence/practice";
+// Gate 4 (Learner Journey Completion) — the primary "Progress" destination
+// was the one item in this row NOT pathway-branched like Learn/Practise
+// above, so a CSSE learner landed on the legacy /progress page (localStorage-
+// backed lib/progress.ts scores from the pre-CSSE content pool) instead of
+// their real Educational Intelligence evidence — confirmed live: real CSSE
+// session results (e.g. a just-completed Reading Comprehension passage)
+// never appeared there at all. /learning-intelligence ("Learning Report" in
+// the Journey section) is the existing, already-built CSSE-scoped learner
+// evidence page (Skills/Evidence/Diagnostics/Readiness/Recommendations) —
+// reused here, not a new page, matching Learn/Practise's own precedent.
+const CSSE_PROGRESS_HREF = "/learning-intelligence";
 
-function primaryItemsFor(isCsse: boolean): NavItem[] {
+export function primaryItemsFor(isCsse: boolean): NavItem[] {
   return [
     { href: "/dashboard", label: "Today", icon: Compass },
     { href: isCsse ? CSSE_LEARN_HREF : "/learn", label: "Learn", icon: BookOpen },
     { href: isCsse ? CSSE_PRACTISE_HREF : "/reasoning", label: "Practise", icon: Puzzle },
     { href: "/mocks", label: "Mock", icon: Trophy },
-    { href: "/progress", label: "Progress", icon: BarChart2 },
+    { href: isCsse ? CSSE_PROGRESS_HREF : "/progress", label: "Progress", icon: BarChart2, exact: isCsse },
   ];
 }
 
@@ -123,8 +144,9 @@ const supportItems: NavItem[] = [
   { href: "/contact", label: "Contact", icon: Mail },
 ];
 
-function isActive(pathname: string, href: string): boolean {
+export function isActive(pathname: string, href: string, exact = false): boolean {
   const basePath = href.split("#")[0];
+  if (exact) return pathname === basePath;
   return pathname === basePath || pathname.startsWith(basePath + "/");
 }
 
@@ -149,7 +171,7 @@ function SidebarLink({
   pathname: string;
   collapsed?: boolean;
 }) {
-  const active = isActive(pathname, item.href);
+  const active = isActive(pathname, item.href, item.exact);
   return (
     <Link
       href={item.href}
@@ -400,7 +422,7 @@ function MobileMoreDrawer({
  * the shrink in the first place.
  */
 function TopBarLink({ item, pathname, collapsed = false }: { item: NavItem; pathname: string; collapsed?: boolean }) {
-  const active = isActive(pathname, item.href);
+  const active = isActive(pathname, item.href, item.exact);
   return (
     <Link
       href={item.href}
@@ -607,8 +629,8 @@ export default function Navigation() {
         className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white dark:bg-gray-950 border-t border-gray-100 dark:border-gray-800 px-1 pb-safe"
       >
         <div className="flex justify-around items-center h-16">
-          {primaryItems.map(({ href, label, icon: Icon }) => {
-            const active = isActive(pathname, href);
+          {primaryItems.map(({ href, label, icon: Icon, exact }) => {
+            const active = isActive(pathname, href, exact);
             return (
               <Link
                 key={href}

@@ -50,6 +50,45 @@ export interface ReviewCriterion {
   polarity: "yes-is-good";
 }
 
+/**
+ * Gate 4 (Learner Journey Completion) — the Founder's English/content
+ * quality standard, formally incorporated here rather than as a competing
+ * content engine or a new taxonomy/schema. No new criterion, key, or
+ * ali_family_review column is added by this: every part of the standard
+ * below maps onto an EXISTING criterion's own question, either already
+ * covered (E "Originality" → originalityConfirmed/copyrightRiskClear; F
+ * "Anti-memorisation" → variationBoundariesSound) or now made explicit in
+ * that criterion's wording (A/B/C/D → wordingQuality and
+ * authenticityConfirmed below, extended rather than replaced). A taxonomy
+ * change (a new boolean column requiring its own migration) is exactly the
+ * category this Gate's own governing instruction reserves for a separate,
+ * explicit Founder decision — this incorporation deliberately stays short
+ * of that.
+ *
+ * A. CONTEMPORARY BRITISH ENGLISH — natural spelling, punctuation,
+ *    vocabulary, idiom and usage for UK selective-school preparation; no
+ *    accidental Americanisation unless context genuinely requires it.
+ * B. NAMES AND NAMING CONSISTENCY — conventional, correctly spelt names
+ *    and established English-language forms where appropriate.
+ *    Wikipedia-quality naming consistency is a usable editorial benchmark
+ *    for this, never a factual authority.
+ * C. MODERN BRITAIN — names and contexts should naturally reflect
+ *    contemporary Britain, without quotas, without excluding culturally
+ *    distinctive names, and without stereotypes, implausible
+ *    combinations, or repetition that increases memorisation.
+ * D. HUMAN EDITORIAL QUALITY — reject formulaic AI-style prose, filler,
+ *    repetitive passage architecture, unnatural dialogue, excessive
+ *    explanation, predictable question construction, artificial moral
+ *    conclusions, implausible child/adult voices, and repeated names,
+ *    contexts, numbers or structural patterns. Publication-quality
+ *    writing is the objective. Content must never be claimed as "not
+ *    AI-generated", and an AI-detector score is never evidence of
+ *    authorship or quality; "Human-reviewed" may be used only where
+ *    operationally true and evidence-backed.
+ *
+ * (E and F are the two already-covered dimensions named above — listed in
+ * the Founder's original standard as Originality and Anti-memorisation.)
+ */
 export const REVIEW_CRITERIA: ReviewCriterion[] = [
   { key: "educationalValidity", question: "Is the educational content accurate?", polarity: "yes-is-good" },
   { key: "competencyValidity", question: "Does it genuinely assess the skill it claims to?", polarity: "yes-is-good" },
@@ -62,7 +101,7 @@ export const REVIEW_CRITERIA: ReviewCriterion[] = [
   // criterion follows. Reframed positively without changing what it
   // actually checks (ambiguity-freedom).
   { key: "ambiguityFree", question: "Does the answer key accept every reasonable answer supported by the passage?", polarity: "yes-is-good" },
-  { key: "wordingQuality", question: "Is the wording clear for an 11+ learner?", polarity: "yes-is-good" },
+  { key: "wordingQuality", question: "Is the wording clear for an 11+ learner, in natural contemporary British English and to a human editorial (not formulaic AI-style) standard?", polarity: "yes-is-good" },
   { key: "ageAppropriate", question: "Is this age-appropriate for an 11+ candidate?", polarity: "yes-is-good" },
   { key: "difficultyAppropriate", question: "Is the difficulty appropriate for its stated level?", polarity: "yes-is-good" },
   { key: "transferValidity", question: "Is the transfer demand (how far this asks the learner to generalise) honestly classified?", polarity: "yes-is-good" },
@@ -77,7 +116,7 @@ export const REVIEW_CRITERIA: ReviewCriterion[] = [
   { key: "examStrategyQuality", question: "Is the exam strategy shown to learners useful and safe advice?", polarity: "yes-is-good" },
   { key: "explanationQuality", question: "Where a model answer is shown, does it actually explain, not just restate?", polarity: "yes-is-good" },
   { key: "validationBehaviourSound", question: "Does the way Angel marks this match how CSSE would genuinely mark it?", polarity: "yes-is-good" },
-  { key: "authenticityConfirmed", question: "Does this genuinely resemble a real CSSE question, not a generic worksheet?", polarity: "yes-is-good" },
+  { key: "authenticityConfirmed", question: "Does this genuinely resemble a real CSSE question, not a generic worksheet, with names and contexts that naturally reflect contemporary Britain rather than a stereotype or an implausible combination?", polarity: "yes-is-good" },
   { key: "originalityConfirmed", question: "Is the content sufficiently original?", polarity: "yes-is-good" },
   { key: "copyrightRiskClear", question: "Is the content free of any copyright concern?", polarity: "yes-is-good" },
 ];
