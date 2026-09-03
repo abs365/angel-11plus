@@ -115,7 +115,10 @@ export async function getActiveMockForm(
   if (error) return { data: null, error: error.message };
   const row = Array.isArray(data) ? data[0] : data;
   if (!row) return { data: null, error: null };
-  return { data: { formId: row.form_id, attemptType: row.attempt_type as MockAttemptType }, error: null };
+  return {
+    data: { formId: row.form_id, attemptType: row.attempt_type as MockAttemptType, displayName: row.display_name ?? null },
+    error: null,
+  };
 }
 
 /**

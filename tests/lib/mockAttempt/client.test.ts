@@ -20,7 +20,7 @@ test("A/B — zero deliverable mock content (getActiveMockForm found no active f
 
 test("C — real deliverable mock content (an active form exists): available, using the exact same predicate — no separate UI-only flag needed", () => {
   const result: MockClientResult<ActiveMockForm | null> = {
-    data: { formId: "form-001", attemptType: "full_mock" },
+    data: { formId: "form-001", attemptType: "full_mock", displayName: "Mathematics Mock 1" },
     error: null,
   };
   assert.equal(isMockFormAvailable(result), true);
@@ -33,7 +33,7 @@ test("an RPC/network error is treated as NOT available, never mistaken for a rea
 
 test("an error alongside unexpected non-null data is still treated as NOT available (error takes precedence)", () => {
   const result: MockClientResult<ActiveMockForm | null> = {
-    data: { formId: "form-001", attemptType: "full_mock" },
+    data: { formId: "form-001", attemptType: "full_mock", displayName: "Mathematics Mock 1" },
     error: "unexpected",
   };
   assert.equal(isMockFormAvailable(result), false);

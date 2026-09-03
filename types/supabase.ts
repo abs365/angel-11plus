@@ -847,9 +847,14 @@ export interface Database {
       // and_reporting_foundation.sql. Not yet applied to production;
       // declared here so lib/mockAttempt/client.ts can call these through
       // the typed supabase.rpc() the same way every other RPC already does.
+      // Programme Completion Increment 015 — supabase/migrations/
+      // 214_mock_get_active_form_display_name.sql. Not yet applied to
+      // production. display_name added (nullable — null until a form's
+      // own composition_provenance carries a displayName key, migrations
+      // 212/213).
       mock_get_active_form: {
         Args: { p_attempt_type: string };
-        Returns: { form_id: string; attempt_type: string }[];
+        Returns: { form_id: string; attempt_type: string; display_name: string | null }[];
       };
       mock_get_attempt_manifest: {
         Args: { p_attempt_id: string };

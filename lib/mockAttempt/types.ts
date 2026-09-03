@@ -136,11 +136,22 @@ export interface MockManifestGroupingEntry {
 /**
  * Programme Increment 008E — supabase/migrations/072_mock_lifecycle_and_
  * reporting_foundation.sql. Mirrors mock_get_active_form()'s exact
- * return shape: only form_id + attempt_type, never question_manifest.
+ * return shape: form_id + attempt_type (+ displayName, below) — never
+ * question_manifest.
+ *
+ * displayName added in Programme Completion Increment 015 (migration
+ * 214) — the real, form-metadata-driven identity mechanism replacing
+ * route-specific hardcoded strings like the literal "Mathematics Mock 1"
+ * found in app/mocks/page.tsx and app/learning-intelligence/mock-exam/
+ * page.tsx. `null` when the form's own composition_provenance has no
+ * displayName key yet (i.e. before migration 213/212 is applied to that
+ * specific form) — every caller must treat null as "use a safe
+ * fallback," never as an error.
  */
 export interface ActiveMockForm {
   formId: string;
   attemptType: MockAttemptType;
+  displayName: string | null;
 }
 
 export type MockScoringState = "not_started" | "scoring" | "scored" | "failed";

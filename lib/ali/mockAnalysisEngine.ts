@@ -200,8 +200,24 @@ export function analyseMockAttempt(
     .slice(0, 3)
     .map((s) => ({ questionTypeId: s.questionTypeId, competencyId: s.competencyId }));
 
+  // Programme Completion Increment 015 — the one real Mathematics-
+  // specific assumption found when tracing this pipeline for Reading
+  // Comprehension Mock 1 readiness: `subject` was hardcoded to
+  // "mathematics" regardless of the attempt's real content. Derived here
+  // instead from the actual questionTypeId prefixes this attempt
+  // contains (QT-RC-*/QT-WC-* -> "english", matching ali_mock_form's own
+  // subject check constraint values; anything else, including QT-MR-* and
+  // any attempt with no scored outcomes, keeps the pre-existing
+  // "mathematics" default — the only case this codebase has ever
+  // actually produced until now). No current UI surface renders
+  // subjectBreakdown (confirmed this session — grepped every app/ and
+  // lib/ caller); fixed anyway since it is a real Mathematics-specific
+  // assumption in a genuine API payload field, not merely a display bug.
+  const attemptSubject = bySkill.some((s) => s.questionTypeId.startsWith("QT-RC-") || s.questionTypeId.startsWith("QT-WC-"))
+    ? "english"
+    : "mathematics";
   const subjectBreakdown: MockSubjectBreakdownEntry[] = overall
-    ? [{ subject: "mathematics", marksAchieved: overall.rawMarksAchieved, marksAvailable: overall.rawMarksAvailable, percentage: overall.percentage }]
+    ? [{ subject: attemptSubject, marksAchieved: overall.rawMarksAchieved, marksAvailable: overall.rawMarksAvailable, percentage: overall.percentage }]
     : [];
 
   return {

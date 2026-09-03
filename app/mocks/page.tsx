@@ -183,6 +183,13 @@ export default function MocksPage() {
   // signal the mock-exam page itself uses to gate attempt creation —
   // genuinely confirms a mock can be delivered right now.
   const [csseMockAvailable, setCsseMockAvailable] = useState(false);
+  // Programme Completion Increment 015 — real form-metadata-driven
+  // identity (migration 214's displayName), replacing the previously
+  // hardcoded "Mathematics Mock 1" literal. Fallback stays
+  // "Mathematics Mock 1" only because that is the one form this
+  // specific card has ever queried ('full_mock') — never a claim about
+  // any other subject.
+  const [csseMockName, setCsseMockName] = useState("Mathematics Mock 1");
 
   useEffect(() => {
     const selected = getSelectedPathwayId() ?? undefined;
@@ -205,7 +212,10 @@ export default function MocksPage() {
         .then(setReadiness)
         .catch(() => setReadiness(null));
       getActiveMockForm(supabase, "full_mock")
-        .then((result) => setCsseMockAvailable(isMockFormAvailable(result)))
+        .then((result) => {
+          setCsseMockAvailable(isMockFormAvailable(result));
+          if (result.data?.displayName) setCsseMockName(result.data.displayName);
+        })
         .catch(() => setCsseMockAvailable(false));
     } else {
       setReadiness(null);
@@ -274,10 +284,13 @@ export default function MocksPage() {
                   <div className="flex items-center gap-2.5">
                     <span className="text-xs font-bold px-2.5 py-1 rounded-lg bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300">CSSE</span>
                     {/* Gate 6 presentation correction (Founder decision) — the
-                        active form is Mathematics-only (migration 150, Decision
-                        219), never a combined English+Mathematics paper. The
-                        heading must name what is actually being offered. */}
-                    <h3 className="text-base font-bold text-gray-900 dark:text-gray-100">Mathematics Mock 1</h3>
+                        active form is subject-pure, never a combined
+                        English+Mathematics paper. The heading must name
+                        what is actually being offered. Programme
+                        Completion Increment 015 — name now comes from the
+                        real active form's own metadata (migration 214),
+                        not a hardcoded literal. */}
+                    <h3 className="text-base font-bold text-gray-900 dark:text-gray-100">{csseMockName}</h3>
                   </div>
                   <StatusIndicator tone={csseMockAvailable ? "success" : "neutral"} label={csseMockAvailable ? "Available" : "Not ready yet"} />
                 </div>
@@ -324,12 +337,14 @@ export default function MocksPage() {
             // No pathway selected — every pathway shown with equal weight, honestly (MOCK_CENTRE_INFORMATION_ARCHITECTURE.md).
             <div className="space-y-3">
               {/* Gate 6 presentation correction (Founder decision) — same
-                  correction as the pathway-prioritised card above: the
-                  active form is Mathematics-only (migration 150), so this
-                  entry point must not claim a complete CSSE sitting either. */}
+                  correction as the pathway-prioritised card above: this
+                  entry point must not claim a complete CSSE sitting.
+                  Programme Completion Increment 015 — name now comes from
+                  the real active form's own metadata, not a hardcoded
+                  literal. */}
               <SimpleMockCard
                 badge="CSSE"
-                name="Mathematics Mock 1"
+                name={csseMockName}
                 bg="bg-blue-50 dark:bg-blue-950"
                 border="border-blue-100 dark:border-blue-900"
                 badgeBg="bg-blue-100 dark:bg-blue-900"

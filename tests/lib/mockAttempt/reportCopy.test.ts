@@ -17,6 +17,8 @@ import {
   practiceActionLabelFor,
   MATHEMATICS_PRACTICE_ROUTE,
   PRACTICE_ACTION_LABEL,
+  READING_COMPREHENSION_PRACTICE_ROUTE,
+  READING_PRACTICE_ACTION_LABEL,
 } from "@/lib/mockAttempt/reportCopy";
 import { COMPETENCIES } from "@/lib/learningEngine/assessmentBrainMap";
 import type { MockNextPracticePriority, MockOverallResult, MockSkillEvidenceEntry, MockStrengthOrPriorityEntry } from "@/lib/mockAttempt/types";
@@ -256,4 +258,50 @@ test("practiceRouteFor URL-encodes its input -- never trusts a competencyId to b
 test("practiceActionLabelFor: 'Practise this skill' only when genuinely targeted, the honest general label otherwise -- never overclaims precision the route doesn't have", () => {
   assert.equal(practiceActionLabelFor("MR-04"), "Practise this skill");
   assert.equal(practiceActionLabelFor(null), PRACTICE_ACTION_LABEL);
+});
+
+/**
+ * Programme Completion Increment 015 — the one real Mathematics-specific
+ * assumption found when tracing this pipeline for Reading Comprehension
+ * Mock 1 readiness: practiceRouteFor()/practiceActionLabelFor() always
+ * routed to Mathematics practice, even for an RC-* (Reading
+ * Comprehension) competencyId. Reading Comprehension Mock 1 can only
+ * ever produce RC-* priorities (it contains no Writing content), so this
+ * is the exact, bounded fix required — not a general subject-routing
+ * rewrite.
+ */
+test("practiceRouteFor: an RC-* competencyId (the only kind Reading Comprehension Mock 1 can produce) routes to the real, existing Reading Comprehension practice route, never Mathematics", () => {
+  assert.equal(practiceRouteFor("RC-01"), `${READING_COMPREHENSION_PRACTICE_ROUTE}?focus=RC-01`);
+  assert.equal(practiceRouteFor("RC-04"), `${READING_COMPREHENSION_PRACTICE_ROUTE}?focus=RC-04`);
+});
+
+test("practiceActionLabelFor: an RC-* competencyId still returns the generic 'Practise this skill' (unchanged -- the fix is only in the route, not this label's own targeted branch)", () => {
+  assert.equal(practiceActionLabelFor("RC-01"), "Practise this skill");
+});
+
+test("READING_COMPREHENSION_PRACTICE_ROUTE and MATHEMATICS_PRACTICE_ROUTE remain genuinely distinct routes", () => {
+  assert.notEqual(READING_COMPREHENSION_PRACTICE_ROUTE, MATHEMATICS_PRACTICE_ROUTE);
+  assert.equal(READING_COMPREHENSION_PRACTICE_ROUTE, "/learning-intelligence/practice/reading-comprehension");
+});
+
+test("READING_PRACTICE_ACTION_LABEL is defined and distinct, even though practiceActionLabelFor() can never currently return it (competencyId=null can't distinguish which subject's general route applies) -- a disclosed design gap, not a bug, since no caller currently needs an untargeted Reading label", () => {
+  assert.equal(READING_PRACTICE_ACTION_LABEL, "Practise Reading Comprehension");
+  assert.notEqual(READING_PRACTICE_ACTION_LABEL, PRACTICE_ACTION_LABEL);
+});
+
+test("practiceRouteFor: Mathematics (MR-*), null, and any non-RC-prefixed id are all completely unaffected by this fix -- exact prior behaviour preserved", () => {
+  assert.equal(practiceRouteFor(null), MATHEMATICS_PRACTICE_ROUTE);
+  assert.equal(practiceRouteFor("MR-01"), `${MATHEMATICS_PRACTICE_ROUTE}?focus=MR-01`);
+  assert.equal(practiceRouteFor("weird id"), `${MATHEMATICS_PRACTICE_ROUTE}?focus=weird%20id`);
+});
+
+test("practiceRouteFor: WC-* (Continuous Writing) is a disclosed, deliberately out-of-scope gap -- still falls back to Mathematics, since no Mock in this codebase currently produces a WC-* priority", () => {
+  assert.equal(practiceRouteFor("WC-01"), `${MATHEMATICS_PRACTICE_ROUTE}?focus=WC-01`);
+});
+
+test("competencyLabel already resolves every Reading Comprehension Mock 1 competency id to a real, non-raw name (pre-existing, re-confirmed, not modified this increment)", () => {
+  for (const id of ["RC-01", "RC-02", "RC-03", "RC-04"]) {
+    assert.notEqual(competencyLabel(id), id, `${id} must not fall back to its own raw code`);
+    assert.ok(COMPETENCIES[id as keyof typeof COMPETENCIES], `${id} must exist in the real COMPETENCIES map`);
+  }
 });

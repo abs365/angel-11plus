@@ -249,6 +249,36 @@ test("subject_breakdown is empty, never fabricated, when overall is null", () =>
   assert.deepEqual(result.subjectBreakdown, []);
 });
 
+/**
+ * Programme Completion Increment 015 — closes a real gap in the test
+ * above: it proved subject_breakdown's marks/percentage were dynamic,
+ * but never actually varied the outcomes' own questionTypeId, so it
+ * never caught that `subject` itself was hardcoded to "mathematics"
+ * regardless of content. Found and fixed while tracing this pipeline
+ * for Reading Comprehension Mock 1 readiness (RC-* outcomes, the only
+ * kind that Mock can ever produce).
+ */
+test("subject_breakdown reports 'english' for an attempt made up of QT-RC-*/QT-WC-* outcomes -- Reading Comprehension Mock 1's own real shape, never mislabelled 'mathematics'", () => {
+  const outcomes = [
+    outcome("q1", "correct", 1, 1, "QT-RC-01"),
+    outcome("q2", "incorrect", 0, 4, "QT-RC-02"),
+  ];
+  const result = analyseMockAttempt(outcomes, bank({}), "a", "reading-comprehension-mock-1", "t", { rawMarksAchieved: 1, rawMarksAvailable: 5, percentage: 20 });
+  assert.deepEqual(result.subjectBreakdown, [{ subject: "english", marksAchieved: 1, marksAvailable: 5, percentage: 20 }]);
+});
+
+test("subject_breakdown still reports 'mathematics' for a QT-MR-*-only attempt (Mathematics Mock 1's own real shape) -- unaffected by the fix", () => {
+  const outcomes = [outcome("q1", "correct", 1, 1, "QT-MR-04")];
+  const result = analyseMockAttempt(outcomes, bank({}), "a", "mathematics-mock-1", "t", { rawMarksAchieved: 6, rawMarksAvailable: 56, percentage: 10.7 });
+  assert.equal(result.subjectBreakdown[0].subject, "mathematics");
+});
+
+test("subject_breakdown falls back to 'mathematics' when every outcome has questionTypeId=null (e.g. all requires_manual_marking) -- preserves the exact pre-fix default for the one case this codebase has ever actually produced", () => {
+  const outcomes = [outcome("q1", "requires_manual_marking", null, 4, null)];
+  const result = analyseMockAttempt(outcomes, bank({}), "a", "f", "t", { rawMarksAchieved: 0, rawMarksAvailable: 4, percentage: null });
+  assert.equal(result.subjectBreakdown[0].subject, "mathematics");
+});
+
 test("PURE FUNCTION DETERMINISM: identical input always produces identical output (idempotency at the function level -- the same guarantee mock_analyse_attempt()'s own analysis_version check provides at the database level)", () => {
   const outcomes = [outcome("q1", "correct", 1, 1, "QT-MR-04"), outcome("q2", "incorrect", 0, 1, "QT-MR-11"), outcome("q3", "unanswered", 0, 1, "QT-MR-11")];
   const b = bank({ q2: { contentDifficulty: "hard", addressesMisconception: "note" } });

@@ -164,6 +164,14 @@ export default function MockExamPage() {
   // only one they are mid-way through (that remains getResumableMockAttempt()'s
   // own, separate job). Empty until the mount effect below resolves it.
   const [previousAttempts, setPreviousAttempts] = useState<{ attemptId: string; submittedAt: string }[]>([]);
+  // Programme Completion Increment 015 — real form-metadata-driven
+  // identity (migration 214's displayName), replacing the previously
+  // hardcoded "Mathematics Mock 1" literal. This page's ATTEMPT_TYPE
+  // constant is fixed to 'full_mock', so the fallback naming
+  // "Mathematics Mock 1" — used only until the active form's own
+  // displayName loads — is accurate for every form this specific page
+  // has ever been able to serve.
+  const [mockDisplayName, setMockDisplayName] = useState("Mathematics Mock 1");
 
   const supabaseRef = useRef<ReturnType<typeof getSupabaseClient>>(null);
   const submittedRef = useRef(false);
@@ -243,6 +251,7 @@ export default function MockExamPage() {
       // the "I'm ready to begin" flow itself, only the optional "previous
       // Mock" section silently stays empty.
       if (isMockFormAvailable(active)) {
+        if (active.data.displayName) setMockDisplayName(active.data.displayName);
         const submitted = await getSubmittedMockAttempts(supabase, active.data.formId);
         if (!submitted.error && submitted.data) setPreviousAttempts(submitted.data);
       }
@@ -489,10 +498,12 @@ export default function MockExamPage() {
       <div className="max-w-3xl mx-auto px-4 py-6 md:px-8 md:py-8">
         {phase === "intro" && (
           <div>
-            {/* Gate 6 presentation correction (Founder decision) — the active
-                form is Mathematics-only (migration 150, Decision 219); this
-                heading must never claim a combined English+Mathematics sitting. */}
-            <h1 className="text-gray-900 dark:text-gray-100 font-bold text-2xl">Mathematics Mock 1</h1>
+            {/* Gate 6 presentation correction (Founder decision) — this
+                heading must never claim a combined English+Mathematics
+                sitting. Programme Completion Increment 015 — name now
+                comes from the real active form's own metadata (migration
+                214), not a hardcoded literal. */}
+            <h1 className="text-gray-900 dark:text-gray-100 font-bold text-2xl">{mockDisplayName}</h1>
             <p className="text-gray-400 dark:text-gray-500 text-sm mt-1">
               A timed, sealed Mathematics sitting. You will not see whether an answer is correct until your report is ready.
             </p>

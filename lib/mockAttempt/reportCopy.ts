@@ -232,6 +232,36 @@ export const MATHEMATICS_PRACTICE_ROUTE = "/learning-intelligence/practice/mathe
 export const PRACTICE_ACTION_LABEL = "Practise Mathematics";
 
 /**
+ * Programme Completion Increment 015 — Reading Comprehension Mock 1's
+ * own competency ids (RC-01..04) were, until this increment, routed to
+ * the Mathematics practice route below regardless — the one real,
+ * concrete Mathematics-specific assumption found in this pipeline when
+ * traced for Reading Mock 1 readiness (every other report-copy function
+ * already resolves via the real `COMPETENCIES` map, which has always
+ * included RC-01..04/WC-01..02 correctly named — see
+ * `lib/learningEngine/assessmentBrainMap.ts`). The real, existing route
+ * (confirmed already in use elsewhere — `app/mocks/adaptive/english/
+ * page.tsx`, `app/reasoning/page.tsx`) is reused here, not invented.
+ *
+ * Scope, deliberately bounded to what Reading Comprehension Mock 1 can
+ * actually produce: this Mock contains only RC-* competencies (no WC-*
+ * — Continuous Writing is not part of it). WC-* still falls back to the
+ * Mathematics route below — a known, disclosed, out-of-scope gap, not
+ * fixed here, since no Mock in this codebase currently produces a WC-*
+ * priority; correcting it is deferred to whichever future increment
+ * first builds a Writing-inclusive Mock.
+ */
+export const READING_COMPREHENSION_PRACTICE_ROUTE = "/learning-intelligence/practice/reading-comprehension";
+export const READING_PRACTICE_ACTION_LABEL = "Practise Reading Comprehension";
+
+function practiceRouteBaseFor(competencyId: string | null): { route: string; label: string } {
+  if (competencyId?.startsWith("RC-")) {
+    return { route: READING_COMPREHENSION_PRACTICE_ROUTE, label: READING_PRACTICE_ACTION_LABEL };
+  }
+  return { route: MATHEMATICS_PRACTICE_ROUTE, label: PRACTICE_ACTION_LABEL };
+}
+
+/**
  * Decision 225 (Mock Priority -> Targeted Practice Routing) — a genuine,
  * competency-targeted route, closing the loop `familyFocusCompetencyId`
  * already existed to support but had no learner-facing caller for.
@@ -239,15 +269,17 @@ export const PRACTICE_ACTION_LABEL = "Practise Mathematics";
  * (migration 151) already resolves per priority via
  * `mock_question_type_competency()`/`questionTypeCompetency()` — never a
  * re-derivation, never a QuestionTypeId mistaken for a CompetencyId.
- * Falls back to the honest, general Mathematics route when no
- * competencyId is available (never an invented per-skill URL for a skill
- * this refinement cannot genuinely target).
+ * Falls back to the honest, general practice route (Mathematics, unless
+ * the competencyId is genuinely RC-prefixed) when no competencyId is
+ * available (never an invented per-skill URL for a skill this
+ * refinement cannot genuinely target).
  */
 export function practiceRouteFor(competencyId: string | null): string {
-  return competencyId ? `${MATHEMATICS_PRACTICE_ROUTE}?focus=${encodeURIComponent(competencyId)}` : MATHEMATICS_PRACTICE_ROUTE;
+  const base = practiceRouteBaseFor(competencyId).route;
+  return competencyId ? `${base}?focus=${encodeURIComponent(competencyId)}` : base;
 }
 
-/** Pairs with practiceRouteFor() — "Practise this skill" only when the route is genuinely targeted, "Practise Mathematics" otherwise. Never claims precision the route doesn't have. */
+/** Pairs with practiceRouteFor() — "Practise this skill" only when the route is genuinely targeted, the honest general label for the correct subject otherwise. Never claims precision the route doesn't have. */
 export function practiceActionLabelFor(competencyId: string | null): string {
-  return competencyId ? "Practise this skill" : PRACTICE_ACTION_LABEL;
+  return competencyId ? "Practise this skill" : practiceRouteBaseFor(competencyId).label;
 }
