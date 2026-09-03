@@ -14,12 +14,28 @@ import { readFileSync } from "node:fs";
 const MIGRATION_198 = readFileSync("supabase/migrations/198_programme_completion_inc005_writing_content.sql", "utf8");
 const MIGRATION_199 = readFileSync("supabase/migrations/199_programme_completion_inc005_writing_pending_review.sql", "utf8");
 
-function extractPrompts(sql: string): Record<string, any> {
+/**
+ * The real shape of the `prompt` jsonb column's parsed contents for a
+ * Writing row (matches `WritingPrompt`, types/index.ts) -- typed here
+ * (rather than `any`, Programme Completion Increment 006's own required
+ * correction) so every field access below is checked, not merely assumed.
+ */
+interface ExtractedWritingPromptJson {
+  id: string;
+  title: string;
+  prompt: string;
+  type: "narrative" | "descriptive" | "persuasive";
+  difficulty: string;
+  timeMinutes: number;
+  checklist: string[];
+}
+
+function extractPrompts(sql: string): Record<string, ExtractedWritingPromptJson> {
   const re = /\$json\$([\s\S]*?)\$json\$/g;
-  const prompts: Record<string, any> = {};
+  const prompts: Record<string, ExtractedWritingPromptJson> = {};
   let m: RegExpExecArray | null;
   while ((m = re.exec(sql))) {
-    const obj = JSON.parse(m[1]);
+    const obj = JSON.parse(m[1]) as ExtractedWritingPromptJson;
     prompts[obj.id] = obj;
   }
   return prompts;
@@ -35,18 +51,21 @@ test("migration 198 registers exactly 2 new Writing prompts, both QT-WC-01a", ()
 
 test("every prompt's checklist begins with the genuine CSSE-evidenced 'Write at least six sentences' instruction and ends with a proofreading check", () => {
   for (const id of Object.keys(PROMPTS)) {
-    assert.equal(PROMPTS[id].checklist[0], "Write at least six sentences", `${id} must carry the evidenced minimum as its first checklist item`);
-    assert.match(PROMPTS[id].checklist.at(-1), /spelling and punctuation/i, `${id} must end with a proofreading check`);
+    const { checklist } = PROMPTS[id];
+    assert.equal(checklist[0], "Write at least six sentences", `${id} must carry the evidenced minimum as its first checklist item`);
+    const lastItem = checklist.at(-1);
+    assert.ok(lastItem, `${id} must have at least one checklist item`);
+    assert.match(lastItem, /spelling and punctuation/i, `${id} must end with a proofreading check`);
   }
 });
 
 test("the two prompts are genuinely different response shapes: one descriptive (person portrait), one narrative (imaginative projection) -- not the same shape with nouns swapped", () => {
-  const types = Object.values(PROMPTS).map((p: any) => p.type);
+  const types = Object.values(PROMPTS).map((p) => p.type);
   assert.deepEqual(types.sort(), ["descriptive", "narrative"]);
 });
 
 test("neither prompt is another instance of the over-represented 'Write about a time...' event-recount template already dominating the inventory", () => {
-  for (const p of Object.values(PROMPTS) as any[]) {
+  for (const p of Object.values(PROMPTS)) {
     assert.ok(!/^write about a time/i.test(p.prompt.trim()), `${p.id} must not reuse the 'Write about a time...' opener`);
   }
 });
@@ -65,7 +84,7 @@ test("the forward-looking prompt is genuinely prospective (imagines a future mom
 
 test("no QT-WC-01b (picture-stimulus) is attempted -- the disclosed, unfilled image-pipeline gap is not silently worked around", () => {
   assert.ok(!/\('[\w-]+', 'writing', 'QT-WC-01b'/.test(MIGRATION_198), "no row's own question_type/skill may be QT-WC-01b");
-  for (const p of Object.values(PROMPTS) as any[]) {
+  for (const p of Object.values(PROMPTS)) {
     assert.ok(!("image" in p) && !("imageUrl" in p) && !("stimulusImage" in p), "no prompt JSON may reference an image field that doesn't exist in the pipeline");
   }
 });
