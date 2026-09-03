@@ -213,6 +213,14 @@ const RACEDAY_01_TIER2: EnglishPromptValidationFields = {
   validationTier: "TIER2_ACCEPTED_SET",
 };
 
+// The real, only TIER1_EXACT_MATCH question across every Reading passage
+// authored so far (migration 097, mock-eng-boathouse-q12a) — not synthetic.
+const BOATHOUSE_12A_TIER1: EnglishPromptValidationFields = {
+  marks: 1,
+  acceptedAnswers: ["Yes"],
+  validationTier: "TIER1_EXACT_MATCH",
+};
+
 const RACEDAY_05_TIER3: EnglishPromptValidationFields = {
   marks: 4,
   modelAnswer:
@@ -274,6 +282,52 @@ test("Tier 2 adversarial: full garbage battery never auto-verifies as correct", 
   for (const input of ADVERSARIAL_GARBAGE_INPUTS) {
     const result = scoreEnglishComprehensionAnswer(input, RACEDAY_01_TIER2, legacyHeuristicShouldNotBeCalled);
     assert.equal(result.earnedMarks, 0, `"${input}" must not earn marks against RACEDAY_01`);
+  }
+});
+
+// --- Tier 1: exact-match questions (Programme Completion Increment 016) ---
+// Root cause: the dispatcher below had no TIER1_EXACT_MATCH case at all,
+// so it fell through to the `default` LEGACY_HEURISTIC branch, which has
+// its own unrelated 8-character length floor -- a genuinely correct short
+// answer like "Yes" scored zero. Fixed by giving TIER1 its own dispatcher
+// case, reusing checkAcceptedAnswerSet() exactly as that function's own
+// pre-existing "Tier 1/2 — retrieval and vocabulary-in-context answers"
+// doc comment already named as one of its two intended callers -- no new
+// matching function, no new scorer.
+
+test("Tier 1 dispatches to the tiered engine, not the legacy heuristic -- the real defect this increment fixes", () => {
+  const result = scoreEnglishComprehensionAnswer("Yes", BOATHOUSE_12A_TIER1, legacyHeuristicShouldNotBeCalled);
+  assert.equal(result.tier, "TIER1_EXACT_MATCH");
+  assert.equal(result.automaticallyVerified, true);
+  assert.equal(result.earnedMarks, 1);
+});
+
+test("Tier 1: a genuinely correct short answer earns full marks -- no longer defeated by the legacy heuristic's 8-character floor", () => {
+  const result = scoreEnglishComprehensionAnswer("Yes", BOATHOUSE_12A_TIER1, legacyHeuristicShouldNotBeCalled);
+  assert.equal(result.earnedMarks, 1);
+});
+
+test("Tier 1: case normalisation -- educationally irrelevant case differences do not fail", () => {
+  assert.equal(scoreEnglishComprehensionAnswer("yes", BOATHOUSE_12A_TIER1, legacyHeuristicShouldNotBeCalled).earnedMarks, 1);
+  assert.equal(scoreEnglishComprehensionAnswer("YES", BOATHOUSE_12A_TIER1, legacyHeuristicShouldNotBeCalled).earnedMarks, 1);
+});
+
+test("Tier 1: harmless surrounding whitespace does not fail", () => {
+  assert.equal(scoreEnglishComprehensionAnswer("  Yes  ", BOATHOUSE_12A_TIER1, legacyHeuristicShouldNotBeCalled).earnedMarks, 1);
+});
+
+test("Tier 1: a genuinely different short answer fails -- never guessed", () => {
+  assert.equal(scoreEnglishComprehensionAnswer("No", BOATHOUSE_12A_TIER1, legacyHeuristicShouldNotBeCalled).earnedMarks, 0);
+});
+
+test("Tier 1: no character-substring false positive -- an unrelated word containing the accepted answer's letters never matches (same DEFECT B class this file's other tiers are already proven against)", () => {
+  assert.equal(scoreEnglishComprehensionAnswer("eyes", BOATHOUSE_12A_TIER1, legacyHeuristicShouldNotBeCalled).earnedMarks, 0);
+});
+
+test("Tier 1 adversarial: garbage battery never auto-verifies as correct -- excluding 'yes' itself, which is this fixture's own genuinely correct accepted answer, not garbage for this particular question", () => {
+  for (const input of ADVERSARIAL_GARBAGE_INPUTS.filter((i) => i.toLowerCase() !== "yes")) {
+    const result = scoreEnglishComprehensionAnswer(input, BOATHOUSE_12A_TIER1, legacyHeuristicShouldNotBeCalled);
+    assert.equal(result.earnedMarks, 0, `"${input}" must not earn marks against BOATHOUSE_12A`);
   }
 });
 

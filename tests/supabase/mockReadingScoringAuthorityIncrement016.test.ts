@@ -53,8 +53,9 @@ test("both new functions are granted execute ONLY to mock_scoring_writer, never 
 });
 
 test("neither function has a fixed safe search_path missing, and both are SECURITY DEFINER", () => {
-  const bodies = migration.split(/create or replace function/).slice(1);
-  assert.equal(bodies.length, 2, "expected exactly two function definitions");
+  const executableLines = migration.split("\n").filter((line) => !line.trim().startsWith("--"));
+  const bodies = executableLines.join("\n").split(/create or replace function/).slice(1);
+  assert.equal(bodies.length, 2, "expected exactly two real (non-comment) function definitions");
   for (const body of bodies) {
     assert.match(body, /security definer/);
     assert.match(body, /set search_path = public/);

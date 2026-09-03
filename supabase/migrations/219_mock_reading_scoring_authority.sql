@@ -62,10 +62,22 @@
 -- FOUNDER-ONLY SETUP (do NOT run this section's SQL from this file --
 -- it is illustrative only, and the real password must never be committed)
 -- ============================================================
--- After applying this migration, separately and manually:
+-- CORRECT ORDER, do the role first: PostgreSQL requires a role to exist
+-- before any GRANT naming it can take effect. This migration's own grant
+-- section (below, near the end of the file) is written defensively
+-- against being applied out of order -- it checks pg_roles first and
+-- safely defers with a RAISE NOTICE, never a hard failure, if the role
+-- does not exist yet -- but that is a SAFETY NET, not the recommended
+-- path: applying out of order leaves the grants un-applied until someone
+-- separately re-runs them. Doing the role first avoids that step
+-- entirely -- this migration's own grants then apply cleanly in the same
+-- pass:
 --   1. create role mock_scoring_writer with login password '<a password
 --      you generate yourself, never shared with or typed to Claude>';
---   2. Set the SAME value as MOCK_SCORING_DATABASE_URL in Vercel's
+--   2. Apply this migration (Supabase Dashboard > SQL Editor). Its own
+--      grant section will find the role already exists and grant EXECUTE
+--      on both new functions immediately -- no separate re-run step.
+--   3. Set the SAME password as MOCK_SCORING_DATABASE_URL in Vercel's
 --      Production environment variables (server-only, never
 --      NEXT_PUBLIC_-prefixed), using Supabase's pooled connection string
 --      shape with mock_scoring_writer as the user:
@@ -351,12 +363,17 @@ revoke execute on function public.mock_persist_reading_scoring(uuid, jsonb) from
 -- ============================================================
 -- The dedicated role's ONLY grants, anywhere in the database.
 -- ============================================================
--- No direct table grant of any kind. If mock_scoring_writer does not yet
--- exist (this migration is applied before the Founder-only role-creation
--- step above), these GRANTs are simply deferred -- re-run them after the
--- role exists if applied in that order; a GRANT to a non-existent role
--- fails safely (an error, not a silent no-op), so this section is written
--- defensively as its own statement, safe to re-run.
+-- No direct table grant of any kind. Recommended order (this file's own
+-- FOUNDER-ONLY SETUP section, above): create the role BEFORE applying
+-- this migration, so these grants apply immediately, in this same pass.
+-- Safety net for the out-of-order case: a bare `grant ... to
+-- mock_scoring_writer` would itself raise a real Postgres error if the
+-- role does not exist yet (GRANT to an unknown role is not a silent
+-- no-op) -- wrapping it in this existence check instead turns that into
+-- a safe, explicit RAISE NOTICE, so applying this migration before the
+-- role exists can never abort the whole transaction; it only means the
+-- two GRANT statements below must be re-run (or this migration re-run
+-- with `create or replace function` again a no-op) once the role exists.
 do $$
 begin
   if exists (select 1 from pg_roles where rolname = 'mock_scoring_writer') then

@@ -328,6 +328,21 @@ export function scoreEnglishComprehensionAnswer(
   }
 
   switch (tier) {
+    // Programme Completion Increment 016 (Reading Mock authoritative
+    // scoring) — TIER1_EXACT_MATCH had no dispatcher case at all, falling
+    // through to the LEGACY_HEURISTIC default below, which has its own
+    // 8-character floor and would score a genuinely correct short answer
+    // (e.g. "Yes") as zero. checkAcceptedAnswerSet()'s own doc comment
+    // ("Tier 1/2 — retrieval and vocabulary-in-context answers") already
+    // named Tier 1 as one of its two intended callers when it was
+    // written — this closes that gap by reusing it exactly as TIER2 does
+    // below, not by writing a second matcher. Its existing token-boundary
+    // safety (no character-substring false positive, e.g. "x" inside
+    // "excitement") already satisfies "no partial/substring false
+    // positive"; its case/whitespace normalisation and author-curated
+    // acceptedAnswers-only matching already satisfy "no semantic
+    // guessing, no invented synonyms."
+    case "TIER1_EXACT_MATCH":
     case "TIER2_ACCEPTED_SET": {
       const result = checkAcceptedAnswerSet(userAnswer, prompt.acceptedAnswers ?? []);
       return {

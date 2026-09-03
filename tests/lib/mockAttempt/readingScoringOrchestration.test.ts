@@ -113,14 +113,38 @@ test("TIER3_QUOTATION_PLUS_EXPLANATION: always computes zero here, regardless of
 });
 
 // --- TIER1_EXACT_MATCH (real mock-eng-boathouse-q12a) ----------------------
+// Corrected this increment (was: fell through to the legacy 8-character
+// keyword heuristic, scoring a genuinely correct short "Yes" as zero) --
+// see lib/learningEngine/englishAnswerValidation.ts's own dispatcher,
+// which now reuses checkAcceptedAnswerSet() for TIER1, exactly as that
+// function's own pre-existing "Tier 1/2" doc comment already intended.
 
-test("TIER1_EXACT_MATCH: falls through to the legacy keyword heuristic today (a pre-existing characteristic of the existing engine's own dispatcher, not introduced by this increment) -- a short genuinely-correct 'Yes' scores zero because it is under the heuristic's own 8-character floor", () => {
+test("TIER1_EXACT_MATCH: the real Boathouse q12a question awards full marks for the genuinely correct short answer", () => {
   const q = item({
     questionId: "mock-eng-boathouse-q12a", marks: 1, validationTier: "TIER1_EXACT_MATCH",
-    acceptedAnswers: ["Yes"], modelAnswer: "Yes -- he shows 'a patience she had never seen in him before' while sorting the tools, before either of them has any special reason (the note) to feel that way yet.",
-    userAnswer: "Yes",
+    acceptedAnswers: ["Yes"], userAnswer: "Yes",
   });
-  assert.equal(computeReadingScoringOutcome(q).marksAwarded, 0, "documents current dispatcher behaviour precisely -- not a defect this increment introduces or is scoped to fix");
+  assert.deepEqual(computeReadingScoringOutcome(q), { questionId: "mock-eng-boathouse-q12a", marksAwarded: 1 });
+});
+
+test("TIER1_EXACT_MATCH: case normalisation -- 'yes' still matches the authored 'Yes'", () => {
+  const q = item({ questionId: "mock-eng-boathouse-q12a", marks: 1, validationTier: "TIER1_EXACT_MATCH", acceptedAnswers: ["Yes"], userAnswer: "yes" });
+  assert.equal(computeReadingScoringOutcome(q).marksAwarded, 1);
+});
+
+test("TIER1_EXACT_MATCH: surrounding whitespace normalisation -- harmless leading/trailing/internal spacing still matches", () => {
+  const q = item({ questionId: "mock-eng-boathouse-q12a", marks: 1, validationTier: "TIER1_EXACT_MATCH", acceptedAnswers: ["Yes"], userAnswer: "  Yes  " });
+  assert.equal(computeReadingScoringOutcome(q).marksAwarded, 1);
+});
+
+test("TIER1_EXACT_MATCH: a genuinely different short answer fails, never guessed", () => {
+  const q = item({ questionId: "mock-eng-boathouse-q12a", marks: 1, validationTier: "TIER1_EXACT_MATCH", acceptedAnswers: ["Yes"], userAnswer: "No" });
+  assert.equal(computeReadingScoringOutcome(q).marksAwarded, 0);
+});
+
+test("TIER1_EXACT_MATCH: no character-level substring false positive -- a genuinely unrelated word that happens to contain the accepted answer's letters never matches", () => {
+  const q = item({ questionId: "x", marks: 1, validationTier: "TIER1_EXACT_MATCH", acceptedAnswers: ["yes"], userAnswer: "eyes" });
+  assert.equal(computeReadingScoringOutcome(q).marksAwarded, 0, "'eyes' must never match 'yes' as a character substring");
 });
 
 // --- unanswered / batch behaviour ------------------------------------------
