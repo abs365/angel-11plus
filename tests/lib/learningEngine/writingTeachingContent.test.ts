@@ -59,3 +59,33 @@ test("getWritingTaskFamilyForPromptType handles missing/empty input safely", () 
   assert.equal(getWritingTaskFamilyForPromptType(null), undefined);
   assert.equal(getWritingTaskFamilyForPromptType(""), undefined);
 });
+
+// === Programme Completion Increment 006, item 2: proof of the composed
+// path, not merely the mapping function in isolation. This is exactly
+// what WritingActivity computes (app/learning-intelligence/practice/
+// [area]/page.tsx: `getWritingTeachingContent(getWritingTaskFamilyForPromptType(prompt.type))`)
+// for a real stored prompt's `type` field. Before this increment's fix,
+// every one of these returned `undefined` for every real prompt in the
+// bank -- the worked-example/planning-scaffold panel could never render.
+
+test("Increment 006 proof: a real 'narrative'-typed prompt (e.g. eng-inc003-writing-imaginedplace-01, eng-pc003-writing-difficulttask, eng-pc005-writing-somethingnew) now receives the actual writing-reflective-discursive scaffold via the real composed call, not undefined", () => {
+  const family = getWritingTaskFamilyForPromptType("narrative");
+  const content = getWritingTeachingContent(family);
+  assert.notEqual(content, undefined);
+  assert.equal(content!.model.whatToNotice.length > 0, true);
+  assert.equal(content!.planningScaffold.length >= 3, true);
+});
+
+test("Increment 006 proof: a real 'descriptive'-typed prompt (e.g. mock-writing-mindchange-01, eng-inc003-writing-favouriteplace-01, eng-pc003-writing-meaningfulplace) now receives the actual scaffold via the real composed call, not undefined", () => {
+  const family = getWritingTaskFamilyForPromptType("descriptive");
+  const content = getWritingTeachingContent(family);
+  assert.notEqual(content, undefined);
+  assert.equal(content!.model.whatToNotice.length > 0, true);
+  assert.equal(content!.planningScaffold.length >= 3, true);
+});
+
+test("Increment 006 proof: the one 'persuasive'-typed prompt (wrt-003, provisional forced fit) still correctly receives no scaffold via the real composed call -- the fix widens coverage to real evidenced types, it does not remove the persuasive exclusion", () => {
+  const family = getWritingTaskFamilyForPromptType("persuasive");
+  const content = getWritingTeachingContent(family);
+  assert.equal(content, undefined);
+});
