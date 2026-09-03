@@ -161,10 +161,27 @@ test("5b. Programme Increment 008E: the canonical Mock Exam entry point no longe
   ]) {
     assert.ok(new RegExp(`\\b${requiredImport}\\b`).test(src), `${file} must call ${requiredImport} from the secure engine`);
   }
+  // Programme Completion Increment 016 — this page now serves more than
+  // one attempt_type (Reading's timed_section, not just Mathematics'
+  // full_mock), so createMockAttempt() is no longer forbidden outright:
+  // migration 085's own header states its full_mock guard leaves
+  // "timed_section and diagnostic_mock behaviour through this same
+  // function... completely unchanged." The real, still-load-bearing
+  // safety property is narrower: createMockAttempt() must never be
+  // reachable for a full_mock attempt specifically. Verified two ways:
+  // (a) no literal call ever passes "full_mock" as its own argument, and
+  // (b) the only call site sits inside the `else` branch of an explicit
+  // `attemptType === "full_mock"` check, whose `if` branch uses
+  // createMockCycleAttempt() instead.
   assert.ok(
-    !/\bcreateMockAttempt\b/.test(src),
-    `${file} must not call createMockAttempt() for a full_mock attempt -- migration 085 unconditionally rejects that attempt_type; createMockCycleAttempt() is the only correct path`
+    !/createMockAttempt\([^)]*["']full_mock["']/.test(src),
+    `${file} must never call createMockAttempt() with a literal "full_mock" argument -- migration 085 unconditionally rejects that attempt_type`
   );
+  const createNewBlock = src.match(/let createdAttemptId: string;[\s\S]*?const started = await startMockAttempt/)?.[0] ?? "";
+  assert.match(createNewBlock, /if \(attemptType === "full_mock"\) \{/, "full_mock must take the cycle-aware branch");
+  assert.match(createNewBlock, /createMockCycleAttempt\(/, "full_mock's branch must use the cycle-aware path");
+  const elseBranch = createNewBlock.match(/\} else \{([\s\S]*?)\n    \}/)?.[1] ?? "";
+  assert.match(elseBranch, /createMockAttempt\(supabase, active\.data\.formId, attemptType\)/, "only the non-full_mock else branch may call createMockAttempt(), and only with the dynamically-resolved attemptType, never a literal");
 });
 
 test("6. Future non-zero Practice growth cannot alter Mock supply", async () => {

@@ -120,7 +120,13 @@ test("returning learner: the intro phase renders a link to each of the caller's 
 });
 
 test("a failure fetching previous attempts never blocks the primary \"I'm ready to begin\" flow -- the mount effect still resolves to intro/unavailable regardless", () => {
-  const mountEffect = mockExamSource.match(/useEffect\(\(\) => \{\s*\(async \(\) => \{[\s\S]*?\}\)\(\);\s*\}, \[\]\);/)?.[0] ?? "";
+  // Programme Completion Increment 016 — the dependency array is now
+  // `[attemptType]`, not `[]`: attemptType (resolved once from
+  // searchParams) is a real dependency this effect reads, added to
+  // satisfy react-hooks/exhaustive-deps correctly, not a behavioural
+  // change (attemptType is stable for the page's lifetime -- a
+  // different ?type= remounts the page tree in the App Router).
+  const mountEffect = mockExamSource.match(/useEffect\(\(\) => \{\s*\(async \(\) => \{[\s\S]*?\}\)\(\);[\s\S]*?\}, \[attemptType\]\);/)?.[0] ?? "";
   assert.match(mountEffect, /if \(!submitted\.error && submitted\.data\)/);
   assert.match(mountEffect, /setPhase\(isMockFormAvailable\(active\) \? "intro" : "unavailable"\)/);
 });

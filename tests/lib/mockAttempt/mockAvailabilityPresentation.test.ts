@@ -41,10 +41,11 @@ test("A — the Mock Centre no longer hard-codes tone=\"success\" label=\"Availa
   );
 });
 
-test("A — the CSSE card's badge is derived from csseMockAvailable, itself set from isMockFormAvailable()", () => {
-  assert.match(MOCK_CENTRE, /const \[csseMockAvailable, setCsseMockAvailable\] = useState\(false\)/, "must start false — never a false 'Available' flash");
-  assert.match(MOCK_CENTRE, /setCsseMockAvailable\(isMockFormAvailable\(result\)\)/);
-  assert.match(MOCK_CENTRE, /tone=\{csseMockAvailable \? "success" : "neutral"\}/);
+test("A — the CSSE cards' badges are derived from csseMocks state, itself set from isMockFormAvailable() -- generalised in Programme Completion Increment 016 from a single full_mock-only flag to one entry per discovered CSSE Mock form", () => {
+  assert.match(MOCK_CENTRE, /full_mock: \{ available: false, displayName: CSSE_MOCK_META\.full_mock\.fallbackName \}/, "must start false — never a false 'Available' flash");
+  assert.match(MOCK_CENTRE, /timed_section: \{ available: false, displayName: CSSE_MOCK_META\.timed_section\.fallbackName \}/, "Reading must also start false");
+  assert.match(MOCK_CENTRE, /available: isMockFormAvailable\(result\)/);
+  assert.match(MOCK_CENTRE, /tone=\{available \? "success" : "neutral"\}/, "the reusable CsseRichMockCard component derives tone from its own available prop");
 });
 
 test("A — SimpleMockCard (reused for the CSSE card in the no-pathway-selected view) never shows 'Available' when available=false", () => {
@@ -54,18 +55,19 @@ test("A — SimpleMockCard (reused for the CSSE card in the no-pathway-selected 
 
 // --- B (continued): the Mock Centre must never route into a dead-end "Start mock" when unavailable ---
 
-test("B — the Mock Centre shows 'Go to Practice' instead of 'Start mock' when the CSSE mock is unavailable, in both card render paths", () => {
+test("B — the Mock Centre shows 'Go to Practice' instead of 'Start mock' when a CSSE mock is unavailable, in both card render paths (CsseRichMockCard and SimpleMockCard, each defined once in source and reused per discovered form)", () => {
   const goToPracticeCount = (MOCK_CENTRE.match(/Go to Practice/g) ?? []).length;
-  assert.equal(goToPracticeCount, 2, "expected the fallback action in both the isCsse branch and SimpleMockCard");
-  assert.ok(!MOCK_CENTRE.includes('href="/learning-intelligence/mock-exam"') || MOCK_CENTRE.includes("csseMockAvailable ?"), "the mock-exam link must be conditional on real availability");
+  assert.equal(goToPracticeCount, 2, "expected the fallback action in both the isCsse branch's CsseRichMockCard and SimpleMockCard");
+  assert.ok(MOCK_CENTRE.includes("available ? (") , "the mock-exam link must be conditional on real availability");
 });
 
-test("A — the Mock Readiness card's own CTA is redirected to Practice when it would otherwise point at an unavailable mock, without touching assessMockReadiness()'s own verdict/explanation logic", () => {
+test("A — the Mock Readiness card's own CTA is redirected to Practice when it would otherwise point at an unavailable mock, without touching assessMockReadiness()'s own verdict/explanation logic. Programme Completion Increment 016 — generalised to anyCsseMockAvailable, true when EITHER discovered CSSE form (Mathematics or Reading) is available, not just Mathematics", () => {
   assert.match(
     MOCK_CENTRE,
-    /readiness\.assessment\.nextAction\.href === "\/learning-intelligence\/mock-exam" && !csseMockAvailable/,
-    "the readiness card's CTA must be conditioned on real content availability"
+    /readiness\.assessment\.nextAction\.href === "\/learning-intelligence\/mock-exam" && !anyCsseMockAvailable/,
+    "the readiness card's CTA must be conditioned on real content availability across all discovered CSSE forms"
   );
+  assert.match(MOCK_CENTRE, /const anyCsseMockAvailable = csseMocks\.full_mock\.available \|\| csseMocks\.timed_section\.available/);
   assert.match(MOCK_CENTRE, /See practice areas/, "the fallback CTA must lead somewhere Angel can genuinely deliver");
   // The explanation text itself is read straight from readiness.assessment.explanation,
   // completely unconditionally -- proving the underlying readiness verdict/copy is untouched.
@@ -74,10 +76,10 @@ test("A — the Mock Readiness card's own CTA is redirected to Practice when it 
 
 // --- D: historical mock results must remain reachable independently of new-mock availability ---
 
-test("D — Mock History (recentResults) renders unconditionally on having results, never gated by csseMockAvailable", () => {
+test("D — Mock History (recentResults) renders unconditionally on having results, never gated by CSSE mock availability", () => {
   const historyBlockMatch = MOCK_CENTRE.match(/\{recentResults\.length > 0 && \(([\s\S]*?)\n {8}\)\}/);
   assert.ok(historyBlockMatch, "the Mock History section must exist, gated only on having real results");
-  assert.ok(!historyBlockMatch![0].includes("csseMockAvailable"), "historical results must not depend on whether a NEW mock can currently be started");
+  assert.ok(!historyBlockMatch![0].includes("csseMocks") && !historyBlockMatch![0].includes("anyCsseMockAvailable"), "historical results must not depend on whether a NEW mock can currently be started");
 });
 
 // --- E: no synthetic fixture anywhere near this corrected flow ---

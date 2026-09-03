@@ -76,8 +76,54 @@ const MOCK_CARDS: {
  * (English + Mathematics together)" added so a learner/parent can see,
  * explicitly, that today's available Mathematics Mock is not yet that
  * complete experience — the exact distinction the Founder required.
+ *
+ * Programme Completion Increment 016 — "English Mock" removed for the
+ * identical reason: Reading Comprehension Mock 1 is now genuinely active
+ * and shown above as its own card, so listing "English Mock" here would
+ * repeat the exact contradiction already corrected for Mathematics.
+ * "Full CSSE Mock (English + Mathematics together)" stays — still
+ * genuinely not built (Increment 013's own CONTENT/ASSESSMENT-CONTRACT
+ * INCOMPLETE finding: no evidenced post-2024 marks split, picture-
+ * stimulus Writing unconfirmed) — this is the one remaining honest gap.
  */
-const COMING_LATER = ["English Mock", "Full CSSE Mock (English + Mathematics together)", "Continuous Writing", "Focused Assessment"];
+const COMING_LATER = ["Full CSSE Mock (English + Mathematics together)", "Continuous Writing", "Focused Assessment"];
+
+/**
+ * Programme Completion Increment 016 — per-attempt-type card metadata for
+ * the two CSSE Mock forms this page can now discover and launch. `href`
+ * carries the attempt_type the learner is choosing forward via the ?type=
+ * query param (app/learning-intelligence/mock-exam/page.tsx's own
+ * fail-safe validation) — Mathematics keeps its exact pre-existing bare
+ * URL (no param at all), so every existing bookmark/link is unaffected.
+ * `fallbackName`/`summary`/`description`/`minutesLabel` are static,
+ * descriptive copy the active-form RPC does not itself return (it only
+ * returns form_id/attempt_type/displayName) — not the source of truth for
+ * NAME, which always comes from the backend's own displayName once
+ * loaded, exactly like every other card on this page.
+ */
+const CSSE_MOCK_META: Record<"full_mock" | "timed_section", {
+  fallbackName: string;
+  summary: string;
+  description: string;
+  minutesLabel: string;
+  href: string;
+}> = {
+  full_mock: {
+    fallbackName: "Mathematics Mock 1",
+    summary: "Mathematics · 21 questions · 56 marks · 60 minutes",
+    description: "A real, timed Mathematics assessment, marked and reported just like the real exam. The complete CSSE Mock, with English and Mathematics together, is still being built.",
+    minutesLabel: "60 min",
+    href: "/learning-intelligence/mock-exam",
+  },
+  timed_section: {
+    fallbackName: "Reading Comprehension Mock 1",
+    summary: "Reading Comprehension · 27 questions · 65 marks · 45 minutes",
+    description: "A real, timed Reading Comprehension assessment across three passages, marked and reported just like a real sitting. The complete CSSE Mock, with Continuous Writing and Mathematics together, is still being built.",
+    minutesLabel: "45 min",
+    href: "/learning-intelligence/mock-exam?type=timed_section",
+  },
+};
+const CSSE_ATTEMPT_TYPES = ["full_mock", "timed_section"] as const;
 
 function readinessDisplay(readiness: CsseMockReadiness): { label: string; tone: StatusTone } {
   if (readiness.assessment.verdict === "practice-first") {
@@ -170,6 +216,66 @@ function SimpleMockCard({
   );
 }
 
+/**
+ * Programme Completion Increment 016 — the rich, pathway-prioritised CSSE
+ * card, factored out so it can be rendered once per discovered CSSE Mock
+ * form (Mathematics full_mock, Reading timed_section) rather than
+ * hardcoded to exactly one. Visual markup is byte-identical to the single
+ * card this replaces — every className, every layout choice — only the
+ * data driving it is now a parameter instead of module-scope state.
+ */
+function CsseRichMockCard({
+  attemptType, displayName, available, best,
+}: {
+  attemptType: "full_mock" | "timed_section";
+  displayName: string;
+  available: boolean;
+  best: number | undefined;
+}) {
+  const meta = CSSE_MOCK_META[attemptType];
+  return (
+    <div className="rounded-2xl border border-blue-100 dark:border-blue-900 bg-blue-50 dark:bg-blue-950 p-5">
+      <div className="flex items-start justify-between mb-2">
+        <div className="flex items-center gap-2.5">
+          <span className="text-xs font-bold px-2.5 py-1 rounded-lg bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300">CSSE</span>
+          {/* Gate 6 presentation correction (Founder decision) — the
+              active form is subject-pure, never a combined
+              English+Mathematics paper. The heading must name what is
+              actually being offered. Name comes from the real active
+              form's own metadata (migration 214), not a hardcoded
+              literal. */}
+          <h3 className="text-base font-bold text-gray-900 dark:text-gray-100">{displayName}</h3>
+        </div>
+        <StatusIndicator tone={available ? "success" : "neutral"} label={available ? "Available" : "Not ready yet"} />
+      </div>
+      {available && <p className="text-xs text-gray-500 dark:text-gray-400 mb-2">{meta.summary}</p>}
+      <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed mb-3">
+        {available
+          ? meta.description
+          : "A full mock is not available right now. Angel does not yet have a complete, reviewed set of exam questions to draw from. Practice stays available in the meantime, and reflects the same real evidence about how your child is progressing."}
+      </p>
+      <div className="flex items-center justify-between">
+        {best !== undefined ? (
+          <span className="text-xs text-gray-500 dark:text-gray-400">
+            Best score: <span className="font-semibold text-gray-800 dark:text-gray-200">{best}%</span>
+          </span>
+        ) : (
+          <span className="text-xs text-gray-400 dark:text-gray-500">Not attempted yet</span>
+        )}
+        {available ? (
+          <ButtonLink href={meta.href} variant="outline" size="sm" leftIcon={<Play size={14} />}>
+            Start mock
+          </ButtonLink>
+        ) : (
+          <ButtonLink href="/learning-intelligence/practice" variant="outline" size="sm">
+            Go to Practice
+          </ButtonLink>
+        )}
+      </div>
+    </div>
+  );
+}
+
 export default function MocksPage() {
   const [pathwayId, setPathwayId] = useState<string | undefined>(undefined);
   const [pathwayLoaded, setPathwayLoaded] = useState(false);
@@ -182,14 +288,14 @@ export default function MocksPage() {
   // getActiveMockForm()/isMockFormAvailable() — the same authoritative
   // signal the mock-exam page itself uses to gate attempt creation —
   // genuinely confirms a mock can be delivered right now.
-  const [csseMockAvailable, setCsseMockAvailable] = useState(false);
-  // Programme Completion Increment 015 — real form-metadata-driven
-  // identity (migration 214's displayName), replacing the previously
-  // hardcoded "Mathematics Mock 1" literal. Fallback stays
-  // "Mathematics Mock 1" only because that is the one form this
-  // specific card has ever queried ('full_mock') — never a claim about
-  // any other subject.
-  const [csseMockName, setCsseMockName] = useState("Mathematics Mock 1");
+  // Programme Completion Increment 016 — generalised from a single
+  // full_mock-only boolean/name pair to one entry per discovered CSSE
+  // Mock form, so this page can render Mathematics AND Reading as
+  // distinct, correctly-named options instead of assuming exactly one.
+  const [csseMocks, setCsseMocks] = useState<Record<"full_mock" | "timed_section", { available: boolean; displayName: string }>>({
+    full_mock: { available: false, displayName: CSSE_MOCK_META.full_mock.fallbackName },
+    timed_section: { available: false, displayName: CSSE_MOCK_META.timed_section.fallbackName },
+  });
 
   useEffect(() => {
     const selected = getSelectedPathwayId() ?? undefined;
@@ -211,12 +317,33 @@ export default function MocksPage() {
       computeCsseMockReadiness(supabase, selected)
         .then(setReadiness)
         .catch(() => setReadiness(null));
-      getActiveMockForm(supabase, "full_mock")
-        .then((result) => {
-          setCsseMockAvailable(isMockFormAvailable(result));
-          if (result.data?.displayName) setCsseMockName(result.data.displayName);
-        })
-        .catch(() => setCsseMockAvailable(false));
+      // Programme Completion Increment 016 — discover both CSSE Mock
+      // forms in parallel, one getActiveMockForm() call per attempt_type
+      // (the same authoritative RPC, unchanged, called twice instead of
+      // once). A failure on one type never blocks the other — each
+      // settles into its own, independent "not available" state.
+      Promise.all(
+        CSSE_ATTEMPT_TYPES.map((attemptType) =>
+          getActiveMockForm(supabase, attemptType)
+            .then((result) => ({
+              attemptType,
+              available: isMockFormAvailable(result),
+              displayName: result.data?.displayName ?? undefined,
+            }))
+            .catch(() => ({ attemptType, available: false, displayName: undefined }))
+        )
+      ).then((entries) => {
+        setCsseMocks((prev) => {
+          const next = { ...prev };
+          for (const entry of entries) {
+            next[entry.attemptType] = {
+              available: entry.available,
+              displayName: entry.displayName ?? prev[entry.attemptType].displayName,
+            };
+          }
+          return next;
+        });
+      });
     } else {
       setReadiness(null);
     }
@@ -225,6 +352,11 @@ export default function MocksPage() {
   const isCsse = pathwayId === "csse";
   const otherCards = MOCK_CARDS.filter((c) => c.pathway !== pathwayId);
   const primaryLegacyCard = MOCK_CARDS.find((c) => c.pathway === pathwayId);
+  // Programme Completion Increment 016 — "is there ANY mock Angel can
+  // currently deliver," generalised from the old full_mock-only boolean.
+  // Used only for the readiness banner's own honest fallback decision
+  // (never repeat a "start a mock" CTA when nothing can be delivered).
+  const anyCsseMockAvailable = csseMocks.full_mock.available || csseMocks.timed_section.available;
 
   return (
     <PageLayout breadcrumbs={[{ label: "Today", href: "/dashboard" }, { label: "Mock Centre" }]}>
@@ -253,7 +385,7 @@ export default function MocksPage() {
                 <StatusIndicator tone={readinessDisplay(readiness).tone} label="Your mock readiness" />
               </div>
               <p className="text-xs text-gray-500 dark:text-gray-400 leading-relaxed mb-2">{readiness.assessment.explanation}</p>
-              {readiness.assessment.nextAction.href === "/learning-intelligence/mock-exam" && !csseMockAvailable ? (
+              {readiness.assessment.nextAction.href === "/learning-intelligence/mock-exam" && !anyCsseMockAvailable ? (
                 <Link href="/learning-intelligence/practice" className="inline-flex items-center gap-1 text-xs font-semibold text-blue-600 dark:text-blue-400">
                   <TrendingUp size={13} /> See practice areas →
                 </Link>
@@ -279,48 +411,25 @@ export default function MocksPage() {
 
           {isCsse ? (
             <>
-              <div className="rounded-2xl border border-blue-100 dark:border-blue-900 bg-blue-50 dark:bg-blue-950 p-5">
-                <div className="flex items-start justify-between mb-2">
-                  <div className="flex items-center gap-2.5">
-                    <span className="text-xs font-bold px-2.5 py-1 rounded-lg bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300">CSSE</span>
-                    {/* Gate 6 presentation correction (Founder decision) — the
-                        active form is subject-pure, never a combined
-                        English+Mathematics paper. The heading must name
-                        what is actually being offered. Programme
-                        Completion Increment 015 — name now comes from the
-                        real active form's own metadata (migration 214),
-                        not a hardcoded literal. */}
-                    <h3 className="text-base font-bold text-gray-900 dark:text-gray-100">{csseMockName}</h3>
-                  </div>
-                  <StatusIndicator tone={csseMockAvailable ? "success" : "neutral"} label={csseMockAvailable ? "Available" : "Not ready yet"} />
-                </div>
-                {csseMockAvailable && (
-                  <p className="text-xs text-gray-500 dark:text-gray-400 mb-2">Mathematics · 21 questions · 56 marks · 60 minutes</p>
-                )}
-                <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed mb-3">
-                  {csseMockAvailable
-                    ? "A real, timed Mathematics assessment, marked and reported just like the real exam. The complete CSSE Mock, with English and Mathematics together, is still being built."
-                    : "A full mock is not available right now. Angel does not yet have a complete, reviewed set of exam questions to draw from. Practice stays available in the meantime, and reflects the same real evidence about how your child is progressing."}
-                </p>
-                <div className="flex items-center justify-between">
-                  {bestScores.csse !== undefined ? (
-                    <span className="text-xs text-gray-500 dark:text-gray-400">
-                      Best score: <span className="font-semibold text-gray-800 dark:text-gray-200">{bestScores.csse}%</span>
-                    </span>
-                  ) : (
-                    <span className="text-xs text-gray-400 dark:text-gray-500">Not attempted yet</span>
-                  )}
-                  {csseMockAvailable ? (
-                    <ButtonLink href="/learning-intelligence/mock-exam" variant="outline" size="sm" leftIcon={<Play size={14} />}>
-                      Start mock
-                    </ButtonLink>
-                  ) : (
-                    <ButtonLink href="/learning-intelligence/practice" variant="outline" size="sm">
-                      Go to Practice
-                    </ButtonLink>
-                  )}
-                </div>
-              </div>
+              {CSSE_ATTEMPT_TYPES.map((attemptType) => (
+                <CsseRichMockCard
+                  key={attemptType}
+                  attemptType={attemptType}
+                  displayName={csseMocks[attemptType].displayName}
+                  available={csseMocks[attemptType].available}
+                  // Both cards read bestScores.csse today — a known,
+                  // disclosed limitation: MockResult/MockPathwayId has no
+                  // slot distinguishing Mathematics from Reading within
+                  // the single "csse" pathway bucket. Not fixed here
+                  // (results/analytics data model, out of scope for
+                  // discovery/launch wiring) — but for Reading
+                  // specifically this is not misleading today: zero
+                  // Reading attempts have ever existed before this
+                  // increment, so "Not attempted yet" is genuinely
+                  // correct, not merely a fallback.
+                  best={attemptType === "full_mock" ? bestScores.csse : undefined}
+                />
+              ))}
 
               <div className="rounded-xl border border-gray-100 dark:border-gray-800 px-4 py-3">
                 <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 dark:text-gray-500 mb-1.5">Coming later</p>
@@ -337,24 +446,26 @@ export default function MocksPage() {
             // No pathway selected — every pathway shown with equal weight, honestly (MOCK_CENTRE_INFORMATION_ARCHITECTURE.md).
             <div className="space-y-3">
               {/* Gate 6 presentation correction (Founder decision) — same
-                  correction as the pathway-prioritised card above: this
+                  correction as the pathway-prioritised cards above: this
                   entry point must not claim a complete CSSE sitting.
-                  Programme Completion Increment 015 — name now comes from
-                  the real active form's own metadata, not a hardcoded
-                  literal. */}
-              <SimpleMockCard
-                badge="CSSE"
-                name={csseMockName}
-                bg="bg-blue-50 dark:bg-blue-950"
-                border="border-blue-100 dark:border-blue-900"
-                badgeBg="bg-blue-100 dark:bg-blue-900"
-                badgeText="text-blue-700 dark:text-blue-300"
-                minutesLabel="60 min"
-                description="Mathematics · 21 questions · 56 marks. A real, timed sitting. The complete CSSE Mock, including English, is still being built."
-                href="/learning-intelligence/mock-exam"
-                best={bestScores.csse}
-                available={csseMockAvailable}
-              />
+                  Programme Completion Increment 016 — one SimpleMockCard
+                  per discovered CSSE form, not just Mathematics. */}
+              {CSSE_ATTEMPT_TYPES.map((attemptType) => (
+                <SimpleMockCard
+                  key={attemptType}
+                  badge="CSSE"
+                  name={csseMocks[attemptType].displayName}
+                  bg="bg-blue-50 dark:bg-blue-950"
+                  border="border-blue-100 dark:border-blue-900"
+                  badgeBg="bg-blue-100 dark:bg-blue-900"
+                  badgeText="text-blue-700 dark:text-blue-300"
+                  minutesLabel={CSSE_MOCK_META[attemptType].minutesLabel}
+                  description={CSSE_MOCK_META[attemptType].description}
+                  href={CSSE_MOCK_META[attemptType].href}
+                  best={attemptType === "full_mock" ? bestScores.csse : undefined}
+                  available={csseMocks[attemptType].available}
+                />
+              ))}
               {MOCK_CARDS.map((card) => (
                 <LegacyMockCard key={card.pathway} card={card} best={bestScores[card.pathway]} />
               ))}

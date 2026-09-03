@@ -11,7 +11,22 @@
  * page component."
  */
 
-import type { MockManifestGroupingEntry, MockQuestionPayload, MockStimulus, MockTableStimulus, ResumableMockAttempt } from "./types";
+import type { MockAttemptType, MockManifestGroupingEntry, MockQuestionPayload, MockStimulus, MockTableStimulus, ResumableMockAttempt } from "./types";
+
+const VALID_ATTEMPT_TYPES: readonly MockAttemptType[] = ["full_mock", "timed_section", "diagnostic_mock"];
+
+/**
+ * Programme Completion Increment 016 — the mock-exam page now serves more
+ * than one Mock family, selected via a `?type=` query param. Never trusts
+ * that value blindly: resolves only the three real MockAttemptType
+ * values, and fails safely to "full_mock" for anything missing or
+ * unrecognised — the exact, always-safe default this page has used since
+ * before this increment, so every bare `/learning-intelligence/mock-exam`
+ * bookmark/link keeps working byte-for-byte unchanged.
+ */
+export function resolveAttemptType(rawType: string | undefined): MockAttemptType {
+  return VALID_ATTEMPT_TYPES.includes(rawType as MockAttemptType) ? (rawType as MockAttemptType) : "full_mock";
+}
 
 /** Never negative — a stale expiresAt in the past reads as 0 remaining, not a negative countdown. */
 export function computeRemainingSeconds(expiresAt: string, now: number = Date.now()): number {

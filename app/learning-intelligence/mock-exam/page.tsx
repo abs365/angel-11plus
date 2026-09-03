@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { use, useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { Flag, RotateCcw } from "lucide-react";
 import PageLayout from "@/components/PageLayout";
@@ -14,6 +14,7 @@ import {
   getOpenMockCycle,
   startNewMockCycle,
   createMockCycleAttempt,
+  createMockAttempt,
   startMockAttempt,
   getMockAttemptManifest,
   getMockAttemptGrouping,
@@ -27,6 +28,7 @@ import {
 } from "@/lib/mockAttempt/client";
 import type { MockAttemptType, MockQuestionPayload } from "@/lib/mockAttempt/types";
 import {
+  resolveAttemptType,
   computeRemainingSeconds,
   isAttemptExpired,
   buildDisplayUnits,
@@ -121,10 +123,32 @@ import { DataTableStimulus } from "@/components/mockAttempt/DataTableStimulus";
  *    single-id unit — byte-identical rendering to before this decision.
  */
 
-const ATTEMPT_TYPE: MockAttemptType = "full_mock";
 // See the file header's own disclosed limitation: one server-authoritative
 // timer for the whole attempt, not yet the real two-paper section model.
-const DURATION_MINUTES = 60;
+// Programme Completion Increment 016 — per-attempt-type duration, since a
+// single fixed 60 minutes is Mathematics Mock 1's own duration specifically,
+// not a universal figure. Reading Comprehension Mock 1's 45 minutes is the
+// already-approved, already-stored Angel timing decision (composition_
+// provenance.timingDecision, migrations 212/217) -- not invented here, only
+// wired through, since the active-form RPC itself does not return a
+// duration figure to derive this from structurally.
+const DURATION_MINUTES_BY_ATTEMPT_TYPE: Record<MockAttemptType, number> = {
+  full_mock: 60,
+  timed_section: 45,
+  diagnostic_mock: 60,
+};
+
+const MOCK_DISPLAY_NAME_FALLBACK_BY_ATTEMPT_TYPE: Record<MockAttemptType, string> = {
+  full_mock: "Mathematics Mock 1",
+  timed_section: "Reading Comprehension Mock 1",
+  diagnostic_mock: "Mock",
+};
+
+const INTRO_SUBTITLE_BY_ATTEMPT_TYPE: Record<MockAttemptType, string> = {
+  full_mock: "A timed, sealed Mathematics sitting. You will not see whether an answer is correct until your report is ready.",
+  timed_section: "A timed, sealed Reading Comprehension sitting. You will not see whether an answer is correct until your report is ready.",
+  diagnostic_mock: "A timed, sealed assessment. You will not see whether an answer is correct until your report is ready.",
+};
 
 type Phase =
   | "intro"
@@ -137,7 +161,21 @@ type Phase =
   | "submitted"
   | "error";
 
-export default function MockExamPage() {
+export default function MockExamPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ type?: string }>;
+}) {
+  // Fail-safe validation, matching this codebase's own established
+  // "absent/unrecognised is not an error, it silently falls back" pattern
+  // (app/learning-intelligence/practice/[area]/page.tsx's own
+  // requestedFocus). resolveAttemptType() is a pure, independently-tested
+  // function (lib/mockAttempt/workspace.ts) — Programme Completion
+  // Increment 016.
+  const { type } = use(searchParams);
+  const attemptType: MockAttemptType = resolveAttemptType(type);
+  const durationMinutes = DURATION_MINUTES_BY_ATTEMPT_TYPE[attemptType];
+
   // Completion Assurance Programme, Completion B — starts at "checking",
   // never "intro": a learner must never see "Before you begin" exam
   // instructions for a mock Angel cannot actually deliver. The mount
@@ -166,12 +204,11 @@ export default function MockExamPage() {
   const [previousAttempts, setPreviousAttempts] = useState<{ attemptId: string; submittedAt: string }[]>([]);
   // Programme Completion Increment 015 — real form-metadata-driven
   // identity (migration 214's displayName), replacing the previously
-  // hardcoded "Mathematics Mock 1" literal. This page's ATTEMPT_TYPE
-  // constant is fixed to 'full_mock', so the fallback naming
-  // "Mathematics Mock 1" — used only until the active form's own
-  // displayName loads — is accurate for every form this specific page
-  // has ever been able to serve.
-  const [mockDisplayName, setMockDisplayName] = useState("Mathematics Mock 1");
+  // hardcoded "Mathematics Mock 1" literal. Programme Completion
+  // Increment 016 — the fallback (used only until the active form's own
+  // displayName loads) is now keyed by the resolved attemptType, since
+  // this page can serve more than one Mock family.
+  const [mockDisplayName, setMockDisplayName] = useState(MOCK_DISPLAY_NAME_FALLBACK_BY_ATTEMPT_TYPE[attemptType]);
 
   const supabaseRef = useRef<ReturnType<typeof getSupabaseClient>>(null);
   const submittedRef = useRef(false);
@@ -244,7 +281,7 @@ export default function MockExamPage() {
       const supabase = getSupabaseClient();
       if (!supabase) { setErrorMessage("Not connected."); setPhase("error"); return; }
       supabaseRef.current = supabase;
-      const active = await getActiveMockForm(supabase, ATTEMPT_TYPE);
+      const active = await getActiveMockForm(supabase, attemptType);
       if (active.error) { setErrorMessage(active.error); setPhase("error"); return; }
       // Decision 220 — best-effort, and deliberately AFTER the phase
       // decision below, never gating it: a failure here must never block
@@ -257,7 +294,13 @@ export default function MockExamPage() {
       }
       setPhase(isMockFormAvailable(active) ? "intro" : "unavailable");
     })();
-  }, []);
+    // attemptType is resolved once from searchParams (use()) and is
+    // stable for this component's lifetime — a real navigation to a
+    // different ?type= remounts this page tree in the App Router, it
+    // does not change this value in place. Declared as a dependency
+    // below because this effect genuinely reads it, matching the real
+    // rule, not a suppressed warning.
+  }, [attemptType]);
 
   async function loadUnit(supabase: NonNullable<typeof supabaseRef.current>, attemptIdValue: string, unit: DisplayUnit) {
     setQuestionLoading(true);
@@ -334,7 +377,7 @@ export default function MockExamPage() {
     if (!supabase) { setErrorMessage("Not connected."); setPhase("error"); return; }
     supabaseRef.current = supabase;
 
-    const active = await getActiveMockForm(supabase, ATTEMPT_TYPE);
+    const active = await getActiveMockForm(supabase, attemptType);
     if (active.error) { setErrorMessage(active.error); setPhase("error"); return; }
     if (!isMockFormAvailable(active)) { setPhase("unavailable"); return; }
 
@@ -379,7 +422,7 @@ export default function MockExamPage() {
       // itself requires status = 'assigned' and can never be called
       // again once it succeeds — repeated resume can never re-start, and
       // therefore never extend, the timer.
-      const started = await startMockAttempt(supabase, resumeAction.attemptId, DURATION_MINUTES);
+      const started = await startMockAttempt(supabase, resumeAction.attemptId, durationMinutes);
       if (started.error || !started.data) { setErrorMessage(started.error ?? "Could not start the attempt."); setPhase("error"); return; }
       await enterAttempt(supabase, resumeAction.attemptId, started.data.expiresAt, new Map());
       return;
@@ -397,33 +440,47 @@ export default function MockExamPage() {
       return;
     }
 
-    // resumeAction.kind === "create_new" — unchanged from this file's own pre-217
-    // behaviour. Migration 107 (Decision 161) — a full_mock attempt must
-    // be created through an owned, open Mock cycle. Discover an existing
-    // one first; only start a new one (subject to the ~14-day cadence
-    // check that function itself enforces) if none exists. See this
-    // file's own header for why the old, now-guarded mock_create_attempt()
-    // path can no longer be used for attempt_type "full_mock".
-    const openCycle = await getOpenMockCycle(supabase);
-    if (openCycle.error) { setErrorMessage(openCycle.error); setPhase("error"); return; }
-    let cycleId = openCycle.data;
-    if (!cycleId) {
-      const cycleStart = await startNewMockCycle(supabase);
-      if (cycleStart.error || !cycleStart.data) {
-        setErrorMessage(cycleStart.error ?? "Could not start a new Mock cycle.");
-        setPhase("error");
-        return;
+    // resumeAction.kind === "create_new". Migration 085 (Decision 135)
+    // made mock_create_attempt() unconditionally reject attempt_type =
+    // "full_mock" — a full_mock attempt must be created through an owned,
+    // open Mock cycle. That migration's own header states this guard is
+    // scoped to "full_mock" specifically: "timed_section and
+    // diagnostic_mock behaviour through this same function is completely
+    // unchanged" (confirmed directly against migration 085/107's source,
+    // Programme Completion Increment 016). So Mathematics (full_mock)
+    // keeps the cycle-aware path, byte-for-byte unchanged from before this
+    // increment; every other attempt_type (Reading's timed_section today)
+    // uses the plain, already-existing, already-uncycled path — not a new
+    // Mock engine, the same one migration 070 has always provided for
+    // non-full_mock attempts.
+    let createdAttemptId: string;
+    if (attemptType === "full_mock") {
+      const openCycle = await getOpenMockCycle(supabase);
+      if (openCycle.error) { setErrorMessage(openCycle.error); setPhase("error"); return; }
+      let cycleId = openCycle.data;
+      if (!cycleId) {
+        const cycleStart = await startNewMockCycle(supabase);
+        if (cycleStart.error || !cycleStart.data) {
+          setErrorMessage(cycleStart.error ?? "Could not start a new Mock cycle.");
+          setPhase("error");
+          return;
+        }
+        cycleId = cycleStart.data;
       }
-      cycleId = cycleStart.data;
+
+      const created = await createMockCycleAttempt(supabase, active.data.formId, cycleId);
+      if (created.error || !created.data) { setErrorMessage(created.error ?? "Could not create an attempt."); setPhase("error"); return; }
+      createdAttemptId = created.data;
+    } else {
+      const created = await createMockAttempt(supabase, active.data.formId, attemptType);
+      if (created.error || !created.data) { setErrorMessage(created.error ?? "Could not create an attempt."); setPhase("error"); return; }
+      createdAttemptId = created.data;
     }
 
-    const created = await createMockCycleAttempt(supabase, active.data.formId, cycleId);
-    if (created.error || !created.data) { setErrorMessage(created.error ?? "Could not create an attempt."); setPhase("error"); return; }
-
-    const started = await startMockAttempt(supabase, created.data, DURATION_MINUTES);
+    const started = await startMockAttempt(supabase, createdAttemptId, durationMinutes);
     if (started.error || !started.data) { setErrorMessage(started.error ?? "Could not start the attempt."); setPhase("error"); return; }
 
-    await enterAttempt(supabase, created.data, started.data.expiresAt, new Map());
+    await enterAttempt(supabase, createdAttemptId, started.data.expiresAt, new Map());
   }
 
   async function handleAnswerAndAdvance(nextUnitIndex: number | null) {
@@ -505,7 +562,7 @@ export default function MockExamPage() {
                 214), not a hardcoded literal. */}
             <h1 className="text-gray-900 dark:text-gray-100 font-bold text-2xl">{mockDisplayName}</h1>
             <p className="text-gray-400 dark:text-gray-500 text-sm mt-1">
-              A timed, sealed Mathematics sitting. You will not see whether an answer is correct until your report is ready.
+              {INTRO_SUBTITLE_BY_ATTEMPT_TYPE[attemptType]}
             </p>
 
             <InfoCard className="mt-5">
