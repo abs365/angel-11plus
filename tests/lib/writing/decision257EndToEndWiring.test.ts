@@ -169,21 +169,9 @@ test("Part H: the admin review page's full-checklist render is a deliberate, doc
   assert.match(adminReviewPageSource, /Preview: what the learner would see, by context/);
 });
 
-test("Part H: app/writing/page.tsx (the Creative Writing route) renders the full stored checklist unfiltered, never through this policy's context-aware presentation — and data/writing.ts remains a dead, unread fixture, not its content source", () => {
-  // Corrected, Programme Completion Increment 005: as of Increment 004
-  // (commit 9622eae), app/writing/page.tsx no longer reads data/writing.ts
-  // at all — its real content source is fetchEligibleWritingPrompts()
-  // (lib/learningEngine/writingPracticeContent.ts), i.e. ali_question_bank
-  // rows with eligibility_status = 'practice_eligible' only. This test's
-  // own assertions were always about data/writing.ts staying free of
-  // QT-WC-01a ids, which still holds (the fixture is untouched, just
-  // unread) — the surrounding claim that it was still page.tsx's live
-  // content source is what this correction fixes. Separately, and still
-  // true: this page renders selectedPrompt.checklist directly, never
-  // through presentWritingChecklistForContext, so no core/coaching
-  // distinction is applied on this route at all (every context sees the
-  // full checklist) — a real, disclosed gap, not this test's subject.
-  assert.match(legacyWritingPageSource, /\{selectedPrompt\.checklist\.map\(\(item\) => \(/);
+test("Part H, corrected (Programme Completion Increment 011): app/writing/page.tsx no longer renders any checklist of its own at all — the gap this test previously documented (full checklist, unfiltered, no core/coaching distinction) is closed by redirecting the route into the canonical engine this whole file already proves is wired correctly. data/writing.ts remains a dead, unread fixture.", () => {
+  assert.doesNotMatch(legacyWritingPageSource, /selectedPrompt\.checklist\.map/);
+  assert.match(legacyWritingPageSource, /redirect\("\/learning-intelligence\/practice\/continuous-writing"\);/);
   for (const [id] of ALL_SEVEN_QTWC01A_PROMPTS) {
     assert.doesNotMatch(legacyWritingDataSource, new RegExp(id));
   }

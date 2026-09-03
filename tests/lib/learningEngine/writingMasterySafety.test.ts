@@ -72,14 +72,7 @@ test("a supported-correct Writing attempt never demotes or promotes an already-e
   assert.equal(after.masteryState, "mastered", "supported evidence must leave an existing mastered state untouched, not revoke it either");
 });
 
-test("app/writing/page.tsx passes supportTier: 'supported' for its AI-scored evidence call", () => {
-  const src = readFileSync("app/writing/page.tsx", "utf8");
-  const call = src.match(/recordLegacyPracticeEvidence\(\{[\s\S]*?\}\)/);
-  assert.ok(call, "recordLegacyPracticeEvidence call must exist in app/writing/page.tsx");
-  assert.match(call![0], /supportTier:\s*"supported"/, "the Writing evidence call must explicitly quarantine its uncalibrated score");
-});
-
-test("app/learning-intelligence/practice/[area]/page.tsx passes 'supported' for its Writing recordAndAdvance call", () => {
+test("app/learning-intelligence/practice/[area]/page.tsx passes 'supported' for its Writing recordAndAdvance call (Programme Completion Increment 011: this is the sole live Writing evidence call site -- app/writing/page.tsx is now a redirect into this same route, see tests/app/writingRouteRedirect.test.ts)", () => {
   const src = readFileSync("app/learning-intelligence/practice/[area]/page.tsx", "utf8");
   assert.match(
     src,
