@@ -38,6 +38,8 @@ function payload(overrides: Partial<MockQuestionPayload>): MockQuestionPayload {
     subpartLabel: "(a)",
     stimulus: null,
     sharedStem: null,
+    passageTitle: null,
+    passageText: null,
     ...overrides,
   };
 }

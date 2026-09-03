@@ -117,6 +117,21 @@ export interface MockQuestionPayload {
    * unchanged from before this migration.
    */
   sharedStem: string | null;
+  /**
+   * Migration 218 (Programme Completion Increment 016, production defect
+   * correction) — a Reading Comprehension question's own passage,
+   * read straight from `prompt.passageTitle`/`prompt.passageText`,
+   * `null` for every row that has never set them (every Mathematics
+   * question, unchanged). Not derived, not fetched separately — the
+   * canonical passage has always lived inline on each question's own
+   * `prompt`, exactly like `question` itself; this only makes it
+   * reachable by the client, closing the first genuine production
+   * defect this Mock ever surfaced (the passage was never returned by
+   * mock_get_question(), so it could never render, even though it was
+   * always present in the database).
+   */
+  passageTitle: string | null;
+  passageText: string | null;
 }
 
 /**

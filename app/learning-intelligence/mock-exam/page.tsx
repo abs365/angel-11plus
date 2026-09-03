@@ -44,6 +44,7 @@ import {
 import { ExamTimer } from "@/components/mockAttempt/ExamTimer";
 import { QuestionPalette } from "@/components/mockAttempt/QuestionPalette";
 import { DataTableStimulus } from "@/components/mockAttempt/DataTableStimulus";
+import { ReadingPassage } from "@/components/mockAttempt/ReadingPassage";
 
 /**
  * Programme Increment 008E — Secure Mock Experience Integration and
@@ -127,14 +128,22 @@ import { DataTableStimulus } from "@/components/mockAttempt/DataTableStimulus";
 // timer for the whole attempt, not yet the real two-paper section model.
 // Programme Completion Increment 016 — per-attempt-type duration, since a
 // single fixed 60 minutes is Mathematics Mock 1's own duration specifically,
-// not a universal figure. Reading Comprehension Mock 1's 45 minutes is the
-// already-approved, already-stored Angel timing decision (composition_
-// provenance.timingDecision, migrations 212/217) -- not invented here, only
-// wired through, since the active-form RPC itself does not return a
-// duration figure to derive this from structurally.
+// not a universal figure. Reading Comprehension Mock 1's approved Angel
+// timing decision (composition_provenance.timingDecision, migrations
+// 212/217) is "45 minutes + 10 minutes reading time" -- found, corrected
+// during this same increment's own audit, that this map originally wired
+// through only 45, dropping the additional 10-minute reading allowance.
+// Corrected to 55 (45+10): this codebase has one combined, server-
+// authoritative timer, not a separately-enforced reading-only phase (the
+// same "single combined sitting" interpretation the real CSSE English
+// paper's own evidenced structure uses -- "a single 70-minute sitting
+// (60 minutes + 10 minutes reading)", never two independently-clocked
+// phases). Not invented here, only correctly wired through in full, since
+// the active-form RPC itself does not return a duration figure to derive
+// this from structurally.
 const DURATION_MINUTES_BY_ATTEMPT_TYPE: Record<MockAttemptType, number> = {
   full_mock: 60,
-  timed_section: 45,
+  timed_section: 55,
   diagnostic_mock: 60,
 };
 
@@ -827,6 +836,7 @@ function MockQuestionRenderer({
           <span className="uppercase tracking-wide font-semibold">{payload.subject}</span>
           <span>{payload.marks} mark{payload.marks === 1 ? "" : "s"}</span>
         </div>
+        {payload.passageText && <ReadingPassage title={payload.passageTitle} text={payload.passageText} />}
         <p className="text-sm font-semibold text-gray-800 dark:text-gray-200 whitespace-pre-line leading-relaxed">{questionText}</p>
         {stimulus && <DataTableStimulus stimulus={stimulus} />}
         <textarea
@@ -859,6 +869,11 @@ function MockQuestionRenderer({
         <span className="uppercase tracking-wide font-semibold">{payloads[0].subject}</span>
         <span>{totalMarks} mark{totalMarks === 1 ? "" : "s"} total</span>
       </div>
+      {/* Every subpart in a group is a lettered split of the SAME
+          original numbered question, so they always share one passage —
+          payloads[0]'s passageText is authoritative for the whole group,
+          never re-fetched or re-derived per subpart. */}
+      {payloads[0].passageText && <ReadingPassage title={payloads[0].passageTitle} text={payloads[0].passageText} />}
       {sharedStimulus && <DataTableStimulus stimulus={sharedStimulus} />}
       {sharedStem && (
         <p className="text-sm font-semibold text-gray-800 dark:text-gray-200 whitespace-pre-line leading-relaxed mb-4">{sharedStem.stem}</p>

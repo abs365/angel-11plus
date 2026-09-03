@@ -320,6 +320,8 @@ test("payloadMatchesQuestion confirms a fetched payload genuinely belongs to the
     subpartLabel: null,
     stimulus: null,
     sharedStem: null,
+    passageTitle: null,
+    passageText: null,
   };
   assert.equal(payloadMatchesQuestion(payload, "q1"), true);
   assert.equal(payloadMatchesQuestion(payload, "q2"), false);

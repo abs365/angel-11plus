@@ -46,6 +46,16 @@ export function isValidMockQuestionPayload(payload: unknown): payload is MockQue
     // fetched before this field existed still passes; a present value
     // must be a string (resolveGroupSharedStem() does the real
     // exact-prefix validation at the render site).
-    (p.sharedStem === null || p.sharedStem === undefined || typeof p.sharedStem === "string")
+    (p.sharedStem === null || p.sharedStem === undefined || typeof p.sharedStem === "string") &&
+    // Migration 218 (Programme Completion Increment 016, production
+    // defect correction) — same loose shape discipline: absent/null/
+    // undefined accepted (every Mathematics question, and every payload
+    // fetched before this field existed), a present value must be a
+    // string. No render-site cross-validation needed beyond this — the
+    // render site simply displays passageText verbatim when present,
+    // there is no derived contract to re-check the way sharedStem's
+    // exact-prefix relationship needs one.
+    (p.passageTitle === null || p.passageTitle === undefined || typeof p.passageTitle === "string") &&
+    (p.passageText === null || p.passageText === undefined || typeof p.passageText === "string")
   );
 }
