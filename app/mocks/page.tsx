@@ -117,9 +117,9 @@ const CSSE_MOCK_META: Record<"full_mock" | "timed_section", {
   },
   timed_section: {
     fallbackName: "Reading Comprehension Mock 1",
-    summary: "Reading Comprehension · 27 questions · 65 marks · 45 minutes",
+    summary: "Reading Comprehension · 27 questions · 65 marks · 55 minutes",
     description: "A real, timed Reading Comprehension assessment across three passages, marked and reported just like a real sitting. The complete CSSE Mock, with Continuous Writing and Mathematics together, is still being built.",
-    minutesLabel: "45 min",
+    minutesLabel: "55 min",
     href: "/learning-intelligence/mock-exam?type=timed_section",
   },
 };

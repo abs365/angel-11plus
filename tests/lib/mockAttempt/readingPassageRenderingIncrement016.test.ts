@@ -195,3 +195,10 @@ test("Reading's duration is corrected to 55 minutes (45 + the previously-dropped
   assert.match(mockExamSource, /timed_section: 55,/);
   assert.match(mockExamSource, /full_mock: 60,/);
 });
+
+test("the Mock Centre's own static Reading card copy agrees with the corrected 55-minute duration -- the Founder's first real sitting caught this drifting to a stale '45 minutes' after the timer was corrected but this card's own literal copy was not", () => {
+  const mocksPageSource = readFileSync("app/mocks/page.tsx", "utf8");
+  assert.match(mocksPageSource, /summary: "Reading Comprehension · 27 questions · 65 marks · 55 minutes"/);
+  assert.match(mocksPageSource, /minutesLabel: "55 min"/);
+  assert.doesNotMatch(mocksPageSource, /45 min/, "no remaining reference to the stale 45-minute figure anywhere in the Mock Centre");
+});
