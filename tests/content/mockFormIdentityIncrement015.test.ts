@@ -15,6 +15,24 @@ import fs from "node:fs";
 const migration212 = fs.readFileSync("supabase/migrations/212_reading_comprehension_mock_1_freeze.sql", "utf8");
 const migration213 = fs.readFileSync("supabase/migrations/213_mathematics_mock_1_display_name.sql", "utf8");
 const migration214 = fs.readFileSync("supabase/migrations/214_mock_get_active_form_display_name.sql", "utf8");
+const migration216 = fs.readFileSync("supabase/migrations/216_mathematics_mock_1_display_name_correction.sql", "utf8");
+
+/**
+ * Programme Completion Increment 016 — migration 213 targeted the wrong
+ * form id ('mathematics-mock-1'); the real, live Mathematics Mock 1 form
+ * id, confirmed against the original source (migrations 147/150, both
+ * declaring `v_form_id constant text := 'first-mock-mathematics-v1'`),
+ * is 'first-mock-mathematics-v1'. 213's own fail-safe guard meant this
+ * was a harmless no-op in production (Founder-confirmed: displayName
+ * still null, form otherwise intact), not a corruption. Migration 216
+ * corrects it additively, targeting the real id. The test below that
+ * previously asserted 213 referenced 'mathematics-mock-1' is retained
+ * as an honest historical record of what 213 actually does (it still
+ * does reference that string — it just refers to a form that doesn't
+ * exist), and a new set of tests below verifies 216 targets the real id
+ * instead.
+ */
+const REAL_MATHEMATICS_MOCK_1_FORM_ID = "first-mock-mathematics-v1";
 
 function stripComments(sql: string): string {
   return sql.split("\n").filter((l) => !l.trimStart().startsWith("--")).join("\n");
@@ -33,11 +51,44 @@ test("migration 213 only sets displayName additively via jsonb_set (a merge, not
   assert.match(migration213, /jsonb_set\(composition_provenance, '\{displayName\}'/);
 });
 
-test("migration 213 targets exactly the Mathematics Mock 1 form id, no other form", () => {
+test("migration 213 targets the wrong, non-existent form id 'mathematics-mock-1' -- historical record of the known Increment 016 defect, corrected by migration 216, not fixed in place here", () => {
   const executable = stripComments(migration213);
   const idMatches = executable.match(/'mathematics-mock-1'/g) ?? [];
-  assert.ok(idMatches.length > 0, "must reference mathematics-mock-1");
+  assert.ok(idMatches.length > 0, "213 does reference the wrong id -- this is a known, disclosed defect, not a bug in this test");
+  assert.doesNotMatch(executable, new RegExp(`'${REAL_MATHEMATICS_MOCK_1_FORM_ID}'`), "213 never accidentally also referenced the real id");
   assert.doesNotMatch(executable, /'reading-comprehension-mock-1'/);
+});
+
+test("migration 216 (the correction) targets the REAL, live Mathematics Mock 1 form id -- confirmed against the original source, migrations 147/150", () => {
+  const executable = stripComments(migration216);
+  assert.match(executable, new RegExp(`'${REAL_MATHEMATICS_MOCK_1_FORM_ID}'`));
+  assert.doesNotMatch(executable, /'mathematics-mock-1'(?!\d)/, "216 must not repeat 213's wrong-id mistake");
+});
+
+test("migration 216 never touches question_manifest, active, subject, or attempt_type -- only composition_provenance", () => {
+  const executable = stripComments(migration216);
+  assert.doesNotMatch(executable, /set\s+question_manifest/i);
+  assert.doesNotMatch(executable, /set\s+active\s*=/i);
+  assert.doesNotMatch(executable, /set\s+subject\s*=/i);
+  assert.doesNotMatch(executable, /set\s+attempt_type\s*=/i);
+  assert.match(executable, /set\s+composition_provenance\s*=\s*jsonb_set/i);
+});
+
+test("migration 216 adds four defensive guards absent from 213 (question count, live-computed marks total, subject, attempt_type) -- verifying the specific shape before mutating, not just the id", () => {
+  assert.match(migration216, /v_question_count\s*<>\s*56/);
+  assert.match(migration216, /v_live_marks_total\s*<>\s*56/);
+  assert.match(migration216, /sum\(\(q\.prompt ->> 'marks'\)::int\)/, "marks total must be live-computed from real question rows, not trusted from a constant");
+  assert.match(migration216, /v_subject\s*<>\s*'mathematics'/);
+  assert.match(migration216, /v_attempt_type\s*<>\s*'full_mock'/);
+});
+
+test("migration 216 is guarded: does not blindly assume the form exists, and refuses (does not silently no-op) when it is missing -- unlike 213's own weaker no-op-and-return behaviour", () => {
+  assert.match(migration216, /raise exception 'Migration 216 refused[^']*expected form/i);
+  assert.match(migration216, /v_row_count\s*<>\s*1/);
+});
+
+test("migration 216 is explicitly marked NOT APPLIED", () => {
+  assert.match(migration216, /NOT APPLIED/);
 });
 
 test("migration 213 is guarded: does not blindly assume the form exists (checks v_row_count before acting)", () => {

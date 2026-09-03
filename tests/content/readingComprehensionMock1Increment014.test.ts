@@ -95,10 +95,16 @@ test("migration 212 uses attempt_type='timed_section', not 'full_mock' (avoids c
 });
 
 test("migrations 209-212 never modify Mathematics content or the Mathematics Mock 1 form", () => {
+  // Programme Completion Increment 016 — checks BOTH the real form id
+  // (first-mock-mathematics-v1, confirmed against migrations 147/150)
+  // and the fictitious one migration 213 mistakenly used, so this test
+  // provides genuine protection regardless of which id a future reader
+  // assumes is correct.
   for (const [name, sql] of [["209", migration209], ["210", migration210], ["211", migration211], ["212", migration212]] as const) {
     const executableLines = sql.split("\n").filter((l) => !l.trimStart().startsWith("--")).join("\n");
     assert.doesNotMatch(executableLines, /'mock-mr\d/, `migration ${name} must not reference any Mathematics question id`);
-    assert.doesNotMatch(executableLines, /'mathematics-mock-1'/, `migration ${name} must not reference the Mathematics Mock 1 form id`);
+    assert.doesNotMatch(executableLines, /'first-mock-mathematics-v1'/, `migration ${name} must not reference the real Mathematics Mock 1 form id`);
+    assert.doesNotMatch(executableLines, /'mathematics-mock-1'/, `migration ${name} must not reference the (fictitious) Mathematics Mock 1 form id either`);
   }
 });
 
