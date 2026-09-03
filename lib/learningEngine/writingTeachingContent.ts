@@ -75,21 +75,41 @@ export function getWritingTeachingContent(family?: WritingTaskFamily | null): Wr
 }
 
 /**
- * Maps a live prompt's own `type` field (data/writing.ts and the
- * ali_question_bank prompt jsonb both use this field, e.g. "narrative",
- * "persuasive", "descriptive") to a real CSSE task family, where one
- * genuinely applies. Deliberately has NO entry for "persuasive" — the
- * one live Writing row today (`wrt-003`) is a persuasive-speech prompt,
- * which is not one of the two real evidenced CSSE genres (Part 7 of the
- * design document) — so this lookup correctly returns undefined for it
- * rather than attaching CSSE-aligned teaching content to a non-CSSE-
- * evidenced task. "reflective"/"discursive" map to the one family
- * implemented this phase; "narrative" is left unmapped pending the
- * deferred picture-narrative family (needs an image asset).
+ * Maps a live prompt's own `type` field to a real CSSE task family, where
+ * one genuinely applies. `WritingPrompt.type` (types/index.ts) is a
+ * closed union of exactly `"narrative" | "descriptive" | "persuasive"` —
+ * no stored prompt has ever used, or can type-check as, `"reflective"` or
+ * `"discursive"`.
+ *
+ * Programme Completion Increment 005 correction: this map previously keyed
+ * on `"reflective"`/`"discursive"` (values no real prompt can ever carry)
+ * and deliberately left `"narrative"` unmapped, reasoning that
+ * `type: "narrative"` meant the deferred QT-WC-01b picture-stimulus
+ * family. That premise was wrong: every row this codebase has ever tagged
+ * `type: "narrative"` (`eng-inc003-writing-imaginedplace-01`, migration
+ * 167; `eng-pc003-writing-difficulttask` and `eng-pc005-writing-
+ * somethingnew`, migrations 196/198) is QT-WC-01a — the SAME evidenced,
+ * text-only reflective/discursive family every `"descriptive"` row also
+ * uses; "narrative" here only distinguishes the response's internal
+ * shape (a chronological/imagined event arc) for readiness-gate
+ * diversity, never a different CSSE question type. Zero rows anywhere in
+ * this bank are QT-WC-01b. Net effect of the old mapping: since no real
+ * prompt could ever carry `"reflective"` or `"discursive"`, Guided
+ * Practice's worked-example/teaching scaffold for Continuous Writing was
+ * unreachable for every real prompt, despite being reported "Confirmed"
+ * against a hand-constructed family id (see ANGEL_ENGLISH_CONTENT_
+ * FOUNDATION_INCREMENT_004_WRITING_FOUNDER_INSPECTION_V1.md Part 1) rather
+ * than the real `prompt.type` value production actually passes through
+ * `getWritingTaskFamilyForPromptType()`.
+ *
+ * `"persuasive"` remains deliberately unmapped: `wrt-003`, the one
+ * `persuasive`-typed row, is a genuine forced-fit (`provisional`,
+ * migration 033) with no confirmed CSSE evidence behind its speech
+ * register, so it correctly receives no CSSE-aligned teaching content.
  */
 const PROMPT_TYPE_TO_FAMILY: Partial<Record<string, WritingTaskFamily>> = {
-  reflective: "writing-reflective-discursive",
-  discursive: "writing-reflective-discursive",
+  narrative: "writing-reflective-discursive",
+  descriptive: "writing-reflective-discursive",
 };
 
 export function getWritingTaskFamilyForPromptType(promptType?: string | null): WritingTaskFamily | undefined {

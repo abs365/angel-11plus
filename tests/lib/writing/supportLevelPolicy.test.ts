@@ -132,6 +132,65 @@ test("presentWritingChecklistForContext never introduces a second copy of any st
   }
 });
 
+// === Programme Completion Increment 005: previously-unclassified ids ===
+// wrt-003 and migration 196's two rows had no entry in
+// WRITING_CHECKLIST_ITEM_SUPPORT_LEVELS at all before this increment,
+// meaning every item (including the length requirement and the
+// proofreading check) silently defaulted to `coaching` and would have
+// been stripped from Independent/Mock presentation. These tests prove
+// the fix: each id now retains at least its length/proofreading `core`
+// items under both reduced contexts, exactly like every other real row.
+
+const sql013 = fs.readFileSync("supabase/migrations/013_wave2_illustrative_practice_content.sql", "utf8");
+const sql196 = fs.readFileSync("supabase/migrations/196_programme_completion_inc003_writing_content.sql", "utf8");
+const sql198 = fs.readFileSync("supabase/migrations/198_programme_completion_inc005_writing_content.sql", "utf8");
+
+const PREVIOUSLY_UNCLASSIFIED_PLUS_NEW: [string, string][] = [
+  ["wrt-003", sql013],
+  ["eng-pc003-writing-difficulttask", sql196],
+  ["eng-pc003-writing-meaningfulplace", sql196],
+  ["eng-pc005-writing-personinfluence", sql198],
+  ["eng-pc005-writing-somethingnew", sql198],
+];
+
+for (const [id, sql] of PREVIOUSLY_UNCLASSIFIED_PLUS_NEW) {
+  test(`${id}: classification array is fully explicit and covers every stored checklist item`, () => {
+    const { checklist } = extractPromptJson(sql, id);
+    const levels = WRITING_CHECKLIST_ITEM_SUPPORT_LEVELS[id];
+    assert.ok(levels, `expected an explicit classification for ${id}`);
+    assert.equal(levels.length, checklist.length, `classification length mismatch for ${id}`);
+    assert.ok(levels.includes("core"), `${id} must classify at least one item core`);
+  });
+
+  test(`mock context: ${id} retains at least one core item, never collapses to nothing`, () => {
+    const { checklist } = extractPromptJson(sql, id);
+    const result = presentWritingChecklistForContext(id, checklist, "mock");
+    assert.ok(result.length > 0, `mock context stripped every item for ${id}`);
+  });
+
+  test(`independent context: ${id} never exposes a coaching-classified item`, () => {
+    const { checklist } = extractPromptJson(sql, id);
+    const result = presentWritingChecklistForContext(id, checklist, "independent");
+    for (const item of checklist) {
+      const index = checklist.indexOf(item);
+      if (checklistItemSupportLevel(id, index) === "coaching") {
+        assert.ok(!result.includes(item), `independent context leaked a coaching item for ${id}: "${item}"`);
+      }
+    }
+  });
+}
+
+test("eng-pc005-writing-personinfluence and eng-pc005-writing-somethingnew each retain 'Write at least six sentences' and the proofreading check under Mock", () => {
+  for (const [id, sql] of [
+    ["eng-pc005-writing-personinfluence", sql198],
+    ["eng-pc005-writing-somethingnew", sql198],
+  ] as [string, string][]) {
+    const { checklist } = extractPromptJson(sql, id);
+    const result = presentWritingChecklistForContext(id, checklist, "mock");
+    assert.deepEqual(result, ["Write at least six sentences", "Check your spelling and punctuation before you finish"]);
+  }
+});
+
 // === Safe defaults for unclassified content ===
 
 test("an unrecognised prompt id defaults every item to coaching (never assumed safe for Mock)", () => {

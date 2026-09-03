@@ -45,8 +45,9 @@ export type ChecklistItemSupportLevel = "core" | "coaching";
  * 7 real, live QT-WC-01a rows (migrations 098, 153, 167 — the complete
  * live set; confirmed by grep, no other applied QT-WC-01a rows exist) is
  * classified below, item by item, against its own actual checklist text.
- * Two further ids (migration 169, Decision 259) are also classified here
- * even though that migration is NOT applied — the id is `authentic_
+ * Further ids (migrations 169, 196, 198 — Decisions 259/Programme
+ * Completion Increments 003/005) are also classified here even though
+ * some of those migrations are NOT applied — each id is `authentic_
  * assessment_candidate`-only, unreachable content until a human promotes
  * it, but classifying it now means no unaudited-content default is ever
  * relied on once it does become reachable. An unlisted prompt id, or an
@@ -54,8 +55,27 @@ export type ChecklistItemSupportLevel = "core" | "coaching";
  * `coaching` (see `checklistItemSupportLevel`) — new or unaudited content
  * is never assumed safe for Mock; a human author must explicitly record
  * an item as `core`.
+ *
+ * Programme Completion Increment 005 correction: `wrt-003` and migration
+ * 196's two rows (`eng-pc003-writing-difficulttask`,
+ * `eng-pc003-writing-meaningfulplace`) were reachable content (wrt-003 via
+ * the pre-Decision-152 Practice pool history; migration 196's rows once
+ * promoted) with NO entry here at all, meaning every one of their items —
+ * including the length requirement and the proofreading check — silently
+ * defaulted to `coaching` and would have been stripped from both
+ * Independent and Mock presentation. Closed this increment, alongside the
+ * two new Increment 005 rows (migration 198), so no candidate content
+ * ships without an explicit classification again.
  */
 export const WRITING_CHECKLIST_ITEM_SUPPORT_LEVELS: Record<string, ChecklistItemSupportLevel[]> = {
+  // Migration 013 — the original illustrative prompt (`provisional`,
+  // forced-fit persuasive-speech register, never promoted to Practice).
+  // No explicit sentence-count item exists on this older row; item 3
+  // ("Use three separate, distinct arguments (one per paragraph)") is the
+  // closest analogue to every later prompt's length requirement, so it is
+  // classified `core` alongside the closing proofreading check.
+  "wrt-003": ["coaching", "coaching", "core", "coaching", "coaching", "coaching", "coaching", "coaching", "core"],
+
   // Migration 167 — Increment 003. The amendment's own named example.
   "eng-inc003-writing-imaginedplace-01": ["core", "coaching", "coaching", "coaching", "coaching", "core"],
 
@@ -79,6 +99,16 @@ export const WRITING_CHECKLIST_ITEM_SUPPORT_LEVELS: Record<string, ChecklistItem
   // these two ids).
   "eng-inc003-writing-favouriteplace-01": ["core", "coaching", "coaching", "coaching", "coaching", "core"],
   "eng-inc003-writing-pocketmoney-01": ["core", "coaching", "coaching", "coaching", "coaching", "coaching", "core"],
+
+  // Migration 196 — Programme Completion Increment 003 (candidate
+  // content; classification was missing until this Increment 005 fix).
+  "eng-pc003-writing-difficulttask": ["core", "coaching", "coaching", "coaching", "coaching", "coaching", "core"],
+  "eng-pc003-writing-meaningfulplace": ["core", "coaching", "coaching", "coaching", "coaching", "core"],
+
+  // Migration 198 — Programme Completion Increment 005 (candidate
+  // content, classified on authoring).
+  "eng-pc005-writing-personinfluence": ["core", "coaching", "coaching", "coaching", "coaching", "core"],
+  "eng-pc005-writing-somethingnew": ["core", "coaching", "coaching", "coaching", "coaching", "core"],
 };
 
 export function checklistItemSupportLevel(promptId: string | null, index: number): ChecklistItemSupportLevel {

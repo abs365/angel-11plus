@@ -41,17 +41,17 @@ test("the MODEL worked opening does not collide with the one real live Writing r
   assert.equal(looksLikeTemplateOrCopied(content.model.topic, liveWrt003Prompt), false);
 });
 
-test("getWritingTaskFamilyForPromptType maps reflective/discursive prompt types to the implemented family", () => {
-  assert.equal(getWritingTaskFamilyForPromptType("reflective"), "writing-reflective-discursive");
-  assert.equal(getWritingTaskFamilyForPromptType("discursive"), "writing-reflective-discursive");
+test("Programme Completion Increment 005 correction: getWritingTaskFamilyForPromptType maps the REAL WritingPrompt.type values (narrative, descriptive) to the implemented family -- 'reflective'/'discursive' are not valid WritingPrompt.type values and no stored prompt can ever carry them", () => {
+  assert.equal(getWritingTaskFamilyForPromptType("narrative"), "writing-reflective-discursive");
+  assert.equal(getWritingTaskFamilyForPromptType("descriptive"), "writing-reflective-discursive");
 });
 
-test("getWritingTaskFamilyForPromptType correctly returns undefined for 'persuasive' -- the one live Writing row's real type, not a CSSE-evidenced genre, so no CSSE-aligned teaching content is falsely attached to it", () => {
+test("getWritingTaskFamilyForPromptType correctly returns undefined for 'persuasive' -- the one provisional, forced-fit Writing row's real type (wrt-003), not a confirmed CSSE-evidenced genre, so no CSSE-aligned teaching content is falsely attached to it", () => {
   assert.equal(getWritingTaskFamilyForPromptType("persuasive"), undefined);
 });
 
-test("getWritingTaskFamilyForPromptType returns undefined for 'narrative' -- the picture-narrative family is deliberately deferred, not silently substituted with the reflective family's content", () => {
-  assert.equal(getWritingTaskFamilyForPromptType("narrative"), undefined);
+test("getWritingTaskFamilyForPromptType returns undefined for an arbitrary/unrecognised type string, never a false-positive match", () => {
+  assert.equal(getWritingTaskFamilyForPromptType("something-unrecognised"), undefined);
 });
 
 test("getWritingTaskFamilyForPromptType handles missing/empty input safely", () => {
