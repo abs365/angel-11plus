@@ -170,6 +170,35 @@ type Phase =
   | "submitted"
   | "error";
 
+/**
+ * Programme Completion Increment 016 — fire-and-forget REQUEST that a
+ * just-locked Reading attempt be scored. Never awaited by either call
+ * site (handleSubmit/handleBegin's finalize_expired branch below) — a
+ * failure here must never block the learner's own submission
+ * confirmation, and this client supplies nothing beyond the attempt id it
+ * already legitimately owns (no correctness/marks/answer claim of any
+ * kind travels through this call). See app/api/mock-reading-scoring/
+ * route.ts and lib/server/mockScoringAuthority.ts for where the real,
+ * independently-verified work happens.
+ */
+function requestReadingScoring(supabase: ReturnType<typeof getSupabaseClient>, attemptId: string): void {
+  if (!supabase) return;
+  void (async () => {
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      const token = session?.access_token;
+      if (!token) return;
+      await fetch("/api/mock-reading-scoring", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ attemptId }),
+      });
+    } catch (err) {
+      console.warn("[MockExam] Reading scoring request failed (non-blocking):", err);
+    }
+  })();
+}
+
 export default function MockExamPage({
   searchParams,
 }: {
@@ -255,14 +284,36 @@ export default function MockExamPage({
     const result = await submitMockAttempt(supabase, attemptId);
     if (result.error) { setErrorMessage(result.error); setPhase("error"); return; }
     // 008F, revised after Founder pre-application architecture review —
-    // this client never triggers scoring itself. Marking now happens
-    // automatically, server-side, the moment mock_submit_attempt() locks
-    // the attempt (migration 074's own redefined report-init trigger) —
-    // authoritative scoring is controlled by Angel's own trusted
-    // database boundary, never learner/browser-initiated. This client
-    // has no execute grant on mock_score_attempt at all.
+    // this client never triggers Mathematics scoring itself. Marking
+    // happens automatically, server-side, the moment mock_submit_attempt()
+    // locks the attempt (migration 074's own redefined report-init
+    // trigger) — authoritative scoring is controlled by Angel's own
+    // trusted database boundary, never learner/browser-initiated. This
+    // client has no execute grant on mock_score_attempt at all.
+    //
+    // Programme Completion Increment 016 — Reading Comprehension content
+    // cannot be scored that same way (mock_score_attempt() only
+    // understands Mathematics' plain scalar answer contract; Reading's
+    // real, tiered contract needs the TypeScript englishAnswerValidation
+    // engine, which cannot run inside Postgres). For a genuine Reading
+    // submission only, this client may REQUEST that its own just-locked
+    // attempt be processed — a request, never a result: it supplies only
+    // the attempt id it already legitimately owns, never any correctness/
+    // marks/answer claim. The actual computation runs entirely server-
+    // side (app/api/mock-reading-scoring/route.ts ->
+    // lib/server/mockScoringAuthority.ts), authenticated as a dedicated,
+    // least-privilege database role this client can never reach directly,
+    // and every invariant that matters (canonical mark ceilings, TIER3/5
+    // judgement-required content, manifest membership, idempotency) is
+    // independently enforced by migration 219's own functions regardless
+    // of what this request does or fails to do. Fire-and-forget by
+    // design: a failure here does not block the learner's own submission
+    // confirmation, and does not yet retry on its own — recovery
+    // automation is a separate, deferred piece of this same architecture
+    // (Founder directive, Section 9), not implemented in this increment.
+    if (attemptType === "timed_section") requestReadingScoring(supabase, attemptId);
     setPhase("submitted");
-  }, [attemptId, currentPayloads, answerDrafts]);
+  }, [attemptId, attemptType, currentPayloads, answerDrafts]);
 
   // Server-authoritative countdown — re-derives from expiresAt every
   // second, never trusts an accumulating client-side counter. Matches
@@ -418,6 +469,7 @@ export default function MockExamPage({
       // never successfully answer anything.
       const finalised = await submitMockAttempt(supabase, resumeAction.attemptId);
       if (finalised.error) { setErrorMessage(finalised.error); setPhase("error"); return; }
+      if (attemptType === "timed_section") requestReadingScoring(supabase, resumeAction.attemptId);
       setAttemptId(resumeAction.attemptId);
       submittedRef.current = true;
       setPhase("submitted");
