@@ -360,4 +360,19 @@ export const PROTECTED_MOCK_FIELDS = [
   "review_metadata",
   "provenance",
   "provenanceNotes",
+  // Programme Completion Increment 016 (Reading scoring investigation) —
+  // the three other real answer-bearing keys `lib/learningEngine/
+  // englishAnswerValidation.ts`'s tiered contract defines
+  // (EnglishPromptValidationFields), confirmed present in the authored
+  // Reading Comprehension Mock 1 content (migrations 097/152) alongside
+  // acceptedAnswers/modelAnswer above. None of these are in
+  // mock_get_question()'s own explicit return allow-list today — this is
+  // defence in depth for a future payload change, not evidence any of
+  // them currently reach a learner.
+  "quotationRequired",
+  "quotation_required",
+  "orderedAnswer",
+  "ordered_answer",
+  "correctOptions",
+  "correct_options",
 ] as const;

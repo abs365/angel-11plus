@@ -1,5 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
 import { findLeakedProtectedFields, isPayloadRedactionSafe, isValidMockQuestionPayload } from "@/lib/mockAttempt/redaction";
 import { PROTECTED_MOCK_FIELDS } from "@/lib/mockAttempt/types";
 
@@ -166,4 +167,32 @@ test("isValidMockQuestionPayload accepts a payload where sharedStem is entirely 
 test("isValidMockQuestionPayload rejects a non-string, non-null sharedStem", () => {
   assert.equal(isValidMockQuestionPayload({ ...SAFE_PAYLOAD, sharedStem: 42 }), false);
   assert.equal(isValidMockQuestionPayload({ ...SAFE_PAYLOAD, sharedStem: { not: "a string" } }), false);
+});
+
+/**
+ * Programme Completion Increment 016 (Reading scoring investigation,
+ * Section 6 defence-in-depth audit) — `lib/learningEngine/
+ * englishAnswerValidation.ts`'s own EnglishPromptValidationFields
+ * contract defines three more real answer-bearing keys
+ * (quotationRequired/orderedAnswer/correctOptions) that the original
+ * PROTECTED_MOCK_FIELDS list, written before Reading content existed,
+ * never named. None of these three currently reach a learner --
+ * mock_get_question()'s own explicit key allow-list (migration 218) is
+ * the primary protection, unchanged by this addition -- this is
+ * defence in depth only, so a future payload change can never
+ * silently expose one.
+ */
+test("quotationRequired/orderedAnswer/correctOptions -- the three real answer-bearing fields the tiered English validation contract defines -- are protected, individually and together", () => {
+  for (const field of ["quotationRequired", "orderedAnswer", "correctOptions"]) {
+    const leaked = { ...SAFE_PAYLOAD, [field]: ["some secret value"] };
+    assert.deepEqual(findLeakedProtectedFields(leaked), [field], `${field} should be detected as leaked`);
+    assert.equal(isPayloadRedactionSafe(leaked), false);
+  }
+});
+
+test("mock_get_question()'s own live SQL (migration 218) never returns any of the three new protected keys -- the primary protection, confirmed unchanged", () => {
+  const migration218 = readFileSync("supabase/migrations/218_mock_get_question_passage_fields.sql", "utf8");
+  for (const field of ["quotationRequired", "orderedAnswer", "correctOptions", "acceptedAnswers", "modelAnswer", "answer"]) {
+    assert.doesNotMatch(migration218, new RegExp(`'${field}'`), `${field} must never appear in mock_get_question()'s own return object`);
+  }
 });
