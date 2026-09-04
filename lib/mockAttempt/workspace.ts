@@ -11,7 +11,19 @@
  * page component."
  */
 
-import type { MockAttemptType, MockManifestGroupingEntry, MockQuestionPayload, MockStimulus, MockTableStimulus, ResumableMockAttempt } from "./types";
+import type { MockAttemptStatus, MockAttemptType, MockManifestGroupingEntry, MockQuestionPayload, MockStimulus, MockTableStimulus, ResumableMockAttempt } from "./types";
+
+/**
+ * Programme Completion Increment 016 — the one, exact, already-activated
+ * Reading form this whole increment's scoring authority (migration 219)
+ * and legacy-exclusion (migration 220) are both scoped to. Named once,
+ * here, rather than repeated as a literal at each of this codebase's
+ * three now-existing call sites (route.ts, migration 220's own trigger
+ * guard, and this function) — migration 220's own SQL literal is the
+ * authoritative source; this constant mirrors it for the application
+ * layer exactly the way this file's own header already requires.
+ */
+const READING_COMPREHENSION_MOCK_1_FORM_ID = "reading-comprehension-mock-1";
 
 const VALID_ATTEMPT_TYPES: readonly MockAttemptType[] = ["full_mock", "timed_section", "diagnostic_mock"];
 
@@ -93,6 +105,44 @@ export function determineMockResumeAction(resumable: ResumableMockAttempt | null
  */
 export function computeResumeStartIndex(units: readonly DisplayUnit[], answeredQuestionIds: ReadonlySet<string>): number {
   return unansweredUnitIndices(units, answeredQuestionIds)[0] ?? 0;
+}
+
+/**
+ * Programme Completion Increment 016, Founder invocation-reliability
+ * repair, Part C — the mock-report page's own bounded, idempotent
+ * recovery gate. A submitted Reading Comprehension Mock 1 attempt whose
+ * report is not yet visible MAY be a genuine case of the original
+ * fire-and-forget scoring request never reaching the server; this
+ * function decides, from data the report page can always legitimately
+ * read (the caller's own owned `ali_mock_attempt` row — no RLS change
+ * required, see lib/mockAttempt/client.ts's own getMockAttemptSummary()),
+ * whether asking the SAME existing scoring authority again is even a
+ * plausible thing to do.
+ *
+ * Deliberately conservative and narrow, matching this increment's own
+ * "do not redesign the scoring authority" boundary: excludes every
+ * Mathematics/other-form/not-yet-submitted attempt outright. It does NOT,
+ * and structurally cannot, distinguish an already-scored-but-unreleased
+ * attempt from a genuinely not-yet-scored one — `ali_mock_attempt_report.
+ * scoring_state` lives behind a release-gated RLS policy (migration 072)
+ * that this increment does not touch, so no caller below the database's
+ * own privileged boundary can read it before release. That distinction is
+ * the unmodified `mock_claim_reading_scoring_work()` function's own job
+ * (migration 219: it already refuses any attempt whose scoring_state is
+ * 'scored', unconditionally, regardless of who asks) — this function only
+ * ever decides whether asking is plausible, never whether the request
+ * will actually do anything; the database remains the sole authority on
+ * that.
+ */
+export function isReadingScoringRecoveryEligible(
+  attempt: { status: MockAttemptStatus; attemptType: MockAttemptType; formId: string } | null
+): boolean {
+  if (!attempt) return false;
+  return (
+    attempt.status === "submitted" &&
+    attempt.attemptType === "timed_section" &&
+    attempt.formId === READING_COMPREHENSION_MOCK_1_FORM_ID
+  );
 }
 
 /**

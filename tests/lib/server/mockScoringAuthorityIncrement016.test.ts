@@ -16,6 +16,7 @@ import { readFileSync } from "node:fs";
 const scoringAuthoritySource = readFileSync("lib/server/mockScoringAuthority.ts", "utf8");
 const routeSource = readFileSync("app/api/mock-reading-scoring/route.ts", "utf8");
 const mockExamPageSource = readFileSync("app/learning-intelligence/mock-exam/page.tsx", "utf8");
+const readingScoringRequestSource = readFileSync("lib/mockAttempt/readingScoringRequest.ts", "utf8");
 const migration074 = readFileSync("supabase/migrations/074_mock_scoring_and_report_release.sql", "utf8");
 const migration075 = readFileSync("supabase/migrations/075_mock_scoring_trust_boundary_correction.sql", "utf8");
 
@@ -105,16 +106,36 @@ test("migration 219 never references mock_score_attempt() or the existing trigge
 });
 
 test("the mock-exam page only requests Reading scoring for attemptType === 'timed_section' -- Mathematics (full_mock) submissions never call the new route", () => {
-  const occurrences = mockExamPageSource.match(/if \(attemptType === "timed_section"\) requestReadingScoring/g) ?? [];
+  const occurrences = mockExamPageSource.match(/if \(attemptType === "timed_section"\) \{\s*\n\s*void requestReadingScoring\(supabase, [\w.]+\)\.then\(logReadingScoringRequestOutcome\);/g) ?? [];
   assert.equal(occurrences.length, 2, "expected the gate at both the normal submit path and the finalize_expired resume path");
 });
 
-test("requestReadingScoring is fire-and-forget -- never awaited, never blocks the learner's own submission confirmation", () => {
-  const fnBody = mockExamPageSource.split("function requestReadingScoring")[1]?.split("\n\n")[0] ?? "";
-  assert.match(fnBody, /void \(async/);
+/**
+ * Founder invocation-reliability repair (same increment) — requestReadingScoring
+ * itself moved to lib/mockAttempt/readingScoringRequest.ts (shared with
+ * the mock-report page's own recovery path) and is now a plain async
+ * function returning a typed outcome, no longer an inline
+ * fire-and-forget IIFE. "Fire-and-forget" now describes the CALL SITE's
+ * own choice not to await it, not the function's own internal shape --
+ * this test moves with that change.
+ */
+test("requestReadingScoring is fire-and-forget from the caller's own perspective -- never awaited by either mock-exam call site, never blocks the learner's own submission confirmation", () => {
+  assert.doesNotMatch(mockExamPageSource, /await requestReadingScoring/);
+  const occurrences = mockExamPageSource.match(/void requestReadingScoring\(supabase, [\w.]+\)\.then\(logReadingScoringRequestOutcome\)/g) ?? [];
+  assert.equal(occurrences.length, 2);
 });
 
 test("requestReadingScoring supplies only an attemptId to the server -- no correctness, marks, or answer content originates in this client-side function", () => {
-  const fnBody = mockExamPageSource.split("function requestReadingScoring")[1]?.split("\nexport default function")[0] ?? "";
+  const fnBody = readingScoringRequestSource.split("export async function requestReadingScoring")[1] ?? "";
   assert.match(fnBody, /body: JSON\.stringify\(\{ attemptId \}\)/);
+});
+
+test("requestReadingScoring inspects the real HTTP outcome -- Founder invocation-reliability repair -- rather than discarding response.ok", () => {
+  assert.match(readingScoringRequestSource, /response\.ok/);
+  assert.match(readingScoringRequestSource, /export type ReadingScoringRequestOutcome/);
+});
+
+test("requestReadingScoring never logs the Authorization token or bearer credential", () => {
+  assert.doesNotMatch(readingScoringRequestSource, /console\.\w+\([^)]*token/i);
+  assert.doesNotMatch(readingScoringRequestSource, /console\.\w+\([^)]*Bearer/i);
 });

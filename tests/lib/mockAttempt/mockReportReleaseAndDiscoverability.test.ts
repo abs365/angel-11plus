@@ -88,15 +88,15 @@ test("ANALYSIS_PENDING_NOTE itself never claims analysis is complete (pre-existi
 });
 
 test("the report page never sets phase to \"ready\" without report_release_state === released -- pending report behaviour is safe, never a broken/inaccessible render", () => {
-  assert.match(reportPageSource, /reportReleaseState\s*!==\s*"released"/);
+  assert.match(reportPageSource, /reportReleaseState\s*===\s*"released"/);
   assert.match(reportPageSource, /setPhase\("not-available"\)/);
 });
 
-test("the report page is unmodified by this decision -- Decision 220's own instruction to verify, not redesign, an already-correct surface", () => {
-  // The exact release-gate line from Decision 97/1407's own original
-  // implementation is still present verbatim -- proves this file was
-  // read and relied upon, not rewritten.
-  assert.match(reportPageSource, /if \(!result\.data \|\| result\.data\.reportReleaseState !== "released"\) \{ setPhase\("not-available"\); return; \}/);
+test("the report page's release gate is unmodified in substance -- Founder invocation-reliability repair (Increment 016, Part C) restructured the single-line gate into an equivalent multi-line if/return to make room for a bounded recovery attempt, but only \"released\" ever reaches \"ready\"", () => {
+  assert.match(
+    reportPageSource,
+    /if \(result\.data && result\.data\.reportReleaseState === "released"\) \{\s*\n\s*setReport\(result\.data\);\s*\n\s*setPhase\("ready"\);\s*\n\s*return;\s*\n\s*\}\s*\n\s*setPhase\("not-available"\);/
+  );
 });
 
 // === Learner discoverability fix (Section 5/6) ===========================

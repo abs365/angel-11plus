@@ -145,7 +145,16 @@ test("when no focus is requested (the ordinary, un-targeted entry to Practice), 
 });
 
 test("the report page's own release/security gate is untouched by this decision -- re-confirmed present, byte-identical to Decision 221/223/224", () => {
-  assert.match(MOCK_REPORT_PAGE, /if \(!result\.data \|\| result\.data\.reportReleaseState !== "released"\) \{ setPhase\("not-available"\); return; \}/);
+  // Founder invocation-reliability repair (Programme Completion Increment
+  // 016, Part C) restructured this single-line gate into an equivalent
+  // multi-line if/return so a bounded recovery attempt could be inserted
+  // after it -- the release/security condition itself (only "released"
+  // ever reaches "ready", every other case reaches "not-available") is
+  // unchanged; this assertion moves with that restructuring.
+  assert.match(
+    MOCK_REPORT_PAGE,
+    /if \(result\.data && result\.data\.reportReleaseState === "released"\) \{\s*\n\s*setReport\(result\.data\);\s*\n\s*setPhase\("ready"\);\s*\n\s*return;\s*\n\s*\}\s*\n\s*setPhase\("not-available"\);/
+  );
 });
 
 test("no migration was introduced by this decision -- purely application code (structural sanity: migration 151 still exists, nothing was deleted; later, unrelated decisions may legitimately add further migrations after this one)", () => {

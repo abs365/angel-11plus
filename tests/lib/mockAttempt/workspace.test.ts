@@ -11,8 +11,60 @@ import {
   payloadMatchesQuestion,
   determineMockResumeAction,
   computeResumeStartIndex,
+  isReadingScoringRecoveryEligible,
 } from "@/lib/mockAttempt/workspace";
 import type { MockManifestGroupingEntry, ResumableMockAttempt } from "@/lib/mockAttempt/types";
+
+/**
+ * Founder invocation-reliability repair (Programme Completion Increment
+ * 016), Part C — real, non-source-text coverage for the mock-report
+ * page's own recovery eligibility gate. Proves the exclusions Section E
+ * of the Founder's own directive names as test requirements 5/6 that ARE
+ * observable at this layer (Mathematics, other forms, in-progress
+ * attempts, no attempt at all). It deliberately does NOT attempt to prove
+ * a "scored" vs "scoring" distinction here -- ali_mock_attempt_report.
+ * scoring_state lives behind a release-gated RLS policy (migration 072)
+ * this repair does not touch, so this function never receives it; that
+ * distinction is the unmodified mock_claim_reading_scoring_work()'s own
+ * job (migration 219, already covered by this repository's own
+ * already_scored tests) -- see this function's own docstring in
+ * workspace.ts for the full reasoning.
+ */
+test("isReadingScoringRecoveryEligible is true only for a submitted timed_section reading-comprehension-mock-1 attempt", () => {
+  assert.equal(
+    isReadingScoringRecoveryEligible({ status: "submitted", attemptType: "timed_section", formId: "reading-comprehension-mock-1" }),
+    true
+  );
+});
+
+test("isReadingScoringRecoveryEligible excludes Mathematics (full_mock) attempts", () => {
+  assert.equal(
+    isReadingScoringRecoveryEligible({ status: "submitted", attemptType: "full_mock", formId: "reading-comprehension-mock-1" }),
+    false
+  );
+});
+
+test("isReadingScoringRecoveryEligible excludes any other form id, even if timed_section and submitted", () => {
+  assert.equal(
+    isReadingScoringRecoveryEligible({ status: "submitted", attemptType: "timed_section", formId: "some-other-form" }),
+    false
+  );
+});
+
+test("isReadingScoringRecoveryEligible excludes an in-progress (not yet submitted) attempt", () => {
+  assert.equal(
+    isReadingScoringRecoveryEligible({ status: "in_progress", attemptType: "timed_section", formId: "reading-comprehension-mock-1" }),
+    false
+  );
+  assert.equal(
+    isReadingScoringRecoveryEligible({ status: "assigned", attemptType: "timed_section", formId: "reading-comprehension-mock-1" }),
+    false
+  );
+});
+
+test("isReadingScoringRecoveryEligible excludes a null attempt (no ali_mock_attempt row found)", () => {
+  assert.equal(isReadingScoringRecoveryEligible(null), false);
+});
 
 /**
  * Programme Increment 008E — pure-function tests for the canonical

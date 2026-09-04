@@ -16,15 +16,25 @@ import fs from "node:fs";
 const MOCK_EXAM = fs.readFileSync("app/learning-intelligence/mock-exam/page.tsx", "utf8");
 const ROUTE = fs.readFileSync("app/api/mock-reading-scoring/route.ts", "utf8");
 const AUTHORITY = fs.readFileSync("lib/server/mockScoringAuthority.ts", "utf8");
+const READING_SCORING_REQUEST = fs.readFileSync("lib/mockAttempt/readingScoringRequest.ts", "utf8");
 
+/**
+ * Founder invocation-reliability repair (same increment) — requestReadingScoring
+ * itself moved out of this page into lib/mockAttempt/readingScoringRequest.ts
+ * (shared with the mock-report page's own recovery path), and now
+ * inspects the real HTTP outcome instead of discarding it. The two tests
+ * below are updated for that new shape; every other test in this file
+ * (route hand-off, RLS-only auth, single scoring authority operation)
+ * proves a contract this repair did not touch and is unchanged.
+ */
 test("D — a timed_section submission still fires requestReadingScoring, which POSTs to /api/mock-reading-scoring", () => {
-  assert.match(MOCK_EXAM, /if \(attemptType === "timed_section"\) requestReadingScoring\(supabase, attemptId\);/);
-  assert.match(MOCK_EXAM, /await fetch\("\/api\/mock-reading-scoring", \{/);
+  assert.match(MOCK_EXAM, /if \(attemptType === "timed_section"\) \{\s*\n\s*void requestReadingScoring\(supabase, attemptId\)\.then\(logReadingScoringRequestOutcome\);\s*\n\s*\}/);
+  assert.match(READING_SCORING_REQUEST, /await fetch\("\/api\/mock-reading-scoring", \{/);
 });
 
 test("D — the request is fire-and-forget (never awaited by the submit handler) so a scoring-request failure cannot block the learner's own submission confirmation", () => {
-  const handler = MOCK_EXAM.match(/if \(attemptType === "timed_section"\) requestReadingScoring\(supabase, attemptId\);\s*\n\s*setPhase\("submitted"\);/);
-  assert.ok(handler, "requestReadingScoring must be called synchronously (not awaited) immediately before setPhase(\"submitted\")");
+  const handler = MOCK_EXAM.match(/if \(attemptType === "timed_section"\) \{\s*\n\s*void requestReadingScoring\(supabase, attemptId\)\.then\(logReadingScoringRequestOutcome\);\s*\n\s*\}\s*\n\s*setPhase\("submitted"\);/);
+  assert.ok(handler, "requestReadingScoring must be fired with void ...then(...) (never awaited) immediately before setPhase(\"submitted\")");
 });
 
 test("D — the API route hands off to scoreReadingAttempt, the one exported operation of the dedicated scoring authority module", () => {

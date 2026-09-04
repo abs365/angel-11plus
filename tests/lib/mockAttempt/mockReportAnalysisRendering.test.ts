@@ -154,7 +154,14 @@ test("MATHEMATICS_PRACTICE_ROUTE points at the real, existing practice area page
 // === 10. Unreleased reports remain protected exactly as before ===========
 
 test("the report page still gates 'ready' strictly on reportReleaseState === released, byte-identical to Decision 221/223 -- this refinement does not touch the release/security gate", () => {
-  assert.match(PAGE, /if \(!result\.data \|\| result\.data\.reportReleaseState !== "released"\) \{ setPhase\("not-available"\); return; \}/);
+  // Founder invocation-reliability repair (Programme Completion Increment
+  // 016, Part C) restructured this single-line gate into an equivalent
+  // multi-line if/return to make room for a bounded recovery attempt
+  // after it -- the release/security condition itself is unchanged.
+  assert.match(
+    PAGE,
+    /if \(result\.data && result\.data\.reportReleaseState === "released"\) \{\s*\n\s*setReport\(result\.data\);\s*\n\s*setPhase\("ready"\);\s*\n\s*return;\s*\n\s*\}\s*\n\s*setPhase\("not-available"\);/
+  );
 });
 
 test("the pending-analysis fallback is preserved for analysisState !== 'complete' -- no regression to the currently-live real report", () => {

@@ -26,6 +26,7 @@ import {
   getMockAttemptAnswers,
   getSubmittedMockAttempts,
 } from "@/lib/mockAttempt/client";
+import { requestReadingScoring, logReadingScoringRequestOutcome } from "@/lib/mockAttempt/readingScoringRequest";
 import type { MockAttemptType, MockQuestionPayload } from "@/lib/mockAttempt/types";
 import {
   resolveAttemptType,
@@ -170,35 +171,6 @@ type Phase =
   | "submitted"
   | "error";
 
-/**
- * Programme Completion Increment 016 — fire-and-forget REQUEST that a
- * just-locked Reading attempt be scored. Never awaited by either call
- * site (handleSubmit/handleBegin's finalize_expired branch below) — a
- * failure here must never block the learner's own submission
- * confirmation, and this client supplies nothing beyond the attempt id it
- * already legitimately owns (no correctness/marks/answer claim of any
- * kind travels through this call). See app/api/mock-reading-scoring/
- * route.ts and lib/server/mockScoringAuthority.ts for where the real,
- * independently-verified work happens.
- */
-function requestReadingScoring(supabase: ReturnType<typeof getSupabaseClient>, attemptId: string): void {
-  if (!supabase) return;
-  void (async () => {
-    try {
-      const { data: { session } } = await supabase.auth.getSession();
-      const token = session?.access_token;
-      if (!token) return;
-      await fetch("/api/mock-reading-scoring", {
-        method: "POST",
-        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-        body: JSON.stringify({ attemptId }),
-      });
-    } catch (err) {
-      console.warn("[MockExam] Reading scoring request failed (non-blocking):", err);
-    }
-  })();
-}
-
 export default function MockExamPage({
   searchParams,
 }: {
@@ -306,12 +278,28 @@ export default function MockExamPage({
     // and every invariant that matters (canonical mark ceilings, TIER3/5
     // judgement-required content, manifest membership, idempotency) is
     // independently enforced by migration 219's own functions regardless
-    // of what this request does or fails to do. Fire-and-forget by
-    // design: a failure here does not block the learner's own submission
-    // confirmation, and does not yet retry on its own — recovery
-    // automation is a separate, deferred piece of this same architecture
-    // (Founder directive, Section 9), not implemented in this increment.
-    if (attemptType === "timed_section") requestReadingScoring(supabase, attemptId);
+    // of what this request does or fails to do.
+    //
+    // ASSESSMENT SUBMISSION SUCCESS (this function, above this line —
+    // mock_submit_attempt() has already committed) is deliberately kept
+    // separate in code from POST-SUBMISSION SCORING PROCESSING (this
+    // line, below): the scoring request is still never awaited by this
+    // handler, so a scoring-service failure can never re-open, block, or
+    // undo the learner's own already-successful submission. What changed
+    // in the Founder invocation-reliability repair is only what happens
+    // to the RESULT of that request — lib/mockAttempt/
+    // readingScoringRequest.ts's own requestReadingScoring() now inspects
+    // the real HTTP outcome instead of discarding it, and
+    // logReadingScoringRequestOutcome() surfaces a non-success outcome
+    // (bounded, non-blocking, console only). It still does not retry on
+    // its own — recovery is the mock-report page's own bounded, idempotent
+    // job (Part C of the same repair, lib/mockAttempt/workspace.ts's own
+    // isReadingScoringRecoveryEligible()), and background/scheduled
+    // recovery automation remains a separate, deferred piece (Founder
+    // directive, Section F), not implemented in this increment.
+    if (attemptType === "timed_section") {
+      void requestReadingScoring(supabase, attemptId).then(logReadingScoringRequestOutcome);
+    }
     setPhase("submitted");
   }, [attemptId, attemptType, currentPayloads, answerDrafts]);
 
@@ -469,7 +457,12 @@ export default function MockExamPage({
       // never successfully answer anything.
       const finalised = await submitMockAttempt(supabase, resumeAction.attemptId);
       if (finalised.error) { setErrorMessage(finalised.error); setPhase("error"); return; }
-      if (attemptType === "timed_section") requestReadingScoring(supabase, resumeAction.attemptId);
+      // See handleSubmit's own comment above: submission success and
+      // scoring-request processing stay separate here too, and the
+      // request is still never awaited.
+      if (attemptType === "timed_section") {
+        void requestReadingScoring(supabase, resumeAction.attemptId).then(logReadingScoringRequestOutcome);
+      }
       setAttemptId(resumeAction.attemptId);
       submittedRef.current = true;
       setPhase("submitted");

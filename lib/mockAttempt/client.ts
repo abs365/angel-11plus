@@ -354,6 +354,41 @@ export async function getMockAttemptReport(
 }
 
 /**
+ * Programme Completion Increment 016, Founder invocation-reliability
+ * repair, Part C — a direct, owner-scoped `.from()` read of the attempt's
+ * OWN lifecycle fields (status/attemptType/formId), never its report.
+ * Matches getMockAttemptReport()'s own established "direct read for
+ * attempt/report metadata, not a wrapping RPC" precedent (this file's own
+ * docstring on that function), and reads only columns the existing
+ * `ali_mock_attempt_select_own` RLS policy (migration 070) already
+ * permits the owning learner to see regardless of submission/scoring
+ * state — no RLS change of any kind. Exists so the mock-report page can
+ * decide whether a bounded scoring-recovery request is even plausible
+ * (lib/mockAttempt/workspace.ts's own isReadingScoringRecoveryEligible())
+ * without needing anything this policy does not already grant.
+ */
+export async function getMockAttemptSummary(
+  supabase: SupabaseClient<Database>,
+  attemptId: string
+): Promise<MockClientResult<{ status: MockAttemptStatus; attemptType: MockAttemptType; formId: string } | null>> {
+  const { data, error } = await supabase
+    .from("ali_mock_attempt")
+    .select("status, attempt_type, form_id")
+    .eq("id", attemptId)
+    .maybeSingle();
+  if (error) return { data: null, error: error.message };
+  if (!data) return { data: null, error: null };
+  return {
+    data: {
+      status: data.status as MockAttemptStatus,
+      attemptType: data.attempt_type as MockAttemptType,
+      formId: data.form_id,
+    },
+    error: null,
+  };
+}
+
+/**
  * Mock Governance Architecture Increment 001 (Decision 135) — thin
  * wrappers around the 3 new SECURITY DEFINER functions (migration 085).
  * Not yet wired into any route (Mock remains unavailable, mock_eligible

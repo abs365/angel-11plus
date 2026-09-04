@@ -1,12 +1,14 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import PageLayout from "@/components/PageLayout";
 import { InfoCard } from "@/components/ui/Card";
 import { getSupabaseClient } from "@/lib/supabase";
-import { getMockAttemptReport } from "@/lib/mockAttempt/client";
+import { getMockAttemptReport, getMockAttemptSummary } from "@/lib/mockAttempt/client";
+import { isReadingScoringRecoveryEligible } from "@/lib/mockAttempt/workspace";
+import { requestReadingScoring, logReadingScoringRequestOutcome } from "@/lib/mockAttempt/readingScoringRequest";
 import { ProgressBar, StatusIndicator } from "@/components/ui/Progress";
 import { ButtonLink } from "@/components/ui/Button";
 import {
@@ -47,6 +49,12 @@ export default function MockReportPage() {
   const [phase, setPhase] = useState<Phase>("loading");
   const [report, setReport] = useState<MockAttemptReport | null>(null);
   const [errorMessage, setErrorMessage] = useState("");
+  // Founder invocation-reliability repair, Part C — a plain ref, not
+  // state: it must survive without triggering a re-render, and its only
+  // job is "has this page instance already tried recovery once" — see the
+  // effect below's own comment for why a ref (not a request-loop guard
+  // inside the request itself) is the right bound here.
+  const recoveryAttemptedRef = useRef(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -56,9 +64,39 @@ export default function MockReportPage() {
       const result = await getMockAttemptReport(supabase, params.attemptId);
       if (cancelled) return;
       if (result.error) { setErrorMessage(result.error); setPhase("error"); return; }
-      if (!result.data || result.data.reportReleaseState !== "released") { setPhase("not-available"); return; }
-      setReport(result.data);
-      setPhase("ready");
+      if (result.data && result.data.reportReleaseState === "released") {
+        setReport(result.data);
+        setPhase("ready");
+        return;
+      }
+      setPhase("not-available");
+
+      // Founder invocation-reliability repair, Part C — bounded,
+      // idempotent recovery. The report is not visible for one of two
+      // reasons: no report row exists at all for this attempt (not a
+      // Mock attempt, or one Angel has not yet processed), or one exists
+      // but is not released. Either way, this client cannot and must not
+      // try to distinguish those cases (see client.ts's own
+      // getMockAttemptReport() docstring — deliberate, unmodified). What
+      // this page CAN safely determine, from data the learner already
+      // owns regardless of release state (getMockAttemptSummary(), a
+      // plain owner-scoped read — no RLS change), is only whether a
+      // scoring-recovery attempt is even plausible: a submitted Reading
+      // Comprehension Mock 1 attempt. Firing it is always safe to attempt
+      // — the unmodified, privileged mock_claim_reading_scoring_work()
+      // (migration 219) remains the sole authority on whether there is
+      // genuinely eligible work, and unconditionally refuses an
+      // already-scored attempt regardless of who asks. Bounded to once
+      // per page load via the ref above, not inside a request loop or a
+      // render-triggered effect dependency, so re-renders (state updates
+      // from this same effect included) can never re-fire it.
+      if (!recoveryAttemptedRef.current) {
+        recoveryAttemptedRef.current = true;
+        const summary = await getMockAttemptSummary(supabase, params.attemptId);
+        if (!cancelled && !summary.error && isReadingScoringRecoveryEligible(summary.data)) {
+          void requestReadingScoring(supabase, params.attemptId).then(logReadingScoringRequestOutcome);
+        }
+      }
     }
     void load();
     return () => { cancelled = true; };
