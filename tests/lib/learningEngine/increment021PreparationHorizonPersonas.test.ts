@@ -201,3 +201,37 @@ test("PERSONA F -- a genuinely weak learner close to the exam: teaching/guided l
   const composition = composeOverTrials(context);
   assert.ok(composition.easy + composition.medium > composition.hard + composition.challenge, `a weak, time-pressured learner must not be flooded with hard/challenge material (got ${JSON.stringify(composition)})`);
 });
+
+// ─── Founder Amendment -- "teaching must mean teaching" decision-level proofs ─
+
+test("a STRONG learner is never routed to teaching_lesson, even when a real lesson exists for every competency -- the stage condition alone gates it, never lesson availability by itself", () => {
+  const competencies = ALL_TWELVE.map((id) => comp(id, "high", "durably-mastered"));
+  const ordered = [candidate("MR-04", "durably-mastered", "cooldown-expired")];
+  const decision = buildPreparationDecision([subject(competencies)], clockFor(600), "Year 5", ordered, [], {
+    hasFullLessonAvailable: () => true, // every competency has a lesson -- must still not matter for a strong learner
+  });
+  assert.notEqual(decision.preparationStage, "foundation");
+  assert.notEqual(decision.preparationStage, "teaching");
+  assert.notEqual(decision.recommendedActivityType, "teaching_lesson", "a strong (transfer-stage) learner must never be routed to teaching merely because a lesson happens to exist");
+});
+
+test("a weak late entrant with a real lesson available for the priority competency genuinely resolves to teaching_lesson -- routing happens BEFORE ordinary Practice, not alongside it", () => {
+  const competencies = ALL_TWELVE.map((id) => comp(id, "low", "exploring"));
+  const ordered = [candidate("MR-04", "exploring", "never-attempted")];
+  const decision = buildPreparationDecision([subject(competencies)], clockFor(15), "Year 6", ordered, [], {
+    hasFullLessonAvailable: (id) => id === "MR-04",
+  });
+  assert.equal(decision.preparationStage, "foundation");
+  assert.equal(decision.recommendedCompetencyId, "MR-04");
+  assert.equal(decision.recommendedActivityType, "teaching_lesson", "a weak/late-entrant learner with a real available lesson for their own priority competency must be routed to it, not merely biased toward its family in ordinary Practice");
+});
+
+test("the same weak late entrant WITHOUT a real lesson available falls back honestly to guided_practice -- never a false teaching_lesson claim", () => {
+  const competencies = ALL_TWELVE.map((id) => comp(id, "low", "exploring"));
+  const ordered = [candidate("MR-04", "exploring", "never-attempted")];
+  const decision = buildPreparationDecision([subject(competencies)], clockFor(15), "Year 6", ordered, [], {
+    hasFullLessonAvailable: () => false,
+  });
+  assert.notEqual(decision.recommendedActivityType, "teaching_lesson", "must never claim a teaching_lesson exists when hasFullLessonAvailable says it doesn't");
+  assert.equal(decision.recommendedActivityType, "guided_practice");
+});

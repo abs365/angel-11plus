@@ -132,7 +132,11 @@ test("the report page's own routing changes never reference workingSteps, a stor
 });
 
 test("the practice page's own NEW routing code (the focus/familyFocus block this decision added) never references workingSteps or a stored correct answer -- pre-existing, unrelated workingSteps rendering for genuine Practice content elsewhere in this large file is expected and untouched", () => {
-  const routingBlock = PRACTICE_PAGE.match(/const \{ focus \} = use\(searchParams\);[\s\S]*?const requestedFocus[^\n]*\n/)?.[0] ?? "";
+  // Increment 021 added a second destructured field (skipTeachingRedirect)
+  // to the same searchParams destructure -- the pattern below matches
+  // either shape, since this test's own job is checking content between
+  // the searchParams read and requestedFocus, not the exact destructure text.
+  const routingBlock = PRACTICE_PAGE.match(/const \{ focus.*?\} = use\(searchParams\);[\s\S]*?const requestedFocus[^\n]*\n/)?.[0] ?? "";
   const indicatorBlock = PRACTICE_PAGE.match(/\{familyFocus\?\.applied && \([\s\S]*?\)\}/)?.[0] ?? "";
   assert.ok(routingBlock.length > 0 && indicatorBlock.length > 0, "expected both new routing blocks to be found");
   assert.ok(!/workingSteps|storedAnswer|correctAnswer/i.test(routingBlock + indicatorBlock));

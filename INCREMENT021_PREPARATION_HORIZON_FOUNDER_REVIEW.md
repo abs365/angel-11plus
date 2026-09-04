@@ -2,6 +2,16 @@
 
 Behavioural/educational review only. No new question family is authored by this increment, so no `ali_family_review` record is created — nothing here requires that workflow. This document exists so you can judge whether the six journeys below feel right before any production deployment.
 
+## Founder Decision Record (additive — original review below is preserved unchanged)
+
+**Original decision: APPROVED WITH AMENDMENT** (this line is not rewritten to plain APPROVED — the amendment below is a real, tracked correction, not a footnote).
+
+**Required amendment:** when Angel recommends `teaching_lesson` and a genuine full lesson exists for the priority competency, the learner must be routed to that real lesson, not merely have their question pool leaned toward its family.
+
+**AMENDMENT IMPLEMENTED: YES.** The Practice page now checks, immediately after the placement check and before loading an ordinary session: if the decision's own `recommendedActivityType` is `teaching_lesson` and a real lesson exists for the priority competency (via the same `fullLessonRegistry.ts` the dashboard already uses), the learner is routed straight to that lesson — a silent redirect, since the lesson page's own existing intro screen already gives it a clear "start here" framing. `guided_practice` is deliberately **not** treated the same way — it remains a weighting preference only, reusing the pre-existing per-question guided-mode default (already live since Increment 007L) rather than forcing a full lesson. When no real lesson exists for a `teaching_lesson` recommendation, the page falls through honestly to ordinary (still weight-biased) Practice — no teaching claim is ever made in that case. Loop safety: every lesson page's own "ready to practise" link now carries a one-time `skipTeachingRedirect=1` flag, so returning from a lesson always reaches a real Practice session at least once, rather than being bounced straight back — no new persistent learner state or schema was needed for this.
+
+**AMENDMENT VERIFICATION: AWAITING FOUNDER.** The Founder will verify the corrected teaching journey (see the updated Journey 5 note below) before deployment.
+
 **What changed, in one sentence:** the real Practice session generator (`lib/learningEngine/sessionGenerator.ts` → `lib/ali/selection.ts`) now genuinely reads the existing Preparation Horizon decision (built in Increment 019, previously only shown on one dashboard card) and lets it bias what gets served — as a *preference*, never a hard rule — and a learner with insufficient evidence is now routed to a real, short placement flow instead of an undifferentiated session.
 
 ---
@@ -76,9 +86,9 @@ Behavioural/educational review only. No new question family is authored by this 
 
 **Angel decision:** `preparationStage = "teaching"` (the real regression/weakness-shaped stage), `recommendedDifficultyLean = "favour_guided_and_easier"` — **not** final-readiness, despite the short runway.
 
-**What the child sees:** an ordinary Practice session, weighted toward easier/guided material and, where a family has real teaching content, toward that family specifically — the opposite of what a naive "exam is close, drill hard" rule would produce.
+**What the child sees:** **UPDATED by the Founder Amendment.** If the priority competency has a real, full lesson available, the child is now taken to that lesson directly — not merely served more questions from its family. If no full lesson exists for that specific competency, the child sees an ordinary Practice session weighted toward easier/guided material and, where a family has real teaching content, toward that family specifically — the opposite of what a naive "exam is close, drill hard" rule would produce.
 
-**Why:** this is the exact failure mode the Founder's own instruction named explicitly — time pressure must never override a genuine weakness signal into a harder lean. The exam clock refines *urgency framing*, never raw difficulty preference, which stays tied to evidence.
+**Why:** this is the exact failure mode the Founder's own instruction named explicitly — time pressure must never override a genuine weakness signal into a harder lean, and where real teaching exists, the child should actually be taught, not just statistically nudged toward teachable material. The exam clock refines *urgency framing*, never raw difficulty preference, which stays tied to evidence.
 
 **Questions/activity served:** predominantly easy/medium material, genuinely favouring families with guided support.
 

@@ -73,3 +73,15 @@ test("the practice page's own wiring never references SEALED/mock_eligible conte
   const wiringBlock = PRACTICE_PAGE.slice(PRACTICE_PAGE.indexOf("Programme Increment 021"), PRACTICE_PAGE.indexOf("const session = await withTimeout"));
   assert.ok(!/mock_eligible|SEALED|ali_mock_exposed/i.test(wiringBlock));
 });
+
+// ─── Founder Amendment record: placement scope/language boundary ──────────
+
+test("placement is explicitly, structurally Mathematics-only -- it samples only MR-series competencies, never RC/WC", () => {
+  assert.match(PLACEMENT_PAGE, /MATHEMATICS_COMPETENCY_IDS.*=.*\[.*"MR-01".*"MR-02".*"MR-03".*"MR-04".*"MR-05".*"MR-06".*\]/s);
+  assert.ok(!/"RC-0[1-4]"|"WC-0[12]"/.test(PLACEMENT_PAGE), "placement must never sample a Reading or Writing competency in this increment");
+  assert.match(PLACEMENT_PAGE, /fetchQuestionBank\(supabase, "maths"/, "placement must only ever fetch Mathematics content");
+});
+
+test("placement never claims whole-programme (English + Mathematics) ability, and never claims a specific ability/level classification from this short check", () => {
+  assert.ok(!/your (ability|11\+) level|predicted (11\+ )?level|you have mastered|overall (level|ability)/i.test(PLACEMENT_PAGE), "placement must never assert a definitive ability/level classification");
+});

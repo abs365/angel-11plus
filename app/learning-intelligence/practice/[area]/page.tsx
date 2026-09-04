@@ -19,7 +19,7 @@ import { recordReadinessSnapshot } from "@/lib/learningEngine/learningHistory";
 import { QUESTION_TYPE_PRIMARY_COMPETENCY, isValidCompetencyId } from "@/lib/learningEngine/assessmentBrainMap";
 import { generatePersonalisedSession, type FamilyFocusSessionInfo, type PreparationSessionContext } from "@/lib/learningEngine/sessionGenerator";
 import { computePreparationDecision } from "@/lib/learningEngine/preparationDecision";
-import { hasFullLessonAvailable } from "@/lib/learningEngine/fullLessonRegistry";
+import { hasFullLessonAvailable, FULL_LESSON_ROUTE } from "@/lib/learningEngine/fullLessonRegistry";
 import { childFriendlySkillLabel } from "@/lib/mockAttempt/reportCopy";
 import {
   getEducationalIntelligence,
@@ -86,7 +86,7 @@ export default function PracticeSessionPage({
   searchParams,
 }: {
   params: Promise<{ area: string }>;
-  searchParams: Promise<{ focus?: string }>;
+  searchParams: Promise<{ focus?: string; skipTeachingRedirect?: string }>;
 }) {
   const { area: areaId } = use(params);
   const area = getPracticeArea(areaId);
@@ -98,8 +98,17 @@ export default function PracticeSessionPage({
   // an unrecognised or missing value is silently `undefined`, never an
   // error, matching generatePersonalisedSession()'s own established
   // "absent is not an error" precedent for every other optional signal.
-  const { focus } = use(searchParams);
+  const { focus, skipTeachingRedirect } = use(searchParams);
   const requestedFocus = focus && isValidCompetencyId(focus) ? focus : undefined;
+  // Programme Increment 021 Founder amendment, loop-safety mechanism -- set
+  // by a lesson page's own "ready to practise" link (see e.g.
+  // app/learning-intelligence/learn/mathematics/percentages/page.tsx) so a
+  // learner who just came FROM the lesson always reaches at least one real
+  // Practice session, even if the decision contract would otherwise still
+  // recommend that same lesson again this instant. Deliberately a one-time
+  // URL flag, not new persistent learner state/schema -- the smallest
+  // existing-state solution, per the Founder's own explicit preference.
+  const skipTeachingLessonRedirect = skipTeachingRedirect === "1";
 
   const [mode, setMode] = useState<Mode>("intro");
   const [familyFocus, setFamilyFocus] = useState<FamilyFocusSessionInfo | undefined>(undefined);
@@ -250,10 +259,25 @@ export default function PracticeSessionPage({
       //   1. placementRequired routes to the real placement flow instead
       //      of ordinary Practice -- a late/insufficient-evidence learner
       //      is never silently served an undifferentiated session.
-      //   2. Otherwise, recommendedDifficultyLean/recommendedActivityType
-      //      feed generatePersonalisedSession()'s own new, additive
-      //      weight-bias mechanism (lib/ali/selection.ts) -- a real
-      //      influence on what gets served, not merely a dashboard label.
+      //   2. Founder Amendment ("teaching must mean teaching") -- when the
+      //      decision recommends teaching_lesson AND a genuine full lesson
+      //      exists for the priority competency (fullLessonRegistry.ts,
+      //      the same registry the dashboard already reads), the learner
+      //      is routed to that real lesson instead of merely having their
+      //      question pool leaned toward its family. guided_practice is
+      //      deliberately NOT treated the same way -- it stays as the
+      //      existing weight-bias-only path (Part 2 below), reusing the
+      //      pre-existing, already-live per-question guided-mode default
+      //      (MathsActivity/ReadingActivity's own `useState(guidedAvailable)`,
+      //      007L) rather than forcing a full lesson merely because
+      //      guidance was recommended -- the Founder's own explicit
+      //      instruction not to conflate the two.
+      //   3. Otherwise (guided_practice, or teaching_lesson with no real
+      //      lesson available -- never pretended as taught), recommendedDifficultyLean/
+      //      recommendedActivityType feed generatePersonalisedSession()'s
+      //      own additive weight-bias mechanism (lib/ali/selection.ts) --
+      //      a real influence on what gets served, not merely a dashboard
+      //      label.
       // Best-effort: if this read fails for any reason, fail OPEN to the
       // unbiased session Practice has always served, never blocking the
       // page on a decision-contract error.
@@ -266,6 +290,11 @@ export default function PracticeSessionPage({
         );
         if (decision.placementRequired) {
           router.replace(`/learning-intelligence/placement?returnArea=${encodeURIComponent(area!.id)}`);
+          return;
+        }
+        const lessonRoute = decision.recommendedCompetencyId ? FULL_LESSON_ROUTE[decision.recommendedCompetencyId] : undefined;
+        if (decision.recommendedActivityType === "teaching_lesson" && lessonRoute && !skipTeachingLessonRedirect) {
+          router.replace(lessonRoute);
           return;
         }
         preparationContext = {

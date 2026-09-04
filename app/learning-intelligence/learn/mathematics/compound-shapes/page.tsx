@@ -770,14 +770,14 @@ export default function MathematicsCompoundShapesLessonPage() {
                   <h2 className="text-gray-900 dark:text-gray-100 font-bold text-lg mb-2">What&apos;s next?</h2>
                   {independentUltimatelyCorrect ? (
                     <Link
-                      href="/learning-intelligence/practice/mathematics"
+                      href="/learning-intelligence/practice/mathematics?skipTeachingRedirect=1"
                       className="inline-flex items-center gap-1.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-colors"
                     >
                       You&apos;re ready to practise this properly <ArrowRight size={14} />
                     </Link>
                   ) : (
                     <Link
-                      href="/learning-intelligence/practice/mathematics"
+                      href="/learning-intelligence/practice/mathematics?skipTeachingRedirect=1"
                       className="inline-flex items-center gap-1.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-colors"
                     >
                       Practise compound shapes again <ArrowRight size={14} />
