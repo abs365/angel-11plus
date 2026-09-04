@@ -2,6 +2,20 @@
 
 This document is the required educational review pack. It also records the Writing/Mock boundary investigation and the Writing Capacity Contract this increment's Wave 1 was derived from, per the Founder's own explicit instruction not to jump straight to "add some more prompts."
 
+## Founder Decision Record (additive — original review below is preserved unchanged)
+
+**Original decision: APPROVED WITH AMENDMENT** (preserved as the historical decision even after the amendment below is implemented and verified — never rewritten to plain APPROVED).
+
+**Candidate 1 — "A Skill You're Proud Of":** APPROVED, unchanged.
+
+**Candidate 2 — "Something That Didn't Go to Plan":** APPROVED WITH AMENDMENT. Founder's own wording-level review confirmed the concern raised in the prior review round was real: the original instruction did not sufficiently prevent a self-caused mistake from satisfying "didn't go the way you expected," risking educational redundancy with `mock-writing-mistakelearned-01`. **Amendment implemented:** the prompt now requires the change be caused by something "outside your control," the checklist explicitly excludes "because of something you did," and the "what would you do differently"/lesson-learned framing (never actually present, but the risk of drifting there) is foreclosed by focusing the checklist entirely on what changed and how the writer responded. A safeguarding line was added, in the same positive register as `mistakelearned-01`'s own established safeguarding tone.
+
+**Candidate 3 — "Advice for Someone Younger":** APPROVED WITH AMENDMENT. **Amendment implemented:** "ordinary, everyday" added to both the prompt and a new checklist line, bounding the scope of valid experience without weakening the synthesis, audience-awareness, or explanation requirements the DEMANDING classification depends on. No formal-letter convention introduced; the 2+-pieces-of-advice, real-grounding, and why-it-matters requirements are all unchanged.
+
+**Amendment implementation: YES.** **Amendment verification: AWAITING FOUNDER.**
+
+---
+
 ## Writing/Mock Boundary Investigation — no defect found
 
 Two currently Practice-visible rows carry a `mock-writing-` id prefix: `mock-writing-mistakelearned-01` and `mock-writing-newplace-01`. Investigated from actual classification/exposure evidence, not naming alone:

@@ -168,3 +168,33 @@ test("no new Writing scorer or rubric dimension is introduced -- the existing 5-
   assert.ok(!MIGRATION_225.includes("writing_rubric") && !MIGRATION_225.includes("WRITING_DIMENSION"));
   assert.ok(!MIGRATION_226.includes("writing_rubric") && !MIGRATION_226.includes("WRITING_DIMENSION"));
 });
+
+// ─── Founder Amendment (educational review round 2) ────────────────────────
+
+test("notgotoplan-01's amended wording structurally excludes a self-caused mistake -- 'outside your control' and 'not because of something you did' both appear, closing the overlap with mistakelearned-01 the original wording left open", () => {
+  const p = PROMPTS["eng-inc004-writing-notgotoplan-01"];
+  assert.match(p.prompt, /outside your control/i);
+  assert.match(p.checklist.join(" "), /not because of something you did/i);
+});
+
+test("notgotoplan-01 no longer requires a lesson/moral/'what would you do differently' element -- it tests adaptation, not retrospective self-judgement", () => {
+  const p = PROMPTS["eng-inc004-writing-notgotoplan-01"];
+  const fullText = (p.prompt + " " + p.checklist.join(" ")).toLowerCase();
+  assert.ok(!/what you.*would.*do differently|what you learned|lesson/.test(fullText));
+});
+
+test("notgotoplan-01 and advice-01 both carry a safeguarding checklist line in the same positive, non-alarming register mistakelearned-01 already established", () => {
+  const notgotoplan = PROMPTS["eng-inc004-writing-notgotoplan-01"];
+  const advice = PROMPTS["eng-inc004-writing-advice-01"];
+  assert.ok(notgotoplan.checklist.some((c: string) => /comfortable writing about.*private, upsetting or serious/i.test(c)), "notgotoplan-01 must carry an explicit, positively-framed safeguarding line");
+  assert.ok(advice.checklist.some((c: string) => /ordinary, everyday experiences.*private, upsetting or serious/i.test(c)), "advice-01 must carry an explicit, positively-framed safeguarding line");
+});
+
+test("advice-01's demanding requirements are fully preserved after amendment: 2+ pieces of advice, real grounding, explanation of why it matters, no formal-letter conventions", () => {
+  const p = PROMPTS["eng-inc004-writing-advice-01"];
+  const fullText = (p.prompt + " " + p.checklist.join(" "));
+  assert.match(fullText, /at least two separate pieces of advice/i);
+  assert.match(fullText, /something real that actually happened/i);
+  assert.match(fullText, /why each piece of advice matters/i);
+  assert.ok(!/dear |yours sincerely|yours faithfully/i.test(fullText), "no formal-letter convention may be introduced");
+});

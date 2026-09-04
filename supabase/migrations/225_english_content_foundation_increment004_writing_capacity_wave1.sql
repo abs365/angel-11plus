@@ -31,6 +31,12 @@
 -- ['csse'], skill 'QT-WC-01a'), and no ali_mock_form row is created or
 -- referenced anywhere below.
 --
+-- Founder Decision Record (additive): Founder educational review APPROVED
+-- WITH AMENDMENT. Candidate 1 (skillproud-01) APPROVED unchanged.
+-- Candidates 2 (notgotoplan-01) and 3 (advice-01) APPROVED WITH AMENDMENT
+-- -- both amended below, per-row rationale in each row's own comment/
+-- explanation column. Amendment verification: AWAITING FOUNDER.
+--
 -- NOT APPLIED. Founder must apply via Supabase Dashboard > SQL Editor,
 -- after independent Founder educational review of this increment's own
 -- review pack. Migration 226 (pending independent review registration)
@@ -59,17 +65,21 @@ values
  'Listing several skills in general terms (''I''m good at football, drawing and maths'') instead of choosing one specific skill and describing it in real detail.',
  'ROUTINE'),
 
--- === notgotoplan-01 — STANDARD (medium). Distinct from mistakelearned-01
--- (a self-caused ERROR, reflected on afterward): this centres on an
--- unexpected EXTERNAL disruption the writer had to respond to in the
--- moment, requiring narration of an adaptive response, not a mistake
--- confession. Distinct from newplace-01's sustained arrival arc: this is
--- one bounded incident, not an extended developing impression. ===
+-- === notgotoplan-01 — STANDARD (medium). Founder Amendment (Increment 023
+-- educational review): the original wording did not sufficiently prevent
+-- overlap with mistakelearned-01 -- a self-caused mistake could equally
+-- satisfy "didn't go the way you expected." Amended to require an
+-- externally-caused change ("outside your control"), explicitly not the
+-- writer's own doing, and to drop any "what did you learn"/"what would
+-- you do differently" framing -- this tests adaptation in the moment,
+-- never retrospective self-judgement (mistakelearned-01's own territory).
+-- A safeguarding line is added, matching mistakelearned-01's own
+-- established tone, phrased positively per the Founder's own preference. ===
 ('eng-inc004-writing-notgotoplan-01', 'writing', 'QT-WC-01a', array['csse'], 'medium', 'open-response', 1500,
- $json${"id":"eng-inc004-writing-notgotoplan-01","title":"Something That Didn't Go to Plan","prompt":"Write about a time when something you were doing, or trying to do, didn't go the way you expected -- it could be a school project, a game, a family occasion, a journey, or anything else. Explain what happened, what you did when things changed, and how it turned out.","type":"descriptive","difficulty":"year6-exam","timeMinutes":25,"checklist":["Write at least six sentences","Describe a specific, genuine situation, not a vague 'sometimes plans go wrong'","Explain clearly what changed or went differently from what you expected","Describe what you actually did in response, not only how you felt about it","Organise your writing into clear paragraphs","Check paragraphing, spelling and punctuation carefully"]}$json$,
- 'Programme Increment 023, Continuous Writing Sustainable Capacity Wave 1 (Writing Capacity Contract). QT-WC-01a (Reflective/Discursive Response Prompt), competency WC-01, family eng-inc004-writing-wc01a-notgotoplan. Prompt shape: externally-caused-disruption-plus-adaptive-response narrative -- genuinely distinct from mistakelearned-01''s self-caused-error structure and newplace-01''s sustained arrival arc. Moderate planning (one specific disruption + one specific adaptation) and moderate structure (setup -> disruption -> response -> outcome), matching the STANDARD tier of the Writing Capacity Contract.', 3, 'eng-inc004-writing-notgotoplan-01',
+ $json${"id":"eng-inc004-writing-notgotoplan-01","title":"Something That Didn't Go to Plan","prompt":"Write about a time when your plans changed because of something outside your control -- perhaps the weather, a cancellation, something going missing, or an activity turning out differently from what you expected. Explain what changed, what you did when it happened, and what happened afterwards.","type":"descriptive","difficulty":"year6-exam","timeMinutes":25,"checklist":["Write at least six sentences","Describe a specific, genuine situation where something changed unexpectedly, not because of something you did","Explain clearly what changed, and what caused it","Describe what you actually did when it happened, not only how you felt about it","Choose something you feel comfortable writing about -- it doesn't need to be private, upsetting or serious","Organise your writing into clear paragraphs","Check paragraphing, spelling and punctuation carefully"]}$json$,
+ 'Programme Increment 023, Continuous Writing Sustainable Capacity Wave 1 (Writing Capacity Contract). QT-WC-01a (Reflective/Discursive Response Prompt), competency WC-01, family eng-inc004-writing-wc01a-notgotoplan. Prompt shape: externally-caused-disruption-plus-adaptive-response narrative. Founder Amendment (Increment 023 educational review): re-worded to require the cause be explicitly "outside your control" and "not because of something you did", structurally excluding a self-caused mistake as the qualifying event -- genuinely distinct from mistakelearned-01''s self-caused-error structure (not merely intended to be, per the original wording''s own real weakness, found and disclosed) and from newplace-01''s sustained arrival arc. Moderate planning (one specific disruption + one specific adaptation) and moderate structure (setup -> disruption -> response -> outcome), matching the STANDARD tier of the Writing Capacity Contract. No "lesson learned"/"what would you do differently" element is required -- this tests adaptation, never retrospective self-judgement.', 3, 'eng-inc004-writing-notgotoplan-01',
  'eng-inc004-writing-wc01a-notgotoplan', 'angel_original', 'authentic_assessment_candidate', 1, true,
- 'Describing only what went wrong and how it felt, without ever explaining what the writer actually did in response -- leaving the adaptive half of the task unaddressed.',
+ 'Choosing a self-caused mistake as the "thing that changed" rather than a genuinely external, unchosen disruption -- collapsing this task back into a mistake-and-lesson narrative rather than an adaptation narrative.',
  'NEAR_TRANSFER'),
 
 -- === advice-01 — DEMANDING (hard). A third, structurally distinct route
@@ -78,10 +88,15 @@ values
 -- requires synthesis across MULTIPLE past experiences into general,
 -- transferable insight, with genuine audience-awareness (writing FOR an
 -- imagined younger reader) -- the highest real planning/structural
--- demand of any Writing prompt in the pool. ===
+-- demand of any Writing prompt in the pool. Founder Amendment (Increment
+-- 023 educational review): "ordinary, everyday" added to the prompt
+-- itself, plus a safeguarding checklist line matching mistakelearned-01's
+-- own established tone -- the demanding synthesis/audience/explanation
+-- requirements are all preserved unchanged; only the scope of what
+-- counts as valid experience is bounded. ===
 ('eng-inc004-writing-advice-01', 'writing', 'QT-WC-01a', array['csse'], 'hard', 'open-response', 1500,
- $json${"id":"eng-inc004-writing-advice-01","title":"Advice for Someone Younger","prompt":"Imagine talking to someone a few years younger than you who is about to join your school or your class. Write the advice you would genuinely give them, based on things you have actually experienced. Explain why each piece of advice matters, using something real that happened to you.","type":"descriptive","difficulty":"year6-exam","timeMinutes":25,"checklist":["Write at least six sentences","Give at least two separate pieces of advice, not only one","For each piece of advice, refer to something real that actually happened to you, not a generic saying","Explain clearly why each piece of advice matters, not only what it is","Write in a genuine, encouraging voice, as if speaking to a real younger person, not as a formal list with no explanation","Organise your writing into clear paragraphs","Check your spelling and punctuation before you finish"]}$json$,
- 'Programme Increment 023, Continuous Writing Sustainable Capacity Wave 1 (Writing Capacity Contract). QT-WC-01a (Reflective/Discursive Response Prompt), competency WC-01, family eng-inc004-writing-wc01a-advice. Prompt shape: synthesis-across-multiple-experiences-for-an-implied-audience -- genuinely distinct from every existing prompt, all of which centre on a SINGLE topic, event or comparison; this requires selecting and connecting several past experiences into general, transferable insight while maintaining audience-awareness, matching the DEMANDING tier alongside imaginedplace-01 and pocketmoney-01 via a third, structurally distinct route to that same challenge level.', 3, 'eng-inc004-writing-advice-01',
+ $json${"id":"eng-inc004-writing-advice-01","title":"Advice for Someone Younger","prompt":"Imagine talking to someone a few years younger than you who is about to join your school or your class. Write the advice you would genuinely give them, based on ordinary, everyday things you have actually experienced. Explain why each piece of advice matters, using something real that happened to you.","type":"descriptive","difficulty":"year6-exam","timeMinutes":25,"checklist":["Write at least six sentences","Give at least two separate pieces of advice, not only one","For each piece of advice, refer to something real that actually happened to you, not a generic saying","Explain clearly why each piece of advice matters, not only what it is","Choose ordinary, everyday experiences -- you don't need to write about anything private, upsetting or serious","Write in a genuine, encouraging voice, as if speaking to a real younger person, not as a formal list with no explanation","Organise your writing into clear paragraphs","Check your spelling and punctuation before you finish"]}$json$,
+ 'Programme Increment 023, Continuous Writing Sustainable Capacity Wave 1 (Writing Capacity Contract). QT-WC-01a (Reflective/Discursive Response Prompt), competency WC-01, family eng-inc004-writing-wc01a-advice. Prompt shape: synthesis-across-multiple-experiences-for-an-implied-audience -- genuinely distinct from every existing prompt, all of which centre on a SINGLE topic, event or comparison; this requires selecting and connecting several past experiences into general, transferable insight while maintaining audience-awareness, matching the DEMANDING tier alongside imaginedplace-01 and pocketmoney-01 via a third, structurally distinct route to that same challenge level. Founder Amendment (Increment 023 educational review): "ordinary, everyday" bounds the scope of valid experience without reducing the synthesis, audience-awareness, or explanation demand this tier depends on -- the requirement for 2+ pieces of advice, real grounding, and stated reasons ("why it matters") is unchanged, and no formal-letter convention is introduced.', 3, 'eng-inc004-writing-advice-01',
  'eng-inc004-writing-wc01a-advice', 'angel_original', 'authentic_assessment_candidate', 1, true,
  'Giving generic, saying-like advice (''always try your best'', ''be kind to others'') with no real personal experience behind it, rather than grounding each piece of advice in something specific that actually happened.',
  'FAR_TRANSFER');
