@@ -2,6 +2,28 @@
 
 Behavioural/educational review only. No new question-bank content was authored by this increment (zero new rows, zero new migration), so no `ali_family_review` record is created — nothing here requires that workflow. This document exists so you can judge the lesson itself, in plain English, before it goes live.
 
+## Founder Decision Record (additive — original review below is preserved unchanged)
+
+**Original decision: APPROVED WITH AMENDMENT.** Core RC-01 lesson: **FOUNDER APPROVED** — the introduction, EXPLAIN, five-step method, "The Football Boots" MODEL, "The New Trainers" GUIDED, "The Baker's Apprentice" INDEPENDENT, "The Storm at the Harbour" remediation/fresh retry, every existing accepted-answer set, the existing feedback ladder, the reflection, and the Practice link are all unchanged from the reviewed version below.
+
+**Amendment reason:** a strong learner could complete the approved lesson without being meaningfully stretched, since every real content item used sits at the `easy` difficulty tier.
+
+**Required amendment:** one optional stretch check, offered only after secure (first-attempt) independent success, using one further already-reviewed, `practice_eligible` RC-01 row.
+
+**Stretch item selected on evidence, not the review's own named suggestions:** "The Understudy" (id `w2-understudy-01`, `hard` tier) — chosen over Attic Door, Piano Recital and Kite Maker because it is the only `hard`-tier RC-01 row with a genuine, hand-checked distractor (Oliver's own extensively-narrated six weeks of preparation, which does not answer "why did he suddenly need to perform" the way Daniel losing his voice does) paired with an answer that stays clearly text-supported and never drifts into inference. Attic Door's answer is locatable via an exact phrase ("eleven days") already present in the question, with no competing false lead; Piano Recital's answer is a two-word quotation with no real distractor either.
+
+**Eligibility (the smallest existing state, read conservatively):** `secureIndependentSuccess = independentAttempt1?.correct === true` — correct on the very first independent attempt, with neither a second attempt nor the fresh-retry remediation path ever needed. A learner who only succeeded via attempt 2 or the fresh retry is not offered the stretch and proceeds straight to ordinary Practice, exactly as before this amendment.
+
+**Child-facing wording:** "Fancy a trickier one?" / "You found that one straight away. Want a trickier one? This passage uses longer, more grown-up writing. You don't have to try it to finish the lesson." / button: "Yes, try one."
+
+**Stretch experience:** the real passage and question, one plain answer box, one submit — no hint system, no reveal ladder (this is a single transfer-evidence attempt, not another teaching cycle). Correct: "Correct. You used the method on a trickier passage." (never "mastered"). Incorrect: a hand-checked explanation naming the real distractor, or an honest generic nudge — never the bare answer, never a forced retry, and the learner can still continue into Practice either way.
+
+**Evidence recording:** reuses the lesson's own existing `recordIndependentAttempt()` path unchanged — the same real outcome-recording every other attempt in this lesson already uses. One stretch answer is additional evidence, never given outsized educational meaning (no mastery claim, no separate evidence store).
+
+**Amendment implementation: YES.** **Amendment verification: AWAITING FOUNDER.**
+
+---
+
 ## SELECTED SKILL
 
 **RC-01 — Literal Retrieval from Narrative Text** (Assessment Brain V1's own competency catalogue; the same canonical 13-competency model Mathematics' MR-01/03/04 lessons already use). Learner-facing title: **"Finding the Answer in the Text."**

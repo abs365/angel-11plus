@@ -186,3 +186,72 @@ test("a Mathematics-area recommendation still resolves a Mathematics lesson rout
   assert.equal(decision.recommendedCompetencyId, "MR-03");
   assert.equal(decision.recommendedActivityType, "teaching_lesson");
 });
+
+// ─── Founder Amendment: optional stretch check ─────────────────────────────
+// Structural proofs against the real page source, matching this file's own
+// established convention (no @testing-library/React-rendering
+// infrastructure exists here).
+
+test("1/4. the stretch section is never gated behind, and never gates, the REFLECT/NEXT STEP section -- a learner can always reach Practice without touching the stretch", () => {
+  const stretchIndex = READING_LESSON.indexOf("Fancy a trickier one?");
+  const reflectCommentIndex = READING_LESSON.indexOf("REFLECT / NEXT STEP");
+  assert.ok(stretchIndex > -1 && reflectCommentIndex > -1 && stretchIndex < reflectCommentIndex, "the stretch section must render as its own independent block, before REFLECT/NEXT STEP in source order");
+  // REFLECT/NEXT STEP's own gate (the line immediately after its comment)
+  // must remain exactly `{independentResolved && (` -- unconditional on
+  // the stretch ever having been offered, started or attempted.
+  const afterComment = READING_LESSON.slice(reflectCommentIndex, reflectCommentIndex + 120);
+  assert.match(afterComment, /\{independentResolved && \(/);
+  assert.ok(!/stretchStarted|stretchAttempt|stretchItem/.test(afterComment));
+});
+
+test("2. the stretch section is offered only after secureIndependentSuccess -- correct on the first independent attempt", () => {
+  assert.match(READING_LESSON, /const secureIndependentSuccess = independentAttempt1\?\.correct === true;/);
+  assert.match(READING_LESSON, /\{independentResolved && secureIndependentSuccess && stretchItem && stretchPrompt && \(/);
+});
+
+test("3. a learner who needed independent attempt 2 or the fresh retry is NOT offered the stretch -- secureIndependentSuccess reads independentAttempt1 only, never attempt2 or the fresh-retry outcome", () => {
+  const line = READING_LESSON.match(/const secureIndependentSuccess = .*/)?.[0] ?? "";
+  assert.ok(!/independentAttempt2|independentFreshAttempt/.test(line), "the eligibility condition must not treat a supported/remediated success as secure");
+});
+
+test("4. the child can finish the lesson and reach Practice without starting the stretch -- starting it requires an explicit button click, never automatic", () => {
+  assert.match(READING_LESSON, /onClick=\{\(\) => setStretchStarted\(true\)\}/);
+  assert.ok(!/setStretchStarted\(true\)/.test(READING_LESSON.replace(/onClick=\{\(\) => setStretchStarted\(true\)\}/, "")), "stretchStarted must only ever be set true from the learner's own button click");
+});
+
+test("5/6/7/8. the selected stretch item is a real, distinct, Practice-eligible RC-01 row -- never Mock/SEALED, never one of the four already-used passages", () => {
+  assert.match(READING_LESSON, /english\.find\(\(q\) => q\.id === "w2-understudy-01"\)/, "the stretch item must be resolved through the same real fetchQuestionBank() pool as every other real content slot");
+  const usedIds = ["w3-rc01-newtrainers-01", "w3-rc01-bakersapprentice-01", "w3-rc01-stormharbour-01", "w2-understudy-01"];
+  assert.equal(new Set(usedIds).size, usedIds.length, "the stretch id must be distinct from every other real content id already used in this lesson");
+  const stretchSection = READING_LESSON.slice(READING_LESSON.indexOf("Fancy a trickier one?"), READING_LESSON.indexOf("REFLECT / NEXT STEP"));
+  assert.ok(!/mock_eligible|SEALED|ali_mock_exposed|ali_mock_form/i.test(stretchSection));
+});
+
+test("9. a correct stretch answer never claims mastery -- only that the method worked on a trickier passage", () => {
+  const stretchSection = READING_LESSON.slice(READING_LESSON.indexOf("Fancy a trickier one?"), READING_LESSON.indexOf("REFLECT / NEXT STEP"));
+  assert.ok(!/master(ed|y)/i.test(stretchSection), "the stretch section must never use the word mastered/mastery");
+  assert.match(stretchSection, /You used the method\s*\n?\s*on a trickier passage/);
+});
+
+test("10. an incorrect stretch answer gives concise, useful feedback and never forces a retry loop -- exactly one attempt, no ladder, no re-enabled input after the first submission", () => {
+  const stretchSection = READING_LESSON.slice(READING_LESSON.indexOf("Fancy a trickier one?"), READING_LESSON.indexOf("REFLECT / NEXT STEP"));
+  // Only one submit path exists (gated on !stretchAttempt), never a second attempt/ladder stage type for the stretch.
+  assert.equal((stretchSection.match(/onClick=\{\(\) => void submitStretch\(\)\}/g) ?? []).length, 1);
+  assert.ok(!/StretchLadderStage|stretch.*attempt-2|stretch.*attempt-3/i.test(stretchSection));
+});
+
+test("11. lesson -> Practice continuation remains safe and unchanged by this amendment", () => {
+  const practiceLinks = [...READING_LESSON.matchAll(/href="\/learning-intelligence\/practice\/reading-comprehension([^"]*)"/g)];
+  assert.ok(practiceLinks.length > 0);
+  for (const link of practiceLinks) assert.match(link[1], /skipTeachingRedirect=1/);
+});
+
+test("12. cross-subject routing protection remains intact after this amendment", () => {
+  assert.match(PRACTICE_PAGE, /COMPONENT_SUBJECT\[COMPETENCIES\[decision\.recommendedCompetencyId\]\.component\]/);
+  assert.match(PRACTICE_PAGE, /recommendedSubject === area!\.subject/);
+});
+
+test("the stretch attempt reuses the existing recordIndependentAttempt() evidence path -- no second evidence store invented for this amendment", () => {
+  const stretchFnSection = READING_LESSON.slice(READING_LESSON.indexOf("async function submitStretch"), READING_LESSON.indexOf("const progression ="));
+  assert.match(stretchFnSection, /await recordIndependentAttempt\(stretchItem, isCorrect, true\);/);
+});

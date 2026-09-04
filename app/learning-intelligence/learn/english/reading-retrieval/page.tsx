@@ -62,6 +62,31 @@ import type { EnglishComprehensionPrompt } from "@/types/ali/questionBank";
  * No architecture terms (RC-01, QT-RC-01, EMC-3, Assessment Brain) are
  * shown to the learner anywhere below -- only in code comments, for
  * internal traceability, matching the Mathematics lessons' own convention.
+ *
+ * Founder Decision Record (additive -- original review above is preserved
+ * unchanged). Original decision: APPROVED WITH AMENDMENT. Core lesson:
+ * FOUNDER APPROVED (EXPLAIN/method/MODEL/GUIDED/INDEPENDENT/remediation/
+ * reflection/Practice link all unchanged from the reviewed version).
+ * Amendment reason: a strong learner who succeeds through the lesson
+ * without needing the remediation path is never meaningfully stretched --
+ * every real content item used is `easy` tier. Amendment: one OPTIONAL
+ * stretch check, offered only after secure (first-attempt) independent
+ * success, using one further real, already-reviewed, practice_eligible
+ * RC-01 row -- "The Understudy" (id `w2-understudy-01`, `hard` tier),
+ * selected over the review's own named candidates (Attic Door, Piano
+ * Recital, Kite Maker) on evidence: Piano Recital's answer is a two-word
+ * quotation with no real distractor; Attic Door's answer is easy to
+ * locate via an exact phrase match ("eleven days") already present in the
+ * question with no competing false lead; The Understudy uniquely pairs a
+ * clearly text-supported answer with a genuine, hand-checked distractor
+ * (Oliver's own extensively-narrated six weeks of preparation, which does
+ * not answer "why did he suddenly need to perform" the way Daniel losing
+ * his voice does) -- real retrieval demand under harder prose, never
+ * inference (the cause is stated directly, not implied). A single
+ * ungated attempt only, no teaching ladder, reusing the exact same
+ * evidence-recording path as every other real attempt in this lesson.
+ * Amendment implementation: YES. Amendment verification: AWAITING
+ * FOUNDER.
  */
 
 const COMPETENCY_ID = "RC-01" as const;
@@ -119,6 +144,22 @@ const STORMHARBOUR_WRONG_PATTERNS: KnownWrongPattern[] = [
   },
 ];
 
+/**
+ * Founder Amendment (optional stretch check, Increment 022) -- the one
+ * real, hand-checked distractor in "The Understudy": Oliver's own six
+ * weeks of nervous preparation is mentioned repeatedly and at length,
+ * making it the plausible wrong answer to reach for instead of the actual
+ * triggering event (Daniel losing his voice), stated once, earlier and
+ * more briefly than the surrounding narrative about Oliver himself.
+ */
+const UNDERSTUDY_WRONG_PATTERNS: KnownWrongPattern[] = [
+  {
+    matches: (a) => /(six weeks|practi[cs]|rehears|nervous|prepar|knew the part|learn(ed|t)? the (lines|part))/i.test(a),
+    explanation:
+      "That's how Oliver had been getting ready, not the reason he suddenly had to go on. Look for the sentence naming what happened to Daniel.",
+  },
+];
+
 function classifyWrongAnswer(userAnswer: string, patterns: KnownWrongPattern[]): string | null {
   return patterns.find((p) => p.matches(userAnswer))?.explanation ?? null;
 }
@@ -159,6 +200,16 @@ export default function EnglishReadingRetrievalLessonPage() {
   const [independentFreshAnswer, setIndependentFreshAnswer] = useState("");
   const [independentFreshAttempt, setIndependentFreshAttempt] = useState<{ answer: string; correct: boolean } | null>(null);
 
+  // Founder Amendment -- optional stretch check. `stretchStarted` is the
+  // learner's own explicit choice to attempt it (never auto-started);
+  // `stretchAttempt` is the one, ungated attempt (no ladder). `stretchItem`
+  // is nullable and never blocks the core lesson if this optional row is
+  // ever unavailable -- see loadLesson()'s own comment below.
+  const [stretchItem, setStretchItem] = useState<BankQuestion | null>(null);
+  const [stretchStarted, setStretchStarted] = useState(false);
+  const [stretchAnswer, setStretchAnswer] = useState("");
+  const [stretchAttempt, setStretchAttempt] = useState<{ answer: string; correct: boolean } | null>(null);
+
   const profileIdRef = useRef<string>("");
   const supabaseRef = useRef<ReturnType<typeof getSupabaseClient>>(null);
   const sessionIdRef = useRef<string>("");
@@ -182,6 +233,11 @@ export default function EnglishReadingRetrievalLessonPage() {
       const guided = english.find((q) => q.id === "w3-rc01-newtrainers-01") ?? null;
       const independent = english.find((q) => q.id === "w3-rc01-bakersapprentice-01") ?? null;
       const independentRetry = english.find((q) => q.id === "w3-rc01-stormharbour-01") ?? null;
+      // Founder Amendment -- optional stretch, never a required part of
+      // the lesson. If this one row is ever unavailable, the stretch
+      // offer simply never renders (see the render logic below) rather
+      // than blocking or erroring the core, already-approved lesson.
+      const stretch = english.find((q) => q.id === "w2-understudy-01") ?? null;
 
       if (!guided || !independent) {
         throw new Error(
@@ -192,6 +248,7 @@ export default function EnglishReadingRetrievalLessonPage() {
       setGuidedItem(guided);
       setIndependentItem(independent);
       setIndependentRetryItem(independentRetry);
+      setStretchItem(stretch);
 
       const snapshot = await getEducationalIntelligence(supabase, profileId, COMPETENCY_ID);
       setEducationalState(snapshot.educationalState);
@@ -354,14 +411,38 @@ export default function EnglishReadingRetrievalLessonPage() {
     setIndependentFreshAnswer("");
   }
 
+  /**
+   * Founder Amendment -- a single, ungated attempt (no hint/reveal ladder,
+   * per explicit instruction: "the purpose is transfer evidence," not
+   * another teaching cycle). Reuses recordIndependentAttempt() unchanged --
+   * the same real outcome-recording path every other attempt in this
+   * lesson already uses, never a second evidence store.
+   */
+  async function submitStretch() {
+    if (!stretchItem) return;
+    const isCorrect = checkRetrieval(stretchAnswer, stretchItem);
+    setStretchAttempt({ answer: stretchAnswer, correct: isCorrect });
+    await recordIndependentAttempt(stretchItem, isCorrect, true);
+    setStretchAnswer("");
+  }
+
   const progression = progressionLabel(checkStage, educationalState);
   const independentResolved = independentLadderStage === "resolved";
   const independentUltimatelyCorrect =
     independentAttempt1?.correct || independentAttempt2?.correct || independentFreshAttempt?.correct || false;
+  // Founder Amendment -- the smallest existing state that means "secure
+  // success," conservatively read: correct on the FIRST independent
+  // attempt, with neither a second attempt nor the fresh-retry
+  // remediation path ever needed. A learner who only succeeded via
+  // attempt 2 or the fresh retry is, by this same conservative reading,
+  // not offered the stretch -- they proceed straight to ordinary
+  // Practice, exactly as before this amendment.
+  const secureIndependentSuccess = independentAttempt1?.correct === true;
 
   const guidedPrompt = guidedItem?.prompt as EnglishComprehensionPrompt | undefined;
   const independentPrompt = independentItem?.prompt as EnglishComprehensionPrompt | undefined;
   const independentRetryPrompt = independentRetryItem?.prompt as EnglishComprehensionPrompt | undefined;
+  const stretchPrompt = stretchItem?.prompt as EnglishComprehensionPrompt | undefined;
 
   return (
     <PageLayout breadcrumbs={[{ label: "Learn", href: "/learning-intelligence/learn" }, { label: "Finding the Answer in the Text" }]}>
@@ -807,6 +888,80 @@ export default function EnglishReadingRetrievalLessonPage() {
                     </p>
                   )}
                 </InfoCard>
+              </section>
+            )}
+
+            {/* STRETCH -- Founder Amendment. Optional, never required to
+                finish the lesson: this section renders alongside REFLECT/
+                NEXT STEP below, never gating it, so a learner can always
+                continue straight into Practice without ever touching this. */}
+            {independentResolved && secureIndependentSuccess && stretchItem && stretchPrompt && (
+              <section>
+                <h2 className="text-gray-900 dark:text-gray-100 font-bold text-lg mb-2">Fancy a trickier one?</h2>
+                {!stretchStarted && (
+                  <InfoCard>
+                    <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed">
+                      You found that one straight away. Want a trickier one? This passage uses longer, more
+                      grown-up writing. You don&apos;t have to try it to finish the lesson.
+                    </p>
+                    <button
+                      onClick={() => setStretchStarted(true)}
+                      className="mt-3 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-colors"
+                    >
+                      Yes, try one
+                    </button>
+                  </InfoCard>
+                )}
+                {stretchStarted && (
+                  <InfoCard>
+                    <p className="text-sm font-bold text-gray-900 dark:text-gray-100">{stretchPrompt.passageTitle}</p>
+                    <p className="text-xs text-gray-600 dark:text-gray-400 mt-2 whitespace-pre-line leading-relaxed max-h-56 overflow-y-auto">
+                      {stretchPrompt.passageText}
+                    </p>
+                    <p className="text-sm font-semibold text-gray-800 dark:text-gray-200 mt-3">{stretchPrompt.question}</p>
+
+                    {!stretchAttempt && (
+                      <>
+                        <input
+                          value={stretchAnswer}
+                          onChange={(e) => setStretchAnswer(e.target.value)}
+                          className="w-full mt-3 text-sm rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-3"
+                          placeholder="Your answer…"
+                          aria-label="Your answer"
+                        />
+                        <button
+                          onClick={() => void submitStretch()}
+                          disabled={!stretchAnswer.trim()}
+                          className="mt-3 bg-blue-600 hover:bg-blue-700 disabled:opacity-40 text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-colors"
+                        >
+                          Submit
+                        </button>
+                      </>
+                    )}
+
+                    {stretchAttempt && (
+                      <div className="mt-3 pt-3 border-t border-gray-100 dark:border-gray-800">
+                        {stretchAttempt.correct ? (
+                          <p className="inline-flex items-center gap-1.5 text-sm font-semibold">
+                            <CheckCircle2 size={16} className="text-emerald-500" /> Correct. You used the method
+                            on a trickier passage.
+                          </p>
+                        ) : (
+                          <>
+                            <p className="inline-flex items-center gap-1.5 text-sm font-semibold text-amber-600 dark:text-amber-500">
+                              <XCircle size={16} /> Not quite this time.
+                            </p>
+                            <p className="text-xs text-gray-600 dark:text-gray-400 mt-1.5 flex items-start gap-1.5">
+                              <Lightbulb size={13} className="mt-0.5 shrink-0 text-sky-600" />
+                              {classifyWrongAnswer(stretchAttempt.answer, UNDERSTUDY_WRONG_PATTERNS) ??
+                                "Look again for the exact sentence that answers this specifically -- that's still real practice either way."}
+                            </p>
+                          </>
+                        )}
+                      </div>
+                    )}
+                  </InfoCard>
+                )}
               </section>
             )}
 
