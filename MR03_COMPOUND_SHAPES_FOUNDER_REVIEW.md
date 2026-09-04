@@ -1,6 +1,11 @@
 # MR-03 Compound Shapes — Founder Content Review
 
-Programme Increment 020, Wave 1. Family: `mr03-compound-area-perimeter` (8 rows, migration 222, NOT applied). Registered for review by migration 223.
+Programme Increment 020, Wave 1. Family: `mr03-compound-area-perimeter` (8 rows). Registered for review by migration 223.
+
+**Migration 222 = APPLIED AND LIVE VERIFIED — 2026-09-04** (Founder-executed; live production state independently verified via read-only SQL query, all 8 rows confirmed present/correct/provisional/not-mock).
+**Migration 223 = APPLIED AND LIVE VERIFIED — 2026-09-04** (Founder-executed; exactly one `pending_independent_review` registration confirmed live, reviewer `UNASSIGNED`, no auto-approval).
+
+Additive note only — no prior history above rewritten.
 
 ---
 
