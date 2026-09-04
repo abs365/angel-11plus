@@ -12,6 +12,8 @@ import { getRecommendations } from "./educationalIntelligenceService";
 import { QUESTION_TYPE_PRIMARY_COMPETENCY, getQuestionTypesForCompetency } from "./assessmentBrainMap";
 import { getPracticeArea, type PracticeAreaId } from "./practiceContent";
 import { classifyRetrievalStage, computeFamilyExposure, groupingKeyOf, passageGroupingKeyOf, type FamilyExposure } from "@/lib/ali/exposureIntelligence";
+import { getMathsTeachingContent } from "./mathsTeachingContent";
+import type { ActivityType, PreparationDecision } from "./preparationDecision";
 
 /**
  * Personalised Session Generation (Sprint 3, ANGEL-CSSE-002A). Single entry
@@ -60,6 +62,85 @@ import { classifyRetrievalStage, computeFamilyExposure, groupingKeyOf, passageGr
  *      and `familyFocus.applied` reports `false` honestly rather than
  *      claiming an effect that couldn't happen.
  */
+
+/**
+ * Programme Increment 021 — Preparation Horizon Operationalisation.
+ *
+ * The optional context a real caller (today: the Practice page) supplies
+ * once it has already computed the canonical decision contract
+ * (`computePreparationDecision()`, lib/learningEngine/preparationDecision.ts,
+ * Increment 019). Deliberately a plain, narrow read of that decision's own
+ * fields — this module invents no new educational judgement of its own,
+ * per this whole programme's "one canonical decision contract" rule
+ * (preparationDecision.ts's own docstring). Optional and additive: every
+ * existing caller that omits it (Mock adaptive pages, the Writing page,
+ * the family-choice pilot route) behaves exactly as before, byte-for-byte.
+ */
+export interface PreparationSessionContext {
+  recommendedDifficultyLean: PreparationDecision["recommendedDifficultyLean"];
+  recommendedActivityType: ActivityType;
+}
+
+/**
+ * Founder's own explicit boundary, Increment 021: "School year is
+ * contextual evidence, NOT an independent difficulty command," and
+ * "final_readiness != always hard, foundation != always easy." This table
+ * is therefore keyed ONLY by `recommendedDifficultyLean` — itself already
+ * derived from real evidence (stage), never keyed by school year or stage
+ * directly, and NEVER a hard exclusion: every multiplier stays > 0, so a
+ * weighted-random sample (lib/ali/selection.ts's own step 5) can still
+ * draw any difficulty tier — "preference, not a lock," exactly as
+ * instructed. Provisional, disclosed calibration (same discipline as this
+ * file's own `DIFFICULTY_ESCALATION_MULTIPLIER`, lib/ali/selection.ts) —
+ * modest boosts/dampens, not an extreme skew, preserving real variation
+ * and unseen-transfer exposure even for a strongly-leaning learner.
+ */
+const DIFFICULTY_LEAN_MULTIPLIER: Record<
+  NonNullable<PreparationDecision["recommendedDifficultyLean"]>,
+  Record<BankQuestion["contentDifficulty"], number>
+> = {
+  favour_guided_and_easier: { easy: 1.6, medium: 1.2, hard: 0.6, challenge: 0.4 },
+  balanced: { easy: 1, medium: 1, hard: 1, challenge: 1 },
+  favour_independent_and_harder: { easy: 0.6, medium: 0.9, hard: 1.4, challenge: 1.6 },
+};
+
+/** A modest, disclosed boost for FAR_TRANSFER-tagged material specifically when the decision contract's own recommendation is an unseen-transfer check — never exclusive (other transfer classes remain fully selectable), matching the same "preference, not lock" discipline. */
+const UNSEEN_TRANSFER_BOOST = 1.5;
+/** Symmetric, modest boost toward a family this learner could receive real guided support for (a real `mathsTeachingContent.ts` entry exists), when the decision contract recommends teaching/guided-shaped activity — never exclusive; a family without teaching content stays fully selectable, it simply isn't preferentially boosted. */
+const GUIDED_FAMILY_BOOST = 1.4;
+
+/**
+ * Builds the one real weight-bias function `selectQuestions()`'s own new
+ * `weightBias` parameter accepts, from a real, already-computed
+ * `PreparationSessionContext` — never a second selection algorithm, a
+ * pure read-side function over the SAME candidate question this engine
+ * would have considered anyway. `undefined` context (every existing
+ * caller) resolves to `undefined` here too, and callers pass `?? (() =>
+ * 1)` onward — see `generatePersonalisedSession()`'s own call site.
+ */
+export function buildPreparationWeightBias(
+  context: PreparationSessionContext | undefined
+): (question: BankQuestion) => number {
+  if (!context) return () => 1;
+
+  const leanTable = context.recommendedDifficultyLean ? DIFFICULTY_LEAN_MULTIPLIER[context.recommendedDifficultyLean] : null;
+
+  return (question: BankQuestion): number => {
+    let bias = 1;
+    if (leanTable) bias *= leanTable[question.contentDifficulty];
+    if (context.recommendedActivityType === "unseen_transfer_check" && question.transferClass === "FAR_TRANSFER") {
+      bias *= UNSEEN_TRANSFER_BOOST;
+    }
+    if (
+      (context.recommendedActivityType === "teaching_lesson" || context.recommendedActivityType === "guided_practice") &&
+      question.familyId &&
+      getMathsTeachingContent(question.familyId)
+    ) {
+      bias *= GUIDED_FAMILY_BOOST;
+    }
+    return bias;
+  };
+}
 
 /** Capped at 1 review-due competency per session — a disclosed judgement
  * call, not a limitation of the underlying signal — so a genuine review
@@ -295,7 +376,9 @@ export async function generatePersonalisedSession(
   profileId: string,
   areaId: PracticeAreaId,
   now: Date = new Date(),
-  familyFocusCompetencyId?: CompetencyId
+  familyFocusCompetencyId?: CompetencyId,
+  /** Programme Increment 021 — optional, additive (see `PreparationSessionContext`'s own docstring above). Omitted by every pre-021 caller, preserving their exact byte-for-byte behaviour. */
+  preparationContext?: PreparationSessionContext
 ): Promise<PersonalisedSession> {
   const area = getPracticeArea(areaId);
   if (!area) {
@@ -384,7 +467,8 @@ export async function generatePersonalisedSession(
 
   const remainingSlots = Math.max(0, area.sessionSize - reviewActivities.length);
   const candidatePool = tagged.filter((q) => !reservedIds.has(q.id));
-  const selection = selectQuestions(candidatePool, history, currentSequence, weakSkills, remainingSlots);
+  const preparationWeightBias = buildPreparationWeightBias(preparationContext);
+  const selection = selectQuestions(candidatePool, history, currentSequence, weakSkills, remainingSlots, Math.random, preparationWeightBias);
   const familyDiversifiedQuestions = reduceFamilyClustering(selection.questions, candidatePool);
   // Passage-level diversification (Educational Increment 007S, Part 4) —
   // a second, independent pass over the SAME reduceFamilyClustering()

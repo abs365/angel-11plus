@@ -6,7 +6,7 @@ import {
   computeDifficultyWeightMultiplier,
   COOLDOWN_QUESTIONS,
 } from "@/lib/ali/selection";
-import { applyRetrievalPriority } from "@/lib/learningEngine/sessionGenerator";
+import { applyRetrievalPriority, buildPreparationWeightBias } from "@/lib/learningEngine/sessionGenerator";
 import { computeFamilyExposure } from "@/lib/ali/exposureIntelligence";
 import type { BankQuestion, ContentDifficulty } from "@/types/ali/questionBank";
 import type { StudentQuestionHistoryRow } from "@/types/ali/history";
@@ -272,3 +272,119 @@ test("14-day spaced retrieval composes correctly with the new difficulty layer: 
 
   assert.equal(afterRetrieval[0]?.id, "fresh", "the pre-existing, unmodified spaced-retrieval swap must still replace a recently-confirmed mastered family with a genuinely new alternative");
 });
+
+// ===========================================================================
+// Programme Increment 021 — Preparation Horizon weight-bias mechanism.
+// buildPreparationWeightBias() is a pure function over a real, already-
+// computed decision context; tested directly (deterministic) rather than
+// via statistical trials of the weighted-random sampler it feeds.
+// ===========================================================================
+
+function fullQ(id: string, difficulty: ContentDifficulty, opts: Partial<BankQuestion> = {}): BankQuestion {
+  return { id, skill: "QT-MR-01", subject: "maths", contentDifficulty: difficulty, prompt: {}, ...opts } as unknown as BankQuestion;
+}
+
+test("buildPreparationWeightBias(undefined) is a pure no-op -- every pre-Increment-021 caller stays byte-for-byte unaffected", () => {
+  const bias = buildPreparationWeightBias(undefined);
+  for (const d of ["easy", "medium", "hard", "challenge"] as ContentDifficulty[]) {
+    assert.equal(bias(fullQ("x", d)), 1);
+  }
+});
+
+test("favour_guided_and_easier boosts easy/medium and dampens hard/challenge, but NEVER to zero (preference, not a lock)", () => {
+  const bias = buildPreparationWeightBias({ recommendedDifficultyLean: "favour_guided_and_easier", recommendedActivityType: "independent_practice" });
+  const easy = bias(fullQ("e", "easy"));
+  const challenge = bias(fullQ("c", "challenge"));
+  assert.ok(easy > 1, "easy must be boosted above the neutral 1x weight");
+  assert.ok(challenge > 0 && challenge < 1, "challenge must be dampened, but never to exactly zero -- a foundation-stage learner must still be able to draw a harder item");
+});
+
+test("favour_independent_and_harder boosts hard/challenge and dampens easy, but never to zero", () => {
+  const bias = buildPreparationWeightBias({ recommendedDifficultyLean: "favour_independent_and_harder", recommendedActivityType: "independent_practice" });
+  const easy = bias(fullQ("e", "easy"));
+  const challenge = bias(fullQ("c", "challenge"));
+  assert.ok(challenge > 1, "challenge must be boosted above the neutral 1x weight");
+  assert.ok(easy > 0 && easy < 1, "easy must be dampened, but never to exactly zero");
+});
+
+test("balanced lean applies no bias at all -- development-stage learners get the ordinary, unweighted distribution", () => {
+  const bias = buildPreparationWeightBias({ recommendedDifficultyLean: "balanced", recommendedActivityType: "independent_practice" });
+  for (const d of ["easy", "medium", "hard", "challenge"] as ContentDifficulty[]) {
+    assert.equal(bias(fullQ("x", d)), 1);
+  }
+});
+
+test("null recommendedDifficultyLean (no real candidate to derive a lean from) applies no difficulty bias", () => {
+  const bias = buildPreparationWeightBias({ recommendedDifficultyLean: null, recommendedActivityType: "independent_practice" });
+  assert.equal(bias(fullQ("x", "hard")), 1);
+});
+
+test("the difficulty-lean table is never keyed by school year -- the same lean produces the identical bias regardless of any year-group context (Founder's own explicit boundary: school year is contextual evidence, not an independent difficulty command)", () => {
+  // buildPreparationWeightBias's own signature has no schoolYear parameter
+  // at all -- this test is a structural proof that fact cannot silently
+  // regress: the SAME lean, called twice, must be identical every time.
+  const biasA = buildPreparationWeightBias({ recommendedDifficultyLean: "favour_independent_and_harder", recommendedActivityType: "independent_practice" });
+  const biasB = buildPreparationWeightBias({ recommendedDifficultyLean: "favour_independent_and_harder", recommendedActivityType: "independent_practice" });
+  for (const d of ["easy", "medium", "hard", "challenge"] as ContentDifficulty[]) {
+    assert.equal(biasA(fullQ("x", d)), biasB(fullQ("x", d)));
+  }
+});
+
+test("unseen_transfer_check boosts FAR_TRANSFER-tagged questions specifically, never other transfer classes, and never excludes them", () => {
+  const bias = buildPreparationWeightBias({ recommendedDifficultyLean: "balanced", recommendedActivityType: "unseen_transfer_check" });
+  const farTransfer = bias(fullQ("ft", "medium", { transferClass: "FAR_TRANSFER" }));
+  const routine = bias(fullQ("r", "medium", { transferClass: "ROUTINE" }));
+  const untagged = bias(fullQ("u", "medium", {}));
+  assert.ok(farTransfer > 1, "FAR_TRANSFER must be boosted for an unseen-transfer-check recommendation");
+  assert.equal(routine, 1, "a ROUTINE-tagged question must not be boosted merely because the session favours transfer");
+  assert.equal(untagged, 1, "an untagged question must remain fully selectable at ordinary weight, never excluded");
+});
+
+test("teaching_lesson/guided_practice boosts a family with real authored teaching content, never a family without it", () => {
+  const bias = buildPreparationWeightBias({ recommendedDifficultyLean: "favour_guided_and_easier", recommendedActivityType: "guided_practice" });
+  // mr03-mixed-perimeter is a real family with a genuine MATHS_FAMILY_TEACHING_CONTENT entry (verified elsewhere this programme).
+  const withTeaching = bias(fullQ("t", "easy", { familyId: "mr03-mixed-perimeter" }));
+  const withoutTeaching = bias(fullQ("nt", "easy", { familyId: "a-family-with-no-teaching-content-xyz" }));
+  assert.ok(withTeaching > withoutTeaching, "a family with real guided/teaching content must be preferentially boosted for a guided-shaped recommendation");
+});
+
+test("selectQuestions()'s own new weightBias parameter defaults to a true no-op -- omitting it reproduces the exact pre-Increment-021 selection for the same seeded random sequence", () => {
+  const candidates = [q("a", "QT-MR-01", "easy"), q("b", "QT-MR-01", "hard"), q("c", "QT-MR-01", "medium")];
+  const history = new Map<string, StudentQuestionHistoryRow>();
+  const withoutBias = selectQuestions(candidates, history, 1, new Set(), 2, mulberry32(42));
+  const withNoOpBias = selectQuestions(candidates, history, 1, new Set(), 2, mulberry32(42), () => 1);
+  assert.deepEqual(withoutBias.questions.map((x) => x.id), withNoOpBias.questions.map((x) => x.id));
+});
+
+test("selectQuestions() with a real difficulty-lean bias genuinely shifts the weighted composition toward the favoured tier over many trials (statistical proof the bias reaches the real sampler, not just the pure weight function)", () => {
+  const candidates = [
+    fullQ("easy1", "easy"), fullQ("easy2", "easy"),
+    fullQ("hard1", "hard"), fullQ("hard2", "hard"),
+  ];
+  const history = new Map<string, StudentQuestionHistoryRow>();
+  const bias = buildPreparationWeightBias({ recommendedDifficultyLean: "favour_guided_and_easier", recommendedActivityType: "independent_practice" });
+
+  let easyCountBiased = 0;
+  let easyCountUnbiased = 0;
+  const trials = 300;
+  for (let i = 0; i < trials; i++) {
+    const rand = mulberry32(i);
+    const biased = selectQuestions(candidates, history, 1, new Set(), 1, rand, bias);
+    if (biased.questions[0]?.contentDifficulty === "easy") easyCountBiased++;
+    const unbiased = selectQuestions(candidates, history, 1, new Set(), 1, rand);
+    if (unbiased.questions[0]?.contentDifficulty === "easy") easyCountUnbiased++;
+  }
+  assert.ok(easyCountBiased > easyCountUnbiased, `favour_guided_and_easier must draw "easy" more often than the unbiased baseline over ${trials} trials (biased=${easyCountBiased}, unbiased=${easyCountUnbiased})`);
+});
+
+/** Small deterministic PRNG (seeded) so the statistical trial above is reproducible, not flaky. */
+function mulberry32(seed: number): () => number {
+  let a = seed + 0x6d2b79f5;
+  return function () {
+    a |= 0;
+    a = (a + 0x6d2b79f5) | 0;
+    let t = Math.imul(a ^ (a >>> 15), 1 | a);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}

@@ -89,7 +89,9 @@ test("the practice page's own 'Focusing on' indicator never renders a raw QT/com
 // === 6. Targeted Practice actually receives the focus ======================
 
 test("generatePersonalisedSession() is called with the validated requestedFocus as its 5th argument -- the real, existing familyFocusCompetencyId parameter, never a new one invented", () => {
-  assert.match(PRACTICE_PAGE, /generatePersonalisedSession\(supabase, profileId, area!\.id, new Date\(\), requestedFocus\)/);
+  // Increment 021 added an optional 6th argument (preparationContext) --
+  // the 5th argument (requestedFocus) this test cares about is unaffected.
+  assert.match(PRACTICE_PAGE, /generatePersonalisedSession\(supabase, profileId, area!\.id, new Date\(\), requestedFocus, preparationContext\)/);
 });
 
 test("the returned session.familyFocus is captured into page state, never discarded -- required for both the learner-facing indicator and honest 'was it actually applied' reporting", () => {

@@ -34,6 +34,7 @@ function rowToBankQuestion(row: BankRow): BankQuestion {
     groupOrder: row.group_order ?? undefined,
     subpartLabel: row.subpart_label ?? undefined,
     markingMode: row.marking_mode ?? undefined,
+    transferClass: row.transfer_class ?? undefined,
   };
 }
 

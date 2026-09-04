@@ -158,7 +158,23 @@ export function selectQuestions(
   currentSequence: number,
   weakSkills: Set<CompetencyCode>,
   count: number,
-  random: () => number = Math.random
+  random: () => number = Math.random,
+  /**
+   * Programme Increment 021 — the one, additive, canonical entry point for
+   * the Preparation Horizon decision contract to influence which
+   * questions this engine actually serves. A plain weight multiplier per
+   * candidate (never a hard filter, never a difficulty lock — this
+   * engine's own weighted-sample step 5 already handles "preference, not
+   * exclusion" for every other signal it has; this is the same discipline
+   * applied to preparation stage). Defaults to `() => 1` for EVERY
+   * existing caller (Mock adaptive pages, the Writing page, the family-
+   * choice pilot route) — behaviour there is byte-for-byte unchanged,
+   * matching this file's own established "every existing caller stays
+   * unaffected" convention throughout. See
+   * lib/learningEngine/sessionGenerator.ts's own `buildPreparationWeightBias()`
+   * for the real, disclosed calibration this multiplier is built from.
+   */
+  weightBias: (question: BankQuestion) => number = () => 1
 ): SelectionResult {
   // Step 1 — absolute exclusion of the immediately preceding mock's questions.
   let previousMockStamp = -1;
@@ -257,13 +273,13 @@ export function selectQuestions(
   // kept narrowest by leaving it untouched.
   const masteredRanksBySkill = computeMasteredRanksBySkill(candidates, history);
   const difficultyWeight = (question: BankQuestion) =>
-    computeDifficultyWeightMultiplier(question, masteredRanksBySkill, history);
+    computeDifficultyWeightMultiplier(question, masteredRanksBySkill, history) * weightBias(question);
 
   const pool: Weighted[] = [
     ...unseen.map((question) => ({ question, weight: 3 * difficultyWeight(question), reason: "unseen" as SelectionReason })),
     ...eligibleSeen.map((question) => ({ question, weight: 2 * difficultyWeight(question), reason: "eligible-seen" as SelectionReason })),
     ...remainingOverridden.map((question) => ({ question, weight: 2 * difficultyWeight(question), reason: "weak-skill-override-pool" as SelectionReason })),
-    ...masteredResurface.map((question) => ({ question, weight: 1, reason: "mastered-resurface" as SelectionReason })),
+    ...masteredResurface.map((question) => ({ question, weight: 1 * weightBias(question), reason: "mastered-resurface" as SelectionReason })),
   ];
 
   // Step 5 — weighted random sample without replacement, filling the rest

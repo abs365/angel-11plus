@@ -155,6 +155,20 @@ export interface BankQuestion {
   subpartLabel?: string;
   /** Migration 093. See `MarkingMode` and lib/ali/assessmentHierarchy.ts. Undefined is a deliberate non-claim, not "deterministic". */
   markingMode?: MarkingMode;
+  /**
+   * Programme Increment 021 — the real `ali_question_bank.transfer_class`
+   * column (migration 035: `ROUTINE`/`NEAR_TRANSFER`/`FAR_TRANSFER`/
+   * `MIXED_TRANSFER`), exposed on `BankQuestion` for the first time so the
+   * Preparation Horizon weight-bias mechanism
+   * (lib/learningEngine/sessionGenerator.ts's own `buildPreparationWeightBias()`)
+   * can genuinely favour unseen-transfer material for an
+   * `unseen_transfer_check`-recommended session, matching
+   * `lib/ali/inventoryClass.ts`'s own `isFarTransfer` reuse of this same
+   * real column. Undefined for any row that predates migration 035, or
+   * whose eventual transfer classification was never assigned -- never
+   * fabricated.
+   */
+  transferClass?: string;
 }
 
 /**

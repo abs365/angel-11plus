@@ -2,6 +2,7 @@
 
 import { use, useEffect, useRef, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { CheckCircle2, XCircle, ArrowRight, RotateCcw, Loader2 } from "lucide-react";
 import PageLayout from "@/components/PageLayout";
 import { InfoCard } from "@/components/ui/Card";
@@ -16,7 +17,9 @@ import { completeLesson, recordSkillResult, getSelectedPathwayId, setSelectedPat
 import { fetchLearnerIntelligenceProfile } from "@/lib/learningEngine/profile";
 import { recordReadinessSnapshot } from "@/lib/learningEngine/learningHistory";
 import { QUESTION_TYPE_PRIMARY_COMPETENCY, isValidCompetencyId } from "@/lib/learningEngine/assessmentBrainMap";
-import { generatePersonalisedSession, type FamilyFocusSessionInfo } from "@/lib/learningEngine/sessionGenerator";
+import { generatePersonalisedSession, type FamilyFocusSessionInfo, type PreparationSessionContext } from "@/lib/learningEngine/sessionGenerator";
+import { computePreparationDecision } from "@/lib/learningEngine/preparationDecision";
+import { hasFullLessonAvailable } from "@/lib/learningEngine/fullLessonRegistry";
 import { childFriendlySkillLabel } from "@/lib/mockAttempt/reportCopy";
 import {
   getEducationalIntelligence,
@@ -87,6 +90,7 @@ export default function PracticeSessionPage({
 }) {
   const { area: areaId } = use(params);
   const area = getPracticeArea(areaId);
+  const router = useRouter();
   // Decision 225 (Mock Priority -> Targeted Practice Routing) -- an
   // optional, caller-supplied competency focus (e.g. from the Mock
   // report's "Practise this skill" action). Validated against the real,
@@ -237,8 +241,43 @@ export default function PracticeSessionPage({
       // /pathways already lets a learner change their selected pathway.
       if (getSelectedPathwayId() !== "csse") setSelectedPathway("csse");
 
+      // Programme Increment 021 — Preparation Horizon Operationalisation.
+      // The SAME canonical decision contract the dashboard already reads
+      // (Increment 019/020's own computePreparationDecision(), never a
+      // second decision engine), computed once per session load. Two real
+      // consequences, both a direct read of the decision's own fields,
+      // never a new judgement invented here:
+      //   1. placementRequired routes to the real placement flow instead
+      //      of ordinary Practice -- a late/insufficient-evidence learner
+      //      is never silently served an undifferentiated session.
+      //   2. Otherwise, recommendedDifficultyLean/recommendedActivityType
+      //      feed generatePersonalisedSession()'s own new, additive
+      //      weight-bias mechanism (lib/ali/selection.ts) -- a real
+      //      influence on what gets served, not merely a dashboard label.
+      // Best-effort: if this read fails for any reason, fail OPEN to the
+      // unbiased session Practice has always served, never blocking the
+      // page on a decision-contract error.
+      let preparationContext: PreparationSessionContext | undefined;
+      try {
+        const decision = await withTimeout(
+          computePreparationDecision(supabase, profileId, { hasFullLessonAvailable }),
+          10000,
+          "checking where to start"
+        );
+        if (decision.placementRequired) {
+          router.replace(`/learning-intelligence/placement?returnArea=${encodeURIComponent(area!.id)}`);
+          return;
+        }
+        preparationContext = {
+          recommendedDifficultyLean: decision.recommendedDifficultyLean,
+          recommendedActivityType: decision.recommendedActivityType,
+        };
+      } catch {
+        // Fail open -- see docstring above.
+      }
+
       const session = await withTimeout(
-        generatePersonalisedSession(supabase, profileId, area!.id, new Date(), requestedFocus),
+        generatePersonalisedSession(supabase, profileId, area!.id, new Date(), requestedFocus, preparationContext),
         10000,
         "today's activities"
       );
