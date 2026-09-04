@@ -187,6 +187,22 @@ function describeRecommendedActivity(activityType: ActivityType, competencyId: s
 }
 
 /**
+ * Programme Increment 020, Part 12 — the real, current set of
+ * competencies with a complete Learn lesson page (arithmetic MR-01,
+ * percentages MR-04, compound shapes MR-03 added this increment). This is
+ * the ONLY thing that determines whether the decision contract's own
+ * deriveActivityFromTrigger() may ever recommend "teaching_lesson" for a
+ * given competency (see preparationDecision.ts's own docstring) — before
+ * this increment, no real caller ever supplied this callback (it silently
+ * defaulted to "no lesson available for any competency"), so the
+ * dashboard's own recommendation could never surface a lesson even for
+ * the 2 that already existed. Deliberately a plain source-level set, not
+ * derived from a route scan — updating it is the one disclosed manual
+ * step required whenever a new full lesson page ships.
+ */
+const COMPETENCIES_WITH_FULL_LESSON = new Set(["MR-01", "MR-04", "MR-03"]);
+
+/**
  * Sprint 3 — the Admission Hero's stage line reuses JourneyTimeline's own
  * stage labels, not a second naming scheme. EEP-003: updated to match
  * JourneyTimeline.tsx's own relabelled STAGES exactly (Building
@@ -518,7 +534,8 @@ export default function DashboardPage() {
                 preparationClock,
                 p.schoolYear,
                 recommendations.ordered,
-                recommendations.vetoedCompetencyCodes
+                recommendations.vetoedCompetencyCodes,
+                { hasFullLessonAvailable: (id) => COMPETENCIES_WITH_FULL_LESSON.has(id) }
               );
               setPreparationDecision(decision);
             })

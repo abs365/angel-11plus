@@ -31,9 +31,10 @@ const PHASE_B_FAMILIES = [
   "mr04-far-percent", "mr04-far-recipe", "mr04-mixed-divisibility", "mr05-constrained-multiple",
   "mr05-factors-primes", "mr05-number-property", "precision-dec", "precision-frac",
 ];
-const ALL_FAMILIES = [...ORIGINAL_007L_FAMILIES, ...PHASE_B_FAMILIES];
+const INCREMENT_020_FAMILIES = ["mr03-compound-area-perimeter"];
+const ALL_FAMILIES = [...ORIGINAL_007L_FAMILIES, ...PHASE_B_FAMILIES, ...INCREMENT_020_FAMILIES];
 
-test("exactly 26 families have teaching content (4 original 007L + 22 Phase B), no more no less", () => {
+test("exactly 27 families have teaching content (4 original 007L + 22 Phase B + 1 Increment 020), no more no less", () => {
   assert.deepEqual(Object.keys(MATHS_FAMILY_TEACHING_CONTENT).sort(), [...ALL_FAMILIES].sort());
 });
 

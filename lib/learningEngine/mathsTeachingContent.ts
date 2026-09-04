@@ -350,6 +350,32 @@ export const MATHS_FAMILY_TEACHING_CONTENT: Record<string, MathsFamilyTeachingCo
     },
     misconceptionCategory: "MISREAD_QUANTITY",
   },
+  /**
+   * Programme Increment 020, Wave 1 (migration 222) — the family's own
+   * "extend beyond the lesson" teaching moment. The new Learn lesson page
+   * (app/learning-intelligence/learn/mathematics/compound-shapes/page.tsx)
+   * teaches this family's AREA method end-to-end; this entry deliberately
+   * teaches the family's OTHER real skill (perimeter, requiring the two
+   * "hidden" sides to be inferred first) rather than duplicating the
+   * lesson's own worked example, matching this file's own "never the
+   * current question's own numbers" discipline with a genuinely different
+   * scenario from every one of the 8 real rows.
+   */
+  "mr03-compound-area-perimeter": {
+    model: {
+      whatToNotice: "A compound (L-shaped) figure has 6 sides in total, but a question may only label 4 of them -- the other 2 must be worked out before the perimeter can be found.",
+      relationship: "Opposite horizontal sides must add up to the same total, and opposite vertical sides must add up to the same total -- use that to find each missing side before adding all 6 together.",
+      scenario: "An L-shaped lawn has 4 labelled sides: 10m, 4m, 2m and 6m (going around). What is the perimeter?",
+      reasoning: [
+        "The missing horizontal side = 10m − 6m = 4m (the top and the step must add up to the bottom's 10m).",
+        "The missing vertical side = 4m + 2m = 6m (the two right-hand sides must add up to the full left side).",
+        "Add all 6 sides: 10 + 4 + 4 + 2 + 6 + 6 = 32m.",
+      ],
+      answer: "32m",
+      verification: "Redraw the shape and count all 6 sides once, checking that the horizontal sides on one side of the shape add up to the same total as the horizontal sides on the other.",
+    },
+    misconceptionCategory: "INCOMPLETE_REASONING",
+  },
   "mr04-compound-percentage": {
     model: {
       whatToNotice: "Two percentage changes happen one after another. The second change applies to the NEW value, not the original.",

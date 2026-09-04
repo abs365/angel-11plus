@@ -59,6 +59,28 @@ export interface WritingPrompt {
   timeMinutes: number;
 }
 
+/**
+ * Programme Increment 020, Part 11 — the smallest additive shape for an
+ * optional deterministic, renderable geometry diagram attached to a
+ * question's own `prompt` jsonb (as `prompt.diagram`). NOT a new database
+ * column, same precedent as `MockTableStimulus` (lib/mockAttempt/types.ts):
+ * `prompt` is already jsonb, so an absent `diagram` key is
+ * indistinguishable from "no diagram," and every existing row (which never
+ * sets this key) behaves exactly as before. Deliberately scoped to
+ * rectilinear (right-angled) compound shapes only — the genuine gap this
+ * increment's own audit found ("zero diagrams, images, or charts anywhere
+ * in Mathematics content") — not a general-purpose geometry engine.
+ * Rendered by components/practice/CompoundShapeDiagram.tsx as plain
+ * inline SVG from these coordinates; never a stock image or upload.
+ */
+export interface CompoundRectilinearDiagram {
+  type: "compound_rectilinear";
+  /** Ordered polygon vertices tracing the shape's outline (a simple, non-self-intersecting rectilinear polygon), in arbitrary proportion-only grid units -- the renderer scales these to fit, they are not to physical scale. */
+  vertices: { x: number; y: number }[];
+  /** One label per shown edge, keyed by the index of the edge running from vertices[edgeIndex] to vertices[(edgeIndex+1) % vertices.length]. A known length (e.g. "8 m") or "?" for the side the learner must find -- never every edge, since a rectilinear shape's remaining edges are always inferable from the ones given. */
+  edgeLabels: { edgeIndex: number; label: string }[];
+}
+
 export interface MathsQuestion {
   id: string;
   question: string;
@@ -67,6 +89,8 @@ export interface MathsQuestion {
   difficulty: Difficulty;
   workingSteps?: string[];
   marks: number;
+  /** Optional deterministic geometry diagram -- see CompoundRectilinearDiagram's own docstring. Absent for every question outside this increment's new compound-shape family. */
+  diagram?: CompoundRectilinearDiagram;
 }
 
 export interface SkillRecord {

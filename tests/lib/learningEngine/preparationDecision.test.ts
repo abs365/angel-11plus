@@ -145,3 +145,21 @@ test("mockTechnicallyAvailable omitted -- assessmentAppropriate/assessmentPurpos
   assert.equal(decision.assessmentAppropriate, false, "with no mock-availability input supplied, a full_mock must never be silently assumed appropriate");
   assert.equal(decision.assessmentPurpose, null);
 });
+
+test("Increment 020, Part 12 -- with the real 3-lesson set supplied (MR-01/MR-04/MR-03), a weak MR-03 recommendation at foundation stage resolves to teaching_lesson, not guided_practice", () => {
+  const competencies = ALL_TWELVE.map((id) => comp(id, "low", "exploring"));
+  const ordered = [candidate("MR-03", "exploring", "weak-competency-remediation")];
+  const decision = buildPreparationDecision([subject(competencies)], clockFor(400), "Year 5", ordered, [], {
+    hasFullLessonAvailable: (id) => ["MR-01", "MR-04", "MR-03"].includes(id),
+  });
+  assert.equal(decision.preparationStage, "foundation");
+  assert.equal(decision.recommendedCompetencyId, "MR-03");
+  assert.equal(decision.recommendedActivityType, "teaching_lesson", "a real lesson exists for MR-03 (Increment 020's own compound-shapes lesson) -- the decision contract must actually recommend it, not fall back to guided_practice as it silently did before any real caller supplied this callback");
+});
+
+test("Increment 020, Part 12 -- the same weak-MR-03 case falls back to guided_practice when no lesson-availability callback is supplied at all (the pre-020 default, still honest for every other page)", () => {
+  const competencies = ALL_TWELVE.map((id) => comp(id, "low", "exploring"));
+  const ordered = [candidate("MR-03", "exploring", "weak-competency-remediation")];
+  const decision = buildPreparationDecision([subject(competencies)], clockFor(400), "Year 5", ordered, [], {});
+  assert.equal(decision.recommendedActivityType, "guided_practice", "omitting hasFullLessonAvailable must never silently assume a lesson exists");
+});

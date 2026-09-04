@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { BookOpen, ArrowRight, Brain, Calculator, Percent } from "lucide-react";
+import { BookOpen, ArrowRight, Brain, Calculator, Percent, Shapes } from "lucide-react";
 import PageLayout from "@/components/PageLayout";
 import { InfoCard } from "@/components/ui/Card";
 import { getSupabaseClient } from "@/lib/supabase";
@@ -17,7 +17,8 @@ import { hubProgressionLabel } from "@/lib/learningEngine/progressionLabel";
  * exist yet. The Mathematics Reference Vertical (see
  * knowledge/.../mathematics-reference-vertical/) added the first genuine
  * lesson; the Mathematics Learning Sequence Expansion (Educational
- * Increment 002) adds a second, without claiming the rest of the
+ * Increment 002) adds a second, and Increment 020 Wave 1 adds a third
+ * (compound-shape area, MR-03), without claiming the rest of the
  * curriculum is ready, which it is not.
  *
  * Non-CSSE-pathway learners never reach this page — Navigation.tsx routes
@@ -25,15 +26,16 @@ import { hubProgressionLabel } from "@/lib/learningEngine/progressionLabel";
  *
  * Sequencing (MATHEMATICS_LEARNING_SEQUENCE_RULES.md): each lesson's card
  * shows its own real, unmodified educationalState for its own competency
- * (MR-01 for Lesson 1, MR-04 for Lesson 2), fetched via the exact same
- * getEducationalIntelligence() call each lesson page itself already makes.
- * No new evidence computation, no invented prerequisite: both lessons are
- * always fully accessible, and any "recommended" framing is copy over real
- * evidence, never a lock.
+ * (MR-01 for Lesson 1, MR-04 for Lesson 2, MR-03 for Lesson 3), fetched via
+ * the exact same getEducationalIntelligence() call each lesson page itself
+ * already makes. No new evidence computation, no invented prerequisite:
+ * every lesson is always fully accessible, and any "recommended" framing
+ * is copy over real evidence, never a lock.
  */
 export default function CsseLearnPage() {
   const [arithmeticState, setArithmeticState] = useState<EducationalIntelligenceSnapshot["educationalState"] | undefined>(undefined);
   const [percentagesState, setPercentagesState] = useState<EducationalIntelligenceSnapshot["educationalState"] | undefined>(undefined);
+  const [compoundShapesState, setCompoundShapesState] = useState<EducationalIntelligenceSnapshot["educationalState"] | undefined>(undefined);
   const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
@@ -49,13 +51,15 @@ export default function CsseLearnPage() {
         if (!cancelled) setLoaded(true);
         return;
       }
-      const [arithmetic, percentages] = await Promise.all([
+      const [arithmetic, percentages, compoundShapes] = await Promise.all([
         getEducationalIntelligence(supabase, profileId, "MR-01").catch(() => null),
         getEducationalIntelligence(supabase, profileId, "MR-04").catch(() => null),
+        getEducationalIntelligence(supabase, profileId, "MR-03").catch(() => null),
       ]);
       if (cancelled) return;
       setArithmeticState(arithmetic?.educationalState);
       setPercentagesState(percentages?.educationalState);
+      setCompoundShapesState(compoundShapes?.educationalState);
       setLoaded(true);
     })();
     return () => {
@@ -65,6 +69,7 @@ export default function CsseLearnPage() {
 
   const arithmeticLabel = hubProgressionLabel(arithmeticState);
   const percentagesLabel = hubProgressionLabel(percentagesState);
+  const compoundShapesLabel = hubProgressionLabel(compoundShapesState);
 
   // Presentation-only ordering note (never a gate — both lessons are always
   // clickable): a family who hasn't touched Mathematics yet sees a gentle
@@ -83,7 +88,7 @@ export default function CsseLearnPage() {
         <h1 className="text-gray-900 dark:text-gray-100 font-bold text-2xl">Learn</h1>
         <p className="text-gray-500 dark:text-gray-400 text-sm mt-2 leading-relaxed">
           Angel&apos;s CSSE Learn experience is being rebuilt one real lesson at a time, around genuine
-          evidence-led preparation content. Two Mathematics lessons are ready today. The rest of the curriculum
+          evidence-led preparation content. Three Mathematics lessons are ready today. The rest of the curriculum
           isn&apos;t yet, and we&apos;d rather show you that plainly than fill this page with content that isn&apos;t
           genuinely CSSE preparation.
         </p>
@@ -121,6 +126,24 @@ export default function CsseLearnPage() {
                   <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 font-medium">
                     {percentagesNote ?? percentagesLabel.label}
                   </p>
+                )}
+              </div>
+              <ArrowRight size={16} className="text-gray-300 dark:text-gray-600 shrink-0" />
+            </InfoCard>
+          </Link>
+
+          <Link href="/learning-intelligence/learn/mathematics/compound-shapes">
+            <InfoCard className="flex items-center gap-4 hover:border-blue-300 dark:hover:border-blue-700 transition-colors border-blue-200 dark:border-blue-800">
+              <div className="bg-blue-100 dark:bg-blue-900 p-3 rounded-2xl shrink-0">
+                <Shapes size={20} className="text-blue-600 dark:text-blue-400" />
+              </div>
+              <div className="min-w-0 flex-1">
+                <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">Mathematics: Area of Compound Shapes</p>
+                <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">
+                  A real lesson: understand the method, try it with support, then try it alone.
+                </p>
+                {loaded && (
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 font-medium">{compoundShapesLabel.label}</p>
                 )}
               </div>
               <ArrowRight size={16} className="text-gray-300 dark:text-gray-600 shrink-0" />
