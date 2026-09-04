@@ -1,6 +1,33 @@
 # MR-03 Compound Shapes — Founder Content Review
 
-Programme Increment 020, Wave 1. Family: `mr03-compound-area-perimeter` (8 rows, migration 222, NOT applied). Registered for review by migration 223. **Current status: PENDING FOUNDER EDUCATIONAL REVIEW** — nothing in this family is Approved. The recommendations below are this session's own educational judgement for you to accept, amend, or overrule; only your decision, recorded through `/admin-beta/review`, constitutes real approval.
+Programme Increment 020, Wave 1. Family: `mr03-compound-area-perimeter` (8 rows, migration 222, NOT applied). Registered for review by migration 223.
+
+---
+
+## Founder Decision Record (additive — original per-question analysis below is preserved unchanged)
+
+**Family-level Founder decision: APPROVED WITH AMENDMENT.**
+
+| Question | Founder decision |
+|---|---|
+| mr03-compound-01 | APPROVED |
+| mr03-compound-02 | APPROVED |
+| mr03-compound-03 | APPROVED |
+| mr03-compound-04 | APPROVED |
+| mr03-compound-05 | APPROVED |
+| mr03-compound-06 | **APPROVED WITH AMENDMENT** |
+| mr03-compound-07 | APPROVED |
+| mr03-compound-08 | APPROVED |
+
+**Required amendment (mr03-compound-06):** the educational reasoning was approved; the original diagram was not. Its "unknown" edge was drawn at its true, proportionally accurate solved length (12, exactly twice the rendered "6 m" edge) — a visual-estimation leak partially undermining the item's own FAR_TRANSFER/reverse-reasoning intent. Founder decision: keep the diagram (do not remove it); redraw it so the unknown dimension is deliberately non-proportional/not to scale, preserving the L-shape's topology and which dimension is unknown, with a visible "Diagram not drawn to scale" notice; the mathematical problem itself (perimeter 44 m, upper section 5 m × 4 m, lower height 6 m, answer 12 m, FAR_TRANSFER, marks 2) must not change.
+
+**AMENDMENT IMPLEMENTED** (this session, not yet Founder-verified): `mr03-compound-06`'s diagram in migration 222 now uses a deliberately schematic vertex set — `(0,0)-(10,0)-(10,4)-(6,4)-(6,7)-(0,7)`, bearing no numeric relationship to the real values 12/6/4/5 — with `diagram.notToScale: true`. `components/practice/CompoundShapeDiagram.tsx` now renders a visible "Diagram not drawn to scale." notice whenever this flag is set (and only then — no other question in the family was changed). The mathematical content (question text, `workingSteps`, answer, marks, `transfer_class`) is byte-for-byte unchanged. Verified this session: the schematic diagram's own rendered edge-ratio (10:4 = 2.5) no longer matches the true ratio (12:6 = 2.0) the original diagram leaked; the shape remains a valid, simple, non-self-intersecting rectilinear hexagon; 5 new regression tests added (`tests/lib/ali/mr03CompoundShapeWave1.test.ts`) parsing the real migration 222 SQL text directly, so a future accidental revert fails a test first, including one asserting no *other* question in the family was made not-to-scale.
+
+**AMENDMENT VERIFIED:** not yet — pending your own review of this implemented change. Please confirm via the same review channel once satisfied, at which point this line will be updated to record that confirmation (and only then).
+
+---
+
+**Current status: PENDING FOUNDER EDUCATIONAL REVIEW of the implemented amendment specifically** — the family-level decision above (APPROVED WITH AMENDMENT) is your own recorded educational decision; the amendment itself awaits your confirmation that it actually closes the gap you identified. The per-question analysis below is the original, unmodified basis for that decision (session's own educational judgement, offered for you to accept, amend, or overrule).
 
 ---
 
@@ -160,6 +187,8 @@ Each entry shows the question exactly as a learner will see it, its diagram desc
 
 **Founder judgement required — YES, flagging genuinely:** This diagram is drawn to real proportional scale from its actual coordinates (the renderer scales real (x,y) points uniformly; it does not distort them). Because the "?" edge is rendered at its **true, solved length** (12, exactly twice the length of the "6 m" edge shown beside it), a visually sharp learner could in principle estimate the answer by eye from the diagram's own proportions, rather than deriving it algebraically — partially undermining the point of a "transfer/reasoning" question. **Recommended fix, not yet made:** for this question only, either (a) redraw the unknown edge at a fixed, neutral placeholder length decoupled from its true value (keeping every other edge's true proportion), or (b) present this one item without a diagram, relying on the stated numbers alone, since the algebra does not depend on a picture. I have not made this change, since it is a genuine design judgement (visual support vs. information leak), not a mechanical defect, and belongs to your review rather than a unilateral edit.
 
+> **UPDATE — Founder decision received: APPROVED WITH AMENDMENT.** Option (a) implemented (see the Founder Decision Record at the top of this document): the diagram is kept, redrawn schematically with a visible "not drawn to scale" notice, decoupled from the true 12/6/4/5 values. AMENDMENT IMPLEMENTED, not yet AMENDMENT VERIFIED.
+
 ---
 
 ## 7. `mr03-compound-07` — Challenge (deeper structural complexity)
@@ -237,4 +266,4 @@ Re-read the full file: registers exactly one review target (`question_family` / 
 
 ## Visual verification
 
-**VISUAL VERIFICATION DEFERRED.** Attempted this session via browser automation (a static HTML harness reproducing `CompoundShapeDiagram`'s exact rendering logic against all 8 real diagrams was built and is ready at short notice); the Chrome browser extension was not connected in this environment, so no actual on-screen rendering, mobile/tablet/desktop layout check, or label-overlap check was performed. Source-level inspection only supports (never proves) that: labels are positioned outward from each shape's centroid (reducing overlap risk by construction), the SVG scales to fit any container width (`w-full max-w-[240px]`), and the component is dark-mode aware. These are structural signals, not a PASS — genuine visual confirmation (including the `#6` scale-leak concern above) requires an actual render pass in a future session with browser access.
+**VISUAL VERIFICATION DEFERRED.** Attempted twice now via browser automation (once for the original review, once again this session for the #06 amendment specifically) — the harness (a static HTML file reproducing `CompoundShapeDiagram`'s exact rendering logic against all 8 real diagrams, now updated with #06's amended, `notToScale` schematic diagram and its visible notice) is built and ready at short notice; the Chrome browser extension was not connected in this environment on either attempt, so no actual on-screen rendering, mobile/tablet/desktop layout check, or label-overlap check has been performed. Source-level inspection only supports (never proves) that: labels are positioned outward from each shape's centroid (reducing overlap risk by construction), the SVG scales to fit any container width (`w-full max-w-[240px]`), the component is dark-mode aware, and the "not drawn to scale" notice text is real and conditionally rendered. These are structural signals, not a PASS. Specifically for #06's amendment: mechanically confirmed (not visually) that its rendered edge-ratio no longer matches the true 12:6 ratio — but whether the notice is legible, whether the shape still reads clearly as an L, and whether a viewer could still estimate the answer from the *amended* rendering genuinely requires an actual render pass in a future session with browser access.

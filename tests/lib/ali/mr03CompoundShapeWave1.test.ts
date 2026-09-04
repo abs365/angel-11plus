@@ -169,3 +169,71 @@ test("CompoundShapeDiagram draws from the real diagram prop's own vertices/edgeL
 test("CompoundShapeDiagram is theme-aware, matching every other component in this codebase's own dark-mode convention", () => {
   assert.match(diagramSource, /dark:/);
 });
+
+test("CompoundShapeDiagram shows a visible 'not drawn to scale' notice whenever diagram.notToScale is set, and this notice text is real, not merely a class name", () => {
+  assert.match(diagramSource, /diagram\.notToScale/);
+  assert.match(diagramSource, /not drawn to scale/i);
+});
+
+// ─── mr03-compound-06 Founder-review amendment: not-to-scale protection ──
+// Founder Educational Review (Increment 020 Wave 1): #06's original
+// diagram drew its "unknown" edge at its true, proportionally accurate
+// solved length (12, vs. the "6 m" edge's real 6) -- a visual-estimation
+// leak. Amended to a schematic (not-proportionally-accurate) vertex set
+// with notToScale:true. These tests parse the REAL migration 222 SQL
+// text (not a hand-typed mirror) so a future accidental revert of the
+// amendment fails here first.
+
+const migration222 = fs.readFileSync("supabase/migrations/222_mathematics_mr03_compound_shape_wave1.sql", "utf8");
+const compound06Json = (() => {
+  const blocks = [...migration222.matchAll(/\$json\$(\{[\s\S]*?\})\$json\$/g)].map((m) => m[1]);
+  const raw = blocks.find((b) => JSON.parse(b).id === "mr03-compound-06");
+  if (!raw) throw new Error("mr03-compound-06's own prompt JSON not found in migration 222");
+  return JSON.parse(raw);
+})();
+
+test("mr03-compound-06's real migration row carries notToScale:true on its diagram", () => {
+  assert.equal(compound06Json.diagram.notToScale, true, "the amendment must be present on the real row this migration inserts, not just in a test fixture");
+});
+
+test("mr03-compound-06's schematic diagram no longer preserves the real edge-length ratios -- a learner cannot recover the true answer by comparing rendered lengths", () => {
+  const v = compound06Json.diagram.vertices;
+  const edgeLen = (i: number) => Math.hypot(v[(i + 1) % v.length].x - v[i].x, v[(i + 1) % v.length].y - v[i].y);
+  const renderedUnknownOverGiven = edgeLen(0) / edgeLen(1); // "?" edge (index 0) vs the labelled "6 m" edge (index 1)
+  const realUnknownOverGiven = 12 / 6; // the true answer (12) over the true given length (6)
+  assert.notEqual(renderedUnknownOverGiven, realUnknownOverGiven, "the rendered proportion must not match the true 12:6 ratio the original (pre-amendment) diagram leaked");
+});
+
+test("mr03-compound-06's mathematical content is byte-for-byte unchanged by the amendment: question, answer, marks, workingSteps, transfer_class", () => {
+  assert.equal(compound06Json.answer, "12m");
+  assert.equal(compound06Json.marks, 2);
+  assert.match(compound06Json.question, /perimeter of 44m/);
+  assert.match(compound06Json.question, /5m by 4m/);
+  assert.match(compound06Json.question, /6m tall/);
+  assert.ok(!/^\s*$/.test(compound06Json.workingSteps.join("")));
+  const startIdx = migration222.indexOf("('mr03-compound-06'");
+  const endIdx = migration222.indexOf("on conflict (id) do nothing;", startIdx);
+  const rowBlock = migration222.slice(startIdx, endIdx);
+  assert.match(rowBlock, /'FAR_TRANSFER'\)/, "compound-06's own INSERT must still end in transfer_class = FAR_TRANSFER, unchanged by the amendment");
+});
+
+test("mr03-compound-06's schematic diagram is still a valid, simple rectilinear polygon (topology preserved, only proportions changed)", () => {
+  const v = compound06Json.diagram.vertices;
+  assert.equal(v.length, 6, "must still be the same 6-vertex L-shape topology, not a different shape");
+  for (let i = 0; i < v.length; i++) {
+    const a = v[i];
+    const b = v[(i + 1) % v.length];
+    assert.ok(a.x === b.x || a.y === b.y, `edge ${i} must remain purely horizontal or vertical (rectilinear)`);
+    assert.ok(!(a.x === b.x && a.y === b.y), `edge ${i} must not be degenerate (zero length)`);
+  }
+});
+
+test("no other question in the family (01-05, 07, 08) was made not-to-scale merely because 06 required it", () => {
+  const otherIds = ["mr03-compound-01", "mr03-compound-02", "mr03-compound-03", "mr03-compound-04", "mr03-compound-05", "mr03-compound-07", "mr03-compound-08"];
+  const blocks = [...migration222.matchAll(/\$json\$(\{[\s\S]*?\})\$json\$/g)].map((m) => JSON.parse(m[1]));
+  for (const id of otherIds) {
+    const row = blocks.find((b) => b.id === id);
+    assert.ok(row, `${id} must still exist in migration 222`);
+    assert.ok(!row.diagram.notToScale, `${id} must remain genuinely proportional -- notToScale is reserved for 06's specific leak, not a family-wide style choice`);
+  }
+});

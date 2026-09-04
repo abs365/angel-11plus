@@ -79,6 +79,21 @@ export interface CompoundRectilinearDiagram {
   vertices: { x: number; y: number }[];
   /** One label per shown edge, keyed by the index of the edge running from vertices[edgeIndex] to vertices[(edgeIndex+1) % vertices.length]. A known length (e.g. "8 m") or "?" for the side the learner must find -- never every edge, since a rectilinear shape's remaining edges are always inferable from the ones given. */
   edgeLabels: { edgeIndex: number; label: string }[];
+  /**
+   * Founder Educational Review, Increment 020 Wave 1 amendment — true when
+   * `vertices` are a deliberately schematic (not-proportionally-accurate)
+   * stand-in for the shape's real dimensions, used ONLY for a reverse-
+   * reasoning/unseen-transfer item whose own "unknown" edge would otherwise
+   * be rendered at its true solved length (a genuine visual-estimation
+   * leak the Founder's own review caught on mr03-compound-06 — see that
+   * migration row's own explanation field). When true, the renderer must
+   * show a visible "not drawn to scale" notice; absent/false for every
+   * other diagram in this codebase, which remain genuinely proportional.
+   * Never set merely for aesthetic reasons -- this exists to protect one
+   * specific educational property (an unknown value must not be visually
+   * measurable), not as a general diagram style option.
+   */
+  notToScale?: boolean;
 }
 
 export interface MathsQuestion {

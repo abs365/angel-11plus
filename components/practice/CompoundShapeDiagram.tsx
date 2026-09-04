@@ -45,46 +45,58 @@ export function CompoundShapeDiagram({ diagram }: { diagram: CompoundRectilinear
   const points = scaleVertices(diagram.vertices);
   const n = points.length;
   const pathD = points.map((p, i) => `${i === 0 ? "M" : "L"} ${p.x.toFixed(1)} ${p.y.toFixed(1)}`).join(" ") + " Z";
+  const accessibleName = diagram.notToScale
+    ? "A diagram of the shape described in this question, with its known side lengths labelled. This diagram is not drawn to scale."
+    : "A diagram of the shape described in this question, with its known side lengths labelled.";
 
   return (
-    <svg
-      viewBox={`0 0 ${VIEW_SIZE} ${VIEW_SIZE}`}
-      role="img"
-      aria-label="A diagram of the shape described in this question, with its known side lengths labelled."
-      className="w-full max-w-[240px] mx-auto"
-    >
-      <path
-        d={pathD}
-        className="fill-sky-50 dark:fill-sky-950 stroke-gray-700 dark:stroke-gray-300"
-        strokeWidth={2}
-        strokeLinejoin="round"
-      />
-      {diagram.edgeLabels.map(({ edgeIndex, label }) => {
-        const a = points[edgeIndex % n];
-        const b = points[(edgeIndex + 1) % n];
-        const midX = (a.x + b.x) / 2;
-        const midY = (a.y + b.y) / 2;
-        // Offset the label outward from the shape's own centroid so it never sits on top of the edge itself.
-        const centroidX = points.reduce((sum, p) => sum + p.x, 0) / n;
-        const centroidY = points.reduce((sum, p) => sum + p.y, 0) / n;
-        const dx = midX - centroidX;
-        const dy = midY - centroidY;
-        const len = Math.hypot(dx, dy) || 1;
-        const labelX = midX + (dx / len) * 14;
-        const labelY = midY + (dy / len) * 14;
-        return (
-          <text
-            key={edgeIndex}
-            x={labelX}
-            y={labelY}
-            textAnchor="middle"
-            dominantBaseline="middle"
-            className="fill-gray-800 dark:fill-gray-200 text-[11px] font-semibold"
-          >
-            {label}
-          </text>
-        );
-      })}
-    </svg>
+    <div>
+      <svg
+        viewBox={`0 0 ${VIEW_SIZE} ${VIEW_SIZE}`}
+        role="img"
+        aria-label={accessibleName}
+        className="w-full max-w-[240px] mx-auto"
+      >
+        <path
+          d={pathD}
+          className="fill-sky-50 dark:fill-sky-950 stroke-gray-700 dark:stroke-gray-300"
+          strokeWidth={2}
+          strokeLinejoin="round"
+        />
+        {diagram.edgeLabels.map(({ edgeIndex, label }) => {
+          const a = points[edgeIndex % n];
+          const b = points[(edgeIndex + 1) % n];
+          const midX = (a.x + b.x) / 2;
+          const midY = (a.y + b.y) / 2;
+          // Offset the label outward from the shape's own centroid so it never sits on top of the edge itself.
+          const centroidX = points.reduce((sum, p) => sum + p.x, 0) / n;
+          const centroidY = points.reduce((sum, p) => sum + p.y, 0) / n;
+          const dx = midX - centroidX;
+          const dy = midY - centroidY;
+          const len = Math.hypot(dx, dy) || 1;
+          const labelX = midX + (dx / len) * 14;
+          const labelY = midY + (dy / len) * 14;
+          return (
+            <text
+              key={edgeIndex}
+              x={labelX}
+              y={labelY}
+              textAnchor="middle"
+              dominantBaseline="middle"
+              className="fill-gray-800 dark:fill-gray-200 text-[11px] font-semibold"
+            >
+              {label}
+            </text>
+          );
+        })}
+      </svg>
+      {/* Founder Educational Review amendment (Increment 020 Wave 1) -- a
+          visible, learner-facing notice for the one diagram whose vertices
+          are deliberately schematic, never proportionally accurate, so an
+          "unknown" edge's true value can never be read off the rendering. */}
+      {diagram.notToScale && (
+        <p className="text-center text-[11px] text-gray-400 dark:text-gray-500 mt-1 italic">Diagram not drawn to scale.</p>
+      )}
+    </div>
   );
 }

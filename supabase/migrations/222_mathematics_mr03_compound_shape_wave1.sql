@@ -89,6 +89,22 @@
 --
 -- Idempotent: every INSERT uses "on conflict (id) do nothing".
 --
+-- ============================================================
+-- FOUNDER EDUCATIONAL REVIEW HISTORY (additive, do not overwrite)
+-- ============================================================
+-- Family-level Founder decision: APPROVED WITH AMENDMENT.
+--   mr03-compound-01/02/03/04/05/07/08 = APPROVED (unchanged since authoring).
+--   mr03-compound-06 = APPROVED WITH AMENDMENT — the educational reasoning
+--     was approved; the original diagram was NOT approved (its "unknown"
+--     edge was drawn at its true, proportionally accurate solved length, a
+--     visual-estimation leak). AMENDMENT IMPLEMENTED this session: see
+--     compound-06's own INSERT below for the exact change. This amendment
+--     is NOT YET Founder-verified — that requires a separate future
+--     confirmation once the Founder has reviewed the amended result, per
+--     the Founder's own explicit instruction not to self-declare
+--     verification. See MR03_COMPOUND_SHAPES_FOUNDER_REVIEW.md's own
+--     additive amendment record for the full history.
+--
 -- NOT APPLIED. Generated for Founder/reviewer application via Supabase
 -- Dashboard > SQL Editor > New query.
 
@@ -175,6 +191,19 @@ values
 on conflict (id) do nothing;
 
 -- === compound-06 — TRANSFER, hard, reverse reasoning: given the perimeter, find a missing dimension ===
+-- Founder Educational Review amendment (Increment 020 Wave 1 review): the
+-- original diagram drew the unknown "?" edge at its true, proportionally
+-- accurate solved length (12, exactly twice the rendered "6 m" edge),
+-- which a visually sharp learner could estimate from directly -- a real
+-- leak the Founder's own review caught, undermining this item's own
+-- FAR_TRANSFER/reverse-reasoning intent. Every edge below is now a
+-- deliberately schematic (not-proportionally-accurate) stand-in --
+-- vertices (0,0)-(10,0)-(10,4)-(6,4)-(6,7)-(0,7), bearing no numeric
+-- relationship to the real values 12/6/4/5/7/10 -- with `notToScale:true`
+-- so the renderer shows a visible "Diagram not drawn to scale." notice.
+-- The mathematics itself is UNCHANGED: perimeter 44m, upper section
+-- 5m x 4m, lower height 6m, answer 12m, marks 2, FAR_TRANSFER, question
+-- text and workingSteps all identical to the original, pre-amendment row.
 insert into public.ali_question_bank
   (id, subject, skill, pathway, content_difficulty, question_type, estimated_time_seconds,
    prompt, explanation, mastery_threshold, learning_unit_id,
@@ -182,8 +211,8 @@ insert into public.ali_question_bank
    transfer_class)
 values
 ('mr03-compound-06', 'maths', 'QT-MR-07', array['csse'], 'hard', 'short-answer', 110,
- $json${"id":"mr03-compound-06","marks":2,"skill":"geometry","answer":"12m","question":"An L-shaped field has a perimeter of 44m. The narrower upper section measures 5m by 4m. The lower section is 6m tall, but its width is unknown, as shown. What is the width of the lower section?","workingSteps":["Let the unknown width be W. Going around all 6 sides: W + 6 + (W − 5) + 4 + 5 + (6 + 4) = perimeter.","This simplifies to: 2W + 20 = 44","So 2W = 24, and W = 12m","Check: sides are 12, 6, 7, 4, 5, 10 -- these add up to 44 ✓"],"diagram":{"type":"compound_rectilinear","vertices":[{"x":0,"y":0},{"x":12,"y":0},{"x":12,"y":6},{"x":5,"y":6},{"x":5,"y":10},{"x":0,"y":10}],"edgeLabels":[{"edgeIndex":0,"label":"?"},{"edgeIndex":1,"label":"6 m"},{"edgeIndex":3,"label":"4 m"},{"edgeIndex":4,"label":"5 m"}]}}$json$,
- 'Programme Increment 020, Wave 1. Assessment Brain QT-MR-07, competency MR-03. Question family: mr03-compound-area-perimeter. Part 1''s required unseen-transfer item: reverses every other row''s forward direction (given sides, find perimeter) into a genuinely unfamiliar reasoning direction (given the perimeter, find a missing side), requiring simple algebraic reasoning over the same shape structure taught in mr03-compound-03/04, not a rehearsed forward calculation. Independently recomputed: perimeter = W + 6 + (W-5) + 4 + 5 + 10 = 2W + 20; 2W+20=44 -> W=12; verified sides 12,6,7,4,5,10 sum to 44.',
+ $json${"id":"mr03-compound-06","marks":2,"skill":"geometry","answer":"12m","question":"An L-shaped field has a perimeter of 44m. The narrower upper section measures 5m by 4m. The lower section is 6m tall, but its width is unknown, as shown. What is the width of the lower section?","workingSteps":["Let the unknown width be W. Going around all 6 sides: W + 6 + (W − 5) + 4 + 5 + (6 + 4) = perimeter.","This simplifies to: 2W + 20 = 44","So 2W = 24, and W = 12m","Check: sides are 12, 6, 7, 4, 5, 10 -- these add up to 44 ✓"],"diagram":{"type":"compound_rectilinear","notToScale":true,"vertices":[{"x":0,"y":0},{"x":10,"y":0},{"x":10,"y":4},{"x":6,"y":4},{"x":6,"y":7},{"x":0,"y":7}],"edgeLabels":[{"edgeIndex":0,"label":"?"},{"edgeIndex":1,"label":"6 m"},{"edgeIndex":3,"label":"4 m"},{"edgeIndex":4,"label":"5 m"}]}}$json$,
+ 'Programme Increment 020, Wave 1. Assessment Brain QT-MR-07, competency MR-03. Question family: mr03-compound-area-perimeter. Part 1''s required unseen-transfer item: reverses every other row''s forward direction (given sides, find perimeter) into a genuinely unfamiliar reasoning direction (given the perimeter, find a missing side), requiring simple algebraic reasoning over the same shape structure taught in mr03-compound-03/04, not a rehearsed forward calculation. Independently recomputed: perimeter = W + 6 + (W-5) + 4 + 5 + 10 = 2W + 20; 2W+20=44 -> W=12; verified sides 12,6,7,4,5,10 sum to 44. AMENDED post-Founder-review (Increment 020 Wave 1): diagram vertices are now schematic/not-to-scale (see this INSERT''s own header comment) -- the mathematical content (question text, workingSteps, answer, marks, transfer_class) is byte-for-byte unchanged from the pre-amendment row.',
  2, 'inc020-wave1-mr03-compound-area-perimeter',
  'mr03-compound-area-perimeter', 'angel_original', 'provisional', 1, true,
  'Treating the perimeter as if it were the area, or trying to find W by guessing rather than setting up the total-sides equation.',
