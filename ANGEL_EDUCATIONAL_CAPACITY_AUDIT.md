@@ -367,3 +367,96 @@ Stated plainly rather than smoothed over:
 - Individual-question-level content review (predictable distractors, repeated wording patterns, repeated contexts) was not performed against all 553 items — out of this audit's scope; flagged as unproven-safe, not claimed safe.
 - Competitive comparison (Section 18) is limited by not having detailed competitor feature data in this session's context; several rows are honestly marked NOT ENOUGH EVIDENCE rather than estimated.
 - Sections 3/4's counts for `eligibility_status` by subject in a few places reflect cross-subject totals not yet separated per-subject (noted inline where this applies) — a mechanical extraction task, not a conceptual gap.
+
+---
+
+## 24. AUTHORITATIVE PRODUCTION RECONCILIATION (Programme Increment 018)
+
+Sections 1–23 above are **preserved unmodified** as the repository audit — the estimates below are recorded, not deleted, per instruction. This section supersedes specific repository-derived numbers with Founder-executed, read-only production query results (evidence hierarchy: production database > historical Founder evidence > deployed code > repository definitions > migration comments — a migration's own "NOT APPLIED" header does not override this).
+
+### 24.1 Mathematics
+
+| | REPOSITORY ESTIMATE (§3, Increment 017) | PRODUCTION RESULT (Increment 018) | RECONCILED VERDICT |
+|---|---|---|---|
+| Total/live rows | 293 defined; live status uncertain pending reconciliation | **293 active** | Repository row count was accurate; the live-status uncertainty is resolved — all 293 are active in production. |
+| Practice-eligible / "live" framing | Full-stack simulation gave 174; a separate historical Decision Log anchor gave 194 | **194 learner-reachable Practice rows** | The Decision Log anchor (194) was correct; the full-migration-stack simulation (174) was not. **194 is the learner-reachable Practice pool, not total live inventory — 293 is total live inventory.** This distinction must be maintained going forward. |
+| Mock-eligible | Decision Log anchor: 48 | **77** | Superseded. 48 was stale; 77 is current. |
+| Distinct families | 73 (of 261/293 tagged rows) | **73 distinct family IDs** (276/293 tagged, 17 untagged) | Family count matches exactly; the tagged-row count differs slightly (261 vs 276) — immaterial to the 73-family conclusion. |
+| Question type | 100% short-answer, 0% MCQ | **293/293 short-answer, 0 multiple-choice** | Confirmed exactly. Recorded as a **diversity finding, not automatically a defect** — CSSE/pathway requirements should determine whether answer-type expansion is appropriate, per Founder instruction. |
+| Difficulty distribution | medium 172 / hard 84 / easy 36 / challenge 1 | **medium 172 / hard 84 / easy 36 / challenge 1** | Confirmed exactly. |
+| Remediation | "No dedicated remediation pool — reuses same practice pool via UI rendering" (still architecturally true) | **259/293 rows (≈88%) carry a populated `addresses_misconception` tag** | Structural finding stands (no separate pool), but misconception-tag *coverage* is broader than Increment 017 implied — recorded as a positive correction to that specific number. |
+
+**New family-depth distribution (not previously queried)**: 2 families have 1 row; 51 have 2–4 rows; 18 have 5–9 rows; 2 have 10+ rows. This is now the authoritative basis for the anti-memorisation finding (§6) — the overwhelming majority of families (51/73, ≈70%) sit in the thinnest safely-usable band (2–4 variants).
+
+### 24.2 English Reading
+
+| | REPOSITORY ESTIMATE (§4, Increment 017) | PRODUCTION RESULT (Increment 018) | RECONCILED VERDICT |
+|---|---|---|---|
+| Total/live rows | 246 defined; "likely closer to 42 live" (Wave-1-only inference from "NOT APPLIED" migration headers) | **243 active** | **MATERIAL POSITIVE CORRECTION.** The ~42-live inference was wrong. Nearly the entire repository-defined pool (243 of 246) is live. The "NOT APPLIED" header is confirmed — for the second time in this programme's history, after the identical finding in Increment 016 for migrations 219/220 — to be an unreliable live/not-live signal on its own; it must never again be treated as evidence of non-application without a corroborating production read. |
+| Practice-eligible/reachable | Not separately computed (flagged as a gap) | **142 learner-reachable Practice rows** | New authoritative figure. |
+| Mock-eligible | Not separately computed | **50** (28 exposed/consumed, 22 unexposed reserve) | Internally consistent: 28 + 22 = 50. |
+| Passages | 30 distinct passages defined in repository | **30 active passages** | Confirmed exactly — unlike the question-row "NOT APPLIED" confusion, the passage-defining migrations were correctly inferred as live. |
+| Deterministic:judgement ratio | 174:59 (≈2.95:1), tiers TIER2 142/TIER3 50/TIER4 23/TIER5 9/TIER6 8/TIER1 1 | TIER1 1 / TIER2 139 / TIER3 44 / TIER4 23 / TIER5 15 / TIER6 8, legacy 13 → deterministic (1+139+23+8=171) : judgement-required (44+15=59) | Broadly confirmed (≈2.9:1); minor tier-count shifts (TIER2 -3, TIER3 -6, TIER5 +6) reflect real content changes since the repository migration set was authored, not a measurement error. |
+
+**New finding, not previously identified**: passage-level `eligibility_status` lags well behind question-level eligibility — only 1 of 30 passages is `practice_eligible` and 5 are `mock_eligible`, despite 142 *questions* being practice-eligible. This means passage eligibility, not question eligibility, may be the binding constraint on reachable Reading content, and was not visible in the Increment 017 repository audit (which did not query passage eligibility distribution). Flagged for investigation in Workstream B, not resolved here.
+
+**Consumed/reserved passages confirmed exactly** against the Founder's named anchors: 3 exposed (Bees, Boathouse, Understudy — matching the `reading-comprehension-mock-1` composition), 2 unexposed mock-eligible reserve (Loose Connection, Sail and Steam).
+
+### 24.3 Continuous Writing
+
+| | REPOSITORY ESTIMATE | PRODUCTION RESULT | RECONCILED VERDICT |
+|---|---|---|---|
+| Total rows | 14 (repository count, confirmed as the DB row count in Increment 017) | **14 active** | Confirmed exactly. |
+| Learner-reachable Practice | Not previously computed | **7** | New finding. Recorded, per Founder instruction, as **a genuine scale constraint** — half of the already-small live pool is not reachable through ordinary Practice. |
+
+### 24.4 Mathematics Mock 1
+
+| | REPOSITORY ESTIMATE (§15) | PRODUCTION RESULT | RECONCILED VERDICT |
+|---|---|---|---|
+| Active form + identity | Uncertain — Increment 017 treated `first-mock-mathematics-v1` as a "superseded legacy id" and could not confirm which form was truly live; cited a 48-row/48-mark figure | `first-mock-mathematics-v1`, active=true, 56 manifest rows, 56 distinct questions, **56 marks**, displayName "Mathematics Mock 1", 2 total attempts / 1 submitted | **Superseded, with a correction to my own prior characterisation**: `first-mock-mathematics-v1` is not legacy — it is the live active Mathematics Mock 1 form, exactly matching the Founder's supplied anchor. The 48-row/48-mark figure is retired. |
+
+### 24.5 Reading Comprehension Mock 1
+
+| | REPOSITORY ESTIMATE (§15) | PRODUCTION RESULT | RECONCILED VERDICT |
+|---|---|---|---|
+| Manifest/marks | 28 raw rows / 27 learner-facing display units / 65 marks (from migration 217's own asserted composition) | `reading-comprehension-mock-1`, active=true, 28 manifest rows, 28 distinct questions, **65 marks**, 5 total attempts / 4 submitted | Confirmed exactly. The 27-vs-28 figure is not a discrepancy: 28 is the database manifest row count, 27 is a frontend/display grouping fact (paired sub-questions rendered as one unit) — both are simultaneously true, at different layers. |
+
+### 24.6 Mathematics Future Mock Reserve — the central "do not silently replace history" case
+
+- **HISTORICAL PLANNING POSITION** (prior programme planning, preserved unmodified): approximately **34 marks** protected future-Mock reserve, with ~22 further marks judged necessary to reach another full 56-mark Mock floor.
+- **CURRENT LIVE STRICT POSITION** (production query: `eligibility_status='mock_eligible' AND not yet exposed to any Mock form`): **21 rows / 21 marks**.
+- **RECONCILED VERDICT**: 21 marks is the current authoritative *strictly mock-eligible-and-unexposed* reserve under the live classification/exposure query. This does not overwrite the 34-mark historical planning figure — the two numbers likely describe different populations (the historical figure may have included content under a different eligibility/review state, or was a pre-exposure planning assumption made before some of that content was actually consumed into `first-mock-mathematics-v1`'s 56-row manifest). **No inference is made about which specific cause applies — that would require evidence this reconciliation does not have.** What is certain: under today's live, strict classification, **a fresh 56-mark Mathematics Mock cannot currently be assembled from the 21-mark reserve alone** — this is now a verified, not estimated, capacity constraint.
+
+### 24.7 English Future Mock Reserve
+
+Strict live reserve: **22 unexposed mock-eligible question rows, 39 marks, 2 unexposed mock-eligible passages** (Loose Connection, Sail and Steam). The three Reading Mock 1 passages (Bees, Boathouse, Understudy) are confirmed already exposed/consumed and remain protected under the firewall — **not** returned to Practice, consistent with the cross-Mock reuse prohibition this audit already found well-engineered (§6, §11).
+
+### 24.8 Teaching, Preparation Horizon, Late Entrant — preserved, independently re-verified, unchanged by production data
+
+These three findings are architectural/code facts, not database facts, and were already independently re-verified against current deployed source in the prior turn of this increment (not merely carried over from Increment 017's sub-agent report):
+
+- **Teaching coverage**: Mathematics 2/12 currently-iterated competencies (`ALL_COMPETENCY_IDS`, `lib/learningEngine/assessmentBrainMap.ts:111` — 13 raw competency keys minus the AR-01 exclusion — ≈17%); English 0/9 (of the 9 distinct Reading skill values catalogued in §4.1). This remains a major educational-scale gap, now confirmed against a much larger live content base than Increment 017 believed existed — i.e. the gap is a *teaching-sequencing* gap, not primarily a *raw-content-existence* gap.
+- **Preparation Horizon**: confirmed display-only — `stagePrinciple()`'s own code comment (`lib/learningEngine/preparationStage.ts:104-106`) states it is "not wired into which questions get selected." It does not control question selection, Mock access, placement, difficulty, or programme sequencing.
+- **Late entrant**: confirmed absent — no baseline/placement diagnostic exists; Mock-attempt creation (`app/learning-intelligence/mock-exam/page.tsx`) has exactly one gate (`isMockFormAvailable`, an existence check), with zero reference to preparation stage or readiness anywhere in that path.
+
+### 24.9 Founder Strategic Interpretation (recorded verbatim as programme position)
+
+Production evidence changes the *conclusion* about content existence, not the conclusion about content *sufficiency*. Angel has a meaningful live educational foundation: 293 live Mathematics questions, 243 live English Reading questions, 14 live Writing prompts, 194/142/7 learner-reachable respectively, two active production Mock forms, real retention/retrieval architecture (§12, unaffected by this reconciliation — remains a genuine strength), and strong Practice/Mock governance (§6, §11, unaffected — the firewall's numbers were confirmed, not contradicted, by this reconciliation). It does **not** yet have the content depth, family diversity, teaching coverage, placement architecture, or long-runway capacity required to sustain a highly engaged learner from Year 4 through selective-school examination. Both statements are true simultaneously; neither supersedes the other.
+
+### 24.10 Updated Capacity Verdict
+
+**PARTIALLY READY** — revised from Increment 017's "NOT READY," reflecting that raw content existence is now confirmed substantial rather than uncertain. The binding constraints are no longer "does the content exist" but: (a) family-depth thinness (51/73 Mathematics families sit at only 2–4 variants — the exhaustion mathematics in §7 is essentially unchanged by this reconciliation, since it was already built on family counts, not raw row counts), (b) teaching-sequence coverage (2/12, 0/9), and (c) preparation-horizon/placement architecture being entirely non-operational. A final raw-question capacity target is **deliberately not set here** — per Founder instruction, it must be derived from preparation horizon, weekly usage, competency breadth, conceptual families, safe reuse, retrieval, freshness, transfer, and assessment protection together, not chosen in isolation now that a raw count is known.
+
+### 24.11 Biggest Verified Educational Gap
+
+**Preparation Horizon is entirely non-operational (0% wired), and no late-entrant placement exists at all.** This is judged the single biggest verified gap over the family-depth/teaching gaps (§24.1, §24.8) because it is a complete architectural absence rather than a thin-but-present capability — the clock/stage engine exists and computes a real answer, but nothing downstream reads it, and no diagnostic exists to feed it quickly for a new learner. It is also the gap most directly contradicted by the Founder's own stated core requirements (must not force a late entrant through unnecessary foundation work; must not let a long-runway learner drill Mocks prematurely) — requirements that, per §24.4–24.5's confirmed Mock-access findings, are currently unmet in production exactly as in the repository audit.
+
+### 24.12 Recommended Next Programme
+
+Per Founder instruction, **not** Increment 017's "content-family-expansion-last" sequencing. Two coordinated workstreams, run in parallel, neither implemented in this increment:
+
+**Workstream A — Preparation & Placement**: entry/placement, late-entrant diagnostic, time-to-exam, existing competency evidence, weakness prioritisation, Mock appropriateness, acceleration, revision, readiness.
+
+**Workstream B — Educational Content Scale**: Question Family Registry, conceptual diversity, anti-memorisation, content inventory classes, controlled variant production, teaching expansion, Practice expansion, transfer, retrieval, Mock reserve (§24.6/24.7's now-verified 21-mark/39-mark strict reserves are the starting denominators), Writing expansion, visual educational assets.
+
+Implementation architecture for either workstream awaits a separate Founder instruction.
