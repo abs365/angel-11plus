@@ -27,6 +27,11 @@ import {
   getSubmittedMockAttempts,
 } from "@/lib/mockAttempt/client";
 import { requestReadingScoring, logReadingScoringRequestOutcome } from "@/lib/mockAttempt/readingScoringRequest";
+import { computeSubjectPreparationSummary } from "@/lib/learningEngine/preparationState";
+import { derivePreparationStage } from "@/lib/learningEngine/preparationStage";
+import { resolvePreparationClock } from "@/lib/learningEngine/preparationClock";
+import { classifyMockAccess, type MockAccessAssessment } from "@/lib/ali/mockAccessPolicy";
+import { getSchoolYear } from "@/lib/progress";
 import type { MockAttemptType, MockQuestionPayload } from "@/lib/mockAttempt/types";
 import {
   resolveAttemptType,
@@ -212,6 +217,13 @@ export default function MockExamPage({
   // only one they are mid-way through (that remains getResumableMockAttempt()'s
   // own, separate job). Empty until the mount effect below resolves it.
   const [previousAttempts, setPreviousAttempts] = useState<{ attemptId: string; submittedAt: string }[]>([]);
+  // Programme Increment 019, Part 6 — Mock Access Policy. Best-effort,
+  // display-only, and deliberately never gates the "I'm ready to begin"
+  // flow (see this page's own mount effect for why) — this Mock remains
+  // TECHNICALLY_AVAILABLE and startable regardless of what this resolves
+  // to; it only adds an honest, evidence-based note about whether current
+  // evidence recommends it as the next best action right now.
+  const [mockAccess, setMockAccess] = useState<MockAccessAssessment | null>(null);
   // Programme Completion Increment 015 — real form-metadata-driven
   // identity (migration 214's displayName), replacing the previously
   // hardcoded "Mathematics Mock 1" literal. Programme Completion
@@ -341,6 +353,24 @@ export default function MockExamPage({
         if (!submitted.error && submitted.data) setPreviousAttempts(submitted.data);
       }
       setPhase(isMockFormAvailable(active) ? "intro" : "unavailable");
+
+      // Programme Increment 019, Part 6 — same best-effort, never-gating
+      // pattern as the previous-attempts lookup immediately above. A
+      // failure here leaves mockAccess null, and the page simply omits
+      // the recommendation note — the "I'm ready to begin" flow is
+      // completely unaffected either way.
+      (async () => {
+        const profileId = await ensureProfile();
+        if (!profileId) return;
+        const [writingSummary, mathsSummary, englishSummary] = await Promise.all([
+          computeSubjectPreparationSummary(supabase, profileId, "Continuous Writing"),
+          computeSubjectPreparationSummary(supabase, profileId, "Mathematics"),
+          computeSubjectPreparationSummary(supabase, profileId, "English Comprehension"),
+        ]);
+        const clock = resolvePreparationClock(new Date());
+        const stage = derivePreparationStage([writingSummary, mathsSummary, englishSummary], clock, getSchoolYear());
+        setMockAccess(classifyMockAccess({ technicallyAvailable: isMockFormAvailable(active), stage, clock }));
+      })().catch(() => {});
     })();
     // attemptType is resolved once from searchParams (use()) and is
     // stable for this component's lifetime — a real navigation to a
@@ -618,6 +648,15 @@ export default function MockExamPage({
             <p className="text-gray-400 dark:text-gray-500 text-sm mt-1">
               {INTRO_SUBTITLE_BY_ATTEMPT_TYPE[attemptType]}
             </p>
+            {/* Programme Increment 019, Part 6 — Mock Access Policy. Never
+                a claim that the learner "is Mock ready" (this increment's
+                own explicit instruction) -- only a plain statement of
+                whether current evidence recommends this as the next best
+                action right now. The Mock itself is always startable
+                below regardless of what this says. */}
+            {mockAccess && mockAccess.availabilityLevel !== "educationally_recommended" && (
+              <p className="text-amber-700 dark:text-amber-400 text-xs mt-2 leading-relaxed">{mockAccess.reasons[0]}</p>
+            )}
 
             <InfoCard className="mt-5">
               <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">Before you begin</p>

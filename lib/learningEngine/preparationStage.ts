@@ -42,7 +42,6 @@ export type PreparationStage =
 export type SchoolYear = "Year 4" | "Year 5" | "Year 6";
 
 /** Proportion-of-competencies thresholds are a disclosed, provisional judgement call (same calibration-ownership discipline as lib/ali/confidence.ts's own thresholds) — not derived from an external standard. */
-const REBUILDING_TRIGGERS_TEACHING_RATIO = 0.2;
 const FOUNDATION_EARLY_STAGE_RATIO = 0.6;
 const DEVELOPING_MID_STAGE_RATIO = 0.5;
 const TRANSFER_STRONG_STAGE_RATIO = 0.6;
@@ -59,8 +58,12 @@ export function derivePreparationStage(
   }
 
   const total = allCompetencies.length;
-  const rebuilding = allCompetencies.filter((c) => c.educationalState === "rebuilding").length;
-  if (rebuilding / total >= REBUILDING_TRIGGERS_TEACHING_RATIO) return "teaching";
+  // Any real regression signal forces teaching -- per this function's own documented invariant
+  // above, never gated on what proportion of the map it represents. A single competency that
+  // has just been revoked from mastery is exactly "the specific skill that slipped" (see
+  // stagePrinciple("teaching") below), not a bulk-distribution event.
+  const hasRegression = allCompetencies.some((c) => c.educationalState === "rebuilding");
+  if (hasRegression) return "teaching";
 
   const earlyStage = allCompetencies.filter(
     (c) => c.educationalState === "exploring" || c.educationalState === "building-knowledge"

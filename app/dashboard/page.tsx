@@ -27,6 +27,9 @@ import { ensureProfile } from "@/lib/supabaseProgress";
 import { computeSubjectPreparationSummary, applyCanonicalWritingEvidence, toAliCompetencySignal } from "@/lib/learningEngine/preparationState";
 import { derivePreparationStage, stagePrinciple } from "@/lib/learningEngine/preparationStage";
 import { resolvePreparationClock } from "@/lib/learningEngine/preparationClock";
+import { buildPreparationDecision, type PreparationDecision, type ActivityType } from "@/lib/learningEngine/preparationDecision";
+import { getRecommendations } from "@/lib/learningEngine/educationalIntelligenceService";
+import { competencyLabel } from "@/lib/ali/labels";
 import NewBadgeBanner from "@/components/NewBadgeBanner";
 import { getPathwayById } from "@/lib/pathways";
 import { Card, MissionCard } from "@/components/ui/Card";
@@ -151,6 +154,37 @@ const EXPECTED_OUTCOME: Record<string, string> = {
   secondary: "Builds on today's momentum",
   review: "Keeps a mastered skill sharp",
 };
+
+/**
+ * Programme Increment 019, Part 5 — turns the canonical decision
+ * contract's own ActivityType + competencyId into the exact style of
+ * learner-facing phrase this increment's own instruction named as
+ * examples ("Learn percentages", "Practise inference", "Revisit
+ * fractions"...). Pure presentation only: every decision this function's
+ * INPUT reflects was already made by lib/learningEngine/
+ * preparationDecision.ts — this function invents no educational logic of
+ * its own, per this increment's own "the UI must not independently
+ * invent educational logic" instruction.
+ */
+function describeRecommendedActivity(activityType: ActivityType, competencyId: string | null): string {
+  const label = competencyId ? competencyLabel(competencyId) : null;
+  switch (activityType) {
+    case "placement_check":
+      return "Complete a short placement check";
+    case "teaching_lesson":
+      return label ? `Learn ${label}` : "Learn a new topic";
+    case "guided_practice":
+      return label ? `Practise ${label} with support` : "Practise with support";
+    case "independent_practice":
+      return label ? `Practise ${label}` : "Practise independently";
+    case "revision_retrieval":
+      return label ? `Revisit ${label}` : "Revisit a previous topic";
+    case "unseen_transfer_check":
+      return label ? `Try an unseen ${label} check` : "Try an unseen transfer check";
+    case "timed_assessment":
+      return "Take an appropriate timed assessment";
+  }
+}
 
 /**
  * Sprint 3 — the Admission Hero's stage line reuses JourneyTimeline's own
@@ -332,6 +366,13 @@ export default function DashboardPage() {
   const [progress, setProgress] = useState<UserProgress | null>(null);
   const [report, setReport] = useState<AnalyticsReport | null>(null);
   const [mission, setMission] = useState<DailyMissionData | null>(null);
+  // Programme Increment 019, Part 5 — the canonical decision contract's
+  // own output (lib/learningEngine/preparationDecision.ts), computed
+  // alongside the existing 007W preparation-stage correction pass below
+  // (same real subjects/clock, no duplicate Supabase round trip). Never
+  // persisted, matching 007W's own "viewing the dashboard must never
+  // manufacture or persist learning evidence" discipline exactly.
+  const [preparationDecision, setPreparationDecision] = useState<PreparationDecision | null>(null);
   const [weeklyGoal, setWeeklyGoal] = useState<WeeklyGoal | null>(null);
   const [newBadgeIds, setNewBadgeIds] = useState<string[]>([]);
   const [pathway, setPathway] = useState<Pathway | undefined>();
@@ -450,11 +491,8 @@ export default function DashboardPage() {
           // unchanged, pre-existing convention -- a parent who has not set
           // a school year sees exactly the same behaviour as before this
           // change, never a new restriction.
-          const stage = derivePreparationStage(
-            [writingSummary, mathsSummary, englishSummary],
-            resolvePreparationClock(new Date()),
-            p.schoolYear
-          );
+          const preparationClock = resolvePreparationClock(new Date());
+          const stage = derivePreparationStage([writingSummary, mathsSummary, englishSummary], preparationClock, p.schoolYear);
           const adaptiveMission = computeAdaptiveState(missionViewProgress, correctedReport).dailyMission;
           const correctedMission =
             stage === "insufficient_evidence" ? adaptiveMission : { ...adaptiveMission, tagline: stagePrinciple(stage) };
@@ -462,6 +500,29 @@ export default function DashboardPage() {
           setReport(correctedReport);
           setMission(correctedMission);
           setParentReport(computeParentReport(p, correctedReport, gamification));
+
+          // Programme Increment 019, Part 4/5 — the SAME real subjects and
+          // clock this block already computed, fed through the canonical
+          // decision contract, plus one new real call to the existing
+          // getRecommendations() (previously always called with
+          // daysUntilExam=null by every real caller in this codebase —
+          // Increment 019's own confirmed finding) so Tier 3 exam-proximity
+          // reweighting can activate for the first time with a genuine
+          // value. Best-effort: a failure here must never block the
+          // already-set report/mission/parentReport above.
+          const allCompetencyIds = [writingSummary, mathsSummary, englishSummary].flatMap((s) => s.competencies.map((c) => c.competencyId));
+          getRecommendations(supabase, profileId, allCompetencyIds, new Date(), preparationClock.daysRemaining)
+            .then((recommendations) => {
+              const decision = buildPreparationDecision(
+                [writingSummary, mathsSummary, englishSummary],
+                preparationClock,
+                p.schoolYear,
+                recommendations.ordered,
+                recommendations.vetoedCompetencyCodes
+              );
+              setPreparationDecision(decision);
+            })
+            .catch(() => {});
         })().catch(() => {
           // Real ALI evidence is unreachable (offline, RLS, etc.) -- fail
           // open to the legacy report already set above, never block or
@@ -579,6 +640,25 @@ export default function DashboardPage() {
               </div>
             )}
           </div>
+
+          {/* Programme Increment 019, Part 5 — the ONE primary educational
+              recommendation the canonical decision contract produces, with
+              its own explainable reason. Deliberately not a carousel and
+              not a second mission list: this is a single, bounded summary
+              of what Angel's own evidence currently recommends doing next,
+              distinct from (and above) the existing Today's Mission list
+              below, which this increment does not touch. */}
+          {preparationDecision && (
+            <Card padding="comfortable" className="mb-4">
+              <p className="text-[10px] font-bold uppercase tracking-wide text-gray-400 dark:text-gray-500 mb-1">Angel recommends next</p>
+              <p className="text-gray-900 dark:text-gray-100 font-semibold leading-snug">
+                {describeRecommendedActivity(preparationDecision.recommendedActivityType, preparationDecision.recommendedCompetencyId)}
+              </p>
+              <p className="text-gray-500 dark:text-gray-400 text-xs mt-1 leading-relaxed">
+                {preparationDecision.decisionReasons[preparationDecision.decisionReasons.length - 1] ?? preparationDecision.stagePrincipleText}
+              </p>
+            </Card>
+          )}
 
           {mission && mission.items.length > 0 ? (
             <Card elevation="raised" accent="primary" padding="none" className="overflow-hidden">

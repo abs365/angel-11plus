@@ -10,6 +10,7 @@ import { getSupabaseClient } from "@/lib/supabase";
 import { ensureProfile } from "@/lib/supabaseProgress";
 import { withTimeout } from "@/lib/withTimeout";
 import { recordPresentation, recordOutcome } from "@/lib/ali/history";
+import { computeQuestionDurationSeconds, isImplausibleDuration } from "@/lib/ali/timingEvidence";
 import { completeLesson, recordSkillResult, getSelectedPathwayId, setSelectedPathway } from "@/lib/progress";
 import { fetchLearnerIntelligenceProfile } from "@/lib/learningEngine/profile";
 import { recordReadinessSnapshot } from "@/lib/learningEngine/learningHistory";
@@ -191,6 +192,17 @@ export default function PracticeSessionPage({
   // resetActivityUiState(), never inside recordAndAdvance() itself — this
   // guard is purely an interaction-layer concern, not an educational one.
   const isSubmittingRef = useRef(false);
+  // Programme Increment 019, Part 17 (Speed/Accuracy Foundation) — the
+  // moment the current question actually became visible to the learner.
+  // Reset in exactly the two places a new question becomes current: here
+  // at module init (harmless — overwritten before any real question loads)
+  // and inside resetActivityUiState() below, the same single per-question
+  // reset point every other session-local ref already uses. Never reset on
+  // a mere re-render of the same question (revisiting an already-answered
+  // question does not restart its own timer), matching the explicit
+  // "revisiting must not silently create misleading timing evidence"
+  // requirement.
+  const questionShownAtRef = useRef<number>(0);
 
   if (!area) {
     return (
@@ -304,6 +316,7 @@ export default function PracticeSessionPage({
       setIndex(0);
       setCorrectCount(0);
       setMode("session");
+      questionShownAtRef.current = Date.now(); // Part 17 — the very first question's own shown-at moment
     } catch (err) {
       setErrorMessage(err instanceof Error ? err.message : "Something went wrong.");
       setMode("error");
@@ -324,6 +337,7 @@ export default function PracticeSessionPage({
     setCheckedItems(new Set());
     setWritingSubmitting(false);
     isSubmittingRef.current = false;
+    questionShownAtRef.current = Date.now(); // Part 17 — this newly-current question's own shown-at moment
   }
 
   async function recordAndAdvance(
@@ -369,6 +383,17 @@ export default function PracticeSessionPage({
         }
       }
 
+      // Programme Increment 019, Part 17 — the first real caller of
+      // recordOutcome()'s own long-existing (migration 015), previously
+      // permanently-empty evidenceFacts.timeTakenSeconds. Computed from
+      // questionShownAtRef's own single per-question reset point (see its
+      // docstring above) and bounded via isImplausibleDuration() so a
+      // learner who left the tab open cannot silently poison this
+      // question's own timing evidence -- an implausible duration is
+      // dropped (undefined) rather than recorded as a genuine slow answer.
+      const rawTimeTakenSeconds = computeQuestionDurationSeconds(questionShownAtRef.current, Date.now());
+      const timeTakenSeconds = isImplausibleDuration(rawTimeTakenSeconds) ? undefined : rawTimeTakenSeconds;
+
       await recordOutcome(
         supabase,
         profileIdRef.current,
@@ -376,7 +401,7 @@ export default function PracticeSessionPage({
         isCorrect,
         sessionIdRef.current,
         current.masteryThreshold,
-        undefined,
+        timeTakenSeconds !== undefined ? { timeTakenSeconds } : undefined,
         supportTier,
         verified
       ).catch(() => {});

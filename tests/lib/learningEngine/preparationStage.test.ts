@@ -51,6 +51,18 @@ test("a real regression (rebuilding) forces teaching, overriding an otherwise-st
   assert.equal(derivePreparationStage([subject(competencies)], noClock), "teaching");
 });
 
+test("a single regression among many strong competencies still forces teaching (Increment 019 Persona F) -- the trigger is never ratio-gated", () => {
+  const competencies = [
+    ...Array.from({ length: 11 }, () => competency("durably-mastered", "high")),
+    competency("rebuilding", "moderate"),
+  ];
+  assert.equal(
+    derivePreparationStage([subject(competencies)], noClock),
+    "teaching",
+    "one real regression signal out of twelve competencies (well under any plausible ratio) must still force teaching"
+  );
+});
+
 test("time remaining alone cannot determine stage: a long-horizon clock never pushes a weak-evidence learner into a late stage", () => {
   const competencies = [competency("exploring", "low"), competency("building-knowledge", "low")];
   // Even with a final_preparation-band clock, weak evidence must stay at its evidence-derived stage.
