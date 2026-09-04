@@ -15,7 +15,7 @@ Programme Increment 020, Wave 1. Family: `mr03-compound-area-perimeter` (8 rows,
 | mr03-compound-03 | APPROVED |
 | mr03-compound-04 | APPROVED |
 | mr03-compound-05 | APPROVED |
-| mr03-compound-06 | **APPROVED WITH AMENDMENT** |
+| mr03-compound-06 | **APPROVED WITH AMENDMENT — AMENDMENT EDUCATIONALLY VERIFIED** |
 | mr03-compound-07 | APPROVED |
 | mr03-compound-08 | APPROVED |
 
@@ -23,11 +23,13 @@ Programme Increment 020, Wave 1. Family: `mr03-compound-area-perimeter` (8 rows,
 
 **AMENDMENT IMPLEMENTED** (this session, not yet Founder-verified): `mr03-compound-06`'s diagram in migration 222 now uses a deliberately schematic vertex set — `(0,0)-(10,0)-(10,4)-(6,4)-(6,7)-(0,7)`, bearing no numeric relationship to the real values 12/6/4/5 — with `diagram.notToScale: true`. `components/practice/CompoundShapeDiagram.tsx` now renders a visible "Diagram not drawn to scale." notice whenever this flag is set (and only then — no other question in the family was changed). The mathematical content (question text, `workingSteps`, answer, marks, `transfer_class`) is byte-for-byte unchanged. Verified this session: the schematic diagram's own rendered edge-ratio (10:4 = 2.5) no longer matches the true ratio (12:6 = 2.0) the original diagram leaked; the shape remains a valid, simple, non-self-intersecting rectilinear hexagon; 5 new regression tests added (`tests/lib/ali/mr03CompoundShapeWave1.test.ts`) parsing the real migration 222 SQL text directly, so a future accidental revert fails a test first, including one asserting no *other* question in the family was made not-to-scale.
 
-**AMENDMENT VERIFIED:** not yet — pending your own review of this implemented change. Please confirm via the same review channel once satisfied, at which point this line will be updated to record that confirmation (and only then).
+**AMENDMENT EDUCATIONALLY VERIFIED BY FOUNDER.** The Founder has reviewed and accepted the implemented change: diagram retained (not removed); deliberately not proportional; visible "Diagram not drawn to scale." notice present; mathematical problem unchanged (perimeter 44 m, upper section 5 m × 4 m, lower height 6 m, answer 12 m, FAR_TRANSFER, marks 2); regression protection present (5 tests). This is a distinct, separate confirmation from visual browser rendering, which remains its own open item below — the Founder's verification is of the educational content and implementation as reviewed in this document and the migration's own text, not of an on-screen render.
+
+**VISUAL RENDER VERIFICATION DEFERRED** — kept explicitly open, not resolved or downgraded by the educational verification above. No actual on-screen rendering (mobile/tablet/desktop, label overlap, notice legibility) has occurred in any session to date; see the "Visual verification" section below for the current state of that separate, still-open item.
 
 ---
 
-**Current status: PENDING FOUNDER EDUCATIONAL REVIEW of the implemented amendment specifically** — the family-level decision above (APPROVED WITH AMENDMENT) is your own recorded educational decision; the amendment itself awaits your confirmation that it actually closes the gap you identified. The per-question analysis below is the original, unmodified basis for that decision (session's own educational judgement, offered for you to accept, amend, or overrule).
+**Current status: family APPROVED WITH AMENDMENT; the amendment itself is AMENDMENT IMPLEMENTED + AMENDMENT EDUCATIONALLY VERIFIED BY FOUNDER.** Production registration (migrations 222/223) is Founder-authorised for manual application; Practice promotion is a separate, not-yet-authorised, future decision. The per-question analysis below is the original, unmodified basis for the Founder's decision.
 
 ---
 
@@ -187,7 +189,7 @@ Each entry shows the question exactly as a learner will see it, its diagram desc
 
 **Founder judgement required — YES, flagging genuinely:** This diagram is drawn to real proportional scale from its actual coordinates (the renderer scales real (x,y) points uniformly; it does not distort them). Because the "?" edge is rendered at its **true, solved length** (12, exactly twice the length of the "6 m" edge shown beside it), a visually sharp learner could in principle estimate the answer by eye from the diagram's own proportions, rather than deriving it algebraically — partially undermining the point of a "transfer/reasoning" question. **Recommended fix, not yet made:** for this question only, either (a) redraw the unknown edge at a fixed, neutral placeholder length decoupled from its true value (keeping every other edge's true proportion), or (b) present this one item without a diagram, relying on the stated numbers alone, since the algebra does not depend on a picture. I have not made this change, since it is a genuine design judgement (visual support vs. information leak), not a mechanical defect, and belongs to your review rather than a unilateral edit.
 
-> **UPDATE — Founder decision received: APPROVED WITH AMENDMENT.** Option (a) implemented (see the Founder Decision Record at the top of this document): the diagram is kept, redrawn schematically with a visible "not drawn to scale" notice, decoupled from the true 12/6/4/5 values. AMENDMENT IMPLEMENTED, not yet AMENDMENT VERIFIED.
+> **UPDATE — Founder decision received: APPROVED WITH AMENDMENT.** Option (a) implemented (see the Founder Decision Record at the top of this document): the diagram is kept, redrawn schematically with a visible "not drawn to scale" notice, decoupled from the true 12/6/4/5 values. AMENDMENT IMPLEMENTED, then AMENDMENT EDUCATIONALLY VERIFIED BY FOUNDER. Visual render verification (on-screen rendering, mobile/tablet/desktop) remains its own separate, still-open, DEFERRED item — not resolved by the educational verification.
 
 ---
 

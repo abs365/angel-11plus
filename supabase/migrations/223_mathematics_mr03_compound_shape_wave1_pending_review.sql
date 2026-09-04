@@ -11,9 +11,13 @@
 -- Idempotent (WHERE NOT EXISTS per family_id + decision), matching
 -- migration 053's own established pattern exactly.
 --
--- NOT APPLIED. Generated for Founder/reviewer application via Supabase
--- Dashboard > SQL Editor > New query, after migration 222 has been
--- applied.
+-- Founder-authorised for manual production application via Supabase
+-- Dashboard > SQL Editor, AFTER migration 222 has succeeded (never before
+-- -- this migration's own INSERT depends on nothing else, but the
+-- Founder's own required execution order is 222 then 223, not reversed).
+-- Registers the review target only; does not itself constitute review,
+-- and does not make any of the 8 rows learner-reachable or promote them
+-- toward practice_eligible/mock_eligible.
 
 begin;
 

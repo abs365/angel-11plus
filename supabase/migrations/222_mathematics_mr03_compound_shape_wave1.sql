@@ -97,16 +97,24 @@
 --   mr03-compound-06 = APPROVED WITH AMENDMENT — the educational reasoning
 --     was approved; the original diagram was NOT approved (its "unknown"
 --     edge was drawn at its true, proportionally accurate solved length, a
---     visual-estimation leak). AMENDMENT IMPLEMENTED this session: see
---     compound-06's own INSERT below for the exact change. This amendment
---     is NOT YET Founder-verified — that requires a separate future
---     confirmation once the Founder has reviewed the amended result, per
---     the Founder's own explicit instruction not to self-declare
---     verification. See MR03_COMPOUND_SHAPES_FOUNDER_REVIEW.md's own
---     additive amendment record for the full history.
+--     visual-estimation leak). AMENDMENT IMPLEMENTED: see compound-06's
+--     own INSERT below for the exact change. AMENDMENT EDUCATIONALLY
+--     VERIFIED BY FOUNDER (diagram retained, deliberately not proportional,
+--     visible not-drawn-to-scale notice present, mathematics unchanged,
+--     regression protection present). Visual render verification (actual
+--     on-screen rendering, mobile/tablet/desktop) remains its own separate
+--     DEFERRED item, not resolved by the educational verification. See
+--     MR03_COMPOUND_SHAPES_FOUNDER_REVIEW.md's own additive amendment
+--     record for the full history.
 --
--- NOT APPLIED. Generated for Founder/reviewer application via Supabase
--- Dashboard > SQL Editor > New query.
+-- Founder-authorised for manual production application via Supabase
+-- Dashboard > SQL Editor. Execute this migration (222) FIRST, then
+-- migration 223. This authorisation covers registering these 8 rows as
+-- 'provisional' content ONLY -- it is NOT a Practice-release decision:
+-- none of these rows becomes learner-reachable, none is promoted toward
+-- practice_eligible/mock_eligible, and no Mock composition/reserve is
+-- touched by applying this migration. A later, separate, explicit
+-- Founder decision governs Practice promotion.
 
 begin;
 
