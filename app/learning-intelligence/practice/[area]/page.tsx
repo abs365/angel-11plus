@@ -16,7 +16,7 @@ import { computeQuestionDurationSeconds, isImplausibleDuration } from "@/lib/ali
 import { completeLesson, recordSkillResult, getSelectedPathwayId, setSelectedPathway } from "@/lib/progress";
 import { fetchLearnerIntelligenceProfile } from "@/lib/learningEngine/profile";
 import { recordReadinessSnapshot } from "@/lib/learningEngine/learningHistory";
-import { QUESTION_TYPE_PRIMARY_COMPETENCY, isValidCompetencyId } from "@/lib/learningEngine/assessmentBrainMap";
+import { QUESTION_TYPE_PRIMARY_COMPETENCY, isValidCompetencyId, COMPETENCIES, COMPONENT_SUBJECT } from "@/lib/learningEngine/assessmentBrainMap";
 import { generatePersonalisedSession, type FamilyFocusSessionInfo, type PreparationSessionContext } from "@/lib/learningEngine/sessionGenerator";
 import { computePreparationDecision } from "@/lib/learningEngine/preparationDecision";
 import { hasFullLessonAvailable, FULL_LESSON_ROUTE } from "@/lib/learningEngine/fullLessonRegistry";
@@ -292,7 +292,23 @@ export default function PracticeSessionPage({
           router.replace(`/learning-intelligence/placement?returnArea=${encodeURIComponent(area!.id)}`);
           return;
         }
-        const lessonRoute = decision.recommendedCompetencyId ? FULL_LESSON_ROUTE[decision.recommendedCompetencyId] : undefined;
+        // Programme Increment 022 -- FULL_LESSON_ROUTE now spans more than
+        // one subject (Mathematics + English), so the top-priority
+        // competency across ALL 13 competencies (computed globally, not
+        // scoped to the area currently being viewed -- see
+        // buildPreparationDecision()'s own allCompetencyIds) could in
+        // principle name a competency from a DIFFERENT subject than the
+        // one this page is showing. Never redirect a learner practising
+        // one subject into a lesson for another -- only take the lesson
+        // redirect when the recommended competency's own subject matches
+        // the area currently open.
+        const recommendedSubject = decision.recommendedCompetencyId
+          ? COMPONENT_SUBJECT[COMPETENCIES[decision.recommendedCompetencyId].component]
+          : undefined;
+        const lessonRoute =
+          decision.recommendedCompetencyId && recommendedSubject === area!.subject
+            ? FULL_LESSON_ROUTE[decision.recommendedCompetencyId]
+            : undefined;
         if (decision.recommendedActivityType === "teaching_lesson" && lessonRoute && !skipTeachingLessonRedirect) {
           router.replace(lessonRoute);
           return;
