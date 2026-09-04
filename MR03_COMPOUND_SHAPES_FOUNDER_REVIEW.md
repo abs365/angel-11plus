@@ -4,6 +4,11 @@ Programme Increment 020, Wave 1. Family: `mr03-compound-area-perimeter` (8 rows)
 
 **Migration 222 = APPLIED AND LIVE VERIFIED — 2026-09-04** (Founder-executed; live production state independently verified via read-only SQL query, all 8 rows confirmed present/correct/provisional/not-mock).
 **Migration 223 = APPLIED AND LIVE VERIFIED — 2026-09-04** (Founder-executed; exactly one `pending_independent_review` registration confirmed live, reviewer `UNASSIGNED`, no auto-approval).
+**Founder content review = LIVE VERIFIED — 2026-09-04** (submitted personally by the Founder through `/admin-beta/review`; live production row independently confirmed: `review_type = content_review`, `reviewer = Ayobami Lawal`, `decision = approved_with_amendment`, additive alongside the original pending row, neither row overwritten).
+**Amendment verification = LIVE VERIFIED — 2026-09-04** (submitted personally by the Founder through `/admin-beta/review`, amendment-verification mode; live production row independently confirmed: `review_type = amendment_verification`, `reviewer = Ayobami Lawal`, `decision = approved`; exactly 3 additive `ali_family_review` rows now exist for this family, none overwritten).
+**Increment 020 educational governance = CLOSED / LIVE VERIFIED — 2026-09-04.**
+**Visual browser render verification = still DEFERRED** — a separate, still-open item, not resolved by the educational/governance closure above; no on-screen rendering has occurred in any session to date.
+**Practice-eligible promotion migration prepared, NOT applied:** `supabase/migrations/224_mathematics_mr03_compound_shape_wave1_practice_eligible_promotion.sql` — Founder-authorised for preparation and verification only; production application awaits a separate, later, explicit Founder decision.
 
 Additive note only — no prior history above rewritten.
 
