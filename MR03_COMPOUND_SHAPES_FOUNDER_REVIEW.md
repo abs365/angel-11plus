@@ -8,7 +8,9 @@ Programme Increment 020, Wave 1. Family: `mr03-compound-area-perimeter` (8 rows)
 **Amendment verification = LIVE VERIFIED — 2026-09-04** (submitted personally by the Founder through `/admin-beta/review`, amendment-verification mode; live production row independently confirmed: `review_type = amendment_verification`, `reviewer = Ayobami Lawal`, `decision = approved`; exactly 3 additive `ali_family_review` rows now exist for this family, none overwritten).
 **Increment 020 educational governance = CLOSED / LIVE VERIFIED — 2026-09-04.**
 **Visual browser render verification = still DEFERRED** — a separate, still-open item, not resolved by the educational/governance closure above; no on-screen rendering has occurred in any session to date.
-**Practice-eligible promotion migration prepared, NOT applied:** `supabase/migrations/224_mathematics_mr03_compound_shape_wave1_practice_eligible_promotion.sql` — Founder-authorised for preparation and verification only; production application awaits a separate, later, explicit Founder decision.
+**Migration 224 = APPLIED AND LIVE VERIFIED — 2026-09-04** (Founder-executed; live production state independently verified via read-only SQL query: all 8 rows `practice_eligible`, zero `provisional`, zero `mock_eligible`, zero Mock-exposed, zero unexpected rows/metadata; `mr03-compound-06` confirmed retaining answer `12m`, `notToScale = true`, `transfer_class = FAR_TRANSFER`, now `eligibility_status = practice_eligible` — identical treatment to its 7 siblings; the 3-row review history confirmed additively intact, none overwritten).
+
+**MR-03 COMPOUND AREA/PERIMETER WAVE 1 = LIVE IN PRACTICE — 2026-09-04.** Increment 020 production release = COMPLETE / LIVE VERIFIED. No further changes are made to this family by this record.
 
 Additive note only — no prior history above rewritten.
 
