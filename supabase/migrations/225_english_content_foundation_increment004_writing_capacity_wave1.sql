@@ -37,6 +37,12 @@
 -- -- both amended below, per-row rationale in each row's own comment/
 -- explanation column. Amendment verification: AWAITING FOUNDER.
 --
+-- Idempotent: the INSERT uses "on conflict (id) do nothing" -- the same
+-- real pattern migrations 153/169 already established (a pre-application
+-- governance check against this migration found the original draft
+-- missing this clause, a real gap against stated precedent; corrected
+-- before authorisation, disclosed here rather than silently fixed).
+--
 -- NOT APPLIED. Founder must apply via Supabase Dashboard > SQL Editor,
 -- after independent Founder educational review of this increment's own
 -- review pack. Migration 226 (pending independent review registration)
@@ -99,7 +105,8 @@ values
  'Programme Increment 023, Continuous Writing Sustainable Capacity Wave 1 (Writing Capacity Contract). QT-WC-01a (Reflective/Discursive Response Prompt), competency WC-01, family eng-inc004-writing-wc01a-advice. Prompt shape: synthesis-across-multiple-experiences-for-an-implied-audience -- genuinely distinct from every existing prompt, all of which centre on a SINGLE topic, event or comparison; this requires selecting and connecting several past experiences into general, transferable insight while maintaining audience-awareness, matching the DEMANDING tier alongside imaginedplace-01 and pocketmoney-01 via a third, structurally distinct route to that same challenge level. Founder Amendment (Increment 023 educational review): "ordinary, everyday" bounds the scope of valid experience without reducing the synthesis, audience-awareness, or explanation demand this tier depends on -- the requirement for 2+ pieces of advice, real grounding, and stated reasons ("why it matters") is unchanged, and no formal-letter convention is introduced.', 3, 'eng-inc004-writing-advice-01',
  'eng-inc004-writing-wc01a-advice', 'angel_original', 'authentic_assessment_candidate', 1, true,
  'Giving generic, saying-like advice (''always try your best'', ''be kind to others'') with no real personal experience behind it, rather than grounding each piece of advice in something specific that actually happened.',
- 'FAR_TRANSFER');
+ 'FAR_TRANSFER')
+on conflict (id) do nothing;
 
 commit;
 

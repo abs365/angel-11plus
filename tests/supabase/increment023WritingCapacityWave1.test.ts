@@ -113,6 +113,13 @@ test("every new row is angel_original provenance, real timeMinutes/type/checklis
   }
 });
 
+// ─── Idempotency (pre-application governance finding) ──────────────────────
+
+test("migration 225 is idempotent -- 'on conflict (id) do nothing', matching the exact real pattern migrations 153/169 already established for this same table", () => {
+  const sqlBody = MIGRATION_225.slice(MIGRATION_225.lastIndexOf("\nbegin;"), MIGRATION_225.indexOf("\ncommit;"));
+  assert.match(sqlBody, /on conflict \(id\) do nothing;\s*$/, "the INSERT must end with the established idempotent conflict clause");
+});
+
 // ─── 4. No Mock exposure ────────────────────────────────────────────────────
 
 test("migration 225 never touches ali_mock_form, and never assigns a Mock-track eligibility_status", () => {
