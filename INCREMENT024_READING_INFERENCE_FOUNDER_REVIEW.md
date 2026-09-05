@@ -2,6 +2,20 @@
 
 Behavioural/educational review only. No new question-bank content was authored (zero new rows, zero new migration) — this document exists so you can judge the lesson itself before it goes live.
 
+## Founder Decision Record (additive — original review below is preserved unchanged)
+
+**Original decision: APPROVED WITH AMENDMENT** (preserved as the historical decision — never rewritten to plain APPROVED).
+
+**Amendment 1** (GUIDED evidence integrity) **and Amendment 2** (explicit Persona A–F tests): **IMPLEMENTED + FOUNDER VERIFIED.**
+
+**Production release: DEPLOYED + VERIFIED.** Release commit `4267f6c`, pushed to `origin/main` (fast-forward from `34ac354`), deployed to Vercel production (`dpl_8RVAkmHGaRVoBtNjGWdHTZbH8PGL`, status Ready), independently cross-verified via GitHub's own commit-status API (`state: success` for the exact release SHA). 7/7 production routes returned HTTP 200 (home, dashboard, Reading Practice, both Reading lessons, a Mathematics lesson, Mathematics Practice). Visual/authenticated journey verification remains DEFERRED (Chrome browser automation unavailable this session, one attempt made, not retried) — this is a disclosed evidence gap, not a claimed pass, and is not treated as grounds to reopen the educational implementation absent an actual discovered defect.
+
+**Reading full teaching coverage: 2/4**, live in production.
+
+**Reusable educational-integrity finding, worth preserving for future Angel teaching-lesson work:** a learner's own self-assessment of an explanation Angel cannot automatically grade (the real `TIER3_QUOTATION_PLUS_EXPLANATION` architecture's own limitation) must be recorded with `verified: false`, not just `supportTier: "supported"`. The two are separate protections at separate layers — `supportTier` protects **mastery** (`lib/ali/mastery.ts`); `verified` protects **confidence/evidence-state** (`lib/ali/confidence.ts`'s own `anyEvidence` check, which reads `verified !== false` and is indifferent to `supportTier`). A lesson (or any future flow) that reuses self-assessment must set both explicitly — passing only `supportTier: "supported"` and leaving `verified` at its default (`true`) is not sufficient, and was the exact real defect this increment's own Amendment 1 found and fixed (`recordOutcome`'s 9th argument). The live Practice page already got this right for its own Tier 3/5 self-assessment (`recordAndAdvance(..., false)`, "Stage 2 Educational Integrity Correction") — this lesson's own standalone `recordOutcome` call had simply not carried that same fix over, confirming the lesson worth recording: **a shared protection pattern must be re-verified explicitly at every new call site that reuses it, never assumed to apply just because the pattern exists elsewhere in the codebase.**
+
+---
+
 ## SELECTED SKILL
 
 **RC-02 — Inference and Justified Interpretation.** Learner-facing title: **"What the Text Doesn't Quite Say."**
