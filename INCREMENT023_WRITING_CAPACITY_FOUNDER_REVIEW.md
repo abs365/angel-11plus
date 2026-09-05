@@ -16,6 +16,22 @@ This document is the required educational review pack. It also records the Writi
 
 ---
 
+## Governance Update (additive — records what happened after amendment verification; nothing above this line is rewritten)
+
+**Amendment verification: FOUNDER VERIFIED** (confirmed in-session against the exact live-applied wording, reproduced word for word by the Founder from an authenticated Supabase Dashboard query).
+
+**Migration 225: APPLIED AND LIVE VERIFIED.** All three rows confirmed present in production with the exact Founder-verified content (title, prompt, checklist), `subject = writing`, `skill = QT-WC-01a`, `provenance = angel_original`, `eligibility_status = authentic_assessment_candidate`, `active = true`, `content_difficulty = easy/medium/hard` respectively, correct `family_id`, no unexpected additional rows, zero Writing Mock exposure — verified from the Founder's own authenticated query results, since `ali_question_bank` rows at this eligibility state are (by design, migration RLS) invisible to any anon-key/script path.
+
+**Migration 226: APPLIED AND LIVE VERIFIED.** All three `pending_independent_review` registrations confirmed present with the correct `review_target_type`, `review_type`, `reviewer = UNASSIGNED`, `decision = pending_independent_review` — verified the same way, for the same reason (`ali_family_review` is RLS-opaque to anon access, migration 054).
+
+**Independent Review Operating Model: READY.** `docs/operations/INDEPENDENT_REVIEW_PACK_TEMPLATE.md` (reusable) and `INCREMENT023_INDEPENDENT_REVIEW_PACK.md` (this increment's completed pack, built from the live-verified wording above) both exist and require no further preparation.
+
+**Reviewer conflict finding — Ayobami Lawal is INELIGIBLE to independently review Increment 023.** Repository evidence (this reviewer's own qualification statement, used identically across every one of their prior reviews in this codebase: *"Founder and parent with direct experience of preparing children for the Essex CSSE 11+..."*) establishes that Ayobami Lawal is the same Founder identity that gave this increment's own educational approval, specified the substantive amendment wording, and verified the amendment above. Recording this same person as the "independent reviewer" for the same content would be a false independence claim and is **not permitted**. This is recorded here so no future session mistakes the historical `pending_independent_review` placeholder rows, Claude's own advisory educational assessment (delivered earlier in this increment's own review, explicitly labelled advisory and never persisted), or Ayobami Lawal's general eligibility for *other* content as satisfying Increment 023's own independent-review requirement. No replacement reviewer has been nominated — reviewer selection for this increment is a Founder/external-human decision, not automated.
+
+**Current state: INCREMENT 023 = HOLD AT INDEPENDENT HUMAN REVIEW.** This is a controlled governance hold, not a content defect — every check the codebase can perform (Founder educational review, technical/test verification, live production verification) has passed. The three prompts remain `authentic_assessment_candidate`: not Practice-live, not Mock-live, not promotable until a genuinely independent human reviewer completes `INCREMENT023_INDEPENDENT_REVIEW_PACK.md`. When one is supplied, this increment resumes from the prepared pack without reopening any of the work above.
+
+---
+
 ## Writing/Mock Boundary Investigation — no defect found
 
 Two currently Practice-visible rows carry a `mock-writing-` id prefix: `mock-writing-mistakelearned-01` and `mock-writing-newplace-01`. Investigated from actual classification/exposure evidence, not naming alone:
