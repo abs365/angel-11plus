@@ -240,7 +240,22 @@ export default function EnglishReadingInferenceLessonPage() {
       sessionIdRef.current,
       guidedItem.masteryThreshold,
       undefined,
-      "supported"
+      "supported",
+      // Founder Amendment (Increment 024) -- this is the learner's own
+      // self-assessment of an explanation Angel cannot automatically
+      // grade (the real TIER3 architecture's own limitation), exactly
+      // the same situation the real Practice page's own
+      // submitSelfAssessment() already handles via recordAndAdvance()'s
+      // explicit `verified: false` (Stage 2 Educational Integrity
+      // Correction). Omitting this defaults to `true` and would let a
+      // self-assessed GUIDED outcome alone clear
+      // computeCompetencyConfidence()'s `anyEvidence` floor
+      // (lib/ali/confidence.ts) and move confidenceTier/educationalState
+      // off "insufficient" -- supportTier: "supported" alone protects
+      // MASTERY (lib/ali/mastery.ts), but does not protect the separate
+      // confidence/evidence-state layer, which reads `verified`
+      // independently.
+      false
     ).catch(() => {});
     if (preAttemptSnapshotRef.current) {
       await processEvidenceForCompetency(

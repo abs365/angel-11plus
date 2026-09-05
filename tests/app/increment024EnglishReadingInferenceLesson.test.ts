@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 import fs from "node:fs";
 import { buildPreparationDecision } from "@/lib/learningEngine/preparationDecision";
 import { hasFullLessonAvailable } from "@/lib/learningEngine/fullLessonRegistry";
+import { checkAcceptedAnswerSet } from "@/lib/learningEngine/englishAnswerValidation";
 import type { SubjectPreparationSummary, CompetencyPreparationSummary } from "@/lib/learningEngine/preparationState";
 import type { PreparationClock } from "@/lib/learningEngine/preparationClock";
 import type { CompetencyId } from "@/lib/learningEngine/types";
@@ -255,4 +256,178 @@ test("existing Mathematics and RC-01 lesson registrations are untouched by this 
   assert.match(REGISTRY, /"MR-03":\s*"\/learning-intelligence\/learn\/mathematics\/compound-shapes"/);
   assert.match(REGISTRY, /"MR-04":\s*"\/learning-intelligence\/learn\/mathematics\/percentages"/);
   assert.match(REGISTRY, /"RC-01":\s*"\/learning-intelligence\/learn\/english\/reading-retrieval"/);
+});
+
+// ═══════════════════════════════════════════════════════════════════════════
+// FOUNDER AMENDMENT 1 — GUIDED evidence must never masquerade as independent
+// evidence at the confidence/evidence-state layer, not only the mastery layer.
+// ═══════════════════════════════════════════════════════════════════════════
+
+test("AMENDMENT 1: the GUIDED self-assessment write passes verified: false to recordOutcome -- a self-assessed explanation Angel cannot auto-grade must never clear computeCompetencyConfidence()'s anyEvidence floor on its own (lib/ali/confidence.ts's own real verified !== false check)", () => {
+  const fnSection = READING_LESSON.slice(
+    READING_LESSON.indexOf("async function submitGuidedSelfAssessment"),
+    READING_LESSON.indexOf("function checkInference")
+  );
+  assert.match(fnSection, /await recordOutcome\(/);
+  // The recordOutcome call must end with `, false)` as its final (9th,
+  // verified) argument -- not left to default to `true`.
+  const recordOutcomeCall = fnSection.slice(fnSection.indexOf("await recordOutcome("), fnSection.indexOf(").catch(() => {});", fnSection.indexOf("await recordOutcome(")));
+  assert.match(recordOutcomeCall, /"supported",\s*\/\/[\s\S]*?\n\s*false\s*$/, "the final argument to recordOutcome must be the literal `false` (verified), not omitted");
+});
+
+test("AMENDMENT 1: supportTier remains 'supported' for the GUIDED write, exactly as before -- the fix adds the missing verified:false, it does not change or duplicate the existing mastery-layer protection", () => {
+  const fnSection = READING_LESSON.slice(
+    READING_LESSON.indexOf("async function submitGuidedSelfAssessment"),
+    READING_LESSON.indexOf("function checkInference")
+  );
+  assert.match(fnSection, /"supported"/);
+});
+
+test("AMENDMENT 1: GUIDED -> INDEPENDENT evidence separation -- secureIndependentSuccess (the sole stretch-eligibility gate) reads only independentAttempt1, never any guided-stage variable", () => {
+  const line = READING_LESSON.match(/const secureIndependentSuccess = .*/)?.[0] ?? "";
+  assert.match(line, /independentAttempt1\?\.correct === true/);
+  assert.ok(!/guided/i.test(line), "the stretch-eligibility condition must never reference any guided-stage variable");
+});
+
+test("AMENDMENT 1: no code path sets independentAttempt1 (or independentLadderStage) from inside the GUIDED self-assessment function -- GUIDED success cannot fabricate independent-stage state", () => {
+  const fnSection = READING_LESSON.slice(
+    READING_LESSON.indexOf("async function submitGuidedSelfAssessment"),
+    READING_LESSON.indexOf("function checkInference")
+  );
+  assert.ok(!/setIndependentAttempt1|setIndependentLadderStage/.test(fnSection));
+});
+
+// ═══════════════════════════════════════════════════════════════════════════
+// FOUNDER AMENDMENT 2 — Personas A–F, explicit deterministic tests.
+// Reuses the same canonical decision/validation functions the lesson and
+// the Preparation Horizon engine themselves use -- never a re-implementation
+// of production logic inside the test.
+// ═══════════════════════════════════════════════════════════════════════════
+
+// Persona A — weaker learner / one-clue guesser: a genuinely weak RC-02
+// signal must route to TEACHING (the real lesson), never be treated as
+// already secure. Reuses the exact real decision engine.
+test("PERSONA A (weaker learner / one-clue guesser): a genuine regression/struggling RC-02 signal routes to the real teaching lesson, never treated as secure or left at weighting-only guided_practice", () => {
+  // "rebuilding" is this engine's own real, unconditional signal for a
+  // struggling/regressed competency (Increment 019's own fix: any
+  // regression forces the overall stage to "teaching" regardless of how
+  // secure every other competency is) -- the correct real representation
+  // of a genuinely weak, one-clue-guessing learner, not an isolated,
+  // otherwise-secure learner's single unattempted gap (which this engine
+  // correctly does NOT escalate to teaching_lesson on its own -- proven
+  // separately, not assumed).
+  const englishWeak = subjectSummary("English Comprehension", [
+    comp("RC-01", "high", "mastered"),
+    comp("RC-02", "low", "rebuilding"),
+    comp("RC-03", "high", "mastered"),
+    comp("RC-04", "high", "mastered"),
+  ]);
+  const decision = buildPreparationDecision(
+    [englishWeak, subjectSummary("Mathematics", MATHS_SECURE), subjectSummary("Continuous Writing", WRITING_SECURE)],
+    clockFor(300),
+    "Year 5",
+    [candidate("RC-02", "rebuilding", "weak-competency-remediation")],
+    [],
+    { hasFullLessonAvailable }
+  );
+  assert.equal(decision.recommendedCompetencyId, "RC-02");
+  assert.equal(decision.recommendedActivityType, "teaching_lesson");
+  assert.ok(!decision.secureCompetencies.includes("RC-02"), "a struggling learner's RC-02 must never appear in secureCompetencies");
+});
+
+test("PERSONA A (isolated gap, otherwise secure learner): a single never-attempted RC-02 competency, with every other competency mastered, correctly does NOT escalate to teaching_lesson on its own -- the overall preparation stage genuinely governs this, confirming Persona A's own real routing rule is not accidental", () => {
+  const englishMostlySecure = subjectSummary("English Comprehension", [
+    comp("RC-01", "high", "mastered"),
+    comp("RC-02", "insufficient", "exploring"),
+    comp("RC-03", "high", "mastered"),
+    comp("RC-04", "high", "mastered"),
+  ]);
+  const decision = buildPreparationDecision(
+    [englishMostlySecure, subjectSummary("Mathematics", MATHS_SECURE), subjectSummary("Continuous Writing", WRITING_SECURE)],
+    clockFor(300),
+    "Year 5",
+    [candidate("RC-02", "exploring", "never-attempted")],
+    [],
+    { hasFullLessonAvailable }
+  );
+  // Documents the real, evidence-based rule rather than asserting a fixed
+  // activity type: an isolated gap in an otherwise-secure learner is
+  // governed by the OVERALL stage, not this one competency alone.
+  assert.equal(decision.recommendedCompetencyId, "RC-02");
+  assert.notEqual(decision.recommendedActivityType, "teaching_lesson", "an isolated, otherwise-secure gap must not itself force teaching_lesson -- that is reserved for a genuine regression/struggling signal, proven by the sibling test above");
+});
+
+// Persona B — plausible-real-world guesser: a real, plausible-sounding but
+// textually-unsupported answer must be rejected by the same real matcher
+// the INDEPENDENT stage actually uses.
+test("PERSONA B (plausible-real-world guesser): a plausible but textually-unsupported answer is genuinely rejected by the real matcher INDEPENDENT uses", () => {
+  const newgirlAccepted = [
+    "felt accepted as ordinary rather than singled out as the new girl",
+    "felt accepted as ordinary rather than singled out as the different girl",
+    "did not have to explain or perform being new",
+    "being included casually mattered more than being noticed",
+    "let her belong without having to justify herself",
+  ];
+  // Plausible in real life (shyness is a believable trait), but not what
+  // this specific passage's evidence supports -- the exact class of error
+  // Persona B represents.
+  const result = checkAcceptedAnswerSet("she was just a shy person by nature", newgirlAccepted);
+  assert.equal(result.correct, false);
+});
+
+// Persona C — evidence retriever who cannot connect clues: GUIDED must show
+// real reasoning (why each quotation matters), not merely the correct
+// answer, regardless of whether quotations were found or the self-
+// assessment was negative.
+test("PERSONA C (retrieves evidence, cannot connect it): GUIDED's post-submission reasoning block explains WHY each quotation matters, not just what the quotations are, and renders regardless of quotationsFound", () => {
+  const guidedSection = READING_LESSON.slice(READING_LESSON.indexOf("Try one with help"), READING_LESSON.indexOf("Watch out for"));
+  assert.match(guidedSection, /guidedQuotationsFound \? \(/);
+  assert.match(guidedSection, /Angel&apos;s own reasoning for this one/i);
+  assert.match(guidedSection, /a physical sign of panic, not just being tired/i);
+  assert.match(guidedSection, /her anxiety is so strong it stops her talking entirely/i);
+});
+
+// Persona D — secure learner, genuine independent transfer: already proven
+// by the anti-memorisation tests above (zero id overlap between MODEL/
+// GUIDED and INDEPENDENT); this test confirms INDEPENDENT's own displayed
+// content never contains GUIDED's specific answer text.
+test("PERSONA D (secure learner, independent transfer): INDEPENDENT's own rendered content never reuses GUIDED's specific quotations or reasoning text", () => {
+  const independentSection = READING_LESSON.slice(READING_LESSON.indexOf('id="independentPrompt"') === -1 ? READING_LESSON.indexOf("Now try one alone") : 0, READING_LESSON.indexOf("Fancy a trickier one?"));
+  assert.ok(!/something urgent and uneven in my chest|could not speak at all/i.test(independentSection), "INDEPENDENT must never reuse GUIDED's specific quotations");
+});
+
+// Persona E — strong learner, stretch requires secure first-attempt
+// independent success. Already covered by the dedicated gating test above;
+// this adds the negative case: an independent success reached only via
+// attempt 2 or the fresh retry must NOT be treated as "secure".
+test("PERSONA E (strong learner): stretch eligibility is specifically first-attempt success -- a learner who needed independent attempt 2 or the fresh retry is not 'secure' by this lesson's own definition", () => {
+  const line = READING_LESSON.match(/const secureIndependentSuccess = .*/)?.[0] ?? "";
+  assert.ok(!/independentAttempt2|independentFreshAttempt/.test(line), "secureIndependentSuccess must not treat a supported/remediated success as secure");
+});
+
+// Persona F — late entrant: Preparation Horizon can route a genuine RC-02
+// teaching need into the full lesson while preserving the subject guard and
+// loop protection. Reuses the exact real decision + routing-guard checks.
+test("PERSONA F (late entrant): a late-entrant-shaped RC-02 weak signal (short runway, Year 6) still resolves to teaching_lesson naming RC-02, and the same cross-subject/loop-safety wiring covers it", () => {
+  const englishWeak = subjectSummary("English Comprehension", [
+    comp("RC-01", "high", "mastered"),
+    comp("RC-02", "low", "rebuilding"),
+    comp("RC-03", "high", "mastered"),
+    comp("RC-04", "high", "mastered"),
+  ]);
+  const decision = buildPreparationDecision(
+    [englishWeak, subjectSummary("Mathematics", MATHS_SECURE), subjectSummary("Continuous Writing", WRITING_SECURE)],
+    clockFor(45), // short runway -- late entrant shape
+    "Year 6",
+    [candidate("RC-02", "rebuilding", "weak-competency-remediation")],
+    [],
+    { hasFullLessonAvailable }
+  );
+  assert.equal(decision.recommendedCompetencyId, "RC-02");
+  assert.equal(decision.recommendedActivityType, "teaching_lesson");
+  // Loop-safety and cross-subject guard are the same shared mechanism
+  // already proven generic above -- confirmed still present, not
+  // reimplemented for RC-02.
+  assert.match(PRACTICE_PAGE, /skipTeachingRedirect === "1"/);
+  assert.match(PRACTICE_PAGE, /recommendedSubject === area!\.subject/);
 });
