@@ -104,10 +104,39 @@ test("the scoring stage (claim/compute/persist) is included in the exception dia
   assert.match(body, /stage:\$\{stage\}/);
 });
 
-test("scorerExceptionDiagnostic never reads err.message -- a Postgres message can echo query context, deliberately excluded", () => {
+test("scorerExceptionDiagnostic reads err.message exactly once, ONLY to hand it to classifyPersistGuard() for classification -- never interpolated directly, never returned raw", () => {
   const helper = ROUTE.match(/function scorerExceptionDiagnostic\([\s\S]*?\n\}/);
   const body = helper![0];
-  assert.doesNotMatch(body, /err\.message/);
+  const messageReads = body.match(/err\.message/g) ?? [];
+  assert.equal(messageReads.length, 1, "err.message should be read exactly once in this function");
+  assert.match(body, /classifyPersistGuard\(err instanceof Error \? err\.message : undefined\)/, "the one read of err.message must be passed straight into classifyPersistGuard, nothing else");
+  assert.doesNotMatch(body, /\$\{err\.message\}/, "err.message must never be interpolated directly into a returned string");
+});
+
+/**
+ * Increment 025 (Founder-approved), round 2 -- Founder-run production
+ * queries disproved both the missing-bank-row and zero-mark-legacy-
+ * heuristic hypotheses. Rather than keep guessing from indirect state,
+ * the route now classifies the caught error's message against migration
+ * 219's own fixed RAISE EXCEPTION templates (lib/mockAttempt/
+ * persistGuardClassifier.ts, real behavioural tests in
+ * tests/lib/mockAttempt/persistGuardClassifier.test.ts) and logs only the
+ * resulting safe, allow-listed identifier -- never the message, never any
+ * interpolated attempt/question id or count it carries.
+ */
+test("scorerExceptionDiagnostic imports and uses the allow-listed persist-guard classifier, not an inline ad-hoc message match", () => {
+  assert.match(ROUTE, /import \{ classifyPersistGuard \} from "@\/lib\/mockAttempt\/persistGuardClassifier";/);
+  const helper = ROUTE.match(/function scorerExceptionDiagnostic\([\s\S]*?\n\}/);
+  const body = helper![0];
+  assert.match(body, /const guard = classifyPersistGuard\(/);
+  assert.match(body, /guard:\$\{guard\}/, "the returned diagnostic string must include the classified guard identifier");
+});
+
+test("both the Postgres and non-Postgres diagnostic branches include the classified guard, not just the Postgres branch", () => {
+  const helper = ROUTE.match(/function scorerExceptionDiagnostic\([\s\S]*?\n\}/);
+  const body = helper![0];
+  const guardFieldOccurrences = body.match(/guard:\$\{guard\}/g) ?? [];
+  assert.equal(guardFieldOccurrences.length, 2, "expected the guard field in both the PostgresError return and the fallback return");
 });
 
 test("scorerExceptionDiagnostic never references the scoring credential, a connection string, or any token/password field", () => {
