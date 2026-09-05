@@ -24,8 +24,6 @@ import {
   ANALYSIS_PENDING_NOTE,
   NO_SECURE_STRENGTHS_NOTE,
   PERFORMANCE_CONTEXT_NOTE,
-  MATHEMATICS_PRACTICE_ROUTE,
-  PRACTICE_ACTION_LABEL,
   practiceRouteFor,
   practiceActionLabelFor,
 } from "@/lib/mockAttempt/reportCopy";
@@ -196,9 +194,23 @@ function MockAnalysisSections({ report }: { report: MockAttemptReport }) {
   // (by competency) or a Section 4 priority card (by question type) --
   // never the same skill shown twice on the page.
   const strengthCompetencyIds = new Set((report.strengths ?? []).map((s) => s.competencyId));
-  const otherSkills = bySkill.filter(
+  const otherSkillsRaw = bySkill.filter(
     (entry) => !priorityQuestionTypeIds.has(entry.questionTypeId) && !(entry.competencyId && strengthCompetencyIds.has(entry.competencyId))
   );
+  // bySkill is question-type level (several QT codes can share one
+  // competency -- e.g. QT-RC-01/QT-RC-07 both -> RC-01, mirroring the
+  // SAME rollup mock_analyse_attempt() already applies for strengths/
+  // weaknesses). Without this, the identical competency label could
+  // render as two separate chips here. One chip per competency (falling
+  // back to the raw question type only when no competency is resolved),
+  // first occurrence kept.
+  const seenOtherSkillKeys = new Set<string>();
+  const otherSkills = otherSkillsRaw.filter((entry) => {
+    const key = entry.competencyId ?? entry.questionTypeId;
+    if (seenOtherSkillKeys.has(key)) return false;
+    seenOtherSkillKeys.add(key);
+    return true;
+  });
 
   return (
     <>
@@ -268,13 +280,19 @@ function MockAnalysisSections({ report }: { report: MockAttemptReport }) {
         </InfoCard>
       )}
 
-      {/* Section 7 — WHAT ANGEL RECOMMENDS NEXT. One closing action, reusing the existing, tested nextPracticeSentence() rather than a new engine. */}
+      {/* Section 7 — WHAT ANGEL RECOMMENDS NEXT. One closing action, reusing
+          the existing, tested nextPracticeSentence() rather than a new
+          engine. Routes via the SAME practiceRouteFor()/practiceActionLabelFor()
+          the per-priority cards already use, targeted at the TOP-ranked
+          priority's own competency -- previously hardcoded to Mathematics
+          regardless of subject, which misrouted an English-only priority
+          set (e.g. Reading Comprehension) to the Mathematics practice area. */}
       {nextPracticeSentence(nextPracticePriorities) && (
         <InfoCard className="border-blue-200 dark:border-blue-900 bg-blue-50 dark:bg-blue-950/40">
           <p className="text-sm font-semibold text-blue-800 dark:text-blue-300">What to do now</p>
           <p className="text-sm text-blue-700 dark:text-blue-400 mt-1 leading-relaxed">{nextPracticeSentence(nextPracticePriorities)}</p>
-          <ButtonLink href={MATHEMATICS_PRACTICE_ROUTE} className="mt-3">
-            {PRACTICE_ACTION_LABEL}
+          <ButtonLink href={practiceRouteFor(priorityEntries[0]?.competencyId ?? null)} className="mt-3">
+            {practiceActionLabelFor(priorityEntries[0]?.competencyId ?? null)}
           </ButtonLink>
         </InfoCard>
       )}

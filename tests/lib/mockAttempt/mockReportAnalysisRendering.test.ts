@@ -2,7 +2,8 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import fs from "node:fs";
 import { analyseMockAttempt, type MockAnalysisOutcomeInput } from "@/lib/ali/mockAnalysisEngine";
-import { childFriendlySkillLabel, priorityExplanationSentence, nextPracticeSentence } from "@/lib/mockAttempt/reportCopy";
+import { childFriendlySkillLabel, priorityExplanationSentence, nextPracticeSentence, practiceRouteFor, practiceActionLabelFor } from "@/lib/mockAttempt/reportCopy";
+import type { MockSkillEvidenceEntry } from "@/lib/mockAttempt/types";
 
 /**
  * Decision 224 (Mock Report Experience Refinement) — structural/source-
@@ -139,13 +140,13 @@ test("HIGH/MIXED performance: a securely-demonstrated skill renders as a genuine
 
 // === 9. Priority actions only link to a genuinely supported existing route ===
 
-test("the priority card action routes through practiceRouteFor(entry.competencyId) (Decision 225's own genuinely-targeted route where safe, honest fallback otherwise) and the closing action uses the general MATHEMATICS_PRACTICE_ROUTE (spans potentially several skills) -- never an ad-hoc, hand-built per-skill URL", () => {
+test("the priority card action routes through practiceRouteFor(entry.competencyId), and the closing action routes through practiceRouteFor()/practiceActionLabelFor() targeted at the top-ranked priority's own competency (subject-aware, not a fixed Mathematics-only route) -- never an ad-hoc, hand-built per-skill URL", () => {
   assert.match(PAGE, /href=\{practiceRouteFor\(entry\.competencyId\)\}/);
-  assert.match(PAGE, /href=\{MATHEMATICS_PRACTICE_ROUTE\}/);
+  assert.match(PAGE, /href=\{practiceRouteFor\(priorityEntries\[0\]\?\.competencyId \?\? null\)\}/);
   assert.ok(!/href=\{`\/learning-intelligence\/practice\/\$\{/.test(PAGE), "must never construct a per-skill practice URL by hand -- practiceRouteFor() is the single, tested source of that URL shape");
 });
 
-test("MATHEMATICS_PRACTICE_ROUTE points at the real, existing practice area page, not an invented path", () => {
+test("practiceRouteFor()'s Mathematics fallback route points at the real, existing practice area page, not an invented path", () => {
   const source = fs.readFileSync("lib/mockAttempt/reportCopy.ts", "utf8");
   assert.match(source, /export const MATHEMATICS_PRACTICE_ROUTE = "\/learning-intelligence\/practice\/mathematics";/);
   assert.ok(fs.existsSync("app/learning-intelligence/practice/[area]/page.tsx"), "the target route must genuinely exist in this repository");
@@ -195,4 +196,56 @@ test("no migration file was introduced by this refinement -- purely a presentati
   const numbers = migrations.map((f) => parseInt(f.split("_")[0], 10)).filter((n) => !Number.isNaN(n));
   assert.ok(numbers.includes(151), "migration 151 must still exist on disk");
   assert.ok(Math.max(...numbers) >= 151);
+});
+
+// === Production defect correction: repeated Section 5 chip labels, and =====
+// === the closing CTA hardcoded to Mathematics regardless of subject ========
+
+test("Section 5 ('Other skills to keep developing') deduplicates by competencyId -- two question types sharing one competency (e.g. QT-RC-01/QT-RC-07 both -> RC-01) render as ONE chip, never the same label twice", () => {
+  assert.match(PAGE, /const seenOtherSkillKeys = new Set<string>\(\);/);
+  assert.match(PAGE, /const key = entry\.competencyId \?\? entry\.questionTypeId;/);
+  assert.match(PAGE, /if \(seenOtherSkillKeys\.has\(key\)\) return false;/);
+});
+
+test("engine-level proof: two question types sharing one competency, both left over for Section 5, collapse to a single otherSkills entry", () => {
+  const bySkill: MockSkillEvidenceEntry[] = [
+    { questionTypeId: "QT-RC-01", competencyId: "RC-01", marksAchieved: 0, marksAvailable: 1, percentage: 0, subpartCount: 1, correctCount: 0, evidenceLevel: "developing", difficultyDistribution: { easy: 1, medium: 0, hard: 0, challenge: 0 }, misconceptionNotes: [] },
+    { questionTypeId: "QT-RC-07", competencyId: "RC-01", marksAchieved: 0, marksAvailable: 1, percentage: 0, subpartCount: 1, correctCount: 0, evidenceLevel: "developing", difficultyDistribution: { easy: 1, medium: 0, hard: 0, challenge: 0 }, misconceptionNotes: [] },
+  ];
+  const seen = new Set<string>();
+  const deduped = bySkill.filter((entry) => {
+    const key = entry.competencyId ?? entry.questionTypeId;
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+  assert.equal(deduped.length, 1, "both QT codes share RC-01 -- must collapse to one chip");
+  assert.equal(deduped[0].questionTypeId, "QT-RC-01", "first occurrence is kept");
+});
+
+test("a skill with no resolved competency (competencyId null) still gets its own chip, keyed by its own questionTypeId -- never silently merged with an unrelated null-competency skill", () => {
+  const bySkill: MockSkillEvidenceEntry[] = [
+    { questionTypeId: "QT-XX-01", competencyId: null, marksAchieved: 0, marksAvailable: 1, percentage: 0, subpartCount: 1, correctCount: 0, evidenceLevel: "developing", difficultyDistribution: { easy: 1, medium: 0, hard: 0, challenge: 0 }, misconceptionNotes: [] },
+    { questionTypeId: "QT-XX-02", competencyId: null, marksAchieved: 0, marksAvailable: 1, percentage: 0, subpartCount: 1, correctCount: 0, evidenceLevel: "developing", difficultyDistribution: { easy: 1, medium: 0, hard: 0, challenge: 0 }, misconceptionNotes: [] },
+  ];
+  const seen = new Set<string>();
+  const deduped = bySkill.filter((entry) => {
+    const key = entry.competencyId ?? entry.questionTypeId;
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+  assert.equal(deduped.length, 2, "two genuinely different unlabeled question types must never be collapsed into one");
+});
+
+test("the closing 'What to do now' CTA routes via practiceRouteFor()/practiceActionLabelFor(), targeted at the TOP-ranked priority's own competency -- never the hardcoded Mathematics route regardless of subject (the confirmed production defect)", () => {
+  assert.match(PAGE, /href=\{practiceRouteFor\(priorityEntries\[0\]\?\.competencyId \?\? null\)\}/);
+  assert.match(PAGE, /\{practiceActionLabelFor\(priorityEntries\[0\]\?\.competencyId \?\? null\)\}/);
+  assert.doesNotMatch(PAGE, /MATHEMATICS_PRACTICE_ROUTE|PRACTICE_ACTION_LABEL\b/, "the hardcoded Mathematics-only constants must no longer be imported or referenced by this page");
+});
+
+test("practiceRouteFor()/practiceActionLabelFor() correctly route an English/Reading-only priority set to the Reading Comprehension practice area, not Mathematics -- reproducing the exact reported production scenario", () => {
+  const englishOnlyPriority = { competencyId: "RC-03", questionTypeId: "QT-RC-04" };
+  assert.match(practiceRouteFor(englishOnlyPriority.competencyId), /^\/learning-intelligence\/practice\/reading-comprehension\?focus=RC-03$/);
+  assert.equal(practiceActionLabelFor(englishOnlyPriority.competencyId), "Practise this skill");
 });
