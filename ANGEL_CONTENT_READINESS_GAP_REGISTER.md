@@ -65,18 +65,23 @@
 
 **UPDATE (same day, after the family-model migration claimed number 228)**: the exact fix specified below has now been written as `supabase/migrations/229_question_bank_telemetry_write_path_restoration.sql` (NOT APPLIED, structurally tested — `tests/supabase/questionBankTelemetryWritePathRestoration.test.ts`, 9/9 passing). It is byte-for-byte the same GRANT + policy shape this addendum already specified, sequenced correctly after migration 228. This closes the "specified but not written" gap; applying it remains a Founder action, per this repository's own standing migration-application convention.
 
-**Recommended fix (privacy-safe: touches only two non-identifying, aggregate, question-level columns; does not reopen migration 084's actual security concern, which was arbitrary content mutation)**:
+**SUPERSEDED (Wave 2 Migration Safety Gate) — the raw-GRANT design quoted below was REJECTED, not applied.** Wave 2's own safety review found it would have let any authenticated client bypass `recordOutcome()`'s logic entirely via a direct PostgREST call and write an arbitrary `usage_count`/`avg_success_rate` value — RLS gates which rows a client may touch, never what value it writes. The original snippet is kept here only for history, per this repository's "record, don't delete" discipline:
 
 ```sql
--- Grant column-scoped UPDATE only -- authenticated users still cannot
--- modify prompt/answer/eligibility_status/etc., only these two
--- non-sensitive rolling-average telemetry columns.
+-- REJECTED DESIGN, kept for history only -- see ANGEL_QUESTION_FACTORY_WAVE2_MIGRATION_SAFETY_GATE.md
 grant update (usage_count, avg_success_rate) on public.ali_question_bank to authenticated;
-
 create policy ali_question_bank_telemetry_update on public.ali_question_bank
   for update to authenticated
   using (eligibility_status is distinct from 'mock_eligible' or public.is_current_user_admin())
   with check (eligibility_status is distinct from 'mock_eligible' or public.is_current_user_admin());
 ```
 
-The `USING`/`WITH CHECK` predicate deliberately mirrors the existing SELECT policy's own eligibility-status gate exactly, so a learner can only bump telemetry on rows they could already see — never on sealed/Mock-reserved content, preserving the Practice/Mock firewall's own boundary for this new write path too. Once applied, `usage_count`/`avg_success_rate` should begin incrementing on the very next Practice-session answer submitted after the migration is live, and this can be verified with the same read-only anon-key query already used to discover the defect (a rising `usage_count` on any previously-zero row is direct, immediate confirmation).
+**Corrected design, now in migration 229**: a single `SECURITY DEFINER` function, `record_question_bank_telemetry(question_id, is_correct)`, granted `EXECUTE` only — no raw table grant, no RLS policy change on `ali_question_bank` at all. The function resolves the caller's own profile from `auth.uid()`, requires a genuine pre-existing `ali_student_question_history` row for that exact question (proving the caller actually encountered it), and computes the new `usage_count`/`avg_success_rate` atomically from the row's own pre-update values — no numeric input from the caller can ever reach these columns. Full safety-gate analysis: `ANGEL_QUESTION_FACTORY_WAVE2_MIGRATION_SAFETY_GATE.md`.
+
+---
+
+## Wave 2 Addendum — Sections 11/12 (2026-09-05)
+
+**Section 11 (content capacity target, recalculated after expansion)**: No recalculation performed, correctly. Zero questions were published to production this wave (Section 6's first batch was generated and validated — 30/30 candidates approved — but deliberately left in "ready to submit" state for genuine Founder/admin review, never self-approved by this session). Every Wave 1 capacity figure (558 total, 351 practice-eligible, 74 Mathematics families, 17 English families) is therefore **unchanged** — reporting a recalculated capacity number now would be reporting on unpublished content, which the Founder's own standard forbids.
+
+**Section 12 (Mock 2 readiness)**: Unchanged from the existing audit's own findings, restated for this wave's report. Mathematics Mock 2: blocked — the strict unexposed reserve is 21 rows/21 marks against a 56-mark active-form requirement; closing this gap needs new *Mock-eligible* (not Practice-eligible) content specifically, which sits entirely outside this wave's Practice-only Question Factory scope (`ANGEL_MOCK_DEPTH_AND_SECURITY_AUDIT.md` §2). Reading Mock 2: blocked similarly — 22 rows/39 marks reserve plus 2 unexposed passages against Reading Mock 1's own 65-mark composition; a full second sitting is not assemblable, though a shorter one might be from the existing reserve. **No new Mock-eligible content was created, generated, or proposed this wave** — the Question Factory's published output this session (once genuinely reviewed) enters the Practice pool only, per Section 12's own explicit instruction not to inflate Mock count with new practice variants.

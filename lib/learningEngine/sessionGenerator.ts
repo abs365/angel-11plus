@@ -12,6 +12,7 @@ import { getRecommendations } from "./educationalIntelligenceService";
 import { QUESTION_TYPE_PRIMARY_COMPETENCY, getQuestionTypesForCompetency } from "./assessmentBrainMap";
 import { getPracticeArea, type PracticeAreaId } from "./practiceContent";
 import { classifyRetrievalStage, computeFamilyExposure, groupingKeyOf, passageGroupingKeyOf, type FamilyExposure } from "@/lib/ali/exposureIntelligence";
+import { computeLearnerCapacityEvidence, type LearnerCapacityEvidence } from "@/lib/ali/capacityEvidence";
 import { getMathsTeachingContent } from "./mathsTeachingContent";
 import type { ActivityType, PreparationDecision } from "./preparationDecision";
 
@@ -181,6 +182,16 @@ export interface PersonalisedSession {
    * so a caller that doesn't check this flag still shows a safe message.
    */
   noContentAvailable?: boolean;
+  /**
+   * Question Factory Wave 2, Section 8 — internal capacity evidence only,
+   * computed via `lib/ali/capacityEvidence.ts`'s first real caller of the
+   * previously-uncalled `effectiveFreshCapacity.ts`. Deliberately NOT
+   * rendered to the learner anywhere (no page reads this field as of this
+   * wave) and does NOT influence which questions were selected above --
+   * see `capacityEvidence.ts`'s own docstring for why live selection
+   * weighting is deliberately deferred, not silently skipped.
+   */
+  internalCapacityEvidence?: LearnerCapacityEvidence;
 }
 
 /**
@@ -509,5 +520,11 @@ export async function generatePersonalisedSession(
     ? generateExplanation(topCandidate, "parent").text
     : "Today's session is a general practice mix across this area.";
 
-  return { activities: [...reviewActivities, ...priorityActivities], summary, familyFocus };
+  // Question Factory Wave 2, Section 8 — computed AFTER selection, from
+  // the exact same candidatePool/history/currentSequence already fetched
+  // above; changes nothing about `priorityActivities`. See
+  // PersonalisedSession.internalCapacityEvidence's own docstring.
+  const internalCapacityEvidence = computeLearnerCapacityEvidence(candidatePool, history, currentSequence);
+
+  return { activities: [...reviewActivities, ...priorityActivities], summary, familyFocus, internalCapacityEvidence };
 }

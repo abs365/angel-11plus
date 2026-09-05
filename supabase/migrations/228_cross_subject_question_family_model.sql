@@ -3,6 +3,23 @@
 -- Additive-only, no historical migration edited in place.
 --
 -- ============================================================
+-- CORRECTION HISTORY (unapplied migration corrected in place, per this
+-- repository's own established convention)
+-- ============================================================
+-- Wave 2's own Migration Safety Gate (Section 1) found a real type bug in
+-- the backfill: `ali_question_bank.pathway` is `text[]` (migration 005's
+-- own original definition, never altered by any later migration --
+-- confirmed by direct search), not `jsonb`. The original backfill assigned
+-- `(array_agg(distinct pathway))[1]` (a `text[]` value) directly into this
+-- table's `pathways jsonb` column, wrapped in `coalesce(..., '[]'::jsonb)`
+-- -- `coalesce` requires all arguments to share a compatible type, so this
+-- would have raised a type-mismatch error the moment a Founder tried to
+-- apply this migration, before this migration's own sanity-check DO block
+-- ever ran. Fixed by wrapping the aggregate in `to_jsonb(...)` before the
+-- `coalesce`. This is the only change from the original version; every
+-- other design decision below is unchanged.
+--
+-- ============================================================
 -- WHY THIS EXISTS
 -- ============================================================
 -- Mathematics already has a real, live `family_id` column (migration 030)
@@ -151,7 +168,7 @@ select
   '{}'::text[] as competency_ids, -- competency derivation requires QUESTION_TYPE_PRIMARY_COMPETENCY, an application-code mapping this migration does not duplicate -- left for the application-layer backfill lib/ali/questionFamilyRegistry.ts already knows how to compute
   array_agg(distinct skill) as skills,
   array_agg(distinct question_type) as question_types,
-  coalesce((array_agg(distinct pathway))[1], '[]'::jsonb) as pathways,
+  coalesce(to_jsonb((array_agg(distinct pathway))[1]), '[]'::jsonb) as pathways,
   array_agg(distinct content_difficulty::text) as difficulty_range,
   'hand_authored' as generation_strategy, -- confirmed, repo-wide: no procedural/template generation mechanism exists anywhere in this codebase's history (lib/ali/questionFamilyRegistry.ts's own documented finding)
   bool_or(eligibility_status in ('practice_eligible', 'mock_eligible')) as production_eligible,

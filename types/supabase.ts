@@ -808,6 +808,45 @@ export interface Database {
         Update: Record<string, never>;
         Relationships: [];
       };
+      // Question Factory Wave 2, Sections 3-5 — supabase/migrations/
+      // 230_question_factory_candidate_lifecycle.sql. Not yet applied to
+      // production. No Insert/Update declared here — every real write
+      // already goes exclusively through submit_question_candidate()/
+      // review_question_candidate()/publish_question_candidate(), never a
+      // direct client write (RLS also has no write policy on this table).
+      ali_question_candidate: {
+        Row: {
+          candidate_id: string;
+          family_id: string;
+          generation_spec_id: string;
+          generation_spec_version: string;
+          subject: string;
+          competency_id: string | null;
+          skill: string;
+          question_type: string | null;
+          pathway: string[];
+          preparation_stage: string | null;
+          difficulty: ContentDifficultyEnum;
+          question_content: Record<string, unknown>;
+          claimed_answer: string;
+          worked_explanation: string | null;
+          distractors: Record<string, unknown> | null;
+          mathematical_validation: Record<string, unknown>;
+          similarity_validation: Record<string, unknown>;
+          generated_at: string;
+          provenance: string;
+          review_status: string;
+          reviewer_id: string | null;
+          review_timestamp: string | null;
+          rejection_reason: string | null;
+          publication_status: string;
+          published_question_id: string | null;
+          created_at: string;
+        };
+        Insert: Record<string, never>;
+        Update: Record<string, never>;
+        Relationships: [];
+      };
     };
     Views: Record<string, never>;
     Functions: {
@@ -925,6 +964,50 @@ export interface Database {
       mock_get_resumable_attempt: {
         Args: { p_form_id: string };
         Returns: { attempt_id: string; status: string; started_at: string | null; expires_at: string | null; is_expired: boolean }[];
+      };
+      // Question Factory Wave 2, Section 1 — supabase/migrations/
+      // 229_question_bank_telemetry_write_path_restoration.sql. Not yet
+      // applied to production; declared here so lib/ali/history.ts can
+      // call it through the typed supabase.rpc() the same way every
+      // other RPC already does.
+      record_question_bank_telemetry: {
+        Args: { p_question_id: string; p_is_correct: boolean };
+        Returns: undefined;
+      };
+      // Question Factory Wave 2, Sections 3-5 — supabase/migrations/
+      // 230_question_factory_candidate_lifecycle.sql. Not yet applied to
+      // production; declared here so lib/questionFactory/adminClient.ts
+      // can call these through the typed supabase.rpc() the same way
+      // every other RPC already does.
+      submit_question_candidate: {
+        Args: {
+          p_candidate_id: string;
+          p_family_id: string;
+          p_generation_spec_id: string;
+          p_generation_spec_version: string;
+          p_subject: string;
+          p_competency_id: string | null;
+          p_skill: string;
+          p_question_type: string | null;
+          p_pathway: string[];
+          p_preparation_stage: string | null;
+          p_difficulty: ContentDifficultyEnum;
+          p_question_content: unknown;
+          p_claimed_answer: string;
+          p_worked_explanation: string | null;
+          p_distractors: unknown;
+          p_mathematical_validation: unknown;
+          p_similarity_validation: unknown;
+        };
+        Returns: string;
+      };
+      review_question_candidate: {
+        Args: { p_candidate_id: string; p_decision: string; p_rejection_reason: string | null };
+        Returns: undefined;
+      };
+      publish_question_candidate: {
+        Args: { p_candidate_id: string };
+        Returns: string;
       };
     };
     Enums: {

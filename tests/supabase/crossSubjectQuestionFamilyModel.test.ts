@@ -97,6 +97,16 @@ test("backfill is idempotent -- on conflict (family_id) do nothing, safe to re-r
   assert.match(EXECUTABLE, /on conflict \(family_id\) do nothing;/);
 });
 
+test("Wave 2 Migration Safety Gate fix: pathway (a real text[] column, not jsonb) is explicitly cast via to_jsonb() before being written into the jsonb pathways column -- a type mismatch here would have failed the entire migration at apply time", () => {
+  assert.match(EXECUTABLE, /coalesce\(to_jsonb\(\(array_agg\(distinct pathway\)\)\[1\]\), '\[\]'::jsonb\) as pathways/);
+  assert.doesNotMatch(EXECUTABLE, /coalesce\(\(array_agg\(distinct pathway\)\)\[1\], '\[\]'::jsonb\)/, "the uncast, type-mismatched original form must not reappear");
+});
+
+test("correction history for the pathway type-cast fix is disclosed in the raw file header", () => {
+  assert.match(MIGRATION, /CORRECTION HISTORY/);
+  assert.match(MIGRATION, /type bug in\s*\n-- the backfill/);
+});
+
 test("generation_strategy is backfilled as hand_authored for every real row -- consistent with the repo-wide confirmed fact that no procedural generation mechanism has ever existed", () => {
   const insertBlock = EXECUTABLE.match(/insert into public\.ali_question_family[\s\S]*?on conflict \(family_id\) do nothing;/)?.[0] ?? "";
   assert.match(insertBlock, /'hand_authored' as generation_strategy/);

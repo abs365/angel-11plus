@@ -323,21 +323,22 @@ export async function recordOutcome(
   // Global calibration-drift signal (ADAPTIVE_ASSESSMENT_ENGINE_ARCHITECTURE.md §3.4)
   // — informational only, not read by any selection logic. Best-effort, never
   // blocks the mock flow.
-  const { data: bankRow, error: bankFetchError } = await supabase
-    .from("ali_question_bank")
-    .select("usage_count, avg_success_rate")
-    .eq("id", questionId)
-    .maybeSingle();
-  if (!bankFetchError && bankRow) {
-    const prevAvg = bankRow.avg_success_rate ?? 0;
-    const newUsageCount = bankRow.usage_count + 1;
-    const newAvg = (prevAvg * bankRow.usage_count + (isCorrect ? 100 : 0)) / newUsageCount;
-    const { error: bankUpdateError } = await supabase
-      .from("ali_question_bank")
-      .update({ usage_count: newUsageCount, avg_success_rate: Math.round(newAvg * 100) / 100 })
-      .eq("id", questionId);
-    if (bankUpdateError) {
-      console.warn("[ALI] recordOutcome bank stats update failed:", bankUpdateError.message);
-    }
+  //
+  // Question Factory Wave 2, Migration Safety Gate correction: this used to
+  // be a client-side fetch-then-write (two round trips, a real if
+  // low-volume race window, and -- the actual defect -- silently blocked
+  // entirely since migration 084's RLS hardening left no UPDATE policy on
+  // ali_question_bank at all). Replaced with a single call to the
+  // server-authorised RPC (migration 229, corrected) that performs the
+  // read-modify-write atomically and validates the caller has a genuine
+  // history row for this exact question before touching anything -- no
+  // client-supplied numeric value can ever reach usage_count/
+  // avg_success_rate directly.
+  const { error: bankTelemetryError } = await supabase.rpc("record_question_bank_telemetry", {
+    p_question_id: questionId,
+    p_is_correct: isCorrect,
+  });
+  if (bankTelemetryError) {
+    console.warn("[ALI] recordOutcome bank telemetry RPC failed:", bankTelemetryError.message);
   }
 }

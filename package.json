@@ -11,6 +11,7 @@
     "migration-sql-guard": "node scripts/migration-sql-guard.mjs",
     "content-duplicate-guard": "node scripts/content-duplicate-guard.mjs",
     "content-governance-report": "tsx scripts/content-governance-report.mjs",
+    "question-factory-wave2-first-batch": "tsx scripts/question-factory-wave2-first-batch.mjs",
     "test": "tsx --test tests/**/*.test.ts"
   },
   "dependencies": {
