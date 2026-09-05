@@ -184,3 +184,19 @@ If `unanswered_with_nonblank_value_ANOMALY` is anything other than `0`, that is 
 ### 5. Conclusion
 
 The scoring pipeline's classification mechanism for "unanswered" is **structurally sound**: it is derived once, inside the database, directly from the presence/blankness of the learner's own persisted response, is never re-derived or overridden at any later stage (manual marking, analysis, or release), and no code path exists (UI key-shape mismatch, server-side deletion) that could produce a false-unanswered classification for a genuinely-answered question on this form. The 11/7/2/17/28 arithmetic is exact, not anomalous. One narrow, disclosed robustness gap exists in the client's final-submission error handling (silently swallowed save failure) that a future increment should fix, but it is not proven — or disproven — to have affected any of these specific 17 questions without the Founder-run query above.
+
+### 6. CLOSED — Founder-run production evidence, 2026-09-05
+
+The Founder ran the summary-only query in Section 4 directly against production. Result:
+
+```
+unanswered_no_row_category_a           = 17
+unanswered_blank_row_category_b        = 0
+unanswered_with_nonblank_value_anomaly = 0
+```
+
+All 17 questions the released report classifies as `unanswered` fall into **Category A** (no `ali_mock_attempt_answer` row exists at all for that question) — zero fall into Category B (a blank row was submitted), and, decisively, **zero fall into the ANOMALY bucket** (a genuinely non-blank persisted response that was still classified as unanswered). This is the row-level confirmation this evidence package's Section 2 mechanism trace predicted and could not, on its own, complete.
+
+**This closes the outstanding integrity item.** Combined with the mechanism trace (Sections 1-2 above), the evidence is now twofold and concordant: the code path that produces an `unanswered` classification is structurally sound, AND the specific 17 questions on this specific attempt independently confirm that classification against the raw, authoritative persisted data. There is no basis to alter the released result.
+
+**The production result remains, and is hereby confirmed as legitimate and final**: attempt `e2f26f8d-25b6-452d-bd1c-3d5ad2436a0f` — 28 assigned, 11 answered, 17 unanswered, 4/65 marks, 6.2%. No code, data, or score change was made or is warranted by this closure.

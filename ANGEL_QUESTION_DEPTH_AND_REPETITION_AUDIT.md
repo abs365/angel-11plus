@@ -134,9 +134,79 @@ It does not attempt a semantic/conceptual-similarity check between rows in the s
 | Mathematics families with ≤4 rows | 53 / 74 (≈72%, incl. 2 singletons) | Capacity Audit §24.1 |
 | English distinct families — `family_id` (authoritative, corrected this pass) | **17** (129/142 rows tagged, avg 7.6 rows/family) | Corrected this pass (§3a) — the Capacity Audit's "no family_id for English" claim was never re-verified and was wrong |
 | English distinct families — passage+reasoning-pattern (secondary lens) | 94 (from 142 rows; 54 singletons, 40 @ 2-4 rows) | New, this pass (§3), `englishFamilyModel.ts` wired for the first time |
-| Writing family concept | Does not exist | Capacity Audit §4 |
+| Writing family concept | **CORRECTED §10 below: 16 real `family_id` records exist in production** — the "does not exist" claim below was never re-verified and was wrong | Was: Capacity Audit §4. Now: §10, this pass |
 | Subpart-clustering in use (practice pool) | No (`question_group_id` null on all 351) | New, this pass |
 | Procedural/template generation mechanism | None exists | Capacity Audit §5 (`ALI_DECISION_LOG.md`) |
 | Sustained practice at 20-30/day, 5-7 days/week, for 4-26 weeks, without unhealthy repetition | **Not achievable today** — raw-pool exhaustion under 1-2 weeks, family-fresh exhaustion in 2-5 days, at every tested intensity | New, this pass (§8) |
 | Anti-memorisation net verdict | HIGH, CRITICAL for frequent users | Capacity Audit §6, unchanged |
 | Semantic duplicate-detection tooling | None exists (structural-only signature) | Capacity Audit §16 |
+
+## 10. Family count reconciliation (post-migration-228 production evidence, 2026-09-05)
+
+Migration 228's backfill ran with full production access (not the anon-key-limited view every prior measurement in this document used) and returned the **true** total `ali_question_family` record count across ALL eligibility statuses, not just `practice_eligible`:
+
+| Subject | Total family records | Production-eligible (practice OR mock track) |
+|---|---|---|
+| English | **80** | 55 |
+| Mathematics | **74** | 67 |
+| Writing | **16** | 7 |
+| **Total** | **170** | **129** |
+
+**Mathematics reconciles exactly** — 74 matches every prior measurement in this document, because that figure was always computed from the Founder's own full-access reconciliation (Capacity Audit §24.1), never anon-key-limited.
+
+**English does NOT reconcile with "17" at face value, and this is NOT a new contradiction — it is two different, both-correct measurements of two different populations, and this must be stated precisely rather than glossed over.** The "17 real family_id families" figure from Question Factory Wave 1 (§3a above) was explicitly and correctly scoped, at the time, to **the 142 practice-eligible English rows only** — the only rows an anon-key query can see at all, per this whole database's own RLS design. It was never a claim about English's total family population. **80 is the true, full-access total across every eligibility status** (practice_eligible + mock_eligible + provisional/other) — genuinely new information this document did not have access to before today, not a correction of the "17" figure, which remains accurate for the population it was scoped to.
+
+**Writing also needs an explicit correction, not merely a reconciliation**: this document previously stated "Writing family concept: Does not exist" (§4, citing Capacity Audit §4, unchanged since Increment 017). **That claim is now confirmed wrong** — 16 real `ali_question_family` records exist for `subject = 'writing'`, meaning `family_id` is populated on Writing rows in production, contrary to the prior assumption. The prior "14 Writing rows total" figure (Capacity Audit §24.3) may itself now be stale if Writing content has grown since Increment 018's reconciliation, since 16 distinct family_id values cannot be backed by fewer than 16 source rows (migration 228's backfill only ever creates a family record from a real, existing `ali_question_bank` row via `GROUP BY family_id`). **This requires a fresh count, not an assumption either way.**
+
+### What the 80 English family records actually represent — honestly unresolved, evidence requested
+
+This environment cannot classify the 80 English records (genuine reusable family / passage-bound grouping / question-type grouping / mechanically-derived artifact / other) without live data this anon-key-limited session cannot read (`ali_question_family` is RLS-blocked to anon entirely; the 101 non-practice-eligible English rows, e.g. `mock_eligible`, are equally invisible to anon). Guessing this classification would violate the exact standard this whole assignment has followed throughout. **The following queries would resolve it**:
+
+```sql
+-- Q1: every English family's size and which eligibility statuses feed it
+select
+  f.family_id,
+  f.row_count,
+  f.production_eligible,
+  array_agg(distinct b.eligibility_status) as statuses_present
+from public.ali_question_family f
+join public.ali_question_bank b on b.family_id = f.family_id
+where f.subject = 'english'
+group by f.family_id, f.row_count, f.production_eligible
+order by f.row_count desc;
+
+-- Q2: summary split -- practice-only vs mock-only vs mixed vs neither
+select
+  count(*) filter (
+    where exists (select 1 from public.ali_question_bank b where b.family_id = f.family_id and b.eligibility_status = 'practice_eligible')
+      and not exists (select 1 from public.ali_question_bank b where b.family_id = f.family_id and b.eligibility_status = 'mock_eligible')
+  ) as practice_only,
+  count(*) filter (
+    where exists (select 1 from public.ali_question_bank b where b.family_id = f.family_id and b.eligibility_status = 'mock_eligible')
+      and not exists (select 1 from public.ali_question_bank b where b.family_id = f.family_id and b.eligibility_status = 'practice_eligible')
+  ) as mock_only,
+  count(*) filter (
+    where exists (select 1 from public.ali_question_bank b where b.family_id = f.family_id and b.eligibility_status = 'practice_eligible')
+      and exists (select 1 from public.ali_question_bank b where b.family_id = f.family_id and b.eligibility_status = 'mock_eligible')
+  ) as mixed_practice_and_mock,
+  count(*) filter (where not f.production_eligible) as neither_track
+from public.ali_question_family f
+where f.subject = 'english';
+
+-- Q3: Writing -- fresh total row count, to reconcile against 16 family records
+select count(*) as total_writing_rows, count(distinct family_id) as distinct_writing_families
+from public.ali_question_bank where subject = 'writing';
+```
+
+**Reasoned, clearly-labelled-as-provisional interim hypothesis** (to be confirmed or replaced by Q1/Q2, not treated as fact until then): the 17 practice-eligible-visible families all carry deliberate, content-wave-based names (`wave1-fam-*`, `wave3-fam-*`) that are strong evidence of genuine, intentional educational authorship, not mechanical derivation. Given the Mock reserve pool's own established governance discipline (educational review before `mock_eligible` promotion — `ANGEL_EDUCATIONAL_CAPACITY_AUDIT.md` §16-17), it is plausible the additional 63 records are similarly genuine families held in Mock reserve rather than released to Practice — but this is a hypothesis pending Q1/Q2's evidence, not a conclusion.
+
+### Authoritative metrics going forward
+
+| Metric | Value | Basis |
+|---|---|---|
+| **DATABASE FAMILY RECORDS** (all statuses, all subjects) | **170** (80 English / 74 Maths / 16 Writing) | `ali_question_family`, full-access, Founder-run |
+| **PRODUCTION-ELIGIBLE FAMILY RECORDS** (practice OR mock track) | **129** (55 English / 67 Maths / 7 Writing) | Same source |
+| **GENUINE EDUCATIONAL FAMILIES** | Confirmed for Mathematics only: **74** (matches database record count exactly, already independently validated, §2). **English and Writing: not yet classifiable** — pending Q1/Q2/Q3 above; do not assume 80/16 equal genuine educational depth without that evidence, per this whole assignment's own standing instruction. | This pass |
+| **PASSAGE-BOUND FAMILIES/GROUPS** (English secondary lens, practice-eligible only) | 94 (§3) | `englishFamilyModel.ts`, unchanged this pass |
+
+**Do not report "170 genuine educational families" anywhere.** 170 is a real, correct DATABASE RECORD count. It is not yet known how many of those 170 represent genuinely distinct educational reasoning demands versus a coarser or finer grouping than that concept — exactly the distinction this entire document exists to protect.

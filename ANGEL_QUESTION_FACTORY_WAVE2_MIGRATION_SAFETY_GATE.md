@@ -57,6 +57,77 @@
 
 Apply in numeric order (228 → 229 → 230) via the Founder's own established process (Supabase Dashboard → SQL Editor, one migration at a time, verifying the schema after each — this document invents no new deployment mechanism, per instruction). All three now pass this safety gate; two genuine defects were found and corrected during the review itself (228's pathway type-cast bug, 229's arbitrary-write vulnerability) — this is exactly the outcome a safety gate exists to produce, not a formality.
 
+## POST-APPLICATION DEFECT FOUND — Migration 228's Pathway Backfill (2026-09-05)
+
+All three migrations applied successfully (Supabase: "Success. No rows returned" for each). The Founder's own post-application verification query then found: `ali_question_family.pathways = []` for `mr01-decimal-computation`, despite every one of its 7 real `ali_question_bank` source rows carrying `pathway = ["csse"]`. **This is a confirmed data-migration defect, not a Supabase UI artifact.**
+
+### Root cause, with PostgreSQL evidence
+
+The backfill's pathway expression (migration 228, corrected form applied to production):
+
+```sql
+coalesce(to_jsonb((array_agg(distinct pathway))[1]), '[]'::jsonb) as pathways,
+```
+
+`ali_question_bank.pathway` is `text[]` (migration 005's original definition, confirmed never altered). PostgreSQL has a dedicated aggregate overload, `array_agg(anyarray) -> anyarray`, specifically for combining several array-valued inputs into one array with an added dimension — so `array_agg(distinct pathway)` over a column of `text[]` values does not error; it builds a genuine **two-dimensional** array (this only succeeds when every aggregated array in the group has the same length, which is true here since every row in this dataset is uniformly tagged `{csse}`, a single-element array).
+
+The defect is in what happens next. PostgreSQL's own documented array-indexing rule (Arrays chapter, "Accessing Arrays"): **ordinary (non-slice) subscripting that supplies fewer subscripts than the array has dimensions returns `NULL`** — it does not return a sub-array, unlike most general-purpose languages. `(array_agg(distinct pathway))[1]` supplies exactly one subscript to what is now a 2-D array, and therefore evaluates to `NULL`, every single time, regardless of the real underlying pathway values. `to_jsonb(NULL)` is `NULL`, and `coalesce(NULL, '[]'::jsonb)` silently substitutes the empty-array default — masking the failure completely. No exception was ever possible from this code path, which is exactly why the migration reported unqualified success.
+
+**This affects every family record produced by this backfill, unconditionally** — the defect is structural (a general property of single-subscript indexing into an aggregated 2-D array), not dependent on any particular pathway value or shape. It does not depend on whether a family has one pathway or several; it fires identically either way, as long as `array_agg(distinct pathway)` itself succeeds (which requires uniform pathway-array length within a family — already established as true for every family in this dataset, since the whole migration completed without the RAISE EXCEPTION its own sanity check would have fired on a genuine backfill-count mismatch; that check does not, and structurally cannot, catch this specific defect, since row COUNTS were never wrong — only the pathways VALUE was silently nulled-then-defaulted).
+
+### What this environment could not do, and the exact diagnostic queries to close the gap
+
+This environment has no live database connection (anon key only; RLS blocks reading `ali_question_family` entirely, and there is no local Postgres available to reproduce this empirically). The root-cause reasoning above is grounded in documented PostgreSQL semantics, not a live reproduction. **Please run this to convert the hypothesis into direct evidence:**
+
+```sql
+-- Diagnostic 1: reproduces the exact defect in isolation, one family
+select
+  family_id,
+  array_agg(distinct pathway) as agg_2d_array,
+  (array_agg(distinct pathway))[1] as broken_index_result,      -- expected: NULL
+  to_jsonb((array_agg(distinct pathway))[1]) as broken_jsonb_result -- expected: NULL
+from public.ali_question_bank
+where family_id = 'mr01-decimal-computation'
+group by family_id;
+
+-- Diagnostic 2: how many of the 170 production family records show the defect
+select count(*) as families_with_empty_pathways
+from public.ali_question_family
+where pathways = '[]'::jsonb;
+
+-- Diagnostic 3: how many families SHOULD have a non-empty pathways value
+-- (i.e. have at least one source row with a real, non-empty pathway array)
+select count(*) as families_that_should_be_nonempty
+from public.ali_question_family f
+where exists (
+  select 1 from public.ali_question_bank b
+  where b.family_id = f.family_id and array_length(b.pathway, 1) > 0
+);
+```
+
+If Diagnostic 1 confirms `NULL`/`NULL`, and Diagnostic 2's count equals (or is very close to) Diagnostic 3's count and the total 170, that is direct, row-level confirmation of both the mechanism and its full blast radius (expected: **all 170 records affected**, given every row in the entire bank is tagged `["csse"]` with no exceptions — confirmed separately, `ANGEL_EDUCATIONAL_CONTENT_INVENTORY.md` §3: "351 practice-eligible rows, 100% CSSE, 0% any other pathway").
+
+### Forward repair — migration 231 (NOT APPLIED)
+
+Per instruction, migration 228 is **not** edited (it is already applied to production). A new, additive, forward-only migration recomputes `pathways` correctly by flattening every family's member rows' pathway arrays with `unnest()` *before* aggregating — avoiding the multi-dimensional-array trap entirely, since `array_agg()` over the unnested (scalar `text`) values produces a genuine 1-D array that `to_jsonb()` converts correctly:
+
+```sql
+with recomputed as (
+  select b.family_id, array_agg(distinct p order by p) as flat_pathways
+  from public.ali_question_bank b
+  cross join lateral unnest(coalesce(b.pathway, '{}'::text[])) as p
+  where b.family_id is not null
+  group by b.family_id
+)
+update public.ali_question_family f
+set pathways = coalesce(to_jsonb(r.flat_pathways), '[]'::jsonb),
+    updated_at = now()
+from recomputed r
+where f.family_id = r.family_id;
+```
+
+See `supabase/migrations/231_ali_question_family_pathway_backfill_repair.sql` for the full, tested migration.
+
 ## Post-Application Verification Procedure (for the Founder to run)
 
 ```sql

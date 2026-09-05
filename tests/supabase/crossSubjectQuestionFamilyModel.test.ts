@@ -136,14 +136,27 @@ function findFilesReferencing(dir: string, needle: string, skipFileName: string,
   return out;
 }
 
-test("ali_question_family is referenced by NO other migration, application route, or SECURITY DEFINER function anywhere in the repository -- confirming it is not yet a dependency of any live code path, so RLS/access-policy correctness here cannot be masked by an existing caller's own assumptions", () => {
+test("ali_question_family is referenced only by known, reviewed follow-on work (the Wave 2 pathway-defect repair migration 231, its own read-only production-verification script, and the pure-function pathway-aggregation oracle) -- no OTHER, unreviewed application route or function has taken a dependency on this table", () => {
   const matches = [
     ...findFilesReferencing("supabase/migrations", "ali_question_family", "228_cross_subject_question_family_model.sql"),
     ...findFilesReferencing("lib", "ali_question_family", "228_cross_subject_question_family_model.sql"),
     ...findFilesReferencing("app", "ali_question_family", "228_cross_subject_question_family_model.sql"),
     ...findFilesReferencing("scripts", "ali_question_family", "228_cross_subject_question_family_model.sql"),
+  ]
+    // Normalise to forward slashes so this assertion is stable across
+    // Windows (backslash) and POSIX (forward slash) path separators.
+    .map((p) => p.replace(/\\/g, "/"));
+  const knownLegitimateReferences = [
+    "supabase/migrations/231_ali_question_family_pathway_backfill_repair.sql",
+    "scripts/verify-question-factory-production.mjs",
+    "lib/ali/pathwayAggregation.ts",
   ];
-  assert.deepEqual(matches, [], "ali_question_family must not yet be referenced anywhere outside migration 228 itself");
+  for (const match of matches) {
+    assert.ok(
+      knownLegitimateReferences.some((known) => match.endsWith(known)),
+      `unexpected new reference to ali_question_family: ${match} -- if this is legitimate follow-on work, add it to knownLegitimateReferences with the same review this test's own docstring implies`
+    );
+  }
 });
 
 test("backfill reads only from ali_question_bank -- no other table is queried or written", () => {
