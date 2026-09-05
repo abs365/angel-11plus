@@ -62,6 +62,41 @@ test("transaction-mode pooling is used (prepare: false) -- compatible with Supav
   assert.match(scoringAuthoritySource, /prepare:\s*false/);
 });
 
+/**
+ * Increment 025 (Founder-approved, bounded observability only) — adds a
+ * local stage tag (claim/compute/persist) so route.ts's own catch can
+ * report which phase was in flight on failure, since a single try/catch
+ * around scoreReadingAttempt() cannot otherwise distinguish them. The
+ * error itself is rethrown completely unmodified in every other respect.
+ */
+test("scoreReadingAttempt() tracks a local stage through claim, compute, and persist in order", () => {
+  const claimIndex = scoringAuthoritySource.indexOf('let stage: "claim" | "compute" | "persist" = "claim";');
+  const computeIndex = scoringAuthoritySource.indexOf('stage = "compute";');
+  const persistIndex = scoringAuthoritySource.indexOf('stage = "persist";');
+  assert.ok(claimIndex !== -1, "expected the initial stage declaration");
+  assert.ok(computeIndex !== -1, "expected stage to advance to compute before computeReadingScoringOutcomes()");
+  assert.ok(persistIndex !== -1, "expected stage to advance to persist before the persist call");
+  assert.ok(claimIndex < computeIndex && computeIndex < persistIndex, "stage must advance claim -> compute -> persist in source order");
+  const computeCallIndex = scoringAuthoritySource.indexOf("computeReadingScoringOutcomes(", computeIndex);
+  const persistCallIndex = scoringAuthoritySource.indexOf("mock_persist_reading_scoring(", persistIndex);
+  assert.ok(computeIndex < computeCallIndex, "stage must be set to compute before the computation it labels");
+  assert.ok(persistIndex < persistCallIndex, "stage must be set to persist before the persist call it labels");
+});
+
+test("on exception, the stage is attached to the error object and the original error is rethrown unmodified -- never swallowed, never replaced", () => {
+  const catchBlock = scoringAuthoritySource.match(/\} catch \(err\) \{([\s\S]*?)\n  \}\n\}/);
+  assert.ok(catchBlock, "expected a catch (err) block wrapping the claim/compute/persist sequence");
+  const body = catchBlock![1];
+  assert.match(body, /\(err as \{ scoringStage\?: string \}\)\.scoringStage = stage;/);
+  assert.match(body, /throw err;/);
+  assert.doesNotMatch(body, /throw new/, "must rethrow the original error object, never construct a replacement");
+});
+
+test("the claim/ineligible/persist success-path return statements are unchanged by the Increment 025 stage tracking", () => {
+  assert.match(scoringAuthoritySource, /return \{ status: "ineligible", reason: claim\?\.reason \?\? "unknown" \};/);
+  assert.match(scoringAuthoritySource, /return persisted \?\? \{ status: "unavailable" \};/);
+});
+
 // --- API route: ownership check, never trusts client-supplied correctness --
 
 test("the API route requires an Authorization header and rejects requests without one", () => {

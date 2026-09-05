@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
+import postgres from "postgres";
 import { scoreReadingAttempt } from "@/lib/server/mockScoringAuthority";
 
 /**
@@ -27,6 +28,31 @@ function logScoringEvent(attemptId: string, stage: ScoringLogStage, outcome: "su
       at: new Date().toISOString(),
     })
   );
+}
+
+/**
+ * Increment 025 (Founder-approved, bounded observability only) — the
+ * scorer catch previously reduced every exception to `err.name`, which a
+ * production minified build renders as an uninformative mangled symbol
+ * for any locally-defined error class (confirmed: `postgres`'s own
+ * PostgresError sets `this.name = this.constructor.name`). Reads only
+ * the same class of fixed, non-secret Postgres wire-protocol diagnostic
+ * fields (SQLSTATE code, severity, source routine) already documented in
+ * `postgres`'s own PostgresError type, plus the bounded claim/compute/
+ * persist stage tag `scoreReadingAttempt()` now attaches to the error
+ * before rethrowing it unmodified. Deliberately never reads `err.message`
+ * (a Postgres error message can echo query context) or any other field —
+ * this is diagnostic metadata only, still never returned to the browser.
+ */
+function scorerExceptionDiagnostic(err: unknown): string {
+  const stage =
+    err && typeof err === "object" && "scoringStage" in err && typeof (err as { scoringStage: unknown }).scoringStage === "string"
+      ? (err as { scoringStage: string }).scoringStage
+      : "unknown";
+  if (err instanceof postgres.PostgresError) {
+    return `exception:${err.code};severity:${err.severity};routine:${err.routine};stage:${stage}`;
+  }
+  return `exception:${err instanceof Error ? err.name : "unknown"};severity:unknown;routine:unknown;stage:${stage}`;
 }
 
 /**
@@ -122,7 +148,7 @@ export async function POST(request: NextRequest) {
     logScoringEvent(attemptId, "scorer", "success", result.status);
     return NextResponse.json(result);
   } catch (err) {
-    logScoringEvent(attemptId, "scorer", "failure", `exception:${err instanceof Error ? err.name : "unknown"}`);
+    logScoringEvent(attemptId, "scorer", "failure", scorerExceptionDiagnostic(err));
     return NextResponse.json({ error: "Scoring processing failed." }, { status: 502 });
   }
 }

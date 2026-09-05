@@ -63,19 +63,34 @@ export async function scoreReadingAttempt(attemptId: string): Promise<ScoreReadi
   const sql = getScoringConnection();
   if (!sql) return { status: "unavailable" };
 
-  const [claimRow] = await sql<{ mock_claim_reading_scoring_work: { eligible: boolean; reason?: string; questions?: ReadingScoringWorkItem[] } }[]>`
-    select mock_claim_reading_scoring_work(${attemptId}::uuid)
-  `;
-  const claim = claimRow?.mock_claim_reading_scoring_work;
-  if (!claim || !claim.eligible) {
-    return { status: "ineligible", reason: claim?.reason ?? "unknown" };
+  // Increment 025 observability — the route's own catch cannot otherwise
+  // tell which of the two SECURITY DEFINER calls (or the pure-JS
+  // computation between them) was in flight on failure. Attached to the
+  // error object, never consumed here, so the underlying exception
+  // (Postgres or otherwise) reaches route.ts completely unmodified.
+  let stage: "claim" | "compute" | "persist" = "claim";
+  try {
+    const [claimRow] = await sql<{ mock_claim_reading_scoring_work: { eligible: boolean; reason?: string; questions?: ReadingScoringWorkItem[] } }[]>`
+      select mock_claim_reading_scoring_work(${attemptId}::uuid)
+    `;
+    const claim = claimRow?.mock_claim_reading_scoring_work;
+    if (!claim || !claim.eligible) {
+      return { status: "ineligible", reason: claim?.reason ?? "unknown" };
+    }
+
+    stage = "compute";
+    const outcomes = computeReadingScoringOutcomes(claim.questions ?? []);
+
+    stage = "persist";
+    const [persistRow] = await sql<{ mock_persist_reading_scoring: { status: "scored" | "already_scored"; scoringState?: "scored" | "scoring" } }[]>`
+      select mock_persist_reading_scoring(${attemptId}::uuid, ${JSON.stringify(outcomes)}::jsonb)
+    `;
+    const persisted = persistRow?.mock_persist_reading_scoring;
+    return persisted ?? { status: "unavailable" };
+  } catch (err) {
+    if (err && typeof err === "object") {
+      (err as { scoringStage?: string }).scoringStage = stage;
+    }
+    throw err;
   }
-
-  const outcomes = computeReadingScoringOutcomes(claim.questions ?? []);
-
-  const [persistRow] = await sql<{ mock_persist_reading_scoring: { status: "scored" | "already_scored"; scoringState?: "scored" | "scoring" } }[]>`
-    select mock_persist_reading_scoring(${attemptId}::uuid, ${JSON.stringify(outcomes)}::jsonb)
-  `;
-  const persisted = persistRow?.mock_persist_reading_scoring;
-  return persisted ?? { status: "unavailable" };
 }
