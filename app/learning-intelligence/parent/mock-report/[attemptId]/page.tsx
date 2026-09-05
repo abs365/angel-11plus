@@ -13,6 +13,7 @@ import {
   priorSentence,
   OFFICIAL_SCORE_DISCLAIMER,
   ANALYSIS_PENDING_NOTE,
+  NO_SECURE_STRENGTHS_NOTE,
 } from "@/lib/mockAttempt/reportCopy";
 import { resolvePreparationClock } from "@/lib/learningEngine/preparationClock";
 import type { MockAttemptReport } from "@/lib/mockAttempt/types";
@@ -88,10 +89,19 @@ export default function ParentMockReportPage() {
 
             <InfoCard>
               <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1">2. Diagnostic interpretation</p>
-              {report.strengths && report.strengths.length > 0 ? (
+              {report.analysisState !== "complete" ? (
+                // Analysis genuinely hasn't run yet -- the only case this
+                // note may ever describe. Matches the learner report's own
+                // established gate (analysisState === "complete") exactly.
+                <p className="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">{ANALYSIS_PENDING_NOTE}</p>
+              ) : report.strengths && report.strengths.length > 0 ? (
                 <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed">{strengthSentence(report.strengths)}</p>
               ) : (
-                <p className="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">{ANALYSIS_PENDING_NOTE}</p>
+                // Analysis is complete; the deterministic engine simply
+                // found no secure strength (never invented) -- the same
+                // honest fallback the learner report already uses, never
+                // "still being prepared" for a finished analysis.
+                <p className="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">{NO_SECURE_STRENGTHS_NOTE}</p>
               )}
               {report.weaknesses && report.weaknesses.length > 0 && (
                 <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed mt-2">{priorSentence(report.weaknesses)}</p>
