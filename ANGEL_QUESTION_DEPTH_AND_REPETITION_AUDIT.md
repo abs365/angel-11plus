@@ -15,9 +15,45 @@
 - **No procedural/template generation exists anywhere in the codebase** — every row in every family is individually hand-authored (confirmed directly in `ALI_DECISION_LOG.md`, cited by the Capacity Audit). "Changing names or numbers" is, today, literally the entire variant-production mechanism for Mathematics.
 - Cross-check performed this pass: a live anon-key query against the 202 Mathematics **practice-eligible** rows only (a subset of the 301 total, since 77 more sit in the mock-eligible/reserve pool) returned a *combined* (all-subjects) family tally of 62 distinct `family_id` keys across the full 351-row practice pool, average size 5.66, 8 singleton families. This is **not directly comparable** to the audit's 74-family Mathematics-only, all-status figure — different denominators (practice-eligible-only vs. all-status; all-subjects-combined vs. Mathematics-only) — and is recorded here only as a corroborating signal that family sizes remain small and single-digit-dominated, not as a replacement figure. **The audit's 74-family, all-status, Mathematics-only figure is authoritative.**
 
-## 3. English Reading — no family concept exists
+## 3. English Reading — first real family measurement (Question Factory Wave 1, Phase 6, 2026-09-05)
 
-**This is a schema gap, not a "not yet measured" gap** (Capacity Audit §4, §5, explicit): `ali_question_bank`'s `family_id` column is populated for Mathematics rows but there is no equivalent conceptual-grouping mechanism ever built or used for English Reading content. 142 practice-eligible English questions exist with **zero declared family structure** — it is not possible today to say how many of those 142 are surface-variants of the same underlying comprehension skill versus genuinely distinct. Recorded as **unmeasurable, not measured-and-safe** — the Founder's own instruction not to infer safety from absence of a bad measurement applies directly here.
+**Superseded finding, kept for history**: this section previously read "no family concept exists... unmeasurable, not measured-and-safe," on the correct basis that `ali_question_bank`'s `family_id` column is never populated for English rows (Capacity Audit §4, §5). That schema gap is still real and unchanged. What has changed is that `lib/ali/englishFamilyModel.ts` — a dormant, previously-never-executed module — has now actually been run against the real, live, 142 practice-eligible English rows (anon-key read-only query, same methodology as the rest of this document), producing the **first trustworthy, reproducible answer** to "how many genuinely different English question families does Angel have?"
+
+**A real, fixable defect was found and corrected in the process**: `englishFamilyModel.ts`'s own docstring claimed its `skill` input was the real `ali_question_bank.skill` column. Live data proves this column actually holds the `QT-RC-XX` Question Type code (e.g. `QT-RC-04`), never a value like `"vocabulary"` — every one of the module's `SKILL_TO_PATTERN` keys. Feeding the documented-but-wrong column would have silently classified 100% of rows as `"unclassified"`. The real free-text label lives at `prompt->>'skill'`. The docstring is corrected (`lib/ali/englishFamilyModel.ts`); the classification logic itself needed no change beyond this. Two previously-undocumented live skill values were also found: `"retrieval"` (1 row — added to `SKILL_TO_PATTERN` as an unambiguous direct match) and `"judgement"` (1 row — deliberately left unclassified; no defensible mapping exists from the label alone). Tests: `tests/lib/ali/englishFamilyModel.test.ts`, 8/8 passing.
+
+**Result, applying the (corrected) family key — (passage, reasoning-pattern) pair — to all 142 rows**:
+
+| Metric | Value |
+|---|---|
+| Distinct English families | **94** |
+| Rows unclassified (`reasoningPattern === "unclassified"`) | 8 / 142 (5.6%) |
+| Family-size distribution | 54 families @ 1 row (57.4%), 40 @ 2-4 rows (42.6%), 0 @ 5-9, 0 @ 10+ |
+| Distinct passages (`learning_unit_id`) | 24 |
+| Average families per passage | ~3.9 |
+| Exact-duplicate stems (mechanical check, `antiMemorisationChecks.findExactDuplicateStems`) | 0 |
+| Near-identical stems (numeric-substitution check, `findNearIdenticalStems`) | 0 |
+
+**Reading this honestly**: 94 genuine families from 142 rows is, if anything, a *thinner* average family size (1.51 rows/family) than Mathematics's own 74 families from 301 rows (4.07 rows/family) — 57.4% of English families are singletons, versus only 2/74 (2.7%) for Mathematics. This is a coarser grouping than Mathematics's own `family_id` (a family here is passage-bound — two questions on different passages testing the identical reasoning pattern are, by this model's own explicit design, never the same family, since an English question's stem is inseparable from its passage), so 94 is not directly comparable to 74 as a measure of "which subject has more variety" — but it is now a real, reproducible number rather than an unmeasurable gap. The mechanical duplicate checks finding zero hits is a genuine, if narrow, positive signal (no cosmetic copy-paste duplication detected at the stem level) — it does not and cannot rule out the "changing names/numbers" pattern for question forms that don't have a literal text stem to compare (this check is stem-text-only, per its own documented scope).
+
+**Reproducible methodology**: anon-key query against `ali_question_bank` where `subject='english'` (142 rows, RLS-limited to `practice_eligible`), extracting `prompt->>'skill'` and `prompt->>'validationTier'` per row, applying `englishFamilyKeyOf(learning_unit_id, {skill, validationTier})`, grouping by `englishFamilyKeyToString()`. Full family list and counts available in this pass's own working notes; not reproduced verbatim here to keep this document at a summary level — re-running the query above reproduces it exactly.
+
+### 3a. CORRECTION (Question Factory Wave 1, Phase 1, same day) — `family_id` IS populated for English; the "schema gap" claim above and in the pre-existing Capacity Audit was wrong
+
+While building `scripts/content-governance-report.mjs` (Phase 1 wiring work, same pass), a direct live query found: **129 of the 142 English practice-eligible rows carry a non-null `family_id`, spanning 17 distinct real values** (e.g. `wave1-fam-synonym-battery`, `wave3-fam-rc01-retrieval`, `wave1-fam-quote-explain`) — the exact same column and mechanism Mathematics has always used, not a derived/inferred concept. Only 13/142 rows have no `family_id`.
+
+This directly contradicts the repeated claim, made throughout this document and inherited from `ANGEL_EDUCATIONAL_CAPACITY_AUDIT.md` §4/§5 ("no equivalent concept exists for English at all... a schema gap"), that English has never had a populated `family_id`. That claim was never re-verified this session before being repeated — it is now corrected, per the Founder's own standard that production evidence overrides a prior document's claim.
+
+| Metric | Value |
+|---|---|
+| Rows with a real, non-null `family_id` | 129 / 142 (90.8%) |
+| Distinct `family_id` families | **17** |
+| Average rows per family | 7.6 |
+| Family-size distribution | 1 family @1 row, 5 @2-4 rows, 5 @5-9 rows, 6 @10+ rows |
+| Rows with no `family_id` | 13 / 142 (9.2%) |
+
+**This is a materially deeper, better-populated family structure than the passage+reasoning-pattern derivation above (17 large families, avg 7.6 rows/family) — and deeper, per family, than Mathematics itself (74 families, avg 4.07 rows/family).** The two English measurements are not contradictory, they answer different questions: `family_id` groups by authored content-topic across passages (e.g. every "synonym battery" item regardless of which passage it accompanies); the passage+reasoning-pattern key groups by passage-bound reasoning shape. **`family_id` is the authoritative measure going forward** — it is the same mechanism Mathematics uses, already reviewed/authored intentionally (the `wave1-`/`wave2-`/`wave3-` naming shows deliberate content-wave authorship, not an accident), and is the column the new cross-subject family model (`ANGEL_QUESTION_SUPPLY_ARCHITECTURE.md`, Phase 2 migration) should build on directly rather than inventing a parallel concept. The passage+reasoning-pattern derivation remains useful as a secondary, finer-grained lens, not a replacement.
+
+**Practical consequence for Phase 2 (the family-model migration)**: English does not need a family concept built — it needs the existing, real `family_id` values reconciled against a proper family registry, exactly like Mathematics. The genuinely open English gap is the 13 rows (9.2%) with no `family_id` at all, and the 40 pathway-question-instances-vs-families reconciliation, not "does a family concept exist."
 
 ## 4. Writing — single competency, no family tracking
 
@@ -72,7 +108,8 @@ It does not attempt a semantic/conceptual-similarity check between rows in the s
 |---|---|---|
 | Mathematics distinct families | 74 | Capacity Audit §24.1/§26 |
 | Mathematics families with ≤4 rows | 53 / 74 (≈72%, incl. 2 singletons) | Capacity Audit §24.1 |
-| English family concept | Does not exist | Capacity Audit §4/§5 |
+| English distinct families — `family_id` (authoritative, corrected this pass) | **17** (129/142 rows tagged, avg 7.6 rows/family) | Corrected this pass (§3a) — the Capacity Audit's "no family_id for English" claim was never re-verified and was wrong |
+| English distinct families — passage+reasoning-pattern (secondary lens) | 94 (from 142 rows; 54 singletons, 40 @ 2-4 rows) | New, this pass (§3), `englishFamilyModel.ts` wired for the first time |
 | Writing family concept | Does not exist | Capacity Audit §4 |
 | Subpart-clustering in use (practice pool) | No (`question_group_id` null on all 351) | New, this pass |
 | Procedural/template generation mechanism | None exists | Capacity Audit §5 (`ALI_DECISION_LOG.md`) |

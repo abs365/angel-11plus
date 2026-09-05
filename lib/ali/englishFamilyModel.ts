@@ -41,7 +41,21 @@ export type EnglishReasoningPattern =
   | "unclassified";
 
 export interface EnglishFamilyClassificationInput {
-  /** Real `ali_question_bank.skill` value for English content (e.g. "evidence", "vocabulary", "inference", "structure", "effect-of-language", "atmosphere", "comparison", "character", "language"). */
+  /**
+   * The free-text reasoning-pattern label ("evidence", "vocabulary",
+   * "inference", "structure", "effect-of-language", "atmosphere",
+   * "comparison", "character", "language", "retrieval", "judgement").
+   *
+   * CORRECTION (Question Factory Wave 1, English family taxonomy pass,
+   * confirmed against 142 live practice-eligible rows): this value lives
+   * at `prompt->>'skill'` (the jsonb prompt payload), NOT at the
+   * top-level `ali_question_bank.skill` column -- that column holds the
+   * `QT-RC-XX` Question Type code (e.g. "QT-RC-04"), which is never a key
+   * in `SKILL_TO_PATTERN` below and would silently classify every real
+   * row as `"unclassified"` if passed here by mistake. This module's
+   * original docstring named the wrong column; the classification logic
+   * itself was always correct once given the right field.
+   */
   skill: string;
   /** Real `prompt->>'validationTier'` value, when present -- legacy pre-007B rows carry none. */
   validationTier?: string | null;
@@ -64,6 +78,16 @@ const SKILL_TO_PATTERN: Record<string, EnglishReasoningPattern | undefined> = {
   character: "inference", // character judgements are inference-pattern reasoning; no separate "characterisation" reasoning pattern is named in Part 8's own list
   comparison: "unclassified", // could be inference-pattern or multi-part-explanation depending on the specific question; skill label alone does not resolve it
   structure: "unclassified", // could be sequence or multi-part-explanation depending on the specific question; skill label alone does not resolve it
+  // Added, Question Factory Wave 1 English family taxonomy pass: found live
+  // in production (1 row) once `prompt.skill` was read correctly (see the
+  // corrected docstring above) -- an unambiguous direct match, the label
+  // literally names the pattern itself, not a judgement call.
+  retrieval: "retrieval",
+  // "judgement" (1 row, found live) is deliberately NOT added here -- its
+  // real reasoning pattern is genuinely ambiguous from the label alone
+  // (could be inference, evidence_quotation, or something this module's
+  // vocabulary doesn't yet name); it already, correctly, falls through to
+  // "unclassified" by this function's own existing fallback behaviour.
 };
 
 /** validationTier -> pattern, consulted only to refine an already-plausible skill-derived pattern (see deriveEnglishReasoningPattern), never used standalone. */

@@ -44,6 +44,23 @@ The Founder's brief specifically asks that "mock reserve questions should not ro
 
 ---
 
+## 6. Conceptual pool mapping (Question Factory Wave 1, Phase 8, 2026-09-05)
+
+The Founder asked for six conceptual content pools (TEACHING, PRACTICE, REMEDIATION, MASTERY CHECK, UNSEEN ASSESSMENT, MOCK RESERVE) to be "supported conceptually," reusing existing concepts rather than building redundant architecture. All six already map cleanly onto real, existing fields — no new column or table is needed:
+
+| Conceptual pool | Existing mechanism | Real value(s) |
+|---|---|---|
+| TEACHING | `lib/ali/inventoryClass.ts`'s `contentType: "teaching"` branch, and `lib/learningEngine/mathsTeachingContent.ts`'s real lesson content | `classifyInventoryClass()` → `"open"` |
+| PRACTICE | `ali_question_bank.eligibility_status = 'practice_eligible'` + `active = true` | `classifyInventoryClass()` → `"renewable"` (or `"measurement"` for FAR_TRANSFER-tagged rows) |
+| REMEDIATION | No dedicated pool exists (confirmed by the pre-existing Capacity Audit §3/§20 and unchanged by this pass) — remediation today reuses the same PRACTICE pool via `addresses_misconception`-tagged rendering, not a separate content pool. Recorded honestly as a gap, not mapped to a mechanism that doesn't exist |
+| MASTERY CHECK | `lib/ali/exposureIntelligence.ts`'s `MASTERY_MAINTENANCE`/`SPACED_RETRIEVAL` retrieval stages, live-wired via `applyRetrievalPriority()` in `lib/learningEngine/sessionGenerator.ts` | Retrieval stage classification, not a separate table |
+| UNSEEN ASSESSMENT | `ali_question_bank.eligibility_status = 'mock_eligible'`, unexposed (`ali_mock_exposed_question_ids`/`ali_mock_exposed_passage_ids`, migrations 208/209) | `classifyInventoryClass()` → `"sealed"` |
+| MOCK RESERVE | Same as UNSEEN ASSESSMENT — a "reserve" is simply the subset of `mock_eligible` rows not yet consumed into an active Mock form's manifest (Section 2 above) | `"sealed"`, cross-referenced against the active manifest |
+
+This mapping is documentation only — it changes no code and no schema. It confirms the Founder's own instruction ("reuse existing concepts where already present... do not create redundant architecture") is already satisfiable without new work for five of the six pools; REMEDIATION is the one genuine, already-known content gap (carried forward from the Capacity Audit, not new this pass).
+
+---
+
 ## Summary table
 
 | Metric | Value | Source |

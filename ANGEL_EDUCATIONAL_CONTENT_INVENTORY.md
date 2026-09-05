@@ -32,7 +32,7 @@ Live query (anon key, `pathway` jsonb array column, 351 practice-eligible rows):
 
 ## 5. QUESTION FAMILIES (headline; full detail in the Repetition Audit doc)
 
-Mathematics: **74 distinct families** across 301 rows (post-Increment-020; was 73/293 before the MR-03 compound-shape addition), family-size distribution 2 families @1 row, 51 @2–4, 18 @5–9, 2 @10+ (§24.1). English Reading: **no formal family concept exists** — a genuine schema gap, not merely unmeasured (§4/§5 of the audit). Writing: not tracked by family at all (14 rows, 1 competency code).
+Mathematics: **74 distinct families** across 301 rows (post-Increment-020; was 73/293 before the MR-03 compound-shape addition), family-size distribution 2 families @1 row, 51 @2–4, 18 @5–9, 2 @10+ (§24.1). English Reading: **CORRECTION (Question Factory Wave 1, Phase 1)** — the Capacity Audit's own §4/§5 claim that "no formal family concept exists... a genuine schema gap" was never re-verified live and was wrong: `family_id` is in fact populated on 129/142 (90.8%) practice-eligible English rows, spanning **17 real families** (avg 7.6 rows/family, deeper on average than Mathematics's 4.07) — see `ANGEL_QUESTION_DEPTH_AND_REPETITION_AUDIT.md` §3a for full detail and reconciliation against a second, passage-bound measurement (94 families). Writing: not tracked by family at all (14 rows, 1 competency code).
 
 ## 6. PASSAGES (English Reading)
 
@@ -68,7 +68,7 @@ The existing audit (§23) already named and closed most of the original unknowns
 | Practice-eligible (learner-reachable) | 351 (202/142/7) | Capacity Audit §24, re-confirmed live this pass |
 | Mock-eligible | 127 (77/50/0) | Capacity Audit §24.1–24.3 |
 | Distinct Mathematics families | 74 | Capacity Audit §24.1/§26 |
-| English family concept | Does not exist | Capacity Audit §5 |
+| English family concept | **Exists: 17 `family_id` families (129/142 rows)** — corrected, see §5 above | New this pass, corrects Capacity Audit §5 |
 | CSSE pathway coverage | 100% of live content | New, this pass |
 | Other advertised pathways (GL/ISEB/etc.) | 0% content | New, this pass |
 | Year 4/5/6 targeting | Not wired (exists, cosmetic-only) | Capacity Audit §8/§21/§24.8, confirmed this pass |

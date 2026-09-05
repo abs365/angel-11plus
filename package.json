@@ -9,6 +9,8 @@
     "lint": "eslint && npm run copy-guard && npm run migration-sql-guard",
     "copy-guard": "node scripts/copy-quality-guard.mjs",
     "migration-sql-guard": "node scripts/migration-sql-guard.mjs",
+    "content-duplicate-guard": "node scripts/content-duplicate-guard.mjs",
+    "content-governance-report": "tsx scripts/content-governance-report.mjs",
     "test": "tsx --test tests/**/*.test.ts"
   },
   "dependencies": {
