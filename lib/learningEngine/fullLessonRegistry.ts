@@ -33,6 +33,12 @@ export const FULL_LESSON_ROUTE: Partial<Record<CompetencyId, string>> = {
   // which stops a recommendation for one subject's competency ever
   // silently redirecting a learner who is practising a different subject.
   "RC-01": "/learning-intelligence/learn/english/reading-retrieval",
+  // Programme Increment 024 — Angel's second English Reading full lesson
+  // (RC-02, Inference and Justified Interpretation). Reuses the same
+  // subject-matching guard practice/[area]/page.tsx already applies to
+  // RC-01 -- no routing change was needed for a second entry under the
+  // same subject.
+  "RC-02": "/learning-intelligence/learn/english/reading-inference",
 };
 
 export function hasFullLessonAvailable(competencyId: CompetencyId): boolean {

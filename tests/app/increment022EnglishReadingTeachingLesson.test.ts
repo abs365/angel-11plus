@@ -81,24 +81,24 @@ test("a weak RC-01 signal, with every other competency secure, produces a real t
 
 // ─── 3. A different Reading skill without a lesson falls back safely ──────
 
-test("a weak RC-02 signal (no lesson registered) falls back to guided_practice, never a false teaching claim", () => {
+test("a weak RC-03 signal (no lesson registered) falls back to guided_practice, never a false teaching claim -- updated from RC-02 to RC-03 by Increment 024, which gave RC-02 a real lesson", () => {
   const englishWeak = subjectSummary("English Comprehension", [
     comp("RC-01", "high", "mastered"),
-    comp("RC-02", "low", "rebuilding"),
-    comp("RC-03", "high", "mastered"),
+    comp("RC-02", "high", "mastered"),
+    comp("RC-03", "low", "rebuilding"),
     comp("RC-04", "high", "mastered"),
   ]);
   const decision = buildPreparationDecision(
     [englishWeak, subjectSummary("Mathematics", MATHS_SECURE), subjectSummary("Continuous Writing", WRITING_SECURE)],
     clockFor(300),
     "Year 5",
-    [candidate("RC-02", "rebuilding", "weak-competency-remediation")],
+    [candidate("RC-03", "rebuilding", "weak-competency-remediation")],
     [],
     { hasFullLessonAvailable }
   );
-  assert.equal(decision.recommendedCompetencyId, "RC-02");
+  assert.equal(decision.recommendedCompetencyId, "RC-03");
   assert.equal(decision.recommendedActivityType, "guided_practice");
-  assert.equal(hasFullLessonAvailable("RC-02"), false);
+  assert.equal(hasFullLessonAvailable("RC-03"), false);
 });
 
 // ─── Cross-subject routing guard (Increment 022's own precondition for adding a second-subject lesson) ───

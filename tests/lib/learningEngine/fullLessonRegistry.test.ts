@@ -9,8 +9,8 @@ import { FULL_LESSON_ROUTE, hasFullLessonAvailable } from "@/lib/learningEngine/
  * caller of buildPreparationDecision independently.
  */
 
-test("the 4 real lessons that exist today are registered, and only those 4", () => {
-  assert.deepEqual(Object.keys(FULL_LESSON_ROUTE).sort(), ["MR-01", "MR-03", "MR-04", "RC-01"]);
+test("the 5 real lessons that exist today are registered, and only those 5", () => {
+  assert.deepEqual(Object.keys(FULL_LESSON_ROUTE).sort(), ["MR-01", "MR-03", "MR-04", "RC-01", "RC-02"]);
 });
 
 test("hasFullLessonAvailable is true for every registered competency and false for every other real competency", () => {
@@ -18,10 +18,12 @@ test("hasFullLessonAvailable is true for every registered competency and false f
   assert.equal(hasFullLessonAvailable("MR-03"), true);
   assert.equal(hasFullLessonAvailable("MR-04"), true);
   assert.equal(hasFullLessonAvailable("RC-01"), true);
+  assert.equal(hasFullLessonAvailable("RC-02"), true);
   assert.equal(hasFullLessonAvailable("MR-02"), false);
   assert.equal(hasFullLessonAvailable("MR-05"), false);
   assert.equal(hasFullLessonAvailable("MR-06"), false);
-  assert.equal(hasFullLessonAvailable("RC-02"), false);
+  assert.equal(hasFullLessonAvailable("RC-03"), false);
+  assert.equal(hasFullLessonAvailable("RC-04"), false);
   assert.equal(hasFullLessonAvailable("WC-01"), false);
 });
 
@@ -33,4 +35,9 @@ test("every registered Mathematics route is a real app route path under /learnin
 
 test("Programme Increment 022 -- RC-01's route is a real app route path under /learning-intelligence/learn/english/", () => {
   assert.match(FULL_LESSON_ROUTE["RC-01"]!, /^\/learning-intelligence\/learn\/english\//);
+});
+
+test("Programme Increment 024 -- RC-02's route is a real app route path under /learning-intelligence/learn/english/, distinct from RC-01's", () => {
+  assert.match(FULL_LESSON_ROUTE["RC-02"]!, /^\/learning-intelligence\/learn\/english\//);
+  assert.notEqual(FULL_LESSON_ROUTE["RC-02"], FULL_LESSON_ROUTE["RC-01"]);
 });
