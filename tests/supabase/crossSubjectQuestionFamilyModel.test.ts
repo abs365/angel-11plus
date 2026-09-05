@@ -1,6 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
+import { readFileSync, readdirSync, statSync } from "node:fs";
+import { join } from "node:path";
 
 /**
  * Question Factory Wave 1, Phase 2 — Cross-Subject Question Family Model.
@@ -79,6 +80,70 @@ test("RLS is enabled with an admin-only SELECT policy -- no anon or plain authen
   assert.match(EXECUTABLE, /alter table public\.ali_question_family enable row level security;/);
   assert.match(EXECUTABLE, /create policy ali_question_family_admin_select[\s\S]*?for select[\s\S]*?using \(is_current_user_admin\(\)\);/);
   assert.doesNotMatch(EXECUTABLE, /for insert|for update|for delete/i);
+});
+
+test("Founder-raised safety gate (Supabase SQL Editor pre-flight warning): RLS is enabled on ali_question_family strictly BEFORE any row is ever inserted into it (the backfill INSERT), and strictly before commit -- the table is never, at any point within this transaction, in a state where a row exists without RLS protection", () => {
+  const createTableIndex = EXECUTABLE.indexOf("create table if not exists public.ali_question_family");
+  const enableRlsIndex = EXECUTABLE.indexOf("alter table public.ali_question_family enable row level security;");
+  const createPolicyIndex = EXECUTABLE.indexOf("create policy ali_question_family_admin_select");
+  const backfillInsertIndex = EXECUTABLE.indexOf("insert into public.ali_question_family");
+  const commitIndex = EXECUTABLE.lastIndexOf("commit;");
+
+  assert.ok(createTableIndex > -1 && enableRlsIndex > -1 && createPolicyIndex > -1 && backfillInsertIndex > -1 && commitIndex > -1);
+  assert.ok(
+    createTableIndex < enableRlsIndex &&
+    enableRlsIndex < createPolicyIndex &&
+    createPolicyIndex < backfillInsertIndex &&
+    backfillInsertIndex < commitIndex,
+    "expected strict order: CREATE TABLE -> ENABLE RLS -> CREATE POLICY -> backfill INSERT -> COMMIT"
+  );
+});
+
+test("the only DROP statement in this entire migration is 'drop policy if exists' against the brand-new ali_question_family table's own policy (idempotent re-run safety) -- it cannot possibly target a pre-existing object with real data, since the table itself is created earlier in this SAME migration/transaction", () => {
+  const dropStatements = [...EXECUTABLE.matchAll(/drop \w+[^;]*;/gi)];
+  assert.equal(dropStatements.length, 1, "expected exactly one DROP statement in this migration");
+  assert.match(dropStatements[0][0], /drop policy if exists ali_question_family_admin_select on public\.ali_question_family;/);
+  // The dropped object's own table must be created earlier in this same file -- proving this DROP can never affect pre-existing production data.
+  const createTableIndex = EXECUTABLE.indexOf("create table if not exists public.ali_question_family");
+  const dropIndex = EXECUTABLE.indexOf(dropStatements[0][0]);
+  assert.ok(createTableIndex > -1 && createTableIndex < dropIndex);
+});
+
+test("no ALTER TABLE statement anywhere in this migration targets any pre-existing table (ali_question_bank, profiles, or any other) -- the only ALTER TABLE in the whole file is enabling RLS on the brand-new table this same migration creates", () => {
+  const alterStatements = [...EXECUTABLE.matchAll(/alter table (\S+)/gi)];
+  assert.equal(alterStatements.length, 1, "expected exactly one ALTER TABLE statement in this migration");
+  assert.equal(alterStatements[0][1], "public.ali_question_family");
+});
+
+test("no UPDATE, DELETE, or TRUNCATE statement exists anywhere in this migration -- it cannot alter or remove any existing row in any table", () => {
+  assert.doesNotMatch(EXECUTABLE, /\bupdate\s+public\./i);
+  assert.doesNotMatch(EXECUTABLE, /\bdelete\s+from\b/i);
+  assert.doesNotMatch(EXECUTABLE, /\btruncate\b/i);
+});
+
+function findFilesReferencing(dir: string, needle: string, skipFileName: string, out: string[] = []): string[] {
+  for (const entry of readdirSync(dir)) {
+    const full = join(dir, entry);
+    const stat = statSync(full);
+    if (stat.isDirectory()) {
+      if (entry === "node_modules" || entry === ".next" || entry === ".git") continue;
+      findFilesReferencing(full, needle, skipFileName, out);
+    } else if (/\.(ts|tsx|sql|mjs|js)$/.test(entry) && entry !== skipFileName) {
+      const content = readFileSync(full, "utf8");
+      if (content.includes(needle)) out.push(full);
+    }
+  }
+  return out;
+}
+
+test("ali_question_family is referenced by NO other migration, application route, or SECURITY DEFINER function anywhere in the repository -- confirming it is not yet a dependency of any live code path, so RLS/access-policy correctness here cannot be masked by an existing caller's own assumptions", () => {
+  const matches = [
+    ...findFilesReferencing("supabase/migrations", "ali_question_family", "228_cross_subject_question_family_model.sql"),
+    ...findFilesReferencing("lib", "ali_question_family", "228_cross_subject_question_family_model.sql"),
+    ...findFilesReferencing("app", "ali_question_family", "228_cross_subject_question_family_model.sql"),
+    ...findFilesReferencing("scripts", "ali_question_family", "228_cross_subject_question_family_model.sql"),
+  ];
+  assert.deepEqual(matches, [], "ali_question_family must not yet be referenced anywhere outside migration 228 itself");
 });
 
 test("backfill reads only from ali_question_bank -- no other table is queried or written", () => {
