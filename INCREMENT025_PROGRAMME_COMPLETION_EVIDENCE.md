@@ -49,4 +49,28 @@ With maintenance review now confirmed operational, the *revision* dimension is n
 
 **Increment 025 (reselected): Diagnose and close Reading Mock scoring**, beginning with a Founder-collaborative diagnostic step (a fresh test/real Reading Mock submission with the resulting server log shared back), before any code change is proposed — mirroring the same Founder-collaborative verification pattern already proven throughout this program (e.g., Increment 020/023's own migration-application verification cycles). This is not implemented this turn (selection only).
 
-**Status: SELECTED / NOT IMPLEMENTED.**
+**Status: SELECTED / NOT IMPLEMENTED (superseded by closure below).**
+
+---
+
+## Closure — technical Reading Mock scoring blocker (2026-09-05)
+
+**Status: PRODUCTION COMPLETE — TECHNICAL READING MOCK SCORING VERIFIED.**
+
+The full diagnostic-to-closure chain, preserved accurately (no historical record rewritten):
+
+1. **Client-side recovery investigation** (production attempt `e2f26f8d-25b6-452d-bd1c-3d5ad2436a0f`) found two real code-quality/observability findings — an unguarded `getSession().then(...)` in `components/providers/AuthProvider.tsx`, and a silent-skip branch in the mock-report recovery effect — neither of which was proven to be, or was, the blocker. **Not fixed as part of this closure**; recorded as open, disclosed findings for a future increment.
+2. Production evidence proved client recovery reliably reaches `/api/mock-reading-scoring` and the request is not the failure point.
+3. A bounded, Founder-approved observability commit (`4cbcf6e`) replaced the route's `exception:${err.name}` diagnostic (uninformative under production minification) with the real Postgres `code`/`severity`/`routine` fields plus a claim/compute/persist stage tag.
+4. Fresh production evidence then showed `exception:P0001;severity:ERROR;routine:exec_stmt_raise;stage:persist` — a genuine `mock_persist_reading_scoring()` (migration 219) RAISE EXCEPTION, not a connection/auth/schema failure. Two hypotheses were formed and **disproved by Founder-run, read-only production queries**: a missing `ali_question_bank` row for one of the 28 assigned questions, and a `marks = 0` legacy-heuristic overflow. Live function signature drift was also checked and disproved.
+5. A second bounded, Founder-approved observability commit (`7e6bb74`) added `lib/mockAttempt/persistGuardClassifier.ts`, matching the caught error's message against migration 219's own 10 fixed RAISE EXCEPTION templates and logging only a safe allow-listed identifier — never the raw message. Fresh production evidence then named the exact guard: `persist_guard:outcomes_not_array`.
+6. Static and local reproduction against the actual installed `postgres` 3.4.9 package's own Bind-message code proved the existing manual `JSON.stringify(outcomes)::jsonb` boundary did **not** double-encode the array — this was verified, not assumed, and is recorded accurately: **JSON.stringify was never proven to be the root cause.**
+7. A bounded, Founder-approved correction (commit `9420faa`) replaced that manual boundary with postgres.js's own explicit JSONB parameter mechanism (`sql.json()`) and added a fail-closed `Array.isArray(outcomes)` invariant immediately before persistence — changing nothing about `outcomes` itself, `computeReadingScoringOutcomes()`, the English scoring engine, or migration 219.
+
+**Production verification, same previously-stalled attempt, same evidence hierarchy this whole increment used (fresh production evidence over static inference):**
+
+> The explicit postgres.js JSONB binding correction resolved the production persistence failure. The same previously stalled production attempt subsequently scored successfully, with all 28 assigned questions persisted and integrity checks passing.
+
+Fresh production scorer event: `outcome: success, reason: scored` (deployment `9420faa`). Founder-run, read-only production verification confirmed: `scoring_state = scoring`, `marking_version = 1`, `question_outcomes` is a genuine JSON array of exactly 28 entries reconciling to the attempt's 28 assigned questions, zero duplicate outcome IDs, zero outcomes outside the assigned manifest, zero automatic-mark bound violations, and 6 questions correctly resolved to `requires_manual_marking`. `overall.percentage = null`, `analysis_state = not_started`, and `report_release_state = pending` are the **expected**, correct state while 6 questions still require manual marking — not a defect, and not evidence the closure is incomplete. The report was not manually released; `scoring_state`/`analysis_state`/`report_release_state` were not altered by this increment.
+
+**Explicitly not touched by this closure**, remaining open for a future increment if selected: the AuthProvider/report-silent-skip client findings (item 1 above); manual marking of the 6 `requires_manual_marking` questions for this attempt; the resulting analysis/report-release stage once marking completes; migrations 221 and 182 (still HOLD / NOT APPLIED); Increment 023 (still HOLD AT INDEPENDENT HUMAN REVIEW).
