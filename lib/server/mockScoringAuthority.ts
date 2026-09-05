@@ -82,8 +82,24 @@ export async function scoreReadingAttempt(attemptId: string): Promise<ScoreReadi
     const outcomes = computeReadingScoringOutcomes(claim.questions ?? []);
 
     stage = "persist";
+    // Founder-directed correction, Increment 025 — the manual
+    // `JSON.stringify(outcomes)::jsonb` boundary is replaced with
+    // postgres.js's own explicit JSONB parameter mechanism (`sql.json()`,
+    // installed postgres 3.4.9), which binds the array directly rather
+    // than through an intermediate string the caller must construct.
+    // Static/local reproduction proved the prior form did not
+    // double-encode, so this is not a proven root-cause fix — it removes
+    // an unnecessary manual serialization step at the exact boundary
+    // production evidence names, using the driver's own supported
+    // mechanism, while changing nothing about `outcomes` itself.
+    if (!Array.isArray(outcomes)) {
+      // Fails closed rather than sending a malformed value to a
+      // privileged SECURITY DEFINER function — never repairs or
+      // transforms the value, and never logs its content.
+      throw new Error("scoreReadingAttempt: outcomes must be an array immediately before persistence");
+    }
     const [persistRow] = await sql<{ mock_persist_reading_scoring: { status: "scored" | "already_scored"; scoringState?: "scored" | "scoring" } }[]>`
-      select mock_persist_reading_scoring(${attemptId}::uuid, ${JSON.stringify(outcomes)}::jsonb)
+      select mock_persist_reading_scoring(${attemptId}::uuid, ${sql.json(outcomes as unknown as postgres.JSONValue)})
     `;
     const persisted = persistRow?.mock_persist_reading_scoring;
     return persisted ?? { status: "unavailable" };
