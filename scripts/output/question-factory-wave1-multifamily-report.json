@@ -1,0 +1,1212 @@
+{
+  "generatedAt": "2026-09-06T08:33:49.574Z",
+  "wavePlan": [
+    {
+      "familyId": "mr01-whole-number-computation",
+      "target": 40,
+      "control": false
+    },
+    {
+      "familyId": "mr02-nth-term",
+      "target": 40,
+      "control": false
+    },
+    {
+      "familyId": "mr03-compound-area-perimeter",
+      "target": 40,
+      "control": false
+    },
+    {
+      "familyId": "mr05-factors-primes",
+      "target": 40,
+      "control": false
+    },
+    {
+      "familyId": "mr04-compound-percentage",
+      "target": 40,
+      "control": false
+    },
+    {
+      "familyId": "mr03-angle-sum",
+      "target": 20,
+      "control": true
+    }
+  ],
+  "totalGenerated": 220,
+  "totalApproved": 220,
+  "totalRejected": 0,
+  "families": [
+    {
+      "familyId": "mr01-whole-number-computation",
+      "isControl": false,
+      "blueprintCount": 9,
+      "existingRealBankRowsChecked": 13,
+      "generated": 40,
+      "approved": 40,
+      "rejected": 0,
+      "rejectionReasons": {},
+      "perBlueprint": [
+        {
+          "blueprintId": "mr01-bp-addition-direct",
+          "rawGenerated": 5,
+          "approved": 5,
+          "distinctRepresentationTypes": 1
+        },
+        {
+          "blueprintId": "mr01-bp-subtraction-direct",
+          "rawGenerated": 5,
+          "approved": 5,
+          "distinctRepresentationTypes": 1
+        },
+        {
+          "blueprintId": "mr01-bp-multiplication-direct",
+          "rawGenerated": 5,
+          "approved": 5,
+          "distinctRepresentationTypes": 1
+        },
+        {
+          "blueprintId": "mr01-bp-division-with-remainder",
+          "rawGenerated": 5,
+          "approved": 5,
+          "distinctRepresentationTypes": 1
+        },
+        {
+          "blueprintId": "mr01-bp-division-exact",
+          "rawGenerated": 4,
+          "approved": 4,
+          "distinctRepresentationTypes": 1
+        },
+        {
+          "blueprintId": "mr01-bp-missing-addend",
+          "rawGenerated": 4,
+          "approved": 4,
+          "distinctRepresentationTypes": 1
+        },
+        {
+          "blueprintId": "mr01-bp-missing-factor",
+          "rawGenerated": 4,
+          "approved": 4,
+          "distinctRepresentationTypes": 1
+        },
+        {
+          "blueprintId": "mr01-bp-error-identification",
+          "rawGenerated": 4,
+          "approved": 4,
+          "distinctRepresentationTypes": 1
+        },
+        {
+          "blueprintId": "mr01-bp-multistep-add-then-multiply",
+          "rawGenerated": 4,
+          "approved": 4,
+          "distinctRepresentationTypes": 1
+        }
+      ],
+      "distinctBlueprintsUsed": 9,
+      "blueprintDepth": {
+        "rawVariantCount": 40,
+        "blueprintDepth": 9,
+        "variantDepth": 9,
+        "dominantBlueprintShare": 0.125,
+        "averageVariantsPerBlueprint": 4.444444444444445
+      },
+      "scaledMemorisationRisk": "LOW",
+      "difficultyDistribution": {
+        "hard": 22,
+        "easy": 4,
+        "medium": 14
+      },
+      "difficultyDistinctTiers": 3,
+      "perBlueprintDifficultyReachability": [
+        {
+          "blueprintId": "mr01-bp-addition-direct",
+          "distinctTiersReached": 3,
+          "tierCounts": {
+            "hard": 3,
+            "medium": 1,
+            "easy": 1
+          },
+          "meetsMinimum": true
+        },
+        {
+          "blueprintId": "mr01-bp-subtraction-direct",
+          "distinctTiersReached": 2,
+          "tierCounts": {
+            "easy": 3,
+            "hard": 2
+          },
+          "meetsMinimum": true
+        },
+        {
+          "blueprintId": "mr01-bp-multiplication-direct",
+          "distinctTiersReached": 2,
+          "tierCounts": {
+            "hard": 4,
+            "medium": 1
+          },
+          "meetsMinimum": true
+        },
+        {
+          "blueprintId": "mr01-bp-division-with-remainder",
+          "distinctTiersReached": 2,
+          "tierCounts": {
+            "hard": 2,
+            "medium": 3
+          },
+          "meetsMinimum": true
+        },
+        {
+          "blueprintId": "mr01-bp-division-exact",
+          "distinctTiersReached": 1,
+          "tierCounts": {
+            "hard": 4
+          },
+          "meetsMinimum": false
+        },
+        {
+          "blueprintId": "mr01-bp-missing-addend",
+          "distinctTiersReached": 1,
+          "tierCounts": {
+            "hard": 4
+          },
+          "meetsMinimum": false
+        },
+        {
+          "blueprintId": "mr01-bp-missing-factor",
+          "distinctTiersReached": 2,
+          "tierCounts": {
+            "medium": 2,
+            "hard": 2
+          },
+          "meetsMinimum": true
+        },
+        {
+          "blueprintId": "mr01-bp-error-identification",
+          "distinctTiersReached": 2,
+          "tierCounts": {
+            "medium": 3,
+            "hard": 1
+          },
+          "meetsMinimum": true
+        },
+        {
+          "blueprintId": "mr01-bp-multistep-add-then-multiply",
+          "distinctTiersReached": 1,
+          "tierCounts": {
+            "medium": 4
+          },
+          "meetsMinimum": false
+        }
+      ],
+      "reasoningRouteDistribution": {
+        "direct_computation": 19,
+        "multi_step_application": 9,
+        "reverse_reasoning": 8,
+        "error_identification": 4
+      },
+      "representationDistribution": {
+        "prose": 40
+      },
+      "unknownPositionDistribution": {
+        "sum": 5,
+        "difference": 5,
+        "product": 5,
+        "remainder": 5,
+        "quotient": 4,
+        "missing_addend": 4,
+        "missing_factor": 4,
+        "corrected_total": 4,
+        "final_result": 4
+      },
+      "contextDistribution": {
+        "bare_arithmetic": 40
+      },
+      "teachingUseCoverage": {
+        "worked_example": 4,
+        "guided_practice": 5,
+        "independent_practice": 5,
+        "scaffolded_practice": 2,
+        "mastery_check": 2,
+        "transfer": 3
+      },
+      "misconceptionCoverage": [
+        "stating the quotient instead of the remainder as the final answer",
+        "a generic arithmetic slip in the final addition step"
+      ],
+      "parameterSignatureDuplicates": [],
+      "contextSaturation": {
+        "dimension": "context",
+        "distinctValueCount": 1,
+        "dominantValueRatio": 1,
+        "exceedsThreshold": true
+      },
+      "reasoningRouteSaturation": {
+        "dimension": "reasoningRoute",
+        "distinctValueCount": 4,
+        "dominantValueRatio": 0.475,
+        "exceedsThreshold": false
+      },
+      "unknownPositionSaturation": {
+        "dimension": "unknownPosition",
+        "distinctValueCount": 9,
+        "dominantValueRatio": 0.125,
+        "exceedsThreshold": false
+      }
+    },
+    {
+      "familyId": "mr02-nth-term",
+      "isControl": false,
+      "blueprintCount": 7,
+      "existingRealBankRowsChecked": 5,
+      "generated": 40,
+      "approved": 40,
+      "rejected": 0,
+      "rejectionReasons": {},
+      "perBlueprint": [
+        {
+          "blueprintId": "mr02-bp-nth-term-direct",
+          "rawGenerated": 6,
+          "approved": 6,
+          "distinctRepresentationTypes": 1
+        },
+        {
+          "blueprintId": "mr02-bp-find-common-difference",
+          "rawGenerated": 6,
+          "approved": 6,
+          "distinctRepresentationTypes": 1
+        },
+        {
+          "blueprintId": "mr02-bp-find-first-term",
+          "rawGenerated": 6,
+          "approved": 6,
+          "distinctRepresentationTypes": 1
+        },
+        {
+          "blueprintId": "mr02-bp-find-term-position",
+          "rawGenerated": 6,
+          "approved": 6,
+          "distinctRepresentationTypes": 1
+        },
+        {
+          "blueprintId": "mr02-bp-verify-membership",
+          "rawGenerated": 6,
+          "approved": 6,
+          "distinctRepresentationTypes": 1
+        },
+        {
+          "blueprintId": "mr02-bp-compare-two-sequences",
+          "rawGenerated": 5,
+          "approved": 5,
+          "distinctRepresentationTypes": 1
+        },
+        {
+          "blueprintId": "mr02-bp-error-identification",
+          "rawGenerated": 5,
+          "approved": 5,
+          "distinctRepresentationTypes": 1
+        }
+      ],
+      "distinctBlueprintsUsed": 7,
+      "blueprintDepth": {
+        "rawVariantCount": 40,
+        "blueprintDepth": 7,
+        "variantDepth": 10,
+        "dominantBlueprintShare": 0.15,
+        "averageVariantsPerBlueprint": 5.714285714285714
+      },
+      "scaledMemorisationRisk": "LOW",
+      "difficultyDistribution": {
+        "medium": 17,
+        "hard": 7,
+        "easy": 16
+      },
+      "difficultyDistinctTiers": 3,
+      "perBlueprintDifficultyReachability": [
+        {
+          "blueprintId": "mr02-bp-nth-term-direct",
+          "distinctTiersReached": 3,
+          "tierCounts": {
+            "medium": 3,
+            "hard": 1,
+            "easy": 2
+          },
+          "meetsMinimum": true
+        },
+        {
+          "blueprintId": "mr02-bp-find-common-difference",
+          "distinctTiersReached": 3,
+          "tierCounts": {
+            "hard": 1,
+            "medium": 4,
+            "easy": 1
+          },
+          "meetsMinimum": true
+        },
+        {
+          "blueprintId": "mr02-bp-find-first-term",
+          "distinctTiersReached": 3,
+          "tierCounts": {
+            "hard": 2,
+            "medium": 2,
+            "easy": 2
+          },
+          "meetsMinimum": true
+        },
+        {
+          "blueprintId": "mr02-bp-find-term-position",
+          "distinctTiersReached": 2,
+          "tierCounts": {
+            "medium": 5,
+            "easy": 1
+          },
+          "meetsMinimum": true
+        },
+        {
+          "blueprintId": "mr02-bp-verify-membership",
+          "distinctTiersReached": 1,
+          "tierCounts": {
+            "easy": 6
+          },
+          "meetsMinimum": false
+        },
+        {
+          "blueprintId": "mr02-bp-compare-two-sequences",
+          "distinctTiersReached": 3,
+          "tierCounts": {
+            "easy": 3,
+            "medium": 1,
+            "hard": 1
+          },
+          "meetsMinimum": true
+        },
+        {
+          "blueprintId": "mr02-bp-error-identification",
+          "distinctTiersReached": 3,
+          "tierCounts": {
+            "medium": 2,
+            "hard": 2,
+            "easy": 1
+          },
+          "meetsMinimum": true
+        }
+      ],
+      "reasoningRouteDistribution": {
+        "multi_step_application": 6,
+        "reverse_reasoning": 18,
+        "comparison": 11,
+        "error_identification": 5
+      },
+      "representationDistribution": {
+        "prose": 40
+      },
+      "unknownPositionDistribution": {
+        "nth_term_value": 6,
+        "common_difference": 6,
+        "first_term": 6,
+        "term_position": 6,
+        "membership_verdict": 6,
+        "comparative_term": 5,
+        "corrected_nth_term": 5
+      },
+      "contextDistribution": {
+        "linear_sequence": 40
+      },
+      "teachingUseCoverage": {
+        "worked_example": 1,
+        "guided_practice": 3,
+        "independent_practice": 3,
+        "transfer": 3,
+        "scaffolded_practice": 2,
+        "mastery_check": 2,
+        "explicit_teaching": 1
+      },
+      "misconceptionCoverage": [
+        "forgetting to add 1 after dividing the total change by the common difference (an off-by-one error)",
+        "using n instead of (n-1) lots of the common difference in the nth-term rule (an off-by-one error)"
+      ],
+      "parameterSignatureDuplicates": [],
+      "contextSaturation": {
+        "dimension": "context",
+        "distinctValueCount": 1,
+        "dominantValueRatio": 1,
+        "exceedsThreshold": true
+      },
+      "reasoningRouteSaturation": {
+        "dimension": "reasoningRoute",
+        "distinctValueCount": 4,
+        "dominantValueRatio": 0.45,
+        "exceedsThreshold": false
+      },
+      "unknownPositionSaturation": {
+        "dimension": "unknownPosition",
+        "distinctValueCount": 7,
+        "dominantValueRatio": 0.15,
+        "exceedsThreshold": false
+      }
+    },
+    {
+      "familyId": "mr03-compound-area-perimeter",
+      "isControl": false,
+      "blueprintCount": 6,
+      "existingRealBankRowsChecked": 8,
+      "generated": 40,
+      "approved": 40,
+      "rejected": 0,
+      "rejectionReasons": {},
+      "perBlueprint": [
+        {
+          "blueprintId": "mr03-bp-compound-area-direct",
+          "rawGenerated": 7,
+          "approved": 7,
+          "distinctRepresentationTypes": 1
+        },
+        {
+          "blueprintId": "mr03-bp-compound-perimeter-direct",
+          "rawGenerated": 7,
+          "approved": 7,
+          "distinctRepresentationTypes": 1
+        },
+        {
+          "blueprintId": "mr03-bp-missing-side-from-perimeter",
+          "rawGenerated": 7,
+          "approved": 7,
+          "distinctRepresentationTypes": 1
+        },
+        {
+          "blueprintId": "mr03-bp-missing-dimension-from-area",
+          "rawGenerated": 7,
+          "approved": 7,
+          "distinctRepresentationTypes": 1
+        },
+        {
+          "blueprintId": "mr03-bp-compare-two-shapes-area",
+          "rawGenerated": 6,
+          "approved": 6,
+          "distinctRepresentationTypes": 1
+        },
+        {
+          "blueprintId": "mr03-bp-multistep-area-and-cost",
+          "rawGenerated": 6,
+          "approved": 6,
+          "distinctRepresentationTypes": 1
+        }
+      ],
+      "distinctBlueprintsUsed": 6,
+      "blueprintDepth": {
+        "rawVariantCount": 40,
+        "blueprintDepth": 6,
+        "variantDepth": 6,
+        "dominantBlueprintShare": 0.175,
+        "averageVariantsPerBlueprint": 6.666666666666667
+      },
+      "scaledMemorisationRisk": "LOW",
+      "difficultyDistribution": {
+        "medium": 17,
+        "easy": 15,
+        "hard": 8
+      },
+      "difficultyDistinctTiers": 3,
+      "perBlueprintDifficultyReachability": [
+        {
+          "blueprintId": "mr03-bp-compound-area-direct",
+          "distinctTiersReached": 2,
+          "tierCounts": {
+            "medium": 5,
+            "hard": 2
+          },
+          "meetsMinimum": true
+        },
+        {
+          "blueprintId": "mr03-bp-compound-perimeter-direct",
+          "distinctTiersReached": 2,
+          "tierCounts": {
+            "easy": 3,
+            "medium": 4
+          },
+          "meetsMinimum": true
+        },
+        {
+          "blueprintId": "mr03-bp-missing-side-from-perimeter",
+          "distinctTiersReached": 3,
+          "tierCounts": {
+            "hard": 3,
+            "easy": 3,
+            "medium": 1
+          },
+          "meetsMinimum": true
+        },
+        {
+          "blueprintId": "mr03-bp-missing-dimension-from-area",
+          "distinctTiersReached": 3,
+          "tierCounts": {
+            "easy": 2,
+            "medium": 4,
+            "hard": 1
+          },
+          "meetsMinimum": true
+        },
+        {
+          "blueprintId": "mr03-bp-compare-two-shapes-area",
+          "distinctTiersReached": 1,
+          "tierCounts": {
+            "easy": 6
+          },
+          "meetsMinimum": false
+        },
+        {
+          "blueprintId": "mr03-bp-multistep-area-and-cost",
+          "distinctTiersReached": 3,
+          "tierCounts": {
+            "easy": 1,
+            "hard": 2,
+            "medium": 3
+          },
+          "meetsMinimum": true
+        }
+      ],
+      "reasoningRouteDistribution": {
+        "multi_step_application": 13,
+        "direct_computation": 7,
+        "reverse_reasoning": 14,
+        "comparison": 6
+      },
+      "representationDistribution": {
+        "diagram": 40
+      },
+      "unknownPositionDistribution": {
+        "total_area": 7,
+        "total_perimeter": 7,
+        "missing_side_from_perimeter": 7,
+        "missing_dimension_from_area": 7,
+        "comparative_area": 6,
+        "total_cost": 6
+      },
+      "contextDistribution": {
+        "compound_shape_geometry": 40
+      },
+      "teachingUseCoverage": {
+        "worked_example": 1,
+        "guided_practice": 3,
+        "independent_practice": 3,
+        "scaffolded_practice": 1,
+        "mastery_check": 1,
+        "transfer": 4
+      },
+      "misconceptionCoverage": [
+        "assuming the notch changes the total perimeter (it does not, for a rectilinear notch)"
+      ],
+      "parameterSignatureDuplicates": [],
+      "contextSaturation": {
+        "dimension": "context",
+        "distinctValueCount": 1,
+        "dominantValueRatio": 1,
+        "exceedsThreshold": true
+      },
+      "reasoningRouteSaturation": {
+        "dimension": "reasoningRoute",
+        "distinctValueCount": 4,
+        "dominantValueRatio": 0.35,
+        "exceedsThreshold": false
+      },
+      "unknownPositionSaturation": {
+        "dimension": "unknownPosition",
+        "distinctValueCount": 6,
+        "dominantValueRatio": 0.175,
+        "exceedsThreshold": false
+      }
+    },
+    {
+      "familyId": "mr05-factors-primes",
+      "isControl": false,
+      "blueprintCount": 7,
+      "existingRealBankRowsChecked": 5,
+      "generated": 40,
+      "approved": 40,
+      "rejected": 0,
+      "rejectionReasons": {},
+      "perBlueprint": [
+        {
+          "blueprintId": "mr05-bp-count-factors",
+          "rawGenerated": 6,
+          "approved": 6,
+          "distinctRepresentationTypes": 1
+        },
+        {
+          "blueprintId": "mr05-bp-is-prime",
+          "rawGenerated": 6,
+          "approved": 6,
+          "distinctRepresentationTypes": 1
+        },
+        {
+          "blueprintId": "mr05-bp-is-factor",
+          "rawGenerated": 6,
+          "approved": 6,
+          "distinctRepresentationTypes": 1
+        },
+        {
+          "blueprintId": "mr05-bp-highest-common-factor",
+          "rawGenerated": 6,
+          "approved": 6,
+          "distinctRepresentationTypes": 1
+        },
+        {
+          "blueprintId": "mr05-bp-lowest-common-multiple",
+          "rawGenerated": 6,
+          "approved": 6,
+          "distinctRepresentationTypes": 1
+        },
+        {
+          "blueprintId": "mr05-bp-count-distinct-prime-factors",
+          "rawGenerated": 5,
+          "approved": 5,
+          "distinctRepresentationTypes": 1
+        },
+        {
+          "blueprintId": "mr05-bp-error-identification",
+          "rawGenerated": 5,
+          "approved": 5,
+          "distinctRepresentationTypes": 1
+        }
+      ],
+      "distinctBlueprintsUsed": 7,
+      "blueprintDepth": {
+        "rawVariantCount": 40,
+        "blueprintDepth": 7,
+        "variantDepth": 7,
+        "dominantBlueprintShare": 0.15,
+        "averageVariantsPerBlueprint": 5.714285714285714
+      },
+      "scaledMemorisationRisk": "LOW",
+      "difficultyDistribution": {
+        "easy": 17,
+        "medium": 14,
+        "hard": 9
+      },
+      "difficultyDistinctTiers": 3,
+      "perBlueprintDifficultyReachability": [
+        {
+          "blueprintId": "mr05-bp-count-factors",
+          "distinctTiersReached": 2,
+          "tierCounts": {
+            "easy": 4,
+            "medium": 2
+          },
+          "meetsMinimum": true
+        },
+        {
+          "blueprintId": "mr05-bp-is-prime",
+          "distinctTiersReached": 3,
+          "tierCounts": {
+            "medium": 2,
+            "hard": 1,
+            "easy": 3
+          },
+          "meetsMinimum": true
+        },
+        {
+          "blueprintId": "mr05-bp-is-factor",
+          "distinctTiersReached": 2,
+          "tierCounts": {
+            "hard": 3,
+            "medium": 3
+          },
+          "meetsMinimum": true
+        },
+        {
+          "blueprintId": "mr05-bp-highest-common-factor",
+          "distinctTiersReached": 2,
+          "tierCounts": {
+            "medium": 3,
+            "hard": 3
+          },
+          "meetsMinimum": true
+        },
+        {
+          "blueprintId": "mr05-bp-lowest-common-multiple",
+          "distinctTiersReached": 3,
+          "tierCounts": {
+            "hard": 1,
+            "medium": 2,
+            "easy": 3
+          },
+          "meetsMinimum": true
+        },
+        {
+          "blueprintId": "mr05-bp-count-distinct-prime-factors",
+          "distinctTiersReached": 3,
+          "tierCounts": {
+            "easy": 2,
+            "medium": 2,
+            "hard": 1
+          },
+          "meetsMinimum": true
+        },
+        {
+          "blueprintId": "mr05-bp-error-identification",
+          "distinctTiersReached": 1,
+          "tierCounts": {
+            "easy": 5
+          },
+          "meetsMinimum": false
+        }
+      ],
+      "reasoningRouteDistribution": {
+        "direct_computation": 6,
+        "comparison": 12,
+        "multi_step_application": 17,
+        "error_identification": 5
+      },
+      "representationDistribution": {
+        "prose": 40
+      },
+      "unknownPositionDistribution": {
+        "factor_count": 6,
+        "primality_verdict": 6,
+        "factor_verdict": 6,
+        "hcf_value": 6,
+        "lcm_value": 6,
+        "distinct_prime_factor_count": 5,
+        "corrected_factor_count": 5
+      },
+      "contextDistribution": {
+        "number_theory": 40
+      },
+      "teachingUseCoverage": {
+        "worked_example": 1,
+        "guided_practice": 4,
+        "independent_practice": 3,
+        "mastery_check": 2,
+        "transfer": 2,
+        "scaffolded_practice": 2,
+        "explicit_teaching": 1
+      },
+      "misconceptionCoverage": [
+        "confusing total factor count with distinct prime factor count",
+        "miscounting factors by missing one or double-counting a repeated divisor"
+      ],
+      "parameterSignatureDuplicates": [],
+      "contextSaturation": {
+        "dimension": "context",
+        "distinctValueCount": 1,
+        "dominantValueRatio": 1,
+        "exceedsThreshold": true
+      },
+      "reasoningRouteSaturation": {
+        "dimension": "reasoningRoute",
+        "distinctValueCount": 4,
+        "dominantValueRatio": 0.425,
+        "exceedsThreshold": false
+      },
+      "unknownPositionSaturation": {
+        "dimension": "unknownPosition",
+        "distinctValueCount": 7,
+        "dominantValueRatio": 0.15,
+        "exceedsThreshold": false
+      }
+    },
+    {
+      "familyId": "mr04-compound-percentage",
+      "isControl": false,
+      "blueprintCount": 6,
+      "existingRealBankRowsChecked": 5,
+      "generated": 40,
+      "approved": 40,
+      "rejected": 0,
+      "rejectionReasons": {},
+      "perBlueprint": [
+        {
+          "blueprintId": "mr04-bp-successive-change-direct",
+          "rawGenerated": 7,
+          "approved": 7,
+          "distinctRepresentationTypes": 1
+        },
+        {
+          "blueprintId": "mr04-bp-order-independence-check",
+          "rawGenerated": 7,
+          "approved": 7,
+          "distinctRepresentationTypes": 1
+        },
+        {
+          "blueprintId": "mr04-bp-find-equivalent-single-percentage",
+          "rawGenerated": 7,
+          "approved": 7,
+          "distinctRepresentationTypes": 1
+        },
+        {
+          "blueprintId": "mr04-bp-reverse-find-original-price",
+          "rawGenerated": 7,
+          "approved": 7,
+          "distinctRepresentationTypes": 1
+        },
+        {
+          "blueprintId": "mr04-bp-error-identification-additive",
+          "rawGenerated": 6,
+          "approved": 6,
+          "distinctRepresentationTypes": 1
+        },
+        {
+          "blueprintId": "mr04-bp-compare-two-scenarios",
+          "rawGenerated": 6,
+          "approved": 6,
+          "distinctRepresentationTypes": 1
+        }
+      ],
+      "distinctBlueprintsUsed": 6,
+      "blueprintDepth": {
+        "rawVariantCount": 40,
+        "blueprintDepth": 6,
+        "variantDepth": 9,
+        "dominantBlueprintShare": 0.175,
+        "averageVariantsPerBlueprint": 6.666666666666667
+      },
+      "scaledMemorisationRisk": "LOW",
+      "difficultyDistribution": {
+        "medium": 23,
+        "hard": 10,
+        "easy": 7
+      },
+      "difficultyDistinctTiers": 3,
+      "perBlueprintDifficultyReachability": [
+        {
+          "blueprintId": "mr04-bp-successive-change-direct",
+          "distinctTiersReached": 2,
+          "tierCounts": {
+            "medium": 4,
+            "hard": 3
+          },
+          "meetsMinimum": true
+        },
+        {
+          "blueprintId": "mr04-bp-order-independence-check",
+          "distinctTiersReached": 3,
+          "tierCounts": {
+            "hard": 1,
+            "medium": 5,
+            "easy": 1
+          },
+          "meetsMinimum": true
+        },
+        {
+          "blueprintId": "mr04-bp-find-equivalent-single-percentage",
+          "distinctTiersReached": 2,
+          "tierCounts": {
+            "hard": 1,
+            "medium": 6
+          },
+          "meetsMinimum": true
+        },
+        {
+          "blueprintId": "mr04-bp-reverse-find-original-price",
+          "distinctTiersReached": 2,
+          "tierCounts": {
+            "medium": 4,
+            "hard": 3
+          },
+          "meetsMinimum": true
+        },
+        {
+          "blueprintId": "mr04-bp-error-identification-additive",
+          "distinctTiersReached": 2,
+          "tierCounts": {
+            "medium": 4,
+            "hard": 2
+          },
+          "meetsMinimum": true
+        },
+        {
+          "blueprintId": "mr04-bp-compare-two-scenarios",
+          "distinctTiersReached": 1,
+          "tierCounts": {
+            "easy": 6
+          },
+          "meetsMinimum": false
+        }
+      ],
+      "reasoningRouteDistribution": {
+        "multi_step_application": 14,
+        "comparison": 13,
+        "reverse_reasoning": 7,
+        "error_identification": 6
+      },
+      "representationDistribution": {
+        "prose": 40
+      },
+      "unknownPositionDistribution": {
+        "final_price": 7,
+        "price_difference_between_orders": 7,
+        "equivalent_overall_percentage": 7,
+        "original_price": 7,
+        "corrected_final_price": 6,
+        "comparative_final_price": 6
+      },
+      "contextDistribution": {
+        "successive_percentage_change": 40
+      },
+      "teachingUseCoverage": {
+        "worked_example": 1,
+        "guided_practice": 3,
+        "independent_practice": 2,
+        "explicit_teaching": 2,
+        "mastery_check": 2,
+        "scaffolded_practice": 2,
+        "transfer": 2
+      },
+      "misconceptionCoverage": [
+        "believing the order of successive percentage changes affects the final price",
+        "treating successive percentage changes as simply additive/subtractive instead of compounding multiplicatively"
+      ],
+      "parameterSignatureDuplicates": [],
+      "contextSaturation": {
+        "dimension": "context",
+        "distinctValueCount": 1,
+        "dominantValueRatio": 1,
+        "exceedsThreshold": true
+      },
+      "reasoningRouteSaturation": {
+        "dimension": "reasoningRoute",
+        "distinctValueCount": 4,
+        "dominantValueRatio": 0.35,
+        "exceedsThreshold": false
+      },
+      "unknownPositionSaturation": {
+        "dimension": "unknownPosition",
+        "distinctValueCount": 6,
+        "dominantValueRatio": 0.175,
+        "exceedsThreshold": false
+      }
+    },
+    {
+      "familyId": "mr03-angle-sum",
+      "isControl": true,
+      "blueprintCount": 7,
+      "existingRealBankRowsChecked": 7,
+      "generated": 20,
+      "approved": 20,
+      "rejected": 0,
+      "rejectionReasons": {},
+      "perBlueprint": [
+        {
+          "blueprintId": "mr03-bp-third-angle-direct",
+          "rawGenerated": 3,
+          "approved": 3,
+          "distinctRepresentationTypes": 2
+        },
+        {
+          "blueprintId": "mr03-bp-ratio-split",
+          "rawGenerated": 3,
+          "approved": 3,
+          "distinctRepresentationTypes": 1
+        },
+        {
+          "blueprintId": "mr03-bp-verify-triangle",
+          "rawGenerated": 3,
+          "approved": 3,
+          "distinctRepresentationTypes": 1
+        },
+        {
+          "blueprintId": "mr03-bp-error-correction",
+          "rawGenerated": 3,
+          "approved": 3,
+          "distinctRepresentationTypes": 1
+        },
+        {
+          "blueprintId": "mr03-bp-misconception-360-confusion",
+          "rawGenerated": 3,
+          "approved": 3,
+          "distinctRepresentationTypes": 1
+        },
+        {
+          "blueprintId": "mr03-bp-compare-triangles",
+          "rawGenerated": 3,
+          "approved": 3,
+          "distinctRepresentationTypes": 1
+        },
+        {
+          "blueprintId": "mr03-bp-isosceles-relationship",
+          "rawGenerated": 2,
+          "approved": 2,
+          "distinctRepresentationTypes": 1
+        }
+      ],
+      "distinctBlueprintsUsed": 7,
+      "blueprintDepth": {
+        "rawVariantCount": 20,
+        "blueprintDepth": 7,
+        "variantDepth": 8,
+        "dominantBlueprintShare": 0.15,
+        "averageVariantsPerBlueprint": 2.857142857142857
+      },
+      "scaledMemorisationRisk": "LOW",
+      "difficultyDistribution": {
+        "easy": 6,
+        "medium": 8,
+        "hard": 6
+      },
+      "difficultyDistinctTiers": 3,
+      "perBlueprintDifficultyReachability": [
+        {
+          "blueprintId": "mr03-bp-third-angle-direct",
+          "distinctTiersReached": 3,
+          "tierCounts": {
+            "easy": 1,
+            "hard": 1,
+            "medium": 1
+          },
+          "meetsMinimum": true
+        },
+        {
+          "blueprintId": "mr03-bp-ratio-split",
+          "distinctTiersReached": 2,
+          "tierCounts": {
+            "easy": 1,
+            "medium": 2
+          },
+          "meetsMinimum": true
+        },
+        {
+          "blueprintId": "mr03-bp-verify-triangle",
+          "distinctTiersReached": 2,
+          "tierCounts": {
+            "easy": 1,
+            "hard": 2
+          },
+          "meetsMinimum": true
+        },
+        {
+          "blueprintId": "mr03-bp-error-correction",
+          "distinctTiersReached": 2,
+          "tierCounts": {
+            "medium": 2,
+            "easy": 1
+          },
+          "meetsMinimum": true
+        },
+        {
+          "blueprintId": "mr03-bp-misconception-360-confusion",
+          "distinctTiersReached": 2,
+          "tierCounts": {
+            "medium": 1,
+            "hard": 2
+          },
+          "meetsMinimum": true
+        },
+        {
+          "blueprintId": "mr03-bp-compare-triangles",
+          "distinctTiersReached": 3,
+          "tierCounts": {
+            "easy": 1,
+            "hard": 1,
+            "medium": 1
+          },
+          "meetsMinimum": true
+        },
+        {
+          "blueprintId": "mr03-bp-isosceles-relationship",
+          "distinctTiersReached": 2,
+          "tierCounts": {
+            "medium": 1,
+            "easy": 1
+          },
+          "meetsMinimum": true
+        }
+      ],
+      "reasoningRouteDistribution": {
+        "direct_computation": 3,
+        "multi_step_application": 5,
+        "comparison": 6,
+        "error_identification": 6
+      },
+      "representationDistribution": {
+        "prose": 19,
+        "table": 1
+      },
+      "unknownPositionDistribution": {
+        "third_angle": 3,
+        "two_unknown_angles_via_ratio": 3,
+        "validity_discrepancy": 3,
+        "corrected_third_angle": 6,
+        "comparative_third_angle": 3,
+        "third_angle_isosceles": 2
+      },
+      "contextDistribution": {
+        "triangle_geometry": 18,
+        "isosceles_triangle_geometry": 2
+      },
+      "teachingUseCoverage": {
+        "worked_example": 1,
+        "guided_practice": 2,
+        "independent_practice": 5,
+        "timed_practice": 1,
+        "scaffolded_practice": 3,
+        "transfer": 3,
+        "mastery_check": 2,
+        "explicit_teaching": 1,
+        "maintenance_retrieval": 1
+      },
+      "misconceptionCoverage": [
+        "treating the ratio parts as the final angles directly, without multiplying by the value of one part",
+        "assuming any three stated angles automatically form a valid triangle without checking the total",
+        "a generic arithmetic slip in the final subtraction step (not a specific named conceptual misconception -- see BP_MISCONCEPTION_360_CONFUSION for that distinct case)",
+        "confusing the triangle angle-sum (180°) with the quadrilateral angle-sum (360°)",
+        "assuming a triangle with larger given angles automatically has a larger third angle (the reverse is generally true)",
+        "forgetting to double the equal angle before subtracting from 180° (subtracting only one instance)"
+      ],
+      "parameterSignatureDuplicates": [],
+      "contextSaturation": {
+        "dimension": "context",
+        "distinctValueCount": 2,
+        "dominantValueRatio": 0.9,
+        "exceedsThreshold": false
+      },
+      "reasoningRouteSaturation": {
+        "dimension": "reasoningRoute",
+        "distinctValueCount": 4,
+        "dominantValueRatio": 0.3,
+        "exceedsThreshold": false
+      },
+      "unknownPositionSaturation": {
+        "dimension": "unknownPosition",
+        "distinctValueCount": 6,
+        "dominantValueRatio": 0.3,
+        "exceedsThreshold": false
+      }
+    }
+  ],
+  "throughput": [
+    {
+      "familyId": "mr01-whole-number-computation",
+      "generated": 40,
+      "elapsedMs": 7.7,
+      "msPerCandidate": 0.1925
+    },
+    {
+      "familyId": "mr02-nth-term",
+      "generated": 40,
+      "elapsedMs": 6.24,
+      "msPerCandidate": 0.1561
+    },
+    {
+      "familyId": "mr03-compound-area-perimeter",
+      "generated": 40,
+      "elapsedMs": 3.52,
+      "msPerCandidate": 0.0879
+    },
+    {
+      "familyId": "mr05-factors-primes",
+      "generated": 40,
+      "elapsedMs": 7.02,
+      "msPerCandidate": 0.1756
+    },
+    {
+      "familyId": "mr04-compound-percentage",
+      "generated": 40,
+      "elapsedMs": 7.8,
+      "msPerCandidate": 0.195
+    },
+    {
+      "familyId": "mr03-angle-sum",
+      "generated": 20,
+      "elapsedMs": 5.38,
+      "msPerCandidate": 0.2692
+    }
+  ]
+}
