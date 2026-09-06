@@ -124,4 +124,6 @@ Every capacity/depth/readiness claim must cite its derivation (a real query, a r
 
 ---
 
-**Correction Log**: none yet. Future amendments to this standard must be recorded here, dated, with the reason and the specific section changed.
+**Correction Log**:
+
+- **2026-09-06 (Migration 232 Production Reconciliation)** — Section 24 (Content Retirement/Versioning). The Educational Foundation Completion increment's own root-cause diagnosis for the Writing 17-rows/16-families discrepancy was DISPROVEN by direct post-application production evidence. It had inferred that migration 228's stale `row_count` was hiding a second live row inside an existing Writing family. Post-application evidence (`writing_total_rows=17`, `writing_rows_with_family=16`, `writing_rows_without_family=1`) instead proves the cause was ONE Writing bank row with `family_id IS NULL` — simple arithmetic, not staleness. This does not invalidate Section 24's own standing rule (`ali_question_family`'s aggregate fields must be kept live by a trigger, not treated as a snapshot) — that architectural weakness was real and independently confirmed fixed (`stale_family_row_counts = 0` post-application). Full record: `ANGEL_EDUCATIONAL_FOUNDATION_COMPLETION_REPORT.md` Section B, and migration 232's own CORRECTION HISTORY.

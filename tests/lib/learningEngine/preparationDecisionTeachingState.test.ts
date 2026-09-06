@@ -97,6 +97,43 @@ test("a weak, rebuilding top candidate resolves to explicit_teaching when a real
   assert.equal(withoutLesson.recommendedActivityType, "guided_practice");
 });
 
+test("remediationAction is null whenever no real regression (rebuilding) signal exists anywhere -- never guessed for a healthy competency map", () => {
+  const competencies = ALL_TWELVE.map((id) => comp(id, "high", "mastered"));
+  const decision = buildPreparationDecision([subject(competencies)], NEAR_TERM_CLOCK, "Year 6", [candidate("MR-01", "mastered", "cooldown-expired")], []);
+  assert.equal(decision.remediationAction, null);
+});
+
+test("a genuine rebuilding (regression) signal produces a real, live remediationAction -- re_teaching when a lesson exists for the WEAK competency specifically, not the unrelated top-priority candidate", () => {
+  const competencies = [
+    ...ALL_TWELVE.filter((id) => id !== "MR-03").map((id) => comp(id, "high", "mastered")),
+    comp("MR-03", "low", "rebuilding"),
+  ];
+  // The top-priority candidate is a DIFFERENT competency (MR-01, never-attempted) than the
+  // one actually regressing (MR-03) -- remediationAction must reason about MR-03's own lesson
+  // availability, not MR-01's.
+  const ordered = [candidate("MR-01", "exploring", "never-attempted"), candidate("MR-03", "rebuilding", "weak-competency-remediation")];
+  const decision = buildPreparationDecision([subject(competencies)], NEAR_TERM_CLOCK, "Year 6", ordered, [], {
+    hasFullLessonAvailable: (id) => id === "MR-03", // deliberately NOT MR-01
+  });
+  assert.equal(decision.remediationAction, "re_teaching", "must check the weak competency's own lesson availability (MR-03), not the unrelated top-priority candidate's (MR-01)");
+});
+
+test("a genuine rebuilding signal without a lesson for the weak competency resolves to worked_example, never a false re_teaching claim", () => {
+  const competencies = [
+    ...ALL_TWELVE.filter((id) => id !== "MR-03").map((id) => comp(id, "high", "mastered")),
+    comp("MR-03", "low", "rebuilding"),
+  ];
+  const decision = buildPreparationDecision(
+    [subject(competencies)],
+    NEAR_TERM_CLOCK,
+    "Year 6",
+    [candidate("MR-03", "rebuilding", "weak-competency-remediation")],
+    [],
+    { hasFullLessonAvailable: () => false }
+  );
+  assert.equal(decision.remediationAction, "worked_example");
+});
+
 test("an unrecognised/legacy educationalState string never crashes and never guesses a teachingState -- fails closed to null", () => {
   const competencies = ALL_TWELVE.map((id) => comp(id, "high", "mastered"));
   const decision = buildPreparationDecision(

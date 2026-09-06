@@ -10,6 +10,7 @@ import { getSchoolYear, getTargetExamDate } from "@/lib/progress";
 import { classifyMockAccess, type MockAccessAssessment } from "@/lib/ali/mockAccessPolicy";
 import type { AssessmentPurpose } from "./assessmentPurpose";
 import { deriveTeachingState, type TeachingState } from "./teachingState";
+import { deriveLiveRemediationAction, type RemediationAction } from "./remediationPolicy";
 import type { EducationalState } from "@/types/ali/educationalState";
 
 /**
@@ -108,6 +109,18 @@ export interface PreparationDecision {
    *     `deriveTeachingState` itself checks for maintenance_retrieval.
    */
   teachingState: TeachingState | null;
+  /**
+   * Migration 232 Production Reconciliation increment, Section 8 --
+   * connects `lib/learningEngine/remediationPolicy.ts`'s
+   * `selectRemediationAction()` to the SAME real "rebuilding" regression
+   * evidence already computed below (`weakCompetencies`), reusing
+   * PreparationDecision/EducationalState, never a parallel engine.
+   * `null` whenever no real regression signal exists for ANY competency
+   * -- never guessed. See `deriveLiveRemediationAction`'s own docstring
+   * for exactly which of its inputs are genuinely live versus honestly
+   * defaulted (disclosed CONTENT SUPPLY BLOCKERS, not fabricated).
+   */
+  remediationAction: RemediationAction | null;
   decisionReasons: string[];
 }
 
@@ -288,6 +301,17 @@ export function buildPreparationDecision(
         })
       : null;
 
+  // Deliberately checks the FIRST WEAK competency's own lesson
+  // availability, not recommendedCompetencyId -- the top-priority
+  // candidate is not always the same competency that is actually
+  // regressing (e.g. a "never-attempted" competency can outrank a
+  // separately-weak one), so remediation must reason about the
+  // competency it is actually remediating.
+  const remediationAction: RemediationAction | null = deriveLiveRemediationAction({
+    hasRealRegressionSignal: weakCompetencies.length > 0,
+    hasFullLessonAvailable: weakCompetencies.length > 0 ? (options.hasFullLessonAvailable ?? (() => false))(weakCompetencies[0]) : false,
+  });
+
   const decisionReasons: string[] = [
     `Preparation stage: "${stage}" (${STAGE_GROUP[stage]}).`,
     clock.horizonBand === "unavailable"
@@ -321,6 +345,7 @@ export function buildPreparationDecision(
     assessmentAppropriate,
     assessmentPurpose,
     teachingState,
+    remediationAction,
     decisionReasons,
   };
 }

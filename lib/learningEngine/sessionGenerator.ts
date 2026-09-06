@@ -124,6 +124,36 @@ const UNSEEN_TRANSFER_BOOST = 1.5;
 const GUIDED_FAMILY_BOOST = 1.4;
 
 /**
+ * Migration 232 Production Reconciliation increment, Section 9 --
+ * completes the two TeachingStates a prior audit found had only a
+ * partial live effect. Both reuse `DIFFICULTY_LEAN_MULTIPLIER`'s own
+ * existing calibrated values as a SECOND, additive layer on top of
+ * whatever `recommendedDifficultyLean` (a whole-session, stage-derived
+ * signal) already gives -- never a replacement, never a new invented
+ * number -- so a specific competency's own TeachingState can express a
+ * real, bounded preference distinct from the session's overall lean:
+ *
+ *   - `scaffolded_practice` (a learner needing partial support on THIS
+ *     competency) previously had an effect ONLY when the family also
+ *     happened to have real `mathsTeachingContent.ts` coverage (~15
+ *     families out of 74) -- for every other family it was, in effect,
+ *     inert. This additional layer gives it a real, if modest, effect
+ *     for EVERY family, closing that gap honestly rather than leaving
+ *     it silently partial.
+ *   - `mastery_check` (evidence suggests independent, reliable
+ *     completion should now be provable) previously had NO effect on
+ *     session composition at all -- it was computed and exposed on
+ *     `PreparationDecision` but influenced nothing downstream. This
+ *     layer gives it a real, bounded nudge toward harder/independent
+ *     material, matching its own educational purpose (confirming
+ *     mastery holds without support, not more guided practice).
+ */
+const TEACHING_STATE_TIER_MULTIPLIER: Partial<Record<TeachingState, Record<BankQuestion["contentDifficulty"], number>>> = {
+  scaffolded_practice: DIFFICULTY_LEAN_MULTIPLIER.favour_guided_and_easier,
+  mastery_check: DIFFICULTY_LEAN_MULTIPLIER.favour_independent_and_harder,
+};
+
+/**
  * Builds the one real weight-bias function `selectQuestions()`'s own new
  * `weightBias` parameter accepts, from a real, already-computed
  * `PreparationSessionContext` — never a second selection algorithm, a
@@ -139,9 +169,12 @@ export function buildPreparationWeightBias(
 
   const leanTable = context.recommendedDifficultyLean ? DIFFICULTY_LEAN_MULTIPLIER[context.recommendedDifficultyLean] : null;
 
+  const teachingStateTierTable = context.teachingState ? TEACHING_STATE_TIER_MULTIPLIER[context.teachingState] : undefined;
+
   return (question: BankQuestion): number => {
     let bias = 1;
     if (leanTable) bias *= leanTable[question.contentDifficulty];
+    if (teachingStateTierTable) bias *= teachingStateTierTable[question.contentDifficulty];
     if (context.recommendedActivityType === "unseen_transfer_check" && question.transferClass === "FAR_TRANSFER") {
       bias *= UNSEEN_TRANSFER_BOOST;
     }

@@ -290,3 +290,51 @@ test("teachingState is optional and defaults to inert -- a caller supplying no t
   const bias = buildPreparationWeightBias(context);
   assert.equal(typeof bias, "function");
 });
+
+// ─── Migration 232 Production Reconciliation increment, Section 9 -- ───────
+// ─── completing scaffolded_practice/mastery_check's live effect for ────────
+// ─── EVERY family, not only ones with real mathsTeachingContent.ts coverage
+
+test("scaffolded_practice now biases toward easier material even for a family with NO real teaching content -- closes the previously-partial gap", () => {
+  const untaughtPool: BankQuestion[] = [
+    bq("e1", "easy", { familyId: "some-untaught-family" }), bq("e2", "easy", { familyId: "some-untaught-family" }),
+    bq("h1", "hard", { familyId: "some-untaught-family" }), bq("h2", "hard", { familyId: "some-untaught-family" }),
+  ];
+  const history = new Map<string, StudentQuestionHistoryRow>();
+
+  function easyShare(context: PreparationSessionContext | undefined, trials = 200): number {
+    const bias = buildPreparationWeightBias(context);
+    let easyCount = 0;
+    for (let i = 0; i < trials; i++) {
+      const result = selectQuestions(untaughtPool, history, 1, new Set(), 1, mulberry32(i), bias);
+      if (result.questions[0]?.contentDifficulty === "easy") easyCount++;
+    }
+    return easyCount / trials;
+  }
+
+  const noTeachingState = easyShare({ recommendedDifficultyLean: "balanced", recommendedActivityType: "independent_practice" });
+  const scaffolded = easyShare({ recommendedDifficultyLean: "balanced", recommendedActivityType: "independent_practice", teachingState: "scaffolded_practice" });
+  assert.ok(scaffolded > noTeachingState, `scaffolded_practice must bias toward easy material even without family teaching content (no-state=${noTeachingState}, scaffolded=${scaffolded})`);
+});
+
+test("mastery_check now biases toward harder/independent material, even under an otherwise-balanced overall lean", () => {
+  const pool: BankQuestion[] = [
+    bq("e1", "easy"), bq("e2", "easy"),
+    bq("h1", "hard"), bq("h2", "hard"),
+  ];
+  const history = new Map<string, StudentQuestionHistoryRow>();
+
+  function hardShare(context: PreparationSessionContext | undefined, trials = 200): number {
+    const bias = buildPreparationWeightBias(context);
+    let hardCount = 0;
+    for (let i = 0; i < trials; i++) {
+      const result = selectQuestions(pool, history, 1, new Set(), 1, mulberry32(i), bias);
+      if (result.questions[0]?.contentDifficulty === "hard") hardCount++;
+    }
+    return hardCount / trials;
+  }
+
+  const balancedOnly = hardShare({ recommendedDifficultyLean: "balanced", recommendedActivityType: "independent_practice" });
+  const masteryCheck = hardShare({ recommendedDifficultyLean: "balanced", recommendedActivityType: "independent_practice", teachingState: "mastery_check" });
+  assert.ok(masteryCheck > balancedOnly, `mastery_check must bias toward harder material relative to a plain balanced lean (balanced=${balancedOnly}, mastery_check=${masteryCheck})`);
+});
