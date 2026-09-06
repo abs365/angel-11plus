@@ -1,4 +1,4 @@
-import type { FamilyGenerationSpec } from "./types";
+import type { FamilyGenerationSpec, StructuralBlueprint } from "./types";
 
 /**
  * Question Factory Wave 1, Phase 4 — three real, live, hand-authored
@@ -103,7 +103,8 @@ type RibbonFractionParams = {
   pieces: number;
 };
 
-export const RIBBON_FRACTION_SPEC: FamilyGenerationSpec<RibbonFractionParams> = {
+export const RIBBON_FRACTION_SPEC: StructuralBlueprint<RibbonFractionParams> = {
+  blueprintId: "precision-frac-bp-ribbon-cutting",
   familyId: "precision-frac",
   competencyId: "MR-06",
   questionTypeId: "QT-MR-14",
@@ -115,11 +116,22 @@ export const RIBBON_FRACTION_SPEC: FamilyGenerationSpec<RibbonFractionParams> = 
   constraints: (p) => p.lengthMetres % p.pieces !== 0 && p.lengthMetres > p.pieces, // must NOT divide evenly (else no fraction is needed), and must produce at least 1 whole part
   invalidCombinationDescription: "Combinations where lengthMetres divides evenly by pieces are excluded -- the family's entire purpose is practising the exact-fraction case, not a whole-number division. Combinations where pieces >= lengthMetres are excluded -- each piece would be under 1m, changing the reasoning shape.",
   difficultyControls: (p) => (p.pieces <= 4 ? "easy" : p.pieces <= 6 ? "medium" : "hard"),
+  difficultyDimensions: ["denominator_size"],
   sampleParams: (random) => ({
     lengthMetres: 4 + Math.floor(random() * 27),
     pieces: 3 + Math.floor(random() * 7),
   }),
-  renderQuestionText: (p) => `A ${p.lengthMetres}m ribbon is cut into ${p.pieces} equal pieces. What is the length of each piece? Give your answer as an exact fraction of a metre, in its simplest form.`,
+  // CORRECTED (Question Factory Scale Architecture, Section 9) -- the
+  // original wording, "Give your answer as an exact fraction... in its
+  // simplest form," is inconsistent with every real answer this family
+  // produces: the constraint `lengthMetres > pieces` guarantees the whole
+  // part is always >= 1, so no answer is ever "a fraction" in the strict
+  // under-1 sense a learner would expect from that phrase. Reworded to
+  // match what the answer actually is, and paired with
+  // deriveAcceptedAnswerForms() below so the mathematically-equivalent
+  // improper-fraction form is also accepted, not just the canonical
+  // mixed-number display form.
+  renderQuestionText: (p) => `A ${p.lengthMetres}m ribbon is cut into ${p.pieces} equal pieces. What is the length of each piece, in metres? Give your answer as a fraction or mixed number, in its simplest form.`,
   deriveCorrectAnswer: (p) => {
     const whole = Math.floor(p.lengthMetres / p.pieces);
     const remainder = p.lengthMetres % p.pieces;
@@ -127,6 +139,23 @@ export const RIBBON_FRACTION_SPEC: FamilyGenerationSpec<RibbonFractionParams> = 
     const simplifiedRemainder = remainder / divisor;
     const simplifiedDenominator = p.pieces / divisor;
     return whole > 0 ? `${whole} ${simplifiedRemainder}/${simplifiedDenominator}` : `${simplifiedRemainder}/${simplifiedDenominator}`;
+  },
+  // Section 9 -- Answer Equivalence. The canonical (display) form is the
+  // mixed number `deriveCorrectAnswer()` already produces; the
+  // mathematically-equivalent improper fraction is also a real, correct
+  // answer a learner might legitimately write, and is now explicitly
+  // accepted rather than silently marked wrong.
+  deriveAcceptedAnswerForms: (p) => {
+    const whole = Math.floor(p.lengthMetres / p.pieces);
+    const remainder = p.lengthMetres % p.pieces;
+    const divisor = gcd(remainder, p.pieces);
+    const simplifiedRemainder = remainder / divisor;
+    const simplifiedDenominator = p.pieces / divisor;
+    const mixedForm = whole > 0 ? `${whole} ${simplifiedRemainder}/${simplifiedDenominator}` : `${simplifiedRemainder}/${simplifiedDenominator}`;
+    if (whole === 0) return [mixedForm]; // already a pure fraction -- no separate improper form to add
+    const improperNumerator = whole * simplifiedDenominator + simplifiedRemainder;
+    const improperForm = `${improperNumerator}/${simplifiedDenominator}`;
+    return [mixedForm, improperForm];
   },
   deriveWorkedSteps: (p) => {
     const whole = Math.floor(p.lengthMetres / p.pieces);
@@ -142,18 +171,16 @@ export const RIBBON_FRACTION_SPEC: FamilyGenerationSpec<RibbonFractionParams> = 
   // Honest disclosure: one reasoning route, one context ("ribbon
   // cutting" -- every single candidate, no exception, since
   // renderQuestionText() has no context parameter at all), one unknown
-  // position. The Wave 2 calibration audit also found a real prompt/
-  // answer-format mismatch here: because `p.lengthMetres > p.pieces` is
-  // a hard constraint, `deriveCorrectAnswer()`'s `whole` part is always
-  // >= 1 -- every real answer is a mixed number (e.g. "1 4/5"), yet the
-  // prompt says "an exact fraction... in its simplest form," which most
-  // naturally reads as a value under 1. Not fixed in this pass (a
-  // wording/generation-wave change); flagged here so the defect is
-  // mechanically traceable to this exact spec, not just prose in a
-  // report.
+  // position -- still true after the Scale Architecture fix above, which
+  // corrected the wording/answer-equivalence defect but did not add
+  // genuine context/reasoning-route variation (that remains real,
+  // scoped, future generation-architecture work, not this pass's task).
   reasoningRoute: () => "direct_computation",
   contextTag: () => "ribbon_cutting",
   unknownPosition: () => "piece_length",
+  representationType: () => "prose",
+  provenance: "angel_original",
+  mockEligible: false,
 };
 
 // ─── Family 3: mr03-angle-sum (triangle angle sum) ──────────────────────

@@ -1,0 +1,95 @@
+{
+  "generatedAt": "2026-09-06T00:33:42.693Z",
+  "familyId": "mr03-angle-sum",
+  "batchSize": 80,
+  "existingRealBankRowsChecked": 7,
+  "generated": 80,
+  "approvedByAutomatedGates": 80,
+  "rejected": 0,
+  "rejectionReasons": {},
+  "perBlueprint": [
+    {
+      "blueprintId": "mr03-bp-third-angle-direct",
+      "rawGenerated": 12,
+      "approved": 12,
+      "distinctRepresentationTypes": 2
+    },
+    {
+      "blueprintId": "mr03-bp-ratio-split",
+      "rawGenerated": 12,
+      "approved": 12,
+      "distinctRepresentationTypes": 1
+    },
+    {
+      "blueprintId": "mr03-bp-verify-triangle",
+      "rawGenerated": 12,
+      "approved": 12,
+      "distinctRepresentationTypes": 1
+    },
+    {
+      "blueprintId": "mr03-bp-error-correction",
+      "rawGenerated": 11,
+      "approved": 11,
+      "distinctRepresentationTypes": 1
+    },
+    {
+      "blueprintId": "mr03-bp-misconception-360-confusion",
+      "rawGenerated": 11,
+      "approved": 11,
+      "distinctRepresentationTypes": 1
+    },
+    {
+      "blueprintId": "mr03-bp-compare-triangles",
+      "rawGenerated": 11,
+      "approved": 11,
+      "distinctRepresentationTypes": 1
+    },
+    {
+      "blueprintId": "mr03-bp-isosceles-relationship",
+      "rawGenerated": 11,
+      "approved": 11,
+      "distinctRepresentationTypes": 1
+    }
+  ],
+  "distinctBlueprintsUsed": 7,
+  "blueprintDepth": {
+    "rawVariantCount": 80,
+    "blueprintDepth": 7,
+    "variantDepth": 8,
+    "dominantBlueprintShare": 0.15,
+    "averageVariantsPerBlueprint": 11.428571428571429
+  },
+  "scaledMemorisationRisk": "LOW",
+  "difficultyDistribution": {
+    "medium": 33,
+    "easy": 26,
+    "hard": 21
+  },
+  "difficultyDistinctTiers": 3,
+  "reasoningRouteDistribution": {
+    "direct_computation": 12,
+    "multi_step_application": 23,
+    "comparison": 23,
+    "error_identification": 22
+  },
+  "representationDistribution": {
+    "prose": 75,
+    "table": 5
+  },
+  "unknownPositionDistribution": {
+    "third_angle": 12,
+    "two_unknown_angles_via_ratio": 12,
+    "validity_discrepancy": 12,
+    "corrected_third_angle": 22,
+    "comparative_third_angle": 11,
+    "third_angle_isosceles": 11
+  },
+  "misconceptionCoverage": [
+    "treating the ratio parts as the final angles directly, without multiplying by the value of one part",
+    "assuming any three stated angles automatically form a valid triangle without checking the total",
+    "a generic arithmetic slip in the final subtraction step (not a specific named conceptual misconception -- see BP_MISCONCEPTION_360_CONFUSION for that distinct case)",
+    "confusing the triangle angle-sum (180°) with the quadrilateral angle-sum (360°)",
+    "assuming a triangle with larger given angles automatically has a larger third angle (the reverse is generally true)",
+    "forgetting to double the equal angle before subtracting from 180° (subtracting only one instance)"
+  ]
+}

@@ -1,0 +1,64 @@
+{
+  "generatedAt": "2026-09-06T00:38:05.222Z",
+  "familyId": "mr03-angle-sum",
+  "blueprintCount": 7,
+  "note": "In-process generation+validation only. No database access. No submission, approval, or publication. Approval rate falls as batch size grows because this single 7-blueprint family has a finite parameter space (most acutely BP_ISOSCELES_RELATIONSHIP), not because compute speed degrades -- see msPerCandidate, which stays sub-millisecond throughout.",
+  "rows": [
+    {
+      "batchSize": 100,
+      "elapsedMs": 9.72,
+      "msPerCandidate": 0.0972,
+      "approved": 98,
+      "approvalRatePct": 98
+    },
+    {
+      "batchSize": 200,
+      "elapsedMs": 10.2,
+      "msPerCandidate": 0.051,
+      "approved": 196,
+      "approvalRatePct": 98
+    },
+    {
+      "batchSize": 500,
+      "elapsedMs": 32.24,
+      "msPerCandidate": 0.0645,
+      "approved": 465,
+      "approvalRatePct": 93
+    },
+    {
+      "batchSize": 1000,
+      "elapsedMs": 106.73,
+      "msPerCandidate": 0.1067,
+      "approved": 898,
+      "approvalRatePct": 89.8
+    },
+    {
+      "batchSize": 1500,
+      "elapsedMs": 212.65,
+      "msPerCandidate": 0.1418,
+      "approved": 1316,
+      "approvalRatePct": 87.7
+    },
+    {
+      "batchSize": 2000,
+      "elapsedMs": 349.4,
+      "msPerCandidate": 0.1747,
+      "approved": 1600,
+      "approvalRatePct": 80
+    },
+    {
+      "batchSize": 3000,
+      "elapsedMs": 576.08,
+      "msPerCandidate": 0.192,
+      "approved": 1345,
+      "approvalRatePct": 44.8
+    },
+    {
+      "batchSize": 5000,
+      "elapsedMs": 979.45,
+      "msPerCandidate": 0.1959,
+      "approved": 1183,
+      "approvalRatePct": 23.7
+    }
+  ]
+}

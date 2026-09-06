@@ -150,6 +150,76 @@ export interface FamilyGenerationSpec<TParams extends Record<string, number>> {
 }
 
 /**
+ * Question Factory Scale Architecture (Increment: Effective Educational
+ * Depth + Bulk Generation) — a family may now own MULTIPLE genuine
+ * structural blueprints. Every Wave 1/2 `FamilyGenerationSpec` (a single
+ * blueprint) remains a valid, unmodified `StructuralBlueprint` -- this
+ * extends rather than replaces that shape, so the three existing
+ * families/specs need no rewrite. A blueprint is the unit that counts
+ * toward STRUCTURAL diversity; multiple blueprints sharing one
+ * `familyId` is exactly how a family gains genuine depth without
+ * fabricating separate families for what is really one competency's
+ * different reasoning demands.
+ */
+export interface StructuralBlueprint<TParams extends Record<string, number>> extends FamilyGenerationSpec<TParams> {
+  /** Stable, unique identifier for this blueprint -- distinct from familyId (several blueprints share one familyId). Never regenerated per batch; a blueprint's own identity must survive across generation runs so its own approval/calibration history is trackable. */
+  blueprintId: string;
+  /**
+   * Task 7 (Controlled Variation Within Blueprints) -- the presentation
+   * format for this specific parameter set, e.g. "prose" or "table". A
+   * blueprint whose representation never varies returns the same
+   * constant regardless of params, honestly disclosing zero
+   * representation variation within it -- exactly the same "declared,
+   * not inferred, constant means honestly narrow" discipline as
+   * reasoningRoute/contextTag/unknownPosition. Kept as a pure function of
+   * `params` (not a separate random draw) so representation choice can
+   * be encoded as an ordinary sampled parameter and stays fully
+   * deterministic/reproducible from params alone, like every other field
+   * here.
+   */
+  representationType(params: TParams): string;
+  /** Named misconception this blueprint specifically targets/diagnoses, if any -- distinct from the family-wide `distractorMisconceptionRules` free-text field, since a family's blueprints can target DIFFERENT misconceptions from one another. */
+  misconceptionTargeted?: string;
+  /**
+   * The measurable characteristics this blueprint's own difficultyControls()
+   * actually uses to derive difficulty -- disclosed explicitly so a
+   * difficulty label is always explainable ("difficulty here comes from
+   * X, Y"), never an unstated or arbitrary rule. Per the Founder's own
+   * instruction: never divisibility/parity of an unrelated value.
+   */
+  difficultyDimensions: string[];
+  /**
+   * Optional: for a blueprint whose correct answer has more than one
+   * mathematically valid written form (e.g. an improper fraction and an
+   * equivalent mixed number), returns every accepted form -- the FIRST
+   * entry is the canonical DISPLAY answer (what worked steps/explanation
+   * show), every entry is an ACCEPTED answer for marking. Omitted
+   * entirely (not just returning a 1-element array) honestly means "this
+   * blueprint's answer has no ambiguity" -- most blueprints, including
+   * every current angle-sum one, fall here.
+   */
+  deriveAcceptedAnswerForms?(params: TParams): string[];
+  /** Real content provenance -- never fabricated; every blueprint built this session is `"angel_original"`. */
+  provenance: string;
+  /** Whether this blueprint's output may ever be considered for the Mock-reserved pool. False for every blueprint in this increment -- publication (migration 230's own `publish_question_candidate()`) always targets `practice_eligible`; a blueprint cannot promote itself to Mock status by declaring this true, it is documentation of intent for a future, separately-gated Mock-supply decision only. */
+  mockEligible: boolean;
+}
+
+/**
+ * A family's full blueprint library. `TParams` is deliberately widened
+ * to `Record<string, number>` at the array level (the same pattern
+ * `WAVE_1_FAMILY_SPECS` already established) so blueprints with
+ * genuinely different parameter shapes (e.g. one takes {angleA, angleB},
+ * another takes {angleA, angleB, angleC}) can coexist in one family's
+ * library without a TypeScript union-inference failure at call sites.
+ */
+export interface EducationalFamily {
+  familyId: string;
+  subject: "maths" | "english" | "writing";
+  blueprints: StructuralBlueprint<Record<string, number>>[];
+}
+
+/**
  * A generated candidate. Deliberately NOT `BankQuestion` -- no `id` in
  * the bank id-space, no `eligibility_status`, no `active`, no path in
  * this module that ever calls `.from("ali_question_bank")`. Approval by
@@ -174,6 +244,12 @@ export interface MathsQuestionCandidate {
   reasoningRoute: ReasoningRoute;
   contextTag: string;
   unknownPosition: string;
+  /** Present only when generated from a `StructuralBlueprint` (Scale Architecture) rather than a plain single-blueprint `FamilyGenerationSpec` (Wave 1/2) -- the id of the specific blueprint within the family that produced this candidate. Undefined, never fabricated, for the three original Wave 1/2 specs. */
+  blueprintId?: string;
+  /** Raw-variant dimension (Task 7) -- HOW this specific instance presents its content (e.g. "prose", "table"), independent of blueprintId. Two candidates sharing a blueprintId but different representationType are the SAME structure, presented differently -- never counted as two structures. */
+  representationType?: string;
+  /** Present only for a blueprint that declares `deriveAcceptedAnswerForms()` -- every mathematically-equivalent accepted written form, canonical form first. Undefined (not an empty array) means this candidate's answer has no accepted-equivalence ambiguity. */
+  acceptedAnswerForms?: string[];
 }
 
 export type ValidationFailureReason =

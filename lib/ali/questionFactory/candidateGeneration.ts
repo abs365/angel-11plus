@@ -1,9 +1,11 @@
 import { findExactDuplicateStems, findNearIdenticalStems } from "../antiMemorisationChecks";
 import type {
   BatchMetrics,
+  EducationalFamily,
   ExistingBankRowForComparison,
   FamilyGenerationSpec,
   MathsQuestionCandidate,
+  StructuralBlueprint,
   ValidationFailureReason,
   ValidationResult,
 } from "./types";
@@ -217,6 +219,156 @@ export function runBatch<T extends Record<string, number>>(
       variedParameterKeys,
       difficultyDistribution,
       nearIdenticalStemGroupsWithinApproved,
+    },
+  };
+}
+
+// ============================================================
+// Scale Architecture (Effective Educational Depth + Bulk Generation) --
+// multi-blueprint family generation. Reuses generateCandidate()/
+// validateCandidate() unmodified for the actual generate/validate work
+// (a StructuralBlueprint IS a FamilyGenerationSpec, structurally); this
+// section only adds blueprint-aware enrichment and cross-blueprint batch
+// orchestration.
+// ============================================================
+
+/** generateCandidate() plus the fields only a StructuralBlueprint can supply (blueprintId, representationType, acceptedAnswerForms) -- never fabricated for a plain FamilyGenerationSpec. */
+export function generateBlueprintCandidate<T extends Record<string, number>>(
+  blueprint: StructuralBlueprint<T>,
+  random: () => number = Math.random
+): MathsQuestionCandidate {
+  const base = generateCandidate(blueprint, random);
+  const acceptedAnswerForms = blueprint.deriveAcceptedAnswerForms?.(base.params as T);
+  return {
+    ...base,
+    blueprintId: blueprint.blueprintId,
+    representationType: blueprint.representationType(base.params as T),
+    ...(acceptedAnswerForms ? { acceptedAnswerForms } : {}),
+  };
+}
+
+/**
+ * validateCandidate() plus an answer-equivalence-aware recheck: when a
+ * blueprint declares deriveAcceptedAnswerForms(), a candidate's
+ * claimedAnswer is accepted if it matches ANY declared form, not only the
+ * canonical deriveCorrectAnswer() result -- otherwise identical to
+ * validateCandidate(), including the same fail-closed independent
+ * recomputation for the canonical form.
+ */
+const MATHEMATICAL_VALIDITY_REASONS: ReadonlySet<ValidationFailureReason> = new Set([
+  "answer_mismatch",
+  "parameter_out_of_range",
+  "invalid_combination",
+]);
+
+export function validateBlueprintCandidate<T extends Record<string, number>>(
+  candidate: MathsQuestionCandidate,
+  blueprint: StructuralBlueprint<T>,
+  existingBankRowsForFamily: readonly ExistingBankRowForComparison[],
+  siblingCandidatesAlreadyApproved: readonly MathsQuestionCandidate[] = []
+): ValidationResult {
+  const baseResult = validateCandidate(candidate, blueprint, existingBankRowsForFamily, siblingCandidatesAlreadyApproved);
+  if (!baseResult.reasons.includes("answer_mismatch")) return baseResult;
+
+  const acceptedForms = blueprint.deriveAcceptedAnswerForms?.(candidate.params as T);
+  if (!acceptedForms || !acceptedForms.includes(candidate.claimedAnswer)) return baseResult;
+
+  // The claimed answer matches a declared equivalent form -- withdraw
+  // ONLY the answer_mismatch reason; every other check's own outcome
+  // (range/constraint/duplicate) is untouched. Recomputed from the
+  // filtered reason list, not patched ad hoc, so mathematicallyValid/
+  // approved stay consistent with validateCandidate()'s own definitions.
+  const reasons = baseResult.reasons.filter((r) => r !== "answer_mismatch");
+  const mathematicallyValid = !reasons.some((r) => MATHEMATICAL_VALIDITY_REASONS.has(r));
+  return { mathematicallyValid, approved: reasons.length === 0, reasons, candidate: baseResult.candidate };
+}
+
+export interface BlueprintUsageMetrics {
+  blueprintId: string;
+  rawGenerated: number;
+  approved: number;
+  distinctRepresentationTypes: number;
+}
+
+export interface FamilyBatchMetrics {
+  familyId: string;
+  rawGenerated: number;
+  approved: number;
+  rejected: number;
+  rejectedByReason: Partial<Record<ValidationFailureReason, number>>;
+  perBlueprint: BlueprintUsageMetrics[];
+  distinctBlueprintsUsed: number;
+}
+
+/**
+ * Distributes `totalBatchSize` as evenly as possible across every
+ * blueprint in the family, generating and validating each candidate
+ * against its OWN blueprint (never cross-validated against a sibling
+ * blueprint's rules), and cross-checks duplicates against the combined
+ * approved set so far across the WHOLE family, not just within one
+ * blueprint -- two different blueprints producing textually-identical
+ * output would still be caught.
+ */
+export function runFamilyBatch(
+  family: EducationalFamily,
+  existingBankRowsForFamily: readonly ExistingBankRowForComparison[],
+  totalBatchSize: number,
+  random: () => number = Math.random
+): { results: ValidationResult[]; metrics: FamilyBatchMetrics } {
+  const blueprintCount = family.blueprints.length;
+  if (blueprintCount === 0) {
+    throw new Error(`runFamilyBatch: family "${family.familyId}" has zero blueprints`);
+  }
+
+  const results: ValidationResult[] = [];
+  const approved: MathsQuestionCandidate[] = [];
+  const rejectedByReason: Partial<Record<ValidationFailureReason, number>> = {};
+  const perBlueprint = new Map<string, { rawGenerated: number; approved: number; representationTypes: Set<string> }>();
+  for (const bp of family.blueprints) perBlueprint.set(bp.blueprintId, { rawGenerated: 0, approved: 0, representationTypes: new Set() });
+
+  for (let i = 0; i < totalBatchSize; i++) {
+    const blueprint = family.blueprints[i % blueprintCount];
+    const candidate = generateBlueprintCandidate(blueprint, random);
+
+    if (candidate.familyId !== family.familyId) {
+      throw new Error(`runFamilyBatch invariant violated: candidate familyId "${candidate.familyId}" does not match family "${family.familyId}"`);
+    }
+
+    const usage = perBlueprint.get(blueprint.blueprintId)!;
+    usage.rawGenerated += 1;
+    if (candidate.representationType) usage.representationTypes.add(candidate.representationType);
+
+    const result = validateBlueprintCandidate(candidate, blueprint, existingBankRowsForFamily, approved);
+    results.push(result);
+
+    if (result.approved) {
+      approved.push(candidate);
+      usage.approved += 1;
+    } else {
+      for (const reason of result.reasons) rejectedByReason[reason] = (rejectedByReason[reason] ?? 0) + 1;
+    }
+  }
+
+  const perBlueprintMetrics: BlueprintUsageMetrics[] = family.blueprints.map((bp) => {
+    const usage = perBlueprint.get(bp.blueprintId)!;
+    return {
+      blueprintId: bp.blueprintId,
+      rawGenerated: usage.rawGenerated,
+      approved: usage.approved,
+      distinctRepresentationTypes: usage.representationTypes.size,
+    };
+  });
+
+  return {
+    results,
+    metrics: {
+      familyId: family.familyId,
+      rawGenerated: totalBatchSize,
+      approved: approved.length,
+      rejected: results.filter((r) => !r.approved).length,
+      rejectedByReason,
+      perBlueprint: perBlueprintMetrics,
+      distinctBlueprintsUsed: perBlueprintMetrics.filter((m) => m.approved > 0).length,
     },
   };
 }

@@ -27,8 +27,19 @@ function seededRandom(seed: number): () => number {
 const REAL_MR01_DECIMAL_ROWS: ExistingBankRowForComparison[] = [
   { id: "mth-008", familyId: "mr01-decimal-computation", prompt: { question: "Calculate: 2.4 × 0.35" } },
 ];
+// Question Factory Scale Architecture (Section 9) corrected this
+// blueprint's wording ("an exact fraction... in its simplest form" ->
+// "a fraction or mixed number, in its simplest form" -- see
+// familySpecs.ts's own CORRECTED comment). This fixture uses the
+// CORRECTED wording to represent what a real row would look like if
+// (re-)published today -- the real, currently-live `precision-frac-01`
+// row in production still carries the pre-correction wording verbatim,
+// a known, disclosed, accepted limitation of text-based exact-duplicate
+// detection: it would not catch a parameter collision against a row
+// whose stored text predates a wording fix. Not remediated in this pass
+// (no production write access, and out of this increment's own scope).
 const REAL_PRECISION_FRAC_ROWS: ExistingBankRowForComparison[] = [
-  { id: "precision-frac-01", familyId: "precision-frac", prompt: { question: "A 10m ribbon is cut into 3 equal pieces. What is the length of each piece? Give your answer as an exact fraction of a metre, in its simplest form." } },
+  { id: "precision-frac-01", familyId: "precision-frac", prompt: { question: "A 10m ribbon is cut into 3 equal pieces. What is the length of each piece, in metres? Give your answer as a fraction or mixed number, in its simplest form." } },
 ];
 const REAL_MR03_ANGLE_ROWS: ExistingBankRowForComparison[] = [
   { id: "mr03-ang-01", familyId: "mr03-angle-sum", prompt: { question: "A triangle has angles of 48°, 62° and one unknown angle. What is the size of the unknown angle?" } },

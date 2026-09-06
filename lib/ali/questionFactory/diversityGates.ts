@@ -285,3 +285,104 @@ export function runFamilyDiversityGates(
     passesAllGates,
   };
 }
+
+// ============================================================
+// Question Factory Scale Architecture — BLUEPRINT DEPTH vs VARIANT DEPTH
+// ============================================================
+//
+// The calibration gate's own `classifyMemorisationRisk(ratio, count)`
+// above is preserved UNMODIFIED and remains correct for exactly the
+// case it was built for: a small batch generated from a SINGLE
+// blueprint (every real Wave 1/2 candidate before this increment). It
+// would misclassify the opposite case the Founder explicitly named:
+// "if 100 valid questions are deliberately generated from 10 strong
+// blueprints, do not automatically classify the family CRITICAL merely
+// because 10/100 = 0.10" -- `structuralDiversityRatio` alone cannot
+// distinguish "10 genuine structures, each legitimately instantiated 10
+// times" from "1 genuine structure repeated 10 times, 10-fold". The
+// functions below add the missing dimension: BLUEPRINT DEPTH (how many
+// genuinely distinct educational structures exist) is now assessed
+// separately from VARIANT DEPTH (how many raw rows exist per
+// structure), and risk is classified from blueprint count and exposure
+// BALANCE across blueprints, not from a bare ratio that scale alone can
+// distort in either direction.
+
+export interface BlueprintDepthClassification {
+  rawVariantCount: number;
+  /**
+   * Distinct `blueprintId` values present. Falls back to the existing
+   * structural-skeleton count when NO candidate carries a `blueprintId`
+   * (every legacy Wave 1/2 single-blueprint spec) -- this fallback is
+   * exactly what makes `classifyScaledMemorisationRisk()` still correctly
+   * classify the original 30-candidate calibration batch as CRITICAL,
+   * not a silent behaviour change for content generated before this
+   * increment.
+   */
+  blueprintDepth: number;
+  /** The existing structural-skeleton count (Task 5's own metric) -- still computed and reported at scale, since it also catches wording-only duplication WITHIN a single blueprint that a blueprint count alone would miss. */
+  variantDepth: number;
+  /** Fraction of raw variants produced by the single most-used blueprint -- a family can have many blueprints on paper yet still be dominated by one of them in practice. */
+  dominantBlueprintShare: number;
+  averageVariantsPerBlueprint: number;
+}
+
+interface BlueprintDepthInput {
+  question: string;
+  blueprintId?: string;
+}
+
+export function classifyBlueprintDepth(candidates: readonly BlueprintDepthInput[]): BlueprintDepthClassification {
+  const rawVariantCount = candidates.length;
+  if (rawVariantCount === 0) {
+    return { rawVariantCount: 0, blueprintDepth: 0, variantDepth: 0, dominantBlueprintShare: 0, averageVariantsPerBlueprint: 0 };
+  }
+
+  const variantDepth = new Set(candidates.map((c) => normaliseStemForNearDuplicateCheck(c.question))).size;
+
+  const blueprintIds = candidates.map((c) => c.blueprintId).filter((id): id is string => Boolean(id));
+  const hasBlueprintData = blueprintIds.length === candidates.length; // every candidate must declare one, or the fallback applies uniformly -- never a partial mix silently treated as complete
+
+  if (!hasBlueprintData) {
+    // Legacy single-blueprint spec (no blueprintId anywhere) -- the
+    // structural-skeleton count IS the best available proxy for
+    // blueprint depth, matching the original calibration gate's own
+    // behaviour exactly.
+    return {
+      rawVariantCount,
+      blueprintDepth: variantDepth,
+      variantDepth,
+      dominantBlueprintShare: 1, // undeclared blueprint provenance is treated as maximally concentrated -- never optimistically assumed diverse
+      averageVariantsPerBlueprint: rawVariantCount / Math.max(variantDepth, 1),
+    };
+  }
+
+  const counts = new Map<string, number>();
+  for (const id of blueprintIds) counts.set(id, (counts.get(id) ?? 0) + 1);
+  const blueprintDepth = counts.size;
+  const dominantCount = Math.max(...counts.values());
+
+  return {
+    rawVariantCount,
+    blueprintDepth,
+    variantDepth,
+    dominantBlueprintShare: dominantCount / rawVariantCount,
+    averageVariantsPerBlueprint: rawVariantCount / blueprintDepth,
+  };
+}
+
+/**
+ * Thresholds are, like the calibration gate's own, a disclosed
+ * provisional judgement call. Risk is driven by TWO independent
+ * conditions -- genuine blueprint count, and balance of exposure across
+ * them -- because either one alone is gameable: many blueprints with one
+ * dominant "filler" blueprint is not meaningfully safer than few
+ * blueprints, and even perfect balance across only 1-2 blueprints is
+ * still a thin family.
+ */
+export function classifyScaledMemorisationRisk(depth: BlueprintDepthClassification): MemorisationRiskLevel {
+  if (depth.blueprintDepth <= 1) return "CRITICAL";
+  if (depth.dominantBlueprintShare > 0.7) return "CRITICAL";
+  if (depth.blueprintDepth <= 2 || depth.dominantBlueprintShare > 0.5) return "HIGH";
+  if (depth.blueprintDepth <= 4 || depth.dominantBlueprintShare > 0.35) return "MEDIUM";
+  return "LOW";
+}
