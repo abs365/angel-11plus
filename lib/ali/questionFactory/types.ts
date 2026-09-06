@@ -20,6 +20,32 @@ import type { CompetencyId, QuestionTypeId } from "@/lib/learningEngine/types";
 
 export type PreparationStageSuitability = "FOUNDATION" | "DEVELOPMENT" | "EXAM_PREPARATION" | "FINAL_READINESS";
 
+/**
+ * Question Factory Wave 2 — Human Educational Calibration Gate.
+ *
+ * The calibration audit of the first 30 real candidates (`mr01-decimal-
+ * computation`, `precision-frac`, `mr03-angle-sum`) found every one of
+ * Wave 1's three specs varies parameters only -- identical reasoning
+ * route, identical presentation context, identical unknown position, in
+ * every single candidate within a family. These three fields exist to
+ * make that fact STRUCTURALLY VISIBLE and MECHANICALLY CHECKABLE, not to
+ * fix it -- fixing it (genuinely varying context/reasoning/unknown-
+ * position) is deferred to a future, separately-approved generation
+ * wave. Declaring today's real, undiversified values honestly (rather
+ * than leaving these fields unpopulated) is itself the point: a spec
+ * that returns the SAME reasoning route for every parameter set is not
+ * lying, it is disclosing a true, currently-narrow design, exactly the
+ * "unclassified, not fabricated" discipline `questionFamilyRegistry.ts`
+ * already established for family metadata.
+ */
+export type ReasoningRoute =
+  | "direct_computation"
+  | "reverse_reasoning"
+  | "comparison"
+  | "error_identification"
+  | "multi_step_application"
+  | "interpretation";
+
 export interface ParameterRange {
   min: number;
   max: number;
@@ -90,6 +116,37 @@ export interface FamilyGenerationSpec<TParams extends Record<string, number>> {
   stageSuitability: PreparationStageSuitability[];
   /** Field 10, disclosed: the policy this spec's author applied when deciding what must vary between generated instances (enforced mechanically in candidateGeneration.ts via structuralSignature/antiMemorisationChecks, not merely asserted here). */
   similarityControls: string;
+
+  /**
+   * Human Educational Calibration Gate (Wave 2) -- which cognitive route
+   * this family's questions require, honestly declared. A spec that only
+   * ever returns one value here (every real Wave 1 spec does today) is
+   * disclosing genuine reasoning-route homogeneity, not a placeholder --
+   * `computeFamilyDiversity()` (diversityGates.ts) reads this field
+   * directly to compute the reasoning-variant count.
+   */
+  reasoningRoute(params: TParams): ReasoningRoute;
+  /**
+   * The real-world (or bare-arithmetic) presentation setting this
+   * candidate is framed in, e.g. "ribbon_cutting", "bare_arithmetic",
+   * "triangle_geometry". A spec returning the SAME literal string for
+   * every parameter set is honestly declaring zero context variation --
+   * this is the mechanism `computeFamilyDiversity()` uses to count
+   * genuinely distinct contexts, replacing the previous approach of
+   * inferring context from free-text question wording (unreliable and
+   * not mechanically checkable).
+   */
+  contextTag(params: TParams): string;
+  /**
+   * Which quantity in the problem is the unknown being solved for, e.g.
+   * "product", "piece_length", "third_angle". Declared explicitly (not
+   * inferred) so a future spec can genuinely vary which value is unknown
+   * (e.g. "given the product and one factor, find the other factor")
+   * without breaking this field's own contract -- today, every real Wave
+   * 1 spec returns a single constant value regardless of parameters,
+   * honestly disclosing zero unknown-position variation.
+   */
+  unknownPosition(params: TParams): string;
 }
 
 /**
@@ -113,6 +170,10 @@ export interface MathsQuestionCandidate {
   difficulty: ContentDifficulty;
   params: Record<string, number>;
   generatedAt: string;
+  /** Copied from the spec's own reasoningRoute(params)/contextTag(params)/unknownPosition(params) at generation time -- see FamilyGenerationSpec's own docstrings for why these are declared, not inferred. */
+  reasoningRoute: ReasoningRoute;
+  contextTag: string;
+  unknownPosition: string;
 }
 
 export type ValidationFailureReason =

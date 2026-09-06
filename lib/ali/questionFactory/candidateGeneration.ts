@@ -69,6 +69,9 @@ export function generateCandidate<T extends Record<string, number>>(
     difficulty: spec.difficultyControls(params),
     params,
     generatedAt: new Date().toISOString(),
+    reasoningRoute: spec.reasoningRoute(params),
+    contextTag: spec.contextTag(params),
+    unknownPosition: spec.unknownPosition(params),
   };
 }
 

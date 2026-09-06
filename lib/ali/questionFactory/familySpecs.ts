@@ -86,6 +86,14 @@ export const DECIMAL_MULTIPLICATION_SPEC: FamilyGenerationSpec<DecimalMultiplica
   },
   stageSuitability: ["DEVELOPMENT", "EXAM_PREPARATION"],
   similarityControls: "Both aTenths and bHundredths are resampled independently per candidate; a candidate is rejected as an exact duplicate if its rendered question text exactly matches an existing real row's question text (i.e. the same two decimal values as an already-authored question) or another candidate already accepted in the same batch.",
+  // Human Educational Calibration Gate (Wave 2) -- honest disclosure, not
+  // a fix: this spec has exactly one reasoning route, one presentation
+  // context, and one unknown position, regardless of which parameters
+  // are sampled. The Wave 2 calibration audit found this is the family's
+  // real, confirmed weakness -- see ANGEL_QUESTION_FACTORY_WAVE2_CALIBRATION_REPORT.md.
+  reasoningRoute: () => "direct_computation",
+  contextTag: () => "bare_arithmetic",
+  unknownPosition: () => "product",
 };
 
 // ─── Family 2: precision-frac (division expressed as an exact fraction) ─
@@ -131,6 +139,21 @@ export const RIBBON_FRACTION_SPEC: FamilyGenerationSpec<RibbonFractionParams> = 
   },
   stageSuitability: ["EXAM_PREPARATION", "FINAL_READINESS"],
   similarityControls: "lengthMetres and pieces are resampled independently per candidate, constrained to never divide evenly; a candidate producing the identical (lengthMetres, pieces) pair as an existing real row or another already-accepted candidate is rejected as an exact duplicate via rendered question text comparison.",
+  // Honest disclosure: one reasoning route, one context ("ribbon
+  // cutting" -- every single candidate, no exception, since
+  // renderQuestionText() has no context parameter at all), one unknown
+  // position. The Wave 2 calibration audit also found a real prompt/
+  // answer-format mismatch here: because `p.lengthMetres > p.pieces` is
+  // a hard constraint, `deriveCorrectAnswer()`'s `whole` part is always
+  // >= 1 -- every real answer is a mixed number (e.g. "1 4/5"), yet the
+  // prompt says "an exact fraction... in its simplest form," which most
+  // naturally reads as a value under 1. Not fixed in this pass (a
+  // wording/generation-wave change); flagged here so the defect is
+  // mechanically traceable to this exact spec, not just prose in a
+  // report.
+  reasoningRoute: () => "direct_computation",
+  contextTag: () => "ribbon_cutting",
+  unknownPosition: () => "piece_length",
 };
 
 // ─── Family 3: mr03-angle-sum (triangle angle sum) ──────────────────────
@@ -151,7 +174,26 @@ export const TRIANGLE_ANGLE_SUM_SPEC: FamilyGenerationSpec<TriangleAngleSumParam
   },
   constraints: (p) => p.angleA + p.angleB < 175 && 180 - p.angleA - p.angleB >= 5, // the unknown angle must be a genuine, non-degenerate positive angle
   invalidCombinationDescription: "Combinations where the two known angles sum to 175° or more are excluded -- the resulting unknown angle (5° or less) is not a realistic or pedagogically useful triangle for this family's stage.",
-  difficultyControls: (p) => ((180 - p.angleA - p.angleB) % 5 === 0 ? "easy" : "medium"),
+  // CORRECTED (Wave 2 Human Educational Calibration Gate) -- the
+  // original rule, `(180 - angleA - angleB) % 5 === 0 ? "easy" :
+  // "medium"`, tied difficulty to an arithmetic coincidence in the
+  // ANSWER (whether it happens to be a multiple of 5), which a learner
+  // cannot perceive before solving and which has no relationship to how
+  // hard the calculation actually is -- confirmed directly against all
+  // 10 real production candidates (e.g. 29°/106° -> 45° was labelled
+  // "easy" and 43°/53° -> 84° was labelled "medium", despite both being
+  // an identical single-step sum-then-subtract with no meaningful
+  // difference in cognitive demand). The corrected rule ties difficulty
+  // to genuine arithmetic complexity of the one real computation this
+  // family requires: the size of the addition (angleA + angleB), which
+  // determines whether carrying is needed and how large the subsequent
+  // subtraction from 180 is. Still a coarse, disclosed proxy -- not a
+  // claim of scientific calibration -- but tied to a real, mechanically
+  // checkable property of the computation itself, not its answer.
+  difficultyControls: (p) => {
+    const sum = p.angleA + p.angleB;
+    return sum <= 90 ? "easy" : sum <= 140 ? "medium" : "hard";
+  },
   sampleParams: (random) => ({
     angleA: 10 + Math.floor(random() * 151),
     angleB: 10 + Math.floor(random() * 151),
@@ -165,6 +207,15 @@ export const TRIANGLE_ANGLE_SUM_SPEC: FamilyGenerationSpec<TriangleAngleSumParam
   ],
   stageSuitability: ["DEVELOPMENT", "EXAM_PREPARATION"],
   similarityControls: "angleA and angleB are resampled independently per candidate; a candidate whose (angleA, angleB) pair (in either order) exactly matches an existing real row or another already-accepted candidate is rejected as an exact duplicate via rendered question text comparison.",
+  // Honest disclosure: one reasoning route (always direct computation --
+  // sum the two knowns, subtract from 180), one context (always "a
+  // triangle," no real-world framing at all), one unknown position
+  // (always the third angle -- reverse-reasoning variants like "given
+  // the third angle and one known angle, find the other known angle"
+  // are not implemented).
+  reasoningRoute: () => "direct_computation",
+  contextTag: () => "triangle_geometry",
+  unknownPosition: () => "third_angle",
 };
 
 // Widened to a single common instantiation deliberately, so callers can
