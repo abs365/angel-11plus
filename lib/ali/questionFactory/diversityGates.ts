@@ -386,3 +386,169 @@ export function classifyScaledMemorisationRisk(depth: BlueprintDepthClassificati
   if (depth.blueprintDepth <= 4 || depth.dominantBlueprintShare > 0.35) return "MEDIUM";
   return "LOW";
 }
+
+// ============================================================
+// Educational Foundation Completion Standard, Section 13 --
+// Wording-Only Substitution Detection
+// ============================================================
+//
+// The Scale Architecture increment's own adversarial tests proved
+// `normaliseStemForNearDuplicateCheck` (digit-substitution-invariant
+// only) does NOT catch three cosmetically-reworded copies of the same
+// underlying question. Per the Founder's own explicit instruction --
+// "do not introduce an expensive opaque dependency merely to claim
+// semantic detection... use layered signals" -- this section adds TWO
+// deterministic, non-generative signals, deliberately not a single
+// fuzzy score:
+//
+//   1. PARAMETER-SIGNATURE duplication (certain, not heuristic): two
+//      candidates sharing the same blueprintId AND the exact same
+//      generation parameters ARE, by definition, the same educational
+//      instance regardless of how differently their question text is
+//      worded -- this is the precise, zero-false-positive fix for the
+//      exact defect the adversarial test named (an LLM or author
+//      rewording the identical {angleA:10, angleB:20} case three ways).
+//   2. TOKEN-OVERLAP similarity (disclosed heuristic, not a hard gate):
+//      a plain Jaccard ratio over lowercase, digit-stripped word tokens
+//      -- catches near-identical phrasing sharing most content words
+//      even when blueprint/parameter identity isn't available (e.g.
+//      legacy content with no blueprintId), reported as a signal for
+//      human review, never an automatic rejection on its own (a false
+//      positive here would wrongly block two genuinely different
+//      questions that happen to share common domain vocabulary, e.g.
+//      "triangle"/"angle" appearing in every member of a family).
+
+export function computeParameterSignature(params: Record<string, number>): string {
+  const sortedKeys = Object.keys(params).sort();
+  return sortedKeys.map((k) => `${k}=${params[k]}`).join("&");
+}
+
+export interface ParameterSignatureDuplicateGroup {
+  blueprintId: string;
+  parameterSignature: string;
+  /** Distinct normalised skeletons sharing this exact (blueprintId, params) pair -- >1 here means wording alone was varied over an otherwise-identical instance. */
+  distinctWordingCount: number;
+  memberIds: string[];
+}
+
+interface ParameterSignatureInput {
+  candidateId: string;
+  question: string;
+  blueprintId?: string;
+  params: Record<string, number>;
+}
+
+/**
+ * Certain, not heuristic: flags every group of candidates that share
+ * BOTH the same declared blueprintId and the exact same parameter
+ * values, yet render as more than one distinct normalised skeleton --
+ * proof that wording, not the underlying educational instance, is the
+ * only thing that varied. Candidates with no `blueprintId` are grouped
+ * under a per-candidate-unique key (never silently treated as sharing
+ * an unknown blueprint with each other), matching this codebase's own
+ * "undeclared provenance is never optimistically assumed" discipline
+ * (`classifyBlueprintDepth`'s own fallback, same principle applied here).
+ */
+export function detectParameterSignatureDuplicates(
+  candidates: readonly ParameterSignatureInput[]
+): ParameterSignatureDuplicateGroup[] {
+  const groups = new Map<string, ParameterSignatureInput[]>();
+  for (const c of candidates) {
+    const key = c.blueprintId ? `${c.blueprintId}::${computeParameterSignature(c.params)}` : `__no_blueprint__::${c.candidateId}`;
+    const existing = groups.get(key);
+    if (existing) existing.push(c);
+    else groups.set(key, [c]);
+  }
+
+  const results: ParameterSignatureDuplicateGroup[] = [];
+  for (const [, members] of groups) {
+    if (members.length < 2) continue;
+    const skeletons = new Set(members.map((m) => normaliseStemForNearDuplicateCheck(m.question)));
+    if (skeletons.size > 1) {
+      results.push({
+        blueprintId: members[0].blueprintId ?? "unknown",
+        parameterSignature: computeParameterSignature(members[0].params),
+        distinctWordingCount: skeletons.size,
+        memberIds: members.map((m) => m.candidateId),
+      });
+    }
+  }
+  return results;
+}
+
+const STOP_WORDS: ReadonlySet<string> = new Set(["a", "an", "the", "is", "are", "of", "in", "to", "and", "one", "what"]);
+
+function tokenise(text: string): Set<string> {
+  const words = text
+    .toLowerCase()
+    .replace(/\d+/g, "")
+    .replace(/[^a-z\s]/g, " ")
+    .split(/\s+/)
+    .filter((w) => w.length > 0 && !STOP_WORDS.has(w));
+  return new Set(words);
+}
+
+/** Plain Jaccard similarity (intersection / union) over content-word tokens, digits and stop-words stripped. A disclosed HEURISTIC signal (see module docstring) -- never an automatic rejection on its own. */
+export function computeTokenOverlapRatio(questionA: string, questionB: string): number {
+  const tokensA = tokenise(questionA);
+  const tokensB = tokenise(questionB);
+  if (tokensA.size === 0 && tokensB.size === 0) return 1;
+  let intersectionSize = 0;
+  for (const t of tokensA) if (tokensB.has(t)) intersectionSize++;
+  const unionSize = tokensA.size + tokensB.size - intersectionSize;
+  return unionSize === 0 ? 0 : intersectionSize / unionSize;
+}
+
+// ============================================================
+// Educational Foundation Completion Standard, Section 14 --
+// Difficulty Integrity: per-blueprint reachability
+// ============================================================
+//
+// `StructuralBlueprint.difficultyDimensions: string[]` is already a
+// REQUIRED (non-optional) field -- every blueprint has been compelled
+// to declare its real difficulty basis since the Scale Architecture
+// increment, a compile-time contract this section does not need to
+// re-invent. What that field cannot catch on its own is the EXACT
+// historical defect this codebase already found and fixed once
+// (mr03-angle-sum's original rule could never produce "hard" for any
+// input, despite "hard" being a defined, intended tier) -- a dead
+// branch is invisible at the type level. `checkDifficultyDistributionIntegrity`
+// already proves this for a whole batch; the addition here is applying
+// it PER BLUEPRINT, so one blueprint's dead branch cannot hide behind
+// other blueprints in the same family batch reaching different tiers.
+
+export interface PerBlueprintDifficultyReport {
+  blueprintId: string;
+  distinctTiersReached: number;
+  tierCounts: Partial<Record<ContentDifficulty, number>>;
+  /** True only when this SPECIFIC blueprint's own candidates reach at least `minDistinctTiers` tiers -- never inferred from the family's overall batch. */
+  meetsMinimum: boolean;
+}
+
+export function checkPerBlueprintDifficultyReachability(
+  candidates: readonly { blueprintId?: string; difficulty: ContentDifficulty }[],
+  minDistinctTiers: number
+): PerBlueprintDifficultyReport[] {
+  const byBlueprint = new Map<string, ContentDifficulty[]>();
+  for (const c of candidates) {
+    if (!c.blueprintId) continue;
+    const existing = byBlueprint.get(c.blueprintId);
+    if (existing) existing.push(c.difficulty);
+    else byBlueprint.set(c.blueprintId, [c.difficulty]);
+  }
+
+  const reports: PerBlueprintDifficultyReport[] = [];
+  for (const [blueprintId, difficulties] of byBlueprint) {
+    const result = checkDifficultyDistributionIntegrity(
+      difficulties.map((difficulty) => ({ difficulty })),
+      minDistinctTiers
+    );
+    reports.push({
+      blueprintId,
+      distinctTiersReached: result.distinctTiersPresent,
+      tierCounts: result.tierCounts,
+      meetsMinimum: result.meetsMinimum,
+    });
+  }
+  return reports;
+}

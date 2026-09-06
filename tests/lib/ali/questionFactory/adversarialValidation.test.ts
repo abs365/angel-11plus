@@ -8,6 +8,9 @@ import {
   detectRepeatedDimension,
   checkDifficultyDistributionIntegrity,
   runFamilyDiversityGates,
+  detectParameterSignatureDuplicates,
+  computeTokenOverlapRatio,
+  checkPerBlueprintDifficultyReachability,
 } from "@/lib/ali/questionFactory/diversityGates";
 import { validateBlueprintCandidate, generateBlueprintCandidate, runFamilyBatch } from "@/lib/ali/questionFactory/candidateGeneration";
 import { MR03_ANGLE_SUM_FAMILY, BP_ISOSCELES_RELATIONSHIP, BP_VERIFY_TRIANGLE } from "@/lib/ali/questionFactory/angleSumBlueprints";
@@ -68,9 +71,11 @@ test("adversarial: a batch that only ever substitutes numbers into one template 
 });
 
 // ============================================================
-// Fixture 2: wording-only substitution -- a REAL, DISCLOSED GAP
+// Fixture 2: wording-only substitution -- NOW CAUGHT (Educational
+// Foundation Completion, Section 13) via parameter-signature identity;
+// the structural-skeleton check ALONE still misses it, disclosed below.
 // ============================================================
-test("adversarial: wording-only substitution (same numbers, different phrasing) is NOT caught by structural-diversity ratio -- a genuine, disclosed limitation, not a false pass", () => {
+test("adversarial: wording-only substitution (same numbers, different phrasing) is NOT caught by structural-diversity ratio alone -- a genuine, disclosed limitation of that ONE signal", () => {
   const badBatch = [
     candidate({ question: "A triangle has angles of 10°, 20° and one unknown angle. What is the size of the unknown angle?" }),
     candidate({ question: "In a certain triangle, two of the angles measure 10° and 20°. Find the remaining angle." }),
@@ -79,11 +84,48 @@ test("adversarial: wording-only substitution (same numbers, different phrasing) 
   const depth = classifyFamilyDepth(badBatch);
   // This assertion documents the REAL current behaviour: normaliseStemForNearDuplicateCheck
   // (lib/ali/antiMemorisationChecks.ts) is digit-substitution-invariant only, never a
-  // paraphrase/semantic-similarity detector. Three cosmetically-reworded copies of the
-  // SAME underlying question (same numbers, same computation) register as three distinct
-  // "structures" today. This is a known, named gap (see the Scale Architecture and this
-  // increment's own evidence report), not a defect introduced by this test.
-  assert.equal(depth.structuralVariantCount, 3, "wording-only variation is currently invisible to the structural-skeleton check");
+  // paraphrase/semantic-similarity detector, taken alone.
+  assert.equal(depth.structuralVariantCount, 3, "structural-skeleton normalisation alone still cannot see wording-only variation");
+});
+
+test("adversarial: the SAME wording-only-substitution fixture IS now caught, certainly, once blueprintId+params are declared -- Section 13's real fix, not a fuzzy score", () => {
+  const badBatch = [
+    candidate({ candidateId: "w1", blueprintId: "mr03-bp-third-angle-direct", params: { angleA: 10, angleB: 20, format: 0 }, question: "A triangle has angles of 10°, 20° and one unknown angle. What is the size of the unknown angle?" }),
+    candidate({ candidateId: "w2", blueprintId: "mr03-bp-third-angle-direct", params: { angleA: 10, angleB: 20, format: 0 }, question: "In a certain triangle, two of the angles measure 10° and 20°. Find the remaining angle." }),
+    candidate({ candidateId: "w3", blueprintId: "mr03-bp-third-angle-direct", params: { angleA: 10, angleB: 20, format: 0 }, question: "One triangle contains angles sized 10° and 20°, plus an unknown third angle. Work out its size." }),
+  ];
+  const duplicates = detectParameterSignatureDuplicates(badBatch);
+  assert.equal(duplicates.length, 1);
+  assert.equal(duplicates[0].distinctWordingCount, 3);
+  assert.deepEqual(new Set(duplicates[0].memberIds), new Set(["w1", "w2", "w3"]));
+});
+
+test("adversarial: two candidates with genuinely DIFFERENT parameters are never flagged as parameter-signature duplicates, even with near-identical wording", () => {
+  const batch = [
+    candidate({ candidateId: "g1", blueprintId: "mr03-bp-third-angle-direct", params: { angleA: 10, angleB: 20, format: 0 } }),
+    candidate({ candidateId: "g2", blueprintId: "mr03-bp-third-angle-direct", params: { angleA: 30, angleB: 40, format: 0 } }),
+  ];
+  assert.equal(detectParameterSignatureDuplicates(batch).length, 0);
+});
+
+test("adversarial: two candidates with NO declared blueprintId are never grouped together (undeclared provenance is never assumed to match)", () => {
+  const batch = [
+    candidate({ candidateId: "u1", blueprintId: undefined, params: { angleA: 10, angleB: 20, format: 0 } }),
+    candidate({ candidateId: "u2", blueprintId: undefined, params: { angleA: 10, angleB: 20, format: 0 } }),
+  ];
+  assert.equal(detectParameterSignatureDuplicates(batch).length, 0);
+});
+
+test("token-overlap ratio: near-identical phrasing scores high (heuristic signal); unrelated stems score low", () => {
+  const high = computeTokenOverlapRatio(
+    "A triangle has angles of 10°, 20° and one unknown angle. What is the size of the unknown angle?",
+    "In a certain triangle, two of the angles measure 10° and 20°. Find the remaining angle."
+  );
+  const low = computeTokenOverlapRatio(
+    "A triangle has angles of 10°, 20° and one unknown angle. What is the size of the unknown angle?",
+    "A ribbon is cut into equal pieces. What is the length of each piece?"
+  );
+  assert.ok(high > low, `wording-similar stems (${high}) should score higher than an unrelated stem (${low})`);
 });
 
 // ============================================================
@@ -167,6 +209,28 @@ test("adversarial: misleading difficulty labels (label uncorrelated with genuine
   const label1 = BP_VERIFY_TRIANGLE.difficultyControls(params);
   const label2 = BP_VERIFY_TRIANGLE.difficultyControls({ ...params });
   assert.equal(label1, label2, "difficultyControls must be a pure function of its declared dimensions, not a hidden random/stateful rule");
+});
+
+// ============================================================
+// Fixture 8b: difficulty reachability -- Section 14's real, new,
+// automatable catch for the EXACT historical defect (a rule that could
+// never produce "hard" for any input) -- applied per blueprint, so one
+// dead branch cannot hide behind other blueprints in the same batch.
+// ============================================================
+test("adversarial: a blueprint whose own candidates never reach more than one difficulty tier is flagged, even though the wider family batch reaches several", () => {
+  const deadBranchBlueprint = Array.from({ length: 10 }, (_, i) => candidate({ candidateId: `dead-${i}`, blueprintId: "mr03-bp-third-angle-direct", difficulty: "easy" }));
+  const healthyBlueprint = [
+    candidate({ candidateId: "h1", blueprintId: "mr03-bp-ratio-split", difficulty: "easy" }),
+    candidate({ candidateId: "h2", blueprintId: "mr03-bp-ratio-split", difficulty: "medium" }),
+    candidate({ candidateId: "h3", blueprintId: "mr03-bp-ratio-split", difficulty: "hard" }),
+  ];
+  const reports = checkPerBlueprintDifficultyReachability([...deadBranchBlueprint, ...healthyBlueprint], 2);
+
+  const deadReport = reports.find((r) => r.blueprintId === "mr03-bp-third-angle-direct")!;
+  const healthyReport = reports.find((r) => r.blueprintId === "mr03-bp-ratio-split")!;
+
+  assert.equal(deadReport.meetsMinimum, false, "a single-tier blueprint must be flagged individually, not masked by a healthy sibling blueprint in the same batch");
+  assert.equal(healthyReport.meetsMinimum, true);
 });
 
 // ============================================================

@@ -9,6 +9,8 @@ import { getRecommendations } from "./educationalIntelligenceService";
 import { getSchoolYear, getTargetExamDate } from "@/lib/progress";
 import { classifyMockAccess, type MockAccessAssessment } from "@/lib/ali/mockAccessPolicy";
 import type { AssessmentPurpose } from "./assessmentPurpose";
+import { deriveTeachingState, type TeachingState } from "./teachingState";
+import type { EducationalState } from "@/types/ali/educationalState";
 
 /**
  * Programme Increment 019, Part 4 — the ONE canonical educational decision
@@ -77,8 +79,41 @@ export interface PreparationDecision {
   revisionRequired: boolean;
   assessmentAppropriate: boolean;
   assessmentPurpose: AssessmentPurpose | null;
+  /**
+   * Educational Foundation Completion increment -- the real, live
+   * connection point between the top-priority candidate's own already-
+   * computed evidence and `lib/learningEngine/teachingState.ts`'s
+   * TeachingState vocabulary. `null` only when there is no real top
+   * candidate to derive one from (e.g. every competency vetoed or
+   * mastered with nothing left to prioritise) -- never guessed.
+   *
+   * Two of `deriveTeachingState`'s inputs are honest, disclosed proxies
+   * rather than perfectly-plumbed signals, because no richer source
+   * exists yet at this call site:
+   *   - `isFirstEncounterEver` is approximated as `stage ===
+   *     "insufficient_evidence"` -- the same real threshold the rest of
+   *     this engine already uses for "not enough evidence exists yet,"
+   *     not a literal zero-attempts count (no such count is exposed to
+   *     this layer today).
+   *   - `lastAttemptSupportTier` is always `null` (unknown) here -- this
+   *     layer only ever sees `CompetencyPreparationSummary`
+   *     (competencyId/confidenceTier/educationalState), which does not
+   *     carry the most recent attempt's supportTier. `deriveTeachingState`
+   *     treats `null` the same as "supported," the more conservative
+   *     (more-teaching, not less) of its two branches.
+   *   - `maintenanceReviewDue`, by contrast, IS a real, exact signal:
+   *     `topCandidate.triggerReason === "review-due"` is produced
+   *     upstream (`recommendationRuntime.ts`) from exactly
+   *     `educationalState === "reviewing"`, the same condition
+   *     `deriveTeachingState` itself checks for maintenance_retrieval.
+   */
+  teachingState: TeachingState | null;
   decisionReasons: string[];
 }
+
+const KNOWN_EDUCATIONAL_STATES: ReadonlySet<string> = new Set<EducationalState>([
+  "exploring", "building-knowledge", "practising", "reinforcing", "mastered", "durably-mastered", "reviewing", "rebuilding",
+]);
 
 const REAL_COMPONENTS: AssessmentComponent[] = ["Mathematics", "English Comprehension", "Continuous Writing"];
 
@@ -242,6 +277,17 @@ export function buildPreparationDecision(
         recommendedCompetencyId
       );
 
+  const teachingState: TeachingState | null =
+    topCandidate && KNOWN_EDUCATIONAL_STATES.has(topCandidate.educationalState)
+      ? deriveTeachingState({
+          educationalState: topCandidate.educationalState as EducationalState,
+          hasFullLessonAvailable: recommendedCompetencyId ? (options.hasFullLessonAvailable ?? (() => false))(recommendedCompetencyId) : false,
+          isFirstEncounterEver: stage === "insufficient_evidence",
+          lastAttemptSupportTier: null,
+          maintenanceReviewDue: topCandidate.triggerReason === "review-due",
+        })
+      : null;
+
   const decisionReasons: string[] = [
     `Preparation stage: "${stage}" (${STAGE_GROUP[stage]}).`,
     clock.horizonBand === "unavailable"
@@ -274,6 +320,7 @@ export function buildPreparationDecision(
     revisionRequired,
     assessmentAppropriate,
     assessmentPurpose,
+    teachingState,
     decisionReasons,
   };
 }

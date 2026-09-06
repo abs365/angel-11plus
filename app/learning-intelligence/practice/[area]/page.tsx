@@ -316,6 +316,7 @@ export default function PracticeSessionPage({
         preparationContext = {
           recommendedDifficultyLean: decision.recommendedDifficultyLean,
           recommendedActivityType: decision.recommendedActivityType,
+          teachingState: decision.teachingState,
         };
       } catch {
         // Fail open -- see docstring above.

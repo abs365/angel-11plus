@@ -15,6 +15,7 @@ import { classifyRetrievalStage, computeFamilyExposure, groupingKeyOf, passageGr
 import { computeLearnerCapacityEvidence, type LearnerCapacityEvidence } from "@/lib/ali/capacityEvidence";
 import { getMathsTeachingContent } from "./mathsTeachingContent";
 import type { ActivityType, PreparationDecision } from "./preparationDecision";
+import type { TeachingState } from "./teachingState";
 
 /**
  * Personalised Session Generation (Sprint 3, ANGEL-CSSE-002A). Single entry
@@ -80,6 +81,18 @@ import type { ActivityType, PreparationDecision } from "./preparationDecision";
 export interface PreparationSessionContext {
   recommendedDifficultyLean: PreparationDecision["recommendedDifficultyLean"];
   recommendedActivityType: ActivityType;
+  /**
+   * Educational Foundation Completion increment -- the real, live
+   * TeachingState computed by `buildPreparationDecision()`, threaded
+   * through so this file's own weight-bias mechanism can distinguish
+   * `scaffolded_practice` from plain `guided_practice`/`independent_practice`
+   * without a second selection algorithm. Optional and nullable: every
+   * pre-existing caller that does not supply it keeps its exact prior
+   * behaviour (this field defaults to inert, matching this whole
+   * mechanism's own established "preference, not lock, and never breaks
+   * an existing caller" discipline).
+   */
+  teachingState?: TeachingState | null;
 }
 
 /**
@@ -133,7 +146,18 @@ export function buildPreparationWeightBias(
       bias *= UNSEEN_TRANSFER_BOOST;
     }
     if (
-      (context.recommendedActivityType === "teaching_lesson" || context.recommendedActivityType === "guided_practice") &&
+      (context.recommendedActivityType === "teaching_lesson" ||
+        context.recommendedActivityType === "guided_practice" ||
+        // Educational Foundation Completion increment -- scaffolded_practice
+        // is a real, distinct TeachingState (partial support, not full
+        // guidance) that had no dedicated bias effect before this pass.
+        // Reusing GUIDED_FAMILY_BOOST rather than inventing a new constant:
+        // both states share the same real justification (a learner who
+        // benefits from active support should be biased toward families
+        // this codebase actually has real teaching content for), and
+        // Section 6's own instruction is "prefer metadata/routing over
+        // duplication."
+        context.teachingState === "scaffolded_practice") &&
       question.familyId &&
       getMathsTeachingContent(question.familyId)
     ) {

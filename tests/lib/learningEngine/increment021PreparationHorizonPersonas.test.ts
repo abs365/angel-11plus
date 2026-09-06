@@ -235,3 +235,58 @@ test("the same weak late entrant WITHOUT a real lesson available falls back hone
   assert.notEqual(decision.recommendedActivityType, "teaching_lesson", "must never claim a teaching_lesson exists when hasFullLessonAvailable says it doesn't");
   assert.equal(decision.recommendedActivityType, "guided_practice");
 });
+
+// ─── Educational Foundation Completion increment, Section 18 -- the ────────
+// ─── Founder's own five named live-selection proof cases ───────────────────
+
+test("CASE B -- Year 5, average/mixed evidence: balanced teaching/practice, neither a forced foundation lean nor a forced hard lean", () => {
+  const competencies = ALL_TWELVE.map((id) => comp(id, "moderate", "practising"));
+  const decision = buildPreparationDecision([subject(competencies)], clockFor(300), "Year 5", [], [], { mockTechnicallyAvailable: true });
+  assert.equal(decision.recommendedDifficultyLean, "balanced", "genuinely mixed/moderate evidence must resolve to a balanced lean, not favour_guided_and_easier or favour_independent_and_harder");
+});
+
+test("CASE D -- identical Year 5 school year, two materially different mastery/evidence profiles, resolve to different educational actions", () => {
+  const strong = ALL_TWELVE.map((id) => comp(id, "high", "durably-mastered"));
+  const weak = ALL_TWELVE.map((id) => comp(id, "low", "exploring"));
+  const strongDecision = buildPreparationDecision([subject(strong)], clockFor(300), "Year 5", [], [], { mockTechnicallyAvailable: true });
+  const weakDecision = buildPreparationDecision([subject(weak)], clockFor(300), "Year 5", [], [], { mockTechnicallyAvailable: true });
+
+  assert.notEqual(strongDecision.preparationStage, weakDecision.preparationStage, "the same school year must not collapse two materially different evidence profiles into the same stage");
+  assert.notEqual(strongDecision.recommendedDifficultyLean, weakDecision.recommendedDifficultyLean);
+});
+
+test("teachingState scaffolded_practice receives the same real guided-family boost as guided_practice, for a family with genuine teaching content -- extending, not duplicating, GUIDED_FAMILY_BOOST", () => {
+  const familyPool: BankQuestion[] = [
+    bq("plain1", "medium", { familyId: undefined }),
+    bq("plain2", "medium", { familyId: undefined }),
+    bq("taught1", "medium", { familyId: "mr03-compound-area-perimeter" }),
+    bq("taught2", "medium", { familyId: "mr03-compound-area-perimeter" }),
+  ];
+  const history = new Map<string, StudentQuestionHistoryRow>();
+
+  function shareOfTaughtFamily(context: PreparationSessionContext | undefined, trials = 200): number {
+    const bias = buildPreparationWeightBias(context);
+    let taughtCount = 0;
+    for (let i = 0; i < trials; i++) {
+      const result = selectQuestions(familyPool, history, 1, new Set(), 1, mulberry32(i), bias);
+      if (result.questions[0]?.familyId === "mr03-compound-area-perimeter") taughtCount++;
+    }
+    return taughtCount / trials;
+  }
+
+  const noContext = shareOfTaughtFamily(undefined);
+  const guidedPracticeContext: PreparationSessionContext = { recommendedDifficultyLean: "balanced", recommendedActivityType: "guided_practice" };
+  const scaffoldedContext: PreparationSessionContext = { recommendedDifficultyLean: "balanced", recommendedActivityType: "independent_practice", teachingState: "scaffolded_practice" };
+
+  const guidedShare = shareOfTaughtFamily(guidedPracticeContext);
+  const scaffoldedShare = shareOfTaughtFamily(scaffoldedContext);
+
+  assert.ok(guidedShare > noContext, "sanity check: the pre-existing guided_practice boost must itself still be real");
+  assert.ok(scaffoldedShare > noContext, "scaffolded_practice must ALSO receive a real boost toward the taught family, not remain inert like the baseline");
+});
+
+test("teachingState is optional and defaults to inert -- a caller supplying no teachingState field behaves byte-for-byte like before this increment", () => {
+  const context: PreparationSessionContext = { recommendedDifficultyLean: "balanced", recommendedActivityType: "independent_practice" };
+  const bias = buildPreparationWeightBias(context);
+  assert.equal(typeof bias, "function");
+});

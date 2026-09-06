@@ -148,8 +148,21 @@ test("ali_question_family is referenced only by known, reviewed follow-on work (
     .map((p) => p.replace(/\\/g, "/"));
   const knownLegitimateReferences = [
     "supabase/migrations/231_ali_question_family_pathway_backfill_repair.sql",
+    // Educational Foundation Completion increment, reviewed: migration
+    // 232 repairs the PROVEN row_count/skills/question_types/pathways
+    // staleness root cause (migration 228's own `on conflict do nothing`
+    // backfill never refreshes on later ali_question_bank changes) and
+    // adds a trigger to keep this table live going forward. Read-only
+    // against ali_question_bank, writes only to ali_question_family,
+    // no RLS/grant change -- same review discipline as 231 above.
+    "supabase/migrations/232_ali_question_family_live_sync.sql",
     "scripts/verify-question-factory-production.mjs",
     "lib/ali/pathwayAggregation.ts",
+    // Documentation-only mention (naming the real table this module's
+    // taxonomy concepts apply to) -- familyTaxonomy.ts issues no query
+    // against ali_question_family itself; its classifier takes plain
+    // caller-supplied fields as input.
+    "lib/ali/familyTaxonomy.ts",
   ];
   for (const match of matches) {
     assert.ok(
