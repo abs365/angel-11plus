@@ -161,6 +161,27 @@ export interface FamilyGenerationSpec<TParams extends Record<string, number>> {
  * fabricating separate families for what is really one competency's
  * different reasoning demands.
  */
+/**
+ * Educational Supply & Progression Integration Gate, Section 8
+ * (Question Factory -> Teaching Engine Contract) -- the ten educational
+ * uses the Founder named explicitly, mirroring
+ * `lib/learningEngine/teachingState.ts`'s `TeachingState` plus two
+ * content-governance uses (`timed_practice`, `mock_reserve`) that are
+ * not learner-progression states but ARE real content-suitability
+ * questions.
+ */
+export type TeachingUse =
+  | "explicit_teaching"
+  | "worked_example"
+  | "guided_practice"
+  | "scaffolded_practice"
+  | "independent_practice"
+  | "transfer"
+  | "mastery_check"
+  | "maintenance_retrieval"
+  | "timed_practice"
+  | "mock_reserve";
+
 export interface StructuralBlueprint<TParams extends Record<string, number>> extends FamilyGenerationSpec<TParams> {
   /** Stable, unique identifier for this blueprint -- distinct from familyId (several blueprints share one familyId). Never regenerated per batch; a blueprint's own identity must survive across generation runs so its own approval/calibration history is trackable. */
   blueprintId: string;
@@ -203,6 +224,17 @@ export interface StructuralBlueprint<TParams extends Record<string, number>> ext
   provenance: string;
   /** Whether this blueprint's output may ever be considered for the Mock-reserved pool. False for every blueprint in this increment -- publication (migration 230's own `publish_question_candidate()`) always targets `practice_eligible`; a blueprint cannot promote itself to Mock status by declaring this true, it is documentation of intent for a future, separately-gated Mock-supply decision only. */
   mockEligible: boolean;
+  /**
+   * Section 8's explicit ask: which teaching states this blueprint's
+   * content is suitable for. A question may legitimately support
+   * several (e.g. a direct, single-step blueprint can serve as both a
+   * worked_example AND independent_practice); a blueprint declaring an
+   * honest, disclosed judgement here, not every value by default --
+   * an empty or narrow list is a true statement about that blueprint's
+   * actual pedagogical suitability, not an oversight. Optional: absence
+   * means "not yet classified," never "suitable for nothing."
+   */
+  teachingUses?: TeachingUse[];
 }
 
 /**

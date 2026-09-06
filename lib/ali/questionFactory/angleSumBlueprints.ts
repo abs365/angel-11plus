@@ -71,6 +71,7 @@ export const BP_THIRD_ANGLE_DIRECT: StructuralBlueprint<DirectThirdAngleParams> 
   representationType: (p) => (p.format === 0 ? "prose" : "table"),
   provenance: "angel_original",
   mockEligible: false,
+  teachingUses: ["worked_example", "guided_practice", "independent_practice", "timed_practice"],
 };
 
 // ─── Blueprint 2: Ratio split -- one given angle, other two in ratio ────
@@ -129,6 +130,7 @@ export const BP_RATIO_SPLIT: StructuralBlueprint<RatioSplitParams> = {
   misconceptionTargeted: "treating the ratio parts as the final angles directly, without multiplying by the value of one part",
   provenance: "angel_original",
   mockEligible: false,
+  teachingUses: ["scaffolded_practice", "independent_practice", "transfer"],
 };
 
 // ─── Blueprint 3: Verify whether three given angles form a valid triangle ─
@@ -173,6 +175,7 @@ export const BP_VERIFY_TRIANGLE: StructuralBlueprint<VerifyTriangleParams> = {
   misconceptionTargeted: "assuming any three stated angles automatically form a valid triangle without checking the total",
   provenance: "angel_original",
   mockEligible: false,
+  teachingUses: ["independent_practice", "transfer", "mastery_check"],
 };
 
 // ─── Blueprint 4: Identify an arbitrary arithmetic error in a worked solution ─
@@ -220,6 +223,7 @@ export const BP_ERROR_CORRECTION: StructuralBlueprint<ErrorCorrectionParams> = {
   misconceptionTargeted: "a generic arithmetic slip in the final subtraction step (not a specific named conceptual misconception -- see BP_MISCONCEPTION_360_CONFUSION for that distinct case)",
   provenance: "angel_original",
   mockEligible: false,
+  teachingUses: ["scaffolded_practice", "mastery_check"],
 };
 
 // ─── Blueprint 5: Diagnose the specific, named "360° confusion" misconception ─
@@ -263,6 +267,7 @@ export const BP_MISCONCEPTION_360_CONFUSION: StructuralBlueprint<Misconception36
   misconceptionTargeted: "confusing the triangle angle-sum (180°) with the quadrilateral angle-sum (360°)",
   provenance: "angel_original",
   mockEligible: false,
+  teachingUses: ["explicit_teaching", "scaffolded_practice"],
 };
 
 // ─── Blueprint 6: Compare the third angle of two different triangles ────
@@ -316,6 +321,7 @@ export const BP_COMPARE_TRIANGLES: StructuralBlueprint<CompareTrianglesParams> =
   misconceptionTargeted: "assuming a triangle with larger given angles automatically has a larger third angle (the reverse is generally true)",
   provenance: "angel_original",
   mockEligible: false,
+  teachingUses: ["transfer", "independent_practice"],
 };
 
 // ─── Blueprint 7: Isosceles relationship (two equal angles) ─────────────
@@ -350,6 +356,7 @@ export const BP_ISOSCELES_RELATIONSHIP: StructuralBlueprint<IsoscelesRelationshi
   misconceptionTargeted: "forgetting to double the equal angle before subtracting from 180° (subtracting only one instance)",
   provenance: "angel_original",
   mockEligible: false,
+  teachingUses: ["guided_practice", "independent_practice", "maintenance_retrieval"],
 };
 
 export const MR03_ANGLE_SUM_FAMILY: EducationalFamily = {

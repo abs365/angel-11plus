@@ -181,6 +181,7 @@ export const RIBBON_FRACTION_SPEC: StructuralBlueprint<RibbonFractionParams> = {
   representationType: () => "prose",
   provenance: "angel_original",
   mockEligible: false,
+  teachingUses: ["worked_example", "guided_practice", "independent_practice"],
 };
 
 // ─── Family 3: mr03-angle-sum (triangle angle sum) ──────────────────────
