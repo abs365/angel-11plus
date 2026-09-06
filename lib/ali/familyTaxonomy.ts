@@ -149,3 +149,173 @@ export function classifyFamilyRecordType(input: FamilyRecordClassificationInput)
     reasoning: "No naming pattern, subject rule, or row-count signal in this classifier matched -- deliberately left unclassified rather than guessed.",
   };
 }
+
+// ============================================================
+// Final Educational Family Classification & Foundation Acceptance
+// Gate (2026-09-06) -- CONSOLIDATION beyond what a per-record naming
+// classifier alone can do.
+//
+// `classifyFamilyRecordType` above answers "is THIS ONE database
+// family record plausibly educational" from its own name/row-count in
+// isolation. It cannot answer the Founder's own explicit ask: "look
+// for consolidation around evidenced educational demands" -- several
+// DIFFERENT database family_id values (different wave, different
+// naming convention, even a lone row_count=1 record) can represent
+// the SAME genuine reasoning demand, and must be merged into ONE
+// educational family, never counted twice.
+//
+// This is evidence-based reasoning over the Founder's own cited
+// family names/row-counts (production Q1 evidence) -- NOT a live
+// content review of individual questions (this session has no
+// per-question text access for English/Writing beyond what the
+// Founder has directly cited). Every entry's confidence is therefore
+// "heuristic," never "certain," and every merge decision states its
+// own reasoning so a future increment with real content access can
+// confirm or correct it. A merge is made ONLY where the family names
+// themselves describe the same reasoning demand (e.g. "direct-retrieval"
+// and "rc01-retrieval" both name retrieval); two names that are merely
+// both "about vocabulary" but test a different demand (explaining a
+// word's contextual meaning vs. matching a synonym) are deliberately
+// kept separate, per the Founder's own "keep separate only when the
+// learner demand is materially different" instruction.
+// ============================================================
+
+export interface EducationalFamilyConsolidation {
+  educationalFamilyName: string;
+  memberDatabaseFamilyIds: string[];
+  totalRows: number;
+  confidence: ClassificationConfidence;
+  reasoning: string;
+}
+
+/**
+ * The 18 named, wave-authored English database family records the
+ * Founder's own Q1 evidence cited (140 total rows), consolidated into
+ * 13 genuine educational families by reasoning-demand. The remaining
+ * 62 of English's 80 database family records (eng-inc-, eng-pc-, and
+ * mock-eng-prefixed records, row_count typically 1-4) are NOT included here -- per the Founder's
+ * own explicit instruction, they are assessment/passage/question-type
+ * scoped storage groupings, not independent educational families,
+ * unless and until direct content review proves otherwise (not
+ * performed this pass, disclosed as unresolved rather than assumed
+ * zero).
+ */
+export const ENGLISH_EDUCATIONAL_FAMILY_CONSOLIDATION: EducationalFamilyConsolidation[] = [
+  {
+    educationalFamilyName: "Retrieval",
+    memberDatabaseFamilyIds: ["wave1-fam-direct-retrieval", "wave3-fam-rc01-retrieval"],
+    totalRows: 19,
+    confidence: "heuristic",
+    reasoning: "Both names describe the same reasoning demand (locate and state a stated fact) across two different authoring waves.",
+  },
+  {
+    educationalFamilyName: "Sequencing",
+    memberDatabaseFamilyIds: ["wave1-fam-sequencing", "wave3-fam-rc06-sequencing"],
+    totalRows: 16,
+    confidence: "heuristic",
+    reasoning: "Both names describe ordering/sequence-establishing reasoning across two authoring waves; wave3's single row is a genuine sibling variant, not a separate demand.",
+  },
+  {
+    educationalFamilyName: "Vocabulary / Meaning in Context",
+    memberDatabaseFamilyIds: ["wave1-fam-vocab-explain"],
+    totalRows: 17,
+    confidence: "heuristic",
+    reasoning: "Explaining a word's contextual meaning is a materially different demand from closed-set synonym matching (kept separate from Synonym Selection below) -- interpretation and justification, not selection.",
+  },
+  {
+    educationalFamilyName: "Synonym Selection",
+    memberDatabaseFamilyIds: ["wave1-fam-synonym-battery"],
+    totalRows: 11,
+    confidence: "heuristic",
+    reasoning: "A closed-set word-relationship matching demand, distinct from open explanation (Vocabulary / Meaning in Context above) -- not merged despite both being \"about vocabulary,\" per the material-difference standard.",
+  },
+  {
+    educationalFamilyName: "Quotation + Explanation",
+    memberDatabaseFamilyIds: ["wave1-fam-quote-explain"],
+    totalRows: 13,
+    confidence: "heuristic",
+    reasoning: "Selecting textual evidence and explaining its relevance is a distinct, named demand with no other cited family describing the same combination.",
+  },
+  {
+    educationalFamilyName: "Multi-Select Reasoning",
+    memberDatabaseFamilyIds: ["wave2-fam-multiselect"],
+    totalRows: 6,
+    confidence: "heuristic",
+    reasoning: "A multiple-correct-answer selection format. Kept separate from Multi-Select + Justification below -- the presence or absence of a justification requirement is a material difference in demand, not a cosmetic one.",
+  },
+  {
+    educationalFamilyName: "Multi-Select + Justification",
+    memberDatabaseFamilyIds: ["wave1-fam-tick-justify"],
+    totalRows: 11,
+    confidence: "heuristic",
+    reasoning: "Select-then-justify combines a selection format with an explanation demand -- materially deeper than plain Multi-Select Reasoning. Currently provisional/non-production per the Founder's own cited status, not yet contributing to Practice/Mock supply regardless of its educational classification.",
+  },
+  {
+    educationalFamilyName: "Emotion & Cause",
+    memberDatabaseFamilyIds: ["wave1-fam-emotion-cause", "wave3-fam-rc08-emotion"],
+    totalRows: 13,
+    confidence: "heuristic",
+    reasoning: "Both plausibly test identifying an emotion and its textual cause; merged on name-similarity alone (rc08-emotion's own name does not explicitly confirm the causal-link component) -- the weakest-confidence merge in this table, flagged for confirmation once real content is reviewed.",
+  },
+  {
+    educationalFamilyName: "Language Effect / Word Choice",
+    memberDatabaseFamilyIds: ["wave3-fam-rc10-word-choice", "wave1-fam-effect-of-language"],
+    totalRows: 12,
+    confidence: "heuristic",
+    reasoning: "Both describe identifying a specific language choice and interpreting its effect -- the same reasoning demand under two names from different waves.",
+  },
+  {
+    educationalFamilyName: "Atmosphere / Mood",
+    memberDatabaseFamilyIds: ["wave3-fam-rc10-atmosphere-mood"],
+    totalRows: 6,
+    confidence: "heuristic",
+    reasoning: "A specific application of language-effect reasoning to mood/atmosphere -- kept separate from Language Effect / Word Choice per the Founder's own list treating them as distinct named items, not assumed identical without content confirmation.",
+  },
+  {
+    educationalFamilyName: "Two-Character Reasoning",
+    memberDatabaseFamilyIds: ["wave1-fam-two-character"],
+    totalRows: 6,
+    confidence: "heuristic",
+    reasoning: "Comparing or relating two named characters is a distinct demand with no other cited family describing the same shape.",
+  },
+  {
+    educationalFamilyName: "Motive Inference",
+    memberDatabaseFamilyIds: ["wave1-fam-motive-inference"],
+    totalRows: 4,
+    confidence: "heuristic",
+    reasoning: "A specific, named inference sub-type (why a character acted) -- no generic \"inference\" family exists in the cited estate to merge into, kept as its own family rather than force-merged into a category not actually present.",
+  },
+  {
+    educationalFamilyName: "Comparison",
+    memberDatabaseFamilyIds: ["wave1-fam-comparative-extraction", "wave3-fam-rc07-comparative"],
+    totalRows: 6,
+    confidence: "heuristic",
+    reasoning: "Both describe comparative reasoning across textual elements -- the same demand under two names from different waves.",
+  },
+];
+
+/**
+ * Writing's entire cited estate (16 database family records, all
+ * `QT-WC-01a`) consolidates to ONE broad genuine educational family --
+ * every real Writing task built to date (`writingTeachingContent.ts`'s
+ * own `WritingTaskFamily = "writing-reflective-discursive"` is the
+ * ONLY task family implemented; the picture-narrative task type is
+ * explicitly deferred) is the reflective/discursive response type.
+ * Topic (favourite place, kindness, screen time, ...) is a PROMPT/TASK
+ * VARIANT dimension, never a separate educational family, per the
+ * Founder's own explicit instruction.
+ */
+export const WRITING_EDUCATIONAL_FAMILY_MODEL: EducationalFamilyConsolidation = {
+  educationalFamilyName: "Reflective/Discursive Writing Response",
+  memberDatabaseFamilyIds: [
+    "eng-inc003-writing-wc01a-favouriteplace", "eng-inc003-writing-wc01a-imaginedplace", "eng-inc003-writing-wc01a-pocketmoney",
+    "eng-inc004-writing-wc01a-advice", "eng-inc004-writing-wc01a-notgotoplan", "eng-inc004-writing-wc01a-skillproud",
+    "mock-writing-wc01a-cookopinion", "mock-writing-wc01a-difficulttask", "mock-writing-wc01a-kindness",
+    "mock-writing-wc01a-meaningfulplace", "mock-writing-wc01a-mindchange", "mock-writing-wc01a-mistakelearned",
+    "mock-writing-wc01a-newplace", "mock-writing-wc01a-personinfluence", "mock-writing-wc01a-screentime",
+    "mock-writing-wc01a-somethingnew",
+  ],
+  totalRows: 16,
+  confidence: "heuristic",
+  reasoning: "Every real Writing family record shares the same competency (QT-WC-01a) and the same, single, currently-implemented task type (reflective/discursive response) -- topic alone varies. No evidence (genre, purpose, audience, rubric dimension) distinguishes any of these 16 as a materially different educational demand from the others.",
+};
