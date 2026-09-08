@@ -1,0 +1,250 @@
+{
+  "families": {
+    "mr04-reverse-percentage": {
+      "totalManufactured": 24,
+      "difficultyDist": {
+        "medium": 5,
+        "easy": 1,
+        "hard": 13,
+        "challenge": 5
+      },
+      "representationDist": {
+        "prose": 24
+      },
+      "reasoningDist": {
+        "reverse_reasoning": 12,
+        "error_identification": 4,
+        "comparison": 4,
+        "multi_step_application": 4
+      },
+      "blueprintDepth": 6,
+      "dominantBlueprintShare": 0.16666666666666666,
+      "classifyScaledMemorisationRisk": "LOW",
+      "legacyStructuralDiversityRatio": 0.3333333333333333,
+      "legacyMemorisationRisk": "HIGH",
+      "templateSaturation": {
+        "dominantSkeleton": "a charity's donations decreased by #% this year compared to last year. this year they received £#. how much did they receive last year?",
+        "dominantSkeletonCount": 4,
+        "saturationRatio": 0.16666666666666666,
+        "exceedsThreshold": false
+      },
+      "parameterSignatureDuplicateGroups": 0,
+      "perBlueprintDifficultyReachability": [
+        {
+          "blueprintId": "mr04-bp-reverse-scaffolded-single-change",
+          "distinctTiersReached": 2,
+          "tierCounts": {
+            "medium": 3,
+            "easy": 1
+          },
+          "meetsMinimum": true
+        },
+        {
+          "blueprintId": "mr04-bp-reverse-direct-unscaffolded",
+          "distinctTiersReached": 2,
+          "tierCounts": {
+            "hard": 3,
+            "medium": 1
+          },
+          "meetsMinimum": true
+        },
+        {
+          "blueprintId": "mr04-bp-reverse-find-rate",
+          "distinctTiersReached": 3,
+          "tierCounts": {
+            "challenge": 1,
+            "medium": 1,
+            "hard": 2
+          },
+          "meetsMinimum": true
+        },
+        {
+          "blueprintId": "mr04-bp-reverse-error-identification",
+          "distinctTiersReached": 1,
+          "tierCounts": {
+            "hard": 4
+          },
+          "meetsMinimum": false
+        },
+        {
+          "blueprintId": "mr04-bp-reverse-compare-two-scenarios",
+          "distinctTiersReached": 1,
+          "tierCounts": {
+            "hard": 4
+          },
+          "meetsMinimum": false
+        },
+        {
+          "blueprintId": "mr04-bp-reverse-multi-step-mixed-operations",
+          "distinctTiersReached": 1,
+          "tierCounts": {
+            "challenge": 4
+          },
+          "meetsMinimum": false
+        }
+      ]
+    },
+    "mr04-time-reverse": {
+      "totalManufactured": 24,
+      "difficultyDist": {
+        "easy": 3,
+        "medium": 2,
+        "challenge": 6,
+        "hard": 13
+      },
+      "representationDist": {
+        "prose": 20,
+        "24hr_clock_with_midnight_wraparound": 4
+      },
+      "reasoningDist": {
+        "reverse_reasoning": 16,
+        "error_identification": 4,
+        "comparison": 4
+      },
+      "blueprintDepth": 6,
+      "dominantBlueprintShare": 0.16666666666666666,
+      "classifyScaledMemorisationRisk": "LOW",
+      "legacyStructuralDiversityRatio": 0.2916666666666667,
+      "legacyMemorisationRisk": "HIGH",
+      "templateSaturation": {
+        "dominantSkeleton": "a cookery class finishes at #:#. it lasted # minutes. what time did the class start?",
+        "dominantSkeletonCount": 4,
+        "saturationRatio": 0.16666666666666666,
+        "exceedsThreshold": false
+      },
+      "parameterSignatureDuplicateGroups": 0,
+      "perBlueprintDifficultyReachability": [
+        {
+          "blueprintId": "mr04-bp-time-reverse-scaffolded-single-stage",
+          "distinctTiersReached": 2,
+          "tierCounts": {
+            "easy": 3,
+            "medium": 1
+          },
+          "meetsMinimum": true
+        },
+        {
+          "blueprintId": "mr04-bp-time-reverse-multistage-direct",
+          "distinctTiersReached": 3,
+          "tierCounts": {
+            "challenge": 2,
+            "medium": 1,
+            "hard": 1
+          },
+          "meetsMinimum": true
+        },
+        {
+          "blueprintId": "mr04-bp-time-reverse-find-missing-stage",
+          "distinctTiersReached": 1,
+          "tierCounts": {
+            "hard": 4
+          },
+          "meetsMinimum": false
+        },
+        {
+          "blueprintId": "mr04-bp-time-reverse-error-identification",
+          "distinctTiersReached": 1,
+          "tierCounts": {
+            "hard": 4
+          },
+          "meetsMinimum": false
+        },
+        {
+          "blueprintId": "mr04-bp-time-reverse-cross-midnight",
+          "distinctTiersReached": 1,
+          "tierCounts": {
+            "challenge": 4
+          },
+          "meetsMinimum": false
+        },
+        {
+          "blueprintId": "mr04-bp-time-reverse-compare-two-schedules",
+          "distinctTiersReached": 1,
+          "tierCounts": {
+            "hard": 4
+          },
+          "meetsMinimum": false
+        }
+      ]
+    },
+    "mr01-reverse-mean": {
+      "totalManufactured": 24,
+      "difficultyDist": {
+        "medium": 4,
+        "hard": 16,
+        "challenge": 4
+      },
+      "representationDist": {
+        "prose": 24
+      },
+      "reasoningDist": {
+        "reverse_reasoning": 8,
+        "multi_step_application": 8,
+        "error_identification": 4,
+        "comparison": 4
+      },
+      "blueprintDepth": 6,
+      "dominantBlueprintShare": 0.16666666666666666,
+      "classifyScaledMemorisationRisk": "LOW",
+      "legacyStructuralDiversityRatio": 0.25,
+      "legacyMemorisationRisk": "HIGH",
+      "templateSaturation": {
+        "dominantSkeleton": "three friends' mean score was #. two of the scores were # and #. remember: total = mean × count. what was the third score?",
+        "dominantSkeletonCount": 4,
+        "saturationRatio": 0.16666666666666666,
+        "exceedsThreshold": false
+      },
+      "parameterSignatureDuplicateGroups": 0,
+      "perBlueprintDifficultyReachability": [
+        {
+          "blueprintId": "mr01-bp-reverse-mean-scaffolded",
+          "distinctTiersReached": 1,
+          "tierCounts": {
+            "medium": 4
+          },
+          "meetsMinimum": false
+        },
+        {
+          "blueprintId": "mr01-bp-reverse-mean-direct",
+          "distinctTiersReached": 1,
+          "tierCounts": {
+            "hard": 4
+          },
+          "meetsMinimum": false
+        },
+        {
+          "blueprintId": "mr01-bp-reverse-mean-new-value-changes-mean",
+          "distinctTiersReached": 1,
+          "tierCounts": {
+            "hard": 4
+          },
+          "meetsMinimum": false
+        },
+        {
+          "blueprintId": "mr01-bp-reverse-mean-error-identification",
+          "distinctTiersReached": 1,
+          "tierCounts": {
+            "hard": 4
+          },
+          "meetsMinimum": false
+        },
+        {
+          "blueprintId": "mr01-bp-reverse-mean-compare-two-groups",
+          "distinctTiersReached": 1,
+          "tierCounts": {
+            "hard": 4
+          },
+          "meetsMinimum": false
+        },
+        {
+          "blueprintId": "mr01-bp-reverse-mean-combined-groups",
+          "distinctTiersReached": 1,
+          "tierCounts": {
+            "challenge": 4
+          },
+          "meetsMinimum": false
+        }
+      ]
+    }
+  }
+}

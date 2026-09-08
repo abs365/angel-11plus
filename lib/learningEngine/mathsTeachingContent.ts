@@ -530,6 +530,57 @@ export const MATHS_FAMILY_TEACHING_CONTENT: Record<string, MathsFamilyTeachingCo
     },
     misconceptionCategory: "PRECISION_INSTRUCTION_IGNORED",
   },
+  // Educational Increment 003, Wave 1 -- three families that had ZERO
+  // teaching content before this increment (confirmed via a live
+  // production query: mr04-reverse-percentage, mr04-time-reverse,
+  // mr01-reverse-mean all had no MATHS_FAMILY_TEACHING_CONTENT entry,
+  // every real row difficulty=hard, transfer_class=FAR_TRANSFER, one
+  // reasoning shape each). Each scenario below is a safe, separate
+  // worked example -- never the live question -- same discipline as
+  // every entry above.
+  "mr04-reverse-percentage": {
+    model: {
+      whatToNotice: "You are given the value AFTER a percentage change, not before -- and asked to find the ORIGINAL value. The percentage cannot be applied directly to the number you can see.",
+      relationship: "The new value represents (100 + the increase)% or (100 − the decrease)% of the original. Divide the new value by that percentage (as a decimal) to undo the change and recover the original.",
+      scenario: "A shop increases every price by 25%. After the increase, a bag costs £40. What was the price before the increase?",
+      reasoning: [
+        "£40 represents 125% of the original price (100% + 25% increase).",
+        "£40 ÷ 1.25 = £32.",
+      ],
+      answer: "£32",
+      verification: "Apply the increase forward to check: £32 × 1.25 = £40 ✓. If the forward check doesn't match the given value, the wrong percentage or direction was used.",
+    },
+    misconceptionCategory: "OPERATION_SELECTION",
+  },
+  "mr04-time-reverse": {
+    model: {
+      whatToNotice: "You are given the FINISH time and the durations of each stage, and asked to find the START time -- the reverse of the usual 'add up the stages' question.",
+      relationship: "Add up all the stage durations to get the total elapsed time, then SUBTRACT that total from the finish time to find the start time.",
+      scenario: "A lesson finishes at 14:20. It consisted of a 25 minute session, a 10 minute break, and a 20 minute session, in that order. What time did the lesson start?",
+      reasoning: [
+        "Total time from start to finish: 25 + 10 + 20 = 55 minutes.",
+        "Subtract this from the finish time: 14:20 − 55 minutes = 13:25.",
+      ],
+      answer: "13:25",
+      verification: "Add the total duration back to the start time: 13:25 + 55 minutes = 14:20 ✓. If adding back doesn't return the given finish time, a subtraction or a stage duration was wrong.",
+    },
+    misconceptionCategory: "PROCEDURAL_SEQUENCE_ERROR",
+  },
+  "mr01-reverse-mean": {
+    model: {
+      whatToNotice: "You are given the MEAN of a set of values and all but one of the individual values, and asked to find the missing one -- the mean itself is NOT the total.",
+      relationship: "Multiply the mean by how many values there are to get the TOTAL first. Then subtract the known values from that total to find the missing one.",
+      scenario: "Four rounds of a game had a mean score of 12. Three of the scores were 9, 15, 10. What was the fourth score?",
+      reasoning: [
+        "Total for all four rounds: 12 × 4 = 48.",
+        "The three known scores add up to: 9 + 15 + 10 = 34.",
+        "The fourth score: 48 − 34 = 14.",
+      ],
+      answer: "14",
+      verification: "Check by finding the mean of all four values: (9 + 15 + 10 + 14) ÷ 4 = 48 ÷ 4 = 12 ✓, matching the given mean.",
+    },
+    misconceptionCategory: "STRUCTURAL_MISAPPLICATION",
+  },
 };
 
 export function getMathsTeachingContent(familyId?: string | null): MathsFamilyTeachingContent | undefined {

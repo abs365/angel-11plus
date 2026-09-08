@@ -49,6 +49,21 @@ export interface WorkedExample {
   modelReasoning: string;
   weakAnswerLooksLike: string;
   whatImprovesIt: string;
+  /**
+   * Educational Increment 003, Wave 1 -- an optional, ORDERED breakdown for
+   * families whose teaching gap is specifically about METHOD (how to find
+   * and select evidence), not just an overall reasoning summary.
+   * `modelReasoning` above remains a valid, complete one-paragraph summary
+   * for every existing entry (this field is additive, never a replacement) --
+   * a family populates this only when a precise, named step sequence is the
+   * actual teaching requirement (e.g. direct-retrieval's Founder-specified
+   * 5-step model: identify exactly what's asked -> locate the relevant
+   * passage part -> distinguish direct evidence from inference -> select the
+   * precise evidence -> give an appropriately precise response). Always
+   * demonstrated on the SAFE, separate scenario above, never the live
+   * question -- teaches the process, never gives the live answer.
+   */
+  fiveStepModel?: string[];
 }
 
 export const ENGLISH_FAMILY_WORKED_EXAMPLE: Partial<Record<string, WorkedExample>> = {
@@ -84,6 +99,27 @@ export const ENGLISH_FAMILY_WORKED_EXAMPLE: Partial<Record<string, WorkedExample
     modelReasoning: "Cover the tricky word ('trudge') with a finger and read the rest of the sentence. 'Determined' and 'up the hill' both suggest effort, so the word likely means a slow, effortful walk, not a light or easy one.",
     weakAnswerLooksLike: "Guessing a meaning that sounds similar to the word but isn't supported by the sentence around it, such as confusing 'trudge' with 'trek' as a place name rather than a way of walking.",
     whatImprovesIt: "Checking the guessed meaning actually fits back into the sentence sensibly, using only clues that are really there in the surrounding words.",
+  },
+  // Educational Increment 003, Wave 1 -- wave1-fam-direct-retrieval had ZERO
+  // ENGLISH_FAMILY_WORKED_EXAMPLE coverage before this increment (confirmed
+  // via a live production query: 34 rows, 5 blueprints, 18 passages, no
+  // worked-example entry at all), despite being the family with the most
+  // published rows of any English family. Uses the Founder-specified
+  // precise 5-step model -- teaches METHOD, never gives the live answer.
+  "wave1-fam-direct-retrieval": {
+    scenario:
+      "Imagine a passage that says: 'The lighthouse keeper checked the log book every evening at six o'clock, noting the wind speed and any passing ships.' The question asks: 'At what time did the lighthouse keeper check the log book?'",
+    modelReasoning:
+      "Work through the passage methodically: pin down exactly what the question wants, find the specific part of the passage that addresses it, check whether the answer is stated directly or needs inference, pick out only the precise words that answer it, then write a response that is exactly as precise as what's being asked -- no more, no less.",
+    fiveStepModel: [
+      "Identify exactly what's asked: the question wants a TIME, not a description of what he did or why.",
+      "Locate the relevant part of the passage: the sentence naming a specific time is the one to focus on, not the whole paragraph.",
+      "Distinguish direct evidence from inference: the passage states the time directly ('every evening at six o'clock') -- nothing needs to be worked out or guessed here.",
+      "Select the precise evidence: the exact phrase 'six o'clock' is the answer -- not the surrounding detail about wind speed or passing ships.",
+      "Give an appropriately precise response: state the time itself ('six o'clock'), not a full restatement of the sentence.",
+    ],
+    weakAnswerLooksLike: "Copying a whole sentence or paragraph around the answer, including details the question didn't ask for, or restating the question instead of the actual evidence.",
+    whatImprovesIt: "Answering with only the specific fact asked for, taken directly from the passage, in a form that directly answers the question (a time, a name, a number, a single detail) rather than a longer quotation.",
   },
 };
 

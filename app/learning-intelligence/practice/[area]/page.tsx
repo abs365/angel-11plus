@@ -1032,6 +1032,13 @@ function ReadingActivity({
         <div className="mt-2 text-xs text-blue-700 dark:text-blue-300 bg-blue-50 dark:bg-blue-950 rounded-xl p-3 space-y-1.5">
           <p><strong>Example: </strong>{workedExample.scenario}</p>
           <p><strong>How to think about it: </strong>{workedExample.modelReasoning}</p>
+          {workedExample.fiveStepModel && workedExample.fiveStepModel.length > 0 && (
+            <ol className="list-decimal list-inside space-y-0.5">
+              {workedExample.fiveStepModel.map((step, i) => (
+                <li key={i}>{step}</li>
+              ))}
+            </ol>
+          )}
           <p><strong>A weaker answer: </strong>{workedExample.weakAnswerLooksLike}</p>
           <p><strong>What makes it better: </strong>{workedExample.whatImprovesIt}</p>
         </div>

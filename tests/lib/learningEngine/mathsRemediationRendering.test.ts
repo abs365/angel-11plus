@@ -90,15 +90,34 @@ test("C/D: the underlying submitted/lastCorrect/addressesMisconception gating is
 
 // --- E: recently activated hard families are genuinely reachable ---
 
-test("E: every MR-04-depth and Increment-006 family has no dedicated teaching content (the exact fallback path this correction fixes) but does carry real addressesMisconception text", () => {
+// Educational Increment 003, Wave 1 -- `mr01-reverse-mean`,
+// `mr04-reverse-percentage`, and `mr04-time-reverse` deliberately GAINED
+// real MATHS_FAMILY_TEACHING_CONTENT entries this wave (closing a real,
+// previously-disclosed zero-coverage gap for exactly these 3 families --
+// see ANGEL_EDUCATIONAL_INCREMENT_003_WAVE1_PRE_PUBLICATION_REPORT.md
+// §J). `mr03-coord-combined` and `mr04-bv-convert` were not touched and
+// genuinely still have none. Split accordingly, rather than silently
+// weakening the original "no dedicated teaching content" assertion for
+// all 5 -- the fallback-path proof (test E below) still needs a REAL
+// no-teaching-content family to be meaningful, and now also proves the
+// positive case for the 3 families this wave added content to.
+const STILL_NO_TEACHING_CONTENT = ["mr03-coord-combined", "mr04-bv-convert"];
+const GAINED_TEACHING_CONTENT_IN_EI003_WAVE1 = ["mr01-reverse-mean", "mr04-reverse-percentage", "mr04-time-reverse"];
+
+test("E: mr03-coord-combined and mr04-bv-convert still have no dedicated teaching content (the exact fallback path this correction fixes); mr01-reverse-mean/mr04-reverse-percentage/mr04-time-reverse now DO (Educational Increment 003, Wave 1) -- every family carries real addressesMisconception text regardless", () => {
   const allNewQuestions = [...mr04DepthQuestions, ...inc006DepthQuestions];
   const families = new Set(allNewQuestions.map((q: { family_id: string }) => q.family_id));
   assert.deepEqual(
     [...families].sort(),
     ["mr01-reverse-mean", "mr03-coord-combined", "mr04-bv-convert", "mr04-reverse-percentage", "mr04-time-reverse"].sort()
   );
-  for (const familyId of families) {
+  for (const familyId of STILL_NO_TEACHING_CONTENT) {
+    assert.ok(families.has(familyId));
     assert.equal(getMathsTeachingContent(familyId), undefined, `${familyId} must remain a genuine no-teaching-content family for this test to be meaningful`);
+  }
+  for (const familyId of GAINED_TEACHING_CONTENT_IN_EI003_WAVE1) {
+    assert.ok(families.has(familyId));
+    assert.notEqual(getMathsTeachingContent(familyId), undefined, `${familyId} gained real teaching content in Educational Increment 003 Wave 1 -- this must not silently regress back to undefined`);
   }
   for (const q of allNewQuestions as { id: string; misconception: string }[]) {
     assert.ok(q.misconception && q.misconception.trim().length > 0, `${q.id} must carry real misconception text for this correction to have any effect`);
