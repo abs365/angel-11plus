@@ -104,8 +104,10 @@ export interface MathsQuestion {
   difficulty: Difficulty;
   workingSteps?: string[];
   marks: number;
-  /** Optional deterministic geometry diagram -- see CompoundRectilinearDiagram's own docstring. Absent for every question outside this increment's new compound-shape family. */
+  /** Optional deterministic geometry diagram -- see CompoundRectilinearDiagram's own docstring. Absent for every question outside this increment's new compound-shape family. Mutually exclusive with `diagrams` in practice (a row sets exactly one), but both are typed independently rather than as a union so an absent key remains indistinguishable from "no diagram" for either shape. */
   diagram?: CompoundRectilinearDiagram;
+  /** Optional ordered list of diagrams for a single question that compares more than one shape (e.g. "Shape A ... Shape B ... which is larger?"). Same per-entry schema as `diagram`; array order is the canonical, meaningful order (first entry = the shape introduced first in the question) and must be preserved by any renderer. */
+  diagrams?: CompoundRectilinearDiagram[];
 }
 
 export interface SkillRecord {

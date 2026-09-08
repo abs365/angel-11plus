@@ -7,7 +7,7 @@ import { CheckCircle2, XCircle, ArrowRight, RotateCcw, Loader2 } from "lucide-re
 import PageLayout from "@/components/PageLayout";
 import { InfoCard } from "@/components/ui/Card";
 import { ProgressBar } from "@/components/ui/Progress";
-import { CompoundShapeDiagram } from "@/components/practice/CompoundShapeDiagram";
+import { CompoundShapeDiagramGroup } from "@/components/practice/CompoundShapeDiagram";
 import { getSupabaseClient } from "@/lib/supabase";
 import { ensureProfile } from "@/lib/supabaseProgress";
 import { withTimeout } from "@/lib/withTimeout";
@@ -1288,12 +1288,11 @@ function MathsActivity({
     <InfoCard className="mt-3">
       {/* Programme Increment 020, Part 11 -- the first Mathematics diagram
           anywhere in this codebase, rendered deterministically from real
-          coordinates on the question's own prompt, never a stock image. */}
-      {prompt.diagram && (
-        <div className="mb-3">
-          <CompoundShapeDiagram diagram={prompt.diagram} />
-        </div>
-      )}
+          coordinates on the question's own prompt, never a stock image.
+          Post-Activation Diagram Rendering Repair -- CompoundShapeDiagramGroup
+          also covers `prompt.diagrams` (plural), for comparison-style
+          questions publishing more than one shape; see its own docstring. */}
+      <CompoundShapeDiagramGroup diagram={prompt.diagram} diagrams={prompt.diagrams} />
       <p className="text-sm font-semibold text-gray-800 dark:text-gray-200">{prompt.question}</p>
 
       {/* Educational Increment 007L, Part 3E — Guided toggle, exact same

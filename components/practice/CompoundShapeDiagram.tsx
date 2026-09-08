@@ -100,3 +100,50 @@ export function CompoundShapeDiagram({ diagram }: { diagram: CompoundRectilinear
     </div>
   );
 }
+
+/**
+ * Post-Activation Diagram Rendering Repair — a question's prompt sets
+ * EITHER `diagram` (one shape) OR `diagrams` (an ordered array, for
+ * comparison-style questions such as "Shape A ... Shape B ... which is
+ * larger?"), never both. This wrapper is the single place that decision is
+ * made, so the Practice page itself doesn't need to duplicate it, and so
+ * the decision is independently testable via `renderToStaticMarkup`
+ * without needing to render the whole Practice page.
+ *
+ * `diagrams` reuses CompoundShapeDiagram per entry (same per-shape schema
+ * as `diagram`) rather than a second renderer. Array order is preserved
+ * exactly — it is the question's own canonical shape order, never
+ * re-sorted. Captions are generic ("Diagram N of M") rather than derived
+ * from the question's prose (e.g. "Shape A"), since nothing guarantees
+ * every future plural-diagram question follows that same convention.
+ */
+export function CompoundShapeDiagramGroup({
+  diagram,
+  diagrams,
+}: {
+  diagram?: CompoundRectilinearDiagram;
+  diagrams?: CompoundRectilinearDiagram[];
+}) {
+  if (diagram) {
+    return (
+      <div className="mb-3">
+        <CompoundShapeDiagram diagram={diagram} />
+      </div>
+    );
+  }
+  if (diagrams && diagrams.length > 0) {
+    return (
+      <div className="mb-3 grid grid-cols-1 sm:grid-cols-2 gap-3">
+        {diagrams.map((d, i) => (
+          <div key={i}>
+            <p className="text-center text-[11px] font-semibold text-gray-500 dark:text-gray-400 mb-1">
+              Diagram {i + 1} of {diagrams.length}
+            </p>
+            <CompoundShapeDiagram diagram={d} />
+          </div>
+        ))}
+      </div>
+    );
+  }
+  return null;
+}
