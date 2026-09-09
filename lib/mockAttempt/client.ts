@@ -8,6 +8,7 @@ import type {
   MockAttemptType,
   MockManifestGroupingEntry,
   MockQuestionPayload,
+  MockWritingAssessment,
   ResumableMockAttempt,
 } from "./types";
 
@@ -109,9 +110,14 @@ export async function submitMockAttempt(
  */
 export async function getActiveMockForm(
   supabase: SupabaseClient<Database>,
-  attemptType: MockAttemptType
+  attemptType: MockAttemptType,
+  subject?: "mathematics" | "english"
 ): Promise<MockClientResult<ActiveMockForm | null>> {
-  const { data, error } = await supabase.rpc("mock_get_active_form", { p_attempt_type: attemptType });
+  // Migration 245 — subject is optional and defaults to matching any
+  // subject (the RPC's own p_subject default), so every existing call
+  // site (both of app/mocks/page.tsx's own current calls) is completely
+  // unaffected until it is deliberately updated to pass a subject.
+  const { data, error } = await supabase.rpc("mock_get_active_form", { p_attempt_type: attemptType, p_subject: subject ?? null });
   if (error) return { data: null, error: error.message };
   const row = Array.isArray(data) ? data[0] : data;
   if (!row) return { data: null, error: null };
@@ -351,6 +357,102 @@ export async function getMockAttemptReport(
     },
     error: null,
   };
+}
+
+/**
+ * Migration 245 — the caller's own attempt's Writing assessment records,
+ * a direct RLS-gated `.from()` read (ali_writing_assessment_select_own,
+ * migration 245: read-your-own-or-admin), matching this file's own
+ * established "direct read for owned records, RPC only for writes"
+ * convention. Deliberately separate from getMockAttemptReport() — see
+ * MockWritingAssessment's own doc comment for why this is never folded
+ * into the report's own `overall`.
+ */
+interface AliWritingAssessmentRow {
+  question_id: string;
+  task_type: string;
+  rubric_version: number;
+  assessment_version: number;
+  response_text: string;
+  dimensions: MockWritingAssessment["dimensions"];
+  overall_indicator: number;
+  assessment_status: string;
+  review_required_reasons: string[] | null;
+  automated_model: string;
+  automated_assessed_at: string;
+  human_reviewed_at: string | null;
+  human_review_notes: string | null;
+  human_review_dimensions: MockWritingAssessment["dimensions"] | null;
+}
+
+export async function getMockWritingAssessments(
+  supabase: SupabaseClient<Database>,
+  attemptId: string
+): Promise<MockClientResult<MockWritingAssessment[]>> {
+  // Migration 245's ali_writing_assessment table is NOT YET APPLIED
+  // (prepared for Founder review, per this repository's standing
+  // convention) — types/supabase.ts is generated from the live schema
+  // and genuinely cannot type a table that does not exist there yet.
+  // This cast is an honest reflection of that fact, matching migration
+  // 244's own established pattern; remove once migration 245 is applied
+  // and types are regenerated.
+  const { data, error } = await (
+    supabase.from as unknown as (table: "ali_writing_assessment") => {
+      select: (columns: string) => { eq: (col: string, val: string) => Promise<{ data: AliWritingAssessmentRow[] | null; error: { message: string } | null }> };
+    }
+  )("ali_writing_assessment")
+    .select(
+      "question_id, task_type, rubric_version, assessment_version, response_text, dimensions, overall_indicator, assessment_status, review_required_reasons, automated_model, automated_assessed_at, human_reviewed_at, human_review_notes, human_review_dimensions"
+    )
+    .eq("attempt_id", attemptId);
+  if (error) return { data: null, error: error.message };
+  const rows = (data ?? []).map(
+    (r): MockWritingAssessment => ({
+      questionId: r.question_id,
+      taskType: r.task_type as "Q1" | "Q2",
+      rubricVersion: r.rubric_version,
+      assessmentVersion: r.assessment_version,
+      responseText: r.response_text,
+      dimensions: r.dimensions,
+      overallIndicator: r.overall_indicator,
+      assessmentStatus: r.assessment_status as "complete" | "review_required",
+      reviewRequiredReasons: r.review_required_reasons,
+      automatedModel: r.automated_model,
+      automatedAssessedAt: r.automated_assessed_at,
+      humanReviewedAt: r.human_reviewed_at,
+      humanReviewNotes: r.human_review_notes,
+      humanReviewDimensions: r.human_review_dimensions,
+    })
+  );
+  return { data: rows, error: null };
+}
+
+/**
+ * Migration 245 — admin-only (mock_review_writing_assessment()'s own
+ * gate). The human-review safety net's one write path: records a
+ * reviewer's own separate judgement alongside the untouched original
+ * automated assessment, never replacing it.
+ */
+export async function reviewMockWritingAssessment(
+  supabase: SupabaseClient<Database>,
+  attemptId: string,
+  questionId: string,
+  humanReviewDimensions: unknown,
+  humanReviewNotes: string
+): Promise<MockClientResult<true>> {
+  const { error } = await (
+    supabase.rpc as unknown as (
+      fn: "mock_review_writing_assessment",
+      args: Record<string, unknown>
+    ) => Promise<{ data: null; error: { message: string } | null }>
+  )("mock_review_writing_assessment", {
+    p_attempt_id: attemptId,
+    p_question_id: questionId,
+    p_human_review_dimensions: humanReviewDimensions,
+    p_human_review_notes: humanReviewNotes,
+  });
+  if (error) return { data: null, error: error.message };
+  return { data: true, error: null };
 }
 
 /**

@@ -11,6 +11,8 @@ import { getMockAttemptReport, getMockAttemptSummary } from "@/lib/mockAttempt/c
 import { isReadingScoringRecoveryEligible } from "@/lib/mockAttempt/workspace";
 import { requestReadingScoring, logReadingScoringRequestOutcome } from "@/lib/mockAttempt/readingScoringRequest";
 import { ingestMockEvidenceIntoEducationalIntelligence } from "@/lib/mockAttempt/evidenceIntegration";
+import { requestMockWritingAssessment, logWritingAssessmentRequestOutcome } from "@/lib/mockAttempt/writingAssessmentRequest";
+import { getMockWritingAssessments } from "@/lib/mockAttempt/client";
 import { ProgressBar, StatusIndicator } from "@/components/ui/Progress";
 import { ButtonLink } from "@/components/ui/Button";
 import {
@@ -29,7 +31,8 @@ import {
   practiceRouteFor,
   practiceActionLabelFor,
 } from "@/lib/mockAttempt/reportCopy";
-import type { MockAttemptReport, MockSkillEvidenceEntry } from "@/lib/mockAttempt/types";
+import { WRITING_DIMENSION_LABEL } from "@/lib/learningEngine/writingRubric";
+import type { MockAttemptReport, MockSkillEvidenceEntry, MockWritingAssessment } from "@/lib/mockAttempt/types";
 
 /**
  * Programme Increment 008F, Part 8 — the child-facing Mock report.
@@ -49,6 +52,7 @@ export default function MockReportPage() {
   const [phase, setPhase] = useState<Phase>("loading");
   const [report, setReport] = useState<MockAttemptReport | null>(null);
   const [errorMessage, setErrorMessage] = useState("");
+  const [writingAssessments, setWritingAssessments] = useState<MockWritingAssessment[]>([]);
   // Founder invocation-reliability repair, Part C — a plain ref, not
   // state: it must survive without triggering a re-render, and its only
   // job is "has this page instance already tried recovery once" — see the
@@ -78,6 +82,24 @@ export default function MockReportPage() {
         void ensureProfile().then((profileId) => {
           if (!cancelled && profileId) {
             void ingestMockEvidenceIntoEducationalIntelligence(supabase, profileId, params.attemptId).catch(() => {});
+          }
+        });
+        // Migration 245 — Mock-grade Continuous Writing assessment.
+        // Fire-and-forget, same discipline as the EI bridge call above:
+        // never blocks or delays the report already rendering, and the
+        // underlying RPC's own idempotency (mock_persist_writing_
+        // assessment, gated on question_outcomes status) makes a repeat
+        // call on every future view of this same report a safe no-op.
+        // Only relevant for an attempt whose form actually contains a
+        // Writing question — every existing form (Mathematics, Reading
+        // Comprehension) has none, so the API route itself resolves
+        // instantly with an empty result for them, never an error.
+        void requestMockWritingAssessment(supabase, params.attemptId).then((outcome) => {
+          logWritingAssessmentRequestOutcome(outcome);
+          if (!cancelled) {
+            void getMockWritingAssessments(supabase, params.attemptId).then((result) => {
+              if (!cancelled && result.data) setWritingAssessments(result.data);
+            });
           }
         });
         return;
@@ -162,6 +184,8 @@ export default function MockReportPage() {
                 <p className="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">{ANALYSIS_PENDING_NOTE}</p>
               </InfoCard>
             )}
+
+            {writingAssessments.length > 0 && <WritingAssessmentSection assessments={writingAssessments} />}
 
             <Link href="/learning-intelligence" className="inline-block text-xs font-semibold text-blue-600 dark:text-blue-400">
               Back to dashboard
@@ -312,5 +336,52 @@ function MockAnalysisSections({ report }: { report: MockAttemptReport }) {
         </InfoCard>
       )}
     </>
+  );
+}
+
+/**
+ * Migration 245 — Continuous Writing, reported separately from every
+ * Comprehension/Mathematics figure above, deliberately never combined
+ * into one score (see migration 245's own header: no current official
+ * CSSE source confirms a Comprehension/Writing mark split, so Angel must
+ * not invent one). `review_required` is shown honestly as still-pending
+ * human review, never silently upgraded to look like a normal result.
+ */
+function WritingAssessmentSection({ assessments }: { assessments: MockWritingAssessment[] }) {
+  return (
+    <InfoCard className="border-purple-200 dark:border-purple-900">
+      <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">Continuous Writing</p>
+      <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 leading-relaxed">
+        Assessed separately from your Comprehension/Mathematics marks above — Angel does not currently have a confirmed official CSSE mark split
+        between components, so these are reported on their own rather than combined into one figure.
+      </p>
+      <div className="mt-3 space-y-3">
+        {assessments.map((assessment) => (
+          <div key={assessment.questionId} className="border border-gray-100 dark:border-gray-800 rounded-lg p-3">
+            {assessment.assessmentStatus === "review_required" ? (
+              <>
+                <StatusIndicator tone="warning" label="Review required" />
+                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1.5 leading-relaxed">
+                  Angel could not confidently assess this response automatically
+                  {assessment.reviewRequiredReasons && assessment.reviewRequiredReasons.length > 0
+                    ? `: ${assessment.reviewRequiredReasons.join("; ")}.`
+                    : "."}{" "}
+                  This will be shown once reviewed.
+                </p>
+              </>
+            ) : (
+              <div className="space-y-1.5">
+                {(assessment.humanReviewDimensions ?? assessment.dimensions).map((d) => (
+                  <div key={d.dimension} className="flex items-start justify-between gap-2">
+                    <span className="text-xs font-medium text-gray-700 dark:text-gray-300">{WRITING_DIMENSION_LABEL[d.dimension]}</span>
+                    <StatusIndicator tone={d.level === "strong" ? "success" : d.level === "secure" ? "info" : "warning"} label={d.level} />
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+    </InfoCard>
   );
 }

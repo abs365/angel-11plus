@@ -58,7 +58,29 @@ export interface MockTableStimulus {
   rows: string[][];
 }
 
-export type MockStimulus = MockTableStimulus;
+/**
+ * Migration 245 — the "future stimulus kind" MockTableStimulus's own
+ * comment above anticipated, added without redesigning MockStimulus or
+ * any code that already switches on `type`. Governs the CSSE-evidenced
+ * Q2 (picture-narrative) Continuous Writing task: `imageAssetUrl` is
+ * deliberately optional and `null` for every task authored so far — no
+ * original/licensed image asset has been sourced or generated in this
+ * increment (a genuine, disclosed capability gap, not an oversight; see
+ * lib/ali/questionFactory/englishQ2PictureNarrativeFamily.ts's own
+ * header). A task with `imageAssetUrl: null` must never be marked
+ * practice_eligible or mock_eligible — there is nothing for a learner to
+ * actually look at. `altText` is required regardless (accessibility,
+ * and so the task specification is reviewable even before an image
+ * exists).
+ */
+export interface MockImageStimulus {
+  type: "image";
+  imageAssetUrl: string | null;
+  altText: string;
+  caption?: string;
+}
+
+export type MockStimulus = MockTableStimulus | MockImageStimulus;
 
 /**
  * The exact, hand-picked field set mock_get_question() (migration 070,
@@ -340,6 +362,35 @@ export interface MockAttemptReport {
   timingEvidence: MockTimingEvidence | null;
   practiceComparison: unknown | null;
   parentExplanation: string | null;
+}
+
+/**
+ * Migration 245 — one ali_writing_assessment row, the shape a report
+ * surface reads. Deliberately NOT part of MockAttemptReport/MockOverallResult
+ * itself (that type mirrors ali_mock_attempt_report's own columns exactly,
+ * migration 072's own established convention) — Writing assessment lives
+ * in its own table and is fetched separately (lib/mockAttempt/client.ts's
+ * getMockWritingAssessments()), specifically so it is never accidentally
+ * pooled into `overall.rawMarksAchieved`/`rawMarksAvailable` (see
+ * migration 245's own header: no legitimate current CSSE source confirms
+ * a Comprehension/Writing mark split, so Angel must not invent one).
+ */
+export interface MockWritingAssessment {
+  questionId: string;
+  taskType: "Q1" | "Q2";
+  rubricVersion: number;
+  assessmentVersion: number;
+  responseText: string;
+  dimensions: import("@/types/writing-feedback").WritingDimensionFeedback[];
+  overallIndicator: number;
+  assessmentStatus: "complete" | "review_required";
+  reviewRequiredReasons: string[] | null;
+  automatedModel: string;
+  automatedAssessedAt: string;
+  humanReviewedAt: string | null;
+  humanReviewNotes: string | null;
+  /** Present only once a reviewer has acted — the ORIGINAL `dimensions` above is never overwritten, this is a separate, additive judgement. */
+  humanReviewDimensions: import("@/types/writing-feedback").WritingDimensionFeedback[] | null;
 }
 
 /**

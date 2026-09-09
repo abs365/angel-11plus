@@ -11,7 +11,7 @@
  * page component."
  */
 
-import type { MockAttemptStatus, MockAttemptType, MockManifestGroupingEntry, MockQuestionPayload, MockStimulus, MockTableStimulus, ResumableMockAttempt } from "./types";
+import type { MockAttemptStatus, MockAttemptType, MockManifestGroupingEntry, MockQuestionPayload, MockTableStimulus, ResumableMockAttempt } from "./types";
 
 /**
  * Programme Completion Increment 016 — the one, exact, already-activated
@@ -292,8 +292,15 @@ export function isValidTableStimulus(value: unknown): value is MockTableStimulus
  * of payloads, coupled to nothing but "the first valid stimulus present
  * in this unit," never to a family id or name.
  */
-export function selectDisplayUnitStimulus(payloads: readonly MockQuestionPayload[]): MockStimulus | null {
+export function selectDisplayUnitStimulus(payloads: readonly MockQuestionPayload[]): MockTableStimulus | null {
   for (const payload of payloads) {
+    // Migration 245 widened MockStimulus to include MockImageStimulus.
+    // isValidTableStimulus() already narrows to MockTableStimulus at
+    // runtime (unchanged) -- this function's own return type now matches
+    // that real narrowing exactly, rather than the wider MockStimulus
+    // union DataTableStimulus (a table-only renderer) was never meant to
+    // receive. Zero behavioural change: this function has never returned
+    // anything but a valid table stimulus.
     if (isValidTableStimulus(payload.stimulus)) return payload.stimulus;
   }
   return null;
