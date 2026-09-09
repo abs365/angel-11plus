@@ -92,10 +92,10 @@ test("the report page never sets phase to \"ready\" without report_release_state
   assert.match(reportPageSource, /setPhase\("not-available"\)/);
 });
 
-test("the report page's release gate is unmodified in substance -- Founder invocation-reliability repair (Increment 016, Part C) restructured the single-line gate into an equivalent multi-line if/return to make room for a bounded recovery attempt, but only \"released\" ever reaches \"ready\"", () => {
+test("the report page's release gate is unmodified in substance -- Founder invocation-reliability repair (Increment 016, Part C) restructured the single-line gate into an equivalent multi-line if/return to make room for a bounded recovery attempt, and migration 244 (Mock Evidence Bridge) added a fire-and-forget ingestion call inside the same branch, but only \"released\" ever reaches \"ready\"", () => {
   assert.match(
     reportPageSource,
-    /if \(result\.data && result\.data\.reportReleaseState === "released"\) \{\s*\n\s*setReport\(result\.data\);\s*\n\s*setPhase\("ready"\);\s*\n\s*return;\s*\n\s*\}\s*\n\s*setPhase\("not-available"\);/
+    /if \(result\.data && result\.data\.reportReleaseState === "released"\) \{\s*\n\s*setReport\(result\.data\);\s*\n\s*setPhase\("ready"\);\s*\n[\s\S]*?\n\s*return;\s*\n\s*\}\s*\n\s*setPhase\("not-available"\);/
   );
 });
 

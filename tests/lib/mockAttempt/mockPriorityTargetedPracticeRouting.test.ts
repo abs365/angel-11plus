@@ -156,10 +156,12 @@ test("the report page's own release/security gate is untouched by this decision 
   // multi-line if/return so a bounded recovery attempt could be inserted
   // after it -- the release/security condition itself (only "released"
   // ever reaches "ready", every other case reaches "not-available") is
-  // unchanged; this assertion moves with that restructuring.
+  // unchanged; this assertion moves with that restructuring. Migration
+  // 244 (Mock Evidence Bridge) added a fire-and-forget ingestion call
+  // inside the same released branch, before its own `return;`.
   assert.match(
     MOCK_REPORT_PAGE,
-    /if \(result\.data && result\.data\.reportReleaseState === "released"\) \{\s*\n\s*setReport\(result\.data\);\s*\n\s*setPhase\("ready"\);\s*\n\s*return;\s*\n\s*\}\s*\n\s*setPhase\("not-available"\);/
+    /if \(result\.data && result\.data\.reportReleaseState === "released"\) \{\s*\n\s*setReport\(result\.data\);\s*\n\s*setPhase\("ready"\);\s*\n[\s\S]*?\n\s*return;\s*\n\s*\}\s*\n\s*setPhase\("not-available"\);/
   );
 });
 

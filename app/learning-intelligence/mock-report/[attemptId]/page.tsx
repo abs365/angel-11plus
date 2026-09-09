@@ -6,9 +6,11 @@ import Link from "next/link";
 import PageLayout from "@/components/PageLayout";
 import { InfoCard } from "@/components/ui/Card";
 import { getSupabaseClient } from "@/lib/supabase";
+import { ensureProfile } from "@/lib/supabaseProgress";
 import { getMockAttemptReport, getMockAttemptSummary } from "@/lib/mockAttempt/client";
 import { isReadingScoringRecoveryEligible } from "@/lib/mockAttempt/workspace";
 import { requestReadingScoring, logReadingScoringRequestOutcome } from "@/lib/mockAttempt/readingScoringRequest";
+import { ingestMockEvidenceIntoEducationalIntelligence } from "@/lib/mockAttempt/evidenceIntegration";
 import { ProgressBar, StatusIndicator } from "@/components/ui/Progress";
 import { ButtonLink } from "@/components/ui/Button";
 import {
@@ -65,6 +67,19 @@ export default function MockReportPage() {
       if (result.data && result.data.reportReleaseState === "released") {
         setReport(result.data);
         setPhase("ready");
+        // Migration 244 — Mock -> Educational Intelligence Evidence
+        // Bridge. Fire-and-forget: never blocks or delays rendering the
+        // report itself (already fetched above), and the bridge's own
+        // idempotency claim (mock_claim_evidence_ingestion) makes a
+        // repeat call on every future view of this same report a safe
+        // no-op. Failure here must never surface as a report-loading
+        // error — this is a background evidence-forwarding step, not
+        // part of the report the learner is looking at.
+        void ensureProfile().then((profileId) => {
+          if (!cancelled && profileId) {
+            void ingestMockEvidenceIntoEducationalIntelligence(supabase, profileId, params.attemptId).catch(() => {});
+          }
+        });
         return;
       }
       setPhase("not-available");

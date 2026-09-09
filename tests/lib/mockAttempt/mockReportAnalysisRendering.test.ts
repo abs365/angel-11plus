@@ -159,9 +159,12 @@ test("the report page still gates 'ready' strictly on reportReleaseState === rel
   // 016, Part C) restructured this single-line gate into an equivalent
   // multi-line if/return to make room for a bounded recovery attempt
   // after it -- the release/security condition itself is unchanged.
+  // Migration 244 (Mock Evidence Bridge) added a fire-and-forget
+  // ingestion call inside the same released branch, before its own
+  // `return;` -- still only "released" ever reaches "ready".
   assert.match(
     PAGE,
-    /if \(result\.data && result\.data\.reportReleaseState === "released"\) \{\s*\n\s*setReport\(result\.data\);\s*\n\s*setPhase\("ready"\);\s*\n\s*return;\s*\n\s*\}\s*\n\s*setPhase\("not-available"\);/
+    /if \(result\.data && result\.data\.reportReleaseState === "released"\) \{\s*\n\s*setReport\(result\.data\);\s*\n\s*setPhase\("ready"\);\s*\n[\s\S]*?\n\s*return;\s*\n\s*\}\s*\n\s*setPhase\("not-available"\);/
   );
 });
 

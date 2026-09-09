@@ -182,7 +182,24 @@ export type MockReportReleaseState = "pending" | "released";
  * not log protected answer material unnecessarily" instruction, applied
  * even to a sealed-until-released row.
  */
-export type MockQuestionOutcomeStatus = "correct" | "incorrect" | "unanswered" | "requires_manual_marking";
+/**
+ * Migration 244 (Mock -> Educational Intelligence Evidence Bridge)
+ * correction: `"partially_correct"` was missing from this union even
+ * though it has been a real, live status value written by
+ * `mock_apply_manual_mark()` (migration 227) since that migration
+ * applied -- `v_new_status := 'partially_correct'` when
+ * `0 < marks_awarded < marks_available`. This was a genuine type/schema
+ * drift (this file documents itself as mirroring the migrations
+ * exactly), not a deliberate omission. Adding the literal here changes
+ * no runtime behaviour anywhere: `lib/mockAttempt/evidenceAdapter.ts`'s
+ * `classifyMockEvidence()` already excludes any status other than
+ * `"correct"`/`"incorrect"` via a strict `!==` check, so a
+ * `"partially_correct"` outcome was already being safely skipped at
+ * runtime — this only makes that existing, correct behaviour visible and
+ * type-safe to new code (see lib/mockAttempt/evidenceIntegration.ts)
+ * rather than silently relying on the union being incomplete.
+ */
+export type MockQuestionOutcomeStatus = "correct" | "incorrect" | "unanswered" | "requires_manual_marking" | "partially_correct";
 
 export interface MockQuestionOutcome {
   questionId: string;
