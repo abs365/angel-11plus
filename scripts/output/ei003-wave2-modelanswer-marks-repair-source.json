@@ -1,0 +1,162 @@
+[
+  {
+    "id": "ei003-w2-seq-explicit-01",
+    "modelAnswer": "b, a, c"
+  },
+  {
+    "id": "ei003-w2-seq-explicit-02",
+    "modelAnswer": "pulling its red blood cells into its liver happens first"
+  },
+  {
+    "id": "ei003-w2-seq-dispersed-01",
+    "modelAnswer": "the sixth house"
+  },
+  {
+    "id": "ei003-w2-seq-dispersed-02",
+    "modelAnswer": "c, a, b"
+  },
+  {
+    "id": "ei003-w2-seq-causal-01",
+    "modelAnswer": "nadia lost time/had to make up the lost half-second"
+  },
+  {
+    "id": "ei003-w2-seq-causal-02",
+    "modelAnswer": "she sank almost to her knee"
+  },
+  {
+    "id": "ei003-w2-seq-narrative-order-01",
+    "modelAnswer": "looking back as an adult remembering childhood -- phrases like 'i still remember' and 'i think about that clock now' show this is being told from much later"
+  },
+  {
+    "id": "ei003-w2-seq-narrative-order-02",
+    "modelAnswer": "b, d, c, a"
+  },
+  {
+    "id": "ei003-w2-comp-reactions-01",
+    "modelAnswer": "nadia reflects and reaches out to talk to marcus, while marcus withdraws and avoids talking"
+  },
+  {
+    "id": "ei003-w2-comp-reactions-02",
+    "modelAnswer": "mrs aldridge treats it as an ordinary delivery (just leaves a note about the milk), while mr whitfield treats it as significant, waiting at the gate and reflecting on the thirty-one years"
+  },
+  {
+    "id": "ei003-w2-comp-time-01",
+    "modelAnswer": "at the start he is calm and businesslike, but at the final house he pauses and seems affected, sitting quietly before starting the engine"
+  },
+  {
+    "id": "ei003-w2-comp-time-02",
+    "modelAnswer": "at the start the narrator expected it to be quick and easy, but by august the narrator felt they had failed"
+  },
+  {
+    "id": "ei003-w2-comp-settings-01",
+    "modelAnswer": "at the start it is misty and the path looks safe, but by midday the mist has cleared and the true difficulty of the ground is revealed"
+  },
+  {
+    "id": "ei003-w2-comp-settings-02",
+    "modelAnswer": "one runs fresh from an underground spring, the other is brackish enough to kill any plant that roots there"
+  },
+  {
+    "id": "ei003-w2-comp-simdiff-01",
+    "modelAnswer": "similarity: both take some responsibility for the mistake; difference: priya says it was fully her fault, while nadia says it wasn't just priya's fault"
+  },
+  {
+    "id": "ei003-w2-comp-simdiff-02",
+    "modelAnswer": "similarity: both keep working on the clock steadily every sunday morning all summer; difference: by august the narrator feels they have failed, while the grandmother shows no sign of sharing that discouragement"
+  },
+  {
+    "id": "ei003-w2-emotion-action-01",
+    "modelAnswer": "nervous"
+  },
+  {
+    "id": "ei003-w2-emotion-action-02",
+    "modelAnswer": "moved/emotional"
+  },
+  {
+    "id": "ei003-w2-emotion-dialogue-01",
+    "modelAnswer": "he feels the ending marks the loss of something that spanned generations, a sense of sentimental attachment"
+  },
+  {
+    "id": "ei003-w2-emotion-dialogue-02",
+    "modelAnswer": "he doesn't want to talk about it, suggesting he feels disappointed or upset"
+  },
+  {
+    "id": "ei003-w2-emotion-arc-01",
+    "modelAnswer": "starts confident it will be quick, becomes discouraged and feels it has failed by august, then feels sudden excitement when it finally starts"
+  },
+  {
+    "id": "ei003-w2-emotion-arc-02",
+    "modelAnswer": "starts wary because of the guide's warning, becomes more alert and cautious after priti sinks into the mud, and ends relieved to reach solid ground just before the tide returns"
+  },
+  {
+    "id": "ei003-w2-emotion-conflict-01",
+    "modelAnswer": "no -- her later careful, testing steps show she was actually more shaken/cautious than the laugh suggested"
+  },
+  {
+    "id": "ei003-w2-emotion-conflict-02",
+    "modelAnswer": "no -- the narrator says he was never sure she really felt that certain, showing her calm outward manner doesn't necessarily match how she truly felt"
+  },
+  {
+    "id": "ei003-w2-atm-single-01",
+    "modelAnswer": "a faded, quiet, gentle mood"
+  },
+  {
+    "id": "ei003-w2-atm-single-02",
+    "modelAnswer": "a dull, muted, quiet morning atmosphere"
+  },
+  {
+    "id": "ei003-w2-atm-accum-01",
+    "modelAnswer": "a sense of long abandonment -- a space frozen in time, untouched for years"
+  },
+  {
+    "id": "ei003-w2-atm-accum-02",
+    "modelAnswer": "a patient, careful, unhurried atmosphere of shared, old-fashioned attention"
+  },
+  {
+    "id": "ei003-w2-atm-change-01",
+    "modelAnswer": "it goes from misty, uncertain and hidden to fully open, revealed and clear"
+  },
+  {
+    "id": "ei003-w2-atm-change-02",
+    "modelAnswer": "it moves from routine and unremarkable to quiet and significant"
+  },
+  {
+    "id": "ei003-w2-atm-contrast-01",
+    "modelAnswer": "despite the real danger, onyema remains calm and confident, reading the ground without needing a map or compass"
+  },
+  {
+    "id": "ei003-w2-atm-contrast-02",
+    "modelAnswer": "the loud, public excitement of the race contrasts with her quiet, private unease at home later that evening"
+  },
+  {
+    "id": "ei003-w2-wc-meaning-01",
+    "modelAnswer": "experienced, aged or toughened by years outdoors"
+  },
+  {
+    "id": "ei003-w2-wc-meaning-02",
+    "modelAnswer": "that the mannequin's human-like appearance is unsettling or unexpected"
+  },
+  {
+    "id": "ei003-w2-wc-subst-01",
+    "modelAnswer": "'pressed' suggests firm, deliberate, close contact, more focused and intense than the plain word 'put'"
+  },
+  {
+    "id": "ei003-w2-wc-subst-02",
+    "modelAnswer": "'waiting' suggests he was there on purpose, anticipating something, unlike the neutral word 'standing'"
+  },
+  {
+    "id": "ei003-w2-wc-conn-01",
+    "modelAnswer": "it suggests the work was interrupted suddenly and never finished or resumed"
+  },
+  {
+    "id": "ei003-w2-wc-conn-02",
+    "modelAnswer": "it suggests the mud seems to be acting on purpose, almost like it has its own intention, emphasising how difficult it is"
+  },
+  {
+    "id": "ei003-w2-wc-toatmosphere-01",
+    "modelAnswer": "the repeated words of wear and decay build a consistent, cumulative atmosphere of age and neglect across the whole room, not just one object"
+  },
+  {
+    "id": "ei003-w2-wc-toatmosphere-02",
+    "modelAnswer": "the repeated stillness/quietness in these word choices builds a reflective, subdued impression of him at the end, contrasting with his earlier brisk manner"
+  }
+]
