@@ -168,6 +168,34 @@ const INTRO_SUBTITLE_BY_ATTEMPT_TYPE: Record<MockAttemptType, string> = {
   diagnostic_mock: "A timed, sealed assessment. You will not see whether an answer is correct until your report is ready.",
 };
 
+/**
+ * CSSE Two-Paper Mock, final production acceptance — the fallback maps
+ * above are keyed only by attemptType, a genuine gap now that two
+ * subject-pure forms (Mathematics, English) share attemptType="full_mock".
+ * english-full-mock-v1's own composition_provenance has no displayName
+ * key set (confirmed live), so the fallback was the ONLY name ever shown
+ * to a learner beginning the English paper — and it silently fell
+ * through to "Mathematics Mock 1" / "A timed, sealed Mathematics
+ * sitting." A real, confirmed, live P1 defect (mislabels which paper the
+ * learner is about to take, exactly the terminology-accuracy concern
+ * this whole arc exists to close), found during the real-learner
+ * production acceptance walkthrough and fixed here, additively: subject
+ * is consulted first, the existing attemptType-keyed maps remain the
+ * fallback for every other case (Mathematics, Reading, diagnostic),
+ * completely unchanged.
+ */
+function fallbackMockDisplayName(attemptType: MockAttemptType, subject: "mathematics" | "english" | undefined): string {
+  if (attemptType === "full_mock" && subject === "english") return "Full English Paper";
+  return MOCK_DISPLAY_NAME_FALLBACK_BY_ATTEMPT_TYPE[attemptType];
+}
+
+function introSubtitleFor(attemptType: MockAttemptType, subject: "mathematics" | "english" | undefined): string {
+  if (attemptType === "full_mock" && subject === "english") {
+    return "A timed, sealed English sitting (Reading Comprehension and Continuous Writing). You will not see whether an answer is correct until your report is ready.";
+  }
+  return INTRO_SUBTITLE_BY_ATTEMPT_TYPE[attemptType];
+}
+
 type Phase =
   | "intro"
   | "checking"
@@ -240,7 +268,7 @@ export default function MockExamPage({
   // Increment 016 — the fallback (used only until the active form's own
   // displayName loads) is now keyed by the resolved attemptType, since
   // this page can serve more than one Mock family.
-  const [mockDisplayName, setMockDisplayName] = useState(MOCK_DISPLAY_NAME_FALLBACK_BY_ATTEMPT_TYPE[attemptType]);
+  const [mockDisplayName, setMockDisplayName] = useState(fallbackMockDisplayName(attemptType, subject));
 
   const supabaseRef = useRef<ReturnType<typeof getSupabaseClient>>(null);
   const submittedRef = useRef(false);
@@ -656,7 +684,7 @@ export default function MockExamPage({
                 214), not a hardcoded literal. */}
             <h1 className="text-gray-900 dark:text-gray-100 font-bold text-2xl">{mockDisplayName}</h1>
             <p className="text-gray-400 dark:text-gray-500 text-sm mt-1">
-              {INTRO_SUBTITLE_BY_ATTEMPT_TYPE[attemptType]}
+              {introSubtitleFor(attemptType, subject)}
             </p>
             {/* Programme Increment 019, Part 6 — Mock Access Policy. Never
                 a claim that the learner "is Mock ready" (this increment's
