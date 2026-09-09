@@ -239,6 +239,21 @@ export default function MockExamPage({
   // truthful presentation, not a replacement for it.
   const [phase, setPhase] = useState<Phase>("checking");
   const [errorMessage, setErrorMessage] = useState("");
+  // CSSE Two-Paper Mock, final production acceptance — a real, live P1
+  // defect found during the real-learner walkthrough: mock_submit_answer()
+  // (migration 245) correctly refuses an answer during a form's own
+  // reading phase (the first english-full-mock-v1 sitting to ever
+  // exercise this guard, since no earlier form ever set reading_phase_
+  // minutes), but this page had no awareness the guard could ever fire —
+  // handleAnswerAndAdvance() treated the refusal as any other fatal
+  // error, routing the learner into the generic "We couldn't continue
+  // this assessment" screen (Start over / Back to dashboard only) the
+  // moment they tried to answer during their own reading time. Fixed
+  // non-destructively: this specific, named server refusal is now
+  // recognised and shown as a calm, accurate, non-fatal inline notice —
+  // the learner stays on their current question, their draft is kept,
+  // and they can simply try again once their reading time has passed.
+  const [readingPhaseNotice, setReadingPhaseNotice] = useState<string | null>(null);
   const [attemptId, setAttemptId] = useState<string | null>(null);
   const [expiresAt, setExpiresAt] = useState<string | null>(null);
   const [remainingSeconds, setRemainingSeconds] = useState<number | null>(null);
@@ -609,6 +624,7 @@ export default function MockExamPage({
     const supabase = supabaseRef.current;
     const currentUnit = units[currentUnitIndex];
     if (!supabase || !attemptId || !currentUnit) return;
+    setReadingPhaseNotice(null);
 
     const results = await Promise.all(
       currentUnit.questionIds.map((id, index) => {
@@ -618,7 +634,19 @@ export default function MockExamPage({
       })
     );
     const failed = results.find((result) => result && result.error);
-    if (failed) { setErrorMessage(failed.error as string); setPhase("error"); return; }
+    if (failed) {
+      // The one named, expected refusal mock_submit_answer() (migration
+      // 245) can raise for a genuinely in-progress attempt — matched on
+      // its own exact, stable phrasing, never a generic string. Every
+      // other failure keeps the existing, unchanged fatal-error path.
+      if (typeof failed.error === "string" && failed.error.includes("is still in its reading phase")) {
+        setReadingPhaseNotice("This paper has a reading time at the start. You can keep reading, but answers can't be entered until your reading time ends — try again in a few minutes.");
+        return;
+      }
+      setErrorMessage(failed.error as string);
+      setPhase("error");
+      return;
+    }
 
     const newlyAnswered = currentUnit.questionIds.filter((_, index) => (answerDrafts[index] ?? "").trim());
     if (newlyAnswered.length > 0) {
@@ -780,6 +808,12 @@ export default function MockExamPage({
                     </p>
                     <ExamTimer remainingSeconds={remainingSeconds ?? 0} />
                   </div>
+
+                  {readingPhaseNotice && (
+                    <div className="bg-amber-50 dark:bg-amber-950 border border-amber-100 dark:border-amber-900 rounded-xl px-4 py-3 mb-3">
+                      <p className="text-xs text-amber-700 dark:text-amber-300 leading-relaxed">{readingPhaseNotice}</p>
+                    </div>
+                  )}
 
                   <InfoCard>
                     {questionLoading || currentPayloads.length === 0 ? (
