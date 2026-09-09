@@ -27,6 +27,19 @@ export const ENGLISH_FAMILY_EXAM_STRATEGY: Record<string, string> = {
   // ENGLISH_WAVE2_TEACHING_CARDS_V1.md.
   "wave2-fam-multiselect":
     "Check off each option against the passage one at a time. Only tick exactly the number you're asked for: ticking extra loses all the marks for that question, even if some of your ticks were right.",
+  // Educational Increment 003, Wave 2 -- these 5 families had ZERO
+  // exam-strategy or worked-example coverage before this wave (confirmed
+  // live this session).
+  "wave3-fam-rc06-sequencing":
+    "Look for time-order clues (numbers, 'first'/'then'/'by the end') scattered through the passage, not just one tidy list -- the order you need might be spread across several paragraphs.",
+  "wave3-fam-rc07-comparative":
+    "Find the evidence for each side separately first, then put them side by side. Don't guess a difference before you've actually located both pieces of evidence.",
+  "wave3-fam-rc08-emotion":
+    "The feeling is never named outright in these questions -- look at what the character DOES or SAYS, not for an emotion word already sitting in the text.",
+  "wave3-fam-rc10-atmosphere-mood":
+    "Notice which senses the description uses (sight, sound, touch) and whether several small details all point the same way -- one detail alone is rarely the whole answer.",
+  "wave3-fam-rc10-word-choice":
+    "Ask why THIS word and not an ordinary one that means almost the same thing. The gap between the two tells you what the writer wanted you to notice.",
 };
 
 export function getExamStrategyHint(familyId?: string | null): string | undefined {
@@ -120,6 +133,89 @@ export const ENGLISH_FAMILY_WORKED_EXAMPLE: Partial<Record<string, WorkedExample
     ],
     weakAnswerLooksLike: "Copying a whole sentence or paragraph around the answer, including details the question didn't ask for, or restating the question instead of the actual evidence.",
     whatImprovesIt: "Answering with only the specific fact asked for, taken directly from the passage, in a form that directly answers the question (a time, a name, a number, a single detail) rather than a longer quotation.",
+  },
+  // Educational Increment 003, Wave 2 -- these 5 families had ZERO
+  // ENGLISH_FAMILY_WORKED_EXAMPLE coverage before this wave (confirmed
+  // live: 1/2/2/6/12 rows respectively, none with any worked example).
+  // All five use the SAME Founder-specified inference model -- What does
+  // the text SAY? -> What evidence matters? -> What does that evidence
+  // SUGGEST? -> Which interpretation fits BEST? -> How can I justify it?
+  // -- tailored per family's own real reasoning demand. Every scenario
+  // below is safe and separate from all 40 real Wave 2 candidates.
+  "wave3-fam-rc06-sequencing": {
+    scenario:
+      "Imagine a passage: 'Maya had wanted a vegetable patch for years. In March, she finally dug over a corner of the garden. The seedlings she'd started on the windowsill back in January went in during April, once the frost risk had passed.'",
+    modelReasoning:
+      "Time-order words and dates are often scattered through a passage, not given as a tidy list -- collect every time marker first, then work out the real order, rather than trusting the order things are mentioned in.",
+    fiveStepModel: [
+      "What does the text SAY? Three months are named: January (seedlings started), March (patch dug), April (seedlings planted out).",
+      "What evidence matters? The dates themselves, not the order the sentences appear in -- January is mentioned in the middle of the passage, not first.",
+      "What does that evidence SUGGEST? The real order is January, then March, then April -- different from the order the sentences are written in.",
+      "Which interpretation fits BEST? Starting seedlings (January) must come before digging the patch (March) and before planting out (April), since a seedling needs to exist before it can be planted.",
+      "How can I justify it? Point to the actual month named for each event, not to where each sentence sits in the paragraph.",
+    ],
+    weakAnswerLooksLike: "Assuming events happened in the order the sentences are written, without checking the actual time markers given for each one.",
+    whatImprovesIt: "Collecting every date/time clue first, then building the real order from those clues alone, independent of sentence order.",
+  },
+  "wave3-fam-rc07-comparative": {
+    scenario:
+      "Imagine a passage: 'When the fire alarm rang, Leo grabbed his bag and walked calmly to the door. Amara froze for a second before following, glancing back twice at her desk on the way out.'",
+    modelReasoning:
+      "Find the evidence for each person separately first -- write down what each one actually does -- before trying to say what the difference between them is.",
+    fiveStepModel: [
+      "What does the text SAY? Leo grabs his bag and walks calmly. Amara freezes, then follows, glancing back twice.",
+      "What evidence matters? Leo's word 'calmly' and single smooth action; Amara's 'froze', plus the repeated glancing back.",
+      "What does that evidence SUGGEST? Leo reacts with composure; Amara reacts with hesitation and lingering worry about what she's leaving behind.",
+      "Which interpretation fits BEST? Leo is unbothered/practical, Amara is more anxious/reluctant to leave -- both readings are directly supported, not guessed.",
+      "How can I justify it? Quote 'calmly' for Leo and 'froze... glancing back twice' for Amara -- two separate pieces of evidence, one for each person.",
+    ],
+    weakAnswerLooksLike: "Describing only one character in detail and guessing vaguely at the other, instead of finding real evidence for both sides of the comparison.",
+    whatImprovesIt: "Locating specific evidence for EACH person or moment being compared, then stating the difference using both pieces of evidence, not just one.",
+  },
+  "wave3-fam-rc08-emotion": {
+    scenario:
+      "Imagine a passage: 'Ben's hand hovered over the phone three times before he finally pressed call. When it started ringing, he stood up, sat back down, then stood again.'",
+    modelReasoning:
+      "No feeling word appears anywhere in this description -- the emotion has to be built entirely from what the character physically does, not read off the page directly.",
+    fiveStepModel: [
+      "What does the text SAY? Ben hesitates over the phone three times, then after calling, stands up and sits down repeatedly.",
+      "What evidence matters? The repeated hesitation before calling, and the restless standing/sitting once it starts ringing.",
+      "What does that evidence SUGGEST? Repeated hesitation and restless movement are both physical signs of nervousness, not calm or excitement.",
+      "Which interpretation fits BEST? Ben is anxious or nervous about this phone call specifically -- not simply busy or bored, which wouldn't explain the hesitation.",
+      "How can I justify it? Point to the specific actions -- hovering three times, standing and sitting repeatedly -- as the evidence, since no emotion word is stated.",
+    ],
+    weakAnswerLooksLike: "Searching the passage for a feeling word that isn't there, or guessing an emotion with no specific action or dialogue pointed to as evidence.",
+    whatImprovesIt: "Naming the emotion AND pointing to the specific behaviour that justifies it, since the text itself never states the feeling directly.",
+  },
+  "wave3-fam-rc10-atmosphere-mood": {
+    scenario:
+      "Imagine a passage: 'The corridor smelled of old paint. Somewhere a tap dripped, steady and slow. Every few steps, a floorboard gave a small, tired creak, and the single bulb overhead flickered without ever quite going out.'",
+    modelReasoning:
+      "No single detail proves the mood on its own -- look for several small details that all point in the same direction before deciding what atmosphere they create together.",
+    fiveStepModel: [
+      "What does the text SAY? Old paint smell, a dripping tap, creaking floorboards, a flickering bulb.",
+      "What evidence matters? All four details together, not just one -- each is small, but they repeat and accumulate across the description.",
+      "What does that evidence SUGGEST? Decay, neglect, and slight unease -- nothing here suggests warmth, brightness, or comfort.",
+      "Which interpretation fits BEST? An eerie, run-down atmosphere, built from several small sensory details rather than one dramatic image.",
+      "How can I justify it? List more than one supporting detail (the smell, the drip, the creak, the flicker) -- a single quote wouldn't be enough evidence on its own for this kind of question.",
+    ],
+    weakAnswerLooksLike: "Quoting only one detail and treating it as the whole answer, when the real atmosphere is built from several details combined.",
+    whatImprovesIt: "Identifying multiple details that build the SAME overall impression, and saying so explicitly, rather than resting the whole answer on one image.",
+  },
+  "wave3-fam-rc10-word-choice": {
+    scenario:
+      "Imagine a sentence: 'The old dog shuffled, rather than walked, across the kitchen floor.'",
+    modelReasoning:
+      "Ask what an ordinary, more neutral word would have suggested instead, and what is different or more specific about the word the writer actually chose.",
+    fiveStepModel: [
+      "What does the text SAY? The dog 'shuffled' rather than 'walked' across the floor.",
+      "What evidence matters? The writer explicitly contrasts 'shuffled' with the plainer word 'walked' in the same sentence.",
+      "What does that evidence SUGGEST? 'Shuffled' suggests slow, dragging, effortful movement -- something 'walked' would not capture on its own.",
+      "Which interpretation fits BEST? The word choice emphasises the dog's age or tiredness, not simple ordinary movement.",
+      "How can I justify it? Compare the chosen word directly against the plainer alternative the sentence itself names, and explain what extra meaning the chosen word adds.",
+    ],
+    weakAnswerLooksLike: "Saying only that the word 'sounds descriptive' without explaining what it specifically adds compared to a plainer alternative.",
+    whatImprovesIt: "Naming the more ordinary alternative word, then explaining precisely what extra meaning or feeling the writer's actual choice adds that the alternative would not.",
   },
 };
 

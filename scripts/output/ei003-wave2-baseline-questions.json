@@ -1,0 +1,943 @@
+[
+  {
+    "id": "qf-eng-voc-13",
+    "family_id": "wave3-fam-rc10-word-choice",
+    "skill": "QT-RC-03",
+    "content_difficulty": "hard",
+    "prompt": {
+      "question": "Why might the author have chosen the word 'streaked' rather than simply 'dirty' to describe the glass walls?",
+      "blueprintId": "eng-voc-bp-effect-of-choice",
+      "passageText": "Maya had visited the old lighthouse a hundred times, but she had never been allowed up the spiral staircase until her grandfather finally handed her the heavy brass key. \"Mind the thirteenth step,\" he warned, tapping his walking stick against the stone floor. \"It has been loose since before your mother was born.\"\r\n\r\nThe staircase wound upward in tight, dizzying loops, and the air grew colder with every turn. Maya counted the steps under her breath, her fingers trailing along a rope handrail that felt rough and slightly damp. When she reached the thirteenth step, she remembered her grandfather's warning and stretched her leg carefully over it, landing with a soft thud on the step beyond.\r\n\r\nAt the top, the lamp room was smaller than she had imagined, its curved glass walls streaked with salt from decades of storms. An enormous lens, taller than Maya herself, sat in the centre of the room like a glass beehive. Her grandfather explained that the lens did not create light of its own; instead, it bent and focused a single bulb's glow into a beam that could be seen for twenty miles out to sea.\r\n\r\n\"Every lighthouse keeper before me had to climb these stairs at dusk, rain or shine, to light the lamp by hand,\" he said, resting a hand on the cold glass. \"Now a computer does it, but somebody still has to check that computer is telling the truth.\" Maya asked what would happen if nobody checked. Her grandfather's smile faded slightly. \"Ships have been lost for less,\" he said quietly, and for a moment Maya understood, properly for the first time, why he still climbed those stairs every single evening.\r\n\r\nBefore they left, Maya pressed her palm against the great lens one last time. It was surprisingly warm, as though it remembered every ship it had ever guided safely home.",
+      "passageTitle": "The Lighthouse Keeper's Apprentice",
+      "teachingUses": [
+        "scaffolded_practice",
+        "transfer"
+      ],
+      "validationTier": "TIER2_ACCEPTED_SET",
+      "acceptedAnswers": [
+        "'streaked' suggests long, thin marks left by salt over time, a more specific and vivid image than just 'dirty'"
+      ],
+      "evidenceLocation": "paragraph 3"
+    },
+    "explanation": "",
+    "eligibility_status": "practice_eligible",
+    "active": true,
+    "learning_unit_id": "eng-inc002-lighthouse-keepers-apprentice",
+    "provenance": "generated_original",
+    "subject": "english"
+  },
+  {
+    "id": "qf-eng-voc-14",
+    "family_id": "wave3-fam-rc10-word-choice",
+    "skill": "QT-RC-03",
+    "content_difficulty": "hard",
+    "prompt": {
+      "question": "Why might the author have chosen 'tightened' rather than 'hurt' to describe Ravi's stomach?",
+      "blueprintId": "eng-voc-bp-effect-of-choice",
+      "passageText": "Every spring, the fields behind Oakbridge School filled with colour as families gathered for the annual kite festival. Ravi had spent three weeks building his kite from bamboo strips and red silk, following instructions his uncle had sent from overseas, and he could hardly sit still in the car on the way there.\r\n\r\nWhen they arrived, the field was already crowded with kites shaped like dragons, birds, and even one enormous octopus with rippling purple tentacles. Ravi's stomach tightened as he compared his simple diamond shape to the elaborate creations soaring above him. His younger sister, Priya, tugged at his sleeve and pointed at a boy nearby whose kite had crashed twice already, tangled string trailing behind him like a confused kitten chasing its own tail.\r\n\r\n\"At least yours will actually fly,\" Priya said, trying to be encouraging, though her voice wobbled slightly with doubt. Ravi took a deep breath, unwound his string, and ran against the wind exactly as his uncle had described in his letter. For a heart-stopping second, nothing happened. Then, suddenly, the kite lifted, caught a gust, and climbed steadily into the pale blue sky.\r\n\r\nRavi laughed with relief and let the string spool out further, watching his simple red kite rise above even the octopus and the dragons. An elderly man standing nearby leaned on his cane and remarked, \"Sometimes the plainest kite flies the truest, because it isn't weighed down trying to be something it's not.\" Ravi wasn't entirely sure what the man meant, but he decided to remember the words anyway, storing them away like a small, valuable coin.\r\n\r\nBy the time the sun began to set, painting the sky the same colour as his kite, Ravi's arms ached pleasantly from holding the string steady for so long. Priya had long since given up watching and was chasing the boy with the tangled kite across the grass, both of them laughing. Ravi didn't mind being left to fly alone; for once, he felt entirely, quietly proud.",
+      "passageTitle": "The Kite Festival",
+      "teachingUses": [
+        "scaffolded_practice",
+        "transfer"
+      ],
+      "validationTier": "TIER2_ACCEPTED_SET",
+      "acceptedAnswers": [
+        "'tightened' suggests a feeling of nervousness building up, which is more precise than a general word like 'hurt'"
+      ],
+      "evidenceLocation": "paragraph 2"
+    },
+    "explanation": "",
+    "eligibility_status": "practice_eligible",
+    "active": true,
+    "learning_unit_id": "eng-inc002-kite-festival",
+    "provenance": "generated_original",
+    "subject": "english"
+  },
+  {
+    "id": "w1-kitemaker-07",
+    "family_id": "wave1-fam-emotion-cause",
+    "skill": "QT-RC-08",
+    "content_difficulty": "medium",
+    "prompt": {
+      "id": "w1-kitemaker-07",
+      "marks": 2,
+      "skill": "atmosphere",
+      "question": "How does Femi feel at the very end of the passage, and why?",
+      "modelAnswer": "Femi feels quietly content or satisfied. He realises Grandad's single nod is 'the closest thing to a celebration he was going to get', and that this is enough for him, even without louder praise.",
+      "passageText": "Grandad Owusu never rushed a kite. He said a kite built in a hurry would fly like it was built in a hurry: badly, and not for long. Every Saturday morning, while the rest of the house was still deciding whether to get up, he and Femi sat at the kitchen table with a pile of bamboo strips, a ball of string, and a stack of old newspapers that Grandad kept folded in a box marked, in faded pen, KITES ONLY.\n\nFemi had watched him make a dozen kites before he was allowed to touch the bamboo himself. Grandad said this was not because Femi was too young, but because watching properly was its own kind of work. \"Anyone can flap a kite about and call it flying,\" he told Femi, snipping a length of string with unhurried precision. \"Only a few people notice why one kite climbs and another one drops into the hedge.\"\n\nThis Saturday, Grandad finally slid a bundle of bamboo strips across the table. \"Your turn,\" he said. Femi's hands, usually so quick at video games, felt suddenly clumsy around the thin wood. He crossed two strips the way he had seen Grandad do it a hundred times, but the shape came out lopsided, one arm longer than the other.\n\nHe waited for Grandad to fix it. Grandad did not move.\n\n\"It's wrong,\" Femi said.\n\n\"It's a start,\" Grandad said. \"Different thing entirely.\" He tapped the longer arm with one finger, not touching it, just pointing. \"What do you notice?\"\n\nFemi looked. He measured the two arms with his eyes, then with his fingers. \"This one's longer.\"\n\n\"So?\"\n\n\"So it won't balance.\"\n\n\"So?\"\n\nFemi sighed, but he was smiling now, because this was the game Grandad always played, the one where he refused to simply say the answer. Femi trimmed the longer arm himself, checked it again, and this time the cross sat even. He looked up, half expecting praise, but Grandad only nodded once, as if Femi had merely confirmed something Grandad already knew.\n\nIt took Femi three more attempts before the frame held its shape without sagging. His fingers ached from pulling the string tight, and twice he had to unpick a knot that had gone stubborn and tangled. When the frame was finally finished, Grandad held it up to the window and turned it slowly, checking the balance against the light.\n\n\"Well,\" he said at last. \"That'll fly.\"\n\nFemi realised, watching Grandad's face, that this was the closest thing to a celebration he was going to get, and that somehow it was enough.",
+      "passageTitle": "The Kite Maker",
+      "validationTier": "TIER5_NAMED_COMPONENT_PLUS_EXPLANATION",
+      "acceptedAnswers": [
+        "content",
+        "satisfied",
+        "happy",
+        "proud",
+        "pleased"
+      ]
+    },
+    "explanation": "Educational Increment 007B, Wave 1. Assessment Brain QT-RC-08, primary competency RC-02. Question family: wave1-fam-emotion-cause. Transfer class: FAR_TRANSFER. Real evidence basis: direct reading of CSSE-003/005/008 (2022/2023 Main Test papers and marking scheme, Level A, Founder-Accepted), reconciled in Educational Increment 007A. Answer validation: TIER3_QUOTATION_PLUS_EXPLANATION.",
+    "eligibility_status": "practice_eligible",
+    "active": true,
+    "learning_unit_id": "wave1-eng-kitemaker",
+    "provenance": "angel_original",
+    "subject": "english"
+  },
+  {
+    "id": "w1-atticdoor-07",
+    "family_id": "wave1-fam-emotion-cause",
+    "skill": "QT-RC-08",
+    "content_difficulty": "hard",
+    "prompt": {
+      "id": "w1-atticdoor-07",
+      "marks": 2,
+      "skill": "atmosphere",
+      "question": "How does Marcus feel in the very last sentence of the passage, and why?",
+      "modelAnswer": "He feels a kind of anticipation he wants to hold onto. He deliberately pauses, 'savouring... the last few seconds of not yet knowing', because once he opens the trunk the mystery and excitement of not knowing will be over.",
+      "passageText": "The attic door had been painted shut for as long as Marcus could remember, its hinges buried under so many layers of old white gloss that it had stopped looking like a door at all and started looking like part of the wall. Nobody in the house had opened it in years. Nobody, until this particular wet Tuesday, had especially wanted to.\n\nMarcus wanted to. He had wanted to for exactly eleven days, ever since his grandmother had mentioned, almost carelessly, that his great-grandfather's old travelling trunk was still up there somewhere, gathering dust and, in her words, \"several decades' worth of nonsense nobody's had the courage to sort through.\"\n\nHe worked a flat-bladed knife into the seam where the door met the frame, feeling the old paint crack and splinter under the pressure. A fine white dust drifted down and settled on his sleeve. When the door finally gave way, it did so all at once, swinging inward with a groan so long and so mournful that Marcus half expected something to groan back.\n\nNothing did. The attic beyond was dim, lit only by a single grimy window at the far end, and thick with the particular smell of old houses: dust and damp wood and something sweetish underneath, like forgotten paper slowly turning to nothing. Shapes crouched under grey dust sheets, furniture from decades Marcus couldn't guess at, their outlines softened and strange.\n\nHe picked his way across the boards, testing each one before he trusted it with his full weight, until he reached a low shape in the far corner that seemed, unmistakably, trunk-shaped. He pulled the sheet away in one motion, sending a fresh cloud of dust spiralling into the grey light.\n\nThe trunk was smaller than he'd imagined, its leather straps cracked and pale, its brass corners dulled almost black with age. A tarnished padlock hung from the clasp, but when Marcus touched it, it simply fell open in his hand, as though it, too, had been waiting eleven days, or perhaps eleven years, for someone to finally come and ask.\n\nHe knelt in front of it for a long moment before he lifted the lid, savouring, in a way he couldn't quite explain, the last few seconds of not yet knowing.",
+      "passageTitle": "The Attic Door",
+      "validationTier": "TIER5_NAMED_COMPONENT_PLUS_EXPLANATION",
+      "acceptedAnswers": [
+        "anticipation",
+        "excitement",
+        "suspense",
+        "wants to delay the moment"
+      ]
+    },
+    "explanation": "Educational Increment 007B, Wave 1. Assessment Brain QT-RC-08, primary competency RC-02. Question family: wave1-fam-emotion-cause. Transfer class: FAR_TRANSFER. Real evidence basis: direct reading of CSSE-003/005/008 (2022/2023 Main Test papers and marking scheme, Level A, Founder-Accepted), reconciled in Educational Increment 007A. Answer validation: TIER3_QUOTATION_PLUS_EXPLANATION.",
+    "eligibility_status": "practice_eligible",
+    "active": true,
+    "learning_unit_id": "wave1-eng-atticdoor",
+    "provenance": "angel_original",
+    "subject": "english"
+  },
+  {
+    "id": "w1-letter-07",
+    "family_id": "wave1-fam-emotion-cause",
+    "skill": "QT-RC-08",
+    "content_difficulty": "medium",
+    "prompt": {
+      "id": "w1-letter-07",
+      "marks": 2,
+      "skill": "atmosphere",
+      "question": "How does Dara feel about being embarrassed on her first day, looking back on it in this letter?",
+      "modelAnswer": "She seems able to laugh at herself about it now rather than feeling upset. She calls it 'possibly the most embarrassing thing that has ever happened to me' in a light, exaggerated, humorous way, comparing it jokingly to falling off a stage in Year 4.",
+      "passageText": "Dear Nana,\n\nMum says I have to write to you properly instead of just sending you funny videos, so here is a proper letter, even though I still think the videos were better.\n\nBristol is loud in a different way from home. Not louder exactly, just loud about different things. There is a market near our new flat that starts setting up at six in the morning, and for the first week I woke up every single day thinking someone was dismantling a small building directly under my window. Mum says I will stop noticing it eventually. I do not fully believe her yet, but she was right about the flat being bigger than it looked in the photos, so maybe she will be right about this too.\n\nThe first proper thing that happened was that I got lost on the way to school, on my actual first day, which is possibly the most embarrassing thing that has ever happened to me, and I am including the time I fell off the stage in Year 4. I took a left turn that I was extremely confident about and ended up outside a launderette instead of the school gates. A woman doing her washing pointed me the right way without laughing at me even once, which I appreciated more than she probably realised.\n\nThe second proper thing was that I made a friend, which happened much faster than I expected and in a way I did not expect at all. Her name is Yusra and she sits next to me in maths, and we started talking because I couldn't find my ruler and she lent me hers without me even having to ask properly, just sort of noticed and passed it over. That was three weeks ago. Now we walk to the bus stop together most days, and she has already taught me two very useful things: which teachers let you retake a test if you ask nicely, and exactly which bit of the playground wall is warmest to sit against at lunchtime, which matters more than you would think in October.\n\nThe third proper thing, and I promise this is the last one because Mum is telling me the postbox closes soon, is that I still miss home, but slightly less loudly than I did in September. I think that is allowed to be true at the same time as everything above.\n\nLots of love,\nDara",
+      "passageTitle": "A Letter to Nana",
+      "validationTier": "TIER5_NAMED_COMPONENT_PLUS_EXPLANATION",
+      "acceptedAnswers": [
+        "she finds it funny now",
+        "able to laugh about it",
+        "not upset anymore, finds it amusing"
+      ]
+    },
+    "explanation": "Educational Increment 007B, Wave 1. Assessment Brain QT-RC-08, primary competency RC-02. Question family: wave1-fam-emotion-cause. Transfer class: FAR_TRANSFER. Real evidence basis: direct reading of CSSE-003/005/008 (2022/2023 Main Test papers and marking scheme, Level A, Founder-Accepted), reconciled in Educational Increment 007A. Answer validation: TIER3_QUOTATION_PLUS_EXPLANATION.",
+    "eligibility_status": "practice_eligible",
+    "active": true,
+    "learning_unit_id": "wave1-eng-lettertonana",
+    "provenance": "angel_original",
+    "subject": "english"
+  },
+  {
+    "id": "w1-newgirl-07",
+    "family_id": "wave1-fam-emotion-cause",
+    "skill": "QT-RC-08",
+    "content_difficulty": "medium",
+    "prompt": {
+      "id": "w1-newgirl-07",
+      "marks": 2,
+      "skill": "atmosphere",
+      "question": "How does Priya feel by the end of the passage, and why?",
+      "modelAnswer": "She feels cautiously content, even though little was resolved. She recognises that nobody needed to ask about her background yet, and she 'didn't mind' sitting quietly at the edge of the group, seeing it as 'a start'.",
+      "passageText": "Priya had rehearsed exactly what she would say when someone finally spoke to her. She had practised it twice in the mirror that morning, a short, breezy sentence about how she'd just moved from Leicester and wasn't it funny how every school smelled slightly of the same disinfectant. It was, she had decided, a good opening line: friendly, a little funny, not desperate.\n\nBy lunchtime she had not used it once.\n\nShe sat at the end of a long table in the dining hall, her tray positioned with unnecessary precision in front of her, and watched the room organise itself into groups she did not belong to. Nobody was unkind. That was almost the strangest part. A girl with a long plait had smiled at her in the corridor that morning, a genuine smile, and said \"you're the new one, right?\" before being swept away by a wave of friends before Priya could answer. It should have felt like an opening. Instead it felt like a door that had opened and closed again before she could step through it.\n\n\"You can sit with us, if you want.\"\n\nPriya looked up. It was a boy from her form group, though she couldn't remember his name, gesturing vaguely at a half-empty table nearby. His tone was so casual that for a moment she wondered if he'd meant to say it to someone else entirely.\n\n\"Thanks,\" she said, and heard, with faint horror, that her voice had come out smaller than she'd intended.\n\nShe picked up her tray. Her carefully rehearsed sentence about Leicester and disinfectant surfaced in her mind, fully formed, ready to be used. She opened her mouth. What came out instead was, \"Is the pasta usually this cold?\"\n\nThe boy laughed, an easy, unbothered laugh, and said the pasta was always this cold, it was basically a school tradition by now, and somehow that was enough. Nobody had asked where she was from. Nobody needed to, not yet. She sat down at the edge of the group, said very little for the rest of lunch, and found, to her own surprise, that she didn't mind. It was, she thought, a start.",
+      "passageTitle": "The New Girl",
+      "validationTier": "TIER5_NAMED_COMPONENT_PLUS_EXPLANATION",
+      "acceptedAnswers": [
+        "content",
+        "hopeful",
+        "relieved",
+        "okay",
+        "cautiously happy"
+      ]
+    },
+    "explanation": "Educational Increment 007B, Wave 1. Assessment Brain QT-RC-08, primary competency RC-02. Question family: wave1-fam-emotion-cause. Transfer class: FAR_TRANSFER. Real evidence basis: direct reading of CSSE-003/005/008 (2022/2023 Main Test papers and marking scheme, Level A, Founder-Accepted), reconciled in Educational Increment 007A. Answer validation: TIER3_QUOTATION_PLUS_EXPLANATION.",
+    "eligibility_status": "practice_eligible",
+    "active": true,
+    "learning_unit_id": "wave1-eng-newgirl",
+    "provenance": "angel_original",
+    "subject": "english"
+  },
+  {
+    "id": "qf-eng-voc-15",
+    "family_id": "wave3-fam-rc10-word-choice",
+    "skill": "QT-RC-03",
+    "content_difficulty": "hard",
+    "prompt": {
+      "question": "Why might the author have chosen 'plunge' rather than 'go down' to describe how temperatures fall?",
+      "blueprintId": "eng-voc-bp-effect-of-choice",
+      "passageText": "Of the seventeen species of penguin found around the world, none endures conditions as extreme as the emperor penguin, which breeds during the brutal Antarctic winter when temperatures can plunge below minus sixty degrees Celsius and winds regularly exceed one hundred and fifty kilometres per hour.\r\n\r\nUnlike most birds, which migrate away from harsh winters, emperor penguins march up to one hundred and twenty kilometres inland across sea ice to reach their traditional breeding grounds. Scientists believe this seemingly illogical journey actually offers a crucial advantage: breeding far from the coast reduces the risk that the sea ice beneath the colony will break apart before the chicks are strong enough to survive on their own.\r\n\r\nAfter the female lays a single egg, she transfers it carefully onto her mate's feet, where it rests beneath a warm fold of skin called a brood pouch. The female then departs on a long journey back to the ocean to feed, leaving the male to incubate the egg completely alone for around two months, surviving entirely on stored body fat and losing nearly half his body weight in the process.\r\n\r\nTo conserve warmth during this period, male emperor penguins huddle together in enormous, tightly packed groups, sometimes numbering in the thousands. Individuals continuously rotate from the freezing outer edge of the huddle toward the sheltered centre, meaning that over time every penguin shares roughly the same amount of exposure to the biting wind. This rotation is so effective that temperatures at the centre of a huddle have been measured at over thirty-seven degrees Celsius, despite the arctic conditions raging just metres away.\r\n\r\nWhen the chick finally hatches, the returning females can locate their own mate and chick among thousands of near-identical birds by recognising the unique call each pair has developed, a feat of vocal memory that continues to intrigue researchers studying animal communication today.",
+      "passageTitle": "Emperor Penguins: Built for the Cold",
+      "teachingUses": [
+        "scaffolded_practice",
+        "transfer"
+      ],
+      "validationTier": "TIER2_ACCEPTED_SET",
+      "acceptedAnswers": [
+        "'plunge' suggests a sudden, dramatic drop, emphasising how extreme the temperature change is"
+      ],
+      "evidenceLocation": "paragraph 1"
+    },
+    "explanation": "",
+    "eligibility_status": "practice_eligible",
+    "active": true,
+    "learning_unit_id": "eng-inc002-emperor-penguins",
+    "provenance": "generated_original",
+    "subject": "english"
+  },
+  {
+    "id": "w2-lastslice-07",
+    "family_id": "wave1-fam-emotion-cause",
+    "skill": "QT-RC-08",
+    "content_difficulty": "medium",
+    "prompt": {
+      "id": "w2-lastslice-07",
+      "marks": 2,
+      "skill": "atmosphere",
+      "question": "How does Marcus feel when he sees the gap in the box after Yasmin takes two slices, and why?",
+      "modelAnswer": "Marcus feels surprised or thrown off, because Yasmin acted while he was still explaining his plan, disrupting the careful, fair division he had been in the middle of announcing.",
+      "passageText": "Marcus had counted the pizza slices twice before his sister Yasmin even sat down, which told her everything she needed to know about how the next ten minutes were going to go.\n\n\"There are seven slices,\" he announced, as if this were a fact that required careful management. \"That's three and a half each.\"\n\n\"I don't want half a slice,\" Yasmin said, reaching for the box.\n\n\"You have to want half a slice. That's how division works.\" Marcus positioned himself slightly between Yasmin and the box, not quite blocking it, but close enough that the message was clear.\n\nYasmin had learned, over many similar standoffs, that arguing with Marcus about fairness never actually got her more pizza, it just got her a longer lecture about fairness. Instead, she waited until he was mid-explanation of exactly how he intended to cut the seventh slice into two precise halves, and simply took two whole slices while he was still talking.\n\n\"That's not what we agreed,\" Marcus said, staring at the gap in the box.\n\n\"We didn't agree anything. You were narrating.\" Yasmin was already halfway through her first slice.\n\nMarcus opened his mouth, closed it again, and did a rapid recalculation. Five slices remained for the two of them to somehow still divide fairly, which was, if anything, a harder problem than the one he'd started with. He picked up a slice, looked at it for a long moment, and then, instead of measuring anything, simply ate it.\n\nYasmin watched this with open surprise. \"No cutting?\"\n\n\"There's no elegant way to divide five slices between two people. I've decided to stop trying.\" He took a second slice. \"This is now a speed problem, not a fairness problem.\"\n\nYasmin laughed properly for the first time all evening, grabbed a third slice for herself, and privately thought that Marcus solved problems the way most people solved problems, just backwards, and about four minutes too late to actually help him get more pizza.",
+      "passageTitle": "The Last Slice",
+      "validationTier": "TIER5_NAMED_COMPONENT_PLUS_EXPLANATION",
+      "acceptedAnswers": [
+        "surprised",
+        "thrown off",
+        "confused",
+        "caught off guard"
+      ]
+    },
+    "explanation": "Educational Increment 007C, Wave 2. Assessment Brain QT-RC-08, primary competency RC-02. Question family: wave1-fam-emotion-cause. Transfer class: FAR_TRANSFER. Real evidence basis: direct reading of CSSE-003/005/008/013 (2021/2022/2023 Main Test papers and 2023 marking scheme, Level A, Founder-Accepted), reconciled in Educational Increments 007A/007B/007C. Answer validation: TIER5_NAMED_COMPONENT_PLUS_EXPLANATION.",
+    "eligibility_status": "practice_eligible",
+    "active": true,
+    "learning_unit_id": "wave2-eng-lastslice",
+    "provenance": "angel_original",
+    "subject": "english"
+  },
+  {
+    "id": "w2-understudy-06",
+    "family_id": "wave1-fam-emotion-cause",
+    "skill": "QT-RC-08",
+    "content_difficulty": "hard",
+    "prompt": {
+      "id": "w2-understudy-06",
+      "marks": 2,
+      "skill": "atmosphere",
+      "question": "How does Oliver feel by the third line of the play, and why?",
+      "modelAnswer": "He feels more settled or relaxed. Something in his chest 'had loosened slightly', and he found he was no longer just reciting memorised words but genuinely becoming the character, showing his nerves easing as he gets into the performance.",
+      "passageText": "Oliver had been the understudy for the lead role in the school production for six weeks, which meant six weeks of learning every line perfectly while fully expecting never to say a single one of them on stage.\n\nThen, forty minutes before curtain, Daniel Okafor lost his voice entirely, reduced to a hoarse whisper that could not have carried past the third row, and Mrs Fennimore appeared in the dressing room with an expression Oliver could not immediately decipher.\n\n\"You know the part,\" she said. It was not quite a question.\n\nOliver's stomach performed a complicated manoeuvre that he would later struggle to describe accurately to anyone. He did know the part. He had known it for six weeks, muttering it under his breath on the bus, reciting it in the shower until his family had started giving him strange looks. Knowing the words, he realised now, with the costume half-buttoned and his hands trembling slightly, was an entirely different matter from being ready to say them in front of four hundred people.\n\n\"I know it,\" he managed.\n\nThe next twenty minutes passed in a blur of costume adjustments and Mrs Fennimore's rapid-fire reassurances, none of which Oliver retained a single word of. What he did remember, vividly, was the moment the curtain rose and the stage lights hit his face, and the sudden, absolute silence of four hundred people waiting for him to speak.\n\nHe opened his mouth, and the first line arrived, unbidden and perfectly formed, exactly where six weeks of muttering on buses had left it. The second line followed the first. By the third, something in his chest had loosened slightly, and he found, to his considerable surprise, that he was no longer reciting memorised words but actually, genuinely, becoming the character he had spent six weeks quietly preparing to never actually play.\n\nHe did not think about Daniel's lost voice again until the interval, and even then, only briefly, and with something that was not quite guilt.",
+      "passageTitle": "The Understudy",
+      "validationTier": "TIER5_NAMED_COMPONENT_PLUS_EXPLANATION",
+      "acceptedAnswers": [
+        "more relaxed",
+        "settled",
+        "less nervous",
+        "more confident"
+      ]
+    },
+    "explanation": "Educational Increment 007C, Wave 2. Assessment Brain QT-RC-08, primary competency RC-02. Question family: wave1-fam-emotion-cause. Transfer class: FAR_TRANSFER. Real evidence basis: direct reading of CSSE-003/005/008/013 (2021/2022/2023 Main Test papers and 2023 marking scheme, Level A, Founder-Accepted), reconciled in Educational Increments 007A/007B/007C. Answer validation: TIER5_NAMED_COMPONENT_PLUS_EXPLANATION.",
+    "eligibility_status": "practice_eligible",
+    "active": true,
+    "learning_unit_id": "wave2-eng-understudy",
+    "provenance": "angel_original",
+    "subject": "english"
+  },
+  {
+    "id": "w2-sciencefair-05",
+    "family_id": "wave1-fam-emotion-cause",
+    "skill": "QT-RC-08",
+    "content_difficulty": "medium",
+    "prompt": {
+      "id": "w2-sciencefair-05",
+      "marks": 2,
+      "skill": "atmosphere",
+      "question": "How does Zara feel by the end of the passage, and why?",
+      "modelAnswer": "She feels happy and pleased. She is 'extremely happy' to keep repeating her hair trick for other children after winning her certificate, showing she enjoyed both the recognition and the fun of the demonstration itself.",
+      "passageText": "Ben had been planning his volcano for the science fair since September. He had researched three different eruption methods, tested each one twice in the garden, and settled on the one that produced the most convincing lava flow without also producing a mess his mother would object to. His display board had section headings. His section headings had subheadings.\n\nZara had decided on her project the night before it was due, largely because she'd forgotten it was due until her older brother mentioned it at dinner. Her project, a demonstration of static electricity using balloons and her own hair, took approximately eleven minutes to prepare and consisted mostly of her rubbing balloons on things and seeing what happened.\n\n\"You didn't even test it,\" Ben said, watching her tape a single sheet of paper, her only signage, to the front of her table.\n\n\"I tested it on myself about four times this morning,\" Zara said. \"It worked every time. What more testing does static electricity need?\"\n\nBen, who had a testing log with dated entries, did not have a good answer to this.\n\nWhen the judges came round, Ben delivered his explanation exactly as rehearsed, complete with the correct chemical terminology and a clear account of the reaction occurring inside his volcano. The judges nodded, made notes, and moved on with polite, unremarkable interest.\n\nAt Zara's table, she rubbed a balloon on her jumper, held it near her own head, and let her hair rise dramatically toward it while explaining, in far less technical language than Ben had used, that opposite charges attract and her hair was proving it live, right now, in front of them. One of the younger judges laughed out loud and asked her to do it again.\n\nBen won a certificate for Scientific Rigour. Zara won a certificate for Most Engaging Demonstration, and spent the rest of the afternoon being asked by at least a dozen other children to do the hair trick again, which she was, by that point, extremely happy to keep doing.",
+      "passageTitle": "The Science Fair",
+      "validationTier": "TIER5_NAMED_COMPONENT_PLUS_EXPLANATION",
+      "acceptedAnswers": [
+        "happy",
+        "pleased",
+        "delighted",
+        "proud"
+      ]
+    },
+    "explanation": "Educational Increment 007C, Wave 2. Assessment Brain QT-RC-08, primary competency RC-02. Question family: wave1-fam-emotion-cause. Transfer class: FAR_TRANSFER. Real evidence basis: direct reading of CSSE-003/005/008/013 (2021/2022/2023 Main Test papers and 2023 marking scheme, Level A, Founder-Accepted), reconciled in Educational Increments 007A/007B/007C. Answer validation: TIER5_NAMED_COMPONENT_PLUS_EXPLANATION.",
+    "eligibility_status": "practice_eligible",
+    "active": true,
+    "learning_unit_id": "wave2-eng-sciencefair",
+    "provenance": "angel_original",
+    "subject": "english"
+  },
+  {
+    "id": "w2-stormwarning-06",
+    "family_id": "wave1-fam-emotion-cause",
+    "skill": "QT-RC-08",
+    "content_difficulty": "medium",
+    "prompt": {
+      "id": "w2-stormwarning-06",
+      "marks": 2,
+      "skill": "atmosphere",
+      "question": "How does Theo feel about the power cut, and why is this surprising given the situation?",
+      "modelAnswer": "He feels delighted, declaring it 'the best part so far'. This is surprising because a power cut during a storm is usually a stressful inconvenience for a family, but Theo, who treats extreme weather as entertainment, finds it exciting rather than worrying.",
+      "passageText": "The warning came through on Dad's phone at exactly four o'clock: severe weather, expect flooding, secure loose items, bring in anything that could blow away.\n\nDad went straight for the garden, hauling the trampoline flat and weighing the corners down with paving slabs before the wind had even properly picked up. Mum moved through the house methodically, closing every window and checking each latch twice, muttering under her breath about the greenhouse glass the entire time. My little brother Theo, who was six and treated every piece of extreme weather as personal entertainment, pressed his face to the living room window and gave a running commentary on the darkening sky as though he were presenting the news.\n\nI was given the bins. Not the exciting job, but an important one, since an unsecured bin in this kind of wind became, according to Dad, \"basically a missile.\" I dragged both wheelie bins into the side passage and wedged them behind the gate, which felt like a reasonable solution right up until the gate itself started rattling alarmingly.\n\nBy five o'clock the rain had turned properly sideways, hammering against the windows in a way that made Theo shriek with delight and the rest of us wince. Dad came in soaked through, having made one final trip to check the trampoline was still flat, and Mum handed him a towel without looking up from the window she was still watching, as if she didn't quite trust it to stay shut on its own.\n\nWe lost power just after six, which Theo declared, with total sincerity, to be the best part so far. We ate dinner by torchlight, listening to the wind trying its best to get into the house, and by the time we went to bed the worst of it had passed, leaving nothing behind but a garden full of leaves, one very flat trampoline, and a six year old already disappointed that tomorrow would probably just be an ordinary day again.",
+      "passageTitle": "Storm Warning",
+      "validationTier": "TIER5_NAMED_COMPONENT_PLUS_EXPLANATION",
+      "acceptedAnswers": [
+        "delighted",
+        "excited",
+        "thrilled",
+        "happy"
+      ]
+    },
+    "explanation": "Educational Increment 007C, Wave 2. Assessment Brain QT-RC-08, primary competency RC-02. Question family: wave1-fam-emotion-cause. Transfer class: FAR_TRANSFER. Real evidence basis: direct reading of CSSE-003/005/008/013 (2021/2022/2023 Main Test papers and 2023 marking scheme, Level A, Founder-Accepted), reconciled in Educational Increments 007A/007B/007C. Answer validation: TIER5_NAMED_COMPONENT_PLUS_EXPLANATION.",
+    "eligibility_status": "practice_eligible",
+    "active": true,
+    "learning_unit_id": "wave2-eng-stormwarning",
+    "provenance": "angel_original",
+    "subject": "english"
+  },
+  {
+    "id": "w2-pianorecital-06",
+    "family_id": "wave1-fam-emotion-cause",
+    "skill": "QT-RC-08",
+    "content_difficulty": "hard",
+    "prompt": {
+      "id": "w2-pianorecital-06",
+      "marks": 2,
+      "skill": "atmosphere",
+      "question": "How does Freya feel in the recital hall in the minutes before she is called, and why?",
+      "modelAnswer": "She feels nervous or anxious. The hall's smell is associated with 'nervous anticipation', and she is preoccupied with worry about whether her fingers will remember the piece once she actually sits down.",
+      "passageText": "The recital hall smelled of polished wood and, faintly, of nervous anticipation, an odour Freya had come to associate specifically with the fifteen minutes before her name was called.\n\nShe had practised the piece so many times that her fingers seemed to know it independently of her conscious mind, a fact that was reassuring in the practice room and considerably less reassuring here, in a hall full of expectant faces, where her conscious mind was currently occupied entirely with the question of whether her fingers would remember anything at all once she actually sat down.\n\nThe girl before her finished to polite, dutiful applause, gathered her music with the brisk efficiency of someone glad to be finished, and returned to her seat. Freya's name was called. She walked to the piano with what she hoped looked like composure and felt, internally, like a barely controlled scramble.\n\nThe first few bars emerged tentative and slightly too quiet, her fingers testing the keys as though they belonged to someone else entirely. But somewhere around the eighth bar, something shifted. The tentative quality fell away, replaced by the fluent, almost automatic motion she recognised from a hundred hours of solitary practice, and she stopped thinking about the audience entirely, absorbed instead in the particular architecture of the piece itself, the way one phrase built toward the next.\n\nShe emerged from the final chord almost surprised to find herself back in the recital hall, the audience's applause arriving a half-second after she expected it, as though she had briefly forgotten they were there to hear anything at all.\n\nHer teacher, waiting in the wings, said only \"the middle section,\" with an expression Freya couldn't immediately place, and it took her a moment to realise it was pride, worn slightly awkwardly, like a coat that didn't quite fit but was worn anyway because the weather demanded it.",
+      "passageTitle": "The Piano Recital",
+      "validationTier": "TIER5_NAMED_COMPONENT_PLUS_EXPLANATION",
+      "acceptedAnswers": [
+        "nervous",
+        "anxious",
+        "worried",
+        "apprehensive"
+      ]
+    },
+    "explanation": "Educational Increment 007C, Wave 2. Assessment Brain QT-RC-08, primary competency RC-02. Question family: wave1-fam-emotion-cause. Transfer class: FAR_TRANSFER. Real evidence basis: direct reading of CSSE-003/005/008/013 (2021/2022/2023 Main Test papers and 2023 marking scheme, Level A, Founder-Accepted), reconciled in Educational Increments 007A/007B/007C. Answer validation: TIER5_NAMED_COMPONENT_PLUS_EXPLANATION.",
+    "eligibility_status": "practice_eligible",
+    "active": true,
+    "learning_unit_id": "wave2-eng-pianorecital",
+    "provenance": "angel_original",
+    "subject": "english"
+  },
+  {
+    "id": "w1-raceday-07",
+    "family_id": "wave1-fam-emotion-cause",
+    "skill": "QT-RC-08",
+    "content_difficulty": "medium",
+    "prompt": {
+      "id": "w1-raceday-07",
+      "marks": 2,
+      "skill": "atmosphere",
+      "question": "How does Ade feel at the very end of the passage, and why?",
+      "modelAnswer": "He feels uneasy or a little resentful, despite the team winning. Watching Cass being celebrated after doing 'everything right' himself while 'she had simply won' without the same effort, he feels his own achievement overshadowed.",
+      "passageText": "Two hours before the county relay, Ade was already at the track, jogging slow, deliberate laps to loosen muscles that did not need loosening, checking his spikes for the fourth time, running through the handover with an imaginary baton held out at exactly the right angle. He had a laminated card in his kit bag listing his split times for the last six meets, and he had read it twice already that morning, as if the numbers might have changed overnight.\n\nCass arrived forty minutes before the race, ate half a banana, and lay down on the grass with her cap over her eyes.\n\n\"You're not warming up,\" Ade said, not quite managing to keep the disapproval out of his voice.\n\n\"I warmed up on the walk here,\" Cass said, without moving the cap.\n\nAde found this deeply unconvincing, though he had learned, over two seasons of running the same relay leg as Cass, that arguing about it achieved nothing. She ran the way some people did crosswords: unbothered, half-distracted, and somehow, infuriatingly, faster than people who took it seriously.\n\nWhen their event was finally called, Ade felt the familiar tightening in his chest, the one that had nothing to do with his lungs and everything to do with the six laminated split times folded in his pocket. Cass, jogging beside him to the start line, was humming something under her breath that he didn't recognise.\n\nThe gun went. Ade ran his leg exactly as planned, matching his practised splits almost to the second, and handed off cleanly to the third runner with the baton secure and his form textbook-perfect. He allowed himself, for the first time all morning, a small breath of relief.\n\nCass ran the anchor leg the way she seemed to do everything: as though the outcome had already been decided somewhere she wasn't especially interested in checking. She crossed the line first by four strides, not visibly out of breath, and spent the next several minutes being hugged by teammates who were considerably more excited about it than she appeared to be.\n\nAde watched her from a short distance, his own relief from moments earlier curdling slightly into something less comfortable. He had done everything right. She had simply won.",
+      "passageTitle": "Race Day",
+      "validationTier": "TIER5_NAMED_COMPONENT_PLUS_EXPLANATION",
+      "acceptedAnswers": [
+        "uneasy",
+        "resentful",
+        "frustrated",
+        "a bit jealous",
+        "uncomfortable"
+      ]
+    },
+    "explanation": "Educational Increment 007B, Wave 1. Assessment Brain QT-RC-08, primary competency RC-02. Question family: wave1-fam-emotion-cause. Transfer class: FAR_TRANSFER. Real evidence basis: direct reading of CSSE-003/005/008 (2022/2023 Main Test papers and marking scheme, Level A, Founder-Accepted), reconciled in Educational Increment 007A. Answer validation: TIER3_QUOTATION_PLUS_EXPLANATION.",
+    "eligibility_status": "practice_eligible",
+    "active": true,
+    "learning_unit_id": "wave1-eng-raceday",
+    "provenance": "angel_original",
+    "subject": "english"
+  },
+  {
+    "id": "w3-rc10-am-03",
+    "family_id": "wave3-fam-rc10-atmosphere-mood",
+    "skill": "QT-RC-10",
+    "content_difficulty": "hard",
+    "prompt": {
+      "id": "w3-rc10-am-03",
+      "marks": 1,
+      "skill": "effect-of-language",
+      "question": "Tom describes the runner beans as growing \"tangled and a bit wild, like they don't know you're not coming to tie them back.\" What does this description suggest about how Tom is feeling?",
+      "modelAnswer": "It suggests Tom feels the absence of his grandad deeply and is projecting that sense of things being 'out of place' onto the garden, showing how much he misses him.",
+      "passageText": "Dear Grandad,\n\nI know you always say a letter should start with the weather, so I'll tell you it has rained every single day this week, which feels like exactly the sort of thing you'd find funny rather than annoying.\n\nSchool has been strange without you picking me up on Thursdays. Mr Ahmed asked where my \"chauffeur\" had gone, and I didn't really know what to say, so I just told him you were resting. I went past the allotment yesterday and your runner beans have grown right over the top of the fence, tangled and a bit wild, like they don't know you're not coming to tie them back. I didn't touch them. I thought you'd want to do that yourself when you're better.\n\nMum says I shouldn't worry so much, but I've started checking my phone every time it buzzes, just in case it's news. Write back soon, even if it's short.\n\nLove,\nTom",
+      "passageTitle": "Letter to Grandad",
+      "validationTier": "TIER2_ACCEPTED_SET",
+      "acceptedAnswers": [
+        "he misses his grandad and notices the absence everywhere",
+        "he feels things are unsettled without his grandad there",
+        "the disorder in the garden reflects his own sense that something is wrong"
+      ]
+    },
+    "explanation": "Educational Increment 007T, Part 7. Assessment Brain QT-RC-10, primary competency RC-02. Question family: wave3-fam-rc10-atmosphere-mood. Real evidence basis: docs/intelligence/CSSE_QUESTION_INTELLIGENCE_FRAMEWORK.md QT-RC-10 (CSSE-013 2021, CSSE-008 2022, EMC-3). Answer validation: TIER2_ACCEPTED_SET.",
+    "eligibility_status": "practice_eligible",
+    "active": true,
+    "learning_unit_id": "wave3-eng-lettertograndad",
+    "provenance": "angel_original",
+    "subject": "english"
+  },
+  {
+    "id": "w3-rc10-am-04",
+    "family_id": "wave3-fam-rc10-atmosphere-mood",
+    "skill": "QT-RC-10",
+    "content_difficulty": "medium",
+    "prompt": {
+      "id": "w3-rc10-am-04",
+      "marks": 1,
+      "skill": "effect-of-language",
+      "question": "Tom writes, \"I didn't touch them. I thought you'd want to do that yourself when you're better.\" What does this suggest about Tom's feelings towards his grandad's return?",
+      "modelAnswer": "It suggests Tom is hopeful and wants to believe his grandad will recover, deliberately leaving the task for him as a way of holding on to that hope.",
+      "passageText": "Dear Grandad,\n\nI know you always say a letter should start with the weather, so I'll tell you it has rained every single day this week, which feels like exactly the sort of thing you'd find funny rather than annoying.\n\nSchool has been strange without you picking me up on Thursdays. Mr Ahmed asked where my \"chauffeur\" had gone, and I didn't really know what to say, so I just told him you were resting. I went past the allotment yesterday and your runner beans have grown right over the top of the fence, tangled and a bit wild, like they don't know you're not coming to tie them back. I didn't touch them. I thought you'd want to do that yourself when you're better.\n\nMum says I shouldn't worry so much, but I've started checking my phone every time it buzzes, just in case it's news. Write back soon, even if it's short.\n\nLove,\nTom",
+      "passageTitle": "Letter to Grandad",
+      "validationTier": "TIER2_ACCEPTED_SET",
+      "acceptedAnswers": [
+        "he is hopeful his grandad will get better",
+        "he wants to preserve something for his grandad to do himself, showing optimism",
+        "he is trying to stay positive about his grandad's recovery"
+      ]
+    },
+    "explanation": "Educational Increment 007T, Part 7. Assessment Brain QT-RC-10, primary competency RC-02. Question family: wave3-fam-rc10-atmosphere-mood. Real evidence basis: docs/intelligence/CSSE_QUESTION_INTELLIGENCE_FRAMEWORK.md QT-RC-10 (CSSE-013 2021, CSSE-008 2022, EMC-3). Answer validation: TIER2_ACCEPTED_SET.",
+    "eligibility_status": "practice_eligible",
+    "active": true,
+    "learning_unit_id": "wave3-eng-lettertograndad",
+    "provenance": "angel_original",
+    "subject": "english"
+  },
+  {
+    "id": "w3-rc10-am-05",
+    "family_id": "wave3-fam-rc10-atmosphere-mood",
+    "skill": "QT-RC-10",
+    "content_difficulty": "easy",
+    "prompt": {
+      "id": "w3-rc10-am-05",
+      "marks": 1,
+      "skill": "effect-of-language",
+      "question": "The sky is described as \"the colour of old bruises.\" What does this description suggest about the coming weather?",
+      "modelAnswer": "It suggests the weather is threatening or ominous, hinting that a storm is approaching.",
+      "passageText": "By four o'clock, the fishing boats that were still out had become small dark shapes against a sky the colour of old bruises. Sam stood on the harbour wall with his father, who hadn't said very much in the last twenty minutes. Every few seconds, his father checked his watch, then looked back out at the water, then checked his watch again, as though the numbers might change if he looked hard enough.\n\nThe wind had picked up enough to make the loose rigging on the moored boats clang against their masts in a rhythm that didn't quite match anything. Down on the quay, Mrs Okafor was pulling the shutters closed on the harbour café two hours before she normally would. Nobody had said the word \"storm\" out loud yet, but everybody on the harbour wall seemed to be moving a little faster than usual, and nobody was smiling.",
+      "passageTitle": "The Storm at the Harbour",
+      "validationTier": "TIER2_ACCEPTED_SET",
+      "acceptedAnswers": [
+        "bad weather or a storm is coming",
+        "the sky looks threatening or dangerous",
+        "something unpleasant is about to happen with the weather"
+      ]
+    },
+    "explanation": "Educational Increment 007T, Part 7. Assessment Brain QT-RC-10, primary competency RC-02. Question family: wave3-fam-rc10-atmosphere-mood. Real evidence basis: docs/intelligence/CSSE_QUESTION_INTELLIGENCE_FRAMEWORK.md QT-RC-10 (CSSE-013 2021, CSSE-008 2022, EMC-3). Answer validation: TIER2_ACCEPTED_SET.",
+    "eligibility_status": "practice_eligible",
+    "active": true,
+    "learning_unit_id": "wave3-eng-stormharbour",
+    "provenance": "angel_original",
+    "subject": "english"
+  },
+  {
+    "id": "w3-rc10-wc-08",
+    "family_id": "wave3-fam-rc10-word-choice",
+    "skill": "QT-RC-10",
+    "content_difficulty": "hard",
+    "prompt": {
+      "id": "w3-rc10-wc-08",
+      "marks": 1,
+      "skill": "effect-of-language",
+      "question": "By the end of the day, the trainers were \"tucked at the very back of his locker,\" and Jayden walked home in his old pair, \"taking the shortest route he knew.\" What does this change suggest about how Jayden is feeling, compared to the start of the passage?",
+      "modelAnswer": "It suggests Jayden has gone from feeling proud and eager to be seen to feeling disappointed or embarrassed, no longer wanting attention after Connor's reaction.",
+      "passageText": "Jayden had saved for eleven weeks to buy the trainers, counting out coins from his paper-round money every Sunday evening. When he finally wore them to school, he spent the whole morning walking very deliberately past groups of people, taking the longest possible route between lessons.\n\nNobody said anything about them at break time. At lunch, Connor glanced down at Jayden's feet for exactly one second, then carried on eating his sandwich without a word. Jayden told himself it didn't matter what Connor thought. By the end of the day, though, the trainers were tucked at the very back of his locker, and Jayden walked home in his old, scuffed pair instead, taking the shortest route he knew.",
+      "passageTitle": "The New Trainers",
+      "validationTier": "TIER2_ACCEPTED_SET",
+      "acceptedAnswers": [
+        "he now feels embarrassed or disappointed, unlike his earlier pride",
+        "his confidence has faded after Connor's lack of reaction",
+        "he wants to avoid attention now, the opposite of the passage's start"
+      ]
+    },
+    "explanation": "Educational Increment 007T, Part 7. Assessment Brain QT-RC-10, primary competency RC-02. Question family: wave3-fam-rc10-word-choice. Real evidence basis: docs/intelligence/CSSE_QUESTION_INTELLIGENCE_FRAMEWORK.md QT-RC-10 (CSSE-013 2021, CSSE-008 2022, EMC-3). Answer validation: TIER2_ACCEPTED_SET.",
+    "eligibility_status": "practice_eligible",
+    "active": true,
+    "learning_unit_id": "wave3-eng-newtrainers",
+    "provenance": "angel_original",
+    "subject": "english"
+  },
+  {
+    "id": "w3-rc10-am-01",
+    "family_id": "wave3-fam-rc10-atmosphere-mood",
+    "skill": "QT-RC-10",
+    "content_difficulty": "medium",
+    "prompt": {
+      "id": "w3-rc10-am-01",
+      "marks": 1,
+      "skill": "effect-of-language",
+      "question": "The writer describes the room as holding \"a stillness that made her steps sound too loud.\" What does this description suggest about how Maya is feeling?",
+      "modelAnswer": "It suggests Maya feels a heightened, uneasy awareness of the silence, as though she senses something unusual is about to happen.",
+      "passageText": "Maya was always the first to arrive. She liked the ten minutes before anyone else came, when the classroom belonged only to her. This morning, though, something felt different. The chairs sat exactly as they had been left the day before, stacked with unusual care. The whiteboard, normally smudged with yesterday's lesson, had been wiped completely clean. Even the window, which never quite closed properly, was shut tight, and the room held a stillness that made her steps sound too loud.\n\nShe set her bag down slowly, as though placing it too quickly might disturb something she couldn't name. On the teacher's desk, a single envelope lay face-down, her name written across it in handwriting she almost recognised. Maya stood very still for a moment, listening to nothing at all, before she reached out and turned it over.",
+      "passageTitle": "The Empty Classroom",
+      "validationTier": "TIER2_ACCEPTED_SET",
+      "acceptedAnswers": [
+        "she feels uneasy or on edge",
+        "she is very aware of the silence, sensing something is different",
+        "the unusual quiet makes her nervous or alert"
+      ]
+    },
+    "explanation": "Educational Increment 007T, Part 7. Assessment Brain QT-RC-10, primary competency RC-02. Question family: wave3-fam-rc10-atmosphere-mood. Real evidence basis: docs/intelligence/CSSE_QUESTION_INTELLIGENCE_FRAMEWORK.md QT-RC-10 (CSSE-013 2021, CSSE-008 2022, EMC-3). Answer validation: TIER2_ACCEPTED_SET.",
+    "eligibility_status": "practice_eligible",
+    "active": true,
+    "learning_unit_id": "wave3-eng-emptyclassroom",
+    "provenance": "angel_original",
+    "subject": "english"
+  },
+  {
+    "id": "w3-rc10-wc-03",
+    "family_id": "wave3-fam-rc10-word-choice",
+    "skill": "QT-RC-10",
+    "content_difficulty": "easy",
+    "prompt": {
+      "id": "w3-rc10-wc-03",
+      "marks": 1,
+      "skill": "effect-of-language",
+      "question": "Mr Fenwick carried the sack \"as though it weighed nothing more than a folded newspaper.\" What does this comparison suggest about Mr Fenwick?",
+      "modelAnswer": "It suggests Mr Fenwick is very strong and experienced, making a physically demanding task look effortless.",
+      "passageText": "Old Mr Fenwick had run the bakery on Corn Street for forty years, and everyone in the village said his bread was the best for miles. When Priya arrived for her first morning as his apprentice, she expected him to hand her an apron and a list of instructions. Instead, he simply pointed to a mountain of flour sacks stacked against the wall and said nothing at all.\n\nPriya waited, unsure whether this was a test or simply how he worked. After a long moment, Mr Fenwick picked up a single sack, hoisted it onto his shoulder without any visible effort, and carried it through to the ovens as though it weighed nothing more than a folded newspaper. Priya hurried to lift a sack of her own. It did not move nearly so easily. By the time she had dragged it halfway across the floor, Mr Fenwick was already three sacks ahead of her, whistling quietly to himself.",
+      "passageTitle": "The Baker's Apprentice",
+      "validationTier": "TIER2_ACCEPTED_SET",
+      "acceptedAnswers": [
+        "he is strong and used to the work",
+        "the task is easy for him because of years of experience",
+        "he makes something difficult look effortless"
+      ]
+    },
+    "explanation": "Educational Increment 007T, Part 7. Assessment Brain QT-RC-10, primary competency RC-02. Question family: wave3-fam-rc10-word-choice. Real evidence basis: docs/intelligence/CSSE_QUESTION_INTELLIGENCE_FRAMEWORK.md QT-RC-10 (CSSE-013 2021, CSSE-008 2022, EMC-3). Answer validation: TIER2_ACCEPTED_SET.",
+    "eligibility_status": "practice_eligible",
+    "active": true,
+    "learning_unit_id": "wave3-eng-bakersapprentice",
+    "provenance": "angel_original",
+    "subject": "english"
+  },
+  {
+    "id": "w3-rc10-am-06",
+    "family_id": "wave3-fam-rc10-atmosphere-mood",
+    "skill": "QT-RC-10",
+    "content_difficulty": "hard",
+    "prompt": {
+      "id": "w3-rc10-am-06",
+      "marks": 1,
+      "skill": "effect-of-language",
+      "question": "\"Nobody had said the word 'storm' out loud yet, but everybody on the harbour wall seemed to be moving a little faster than usual, and nobody was smiling.\" What does this suggest about the atmosphere on the harbour wall?",
+      "modelAnswer": "It suggests an unspoken tension or fear, since everyone senses danger is close even though nobody wants to say so directly, creating a quietly anxious atmosphere.",
+      "passageText": "By four o'clock, the fishing boats that were still out had become small dark shapes against a sky the colour of old bruises. Sam stood on the harbour wall with his father, who hadn't said very much in the last twenty minutes. Every few seconds, his father checked his watch, then looked back out at the water, then checked his watch again, as though the numbers might change if he looked hard enough.\n\nThe wind had picked up enough to make the loose rigging on the moored boats clang against their masts in a rhythm that didn't quite match anything. Down on the quay, Mrs Okafor was pulling the shutters closed on the harbour café two hours before she normally would. Nobody had said the word \"storm\" out loud yet, but everybody on the harbour wall seemed to be moving a little faster than usual, and nobody was smiling.",
+      "passageTitle": "The Storm at the Harbour",
+      "validationTier": "TIER2_ACCEPTED_SET",
+      "acceptedAnswers": [
+        "there is a hidden or unspoken worry among everyone present",
+        "people are anxious but trying not to show it openly",
+        "the tension is felt but not directly discussed",
+        "avoiding voicing their fear directly"
+      ]
+    },
+    "explanation": "Educational Increment 007T, Part 7. Assessment Brain QT-RC-10, primary competency RC-02. Question family: wave3-fam-rc10-atmosphere-mood. Real evidence basis: docs/intelligence/CSSE_QUESTION_INTELLIGENCE_FRAMEWORK.md QT-RC-10 (CSSE-013 2021, CSSE-008 2022, EMC-3). Answer validation: TIER2_ACCEPTED_SET.",
+    "eligibility_status": "practice_eligible",
+    "active": true,
+    "learning_unit_id": "wave3-eng-stormharbour",
+    "provenance": "angel_original",
+    "subject": "english"
+  },
+  {
+    "id": "w3-rc10-wc-04",
+    "family_id": "wave3-fam-rc10-word-choice",
+    "skill": "QT-RC-10",
+    "content_difficulty": "hard",
+    "prompt": {
+      "id": "w3-rc10-wc-04",
+      "marks": 1,
+      "skill": "effect-of-language",
+      "question": "What does the detail that Mr Fenwick was \"whistling quietly to himself\" while working suggest about how he feels about the task?",
+      "modelAnswer": "It suggests the work is so familiar and easy to him that he can do it almost without thinking, contrasting with Priya's visible struggle with the same task.",
+      "passageText": "Old Mr Fenwick had run the bakery on Corn Street for forty years, and everyone in the village said his bread was the best for miles. When Priya arrived for her first morning as his apprentice, she expected him to hand her an apron and a list of instructions. Instead, he simply pointed to a mountain of flour sacks stacked against the wall and said nothing at all.\n\nPriya waited, unsure whether this was a test or simply how he worked. After a long moment, Mr Fenwick picked up a single sack, hoisted it onto his shoulder without any visible effort, and carried it through to the ovens as though it weighed nothing more than a folded newspaper. Priya hurried to lift a sack of her own. It did not move nearly so easily. By the time she had dragged it halfway across the floor, Mr Fenwick was already three sacks ahead of her, whistling quietly to himself.",
+      "passageTitle": "The Baker's Apprentice",
+      "validationTier": "TIER2_ACCEPTED_SET",
+      "acceptedAnswers": [
+        "the task is second nature to him, requiring little effort or concentration",
+        "he is relaxed and unbothered by work that Priya finds difficult",
+        "it shows his ease and experience compared to Priya's struggle"
+      ]
+    },
+    "explanation": "Educational Increment 007T, Part 7. Assessment Brain QT-RC-10, primary competency RC-02. Question family: wave3-fam-rc10-word-choice. Real evidence basis: docs/intelligence/CSSE_QUESTION_INTELLIGENCE_FRAMEWORK.md QT-RC-10 (CSSE-013 2021, CSSE-008 2022, EMC-3). Answer validation: TIER2_ACCEPTED_SET.",
+    "eligibility_status": "practice_eligible",
+    "active": true,
+    "learning_unit_id": "wave3-eng-bakersapprentice",
+    "provenance": "angel_original",
+    "subject": "english"
+  },
+  {
+    "id": "w3-rc10-wc-05",
+    "family_id": "wave3-fam-rc10-word-choice",
+    "skill": "QT-RC-10",
+    "content_difficulty": "medium",
+    "prompt": {
+      "id": "w3-rc10-wc-05",
+      "marks": 1,
+      "skill": "effect-of-language",
+      "question": "Why might Tom choose to mention that he has \"started checking my phone every time it buzzes, just in case it's news\"?",
+      "modelAnswer": "It suggests Tom is quietly anxious about his grandad's health, even though he does not say so directly.",
+      "passageText": "Dear Grandad,\n\nI know you always say a letter should start with the weather, so I'll tell you it has rained every single day this week, which feels like exactly the sort of thing you'd find funny rather than annoying.\n\nSchool has been strange without you picking me up on Thursdays. Mr Ahmed asked where my \"chauffeur\" had gone, and I didn't really know what to say, so I just told him you were resting. I went past the allotment yesterday and your runner beans have grown right over the top of the fence, tangled and a bit wild, like they don't know you're not coming to tie them back. I didn't touch them. I thought you'd want to do that yourself when you're better.\n\nMum says I shouldn't worry so much, but I've started checking my phone every time it buzzes, just in case it's news. Write back soon, even if it's short.\n\nLove,\nTom",
+      "passageTitle": "Letter to Grandad",
+      "validationTier": "TIER2_ACCEPTED_SET",
+      "acceptedAnswers": [
+        "he is worried about his grandad without saying so outright",
+        "it reveals underlying anxiety about receiving bad news",
+        "it shows his concern despite trying to sound calm in the letter"
+      ]
+    },
+    "explanation": "Educational Increment 007T, Part 7. Assessment Brain QT-RC-10, primary competency RC-02. Question family: wave3-fam-rc10-word-choice. Real evidence basis: docs/intelligence/CSSE_QUESTION_INTELLIGENCE_FRAMEWORK.md QT-RC-10 (CSSE-013 2021, CSSE-008 2022, EMC-3). Answer validation: TIER2_ACCEPTED_SET.",
+    "eligibility_status": "practice_eligible",
+    "active": true,
+    "learning_unit_id": "wave3-eng-lettertograndad",
+    "provenance": "angel_original",
+    "subject": "english"
+  },
+  {
+    "id": "w3-rc10-wc-06",
+    "family_id": "wave3-fam-rc10-word-choice",
+    "skill": "QT-RC-10",
+    "content_difficulty": "medium",
+    "prompt": {
+      "id": "w3-rc10-wc-06",
+      "marks": 1,
+      "skill": "effect-of-language",
+      "question": "Sam's father checked his watch \"as though the numbers might change if he looked hard enough.\" What does this suggest about how Sam's father is feeling?",
+      "modelAnswer": "It suggests he feels anxious and powerless, repeating a pointless action because he cannot control the situation he is worried about.",
+      "passageText": "By four o'clock, the fishing boats that were still out had become small dark shapes against a sky the colour of old bruises. Sam stood on the harbour wall with his father, who hadn't said very much in the last twenty minutes. Every few seconds, his father checked his watch, then looked back out at the water, then checked his watch again, as though the numbers might change if he looked hard enough.\n\nThe wind had picked up enough to make the loose rigging on the moored boats clang against their masts in a rhythm that didn't quite match anything. Down on the quay, Mrs Okafor was pulling the shutters closed on the harbour café two hours before she normally would. Nobody had said the word \"storm\" out loud yet, but everybody on the harbour wall seemed to be moving a little faster than usual, and nobody was smiling.",
+      "passageTitle": "The Storm at the Harbour",
+      "validationTier": "TIER2_ACCEPTED_SET",
+      "acceptedAnswers": [
+        "he feels anxious and helpless about the situation",
+        "he is worried but can do nothing except wait",
+        "the repeated checking shows his nervous, powerless feeling"
+      ]
+    },
+    "explanation": "Educational Increment 007T, Part 7. Assessment Brain QT-RC-10, primary competency RC-02. Question family: wave3-fam-rc10-word-choice. Real evidence basis: docs/intelligence/CSSE_QUESTION_INTELLIGENCE_FRAMEWORK.md QT-RC-10 (CSSE-013 2021, CSSE-008 2022, EMC-3). Answer validation: TIER2_ACCEPTED_SET.",
+    "eligibility_status": "practice_eligible",
+    "active": true,
+    "learning_unit_id": "wave3-eng-stormharbour",
+    "provenance": "angel_original",
+    "subject": "english"
+  },
+  {
+    "id": "w1-lastbus-07",
+    "family_id": "wave1-fam-emotion-cause",
+    "skill": "QT-RC-08",
+    "content_difficulty": "medium",
+    "prompt": {
+      "id": "w1-lastbus-07",
+      "marks": 2,
+      "skill": "atmosphere",
+      "question": "How does the narrator's emotion change in the last two paragraphs of the passage, and why?",
+      "modelAnswer": "She changes from fear and exhaustion to relief and laughter. Once she is safely on the bus and the danger of missing it has passed, her body finally 'gives permission' to laugh, showing the fear draining away now that she is safe.",
+      "passageText": "I had exactly six minutes to reach the bus stop on Ferry Road, and I was still four streets away when my shoelace came undone for the second time that morning.\n\nI didn't stop. I told myself the lace could wait, the way you tell yourself lots of things can wait when you are already running. My bag thumped against my back with every stride, and somewhere inside it my recorder case was rattling loose against my water bottle, a sound that seemed, absurdly, to be counting down the minutes along with me.\n\nAt the corner of Wren Street I nearly collided with a man walking a dog nearly as tall as I was. He said something I didn't catch. I said sorry without really meaning it, because sorry was easier than stopping to explain that if I missed the 8:14 there would not be another bus for forty minutes, and forty minutes was exactly long enough to turn me from a girl who was occasionally a little late into a girl who had missed her audition entirely.\n\nI could see the stop now, a low glass shelter with three people already waiting under it. I couldn't see the bus. That was something, at least. I slowed just slightly, enough to breathe, enough to feel my heart doing something urgent and uneven in my chest.\n\nThen I saw it: a flash of red at the far end of Ferry Road, still small with distance, but unmistakably a bus, unmistakably mine.\n\nI ran the last stretch properly then, lace flapping, bag thumping, arms pumping in a way that would have embarrassed me on any other morning. The three people at the stop turned to watch me coming, which embarrassed me anyway. I reached the shelter exactly as the bus doors hissed open, and for a moment I could not speak at all, could only stand there with my hands on my knees, gulping air like something that had been underwater too long.\n\nThe driver waited. He didn't have to, but he did, watching me in his mirror with an expression I couldn't read, somewhere between amusement and patience.\n\n\"Cutting it fine,\" he said, as I finally climbed the steps.\n\n\"Every time,\" I managed, and found, to my surprise, that I was laughing, actual proper laughing, the kind that comes when your body has been too frightened to laugh for the last six minutes and has finally been given permission.",
+      "passageTitle": "The Last Bus",
+      "validationTier": "TIER5_NAMED_COMPONENT_PLUS_EXPLANATION",
+      "acceptedAnswers": [
+        "from scared to relieved",
+        "fear to relief",
+        "anxious to happy",
+        "anxious to laughing"
+      ]
+    },
+    "explanation": "Educational Increment 007B, Wave 1. Assessment Brain QT-RC-08, primary competency RC-02. Question family: wave1-fam-emotion-cause. Transfer class: FAR_TRANSFER. Real evidence basis: direct reading of CSSE-003/005/008 (2022/2023 Main Test papers and marking scheme, Level A, Founder-Accepted), reconciled in Educational Increment 007A. Answer validation: TIER3_QUOTATION_PLUS_EXPLANATION.",
+    "eligibility_status": "practice_eligible",
+    "active": true,
+    "learning_unit_id": "wave1-eng-lastbus",
+    "provenance": "angel_original",
+    "subject": "english"
+  },
+  {
+    "id": "w3-rc10-am-02",
+    "family_id": "wave3-fam-rc10-atmosphere-mood",
+    "skill": "QT-RC-10",
+    "content_difficulty": "hard",
+    "prompt": {
+      "id": "w3-rc10-am-02",
+      "marks": 1,
+      "skill": "effect-of-language",
+      "question": "Why might the writer choose to end the passage with Maya \"listening to nothing at all\" just before she turns the envelope over?",
+      "modelAnswer": "It builds suspense by holding the reader in the moment of anticipation, emphasising Maya's hesitation and the tension of not yet knowing what the envelope contains.",
+      "passageText": "Maya was always the first to arrive. She liked the ten minutes before anyone else came, when the classroom belonged only to her. This morning, though, something felt different. The chairs sat exactly as they had been left the day before, stacked with unusual care. The whiteboard, normally smudged with yesterday's lesson, had been wiped completely clean. Even the window, which never quite closed properly, was shut tight, and the room held a stillness that made her steps sound too loud.\n\nShe set her bag down slowly, as though placing it too quickly might disturb something she couldn't name. On the teacher's desk, a single envelope lay face-down, her name written across it in handwriting she almost recognised. Maya stood very still for a moment, listening to nothing at all, before she reached out and turned it over.",
+      "passageTitle": "The Empty Classroom",
+      "validationTier": "TIER2_ACCEPTED_SET",
+      "acceptedAnswers": [
+        "it creates suspense before the reveal",
+        "it creates tension before the reveal",
+        "it shows her hesitating, delaying the moment of finding out",
+        "it emphasises the anticipation building throughout the passage",
+        "build suspense and tension"
+      ]
+    },
+    "explanation": "Educational Increment 007T, Part 7. Assessment Brain QT-RC-10, primary competency RC-02. Question family: wave3-fam-rc10-atmosphere-mood. Real evidence basis: docs/intelligence/CSSE_QUESTION_INTELLIGENCE_FRAMEWORK.md QT-RC-10 (CSSE-013 2021, CSSE-008 2022, EMC-3). Answer validation: TIER2_ACCEPTED_SET.",
+    "eligibility_status": "practice_eligible",
+    "active": true,
+    "learning_unit_id": "wave3-eng-emptyclassroom",
+    "provenance": "angel_original",
+    "subject": "english"
+  },
+  {
+    "id": "w3-rc10-wc-01",
+    "family_id": "wave3-fam-rc10-word-choice",
+    "skill": "QT-RC-10",
+    "content_difficulty": "easy",
+    "prompt": {
+      "id": "w3-rc10-wc-01",
+      "marks": 1,
+      "skill": "effect-of-language",
+      "question": "The chairs were \"stacked with unusual care.\" What does the phrase \"unusual care\" suggest?",
+      "modelAnswer": "It suggests someone deliberately and carefully rearranged the room, which is out of the ordinary and adds to the sense that something unusual has happened.",
+      "passageText": "Maya was always the first to arrive. She liked the ten minutes before anyone else came, when the classroom belonged only to her. This morning, though, something felt different. The chairs sat exactly as they had been left the day before, stacked with unusual care. The whiteboard, normally smudged with yesterday's lesson, had been wiped completely clean. Even the window, which never quite closed properly, was shut tight, and the room held a stillness that made her steps sound too loud.\n\nShe set her bag down slowly, as though placing it too quickly might disturb something she couldn't name. On the teacher's desk, a single envelope lay face-down, her name written across it in handwriting she almost recognised. Maya stood very still for a moment, listening to nothing at all, before she reached out and turned it over.",
+      "passageTitle": "The Empty Classroom",
+      "validationTier": "TIER2_ACCEPTED_SET",
+      "acceptedAnswers": [
+        "someone arranged the room deliberately, which is unusual",
+        "someone arranged the room carefully, which is unusual",
+        "planned or prepared the room carefully",
+        "it hints that something out of the ordinary has occurred",
+        "it shows the tidiness is not accidental",
+        "the arrangement was deliberate and planned, not accidental tidying"
+      ]
+    },
+    "explanation": "Educational Increment 007T, Part 7. Assessment Brain QT-RC-10, primary competency RC-02. Question family: wave3-fam-rc10-word-choice. Real evidence basis: docs/intelligence/CSSE_QUESTION_INTELLIGENCE_FRAMEWORK.md QT-RC-10 (CSSE-013 2021, CSSE-008 2022, EMC-3). Answer validation: TIER2_ACCEPTED_SET.",
+    "eligibility_status": "practice_eligible",
+    "active": true,
+    "learning_unit_id": "wave3-eng-emptyclassroom",
+    "provenance": "angel_original",
+    "subject": "english"
+  },
+  {
+    "id": "w3-rc10-wc-02",
+    "family_id": "wave3-fam-rc10-word-choice",
+    "skill": "QT-RC-10",
+    "content_difficulty": "medium",
+    "prompt": {
+      "id": "w3-rc10-wc-02",
+      "marks": 1,
+      "skill": "effect-of-language",
+      "question": "The envelope was addressed \"in handwriting she almost recognised.\" What does the phrase \"almost recognised\" suggest?",
+      "modelAnswer": "It suggests a sense of partial, uncertain familiarity, deepening the mystery around who sent the envelope.",
+      "passageText": "Maya was always the first to arrive. She liked the ten minutes before anyone else came, when the classroom belonged only to her. This morning, though, something felt different. The chairs sat exactly as they had been left the day before, stacked with unusual care. The whiteboard, normally smudged with yesterday's lesson, had been wiped completely clean. Even the window, which never quite closed properly, was shut tight, and the room held a stillness that made her steps sound too loud.\n\nShe set her bag down slowly, as though placing it too quickly might disturb something she couldn't name. On the teacher's desk, a single envelope lay face-down, her name written across it in handwriting she almost recognised. Maya stood very still for a moment, listening to nothing at all, before she reached out and turned it over.",
+      "passageTitle": "The Empty Classroom",
+      "validationTier": "TIER2_ACCEPTED_SET",
+      "acceptedAnswers": [
+        "she is not fully sure whose handwriting it is, only partly familiar",
+        "it creates uncertainty about the sender",
+        "it creates mystery about the sender",
+        "she has some recognition but cannot place it exactly"
+      ]
+    },
+    "explanation": "Educational Increment 007T, Part 7. Assessment Brain QT-RC-10, primary competency RC-02. Question family: wave3-fam-rc10-word-choice. Real evidence basis: docs/intelligence/CSSE_QUESTION_INTELLIGENCE_FRAMEWORK.md QT-RC-10 (CSSE-013 2021, CSSE-008 2022, EMC-3). Answer validation: TIER2_ACCEPTED_SET.",
+    "eligibility_status": "practice_eligible",
+    "active": true,
+    "learning_unit_id": "wave3-eng-emptyclassroom",
+    "provenance": "angel_original",
+    "subject": "english"
+  },
+  {
+    "id": "qf-eng-voc-16",
+    "family_id": "wave3-fam-rc10-word-choice",
+    "skill": "QT-RC-03",
+    "content_difficulty": "medium",
+    "prompt": {
+      "question": "Why might the author have chosen 'soupy' rather than 'wet' to describe the pulp mixture?",
+      "blueprintId": "eng-voc-bp-effect-of-choice",
+      "passageText": "Every year, households across the country place old newspapers, cardboard boxes, and used notebooks into recycling bins without necessarily knowing what happens next. The journey from a crumpled sheet of paper to a brand-new notebook page involves several distinct stages, each of which removes something the previous stage left behind.\r\n\r\nFirst, collected paper is transported to a recycling plant, where it is sorted by hand and by machine into different grades. Newspaper, cardboard, and office paper are separated because they contain different types of fibre and cannot be processed together without weakening the final product. Once sorted, the paper is shredded into small pieces and mixed with water in a giant container called a pulper, which breaks it down into a thick, soupy mixture known as pulp.\r\n\r\nThe pulp is then pushed through screens with tiny holes. This step removes staples, plastic film, and other contaminants that would otherwise ruin the texture of the finished paper. Next, the pulp travels through a cleaning process that spins it at high speed, flinging out heavier impurities such as grit and small pieces of glass using centrifugal force.\r\n\r\nOne of the trickiest stages is de-inking, in which chemicals and air bubbles are used to separate ink particles from the paper fibres. The ink rises to the surface as a foam and is skimmed away, leaving behind fibres that are considerably paler than before. Finally, the cleaned pulp is spread thinly across a moving mesh screen, pressed to remove water, and dried by passing over heated rollers, emerging at the end of the line as fresh, usable paper.\r\n\r\nRecycled paper can typically be reprocessed this way four to six times before its fibres become too short and weak to hold together, at which point they are usually blended with a small amount of fresh wood pulp to strengthen the mixture once again.",
+      "passageTitle": "The Journey of Recycled Paper",
+      "teachingUses": [
+        "scaffolded_practice",
+        "transfer"
+      ],
+      "validationTier": "TIER2_ACCEPTED_SET",
+      "acceptedAnswers": [
+        "'soupy' gives a more specific, vivid image of a thick liquid mixture than a plain word like 'wet'"
+      ],
+      "evidenceLocation": "paragraph 2"
+    },
+    "explanation": "",
+    "eligibility_status": "practice_eligible",
+    "active": true,
+    "learning_unit_id": "eng-inc002-journey-of-recycled-paper",
+    "provenance": "generated_original",
+    "subject": "english"
+  },
+  {
+    "id": "w3-rc07-newtrainers-01",
+    "family_id": "wave3-fam-rc07-comparative",
+    "skill": "QT-RC-07",
+    "content_difficulty": "medium",
+    "prompt": {
+      "id": "w3-rc07-newtrainers-01",
+      "marks": 1,
+      "skill": "comparison",
+      "question": "Compare how Jayden behaves at the start of the school day with how he behaves by the end of the day. What has changed?",
+      "modelAnswer": "At the start, Jayden deliberately walks past groups of people, taking the longest route, wanting to be seen in his new trainers. By the end, he hides the trainers at the back of his locker and takes the shortest route home in his old pair, actively avoiding attention -- a complete reversal.",
+      "passageText": "Jayden had saved for eleven weeks to buy the trainers, counting out coins from his paper-round money every Sunday evening. When he finally wore them to school, he spent the whole morning walking very deliberately past groups of people, taking the longest possible route between lessons.\n\nNobody said anything about them at break time. At lunch, Connor glanced down at Jayden's feet for exactly one second, then carried on eating his sandwich without a word. Jayden told himself it didn't matter what Connor thought. By the end of the day, though, the trainers were tucked at the very back of his locker, and Jayden walked home in his old, scuffed pair instead, taking the shortest route he knew.",
+      "passageTitle": "The New Trainers",
+      "validationTier": "TIER2_ACCEPTED_SET",
+      "acceptedAnswers": [
+        "goes from wanting to be seen to wanting to hide",
+        "goes from wanting to be seen to wanting to avoid attention",
+        "started proud and eager to show off, ended embarrassed and avoiding notice",
+        "the longest route to be seen becomes the shortest route to avoid being seen"
+      ]
+    },
+    "explanation": "English Wave 3 Reading Remediation. QT-RC-07, competency RC-01. Question family: wave3-fam-rc07-comparative. Drawing on the passage's own explicit before/after structure.",
+    "eligibility_status": "practice_eligible",
+    "active": true,
+    "learning_unit_id": "wave3-eng-newtrainers",
+    "provenance": "angel_original",
+    "subject": "english"
+  },
+  {
+    "id": "w3-rc07-bakersapprentice-01",
+    "family_id": "wave3-fam-rc07-comparative",
+    "skill": "QT-RC-07",
+    "content_difficulty": "medium",
+    "prompt": {
+      "id": "w3-rc07-bakersapprentice-01",
+      "marks": 1,
+      "skill": "comparison",
+      "question": "Compare how easily Mr Fenwick carries a flour sack with how Priya manages hers. What is the difference?",
+      "modelAnswer": "Mr Fenwick lifts and carries his sack effortlessly, \"without any visible effort,\" as though it weighed almost nothing. Priya's sack does not move nearly so easily -- she has to drag hers and falls three sacks behind him.",
+      "passageText": "Old Mr Fenwick had run the bakery on Corn Street for forty years, and everyone in the village said his bread was the best for miles. When Priya arrived for her first morning as his apprentice, she expected him to hand her an apron and a list of instructions. Instead, he simply pointed to a mountain of flour sacks stacked against the wall and said nothing at all.\n\nPriya waited, unsure whether this was a test or simply how he worked. After a long moment, Mr Fenwick picked up a single sack, hoisted it onto his shoulder without any visible effort, and carried it through to the ovens as though it weighed nothing more than a folded newspaper. Priya hurried to lift a sack of her own. It did not move nearly so easily. By the time she had dragged it halfway across the floor, Mr Fenwick was already three sacks ahead of her, whistling quietly to himself.",
+      "passageTitle": "The Baker's Apprentice",
+      "validationTier": "TIER2_ACCEPTED_SET",
+      "acceptedAnswers": [
+        "he carries his easily, she struggles and has to drag hers",
+        "he carries his effortlessly, she struggles and has to drag hers",
+        "his experience makes it look easy, her lack of experience makes it hard",
+        "he is far ahead of her because the task is effortless for him but not for her"
+      ]
+    },
+    "explanation": "English Wave 3 Reading Remediation. QT-RC-07 (Multi-Entity Comparative Attribute Extraction), competency RC-01. Question family: wave3-fam-rc07-comparative. Drawing directly on the passage's own central two-character contrast.",
+    "eligibility_status": "practice_eligible",
+    "active": true,
+    "learning_unit_id": "wave3-eng-bakersapprentice",
+    "provenance": "angel_original",
+    "subject": "english"
+  },
+  {
+    "id": "w3-rc08-emptyclassroom-01",
+    "family_id": "wave3-fam-rc08-emotion",
+    "skill": "QT-RC-08",
+    "content_difficulty": "medium",
+    "prompt": {
+      "id": "w3-rc08-emptyclassroom-01",
+      "marks": 1,
+      "skill": "atmosphere",
+      "question": "How does Maya feel as she first notices the classroom is different, based on the way she moves and behaves?",
+      "modelAnswer": "She feels cautious and uneasy -- she sets her bag down slowly, \"as though placing it too quickly might disturb something she couldn't name,\" and stands very still, suggesting careful, wary behaviour rather than her usual comfort in the empty room.",
+      "passageText": "Maya was always the first to arrive. She liked the ten minutes before anyone else came, when the classroom belonged only to her. This morning, though, something felt different. The chairs sat exactly as they had been left the day before, stacked with unusual care. The whiteboard, normally smudged with yesterday's lesson, had been wiped completely clean. Even the window, which never quite closed properly, was shut tight, and the room held a stillness that made her steps sound too loud.\n\nShe set her bag down slowly, as though placing it too quickly might disturb something she couldn't name. On the teacher's desk, a single envelope lay face-down, her name written across it in handwriting she almost recognised. Maya stood very still for a moment, listening to nothing at all, before she reached out and turned it over.",
+      "passageTitle": "The Empty Classroom",
+      "validationTier": "TIER2_ACCEPTED_SET",
+      "acceptedAnswers": [
+        "cautious and uneasy, moving carefully",
+        "wary or on edge, unlike her usual comfort in the room",
+        "nervous, sensing something unusual without knowing what"
+      ]
+    },
+    "explanation": "English Wave 3 Reading Remediation. QT-RC-08 (Emotion-and-Cause), competency RC-02. Question family: wave3-fam-rc08-emotion. Asks about Maya's INITIAL reaction, a different moment from the existing questions' focus on the closing line.",
+    "eligibility_status": "practice_eligible",
+    "active": true,
+    "learning_unit_id": "wave3-eng-emptyclassroom",
+    "provenance": "angel_original",
+    "subject": "english"
+  },
+  {
+    "id": "w3-rc06-lettertograndad-01",
+    "family_id": "wave3-fam-rc06-sequencing",
+    "skill": "QT-RC-06",
+    "content_difficulty": "medium",
+    "prompt": {
+      "id": "w3-rc06-lettertograndad-01",
+      "marks": 1,
+      "skill": "structure",
+      "question": "Put these three things Tom mentions in the order he writes about them in the letter: (a) checking his phone for news (b) the runner beans in the allotment (c) being picked up on Thursdays.",
+      "modelAnswer": "1. Being picked up on Thursdays (c). 2. The runner beans in the allotment (b). 3. Checking his phone for news (a).",
+      "passageText": "Dear Grandad,\n\nI know you always say a letter should start with the weather, so I'll tell you it has rained every single day this week, which feels like exactly the sort of thing you'd find funny rather than annoying.\n\nSchool has been strange without you picking me up on Thursdays. Mr Ahmed asked where my \"chauffeur\" had gone, and I didn't really know what to say, so I just told him you were resting. I went past the allotment yesterday and your runner beans have grown right over the top of the fence, tangled and a bit wild, like they don't know you're not coming to tie them back. I didn't touch them. I thought you'd want to do that yourself when you're better.\n\nMum says I shouldn't worry so much, but I've started checking my phone every time it buzzes, just in case it's news. Write back soon, even if it's short.\n\nLove,\nTom",
+      "passageTitle": "Letter to Grandad",
+      "orderedAnswer": [
+        "being picked up on Thursdays",
+        "the runner beans in the allotment",
+        "checking his phone for news"
+      ],
+      "validationTier": "TIER4_ORDERED_LIST"
+    },
+    "explanation": "English Wave 3 Reading Remediation. QT-RC-06 (Sequential Ordering of Textual Information), competency RC-04. Question family: wave3-fam-rc06-sequencing. New demand type for Wave 3, testing the letter's own explicit paragraph structure.",
+    "eligibility_status": "practice_eligible",
+    "active": true,
+    "learning_unit_id": "wave3-eng-lettertograndad",
+    "provenance": "angel_original",
+    "subject": "english"
+  },
+  {
+    "id": "w3-rc08-stormharbour-01",
+    "family_id": "wave3-fam-rc08-emotion",
+    "skill": "QT-RC-08",
+    "content_difficulty": "medium",
+    "prompt": {
+      "id": "w3-rc08-stormharbour-01",
+      "marks": 1,
+      "skill": "atmosphere",
+      "question": "How might Sam himself be feeling as he watches his father repeatedly check his watch and look out at the water?",
+      "modelAnswer": "Sam is likely feeling worried or anxious too, picking up on his father's tension even though Sam's own feelings are never directly stated -- the tense, unsmiling atmosphere around them suggests he shares the general unease.",
+      "passageText": "By four o'clock, the fishing boats that were still out had become small dark shapes against a sky the colour of old bruises. Sam stood on the harbour wall with his father, who hadn't said very much in the last twenty minutes. Every few seconds, his father checked his watch, then looked back out at the water, then checked his watch again, as though the numbers might change if he looked hard enough.\n\nThe wind had picked up enough to make the loose rigging on the moored boats clang against their masts in a rhythm that didn't quite match anything. Down on the quay, Mrs Okafor was pulling the shutters closed on the harbour café two hours before she normally would. Nobody had said the word \"storm\" out loud yet, but everybody on the harbour wall seemed to be moving a little faster than usual, and nobody was smiling.",
+      "passageTitle": "The Storm at the Harbour",
+      "validationTier": "TIER2_ACCEPTED_SET",
+      "acceptedAnswers": [
+        "worried or anxious, picking up on his father's tension",
+        "uneasy, affected by the tense atmosphere around him",
+        "nervous, even though it isn't stated directly"
+      ]
+    },
+    "explanation": "English Wave 3 Reading Remediation. QT-RC-08, competency RC-02. Question family: wave3-fam-rc08-emotion. Asks about SAM's feelings specifically -- the existing questions all address his father's, a genuinely different vantage point.",
+    "eligibility_status": "practice_eligible",
+    "active": true,
+    "learning_unit_id": "wave3-eng-stormharbour",
+    "provenance": "angel_original",
+    "subject": "english"
+  },
+  {
+    "id": "w3-rc10-wc-07",
+    "family_id": "wave3-fam-rc10-word-choice",
+    "skill": "QT-RC-10",
+    "content_difficulty": "easy",
+    "prompt": {
+      "id": "w3-rc10-wc-07",
+      "marks": 1,
+      "skill": "effect-of-language",
+      "question": "Jayden \"spent the whole morning walking very deliberately past groups of people, taking the longest possible route between lessons.\" What does this suggest about how Jayden felt about his new trainers?",
+      "modelAnswer": "It suggests Jayden felt proud of his new trainers and wanted other people to notice them.",
+      "passageText": "Jayden had saved for eleven weeks to buy the trainers, counting out coins from his paper-round money every Sunday evening. When he finally wore them to school, he spent the whole morning walking very deliberately past groups of people, taking the longest possible route between lessons.\n\nNobody said anything about them at break time. At lunch, Connor glanced down at Jayden's feet for exactly one second, then carried on eating his sandwich without a word. Jayden told himself it didn't matter what Connor thought. By the end of the day, though, the trainers were tucked at the very back of his locker, and Jayden walked home in his old, scuffed pair instead, taking the shortest route he knew.",
+      "passageTitle": "The New Trainers",
+      "validationTier": "TIER2_ACCEPTED_SET",
+      "acceptedAnswers": [
+        "he was proud and wanted to show them off",
+        "he wanted people to notice his new trainers",
+        "he felt excited and eager for attention",
+        "he was proud of his new trainers and wanted people to notice and admire them"
+      ]
+    },
+    "explanation": "Educational Increment 007T, Part 7. Assessment Brain QT-RC-10, primary competency RC-02. Question family: wave3-fam-rc10-word-choice. Real evidence basis: docs/intelligence/CSSE_QUESTION_INTELLIGENCE_FRAMEWORK.md QT-RC-10 (CSSE-013 2021, CSSE-008 2022, EMC-3). Answer validation: TIER2_ACCEPTED_SET.",
+    "eligibility_status": "practice_eligible",
+    "active": true,
+    "learning_unit_id": "wave3-eng-newtrainers",
+    "provenance": "angel_original",
+    "subject": "english"
+  }
+]

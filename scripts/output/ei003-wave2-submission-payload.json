@@ -1,0 +1,1884 @@
+[
+  {
+    "p_candidate_id": "ei003-w2-seq-explicit-01",
+    "p_family_id": "wave3-fam-rc06-sequencing",
+    "p_generation_spec_id": "ei003-w2-bp-seq-explicit-chronology",
+    "p_generation_spec_version": "1",
+    "p_subject": "english",
+    "p_competency_id": null,
+    "p_skill": "QT-RC-06",
+    "p_question_type": "short-answer",
+    "p_pathway": [
+      "csse"
+    ],
+    "p_preparation_stage": "FOUNDATION",
+    "p_difficulty": "easy",
+    "p_question_content": {
+      "question": "Put these three events from \"The Relay Baton\" in the order they happen: (a) Nadia passes the baton to Marcus, (b) the handover between Priya and Nadia is clumsy, (c) Kestrel wins by less than a second.",
+      "acceptedAnswers": [
+        "b, a, c",
+        "b then a then c",
+        "the clumsy handover, then passing to marcus, then kestrel winning"
+      ],
+      "evidenceQuotes": [
+        "the handover was clumsy",
+        "She passed the baton to Marcus",
+        "Kestrel won by less than a second"
+      ],
+      "explanationGuidance": "All three events are narrated in this order, one after another, with no jump back in time -- the clumsy handover happens first, then Nadia's leg ends with her passing to Marcus, then the race result is announced last.",
+      "distractorRationale": null,
+      "blueprintId": "ei003-w2-bp-seq-explicit-chronology",
+      "reasoningRoute": "explicit_chronology",
+      "familyId": "wave3-fam-rc06-sequencing"
+    },
+    "p_claimed_answer": "b, a, c",
+    "p_worked_explanation": "All three events are narrated in this order, one after another, with no jump back in time -- the clumsy handover happens first, then Nadia's leg ends with her passing to Marcus, then the race result is announced last.",
+    "p_distractors": null,
+    "p_mathematical_validation": {
+      "evidenceQuotesVerifiedAgainstRealPassageText": true,
+      "validator": "scripts/validate-ei003-wave2-manifest.mjs",
+      "validatedAt": "2026-09-09T04:20:50.204Z"
+    },
+    "p_similarity_validation": {
+      "approved": true,
+      "reasons": [],
+      "checkedForDuplicateQuestionTextWithinBatch": true,
+      "checkedForExactDuplicateAgainstLiveProductionQuestionsForSameFamily": true
+    },
+    "p_passage_id": "ei003-w2-eng-the-relay-baton"
+  },
+  {
+    "p_candidate_id": "ei003-w2-seq-explicit-02",
+    "p_family_id": "wave3-fam-rc06-sequencing",
+    "p_generation_spec_id": "ei003-w2-bp-seq-explicit-chronology",
+    "p_generation_spec_version": "1",
+    "p_subject": "english",
+    "p_competency_id": null,
+    "p_skill": "QT-RC-06",
+    "p_question_type": "short-answer",
+    "p_pathway": [
+      "csse"
+    ],
+    "p_preparation_stage": "FOUNDATION",
+    "p_difficulty": "easy",
+    "p_question_content": {
+      "question": "According to the passage, which happens first: the frog pulling its red blood cells into its liver, or the frog waking up and needing full-strength muscles?",
+      "acceptedAnswers": [
+        "pulling its red blood cells into its liver happens first",
+        "the blood is hidden in the liver first, then it wakes up",
+        "hiding the blood cells comes before waking"
+      ],
+      "evidenceQuotes": [
+        "it pulls roughly ninety percent of its red blood cells out of general circulation",
+        "returns its blood to normal circulation the moment it wakes and needs full-strength muscles"
+      ],
+      "explanationGuidance": "The passage states the frog hides its blood cells while resting/sleeping, and only returns them to circulation later, at the moment it wakes -- so the hiding happens first, the waking/returning second.",
+      "distractorRationale": null,
+      "blueprintId": "ei003-w2-bp-seq-explicit-chronology",
+      "reasoningRoute": "explicit_chronology",
+      "familyId": "wave3-fam-rc06-sequencing"
+    },
+    "p_claimed_answer": "pulling its red blood cells into its liver happens first",
+    "p_worked_explanation": "The passage states the frog hides its blood cells while resting/sleeping, and only returns them to circulation later, at the moment it wakes -- so the hiding happens first, the waking/returning second.",
+    "p_distractors": null,
+    "p_mathematical_validation": {
+      "evidenceQuotesVerifiedAgainstRealPassageText": true,
+      "validator": "scripts/validate-ei003-wave2-manifest.mjs",
+      "validatedAt": "2026-09-09T04:20:50.204Z"
+    },
+    "p_similarity_validation": {
+      "approved": true,
+      "reasons": [],
+      "checkedForDuplicateQuestionTextWithinBatch": true,
+      "checkedForExactDuplicateAgainstLiveProductionQuestionsForSameFamily": true
+    },
+    "p_passage_id": "ei003-w2-eng-the-glass-frog"
+  },
+  {
+    "p_candidate_id": "ei003-w2-seq-dispersed-01",
+    "p_family_id": "wave3-fam-rc06-sequencing",
+    "p_generation_spec_id": "ei003-w2-bp-seq-dispersed-chronology",
+    "p_generation_spec_version": "1",
+    "p_subject": "english",
+    "p_competency_id": null,
+    "p_skill": "QT-RC-06",
+    "p_question_type": "short-answer",
+    "p_pathway": [
+      "csse"
+    ],
+    "p_preparation_stage": "DEVELOPMENT",
+    "p_difficulty": "medium",
+    "p_question_content": {
+      "question": "At which house does Tobias first learn from someone other than his grandad that this is the very last round: the second house, the sixth house, or the ninth house?",
+      "acceptedAnswers": [
+        "the sixth house",
+        "sixth house",
+        "house six",
+        "6th"
+      ],
+      "evidenceQuotes": [
+        "It was only at the sixth house",
+        "\"Last one today, is it, Kofi?\" the man said."
+      ],
+      "explanationGuidance": "The passage marks each house's position explicitly (\"the first house\", \"the second house\", \"the sixth house\", \"the ninth house\") scattered across several paragraphs -- Mr Whitfield's conversation about it being the last round is specifically placed at the sixth house, not the second or ninth.",
+      "distractorRationale": null,
+      "blueprintId": "ei003-w2-bp-seq-dispersed-chronology",
+      "reasoningRoute": "dispersed_chronology",
+      "familyId": "wave3-fam-rc06-sequencing"
+    },
+    "p_claimed_answer": "the sixth house",
+    "p_worked_explanation": "The passage marks each house's position explicitly (\"the first house\", \"the second house\", \"the sixth house\", \"the ninth house\") scattered across several paragraphs -- Mr Whitfield's conversation about it being the last round is specifically placed at the sixth house, not the second or ninth.",
+    "p_distractors": null,
+    "p_mathematical_validation": {
+      "evidenceQuotesVerifiedAgainstRealPassageText": true,
+      "validator": "scripts/validate-ei003-wave2-manifest.mjs",
+      "validatedAt": "2026-09-09T04:20:50.204Z"
+    },
+    "p_similarity_validation": {
+      "approved": true,
+      "reasons": [],
+      "checkedForDuplicateQuestionTextWithinBatch": true,
+      "checkedForExactDuplicateAgainstLiveProductionQuestionsForSameFamily": true
+    },
+    "p_passage_id": "ei003-w2-eng-the-last-delivery"
+  },
+  {
+    "p_candidate_id": "ei003-w2-seq-dispersed-02",
+    "p_family_id": "wave3-fam-rc06-sequencing",
+    "p_generation_spec_id": "ei003-w2-bp-seq-dispersed-chronology",
+    "p_generation_spec_version": "1",
+    "p_subject": "english",
+    "p_competency_id": null,
+    "p_skill": "QT-RC-06",
+    "p_question_type": "short-answer",
+    "p_pathway": [
+      "csse"
+    ],
+    "p_preparation_stage": "DEVELOPMENT",
+    "p_difficulty": "medium",
+    "p_question_content": {
+      "question": "Put these three moments from \"The Clock That Stopped\" in the order they happened: (a) a gear is discovered installed backwards, (b) the clock is still silent even in August, (c) a spring is dropped and disappears under the dresser.",
+      "acceptedAnswers": [
+        "c, a, b",
+        "c then a then b",
+        "dropped spring, then backwards gear, then still silent in august"
+      ],
+      "evidenceQuotes": [
+        "Twice I dropped a spring",
+        "three weeks in, we discovered an entire gear installed backwards",
+        "By August, the clock still didn't run"
+      ],
+      "explanationGuidance": "The passage gives time markers scattered through the account: the dropped spring is mentioned as an early setback, the backwards gear is explicitly \"three weeks in\", and the clock is confirmed still not working \"by August\" -- later than both.",
+      "distractorRationale": null,
+      "blueprintId": "ei003-w2-bp-seq-dispersed-chronology",
+      "reasoningRoute": "dispersed_chronology",
+      "familyId": "wave3-fam-rc06-sequencing"
+    },
+    "p_claimed_answer": "c, a, b",
+    "p_worked_explanation": "The passage gives time markers scattered through the account: the dropped spring is mentioned as an early setback, the backwards gear is explicitly \"three weeks in\", and the clock is confirmed still not working \"by August\" -- later than both.",
+    "p_distractors": null,
+    "p_mathematical_validation": {
+      "evidenceQuotesVerifiedAgainstRealPassageText": true,
+      "validator": "scripts/validate-ei003-wave2-manifest.mjs",
+      "validatedAt": "2026-09-09T04:20:50.204Z"
+    },
+    "p_similarity_validation": {
+      "approved": true,
+      "reasons": [],
+      "checkedForDuplicateQuestionTextWithinBatch": true,
+      "checkedForExactDuplicateAgainstLiveProductionQuestionsForSameFamily": true
+    },
+    "p_passage_id": "ei003-w2-eng-the-clock-that-stopped"
+  },
+  {
+    "p_candidate_id": "ei003-w2-seq-causal-01",
+    "p_family_id": "wave3-fam-rc06-sequencing",
+    "p_generation_spec_id": "ei003-w2-bp-seq-causal-ordering",
+    "p_generation_spec_version": "1",
+    "p_subject": "english",
+    "p_competency_id": null,
+    "p_skill": "QT-RC-06",
+    "p_question_type": "short-answer",
+    "p_pathway": [
+      "csse"
+    ],
+    "p_preparation_stage": "INDEPENDENT",
+    "p_difficulty": "hard",
+    "p_question_content": {
+      "question": "What happened as a direct result of the clumsy handover between Priya and Nadia?",
+      "acceptedAnswers": [
+        "nadia lost time/had to make up the lost half-second",
+        "she lost time fumbling for a proper grip",
+        "the baton clipped her fingers, costing her time before she could run properly",
+        "she had a mark left on her knuckles"
+      ],
+      "evidenceQuotes": [
+        "the baton clipped Nadia's fingers before she managed to close her hand around it",
+        "the half-second she'd lost fumbling for a proper grip"
+      ],
+      "explanationGuidance": "The passage directly links the clumsy handover to a real consequence: Nadia loses a half-second fumbling for a proper grip on the baton, which is presented as a specific, quantified cost of that one earlier event.",
+      "distractorRationale": null,
+      "blueprintId": "ei003-w2-bp-seq-causal-ordering",
+      "reasoningRoute": "causal_ordering",
+      "familyId": "wave3-fam-rc06-sequencing"
+    },
+    "p_claimed_answer": "nadia lost time/had to make up the lost half-second",
+    "p_worked_explanation": "The passage directly links the clumsy handover to a real consequence: Nadia loses a half-second fumbling for a proper grip on the baton, which is presented as a specific, quantified cost of that one earlier event.",
+    "p_distractors": null,
+    "p_mathematical_validation": {
+      "evidenceQuotesVerifiedAgainstRealPassageText": true,
+      "validator": "scripts/validate-ei003-wave2-manifest.mjs",
+      "validatedAt": "2026-09-09T04:20:50.204Z"
+    },
+    "p_similarity_validation": {
+      "approved": true,
+      "reasons": [],
+      "checkedForDuplicateQuestionTextWithinBatch": true,
+      "checkedForExactDuplicateAgainstLiveProductionQuestionsForSameFamily": true
+    },
+    "p_passage_id": "ei003-w2-eng-the-relay-baton"
+  },
+  {
+    "p_candidate_id": "ei003-w2-seq-causal-02",
+    "p_family_id": "wave3-fam-rc06-sequencing",
+    "p_generation_spec_id": "ei003-w2-bp-seq-causal-ordering",
+    "p_generation_spec_version": "1",
+    "p_subject": "english",
+    "p_competency_id": null,
+    "p_skill": "QT-RC-06",
+    "p_question_type": "short-answer",
+    "p_pathway": [
+      "csse"
+    ],
+    "p_preparation_stage": "INDEPENDENT",
+    "p_difficulty": "hard",
+    "p_question_content": {
+      "question": "What happened as a direct result of Priti stepping onto ground that looked solid?",
+      "acceptedAnswers": [
+        "she sank almost to her knee",
+        "her leg sank into the mud",
+        "she began moving more carefully afterwards, testing each step"
+      ],
+      "evidenceQuotes": [
+        "Priti, walking just ahead of me, put her weight on a patch of ground that appeared entirely solid and sank almost to her knee",
+        "she moved more carefully afterwards, testing each step before committing her full weight"
+      ],
+      "explanationGuidance": "The passage shows a clear cause-and-effect chain: stepping on ground that only LOOKED solid caused Priti to sink, which in turn caused her later, more cautious behaviour -- two separate, linked consequences of one triggering action.",
+      "distractorRationale": null,
+      "blueprintId": "ei003-w2-bp-seq-causal-ordering",
+      "reasoningRoute": "causal_ordering",
+      "familyId": "wave3-fam-rc06-sequencing"
+    },
+    "p_claimed_answer": "she sank almost to her knee",
+    "p_worked_explanation": "The passage shows a clear cause-and-effect chain: stepping on ground that only LOOKED solid caused Priti to sink, which in turn caused her later, more cautious behaviour -- two separate, linked consequences of one triggering action.",
+    "p_distractors": null,
+    "p_mathematical_validation": {
+      "evidenceQuotesVerifiedAgainstRealPassageText": true,
+      "validator": "scripts/validate-ei003-wave2-manifest.mjs",
+      "validatedAt": "2026-09-09T04:20:50.204Z"
+    },
+    "p_similarity_validation": {
+      "approved": true,
+      "reasons": [],
+      "checkedForDuplicateQuestionTextWithinBatch": true,
+      "checkedForExactDuplicateAgainstLiveProductionQuestionsForSameFamily": true
+    },
+    "p_passage_id": "ei003-w2-eng-crossing-the-fen"
+  },
+  {
+    "p_candidate_id": "ei003-w2-seq-narrative-order-01",
+    "p_family_id": "wave3-fam-rc06-sequencing",
+    "p_generation_spec_id": "ei003-w2-bp-seq-narrative-vs-event-order",
+    "p_generation_spec_version": "1",
+    "p_subject": "english",
+    "p_competency_id": null,
+    "p_skill": "QT-RC-06",
+    "p_question_type": "short-answer",
+    "p_pathway": [
+      "csse"
+    ],
+    "p_preparation_stage": "TRANSFER",
+    "p_difficulty": "challenge",
+    "p_question_content": {
+      "question": "The narrator opens the passage saying \"I was eleven... I still remember exactly which one.\" Is the narrator telling this story as it happens, or looking back on it as an adult remembering childhood? Use evidence from the passage to support your answer.",
+      "acceptedAnswers": [
+        "looking back as an adult remembering childhood -- phrases like 'i still remember' and 'i think about that clock now' show this is being told from much later",
+        "the narrator is remembering it later, shown by 'i still remember' and 'i think about that clock now whenever'",
+        "it is told in reflection from later in life, evidenced by 'i think about that clock now'"
+      ],
+      "evidenceQuotes": [
+        "I still remember exactly which one",
+        "I think about that clock now whenever something in my own life refuses to work"
+      ],
+      "explanationGuidance": "The opening phrase 'I still remember' and the closing 'I think about that clock now' both signal that an older narrator is recalling a childhood summer, not narrating it as it happens -- the whole account is a reflective memory, which is why events can be summarised across a season rather than told minute-by-minute.",
+      "distractorRationale": null,
+      "blueprintId": "ei003-w2-bp-seq-narrative-vs-event-order",
+      "reasoningRoute": "explicit_chronology",
+      "familyId": "wave3-fam-rc06-sequencing"
+    },
+    "p_claimed_answer": "looking back as an adult remembering childhood -- phrases like 'i still remember' and 'i think about that clock now' show this is being told from much later",
+    "p_worked_explanation": "The opening phrase 'I still remember' and the closing 'I think about that clock now' both signal that an older narrator is recalling a childhood summer, not narrating it as it happens -- the whole account is a reflective memory, which is why events can be summarised across a season rather than told minute-by-minute.",
+    "p_distractors": null,
+    "p_mathematical_validation": {
+      "evidenceQuotesVerifiedAgainstRealPassageText": true,
+      "validator": "scripts/validate-ei003-wave2-manifest.mjs",
+      "validatedAt": "2026-09-09T04:20:50.204Z"
+    },
+    "p_similarity_validation": {
+      "approved": true,
+      "reasons": [],
+      "checkedForDuplicateQuestionTextWithinBatch": true,
+      "checkedForExactDuplicateAgainstLiveProductionQuestionsForSameFamily": true
+    },
+    "p_passage_id": "ei003-w2-eng-the-clock-that-stopped"
+  },
+  {
+    "p_candidate_id": "ei003-w2-seq-narrative-order-02",
+    "p_family_id": "wave3-fam-rc06-sequencing",
+    "p_generation_spec_id": "ei003-w2-bp-seq-narrative-vs-event-order",
+    "p_generation_spec_version": "1",
+    "p_subject": "english",
+    "p_competency_id": null,
+    "p_skill": "QT-RC-06",
+    "p_question_type": "short-answer",
+    "p_pathway": [
+      "csse"
+    ],
+    "p_preparation_stage": "TRANSFER",
+    "p_difficulty": "challenge",
+    "p_question_content": {
+      "question": "Put these four moments in the order they really happened: (a) the clock starts running on a Tuesday, (b) the grandmother says nobody has ever actually opened the clock up to check, (c) the clock is still silent by August, (d) a gear is found installed backwards.",
+      "acceptedAnswers": [
+        "b, d, c, a",
+        "b then d then c then a"
+      ],
+      "evidenceQuotes": [
+        "Nobody's ever actually opened it up to check",
+        "three weeks in, we discovered an entire gear installed backwards",
+        "By August, the clock still didn't run",
+        "It started running on a Tuesday"
+      ],
+      "explanationGuidance": "Reading past the reflective framing to the real chronology: the grandmother's opening remark comes first (before any work begins), the backwards gear is found three weeks into the work, the clock is still silent by August (weeks later still), and it finally starts on a Tuesday near the very end of the account.",
+      "distractorRationale": null,
+      "blueprintId": "ei003-w2-bp-seq-narrative-vs-event-order",
+      "reasoningRoute": "explicit_chronology",
+      "familyId": "wave3-fam-rc06-sequencing"
+    },
+    "p_claimed_answer": "b, d, c, a",
+    "p_worked_explanation": "Reading past the reflective framing to the real chronology: the grandmother's opening remark comes first (before any work begins), the backwards gear is found three weeks into the work, the clock is still silent by August (weeks later still), and it finally starts on a Tuesday near the very end of the account.",
+    "p_distractors": null,
+    "p_mathematical_validation": {
+      "evidenceQuotesVerifiedAgainstRealPassageText": true,
+      "validator": "scripts/validate-ei003-wave2-manifest.mjs",
+      "validatedAt": "2026-09-09T04:20:50.204Z"
+    },
+    "p_similarity_validation": {
+      "approved": true,
+      "reasons": [],
+      "checkedForDuplicateQuestionTextWithinBatch": true,
+      "checkedForExactDuplicateAgainstLiveProductionQuestionsForSameFamily": true
+    },
+    "p_passage_id": "ei003-w2-eng-the-clock-that-stopped"
+  },
+  {
+    "p_candidate_id": "ei003-w2-comp-reactions-01",
+    "p_family_id": "wave3-fam-rc07-comparative",
+    "p_generation_spec_id": "ei003-w2-bp-comp-reactions",
+    "p_generation_spec_version": "1",
+    "p_subject": "english",
+    "p_competency_id": null,
+    "p_skill": "QT-RC-07",
+    "p_question_type": "short-answer",
+    "p_pathway": [
+      "csse"
+    ],
+    "p_preparation_stage": "FOUNDATION",
+    "p_difficulty": "medium",
+    "p_question_content": {
+      "question": "After the race, compare how Nadia and Marcus each react to their own part in the loss. What is the difference?",
+      "acceptedAnswers": [
+        "nadia reflects and reaches out to talk to marcus, while marcus withdraws and avoids talking",
+        "nadia is quietly thoughtful and tries to comfort marcus, but marcus stays withdrawn, kicking gravel and giving short answers",
+        "she engages with what happened, he pulls away and goes quiet"
+      ],
+      "evidenceQuotes": [
+        "Marcus hanging slightly behind the rest of the group, kicking at loose gravel",
+        "\"Nearly,\" he said eventually, and kept his eyes on the gravel",
+        "She slowed her own pace until she was walking beside him"
+      ],
+      "explanationGuidance": "Nadia's reaction is shown through action: she deliberately slows down to walk beside Marcus and speaks to him. Marcus's reaction is shown through withdrawal: he lags behind, kicks at gravel, and gives a short, one-word answer without meeting anyone's eyes -- a clear contrast in how the two characters handle the same disappointing result.",
+      "distractorRationale": null,
+      "blueprintId": "ei003-w2-bp-comp-reactions",
+      "reasoningRoute": "compare_reactions",
+      "familyId": "wave3-fam-rc07-comparative"
+    },
+    "p_claimed_answer": "nadia reflects and reaches out to talk to marcus, while marcus withdraws and avoids talking",
+    "p_worked_explanation": "Nadia's reaction is shown through action: she deliberately slows down to walk beside Marcus and speaks to him. Marcus's reaction is shown through withdrawal: he lags behind, kicks at gravel, and gives a short, one-word answer without meeting anyone's eyes -- a clear contrast in how the two characters handle the same disappointing result.",
+    "p_distractors": null,
+    "p_mathematical_validation": {
+      "evidenceQuotesVerifiedAgainstRealPassageText": true,
+      "validator": "scripts/validate-ei003-wave2-manifest.mjs",
+      "validatedAt": "2026-09-09T04:20:50.204Z"
+    },
+    "p_similarity_validation": {
+      "approved": true,
+      "reasons": [],
+      "checkedForDuplicateQuestionTextWithinBatch": true,
+      "checkedForExactDuplicateAgainstLiveProductionQuestionsForSameFamily": true
+    },
+    "p_passage_id": "ei003-w2-eng-the-relay-baton"
+  },
+  {
+    "p_candidate_id": "ei003-w2-comp-reactions-02",
+    "p_family_id": "wave3-fam-rc07-comparative",
+    "p_generation_spec_id": "ei003-w2-bp-comp-reactions",
+    "p_generation_spec_version": "1",
+    "p_subject": "english",
+    "p_competency_id": null,
+    "p_skill": "QT-RC-07",
+    "p_question_type": "short-answer",
+    "p_pathway": [
+      "csse"
+    ],
+    "p_preparation_stage": "FOUNDATION",
+    "p_difficulty": "medium",
+    "p_question_content": {
+      "question": "Compare how Mrs Aldridge and Mr Whitfield each treat the milk delivery on Grandad Kofi's last morning. What is the difference?",
+      "acceptedAnswers": [
+        "mrs aldridge treats it as an ordinary delivery (just leaves a note about the milk), while mr whitfield treats it as significant, waiting at the gate and reflecting on the thirty-one years",
+        "she treats it like any normal day, he clearly knows it's meaningful and marks the moment",
+        "mrs aldridge is unaware or unbothered, mr whitfield is deliberately present and reflective"
+      ],
+      "evidenceQuotes": [
+        "Mrs Aldridge left a note under an empty bottle: TWO PINTS, NOT ONE, THANK YOU",
+        "an elderly man in a dressing gown was already waiting by the gate",
+        "You brought milk to my mother before you brought it to me"
+      ],
+      "explanationGuidance": "Mrs Aldridge's response (a routine note about quantity) shows no awareness anything is different about this round. Mr Whitfield, by contrast, is already waiting, references the full thirty-one years, and holds the bottles longer than necessary -- his behaviour shows he understands the moment's significance.",
+      "distractorRationale": null,
+      "blueprintId": "ei003-w2-bp-comp-reactions",
+      "reasoningRoute": "compare_reactions",
+      "familyId": "wave3-fam-rc07-comparative"
+    },
+    "p_claimed_answer": "mrs aldridge treats it as an ordinary delivery (just leaves a note about the milk), while mr whitfield treats it as significant, waiting at the gate and reflecting on the thirty-one years",
+    "p_worked_explanation": "Mrs Aldridge's response (a routine note about quantity) shows no awareness anything is different about this round. Mr Whitfield, by contrast, is already waiting, references the full thirty-one years, and holds the bottles longer than necessary -- his behaviour shows he understands the moment's significance.",
+    "p_distractors": null,
+    "p_mathematical_validation": {
+      "evidenceQuotesVerifiedAgainstRealPassageText": true,
+      "validator": "scripts/validate-ei003-wave2-manifest.mjs",
+      "validatedAt": "2026-09-09T04:20:50.204Z"
+    },
+    "p_similarity_validation": {
+      "approved": true,
+      "reasons": [],
+      "checkedForDuplicateQuestionTextWithinBatch": true,
+      "checkedForExactDuplicateAgainstLiveProductionQuestionsForSameFamily": true
+    },
+    "p_passage_id": "ei003-w2-eng-the-last-delivery"
+  },
+  {
+    "p_candidate_id": "ei003-w2-comp-time-01",
+    "p_family_id": "wave3-fam-rc07-comparative",
+    "p_generation_spec_id": "ei003-w2-bp-comp-across-time",
+    "p_generation_spec_version": "1",
+    "p_subject": "english",
+    "p_competency_id": null,
+    "p_skill": "QT-RC-07",
+    "p_question_type": "short-answer",
+    "p_pathway": [
+      "csse"
+    ],
+    "p_preparation_stage": "DEVELOPMENT",
+    "p_difficulty": "medium",
+    "p_question_content": {
+      "question": "Compare Grandad Kofi's manner at the very start of the round with his manner at the very last house. What has changed?",
+      "acceptedAnswers": [
+        "at the start he is calm and businesslike, but at the final house he pauses and seems affected, sitting quietly before starting the engine",
+        "he goes from routine and unbothered to visibly moved, shown by sitting still with both hands on the wheel",
+        "his ordinary, practical manner shifts to a quieter, more reflective one at the end"
+      ],
+      "evidenceQuotes": [
+        "read it, smiled slightly, and swapped the empties without comment",
+        "He sat with both hands resting on the wheel, looking out at the empty street ahead"
+      ],
+      "explanationGuidance": "Early in the round, Grandad Kofi handles the deliveries briskly and without visible emotion. By the final house, his behaviour changes noticeably: he pauses, sits without moving, and delays starting the engine -- evidence of a shift from routine to reflection as the round nears its true end.",
+      "distractorRationale": null,
+      "blueprintId": "ei003-w2-bp-comp-across-time",
+      "reasoningRoute": "compare_across_time",
+      "familyId": "wave3-fam-rc07-comparative"
+    },
+    "p_claimed_answer": "at the start he is calm and businesslike, but at the final house he pauses and seems affected, sitting quietly before starting the engine",
+    "p_worked_explanation": "Early in the round, Grandad Kofi handles the deliveries briskly and without visible emotion. By the final house, his behaviour changes noticeably: he pauses, sits without moving, and delays starting the engine -- evidence of a shift from routine to reflection as the round nears its true end.",
+    "p_distractors": null,
+    "p_mathematical_validation": {
+      "evidenceQuotesVerifiedAgainstRealPassageText": true,
+      "validator": "scripts/validate-ei003-wave2-manifest.mjs",
+      "validatedAt": "2026-09-09T04:20:50.204Z"
+    },
+    "p_similarity_validation": {
+      "approved": true,
+      "reasons": [],
+      "checkedForDuplicateQuestionTextWithinBatch": true,
+      "checkedForExactDuplicateAgainstLiveProductionQuestionsForSameFamily": true
+    },
+    "p_passage_id": "ei003-w2-eng-the-last-delivery"
+  },
+  {
+    "p_candidate_id": "ei003-w2-comp-time-02",
+    "p_family_id": "wave3-fam-rc07-comparative",
+    "p_generation_spec_id": "ei003-w2-bp-comp-across-time",
+    "p_generation_spec_version": "1",
+    "p_subject": "english",
+    "p_competency_id": null,
+    "p_skill": "QT-RC-07",
+    "p_question_type": "short-answer",
+    "p_pathway": [
+      "csse"
+    ],
+    "p_preparation_stage": "DEVELOPMENT",
+    "p_difficulty": "hard",
+    "p_question_content": {
+      "question": "Compare the narrator's expectations at the very start of the clock project with how the narrator felt by August. What has changed?",
+      "acceptedAnswers": [
+        "at the start the narrator expected it to be quick and easy, but by august the narrator felt they had failed",
+        "he goes from expecting an easy afternoon's work to feeling discouraged, believing the clock would never run",
+        "his early confidence gives way to a sense of failure months later"
+      ],
+      "evidenceQuotes": [
+        "I expected this to take an afternoon. It took most of that summer.",
+        "I remember feeling, by then, that we'd failed"
+      ],
+      "explanationGuidance": "At the very start, the narrator expects the repair to be quick, assuming it will take a single afternoon. By August, after months of work, that confidence has been replaced by a sense of failure -- a clear before/after contrast in the narrator's own state across the course of the project.",
+      "distractorRationale": null,
+      "blueprintId": "ei003-w2-bp-comp-across-time",
+      "reasoningRoute": "compare_across_time",
+      "familyId": "wave3-fam-rc07-comparative"
+    },
+    "p_claimed_answer": "at the start the narrator expected it to be quick and easy, but by august the narrator felt they had failed",
+    "p_worked_explanation": "At the very start, the narrator expects the repair to be quick, assuming it will take a single afternoon. By August, after months of work, that confidence has been replaced by a sense of failure -- a clear before/after contrast in the narrator's own state across the course of the project.",
+    "p_distractors": null,
+    "p_mathematical_validation": {
+      "evidenceQuotesVerifiedAgainstRealPassageText": true,
+      "validator": "scripts/validate-ei003-wave2-manifest.mjs",
+      "validatedAt": "2026-09-09T04:20:50.204Z"
+    },
+    "p_similarity_validation": {
+      "approved": true,
+      "reasons": [],
+      "checkedForDuplicateQuestionTextWithinBatch": true,
+      "checkedForExactDuplicateAgainstLiveProductionQuestionsForSameFamily": true
+    },
+    "p_passage_id": "ei003-w2-eng-the-clock-that-stopped"
+  },
+  {
+    "p_candidate_id": "ei003-w2-comp-settings-01",
+    "p_family_id": "wave3-fam-rc07-comparative",
+    "p_generation_spec_id": "ei003-w2-bp-comp-settings",
+    "p_generation_spec_version": "1",
+    "p_subject": "english",
+    "p_competency_id": null,
+    "p_skill": "QT-RC-07",
+    "p_question_type": "short-answer",
+    "p_pathway": [
+      "csse"
+    ],
+    "p_preparation_stage": "INDEPENDENT",
+    "p_difficulty": "hard",
+    "p_question_content": {
+      "question": "Compare the fen at the start of the crossing with the fen at midday. What has changed?",
+      "acceptedAnswers": [
+        "at the start it is misty and the path looks safe, but by midday the mist has cleared and the true difficulty of the ground is revealed",
+        "it goes from hidden/misty to fully visible and revealed",
+        "the mist that hid the ground at dawn has burned away, showing the fen properly"
+      ],
+      "evidenceQuotes": [
+        "the mist still sat low over the reed beds",
+        "By midday the mist had burned away entirely, and the fen revealed itself properly"
+      ],
+      "explanationGuidance": "The passage explicitly marks two states of the same place: misty and partly hidden at the start of the walk, then fully visible (\"revealed itself properly\") once the mist clears by midday -- a genuine change in the setting itself, not in a character.",
+      "distractorRationale": null,
+      "blueprintId": "ei003-w2-bp-comp-settings",
+      "reasoningRoute": "compare_settings",
+      "familyId": "wave3-fam-rc07-comparative"
+    },
+    "p_claimed_answer": "at the start it is misty and the path looks safe, but by midday the mist has cleared and the true difficulty of the ground is revealed",
+    "p_worked_explanation": "The passage explicitly marks two states of the same place: misty and partly hidden at the start of the walk, then fully visible (\"revealed itself properly\") once the mist clears by midday -- a genuine change in the setting itself, not in a character.",
+    "p_distractors": null,
+    "p_mathematical_validation": {
+      "evidenceQuotesVerifiedAgainstRealPassageText": true,
+      "validator": "scripts/validate-ei003-wave2-manifest.mjs",
+      "validatedAt": "2026-09-09T04:20:50.204Z"
+    },
+    "p_similarity_validation": {
+      "approved": true,
+      "reasons": [],
+      "checkedForDuplicateQuestionTextWithinBatch": true,
+      "checkedForExactDuplicateAgainstLiveProductionQuestionsForSameFamily": true
+    },
+    "p_passage_id": "ei003-w2-eng-crossing-the-fen"
+  },
+  {
+    "p_candidate_id": "ei003-w2-comp-settings-02",
+    "p_family_id": "wave3-fam-rc07-comparative",
+    "p_generation_spec_id": "ei003-w2-bp-comp-settings",
+    "p_generation_spec_version": "1",
+    "p_subject": "english",
+    "p_competency_id": null,
+    "p_skill": "QT-RC-07",
+    "p_question_type": "short-answer",
+    "p_pathway": [
+      "csse"
+    ],
+    "p_preparation_stage": "INDEPENDENT",
+    "p_difficulty": "hard",
+    "p_question_content": {
+      "question": "Compare the two channels of water Onyema points out near the end of the crossing. What is the difference between them?",
+      "acceptedAnswers": [
+        "one runs fresh from an underground spring, the other is brackish enough to kill any plant that roots there",
+        "one is fresh water even in dry months, the other is salty/brackish and harmful to plants"
+      ],
+      "evidenceQuotes": [
+        "a channel where, he said, the water ran fresh from an underground spring even in the driest months",
+        "another, barely twenty metres further on, where the water was brackish enough to kill any plant unlucky enough to root there"
+      ],
+      "explanationGuidance": "The passage directly contrasts two nearby channels: one is described as genuinely fresh water, the other as brackish (salty) enough to be harmful to plant life -- two very different conditions in a very small area.",
+      "distractorRationale": null,
+      "blueprintId": "ei003-w2-bp-comp-settings",
+      "reasoningRoute": "compare_settings",
+      "familyId": "wave3-fam-rc07-comparative"
+    },
+    "p_claimed_answer": "one runs fresh from an underground spring, the other is brackish enough to kill any plant that roots there",
+    "p_worked_explanation": "The passage directly contrasts two nearby channels: one is described as genuinely fresh water, the other as brackish (salty) enough to be harmful to plant life -- two very different conditions in a very small area.",
+    "p_distractors": null,
+    "p_mathematical_validation": {
+      "evidenceQuotesVerifiedAgainstRealPassageText": true,
+      "validator": "scripts/validate-ei003-wave2-manifest.mjs",
+      "validatedAt": "2026-09-09T04:20:50.204Z"
+    },
+    "p_similarity_validation": {
+      "approved": true,
+      "reasons": [],
+      "checkedForDuplicateQuestionTextWithinBatch": true,
+      "checkedForExactDuplicateAgainstLiveProductionQuestionsForSameFamily": true
+    },
+    "p_passage_id": "ei003-w2-eng-crossing-the-fen"
+  },
+  {
+    "p_candidate_id": "ei003-w2-comp-simdiff-01",
+    "p_family_id": "wave3-fam-rc07-comparative",
+    "p_generation_spec_id": "ei003-w2-bp-comp-similarity-difference",
+    "p_generation_spec_version": "1",
+    "p_subject": "english",
+    "p_competency_id": null,
+    "p_skill": "QT-RC-07",
+    "p_question_type": "short-answer",
+    "p_pathway": [
+      "csse"
+    ],
+    "p_preparation_stage": "TRANSFER",
+    "p_difficulty": "challenge",
+    "p_question_content": {
+      "question": "Nadia and Priya both comment on the clumsy handover. What is one thing they have in common in how they respond, and one way their responses are different?",
+      "acceptedAnswers": [
+        "similarity: both take some responsibility for the mistake; difference: priya says it was fully her fault, while nadia says it wasn't just priya's fault",
+        "they are similar because they both acknowledge blame for the handover; they differ because priya accepts full responsibility while nadia shares it"
+      ],
+      "evidenceQuotes": [
+        "\"Bad handover,\" Priya said quietly, coming to stand beside Nadia. \"That was on me.\"",
+        "\"It wasn't just you,\" Nadia said, though she wasn't sure that was true either"
+      ],
+      "explanationGuidance": "Both girls acknowledge the handover was a problem -- that is the similarity. But Priya takes full personal responsibility (\"that was on me\"), while Nadia pushes back against that, sharing the blame more widely (\"it wasn't just you\") -- a genuine, textually-supported difference in how each character assigns responsibility.",
+      "distractorRationale": null,
+      "blueprintId": "ei003-w2-bp-comp-similarity-difference",
+      "reasoningRoute": "similarity_and_difference",
+      "familyId": "wave3-fam-rc07-comparative"
+    },
+    "p_claimed_answer": "similarity: both take some responsibility for the mistake; difference: priya says it was fully her fault, while nadia says it wasn't just priya's fault",
+    "p_worked_explanation": "Both girls acknowledge the handover was a problem -- that is the similarity. But Priya takes full personal responsibility (\"that was on me\"), while Nadia pushes back against that, sharing the blame more widely (\"it wasn't just you\") -- a genuine, textually-supported difference in how each character assigns responsibility.",
+    "p_distractors": null,
+    "p_mathematical_validation": {
+      "evidenceQuotesVerifiedAgainstRealPassageText": true,
+      "validator": "scripts/validate-ei003-wave2-manifest.mjs",
+      "validatedAt": "2026-09-09T04:20:50.204Z"
+    },
+    "p_similarity_validation": {
+      "approved": true,
+      "reasons": [],
+      "checkedForDuplicateQuestionTextWithinBatch": true,
+      "checkedForExactDuplicateAgainstLiveProductionQuestionsForSameFamily": true
+    },
+    "p_passage_id": "ei003-w2-eng-the-relay-baton"
+  },
+  {
+    "p_candidate_id": "ei003-w2-comp-simdiff-02",
+    "p_family_id": "wave3-fam-rc07-comparative",
+    "p_generation_spec_id": "ei003-w2-bp-comp-similarity-difference",
+    "p_generation_spec_version": "1",
+    "p_subject": "english",
+    "p_competency_id": null,
+    "p_skill": "QT-RC-07",
+    "p_question_type": "short-answer",
+    "p_pathway": [
+      "csse"
+    ],
+    "p_preparation_stage": "TRANSFER",
+    "p_difficulty": "challenge",
+    "p_question_content": {
+      "question": "Compare the narrator and the grandmother's patience during the summer spent mending the clock. What do they have in common, and what is different?",
+      "acceptedAnswers": [
+        "similarity: both keep working on the clock steadily every sunday morning all summer; difference: by august the narrator feels they have failed, while the grandmother shows no sign of sharing that discouragement",
+        "they are similar because they both stay committed to the weekly work; they differ because he becomes discouraged by august while she stays calm and keeps testing"
+      ],
+      "evidenceQuotes": [
+        "We worked on it most Sunday mornings",
+        "I remember feeling, by then, that we'd failed",
+        "My grandmother didn't seem to share this feeling. She kept adjusting, testing, listening to the mechanism with her ear pressed close to the case"
+      ],
+      "explanationGuidance": "Both the narrator and the grandmother show up and work on the clock together most Sunday mornings across the whole summer -- that is the similarity. But by August, their feelings diverge: the narrator believes they have failed, while the grandmother shows no sign of sharing that discouragement, calmly continuing to adjust and listen to the mechanism.",
+      "distractorRationale": null,
+      "blueprintId": "ei003-w2-bp-comp-similarity-difference",
+      "reasoningRoute": "similarity_and_difference",
+      "familyId": "wave3-fam-rc07-comparative"
+    },
+    "p_claimed_answer": "similarity: both keep working on the clock steadily every sunday morning all summer; difference: by august the narrator feels they have failed, while the grandmother shows no sign of sharing that discouragement",
+    "p_worked_explanation": "Both the narrator and the grandmother show up and work on the clock together most Sunday mornings across the whole summer -- that is the similarity. But by August, their feelings diverge: the narrator believes they have failed, while the grandmother shows no sign of sharing that discouragement, calmly continuing to adjust and listen to the mechanism.",
+    "p_distractors": null,
+    "p_mathematical_validation": {
+      "evidenceQuotesVerifiedAgainstRealPassageText": true,
+      "validator": "scripts/validate-ei003-wave2-manifest.mjs",
+      "validatedAt": "2026-09-09T04:20:50.204Z"
+    },
+    "p_similarity_validation": {
+      "approved": true,
+      "reasons": [],
+      "checkedForDuplicateQuestionTextWithinBatch": true,
+      "checkedForExactDuplicateAgainstLiveProductionQuestionsForSameFamily": true
+    },
+    "p_passage_id": "ei003-w2-eng-the-clock-that-stopped"
+  },
+  {
+    "p_candidate_id": "ei003-w2-emotion-action-01",
+    "p_family_id": "wave3-fam-rc08-emotion",
+    "p_generation_spec_id": "ei003-w2-bp-emotion-from-action",
+    "p_generation_spec_version": "1",
+    "p_subject": "english",
+    "p_competency_id": null,
+    "p_skill": "QT-RC-08",
+    "p_question_type": "short-answer",
+    "p_pathway": [
+      "csse"
+    ],
+    "p_preparation_stage": "DEVELOPMENT",
+    "p_difficulty": "medium",
+    "p_question_content": {
+      "question": "How is Nadia feeling as she waits at the changeover line, based on her body and reactions, not on anything she says?",
+      "acceptedAnswers": [
+        "nervous",
+        "anxious",
+        "tense",
+        "on edge",
+        "uneasy"
+      ],
+      "evidenceQuotes": [
+        "Nadia's own legs felt suddenly unfamiliar, as though she'd forgotten how they worked",
+        "Nadia flinched before catching herself"
+      ],
+      "explanationGuidance": "No word for how Nadia feels appears anywhere in this part of the passage. The evidence is entirely physical: her legs feel unfamiliar, and she flinches at a shout that isn't even meant for her yet -- both signs of nervous tension, inferred from behaviour alone.",
+      "distractorRationale": null,
+      "blueprintId": "ei003-w2-bp-emotion-from-action",
+      "reasoningRoute": "inferred_from_action",
+      "familyId": "wave3-fam-rc08-emotion"
+    },
+    "p_claimed_answer": "nervous",
+    "p_worked_explanation": "No word for how Nadia feels appears anywhere in this part of the passage. The evidence is entirely physical: her legs feel unfamiliar, and she flinches at a shout that isn't even meant for her yet -- both signs of nervous tension, inferred from behaviour alone.",
+    "p_distractors": null,
+    "p_mathematical_validation": {
+      "evidenceQuotesVerifiedAgainstRealPassageText": true,
+      "validator": "scripts/validate-ei003-wave2-manifest.mjs",
+      "validatedAt": "2026-09-09T04:20:50.204Z"
+    },
+    "p_similarity_validation": {
+      "approved": true,
+      "reasons": [],
+      "checkedForDuplicateQuestionTextWithinBatch": true,
+      "checkedForExactDuplicateAgainstLiveProductionQuestionsForSameFamily": true
+    },
+    "p_passage_id": "ei003-w2-eng-the-relay-baton"
+  },
+  {
+    "p_candidate_id": "ei003-w2-emotion-action-02",
+    "p_family_id": "wave3-fam-rc08-emotion",
+    "p_generation_spec_id": "ei003-w2-bp-emotion-from-action",
+    "p_generation_spec_version": "1",
+    "p_subject": "english",
+    "p_competency_id": null,
+    "p_skill": "QT-RC-08",
+    "p_question_type": "short-answer",
+    "p_pathway": [
+      "csse"
+    ],
+    "p_preparation_stage": "DEVELOPMENT",
+    "p_difficulty": "hard",
+    "p_question_content": {
+      "question": "How does Grandad Kofi seem to feel at the very last house, based on what he does rather than anything he says?",
+      "acceptedAnswers": [
+        "moved/emotional",
+        "affected, reflective",
+        "sad or sentimental about it ending",
+        "reluctant to leave, moved by the moment"
+      ],
+      "evidenceQuotes": [
+        "he didn't start the engine straight away. He sat with both hands resting on the wheel, looking out at the empty street ahead"
+      ],
+      "explanationGuidance": "No emotion word is used to describe Grandad Kofi here. His pause, his stillness, and the fact that he delays starting the engine after thirty-one years of the same routine are all behavioural evidence that he is more affected by this moment than his usual brisk manner has shown all round.",
+      "distractorRationale": null,
+      "blueprintId": "ei003-w2-bp-emotion-from-action",
+      "reasoningRoute": "inferred_from_action",
+      "familyId": "wave3-fam-rc08-emotion"
+    },
+    "p_claimed_answer": "moved/emotional",
+    "p_worked_explanation": "No emotion word is used to describe Grandad Kofi here. His pause, his stillness, and the fact that he delays starting the engine after thirty-one years of the same routine are all behavioural evidence that he is more affected by this moment than his usual brisk manner has shown all round.",
+    "p_distractors": null,
+    "p_mathematical_validation": {
+      "evidenceQuotesVerifiedAgainstRealPassageText": true,
+      "validator": "scripts/validate-ei003-wave2-manifest.mjs",
+      "validatedAt": "2026-09-09T04:20:50.204Z"
+    },
+    "p_similarity_validation": {
+      "approved": true,
+      "reasons": [],
+      "checkedForDuplicateQuestionTextWithinBatch": true,
+      "checkedForExactDuplicateAgainstLiveProductionQuestionsForSameFamily": true
+    },
+    "p_passage_id": "ei003-w2-eng-the-last-delivery"
+  },
+  {
+    "p_candidate_id": "ei003-w2-emotion-dialogue-01",
+    "p_family_id": "wave3-fam-rc08-emotion",
+    "p_generation_spec_id": "ei003-w2-bp-emotion-from-dialogue",
+    "p_generation_spec_version": "1",
+    "p_subject": "english",
+    "p_competency_id": null,
+    "p_skill": "QT-RC-08",
+    "p_question_type": "short-answer",
+    "p_pathway": [
+      "csse"
+    ],
+    "p_preparation_stage": "INDEPENDENT",
+    "p_difficulty": "hard",
+    "p_question_content": {
+      "question": "What does Mr Whitfield's comment \"You brought milk to my mother before you brought it to me\" suggest about how he feels about Grandad Kofi's round ending?",
+      "acceptedAnswers": [
+        "he feels the ending marks the loss of something that spanned generations, a sense of sentimental attachment",
+        "he is reflecting on how long-standing and meaningful the connection has been, showing he feels its significance",
+        "it shows he values the history and continuity of the round, and feels its ending as significant"
+      ],
+      "evidenceQuotes": [
+        "You brought milk to my mother before you brought it to me"
+      ],
+      "explanationGuidance": "Mr Whitfield never says he feels sad or moved. But his choice to mention that the round connects two generations of his own family reveals that he sees this as the end of something that mattered across a long span of time -- the feeling is carried in what he chooses to say, not in a stated emotion.",
+      "distractorRationale": null,
+      "blueprintId": "ei003-w2-bp-emotion-from-dialogue",
+      "reasoningRoute": "inferred_from_dialogue",
+      "familyId": "wave3-fam-rc08-emotion"
+    },
+    "p_claimed_answer": "he feels the ending marks the loss of something that spanned generations, a sense of sentimental attachment",
+    "p_worked_explanation": "Mr Whitfield never says he feels sad or moved. But his choice to mention that the round connects two generations of his own family reveals that he sees this as the end of something that mattered across a long span of time -- the feeling is carried in what he chooses to say, not in a stated emotion.",
+    "p_distractors": null,
+    "p_mathematical_validation": {
+      "evidenceQuotesVerifiedAgainstRealPassageText": true,
+      "validator": "scripts/validate-ei003-wave2-manifest.mjs",
+      "validatedAt": "2026-09-09T04:20:50.204Z"
+    },
+    "p_similarity_validation": {
+      "approved": true,
+      "reasons": [],
+      "checkedForDuplicateQuestionTextWithinBatch": true,
+      "checkedForExactDuplicateAgainstLiveProductionQuestionsForSameFamily": true
+    },
+    "p_passage_id": "ei003-w2-eng-the-last-delivery"
+  },
+  {
+    "p_candidate_id": "ei003-w2-emotion-dialogue-02",
+    "p_family_id": "wave3-fam-rc08-emotion",
+    "p_generation_spec_id": "ei003-w2-bp-emotion-from-dialogue",
+    "p_generation_spec_version": "1",
+    "p_subject": "english",
+    "p_competency_id": null,
+    "p_skill": "QT-RC-08",
+    "p_question_type": "short-answer",
+    "p_pathway": [
+      "csse"
+    ],
+    "p_preparation_stage": "INDEPENDENT",
+    "p_difficulty": "hard",
+    "p_question_content": {
+      "question": "Marcus only says \"Nearly,\" in reply to Nadia. What does the briefness of his answer suggest about how he is feeling?",
+      "acceptedAnswers": [
+        "he doesn't want to talk about it, suggesting he feels disappointed or upset",
+        "the short answer suggests he is holding back stronger feelings, likely frustration or disappointment",
+        "it suggests he feels bad about the result and doesn't want to say more"
+      ],
+      "evidenceQuotes": [
+        "\"Nearly,\" he said eventually, and kept his eyes on the gravel"
+      ],
+      "explanationGuidance": "Marcus's answer is a single word, offered only \"eventually\" and paired with him looking away rather than at Nadia -- the briefness and reluctance of the reply suggest he is feeling something he doesn't want to discuss, most likely disappointment, rather than genuine indifference.",
+      "distractorRationale": null,
+      "blueprintId": "ei003-w2-bp-emotion-from-dialogue",
+      "reasoningRoute": "inferred_from_dialogue",
+      "familyId": "wave3-fam-rc08-emotion"
+    },
+    "p_claimed_answer": "he doesn't want to talk about it, suggesting he feels disappointed or upset",
+    "p_worked_explanation": "Marcus's answer is a single word, offered only \"eventually\" and paired with him looking away rather than at Nadia -- the briefness and reluctance of the reply suggest he is feeling something he doesn't want to discuss, most likely disappointment, rather than genuine indifference.",
+    "p_distractors": null,
+    "p_mathematical_validation": {
+      "evidenceQuotesVerifiedAgainstRealPassageText": true,
+      "validator": "scripts/validate-ei003-wave2-manifest.mjs",
+      "validatedAt": "2026-09-09T04:20:50.204Z"
+    },
+    "p_similarity_validation": {
+      "approved": true,
+      "reasons": [],
+      "checkedForDuplicateQuestionTextWithinBatch": true,
+      "checkedForExactDuplicateAgainstLiveProductionQuestionsForSameFamily": true
+    },
+    "p_passage_id": "ei003-w2-eng-the-relay-baton"
+  },
+  {
+    "p_candidate_id": "ei003-w2-emotion-arc-01",
+    "p_family_id": "wave3-fam-rc08-emotion",
+    "p_generation_spec_id": "ei003-w2-bp-emotion-arc",
+    "p_generation_spec_version": "1",
+    "p_subject": "english",
+    "p_competency_id": null,
+    "p_skill": "QT-RC-08",
+    "p_question_type": "short-answer",
+    "p_pathway": [
+      "csse"
+    ],
+    "p_preparation_stage": "TRANSFER",
+    "p_difficulty": "challenge",
+    "p_question_content": {
+      "question": "How does the narrator's feeling about the clock project change over the course of the whole passage, from the very start to the moment it finally started running?",
+      "acceptedAnswers": [
+        "starts confident it will be quick, becomes discouraged and feels it has failed by august, then feels sudden excitement when it finally starts",
+        "he moves from expecting an easy afternoon, to a sense of failure months later, to excited surprise when he hears it running",
+        "early confidence gives way to discouragement, then to sudden excitement at the end"
+      ],
+      "evidenceQuotes": [
+        "I expected this to take an afternoon. It took most of that summer.",
+        "I remember feeling, by then, that we'd failed",
+        "I heard it from the hallway — a small, dry ticking, unfamiliar because none of us had ever heard it — and ran back in"
+      ],
+      "explanationGuidance": "Tracing evidence across the whole passage: the narrator begins confident the repair will be quick, grows discouraged by August, believing the project has failed, and then reacts with sudden excitement at the very end -- rushing back into the room the moment the clock is finally heard running.",
+      "distractorRationale": null,
+      "blueprintId": "ei003-w2-bp-emotion-arc",
+      "reasoningRoute": "emotion_arc",
+      "familyId": "wave3-fam-rc08-emotion"
+    },
+    "p_claimed_answer": "starts confident it will be quick, becomes discouraged and feels it has failed by august, then feels sudden excitement when it finally starts",
+    "p_worked_explanation": "Tracing evidence across the whole passage: the narrator begins confident the repair will be quick, grows discouraged by August, believing the project has failed, and then reacts with sudden excitement at the very end -- rushing back into the room the moment the clock is finally heard running.",
+    "p_distractors": null,
+    "p_mathematical_validation": {
+      "evidenceQuotesVerifiedAgainstRealPassageText": true,
+      "validator": "scripts/validate-ei003-wave2-manifest.mjs",
+      "validatedAt": "2026-09-09T04:20:50.204Z"
+    },
+    "p_similarity_validation": {
+      "approved": true,
+      "reasons": [],
+      "checkedForDuplicateQuestionTextWithinBatch": true,
+      "checkedForExactDuplicateAgainstLiveProductionQuestionsForSameFamily": true
+    },
+    "p_passage_id": "ei003-w2-eng-the-clock-that-stopped"
+  },
+  {
+    "p_candidate_id": "ei003-w2-emotion-arc-02",
+    "p_family_id": "wave3-fam-rc08-emotion",
+    "p_generation_spec_id": "ei003-w2-bp-emotion-arc",
+    "p_generation_spec_version": "1",
+    "p_subject": "english",
+    "p_competency_id": null,
+    "p_skill": "QT-RC-08",
+    "p_question_type": "short-answer",
+    "p_pathway": [
+      "csse"
+    ],
+    "p_preparation_stage": "TRANSFER",
+    "p_difficulty": "challenge",
+    "p_question_content": {
+      "question": "How does the narrator's feeling during the crossing change from the start of the walk to reaching solid ground at the end?",
+      "acceptedAnswers": [
+        "starts wary because of the guide's warning, becomes more alert and cautious after priti sinks into the mud, and ends relieved to reach solid ground just before the tide returns",
+        "he moves from uneasy anticipation, to heightened caution once he sees the danger for himself, to relief at finishing safely",
+        "wary at the outset, more careful after the near-accident, and relieved by the end"
+      ],
+      "evidenceQuotes": [
+        "warned us before we set out that the fen changed with every high tide, and that a path safe at dawn could be treacherous by noon",
+        "I understood what he meant within twenty minutes, when Priti, walking just ahead of me, put her weight on a patch of ground that appeared entirely solid and sank almost to her knee before anyone could react",
+        "We reached solid ground on the far side just as the tide, exactly as promised, began sliding back in behind us"
+      ],
+      "explanationGuidance": "The narrator starts the crossing already wary, having been warned the ground can turn treacherous. That wariness sharpens into real alertness once Priti sinks into the mud, proving the warning was genuine. By the end, reaching solid ground just as the tide returns behind them signals relief at a safe, narrowly-timed finish -- a clear emotional arc across the whole passage.",
+      "distractorRationale": null,
+      "blueprintId": "ei003-w2-bp-emotion-arc",
+      "reasoningRoute": "emotion_arc",
+      "familyId": "wave3-fam-rc08-emotion"
+    },
+    "p_claimed_answer": "starts wary because of the guide's warning, becomes more alert and cautious after priti sinks into the mud, and ends relieved to reach solid ground just before the tide returns",
+    "p_worked_explanation": "The narrator starts the crossing already wary, having been warned the ground can turn treacherous. That wariness sharpens into real alertness once Priti sinks into the mud, proving the warning was genuine. By the end, reaching solid ground just as the tide returns behind them signals relief at a safe, narrowly-timed finish -- a clear emotional arc across the whole passage.",
+    "p_distractors": null,
+    "p_mathematical_validation": {
+      "evidenceQuotesVerifiedAgainstRealPassageText": true,
+      "validator": "scripts/validate-ei003-wave2-manifest.mjs",
+      "validatedAt": "2026-09-09T04:20:50.204Z"
+    },
+    "p_similarity_validation": {
+      "approved": true,
+      "reasons": [],
+      "checkedForDuplicateQuestionTextWithinBatch": true,
+      "checkedForExactDuplicateAgainstLiveProductionQuestionsForSameFamily": true
+    },
+    "p_passage_id": "ei003-w2-eng-crossing-the-fen"
+  },
+  {
+    "p_candidate_id": "ei003-w2-emotion-conflict-01",
+    "p_family_id": "wave3-fam-rc08-emotion",
+    "p_generation_spec_id": "ei003-w2-bp-emotion-conflicting",
+    "p_generation_spec_version": "1",
+    "p_subject": "english",
+    "p_competency_id": null,
+    "p_skill": "QT-RC-08",
+    "p_question_type": "short-answer",
+    "p_pathway": [
+      "csse"
+    ],
+    "p_preparation_stage": "FAR_TRANSFER",
+    "p_difficulty": "challenge",
+    "p_question_content": {
+      "question": "Priti \"laughed it off\" after sinking into the mud. Does this laughter show her true feeling about what happened? Use evidence to explain your answer.",
+      "acceptedAnswers": [
+        "no -- her later careful, testing steps show she was actually more shaken/cautious than the laugh suggested",
+        "not fully -- the laugh suggests she wasn't bothered, but her more careful behaviour afterwards suggests she was genuinely unsettled",
+        "the laugh downplays it, but her subsequent caution reveals she took it more seriously than she let on"
+      ],
+      "evidenceQuotes": [
+        "She laughed it off, though I noticed she moved more carefully afterwards, testing each step before committing her full weight"
+      ],
+      "explanationGuidance": "The laugh alone would suggest Priti wasn't bothered by sinking into the mud. But the passage immediately gives conflicting evidence: she moved more carefully afterwards, testing every step -- behaviour that only makes sense if the incident genuinely unsettled her. The later, sustained behaviour is stronger evidence than the single dismissive laugh.",
+      "distractorRationale": null,
+      "blueprintId": "ei003-w2-bp-emotion-conflicting",
+      "reasoningRoute": "conflicting_evidence",
+      "familyId": "wave3-fam-rc08-emotion"
+    },
+    "p_claimed_answer": "no -- her later careful, testing steps show she was actually more shaken/cautious than the laugh suggested",
+    "p_worked_explanation": "The laugh alone would suggest Priti wasn't bothered by sinking into the mud. But the passage immediately gives conflicting evidence: she moved more carefully afterwards, testing every step -- behaviour that only makes sense if the incident genuinely unsettled her. The later, sustained behaviour is stronger evidence than the single dismissive laugh.",
+    "p_distractors": null,
+    "p_mathematical_validation": {
+      "evidenceQuotesVerifiedAgainstRealPassageText": true,
+      "validator": "scripts/validate-ei003-wave2-manifest.mjs",
+      "validatedAt": "2026-09-09T04:20:50.204Z"
+    },
+    "p_similarity_validation": {
+      "approved": true,
+      "reasons": [],
+      "checkedForDuplicateQuestionTextWithinBatch": true,
+      "checkedForExactDuplicateAgainstLiveProductionQuestionsForSameFamily": true
+    },
+    "p_passage_id": "ei003-w2-eng-crossing-the-fen"
+  },
+  {
+    "p_candidate_id": "ei003-w2-emotion-conflict-02",
+    "p_family_id": "wave3-fam-rc08-emotion",
+    "p_generation_spec_id": "ei003-w2-bp-emotion-conflicting",
+    "p_generation_spec_version": "1",
+    "p_subject": "english",
+    "p_competency_id": null,
+    "p_skill": "QT-RC-08",
+    "p_question_type": "short-answer",
+    "p_pathway": [
+      "csse"
+    ],
+    "p_preparation_stage": "FAR_TRANSFER",
+    "p_difficulty": "challenge",
+    "p_question_content": {
+      "question": "The grandmother says \"There,\" as though she had expected the clock to start working all along. Does the passage show she really felt that certain? Use evidence to explain your answer.",
+      "acceptedAnswers": [
+        "no -- the narrator says he was never sure she really felt that certain, showing her calm outward manner doesn't necessarily match how she truly felt",
+        "her reaction sounds confident and unsurprised, but the narrator's own comment reveals real doubt about whether that confidence was genuine",
+        "the outward calm suggests certainty, but the narrator directly says he could never be sure it was real"
+      ],
+      "evidenceQuotes": [
+        "\"There,\" she said, as though she'd expected this outcome the entire time, though I've never been sure she really did."
+      ],
+      "explanationGuidance": "The grandmother's single word and calm manner suggest she was confident the clock would work all along. But the narrator immediately undercuts that impression -- \"though I've never been sure she really did\" -- showing that her outward composure cannot be trusted as proof of what she genuinely felt underneath.",
+      "distractorRationale": null,
+      "blueprintId": "ei003-w2-bp-emotion-conflicting",
+      "reasoningRoute": "conflicting_evidence",
+      "familyId": "wave3-fam-rc08-emotion"
+    },
+    "p_claimed_answer": "no -- the narrator says he was never sure she really felt that certain, showing her calm outward manner doesn't necessarily match how she truly felt",
+    "p_worked_explanation": "The grandmother's single word and calm manner suggest she was confident the clock would work all along. But the narrator immediately undercuts that impression -- \"though I've never been sure she really did\" -- showing that her outward composure cannot be trusted as proof of what she genuinely felt underneath.",
+    "p_distractors": null,
+    "p_mathematical_validation": {
+      "evidenceQuotesVerifiedAgainstRealPassageText": true,
+      "validator": "scripts/validate-ei003-wave2-manifest.mjs",
+      "validatedAt": "2026-09-09T04:20:50.204Z"
+    },
+    "p_similarity_validation": {
+      "approved": true,
+      "reasons": [],
+      "checkedForDuplicateQuestionTextWithinBatch": true,
+      "checkedForExactDuplicateAgainstLiveProductionQuestionsForSameFamily": true
+    },
+    "p_passage_id": "ei003-w2-eng-the-clock-that-stopped"
+  },
+  {
+    "p_candidate_id": "ei003-w2-atm-single-01",
+    "p_family_id": "wave3-fam-rc10-atmosphere-mood",
+    "p_generation_spec_id": "ei003-w2-bp-atm-single-sensory",
+    "p_generation_spec_version": "1",
+    "p_subject": "english",
+    "p_competency_id": null,
+    "p_skill": "QT-RC-10",
+    "p_question_type": "short-answer",
+    "p_pathway": [
+      "csse"
+    ],
+    "p_preparation_stage": "FOUNDATION",
+    "p_difficulty": "easy",
+    "p_question_content": {
+      "question": "The light in the attic is described as \"thin and the colour of weak honey.\" What mood does this description create?",
+      "acceptedAnswers": [
+        "a faded, quiet, gentle mood",
+        "soft and faint, suggesting age or neglect",
+        "a dim, nostalgic feeling"
+      ],
+      "evidenceQuotes": [
+        "what light did get through arrived thin and the colour of weak honey"
+      ],
+      "explanationGuidance": "Describing the light as thin and weakly golden (rather than bright or warm) creates a soft, faded mood -- suggesting a space that has been quiet and undisturbed for a long time, rather than one full of life or activity.",
+      "distractorRationale": null,
+      "blueprintId": "ei003-w2-bp-atm-single-sensory",
+      "reasoningRoute": "single_sensory_atmosphere",
+      "familyId": "wave3-fam-rc10-atmosphere-mood"
+    },
+    "p_claimed_answer": "a faded, quiet, gentle mood",
+    "p_worked_explanation": "Describing the light as thin and weakly golden (rather than bright or warm) creates a soft, faded mood -- suggesting a space that has been quiet and undisturbed for a long time, rather than one full of life or activity.",
+    "p_distractors": null,
+    "p_mathematical_validation": {
+      "evidenceQuotesVerifiedAgainstRealPassageText": true,
+      "validator": "scripts/validate-ei003-wave2-manifest.mjs",
+      "validatedAt": "2026-09-09T04:20:50.204Z"
+    },
+    "p_similarity_validation": {
+      "approved": true,
+      "reasons": [],
+      "checkedForDuplicateQuestionTextWithinBatch": true,
+      "checkedForExactDuplicateAgainstLiveProductionQuestionsForSameFamily": true
+    },
+    "p_passage_id": "ei003-w2-eng-the-attic-workshop"
+  },
+  {
+    "p_candidate_id": "ei003-w2-atm-single-02",
+    "p_family_id": "wave3-fam-rc10-atmosphere-mood",
+    "p_generation_spec_id": "ei003-w2-bp-atm-single-sensory",
+    "p_generation_spec_version": "1",
+    "p_subject": "english",
+    "p_competency_id": null,
+    "p_skill": "QT-RC-10",
+    "p_question_type": "short-answer",
+    "p_pathway": [
+      "csse"
+    ],
+    "p_preparation_stage": "FOUNDATION",
+    "p_difficulty": "easy",
+    "p_question_content": {
+      "question": "By the ninth house, the sky is described as \"the colour of weak tea.\" What atmosphere does this create?",
+      "acceptedAnswers": [
+        "a dull, muted, quiet morning atmosphere",
+        "flat and unremarkable, low-key",
+        "grey and ordinary, unexciting"
+      ],
+      "evidenceQuotes": [
+        "the sky had gone the colour of weak tea"
+      ],
+      "explanationGuidance": "Comparing the sky to weak tea suggests a pale, muted, unremarkable colour -- creating a flat, quiet atmosphere that matches the ordinary, routine feeling of the morning, rather than anything dramatic.",
+      "distractorRationale": null,
+      "blueprintId": "ei003-w2-bp-atm-single-sensory",
+      "reasoningRoute": "single_sensory_atmosphere",
+      "familyId": "wave3-fam-rc10-atmosphere-mood"
+    },
+    "p_claimed_answer": "a dull, muted, quiet morning atmosphere",
+    "p_worked_explanation": "Comparing the sky to weak tea suggests a pale, muted, unremarkable colour -- creating a flat, quiet atmosphere that matches the ordinary, routine feeling of the morning, rather than anything dramatic.",
+    "p_distractors": null,
+    "p_mathematical_validation": {
+      "evidenceQuotesVerifiedAgainstRealPassageText": true,
+      "validator": "scripts/validate-ei003-wave2-manifest.mjs",
+      "validatedAt": "2026-09-09T04:20:50.204Z"
+    },
+    "p_similarity_validation": {
+      "approved": true,
+      "reasons": [],
+      "checkedForDuplicateQuestionTextWithinBatch": true,
+      "checkedForExactDuplicateAgainstLiveProductionQuestionsForSameFamily": true
+    },
+    "p_passage_id": "ei003-w2-eng-the-last-delivery"
+  },
+  {
+    "p_candidate_id": "ei003-w2-atm-accum-01",
+    "p_family_id": "wave3-fam-rc10-atmosphere-mood",
+    "p_generation_spec_id": "ei003-w2-bp-atm-accumulated",
+    "p_generation_spec_version": "1",
+    "p_subject": "english",
+    "p_competency_id": null,
+    "p_skill": "QT-RC-10",
+    "p_question_type": "short-answer",
+    "p_pathway": [
+      "csse"
+    ],
+    "p_preparation_stage": "DEVELOPMENT",
+    "p_difficulty": "medium",
+    "p_question_content": {
+      "question": "The passage mentions dust settled in soft grey drifts, cobwebs across an empty birdcage, a scarred workbench, and newspapers too faded to read. What overall atmosphere do these details, taken together, create?",
+      "acceptedAnswers": [
+        "a sense of long abandonment -- a space frozen in time, untouched for years",
+        "an atmosphere of neglect and stillness, as if time stopped there",
+        "a feeling of something once active now completely still and forgotten"
+      ],
+      "evidenceQuotes": [
+        "dust had settled — not evenly, but in soft grey drifts",
+        "cobwebs strung between the frame and an old birdcage that no bird had occupied",
+        "its surface scarred with decades of small cuts",
+        "a stack of newspapers so old the print had faded to a uniform grey"
+      ],
+      "explanationGuidance": "No single detail alone proves the room has been abandoned for years, but the dust, the empty birdcage, the worn workbench, and the illegible newspapers all point the same way when combined -- this is a demand for synthesising several scattered details into one overall impression, not reading off one image.",
+      "distractorRationale": null,
+      "blueprintId": "ei003-w2-bp-atm-accumulated",
+      "reasoningRoute": "accumulated_atmosphere",
+      "familyId": "wave3-fam-rc10-atmosphere-mood"
+    },
+    "p_claimed_answer": "a sense of long abandonment -- a space frozen in time, untouched for years",
+    "p_worked_explanation": "No single detail alone proves the room has been abandoned for years, but the dust, the empty birdcage, the worn workbench, and the illegible newspapers all point the same way when combined -- this is a demand for synthesising several scattered details into one overall impression, not reading off one image.",
+    "p_distractors": null,
+    "p_mathematical_validation": {
+      "evidenceQuotesVerifiedAgainstRealPassageText": true,
+      "validator": "scripts/validate-ei003-wave2-manifest.mjs",
+      "validatedAt": "2026-09-09T04:20:50.204Z"
+    },
+    "p_similarity_validation": {
+      "approved": true,
+      "reasons": [],
+      "checkedForDuplicateQuestionTextWithinBatch": true,
+      "checkedForExactDuplicateAgainstLiveProductionQuestionsForSameFamily": true
+    },
+    "p_passage_id": "ei003-w2-eng-the-attic-workshop"
+  },
+  {
+    "p_candidate_id": "ei003-w2-atm-accum-02",
+    "p_family_id": "wave3-fam-rc10-atmosphere-mood",
+    "p_generation_spec_id": "ei003-w2-bp-atm-accumulated",
+    "p_generation_spec_version": "1",
+    "p_subject": "english",
+    "p_competency_id": null,
+    "p_skill": "QT-RC-10",
+    "p_question_type": "short-answer",
+    "p_pathway": [
+      "csse"
+    ],
+    "p_preparation_stage": "DEVELOPMENT",
+    "p_difficulty": "medium",
+    "p_question_content": {
+      "question": "Across the passage, the grandmother spreads newspaper on the table, names each tiny part \"as though introducing me to relatives,\" and works \"most Sunday mornings\" all summer. What overall atmosphere do these details create together?",
+      "acceptedAnswers": [
+        "a patient, careful, unhurried atmosphere of shared, old-fashioned attention",
+        "a calm, methodical mood built from steady routine and care",
+        "an unrushed, affectionate atmosphere around a slow, shared task"
+      ],
+      "evidenceQuotes": [
+        "setting it on newspaper spread across the kitchen table",
+        "as though introducing me to relatives",
+        "We worked on it most Sunday mornings"
+      ],
+      "explanationGuidance": "No one detail alone establishes the unhurried, careful mood of the memory, but the newspaper laid out with care, the almost affectionate way parts are named, and the steady Sunday-morning routine all combine into a single overall atmosphere of patient, shared attention.",
+      "distractorRationale": null,
+      "blueprintId": "ei003-w2-bp-atm-accumulated",
+      "reasoningRoute": "accumulated_atmosphere",
+      "familyId": "wave3-fam-rc10-atmosphere-mood"
+    },
+    "p_claimed_answer": "a patient, careful, unhurried atmosphere of shared, old-fashioned attention",
+    "p_worked_explanation": "No one detail alone establishes the unhurried, careful mood of the memory, but the newspaper laid out with care, the almost affectionate way parts are named, and the steady Sunday-morning routine all combine into a single overall atmosphere of patient, shared attention.",
+    "p_distractors": null,
+    "p_mathematical_validation": {
+      "evidenceQuotesVerifiedAgainstRealPassageText": true,
+      "validator": "scripts/validate-ei003-wave2-manifest.mjs",
+      "validatedAt": "2026-09-09T04:20:50.204Z"
+    },
+    "p_similarity_validation": {
+      "approved": true,
+      "reasons": [],
+      "checkedForDuplicateQuestionTextWithinBatch": true,
+      "checkedForExactDuplicateAgainstLiveProductionQuestionsForSameFamily": true
+    },
+    "p_passage_id": "ei003-w2-eng-the-clock-that-stopped"
+  },
+  {
+    "p_candidate_id": "ei003-w2-atm-change-01",
+    "p_family_id": "wave3-fam-rc10-atmosphere-mood",
+    "p_generation_spec_id": "ei003-w2-bp-atm-change",
+    "p_generation_spec_version": "1",
+    "p_subject": "english",
+    "p_competency_id": null,
+    "p_skill": "QT-RC-10",
+    "p_question_type": "short-answer",
+    "p_pathway": [
+      "csse"
+    ],
+    "p_preparation_stage": "INDEPENDENT",
+    "p_difficulty": "hard",
+    "p_question_content": {
+      "question": "How does the atmosphere of the fen change between the start of the crossing and midday?",
+      "acceptedAnswers": [
+        "it goes from misty, uncertain and hidden to fully open, revealed and clear",
+        "from an unclear, mysterious feeling to an exposed, open one",
+        "the hidden, uncertain early atmosphere becomes fully visible and revealed by midday"
+      ],
+      "evidenceQuotes": [
+        "the mist still sat low over the reed beds",
+        "By midday the mist had burned away entirely, and the fen revealed itself properly: an enormous flat expanse"
+      ],
+      "explanationGuidance": "At the start, low mist creates an uncertain, half-hidden atmosphere. By midday, that mist has completely cleared, and the passage explicitly says the fen \"revealed itself properly\" -- a genuine, evidenced shift from concealment to full exposure.",
+      "distractorRationale": null,
+      "blueprintId": "ei003-w2-bp-atm-change",
+      "reasoningRoute": "atmosphere_change",
+      "familyId": "wave3-fam-rc10-atmosphere-mood"
+    },
+    "p_claimed_answer": "it goes from misty, uncertain and hidden to fully open, revealed and clear",
+    "p_worked_explanation": "At the start, low mist creates an uncertain, half-hidden atmosphere. By midday, that mist has completely cleared, and the passage explicitly says the fen \"revealed itself properly\" -- a genuine, evidenced shift from concealment to full exposure.",
+    "p_distractors": null,
+    "p_mathematical_validation": {
+      "evidenceQuotesVerifiedAgainstRealPassageText": true,
+      "validator": "scripts/validate-ei003-wave2-manifest.mjs",
+      "validatedAt": "2026-09-09T04:20:50.204Z"
+    },
+    "p_similarity_validation": {
+      "approved": true,
+      "reasons": [],
+      "checkedForDuplicateQuestionTextWithinBatch": true,
+      "checkedForExactDuplicateAgainstLiveProductionQuestionsForSameFamily": true
+    },
+    "p_passage_id": "ei003-w2-eng-crossing-the-fen"
+  },
+  {
+    "p_candidate_id": "ei003-w2-atm-change-02",
+    "p_family_id": "wave3-fam-rc10-atmosphere-mood",
+    "p_generation_spec_id": "ei003-w2-bp-atm-change",
+    "p_generation_spec_version": "1",
+    "p_subject": "english",
+    "p_competency_id": null,
+    "p_skill": "QT-RC-10",
+    "p_question_type": "short-answer",
+    "p_pathway": [
+      "csse"
+    ],
+    "p_preparation_stage": "INDEPENDENT",
+    "p_difficulty": "hard",
+    "p_question_content": {
+      "question": "How does the atmosphere of the round change from the very ordinary early houses to the final house?",
+      "acceptedAnswers": [
+        "it moves from routine and unremarkable to quiet and significant",
+        "from ordinary and businesslike to still and meaningful",
+        "the everyday, uneventful feel gives way to a quieter, more weighty mood at the end"
+      ],
+      "evidenceQuotes": [
+        "the round unfolded almost exactly like any other Tuesday",
+        "He sat with both hands resting on the wheel, looking out at the empty street ahead"
+      ],
+      "explanationGuidance": "The passage opens by explicitly describing the round as unfolding like any ordinary day. By the final house, the mood has shifted into something quieter and heavier, marked by Grandad Kofi's pause and stillness -- a genuine atmospheric change across the whole passage, not just a single moment.",
+      "distractorRationale": null,
+      "blueprintId": "ei003-w2-bp-atm-change",
+      "reasoningRoute": "atmosphere_change",
+      "familyId": "wave3-fam-rc10-atmosphere-mood"
+    },
+    "p_claimed_answer": "it moves from routine and unremarkable to quiet and significant",
+    "p_worked_explanation": "The passage opens by explicitly describing the round as unfolding like any ordinary day. By the final house, the mood has shifted into something quieter and heavier, marked by Grandad Kofi's pause and stillness -- a genuine atmospheric change across the whole passage, not just a single moment.",
+    "p_distractors": null,
+    "p_mathematical_validation": {
+      "evidenceQuotesVerifiedAgainstRealPassageText": true,
+      "validator": "scripts/validate-ei003-wave2-manifest.mjs",
+      "validatedAt": "2026-09-09T04:20:50.204Z"
+    },
+    "p_similarity_validation": {
+      "approved": true,
+      "reasons": [],
+      "checkedForDuplicateQuestionTextWithinBatch": true,
+      "checkedForExactDuplicateAgainstLiveProductionQuestionsForSameFamily": true
+    },
+    "p_passage_id": "ei003-w2-eng-the-last-delivery"
+  },
+  {
+    "p_candidate_id": "ei003-w2-atm-contrast-01",
+    "p_family_id": "wave3-fam-rc10-atmosphere-mood",
+    "p_generation_spec_id": "ei003-w2-bp-atm-character-contrast",
+    "p_generation_spec_version": "1",
+    "p_subject": "english",
+    "p_competency_id": null,
+    "p_skill": "QT-RC-10",
+    "p_question_type": "short-answer",
+    "p_pathway": [
+      "csse"
+    ],
+    "p_preparation_stage": "TRANSFER",
+    "p_difficulty": "challenge",
+    "p_question_content": {
+      "question": "The fen is described as genuinely dangerous -- shifting stakes, sinking mud, a path that changes with the tide. How does Onyema's own manner contrast with this atmosphere of danger?",
+      "acceptedAnswers": [
+        "despite the real danger, onyema remains calm and confident, reading the ground without needing a map or compass",
+        "he moves through the risky landscape with calm expertise rather than visible worry",
+        "his relaxed, practised manner contrasts with how genuinely hazardous the setting is"
+      ],
+      "evidenceQuotes": [
+        "a path safe at dawn could be treacherous by noon",
+        "Onyema never once consulted a map or a compass; he read the ground itself"
+      ],
+      "explanationGuidance": "The setting itself is established as genuinely risky and unpredictable. Onyema's behaviour, though, shows no anxiety at all -- he moves without hesitation and without instruments, guided only by close reading of the ground -- a clear contrast between a dangerous atmosphere and one character's calm response to it.",
+      "distractorRationale": null,
+      "blueprintId": "ei003-w2-bp-atm-character-contrast",
+      "reasoningRoute": "atmosphere_character_contrast",
+      "familyId": "wave3-fam-rc10-atmosphere-mood"
+    },
+    "p_claimed_answer": "despite the real danger, onyema remains calm and confident, reading the ground without needing a map or compass",
+    "p_worked_explanation": "The setting itself is established as genuinely risky and unpredictable. Onyema's behaviour, though, shows no anxiety at all -- he moves without hesitation and without instruments, guided only by close reading of the ground -- a clear contrast between a dangerous atmosphere and one character's calm response to it.",
+    "p_distractors": null,
+    "p_mathematical_validation": {
+      "evidenceQuotesVerifiedAgainstRealPassageText": true,
+      "validator": "scripts/validate-ei003-wave2-manifest.mjs",
+      "validatedAt": "2026-09-09T04:20:50.204Z"
+    },
+    "p_similarity_validation": {
+      "approved": true,
+      "reasons": [],
+      "checkedForDuplicateQuestionTextWithinBatch": true,
+      "checkedForExactDuplicateAgainstLiveProductionQuestionsForSameFamily": true
+    },
+    "p_passage_id": "ei003-w2-eng-crossing-the-fen"
+  },
+  {
+    "p_candidate_id": "ei003-w2-atm-contrast-02",
+    "p_family_id": "wave3-fam-rc10-atmosphere-mood",
+    "p_generation_spec_id": "ei003-w2-bp-atm-character-contrast",
+    "p_generation_spec_version": "1",
+    "p_subject": "english",
+    "p_competency_id": null,
+    "p_skill": "QT-RC-10",
+    "p_question_type": "short-answer",
+    "p_pathway": [
+      "csse"
+    ],
+    "p_preparation_stage": "TRANSFER",
+    "p_difficulty": "challenge",
+    "p_question_content": {
+      "question": "A relay race is usually a loud, public, competitive occasion. How does Nadia's private feeling that evening contrast with this atmosphere?",
+      "acceptedAnswers": [
+        "the loud, public excitement of the race contrasts with her quiet, private unease at home later that evening",
+        "instead of the public energy of the race, she is left with a small, quiet, personal reminder of what happened",
+        "the public drama of the event gives way to a private, understated moment alone"
+      ],
+      "evidenceQuotes": [
+        "someone shouted",
+        "It was only that evening, unlacing her trainers at home, that Nadia realised she still had a faint red mark"
+      ],
+      "explanationGuidance": "The race itself is a loud, shared, public occasion, full of shouting and competition. The passage ends, though, on a small, private, almost accidental moment -- Nadia alone at home, quietly noticing a mark on her hand -- a deliberate contrast between the public atmosphere of the event and her own quiet, unresolved feeling about it.",
+      "distractorRationale": null,
+      "blueprintId": "ei003-w2-bp-atm-character-contrast",
+      "reasoningRoute": "atmosphere_character_contrast",
+      "familyId": "wave3-fam-rc10-atmosphere-mood"
+    },
+    "p_claimed_answer": "the loud, public excitement of the race contrasts with her quiet, private unease at home later that evening",
+    "p_worked_explanation": "The race itself is a loud, shared, public occasion, full of shouting and competition. The passage ends, though, on a small, private, almost accidental moment -- Nadia alone at home, quietly noticing a mark on her hand -- a deliberate contrast between the public atmosphere of the event and her own quiet, unresolved feeling about it.",
+    "p_distractors": null,
+    "p_mathematical_validation": {
+      "evidenceQuotesVerifiedAgainstRealPassageText": true,
+      "validator": "scripts/validate-ei003-wave2-manifest.mjs",
+      "validatedAt": "2026-09-09T04:20:50.204Z"
+    },
+    "p_similarity_validation": {
+      "approved": true,
+      "reasons": [],
+      "checkedForDuplicateQuestionTextWithinBatch": true,
+      "checkedForExactDuplicateAgainstLiveProductionQuestionsForSameFamily": true
+    },
+    "p_passage_id": "ei003-w2-eng-the-relay-baton"
+  },
+  {
+    "p_candidate_id": "ei003-w2-wc-meaning-01",
+    "p_family_id": "wave3-fam-rc10-word-choice",
+    "p_generation_spec_id": "ei003-w2-bp-wc-meaning-in-context",
+    "p_generation_spec_version": "1",
+    "p_subject": "english",
+    "p_competency_id": null,
+    "p_skill": "QT-RC-10",
+    "p_question_type": "short-answer",
+    "p_pathway": [
+      "csse"
+    ],
+    "p_preparation_stage": "FOUNDATION",
+    "p_difficulty": "easy",
+    "p_question_content": {
+      "question": "In \"a weathered man named Onyema,\" what does the word \"weathered\" suggest about him?",
+      "acceptedAnswers": [
+        "experienced, aged or toughened by years outdoors",
+        "worn/aged from long experience in the outdoors",
+        "someone shaped by years of exposure to the elements"
+      ],
+      "evidenceQuotes": [
+        "a weathered man named Onyema"
+      ],
+      "explanationGuidance": "\"Weathered\" specifically suggests a person shaped and toughened by long exposure to outdoor conditions over time -- it tells the reader about his experience and age without stating either directly.",
+      "distractorRationale": null,
+      "blueprintId": "ei003-w2-bp-wc-meaning-in-context",
+      "reasoningRoute": "meaning_in_context",
+      "familyId": "wave3-fam-rc10-word-choice"
+    },
+    "p_claimed_answer": "experienced, aged or toughened by years outdoors",
+    "p_worked_explanation": "\"Weathered\" specifically suggests a person shaped and toughened by long exposure to outdoor conditions over time -- it tells the reader about his experience and age without stating either directly.",
+    "p_distractors": null,
+    "p_mathematical_validation": {
+      "evidenceQuotesVerifiedAgainstRealPassageText": true,
+      "validator": "scripts/validate-ei003-wave2-manifest.mjs",
+      "validatedAt": "2026-09-09T04:20:50.204Z"
+    },
+    "p_similarity_validation": {
+      "approved": true,
+      "reasons": [],
+      "checkedForDuplicateQuestionTextWithinBatch": true,
+      "checkedForExactDuplicateAgainstLiveProductionQuestionsForSameFamily": true
+    },
+    "p_passage_id": "ei003-w2-eng-crossing-the-fen"
+  },
+  {
+    "p_candidate_id": "ei003-w2-wc-meaning-02",
+    "p_family_id": "wave3-fam-rc10-word-choice",
+    "p_generation_spec_id": "ei003-w2-bp-wc-meaning-in-context",
+    "p_generation_spec_version": "1",
+    "p_subject": "english",
+    "p_competency_id": null,
+    "p_skill": "QT-RC-10",
+    "p_question_type": "short-answer",
+    "p_pathway": [
+      "csse"
+    ],
+    "p_preparation_stage": "FOUNDATION",
+    "p_difficulty": "easy",
+    "p_question_content": {
+      "question": "In \"a dressmaker's mannequin draped in a sheet that had slipped to reveal one shoulder, oddly human in the low light,\" what does the word \"oddly\" suggest?",
+      "acceptedAnswers": [
+        "that the mannequin's human-like appearance is unsettling or unexpected",
+        "something strange or unsettling about how lifelike it looks",
+        "it creates an uneasy, unexpected sense of it looking real"
+      ],
+      "evidenceQuotes": [
+        "oddly human in the low light"
+      ],
+      "explanationGuidance": "\"Oddly\" signals that the mannequin's human appearance is unexpected and slightly unsettling, not simply neutral or ordinary -- it shapes how the reader is meant to react to this detail.",
+      "distractorRationale": null,
+      "blueprintId": "ei003-w2-bp-wc-meaning-in-context",
+      "reasoningRoute": "meaning_in_context",
+      "familyId": "wave3-fam-rc10-word-choice"
+    },
+    "p_claimed_answer": "that the mannequin's human-like appearance is unsettling or unexpected",
+    "p_worked_explanation": "\"Oddly\" signals that the mannequin's human appearance is unexpected and slightly unsettling, not simply neutral or ordinary -- it shapes how the reader is meant to react to this detail.",
+    "p_distractors": null,
+    "p_mathematical_validation": {
+      "evidenceQuotesVerifiedAgainstRealPassageText": true,
+      "validator": "scripts/validate-ei003-wave2-manifest.mjs",
+      "validatedAt": "2026-09-09T04:20:50.204Z"
+    },
+    "p_similarity_validation": {
+      "approved": true,
+      "reasons": [],
+      "checkedForDuplicateQuestionTextWithinBatch": true,
+      "checkedForExactDuplicateAgainstLiveProductionQuestionsForSameFamily": true
+    },
+    "p_passage_id": "ei003-w2-eng-the-attic-workshop"
+  },
+  {
+    "p_candidate_id": "ei003-w2-wc-subst-01",
+    "p_family_id": "wave3-fam-rc10-word-choice",
+    "p_generation_spec_id": "ei003-w2-bp-wc-substitution",
+    "p_generation_spec_version": "1",
+    "p_subject": "english",
+    "p_competency_id": null,
+    "p_skill": "QT-RC-10",
+    "p_question_type": "short-answer",
+    "p_pathway": [
+      "csse"
+    ],
+    "p_preparation_stage": "DEVELOPMENT",
+    "p_difficulty": "medium",
+    "p_question_content": {
+      "question": "Why might the writer have chosen \"pressed\" rather than \"put\" in \"listening to the mechanism with her ear pressed close to the case\"?",
+      "acceptedAnswers": [
+        "'pressed' suggests firm, deliberate, close contact, more focused and intense than the plain word 'put'",
+        "'pressed' shows real concentration and effort, whereas 'put' would sound casual",
+        "it suggests a determined, careful action rather than a casual one"
+      ],
+      "evidenceQuotes": [
+        "her ear pressed close to the case as though it might tell her something the rest of us couldn't hear"
+      ],
+      "explanationGuidance": "\"Pressed\" suggests firm, deliberate, sustained contact, showing real concentration and effort. \"Put\" would describe the same basic action but with none of that intensity or care.",
+      "distractorRationale": null,
+      "blueprintId": "ei003-w2-bp-wc-substitution",
+      "reasoningRoute": "word_substitution_rationale",
+      "familyId": "wave3-fam-rc10-word-choice"
+    },
+    "p_claimed_answer": "'pressed' suggests firm, deliberate, close contact, more focused and intense than the plain word 'put'",
+    "p_worked_explanation": "\"Pressed\" suggests firm, deliberate, sustained contact, showing real concentration and effort. \"Put\" would describe the same basic action but with none of that intensity or care.",
+    "p_distractors": null,
+    "p_mathematical_validation": {
+      "evidenceQuotesVerifiedAgainstRealPassageText": true,
+      "validator": "scripts/validate-ei003-wave2-manifest.mjs",
+      "validatedAt": "2026-09-09T04:20:50.204Z"
+    },
+    "p_similarity_validation": {
+      "approved": true,
+      "reasons": [],
+      "checkedForDuplicateQuestionTextWithinBatch": true,
+      "checkedForExactDuplicateAgainstLiveProductionQuestionsForSameFamily": true
+    },
+    "p_passage_id": "ei003-w2-eng-the-clock-that-stopped"
+  },
+  {
+    "p_candidate_id": "ei003-w2-wc-subst-02",
+    "p_family_id": "wave3-fam-rc10-word-choice",
+    "p_generation_spec_id": "ei003-w2-bp-wc-substitution",
+    "p_generation_spec_version": "1",
+    "p_subject": "english",
+    "p_competency_id": null,
+    "p_skill": "QT-RC-10",
+    "p_question_type": "short-answer",
+    "p_pathway": [
+      "csse"
+    ],
+    "p_preparation_stage": "DEVELOPMENT",
+    "p_difficulty": "medium",
+    "p_question_content": {
+      "question": "Why might the writer have chosen \"waiting\" rather than \"standing\" in \"an elderly man in a dressing gown was already waiting by the gate\"?",
+      "acceptedAnswers": [
+        "'waiting' suggests he was there on purpose, anticipating something, unlike the neutral word 'standing'",
+        "'waiting' implies deliberate anticipation, whereas 'standing' would just describe his position without meaning",
+        "it shows purpose and expectation, not just his physical position"
+      ],
+      "evidenceQuotes": [
+        "an elderly man in a dressing gown was already waiting by the gate"
+      ],
+      "explanationGuidance": "\"Waiting\" implies the man was there on purpose, anticipating the milk float's arrival -- a small but important detail that hints he already knew something significant was happening. \"Standing\" would describe the same physical position but without that sense of purpose.",
+      "distractorRationale": null,
+      "blueprintId": "ei003-w2-bp-wc-substitution",
+      "reasoningRoute": "word_substitution_rationale",
+      "familyId": "wave3-fam-rc10-word-choice"
+    },
+    "p_claimed_answer": "'waiting' suggests he was there on purpose, anticipating something, unlike the neutral word 'standing'",
+    "p_worked_explanation": "\"Waiting\" implies the man was there on purpose, anticipating the milk float's arrival -- a small but important detail that hints he already knew something significant was happening. \"Standing\" would describe the same physical position but without that sense of purpose.",
+    "p_distractors": null,
+    "p_mathematical_validation": {
+      "evidenceQuotesVerifiedAgainstRealPassageText": true,
+      "validator": "scripts/validate-ei003-wave2-manifest.mjs",
+      "validatedAt": "2026-09-09T04:20:50.204Z"
+    },
+    "p_similarity_validation": {
+      "approved": true,
+      "reasons": [],
+      "checkedForDuplicateQuestionTextWithinBatch": true,
+      "checkedForExactDuplicateAgainstLiveProductionQuestionsForSameFamily": true
+    },
+    "p_passage_id": "ei003-w2-eng-the-last-delivery"
+  },
+  {
+    "p_candidate_id": "ei003-w2-wc-conn-01",
+    "p_family_id": "wave3-fam-rc10-word-choice",
+    "p_generation_spec_id": "ei003-w2-bp-wc-connotation",
+    "p_generation_spec_version": "1",
+    "p_subject": "english",
+    "p_competency_id": null,
+    "p_skill": "QT-RC-10",
+    "p_question_type": "short-answer",
+    "p_pathway": [
+      "csse"
+    ],
+    "p_preparation_stage": "INDEPENDENT",
+    "p_difficulty": "hard",
+    "p_question_content": {
+      "question": "The half-finished birdhouse is described as \"leaning against the others like something caught mid-sentence.\" What does this comparison suggest?",
+      "acceptedAnswers": [
+        "it suggests the work was interrupted suddenly and never finished or resumed",
+        "it suggests something was abandoned abruptly, frozen at the exact moment it stopped",
+        "the comparison implies an unfinished task left suddenly, like a thought cut off"
+      ],
+      "evidenceQuotes": [
+        "a half-finished birdhouse sat exactly where it had been abandoned, one wall still unattached, leaning against the others like something caught mid-sentence"
+      ],
+      "explanationGuidance": "Comparing the birdhouse to something \"caught mid-sentence\" suggests an abrupt, unplanned interruption -- work that stopped suddenly, mid-task, and was simply never picked up again, much like a sentence broken off before it finishes.",
+      "distractorRationale": null,
+      "blueprintId": "ei003-w2-bp-wc-connotation",
+      "reasoningRoute": "connotation_interpretation",
+      "familyId": "wave3-fam-rc10-word-choice"
+    },
+    "p_claimed_answer": "it suggests the work was interrupted suddenly and never finished or resumed",
+    "p_worked_explanation": "Comparing the birdhouse to something \"caught mid-sentence\" suggests an abrupt, unplanned interruption -- work that stopped suddenly, mid-task, and was simply never picked up again, much like a sentence broken off before it finishes.",
+    "p_distractors": null,
+    "p_mathematical_validation": {
+      "evidenceQuotesVerifiedAgainstRealPassageText": true,
+      "validator": "scripts/validate-ei003-wave2-manifest.mjs",
+      "validatedAt": "2026-09-09T04:20:50.204Z"
+    },
+    "p_similarity_validation": {
+      "approved": true,
+      "reasons": [],
+      "checkedForDuplicateQuestionTextWithinBatch": true,
+      "checkedForExactDuplicateAgainstLiveProductionQuestionsForSameFamily": true
+    },
+    "p_passage_id": "ei003-w2-eng-the-attic-workshop"
+  },
+  {
+    "p_candidate_id": "ei003-w2-wc-conn-02",
+    "p_family_id": "wave3-fam-rc10-word-choice",
+    "p_generation_spec_id": "ei003-w2-bp-wc-connotation",
+    "p_generation_spec_version": "1",
+    "p_subject": "english",
+    "p_competency_id": null,
+    "p_skill": "QT-RC-10",
+    "p_question_type": "short-answer",
+    "p_pathway": [
+      "csse"
+    ],
+    "p_preparation_stage": "INDEPENDENT",
+    "p_difficulty": "hard",
+    "p_question_content": {
+      "question": "The passage says the mud \"pulled at our boots with a strength that seemed almost deliberate.\" What does this comparison suggest?",
+      "acceptedAnswers": [
+        "it suggests the mud seems to be acting on purpose, almost like it has its own intention, emphasising how difficult it is",
+        "it personifies the mud, making the ground feel actively hostile rather than just difficult",
+        "it makes the mud seem like it is intentionally resisting them, not just naturally sticky"
+      ],
+      "evidenceQuotes": [
+        "the mud pulled at our boots with a strength that seemed almost deliberate"
+      ],
+      "explanationGuidance": "Describing the mud's pull as \"almost deliberate\" gives it a sense of intention, as though the ground itself is resisting them on purpose -- a stronger, more vivid image than simply saying the mud was thick or sticky.",
+      "distractorRationale": null,
+      "blueprintId": "ei003-w2-bp-wc-connotation",
+      "reasoningRoute": "connotation_interpretation",
+      "familyId": "wave3-fam-rc10-word-choice"
+    },
+    "p_claimed_answer": "it suggests the mud seems to be acting on purpose, almost like it has its own intention, emphasising how difficult it is",
+    "p_worked_explanation": "Describing the mud's pull as \"almost deliberate\" gives it a sense of intention, as though the ground itself is resisting them on purpose -- a stronger, more vivid image than simply saying the mud was thick or sticky.",
+    "p_distractors": null,
+    "p_mathematical_validation": {
+      "evidenceQuotesVerifiedAgainstRealPassageText": true,
+      "validator": "scripts/validate-ei003-wave2-manifest.mjs",
+      "validatedAt": "2026-09-09T04:20:50.204Z"
+    },
+    "p_similarity_validation": {
+      "approved": true,
+      "reasons": [],
+      "checkedForDuplicateQuestionTextWithinBatch": true,
+      "checkedForExactDuplicateAgainstLiveProductionQuestionsForSameFamily": true
+    },
+    "p_passage_id": "ei003-w2-eng-crossing-the-fen"
+  },
+  {
+    "p_candidate_id": "ei003-w2-wc-toatmosphere-01",
+    "p_family_id": "wave3-fam-rc10-word-choice",
+    "p_generation_spec_id": "ei003-w2-bp-wc-to-atmosphere",
+    "p_generation_spec_version": "1",
+    "p_subject": "english",
+    "p_competency_id": null,
+    "p_skill": "QT-RC-10",
+    "p_question_type": "short-answer",
+    "p_pathway": [
+      "csse"
+    ],
+    "p_preparation_stage": "TRANSFER",
+    "p_difficulty": "challenge",
+    "p_question_content": {
+      "question": "The passage repeatedly describes objects as \"scarred,\" \"cracked,\" \"faded,\" and \"pale.\" What effect does this repeated pattern of word choice have on the overall description of the attic?",
+      "acceptedAnswers": [
+        "the repeated words of wear and decay build a consistent, cumulative atmosphere of age and neglect across the whole room, not just one object",
+        "using similar 'worn-out' words for many different objects reinforces the sense that everything has aged together, undisturbed",
+        "it creates one unified impression of decay and abandonment spread across the whole space"
+      ],
+      "evidenceQuotes": [
+        "its surface scarred with decades of small cuts",
+        "their leather straps cracked and pale",
+        "so old the print had faded to a uniform grey"
+      ],
+      "explanationGuidance": "No single word choice does this alone -- it is the REPETITION of similar wear-and-decay language across the workbench, the trunks, and the newspapers that builds one consistent, cumulative atmosphere of long neglect spanning the whole room, rather than describing one object in isolation.",
+      "distractorRationale": null,
+      "blueprintId": "ei003-w2-bp-wc-to-atmosphere",
+      "reasoningRoute": "word_choice_to_atmosphere",
+      "familyId": "wave3-fam-rc10-word-choice"
+    },
+    "p_claimed_answer": "the repeated words of wear and decay build a consistent, cumulative atmosphere of age and neglect across the whole room, not just one object",
+    "p_worked_explanation": "No single word choice does this alone -- it is the REPETITION of similar wear-and-decay language across the workbench, the trunks, and the newspapers that builds one consistent, cumulative atmosphere of long neglect spanning the whole room, rather than describing one object in isolation.",
+    "p_distractors": null,
+    "p_mathematical_validation": {
+      "evidenceQuotesVerifiedAgainstRealPassageText": true,
+      "validator": "scripts/validate-ei003-wave2-manifest.mjs",
+      "validatedAt": "2026-09-09T04:20:50.204Z"
+    },
+    "p_similarity_validation": {
+      "approved": true,
+      "reasons": [],
+      "checkedForDuplicateQuestionTextWithinBatch": true,
+      "checkedForExactDuplicateAgainstLiveProductionQuestionsForSameFamily": true
+    },
+    "p_passage_id": "ei003-w2-eng-the-attic-workshop"
+  },
+  {
+    "p_candidate_id": "ei003-w2-wc-toatmosphere-02",
+    "p_family_id": "wave3-fam-rc10-word-choice",
+    "p_generation_spec_id": "ei003-w2-bp-wc-to-atmosphere",
+    "p_generation_spec_version": "1",
+    "p_subject": "english",
+    "p_competency_id": null,
+    "p_skill": "QT-RC-10",
+    "p_question_type": "short-answer",
+    "p_pathway": [
+      "csse"
+    ],
+    "p_preparation_stage": "TRANSFER",
+    "p_difficulty": "challenge",
+    "p_question_content": {
+      "question": "Near the end of the passage, the writer repeatedly uses words and phrases suggesting stillness and quiet: \"didn't say anything,\" \"didn't start the engine straight away,\" \"sat there.\" What effect does this pattern of word choice have on how Grandad Kofi is presented?",
+      "acceptedAnswers": [
+        "the repeated stillness/quietness in these word choices builds a reflective, subdued impression of him at the end, contrasting with his earlier brisk manner",
+        "the pattern of quiet, unhurried language presents him as thoughtful and affected, rather than simply finishing a routine task",
+        "it builds a consistent sense of quiet reflection through repeated stillness in his actions"
+      ],
+      "evidenceQuotes": [
+        "didn't say anything to that",
+        "he didn't start the engine straight away",
+        "He sat with both hands resting on the wheel"
+      ],
+      "explanationGuidance": "Each phrase alone is a small, ordinary action, but their repetition -- not saying anything, not starting the engine, simply sitting -- builds a consistent pattern of stillness that presents Grandad Kofi as quietly reflective at the end of the round, a cumulative effect no single phrase could create on its own.",
+      "distractorRationale": null,
+      "blueprintId": "ei003-w2-bp-wc-to-atmosphere",
+      "reasoningRoute": "word_choice_to_atmosphere",
+      "familyId": "wave3-fam-rc10-word-choice"
+    },
+    "p_claimed_answer": "the repeated stillness/quietness in these word choices builds a reflective, subdued impression of him at the end, contrasting with his earlier brisk manner",
+    "p_worked_explanation": "Each phrase alone is a small, ordinary action, but their repetition -- not saying anything, not starting the engine, simply sitting -- builds a consistent pattern of stillness that presents Grandad Kofi as quietly reflective at the end of the round, a cumulative effect no single phrase could create on its own.",
+    "p_distractors": null,
+    "p_mathematical_validation": {
+      "evidenceQuotesVerifiedAgainstRealPassageText": true,
+      "validator": "scripts/validate-ei003-wave2-manifest.mjs",
+      "validatedAt": "2026-09-09T04:20:50.204Z"
+    },
+    "p_similarity_validation": {
+      "approved": true,
+      "reasons": [],
+      "checkedForDuplicateQuestionTextWithinBatch": true,
+      "checkedForExactDuplicateAgainstLiveProductionQuestionsForSameFamily": true
+    },
+    "p_passage_id": "ei003-w2-eng-the-last-delivery"
+  }
+]
