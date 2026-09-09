@@ -40,6 +40,17 @@ export const ENGLISH_FAMILY_EXAM_STRATEGY: Record<string, string> = {
     "Notice which senses the description uses (sight, sound, touch) and whether several small details all point the same way -- one detail alone is rarely the whole answer.",
   "wave3-fam-rc10-word-choice":
     "Ask why THIS word and not an ordinary one that means almost the same thing. The gap between the two tells you what the writer wanted you to notice.",
+  // Educational Increment 003, Wave 3 -- these 4 families had ZERO
+  // exam-strategy or worked-example coverage before this wave (confirmed
+  // live this session).
+  "wave3-fam-rc01-retrieval":
+    "Decide exactly what fact the question wants BEFORE you search. Find that specific detail in the passage and check it actually answers the question, rather than the first plausible-sounding line you spot.",
+  "wave1-fam-comparative-extraction":
+    "Work out exactly WHAT is being compared (two people? two moments? two places?) before you search. Find evidence for each side separately, then put them side by side.",
+  "wave1-fam-motive-inference":
+    "Never guess a motive out of thin air. Find the specific action or line that prompted the question, then ask what real evidence in the text points to WHY.",
+  "wave1-fam-effect-of-language":
+    "Ask what the word or phrase actually pictures or suggests, then ask why the writer picked that word rather than a plainer one. The effect is the gap between the two.",
 };
 
 export function getExamStrategyHint(familyId?: string | null): string | undefined {
@@ -216,6 +227,62 @@ export const ENGLISH_FAMILY_WORKED_EXAMPLE: Partial<Record<string, WorkedExample
     ],
     weakAnswerLooksLike: "Saying only that the word 'sounds descriptive' without explaining what it specifically adds compared to a plainer alternative.",
     whatImprovesIt: "Naming the more ordinary alternative word, then explaining precisely what extra meaning or feeling the writer's actual choice adds that the alternative would not.",
+  },
+  // Educational Increment 003, Wave 3 -- retrieval and comparative-
+  // extraction share the SAME five-step model (Founder-specified): both
+  // are fundamentally about locating and precisely reading real, stated
+  // passage content, not inferring anything beyond it.
+  "wave3-fam-rc01-retrieval": {
+    scenario: "Imagine a passage where a character checks the time, then later mentions missing the 4 o'clock train because of it.",
+    modelReasoning: "Decide precisely what the question is asking for before searching, then locate that exact detail in the passage and check it genuinely answers what was asked -- not just the first sentence that looks related.",
+    fiveStepModel: [
+      "What information do I need? Exactly what time the character missed the train, not just that they were late.",
+      "Where is the evidence? Later in the passage, near where the missed train is mentioned -- not necessarily near the first time-check.",
+      "What does it actually say? The passage states the exact time the train left.",
+      "Which detail answers the question? Only the specific train time -- not the earlier, unrelated time-check.",
+      "Check. Re-read the question once more against the exact detail chosen, to confirm it is the precise fact asked for, not a nearby distractor.",
+    ],
+    weakAnswerLooksLike: "Answering with the first time-related detail found, without checking it is the one the question actually asks for.",
+    whatImprovesIt: "Identifying precisely what the question needs before searching, then confirming the chosen detail matches that need exactly.",
+  },
+  "wave1-fam-comparative-extraction": {
+    scenario: "Imagine a passage where one character calmly waits out a delay and another paces anxiously, checking their phone repeatedly.",
+    modelReasoning: "Work out exactly what is being compared -- two characters? one character at two moments? two places? -- then find evidence for each side separately before combining them.",
+    fiveStepModel: [
+      "What information do I need? Evidence of how each character behaves during the delay, for both sides of the comparison.",
+      "Where is the evidence? One description for the calm character, a separate description for the anxious one, often in different parts of the passage.",
+      "What does it actually say? The passage states specific actions for each -- waiting calmly versus pacing and checking a phone.",
+      "Which detail answers the question? The specific contrasting actions for each side, not a general impression of 'one is calmer'.",
+      "Check. Confirm both halves of the comparison have their own real evidence, not just the more obvious or dramatic side.",
+    ],
+    weakAnswerLooksLike: "Describing one side of the comparison in detail and the other side only vaguely or not at all.",
+    whatImprovesIt: "Finding specific, separate evidence for each side of the comparison before writing the final answer.",
+  },
+  "wave1-fam-motive-inference": {
+    scenario: "Imagine a character who offers to carry the heaviest bag without being asked, then quickly changes the subject when thanked.",
+    modelReasoning: "Start from the specific action or line the question is about, find the real evidence around it, and reason towards the motive that evidence actually supports -- never guess a motive with no textual evidence behind it.",
+    fiveStepModel: [
+      "What happened? The character volunteers to carry the heaviest bag, then deflects when thanked.",
+      "What evidence matters? Both parts together -- the unprompted offer AND the discomfort with being thanked.",
+      "What does it suggest? That the character wanted to help without wanting attention or praise for it.",
+      "Which motive fits best? Genuine, quiet helpfulness -- not, for example, showing off, since showing off would welcome the thanks rather than deflect it.",
+      "Justify. Point to both the offer and the deflection as the two pieces of evidence supporting that specific motive, not just one of them.",
+    ],
+    weakAnswerLooksLike: "Naming a plausible-sounding motive ('he wanted to be helpful') without connecting it to a specific piece of evidence in the text.",
+    whatImprovesIt: "Naming the exact action or line first, then explaining precisely what about it supports the chosen motive.",
+  },
+  "wave1-fam-effect-of-language": {
+    scenario: "Imagine a sentence: 'The old gate didn't open, it groaned open, as if it hadn't moved in years.'",
+    modelReasoning: "Identify the specific word or phrase, work out what it means and suggests in this exact sentence, then explain why the writer chose it over a plainer alternative and what effect that creates.",
+    fiveStepModel: [
+      "Which word/phrase? 'Groaned', used instead of the plainer word 'opened'.",
+      "What does it mean here? A groan is normally a sound a person or animal makes when in discomfort.",
+      "What does it suggest? Applying a human-like sound to the gate suggests it is old, stiff, and reluctant to move -- not simply that it opened.",
+      "Why did the writer choose it? A gate 'groaning' does more work than a gate that just 'opened' -- it adds sound, age, and a sense of effort in one word.",
+      "What effect does it create? It makes the gate feel almost alive and worn out, reinforcing the sense that it hasn't moved in a long time -- exactly what the rest of the sentence confirms.",
+    ],
+    weakAnswerLooksLike: "Saying the word 'makes it more descriptive' without naming the specific meaning, connotation, or effect it adds.",
+    whatImprovesIt: "Naming precisely what the chosen word suggests (sound, age, human-like quality) and connecting that directly to the effect it creates.",
   },
 };
 
