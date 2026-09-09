@@ -11,7 +11,7 @@
  * page component."
  */
 
-import type { MockAttemptStatus, MockAttemptType, MockManifestGroupingEntry, MockQuestionPayload, MockTableStimulus, ResumableMockAttempt } from "./types";
+import type { MockAttemptStatus, MockAttemptType, MockImageStimulus, MockManifestGroupingEntry, MockQuestionPayload, MockTableStimulus, ResumableMockAttempt } from "./types";
 
 /**
  * Programme Completion Increment 016 — the one, exact, already-activated
@@ -276,6 +276,42 @@ export function isValidTableStimulus(value: unknown): value is MockTableStimulus
   const rows = v.rows;
   if (!Array.isArray(rows) || rows.length === 0) return false;
   return rows.every((row) => Array.isArray(row) && row.length === headers.length && row.every((cell) => typeof cell === "string"));
+}
+
+/**
+ * CSSE Two-Paper Mock, pre-activation completion pass (migration 246) —
+ * the same fail-closed discipline as isValidTableStimulus() above,
+ * applied to MockImageStimulus. A stimulus with `imageAssetUrl: null`
+ * (an unauthored image, e.g. a future Q2-family task not yet completed)
+ * deliberately returns false: this is the one enforcement point that
+ * keeps an incomplete image task from ever being rendered to a learner,
+ * mirroring MockImageStimulus's own doc comment in lib/mockAttempt/
+ * types.ts.
+ */
+export function isValidImageStimulus(value: unknown): value is MockImageStimulus & { imageAssetUrl: string } {
+  if (!value || typeof value !== "object") return false;
+  const v = value as Record<string, unknown>;
+  if (v.type !== "image") return false;
+  if (typeof v.imageAssetUrl !== "string" || v.imageAssetUrl.length === 0) return false;
+  if (typeof v.altText !== "string" || v.altText.length === 0) return false;
+  if (v.caption !== undefined && typeof v.caption !== "string") return false;
+  return true;
+}
+
+/**
+ * Image-stimulus counterpart to selectDisplayUnitStimulus() above, same
+ * "first valid stimulus present in this unit" rule, generic over any
+ * payload set rather than coupled to a specific family. A unit is never
+ * expected to carry both a table and an image stimulus at once (no
+ * content in this codebase does), so callers check both independently.
+ */
+export function selectDisplayUnitImageStimulus(
+  payloads: readonly MockQuestionPayload[]
+): (MockImageStimulus & { imageAssetUrl: string }) | null {
+  for (const payload of payloads) {
+    if (isValidImageStimulus(payload.stimulus)) return payload.stimulus;
+  }
+  return null;
 }
 
 /**

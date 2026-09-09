@@ -41,7 +41,9 @@ import {
   buildPalette,
   unansweredUnitIndices,
   selectDisplayUnitStimulus,
+  selectDisplayUnitImageStimulus,
   isValidTableStimulus,
+  isValidImageStimulus,
   resolveGroupSharedStem,
   determineMockResumeAction,
   computeResumeStartIndex,
@@ -50,6 +52,7 @@ import {
 import { ExamTimer } from "@/components/mockAttempt/ExamTimer";
 import { QuestionPalette } from "@/components/mockAttempt/QuestionPalette";
 import { DataTableStimulus } from "@/components/mockAttempt/DataTableStimulus";
+import { ImageStimulus } from "@/components/mockAttempt/ImageStimulus";
 import { ReadingPassage } from "@/components/mockAttempt/ReadingPassage";
 
 /**
@@ -179,7 +182,7 @@ type Phase =
 export default function MockExamPage({
   searchParams,
 }: {
-  searchParams: Promise<{ type?: string }>;
+  searchParams: Promise<{ type?: string; subject?: string }>;
 }) {
   // Fail-safe validation, matching this codebase's own established
   // "absent/unrecognised is not an error, it silently falls back" pattern
@@ -187,9 +190,16 @@ export default function MockExamPage({
   // requestedFocus). resolveAttemptType() is a pure, independently-tested
   // function (lib/mockAttempt/workspace.ts) — Programme Completion
   // Increment 016.
-  const { type } = use(searchParams);
+  const { type, subject: rawSubject } = use(searchParams);
   const attemptType: MockAttemptType = resolveAttemptType(type);
   const durationMinutes = DURATION_MINUTES_BY_ATTEMPT_TYPE[attemptType];
+  // CSSE Two-Paper Mock, pre-activation completion pass — optional,
+  // additive: absent (every existing link to this page, unchanged) means
+  // "any subject," exactly matching getActiveMockForm()'s own default.
+  // Only meaningful for attemptType="full_mock", where two subject-pure
+  // forms (Mathematics, English) now coexist and getActiveMockForm() must
+  // be told which one to find — see migration 245's own subject-aware fix.
+  const subject: "mathematics" | "english" | undefined = rawSubject === "mathematics" || rawSubject === "english" ? rawSubject : undefined;
 
   // Completion Assurance Programme, Completion B — starts at "checking",
   // never "intro": a learner must never see "Before you begin" exam
@@ -341,7 +351,7 @@ export default function MockExamPage({
       const supabase = getSupabaseClient();
       if (!supabase) { setErrorMessage("Not connected."); setPhase("error"); return; }
       supabaseRef.current = supabase;
-      const active = await getActiveMockForm(supabase, attemptType);
+      const active = await getActiveMockForm(supabase, attemptType, subject);
       if (active.error) { setErrorMessage(active.error); setPhase("error"); return; }
       // Decision 220 — best-effort, and deliberately AFTER the phase
       // decision below, never gating it: a failure here must never block
@@ -455,7 +465,7 @@ export default function MockExamPage({
     if (!supabase) { setErrorMessage("Not connected."); setPhase("error"); return; }
     supabaseRef.current = supabase;
 
-    const active = await getActiveMockForm(supabase, attemptType);
+    const active = await getActiveMockForm(supabase, attemptType, subject);
     if (active.error) { setErrorMessage(active.error); setPhase("error"); return; }
     if (!isMockFormAvailable(active)) { setPhase("unavailable"); return; }
 
@@ -914,6 +924,7 @@ function MockQuestionRenderer({
     const payload = payloads[0];
     const questionText = typeof payload.question === "string" ? payload.question : JSON.stringify(payload.question);
     const stimulus = isValidTableStimulus(payload.stimulus) ? payload.stimulus : null;
+    const imageStimulus = isValidImageStimulus(payload.stimulus) ? payload.stimulus : null;
     return (
       <div>
         <div className="flex items-center justify-between text-xs text-gray-400 dark:text-gray-500 mb-2">
@@ -923,6 +934,7 @@ function MockQuestionRenderer({
         {payload.passageText && <ReadingPassage title={payload.passageTitle} text={payload.passageText} />}
         <p className="text-sm font-semibold text-gray-800 dark:text-gray-200 whitespace-pre-line leading-relaxed">{questionText}</p>
         {stimulus && <DataTableStimulus stimulus={stimulus} />}
+        {imageStimulus && <ImageStimulus stimulus={imageStimulus} />}
         <textarea
           value={values[0] ?? ""}
           onChange={(e) => onChange(0, e.target.value)}
@@ -938,6 +950,12 @@ function MockQuestionRenderer({
   // Decision 170 — one shared stimulus rendered once for the whole grouped
   // experience (display-unit level), never once per raw subpart.
   const sharedStimulus = selectDisplayUnitStimulus(payloads);
+  // Migration 246 — the image-stimulus counterpart. No grouped family in
+  // this codebase authors an image stimulus today (Q2 is always a
+  // standalone display unit, the payloads.length <= 1 branch above), but
+  // this keeps the two stimulus kinds symmetric rather than assuming
+  // permanently that only the standalone branch will ever need one.
+  const sharedImageStimulus = selectDisplayUnitImageStimulus(payloads);
   // Shared-Scenario Presentation Correction (Decision 180) — resolved
   // only via the explicit sharedStem content contract (migration 121/
   // 122), never by parsing/diffing question text here. null for every
@@ -959,6 +977,7 @@ function MockQuestionRenderer({
           never re-fetched or re-derived per subpart. */}
       {payloads[0].passageText && <ReadingPassage title={payloads[0].passageTitle} text={payloads[0].passageText} />}
       {sharedStimulus && <DataTableStimulus stimulus={sharedStimulus} />}
+      {sharedImageStimulus && <ImageStimulus stimulus={sharedImageStimulus} />}
       {sharedStem && (
         <p className="text-sm font-semibold text-gray-800 dark:text-gray-200 whitespace-pre-line leading-relaxed mb-4">{sharedStem.stem}</p>
       )}

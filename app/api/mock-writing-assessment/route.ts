@@ -83,7 +83,7 @@ export async function POST(request: NextRequest) {
   const results: { questionId: string; persisted: boolean; assessmentStatus: string }[] = [];
 
   for (const row of writingRows) {
-    const prompt = row.prompt as { title?: string; type?: string; prompt?: string; checklist?: string[] };
+    const prompt = row.prompt as { title?: string; type?: string; prompt?: string; checklist?: string[]; stimulus?: { type?: string } };
     const { data: answerRow } = await callerClient
       .from("ali_mock_attempt_answer")
       .select("response")
@@ -109,10 +109,17 @@ export async function POST(request: NextRequest) {
       continue;
     }
 
-    // Q1 is the only task type any current form uses (migration 245's
-    // own header) — Q2 does not exist yet. Real, honest, not a guess:
-    // every English form's Writing manifest entries are Q1 today.
-    const taskType = "Q1";
+    // CSSE Two-Paper Mock, pre-activation completion pass (migration 246)
+    // — this route has no access to a manifest's own "section" label
+    // (it only ever fetches ali_question_bank rows by id), so task type
+    // is derived from a real, structural signal already present on the
+    // row's own prompt: the CSSE genre split IS the presence of a
+    // picture stimulus — Q1 (reflective/discursive) never carries one,
+    // Q2 (picture-narrative) always does (see lib/ali/questionFactory/
+    // englishQ2PictureNarrativeFamily.ts). Not a guess, and not
+    // hardcoded: a genuinely different Writing row shape now correctly
+    // resolves to "Q2" instead of silently mislabelling it "Q1".
+    const taskType: "Q1" | "Q2" = prompt.stimulus?.type === "image" ? "Q2" : "Q1";
 
     const { data: persisted, error: persistError } = await (
       callerClient.rpc as unknown as (

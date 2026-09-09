@@ -55,9 +55,13 @@ test("A — SimpleMockCard (reused for the CSSE card in the no-pathway-selected 
 
 // --- B (continued): the Mock Centre must never route into a dead-end "Start mock" when unavailable ---
 
-test("B — the Mock Centre shows 'Go to Practice' instead of 'Start mock' when a CSSE mock is unavailable, in both card render paths (CsseRichMockCard and SimpleMockCard, each defined once in source and reused per discovered form)", () => {
+test("B — the Mock Centre shows 'Go to Practice' instead of 'Start mock' when a CSSE mock is unavailable, in every card render path (CsseRichMockCard, SimpleMockCard, and CsseCompleteMockCard, each defined once in source and reused per discovered form)", () => {
+  // CSSE Two-Paper Mock, pre-activation completion pass — a third real
+  // card (CsseCompleteMockCard) now exists, with the exact same honest
+  // "Go to Practice" fallback when it is unavailable (today: always,
+  // since the English full paper form stays active=false).
   const goToPracticeCount = (MOCK_CENTRE.match(/Go to Practice/g) ?? []).length;
-  assert.equal(goToPracticeCount, 2, "expected the fallback action in both the isCsse branch's CsseRichMockCard and SimpleMockCard");
+  assert.equal(goToPracticeCount, 3, "expected the fallback action in the isCsse branch's CsseRichMockCard, SimpleMockCard, and CsseCompleteMockCard");
   assert.ok(MOCK_CENTRE.includes("available ? (") , "the mock-exam link must be conditional on real availability");
 });
 

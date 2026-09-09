@@ -11,6 +11,7 @@ import { getMockAttemptReport, getMockAttemptSummary } from "@/lib/mockAttempt/c
 import { isReadingScoringRecoveryEligible } from "@/lib/mockAttempt/workspace";
 import { requestReadingScoring, logReadingScoringRequestOutcome } from "@/lib/mockAttempt/readingScoringRequest";
 import { ingestMockEvidenceIntoEducationalIntelligence } from "@/lib/mockAttempt/evidenceIntegration";
+import { ingestWritingEvidenceIntoEducationalIntelligence } from "@/lib/mockAttempt/writingEvidenceIntegration";
 import { requestMockWritingAssessment, logWritingAssessmentRequestOutcome } from "@/lib/mockAttempt/writingAssessmentRequest";
 import { getMockWritingAssessments } from "@/lib/mockAttempt/client";
 import { ProgressBar, StatusIndicator } from "@/components/ui/Progress";
@@ -99,6 +100,23 @@ export default function MockReportPage() {
           if (!cancelled) {
             void getMockWritingAssessments(supabase, params.attemptId).then((result) => {
               if (!cancelled && result.data) setWritingAssessments(result.data);
+              // CSSE Two-Paper Mock, pre-activation completion pass (§10)
+              // — the smallest legitimate Writing -> Educational
+              // Intelligence adapter, fire-and-forget, same discipline as
+              // every evidence-forwarding call on this page: never blocks
+              // or delays anything already rendered, and the underlying
+              // claim (mock_claim_writing_evidence_ingestion, migration
+              // 247) makes a repeat call on every future view of this
+              // same report a safe no-op, independent of the binary EI
+              // bridge's own claim above.
+              if (!cancelled && result.data) {
+                void ensureProfile().then((profileId) => {
+                  if (cancelled || !profileId) return;
+                  for (const assessment of result.data!) {
+                    void ingestWritingEvidenceIntoEducationalIntelligence(supabase, profileId, params.attemptId, assessment).catch(() => {});
+                  }
+                });
+              }
             });
           }
         });

@@ -1,34 +1,22 @@
 /**
- * CSSE English Full Paper, Migration 245 — Q2 (picture-narrative)
- * Continuous Writing family scaffold.
+ * CSSE English Full Paper — Q2 (picture-narrative) Continuous Writing
+ * family scaffold. Originally specified by migration 245 with
+ * `imageAssetUrl: null` (no image-authoring capability existed yet).
  *
- * DISCLOSED, DELIBERATE GAP: this file specifies the family/task
- * structure, prompt text, planning scaffold, and rubric mapping for the
- * CSSE-evidenced Q2 genre ("write a story based on the picture below" —
- * ANGEL_PHASE_D_CONTINUOUS_WRITING_STANDARD_V1.md Part 2, primary-source
- * evidenced 3/3 real papers read) — but does NOT include a real image
- * asset. This session has no image-generation or licensed-stock-image-
- * sourcing capability, and copying a real CSSE examination image would
- * violate the governing brief's own explicit copyright instruction
- * (§9/§11/§14). Rather than ship a task with a fabricated/placeholder
- * image, or silently skip Q2 entirely, this file exists so a future
- * increment with genuine image-authoring capability can complete exactly
- * one already-fully-specified task without re-deriving the educational
- * design from scratch.
- *
- * NOT inserted into ali_question_bank by this migration/increment — an
- * incomplete task (no real imageAssetUrl) must never be marked
- * practice_eligible or mock_eligible (governing brief §7/§8: "only
- * promote content that meets the full Mock standard"). This is a design
- * file only.
+ * CSSE Two-Paper Mock, pre-activation completion pass (migration 246):
+ * the task now points at a real, original, hand-authored SVG asset
+ * (`public/mock-assets/q2-picture-narrative/old-shed-v1.svg`) — not
+ * AI-generated, not sourced from any CSSE paper or third-party image
+ * library, confirmed well-formed and confirmed to render correctly via a
+ * live browser check. Still NOT inserted into `ali_question_bank` by
+ * TypeScript alone — the actual production content row and manifest
+ * attachment are governed, versioned SQL (migration 246), never a direct
+ * write; this file remains the single source of truth for the task's
+ * design that migration 246 reads from.
  *
  * Rubric compatibility: identical to Q1 — the CSSE-evidenced 5-dimension
  * rubric (lib/learningEngine/writingRubric.ts's WRITING_DIMENSIONS) is
- * not genre-specific (ANGEL_PHASE_D_CONTINUOUS_WRITING_STANDARD_V1.md
- * Part 7: "the rubric itself is not family-specific evidence"). No new
- * rubric logic is required once a real image exists — only a real
- * MockImageStimulus value (lib/mockAttempt/types.ts, migration 245)
- * needs to be authored and attached.
+ * not genre-specific. No new rubric logic was required.
  */
 
 import type { MockImageStimulus } from "@/lib/mockAttempt/types";
@@ -48,12 +36,10 @@ export interface Q2PictureNarrativeTask {
 }
 
 /**
- * One fully-specified task, deliberately not authored to any real image
- * yet (`imageAssetUrl: null`). The scene description below exists so a
- * future image-sourcing/generation step has a precise, reviewed brief to
- * work from — it is NOT shown to the learner as text-only stimulus; a
- * genuine picture-narrative task requires the actual image (CSSE's own
- * evidenced format), never a text description standing in for one.
+ * One fully-specified task, now pointing at the real, verified SVG asset
+ * authored for it. The `altText` below is the accessible text
+ * description shown to assistive technology, not a stand-in for the
+ * image — the image itself is what the learner sees and writes from.
  */
 export const Q2_PICTURE_NARRATIVE_TASKS: Q2PictureNarrativeTask[] = [
   {
@@ -79,9 +65,9 @@ export const Q2_PICTURE_NARRATIVE_TASKS: Q2PictureNarrativeTask[] = [
     timeMinutes: 25,
     stimulus: {
       type: "image",
-      imageAssetUrl: null,
+      imageAssetUrl: "/mock-assets/q2-picture-narrative/old-shed-v1.svg",
       altText:
-        "An old, weathered garden shed with a slightly ajar door, standing at the edge of an overgrown garden late in the afternoon. PENDING: no real image asset exists yet -- see this file's own header.",
+        "An old, weathered wooden shed stands at the edge of an overgrown garden in the late afternoon. Its door is slightly open, long grass and a climbing plant have grown up around its base, and a large tree stands beside it under a warm, softening sky.",
       caption: undefined,
     },
   },

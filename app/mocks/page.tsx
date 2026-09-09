@@ -81,12 +81,18 @@ const MOCK_CARDS: {
  * identical reason: Reading Comprehension Mock 1 is now genuinely active
  * and shown above as its own card, so listing "English Mock" here would
  * repeat the exact contradiction already corrected for Mathematics.
- * "Full CSSE Mock (English + Mathematics together)" stays — still
- * genuinely not built (Increment 013's own CONTENT/ASSESSMENT-CONTRACT
- * INCOMPLETE finding: no evidenced post-2024 marks split, picture-
- * stimulus Writing unconfirmed) — this is the one remaining honest gap.
+ *
+ * CSSE Two-Paper Mock, pre-activation completion pass (governing brief
+ * §8) — "Full CSSE Mock (English + Mathematics together)" REMOVED from
+ * this list. A real Complete CSSE Mock entry point now exists (the
+ * CsseCompleteMockCard below, linking to /learning-intelligence/
+ * mock-exam/sitting) rather than a bare promise — but it stays honestly
+ * "Not ready yet" for as long as the English full paper form remains
+ * active=false (unaffected by this pass, still the Founder's own
+ * separate, later activation decision), so nothing here claims a
+ * capability Angel cannot yet deliver.
  */
-const COMING_LATER = ["Full CSSE Mock (English + Mathematics together)", "Continuous Writing", "Focused Assessment"];
+const COMING_LATER = ["Focused Assessment"];
 
 /**
  * Programme Completion Increment 016 — per-attempt-type card metadata for
@@ -276,6 +282,48 @@ function CsseRichMockCard({
   );
 }
 
+/**
+ * CSSE Two-Paper Mock, pre-activation completion pass (governing brief
+ * §8) — the real, honestly-gated "Complete CSSE Mock" entry point.
+ * Available only once BOTH the Mathematics full_mock form AND the
+ * English full_mock form are active — computed live from the same
+ * getActiveMockForm()/isMockFormAvailable() signal every other card on
+ * this page already uses, never a hardcoded flag. Links to the new
+ * two-paper sitting hub (app/learning-intelligence/mock-exam/sitting),
+ * which does its own, independent per-paper availability check —
+ * production activation is governed entirely by each form's own
+ * `active` column, untouched by this card.
+ */
+function CsseCompleteMockCard({ available }: { available: boolean }) {
+  return (
+    <div className="rounded-2xl border border-blue-100 dark:border-blue-900 bg-blue-50 dark:bg-blue-950 p-5">
+      <div className="flex items-start justify-between mb-2">
+        <div className="flex items-center gap-2.5">
+          <span className="text-xs font-bold px-2.5 py-1 rounded-lg bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300">CSSE</span>
+          <h3 className="text-base font-bold text-gray-900 dark:text-gray-100">Complete CSSE Mock</h3>
+        </div>
+        <StatusIndicator tone={available ? "success" : "neutral"} label={available ? "Available" : "Not ready yet"} />
+      </div>
+      <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed mb-3">
+        {available
+          ? "English and Mathematics, joined into one complete CSSE sitting. Each paper is its own separate, timed attempt."
+          : "The Full English Paper is not available yet, so a complete two-paper CSSE sitting cannot be offered. The Reading Comprehension Mock and Mathematics Mock remain available on their own above."}
+      </p>
+      <div className="flex items-center justify-end">
+        {available ? (
+          <ButtonLink href="/learning-intelligence/mock-exam/sitting" variant="outline" size="sm" leftIcon={<Play size={14} />}>
+            Go to your sitting
+          </ButtonLink>
+        ) : (
+          <ButtonLink href="/learning-intelligence/practice" variant="outline" size="sm">
+            Go to Practice
+          </ButtonLink>
+        )}
+      </div>
+    </div>
+  );
+}
+
 export default function MocksPage() {
   const [pathwayId, setPathwayId] = useState<string | undefined>(undefined);
   const [pathwayLoaded, setPathwayLoaded] = useState(false);
@@ -296,6 +344,12 @@ export default function MocksPage() {
     full_mock: { available: false, displayName: CSSE_MOCK_META.full_mock.fallbackName },
     timed_section: { available: false, displayName: CSSE_MOCK_META.timed_section.fallbackName },
   });
+  // CSSE Two-Paper Mock, pre-activation completion pass — whether the
+  // English full paper form is independently active. Starts false (the
+  // real, current state as of this pass), becomes true automatically
+  // once the Founder later activates english-full-mock-v1, with zero
+  // further code change.
+  const [englishFullMockAvailable, setEnglishFullMockAvailable] = useState(false);
 
   useEffect(() => {
     const selected = getSelectedPathwayId() ?? undefined;
@@ -344,6 +398,15 @@ export default function MocksPage() {
           return next;
         });
       });
+      // CSSE Two-Paper Mock, pre-activation completion pass — a separate,
+      // subject-scoped discovery call (english, full_mock), independent
+      // of the Mathematics full_mock lookup above: today the two happen
+      // to share one attempt_type, but they are two distinct forms
+      // (migration 245's own subject-aware mock_get_active_form() fix),
+      // so this must not be conflated with csseMocks.full_mock.
+      getActiveMockForm(supabase, "full_mock", "english")
+        .then((result) => setEnglishFullMockAvailable(isMockFormAvailable(result)))
+        .catch(() => setEnglishFullMockAvailable(false));
     } else {
       setReadiness(null);
     }
@@ -357,6 +420,10 @@ export default function MocksPage() {
   // Used only for the readiness banner's own honest fallback decision
   // (never repeat a "start a mock" CTA when nothing can be delivered).
   const anyCsseMockAvailable = csseMocks.full_mock.available || csseMocks.timed_section.available;
+  // CSSE Two-Paper Mock, pre-activation completion pass — a Complete CSSE
+  // Mock genuinely requires BOTH real papers to exist and be active, not
+  // merely one of them.
+  const completeCsseMockAvailable = englishFullMockAvailable && csseMocks.full_mock.available;
 
   return (
     <PageLayout breadcrumbs={[{ label: "Today", href: "/dashboard" }, { label: "Mock Centre" }]}>
@@ -411,6 +478,7 @@ export default function MocksPage() {
 
           {isCsse ? (
             <>
+              <CsseCompleteMockCard available={completeCsseMockAvailable} />
               {CSSE_ATTEMPT_TYPES.map((attemptType) => (
                 <CsseRichMockCard
                   key={attemptType}
@@ -450,6 +518,7 @@ export default function MocksPage() {
                   entry point must not claim a complete CSSE sitting.
                   Programme Completion Increment 016 — one SimpleMockCard
                   per discovered CSSE form, not just Mathematics. */}
+              <CsseCompleteMockCard available={completeCsseMockAvailable} />
               {CSSE_ATTEMPT_TYPES.map((attemptType) => (
                 <SimpleMockCard
                   key={attemptType}

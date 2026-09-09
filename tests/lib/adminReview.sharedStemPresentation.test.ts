@@ -55,7 +55,15 @@ test("F: structured stimulus resolution (runningclub) is untouched and independe
 });
 
 test("learner surface: MockQuestionRenderer resolves a shared stem via the same generic helper, imported alongside the existing stimulus helper", () => {
-  assert.match(learnerSource, /selectDisplayUnitStimulus,\s*\n\s*isValidTableStimulus,\s*\n\s*resolveGroupSharedStem,/);
+  // CSSE Two-Paper Mock, pre-activation completion pass — the image-
+  // stimulus counterpart (selectDisplayUnitImageStimulus/
+  // isValidImageStimulus) was added to this same import block, between
+  // the table-stimulus imports and resolveGroupSharedStem. Tolerant of
+  // that insertion (matching this repo's own established precedent for
+  // this exact kind of literal-adjacency regex) while still asserting
+  // the real invariant: all three helpers are imported together, in
+  // order, from the shared workspace module.
+  assert.match(learnerSource, /selectDisplayUnitStimulus,\s*\n\s*selectDisplayUnitImageStimulus,\s*\n\s*isValidTableStimulus,\s*\n\s*isValidImageStimulus,\s*\n\s*resolveGroupSharedStem,/);
   assert.match(learnerSource, /const sharedStem = resolveGroupSharedStem\(payloads\.map\(\(payload, i\) => \(\{ question: questionTexts\[i\], sharedStem: payload\.sharedStem \}\)\)\);/);
   assert.ok(!learnerSource.includes("mock-mr06-linkedvalues"), "the learner page must never hard-code the specific family id into the rendering logic");
 });

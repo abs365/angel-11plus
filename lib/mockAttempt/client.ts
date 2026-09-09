@@ -286,6 +286,60 @@ export async function getOpenMockCycle(
   return { data: (data as string | null) ?? null, error: null };
 }
 
+/**
+ * CSSE Two-Paper Mock, pre-activation completion pass — one row per
+ * attempt linked to a given cycle, the read-only building block a
+ * sitting-level state reader needs. A direct, RLS-gated `.from()` read
+ * (ali_mock_attempt_select_own, migration 070: read-your-own), matching
+ * this file's own established "direct read for owned records" convention
+ * (see getMockAttemptReport()/getMockWritingAssessments() above) —
+ * deliberately NOT a new RPC, since mock_cycle_is_open() (migration 085)
+ * is INTERNAL-ONLY by design and this file's own established precedent
+ * is to derive sitting state from the owner's own already-readable
+ * ali_mock_attempt rows rather than add a new privileged function for
+ * something RLS already permits.
+ */
+export interface MockCycleAttemptRow {
+  attemptId: string;
+  subject: "mathematics" | "english" | null;
+  status: MockAttemptStatus;
+  submittedAt: string | null;
+}
+
+export async function getMockCycleAttempts(
+  supabase: SupabaseClient<Database>,
+  cycleId: string
+): Promise<MockClientResult<MockCycleAttemptRow[]>> {
+  // cycle_id/subject were added to ali_mock_attempt by migration 085;
+  // types/supabase.ts's generated Row type for this table (above) does
+  // not yet include them (confirmed by direct inspection this session)
+  // -- an honest reflection of generated-type lag, matching migration
+  // 245's own getMockWritingAssessments() cast precedent exactly. Remove
+  // once types are regenerated against the live schema.
+  const { data, error } = await (
+    supabase.from as unknown as (table: "ali_mock_attempt") => {
+      select: (columns: string) => {
+        eq: (col: string, val: string) => Promise<{
+          data: { id: string; subject: string | null; status: string; submitted_at: string | null }[] | null;
+          error: { message: string } | null;
+        }>;
+      };
+    }
+  )("ali_mock_attempt")
+    .select("id, subject, status, submitted_at")
+    .eq("cycle_id", cycleId);
+  if (error) return { data: null, error: error.message };
+  const rows = (data ?? []).map(
+    (r): MockCycleAttemptRow => ({
+      attemptId: r.id,
+      subject: r.subject === "mathematics" || r.subject === "english" ? r.subject : null,
+      status: r.status as MockAttemptStatus,
+      submittedAt: r.submitted_at,
+    })
+  );
+  return { data: rows, error: null };
+}
+
 export async function setMockFlag(
   supabase: SupabaseClient<Database>,
   attemptId: string,

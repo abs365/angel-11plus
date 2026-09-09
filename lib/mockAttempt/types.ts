@@ -62,16 +62,16 @@ export interface MockTableStimulus {
  * Migration 245 — the "future stimulus kind" MockTableStimulus's own
  * comment above anticipated, added without redesigning MockStimulus or
  * any code that already switches on `type`. Governs the CSSE-evidenced
- * Q2 (picture-narrative) Continuous Writing task: `imageAssetUrl` is
- * deliberately optional and `null` for every task authored so far — no
- * original/licensed image asset has been sourced or generated in this
- * increment (a genuine, disclosed capability gap, not an oversight; see
- * lib/ali/questionFactory/englishQ2PictureNarrativeFamily.ts's own
- * header). A task with `imageAssetUrl: null` must never be marked
- * practice_eligible or mock_eligible — there is nothing for a learner to
- * actually look at. `altText` is required regardless (accessibility,
- * and so the task specification is reviewable even before an image
- * exists).
+ * Q2 (picture-narrative) Continuous Writing task. `imageAssetUrl` stays
+ * nullable by design: a task with `imageAssetUrl: null` has no real
+ * asset yet and must never be marked practice_eligible or mock_eligible
+ * — there is nothing for a learner to actually look at. Migration 246
+ * attaches the first real, original asset
+ * (public/mock-assets/q2-picture-narrative/old-shed-v1.svg) to the one
+ * Q2 task specified in
+ * lib/ali/questionFactory/englishQ2PictureNarrativeFamily.ts. `altText`
+ * is required regardless (accessibility, and so the task specification
+ * is reviewable even before an image exists).
  */
 export interface MockImageStimulus {
   type: "image";
