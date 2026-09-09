@@ -9,7 +9,7 @@ import { StatusIndicator, type StatusTone } from "@/components/ui/Progress";
 import { ButtonLink } from "@/components/ui/Button";
 import { getSupabaseClient } from "@/lib/supabase";
 import { ensureProfile } from "@/lib/supabaseProgress";
-import { getActiveMockForm, isMockFormAvailable, getOpenMockCycle, getMockCycleAttempts } from "@/lib/mockAttempt/client";
+import { getActiveMockForm, isMockFormAvailable, getOpenMockCycle, getMostRecentMockCycle, getMockCycleAttempts } from "@/lib/mockAttempt/client";
 import { deriveMockCycleSittingState, type MockCycleSittingState, type MockPaperState } from "@/lib/mockAttempt/cycleState";
 
 /**
@@ -140,10 +140,20 @@ export default function CompleteCsseMockSittingPage() {
 
       const openCycle = await getOpenMockCycle(supabase);
       if (openCycle.error) { setErrorMessage(openCycle.error); setLoading(false); return; }
-      if (openCycle.data) {
-        const attempts = await getMockCycleAttempts(supabase, openCycle.data);
+      // CSSE Two-Paper Mock, final production acceptance — a real, live
+      // P1 defect found during the real-learner walkthrough:
+      // getOpenMockCycle() deliberately returns null once BOTH papers in
+      // a cycle are submitted (it is designed to answer "can a new cycle
+      // be started," not "does this learner have a recent sitting worth
+      // showing") — so a genuinely COMPLETE sitting rendered as if
+      // nothing had been started at all. Fixed by falling back to the
+      // caller's own most recent cycle (any status) whenever no OPEN one
+      // exists, via a direct, RLS-gated read (no new RPC/migration).
+      const cycleId = openCycle.data ?? (await getMostRecentMockCycle(supabase)).data;
+      if (cycleId) {
+        const attempts = await getMockCycleAttempts(supabase, cycleId);
         if (attempts.error) { setErrorMessage(attempts.error); setLoading(false); return; }
-        setSitting(deriveMockCycleSittingState(openCycle.data, attempts.data ?? []));
+        setSitting(deriveMockCycleSittingState(cycleId, attempts.data ?? []));
       }
       setLoading(false);
     })();

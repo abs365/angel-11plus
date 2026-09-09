@@ -287,6 +287,53 @@ export async function getOpenMockCycle(
 }
 
 /**
+ * CSSE Two-Paper Mock, final production acceptance — a real, live P1
+ * defect found during the real-learner walkthrough: getOpenMockCycle()
+ * (above) deliberately, correctly returns null once BOTH subjects in a
+ * cycle are submitted (it wraps mock_get_open_cycle(), which filters on
+ * mock_cycle_is_open() — designed for a different question, "can a new
+ * cycle be started," not "does this learner have a recent sitting worth
+ * showing"). The sitting hub page relied on getOpenMockCycle() alone, so
+ * a genuinely COMPLETE sitting rendered as if nothing had been started
+ * at all — the exact opposite of correct.
+ *
+ * ali_mock_cycle already carries a full "read-your-own" RLS policy
+ * (migration 085: `using (profile_id in (select id from profiles where
+ * auth_user_id = auth.uid()))`), unconditioned on open/closed status —
+ * so this is a direct, RLS-gated read (no new RPC, no migration needed),
+ * matching this file's own established "direct read for owned records"
+ * convention. Used as a fallback specifically when no OPEN cycle exists,
+ * to find the most recent cycle regardless of completion state.
+ */
+export async function getMostRecentMockCycle(
+  supabase: SupabaseClient<Database>
+): Promise<MockClientResult<string | null>> {
+  // ali_mock_cycle (migration 085) is not present in the generated
+  // Database type (types/supabase.ts) even though it has long been
+  // live in production -- this cast is an honest reflection of that
+  // generated-type gap, mirroring this file's own established pattern
+  // for a table the codegen hasn't caught up with (see
+  // getMockWritingAssessments() above for the identical precedent).
+  const { data, error } = await (
+    supabase.from as unknown as (table: "ali_mock_cycle") => {
+      select: (columns: string) => {
+        order: (col: string, opts: { ascending: boolean }) => {
+          limit: (n: number) => {
+            maybeSingle: () => Promise<{ data: { id: string } | null; error: { message: string } | null }>;
+          };
+        };
+      };
+    }
+  )("ali_mock_cycle")
+    .select("id")
+    .order("created_at", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+  if (error) return { data: null, error: error.message };
+  return { data: data?.id ?? null, error: null };
+}
+
+/**
  * CSSE Two-Paper Mock, pre-activation completion pass — one row per
  * attempt linked to a given cycle, the read-only building block a
  * sitting-level state reader needs. A direct, RLS-gated `.from()` read
