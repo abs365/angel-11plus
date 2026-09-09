@@ -170,9 +170,23 @@ export default function CsseMockSittingResultsPage({ searchParams }: { searchPar
   // ALL ASSESSMENT REVIEW COMPLETE (additionally, no Writing item is
   // still review_required -- an assessment-quality fact). A learner's
   // result stays visible either way; only the label differs, honestly.
+  //
+  // Final production acceptance — a real, live defect found and fixed:
+  // both reports are release-gated (an admin action, separate from
+  // submission itself), so immediately after submitting, englishReport/
+  // mathsReport are both still null and writingAssessments is still
+  // empty. The original logic read an empty writingAssessments array as
+  // "nothing needs review" and claimed "all assessment complete" —
+  // false: assessment had not even started, only genuinely finished
+  // assessments were absent from a list that was empty for the wrong
+  // reason. Fixed by requiring both reports to actually be available
+  // before either "complete" or "under review" is claimed — a third,
+  // honest "still being prepared" state covers the gap in between.
   const sittingComplete = sitting?.sittingComplete ?? false;
+  const bothReportsAvailable = englishReport !== null && mathsReport !== null;
   const anyReviewRequired = writingAssessments.some((w) => w.assessmentStatus === "review_required");
-  const allAssessmentReviewComplete = sittingComplete && !anyReviewRequired;
+  const allAssessmentReviewComplete = sittingComplete && bothReportsAvailable && !anyReviewRequired;
+  const resultsStillPreparing = sittingComplete && !bothReportsAvailable;
 
   return (
     <PageLayout breadcrumbs={[{ label: "Today", href: "/dashboard" }, { label: "Mock Centre", href: "/mocks" }, { label: "Sitting result" }]}>
@@ -202,16 +216,27 @@ export default function CsseMockSittingResultsPage({ searchParams }: { searchPar
         ) : (
           <>
             <InfoCard className="flex items-start gap-3">
-              {allAssessmentReviewComplete ? (
+              {resultsStillPreparing ? (
+                <Circle size={18} className="text-gray-300 dark:text-gray-600 mt-0.5 shrink-0" />
+              ) : allAssessmentReviewComplete ? (
                 <CheckCircle2 size={18} className="text-green-600 mt-0.5 shrink-0" />
               ) : (
                 <AlertTriangle size={18} className="text-amber-600 mt-0.5 shrink-0" />
               )}
               <div>
                 <p className="text-sm font-bold text-gray-900 dark:text-gray-100">
-                  {allAssessmentReviewComplete ? "Sitting complete — all assessment complete" : "Sitting complete — some assessment still under review"}
+                  {resultsStillPreparing
+                    ? "Sitting complete — results still being prepared"
+                    : allAssessmentReviewComplete
+                      ? "Sitting complete — all assessment complete"
+                      : "Sitting complete — some assessment still under review"}
                 </p>
-                {!allAssessmentReviewComplete && (
+                {resultsStillPreparing && (
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 leading-relaxed">
+                    Both papers were submitted. Marking and analysis is a separate step, and each paper's own result appears below once it's ready.
+                  </p>
+                )}
+                {!resultsStillPreparing && !allAssessmentReviewComplete && (
                   <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 leading-relaxed">
                     Both papers were submitted. One or more Continuous Writing responses need a closer look before Angel shows a confident assessment for them — the rest of the result below is unaffected.
                   </p>
