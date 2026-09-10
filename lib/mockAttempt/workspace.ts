@@ -25,6 +25,18 @@ import type { MockAttemptStatus, MockAttemptType, MockImageStimulus, MockManifes
  */
 const READING_COMPREHENSION_MOCK_1_FORM_ID = "reading-comprehension-mock-1";
 
+/**
+ * CSSE Two-Paper Mock P1 Repair (P1-B) — migration 251 widened
+ * mock_claim_reading_scoring_work()/mock_persist_reading_scoring()'s own
+ * eligibility guard to also accept this exact, named form (its Reading
+ * manifest is copied verbatim from reading-comprehension-mock-1, so it
+ * needs the identical authoritative scoring path) — this constant
+ * mirrors that same widened SQL literal for the application layer,
+ * exactly the way READING_COMPREHENSION_MOCK_1_FORM_ID already does for
+ * the original form.
+ */
+const ENGLISH_FULL_MOCK_FORM_ID = "english-full-mock-v1";
+
 const VALID_ATTEMPT_TYPES: readonly MockAttemptType[] = ["full_mock", "timed_section", "diagnostic_mock"];
 
 /**
@@ -138,10 +150,30 @@ export function isReadingScoringRecoveryEligible(
   attempt: { status: MockAttemptStatus; attemptType: MockAttemptType; formId: string } | null
 ): boolean {
   if (!attempt) return false;
+  if (attempt.status !== "submitted") return false;
+  return (
+    (attempt.attemptType === "timed_section" && attempt.formId === READING_COMPREHENSION_MOCK_1_FORM_ID) ||
+    (attempt.attemptType === "full_mock" && attempt.formId === ENGLISH_FULL_MOCK_FORM_ID)
+  );
+}
+
+/**
+ * CSSE Two-Paper Mock P1 Repair (P1-B) — mirrors isReadingScoringRecoveryEligible()'s
+ * own exact discipline (this function only ever decides whether asking is
+ * plausible; the database, via mock_persist_writing_assessment()'s own
+ * independent checks, remains the sole authority on whether the request
+ * actually does anything). Scoped to english-full-mock-v1 only — every
+ * other existing form has no Writing content, so requesting this for them
+ * would always be a safe, cheap no-op, but there is no need to ask.
+ */
+export function isWritingAssessmentRecoveryEligible(
+  attempt: { status: MockAttemptStatus; attemptType: MockAttemptType; formId: string } | null
+): boolean {
+  if (!attempt) return false;
   return (
     attempt.status === "submitted" &&
-    attempt.attemptType === "timed_section" &&
-    attempt.formId === READING_COMPREHENSION_MOCK_1_FORM_ID
+    attempt.attemptType === "full_mock" &&
+    attempt.formId === ENGLISH_FULL_MOCK_FORM_ID
   );
 }
 

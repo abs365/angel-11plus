@@ -22,7 +22,12 @@ test("admin surface fails closed: checking/not-signed-in/not-admin all render be
 });
 
 test("release action uses the existing releaseMockReport() wrapper -- no direct rpc() or table write anywhere in this file", () => {
-  assert.match(SOURCE, /import \{ releaseMockReport \} from "@\/lib\/mockAttempt\/client";/);
+  // CSSE Two-Paper Mock P1 Repair, Section 6 — this page's import now also
+  // brings in backfillNamedMathematicsAcceptanceAnalysis (the one
+  // narrowly-scoped, named-attempt-only recovery wrapper); releaseMockReport
+  // itself, and the discipline this test protects (no direct .rpc()/table
+  // write in this file), are unchanged.
+  assert.match(SOURCE, /import \{ releaseMockReport, backfillNamedMathematicsAcceptanceAnalysis \} from "@\/lib\/mockAttempt\/client";/);
   assert.match(SOURCE, /const result = await releaseMockReport\(supabase, trimmedId\);/);
   assert.doesNotMatch(SOURCE, /\.rpc\(/);
   assert.doesNotMatch(SOURCE, /\.from\(["']ali_mock_attempt/);

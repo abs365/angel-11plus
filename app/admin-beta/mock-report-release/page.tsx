@@ -6,7 +6,7 @@ import { ShieldAlert, LogOut, Mail, ArrowRight, CheckCircle2, AlertTriangle, Fil
 import { useAuth } from "@/components/providers/AuthProvider";
 import { checkIsAdmin } from "@/lib/feedback";
 import { getSupabaseClient } from "@/lib/supabase";
-import { releaseMockReport } from "@/lib/mockAttempt/client";
+import { releaseMockReport, backfillNamedMathematicsAcceptanceAnalysis } from "@/lib/mockAttempt/client";
 
 /**
  * CSSE Two-Paper Mock, final production acceptance — the bounded admin
@@ -41,6 +41,7 @@ import { releaseMockReport } from "@/lib/mockAttempt/client";
 
 type AccessState = "checking" | "not-signed-in" | "not-admin" | "admin";
 type ReleaseStatus = "idle" | "confirming" | "releasing" | "success" | "error";
+type BackfillStatus = "idle" | "confirming" | "running" | "success" | "error";
 
 const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
@@ -137,6 +138,8 @@ export default function MockReportReleasePage() {
   const [status, setStatus] = useState<ReleaseStatus>("idle");
   const [errorMessage, setErrorMessage] = useState("");
   const [releasedAttemptId, setReleasedAttemptId] = useState("");
+  const [backfillStatus, setBackfillStatus] = useState<BackfillStatus>("idle");
+  const [backfillErrorMessage, setBackfillErrorMessage] = useState("");
 
   useEffect(() => {
     if (authLoading) return;
@@ -175,6 +178,32 @@ export default function MockReportReleasePage() {
     setReleasedAttemptId(trimmedId);
     setStatus("success");
     setAttemptId("");
+  }
+
+  function handleRequestBackfill() {
+    if (backfillStatus === "running") return;
+    setBackfillStatus("confirming");
+    setBackfillErrorMessage("");
+  }
+
+  function handleCancelBackfill() {
+    setBackfillStatus("idle");
+  }
+
+  async function handleConfirmBackfill() {
+    if (backfillStatus === "running") return; // guards against double submission
+    setBackfillStatus("running");
+    const supabase = getSupabaseClient();
+    if (!supabase) { setBackfillStatus("error"); setBackfillErrorMessage("Not connected."); return; }
+    const result = await backfillNamedMathematicsAcceptanceAnalysis(supabase);
+    if (result.error) {
+      // The exact, governed error message from the database function
+      // itself, never replaced with an invented, friendlier one.
+      setBackfillStatus("error");
+      setBackfillErrorMessage(result.error);
+      return;
+    }
+    setBackfillStatus("success");
   }
 
   if (authLoading || access === "checking") {
@@ -275,6 +304,70 @@ export default function MockReportReleasePage() {
               <div>
                 <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">Not released</p>
                 <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 font-mono leading-relaxed">{errorMessage}</p>
+              </div>
+            </div>
+          )}
+        </div>
+
+        <div>
+          <h2 className="text-sm font-bold text-gray-900 dark:text-gray-100">One-time recovery: Mathematics acceptance attempt</h2>
+          <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 leading-relaxed">
+            CSSE Two-Paper Mock P1 Repair — runs the real analysis pipeline (mock_analyse_attempt) for exactly one
+            named, already-scored attempt. Not a general capability: the attempt ID is hardcoded inside the database
+            function itself, not entered here.
+          </p>
+        </div>
+
+        <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-5 space-y-4">
+          {backfillStatus === "idle" && (
+            <button
+              onClick={handleRequestBackfill}
+              className="w-full bg-gray-800 hover:bg-gray-900 dark:bg-gray-700 dark:hover:bg-gray-600 text-white font-semibold py-2.5 rounded-xl text-sm transition-colors"
+            >
+              Backfill Mathematics analysis
+            </button>
+          )}
+
+          {backfillStatus === "confirming" && (
+            <div className="border border-amber-200 dark:border-amber-800 rounded-xl p-4 space-y-3">
+              <p className="text-sm text-gray-800 dark:text-gray-200 leading-relaxed">
+                Run analysis for the named Mathematics acceptance attempt? This does not release the report — release
+                remains a separate, explicit action above.
+              </p>
+              <div className="flex items-center gap-2">
+                <button onClick={handleConfirmBackfill} className="flex-1 bg-gray-800 hover:bg-gray-900 dark:bg-gray-700 dark:hover:bg-gray-600 text-white font-semibold py-2 rounded-lg text-sm transition-colors">
+                  Confirm backfill
+                </button>
+                <button onClick={handleCancelBackfill} className="flex-1 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 font-semibold py-2 rounded-lg text-sm transition-colors">
+                  Cancel
+                </button>
+              </div>
+            </div>
+          )}
+
+          {backfillStatus === "running" && (
+            <p className="text-sm text-gray-500 dark:text-gray-400 text-center py-2">Running…</p>
+          )}
+
+          {backfillStatus === "success" && (
+            <div className="flex items-start gap-3 border border-green-200 dark:border-green-800 rounded-xl p-4">
+              <CheckCircle2 size={18} className="text-green-600 mt-0.5 shrink-0" />
+              <div>
+                <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">Analysis run</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                  The database confirmed no error. This page cannot independently re-verify the row afterward — check
+                  the attempt&apos;s analysis_state, then release it above once ready.
+                </p>
+              </div>
+            </div>
+          )}
+
+          {backfillStatus === "error" && (
+            <div className="flex items-start gap-3 border border-red-200 dark:border-red-800 rounded-xl p-4">
+              <AlertTriangle size={18} className="text-red-600 mt-0.5 shrink-0" />
+              <div>
+                <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">Not completed</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 font-mono leading-relaxed">{backfillErrorMessage}</p>
               </div>
             </div>
           )}

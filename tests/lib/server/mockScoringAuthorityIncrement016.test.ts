@@ -140,8 +140,16 @@ test("migration 219 never references mock_score_attempt() or the existing trigge
   assert.doesNotMatch(migration219.replace(/-- .*mock_score_attempt.*/g, ""), /create or replace function public\.mock_score_attempt/);
 });
 
-test("the mock-exam page only requests Reading scoring for attemptType === 'timed_section' -- Mathematics (full_mock) submissions never call the new route", () => {
-  const occurrences = mockExamPageSource.match(/if \(attemptType === "timed_section"\) \{\s*\n\s*void requestReadingScoring\(supabase, [\w.]+\)\.then\(logReadingScoringRequestOutcome\);/g) ?? [];
+/**
+ * CSSE Two-Paper Mock P1 Repair (P1-B) — widened (migration 251's own
+ * database-side eligibility guard also now accepts english-full-mock-v1,
+ * whose Reading section is copied verbatim from reading-comprehension-
+ * mock-1). The invariant this test protects is unchanged in substance:
+ * Mathematics (full_mock, subject=mathematics) still never calls the new
+ * route -- only the exact condition text is updated.
+ */
+test("the mock-exam page requests Reading scoring for attemptType === 'timed_section' and for english full_mock attempts -- Mathematics (full_mock, subject=mathematics) submissions never call the new route", () => {
+  const occurrences = mockExamPageSource.match(/if \(attemptType === "timed_section" \|\| \(attemptType === "full_mock" && subject === "english"\)\) \{\s*\n\s*void requestReadingScoring\(supabase, [\w.]+\)\.then\(logReadingScoringRequestOutcome\);/g) ?? [];
   assert.equal(occurrences.length, 2, "expected the gate at both the normal submit path and the finalize_expired resume path");
 });
 

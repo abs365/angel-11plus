@@ -362,11 +362,21 @@ export default function MockExamPage({
     // isReadingScoringRecoveryEligible()), and background/scheduled
     // recovery automation remains a separate, deferred piece (Founder
     // directive, Section F), not implemented in this increment.
-    if (attemptType === "timed_section") {
+    //
+    // CSSE Two-Paper Mock P1 Repair (P1-B) — english-full-mock-v1 copies
+    // reading-comprehension-mock-1's entire Reading manifest verbatim
+    // (migration 245), so its Reading questions need the exact same
+    // authoritative scoring request this form has always sent for
+    // itself — migration 251's own widened mock_claim_reading_scoring_
+    // work()/mock_persist_reading_scoring() eligibility guard is what
+    // makes this request meaningful for the English form; requesting it
+    // for any other full_mock (Mathematics) is always a safe, cheap
+    // {eligible:false} no-op, never an error.
+    if (attemptType === "timed_section" || (attemptType === "full_mock" && subject === "english")) {
       void requestReadingScoring(supabase, attemptId).then(logReadingScoringRequestOutcome);
     }
     setPhase("submitted");
-  }, [attemptId, attemptType, currentPayloads, answerDrafts]);
+  }, [attemptId, attemptType, subject, currentPayloads, answerDrafts]);
 
   // Server-authoritative countdown — re-derives from expiresAt every
   // second, never trusts an accumulating client-side counter. Matches
@@ -542,8 +552,9 @@ export default function MockExamPage({
       if (finalised.error) { setErrorMessage(finalised.error); setPhase("error"); return; }
       // See handleSubmit's own comment above: submission success and
       // scoring-request processing stay separate here too, and the
-      // request is still never awaited.
-      if (attemptType === "timed_section") {
+      // request is still never awaited. Same P1-B widening as
+      // handleSubmit's own identical call.
+      if (attemptType === "timed_section" || (attemptType === "full_mock" && subject === "english")) {
         void requestReadingScoring(supabase, resumeAction.attemptId).then(logReadingScoringRequestOutcome);
       }
       setAttemptId(resumeAction.attemptId);

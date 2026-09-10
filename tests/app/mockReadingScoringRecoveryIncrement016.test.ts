@@ -24,7 +24,10 @@ test("the report page only attempts recovery once per page load -- guarded by a 
 });
 
 test("recovery eligibility is decided by the real, tested isReadingScoringRecoveryEligible() -- never a duplicated inline condition", () => {
-  assert.match(REPORT_PAGE, /import \{ isReadingScoringRecoveryEligible \} from "@\/lib\/mockAttempt\/workspace";/);
+  // CSSE Two-Paper Mock P1 Repair (P1-B) — this import now also brings in
+  // isWritingAssessmentRecoveryEligible (same file, same discipline);
+  // isReadingScoringRecoveryEligible's own contract is unchanged.
+  assert.match(REPORT_PAGE, /import \{ isReadingScoringRecoveryEligible, isWritingAssessmentRecoveryEligible \} from "@\/lib\/mockAttempt\/workspace";/);
   assert.match(REPORT_PAGE, /isReadingScoringRecoveryEligible\(summary\.data\)/);
 });
 
@@ -55,7 +58,7 @@ test("recovery never blocks or delays the report UI -- fired with void ...then(.
  */
 test("ASSESSMENT SUBMISSION SUCCESS is decided entirely before, and independently of, the scoring request -- Founder Part A separation", () => {
   const submitIndex = MOCK_EXAM.indexOf("const result = await submitMockAttempt(supabase, attemptId);");
-  const scoringIndex = MOCK_EXAM.indexOf('if (attemptType === "timed_section") {\n      void requestReadingScoring(supabase, attemptId)');
+  const scoringIndex = MOCK_EXAM.indexOf('if (attemptType === "timed_section" || (attemptType === "full_mock" && subject === "english")) {\n      void requestReadingScoring(supabase, attemptId)');
   assert.ok(submitIndex > -1 && scoringIndex > -1 && submitIndex < scoringIndex);
   // The scoring request's own outcome is only ever consumed by
   // logReadingScoringRequestOutcome (console-only) -- never assigned to

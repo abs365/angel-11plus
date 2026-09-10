@@ -414,6 +414,25 @@ export async function releaseMockReport(
 }
 
 /**
+ * CSSE Two-Paper Mock P1 Repair — admin-only (enforced inside the
+ * SECURITY DEFINER function body via is_current_user_admin(), migration
+ * 251), no parameter of any kind: the one named Mathematics acceptance
+ * attempt id is a hardcoded literal inside the database function itself,
+ * not passed from here — this is not a reusable/general backfill
+ * capability. Calls the real, unmodified mock_analyse_attempt() for that
+ * one attempt, whose scoring_state already reached 'scored' before
+ * migration 250 restored automatic analysis invocation for future
+ * attempts.
+ */
+export async function backfillNamedMathematicsAcceptanceAnalysis(
+  supabase: SupabaseClient<Database>
+): Promise<MockClientResult<true>> {
+  const { error } = await supabase.rpc("mock_backfill_named_mathematics_acceptance_analysis");
+  if (error) return { data: null, error: error.message };
+  return { data: true, error: null };
+}
+
+/**
  * Reads a Mock attempt's own report — a direct, RLS-gated `.from()` read,
  * deliberately, not a wrapping RPC (see types/supabase.ts's own comment
  * on the ali_mock_attempt_report Table entry for why). Returns

@@ -27,13 +27,23 @@ const READING_SCORING_REQUEST = fs.readFileSync("lib/mockAttempt/readingScoringR
  * (route hand-off, RLS-only auth, single scoring authority operation)
  * proves a contract this repair did not touch and is unchanged.
  */
+/**
+ * CSSE Two-Paper Mock P1 Repair (P1-B) — english-full-mock-v1's own
+ * Reading section is copied verbatim from reading-comprehension-mock-1
+ * (migration 245) and needs the identical authoritative scoring path, so
+ * the gate below now also fires for a full_mock attempt whose subject is
+ * english (migration 251's own widened database-side eligibility guard
+ * is what makes this meaningful) -- the two tests below are updated for
+ * that widened condition; the request itself still POSTs to the same
+ * unchanged route.
+ */
 test("D — a timed_section submission still fires requestReadingScoring, which POSTs to /api/mock-reading-scoring", () => {
-  assert.match(MOCK_EXAM, /if \(attemptType === "timed_section"\) \{\s*\n\s*void requestReadingScoring\(supabase, attemptId\)\.then\(logReadingScoringRequestOutcome\);\s*\n\s*\}/);
+  assert.match(MOCK_EXAM, /if \(attemptType === "timed_section" \|\| \(attemptType === "full_mock" && subject === "english"\)\) \{\s*\n\s*void requestReadingScoring\(supabase, attemptId\)\.then\(logReadingScoringRequestOutcome\);\s*\n\s*\}/);
   assert.match(READING_SCORING_REQUEST, /await fetch\("\/api\/mock-reading-scoring", \{/);
 });
 
 test("D — the request is fire-and-forget (never awaited by the submit handler) so a scoring-request failure cannot block the learner's own submission confirmation", () => {
-  const handler = MOCK_EXAM.match(/if \(attemptType === "timed_section"\) \{\s*\n\s*void requestReadingScoring\(supabase, attemptId\)\.then\(logReadingScoringRequestOutcome\);\s*\n\s*\}\s*\n\s*setPhase\("submitted"\);/);
+  const handler = MOCK_EXAM.match(/if \(attemptType === "timed_section" \|\| \(attemptType === "full_mock" && subject === "english"\)\) \{\s*\n\s*void requestReadingScoring\(supabase, attemptId\)\.then\(logReadingScoringRequestOutcome\);\s*\n\s*\}\s*\n\s*setPhase\("submitted"\);/);
   assert.ok(handler, "requestReadingScoring must be fired with void ...then(...) (never awaited) immediately before setPhase(\"submitted\")");
 });
 

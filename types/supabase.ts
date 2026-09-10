@@ -925,6 +925,17 @@ export interface Database {
         Args: { p_attempt_id: string };
         Returns: undefined;
       };
+      // CSSE Two-Paper Mock P1 Repair — supabase/migrations/
+      // 251_english_full_mock_scoring_completion.sql. Not yet applied to
+      // production. Admin-gated, no parameter at all (the one named
+      // Mathematics acceptance attempt id is a hardcoded literal inside
+      // the function body) — declared here so lib/mockAttempt/client.ts
+      // can call it through the typed supabase.rpc() the same way
+      // mock_release_report already does.
+      mock_backfill_named_mathematics_acceptance_analysis: {
+        Args: Record<string, never>;
+        Returns: undefined;
+      };
       // Mock Governance Architecture Increment 001 (Decision 135) —
       // supabase/migrations/085_mock_cycle_governance_architecture.sql,
       // corrected by migration 086 (Decision 136). Applied to production

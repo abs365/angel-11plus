@@ -12,6 +12,7 @@ import {
   determineMockResumeAction,
   computeResumeStartIndex,
   isReadingScoringRecoveryEligible,
+  isWritingAssessmentRecoveryEligible,
 } from "@/lib/mockAttempt/workspace";
 import type { MockManifestGroupingEntry, ResumableMockAttempt } from "@/lib/mockAttempt/types";
 
@@ -64,6 +65,61 @@ test("isReadingScoringRecoveryEligible excludes an in-progress (not yet submitte
 
 test("isReadingScoringRecoveryEligible excludes a null attempt (no ali_mock_attempt row found)", () => {
   assert.equal(isReadingScoringRecoveryEligible(null), false);
+});
+
+/**
+ * CSSE Two-Paper Mock P1 Repair (P1-B) — english-full-mock-v1's Reading
+ * section is copied verbatim from reading-comprehension-mock-1 (migration
+ * 245) and needs the identical authoritative scoring path, so migration
+ * 251 widened the underlying eligibility guard to also accept this exact,
+ * named form -- these tests prove the application-layer mirror of that
+ * same widened SQL literal.
+ */
+test("isReadingScoringRecoveryEligible is also true for a submitted full_mock english-full-mock-v1 attempt", () => {
+  assert.equal(
+    isReadingScoringRecoveryEligible({ status: "submitted", attemptType: "full_mock", formId: "english-full-mock-v1" }),
+    true
+  );
+});
+
+test("isReadingScoringRecoveryEligible excludes Mathematics (first-mock-mathematics-v1, or any other full_mock form) even though full_mock is otherwise eligible for English", () => {
+  assert.equal(
+    isReadingScoringRecoveryEligible({ status: "submitted", attemptType: "full_mock", formId: "first-mock-mathematics-v1" }),
+    false
+  );
+});
+
+test("isReadingScoringRecoveryEligible excludes an in-progress english-full-mock-v1 attempt", () => {
+  assert.equal(
+    isReadingScoringRecoveryEligible({ status: "in_progress", attemptType: "full_mock", formId: "english-full-mock-v1" }),
+    false
+  );
+});
+
+test("isWritingAssessmentRecoveryEligible is true only for a submitted full_mock english-full-mock-v1 attempt", () => {
+  assert.equal(
+    isWritingAssessmentRecoveryEligible({ status: "submitted", attemptType: "full_mock", formId: "english-full-mock-v1" }),
+    true
+  );
+});
+
+test("isWritingAssessmentRecoveryEligible excludes Mathematics and Reading Comprehension Mock 1 (neither has Writing content)", () => {
+  assert.equal(
+    isWritingAssessmentRecoveryEligible({ status: "submitted", attemptType: "full_mock", formId: "first-mock-mathematics-v1" }),
+    false
+  );
+  assert.equal(
+    isWritingAssessmentRecoveryEligible({ status: "submitted", attemptType: "timed_section", formId: "reading-comprehension-mock-1" }),
+    false
+  );
+});
+
+test("isWritingAssessmentRecoveryEligible excludes a not-yet-submitted attempt and a null attempt", () => {
+  assert.equal(
+    isWritingAssessmentRecoveryEligible({ status: "in_progress", attemptType: "full_mock", formId: "english-full-mock-v1" }),
+    false
+  );
+  assert.equal(isWritingAssessmentRecoveryEligible(null), false);
 });
 
 /**

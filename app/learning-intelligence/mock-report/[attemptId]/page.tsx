@@ -8,7 +8,7 @@ import { InfoCard } from "@/components/ui/Card";
 import { getSupabaseClient } from "@/lib/supabase";
 import { ensureProfile } from "@/lib/supabaseProgress";
 import { getMockAttemptReport, getMockAttemptSummary } from "@/lib/mockAttempt/client";
-import { isReadingScoringRecoveryEligible } from "@/lib/mockAttempt/workspace";
+import { isReadingScoringRecoveryEligible, isWritingAssessmentRecoveryEligible } from "@/lib/mockAttempt/workspace";
 import { requestReadingScoring, logReadingScoringRequestOutcome } from "@/lib/mockAttempt/readingScoringRequest";
 import { ingestMockEvidenceIntoEducationalIntelligence } from "@/lib/mockAttempt/evidenceIntegration";
 import { ingestWritingEvidenceIntoEducationalIntelligence } from "@/lib/mockAttempt/writingEvidenceIntegration";
@@ -148,6 +148,23 @@ export default function MockReportPage() {
         const summary = await getMockAttemptSummary(supabase, params.attemptId);
         if (!cancelled && !summary.error && isReadingScoringRecoveryEligible(summary.data)) {
           void requestReadingScoring(supabase, params.attemptId).then(logReadingScoringRequestOutcome);
+        }
+        // CSSE Two-Paper Mock P1 Repair (P1-B) — english-full-mock-v1's
+        // scoring_state can only ever reach 'scored' once its Writing
+        // assessments have run (migration 251's own mock_check_and_
+        // complete_scoring()), but report release requires scoring_state
+        // ='scored'. Requesting Writing assessment only AFTER release
+        // (this page's own prior behaviour, below) was therefore a real
+        // deadlock for this form: release could never happen because
+        // assessment never ran, and assessment never ran because release
+        // never happened. mock_persist_writing_assessment() (migration
+        // 245) has never required release — only a submitted attempt —
+        // so firing it from here, in the same "not yet released, recovery
+        // may help" branch the Reading-scoring request already uses, is
+        // safe and closes the loop. Idempotent per (attempt, question),
+        // same discipline as the reading-scoring call above.
+        if (!cancelled && !summary.error && isWritingAssessmentRecoveryEligible(summary.data)) {
+          void requestMockWritingAssessment(supabase, params.attemptId).then(logWritingAssessmentRequestOutcome);
         }
       }
     }
