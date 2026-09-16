@@ -56,20 +56,24 @@ export async function POST(request: NextRequest) {
   });
 
   // Find this attempt's own pending (requires_manual_marking, subject=writing)
-  // outcomes via the report row the caller already owns (RLS-gated read,
-  // same as lib/mockAttempt/client.ts's getMockAttemptReport()).
-  const { data: reportRow, error: reportError } = await callerClient
-    .from("ali_mock_attempt_report")
-    .select("question_outcomes")
-    .eq("attempt_id", attemptId)
-    .maybeSingle();
-  if (reportError || !reportRow) {
+  // question ids via mock_get_pending_writing_question_ids() (migration
+  // 253) -- NOT a direct read of ali_mock_attempt_report, whose own SELECT
+  // policy (ali_mock_attempt_report_select_released, migration 072) is
+  // scoped to "owner AND released": this route runs specifically to help
+  // an unreleased attempt reach a releasable state, so a direct RLS-gated
+  // read here always returned zero rows for exactly the case this route
+  // exists to serve (production-confirmed: 404 "report_not_available" for
+  // every genuinely eligible, unreleased request). The new function
+  // resolves ownership internally (profile_id = caller, never RLS) and
+  // exposes only the bounded list this route needs -- no other report
+  // field is ever read pre-release by this route.
+  const { data: pendingIds, error: pendingError } = await callerClient.rpc("mock_get_pending_writing_question_ids", {
+    p_attempt_id: attemptId,
+  });
+  if (pendingError) {
     return NextResponse.json({ error: "report_not_available" }, { status: 404 });
   }
-
-  const outcomes = (reportRow.question_outcomes as { questionId: string; status: string }[]) ?? [];
-  const pendingIds = outcomes.filter((o) => o.status === "requires_manual_marking").map((o) => o.questionId);
-  if (pendingIds.length === 0) {
+  if (!pendingIds || pendingIds.length === 0) {
     return NextResponse.json({ assessed: [], alreadyComplete: true });
   }
 

@@ -936,6 +936,16 @@ export interface Database {
         Args: Record<string, never>;
         Returns: undefined;
       };
+      // CSSE Two-Paper Mock P1 Repair, recovery-path defect fix —
+      // supabase/migrations/253_mock_writing_assessment_pending_lookup.sql.
+      // Not yet applied to production. Owner-scoped (resolves ownership
+      // internally, never RLS) — declared here so app/api/mock-writing-
+      // assessment/route.ts can call it through the typed supabase.rpc()
+      // the same way every other RPC already does.
+      mock_get_pending_writing_question_ids: {
+        Args: { p_attempt_id: string };
+        Returns: string[];
+      };
       // Mock Governance Architecture Increment 001 (Decision 135) —
       // supabase/migrations/085_mock_cycle_governance_architecture.sql,
       // corrected by migration 086 (Decision 136). Applied to production

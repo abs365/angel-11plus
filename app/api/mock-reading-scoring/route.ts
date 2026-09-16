@@ -117,7 +117,7 @@ export async function POST(request: NextRequest) {
   });
   const { data: attempt, error } = await learnerClient
     .from("ali_mock_attempt")
-    .select("id, status, form_id")
+    .select("id, status, form_id, attempt_type")
     .eq("id", attemptId)
     .maybeSingle();
 
@@ -129,9 +129,20 @@ export async function POST(request: NextRequest) {
     logScoringEvent(attemptId, "ownership", "failure", "not_submitted");
     return NextResponse.json({ error: "Attempt is not submitted." }, { status: 409 });
   }
-  if (attempt.form_id !== "reading-comprehension-mock-1") {
+  // Migration 251 widened the underlying Reading scoring authority
+  // (mock_claim_reading_scoring_work()/mock_persist_reading_scoring()) and
+  // lib/mockAttempt/workspace.ts's own isReadingScoringRecoveryEligible()
+  // to also accept (full_mock, english-full-mock-v1) -- this route's own
+  // redundant pre-check was never updated to match, so it kept rejecting
+  // every genuinely-eligible English Full Mock request with "wrong_form"
+  // before the request ever reached the (already-correct) database layer.
+  // Same named, bounded, additive OR guard as every other widened site.
+  const isEligibleForm =
+    attempt.form_id === "reading-comprehension-mock-1" ||
+    (attempt.attempt_type === "full_mock" && attempt.form_id === "english-full-mock-v1");
+  if (!isEligibleForm) {
     logScoringEvent(attemptId, "ownership", "failure", "wrong_form");
-    return NextResponse.json({ error: "Not a Reading Comprehension Mock 1 attempt." }, { status: 400 });
+    return NextResponse.json({ error: "Not an eligible Reading scoring attempt." }, { status: 400 });
   }
 
   // Founder invocation-reliability repair, Part B — every branch below is

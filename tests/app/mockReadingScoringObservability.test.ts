@@ -66,7 +66,7 @@ test("scoring success and ineligible results are still returned as before -- thi
 
 test("the route's own ownership/auth/config guards (Founder-approved, unmodified in this repair) are still present unchanged", () => {
   assert.match(ROUTE, /attempt\.status !== "submitted"/);
-  assert.match(ROUTE, /attempt\.form_id !== "reading-comprehension-mock-1"/);
+  assert.match(ROUTE, /attempt\.form_id === "reading-comprehension-mock-1"/);
   assert.match(ROUTE, /const result = await scoreReadingAttempt\(attemptId\);/);
   assert.doesNotMatch(ROUTE, /service_role/i);
 });

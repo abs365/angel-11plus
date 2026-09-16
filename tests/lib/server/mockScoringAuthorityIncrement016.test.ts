@@ -110,9 +110,10 @@ test("the API route performs an RLS-scoped ownership read using the caller's own
   assert.doesNotMatch(routeSource, /MOCK_SCORING_DATABASE_URL/, "the route itself must never touch the privileged credential directly");
 });
 
-test("the API route independently checks status=submitted and the exact Reading form id before ever calling the privileged scoring operation", () => {
+test("the API route independently checks status=submitted and an eligible Reading form (reading-comprehension-mock-1, or full_mock english-full-mock-v1) before ever calling the privileged scoring operation", () => {
   assert.match(routeSource, /attempt\.status !== "submitted"/);
-  assert.match(routeSource, /attempt\.form_id !== "reading-comprehension-mock-1"/);
+  assert.match(routeSource, /attempt\.form_id === "reading-comprehension-mock-1"/);
+  assert.match(routeSource, /attempt\.attempt_type === "full_mock" && attempt\.form_id === "english-full-mock-v1"/);
 });
 
 test("the request body is never trusted for anything beyond an attemptId -- no correctness, marks, or answer field is ever read from the incoming request", () => {
