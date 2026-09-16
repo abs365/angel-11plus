@@ -58,6 +58,6 @@ test("the 'continue without signing in' skip path remains present, unchanged", (
 });
 
 test("copy for new users never claims password sign-in auto-creates an account -- only the magic-link path does that", () => {
-  assert.doesNotMatch(SOURCE, /sign in above.{0,40}created automatically/is);
+  assert.doesNotMatch(SOURCE, /sign in above[\s\S]{0,40}created automatically/i);
   assert.match(SOURCE, /New here\?/);
 });

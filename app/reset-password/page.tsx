@@ -13,26 +13,54 @@ type UpdateState = "idle" | "saving" | "saved" | "error";
 const MIN_PASSWORD_LENGTH = 8;
 
 /**
- * Returning-user access improvement — the governed Supabase Auth password
- * recovery flow (auth.resetPasswordForEmail() / auth.updateUser()), never
- * a custom mechanism. This ONE page serves both directions of that flow,
- * distinguished only by AuthProvider's own isPasswordRecovery signal:
+ * Production defect found by real Founder acceptance testing: Supabase's
+ * own auth-js client (installed version confirmed directly:
+ * node_modules/@supabase/auth-js/dist/module/GoTrueClient.js) defers its
+ * PASSWORD_RECOVERY notification inside a `setTimeout(...)` call, fired
+ * from `_initialize()` -- which itself runs as a fire-and-forget promise
+ * chain kicked off the moment the Supabase client is first constructed
+ * (component/lib/supabase.ts's getSupabaseClient() singleton), NOT
+ * synchronised with any particular React component's own effect. A
+ * genuinely real recovery link click was verified in production landing
+ * back on the plain "Reset your password" request form -- proving
+ * AuthProvider's own onAuthStateChange listener can genuinely miss this
+ * transient, one-time event depending on exactly when/where the shared
+ * Supabase client singleton is first created relative to when this page's
+ * own effects run. (Investigated and ruled out separately: Angel's
+ * anonymous-session bootstrap, ensureLearnerSession()/signInAnonymously(),
+ * cannot participate -- lib/learnerIdentity.ts's own header confirms
+ * "Allow anonymous sign-ins" is OFF in production, so that call fails
+ * harmlessly and fires no competing auth event.)
  *
- *   - Arrived normally (e.g. from /login's "Forgot password?" link):
- *     isPasswordRecovery is false -> show the "email me a reset link" form.
- *   - Arrived via the emailed recovery link: Supabase's own JS client
- *     (detectSessionInUrl: true, lib/supabase.ts) has already exchanged
- *     the link's token for a genuine recovery session and fired a
- *     PASSWORD_RECOVERY auth event -> isPasswordRecovery is true -> show
- *     the "choose a new password" form.
- *
- * Sets a password on the SAME existing auth.users row (matched by email,
- * exactly like magic-link sign-in already does) — never creates a second
- * account, never touches any profile/attempt/evidence row directly.
+ * Fix: recovery-link arrival is now detected durably, independent of any
+ * event's timing, by reading the recovery link's own `type=recovery`
+ * parameter directly from the URL (hash for Supabase's default implicit
+ * flow, confirmed via the installed auth-js's own DEFAULT_OPTIONS) the
+ * moment this page's very first render happens -- via a lazy useState
+ * initializer, which React guarantees runs during this component's own
+ * render phase, strictly before ANY effect (this page's own, or
+ * AuthProvider's) can execute. `type` is a plain, non-secret mode flag,
+ * never an access token or credential -- reading it is not "parsing an
+ * access token" in the sense this project's security rules forbid.
+ * AuthProvider's own isPasswordRecovery flag is kept and still honoured
+ * (still correct on every occasion the event genuinely does arrive in
+ * time) -- this is an additive, durable confirmation, not a replacement
+ * auth mechanism.
  */
+export function isPasswordRecoveryUrl(hash: string, search: string): boolean {
+  const stripLeading = (raw: string, prefix: string) => (raw.startsWith(prefix) ? raw.slice(1) : raw);
+  const hashParams = new URLSearchParams(stripLeading(hash, "#"));
+  const searchParams = new URLSearchParams(stripLeading(search, "?"));
+  return hashParams.get("type") === "recovery" || searchParams.get("type") === "recovery";
+}
+
 export default function ResetPasswordPage() {
   const { isPasswordRecovery, sendPasswordResetEmail, updatePassword } = useAuth();
   const router = useRouter();
+  const [arrivedViaRecoveryLink] = useState(
+    () => typeof window !== "undefined" && isPasswordRecoveryUrl(window.location.hash, window.location.search)
+  );
+  const showNewPasswordForm = isPasswordRecovery || arrivedViaRecoveryLink;
 
   const [email, setEmail] = useState("");
   const [requestState, setRequestState] = useState<RequestState>("idle");
@@ -98,7 +126,7 @@ export default function ResetPasswordPage() {
         </div>
 
         <div className="bg-white dark:bg-gray-900 rounded-3xl shadow-sm border border-gray-100 dark:border-gray-800 p-8">
-          {isPasswordRecovery ? (
+          {showNewPasswordForm ? (
             updateState === "saved" ? (
               <div className="text-center">
                 <div className="inline-flex items-center justify-center w-14 h-14 bg-green-100 dark:bg-green-900 rounded-2xl mb-4">

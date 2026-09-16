@@ -12,9 +12,10 @@ import fs from "node:fs";
 
 const SOURCE = fs.readFileSync("app/reset-password/page.tsx", "utf8");
 
-test("the page branches on AuthProvider's own isPasswordRecovery signal -- never a locally-invented flag", () => {
+test("the page branches on AuthProvider's own isPasswordRecovery signal, durably reinforced by a direct URL check -- never a locally-invented replacement", () => {
   assert.match(SOURCE, /const \{ isPasswordRecovery, sendPasswordResetEmail, updatePassword \} = useAuth\(\);/);
-  assert.match(SOURCE, /\{isPasswordRecovery \?/);
+  assert.match(SOURCE, /const showNewPasswordForm = isPasswordRecovery \|\| arrivedViaRecoveryLink;/);
+  assert.match(SOURCE, /\{showNewPasswordForm \?/);
 });
 
 test("the request-a-reset-link form calls the AuthProvider's own sendPasswordResetEmail -- no direct supabase.auth call in this file", () => {
