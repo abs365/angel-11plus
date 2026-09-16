@@ -25,8 +25,15 @@ const MOCK_EXAM = readFileSync("app/learning-intelligence/mock-exam/page.tsx", "
 
 test("A — Mock Centre discovers full_mock via getActiveMockForm, and renders it through the reusable CsseRichMockCard", () => {
   assert.match(MOCK_CENTRE, /CSSE_ATTEMPT_TYPES = \["full_mock", "timed_section"\] as const/);
-  assert.match(MOCK_CENTRE, /CSSE_ATTEMPT_TYPES\.map\(\(attemptType\) =>[\s\S]*?getActiveMockForm\(supabase, attemptType\)/);
+  assert.match(
+    MOCK_CENTRE,
+    /CSSE_ATTEMPT_TYPES\.map\(\(attemptType\) =>[\s\S]*?getActiveMockForm\(supabase, attemptType, attemptType === "full_mock" \? "mathematics" : undefined\)/
+  );
   assert.match(MOCK_CENTRE, /full_mock: \{\s*fallbackName: "Mathematics Mock 1"/);
+});
+
+test("A2 — CSSE Two-Paper Mock final acceptance fix: the generic full_mock discovery call is now explicitly scoped to mathematics, not left to resolve ambiguously against a second full_mock form (English)", () => {
+  assert.match(MOCK_CENTRE, /attemptType === "full_mock" \? "mathematics" : undefined/);
 });
 
 // --- B: Mock Centre can discover/render timed_section ------------------
@@ -40,8 +47,8 @@ test("B — Mock Centre discovers timed_section via getActiveMockForm, and rende
 
 // --- C: Mathematics selection launches using full_mock ------------------
 
-test("C — the Mathematics card's href launches the mock-exam page with no ?type= param, which resolveAttemptType() defaults to full_mock", () => {
-  assert.match(MOCK_CENTRE, /full_mock: \{[\s\S]*?href: "\/learning-intelligence\/mock-exam",/);
+test("C — the Mathematics card's href launches the mock-exam page with no ?type= param (resolveAttemptType() defaults to full_mock) but an explicit ?subject=mathematics -- CSSE Two-Paper Mock final acceptance fix: once a second full_mock form (English) existed, an unscoped lookup could silently resolve to the wrong subject", () => {
+  assert.match(MOCK_CENTRE, /full_mock: \{[\s\S]*?href: "\/learning-intelligence\/mock-exam\?subject=mathematics",/);
   assert.equal(resolveAttemptType(undefined), "full_mock");
 });
 

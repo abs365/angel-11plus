@@ -104,6 +104,30 @@ function WritingAssessmentRow({ assessment }: { assessment: MockWritingAssessmen
   );
 }
 
+/**
+ * CSSE Two-Paper Mock, final learner acceptance correction — real
+ * evidence proved this section's own "(some items awaiting marking)"
+ * caveat was permanently, structurally stuck on for english-full-mock-v1,
+ * regardless of whether Reading itself had any outstanding marking.
+ * Root cause: report.overall.percentage (migration 251's own
+ * mock_persist_reading_scoring()) is set to null whenever ANY entry in
+ * question_outcomes is still 'requires_manual_marking' -- and English's
+ * own two Writing questions remain at that status PERMANENTLY by design
+ * (migration 245/251: a Writing item's persisted qualitative assessment
+ * lives entirely in ali_writing_assessment, never in question_outcomes),
+ * even once genuinely, correctly assessed. This section reused that same
+ * percentage-is-null signal to decide Reading's own caveat, so it could
+ * never turn off for this form -- the exact defect, not a display of
+ * genuinely outstanding Reading marking.
+ *
+ * Fix: derive Reading's own outstanding-marking state directly from
+ * question_outcomes, explicitly excluding the attempt's own known Writing
+ * question ids (from the already-fetched `writing` array) -- the same
+ * evidence-based exclusion migration 251's own mock_check_and_complete_
+ * scoring() already applies for the identical reason. rawMarksAchieved/
+ * rawMarksAvailable/percentage themselves are completely unchanged --
+ * only the caveat's own trigger condition is corrected.
+ */
 function EnglishSection({ report, writing }: { report: MockAttemptReport | null; writing: MockWritingAssessment[] }) {
   if (!report) {
     return (
@@ -112,13 +136,17 @@ function EnglishSection({ report, writing }: { report: MockAttemptReport | null;
       </InfoCard>
     );
   }
+  const writingQuestionIds = new Set(writing.map((w) => w.questionId));
+  const readingHasOutstandingMarking = (report.questionOutcomes ?? []).some(
+    (o) => o.status === "requires_manual_marking" && !writingQuestionIds.has(o.questionId)
+  );
   return (
     <InfoCard>
       <p className="text-sm font-bold text-gray-900 dark:text-gray-100 mb-2">English</p>
       {report.overall && (
         <p className="text-xs text-gray-600 dark:text-gray-400 mb-2">
           Reading Comprehension: {report.overall.rawMarksAchieved} / {report.overall.rawMarksAvailable} marks
-          {report.overall.percentage !== null ? ` (${report.overall.percentage}%)` : " (some items awaiting marking)"}
+          {readingHasOutstandingMarking ? " (some items awaiting marking)" : report.overall.percentage !== null ? ` (${report.overall.percentage}%)` : ""}
         </p>
       )}
       <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 dark:text-gray-500 mb-1">

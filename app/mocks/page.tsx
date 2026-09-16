@@ -119,7 +119,19 @@ const CSSE_MOCK_META: Record<"full_mock" | "timed_section", {
     summary: "Mathematics · 21 questions · 56 marks · 60 minutes",
     description: "A real, timed Mathematics assessment, marked and reported just like the real exam. The complete CSSE Mock, with English and Mathematics together, is still being built.",
     minutesLabel: "60 min",
-    href: "/learning-intelligence/mock-exam",
+    // CSSE Two-Paper Mock, final production acceptance — a real, live P1
+    // defect found during the final learner walkthrough: this href never
+    // named its own subject, so once english-full-mock-v1 (a second
+    // full_mock form) existed, /learning-intelligence/mock-exam's own
+    // getActiveMockForm(supabase, "full_mock", undefined) call could
+    // resolve to English instead of Mathematics -- the page's hardcoded
+    // fallback title still read "Mathematics Mock 1" (English's own form
+    // row has no displayName set), while its "previous attempt" lookup
+    // correctly followed the REAL resolved (English) form_id, silently
+    // surfacing the wrong subject's own attempt. Explicit subject removes
+    // the ambiguity at its source, exactly like the dedicated English
+    // discovery call below already does for its own subject.
+    href: "/learning-intelligence/mock-exam?subject=mathematics",
   },
   timed_section: {
     fallbackName: "Reading Comprehension Mock 1",
@@ -376,9 +388,15 @@ export default function MocksPage() {
       // (the same authoritative RPC, unchanged, called twice instead of
       // once). A failure on one type never blocks the other — each
       // settles into its own, independent "not available" state.
+      // CSSE Two-Paper Mock, final production acceptance — the full_mock
+      // slot here has always been intended as this page's own Mathematics
+      // discovery (see the dedicated, subject-scoped English call just
+      // below), but never said so explicitly -- silently ambiguous once a
+      // second full_mock form (English) existed. Naming it now closes the
+      // same real defect fixed at this card's own href above.
       Promise.all(
         CSSE_ATTEMPT_TYPES.map((attemptType) =>
-          getActiveMockForm(supabase, attemptType)
+          getActiveMockForm(supabase, attemptType, attemptType === "full_mock" ? "mathematics" : undefined)
             .then((result) => ({
               attemptType,
               available: isMockFormAvailable(result),
