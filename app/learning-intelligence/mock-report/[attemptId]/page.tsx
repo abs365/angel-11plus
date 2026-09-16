@@ -5,6 +5,7 @@ import { useParams } from "next/navigation";
 import Link from "next/link";
 import PageLayout from "@/components/PageLayout";
 import { InfoCard } from "@/components/ui/Card";
+import { useAuth } from "@/components/providers/AuthProvider";
 import { getSupabaseClient } from "@/lib/supabase";
 import { ensureProfile } from "@/lib/supabaseProgress";
 import { getMockAttemptReport, getMockAttemptSummary } from "@/lib/mockAttempt/client";
@@ -50,6 +51,7 @@ type Phase = "loading" | "not-available" | "ready" | "error";
 
 export default function MockReportPage() {
   const params = useParams<{ attemptId: string }>();
+  const { loading: authLoading } = useAuth();
   const [phase, setPhase] = useState<Phase>("loading");
   const [report, setReport] = useState<MockAttemptReport | null>(null);
   const [errorMessage, setErrorMessage] = useState("");
@@ -62,6 +64,22 @@ export default function MockReportPage() {
   const recoveryAttemptedRef = useRef(false);
 
   useEffect(() => {
+    // CSSE Two-Paper Mock P1 Repair, recovery-path defect — production
+    // evidence (Vercel runtime logs) proved this effect could run BEFORE
+    // the Supabase client's own session restoration finished: with no
+    // session yet resolved, requestReadingScoring()/requestMockWriting
+    // Assessment() (lib/mockAttempt/readingScoringRequest.ts,
+    // writingAssessmentRequest.ts) both silently return a "no_session"
+    // outcome and NEVER call fetch at all — zero server-side trace, no
+    // console warning, and this page's own owner-scoped reads (RLS-gated)
+    // would also see nothing, indistinguishable from "not released yet".
+    // Every other authenticated page in this app already waits for
+    // AuthProvider's own `loading` flag before doing anything RLS-scoped
+    // (see app/admin-beta/mock-report-release/page.tsx) — this page never
+    // did. Reusing that exact existing signal, not a new mechanism: the
+    // effect simply does nothing until the session is genuinely resolved
+    // one way or another, then runs exactly as it already did.
+    if (authLoading) return;
     let cancelled = false;
     async function load() {
       const supabase = getSupabaseClient();
@@ -170,7 +188,7 @@ export default function MockReportPage() {
     }
     void load();
     return () => { cancelled = true; };
-  }, [params.attemptId]);
+  }, [params.attemptId, authLoading]);
 
   return (
     <PageLayout breadcrumbs={[{ label: "Learning Report", href: "/learning-intelligence" }, { label: "Mock result" }]}>
