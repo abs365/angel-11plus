@@ -26,11 +26,11 @@ test("the route calls mock_get_pending_writing_question_ids via the caller's own
 });
 
 test("an RPC error still returns the same bounded 404 contract as before -- transport error shape unchanged", () => {
-  assert.match(ROUTE, /if \(pendingError\) \{\s*\n\s*return NextResponse\.json\(\{ error: "report_not_available" \}, \{ status: 404 \}\);/);
+  assert.match(ROUTE, /if \(pendingError\) \{[\s\S]*?\n\s*return NextResponse\.json\(\{ error: "report_not_available" \}, \{ status: 404 \}\);/);
 });
 
 test("an empty pending list still returns the same 'alreadyComplete' shape as before", () => {
-  assert.match(ROUTE, /if \(!pendingIds \|\| pendingIds\.length === 0\) \{\s*\n\s*return NextResponse\.json\(\{ assessed: \[\], alreadyComplete: true \}\);/);
+  assert.match(ROUTE, /if \(!pendingIds \|\| pendingIds\.length === 0\) \{[\s\S]*?\n\s*return NextResponse\.json\(\{ assessed: \[\], alreadyComplete: true \}\);/);
 });
 
 test("the actual write path (mock_persist_writing_assessment) is completely unchanged by this fix", () => {

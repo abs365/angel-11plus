@@ -21,6 +21,38 @@ import { assessWritingResponseForMock } from "@/lib/learningEngine/mockWritingAs
  * and Mock experiences separate.
  */
 
+/**
+ * CSSE Two-Paper Mock P1 Repair, recovery-path defect — production
+ * evidence proved this route could return 200 with an empty `assessed`
+ * array (ali_writing_assessment stays empty) while leaving ZERO server-
+ * side trace of why: a failed OpenAI call or a failed persist RPC were
+ * both silently `continue`d per item, with no console output of any
+ * kind. The sibling /api/mock-reading-scoring route already solved this
+ * exact observability gap (Increment 016's own logScoringEvent) -- this
+ * mirrors that same, already-approved pattern exactly: one fixed,
+ * developer-authored literal per event, never the learner's own response
+ * text, never the OpenAI API key, never the raw exception object.
+ */
+type WritingLogStage = "config" | "auth" | "request" | "pending-lookup" | "bank-lookup" | "assess" | "persist" | "summary";
+
+function logWritingAssessmentEvent(
+  attemptId: string,
+  stage: WritingLogStage,
+  outcome: "success" | "failure",
+  detail?: string
+): void {
+  console.log(
+    JSON.stringify({
+      scope: "mock-writing-assessment",
+      attemptId,
+      stage,
+      outcome,
+      detail: detail ? detail.slice(0, 200) : undefined,
+      at: new Date().toISOString(),
+    })
+  );
+}
+
 const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const RUBRIC_VERSION = 1;
 const ASSESSMENT_VERSION = 1;
@@ -71,17 +103,23 @@ export async function POST(request: NextRequest) {
     p_attempt_id: attemptId,
   });
   if (pendingError) {
+    logWritingAssessmentEvent(attemptId, "pending-lookup", "failure", pendingError.message);
     return NextResponse.json({ error: "report_not_available" }, { status: 404 });
   }
   if (!pendingIds || pendingIds.length === 0) {
+    logWritingAssessmentEvent(attemptId, "pending-lookup", "success", "no_pending_items");
     return NextResponse.json({ assessed: [], alreadyComplete: true });
   }
+  logWritingAssessmentEvent(attemptId, "pending-lookup", "success", `pending_count:${pendingIds.length}`);
 
   const { data: bankRows, error: bankError } = await callerClient
     .from("ali_question_bank")
     .select("id, subject, prompt")
     .in("id", pendingIds);
-  if (bankError) return NextResponse.json({ error: "server_error" }, { status: 502 });
+  if (bankError) {
+    logWritingAssessmentEvent(attemptId, "bank-lookup", "failure", bankError.message);
+    return NextResponse.json({ error: "server_error" }, { status: 502 });
+  }
 
   const writingRows = (bankRows ?? []).filter((r) => r.subject === "writing");
   const results: { questionId: string; persisted: boolean; assessmentStatus: string }[] = [];
@@ -95,7 +133,10 @@ export async function POST(request: NextRequest) {
       .eq("question_id", row.id)
       .maybeSingle();
     const responseText = (answerRow?.response as { value?: string } | null)?.value;
-    if (!responseText || !responseText.trim()) continue; // genuinely unanswered — nothing to assess
+    if (!responseText || !responseText.trim()) {
+      logWritingAssessmentEvent(attemptId, "assess", "success", `${row.id}:unanswered`);
+      continue; // genuinely unanswered — nothing to assess
+    }
 
     let assessment: Awaited<ReturnType<typeof assessWritingResponseForMock>>;
     try {
@@ -106,10 +147,13 @@ export async function POST(request: NextRequest) {
         checklist: prompt.checklist ?? [],
         responseText,
       });
-    } catch {
+    } catch (err) {
       // A failed AI call is never silently treated as "complete" — the
       // learner/reviewer sees this item still pending, not a fabricated
-      // pass. No partial write occurs.
+      // pass. No partial write occurs. Now logged (bounded, never the
+      // learner's own response text or the API key) instead of vanishing
+      // without trace.
+      logWritingAssessmentEvent(attemptId, "assess", "failure", `${row.id}:${err instanceof Error ? err.message : "unknown"}`);
       continue;
     }
 
@@ -143,8 +187,15 @@ export async function POST(request: NextRequest) {
       p_automated_model: "gpt-4o-mini",
     });
 
+    if (persistError) {
+      logWritingAssessmentEvent(attemptId, "persist", "failure", `${row.id}:${persistError.message}`);
+    } else {
+      logWritingAssessmentEvent(attemptId, "persist", "success", `${row.id}:${assessment.assessmentStatus}`);
+    }
+
     results.push({ questionId: row.id, persisted: Boolean(persisted) && !persistError, assessmentStatus: assessment.assessmentStatus });
   }
 
+  logWritingAssessmentEvent(attemptId, "summary", "success", `assessed_count:${results.length}`);
   return NextResponse.json({ assessed: results });
 }
