@@ -7,6 +7,38 @@ import { useAuth } from "@/components/providers/AuthProvider";
 import { checkIsAdmin } from "@/lib/feedback";
 import { getSupabaseClient } from "@/lib/supabase";
 import { releaseMockReport, backfillNamedMathematicsAcceptanceAnalysis } from "@/lib/mockAttempt/client";
+import { applyManualMark } from "@/lib/mockAttempt/manualMarkRequest";
+
+/**
+ * CSSE Two-Paper Mock P1 Repair, English Full Mock assessment completion —
+ * a second, equally bounded named-recovery section, same discipline as
+ * the Mathematics backfill section below: the attempt id AND every
+ * question id are fixed literals in this file, never a caller-editable
+ * field, so this can never become a general "mark anything zero" tool.
+ * Five genuine TIER3/TIER5 Reading items on this one already-submitted
+ * English acceptance attempt were proven (production read-only query) to
+ * have no learner response at all (learner_response = NULL) — the
+ * correct, ungoverned-by-judgement outcome for a blank response is 0,
+ * applied through the existing, unmodified, admin-gated
+ * mock_apply_manual_mark() (migration 227, widened to english-full-
+ * mock-v1 by migration 252) via its existing HTTP surface. This page
+ * adds no new marking authority, no new RPC, no positive-mark path.
+ */
+const ENGLISH_ACCEPTANCE_ATTEMPT_ID = "d15dd181-4a4e-4a02-bd71-32a3a4cf2a91";
+const UNANSWERED_READING_ZERO_MARK_QUESTIONS: readonly { id: string; marksAvailable: number }[] = [
+  { id: "eng-inc002-roboticsfinal-q03", marksAvailable: 4 },
+  { id: "eng-inc002-roboticsfinal-q05", marksAvailable: 2 },
+  { id: "eng-inc002-roboticsfinal-q08", marksAvailable: 2 },
+  { id: "eng-inc002-sailandsteam-q03", marksAvailable: 4 },
+  { id: "eng-inc002-sailandsteam-q07", marksAvailable: 2 },
+];
+
+type ZeroMarkItemState = "pending" | "running" | "success" | "already_resolved" | "error";
+interface ZeroMarkItemResult {
+  state: ZeroMarkItemState;
+  detail?: string;
+}
+type ZeroMarkStatus = "idle" | "confirming" | "running" | "done";
 
 /**
  * CSSE Two-Paper Mock, final production acceptance — the bounded admin
@@ -140,6 +172,8 @@ export default function MockReportReleasePage() {
   const [releasedAttemptId, setReleasedAttemptId] = useState("");
   const [backfillStatus, setBackfillStatus] = useState<BackfillStatus>("idle");
   const [backfillErrorMessage, setBackfillErrorMessage] = useState("");
+  const [zeroMarkStatus, setZeroMarkStatus] = useState<ZeroMarkStatus>("idle");
+  const [zeroMarkResults, setZeroMarkResults] = useState<Record<string, ZeroMarkItemResult>>({});
 
   useEffect(() => {
     if (authLoading) return;
@@ -204,6 +238,53 @@ export default function MockReportReleasePage() {
       return;
     }
     setBackfillStatus("success");
+  }
+
+  function handleRequestZeroMark() {
+    if (zeroMarkStatus === "running") return;
+    setZeroMarkStatus("confirming");
+    setZeroMarkResults({});
+  }
+
+  function handleCancelZeroMark() {
+    setZeroMarkStatus("idle");
+  }
+
+  /**
+   * Runs sequentially, one question at a time — never parallel — so the
+   * per-item result list fills in a stable, readable order and so a
+   * transient failure on one item can never race with another item's own
+   * write to the same report row. Safe to re-run: an already-resolved
+   * item comes back from mock_apply_manual_mark() as a rejected mark
+   * (its own "not awaiting manual marking" guard), surfaced here as
+   * "already resolved", never as an alarming failure.
+   */
+  async function handleConfirmZeroMark() {
+    if (zeroMarkStatus === "running") return; // guards against double submission
+    setZeroMarkStatus("running");
+    const supabase = getSupabaseClient();
+    if (!supabase) {
+      const allFailed: Record<string, ZeroMarkItemResult> = {};
+      for (const q of UNANSWERED_READING_ZERO_MARK_QUESTIONS) allFailed[q.id] = { state: "error", detail: "Not connected." };
+      setZeroMarkResults(allFailed);
+      setZeroMarkStatus("done");
+      return;
+    }
+
+    for (const q of UNANSWERED_READING_ZERO_MARK_QUESTIONS) {
+      setZeroMarkResults((prev) => ({ ...prev, [q.id]: { state: "running" } }));
+      const outcome = await applyManualMark(supabase, ENGLISH_ACCEPTANCE_ATTEMPT_ID, q.id, 0);
+      let itemResult: ZeroMarkItemResult;
+      if (outcome.ok) {
+        itemResult = { state: "success" };
+      } else if (outcome.status === 409 && outcome.reason === "mark_rejected") {
+        itemResult = { state: "already_resolved", detail: "Already resolved — no change made." };
+      } else {
+        itemResult = { state: "error", detail: outcome.reason };
+      }
+      setZeroMarkResults((prev) => ({ ...prev, [q.id]: itemResult }));
+    }
+    setZeroMarkStatus("done");
   }
 
   if (authLoading || access === "checking") {
@@ -370,6 +451,76 @@ export default function MockReportReleasePage() {
                 <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 font-mono leading-relaxed">{backfillErrorMessage}</p>
               </div>
             </div>
+          )}
+        </div>
+
+        <div>
+          <h2 className="text-sm font-bold text-gray-900 dark:text-gray-100">One-time recovery: English acceptance attempt — unanswered Reading items</h2>
+          <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 leading-relaxed">
+            CSSE Two-Paper Mock P1 Repair — resolves exactly 5 named TIER3/TIER5 Reading questions on one named,
+            already-submitted English attempt to 0 marks, through the existing, unmodified mock_apply_manual_mark()
+            (admin-gated inside the database itself). Every learner response for these 5 questions was confirmed
+            NULL by production read-only query — there is no evidence to judge, so 0 is the only legitimate
+            outcome. Not a general capability: the attempt ID and all 5 question IDs are hardcoded in this page,
+            not entered here. Writing is never touched by this action.
+          </p>
+        </div>
+
+        <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-5 space-y-4">
+          <div className="text-xs font-mono text-gray-400 dark:text-gray-500 break-all">
+            Attempt: {ENGLISH_ACCEPTANCE_ATTEMPT_ID}
+          </div>
+          <ul className="space-y-1">
+            {UNANSWERED_READING_ZERO_MARK_QUESTIONS.map((q) => {
+              const result = zeroMarkResults[q.id];
+              return (
+                <li key={q.id} className="flex items-center justify-between text-xs font-mono gap-2">
+                  <span className="text-gray-600 dark:text-gray-400 truncate">{q.id} ({q.marksAvailable} marks)</span>
+                  {!result && <span className="text-gray-300 dark:text-gray-600">—</span>}
+                  {result?.state === "running" && <span className="text-gray-400">running…</span>}
+                  {result?.state === "success" && <span className="text-green-600 dark:text-green-400">0 marks applied</span>}
+                  {result?.state === "already_resolved" && <span className="text-amber-600 dark:text-amber-400">already resolved</span>}
+                  {result?.state === "error" && <span className="text-red-600 dark:text-red-400">{result.detail}</span>}
+                </li>
+              );
+            })}
+          </ul>
+
+          {zeroMarkStatus === "idle" && (
+            <button
+              onClick={handleRequestZeroMark}
+              className="w-full bg-gray-800 hover:bg-gray-900 dark:bg-gray-700 dark:hover:bg-gray-600 text-white font-semibold py-2.5 rounded-xl text-sm transition-colors"
+            >
+              Resolve 5 unanswered Reading items as 0
+            </button>
+          )}
+
+          {zeroMarkStatus === "confirming" && (
+            <div className="border border-amber-200 dark:border-amber-800 rounded-xl p-4 space-y-3">
+              <p className="text-sm text-gray-800 dark:text-gray-200 leading-relaxed">
+                Apply a 0 mark to all 5 named Reading questions on this one attempt? Each item currently has no
+                learner response — this cannot award a positive mark and cannot touch Writing.
+              </p>
+              <div className="flex items-center gap-2">
+                <button onClick={handleConfirmZeroMark} className="flex-1 bg-gray-800 hover:bg-gray-900 dark:bg-gray-700 dark:hover:bg-gray-600 text-white font-semibold py-2 rounded-lg text-sm transition-colors">
+                  Confirm — apply 0 to all 5
+                </button>
+                <button onClick={handleCancelZeroMark} className="flex-1 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 font-semibold py-2 rounded-lg text-sm transition-colors">
+                  Cancel
+                </button>
+              </div>
+            </div>
+          )}
+
+          {zeroMarkStatus === "running" && (
+            <p className="text-sm text-gray-500 dark:text-gray-400 text-center py-2">Applying marks…</p>
+          )}
+
+          {zeroMarkStatus === "done" && (
+            <p className="text-xs text-gray-500 dark:text-gray-400 leading-relaxed">
+              Done — see per-item result above. This page cannot independently re-verify the report row afterward;
+              check scoring_state once ready.
+            </p>
           )}
         </div>
       </div>
