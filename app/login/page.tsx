@@ -2,11 +2,13 @@
 
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { BookOpen, Mail, ArrowRight, CheckCircle } from "lucide-react";
+import { BookOpen, Mail, Lock, ArrowRight, CheckCircle } from "lucide-react";
 import { useAuth } from "@/components/providers/AuthProvider";
 import ErrorState from "@/components/ErrorState";
 
-type State = "idle" | "sending" | "sent" | "error";
+type MagicLinkState = "idle" | "sending" | "sent" | "error";
+type PasswordState = "idle" | "signing-in" | "error";
+type Mode = "password" | "magic-link";
 
 // Domains that are reserved for documentation or are well-known disposable services
 const BLOCKED_DOMAINS = new Set([
@@ -29,6 +31,25 @@ function validateEmail(raw: string): string | null {
 
 function isRateLimitError(msg: string) {
   return /rate.?limit|only request this after/i.test(msg);
+}
+
+/**
+ * Returning-user access improvement — the exact production defect that
+ * prompted this page: a returning learner/parent had no reliable way in
+ * to a permanent account beyond repeatedly requesting an email link, with
+ * no explanation of why a second request was refused. Never surfaces
+ * Supabase's own technical wording (OTP/JWT/rate limit/provider) — every
+ * message here is written for a parent or child, in plain English.
+ */
+function friendlySignInError(msg: string): string {
+  if (isRateLimitError(msg)) return "Please wait a minute before requesting another sign-in link.";
+  if (/invalid login credentials/i.test(msg)) {
+    return "That email and password don't match. Check them, or use “Forgot password?” below.";
+  }
+  if (/email not confirmed/i.test(msg)) {
+    return "Please confirm your email address first. Check your inbox for our earlier email.";
+  }
+  return msg;
 }
 
 /**
@@ -60,14 +81,20 @@ export function isPermanentlyAuthenticated(user: { is_anonymous?: boolean } | nu
 const DEBOUNCE_MS = 2_000;
 
 export default function LoginPage() {
-  const { user, signInWithMagicLink } = useAuth();
+  const { user, signInWithMagicLink, signInWithPassword } = useAuth();
   const router = useRouter();
+  const [mode, setMode] = useState<Mode>("password");
   const [email, setEmail] = useState("");
-  const [state, setState] = useState<State>("idle");
-  const [errorMsg, setErrorMsg] = useState("");
+  const [password, setPassword] = useState("");
+
+  const [magicLinkState, setMagicLinkState] = useState<MagicLinkState>("idle");
+  const [magicLinkError, setMagicLinkError] = useState("");
   const [rateLimitUntil, setRateLimitUntil] = useState<number | null>(null);
   const [secondsLeft, setSecondsLeft] = useState(0);
-  const lastSubmitRef = useRef(0);
+  const lastMagicLinkSubmitRef = useRef(0);
+
+  const [passwordState, setPasswordState] = useState<PasswordState>("idle");
+  const [passwordError, setPasswordError] = useState("");
 
   useEffect(() => {
     if (!rateLimitUntil) return;
@@ -93,44 +120,76 @@ export default function LoginPage() {
 
   function handleEmailChange(e: React.ChangeEvent<HTMLInputElement>) {
     setEmail(e.target.value);
-    if (state === "error" && secondsLeft === 0) {
-      setState("idle");
-      setErrorMsg("");
+    if (magicLinkState === "error" && secondsLeft === 0) {
+      setMagicLinkState("idle");
+      setMagicLinkError("");
+    }
+    if (passwordState === "error") {
+      setPasswordState("idle");
+      setPasswordError("");
     }
   }
 
-  async function handleSubmit(e: React.FormEvent) {
+  async function handlePasswordSignIn(e: React.FormEvent) {
+    e.preventDefault();
+    if (passwordState === "signing-in") return;
+
+    const validationError = validateEmail(email);
+    if (validationError) {
+      setPasswordState("error");
+      setPasswordError(validationError);
+      return;
+    }
+    if (!password) {
+      setPasswordState("error");
+      setPasswordError("Please enter your password.");
+      return;
+    }
+
+    setPasswordState("signing-in");
+    setPasswordError("");
+
+    const { error } = await signInWithPassword(email.trim(), password);
+    if (error) {
+      setPasswordState("error");
+      setPasswordError(friendlySignInError(error));
+    }
+    // On success, the auth state change updates `user` and the redirect
+    // above takes over on the next render — nothing else to do here.
+  }
+
+  async function handleMagicLinkRequest(e: React.FormEvent) {
     e.preventDefault();
     if (secondsLeft > 0) return;
 
     const validationError = validateEmail(email);
     if (validationError) {
-      setState("error");
-      setErrorMsg(validationError);
+      setMagicLinkState("error");
+      setMagicLinkError(validationError);
       return;
     }
 
     const now = Date.now();
-    if (now - lastSubmitRef.current < DEBOUNCE_MS) return;
-    lastSubmitRef.current = now;
+    if (now - lastMagicLinkSubmitRef.current < DEBOUNCE_MS) return;
+    lastMagicLinkSubmitRef.current = now;
 
-    setState("sending");
-    setErrorMsg("");
+    setMagicLinkState("sending");
+    setMagicLinkError("");
 
     const { error } = await signInWithMagicLink(email.trim());
 
     if (error) {
-      setState("error");
+      setMagicLinkState("error");
       if (isRateLimitError(error)) {
-        setErrorMsg("Please wait 60 seconds before requesting another magic link.");
+        setMagicLinkError("Please wait a minute before requesting another sign-in link.");
         const until = Date.now() + 60_000;
         setRateLimitUntil(until);
         setSecondsLeft(60);
       } else {
-        setErrorMsg(error);
+        setMagicLinkError(error);
       }
     } else {
-      setState("sent");
+      setMagicLinkState("sent");
     }
   }
 
@@ -148,21 +207,21 @@ export default function LoginPage() {
 
         {/* Card */}
         <div className="bg-white dark:bg-gray-900 rounded-3xl shadow-sm border border-gray-100 dark:border-gray-800 p-8">
-          {state === "sent" ? (
+          {mode === "magic-link" && magicLinkState === "sent" ? (
             <div className="text-center">
               <div className="inline-flex items-center justify-center w-14 h-14 bg-green-100 dark:bg-green-900 rounded-2xl mb-4">
                 <CheckCircle size={26} className="text-green-600 dark:text-green-400" />
               </div>
               <h2 className="text-gray-900 dark:text-gray-100 font-bold text-xl mb-2">Check your email</h2>
               <p className="text-gray-500 dark:text-gray-400 text-sm leading-relaxed mb-6">
-                We sent a magic link to{" "}
+                We&apos;ve sent a secure sign-in link to{" "}
                 <strong className="text-gray-700 dark:text-gray-300">{email}</strong>.
-                Click the link in that email to sign in.
+                Open the email and tap the link to sign in.
               </p>
               <p className="text-gray-400 dark:text-gray-500 text-xs">
                 No email? Check your spam folder, or{" "}
                 <button
-                  onClick={() => setState("idle")}
+                  onClick={() => setMagicLinkState("idle")}
                   className="text-blue-600 font-medium underline underline-offset-2"
                 >
                   try again
@@ -179,62 +238,142 @@ export default function LoginPage() {
                 Sign in to save progress across all your devices
               </p>
 
-              <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-                <div>
-                  <label
-                    htmlFor="email"
-                    className="block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-2"
-                  >
-                    Email address
-                  </label>
-                  <div className="relative">
-                    <Mail
-                      size={16}
-                      className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500"
-                    />
-                    <input
-                      id="email"
-                      type="email"
-                      value={email}
-                      onChange={handleEmailChange}
-                      placeholder="you@example.com"
-                      autoComplete="email"
-                      autoFocus
-                      required
-                      aria-describedby={state === "error" ? "login-error" : undefined}
-                      className="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl pl-10 pr-4 py-3.5 text-sm text-gray-800 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all"
-                    />
+              {mode === "password" ? (
+                <form onSubmit={handlePasswordSignIn} className="flex flex-col gap-4">
+                  <div>
+                    <label htmlFor="email" className="block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-2">
+                      Email address
+                    </label>
+                    <div className="relative">
+                      <Mail size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500" />
+                      <input
+                        id="email"
+                        type="email"
+                        value={email}
+                        onChange={handleEmailChange}
+                        placeholder="you@example.com"
+                        autoComplete="email"
+                        autoFocus
+                        required
+                        className="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl pl-10 pr-4 py-3.5 text-sm text-gray-800 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all"
+                      />
+                    </div>
                   </div>
-                </div>
 
-                {state === "error" && <ErrorState variant="banner" id="login-error" message={errorMsg} />}
+                  <div>
+                    <label htmlFor="password" className="block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-2">
+                      Password
+                    </label>
+                    <div className="relative">
+                      <Lock size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500" />
+                      <input
+                        id="password"
+                        type="password"
+                        value={password}
+                        onChange={(e) => {
+                          setPassword(e.target.value);
+                          if (passwordState === "error") { setPasswordState("idle"); setPasswordError(""); }
+                        }}
+                        placeholder="Your password"
+                        autoComplete="current-password"
+                        required
+                        aria-describedby={passwordState === "error" ? "password-error" : undefined}
+                        className="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl pl-10 pr-4 py-3.5 text-sm text-gray-800 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all"
+                      />
+                    </div>
+                  </div>
 
-                <button
-                  type="submit"
-                  disabled={state === "sending" || !email.trim() || secondsLeft > 0}
-                  className="flex items-center justify-center gap-2 w-full bg-blue-600 text-white rounded-xl py-4 font-semibold text-base hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                >
-                  {state === "sending" ? (
-                    <>
-                      <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                      Sending link…
-                    </>
-                  ) : secondsLeft > 0 ? (
-                    `Try again in ${secondsLeft}s`
-                  ) : (
-                    <>
-                      Send magic link
-                      <ArrowRight size={18} />
-                    </>
-                  )}
-                </button>
-              </form>
+                  {passwordState === "error" && <ErrorState variant="banner" id="password-error" message={passwordError} />}
 
-              <p className="text-gray-400 dark:text-gray-500 text-xs text-center mt-6 leading-relaxed">
-                No password needed. We&apos;ll email you a secure link.
-                <br />
-                No account? One will be created automatically.
-              </p>
+                  <button
+                    type="submit"
+                    disabled={passwordState === "signing-in" || !email.trim() || !password}
+                    className="flex items-center justify-center gap-2 w-full bg-blue-600 text-white rounded-xl py-4 font-semibold text-base hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  >
+                    {passwordState === "signing-in" ? (
+                      <>
+                        <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                        Signing in…
+                      </>
+                    ) : (
+                      <>
+                        Sign in
+                        <ArrowRight size={18} />
+                      </>
+                    )}
+                  </button>
+
+                  <div className="flex items-center justify-between text-xs mt-1">
+                    <button type="button" onClick={() => router.push("/reset-password")} className="text-blue-600 font-medium hover:underline">
+                      Forgot password?
+                    </button>
+                    <button type="button" onClick={() => setMode("magic-link")} className="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300">
+                      Email me a secure sign-in link
+                    </button>
+                  </div>
+                </form>
+              ) : (
+                <form onSubmit={handleMagicLinkRequest} className="flex flex-col gap-4">
+                  <div>
+                    <label htmlFor="magic-email" className="block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-2">
+                      Email address
+                    </label>
+                    <div className="relative">
+                      <Mail size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500" />
+                      <input
+                        id="magic-email"
+                        type="email"
+                        value={email}
+                        onChange={handleEmailChange}
+                        placeholder="you@example.com"
+                        autoComplete="email"
+                        autoFocus
+                        required
+                        aria-describedby={magicLinkState === "error" ? "magic-link-error" : undefined}
+                        className="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl pl-10 pr-4 py-3.5 text-sm text-gray-800 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all"
+                      />
+                    </div>
+                  </div>
+
+                  {magicLinkState === "error" && <ErrorState variant="banner" id="magic-link-error" message={magicLinkError} />}
+
+                  <button
+                    type="submit"
+                    disabled={magicLinkState === "sending" || !email.trim() || secondsLeft > 0}
+                    className="flex items-center justify-center gap-2 w-full bg-blue-600 text-white rounded-xl py-4 font-semibold text-base hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  >
+                    {magicLinkState === "sending" ? (
+                      <>
+                        <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                        Sending link…
+                      </>
+                    ) : secondsLeft > 0 ? (
+                      `Try again in ${secondsLeft}s`
+                    ) : (
+                      <>
+                        Send sign-in link
+                        <ArrowRight size={18} />
+                      </>
+                    )}
+                  </button>
+
+                  <p className="text-gray-400 dark:text-gray-500 text-xs text-center">
+                    No password needed. We&apos;ll email you a secure link.
+                  </p>
+
+                  <div className="text-center text-xs mt-1">
+                    <button type="button" onClick={() => setMode("password")} className="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300">
+                      Sign in with a password instead
+                    </button>
+                  </div>
+                </form>
+              )}
+
+              {mode === "password" && (
+                <p className="text-gray-400 dark:text-gray-500 text-xs text-center mt-6 leading-relaxed">
+                  New here? Use &ldquo;Email me a secure sign-in link&rdquo; above to create your account.
+                </p>
+              )}
             </>
           )}
         </div>
