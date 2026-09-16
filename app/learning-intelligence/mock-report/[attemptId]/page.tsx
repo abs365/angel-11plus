@@ -400,7 +400,28 @@ function MockAnalysisSections({ report }: { report: MockAttemptReport }) {
  * not invent one). `review_required` is shown honestly as still-pending
  * human review, never silently upgraded to look like a normal result.
  */
+/**
+ * CSSE Two-Paper Mock, final learner acceptance — the exact, evidence-
+ * confirmed defect: two genuinely independent, correctly-persisted
+ * ali_writing_assessment records (Q1 complete, Q2 review_required) were
+ * both already being fetched and both already rendered in their own
+ * bordered block -- proven directly against the live production report
+ * (network response + rendered text both showed two rows) -- but NEITHER
+ * block ever carried a task label or a "complete" status badge, so a
+ * review_required block sitting directly above a complete block's own
+ * dimension rows read as one garbled, undifferentiated section. This is
+ * the smallest possible fix: a task label (from the real, persisted
+ * taskType, never the internal question_id) and a status badge on EVERY
+ * block, plus a stable Q1-then-Q2 render order. No data is re-fetched,
+ * re-generated, combined, or modified -- purely presentation.
+ */
+const WRITING_TASK_LABEL: Record<MockWritingAssessment["taskType"], string> = {
+  Q1: "Writing Task 1",
+  Q2: "Writing Task 2",
+};
+
 function WritingAssessmentSection({ assessments }: { assessments: MockWritingAssessment[] }) {
+  const orderedAssessments = [...assessments].sort((a, b) => a.taskType.localeCompare(b.taskType));
   return (
     <InfoCard className="border-purple-200 dark:border-purple-900">
       <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">Continuous Writing</p>
@@ -409,19 +430,26 @@ function WritingAssessmentSection({ assessments }: { assessments: MockWritingAss
         between components, so these are reported on their own rather than combined into one figure.
       </p>
       <div className="mt-3 space-y-3">
-        {assessments.map((assessment) => (
+        {orderedAssessments.map((assessment) => (
           <div key={assessment.questionId} className="border border-gray-100 dark:border-gray-800 rounded-lg p-3">
-            {assessment.assessmentStatus === "review_required" ? (
-              <>
+            <div className="flex items-center justify-between gap-2 mb-2">
+              <span className="text-xs font-semibold text-gray-700 dark:text-gray-300">
+                {WRITING_TASK_LABEL[assessment.taskType] ?? assessment.taskType}
+              </span>
+              {assessment.assessmentStatus === "review_required" ? (
                 <StatusIndicator tone="warning" label="Review required" />
-                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1.5 leading-relaxed">
-                  Angel could not confidently assess this response automatically
-                  {assessment.reviewRequiredReasons && assessment.reviewRequiredReasons.length > 0
-                    ? `: ${assessment.reviewRequiredReasons.join("; ")}.`
-                    : "."}{" "}
-                  This will be shown once reviewed.
-                </p>
-              </>
+              ) : (
+                <StatusIndicator tone="success" label="Assessment complete" />
+              )}
+            </div>
+            {assessment.assessmentStatus === "review_required" ? (
+              <p className="text-xs text-gray-500 dark:text-gray-400 leading-relaxed">
+                Angel could not confidently assess this response automatically
+                {assessment.reviewRequiredReasons && assessment.reviewRequiredReasons.length > 0
+                  ? `: ${assessment.reviewRequiredReasons.join("; ")}.`
+                  : "."}{" "}
+                This will be shown once reviewed.
+              </p>
             ) : (
               <div className="space-y-1.5">
                 {(assessment.humanReviewDimensions ?? assessment.dimensions).map((d) => (
