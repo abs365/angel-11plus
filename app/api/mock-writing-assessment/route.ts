@@ -112,36 +112,45 @@ export async function POST(request: NextRequest) {
   }
   logWritingAssessmentEvent(attemptId, "pending-lookup", "success", `pending_count:${pendingIds.length}`);
 
-  const { data: bankRows, error: bankError } = await callerClient
-    .from("ali_question_bank")
-    .select("id, subject, prompt")
-    .in("id", pendingIds);
+  // Migration 254 — ali_question_bank's own RLS (ali_question_bank_select_
+  // all, migration 100) only lets a non-admin caller see practice_eligible
+  // rows; both Writing questions are mock_eligible, so a plain RLS-scoped
+  // read here always returned zero rows (production-confirmed: pending_
+  // count:2 immediately followed by assessed_count:0, no "assess" stage
+  // log for either question -- writingRows was silently empty). This
+  // function bypasses that RLS the same way every other Mock content-
+  // delivery function already does (mock_get_question(), migration 070),
+  // never by relaxing the policy itself, and internally reuses (never
+  // reimplements) mock_get_pending_writing_question_ids()'s own
+  // ownership/pending derivation.
+  const { data: writingRows, error: bankError } = await callerClient.rpc("mock_get_writing_question_content", {
+    p_attempt_id: attemptId,
+  });
   if (bankError) {
     logWritingAssessmentEvent(attemptId, "bank-lookup", "failure", bankError.message);
     return NextResponse.json({ error: "server_error" }, { status: 502 });
   }
-
-  const writingRows = (bankRows ?? []).filter((r) => r.subject === "writing");
   const results: { questionId: string; persisted: boolean; assessmentStatus: string }[] = [];
 
   for (const row of writingRows) {
+    const questionId = row.question_id;
     const prompt = row.prompt as { title?: string; type?: string; prompt?: string; checklist?: string[]; stimulus?: { type?: string } };
     const { data: answerRow } = await callerClient
       .from("ali_mock_attempt_answer")
       .select("response")
       .eq("attempt_id", attemptId)
-      .eq("question_id", row.id)
+      .eq("question_id", questionId)
       .maybeSingle();
     const responseText = (answerRow?.response as { value?: string } | null)?.value;
     if (!responseText || !responseText.trim()) {
-      logWritingAssessmentEvent(attemptId, "assess", "success", `${row.id}:unanswered`);
+      logWritingAssessmentEvent(attemptId, "assess", "success", `${questionId}:unanswered`);
       continue; // genuinely unanswered — nothing to assess
     }
 
     let assessment: Awaited<ReturnType<typeof assessWritingResponseForMock>>;
     try {
       assessment = await assessWritingResponseForMock(openAiKey, {
-        promptTitle: prompt.title ?? row.id,
+        promptTitle: prompt.title ?? questionId,
         promptType: prompt.type ?? "descriptive",
         promptText: prompt.prompt ?? "",
         checklist: prompt.checklist ?? [],
@@ -153,7 +162,7 @@ export async function POST(request: NextRequest) {
       // pass. No partial write occurs. Now logged (bounded, never the
       // learner's own response text or the API key) instead of vanishing
       // without trace.
-      logWritingAssessmentEvent(attemptId, "assess", "failure", `${row.id}:${err instanceof Error ? err.message : "unknown"}`);
+      logWritingAssessmentEvent(attemptId, "assess", "failure", `${questionId}:${err instanceof Error ? err.message : "unknown"}`);
       continue;
     }
 
@@ -176,7 +185,7 @@ export async function POST(request: NextRequest) {
       ) => Promise<{ data: boolean | null; error: { message: string } | null }>
     )("mock_persist_writing_assessment", {
       p_attempt_id: attemptId,
-      p_question_id: row.id,
+      p_question_id: questionId,
       p_task_type: taskType,
       p_rubric_version: RUBRIC_VERSION,
       p_assessment_version: ASSESSMENT_VERSION,
@@ -188,12 +197,12 @@ export async function POST(request: NextRequest) {
     });
 
     if (persistError) {
-      logWritingAssessmentEvent(attemptId, "persist", "failure", `${row.id}:${persistError.message}`);
+      logWritingAssessmentEvent(attemptId, "persist", "failure", `${questionId}:${persistError.message}`);
     } else {
-      logWritingAssessmentEvent(attemptId, "persist", "success", `${row.id}:${assessment.assessmentStatus}`);
+      logWritingAssessmentEvent(attemptId, "persist", "success", `${questionId}:${assessment.assessmentStatus}`);
     }
 
-    results.push({ questionId: row.id, persisted: Boolean(persisted) && !persistError, assessmentStatus: assessment.assessmentStatus });
+    results.push({ questionId, persisted: Boolean(persisted) && !persistError, assessmentStatus: assessment.assessmentStatus });
   }
 
   logWritingAssessmentEvent(attemptId, "summary", "success", `assessed_count:${results.length}`);

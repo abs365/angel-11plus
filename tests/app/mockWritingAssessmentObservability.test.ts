@@ -25,11 +25,11 @@ test("every meaningful stage logs a bounded operational event", () => {
 test("a failed OpenAI/assessment call for one item is now logged with a bounded reason, not silently swallowed", () => {
   const catchBlock = ROUTE.match(/} catch \(err\) \{([\s\S]*?)\n {6}continue;/);
   assert.ok(catchBlock, "expected the assess catch(err) block");
-  assert.match(catchBlock![1], /logWritingAssessmentEvent\(attemptId, "assess", "failure", `\$\{row\.id\}:\$\{err instanceof Error \? err\.message : "unknown"\}`\);/);
+  assert.match(catchBlock![1], /logWritingAssessmentEvent\(attemptId, "assess", "failure", `\$\{questionId\}:\$\{err instanceof Error \? err\.message : "unknown"\}`\);/);
 });
 
 test("a failed persist RPC for one item is now logged with a bounded reason", () => {
-  assert.match(ROUTE, /if \(persistError\) \{\s*\n\s*logWritingAssessmentEvent\(attemptId, "persist", "failure", `\$\{row\.id\}:\$\{persistError\.message\}`\);/);
+  assert.match(ROUTE, /if \(persistError\) \{\s*\n\s*logWritingAssessmentEvent\(attemptId, "persist", "failure", `\$\{questionId\}:\$\{persistError\.message\}`\);/);
 });
 
 test("the logger never logs the learner's own response text, the OpenAI API key, or the Authorization header", () => {
@@ -48,7 +48,7 @@ test("logged detail is defensively truncated, same discipline as the sibling rea
 
 test("this fix does not change any actual persistence behaviour -- the real write path is untouched", () => {
   assert.match(ROUTE, /"mock_persist_writing_assessment", \{/);
-  assert.match(ROUTE, /results\.push\(\{ questionId: row\.id, persisted: Boolean\(persisted\) && !persistError, assessmentStatus: assessment\.assessmentStatus \}\);/);
+  assert.match(ROUTE, /results\.push\(\{ questionId, persisted: Boolean\(persisted\) && !persistError, assessmentStatus: assessment\.assessmentStatus \}\);/);
 });
 
 test("no service-role or privileged connection is introduced by this fix", () => {

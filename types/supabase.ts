@@ -946,6 +946,17 @@ export interface Database {
         Args: { p_attempt_id: string };
         Returns: string[];
       };
+      // CSSE Two-Paper Mock P1 Repair, recovery-path defect fix —
+      // supabase/migrations/254_mock_writing_assessment_question_content_
+      // lookup.sql. Not yet applied to production. Bypasses ali_question_
+      // bank's own practice_eligible-only RLS the same way mock_get_
+      // question() already does — declared here so app/api/mock-writing-
+      // assessment/route.ts can call it through the typed supabase.rpc()
+      // the same way every other RPC already does.
+      mock_get_writing_question_content: {
+        Args: { p_attempt_id: string };
+        Returns: { question_id: string; prompt: unknown }[];
+      };
       // Mock Governance Architecture Increment 001 (Decision 135) —
       // supabase/migrations/085_mock_cycle_governance_architecture.sql,
       // corrected by migration 086 (Decision 136). Applied to production
