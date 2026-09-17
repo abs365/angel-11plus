@@ -1,7 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import fs from "node:fs";
-import { promptWritingTask } from "../../lib/adminReview";
+import { promptWritingTask, writingResponseShapeLabel } from "../../lib/adminReview";
 
 /**
  * Decision 233 — Founder-reported live defect: the Bee passage and
@@ -154,6 +154,41 @@ test("all three question-rendering call sites in ReviewForm use QuestionOrWritin
 
 test("the grouped/passage-branch call site still passes the real sharedStem-aware display text for non-writing content via displayText, unaffected by the writing fix", () => {
   assert.match(pageSource, /<QuestionOrWritingTaskBody question=\{question\} displayText=\{sharedStem \? sharedStem\.tails\[index\] : undefined\} \/>/);
+});
+
+// === Migration 258 correction: "picture-narrative" response-shape label =====
+
+test("writingResponseShapeLabel('picture-narrative') now returns an honest, catalogued label, not the 'Not yet catalogued' fallback", () => {
+  assert.equal(writingResponseShapeLabel("picture-narrative"), "Picture-Stimulus Narrative");
+});
+
+test("REGRESSION: the rejected riverboat row (migration 255) and the replacement (migration 257) both resolve through promptWritingTask() with their own real stored stimulus, and both now display the catalogued label", () => {
+  const sql255 = fs.readFileSync("supabase/migrations/255_writing_picture_narrative_practice_content.sql", "utf8");
+  const sql257 = fs.readFileSync("supabase/migrations/257_writing_picture_narrative_replacement_practice_content.sql", "utf8");
+  for (const [sql, id, imageAssetUrl] of [
+    [sql255, "eng-practice-writing-picturenarrative-riverboat-01", "/practice-assets/writing-picture-narrative/riverboat-v1.svg"],
+    [sql257, "eng-practice-writing-picturenarrative-treehouselantern-01", "/practice-assets/writing-picture-narrative/treehouselantern-v1.svg"],
+  ] as const) {
+    const prompt = extractPromptJson(sql, id);
+    const result = promptWritingTask(prompt);
+    assert.ok(result, `expected ${id} to resolve as a writing task`);
+    assert.equal(result!.responseType, "picture-narrative");
+    assert.equal(writingResponseShapeLabel(result!.responseType), "Picture-Stimulus Narrative");
+    assert.deepEqual(result!.stimulus, {
+      type: "image",
+      imageAssetUrl,
+      altText: (prompt as { stimulus: { altText: string } }).stimulus.altText,
+    });
+  }
+});
+
+test("the replacement's altText is a factual description of its own new scene, not a copy of the rejected riverboat's altText", () => {
+  const sql255 = fs.readFileSync("supabase/migrations/255_writing_picture_narrative_practice_content.sql", "utf8");
+  const sql257 = fs.readFileSync("supabase/migrations/257_writing_picture_narrative_replacement_practice_content.sql", "utf8");
+  const riverboat = promptWritingTask(extractPromptJson(sql255, "eng-practice-writing-picturenarrative-riverboat-01"))!;
+  const treehouse = promptWritingTask(extractPromptJson(sql257, "eng-practice-writing-picturenarrative-treehouselantern-01"))!;
+  assert.notEqual(riverboat.stimulus!.altText, treehouse.stimulus!.altText);
+  assert.notEqual(riverboat.stimulus!.imageAssetUrl, treehouse.stimulus!.imageAssetUrl);
 });
 
 // === Understudy/Bee comprehension rendering is unaffected ====================

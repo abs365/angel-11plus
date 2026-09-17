@@ -4,8 +4,12 @@
 It records current state only — not history. For history, see the specific `ANGEL_*.md` report
 named under each item below. For operating rules, see `AGENTS.md` (imported by `CLAUDE.md`).
 
-Last updated: 2026-09-17, Educational Depth Phase 1 Wave 2 (Writing picture-narrative) — code
-shipped, PRODUCTION ACCEPTANCE: PARTIAL. See "Closed programme (most recent)" below.
+Last updated: 2026-09-17, Educational Depth Phase 1 Wave 2 (Writing picture-narrative) —
+REJECTED STIMULUS CORRECTION. The Founder independently reviewed migration 255's riverboat
+candidate and REJECTED it (real Year 5 learner evidence: "there is nothing to write with the
+picture"). A replacement candidate ("The Treehouse Lantern", migrations 257/258) is authored,
+registered for independent review, and awaiting the Founder. See "Closed programme (most recent)"
+below.
 
 ---
 
@@ -48,15 +52,48 @@ Publication is admin-gated (`submit_question_candidate` / `publish_question_cand
   (`b65721a` on `origin/main`, deployed, smoke-verified)
 
 **Not closed — open pending one Founder action:**
-- **Educational Depth Phase 1 Wave 2 (Writing picture-narrative) — production acceptance: PARTIAL.**
+- **Educational Depth Phase 1 Wave 2 (Writing picture-narrative) — production acceptance: PARTIAL,
+  now mid-correction after a real Founder rejection.**
   Code (teaching content, image-stimulus render path, type/routing) is deployed and live
-  (`b777431`), smoke-verified against a real live row with zero regression. The one new Practice
-  content row is authored but staged at `authentic_assessment_candidate`
-  (`supabase/migrations/255_writing_picture_narrative_practice_content.sql`, NOT APPLIED) — no real
-  learner can reach picture-narrative Practice content until the Founder applies that migration via
-  Supabase Dashboard > SQL Editor. See "Closed programme (most recent)" below for full detail. Do
-  not re-attempt to apply this migration directly; it is a Founder action by this repo's own
-  standing convention (every migration here is Founder-applied, `DEPLOYMENT.md`).
+  (`b777431`), smoke-verified against a real live row with zero regression.
+  - **Migration 255's candidate ("The Riverboat at Dawn") was applied, registered for review
+    (migration 256), and independently reviewed by the Founder via the live `/admin-beta/review`
+    interface. Decision: REJECTED.** Root cause (direct target-learner evidence): a real Year 5
+    child preparing for the 11+ was shown the picture unprompted and said "there is nothing to
+    write with the picture" — the scene was visually describable but not narratively generative
+    enough (atmosphere and static objects, too little action/relationship/tension/discovery for a
+    Year 5 learner to build a story from). The rejection is preserved exactly as the Founder
+    recorded it in `ali_family_review`; the row itself is untouched, still
+    `authentic_assessment_candidate`, and structurally unpromotable (every real promotion migration
+    in this repo — 200/203/224's own pattern — requires `decision = 'approved'` or
+    `'approved_with_amendment'`; `'rejected'` satisfies neither, so no further lock was needed).
+  - **A new educational-quality principle was established from this rejection**: a picture-led
+    narrative stimulus must not merely be describable — it must be **narratively generative**,
+    giving a learner several credible footholds (action, relationship, discovery, tension, an
+    unusual object, evidence something just happened, etc.) while staying genuinely open to more
+    than one legitimate story.
+  - **Replacement candidate authored and staged**: "The Treehouse Lantern"
+    (`eng-practice-writing-picturenarrative-treehouselantern-01`,
+    `supabase/migrations/257_writing_picture_narrative_replacement_practice_content.sql`, NOT
+    APPLIED), a new original SVG scene (`public/practice-assets/writing-picture-narrative/
+    treehouselantern-v1.svg`) with multiple deliberate narrative footholds (a rope ladder pulled up
+    off the ground, a lantern-lit window in bright daylight, a dropped bag with spilled compass/
+    torch/note, two distinct sets of footprints, a watching magpie) and no text/title/speech
+    bubble dictating a plot. Registered for independent review
+    (`supabase/migrations/258_writing_picture_narrative_replacement_pending_review.sql`, NOT
+    APPLIED) via the same `ali_family_review` mechanism as migration 256.
+  - **Response-shape metadata defect fixed in the same commit**: the review screen's "Response
+    shape" label displayed "Not yet catalogued (picture-narrative)" for both the rejected and
+    replacement rows — a real small defect (the new `picture-narrative` response type had never
+    been added to `lib/adminReview.ts`'s `WRITING_RESPONSE_SHAPE_LABEL` map, unlike `descriptive`/
+    `narrative`), now labelled "Picture-Stimulus Narrative". This was a display gap only —
+    `promptWritingTask()` already read `responseType` correctly for these rows.
+  - No real learner can reach picture-narrative Practice content until the Founder (a) applies
+    migrations 257 and 258 via Supabase Dashboard > SQL Editor, and (b) completes a genuine
+    independent review of the replacement through `/admin-beta/review`. See "Closed programme
+    (most recent)" below for full detail. Do not re-attempt to apply any of these migrations
+    directly; it is a Founder action by this repo's own standing convention (every migration here
+    is Founder-applied, `DEPLOYMENT.md`).
 
 ## Closed programme (most recent)
 
@@ -201,11 +238,17 @@ until a dedicated review says otherwise.
 
 ## Exact next educational priority
 
-**Immediate, one-step, non-engineering**: apply `supabase/migrations/255_writing_picture_narrative_
-practice_content.sql` (Founder review + Supabase Dashboard > SQL Editor). This is the single action
-that converts Wave 2 from PARTIAL to a real, learner-reachable picture-narrative Practice row —
-review the new prompt/checklist/image (`public/practice-assets/writing-picture-narrative/
-riverboat-v1.svg`) first, per this repo's own standing content-review discipline.
+**Superseded**: migration 255 (the riverboat candidate) was applied, reviewed, and REJECTED by the
+Founder — do not apply it as a promotion target; its rejection stands as governance evidence.
+
+**Immediate, one-step, non-engineering**: apply `supabase/migrations/257_writing_picture_
+narrative_replacement_practice_content.sql` and `258_..._replacement_pending_review.sql` (Founder
+review + Supabase Dashboard > SQL Editor), then complete a genuine independent review of "The
+Treehouse Lantern" through `/admin-beta/review` — review the new prompt/checklist/image
+(`public/practice-assets/writing-picture-narrative/treehouselantern-v1.svg`) directly, per this
+repo's own standing content-review discipline. Only after a real approved/approved_with_amendment
+decision exists in `ali_family_review` can a promotion migration (matching 200/203/224's pattern)
+be authored — never inferred, never fabricated.
 
 **Next educational Wave** (after that Founder action, or in parallel if the Founder prefers to
 batch it with the next Wave's own content): Writing picture-narrative still has only ONE Practice

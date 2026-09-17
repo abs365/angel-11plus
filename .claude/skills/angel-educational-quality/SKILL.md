@@ -46,6 +46,30 @@ Check, for the family in question, against **live production data** (never assum
    `practiceInteractionGuard.ts`'s pattern) — Wave 1 found 68% of covered Maths questions were
    silently gated out by a stricter-than-necessary render condition.
 
+## Picture-led narrative stimuli must be narratively generative, not merely describable
+
+(Established from a real Founder rejection, Educational Depth Phase 1 Wave 2: a real Year 5 learner
+shown a technically well-illustrated but under-generative picture said "there is nothing to write
+with the picture.")
+
+A strong picture-led Writing stimulus must give a learner several credible narrative footholds —
+for example a character whose situation raises questions, an interrupted activity, evidence
+something has just happened or may happen next, an unusual object, a discovery, a problem or
+decision, mild tension or mystery, contrasting reactions, or an unexpected circumstance — while
+remaining genuinely open-ended. Do not mechanically include every item; choose a coherent scene.
+
+- **Test it**: could different children reasonably produce materially different stories while all
+  grounding their narrative in evidence actually visible in the image? If the honest answer is "not
+  without inventing almost everything themselves," the stimulus is describable but not generative —
+  reject or redesign it before it reaches Practice.
+- **Anti-memorisation applies to images too**: never solve weak generativity by adding text to the
+  picture (a title, a speech bubble, a written clue, a fixed backstory, an obvious
+  beginning-middle-end) — that dictates the plot instead of evidencing it, and collapses the range
+  of legitimate stories a learner could write.
+- **Automated checks (asset exists, renders, is classified correctly, doesn't collide with Mock)
+  prove structural safety only** — they cannot prove narrative quality. That requires a real
+  learner or Founder judgement call before any picture-narrative candidate is promoted.
+
 ## Non-negotiables
 
 - **Supported success ≠ independent mastery.** Never record or report guided-mode correctness as

@@ -118,6 +118,16 @@ export const WRITING_CHECKLIST_ITEM_SUPPORT_LEVELS: Record<string, ChecklistItem
   // point, vocabulary/sentences, paragraphing) are all writing-technique
   // coaching, matching the shape of every other 7-item checklist above.
   "eng-practice-writing-picturenarrative-riverboat-01": ["core", "coaching", "coaching", "coaching", "coaching", "coaching", "core"],
+
+  // Migration 257 — Educational Depth Phase 1, Wave 2 REPLACEMENT (after
+  // the Founder's own independent review rejected the riverboat row
+  // above). Also `authentic_assessment_candidate` only, classified on
+  // authoring per this file's own standing rule. Same shape as the
+  // rejected row: item 1 (length) and item 7 (proofreading) are core;
+  // the middle five (staying grounded in the picture, choosing one
+  // direction, a turning point, vocabulary/sentences, paragraphing) are
+  // all writing-technique coaching.
+  "eng-practice-writing-picturenarrative-treehouselantern-01": ["core", "coaching", "coaching", "coaching", "coaching", "coaching", "core"],
 };
 
 export function checklistItemSupportLevel(promptId: string | null, index: number): ChecklistItemSupportLevel {

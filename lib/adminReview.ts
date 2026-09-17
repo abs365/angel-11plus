@@ -997,10 +997,21 @@ export function promptWritingTask(prompt: unknown): { title: string; prompt: str
  * Imaginative". An unrecognised or missing value falls back to a
  * visibly-honest placeholder rather than silently reusing either label,
  * so a future new response type is never misrepresented by this map.
+ *
+ * Migration 258 correction: migration 255/256's own riverboat row (and
+ * every row of this Wave's new response shape, including migration 257's
+ * replacement) stores `type: "picture-narrative"`, which had never been
+ * added here — it displayed as "Not yet catalogued (picture-narrative)"
+ * on the live review surface, a genuine small defect this Wave's own new
+ * response shape caused (not a missing-registration defect:
+ * `promptWritingTask()` already read `responseType` correctly for these
+ * rows; only the display label was never catalogued). Added below,
+ * matching this map's own existing convention exactly.
  */
 export const WRITING_RESPONSE_SHAPE_LABEL: Record<string, string> = {
   descriptive: "Personal Experience / Opinion",
   narrative: "Narrative / Imaginative",
+  "picture-narrative": "Picture-Stimulus Narrative",
 };
 
 export function writingResponseShapeLabel(responseType: string | null): string {

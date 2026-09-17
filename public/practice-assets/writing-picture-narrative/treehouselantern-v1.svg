@@ -1,0 +1,162 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" width="800" height="600" role="img" aria-labelledby="treehouseLanternTitle treehouseLanternDesc">
+  <title id="treehouseLanternTitle">The Treehouse Lantern</title>
+  <desc id="treehouseLanternDesc">A large oak tree stands in a sunny garden, with a small wooden treehouse built among its branches. A rope ladder hangs from the treehouse, pulled up so its lower rungs dangle above the ground. The treehouse's round window glows with warm lantern light even though it is the middle of a bright day. At the foot of the tree, a canvas bag lies on its side with its flap open, and a compass, a torch, and a folded piece of paper have spilled out beside it. Two different sets of footprints cross the grass: one leading from a garden gate to the tree, and another leading away from the tree towards a hedge. A magpie is perched on a low branch near the treehouse, looking towards the window.</desc>
+
+  <!-- Original illustration authored directly for Angel 11+, Educational Depth Phase 1 Wave 2 (post-Founder-rejection replacement). Flat/stylised vector art, no photographic or copyrighted source material of any kind. Deliberately distinct from migration 255's rejected old riverboat-v1.svg (misty river dawn, boat, no dwelling) and from migration 246's old-shed-v1.svg (Mock-reserved: overgrown garden, late-afternoon warm sky, an ajar shed door, no treehouse, no bag, no footprints, no bird): different setting, bright midday light, and a genuinely different set of narrative footholds (raised ladder, glowing window in daylight, a dropped open bag with spilled contents, two distinct sets of footprints implying more than one person, a watching bird) rather than a single ambiguous open door. -->
+
+  <defs>
+    <linearGradient id="middaySky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#7fb8e0"/>
+      <stop offset="60%" stop-color="#bfe0f0"/>
+      <stop offset="100%" stop-color="#eaf6f2"/>
+    </linearGradient>
+    <linearGradient id="lawn" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#8fbf5a"/>
+      <stop offset="100%" stop-color="#6a9a42"/>
+    </linearGradient>
+    <radialGradient id="sunGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#fff8db" stop-opacity="0.9"/>
+      <stop offset="100%" stop-color="#fff8db" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="lanternGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#ffdf8a" stop-opacity="0.95"/>
+      <stop offset="100%" stop-color="#ffdf8a" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="treehouseWood" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#b98a5c"/>
+      <stop offset="100%" stop-color="#8a5d3b"/>
+    </linearGradient>
+    <linearGradient id="bagCanvas" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#c9a463"/>
+      <stop offset="100%" stop-color="#a97f45"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Sky -->
+  <rect x="0" y="0" width="800" height="420" fill="url(#middaySky)"/>
+  <circle cx="700" cy="90" r="130" fill="url(#sunGlow)"/>
+  <circle cx="700" cy="90" r="36" fill="#fff6d6"/>
+  <g fill="#ffffff" opacity="0.75">
+    <ellipse cx="180" cy="80" rx="46" ry="16"/>
+    <ellipse cx="220" cy="72" rx="34" ry="13"/>
+    <ellipse cx="420" cy="60" rx="40" ry="14"/>
+  </g>
+
+  <!-- Distant hedge line -->
+  <g opacity="0.6">
+    <ellipse cx="90" cy="400" rx="100" ry="30" fill="#6f9846"/>
+    <ellipse cx="680" cy="404" rx="110" ry="28" fill="#6f9846"/>
+    <ellipse cx="760" cy="398" rx="70" ry="24" fill="#79a24f"/>
+  </g>
+
+  <!-- Garden fence with gate, right background -->
+  <g stroke="#8a5d3b" stroke-width="6" stroke-linecap="round">
+    <line x1="600" y1="360" x2="600" y2="420"/>
+    <line x1="640" y1="352" x2="640" y2="415"/>
+    <line x1="740" y1="350" x2="740" y2="414"/>
+    <line x1="780" y1="356" x2="780" y2="418"/>
+  </g>
+  <g stroke="#8a5d3b" stroke-width="4">
+    <line x1="600" y1="378" x2="640" y2="374"/>
+    <line x1="740" y1="372" x2="780" y2="376"/>
+  </g>
+  <!-- Gate, left slightly ajar (gap between 640 and 740) -->
+
+  <!-- Ground -->
+  <rect x="0" y="400" width="800" height="200" fill="url(#lawn)"/>
+
+  <!-- Large oak tree -->
+  <g>
+    <path d="M 300 600 C 292 500 302 430 296 380 C 292 356 316 348 322 380 C 328 430 336 500 330 600 Z" fill="#6f4a2e"/>
+    <ellipse cx="310" cy="270" rx="180" ry="130" fill="#6f9846"/>
+    <ellipse cx="190" cy="310" rx="100" ry="80" fill="#79a24f"/>
+    <ellipse cx="430" cy="300" rx="110" ry="88" fill="#79a24f"/>
+    <ellipse cx="310" cy="200" rx="120" ry="80" fill="#87ac5c"/>
+  </g>
+
+  <!-- Treehouse, nested against the trunk within the canopy -->
+  <g>
+    <!-- Supporting branch beneath the platform -->
+    <path d="M 250 340 L 400 332" stroke="#5c4632" stroke-width="10" stroke-linecap="round"/>
+    <!-- Platform -->
+    <rect x="255" y="330" width="150" height="14" fill="#7a5738"/>
+    <!-- Front wall -->
+    <rect x="270" y="248" width="120" height="96" fill="url(#treehouseWood)"/>
+    <g stroke="#6f4a2e" stroke-width="2" opacity="0.5">
+      <line x1="290" y1="248" x2="290" y2="344"/>
+      <line x1="310" y1="248" x2="310" y2="344"/>
+      <line x1="350" y1="248" x2="350" y2="344"/>
+      <line x1="370" y1="248" x2="370" y2="344"/>
+    </g>
+    <!-- Roof -->
+    <polygon points="258,252 330,208 402,252 388,264 330,228 272,264" fill="#5c4632"/>
+    <!-- Round window, glowing -->
+    <circle cx="330" cy="292" r="60" fill="url(#lanternGlow)"/>
+    <circle cx="330" cy="292" r="26" fill="#f9d878" stroke="#5c4632" stroke-width="5"/>
+    <line x1="330" y1="266" x2="330" y2="318" stroke="#5c4632" stroke-width="3"/>
+    <line x1="304" y1="292" x2="356" y2="292" stroke="#5c4632" stroke-width="3"/>
+  </g>
+
+  <!-- Rope ladder, hanging from the platform but pulled up, dangling clear of the ground -->
+  <g stroke="#c9b691" stroke-width="4" stroke-linecap="round">
+    <line x1="298" y1="344" x2="292" y2="430"/>
+    <line x1="326" y1="344" x2="320" y2="430"/>
+  </g>
+  <g stroke="#c9b691" stroke-width="4">
+    <line x1="294" y1="368" x2="322" y2="366"/>
+    <line x1="293" y1="392" x2="321" y2="390"/>
+    <line x1="292" y1="416" x2="320" y2="414"/>
+  </g>
+
+  <!-- Magpie, perched on a low branch, watching the window -->
+  <g>
+    <path d="M 420 316 L 470 310" stroke="#5c4632" stroke-width="6" stroke-linecap="round"/>
+    <ellipse cx="450" cy="302" rx="20" ry="13" fill="#1c1c1c"/>
+    <ellipse cx="462" cy="300" rx="8" ry="6" fill="#f2f2f2"/>
+    <path d="M 468 300 L 480 296 L 468 306 Z" fill="#1c1c1c"/>
+    <path d="M 434 296 L 424 292" stroke="#1c1c1c" stroke-width="4" stroke-linecap="round"/>
+    <circle cx="465" cy="298" r="2" fill="#fff"/>
+  </g>
+
+  <!-- Grass tufts around the base -->
+  <g fill="#4e6b35">
+    <path d="M 60 600 q 6 -40 0 -60 q 10 26 8 60 Z"/>
+    <path d="M 520 600 q 8 -44 -2 -66 q 14 24 10 66 Z"/>
+    <path d="M 760 600 q 6 -34 -8 -50 q 14 20 10 50 Z"/>
+  </g>
+
+  <!-- Two distinct sets of footprints -->
+  <!-- Path A: larger prints, from the gate towards the tree -->
+  <g fill="#3f5a2a" opacity="0.55">
+    <ellipse cx="640" cy="470" rx="9" ry="14" transform="rotate(-25 640 470)"/>
+    <ellipse cx="590" cy="490" rx="9" ry="14" transform="rotate(-20 590 490)"/>
+    <ellipse cx="540" cy="505" rx="9" ry="14" transform="rotate(-15 540 505)"/>
+    <ellipse cx="485" cy="515" rx="9" ry="14" transform="rotate(-10 485 515)"/>
+    <ellipse cx="428" cy="522" rx="9" ry="14" transform="rotate(-6 428 522)"/>
+  </g>
+  <!-- Path B: smaller prints, from the tree towards the hedge on the left -->
+  <g fill="#3f5a2a" opacity="0.55">
+    <ellipse cx="330" cy="560" rx="6" ry="10" transform="rotate(18 330 560)"/>
+    <ellipse cx="280" cy="548" rx="6" ry="10" transform="rotate(24 280 548)"/>
+    <ellipse cx="228" cy="540" rx="6" ry="10" transform="rotate(30 228 540)"/>
+    <ellipse cx="176" cy="536" rx="6" ry="10" transform="rotate(34 176 536)"/>
+    <ellipse cx="122" cy="534" rx="6" ry="10" transform="rotate(38 122 534)"/>
+  </g>
+
+  <!-- Dropped canvas bag at the foot of the tree, flap open, contents spilled -->
+  <g>
+    <ellipse cx="405" cy="565" rx="46" ry="16" fill="#00000022"/>
+    <path d="M 365 560 C 360 540 380 528 410 530 C 440 528 456 542 452 558 C 448 574 372 578 365 560 Z" fill="url(#bagCanvas)"/>
+    <path d="M 385 532 L 420 512 L 435 524 L 402 542 Z" fill="#8a6a3a"/>
+    <rect x="392" y="500" width="8" height="20" fill="#5c4632" transform="rotate(-18 396 510)"/>
+    <!-- Compass -->
+    <circle cx="345" cy="572" r="14" fill="#e7d6a0" stroke="#5c4632" stroke-width="3"/>
+    <line x1="345" y1="562" x2="345" y2="582" stroke="#b23a3a" stroke-width="2"/>
+    <line x1="335" y1="572" x2="355" y2="572" stroke="#5c4632" stroke-width="2"/>
+    <!-- Torch -->
+    <rect x="460" y="558" width="34" height="12" rx="3" fill="#4a4a4a"/>
+    <circle cx="496" cy="564" r="7" fill="#ffe08a"/>
+    <!-- Folded paper -->
+    <polygon points="415,578 445,572 452,588 422,594" fill="#f7f2e2" stroke="#c9b691" stroke-width="2"/>
+  </g>
+</svg>
