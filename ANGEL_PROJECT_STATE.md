@@ -4,16 +4,17 @@
 It records current state only — not history. For history, see the specific `ANGEL_*.md` report
 named under each item below. For operating rules, see `AGENTS.md` (imported by `CLAUDE.md`).
 
-Last updated: 2026-09-17, Educational Depth Phase 1 Wave 1 — production acceptance closed.
+Last updated: 2026-09-17, Educational Depth Phase 1 Wave 2 (Writing picture-narrative) — code
+shipped, PRODUCTION ACCEPTANCE: PARTIAL. See "Closed programme (most recent)" below.
 
 ---
 
 ## Current production status
 
 **Live** at `https://angel-11plus.vercel.app` (Vercel project `angel-11plus`, org `abs365s-projects`).
-Currently deployed from commit **`b65721a`** (`origin/main`, includes `c542bef`) — confirmed by
-`git fetch` showing `origin/main` at `b65721a`, and by `vercel inspect` showing the current
-Production deployment (aliased to `angel-11plus.vercel.app`) Ready, created after that push.
+Currently deployed from commit **`b777431`** (`origin/main`) — confirmed by `git push` showing
+`origin/main` advance from `9276412` to `b777431`, and by `vercel inspect`/`vercel alias ls` showing
+`angel-11plus.vercel.app` aliased to the resulting Ready production deployment.
 
 Supabase project: `agxunwcdatosrmzhhuxj` (`https://agxunwcdatosrmzhhuxj.supabase.co`) — confirmed
 identical between the Vercel production build and local dev; not a project-mismatch risk.
@@ -44,12 +45,64 @@ Publication is admin-gated (`submit_question_candidate` / `publish_question_cand
   before the Educational Depth Programme began)
 - Authentication / password recovery — production acceptance
 - **Educational Depth Phase 1 Wave 1 (MR-01 Arithmetic Foundation) — production acceptance: GO**
-  (`b65721a` on `origin/main`, deployed, smoke-verified — see "Closed programme" below)
+  (`b65721a` on `origin/main`, deployed, smoke-verified)
+
+**Not closed — open pending one Founder action:**
+- **Educational Depth Phase 1 Wave 2 (Writing picture-narrative) — production acceptance: PARTIAL.**
+  Code (teaching content, image-stimulus render path, type/routing) is deployed and live
+  (`b777431`), smoke-verified against a real live row with zero regression. The one new Practice
+  content row is authored but staged at `authentic_assessment_candidate`
+  (`supabase/migrations/255_writing_picture_narrative_practice_content.sql`, NOT APPLIED) — no real
+  learner can reach picture-narrative Practice content until the Founder applies that migration via
+  Supabase Dashboard > SQL Editor. See "Closed programme (most recent)" below for full detail. Do
+  not re-attempt to apply this migration directly; it is a Founder action by this repo's own
+  standing convention (every migration here is Founder-applied, `DEPLOYMENT.md`).
 
 ## Closed programme (most recent)
 
-**Educational Depth & Daily Preparation Programme, Phase 1, Wave 1** — MR-01 Arithmetic Foundation
-teaching depth + Maths remediation-silence fix. **CLOSED — production acceptance: GO.**
+**Educational Depth & Daily Preparation Programme, Phase 1, Wave 2** — Writing picture-narrative
+teaching depth + Practice image-stimulus infrastructure + one new original candidate prompt.
+**Code: CLOSED, deployed, GO. Content: OPEN, awaiting one Founder migration application. Overall:
+PARTIAL.**
+
+- Pushed to `origin/main` at `b777431`. Vercel Git integration deployed it; production alias
+  `angel-11plus.vercel.app` confirmed (via `vercel alias ls`) pointing at the resulting Ready
+  deployment.
+- **Baseline (live-verified this session, not from a prior report)**: all 7 `practice_eligible`
+  Writing rows are QT-WC-01a (reflective/discursive); zero QT-WC-01b (picture-narrative) rows
+  existed anywhere in the bank, in Practice or Mock-applied state. Zero teaching content and zero
+  image-stimulus rendering capability existed in Practice.
+- **What changed (code, live)**: a new `writing-picture-narrative` teaching family
+  (`lib/learningEngine/writingTeachingContent.ts`) teaching picture-evidence reasoning (observe →
+  interpret → commit to one direction → structure), routed via a new, separate `"picture-narrative"`
+  prompt type so no existing `narrative`/`descriptive` row's teaching content changed.
+  `WritingPrompt` gained an optional `stimulus` field (`types/index.ts`), validated defensively and
+  rendered in Practice's `WritingActivity` (absent on every pre-existing row, regression-safe by
+  construction).
+- **Content created**: exactly one new, original Practice picture-narrative prompt ("The Riverboat
+  at Dawn") with its own hand-authored SVG stimulus, deliberately a different scene from Mock's own
+  Q2 picture (a shed, migration 246) so Practice can never preview the exact image a learner could
+  later meet in a sealed Mock sitting. Staged at `authentic_assessment_candidate`, matching this
+  repo's own first-content convention (migrations 098/153/246) — not yet learner-reachable.
+- Tests: 4554/4561 pass; the 7 failures are byte-identical to the pre-existing baseline this file
+  already discloses (`englishWave1`, `englishWave2`, `englishWave2ExposureExpansion`,
+  `englishWave2PipelineVerification`, `migration237PublishAnswerPersistenceCorrection`, plus the two
+  untracked Factory files under "Deferred / non-blocking issues" below) — 0 regressions. `tsc
+  --noEmit` clean for every file this Wave touched. Independent subagent review found no material
+  defects.
+- **Production learner verification** (real authenticated learner, `balletman20@yahoo.com`,
+  Founder-authenticated, post-deploy): Continuous Writing Practice loaded a real live row
+  (`mock-writing-mistakelearned-01`); its worked-example panel correctly still showed the unchanged
+  `writing-reflective-discursive` scaffold (not the new family); its checklist rendered unchanged;
+  no image block rendered (correct — this row has no `stimulus`); no console errors. This proves
+  zero regression to the one thing a real learner can reach today. It cannot prove the new
+  picture-narrative content works for a real learner, because no learner can reach it yet — that
+  check is only possible after the Founder applies migration 255.
+- **Why this is PARTIAL, not GO**: this repo's own `submit_question_candidate`/
+  `publish_question_candidate` RPCs are admin-gated by design, and `DEPLOYMENT.md` records every
+  migration in this repo (schema, function, or content) as Founder-applied via Supabase Dashboard >
+  SQL Editor — there is no automated or Claude-held path to production content publication, by
+  design, not by omission. This mirrors migration 246's own identical treatment of Mock's Q2 row.
 
 - Pushed to `origin/main` at `c542bef` (implementation) and `b65721a` (Angel Claude Operating
   System v1.0 docs). Vercel Git integration deployed both; production alias
@@ -85,10 +138,11 @@ teaching depth + Maths remediation-silence fix. **CLOSED — production acceptan
 
 ## Known material educational risks (from Wave 1's live-production baseline)
 
-1. **Writing is critically thin**: 7 practice-eligible rows across 7 one-question families.
-   **Picture-led narrative has zero Practice content and zero teaching content** — it exists only
-   as a Mock task. This is the sharpest gap against the platform's own teaching-progression
-   standard.
+1. **Writing is critically thin**: 7 practice-eligible rows across 7 one-question families, still
+   entirely QT-WC-01a (reflective/discursive). Wave 2 built the picture-narrative teaching/render
+   infrastructure and authored one original candidate prompt, but it is not yet `practice_eligible`
+   (see "Not closed" above) — until the Founder applies migration 255, this risk is unchanged in
+   practice, even though the code to close it is now live.
 2. **Representation variation is nearly absent**: one representation type in 10 of the 12
    structurally-deepened Maths families. Reasoning-route and unknown-position variation are real;
    representation variation is not.
@@ -145,10 +199,17 @@ compliance merely because documentation exists** — formal Children's Code / DP
 and not yet independently verified as complete. Treat any privacy/compliance claim as unverified
 until a dedicated review says otherwise.
 
-## Exact next educational priority (not yet started)
+## Exact next educational priority
 
-**Writing — picture-led narrative learning depth.** Wave 1 is now formally closed; this is next.
-Reasoning: the
-Full English Paper can assess picture-led narrative, but current production learning content has
-an absence (not just a thinness) problem for this mode — see "Known material educational risks"
-above.
+**Immediate, one-step, non-engineering**: apply `supabase/migrations/255_writing_picture_narrative_
+practice_content.sql` (Founder review + Supabase Dashboard > SQL Editor). This is the single action
+that converts Wave 2 from PARTIAL to a real, learner-reachable picture-narrative Practice row —
+review the new prompt/checklist/image (`public/practice-assets/writing-picture-narrative/
+riverboat-v1.svg`) first, per this repo's own standing content-review discipline.
+
+**Next educational Wave** (after that Founder action, or in parallel if the Founder prefers to
+batch it with the next Wave's own content): Writing picture-narrative still has only ONE Practice
+prompt once 255 is applied — genuine family depth (structural/representation variation across
+several picture stimuli, not just one) is the next material gap, following the same Family Depth
+Standard Wave 1 established for Maths. Do not generate volume for its own sake; check what teaching
+gap remains first.
