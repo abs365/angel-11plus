@@ -33,9 +33,21 @@ const PHASE_B_FAMILIES = [
 ];
 const INCREMENT_020_FAMILIES = ["mr03-compound-area-perimeter"];
 const INCREMENT_003_FAMILIES = ["mr04-reverse-percentage", "mr04-time-reverse", "mr01-reverse-mean"];
-const ALL_FAMILIES = [...ORIGINAL_007L_FAMILIES, ...PHASE_B_FAMILIES, ...INCREMENT_020_FAMILIES, ...INCREMENT_003_FAMILIES];
+/**
+ * Educational Depth Programme, Phase 1 Wave 1 — the MR-01 Arithmetic
+ * Foundation cluster. Selected on live production evidence: 73 already-
+ * published practice-eligible questions (including the bank's single
+ * largest family, at 53 rows) that had no family teaching content at all.
+ */
+const EDUCATIONAL_DEPTH_WAVE1_FAMILIES = [
+  "mr01-whole-number-computation",
+  "mr01-decimal-computation",
+  "mr01-multistep-order-of-operations",
+  "mr01-fraction-computation",
+];
+const ALL_FAMILIES = [...ORIGINAL_007L_FAMILIES, ...PHASE_B_FAMILIES, ...INCREMENT_020_FAMILIES, ...INCREMENT_003_FAMILIES, ...EDUCATIONAL_DEPTH_WAVE1_FAMILIES];
 
-test("exactly 30 families have teaching content (4 original 007L + 22 Phase B + 1 Increment 020 + 3 Increment 003 Wave 1), no more no less", () => {
+test("exactly 34 families have teaching content (4 original 007L + 22 Phase B + 1 Increment 020 + 3 Increment 003 Wave 1 + 4 Educational Depth Wave 1), no more no less", () => {
   assert.deepEqual(Object.keys(MATHS_FAMILY_TEACHING_CONTENT).sort(), [...ALL_FAMILIES].sort());
 });
 
@@ -404,4 +416,170 @@ test("effectiveGuidedRevealStepCount matches every family's real maxGuidedReveal
   assert.equal(effectiveGuidedRevealStepCount(2, MATHS_FAMILY_TEACHING_CONTENT["mr01-data-table"].maxGuidedRevealSteps), 1);
   assert.equal(effectiveGuidedRevealStepCount(0, MATHS_FAMILY_TEACHING_CONTENT["mr05-number-property"].maxGuidedRevealSteps), 0);
   assert.equal(effectiveGuidedRevealStepCount(3, MATHS_FAMILY_TEACHING_CONTENT["mr02-nth-term"].maxGuidedRevealSteps), 3);
+});
+
+/**
+ * ─── Educational Depth Programme, Phase 1 Wave 1 — the MR-01 Arithmetic
+ * Foundation cluster ──────────────────────────────────────────────────
+ *
+ * Same discipline as the Phase B block above: MODEL answers are
+ * independently RECOMPUTED here from the scenario's own stated numbers,
+ * never merely asserted equal to the stored string, and every family's
+ * guided-reveal cap is asserted against the measured live-production
+ * boundary it was derived from.
+ */
+
+const EDUCATIONAL_DEPTH_WAVE1_LIVE_ANSWERS: Record<string, string[]> = {
+  // Frozen snapshot of every distinct live `prompt.answer` for these four
+  // families, read from production `ali_question_bank` (practice-eligible,
+  // active) during this wave's own baseline assessment. Purpose is
+  // identical to LIVE_ANSWERS_AT_PHASE_B_TIME above: a future edit to a
+  // MODEL cannot silently start handing a learner the answer to a real
+  // live question in the same family without failing here.
+  "mr01-whole-number-computation": ["2285", "931", "435", "326", "282", "3484", "6", "81", "5744", "1203", "527", "840", "84", "107", "804", "119", "2310", "188", "56", "3206", "1290", "169", "2", "3", "8714", "2177", "771", "2807", "3136", "1785", "3727", "136", "124", "13242", "281", "1418", "2021", "21", "204", "2833", "8", "2418", "3243", "7726", "1274", "4329", "6248", "4989", "13589", "12920", "3533"],
+  "mr01-decimal-computation": ["5.63", "5.2", "7.98", "3.9", "24", "0.84", "100"],
+  "mr01-multistep-order-of-operations": ["36", "8", "26", "17", "22", "76", "40"],
+  "mr01-fraction-computation": ["2/3", "2/15", "5/12", "9/10", "180"],
+};
+
+test("Wave 1: all four MR-01 Arithmetic Foundation families now have teaching content", () => {
+  for (const fam of EDUCATIONAL_DEPTH_WAVE1_FAMILIES) {
+    const content = getMathsTeachingContent(fam);
+    assert.ok(content, `${fam} must have teaching content after Wave 1`);
+  }
+});
+
+test("Wave 1: no MODEL answer collides with any live answer in its own family", () => {
+  for (const fam of EDUCATIONAL_DEPTH_WAVE1_FAMILIES) {
+    const content = getMathsTeachingContent(fam)!;
+    const live = EDUCATIONAL_DEPTH_WAVE1_LIVE_ANSWERS[fam];
+    assert.ok(
+      !live.includes(content.model.answer),
+      `${fam}'s MODEL answer "${content.model.answer}" must not equal any live question's answer`
+    );
+  }
+});
+
+test("mr01-whole-number-computation MODEL: long multiplication recomputed via its own partial products", () => {
+  const content = getMathsTeachingContent("mr01-whole-number-computation")!;
+  assert.equal(326 * 20, 6520, "first partial product as stated in the MODEL's reasoning");
+  assert.equal(326 * 4, 1304, "second partial product as stated in the MODEL's reasoning");
+  assert.equal(6520 + 1304, 326 * 24, "the two partial products must genuinely reconstruct the product");
+  assert.equal(326 * 24, 7824);
+  assert.equal(content.model.answer, "7824");
+  assert.equal(checkMathsAnswer("7824", content.model.answer), true);
+});
+
+test("mr01-decimal-computation MODEL: decimal addition recomputed, and the padding step is genuinely necessary", () => {
+  const content = getMathsTeachingContent("mr01-decimal-computation")!;
+  assert.equal(Math.round((8.3 + 12.75) * 100) / 100, 21.05);
+  assert.equal(content.model.answer, "21.05");
+  // The MODEL's whole teaching point is that the two addends have a
+  // DIFFERENT number of decimal places -- if a future edit picked numbers
+  // with matching places, the worked example would stop demonstrating the
+  // misconception it exists to address.
+  const dp = (n: string) => (n.split(".")[1] ?? "").length;
+  assert.notEqual(dp("8.3"), dp("12.75"), "the MODEL's two addends must differ in decimal places");
+  assert.equal(checkMathsAnswer("21.05", content.model.answer), true);
+});
+
+test("mr01-multistep-order-of-operations MODEL: precedence result and the left-to-right trap value both recomputed", () => {
+  const content = getMathsTeachingContent("mr01-multistep-order-of-operations")!;
+  assert.equal(30 - 4 * (2 + 3), 10, "correct precedence evaluation");
+  assert.equal((30 - 4) * 5, 130, "the wrong left-to-right value the verification text cites");
+  assert.equal(content.model.answer, "10");
+  assert.ok(
+    content.model.verification.includes("130"),
+    "the verification must name the actual wrong-order value, so the learner can recognise their own error"
+  );
+  assert.equal(checkMathsAnswer("10", content.model.answer), true);
+});
+
+test("mr01-fraction-computation MODEL: common-denominator addition recomputed, and the cited wrong method genuinely gives the cited wrong value", () => {
+  const content = getMathsTeachingContent("mr01-fraction-computation")!;
+  // 2/3 + 1/6 via common denominator 6 -> 4/6 + 1/6 = 5/6.
+  // Recomputed with exact integer arithmetic rather than float division:
+  // this mirrors the actual method being taught (convert, add numerators,
+  // simplify) AND avoids a float-equality artefact, since 2/3 + 1/6 and
+  // 5/6 are not bit-identical in IEEE-754.
+  const lcd = 6;
+  assert.equal(lcd % 3, 0, "6 must genuinely be a common denominator for thirds");
+  assert.equal(lcd % 6, 0, "...and for sixths");
+  const twoThirdsAsSixths = (2 * lcd) / 3;
+  assert.equal(twoThirdsAsSixths, 4, "2/3 converts to 4/6");
+  const sumNumerator = twoThirdsAsSixths + 1;
+  assert.equal(sumNumerator, 5, "numerators add to 5, denominators are NOT added");
+  const gcd = (a: number, b: number): number => (b === 0 ? a : gcd(b, a % b));
+  assert.equal(gcd(sumNumerator, lcd), 1, "5/6 must genuinely already be in simplest form");
+  assert.equal(content.model.answer, `${sumNumerator}/${lcd}`);
+  assert.equal(content.model.answer, "5/6");
+  // The verification claims adding denominators gives 3/9 = 1/3, and that
+  // this is SMALLER than 2/3 -- both halves recomputed, so the teaching
+  // claim cannot silently become false.
+  const wrongNumerator = 2 + 1;
+  const wrongDenominator = 3 + 6;
+  assert.equal(wrongNumerator, 3);
+  assert.equal(wrongDenominator, 9);
+  assert.equal(gcd(wrongNumerator, wrongDenominator), 3, "3/9 simplifies by 3...");
+  assert.equal(wrongNumerator / 3, 1, "...to 1/3");
+  assert.equal(wrongDenominator / 3, 3);
+  // and 1/3 must genuinely be smaller than the larger addend 2/3 --
+  // compared as integers over the same denominator, not as floats.
+  assert.ok(1 * 3 < 2 * 3, "the wrong result must genuinely be smaller than 2/3");
+});
+
+/**
+ * ─── Wave 1 answer-leak safety: the reason maxGuidedRevealSteps is
+ * mandatory for all four of these families ───────────────────────────
+ *
+ * Measured directly against live production rows during this wave: in
+ * EVERY row of all four families, the LAST stored working step restates
+ * the final answer verbatim (49/49, 6/6, 6/6, 5/5). Each cap below is the
+ * measured minimum number of steps revealable before the answer first
+ * appears in ANY of that family's real rows. Without these caps, adding
+ * teaching content to these families would have handed the answer to a
+ * learner before they submitted -- including to 36 single-step rows whose
+ * only working step IS the answer.
+ */
+
+test("Wave 1 safety: every MR-01 cluster family carries an explicit guided-reveal cap — none may be left uncapped", () => {
+  for (const fam of EDUCATIONAL_DEPTH_WAVE1_FAMILIES) {
+    const content = getMathsTeachingContent(fam)!;
+    assert.notEqual(
+      content.maxGuidedRevealSteps,
+      undefined,
+      `${fam}'s real rows all end in an answer-restating step, so it MUST carry a cap`
+    );
+  }
+});
+
+test("Wave 1 safety: each cap matches the measured live boundary it was derived from", () => {
+  assert.equal(
+    MATHS_FAMILY_TEACHING_CONTENT["mr01-whole-number-computation"].maxGuidedRevealSteps,
+    0,
+    "36 of 49 real rows have a single working step that IS the answer -- nothing is safe to reveal"
+  );
+  assert.equal(MATHS_FAMILY_TEACHING_CONTENT["mr01-decimal-computation"].maxGuidedRevealSteps, 1);
+  assert.equal(MATHS_FAMILY_TEACHING_CONTENT["mr01-multistep-order-of-operations"].maxGuidedRevealSteps, 1);
+  assert.equal(MATHS_FAMILY_TEACHING_CONTENT["mr01-fraction-computation"].maxGuidedRevealSteps, 1);
+});
+
+test("Wave 1 safety: the caps, applied through the real reveal function, stop short of the answer step for each family's shortest real row", () => {
+  // Shortest real row shapes measured live: whole-number 1 step,
+  // decimal 2 steps, order-of-operations 2 steps, fraction 2 steps --
+  // and in each the answer appears in the FINAL step.
+  const shortestRealStepCount: Record<string, number> = {
+    "mr01-whole-number-computation": 1,
+    "mr01-decimal-computation": 2,
+    "mr01-multistep-order-of-operations": 2,
+    "mr01-fraction-computation": 2,
+  };
+  for (const fam of EDUCATIONAL_DEPTH_WAVE1_FAMILIES) {
+    const steps = shortestRealStepCount[fam];
+    const revealable = effectiveGuidedRevealStepCount(steps, MATHS_FAMILY_TEACHING_CONTENT[fam].maxGuidedRevealSteps);
+    assert.ok(
+      revealable < steps,
+      `${fam}: reveal (${revealable}) must stop strictly before the final, answer-bearing step (${steps})`
+    );
+  }
 });

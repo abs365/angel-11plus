@@ -35,36 +35,71 @@ function mathsActivitySource(): string {
 
 function remediationBlock(): string {
   const src = mathsActivitySource();
-  const blockMatch = src.match(/\{shouldRenderMisconceptionNote\(submitted, lastCorrect, addressesMisconception\) && \(([\s\S]*?)\n {8}\)\}/);
+  const blockMatch = src.match(/\{shouldRenderMathsMisconceptionNote\(submitted, lastCorrect, addressesMisconception, misconceptionLabel\) && \(([\s\S]*?)\n {8}\)\}/);
   assert.ok(blockMatch, "MathsActivity's remediation block not found");
   return blockMatch![1];
 }
 
 // --- A/B: the render gate itself no longer requires misconceptionLabel ---
 
-test("A/B: MathsActivity's remediation block is gated ONLY by the shared shouldRenderMisconceptionNote() predicate, never additionally by misconceptionLabel", () => {
+test("A/B: MathsActivity's remediation block is gated by the shared Maths predicate alone, never additionally by misconceptionLabel as a prerequisite", () => {
   const src = mathsActivitySource();
+  // Educational Depth Programme, Phase 1 Wave 1 -- the gate is now
+  // shouldRenderMathsMisconceptionNote, which takes the family label as a
+  // FALLBACK argument rather than treating it as a prerequisite. Completion
+  // A's actual protective intent (a missing label must never suppress real
+  // row-level text) is unchanged and is proven directly, against the real
+  // predicate rather than against source text, in
+  // practiceInteractionGuard.test.ts.
   assert.match(
     src,
-    /\{shouldRenderMisconceptionNote\(submitted, lastCorrect, addressesMisconception\) && \(/,
-    "the remediation block must be gated by the shared predicate alone, matching ReadingActivity's own call site exactly"
+    /\{shouldRenderMathsMisconceptionNote\(submitted, lastCorrect, addressesMisconception, misconceptionLabel\) && \(/,
+    "the remediation block must be gated by the shared Maths predicate"
   );
-  // The old, incorrect gate additionally required `&& misconceptionLabel`
-  // directly after the predicate call -- assert that exact broken pattern
-  // is gone, not merely that *a* working pattern exists elsewhere.
+  // The old, incorrect gate required `&& misconceptionLabel` directly after
+  // the predicate call -- assert that exact broken pattern is still gone.
   assert.ok(
-    !/shouldRenderMisconceptionNote\(submitted, lastCorrect, addressesMisconception\) && misconceptionLabel/.test(src),
-    "misconceptionLabel must never be an additional prerequisite for rendering the remediation block"
+    !/shouldRenderMathsMisconceptionNote\([^)]*\) && misconceptionLabel/.test(src),
+    "misconceptionLabel must never be an additional AND-prerequisite for rendering the remediation block"
+  );
+  // And the widened gate must genuinely still pass the row-level text
+  // through as the first-choice signal, not have been replaced by a
+  // label-only block.
+  assert.ok(
+    /shouldRenderMathsMisconceptionNote\(submitted, lastCorrect, addressesMisconception, /.test(src),
+    "the row-level text must still be the predicate's own primary argument"
   );
 });
 
-test("A: addressesMisconception itself renders unconditionally inside the block, not nested inside a misconceptionLabel check, and is passed through the humanizer before display", () => {
+test("A: addressesMisconception renders on its own presence alone -- never nested inside a misconceptionLabel check -- and is passed through the humanizer before display", () => {
   const block = remediationBlock();
   assert.match(
     block,
     /<p[^>]*>\{humanizeMisconceptionText\(addressesMisconception\)\}<\/p>/,
-    "addressesMisconception must render as its own unconditional paragraph, humanized before display"
+    "addressesMisconception must render as its own paragraph, humanized before display"
   );
+  // Wave 1: the text paragraph is now guarded by `addressesMisconception &&`
+  // because the block can be entered on the family label alone (the 398-row
+  // no-text case). That guard must depend on the TEXT's own presence, never
+  // on the label -- otherwise Completion A's defect returns.
+  assert.match(
+    block,
+    /\{addressesMisconception && \(/,
+    "the text paragraph must be guarded by the presence of the text itself"
+  );
+  // Non-nesting is proven structurally rather than by a cross-line regex
+  // (which would false-positive on two SIBLING conditionals): the label
+  // conditional must be the single-line, self-closing form asserted by
+  // test B below, so it is necessarily closed before the text paragraph
+  // begins. A multi-line `{misconceptionLabel && (` opener is the only
+  // shape that could enclose the text, so its absence is the real check.
+  assert.ok(
+    !/\{misconceptionLabel && \(/.test(block),
+    "misconceptionLabel must not open a multi-line conditional that could enclose the misconception text"
+  );
+  const labelLine = block.split(String.fromCharCode(10)).find((l) => l.includes("misconceptionLabel &&"));
+  assert.ok(labelLine && labelLine.trimEnd().endsWith("}"), "the label conditional must open and close on one line");
+  assert.ok(labelLine && !labelLine.includes("humanizeMisconceptionText"), "the label conditional must not contain the misconception text");
 });
 
 test("B: misconceptionLabel, when present, still renders as an optional heading ahead of the humanized misconception text", () => {
@@ -84,8 +119,12 @@ test("C/D: the underlying submitted/lastCorrect/addressesMisconception gating is
   // practiceInteractionGuard.test.ts. This test only proves MathsActivity
   // still calls that exact shared function, not a local reimplementation.
   const src = mathsActivitySource();
-  const callCount = (src.match(/shouldRenderMisconceptionNote\(/g) ?? []).length;
+  const callCount = (src.match(/shouldRenderMathsMisconceptionNote\(/g) ?? []).length;
   assert.equal(callCount, 1, "MathsActivity must call the shared predicate exactly once, never a parallel local condition");
+  // MathsActivity must not also call the English/shared gate -- two gates in
+  // one component is exactly the divergence this test exists to prevent.
+  const sharedGateCalls = (src.match(/[^s]shouldRenderMisconceptionNote\(/g) ?? []).length;
+  assert.equal(sharedGateCalls, 0, "MathsActivity must not additionally call the un-widened shared predicate");
 });
 
 // --- E: recently activated hard families are genuinely reachable ---
@@ -132,10 +171,19 @@ test("F: a family WITH dedicated teaching content still resolves a real misconce
 });
 
 test("no pre-submission or duplicate leakage path was introduced: addressesMisconception appears exactly where expected in MathsActivity", () => {
-  const src = mathsActivitySource();
+  // Comments are stripped before counting. The original guard counted raw
+  // source occurrences, which made it fail whenever a comment merely NAMED
+  // the identifier -- coupling a real leakage guard to prose. Stripping
+  // comments keeps the guard's actual intent (no stray or duplicated render
+  // path) without that fragility.
+  const src = mathsActivitySource()
+    .replace(/\/\*[\s\S]*?\*\//g, "")
+    .replace(/^\s*\/\/.*$/gm, "");
   const occurrences = [...src.matchAll(/addressesMisconception/g)].length;
-  // prop type declaration, destructured parameter, gate condition,
-  // interpolated render = exactly 4 real references, same discipline as
-  // englishRemediationRendering.test.ts's own equivalent guard.
-  assert.equal(occurrences, 4, `expected exactly 4 references to addressesMisconception in MathsActivity, found ${occurrences}`);
+  // prop type declaration, destructured parameter, gate argument,
+  // text-presence guard, interpolated render = exactly 5 real references.
+  // The 5th (the text-presence guard) is new in Educational Depth
+  // Programme Phase 1 Wave 1, which allows the block to be entered on the
+  // family label alone when a row carries no text of its own.
+  assert.equal(occurrences, 5, `expected exactly 5 references to addressesMisconception in MathsActivity, found ${occurrences}`);
 });

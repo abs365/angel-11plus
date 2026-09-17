@@ -38,7 +38,7 @@ import { getExamStrategyHint, getWorkedExample } from "@/lib/learningEngine/engl
 import { getGuidedScaffoldKind, getGuidedInstructionText, checkLiveSelectionCount } from "@/lib/learningEngine/guidedPractice";
 import { classifyAutomaticError, getSelfReflectionCategories, WRONG_ANSWER_CATEGORY_LABEL } from "@/lib/learningEngine/englishErrorClassification";
 import { getMathsTeachingContent, MATHS_MISCONCEPTION_CATEGORY_LABEL, effectiveGuidedRevealStepCount } from "@/lib/learningEngine/mathsTeachingContent";
-import { canSubmitAnswer, runGuardedSubmission, resolveOutcomeLabel, shouldRenderMisconceptionNote, humanizeMisconceptionText } from "@/lib/learningEngine/practiceInteractionGuard";
+import { canSubmitAnswer, runGuardedSubmission, resolveOutcomeLabel, shouldRenderMisconceptionNote, shouldRenderMathsMisconceptionNote, humanizeMisconceptionText } from "@/lib/learningEngine/practiceInteractionGuard";
 import { CompetencyProfile } from "@/components/learningEngine/CompetencyProfile";
 import { EvidenceProfile } from "@/components/learningEngine/EvidenceProfile";
 import { DiagnosticOverview } from "@/components/learningEngine/DiagnosticOverview";
@@ -1431,10 +1431,23 @@ function MathsActivity({
             mathsTeachingContent.ts's own documented contract that absence
             of teaching content must never change behaviour for a family
             it doesn't cover. */}
-        {shouldRenderMisconceptionNote(submitted, lastCorrect, addressesMisconception) && (
+        {/* Educational Depth Programme, Phase 1 Wave 1 — remediation
+            silence fix. Previously gated on addressesMisconception alone,
+            which meant 398 of the 587 live Mathematics rows (68%, measured
+            against production) showed a learner NOTHING after a wrong
+            answer, because the Question Factory-generated rows carry no
+            addresses_misconception text — even though their family's own
+            teaching content, and therefore misconceptionLabel, was sitting
+            right here already computed. The row-level text remains the
+            preferred, richer signal and is unchanged where it exists; the
+            family-level label is now a genuine fallback rather than a
+            decoration that only ever appeared alongside text. */}
+        {shouldRenderMathsMisconceptionNote(submitted, lastCorrect, addressesMisconception, misconceptionLabel) && (
           <div className="text-xs text-blue-700 dark:text-blue-300 bg-blue-50 dark:bg-blue-950 rounded-xl p-3 mt-3">
             {misconceptionLabel && <p className="font-semibold">{misconceptionLabel}</p>}
-            <p className={misconceptionLabel ? "mt-1" : undefined}>{humanizeMisconceptionText(addressesMisconception)}</p>
+            {addressesMisconception && (
+              <p className={misconceptionLabel ? "mt-1" : undefined}>{humanizeMisconceptionText(addressesMisconception)}</p>
+            )}
           </div>
         )}
 

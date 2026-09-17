@@ -5,6 +5,7 @@ import {
   runGuardedSubmission,
   resolveOutcomeLabel,
   shouldRenderMisconceptionNote,
+  shouldRenderMathsMisconceptionNote,
   humanizeMisconceptionText,
 } from "../../../lib/learningEngine/practiceInteractionGuard";
 
@@ -324,4 +325,61 @@ test("control: a plain all-lowercase slug still humanizes exactly as before (no 
 test("control: real prose containing capitalised proper nouns and spaces is still left completely unchanged", () => {
   const realProseWithNames = "Assuming Maya or Priya's reaction reflects the whole class's mood, rather than her own private feeling.";
   assert.equal(humanizeMisconceptionText(realProseWithNames), realProseWithNames);
+});
+
+/**
+ * ─── Educational Depth Programme, Phase 1 Wave 1 — Mathematics
+ * remediation silence fix ────────────────────────────────────────────
+ *
+ * The defect these cover, measured against live production during this
+ * wave: 414 of 587 practice-eligible Mathematics rows carry no
+ * `addresses_misconception` text, and 398 of those are in families that
+ * DO have teaching content. Under the old shared gate, all 398 rendered
+ * no wrong-answer guidance whatsoever.
+ */
+
+test("Wave 1 fix: a wrong answer on a row with NO text but a real family label now shows the family label (the 398-row case)", () => {
+  assert.equal(
+    shouldRenderMathsMisconceptionNote(true, false, undefined, "This looks like the right idea, applied in the wrong order or stopped one step early."),
+    true
+  );
+});
+
+test("Wave 1 fix: the old shared gate would have shown nothing for that exact same case — this is the behaviour being corrected", () => {
+  assert.equal(shouldRenderMisconceptionNote(true, false, undefined), false);
+});
+
+test("Wave 1 fix: row-level text alone still renders, with or without a family label (ASSESSMENT-ONLY families unchanged)", () => {
+  assert.equal(shouldRenderMathsMisconceptionNote(true, false, "Applying the stated operation directly.", undefined), true);
+  assert.equal(shouldRenderMathsMisconceptionNote(true, false, "Applying the stated operation directly.", "A label"), true);
+});
+
+test("Wave 1 fix: neither text nor label still renders nothing — the fallback is not a fabricated diagnosis", () => {
+  assert.equal(shouldRenderMathsMisconceptionNote(true, false, undefined, undefined), false);
+  assert.equal(shouldRenderMathsMisconceptionNote(true, false, "", ""), false);
+});
+
+test("Wave 1 fix: a CORRECT answer never renders remediation, whatever content is available", () => {
+  assert.equal(shouldRenderMathsMisconceptionNote(true, true, "real text", "real label"), false);
+});
+
+test("Wave 1 fix: an unsubmitted question never renders remediation, whatever content is available", () => {
+  assert.equal(shouldRenderMathsMisconceptionNote(false, false, "real text", "real label"), false);
+  assert.equal(shouldRenderMathsMisconceptionNote(false, null, "real text", "real label"), false);
+});
+
+test("Wave 1 fix: the two gates agree on WHEN remediation is due, differing only on what content suffices", () => {
+  // Wherever the original gate fires, the Maths gate must fire too --
+  // the fix may only ever widen, never narrow, existing behaviour.
+  for (const submitted of [true, false]) {
+    for (const lastCorrect of [true, false, null]) {
+      for (const text of ["real text", undefined]) {
+        const original = shouldRenderMisconceptionNote(submitted, lastCorrect as boolean | null, text);
+        const widened = shouldRenderMathsMisconceptionNote(submitted, lastCorrect as boolean | null, text, "a label");
+        if (original) {
+          assert.equal(widened, true, `widened gate must never suppress a case the original gate rendered (submitted=${submitted}, lastCorrect=${lastCorrect}, text=${text})`);
+        }
+      }
+    }
+  }
 });

@@ -107,6 +107,43 @@ export function shouldRenderMisconceptionNote(
 }
 
 /**
+ * Educational Depth Programme, Phase 1 Wave 1 — Mathematics remediation
+ * silence fix.
+ *
+ * Found during this wave's own live-production assessment, not assumed:
+ * 414 of the 587 live practice-eligible Mathematics rows carry NO
+ * `addresses_misconception` text at all (overwhelmingly the Question
+ * Factory-generated rows, which never authored that field), and 398 of
+ * those sit in families that DO have full teaching content. Because
+ * `shouldRenderMisconceptionNote` gates on the row-level text alone, a
+ * learner answering any of those 398 questions incorrectly saw NOTHING —
+ * not even the family's own misconception-category framing, which is
+ * already computed and available at that call site.
+ *
+ * That is 68% of live Mathematics practice offering no wrong-answer
+ * guidance, in families that were nominally "teaching covered".
+ *
+ * This function keeps the row-level text as the preferred, richer signal
+ * and adds the family-level category label as a genuine FALLBACK — never
+ * a replacement. It deliberately does not touch
+ * `shouldRenderMisconceptionNote`, which English still uses unchanged:
+ * English has its own tiered error classification and its own rows do
+ * carry real text, so widening the shared gate would change behaviour for
+ * a subject this wave did not assess.
+ */
+export function shouldRenderMathsMisconceptionNote(
+  submitted: boolean,
+  lastCorrect: boolean | null,
+  addressesMisconception: string | undefined,
+  familyMisconceptionLabel: string | undefined
+): boolean {
+  // Same `!lastCorrect` semantics as shouldRenderMisconceptionNote above,
+  // deliberately identical so the two gates can never disagree about WHEN
+  // remediation is due — only about what content is sufficient to show.
+  return submitted && !lastCorrect && (Boolean(addressesMisconception) || Boolean(familyMisconceptionLabel));
+}
+
+/**
  * Completion Assurance Programme, Completion A — surfaced only once
  * MathsActivity's misconceptionLabel gate was removed: every
  * pre-existing Mathematics family's addressesMisconception text

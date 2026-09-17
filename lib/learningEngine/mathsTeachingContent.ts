@@ -581,6 +581,111 @@ export const MATHS_FAMILY_TEACHING_CONTENT: Record<string, MathsFamilyTeachingCo
     },
     misconceptionCategory: "STRUCTURAL_MISAPPLICATION",
   },
+
+  /*
+   * Educational Depth Programme, Phase 1 Wave 1 -- the MR-01 Arithmetic
+   * Foundation cluster. These 4 families were selected on live production
+   * evidence, not planning assumption: together they are 73 already-
+   * published, already-practice-eligible questions (including the largest
+   * single family in the whole bank, at 53 rows) that carried NO family
+   * teaching content at all, so every one of them rendered the pre-007L
+   * ASSESSMENT ONLY surface -- no "Try with guidance" control, no worked
+   * example, no model. MR-01's full lesson (/learning-intelligence/learn/
+   * mathematics/arithmetic) does exist, but it teaches one narrow concept
+   * (column subtraction with regrouping across zeros) and does not cover
+   * this cluster's real range: long multiplication, division with
+   * remainders, missing-operand reverse problems, error identification,
+   * decimals, order of operations, or fractions.
+   *
+   * maxGuidedRevealSteps is set on ALL FOUR, and is not optional here.
+   * Every one of these families' real stored workingSteps ends in a step
+   * that restates the final answer verbatim -- measured directly against
+   * live production rows: 49/49, 6/6, 6/6 and 5/5 respectively. Each cap
+   * below is the measured minimum number of steps revealable before the
+   * answer appears in ANY of that family's real rows, so Guided reveal can
+   * never leak an answer pre-submission. Post-submission the full,
+   * unmodified workingSteps are still shown, unaffected.
+   */
+  "mr01-whole-number-computation": {
+    model: {
+      whatToNotice: "A calculation on whole numbers, with no context to unpick. The part that is missing varies: usually the RESULT, but sometimes one of the numbers being operated on, and sometimes you are given a result that is stated to be wrong and asked for the correct one.",
+      relationship: "Identify the operation and which position is unknown BEFORE calculating. If the result is missing, work forwards. If one of the operands is missing, work backwards using the inverse operation. Long multiplication needs every partial product; division needs the remainder handled the way the question actually asks for it.",
+      scenario: "326 x 24 = ?",
+      reasoning: [
+        "Split the 24 into 20 and 4, so that no partial product can be lost.",
+        "326 x 20 = 6520.",
+        "326 x 4 = 1304.",
+        "Add the partial products: 6520 + 1304 = 7824.",
+      ],
+      answer: "7824",
+      verification: "Estimate to check the size is right: 326 is about 330 and 24 is about 25, and 330 x 25 = 8250 -- close to 7824, so no partial product has been dropped. A missed partial product usually leaves an answer far too small.",
+    },
+    misconceptionCategory: "PROCEDURAL_SEQUENCE_ERROR",
+    /* Measured cap: 36 of this family's 49 real rows with working carry a
+       SINGLE working step that is just the answer restated ("5164 - 2879 =
+       2285"). There is no genuine intermediate step to reveal, so Guided
+       reveal is disabled for this family entirely -- the same decision, for
+       the same measured reason, as mr05-number-property above. The MODEL is
+       where this family's teaching value sits, and it is unaffected. */
+    maxGuidedRevealSteps: 0,
+  },
+  "mr01-decimal-computation": {
+    model: {
+      whatToNotice: "The numbers carry decimal points, and the two numbers often have a DIFFERENT number of decimal places. The decimal point is a place-value marker, not decoration -- it decides which digits line up with which.",
+      relationship: "For addition and subtraction, line the decimal points up vertically and pad the shorter number with a zero so both have the same number of decimal places. For multiplication, multiply as whole numbers and then place the point so the answer has as many decimal places as both numbers together. For division, remember that dividing by a number smaller than 1 makes the answer BIGGER, not smaller.",
+      scenario: "8.3 + 12.75 = ?",
+      reasoning: [
+        "8.3 has 1 decimal place, 12.75 has 2 -- pad 8.3 to 8.30 so they match.",
+        "Line the points up: 8.30 + 12.75.",
+        "Add from the right: 0 + 5 = 5, then 3 + 7 = 10 (carry 1), then 8 + 2 + 1 = 11.",
+        "Result: 21.05.",
+      ],
+      answer: "21.05",
+      verification: "Check the size by rounding: 8.3 is about 8 and 12.75 is about 13, and 8 + 13 = 21 -- so 21.05 is the right magnitude. An answer near 9.6 or 20.5 would mean the decimal points were not aligned.",
+    },
+    misconceptionCategory: "PROCEDURAL_SEQUENCE_ERROR",
+    /* Measured cap: every one of this family's 6 real rows with working
+       reaches the answer by its 2nd step at the latest, so only the 1st
+       step is safe to reveal pre-submission. */
+    maxGuidedRevealSteps: 1,
+  },
+  "mr01-multistep-order-of-operations": {
+    model: {
+      whatToNotice: "More than one operation in a single expression, often with brackets, a power or a root. Working left to right in reading order is exactly what these questions are built to catch.",
+      relationship: "Resolve in this order: Brackets, then Indices (powers and roots), then Division and Multiplication together working left to right, then Addition and Subtraction together working left to right. Rewrite the whole expression after each stage rather than trying to hold it in your head.",
+      scenario: "30 - 4 x (2 + 3) = ?",
+      reasoning: [
+        "Brackets first: 2 + 3 = 5, so the expression becomes 30 - 4 x 5.",
+        "Multiplication before subtraction: 4 x 5 = 20, so the expression becomes 30 - 20.",
+        "Subtract: 30 - 20 = 10.",
+      ],
+      answer: "10",
+      verification: "Check what a left-to-right reading would have given: 30 - 4 = 26, then 26 x 5 = 130. Getting 130 instead of 10 is the signature of ignoring precedence -- if an answer is far larger than the numbers in the expression suggest, re-check the order.",
+    },
+    misconceptionCategory: "PROCEDURAL_SEQUENCE_ERROR",
+    /* Measured cap: all 6 real rows with working reach the answer by their
+       2nd step, so 1 step is the safe pre-submission reveal boundary. */
+    maxGuidedRevealSteps: 1,
+  },
+  "mr01-fraction-computation": {
+    model: {
+      whatToNotice: "Fractions combined by one of the four operations, sometimes written as mixed numbers. Which method is correct depends entirely on the OPERATION -- the methods are not interchangeable, even though the questions look alike.",
+      relationship: "Adding or subtracting needs a COMMON DENOMINATOR first, and denominators are never added. Multiplying needs no common denominator -- multiply numerators together and denominators together. Dividing means multiplying by the reciprocal of the second fraction. Mixed numbers are converted to improper fractions before any of this. If the question asks for simplest form, simplifying is part of the answer, not an optional extra.",
+      scenario: "2/3 + 1/6 = ? Give your answer in its simplest form.",
+      reasoning: [
+        "This is addition, so a common denominator is needed: the lowest common multiple of 3 and 6 is 6.",
+        "Convert: 2/3 = 4/6. The 1/6 already has denominator 6.",
+        "Add the numerators only: 4/6 + 1/6 = 5/6.",
+        "Check simplest form: 5 and 6 share no factor above 1, so 5/6 is already simplest.",
+      ],
+      answer: "5/6",
+      verification: "Sense-check against the parts: 2/3 is a little more than a half and 1/6 is small, so an answer just under 1 is plausible. Adding the denominators would have given 3/9 = 1/3, which is SMALLER than 2/3 on its own -- an immediate signal that the wrong method was used.",
+    },
+    misconceptionCategory: "STRUCTURAL_MISAPPLICATION",
+    /* Measured cap: the shortest real row (2 steps) reaches the answer at
+       step 2, so 1 step is the safe pre-submission reveal boundary. */
+    maxGuidedRevealSteps: 1,
+  },
 };
 
 export function getMathsTeachingContent(familyId?: string | null): MathsFamilyTeachingContent | undefined {
