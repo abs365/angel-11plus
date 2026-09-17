@@ -37,6 +37,19 @@ export const WRITING_READINESS_MIN_SHAPES = 2;
  * — a malformed or unexpectedly-shaped stored prompt is silently excluded,
  * never rendered. No fixture fallback of any kind.
  */
+/**
+ * Educational Depth Phase 1, Wave 2 — a `stimulus` key is optional (every
+ * pre-Wave-2 row has none, and must keep validating exactly as before),
+ * but if present it must be genuinely well-formed: a malformed stimulus
+ * is excluded the same way a malformed prompt is, never rendered with a
+ * broken image or missing alt text.
+ */
+function isValidWritingPromptStimulus(value: unknown): boolean {
+  if (!value || typeof value !== "object") return false;
+  const v = value as Record<string, unknown>;
+  return v.type === "image" && typeof v.imageAssetUrl === "string" && v.imageAssetUrl.length > 0 && typeof v.altText === "string" && v.altText.length > 0;
+}
+
 function isValidWritingPrompt(value: unknown): value is WritingPrompt {
   if (!value || typeof value !== "object") return false;
   const v = value as Record<string, unknown>;
@@ -44,11 +57,12 @@ function isValidWritingPrompt(value: unknown): value is WritingPrompt {
     typeof v.id === "string" &&
     typeof v.title === "string" &&
     typeof v.prompt === "string" &&
-    (v.type === "narrative" || v.type === "descriptive" || v.type === "persuasive") &&
+    (v.type === "narrative" || v.type === "descriptive" || v.type === "persuasive" || v.type === "picture-narrative") &&
     typeof v.difficulty === "string" &&
     typeof v.timeMinutes === "number" &&
     Array.isArray(v.checklist) &&
-    v.checklist.every((item) => typeof item === "string")
+    v.checklist.every((item) => typeof item === "string") &&
+    (v.stimulus === undefined || isValidWritingPromptStimulus(v.stimulus))
   );
 }
 

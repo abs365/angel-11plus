@@ -4,13 +4,23 @@
  * Same shape as lib/learningEngine/mathsTeachingContent.ts's proven
  * pattern (Educational Increment 007L/007M): a plain
  * Record<taskFamilyId, WritingFamilyTeachingContent>, not a database
- * table, not a second engine. Bounded to the one task family Part 7 of
- * the design document justifies building now — the picture-narrative
- * family remains deferred (needs an original, non-copyrighted image
- * asset, a separate content-sourcing step).
+ * table, not a second engine.
+ *
+ * Educational Depth Phase 1, Wave 2 — the picture-narrative family named
+ * as deferred above is now implemented. It needed two things Part 7
+ * itself named as blockers: an original, non-copyrighted image asset (an
+ * SVG was hand-authored for Mock's Q2, migration 246; a second, distinct
+ * one is authored for Practice by this Wave, see supabase/migrations/255_
+ * writing_picture_narrative_practice_content.sql) and the WritingPrompt
+ * type/render path actually supporting an image stimulus (types/index.ts,
+ * this Wave). The two families need genuinely different planning
+ * scaffolds (evidence: this file's own commentary said so before either
+ * was built) — picture-narrative's below teaches picture-evidence
+ * reasoning (Picture evidence -> possible interpretation -> narrative
+ * choice -> sentence/paragraph decision), never a memorisable plot.
  */
 
-export type WritingTaskFamily = "writing-reflective-discursive";
+export type WritingTaskFamily = "writing-reflective-discursive" | "writing-picture-narrative";
 
 export interface WritingPlanningQuestion {
   question: string;
@@ -67,6 +77,26 @@ export const WRITING_FAMILY_TEACHING_CONTENT: Record<WritingTaskFamily, WritingF
     ],
     commonMisconception: "Writing general facts or a made-up story about the topic area, instead of the candidate's own real experience or genuine opinion the question actually asked for.",
   },
+  "writing-picture-narrative": {
+    model: {
+      whatToNotice: "The picture shows one still moment, not a whole story. Notice two or three specific, concrete details in it (an object, a person, something odd or out of place) rather than trying to describe everything you can see.",
+      approach: "Work through the picture in order: what you actually see, what it might mean, which one story direction you will choose, then how your opening sentence will use a detail from the picture rather than just naming it.",
+      topic: "Imagine a picture showing a bicycle lying on its side in an empty playground at dusk, with one light still on in the school building behind it.",
+      workedOpening: "The bicycle lay exactly where it had fallen, its front wheel still slowly turning. Nobody else was in the playground, but somewhere behind me, in the one lit window of the school, I could hear someone moving.",
+      reasoning: [
+        "Starts inside the scene, using a real detail from the picture (the fallen bicycle, its wheel still turning) as evidence, rather than announcing 'this is a story about a bicycle.'",
+        "The turning wheel is a small precise detail, not the whole bicycle described generally, which suggests something just happened rather than simply describing an object.",
+        "The second sentence commits to ONE narrative direction (someone is in the lit window) instead of listing everything else visible in the scene.",
+      ],
+    },
+    planningScaffold: [
+      { question: "What can you actually see in the picture? Name two or three specific details, not the whole scene.", purpose: "Forces genuine observation of real evidence before any story is invented, directly addressing this family's own most common misconception (describing the picture instead of narrating)." },
+      { question: "What might have just happened, or be about to happen, based on what you noticed?", purpose: "Generates a plausible story possibility grounded in the picture's evidence, rather than an idea unrelated to it." },
+      { question: "Which ONE story direction will you choose, and who is your main character?", purpose: "Forces a single, manageable narrative direction rather than trying to cover every possibility the picture suggests." },
+      { question: "What is the turning point, and how will your story end?", purpose: "Ensures the writing develops events rather than only listing or describing them, and that it reaches a genuine ending." },
+    ],
+    commonMisconception: "Describing the picture itself (a static scene description) rather than writing a story that uses it as a starting point. The marker cannot credit narrative writing that never actually narrates a sequence of events.",
+  },
 };
 
 export function getWritingTeachingContent(family?: WritingTaskFamily | null): WritingFamilyTeachingContent | undefined {
@@ -106,10 +136,21 @@ export function getWritingTeachingContent(family?: WritingTaskFamily | null): Wr
  * `persuasive`-typed row, is a genuine forced-fit (`provisional`,
  * migration 033) with no confirmed CSSE evidence behind its speech
  * register, so it correctly receives no CSSE-aligned teaching content.
+ *
+ * Educational Depth Phase 1, Wave 2 — `WritingPrompt.type` now also
+ * accepts `"picture-narrative"`, a genuinely new fourth value, not a
+ * repurposing of `"narrative"`. It is kept separate deliberately: every
+ * existing `"narrative"`-typed row (imaginedplace, difficulttask,
+ * somethingnew) is real QT-WC-01a text-only content and must keep
+ * resolving to `writing-reflective-discursive` exactly as before —
+ * mapping `"picture-narrative"` to its own `writing-picture-narrative`
+ * family means adding this entry cannot change any existing row's
+ * teaching content.
  */
 const PROMPT_TYPE_TO_FAMILY: Partial<Record<string, WritingTaskFamily>> = {
   narrative: "writing-reflective-discursive",
   descriptive: "writing-reflective-discursive",
+  "picture-narrative": "writing-picture-narrative",
 };
 
 export function getWritingTaskFamilyForPromptType(promptType?: string | null): WritingTaskFamily | undefined {

@@ -92,3 +92,42 @@ test("fetchEligibleWritingPrompts never references the static fixture -- it is p
   const source = fetchEligibleWritingPrompts.toString();
   assert.ok(!source.includes("writingPrompts"), "must never fall back to the static fixture array");
 });
+
+// === Educational Depth Phase 1, Wave 2 — picture-narrative stimulus validation.
+
+test("a well-formed 'picture-narrative' prompt with a real image stimulus passes validation and is returned", async () => {
+  const withStimulus = makePrompt({
+    id: "good-picture",
+    type: "picture-narrative",
+    stimulus: { type: "image", imageAssetUrl: "/practice-assets/writing-picture-narrative/riverboat-v1.svg", altText: "A boat on a misty riverbank." },
+  });
+  const client = makeStubClient([{ prompt: withStimulus }]);
+  const result = await fetchEligibleWritingPrompts(client);
+  assert.equal(result.length, 1);
+  assert.equal(result[0].id, "good-picture");
+  assert.equal(result[0].stimulus?.imageAssetUrl, "/practice-assets/writing-picture-narrative/riverboat-v1.svg");
+});
+
+test("a 'picture-narrative' prompt is silently excluded if its stimulus is malformed -- missing altText, missing imageAssetUrl, or the wrong type -- never rendered with a broken image", async () => {
+  const missingAlt = makePrompt({ id: "bad-1", type: "picture-narrative", stimulus: { type: "image", imageAssetUrl: "/x.svg", altText: "" } as never });
+  const missingUrl = makePrompt({ id: "bad-2", type: "picture-narrative", stimulus: { type: "image", imageAssetUrl: "", altText: "Something." } as never });
+  const wrongType = makePrompt({ id: "bad-3", type: "picture-narrative", stimulus: { type: "chart", imageAssetUrl: "/x.svg", altText: "Something." } as never });
+  const client = makeStubClient([{ prompt: missingAlt }, { prompt: missingUrl }, { prompt: wrongType }, { prompt: makePrompt({ id: "good" }) }]);
+  const result = await fetchEligibleWritingPrompts(client);
+  assert.deepEqual(result.map((p) => p.id), ["good"]);
+});
+
+test("a prompt with no 'stimulus' key at all (every pre-Wave-2 row) still validates exactly as before -- regression-safe", async () => {
+  const noStimulus = makePrompt({ id: "no-stimulus" });
+  assert.equal("stimulus" in noStimulus, false);
+  const client = makeStubClient([{ prompt: noStimulus }]);
+  const result = await fetchEligibleWritingPrompts(client);
+  assert.equal(result.length, 1);
+  assert.equal(result[0].stimulus, undefined);
+});
+
+test("'picture-narrative' is now accepted as a valid WritingPrompt.type, alongside the 3 pre-existing values", async () => {
+  const client = makeStubClient([{ prompt: makePrompt({ id: "p", type: "picture-narrative" }) }]);
+  const result = await fetchEligibleWritingPrompts(client);
+  assert.equal(result.length, 1);
+});

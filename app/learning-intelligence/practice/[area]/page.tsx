@@ -51,7 +51,7 @@ import { getWritingTeachingContent, getWritingTaskFamilyForPromptType } from "@/
 import { WRITING_DIMENSION_LABEL } from "@/lib/learningEngine/writingRubric";
 import { presentWritingChecklistForContext, isWritingFamilyGuidedEligible, writingSupportContextForGuidedToggle } from "@/lib/writing/supportLevelPolicy";
 import type { EnglishComprehensionPrompt } from "@/types/ali/questionBank";
-import type { MathsQuestion } from "@/types/index";
+import type { MathsQuestion, WritingPromptImageStimulus } from "@/types/index";
 
 type Mode = "intro" | "loading" | "error" | "unavailable" | "session" | "results";
 
@@ -828,7 +828,7 @@ export default function PracticeSessionPage({
               <WritingActivity
                 key={current.id}
                 promptId={current.id}
-                prompt={current.prompt as { title: string; prompt: string; checklist: string[]; type?: string }}
+                prompt={current.prompt as { title: string; prompt: string; checklist: string[]; type?: string; stimulus?: WritingPromptImageStimulus }}
                 guidedAvailable={Boolean(current.familyId && writingGuidedFamiliesRef.current.has(current.familyId))}
                 answer={answer}
                 setAnswer={setAnswer}
@@ -1468,7 +1468,7 @@ function WritingActivity({
   promptId, prompt, guidedAvailable, answer, setAnswer, checkedItems, setCheckedItems, submitted, submitting, feedback, feedbackError, onSubmit, onNext, isLast,
 }: {
   promptId: string;
-  prompt: { title: string; prompt: string; checklist: string[]; type?: string };
+  prompt: { title: string; prompt: string; checklist: string[]; type?: string; stimulus?: WritingPromptImageStimulus };
   guidedAvailable: boolean;
   answer: string;
   setAnswer: (v: string) => void;
@@ -1517,6 +1517,18 @@ function WritingActivity({
   return (
     <InfoCard className="mt-3">
       <p className="text-sm font-bold text-gray-900 dark:text-gray-100">{prompt.title}</p>
+      {/* Educational Depth Phase 1, Wave 2 — the picture stimulus itself.
+          Absent on every prompt before this Wave, so this renders nothing
+          extra for any existing row (regression-safe by construction).
+          altText is required by isValidWritingPromptStimulus, so a screen-
+          reader user always gets real content, never a blank/generic alt. */}
+      {prompt.stimulus?.type === "image" && (
+        <img
+          src={prompt.stimulus.imageAssetUrl}
+          alt={prompt.stimulus.altText}
+          className="mt-3 w-full max-w-md rounded-xl border border-gray-200 dark:border-gray-700"
+        />
+      )}
       <p className="text-xs text-gray-600 dark:text-gray-400 mt-2 whitespace-pre-line leading-relaxed">{prompt.prompt}</p>
 
       {teachingContent && !submitted && (

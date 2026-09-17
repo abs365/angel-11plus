@@ -49,14 +49,32 @@ export interface VocabWord {
   category: "tier2" | "tier3" | "literary";
 }
 
+/**
+ * Educational Depth Phase 1, Wave 2 — the image-stimulus shape a
+ * picture-led narrative prompt attaches to `WritingPrompt.stimulus`.
+ * Deliberately narrow (one variant, `type: "image"`) rather than a
+ * general stimulus union: this is the one CSSE-evidenced Writing
+ * stimulus shape (QT-WC-01b), matching the shape already used by Mock's
+ * own Q2 row (migration 246's `prompt.stimulus`), not a new invented
+ * contract. `altText` is required, never optional, since the picture is
+ * the task's own substantive content, not decoration.
+ */
+export interface WritingPromptImageStimulus {
+  type: "image";
+  imageAssetUrl: string;
+  altText: string;
+}
+
 export interface WritingPrompt {
   id: string;
   title: string;
   prompt: string;
-  type: "narrative" | "descriptive" | "persuasive";
+  type: "narrative" | "descriptive" | "persuasive" | "picture-narrative";
   difficulty: Difficulty;
   checklist: string[];
   timeMinutes: number;
+  /** Educational Depth Phase 1, Wave 2 — present only for `type: "picture-narrative"` prompts. Absent on every existing row, so every current reader is unaffected. */
+  stimulus?: WritingPromptImageStimulus;
 }
 
 /**

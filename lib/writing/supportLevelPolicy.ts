@@ -109,6 +109,15 @@ export const WRITING_CHECKLIST_ITEM_SUPPORT_LEVELS: Record<string, ChecklistItem
   // content, classified on authoring).
   "eng-pc005-writing-personinfluence": ["core", "coaching", "coaching", "coaching", "coaching", "core"],
   "eng-pc005-writing-somethingnew": ["core", "coaching", "coaching", "coaching", "coaching", "core"],
+
+  // Migration 255 — Educational Depth Phase 1, Wave 2. The first Practice
+  // picture-narrative (QT-WC-01b) row, `authentic_assessment_candidate`
+  // only, classified on authoring per this file's own standing rule.
+  // Item 1 (length) and item 7 (proofreading) are core; the middle five
+  // (staying grounded in the picture, narrative direction, a turning
+  // point, vocabulary/sentences, paragraphing) are all writing-technique
+  // coaching, matching the shape of every other 7-item checklist above.
+  "eng-practice-writing-picturenarrative-riverboat-01": ["core", "coaching", "coaching", "coaching", "coaching", "coaching", "core"],
 };
 
 export function checklistItemSupportLevel(promptId: string | null, index: number): ChecklistItemSupportLevel {
