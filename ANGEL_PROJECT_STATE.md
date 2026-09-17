@@ -4,15 +4,16 @@
 It records current state only — not history. For history, see the specific `ANGEL_*.md` report
 named under each item below. For operating rules, see `AGENTS.md` (imported by `CLAUDE.md`).
 
-Last updated: 2026-09-17, end of Educational Depth Phase 1 Wave 1 closure attempt.
+Last updated: 2026-09-17, Educational Depth Phase 1 Wave 1 — production acceptance closed.
 
 ---
 
 ## Current production status
 
 **Live** at `https://angel-11plus.vercel.app` (Vercel project `angel-11plus`, org `abs365s-projects`).
-Currently deployed from commit **`f4f21fa`** (`origin/main`) — confirmed by matching the
-production deployment's creation timestamp to that commit's push.
+Currently deployed from commit **`b65721a`** (`origin/main`, includes `c542bef`) — confirmed by
+`git fetch` showing `origin/main` at `b65721a`, and by `vercel inspect` showing the current
+Production deployment (aliased to `angel-11plus.vercel.app`) Ready, created after that push.
 
 Supabase project: `agxunwcdatosrmzhhuxj` (`https://agxunwcdatosrmzhhuxj.supabase.co`) — confirmed
 identical between the Vercel production build and local dev; not a project-mismatch risk.
@@ -42,28 +43,45 @@ Publication is admin-gated (`submit_question_candidate` / `publish_question_cand
 - **Complete CSSE Two-Paper Mock — production learner acceptance: GO** (the milestone that closed
   before the Educational Depth Programme began)
 - Authentication / password recovery — production acceptance
+- **Educational Depth Phase 1 Wave 1 (MR-01 Arithmetic Foundation) — production acceptance: GO**
+  (`b65721a` on `origin/main`, deployed, smoke-verified — see "Closed programme" below)
 
-## Active programme
+## Closed programme (most recent)
 
 **Educational Depth & Daily Preparation Programme, Phase 1, Wave 1** — MR-01 Arithmetic Foundation
-teaching depth + Maths remediation-silence fix.
+teaching depth + Maths remediation-silence fix. **CLOSED — production acceptance: GO.**
 
-- Committed locally at **`c542bef`** (on `f4f21fa`). **Not pushed, not deployed.**
+- Pushed to `origin/main` at `c542bef` (implementation) and `b65721a` (Angel Claude Operating
+  System v1.0 docs). Vercel Git integration deployed both; production alias
+  `angel-11plus.vercel.app` confirmed pointing at the resulting Ready deployment.
 - Content: 0 new questions generated (deliberate — the gap was teaching, not volume). Added
   teaching content for 4 MR-01 families (73 existing questions, 0/73 → 73/73 worked-example
   reach) and fixed a defect where 398 of 472 covered Maths questions showed nothing after a wrong
   answer (→ 0 silent).
 - Tests: 4536/4543 pass; the 7 failures are byte-identical to the pre-change baseline (measured by
   stashing the work) — 0 regressions.
-- **Status: closure blocked on real production learner verification.** The session investigating
-  this found the blocker was environmental (a stray local `.env.local` misconfiguration + a guest/
-  unauthenticated browser session), not a genuine Angel defect — see
-  `ANGEL_EDUCATIONAL_DEPTH_PHASE1_WAVE1_REPORT.md` and the Wave 1 closure session's report for
-  full detail. **Founder authentication is required to complete the 3 representative learner
-  checks; push + deploy are withheld until that passes**, per the Angel Constitution's "no direct
-  unsafe production mutation" and "real evidence before claiming GO" rules.
+- **Production acceptance evidence** (real authenticated learner, `balletman20@yahoo.com`,
+  Founder-authenticated):
+  - **Check 2 (direct live) — PASS**: `mr01-multistep-order-of-operations`,
+    `maxGuidedRevealSteps = 1` — reveal control capped correctly at 0 of 1, final answer never
+    leaked, wrong answer produced family-level + row-level remediation, Next available.
+  - **Check 3 (direct live) — PASS**: `mr04-time-reverse` (non-MR-01 fallback) — wrong answer
+    produced the widened family-level remediation fallback with no silence, Next available.
+  - **Check 1 (combined deterministic + live equivalent-path, not a direct live hit on the exact
+    target family)** — MR-01 whole-number family, `maxGuidedRevealSteps = 0`, was not drawn
+    across 4 bounded real sessions (32 questions). Accepted on: the identical cap=0 code path
+    observed live on other zero-real-step rows; deterministic verification of all 49 real
+    whole-number rows finding 0 answer leaks. Do not report this as a direct live hit on the exact
+    family.
+  - **Bounded post-deploy production smoke check (this session)** — PASS: fresh session against
+    `https://angel-11plus.vercel.app`, real authenticated learner session, Mathematics practice
+    loaded (after one transient "timed out waiting for today's activities" retry — not reproduced
+    on retry, treated as transient, not investigated further), a deliberately wrong answer
+    produced a genuine per-question misconception remediation note, correct answer + worked steps,
+    and Next — confirming the Wave 1 learner path is live and operating in production. This was a
+    smoke check, not a repeat of the 3-check acceptance programme above.
 
-**Do not begin Wave 2 (Writing) until Wave 1 is formally closed.**
+**Do not begin Wave 2 (Writing) without this record** — see next priority below.
 
 ## Known material educational risks (from Wave 1's live-production baseline)
 
@@ -129,7 +147,8 @@ until a dedicated review says otherwise.
 
 ## Exact next educational priority (not yet started)
 
-**Writing — picture-led narrative learning depth**, once Wave 1 is formally closed. Reasoning: the
+**Writing — picture-led narrative learning depth.** Wave 1 is now formally closed; this is next.
+Reasoning: the
 Full English Paper can assess picture-led narrative, but current production learning content has
 an absence (not just a thinness) problem for this mode — see "Known material educational risks"
 above.
