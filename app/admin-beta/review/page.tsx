@@ -450,6 +450,21 @@ function QuestionOrWritingTaskBody({ question, displayText }: { question: Repres
     const w = question.writingTask;
     return (
       <>
+        {/* Educational Depth Phase 1, Wave 2 — the first image-stimulus
+            Writing row (migration 255). Without this, the Founder's
+            "Stored instructional checklist" review below would judge a
+            picture-narrative task's content integrity without ever
+            seeing the picture — the exact original-stimulus evidence
+            this review exists to confirm. Mirrors the learner-facing
+            renderer's own stimulus.type === "image" check
+            (app/learning-intelligence/practice/[area]/page.tsx). */}
+        {w.stimulus?.type === "image" && (
+          <img
+            src={w.stimulus.imageAssetUrl}
+            alt={w.stimulus.altText}
+            className="mt-1 max-w-sm rounded border border-gray-200 dark:border-gray-700"
+          />
+        )}
         <p className="text-sm font-semibold text-gray-800 dark:text-gray-200 mt-1 whitespace-pre-line">{w.prompt}</p>
         <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
           {/* Decision 254, Section 1 — the taxonomy code's canonical name

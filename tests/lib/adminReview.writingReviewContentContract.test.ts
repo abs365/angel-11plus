@@ -26,7 +26,7 @@ test("promptWritingTask() extracts title/prompt/checklist/timeMinutes/responseTy
     id: "x", title: "My Title", prompt: "Write about something.", type: "descriptive",
     difficulty: "year6-exam", timeMinutes: 25, checklist: ["Do this", "Do that"],
   });
-  assert.deepEqual(result, { title: "My Title", prompt: "Write about something.", checklist: ["Do this", "Do that"], timeMinutes: 25, responseType: "descriptive" });
+  assert.deepEqual(result, { title: "My Title", prompt: "Write about something.", checklist: ["Do this", "Do that"], timeMinutes: 25, responseType: "descriptive", stimulus: null });
 });
 
 test("promptWritingTask() returns null for a deterministic comprehension/Mathematics-shaped prompt (question/modelAnswer, no title/checklist)", () => {
@@ -49,12 +49,31 @@ test("promptWritingTask() returns null if checklist is missing or not a string a
 
 test("promptWritingTask() tolerates a missing/non-numeric timeMinutes -- returns null for that field alone, not for the whole result", () => {
   const result = promptWritingTask({ title: "T", prompt: "P", checklist: ["a"] });
-  assert.deepEqual(result, { title: "T", prompt: "P", checklist: ["a"], timeMinutes: null, responseType: null });
+  assert.deepEqual(result, { title: "T", prompt: "P", checklist: ["a"], timeMinutes: null, responseType: null, stimulus: null });
 });
 
 test("promptWritingTask() tolerates a missing/non-string type -- responseType is null for that field alone, not for the whole result", () => {
   const result = promptWritingTask({ title: "T", prompt: "P", checklist: ["a"], type: 42 });
-  assert.deepEqual(result, { title: "T", prompt: "P", checklist: ["a"], timeMinutes: null, responseType: null });
+  assert.deepEqual(result, { title: "T", prompt: "P", checklist: ["a"], timeMinutes: null, responseType: null, stimulus: null });
+});
+
+test("promptWritingTask() extracts a valid image stimulus (Educational Depth Phase 1, Wave 2 -- the first image-stimulus writing row)", () => {
+  const result = promptWritingTask({
+    title: "T", prompt: "P", checklist: ["a"],
+    stimulus: { type: "image", imageAssetUrl: "/practice-assets/x.svg", altText: "A description." },
+  });
+  assert.deepEqual(result, {
+    title: "T", prompt: "P", checklist: ["a"], timeMinutes: null, responseType: null,
+    stimulus: { type: "image", imageAssetUrl: "/practice-assets/x.svg", altText: "A description." },
+  });
+});
+
+test("promptWritingTask() ignores a malformed stimulus (missing altText) -- never renders a broken/inaccessible image rather than none", () => {
+  const result = promptWritingTask({
+    title: "T", prompt: "P", checklist: ["a"],
+    stimulus: { type: "image", imageAssetUrl: "/x.svg" },
+  });
+  assert.deepEqual(result, { title: "T", prompt: "P", checklist: ["a"], timeMinutes: null, responseType: null, stimulus: null });
 });
 
 // === Proven against REAL stored content (migrations 098 and 153) ===========

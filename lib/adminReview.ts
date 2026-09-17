@@ -915,7 +915,7 @@ export interface RepresentativeQuestion {
    * `writingTask` for a writing row instead of `question`/`modelAnswer`,
    * never treat the fallback text as evidence of missing content.
    */
-  writingTask: { title: string; prompt: string; checklist: string[]; timeMinutes: number | null; responseType: string | null } | null;
+  writingTask: { title: string; prompt: string; checklist: string[]; timeMinutes: number | null; responseType: string | null; stimulus: { type: "image"; imageAssetUrl: string; altText: string } | null } | null;
   /** Decision 235 -- `ali_question_bank.explanation`, the author's own per-question note (REMEDIATION rationale, marking-policy clarification). Previously never selected or rendered (same class of gap Decision 232 fixed for `provenance`/`notes`) -- now selected via QUESTION_SELECT_COLUMNS and rendered in QuestionOrWritingTaskBody so amendment verification does not require re-reading raw SQL. null when the row has no explanation, or for any caller not using mapQuestionRow (e.g. fetchQuestionsForPassage always does). */
   authorNote: string | null;
 }
@@ -940,16 +940,29 @@ function promptText(prompt: unknown, key: "question" | "modelAnswer"): string {
  * this shape (i.e. every non-writing row) — never guesses, never
  * fabricates a title/prompt/checklist that isn't genuinely stored.
  */
-export function promptWritingTask(prompt: unknown): { title: string; prompt: string; checklist: string[]; timeMinutes: number | null; responseType: string | null } | null {
+export function promptWritingTask(prompt: unknown): { title: string; prompt: string; checklist: string[]; timeMinutes: number | null; responseType: string | null; stimulus: { type: "image"; imageAssetUrl: string; altText: string } | null } | null {
   if (!prompt || typeof prompt !== "object") return null;
   const p = prompt as Record<string, unknown>;
   if (typeof p.title !== "string" || typeof p.prompt !== "string") return null;
   if (!Array.isArray(p.checklist) || !p.checklist.every((c) => typeof c === "string")) return null;
+  const rawStimulus = p.stimulus;
+  const stimulus =
+    rawStimulus && typeof rawStimulus === "object" &&
+    (rawStimulus as Record<string, unknown>).type === "image" &&
+    typeof (rawStimulus as Record<string, unknown>).imageAssetUrl === "string" &&
+    typeof (rawStimulus as Record<string, unknown>).altText === "string"
+      ? {
+          type: "image" as const,
+          imageAssetUrl: (rawStimulus as Record<string, unknown>).imageAssetUrl as string,
+          altText: (rawStimulus as Record<string, unknown>).altText as string,
+        }
+      : null;
   return {
     title: p.title,
     prompt: p.prompt,
     checklist: p.checklist as string[],
     timeMinutes: typeof p.timeMinutes === "number" ? p.timeMinutes : null,
+    stimulus,
     // Decision 254, Section 1 — the stored `type` field (e.g.
     // "descriptive", "narrative") is each item's OWN actual response
     // shape, already present on every real writing row (migrations
