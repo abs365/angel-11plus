@@ -252,6 +252,46 @@ compliance merely because documentation exists** — formal Children's Code / DP
 and not yet independently verified as complete. Treat any privacy/compliance claim as unverified
 until a dedicated review says otherwise.
 
+### LR-02 — Parent + learner first-10-minutes journey (2026-09-18)
+
+**GO**, with one real defect found and fixed, and one disclosed evidence gap (see below) —
+not a full fresh-registration walkthrough.
+
+- **Journey mapped and largely already works well**: `/pathways` (target-pathway setup, optional
+  exam date/year group, plain-language pathway cards, clear disclaimers) is genuinely good
+  first-run UX. The dashboard's "Today's Admission Mission" gives one clear primary action
+  ("Start Today's Mission") with 3 concrete, plain-language reasons per item. Parent Dashboard
+  (`/learning-intelligence/parent`) gives a real progress summary and one clear next action ("See
+  This Week's Revision Plan"). `/login` explains what Angel is briefly ("Selective School
+  Preparation") and lets anyone continue without signing in first (anonymous-first session,
+  upgradeable later via magic link) — reasonable for a Founder-invited controlled beta.
+- **Real defect found and fixed (`a5f004e`, deployed, live-reconfirmed)**: the dashboard's "Angel
+  recommends next" card was showing the raw internal decision-audit string verbatim to families
+  (e.g. `Top-priority competency "MR-02" (trigger: weak-competency-remediation).`,
+  `app/dashboard/page.tsx:660`) instead of the existing, purpose-built family-facing
+  `stagePrinciple()` text (`lib/learningEngine/preparationStage.ts` — "never engine terminology,"
+  already used successfully on `/pathways`'s "Current focus"). One-line fix: stopped reading
+  `decisionReasons` (an internal explainability trail, never written for display) for this UI
+  spot. `preparationDecision.decisionReasons` itself is untouched — still available to any other
+  (e.g. admin/debug) consumer.
+- **Evidence gap, disclosed not manufactured**: this was verified against the Founder's own real,
+  mature account (3 sessions, achievements already earned) — the true zero-session first message
+  (`"Your admission journey starts here."`, confirmed in code,
+  `app/dashboard/page.tsx`'s `getEncouragingMessage`) was not observed live, and a genuinely fresh
+  registration (new email, new household, new learner profile) was deliberately not created this
+  session, to avoid casually adding a fake family to production. If a true fresh-account
+  walkthrough is wanted, the smallest safe route is the Founder creating one real test family via
+  the live sign-up flow (`/login` → "Email me a secure sign-in link") and sharing what it showed.
+- **Known, previously-disclosed limitation, not new**: a child's display name
+  (`localStorage` key `angel_child_name`, `app/dashboard/page.tsx`) is local-only — it does not
+  persist across devices or reach the database (`profiles.name` stays the literal default
+  `"Angel"`). Already flagged for Founder review in the AN-102 report; DEFER, not a beta blocker —
+  the product functions correctly without it.
+- Tests: 4594/4601 pass (unchanged baseline, 0 regressions from this fix). `tsc --noEmit` clean.
+  Deployed `a5f004e` on `origin/main`; production alias confirmed pointing at the resulting Ready
+  deployment; the corrected text (`"Building the core ideas first..."`) reconfirmed live on
+  `https://angel-11plus.vercel.app/dashboard`.
+
 ## Exact next educational priority
 
 **Superseded**: migration 255 (the riverboat candidate) was applied, reviewed, and REJECTED by the
