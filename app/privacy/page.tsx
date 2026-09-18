@@ -100,7 +100,7 @@ export default function PrivacyPage() {
         </Section>
 
         <Section title="8. Cookies">
-          <p>Angel 11+ uses no advertising cookies. The platform may use essential session cookies for authentication (only if you sign in) and localStorage for progress data.</p>
+          <p>Angel 11+ uses no advertising cookies, and does not use cookies for authentication. Signing in stores an essential session token in your browser&apos;s local storage (not a cookie), alongside your progress data.</p>
         </Section>
 
         <Section title="9. Changes to this policy">

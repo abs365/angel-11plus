@@ -252,6 +252,54 @@ compliance merely because documentation exists** — formal Children's Code / DP
 and not yet independently verified as complete. Treat any privacy/compliance claim as unverified
 until a dedicated review says otherwise.
 
+### LR-01 — Child data, privacy + controlled-beta readiness (2026-09-18)
+
+**PARTIAL — GO for controlled beta with one Founder decision outstanding, not a full
+public-launch certification.** Full evidence pack: `ANGEL_LR01_DPIA_AND_CHILDRENS_CODE_ASSESSMENT.md`
+(new document — no prior DPIA artefact existed). Do not treat this as a legal compliance
+certification; it is the evidence pack a Founder/legal DPIA sign-off should be made from.
+
+- **Verified data inventory**: no table anywhere in the schema holds a child's DOB, home address,
+  phone number, photograph, precise geolocation, or real school name. `profiles.name` is always
+  the literal default `"Angel"` — the database never captures a real child's name (consistent with
+  LR-02/AN-102). Real PII collected is limited to: the account email (Supabase-managed
+  `auth.users`, not this app's own table), and — only if a parent voluntarily submits a beta
+  application/testimonial/feedback form — `parent_name` + `email`.
+- **Processor footprint is genuinely minimal**, checked against `package.json`/`.env.local`, not
+  assumed: only Supabase (DB/auth), Vercel (hosting), and OpenAI (Writing AI feedback). Confirmed
+  **absent**: Sentry, Stripe, Upstash, Google Analytics, PostHog, Amplitude, Mixpanel, Segment, or
+  any advertising/tracking SDK. The one AI call (OpenAI, Writing feedback) sends only the prompt
+  and the child's writing text — verified in code, no name/email/profile ID accompanies it.
+- **RLS/ownership verified live, not assumed**: an unauthenticated anon-key request returns zero
+  rows from every learner-data table checked (`profiles`, `ali_student_question_history`,
+  `user_stats`, `lesson_progress`, `ali_mock_attempt`, `ali_mock_attempt_answer`,
+  `beta_family_applications`, `ali_family_focus_selection`); the Founder's own authenticated
+  session sees exactly its own 1 row, not other families'. No P0/P1 exposure found.
+- **One real, concrete discrepancy found, not silently fixed**: both `/privacy` ("Parent or
+  guardian consent is required before account creation") and `/terms` ("Children must have
+  parental permission") state a safeguard with no corresponding technical gate anywhere in the
+  actual sign-up flow (`/login`, read in full — no consent checkbox, no age/parent affirmation
+  step). For this specific closed, Founder-invited beta, the Founder personally inviting each known
+  parent is the real mechanism — but the published policy text implies a product mechanism that
+  doesn't exist. **This is a Founder decision, not an engineering fix**: either correct the policy
+  wording to describe the invitation-based model honestly, or add a real (lightweight) consent
+  step to sign-up. Neither was implemented this session.
+- **Minor factual correction made in this same commit**: `/privacy` §8 said "session cookies for
+  authentication" — the actual mechanism is `localStorage` (`sb-<ref>-auth-token`), not a cookie.
+  Corrected to accurately describe local storage. Purely a factual/technical wording fix, not a
+  substantive policy change.
+- **Children's Code**: assessed standard-by-standard against the current (live-fetched, 2026-09-18)
+  ICO guidance in the evidence pack. No standard found to be materially unmet for a closed,
+  Founder-invited beta; child-accessible transparency (a plain-language "how Angel decides what to
+  suggest" explanation, distinct from the adult Privacy Policy) is a genuine, not-yet-closed gap,
+  assessed as BETA IMPORTANT rather than a blocker at this scale.
+- **Outstanding Founder decisions** (full list in the evidence pack §15): (1) how to close the
+  consent policy-vs-product gap above; (2) confirm OpenAI account is on a zero-retention/
+  non-training setting; (3) confirm the manual (no self-service RPC exists) family-deletion process
+  is operationally reliable at 10–25-family scale; (4) whether a child-facing explanation is needed
+  before beta or can follow shortly after; (5) formal legal review of the evidence pack itself.
+- Tests: unchanged (0 logic changes, one JSX wording fix). `tsc --noEmit` clean.
+
 ### LR-02 — Parent + learner first-10-minutes journey (2026-09-18)
 
 **GO**, with one real defect found and fixed, and one disclosed evidence gap (see below) —
