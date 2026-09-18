@@ -377,16 +377,6 @@ export default function LoginPage() {
             </>
           )}
         </div>
-
-        {/* Skip */}
-        <div className="text-center mt-5">
-          <button
-            onClick={() => router.push("/dashboard")}
-            className="text-gray-400 dark:text-gray-500 text-sm hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
-          >
-            Continue without signing in →
-          </button>
-        </div>
       </div>
     </div>
   );

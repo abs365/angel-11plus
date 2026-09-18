@@ -52,9 +52,24 @@ test("the existing Gate 3 isPermanentlyAuthenticated redirect predicate is compl
   assert.match(SOURCE, /return Boolean\(user\) && !user!\.is_anonymous;/);
 });
 
-test("the 'continue without signing in' skip path remains present, unchanged", () => {
-  assert.match(SOURCE, /Continue without signing in/);
-  assert.match(SOURCE, /router\.push\("\/dashboard"\)/);
+/**
+ * LR-03 Family #1 pre-launch defect A — real Founder production evidence:
+ * a prominent "Continue without signing in" CTA sitting right next to the
+ * sign-in form undermines the controlled beta's approved parent-led entry
+ * path (parent/carer controls the account -> learner uses the experience).
+ * The underlying anonymous-session capability itself is NOT removed --
+ * AuthProvider's own automatic anonymous bootstrap (ensureLearnerSession(),
+ * every page load with no session yet) is completely untouched, and remains
+ * reachable by any page load regardless of this file -- only this one
+ * explicit, on-the-nose invitation to skip sign-in is removed from the
+ * sign-in page itself.
+ */
+test("the login page no longer offers an explicit 'continue without signing in' skip CTA", () => {
+  assert.doesNotMatch(SOURCE, /Continue without signing in/);
+});
+
+test("router.push to /dashboard is no longer reachable from a button on this page (the skip CTA was its only use)", () => {
+  assert.doesNotMatch(SOURCE, /router\.push\("\/dashboard"\)/);
 });
 
 test("copy for new users never claims password sign-in auto-creates an account -- only the magic-link path does that", () => {

@@ -219,7 +219,7 @@ function PlacementPageInner() {
                     {lastCorrect ? (
                       <><CheckCircle2 size={16} className="text-emerald-500" /> Got it, thank you.</>
                     ) : (
-                      <><XCircle size={16} className="text-amber-500" /> That&apos;s alright, this helps Angel just as much either way.</>
+                      <><XCircle size={16} className="text-amber-500" /> Not quite — and that&apos;s completely fine. This is exactly the kind of thing Angel uses to work out where to help you first.</>
                     )}
                   </p>
                   <button
