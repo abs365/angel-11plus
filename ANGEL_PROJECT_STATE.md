@@ -254,10 +254,11 @@ until a dedicated review says otherwise.
 
 ### LR-01 — Child data, privacy + controlled-beta readiness (2026-09-18)
 
-**PARTIAL — GO for controlled beta with one Founder decision outstanding, not a full
-public-launch certification.** Full evidence pack: `ANGEL_LR01_DPIA_AND_CHILDRENS_CODE_ASSESSMENT.md`
-(new document — no prior DPIA artefact existed). Do not treat this as a legal compliance
-certification; it is the evidence pack a Founder/legal DPIA sign-off should be made from.
+**GO FOR CONTROLLED BETA. Not a full public-launch certification, not a formal legal compliance
+certification.** Full evidence pack: `ANGEL_LR01_DPIA_AND_CHILDRENS_CODE_ASSESSMENT.md` (new
+document — no prior DPIA artefact existed), closed this same day after the one real discrepancy it
+found was corrected and the one transparency gap it found was closed — see below. It remains the
+evidence pack a formal Founder/legal DPIA sign-off should be made from, not the sign-off itself.
 
 - **Verified data inventory**: no table anywhere in the schema holds a child's DOB, home address,
   phone number, photograph, precise geolocation, or real school name. `profiles.name` is always
@@ -275,30 +276,54 @@ certification; it is the evidence pack a Founder/legal DPIA sign-off should be m
   `user_stats`, `lesson_progress`, `ali_mock_attempt`, `ali_mock_attempt_answer`,
   `beta_family_applications`, `ali_family_focus_selection`); the Founder's own authenticated
   session sees exactly its own 1 row, not other families'. No P0/P1 exposure found.
-- **One real, concrete discrepancy found, not silently fixed**: both `/privacy` ("Parent or
+- **The parental-consent discrepancy is CORRECTED, live** (`1256305`): both `/privacy` ("Parent or
   guardian consent is required before account creation") and `/terms` ("Children must have
-  parental permission") state a safeguard with no corresponding technical gate anywhere in the
-  actual sign-up flow (`/login`, read in full — no consent checkbox, no age/parent affirmation
-  step). For this specific closed, Founder-invited beta, the Founder personally inviting each known
-  parent is the real mechanism — but the published policy text implies a product mechanism that
-  doesn't exist. **This is a Founder decision, not an engineering fix**: either correct the policy
-  wording to describe the invitation-based model honestly, or add a real (lightweight) consent
-  step to sign-up. Neither was implemented this session.
-- **Minor factual correction made in this same commit**: `/privacy` §8 said "session cookies for
-  authentication" — the actual mechanism is `localStorage` (`sb-<ref>-auth-token`), not a cookie.
-  Corrected to accurately describe local storage. Purely a factual/technical wording fix, not a
-  substantive policy change.
-- **Children's Code**: assessed standard-by-standard against the current (live-fetched, 2026-09-18)
-  ICO guidance in the evidence pack. No standard found to be materially unmet for a closed,
-  Founder-invited beta; child-accessible transparency (a plain-language "how Angel decides what to
-  suggest" explanation, distinct from the adult Privacy Policy) is a genuine, not-yet-closed gap,
-  assessed as BETA IMPORTANT rather than a blocker at this scale.
-- **Outstanding Founder decisions** (full list in the evidence pack §15): (1) how to close the
-  consent policy-vs-product gap above; (2) confirm OpenAI account is on a zero-retention/
-  non-training setting; (3) confirm the manual (no self-service RPC exists) family-deletion process
-  is operationally reliable at 10–25-family scale; (4) whether a child-facing explanation is needed
-  before beta or can follow shortly after; (5) formal legal review of the evidence pack itself.
-- Tests: unchanged (0 logic changes, one JSX wording fix). `tsc --noEmit` clean.
+  parental permission") stated a safeguard with no corresponding technical gate anywhere in the
+  actual sign-up flow (`/login` — no consent checkbox, no age/parent affirmation step), and without
+  Article 8 being established as the actual lawful basis relied on. Both now describe the real,
+  verified mechanism instead: a parent/carer sets up and controls the account using their own
+  email; a child does not sign up independently. The parent-led model itself is not weakened, only
+  stated more precisely — no consent checkbox was added merely to match the old wording. Whether
+  Article 8 formally applies to this account-creation mechanic remains genuinely open
+  (**FOUNDER/LEGAL REVIEW REQUIRED** — the ICO guidance consulted does not explicitly resolve it
+  for a service shaped like Angel's) — the corrected wording does not depend on resolving it.
+- **Child-accessible transparency is now LIVE** (`1256305`): a small info icon on the dashboard's
+  "Angel recommends next" card (the one point the product acts on a child's own performance
+  evidence) opens a plain-language, Year 4–6-appropriate explanation — reuses the existing
+  `components/ui/Popover.tsx`, names no internal terminology (EI, profiling, OpenAI, API), does not
+  claim data "never leaves Angel," and links through to the full `/privacy` Notice. Confirmed
+  rendering correctly in production this session, including the link's `href`.
+- **OpenAI retention/training position — verified against OpenAI's own published policy, account
+  setting not independently confirmable from this codebase**: by default, API data is not used for
+  model training, and is retained up to 30 days for abuse monitoring unless the account has Zero
+  Data Retention (a separate, opt-in tier). Recorded as **OPENAI RETENTION CONFIGURATION — FOUNDER
+  VERIFICATION REQUIRED** in the evidence pack, with the exact dashboard location
+  (`platform.openai.com` → Settings → Organization → Data controls → Data Retention) — not falsely
+  claimed as zero-retention.
+- **Minor factual correction, live**: `/privacy` §8 said "session cookies for authentication" — the
+  actual mechanism is `localStorage`, not a cookie. Corrected.
+- **Manual beta deletion process — documented precisely, not assumed**: verified every
+  `references public.profiles(id)` foreign key declared across the migration history directly.
+  Several tables cascade-delete with `profiles` (`user_stats`, `lesson_progress`,
+  `ali_durable_mastery`, `ali_student_adaptive_state`, `ali_family_focus_selection`); some instead
+  `on delete set null` and would **survive** profile deletion with real parent PII intact unless
+  separately deleted (`beta_family_applications`, `testimonials`, `feedback_submissions`); and
+  `ali_mock_attempt` has no `on delete` clause at all, so deleting `profiles` directly while mock
+  attempts exist would fail outright on a foreign-key violation. A real deletion request is a
+  real multi-table operation, not a single click — documented in the evidence pack §10 so the
+  Founder can execute it correctly. Accepted as the beta position (no self-service portal built,
+  per instruction); recommended the Founder execute one real deletion end-to-end early in the beta
+  to confirm the documented sequence actually works.
+- **Children's Code**: standard-by-standard assessment in the evidence pack, against live-fetched
+  ICO guidance. No standard assessed as materially unmet for a closed, Founder-invited beta.
+- Tests: unchanged baseline (4594/4601), `tsc --noEmit` clean. Deployed `1256305`; all three
+  corrections (privacy wording, terms wording, child-facing popover) reconfirmed live in production
+  this session.
+- **PUBLIC-LAUNCH requirements, explicitly preserved, not required for this beta**: a real
+  age-assurance mechanism beyond parent-selected year group (2026 ICO enforcement has hardened
+  specifically here); closing the no-login-wall residual risk once the URL is publicly
+  discoverable beyond direct invitation; a self-service/single-RPC deletion path once manual
+  multi-table deletion no longer scales; formal legal sign-off of the evidence pack.
 
 ### LR-02 — Parent + learner first-10-minutes journey (2026-09-18)
 
