@@ -13,8 +13,10 @@ import {
   Compass,
   TrendingUp,
   Pencil,
+  Info,
 } from "lucide-react";
 import PageLayout from "@/components/PageLayout";
+import Popover from "@/components/ui/Popover";
 import { getProgress, markBadgesSeen, getSelectedPathwayId } from "@/lib/progress";
 import { migrateLocalProgressToSupabase } from "@/lib/migrateProgress";
 import { computeAnalytics } from "@/lib/analytics";
@@ -652,13 +654,53 @@ export default function DashboardPage() {
               below, which this increment does not touch. */}
           {preparationDecision && (
             <Card padding="comfortable" className="mb-4">
-              <p className="text-[10px] font-bold uppercase tracking-wide text-gray-400 dark:text-gray-500 mb-1">Angel recommends next</p>
-              <p className="text-gray-900 dark:text-gray-100 font-semibold leading-snug">
-                {describeRecommendedActivity(preparationDecision.recommendedActivityType, preparationDecision.recommendedCompetencyId)}
-              </p>
-              <p className="text-gray-500 dark:text-gray-400 text-xs mt-1 leading-relaxed">
-                {preparationDecision.stagePrincipleText}
-              </p>
+              <div className="flex items-start justify-between gap-2">
+                <div className="min-w-0">
+                  <p className="text-[10px] font-bold uppercase tracking-wide text-gray-400 dark:text-gray-500 mb-1">Angel recommends next</p>
+                  <p className="text-gray-900 dark:text-gray-100 font-semibold leading-snug">
+                    {describeRecommendedActivity(preparationDecision.recommendedActivityType, preparationDecision.recommendedCompetencyId)}
+                  </p>
+                  <p className="text-gray-500 dark:text-gray-400 text-xs mt-1 leading-relaxed">
+                    {preparationDecision.stagePrincipleText}
+                  </p>
+                </div>
+                {/* LR-01 — child-accessible, just-in-time transparency at the one
+                    point the product actually acts on a child's own performance
+                    evidence to choose what to show next. Deliberately not a new
+                    onboarding step or a privacy dashboard: a small, dismissible
+                    disclosure reusing the existing Popover component, written for
+                    a Year 4-6 reader, that layers up to the full adult Privacy
+                    Notice rather than duplicating it. */}
+                <Popover
+                  label="Why does Angel suggest this?"
+                  align="right"
+                  trigger={(props) => (
+                    <button
+                      {...props}
+                      className="shrink-0 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 p-0.5"
+                    >
+                      <Info size={16} aria-hidden="true" />
+                      <span className="sr-only">Why does Angel suggest this?</span>
+                    </button>
+                  )}
+                >
+                  <div className="w-72 max-w-[80vw] bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 rounded-2xl shadow-lg p-4 text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
+                    <p className="font-semibold text-gray-900 dark:text-gray-100 mb-2">Why does Angel suggest this?</p>
+                    <ul className="space-y-1.5 list-disc pl-4">
+                      <li>Angel remembers how you&apos;re getting on with each topic you practise.</li>
+                      <li>Your answers and results help Angel suggest useful practice for next time.</li>
+                      <li>Your parent or carer can see your learning progress.</li>
+                      <li>If you write something for feedback, a computer program helps check it and give you tips.</li>
+                      <li>Angel doesn&apos;t need things like your address, a photo, or your location to work.</li>
+                      <li>Not sure about something? Ask your parent or carer — they&apos;re in charge of your Angel account.</li>
+                      <li>You, or your parent or carer, can always ask us for help with your information.</li>
+                    </ul>
+                    <Link href="/privacy" className="inline-block mt-3 text-blue-600 dark:text-blue-400 font-medium hover:underline">
+                      Read our full Privacy Notice →
+                    </Link>
+                  </div>
+                </Popover>
+              </div>
             </Card>
           )}
 

@@ -66,7 +66,7 @@ export default function PrivacyPage() {
             <li>• We do not require children to create accounts to use the platform</li>
             <li>• We do not collect children's names, photos or personal identifiers</li>
             <li>• We do not display advertising to any users</li>
-            <li>• Parent or guardian consent is required before account creation</li>
+            <li>• A parent or carer sets up and controls any Angel 11+ account, using their own email address — Angel 11+ is not a service a child signs up for independently</li>
           </ul>
           <p className="mt-3">If you believe we have inadvertently collected personal data from a child without appropriate consent, please <Link href="/contact" className="text-blue-600 dark:text-blue-400 hover:underline">contact us</Link> immediately.</p>
         </Section>

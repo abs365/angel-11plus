@@ -41,10 +41,10 @@ export default function TermsPage() {
         </Section>
 
         <Section title="3. Who can use Angel 11+">
-          <p>Angel 11+ is designed for use by children aged 8–13, under the supervision and with the consent of a parent or guardian.</p>
+          <p>Angel 11+ is designed for use by children aged 8–13, under the supervision of a parent or guardian.</p>
           <ul className="mt-2 space-y-1.5 text-sm text-gray-600 dark:text-gray-400">
-            <li>• Children must have parental permission to use the platform</li>
-            <li>• Accounts (where applicable) must be set up by a parent or guardian</li>
+            <li>• A parent or guardian sets up and controls any Angel 11+ account, using their own email address</li>
+            <li>• A child does not sign up for Angel 11+ independently</li>
             <li>• Use is for personal, non-commercial educational purposes only</li>
           </ul>
         </Section>
