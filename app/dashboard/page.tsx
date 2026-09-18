@@ -657,7 +657,7 @@ export default function DashboardPage() {
                 {describeRecommendedActivity(preparationDecision.recommendedActivityType, preparationDecision.recommendedCompetencyId)}
               </p>
               <p className="text-gray-500 dark:text-gray-400 text-xs mt-1 leading-relaxed">
-                {preparationDecision.decisionReasons[preparationDecision.decisionReasons.length - 1] ?? preparationDecision.stagePrincipleText}
+                {preparationDecision.stagePrincipleText}
               </p>
             </Card>
           )}
