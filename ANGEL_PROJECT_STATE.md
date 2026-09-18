@@ -365,7 +365,56 @@ not a full fresh-registration walkthrough.
   deployment; the corrected text (`"Building the core ideas first..."`) reconfirmed live on
   `https://angel-11plus.vercel.app/dashboard`.
 
-## Exact next educational priority
+### LR-03 — Controlled beta operations + Family #1 readiness (2026-09-18)
+
+**GO — ANGEL IS READY TO INVITE FAMILY #1.** Full operating document:
+`ANGEL_CONTROLLED_BETA_OPERATING_PACK.md` (new — no equivalent existed). No product code changed
+this pass; every requirement was met by documenting and correctly sequencing capabilities the
+product already has, per this pass's own explicit instruction not to build an invitation engine,
+a beta-management platform, or a CRM.
+
+- **Existing capability inventory, confirmed live**: `/beta-family`, `/contact`, `/feedback`,
+  `/report-bug`, `/feature-request`, `/testimonial`, `/privacy`, `/terms` all return HTTP 200 in
+  production — checked directly, not assumed. Admin visibility into every beta-relevant table
+  (`beta_family_applications`, `bug_reports`, `feedback_submissions`, `feature_requests`,
+  `testimonials`) is via Supabase Dashboard → Table Editor — the same tool already used for every
+  migration in this project; deliberately no new in-app admin page was built for this.
+- **Invitation process**: Founder sends a direct message (email/WhatsApp, no new tooling) with the
+  production URL and one line of context; the parent uses the existing `/login` magic-link flow
+  (or the child can start anonymously first) — both real, working paths per LR-02. Documented in
+  full in the Operating Pack §4.
+- **Activation defined precisely, not as "account created"**: a family is activated when the
+  learner's preparation stage moves out of `insufficient_evidence`
+  (`derivePreparationStage()`, `lib/learningEngine/preparationStage.ts`) — the exact, already-live
+  signal that flips the dashboard's "Angel recommends next" card from the generic "not enough
+  practice yet" message to a real, specific recommendation. Founder-observable without new tooling
+  (Operating Pack §5).
+- **8-measure beta scorecard** (access, activation, return, educational function, parent
+  understanding, reliability, support burden, safety/privacy) — each marked INITIAL OPERATING
+  SIGNAL vs VALIDATED BENCHMARK, explicitly not pretending statistical significance at 10–25
+  families (Operating Pack §6).
+- **Parent feedback**: reuses `/feedback` directly; 6 questions the Founder sends once a family has
+  activated. **Learner feedback**: deliberately a short spoken conversation (6 child-appropriate
+  questions), not a new written form — avoids collecting a child's own written text into a new
+  table purely for this beta, and avoids a research-questionnaire feel (Operating Pack §7).
+- **Support/issue routing mapped onto TECHNICAL / EDUCATIONAL CONTENT / EDUCATIONAL RECOMMENDATION
+  / ACCOUNT-ACCESS / PRIVACY-DATA / OTHER** using existing routes. One genuine, bounded gap
+  disclosed, not fixed: `/feedback`/`/report-bug` have no dedicated recommendation/privacy
+  category yet — BETA IMPORTANT, not a blocker, since Founder-read free text is adequate triage at
+  this scale (Operating Pack §8).
+- **P0–P3 severity model** and a specific **educational-incident procedure** that protects
+  historical learner evidence — a report like "this question is wrong" is explicitly routed
+  through this repo's existing governed content-review mechanism (Question Factory /
+  `/admin-beta/review`), never a same-session silent content edit, and a past attempt's own
+  recorded evidence is never rewritten after a fix (Operating Pack §9–§10).
+- **Privacy/deletion turned into a concrete, ordered Founder procedure**, built directly on LR-01's
+  verified multi-table foreign-key findings — not redesigned, made executable (Operating Pack
+  §11). OpenAI account-level retention setting remains **FOUNDER VERIFICATION REQUIRED** (LR-01,
+  unchanged, does not block this closure).
+- **Light Founder cadence and a 3-wave cohort ramp** (1 family → 2–5 → remaining up to 25), gated
+  on no open P0/P1 rather than a fixed calendar (Operating Pack §2, §13).
+- **No FAMILY #1 BLOCKER found.** No product code changed; no new tests required (no code
+  touched).
 
 **Superseded**: migration 255 (the riverboat candidate) was applied, reviewed, and REJECTED by the
 Founder — do not apply it as a promotion target; its rejection stands as governance evidence.
