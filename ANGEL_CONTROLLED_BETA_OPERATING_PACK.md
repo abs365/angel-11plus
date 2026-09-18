@@ -60,15 +60,17 @@ can comfortably show at a glance (a public-launch-scale consideration, not a bet
 
 1. **Founder selects a family** they know personally (Wave 0 — deliberately not a stranger).
 2. **Founder sends a direct message** (email or WhatsApp — no new tooling needed) containing:
-   the production URL (`https://angel-11plus.vercel.app`), one sentence on what Angel is
-   ("an 11+ preparation platform your child can start using right away, no set-up needed from
-   you first"), and an invitation to use "Email me a secure sign-in link" on `/login` to create
-   their own account when ready (or to let their child explore anonymously first — both are
-   real, working paths per LR-02).
-3. **Parent expectation, stated plainly in the same message**: sign-in is optional to start; the
-   child can begin practising immediately; the parent can look at `/learning-intelligence/parent`
-   whenever they want to see progress; nothing needs to be "set up" beyond picking a pathway
-   (optional, changeable any time) on first use.
+   the **`/login` URL specifically**
+   (`https://angel-11plus.vercel.app/login`, not the bare domain — the bare domain redirects
+   straight into the dashboard without ever showing the sign-in screen, per the Family #1
+   pre-launch defect fix below), one sentence on what Angel is ("an 11+ preparation platform for
+   your child's 11+ preparation — you set it up, they use it"), and an invitation to use "Email
+   me a secure sign-in link" to create the parent-controlled account.
+3. **Parent expectation, stated plainly in the same message**: the parent signs in first (this is
+   now the front door for invited families, not an optional extra); the child then begins
+   practising on that account; the parent can look at `/learning-intelligence/parent` whenever
+   they want to see progress; nothing needs to be "set up" beyond picking a pathway (optional,
+   changeable any time) on first use.
 4. **What the child should do first**: click "Start Today's Mission" on the dashboard — this
    already routes to a real, working, evidence-based first activity (LR-02).
 5. **What the Founder should not need to explain manually**: the pathway choice (the `/pathways`

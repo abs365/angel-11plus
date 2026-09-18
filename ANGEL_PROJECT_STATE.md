@@ -413,8 +413,45 @@ a beta-management platform, or a CRM.
   unchanged, does not block this closure).
 - **Light Founder cadence and a 3-wave cohort ramp** (1 family → 2–5 → remaining up to 25), gated
   on no open P0/P1 rather than a fixed calendar (Operating Pack §2, §13).
-- **No FAMILY #1 BLOCKER found.** No product code changed; no new tests required (no code
-  touched).
+
+**2026-09-18 UPDATE — two real Family #1 pre-launch defects found via genuine Founder production
+use, and CORRECTED, `ab6cfda` on `origin/main`, deployed and reconfirmed live:**
+
+- **Defect A (anonymous entry undermining the parent-led onboarding path) — FIXED.** `/login`'s
+  own "Continue without signing in" button sat directly beside the sign-in form. Investigated
+  first: anonymous sessions are real, persistent (same `profiles`/`ali_student_question_history`
+  tables), and genuinely upgradeable to a permanent account via `claim_legacy_profile()`
+  (device-keyed, migration 019) the moment a parent signs in on the same device — sound,
+  deliberate architecture, left completely untouched. Removed only the one explicit skip button
+  on `/login` itself. The Operating Pack's own invitation instructions (§4) corrected to link
+  invited families to `/login` specifically, not the bare domain (which still redirects straight
+  to an anonymous dashboard — root-level routing was not touched, since preserving that capability
+  for a future public trial/demo is appropriate; only the beta invitation's own entry point moved).
+- **Defect B (misleading placement-diagnostic feedback), the priority defect — FIXED.** The
+  Increment 021 Placement diagnostic (`app/learning-intelligence/placement/page.tsx`) showed
+  "That's alright, this helps Angel just as much either way" after an incorrect answer — read
+  exactly like "wrong answers don't matter," contradicting the intro screen's own honest framing.
+  Confirmed first that this surface genuinely is an intentional, Mathematics-only, deterministically
+  -marked diagnostic (not Practice) that must not reveal answers/hints across its 6
+  one-per-competency questions — the *design* was correct, only the wording was wrong. Corrected
+  to "Not quite — and that's completely fine. This is exactly the kind of thing Angel uses to work
+  out where to help you first." — honestly signals the outcome without revealing the answer,
+  preserving diagnostic validity. Confirmed this exact string existed only on this one surface, not
+  shared with the separate, already-verified-correct Practice remediation system.
+- **Both example questions independently re-verified against live production data — no content
+  defect found.** "A baking recipe starts at 15:40…" (`mr04-time-05`): canonical answer `17:30`,
+  matching the Founder's own reasoning exactly. "Point D was translated 4 units left and 7 units
+  down to end up at (1, -10)…" (a live Question-Factory-generated row,
+  `qf-factory-candidate-mr03-coordinate-8933871035696954`): canonical answer `(5, -3)`, also exact.
+  Both submitted answers (`98766`, `19`) were correctly marked incorrect — `checkMathsAnswer()`'s
+  existing text-equality fallback correctly rejects a non-matching answer with no format-validation
+  gap; no new validation was added.
+- Tests: 4595/4602 pass (net +1: one outdated test assertion replaced with two reflecting the
+  corrected behaviour), the 7 failures byte-identical to the pre-existing baseline — 0 regressions.
+  `tsc --noEmit` clean. Both fixes reconfirmed live in production this session (the login page no
+  longer shows the skip button; a real, bounded placement-diagnostic submission on the Founder's
+  own account rendered the corrected feedback text exactly).
+- **No further FAMILY #1 BLOCKER remains.**
 
 **Superseded**: migration 255 (the riverboat candidate) was applied, reviewed, and REJECTED by the
 Founder — do not apply it as a promotion target; its rejection stands as governance evidence.
