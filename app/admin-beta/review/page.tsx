@@ -7,7 +7,7 @@ import { useAuth } from "@/components/providers/AuthProvider";
 import { checkIsAdmin } from "@/lib/feedback";
 import { checklistItemSupportLevel, presentWritingChecklistForContext } from "@/lib/writing/supportLevelPolicy";
 import {
-  fetchPendingReviewTargets, fetchReviewedTargetIds, fetchRepresentativeQuestions, fetchQuestionsForPassage,
+  fetchPendingReviewTargets, fetchReviewedTargetIds, fetchAllOriginalReviewClosedFamilyIds, fetchRepresentativeQuestions, fetchQuestionsForPassage,
   fetchPassageDetail, fetchTargetSummary, submitReview,
   REVIEW_CRITERIA, WRITING_REVIEW_CRITERIA, FAMILY_EDUCATIONAL_CONTEXT, FAMILY_MARKING_BASIS,
   writingResponseShapeLabel, QUESTION_TYPE_NAME,
@@ -3420,16 +3420,31 @@ function AmendmentVerificationSection({
 
 /**
  * Educational Increment 007T, Migration 064 Review-Surface Reconciliation
- * Part 6 correction — `reviewedIds` (now scoped to review_type =
- * 'content_review', see fetchReviewedTargetIds()) is cross-referenced
- * here so a target whose pending placeholder row was superseded by a
- * LATER, real content_review decision — submitted directly through this
- * very backlog, outside any named batch array, which the append-only
- * model never deletes the old placeholder row for — no longer inflates
- * the "pending" count or list. This does not touch, and cannot be
- * satisfied by, a maths/english/writing teaching-review decision for the
- * same family_id (a different review_type entirely, deliberately
- * excluded by fetchReviewedTargetIds()'s own scope).
+ * Part 6 correction — the `reviewedIds` param passed in here is
+ * `fetchAllOriginalReviewClosedFamilyIds()`'s result (scoped to every
+ * `ORIGINAL_CONTENT_REVIEW_TYPES` value — content_review, and the three
+ * mock_*_independent_review types), cross-referenced so a target whose
+ * pending placeholder row was superseded by a LATER, real decision of
+ * ANY original review type — submitted directly through this very
+ * backlog, outside any named batch array, which the append-only model
+ * never deletes the old placeholder row for — no longer inflates the
+ * "pending" count or list.
+ *
+ * Originally this was `fetchReviewedTargetIds()`'s own narrower
+ * content_review-only result, which left a genuinely reviewed family
+ * (e.g. a `mock_writing_prompt_independent_review` decision) stuck in
+ * this backlog forever even after a real Founder decision existed —
+ * caught 2026-09-18 when "Eng Practice Writing Wc01b Treehouselantern"
+ * kept appearing here despite a live, non-UNASSIGNED `approved` row.
+ * Widening to `ORIGINAL_CONTENT_REVIEW_TYPES` here (not inside
+ * `fetchReviewedTargetIds()` itself, which several OTHER call sites
+ * deliberately keep content_review-scoped) is the smallest fix that
+ * closes this without touching those other call sites' own correctness.
+ *
+ * This still does not touch, and cannot be satisfied by, a
+ * maths/english/writing teaching-review decision for the same family_id
+ * (a different review_type entirely, outside ORIGINAL_CONTENT_REVIEW_TYPES
+ * by design — see that constant's own docstring).
  */
 function FullBacklogSection({ targets, reviewedIds, onOpen }: { targets: PendingReviewTarget[]; reviewedIds: Set<string>; onOpen: (t: PendingReviewTarget) => void }) {
   const backlogTargets = targets.filter((t) =>
@@ -3590,6 +3605,8 @@ function ReviewDashboard() {
   /** Decision 253 — true only when fetchPendingReviewTargets()'s own query errored, distinct from a genuinely empty/not-admin result. See PendingReviewSection's own error banner below. */
   const [pendingFetchFailed, setPendingFetchFailed] = useState(false);
   const [reviewedIds, setReviewedIds] = useState<Set<string>>(new Set());
+  /** Broader than `reviewedIds` (content_review-only) — every family with a real closed decision under any ORIGINAL_CONTENT_REVIEW_TYPES value. Used only by FullBacklogSection's own exclusion, so a genuinely reviewed Writing/Mock-Maths/Mock-English-passage family stops surfacing as "unresolved" once its real decision is recorded. */
+  const [originalReviewClosedIds, setOriginalReviewClosedIds] = useState<Set<string>>(new Set());
   const [selected, setSelected] = useState<PendingReviewTarget | null>(null);
   const [teachingReviewedIds, setTeachingReviewedIds] = useState<Set<string>>(new Set());
   const [selectedTeachingFamilyId, setSelectedTeachingFamilyId] = useState<string | null>(null);
@@ -3655,8 +3672,8 @@ function ReviewDashboard() {
   const [amendmentReverifyConfirmed, setAmendmentReverifyConfirmed] = useState(false);
 
   async function load() {
-    const [pendingResult, reviewed, teachingReviewed, englishTeachingReviewed, writingTeachingReviewed, sevenX, mr04Depth, inc006Depth, mockMrBatch001, mockMrBatch002, mockMrBatch003, mockFirstMockCompoundBatch001, mockSharedScenarioCompletionBatch, mockStructuralCapacityInc001, mockStructuralCapacityWave002, mockStructuralCapacityWave002Correction001, mockStructuralCapacityIncrement003, mockStructuralCapacityIncrement004, mockStructuralCapacityIncrement005, mockStructuralCapacityIncrement006, mockEnglishPassageBatch001, mockWritingBatch001, englishInc001Passage, englishInc001Writing, englishInc002Passage, mathIncrement007to009, readingRemediation, writingDepthExtension] = await Promise.all([
-      fetchPendingReviewTargets(), fetchReviewedTargetIds(), fetchMathsTeachingReviewedFamilyIds(), fetchEnglishTeachingReviewedFamilyIds(), fetchWritingTeachingReviewedFamilyIds(),
+    const [pendingResult, reviewed, originalReviewClosed, teachingReviewed, englishTeachingReviewed, writingTeachingReviewed, sevenX, mr04Depth, inc006Depth, mockMrBatch001, mockMrBatch002, mockMrBatch003, mockFirstMockCompoundBatch001, mockSharedScenarioCompletionBatch, mockStructuralCapacityInc001, mockStructuralCapacityWave002, mockStructuralCapacityWave002Correction001, mockStructuralCapacityIncrement003, mockStructuralCapacityIncrement004, mockStructuralCapacityIncrement005, mockStructuralCapacityIncrement006, mockEnglishPassageBatch001, mockWritingBatch001, englishInc001Passage, englishInc001Writing, englishInc002Passage, mathIncrement007to009, readingRemediation, writingDepthExtension] = await Promise.all([
+      fetchPendingReviewTargets(), fetchReviewedTargetIds(), fetchAllOriginalReviewClosedFamilyIds(), fetchMathsTeachingReviewedFamilyIds(), fetchEnglishTeachingReviewedFamilyIds(), fetchWritingTeachingReviewedFamilyIds(),
       fetchSevenXReviewStatus(SEVEN_X_TARGET_IDS), fetchMr04DepthReviewStatus(MR04_DEPTH_TARGET_IDS), fetchInc006DepthReviewStatus(INC006_DEPTH_TARGET_IDS),
       fetchMockMrBatch001ReviewStatus(MOCK_MR_BATCH001_TARGET_IDS), fetchMockMrBatch002ReviewStatus(MOCK_MR_BATCH002_TARGET_IDS),
       fetchMockMrBatch003ReviewStatus(MOCK_MR_BATCH003_TARGET_IDS),
@@ -3687,6 +3704,7 @@ function ReviewDashboard() {
     setTargets(pendingResult.targets);
     setPendingFetchFailed(pendingResult.fetchFailed);
     setReviewedIds(reviewed);
+    setOriginalReviewClosedIds(originalReviewClosed);
     setTeachingReviewedIds(teachingReviewed);
     setEnglishTeachingReviewedIds(englishTeachingReviewed);
     setWritingTeachingReviewedIds(writingTeachingReviewed);
@@ -4205,7 +4223,7 @@ function ReviewDashboard() {
       <EnglishInc002PassageSection targets={targets} status={englishInc002PassageStatus} onOpen={setSelectedEnglishInc002Passage} />
       <EnglishInc001WritingSection targets={targets} status={englishInc001WritingStatus} onOpen={(target, family) => setSelectedEnglishInc001Writing({ target, family })} />
       <AmendmentVerificationSection targets={amendmentVerificationTargets} status={amendmentVerificationStatus} onOpen={(target) => { setAmendmentReverifyConfirmed(false); setSelectedAmendmentVerification(target); }} />
-      <FullBacklogSection targets={targets} reviewedIds={reviewedIds} onOpen={setSelected} />
+      <FullBacklogSection targets={targets} reviewedIds={originalReviewClosedIds} onOpen={setSelected} />
       </>
       )}
     </div>

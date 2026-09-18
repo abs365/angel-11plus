@@ -2961,6 +2961,30 @@ export function deriveLatestOriginalReviewDecision(rows: FamilyReviewHistoryRow[
 }
 
 /**
+ * Full Review Backlog discrepancy fix — every family_id that already has a
+ * real, closed decision under ANY `ORIGINAL_CONTENT_REVIEW_TYPES` value,
+ * not just `content_review` (`fetchReviewedTargetIds()`'s own narrower
+ * scope, correct for the pilot/batch sections that genuinely are
+ * content_review, but wrong for `FullBacklogSection`'s generic exclusion,
+ * which must recognise a real decision under any original review type —
+ * e.g. `mock_writing_prompt_independent_review` — as closing that family
+ * out of the backlog). Same "still-pending placeholder" exclusion as
+ * `fetchReviewedTargetIds()`; reuses the existing
+ * `ORIGINAL_CONTENT_REVIEW_TYPES` list rather than inventing a new one.
+ */
+export async function fetchAllOriginalReviewClosedFamilyIds(): Promise<Set<string>> {
+  const supabase = getSupabaseClient();
+  if (!supabase) return new Set();
+  const { data, error } = await supabase
+    .from("ali_family_review")
+    .select("family_id")
+    .in("review_type", ORIGINAL_CONTENT_REVIEW_TYPES)
+    .neq("decision", "pending_independent_review");
+  if (error || !data) return new Set();
+  return new Set(data.map((r) => r.family_id));
+}
+
+/**
  * Pure core of the generic Amendment Verification eligibility rule
  * (Decision 251, Part B's "Preferred architecture"): a review target is
  * eligible iff its LATEST formal original-review decision is exactly
