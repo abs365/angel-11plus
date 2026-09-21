@@ -35,7 +35,7 @@ function extractPublishFunctionBody(executableText: string): string {
   if (!match) throw new Error("could not locate publish_question_candidate function body");
   return match[0];
 }
-const oldBody = extractPublishFunctionBody(OLD_235_EXECUTABLE);
+const oldBody = OLD_235_SQL === null ? "" : extractPublishFunctionBody(OLD_235_EXECUTABLE);
 const newBody = extractPublishFunctionBody(executable);
 
 /** The local, in-test equivalent of the exact merge Postgres will perform, for a Maths candidate. */
