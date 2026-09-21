@@ -432,9 +432,10 @@ function LoginContent() {
                     </button>
                   </div>
 
-                  {/* Every existing account was created by email link and has
-                      no password, so this is a first-class path for a returning
-                      parent, not a footnote. */}
+                  {/* Accounts made through Create account never ask the parent to
+                      choose a password (Supabase stores a random temporary one nobody
+                      knows), so this is a first-class path for a returning parent,
+                      not a footnote. */}
                   <div className="rounded-xl border border-gray-200 dark:border-gray-700 px-4 py-3 text-center">
                     <p className="text-gray-500 dark:text-gray-400 text-xs mb-2">
                       Signed up with an email link? You may not have a password.

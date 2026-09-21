@@ -174,3 +174,80 @@ test("ANONYMOUS learner -> a NEW permanent account is a different auth identity:
   assert.notEqual(ANON_LEARNER, LB);
   void setActiveLearner;
 });
+
+// ---------------------------------------------------------------------------------------------------------------
+// The EXACT production case (Founder's real journey, confirmed by the read-only provenance check):
+//   the browser's previous owner was an ANONYMOUS learner (own server evidence: 1 lesson_progress row, 69 XP);
+//   a NEW permanent account was created on the SAME browser; the new learner owns ZERO server evidence, yet
+//   production showed "5 sessions so far", "Solid progress", "Building Confidence", CSSE and a daily mission.
+// ---------------------------------------------------------------------------------------------------------------
+
+import { computeAnalytics } from "@/lib/analytics";
+import { computeAdaptiveState } from "@/lib/adaptiveEngine";
+import { computeGamification } from "@/lib/gamification";
+import { computeParentReport, READINESS_CONFIG } from "@/lib/parentInsights";
+import { getInProgressMockAttempt, startMockAttempt } from "@/lib/mockProgress";
+
+function dashboardView() {
+  const p = getProgress();
+  const r = computeAnalytics(p);
+  const adaptive = computeAdaptiveState(p, r);
+  const parent = computeParentReport(p, r, computeGamification(p));
+  return {
+    sessions: p.completedLessons.length,
+    solidProgressMessage: p.completedLessons.length >= 5,
+    xp: p.xp,
+    pathway: p.selectedPathwayId,
+    confidenceChip: READINESS_CONFIG[parent.examReadiness].label,
+    missionLabels: adaptive.dailyMission.items.map((i: { label?: string; title?: string }) => i.label ?? i.title),
+    hasExamDate: Boolean(p.targetExamDate),
+    hasSkillEvidence: Object.keys(p.skillScores ?? {}).length > 0 || Object.keys(p.aliCompetencySignal ?? {}).length > 0,
+  };
+}
+
+test("EXACT PRODUCTION CASE: anonymous learner A's device state -> NEW permanent account B on the SAME browser: B gets a clean learner", async () => {
+  // Anonymous A accumulated local state (sessions, XP, pathway, scores, an unfinished Mock).
+  seedLegacyDeviceWideState();
+  ls.setItem("angel11plus_mock_attempt_in_progress", JSON.stringify({ id: "csse-1", pathway: "csse", pathwayName: "CSSE", startedAt: "2026-09-08T15:00:00Z" }));
+  const aRaw = ls.getItem("angel11plus_progress");
+  const aMockRaw = ls.getItem("angel11plus_mock_attempt_in_progress");
+
+  // The anonymous session is replaced when B signs in via the email link; B is a different auth identity whose
+  // profile was created with a fresh device id (the anonymous profile owns this device's id).
+  await signInAs(UB);
+  assert.equal(learnerOwnsThisDevice("fresh-device-for-B", DEVICE), false);
+
+  const b = dashboardView();
+  assert.equal(b.sessions, 0, "B must not show A's completed sessions");
+  assert.equal(b.solidProgressMessage, false, "B must not get 'Solid progress'");
+  assert.equal(b.xp, 0, "B must not show A's XP");
+  assert.equal(b.pathway, undefined, "B must not inherit A's CSSE pathway");
+  assert.equal(b.hasExamDate, false);
+  assert.equal(b.hasSkillEvidence, false, "B must not show A's preparation/skill state");
+  assert.equal(b.confidenceChip, READINESS_CONFIG["not-ready"].label, "B must not show A's confidence state");
+  assert.equal(await getInProgressMockAttempt(), null, "B must not see A's unfinished Mock");
+  // A brand-new account still gets the generic default mission; what matters is that it is EXACTLY the mission of a
+  // virgin learner (default progress), i.e. not one built from A's scores.
+  const virgin = computeAdaptiveState(
+    { xp: 0, streak: 1, completedLessons: [], scores: {}, lastActivity: getProgress().lastActivity },
+    computeAnalytics({ xp: 0, streak: 1, completedLessons: [], scores: {}, lastActivity: getProgress().lastActivity })
+  ).dailyMission.items.map((i: { label?: string; title?: string }) => i.label ?? i.title);
+  assert.deepEqual(b.missionLabels, virgin, "B's daily mission must equal a virgin learner's, not one derived from A's scores");
+
+  // B starts a Mock of their own on the shared browser; it is B's only.
+  startMockAttempt("csse", "CSSE");
+  assert.notEqual(await getInProgressMockAttempt(), null);
+
+  // A's browser state is completely untouched: never read-and-rewritten, never deleted.
+  assert.equal(ls.getItem("angel11plus_progress"), aRaw);
+  assert.equal(ls.getItem("angel11plus_mock_attempt_in_progress"), aMockRaw);
+});
+
+test("the SAME inputs on the current production code (device-wide key) would have shown B all of A's state -- the defect this branch removes", () => {
+  // Characterisation of what production did: with no learner context, there is only the legacy key and
+  // the branch refuses to read it (learnerStorageKey() is null until a learner is known).
+  seedLegacyDeviceWideState();
+  clearLearnerContext();
+  const beforeAnyLearnerIsKnown = getProgress();
+  assert.equal(beforeAnyLearnerIsKnown.completedLessons.length, 0, "the legacy device-wide blob is never read as anyone's state");
+});

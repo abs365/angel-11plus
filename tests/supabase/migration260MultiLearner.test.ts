@@ -508,3 +508,52 @@ test("ANONYMOUS -> NEW permanent account (server side): the anonymous learner's 
   const still = await db.query<{ n: number }>(`select count(*)::int n from public.lesson_progress where profile_id='${ANON_PROFILE}'`);
   assert.equal(still.rows[0].n, 1, "the anonymous evidence is preserved, untouched, under its own identity");
 });
+
+test("EXACT PRODUCTION CASE (server side): anonymous learner (1 lesson, 69 XP, 0 question history) + NEW permanent account on the SAME browser: new learner has ZERO evidence, anonymous evidence is byte-for-byte untouched", async () => {
+  const ANON3 = "56565656-5656-4656-8656-565656565656";
+  const PERM3 = "78787878-7878-4878-8878-787878787878";
+  const A_PROFILE = "c3c3c3c3-0000-4000-8000-0000000000aa";
+  const lessonSubject = await firstEnum("lesson_progress", "subject");
+  await db.exec(`
+    insert into auth.users (id, email, is_anonymous) values ('${ANON3}', null, true), ('${PERM3}', 'p3@example.test', false);
+    insert into public.profiles (id, device_id, auth_user_id) values ('${A_PROFILE}', 'dev-founder-browser', '${ANON3}');
+    insert into public.lesson_progress (profile_id, lesson_id, subject, score, xp_gained) values ('${A_PROFILE}', 'l9', '${lessonSubject}', 40, 10);
+    insert into public.user_stats (profile_id, total_xp, streak) values ('${A_PROFILE}', 69, 1);
+  `);
+  const evidenceOf = async (profile: string) => JSON.stringify((await db.query(
+    `select (select count(*) from public.lesson_progress where profile_id='${profile}')::int as lessons,
+            (select count(*) from public.ali_student_question_history where profile_id='${profile}')::int as history,
+            (select coalesce(sum(total_xp),0) from public.user_stats where profile_id='${profile}')::int as xp,
+            (select md5(coalesce(string_agg(lesson_id||score::text||xp_gained::text, ',' order by lesson_id),'')) from public.lesson_progress where profile_id='${profile}') as fingerprint`
+  )).rows[0]);
+  const aBefore = await evidenceOf(A_PROFILE);
+  assert.match(aBefore, /"lessons":1/);
+  assert.match(aBefore, /"xp":69/);
+
+  await asUser(db, { uid: PERM3 }, async (q) => {
+    // What ensureProfile() does for a brand-new account: claim (refused: the device profile is OWNED), then insert.
+    const claim = await q("select public.claim_legacy_profile('dev-founder-browser') as id");
+    assert.equal(claim.rows[0].id, null);
+    // Same browser => same device id => unique violation => the client retries with a fresh device id.
+    const clash = await q("insert into public.profiles (device_id, auth_user_id) values ('dev-founder-browser', $1)", [PERM3]);
+    assert.equal(clash.error?.code, "23505");
+    const created = await q("insert into public.profiles (device_id, auth_user_id) values ('fresh-device-for-perm3', $1) returning id", [PERM3]);
+    assert.equal(created.error, undefined);
+    const newId = String(created.rows[0].id);
+
+    // The new learner owns nothing and can see nothing that belongs to the anonymous learner.
+    for (const [t, col] of [["lesson_progress", "profile_id"], ["ali_student_question_history", "profile_id"], ["user_stats", "profile_id"],
+                            ["ali_durable_mastery", "profile_id"], ["ali_student_adaptive_state", "profile_id"], ["ali_mock_attempt", "profile_id"]] as const) {
+      const r = await q(`select count(*)::int as n from public.${t} where ${col} = $1`, [newId]);
+      assert.equal(r.rows[0].n, 0, `new learner must own no ${t}`);
+      const all = await q(`select count(*)::int as n from public.${t}`);
+      assert.equal(all.rows[0].n, 0, `new account must not see any ${t} row at all (none is theirs)`);
+    }
+    const pathway = await q("select selected_pathway_id from public.profiles where id = $1", [newId]);
+    assert.equal(pathway.rows[0].selected_pathway_id, null);
+  });
+
+  assert.equal(await evidenceOf(A_PROFILE), aBefore, "the anonymous learner's server evidence must be completely untouched");
+  const owner = await db.query<{ auth_user_id: string }>(`select auth_user_id from public.profiles where id='${A_PROFILE}'`);
+  assert.equal(owner.rows[0].auth_user_id, ANON3, "the anonymous learner remains separately owned");
+});

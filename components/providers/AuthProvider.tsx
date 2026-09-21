@@ -26,9 +26,15 @@ interface AuthContextValue {
    * own "Email" provider already supports password sign-in for every
    * existing auth.users row; this calls the SAME account by email,
    * identically to signInWithMagicLink — no new user, no new profile, no
-   * change to any existing profile/attempt/evidence ownership. A user who
-   * has never set a password (every existing account today) gets the
-   * exact governed Supabase error for that case, surfaced by the caller.
+   * change to any existing profile/attempt/evidence ownership. NOTE (verified
+   * from Supabase Auth's own source, internal/api/otp.go, and production
+   * data): accounts created through the email-link flow are NOT stored without
+   * a password -- Supabase signs them up with a random 64-character temporary
+   * password that is hashed into auth.users.encrypted_password and that nobody
+   * knows. So "has a stored password value" is true for every such account;
+   * what matters is that the parent never chose or learned one. A parent who
+   * tries a password they never set simply gets Supabase's normal "Invalid
+   * login credentials", which the caller turns into a friendly message.
    */
   signInWithPassword: (email: string, password: string) => Promise<{ error: string | null }>;
   /**

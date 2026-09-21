@@ -101,7 +101,7 @@ test("the old small-print registration hint is gone", () => {
   assert.doesNotMatch(SOURCE, /to create your account\./);
 });
 
-test("a returning parent who signed up by email link (no password) gets a prominent, explained path", () => {
+test("a returning parent who signed up by email link (never chose a password) gets a prominent, explained path", () => {
   assert.match(SOURCE, /Signed up with an email link\? You may not have a password\./);
 });
 

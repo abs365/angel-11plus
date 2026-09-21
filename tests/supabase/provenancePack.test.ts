@@ -41,12 +41,12 @@ test("every statement runs on real Postgres and distinguishes an anonymous previ
   const [q1, q2, q3, q4] = await Promise.all(statements.map(async (s) => (await db.query<Record<string, unknown>>(sub(s))).rows));
 
   assert.equal(q1[0].is_anonymous, false);
-  assert.equal(q1[0].has_password, false);
+  assert.equal(q1[0].has_stored_password_value, false); // stub account with an empty hash; real email-link accounts store a random temporary hash
   assert.equal(q2[0].lesson_progress_rows, 0);
   assert.notEqual(q2[0].device_prefix, "dev-brow", "new account was issued a different device id");
   assert.equal(q3[0].owner_is_anonymous, true, "the pack identifies the previous owner of the browser as anonymous");
   assert.equal(q3[0].owner_has_email, false);
-  assert.equal(Number(q4[0].permanent_with_password), 1);
-  assert.equal(Number(q4[0].permanent_passwordless), 1);
+  assert.equal(Number(q4[0].permanent_with_stored_password_value), 1);
+  assert.equal(Number(q4[0].permanent_without_stored_password_value), 1);
   assert.equal(Number(q4[0].anonymous), 1);
 });
