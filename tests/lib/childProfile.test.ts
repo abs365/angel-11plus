@@ -108,7 +108,13 @@ test("resolveLoginTab: Sign in links land on the sign-in tab; a bare /login (bet
 
 test("every 'Sign in' link in the shell targets the sign-in tab", () => {
   for (const f of ["components/Header.tsx", "components/Navigation.tsx", "components/ui/UserMenu.tsx", "app/reset-password/page.tsx"]) {
-    const src = fs.readFileSync(f, "utf8");
+    let src = fs.readFileSync(f, "utf8");
+    // The Header also offers a "Create account" action (controlled-beta policy: an anonymous session is not a
+    // registered parent). That one link legitimately targets the bare /login (Create account tab); nothing else may.
+    if (f === "components/Header.tsx") {
+      assert.equal((src.match(/href="\/login"\s*\n\s*className="[^"]*"\s*\n\s*>\s*\n\s*Create account/g) ?? []).length, 1, "Header: exactly one bare /login link, and it is Create account");
+      src = src.replace(/href="\/login"(\s*\n\s*className="[^"]*"\s*\n\s*>\s*\n\s*Create account)/, "$1");
+    }
     assert.doesNotMatch(src, /href="\/login"/, `${f} should link to /login?mode=signin`);
     assert.match(src, /href="\/login\?mode=signin"/);
   }
