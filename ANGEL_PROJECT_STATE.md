@@ -13,6 +13,21 @@ practice_eligible. See "Closed programme (most recent)" below.
 
 ---
 
+## New-account / same-browser isolation + returning-parent auth clarity (2026-09-21, commit 6d643be, deployed)
+
+Founder's real new-email journey showed another user's progress. Verified root cause on production code: the whole
+learner blob (`angel11plus_progress`: sessions, readiness chip, missions, pathway) is ONE device-wide localStorage key
+read by `getProgress()` with no account awareness, so ANY account on that browser renders it ("5 sessions so far",
+"Solid progress", "Building Confidence", CSSE, English mission all derive from it -- reproduced with the real functions).
+Not fixed on main (Migration 260 branch fixes it: per-learner keys + claim only when profiles.device_id matches; tests
+`tests/lib/crossAccountDeviceState.test.ts`). Anonymous->permanent is NOT a claim in the current architecture: signInWithOtp
+creates a new auth user; the anonymous profile stays owned by the anonymous identity. Provenance of the Founder's actual
+browser needs `ANGEL_ACCOUNT_ISOLATION_PROVENANCE_CHECK.sql` (read-only).
+Auth: accounts made via Create account are PASSWORDLESS; password can only be set via the reset flow. /login Sign in now
+leads with the email link (password secondary) and uses shouldCreateUser:false so a typo can never create an account.
+
+---
+
 ## Create-account production defect (2026-09-21, commits 3862f09 + 389ab83, deployed, Vercel Ready)
 
 Founder found the live /login Create account button did nothing. Reproduced on real production: with an empty email
