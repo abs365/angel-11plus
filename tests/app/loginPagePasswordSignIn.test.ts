@@ -13,7 +13,7 @@ import fs from "node:fs";
 
 const SOURCE = fs.readFileSync("app/login/page.tsx", "utf8");
 
-test("the secure email link is the DEFAULT sign-in method; password is a secondary option (accounts made via Create account are passwordless)", () => {
+test("the secure email link is the DEFAULT sign-in method; password is a secondary option (Create account never asks the parent to choose a password)", () => {
   assert.match(SOURCE, /const \[mode, setMode\] = useState<Mode>\("magic-link"\);/);
   // Switching tabs always returns to the default, never to an unknown password.
   assert.match(SOURCE, /setTab\(next\);\s*\n\s*setMode\("magic-link"\);/);
@@ -49,9 +49,10 @@ test("friendlySignInError never surfaces Supabase's raw 'Invalid login credentia
   assert.match(fn![0], /Forgot password/i);
 });
 
-test("the existing Gate 3 isPermanentlyAuthenticated redirect predicate is completely unchanged", () => {
-  assert.match(SOURCE, /export function isPermanentlyAuthenticated\(user: \{ is_anonymous\?: boolean \} \| null \| undefined\): boolean \{/);
-  assert.match(SOURCE, /return Boolean\(user\) && !user!\.is_anonymous;/);
+test("the existing Gate 3 isPermanentlyAuthenticated redirect predicate is completely unchanged (now in lib/loginRouting.ts)", () => {
+  const ROUTING = fs.readFileSync("lib/loginRouting.ts", "utf8");
+  assert.match(ROUTING, /export function isPermanentlyAuthenticated\(user: \{ is_anonymous\?: boolean \} \| null \| undefined\): boolean \{/);
+  assert.match(ROUTING, /return Boolean\(user\) && !user!\.is_anonymous;/);
 });
 
 /**
@@ -107,8 +108,8 @@ test("a parent who never set a password is told plainly they do not need one, fr
 });
 
 /**
- * Returning-parent authentication clarity: Create account is passwordless, so
- * Sign in must not present an unknown password as the expected default. Sign in
+ * Returning-parent authentication clarity: Create account never asks the parent to choose a
+ * password, so Sign in must not present an unknown password as the expected default. Sign in
  * leads with the email link, distinguishes itself from Create account in wording,
  * and (shouldCreateUser:false) can never silently create an account from a typo.
  */

@@ -1,5 +1,6 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Database } from "@/types/supabase";
+import { learnerRequestHeaders } from "@/lib/learnerContext";
 
 /**
  * CSSE Two-Paper Mock P1 Repair, English Full Mock assessment completion —
@@ -60,7 +61,7 @@ export async function applyManualMark(
 
     const response = await fetch("/api/mock-manual-mark", {
       method: "POST",
-      headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}`, ...learnerRequestHeaders() },
       body: JSON.stringify({ attemptId, questionId, marksAwarded }),
     });
     if (!response.ok) {

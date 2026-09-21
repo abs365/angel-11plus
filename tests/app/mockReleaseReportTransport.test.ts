@@ -65,7 +65,7 @@ test("a well-formed UUID passes the route's own validation and reaches the RPC c
 // --- 5: caller Authorization is forwarded --------------------------------
 
 test("the caller's own Authorization header is forwarded into the Supabase client -- never a service-role key, never a fixed/omitted value (5)", () => {
-  assert.match(ROUTE, /createClient\(url, anonKey, \{\s*\n\s*global: \{ headers: \{ Authorization: authHeader \} \},\s*\n\s*auth: \{ persistSession: false \},\s*\n\s*\}\);/);
+  assert.match(ROUTE, /createClient\(url, anonKey, \{\s*\n\s*global: \{ headers: \{ Authorization: authHeader, \.\.\.forwardedLearnerHeaders\(request\) \} \},\s*\n\s*auth: \{ persistSession: false \},\s*\n\s*\}\);/);
 });
 
 // --- 6, 7: fixed RPC name, only attemptId supplied -----------------------

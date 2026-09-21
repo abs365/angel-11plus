@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/components/providers/AuthProvider";
 import { useChildName } from "@/lib/useChildName";
+import LearnerSwitcher from "@/components/LearnerSwitcher";
 import Popover from "@/components/ui/Popover";
 import SearchBar from "@/components/ui/SearchBar";
 import NotificationArea from "@/components/ui/NotificationArea";
@@ -55,6 +56,8 @@ export default function Header({ breadcrumbs }: HeaderProps) {
         <div className="hidden sm:block">
           <SearchBar />
         </div>
+
+        {!loading && user && <LearnerSwitcher />}
 
         <Popover
           label="Notifications"

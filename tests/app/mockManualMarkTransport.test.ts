@@ -76,7 +76,7 @@ test("no field resembling marker identity, admin flag, or role is read from the 
 
 test("the route uses createClient with the caller's OWN forwarded Authorization header -- never a direct Postgres connection, never the postgres package (D)", () => {
   assert.doesNotMatch(ROUTE, /from "postgres"/, "must never import the postgres package -- that channel bypasses auth.uid() entirely, per this route's own header rationale");
-  assert.match(ROUTE, /createClient\(url, anonKey, \{\s*\n\s*global: \{ headers: \{ Authorization: authHeader \} \},\s*\n\s*auth: \{ persistSession: false \},\s*\n\s*\}\);/);
+  assert.match(ROUTE, /createClient\(url, anonKey, \{\s*\n\s*global: \{ headers: \{ Authorization: authHeader, \.\.\.forwardedLearnerHeaders\(request\) \} \},\s*\n\s*auth: \{ persistSession: false \},\s*\n\s*\}\);/);
 });
 
 test("no service-role credential or MOCK_SCORING_DATABASE_URL is referenced in this route's EXECUTABLE code (E) -- the header comment's own explanation of what NOT to use is expected and fine", () => {

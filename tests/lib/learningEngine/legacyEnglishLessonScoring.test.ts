@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { scoreAnswer } from "@/app/english/[id]/page";
+import { scoreAnswer } from "@/lib/legacyEnglishScoring";
 
 /**
  * Stage 2 Educational Integrity Correction (Learn-path investigation) —

@@ -1,10 +1,22 @@
 "use client";
 
 import type { UserProgress, SkillType } from "@/types";
-import { syncLessonComplete, syncFullProgress, subjectFromLessonId } from "./supabaseProgress";
+import { syncLessonComplete, syncFullProgress, subjectFromLessonId, syncLearnerSetup } from "./supabaseProgress";
 import { getMondayOfWeek } from "./gamification";
+import { learnerStorageKey } from "./learnerContext";
 
-const KEY = "angel11plus_progress";
+/**
+ * Multi-learner (migration 260): this blob is LEARNER state (xp, streak,
+ * scores, completed lessons, pathway, exam date, school year, ALI signals),
+ * so it lives under a key scoped by the active learner id -- never one
+ * device-wide key that a sibling or another account on a shared device
+ * could read or overwrite. Until the learner is known, reads return
+ * defaults and writes are skipped (learnerStorageKey() is null); the
+ * legacy device-wide blob is only ever touched by the one-time claim in
+ * lib/learnerActivation.ts.
+ */
+export const PROGRESS_BASE_KEY = "angel11plus_progress";
+const KEY = PROGRESS_BASE_KEY;
 
 const defaultProgress: UserProgress = {
   xp: 0,
@@ -17,7 +29,9 @@ const defaultProgress: UserProgress = {
 export function getProgress(): UserProgress {
   if (typeof window === "undefined") return defaultProgress;
   try {
-    const stored = localStorage.getItem(KEY);
+    const key = learnerStorageKey(KEY);
+    if (!key) return defaultProgress;
+    const stored = localStorage.getItem(key);
     if (!stored) return defaultProgress;
     return JSON.parse(stored) as UserProgress;
   } catch {
@@ -27,7 +41,9 @@ export function getProgress(): UserProgress {
 
 export function saveProgress(progress: UserProgress): void {
   if (typeof window === "undefined") return;
-  localStorage.setItem(KEY, JSON.stringify(progress));
+  const key = learnerStorageKey(KEY);
+  if (!key) return; // active learner not known yet: never write to another learner's or the legacy key
+  localStorage.setItem(key, JSON.stringify(progress));
 }
 
 export function addXP(amount: number): UserProgress {
@@ -179,6 +195,7 @@ export function setTargetExamDate(dateIso: string): { success: boolean; error?: 
   }
   const p = getProgress();
   saveProgress({ ...p, targetExamDate: dateIso, targetExamDateProvenance: "parent_supplied" });
+  syncLearnerSetup({ target_exam_date: dateIso, target_exam_date_provenance: "parent_supplied" }).catch(() => {});
   return { success: true };
 }
 
@@ -207,6 +224,7 @@ export function getTargetExamDateProvenance(): "official" | "parent_supplied" | 
 export function clearTargetExamDate(): void {
   const p = getProgress();
   saveProgress({ ...p, targetExamDate: undefined, targetExamDateProvenance: undefined });
+  syncLearnerSetup({ target_exam_date: null, target_exam_date_provenance: null }).catch(() => {});
 }
 
 const PLAUSIBLE_SCHOOL_YEARS = ["Year 4", "Year 5", "Year 6"] as const;
@@ -229,6 +247,7 @@ export function setSchoolYear(year: string): { success: boolean; error?: string 
   }
   const p = getProgress();
   saveProgress({ ...p, schoolYear: year });
+  syncLearnerSetup({ school_year: year }).catch(() => {});
   return { success: true };
 }
 
@@ -239,4 +258,5 @@ export function getSchoolYear(): "Year 4" | "Year 5" | "Year 6" | undefined {
 export function clearSchoolYear(): void {
   const p = getProgress();
   saveProgress({ ...p, schoolYear: undefined });
+  syncLearnerSetup({ school_year: null }).catch(() => {});
 }

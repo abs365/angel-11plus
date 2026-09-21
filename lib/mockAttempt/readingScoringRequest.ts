@@ -1,5 +1,6 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Database } from "@/types/supabase";
+import { learnerRequestHeaders } from "@/lib/learnerContext";
 
 /**
  * Programme Completion Increment 016, Founder invocation-reliability
@@ -91,7 +92,7 @@ export async function requestReadingScoring(
 
     const response = await fetch("/api/mock-reading-scoring", {
       method: "POST",
-      headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}`, ...learnerRequestHeaders() },
       body: JSON.stringify({ attemptId }),
     });
     if (!response.ok) {

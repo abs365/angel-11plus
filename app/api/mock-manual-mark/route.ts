@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
+import { forwardedLearnerHeaders } from "@/lib/learnerRequestForwarding";
 
 /**
  * Reading Mock Manual Marking — Authenticated Transport Only.
@@ -134,7 +135,7 @@ export async function POST(request: NextRequest) {
   // own auth.uid()-derived marker identity — never a privileged
   // connection, never a caller-supplied identity of any kind.
   const callerClient = createClient(url, anonKey, {
-    global: { headers: { Authorization: authHeader } },
+    global: { headers: { Authorization: authHeader, ...forwardedLearnerHeaders(request) } },
     auth: { persistSession: false },
   });
 

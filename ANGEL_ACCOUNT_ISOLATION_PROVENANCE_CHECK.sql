@@ -19,13 +19,15 @@
 
 -- ------------------------------------------------------------------------------------------------
 -- Q1. The NEW account itself.
---   EXPECT: is_anonymous = false; created_at = the day of your test; has_password = false
---   (Create account is passwordless).
+--   EXPECT: is_anonymous = false; created_at = the day of your test.
+--   has_stored_password_value is TRUE for every account created by the email link: Supabase signs such users
+--   up with a random 64-character temporary password (hashed, unknown to everyone). It does NOT mean the parent
+--   chose or knows a password; ever_requested_password_reset = false means they never used the reset flow.
 -- ------------------------------------------------------------------------------------------------
 select left(u.id::text, 8)                                          as account,
        u.is_anonymous,
        u.created_at,
-       (u.encrypted_password is not null and u.encrypted_password <> '') as has_password,
+       (u.encrypted_password is not null and u.encrypted_password <> '') as has_stored_password_value,
        (u.recovery_sent_at is not null)                             as ever_requested_password_reset,
        u.last_sign_in_at
 from auth.users u
@@ -72,14 +74,15 @@ where p.device_id = '<DEVICE_ID>';
 
 -- ------------------------------------------------------------------------------------------------
 -- Q4. Real password statistics across ALL Angel 11+ accounts (counts only).
---   permanent_passwordless = accounts created by the email link that never set a password.
---   permanent_with_password = accounts that genuinely can sign in with a password.
---   ever_requested_password_reset = accounts that used "Forgot password" (the only way to set one).
+--   permanent_with_stored_password_value = permanent accounts with ANY stored password hash (includes the random
+--     temporary one Supabase assigns at email-link sign-up; this alone says nothing about a KNOWN password).
+--   ever_requested_password_reset = accounts that used "Forgot password" (the only in-app way to choose a
+--     password): the meaningful indicator that a parent set one.
 -- ------------------------------------------------------------------------------------------------
 select count(*)                                                                                   as accounts_total,
        count(*) filter (where is_anonymous)                                                       as anonymous,
        count(*) filter (where not is_anonymous)                                                   as permanent,
-       count(*) filter (where not is_anonymous and encrypted_password is not null and encrypted_password <> '') as permanent_with_password,
-       count(*) filter (where not is_anonymous and (encrypted_password is null or encrypted_password = ''))    as permanent_passwordless,
+       count(*) filter (where not is_anonymous and encrypted_password is not null and encrypted_password <> '') as permanent_with_stored_password_value,
+       count(*) filter (where not is_anonymous and (encrypted_password is null or encrypted_password = ''))    as permanent_without_stored_password_value,
        count(*) filter (where recovery_sent_at is not null)                                       as ever_requested_password_reset
 from auth.users;

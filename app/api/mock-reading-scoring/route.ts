@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
+import { forwardedLearnerHeaders } from "@/lib/learnerRequestForwarding";
 import postgres from "postgres";
 import { scoreReadingAttempt } from "@/lib/server/mockScoringAuthority";
 import { classifyPersistGuard } from "@/lib/mockAttempt/persistGuardClassifier";
@@ -112,7 +113,7 @@ export async function POST(request: NextRequest) {
   // client-side, not the privileged scoring connection. A caller can only
   // ever see their own attempts here; this is ordinary RLS, unmodified.
   const learnerClient = createClient(url, anonKey, {
-    global: { headers: { Authorization: authHeader } },
+    global: { headers: { Authorization: authHeader, ...forwardedLearnerHeaders(request) } },
     auth: { persistSession: false },
   });
   const { data: attempt, error } = await learnerClient

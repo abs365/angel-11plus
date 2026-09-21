@@ -5,6 +5,7 @@ import { ensureLearnerSession } from "./learnerIdentity";
 import type { Subject, Database } from "@/types/supabase";
 import type { UserProgress } from "@/types";
 import type { SupabaseClient } from "@supabase/supabase-js";
+import { ensureLearnerContext, refreshLearnerContext } from "./learnerContext";
 
 const DEVICE_ID_KEY = "angel11plus_device_id";
 
@@ -93,6 +94,40 @@ export function getDeviceId(): string {
 // makes the re-read safe: at most one row can ever own this auth_user_id.
 // ----------------------------------------------------------------
 
+/**
+ * Multi-learner (migration 260): one account owns N learners, so "the
+ * profile for this account" is now "the ACTIVE learner for this account",
+ * resolved by the single learner context (lib/learnerContext.ts) and
+ * validated by the database on every request. The injected-client branch
+ * is the unchanged single-row lookup the unit-test stubs exercise.
+ */
+async function findAccountLearnerId(
+  supabase: SupabaseClient<Database>,
+  authUserId: string,
+  injected: boolean
+): Promise<{ id: string | null; error?: string }> {
+  if (injected) {
+    const { data, error } = await supabase
+      .from("profiles")
+      .select("id")
+      .eq("auth_user_id", authUserId)
+      .maybeSingle();
+    if (error) return { id: null, error: error.message };
+    return { id: data?.id ?? null };
+  }
+  const { data } = await supabase.auth.getSession();
+  const token = data.session?.access_token;
+  if (!token) return { id: null, error: "no access token" };
+  const ctx = await ensureLearnerContext(authUserId, token);
+  if (ctx.status !== "ready") return { id: null, error: "learner context unavailable" };
+  return { id: ctx.learnerId };
+}
+
+async function refreshContextFor(supabase: SupabaseClient<Database>, authUserId: string): Promise<void> {
+  const { data } = await supabase.auth.getSession();
+  if (data.session?.access_token) await refreshLearnerContext(authUserId, data.session.access_token);
+}
+
 const PROFILES_DEVICE_ID_UNIQUE_VIOLATION = "profiles_device_id_key";
 const PROFILES_AUTH_USER_ID_UNIQUE_VIOLATION = "profiles_auth_user_id_key";
 
@@ -118,16 +153,12 @@ export async function ensureProfile(
     return null;
   }
 
-  const { data: existing, error: lookupError } = await supabase
-    .from("profiles")
-    .select("id")
-    .eq("auth_user_id", authUserId)
-    .maybeSingle();
+  const { id: existingId, error: lookupError } = await findAccountLearnerId(supabase, authUserId, Boolean(injectedClient));
   if (lookupError) {
-    console.warn("[Supabase] ensureProfile lookup failed:", lookupError.message);
+    console.warn("[Supabase] ensureProfile lookup failed:", lookupError);
     return null;
   }
-  if (existing) return existing.id;
+  if (existingId) return existingId;
 
   const deviceId = getDeviceId();
   if (deviceId) {
@@ -137,6 +168,7 @@ export async function ensureProfile(
     if (claimError) {
       console.warn("[Supabase] claim_legacy_profile failed:", claimError.message);
     } else if (claimedId) {
+      if (!injectedClient) await refreshContextFor(supabase, authUserId);
       return claimedId;
     }
   }
@@ -163,16 +195,13 @@ export async function ensureProfile(
     // Converge on that same row instead of failing: profiles_auth_user_id
     // is unique, so at most one row can own this auth_user_id, and this
     // read finds precisely it.
-    const { data: resolved, error: resolveError } = await supabase
-      .from("profiles")
-      .select("id")
-      .eq("auth_user_id", authUserId)
-      .maybeSingle();
+    if (!injectedClient) await refreshContextFor(supabase, authUserId);
+    const { id: resolvedId, error: resolveError } = await findAccountLearnerId(supabase, authUserId, Boolean(injectedClient));
     if (resolveError) {
-      console.warn("[Supabase] ensureProfile post-race re-read failed:", resolveError.message);
+      console.warn("[Supabase] ensureProfile post-race re-read failed:", resolveError);
       return null;
     }
-    if (resolved) return resolved.id;
+    if (resolvedId) return resolvedId;
     // The constraint violation guarantees a row exists for this
     // auth_user_id; finding none here is genuinely unexpected (not a race
     // this function can resolve by retrying) — fail closed rather than
@@ -185,6 +214,7 @@ export async function ensureProfile(
     console.warn("[Supabase] ensureProfile insert failed:", insertError.message);
     return null;
   }
+  if (created?.id && !injectedClient) await refreshContextFor(supabase, authUserId);
   return created?.id ?? null;
 }
 
@@ -289,6 +319,38 @@ export async function syncSelectedPathway(pathwayId: string): Promise<void> {
   if (error) {
     console.warn("[Supabase] syncSelectedPathway failed:", error.message);
   }
+}
+
+// ----------------------------------------------------------------
+// Per-learner preparation setup (multi-learner, migration 260): the
+// learner's own pathway / exam date / school year / first-name live on
+// their profiles row, not in device-wide browser state. Best effort and
+// fire-and-forget like every other sync in this file; the learner-scoped
+// local cache keeps the UI responsive either way.
+// ----------------------------------------------------------------
+
+export interface LearnerSetupPatch {
+  selected_pathway_id?: string | null;
+  pathway_selected_at?: string | null;
+  target_exam_date?: string | null;
+  target_exam_date_provenance?: "official" | "parent_supplied" | "estimated" | "unknown" | null;
+  school_year?: "Year 4" | "Year 5" | "Year 6" | null;
+  learner_name?: string | null;
+}
+
+export async function syncLearnerSetup(patch: LearnerSetupPatch): Promise<boolean> {
+  const supabase = getSupabaseClient();
+  if (!supabase) return false;
+
+  const profileId = await ensureProfile();
+  if (!profileId) return false;
+
+  const { error } = await supabase.from("profiles").update(patch).eq("id", profileId);
+  if (error) {
+    console.warn("[Supabase] syncLearnerSetup failed:", error.message);
+    return false;
+  }
+  return true;
 }
 
 // ----------------------------------------------------------------

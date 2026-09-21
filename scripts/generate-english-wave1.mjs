@@ -1,5 +1,11 @@
 import { writeFileSync } from "node:fs";
 
+// Session-local debug dumps (paths from the machine/session that authored this file). Best effort:
+// importing this module (e.g. from a test) must never throw because that directory does not exist.
+function writeSessionDebugDump(path, data) {
+  try { writeFileSync(path, data); } catch { /* directory absent outside the original session */ }
+}
+
 // ============================================================
 // Educational Increment 007B — CSSE English Wave 1.
 // 6 original Angel passages, narrative fiction (the only genre the 007A
@@ -711,7 +717,7 @@ if (failCount > 0) {
 }
 console.log(`\nWave 1 English generation: PASS, ${items.length} items across ${passages.length} passages, 0 quotation-verification failures`);
 
-writeFileSync(
+writeSessionDebugDump(
   "C:/Users/Admin/AppData/Local/Temp/claude/C--Users-Admin/741c0ede-7d52-4a4c-9a84-915666c1c1bc/scratchpad/wave1_items.json",
   JSON.stringify(items, null, 2)
 );
@@ -719,7 +725,7 @@ writeFileSync(
 console.log(`Passages authored: ${passages.length}`);
 for (const p of passages) console.log(`  ${p.id}: "${p.title}" (${p.wordCount} words, ${p.readingComplexity})`);
 
-writeFileSync(
+writeSessionDebugDump(
   "C:/Users/Admin/AppData/Local/Temp/claude/C--Users-Admin/741c0ede-7d52-4a4c-9a84-915666c1c1bc/scratchpad/wave1_passages.json",
   JSON.stringify(passages, null, 2)
 );

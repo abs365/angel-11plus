@@ -13,17 +13,35 @@ practice_eligible. See "Closed programme (most recent)" below.
 
 ---
 
+## Multi-learner household architecture (2026-09-21) -- DATABASE APPLIED + CLIENT INTEGRATED
+
+Founder decision: one parent account -> many learners (max 8). **Migration 260 was applied to production ONCE**
+(project `agxunwcdatosrmzhhuxj`) and accepted: AFTER preflight PASS -- 92 learners / 90 owned / 2 unowned, profile identity
+checksum `e77235fe0dedfa3251ddf5a9fa2e6158` unchanged, evidence 2069 rows / fingerprint `df5e191d...` unchanged, 0 legacy
+resolvers, `is_admin`/`auth_user_id` no longer client-writable. **Never re-run 260.** The file is on main
+(`supabase/migrations/260_...`, sha256 `2E76C5F4...FD58`, 24340 bytes).
+The multi-learner CLIENT was integrated into main by a controlled merge that preserved the newer production auth/login work
+(6d643be/389ab83/3862f09). Design + dependency map: `ANGEL_MULTI_LEARNER_HOUSEHOLD_ARCHITECTURE.md`; evidence:
+`ANGEL_ACCOUNT_ISOLATION_AND_AUTH_MODEL_EVIDENCE.md`; before/after pack: `ANGEL_MULTI_LEARNER_MIGRATION_VERIFICATION_PACK.sql`.
+Every request carries a database-validated `x-angel-learner-id`; learner browser state is scoped per learner (closes the
+device-wide localStorage contamination). Clean checkout builds/type-checks/tests by the normal process
+(`scripts/verify-clean-checkout.mjs`); the earlier "7 baseline failing tests" were tracked tests with session-local paths / a
+missing migration-235 file, fixed in this work (they are NOT untracked files).
+Founder-only acceptance still needed: real parent journey (Child 1 -> add Child 2 -> switch -> back -> logout/login).
+
+---
+
 ## New-account / same-browser isolation + returning-parent auth clarity (2026-09-21, commit 6d643be, deployed)
 
 Founder's real new-email journey showed another user's progress. Verified root cause on production code: the whole
 learner blob (`angel11plus_progress`: sessions, readiness chip, missions, pathway) is ONE device-wide localStorage key
 read by `getProgress()` with no account awareness, so ANY account on that browser renders it ("5 sessions so far",
 "Solid progress", "Building Confidence", CSSE, English mission all derive from it -- reproduced with the real functions).
-Not fixed on main (Migration 260 branch fixes it: per-learner keys + claim only when profiles.device_id matches; tests
+Fixed by the multi-learner client (per-learner keys + claim only when profiles.device_id matches; tests
 `tests/lib/crossAccountDeviceState.test.ts`). Anonymous->permanent is NOT a claim in the current architecture: signInWithOtp
 creates a new auth user; the anonymous profile stays owned by the anonymous identity. Provenance of the Founder's actual
 browser needs `ANGEL_ACCOUNT_ISOLATION_PROVENANCE_CHECK.sql` (read-only).
-Auth: accounts made via Create account are PASSWORDLESS; password can only be set via the reset flow. /login Sign in now
+Auth: Create account never asks the parent to choose a password (Supabase stores a random temporary one nobody knows); a password can only be chosen via the reset flow. /login Sign in now
 leads with the email link (password secondary) and uses shouldCreateUser:false so a typo can never create an account.
 
 ---
