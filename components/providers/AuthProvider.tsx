@@ -12,6 +12,8 @@ import type { User, Session } from "@supabase/supabase-js";
 import { getSupabaseClient } from "@/lib/supabase";
 import { getDeviceId, ensureProfile } from "@/lib/supabaseProgress";
 import { ensureLearnerSession } from "@/lib/learnerIdentity";
+import { clearLearnerContext } from "@/lib/learnerContext";
+import { activateLearner } from "@/lib/learnerActivation";
 
 interface AuthContextValue {
   user: User | null;
@@ -94,12 +96,14 @@ async function linkAuthToDeviceProfile(authUserId: string): Promise<void> {
   const supabase = getSupabaseClient();
   if (!supabase) return;
 
+  // Multi-learner (migration 260): an account may own several learners, so
+  // "already linked" means "owns at least one" (not a single-row lookup).
   const { data: existing } = await supabase
     .from("profiles")
     .select("id")
     .eq("auth_user_id", authUserId)
-    .maybeSingle();
-  if (existing) return; // Already linked — nothing to do
+    .limit(1);
+  if (existing && existing.length > 0) return; // Already linked — nothing to do
 
   const deviceId = getDeviceId();
   if (!deviceId) return;
@@ -137,7 +141,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       if (data.session?.user) {
         // Ensure profile exists and is linked — fire and forget
-        ensureProfile().catch(() => {});
+        ensureProfile().then(activateLearner).catch(() => {});
         linkAuthToDeviceProfile(data.session.user.id).catch(() => {});
       } else {
         ensureLearnerSession().catch(() => {});
@@ -160,8 +164,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setLoading(false);
       setIsPasswordRecovery(event === "PASSWORD_RECOVERY");
 
+      if (event === "SIGNED_OUT") clearLearnerContext();
+
       if (newSession?.user) {
-        ensureProfile().catch(() => {});
+        ensureProfile().then(activateLearner).catch(() => {});
         linkAuthToDeviceProfile(newSession.user.id).catch(() => {});
       }
     });
@@ -233,6 +239,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const supabase = getSupabaseClient();
     if (!supabase) return;
     await supabase.auth.signOut();
+    clearLearnerContext();
   }, []);
 
   return (

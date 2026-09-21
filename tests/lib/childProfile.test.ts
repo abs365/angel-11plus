@@ -114,11 +114,16 @@ test("every 'Sign in' link in the shell targets the sign-in tab", () => {
   }
 });
 
-test("the Parent Dashboard shows the learner identity banner, and never fakes a multi-child control", () => {
+test("the Parent Dashboard is the family overview: it names whose progress is shown, switches child through the ONE learner context, and offers Add another child (multi-child is real since migration 260)", () => {
   const page = fs.readFileSync("app/learning-intelligence/parent/page.tsx", "utf8");
   assert.match(page, /<LearnerIdentityBanner \/>/);
   const banner = fs.readFileSync("components/parent/LearnerIdentityBanner.tsx", "utf8");
   assert.match(banner, /progress/);
-  assert.match(banner, /currently supports one child per account/);
-  assert.doesNotMatch(banner, /Add another child|Switch child|<select/i);
+  assert.match(banner, /useLearners\(\)/);
+  assert.match(banner, /switchLearner\(l\.id\)/);
+  assert.match(banner, /Add another child/);
+  assert.match(banner, /href="\/add-child"/);
+  // Children are never merged into an aggregate score, and ids are never shown.
+  assert.doesNotMatch(banner.replace(/\/\*[\s\S]*?\*\//g, ""), /total|average|combined/i);
+  assert.doesNotMatch(banner, /currently supports one child per account/);
 });

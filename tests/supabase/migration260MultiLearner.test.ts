@@ -434,3 +434,54 @@ test("static coverage: every learner-resolving function defined anywhere in the 
   const missing = [...names].filter((n) => !preRewriteCandidates.includes(n));
   assert.deepEqual(missing, [], "functions defined in migrations but absent from the test database (would be untested)");
 });
+
+test("MOCK ownership through a real Mock RPC: A1's open attempt is returned only for A1, A2's only for A2, and never to another parent", async () => {
+  await db.exec(`
+    insert into public.ali_mock_form (id, attempt_type, question_manifest) values ('form-x', 'full_mock', '[]'::jsonb);
+    insert into public.ali_mock_attempt (profile_id, form_id, attempt_type, assigned_question_ids, status) values
+      ('${PA1}', 'form-x', 'full_mock', array['q1'], 'in_progress'),
+      ('${A2}', 'form-x', 'full_mock', array['q1'], 'in_progress');
+  `);
+  const idFor = async (profile: string) =>
+    (await db.query<{ id: string }>(`select id from public.ali_mock_attempt where profile_id='${profile}'`)).rows[0].id;
+  const attemptA1 = await idFor(PA1);
+  const attemptA2 = await idFor(A2);
+  assert.notEqual(attemptA1, attemptA2);
+
+  await asUser(db, { uid: A, learnerHeader: PA1 }, async (q) => {
+    const r = await q("select attempt_id from public.mock_get_resumable_attempt('form-x')");
+    assert.deepEqual(r.rows.map((x) => x.attempt_id), [attemptA1]);
+  });
+  await asUser(db, { uid: A, learnerHeader: A2 }, async (q) => {
+    const r = await q("select attempt_id from public.mock_get_resumable_attempt('form-x')");
+    assert.deepEqual(r.rows.map((x) => x.attempt_id), [attemptA2]);
+  });
+  // Parent B, even naming A's learner, gets nothing and an ownership error -- never A's attempt.
+  await asUser(db, { uid: B, learnerHeader: PA1 }, async (q) => {
+    const r = await q("select attempt_id from public.mock_get_resumable_attempt('form-x')");
+    assert.match(r.error?.message ?? "", /angel_learner_not_owned/);
+    assert.deepEqual(r.rows, []);
+  });
+  await asUser(db, { uid: B, learnerHeader: PB1 }, async (q) => {
+    const r = await q("select attempt_id from public.mock_get_resumable_attempt('form-x')");
+    assert.deepEqual(r.rows, []);
+    const direct = await q("select id from public.ali_mock_attempt");
+    assert.deepEqual(direct.rows, [], "RLS: parent B must not see any of parent A's Mock attempts");
+  });
+  // Under one account with two learners, a missing header can never pick a learner for a Mock action.
+  await asUser(db, { uid: A }, async (q) => {
+    const r = await q("select attempt_id from public.mock_get_resumable_attempt('form-x')");
+    assert.match(r.error?.message ?? "", /angel_learner_required/);
+  });
+});
+
+test("SIGN-OUT / SIGN-IN and shared device: switching to the other parent's session yields only their own learner, in both directions", async () => {
+  for (const [uid, own, foreign] of [[A, PA1, PB1], [B, PB1, PA1]] as const) {
+    await asUser(db, { uid, learnerHeader: own }, async (q) => {
+      assert.equal((await q("select public.current_learner_id() as id")).rows[0].id, own);
+    });
+    await asUser(db, { uid, learnerHeader: foreign }, async (q) => {
+      assert.match((await q("select public.current_learner_id() as id")).error?.message ?? "", /angel_learner_not_owned/);
+    });
+  }
+});

@@ -2,6 +2,7 @@
 
 import type { MockResult, MockPathwayId, MockAttemptInProgress } from "@/types/mock";
 import { getProgress, saveProgress } from "./progress";
+import { learnerStorageKey } from "./learnerContext";
 
 // Phase 4 Sprint 1, Increment 2 — a single in-progress-attempt slot, kept
 // deliberately separate from mockResults[] (see MockAttemptInProgress's own
@@ -11,13 +12,18 @@ import { getProgress, saveProgress } from "./progress";
 // i.e. genuinely abandoned, and its absence of a matching MockResult is
 // itself the durable record of that (no data is lost — mockResults[] is
 // untouched either way).
-const IN_PROGRESS_KEY = "angel11plus_mock_attempt_in_progress";
+export const IN_PROGRESS_BASE_KEY = "angel11plus_mock_attempt_in_progress";
+// Multi-learner: an in-progress Mock belongs to ONE learner (see lib/learnerContext.ts).
+function inProgressKey(): string | null {
+  return learnerStorageKey(IN_PROGRESS_BASE_KEY);
+}
 
 export function startMockAttempt(pathway: MockPathwayId, pathwayName: string): string {
   const id = `${pathway}-${Date.now()}`;
   if (typeof window !== "undefined") {
     const attempt: MockAttemptInProgress = { id, pathway, pathwayName, startedAt: new Date().toISOString() };
-    localStorage.setItem(IN_PROGRESS_KEY, JSON.stringify(attempt));
+    const key = inProgressKey();
+    if (key) localStorage.setItem(key, JSON.stringify(attempt));
   }
   return id;
 }
@@ -33,7 +39,9 @@ export function startMockAttempt(pathway: MockPathwayId, pathwayName: string): s
 export async function getInProgressMockAttempt(): Promise<MockAttemptInProgress | null> {
   if (typeof window === "undefined") return null;
   try {
-    const stored = localStorage.getItem(IN_PROGRESS_KEY);
+    const key = inProgressKey();
+    if (!key) return null;
+    const stored = localStorage.getItem(key);
     return stored ? (JSON.parse(stored) as MockAttemptInProgress) : null;
   } catch {
     return null;
@@ -47,7 +55,8 @@ async function clearInProgressMockAttempt(id: string): Promise<void> {
   // already-abandoned attempt must not be silently cleared by a later,
   // unrelated attempt's completion.
   if (current?.id === id) {
-    localStorage.removeItem(IN_PROGRESS_KEY);
+    const key = inProgressKey();
+    if (key) localStorage.removeItem(key);
   }
 }
 

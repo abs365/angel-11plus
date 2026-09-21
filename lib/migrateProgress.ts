@@ -4,7 +4,12 @@ import { getProgress } from "./progress";
 import { syncFullProgress, ensureProfile, getDeviceId, subjectFromLessonId } from "./supabaseProgress";
 import { getSupabaseClient } from "./supabase";
 
-const MIGRATED_KEY = "angel11plus_migrated_v1";
+import { learnerStorageKey } from "./learnerContext";
+
+export const MIGRATED_BASE_KEY = "angel11plus_migrated_v1";
+// Multi-learner: "already pushed" is per learner, so one child's flag can
+// neither block nor duplicate another child's one-time push.
+const migratedKey = () => learnerStorageKey(MIGRATED_BASE_KEY);
 
 /**
  * Runs once per device after Supabase keys are configured.
@@ -18,14 +23,16 @@ export async function migrateLocalProgressToSupabase(): Promise<void> {
   const deviceId = getDeviceId();
   if (!deviceId) return;
 
-  const alreadyMigrated = localStorage.getItem(MIGRATED_KEY);
+  const key = migratedKey();
+  if (!key) return; // active learner not known yet
+  const alreadyMigrated = localStorage.getItem(key);
   if (alreadyMigrated) return;
 
   const progress = getProgress();
 
   // If nothing to migrate, just mark done
   if (progress.completedLessons.length === 0 && progress.xp === 0) {
-    localStorage.setItem(MIGRATED_KEY, "1");
+    localStorage.setItem(key, "1");
     return;
   }
 
@@ -53,7 +60,7 @@ export async function migrateLocalProgressToSupabase(): Promise<void> {
       }
     }
 
-    localStorage.setItem(MIGRATED_KEY, "1");
+    localStorage.setItem(key, "1");
     console.info("[Supabase] Local progress migrated successfully.");
   } catch (err) {
     console.warn("[Supabase] Migration error:", err);

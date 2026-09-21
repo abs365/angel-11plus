@@ -2,27 +2,28 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Pencil } from "lucide-react";
-import { useChildName } from "@/lib/useChildName";
+import { Pencil, Plus } from "lucide-react";
+import { useLearners } from "@/lib/useLearners";
+import { learnerDisplayName } from "@/lib/learnerDisplay";
 import { getPathwayById } from "@/lib/pathways";
-import { getSelectedPathwayId } from "@/lib/progress";
 import ChildNameForm from "@/components/parent/ChildNameForm";
 
 /**
- * Parent Dashboard -- "whose progress am I looking at?" (Family #1
- * onboarding finding). Angel 11+ supports one learner per account today
- * (profiles.auth_user_id is UNIQUE), so there is exactly one learner to
- * identify and nothing to switch between. The one-child limit is stated
- * plainly rather than hidden behind a control that could not be honoured;
- * the feedback link records real demand for more.
+ * Parent Dashboard family overview. Angel 11+ now supports several children
+ * under one parent account (migration 260), each with completely separate
+ * progress and evidence, so this states plainly WHOSE progress is on screen,
+ * lets the parent choose another child, and offers "Add another child".
+ * Children are never combined into an aggregate score.
  */
 export default function LearnerIdentityBanner() {
-  const { name, ready, save } = useChildName();
+  const { learners, active, ready, switchLearner, renameLearner } = useLearners();
   const [editing, setEditing] = useState(false);
-  const pathway = getPathwayById(getSelectedPathwayId() ?? "");
 
-  if (!ready) return null;
+  if (!ready || !active) return null;
 
+  const activeIndex = learners.findIndex((l) => l.id === active.id);
+  const name = active.name;
+  const pathway = getPathwayById(active.pathway ?? "");
   const showForm = editing || !name;
 
   return (
@@ -30,9 +31,7 @@ export default function LearnerIdentityBanner() {
       aria-label="Which child this dashboard shows"
       className="mt-4 rounded-2xl border border-sky-100 dark:border-sky-900 bg-sky-50/60 dark:bg-sky-950/30 px-4 py-3"
     >
-      <p className="text-[10px] font-bold uppercase tracking-wide text-sky-700 dark:text-sky-400">
-        Viewing
-      </p>
+      <p className="text-[10px] font-bold uppercase tracking-wide text-sky-700 dark:text-sky-400">Viewing</p>
 
       {name && !editing && (
         <div className="flex items-start justify-between gap-3">
@@ -59,28 +58,58 @@ export default function LearnerIdentityBanner() {
         <div className="mt-1">
           {!name && (
             <p className="text-gray-900 dark:text-gray-100 font-semibold text-base mb-2">
-              Add your child&apos;s first name so you can see whose progress this is
+              Add {learnerDisplayName(active, activeIndex)}&rsquo;s first name so you can see whose progress this is
             </p>
           )}
           <ChildNameForm
             initial={name}
             autoFocus={editing}
             onSave={(n) => {
-              if (save(n)) setEditing(false);
+              if (renameLearner(active.id, n)) setEditing(false);
             }}
             onCancel={editing ? () => setEditing(false) : undefined}
           />
         </div>
       )}
 
-      <p className="text-gray-500 dark:text-gray-400 text-xs leading-relaxed mt-2">
-        A first name or nickname is enough. It is kept on this device only and is never sent to Angel 11+.
-        {" "}Angel 11+ currently supports one child per account. Preparing more than one child?{" "}
-        <Link href="/feedback" className="text-sky-700 dark:text-sky-400 font-medium hover:underline">
-          Tell us
-        </Link>
-        .
-      </p>
+      <div className="mt-3 pt-3 border-t border-sky-100 dark:border-sky-900">
+        <p className="text-[10px] font-bold uppercase tracking-wide text-gray-500 dark:text-gray-400 mb-2">
+          Your children
+        </p>
+        <ul className="flex flex-wrap items-center gap-2">
+          {learners.map((l, i) => {
+            const isActive = l.id === active.id;
+            return (
+              <li key={l.id}>
+                <button
+                  type="button"
+                  onClick={() => switchLearner(l.id)}
+                  aria-pressed={isActive}
+                  className={
+                    isActive
+                      ? "text-sm font-semibold rounded-full px-3 py-1 bg-sky-700 text-white"
+                      : "text-sm font-medium rounded-full px-3 py-1 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 hover:border-sky-400"
+                  }
+                >
+                  {learnerDisplayName(l, i)}
+                </button>
+              </li>
+            );
+          })}
+          <li>
+            <Link
+              href="/add-child"
+              className="inline-flex items-center gap-1 text-sm font-medium text-sky-700 dark:text-sky-400 hover:underline px-1 py-1"
+            >
+              <Plus size={14} aria-hidden="true" />
+              Add another child
+            </Link>
+          </li>
+        </ul>
+        <p className="text-gray-500 dark:text-gray-400 text-xs leading-relaxed mt-2">
+          Each child has their own progress, practice and recommendations. A first name or nickname is all Angel 11+ stores to tell them apart.
+        </p>
+      </div>
     </section>
   );
 }

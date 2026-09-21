@@ -1,5 +1,6 @@
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 import type { Database } from "@/types/supabase";
+import { createLearnerAwareFetch } from "./learnerContext";
 
 let _client: SupabaseClient<Database> | null = null;
 
@@ -53,6 +54,16 @@ export function getSupabaseClient(): SupabaseClient<Database> | null {
         persistSession: true,
         autoRefreshToken: true,
         detectSessionInUrl: true,
+      },
+      // Multi-learner (migration 260): every REST/RPC request made with an
+      // account JWT carries the validated active-learner header. The one
+      // place this happens, so no page can forget it or pick its own.
+      global: {
+        fetch: createLearnerAwareFetch({
+          restBase: `${url}/rest/v1`,
+          anonKey: key,
+          baseFetch: (input, init) => fetch(input, init),
+        }),
       },
     });
   }

@@ -53,6 +53,11 @@ export interface Database {
           // or no pathway chosen yet.
           selected_pathway_id: string | null;
           pathway_selected_at: string | null;
+          // Multi-learner (migration 260) -- each profiles row IS a learner.
+          learner_name: string | null; // parent-entered first name/nickname only
+          target_exam_date: string | null;
+          target_exam_date_provenance: "official" | "parent_supplied" | "estimated" | "unknown" | null;
+          school_year: "Year 4" | "Year 5" | "Year 6" | null;
         };
         Insert: {
           id?: string;
@@ -65,7 +70,12 @@ export interface Database {
         };
         Update: {
           name?: string;
-          auth_user_id?: string | null;
+          // auth_user_id is no longer client-writable (migration 260);
+          // ownership changes only via SECURITY DEFINER functions.
+          learner_name?: string | null;
+          target_exam_date?: string | null;
+          target_exam_date_provenance?: "official" | "parent_supplied" | "estimated" | "unknown" | null;
+          school_year?: "Year 4" | "Year 5" | "Year 6" | null;
           // is_admin deliberately omitted — migration 008 revokes UPDATE
           // privilege on this column for authenticated/anon roles at the
           // database level, so it is never a valid client-side write.
@@ -853,6 +863,10 @@ export interface Database {
       is_current_user_admin: {
         Args: Record<string, never>;
         Returns: boolean;
+      };
+      create_learner: {
+        Args: { p_learner_name: string; p_pathway_id?: string | null };
+        Returns: string;
       };
       claim_legacy_profile: {
         Args: { p_device_id: string };

@@ -1,5 +1,6 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Database } from "@/types/supabase";
+import { learnerRequestHeaders } from "@/lib/learnerContext";
 
 /**
  * Migration 245 — mirrors lib/mockAttempt/readingScoringRequest.ts's own
@@ -50,7 +51,7 @@ export async function requestMockWritingAssessment(
 
     const response = await fetch("/api/mock-writing-assessment", {
       method: "POST",
-      headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}`, ...learnerRequestHeaders() },
       body: JSON.stringify({ attemptId }),
     });
     if (!response.ok) {

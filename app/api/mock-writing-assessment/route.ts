@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
+import { forwardedLearnerHeaders } from "@/lib/learnerRequestForwarding";
 import { assessWritingResponseForMock } from "@/lib/learningEngine/mockWritingAssessmentEngine";
 
 /**
@@ -83,7 +84,7 @@ export async function POST(request: NextRequest) {
   // caller's own attempts; every write goes through a SECURITY DEFINER
   // function that independently re-validates ownership.
   const callerClient = createClient(url, anonKey, {
-    global: { headers: { Authorization: authHeader } },
+    global: { headers: { Authorization: authHeader, ...forwardedLearnerHeaders(request) } },
     auth: { persistSession: false },
   });
 

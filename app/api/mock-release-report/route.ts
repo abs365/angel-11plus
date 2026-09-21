@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
+import { forwardedLearnerHeaders } from "@/lib/learnerRequestForwarding";
 
 /**
  * Reading Mock Report Release — Authenticated Transport Only.
@@ -102,7 +103,7 @@ export async function POST(request: NextRequest) {
   // under mock_release_report()'s own is_current_user_admin() gate --
   // never a privileged connection, never a caller-supplied identity.
   const callerClient = createClient(url, anonKey, {
-    global: { headers: { Authorization: authHeader } },
+    global: { headers: { Authorization: authHeader, ...forwardedLearnerHeaders(request) } },
     auth: { persistSession: false },
   });
 
