@@ -235,6 +235,9 @@ export default function ResetPasswordPage() {
               <p className="text-gray-400 dark:text-gray-500 text-sm text-center mb-8">
                 We&apos;ll email you a secure link to choose a new one
               </p>
+              <p className="text-gray-400 dark:text-gray-500 text-xs text-center -mt-6 mb-8 leading-relaxed">
+                Never set a password? You can set one here, or you can always sign in with an email link instead.
+              </p>
               <form onSubmit={handleRequestSubmit} className="flex flex-col gap-4">
                 <div>
                   <label htmlFor="reset-email" className="block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-2">

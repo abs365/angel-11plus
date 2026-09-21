@@ -76,6 +76,13 @@ export function friendlyEmailLinkError(msg: string, intent: EmailLinkIntent): Em
     };
   }
   if (/signups? not allowed|signup.*disabled/i.test(msg)) {
+    // Sign in never creates accounts (shouldCreateUser:false), so this means "no such account".
+    if (intent === "signin") {
+      return {
+        message: "We couldn't find an Angel 11+ account for that email address. Check the spelling, or create an account.",
+        cooldownSeconds: 0,
+      };
+    }
     return {
       message: "New accounts can't be created at the moment. Please contact us and we'll help you get started.",
       cooldownSeconds: 0,

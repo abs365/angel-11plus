@@ -17,7 +17,12 @@ interface AuthContextValue {
   user: User | null;
   session: Session | null;
   loading: boolean;
-  signInWithMagicLink: (email: string) => Promise<{ error: string | null }>;
+  /**
+   * Email-link authentication. `createAccount` (default true) controls whether an
+   * unknown address creates a new account: Create account passes true; Sign in passes
+   * false so a mistyped address can never silently create a second, empty account.
+   */
+  signInWithMagicLink: (email: string, options?: { createAccount?: boolean }) => Promise<{ error: string | null }>;
   /**
    * Returning-user access improvement — email/password sign-in, alongside
    * the existing magic-link method (never replacing it). Supabase Auth's
@@ -170,13 +175,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const signInWithMagicLink = useCallback(
-    async (email: string): Promise<{ error: string | null }> => {
+    async (email: string, options?: { createAccount?: boolean }): Promise<{ error: string | null }> => {
       const supabase = getSupabaseClient();
       if (!supabase) return { error: "Supabase is not configured." };
 
       const { error } = await supabase.auth.signInWithOtp({
         email,
         options: {
+          shouldCreateUser: options?.createAccount ?? true,
           emailRedirectTo:
             typeof window !== "undefined"
               ? `${window.location.origin}/dashboard`

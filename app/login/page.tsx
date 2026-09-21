@@ -101,7 +101,9 @@ function LoginContent() {
   const searchParams = useSearchParams();
   const [tab, setTab] = useState<Tab>(resolveLoginTab(searchParams.get("mode")));
   // Within the Sign in tab only: which method is showing.
-  const [mode, setMode] = useState<Mode>("password");
+  // Returning parents: the secure email link is the default (every account created through
+  // Create account is passwordless); the password form is a secondary option.
+  const [mode, setMode] = useState<Mode>("magic-link");
   // Which journey the last email link was requested from (drives the
   // "Check your email" wording — confirm an account vs. sign in).
   const [linkIntent, setLinkIntent] = useState<Tab>("create");
@@ -142,7 +144,7 @@ function LoginContent() {
 
   function selectTab(next: Tab) {
     setTab(next);
-    setMode("password");
+    setMode("magic-link");
     setMagicLinkState("idle");
     setMagicLinkError("");
     setPasswordState("idle");
@@ -209,7 +211,7 @@ function LoginContent() {
     setMagicLinkState("sending");
     setMagicLinkError("");
 
-    const { error } = await signInWithMagicLink(email.trim());
+    const { error } = await signInWithMagicLink(email.trim(), { createAccount: tab === "create" });
 
     if (error) {
       setMagicLinkState("error");
@@ -311,7 +313,9 @@ function LoginContent() {
               <p className="text-gray-400 dark:text-gray-500 text-sm text-center mb-6 leading-relaxed">
                 {creating
                   ? "For parents and carers. No password needed."
-                  : "Sign in to pick up where you left off, on any device."}
+                  : mode === "magic-link"
+                    ? "Enter your email and we'll email you a secure link to sign in. No password needed."
+                    : "Enter the email address and password you set for Angel 11+."}
               </p>
 
               {showLinkForm ? (
@@ -355,7 +359,7 @@ function LoginContent() {
                       `Try again in ${secondsLeft}s`
                     ) : (
                       <>
-                        {creating ? "Create account" : "Send sign-in link"}
+                        {creating ? "Create account" : "Email me a sign-in link"}
                         <ArrowRight size={18} />
                       </>
                     )}
@@ -369,14 +373,14 @@ function LoginContent() {
                     </ol>
                   ) : (
                     <p className="text-gray-400 dark:text-gray-500 text-xs text-center">
-                      No password needed. We&apos;ll email you a secure link.
+                      Use the same email address you created your account with.
                     </p>
                   )}
 
                   {!creating && (
                     <div className="text-center text-xs mt-1">
                       <button type="button" onClick={() => setMode("password")} className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 underline underline-offset-2">
-                        Sign in with a password instead
+                        I set a password. Sign in with it instead
                       </button>
                     </div>
                   )}
@@ -448,16 +452,16 @@ function LoginContent() {
 
                   <div className="text-xs mt-1">
                     <button type="button" onClick={() => router.push("/reset-password")} className="text-blue-600 font-medium hover:underline">
-                      Forgot password?
+                      Forgot password, or need to set one?
                     </button>
                   </div>
 
-                  {/* Every existing account was created by email link and has
-                      no password, so this is a first-class path for a returning
-                      parent, not a footnote. */}
+                  {/* Accounts made through Create account are passwordless, so a
+                      returning parent must never be left thinking they need a
+                      password they were never given. */}
                   <div className="rounded-xl border border-gray-200 dark:border-gray-700 px-4 py-3 text-center">
                     <p className="text-gray-500 dark:text-gray-400 text-xs mb-2">
-                      Signed up with an email link? You may not have a password.
+                      Never set a password? You don&apos;t need one.
                     </p>
                     <button
                       type="button"

@@ -70,6 +70,13 @@ test("server errors are translated: sign-ups closed, sending failure, network fa
   assert.match(friendlyEmailLinkError("boom", "signin").message, /sign-in link/);
 });
 
+test("Sign in with an unknown address says no account was found and points to Create account (it never creates one)", () => {
+  const out = friendlyEmailLinkError("Signups not allowed for otp", "signin");
+  assert.match(out.message, /couldn't find an Angel 11\+ account/);
+  assert.match(out.message, /create an account/i);
+  assert.doesNotMatch(out.message, /otp|signups/i);
+});
+
 test("success copy states what happened and what to do next, per journey", () => {
   const create = checkEmailCopy("create");
   assert.equal(create.title, "Check your email");
@@ -99,7 +106,7 @@ test("the real /login page: validation, error mapping and success copy come from
 });
 
 test("Create account still uses the existing email-link mechanism only: no new auth system, no password", () => {
-  assert.match(PAGE, /await signInWithMagicLink\(email\.trim\(\)\);/);
+  assert.match(PAGE, /await signInWithMagicLink\(email\.trim\(\), \{ createAccount: tab === "create" \}\);/);
   assert.doesNotMatch(PAGE, /supabase\.auth\./);
   assert.doesNotMatch(PAGE, /signUp\(/);
 });
