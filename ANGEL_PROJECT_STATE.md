@@ -13,6 +13,21 @@ practice_eligible. See "Closed programme (most recent)" below.
 
 ---
 
+## Create-account production defect (2026-09-21, commits 3862f09 + 389ab83, deployed, Vercel Ready)
+
+Founder found the live /login Create account button did nothing. Reproduced on real production: with an empty email
+the submit button was `disabled` (dead click, no message); malformed email only showed the browser's own bubble;
+server errors were raw / the project-level email limit was shown as a 60s wait. Fixed: buttons never disabled by an
+empty box, `noValidate` so our inline messages always show, errors mapped to plain language (`lib/authEmailFeedback.ts`),
+success copy per spec. Same email-link mechanism; password sign-in / reset / email-link sign-in unchanged. Verified on
+real production signed-out (empty/invalid/valid -> otp reaches Supabase with redirect to /dashboard; success state;
+real Supabase 400 -> friendly message; returning sign-in incl. real wrong-credentials 400). Multi-learner branch
+`multi-learner-household` preserved, NOT merged; migration 260 NOT applied. Merge note: that branch also edits
+app/login/page.tsx (moves helper exports) -> expect a small conflict when merging. Founder-only checks: real inbox
+round-trip; Supabase email template subject; Auth URL Configuration allow-list for the /dashboard redirect.
+
+---
+
 ## Family #1 onboarding correction (2026-09-21, commit `9381ed1`, deployed, Vercel Ready)
 
 Real-family evidence: a parent could not tell how to register on `/login`, and could not see which child
