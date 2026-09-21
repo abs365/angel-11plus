@@ -13,6 +13,21 @@ practice_eligible. See "Closed programme (most recent)" below.
 
 ---
 
+## Family #1 onboarding correction (2026-09-21, commit `9381ed1`, deployed, Vercel Ready)
+
+Real-family evidence: a parent could not tell how to register on `/login`, and could not see which child
+the dashboards showed. Corrected (bounded, no new auth, no schema change):
+- `/login` leads with two journeys: **Create account** (existing email-link flow underneath) and **Sign in**
+  (password / explained email link / reset). Bare `/login` opens Create account; shell "Sign in" links use `?mode=signin`.
+- Child display name is still local-only (LR-01) but now **scoped per signed-in account** (`lib/childProfile.ts`);
+  the legacy device-wide name is claimed by the first permanent account and never deleted.
+- Parent Dashboard shows "Viewing: <name>'s progress"; dashboard shows a first-run setup card (pathway + first name).
+- **Verified architecture finding: multi-child is NOT supported.** `profiles.auth_user_id` is UNIQUE (one learner per
+  account) and pathway/progress/XP are device-wide localStorage. No "Add another child" control exists by design; the UI
+  states the one-child limit. Multi-child is a Founder decision requiring a schema + per-learner local-state change.
+
+---
+
 ## Current production status
 
 **Live** at `https://angel-11plus.vercel.app` (Vercel project `angel-11plus`, org `abs365s-projects`).
