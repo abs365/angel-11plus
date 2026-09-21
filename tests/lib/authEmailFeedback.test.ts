@@ -86,34 +86,80 @@ test("success copy states what happened and what to do next, per journey", () =>
   assert.equal(signin.next, "Open the email and tap the link to sign in.");
 });
 
-const PAGE = fs.readFileSync("app/login/page.tsx", "utf8");
 
-test("the real /login page: the submit buttons are no longer disabled by an empty box (the silent-dead-button defect)", () => {
-  assert.doesNotMatch(PAGE, /disabled=\{[^}]*!email\.trim\(\)/);
-  assert.doesNotMatch(PAGE, /disabled=\{[^}]*!password/);
-  assert.match(PAGE, /disabled=\{magicLinkState === "sending" \|\| secondsLeft > 0\}/);
+// ---------------------------------------------------------------------------------------------------------------
+// Password registration and password sign-in.
+// ---------------------------------------------------------------------------------------------------------------
+
+import {
+  ALREADY_REGISTERED_MESSAGE,
+  PASSWORD_MIN_LENGTH,
+  checkEmailCopyForPasswordSignup,
+  friendlyPasswordSignInError,
+  friendlySignUpError,
+  validateNewPassword,
+} from "@/lib/authEmailFeedback";
+
+test("a NEW password must be chosen, long enough, and confirmed (same minimum as the reset page)", () => {
+  assert.equal(PASSWORD_MIN_LENGTH, 8);
+  assert.equal(validateNewPassword("", ""), "Choose a password for your account.");
+  assert.match(validateNewPassword("short", "short")!, /at least 8 characters/);
+  assert.equal(validateNewPassword("long-enough-1", "long-enough-2"), "Those passwords don't match. Please check and try again.");
+  assert.equal(validateNewPassword("long-enough-1", "long-enough-1"), null);
+  assert.equal(fs.readFileSync("app/reset-password/page.tsx", "utf8").match(/MIN_PASSWORD_LENGTH = (\d+)/)?.[1], "8", "one rule everywhere");
 });
 
-test("the real /login page: forms opt out of native validation so OUR inline messages always show", () => {
-  assert.equal((PAGE.match(/noValidate/g) ?? []).length, 2);
+test("registering with an address that already has an account tells the parent so, with the two routes in (never a raw error)", () => {
+  assert.equal(friendlySignUpError("User already registered"), ALREADY_REGISTERED_MESSAGE);
+  assert.equal(friendlySignUpError("A user with this email address has already been registered"), ALREADY_REGISTERED_MESSAGE);
+  assert.match(ALREADY_REGISTERED_MESSAGE, /Sign in instead/);
+  assert.match(ALREADY_REGISTERED_MESSAGE, /Forgot password/);
 });
 
-test("the real /login page: validation, error mapping and success copy come from the shared tested module", () => {
-  assert.match(PAGE, /validateEmailForAuth\(email, tab\)/);
-  assert.match(PAGE, /friendlyEmailLinkError\(error, tab\)/);
-  assert.match(PAGE, /checkEmailCopy\(linkIntent\)/);
-  assert.doesNotMatch(PAGE, /setMagicLinkError\(error\)/, "raw service errors must never be shown");
+test("password registration errors are translated: weak password, limits, closed sign-ups, network, unknown -- never raw service wording", () => {
+  const cases: [string, RegExp][] = [
+    ["Password should be at least 6 characters", /too easy to guess/],
+    ["Password is known to be weak and easy to guess", /too easy to guess/],
+    ["email rate limit exceeded", /about an hour/],
+    ["For security purposes, you can only request this after 30 seconds", /wait a minute/],
+    ["Signups not allowed for this instance", /can't be created at the moment/],
+    ["Failed to fetch", /couldn't reach Angel 11\+/],
+    ["Unable to validate email address: invalid format", /doesn't look right/],
+    ["some new internal error 5xx", /couldn't create your account just now/],
+  ];
+  for (const [raw, expected] of cases) {
+    const msg = friendlySignUpError(raw);
+    assert.match(msg, expected, raw);
+    assert.doesNotMatch(msg, /supabase|jwt|otp|smtp|5xx|signups/i, `raw wording leaked for: ${raw}`);
+  }
 });
 
-test("Create account still uses the existing email-link mechanism only: no new auth system, no password", () => {
-  assert.match(PAGE, /await signInWithMagicLink\(email\.trim\(\), \{ createAccount: tab === "create" \}\);/);
-  assert.doesNotMatch(PAGE, /supabase\.auth\./);
-  assert.doesNotMatch(PAGE, /signUp\(/);
+test("WRONG PASSWORD gives a friendly message that also covers the email-link parent who never set one", () => {
+  const msg = friendlyPasswordSignInError("Invalid login credentials");
+  assert.match(msg, /email and password don't match/);
+  assert.match(msg, /signed up with an email link/);
+  assert.match(msg, /Forgot password/);
+  assert.match(msg, /sign-in link/);
+  assert.doesNotMatch(msg, /Invalid login credentials/);
 });
 
-test("returning sign-in paths are intact: password submit, forgot password, email-link alternative", () => {
-  assert.match(PAGE, /await signInWithPassword\(email\.trim\(\), password\);/);
-  assert.match(PAGE, /router\.push\("\/reset-password"\)/);
-  assert.match(PAGE, /Email me a sign-in link/);
-  assert.match(PAGE, /Please enter your password\./);
+test("password sign-in errors: unconfirmed email, limits, network and unknown are all plain language", () => {
+  assert.match(friendlyPasswordSignInError("Email not confirmed"), /confirm your email address first/);
+  assert.match(friendlyPasswordSignInError("email rate limit exceeded"), /about an hour/);
+  assert.match(friendlyPasswordSignInError("Failed to fetch"), /couldn't reach Angel 11\+/);
+  assert.match(friendlyPasswordSignInError("kaboom"), /couldn't sign you in just now/);
+});
+
+test("password-registration success copy: check your email, confirm the account, then set up the child", () => {
+  const c = checkEmailCopyForPasswordSignup();
+  assert.equal(c.title, "Check your email");
+  assert.equal(c.lead, "We've sent you a secure link to confirm your Angel 11+ account.");
+  assert.match(c.next, /tap the link to finish creating your account/);
+  assert.match(c.next, /set up your child/);
+});
+
+test("the email-link sign-in never creates an account (still shouldCreateUser:false via createAccount:false)", () => {
+  const provider = fs.readFileSync("components/providers/AuthProvider.tsx", "utf8");
+  assert.match(provider, /shouldCreateUser: options\?\.createAccount \?\? true/);
+  assert.match(fs.readFileSync("app/login/page.tsx", "utf8"), /createAccount: creating/);
 });

@@ -43,7 +43,7 @@ export default function PrivacyPage() {
 
           <p className="font-semibold text-gray-800 dark:text-gray-200 mt-4 mb-2">Optional: account sync (Supabase)</p>
           <p>If you choose to create an account or sign in with email, your progress is synced to a secure cloud database so it can be accessed across multiple devices. This is optional and you can use Angel 11+ without creating an account.</p>
-          <p className="mt-2">Data synced if you sign in: email address, progress records, session history, and, for each child on your account, the first name or nickname you choose to give them, their exam pathway, and the exam date and school year if you enter them.</p>
+          <p className="mt-2">Data synced if you sign in: email address, a securely hashed password if you choose one (we never see or store your actual password), progress records, session history, and, for each child on your account, the first name or nickname you choose to give them, their exam pathway, and the exam date and school year if you enter them.</p>
           <p className="mt-2">One account can hold more than one child. Each child has their own separate progress, practice, recommendations and Mock results; they are never combined. We store only a first name or nickname for each child, and only so that you can tell your children apart and switch between them. We never ask for a surname, date of birth, photograph, school, address, phone number or location for this purpose.</p>
 
           <p className="font-semibold text-gray-800 dark:text-gray-200 mt-4 mb-2">Beta feedback forms</p>

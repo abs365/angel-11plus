@@ -3,88 +3,21 @@ import assert from "node:assert/strict";
 import fs from "node:fs";
 
 /**
- * Returning-user access improvement — /login now offers email/password
- * sign-in as the primary route, with the existing magic-link method
- * demoted to a secondary, clearly-labelled option (never removed). This
- * project has no jsdom/React Testing Library, so this mirrors the
- * established convention for a page component: structural source-text
- * assertions against the real source.
+ * Parent authentication UX. /login offers the familiar model:
+ *   NEW PARENT        Create account -> email + password + confirm -> confirm by email.
+ *   RETURNING PARENT  Sign in        -> email + password.
+ * with the secure email link kept as a clearly-labelled secondary option on both, and the reset flow as the way for
+ * an existing (email-link) account to choose its first password. This project has no jsdom/React Testing Library,
+ * so this mirrors the established convention for a page component: structural source-text assertions against the
+ * real source, plus direct tests of the pure logic in lib/authEmailFeedback.ts and lib/loginRouting.ts.
  */
 
 const SOURCE = fs.readFileSync("app/login/page.tsx", "utf8");
+const ROUTING = fs.readFileSync("lib/loginRouting.ts", "utf8");
+const PROVIDER = fs.readFileSync("components/providers/AuthProvider.tsx", "utf8");
 
-test("the secure email link is the DEFAULT sign-in method; password is a secondary option (Create account never asks the parent to choose a password)", () => {
-  assert.match(SOURCE, /const \[mode, setMode\] = useState<Mode>\("magic-link"\);/);
-  // Switching tabs always returns to the default, never to an unknown password.
-  assert.match(SOURCE, /setTab\(next\);\s*\n\s*setMode\("magic-link"\);/);
-});
+// ------------------------------------------------------------------ the two journeys
 
-test("password sign-in calls the AuthProvider's own signInWithPassword -- no direct supabase.auth call in this file", () => {
-  assert.match(SOURCE, /const \{ user, signInWithMagicLink, signInWithPassword \} = useAuth\(\);/);
-  assert.match(SOURCE, /await signInWithPassword\(email\.trim\(\), password\);/);
-  assert.doesNotMatch(SOURCE, /supabase\.auth\./);
-});
-
-test("a 'Forgot password?' link routes to /reset-password", () => {
-  assert.match(SOURCE, /router\.push\("\/reset-password"\)/);
-});
-
-test("the existing magic-link method remains fully present and reachable as a secondary option", () => {
-  assert.match(SOURCE, /await signInWithMagicLink\(email\.trim\(\), \{ createAccount: tab === "create" \}\);/);
-  assert.match(SOURCE, /Email me a sign-in link/);
-  assert.match(SOURCE, /Sign in with it instead/);
-});
-
-test("no raw Supabase/technical jargon (OTP, JWT, provider, rate limit) is ever shown to the user", () => {
-  const userFacingText = SOURCE.match(/>[^<{]*[a-zA-Z][^<{]*</g)?.join(" ") ?? "";
-  for (const jargon of ["OTP", "JWT", "provider", "rate limit"]) {
-    assert.doesNotMatch(userFacingText, new RegExp(jargon, "i"), `expected no user-facing "${jargon}" text`);
-  }
-});
-
-test("friendlySignInError never surfaces Supabase's raw 'Invalid login credentials' wording unexplained", () => {
-  const fn = SOURCE.match(/function friendlySignInError\([\s\S]*?\n\}/);
-  assert.ok(fn);
-  assert.match(fn![0], /invalid login credentials/i);
-  assert.match(fn![0], /Forgot password/i);
-});
-
-test("the existing Gate 3 isPermanentlyAuthenticated redirect predicate is completely unchanged (now in lib/loginRouting.ts)", () => {
-  const ROUTING = fs.readFileSync("lib/loginRouting.ts", "utf8");
-  assert.match(ROUTING, /export function isPermanentlyAuthenticated\(user: \{ is_anonymous\?: boolean \} \| null \| undefined\): boolean \{/);
-  assert.match(ROUTING, /return Boolean\(user\) && !user!\.is_anonymous;/);
-});
-
-/**
- * LR-03 Family #1 pre-launch defect A — real Founder production evidence:
- * a prominent "Continue without signing in" CTA sitting right next to the
- * sign-in form undermines the controlled beta's approved parent-led entry
- * path (parent/carer controls the account -> learner uses the experience).
- * The underlying anonymous-session capability itself is NOT removed --
- * AuthProvider's own automatic anonymous bootstrap (ensureLearnerSession(),
- * every page load with no session yet) is completely untouched, and remains
- * reachable by any page load regardless of this file -- only this one
- * explicit, on-the-nose invitation to skip sign-in is removed from the
- * sign-in page itself.
- */
-test("the login page no longer offers an explicit 'continue without signing in' skip CTA", () => {
-  assert.doesNotMatch(SOURCE, /Continue without signing in/);
-});
-
-test("router.push to /dashboard is no longer reachable from a button on this page (the skip CTA was its only use)", () => {
-  assert.doesNotMatch(SOURCE, /router\.push\("\/dashboard"\)/);
-});
-
-test("copy for new users never claims password sign-in auto-creates an account -- only the email-link path does that", () => {
-  assert.doesNotMatch(SOURCE, /sign in above[\s\S]{0,40}created automatically/i);
-});
-
-/**
- * Family #1 onboarding finding: a real parent could not tell how to
- * register -- the only registration path was a faint "Email me a secure
- * sign-in link" plus small print. Account creation is now a first-class,
- * always-visible journey alongside Sign in.
- */
 test("both journeys are always visible as tabs: Create account and Sign in", () => {
   assert.match(SOURCE, /role="tablist"/);
   assert.match(SOURCE, /label: "Create account"/);
@@ -93,41 +26,97 @@ test("both journeys are always visible as tabs: Create account and Sign in", () 
   assert.match(SOURCE, /Already registered/);
 });
 
-test("Create account is the email-link flow underneath (same signInWithMagicLink call -- no second auth system, no duplicate accounts)", () => {
-  assert.match(SOURCE, /showLinkForm = tab === "create" \|\| mode === "magic-link"/);
-  assert.match(SOURCE, /We&apos;ll email you a secure link to confirm your account\./);
-});
-
-test("the old small-print registration hint is gone", () => {
-  assert.doesNotMatch(SOURCE, /New here\?/);
-  assert.doesNotMatch(SOURCE, /to create your account\./);
-});
-
-test("a parent who never set a password is told plainly they do not need one, from the password form", () => {
-  assert.match(SOURCE, /Never set a password\? You don&apos;t need one\./);
-});
-
-/**
- * Returning-parent authentication clarity: Create account never asks the parent to choose a
- * password, so Sign in must not present an unknown password as the expected default. Sign in
- * leads with the email link, distinguishes itself from Create account in wording,
- * and (shouldCreateUser:false) can never silently create an account from a typo.
- */
-test("Sign in and Create account are worded differently even though both use the email link underneath", () => {
-  assert.match(SOURCE, /creating \? "Create account" : "Email me a sign-in link"/);
-  assert.match(SOURCE, /we'll email you a secure link to sign in\. No password needed\./);
-  assert.match(SOURCE, /We&apos;ll email you a secure link to confirm your account\./);
-});
-
-test("the password path stays available for accounts that have one, and can also be used to SET a first password (via reset)", () => {
-  assert.match(SOURCE, /Forgot password, or need to set one\?/);
+test("RETURNING parent: the DEFAULT sign-in method is email + password (the email link is not the default)", () => {
+  assert.match(SOURCE, /const \[signinUsesLink, setSigninUsesLink\] = useState\(false\);/);
+  assert.match(SOURCE, /Enter your email address and password\./);
+  assert.match(SOURCE, /autoComplete|"current-password"/);
   assert.match(SOURCE, /await signInWithPassword\(email\.trim\(\), password\);/);
+  // switching tabs always returns to the password default
+  assert.match(SOURCE, /setTab\(next\);\s*\n\s*setSigninUsesLink\(false\);\s*\n\s*setCreateUsesLink\(false\);/);
 });
 
-test("Sign in never creates an account: only the Create account tab asks for account creation", () => {
-  assert.match(SOURCE, /createAccount: tab === "create"/);
-  const provider = fs.readFileSync("components/providers/AuthProvider.tsx", "utf8");
-  assert.match(provider, /shouldCreateUser: options\?\.createAccount \?\? true/);
+test("RETURNING parent: forgot-password, the email-link alternative and Create-an-account are all offered", () => {
+  assert.match(SOURCE, /router\.push\("\/reset-password"\)/);
+  assert.match(SOURCE, /Forgot password, or need to set one\?/);
+  assert.match(SOURCE, /Email me a sign-in link instead/);
+  assert.match(SOURCE, /New to Angel 11\+\?/);
+  assert.match(SOURCE, /Create an account/);
+  assert.match(SOURCE, /Welcome back/);
+});
+
+test("NEW parent: Create account is email + password + confirm, and registers through the provider's signUpWithPassword", () => {
+  assert.match(SOURCE, /const \[createUsesLink, setCreateUsesLink\] = useState\(false\);/);
+  assert.match(SOURCE, /"signup-password"/);
+  assert.match(SOURCE, /"signup-confirm"/);
+  assert.match(SOURCE, /"new-password"/);
+  assert.match(SOURCE, /await signUpWithPassword\(email\.trim\(\), password\);/);
+  assert.match(SOURCE, /validateNewPassword\(password, confirm\)/);
+  assert.match(SOURCE, /Already registered\?/);
+});
+
+test("NEW parent: after registering they are told to check their email (the address must be confirmed) with the shared copy", () => {
+  assert.match(SOURCE, /checkEmailCopyForPasswordSignup\(\)/);
+  assert.match(SOURCE, /setSignupSent\(true\)/);
+});
+
+test("an already-registered address is reported, not silently 'created': the provider flags it and the page shows the friendly message", () => {
+  assert.match(SOURCE, /if \(result\.alreadyRegistered\) return failPassword\(friendlySignUpError\("User already registered"\)\);/);
+});
+
+// ------------------------------------------------------------------ the secondary, passwordless option
+
+test("the secure email link remains fully present as a SECONDARY option on both journeys", () => {
+  assert.match(SOURCE, /await signInWithMagicLink\(email\.trim\(\), \{ createAccount: creating \}\);/);
+  assert.match(SOURCE, /Prefer no password\? Create your account with an email link instead/);
+  assert.match(SOURCE, /Email me a sign-in link/);
+  assert.match(SOURCE, /Sign in with a password instead/);
+  assert.match(SOURCE, /Choose a password instead/);
+});
+
+test("Sign in never creates an account: password sign-in cannot, and the email-link path asks for account creation ONLY from the Create tab", () => {
+  assert.doesNotMatch(SOURCE, /supabase\.auth\./, "no direct Supabase call in the page");
+  assert.match(SOURCE, /createAccount: creating/);
+  assert.match(SOURCE, /const creating = tab === "create";/);
+  assert.match(PROVIDER, /shouldCreateUser: options\?\.createAccount \?\? true/);
+});
+
+// ------------------------------------------------------------------ friendly behaviour (unchanged contract)
+
+test("validation is visible: forms opt out of native validation, buttons are never disabled by an empty box", () => {
+  assert.equal((SOURCE.match(/noValidate/g) ?? []).length, 3);
+  assert.doesNotMatch(SOURCE, /disabled=\{[^}]*!email\.trim\(\)/);
+  assert.doesNotMatch(SOURCE, /disabled=\{[^}]*!password/);
+});
+
+test("validation, error mapping and success copy come from the shared tested module, never raw service text", () => {
+  assert.match(SOURCE, /friendlyPasswordSignInError\(error\)/);
+  assert.match(SOURCE, /friendlySignUpError\(result\.error\)/);
+  assert.match(SOURCE, /friendlyEmailLinkError\(error, tab\)/);
+  assert.doesNotMatch(SOURCE, /setLinkError\(error\)|failPassword\(error\)|failPassword\(result\.error\)/);
+});
+
+test("no raw Supabase/technical jargon (OTP, JWT, provider, rate limit) is ever shown to the user", () => {
+  const userFacingText = SOURCE.match(/>[^<{]*[a-zA-Z][^<{]*</g)?.join(" ") ?? "";
+  for (const jargon of ["OTP", "JWT", "provider", "rate limit", "Supabase"]) {
+    assert.doesNotMatch(userFacingText, new RegExp(jargon, "i"), `expected no user-facing "${jargon}" text`);
+  }
+});
+
+test("a parent who never set a password is told plainly they do not need one", () => {
+  assert.match(SOURCE, /Never set a password\? You don&apos;t need one/);
+});
+
+// ------------------------------------------------------------------ existing guarantees preserved
+
+test("the existing Gate 3 isPermanentlyAuthenticated redirect predicate is completely unchanged (in lib/loginRouting.ts)", () => {
+  assert.match(ROUTING, /export function isPermanentlyAuthenticated\(user: \{ is_anonymous\?: boolean \} \| null \| undefined\): boolean \{/);
+  assert.match(ROUTING, /return Boolean\(user\) && !user!\.is_anonymous;/);
+  assert.match(SOURCE, /if \(isPermanentlyAuthenticated\(user\)\) \{\s*\n\s*router\.replace\("\/dashboard"\);/);
+});
+
+test("the login page never offers a 'continue without signing in' skip CTA, and never routes to /dashboard from a button", () => {
+  assert.doesNotMatch(SOURCE, /Continue without signing in/);
+  assert.doesNotMatch(SOURCE, /router\.push\("\/dashboard"\)/);
 });
 
 test("the product name is never shortened to bare 'Angel' in visible login copy", () => {

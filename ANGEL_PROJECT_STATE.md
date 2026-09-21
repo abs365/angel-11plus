@@ -13,6 +13,17 @@ practice_eligible. See "Closed programme (most recent)" below.
 
 ---
 
+## Parent authentication UX (2026-09-21) -- password primary, email link secondary
+
+/login is now the familiar model: **Create account** = email + password + confirm (Supabase `signUp`, address confirmed by an
+emailed link; an already-registered address is detected from an empty `identities` list and nothing is created), **Sign in** =
+email + password, with "Forgot password, or need to set one?" (the existing reset flow, which lets an email-link account CHOOSE
+its first password -- those accounts hold a random temporary password nobody knows, so a wrong-password message points there) and
+"Email me a sign-in link instead" as the secondary passwordless option (still `shouldCreateUser:false` on Sign in). No migration, no
+learner-table change; multi-learner context clearing/restoration untouched. Logic + copy: `lib/authEmailFeedback.ts`.
+
+---
+
 ## Multi-learner household architecture (2026-09-21) -- DATABASE APPLIED + CLIENT INTEGRATED
 
 Founder decision: one parent account -> many learners (max 8). **Migration 260 was applied to production ONCE**

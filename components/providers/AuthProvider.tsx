@@ -43,6 +43,16 @@ interface AuthContextValue {
    */
   signInWithPassword: (email: string, password: string) => Promise<{ error: string | null }>;
   /**
+   * Create account with a password the parent chooses. Supabase's own signUp(): the address is confirmed by an
+   * emailed link (auto-confirm is off), after which the parent is signed in. `alreadyRegistered` is true when
+   * the address already belongs to an account (Supabase returns a user with no identities instead of an error);
+   * nothing is created in that case. `signedIn` is true only if the project auto-confirmed and returned a session.
+   */
+  signUpWithPassword: (
+    email: string,
+    password: string
+  ) => Promise<{ error: string | null; alreadyRegistered: boolean; signedIn: boolean }>;
+  /**
    * Sends Supabase's own governed password-recovery email. Never invents
    * a custom recovery mechanism — this is supabase.auth.resetPasswordForEmail(),
    * the same authority every other Supabase Auth app uses. The redirect
@@ -76,6 +86,7 @@ const AuthContext = createContext<AuthContextValue>({
   loading: false,
   signInWithMagicLink: async () => ({ error: null }),
   signInWithPassword: async () => ({ error: null }),
+  signUpWithPassword: async () => ({ error: null, alreadyRegistered: false, signedIn: false }),
   sendPasswordResetEmail: async () => ({ error: null }),
   updatePassword: async () => ({ error: null }),
   isPasswordRecovery: false,
@@ -220,6 +231,29 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     []
   );
 
+  const signUpWithPassword = useCallback(
+    async (
+      email: string,
+      password: string
+    ): Promise<{ error: string | null; alreadyRegistered: boolean; signedIn: boolean }> => {
+      const supabase = getSupabaseClient();
+      if (!supabase) return { error: "Supabase is not configured.", alreadyRegistered: false, signedIn: false };
+
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          emailRedirectTo: typeof window !== "undefined" ? `${window.location.origin}/dashboard` : undefined,
+        },
+      });
+      if (error) return { error: error.message, alreadyRegistered: false, signedIn: false };
+      const identities = data.user?.identities;
+      const alreadyRegistered = Array.isArray(identities) && identities.length === 0;
+      return { error: null, alreadyRegistered, signedIn: Boolean(data.session) };
+    },
+    []
+  );
+
   const sendPasswordResetEmail = useCallback(
     async (email: string): Promise<{ error: string | null }> => {
       const supabase = getSupabaseClient();
@@ -262,6 +296,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         loading,
         signInWithMagicLink,
         signInWithPassword,
+        signUpWithPassword,
         sendPasswordResetEmail,
         updatePassword,
         isPasswordRecovery,

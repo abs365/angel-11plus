@@ -7,38 +7,29 @@ import { useAuth } from "@/components/providers/AuthProvider";
 import ErrorState from "@/components/ErrorState";
 import {
   validateEmailForAuth,
+  validateNewPassword,
   friendlyEmailLinkError,
+  friendlySignUpError,
+  friendlyPasswordSignInError,
   checkEmailCopy,
-  isPerAddressCooldown,
-  isEmailSendingLimit,
+  checkEmailCopyForPasswordSignup,
+  PASSWORD_MIN_LENGTH,
 } from "@/lib/authEmailFeedback";
 import { resolveLoginTab, isPermanentlyAuthenticated, type LoginTab } from "@/lib/loginRouting";
 
-type MagicLinkState = "idle" | "sending" | "sent" | "error";
-type PasswordState = "idle" | "signing-in" | "error";
-type Mode = "password" | "magic-link";
+type LinkState = "idle" | "sending" | "sent" | "error";
+type PasswordState = "idle" | "working" | "error";
 type Tab = LoginTab;
 
-
 /**
- * Returning-user access improvement — the exact production defect that
- * prompted this page: a returning learner/parent had no reliable way in
- * to a permanent account beyond repeatedly requesting an email link, with
- * no explanation of why a second request was refused. Never surfaces
- * Supabase's own technical wording (OTP/JWT/rate limit/provider) — every
- * message here is written for a parent or child, in plain English.
+ * Parent authentication UX. Two journeys, both familiar:
+ *   NEW PARENT       Create account -> email + password (+ confirm) -> confirm by email -> signed in.
+ *   RETURNING PARENT Sign in        -> email + password.
+ * The secure email link is a secondary, passwordless option on both. Every existing account keeps working:
+ * accounts made through the email link hold a random temporary password nobody knows, so those parents use
+ * "Forgot password?" (Supabase's own reset flow, /reset-password) to CHOOSE a password, or keep using the link.
+ * Sign in never creates an account: password sign-in cannot, and the email-link sign-in passes shouldCreateUser:false.
  */
-function friendlySignInError(msg: string): string {
-  if (isPerAddressCooldown(msg) || isEmailSendingLimit(msg)) return friendlyEmailLinkError(msg, "signin").message;
-  if (/invalid login credentials/i.test(msg)) {
-    return "That email and password don't match. Check them, or use “Forgot password?” below.";
-  }
-  if (/email not confirmed/i.test(msg)) {
-    return "Please confirm your email address first. Check your inbox for our earlier email.";
-  }
-  return msg;
-}
-
 
 const DEBOUNCE_MS = 2_000;
 
@@ -48,6 +39,9 @@ const PRIMARY_BUTTON_CLASS =
   "flex items-center justify-center gap-2 w-full bg-blue-600 text-white rounded-xl py-4 font-semibold text-base hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors";
 const LABEL_CLASS =
   "block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-2";
+const TEXT_LINK_CLASS = "text-blue-600 font-medium underline underline-offset-2";
+const SUBTLE_LINK_CLASS =
+  "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 underline underline-offset-2";
 
 export default function LoginPage() {
   return (
@@ -58,29 +52,30 @@ export default function LoginPage() {
 }
 
 function LoginContent() {
-  const { user, signInWithMagicLink, signInWithPassword } = useAuth();
+  const { user, signInWithMagicLink, signInWithPassword, signUpWithPassword } = useAuth();
   const router = useRouter();
   const searchParams = useSearchParams();
   const [tab, setTab] = useState<Tab>(resolveLoginTab(searchParams.get("mode")));
-  // Within the Sign in tab only: which method is showing.
-  // Returning parents: the secure email link is the default (every account created through
-  // Create account never asks the parent to choose a password); the password form is a secondary option.
-  const [mode, setMode] = useState<Mode>("magic-link");
-  // Which journey the last email link was requested from (drives the
-  // "Check your email" wording — confirm an account vs. sign in).
-  const [linkIntent, setLinkIntent] = useState<Tab>("create");
+  // Which method each journey is showing. Password is the default for both; the email link is the secondary option.
+  const [signinUsesLink, setSigninUsesLink] = useState(false);
+  const [createUsesLink, setCreateUsesLink] = useState(false);
+  // Which journey the last email was requested from (drives the "Check your email" wording).
+  const [sentKind, setSentKind] = useState<"signin-link" | "create-link" | "create-password">("create-password");
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirm, setConfirm] = useState("");
 
-  const [magicLinkState, setMagicLinkState] = useState<MagicLinkState>("idle");
-  const [magicLinkError, setMagicLinkError] = useState("");
+  const [linkState, setLinkState] = useState<LinkState>("idle");
+  const [linkError, setLinkError] = useState("");
   const [rateLimitUntil, setRateLimitUntil] = useState<number | null>(null);
   const [secondsLeft, setSecondsLeft] = useState(0);
-  const lastMagicLinkSubmitRef = useRef(0);
+  const lastLinkSubmitRef = useRef(0);
   const emailInputRef = useRef<HTMLInputElement>(null);
 
   const [passwordState, setPasswordState] = useState<PasswordState>("idle");
   const [passwordError, setPasswordError] = useState("");
+  const [signupSent, setSignupSent] = useState(false);
 
   useEffect(() => {
     if (!rateLimitUntil) return;
@@ -104,20 +99,30 @@ function LoginContent() {
     return null;
   }
 
-  function selectTab(next: Tab) {
-    setTab(next);
-    setMode("magic-link");
-    setMagicLinkState("idle");
-    setMagicLinkError("");
+  const creating = tab === "create";
+  const showLinkForm = creating ? createUsesLink : signinUsesLink;
+  const linkSent = showLinkForm && linkState === "sent";
+
+  function resetFeedback() {
+    setLinkState("idle");
+    setLinkError("");
     setPasswordState("idle");
     setPasswordError("");
+    setSignupSent(false);
+  }
+
+  function selectTab(next: Tab) {
+    setTab(next);
+    setSigninUsesLink(false);
+    setCreateUsesLink(false);
+    resetFeedback();
   }
 
   function handleEmailChange(e: React.ChangeEvent<HTMLInputElement>) {
     setEmail(e.target.value);
-    if (magicLinkState === "error" && secondsLeft === 0) {
-      setMagicLinkState("idle");
-      setMagicLinkError("");
+    if (linkState === "error" && secondsLeft === 0) {
+      setLinkState("idle");
+      setLinkError("");
     }
     if (passwordState === "error") {
       setPasswordState("idle");
@@ -125,71 +130,149 @@ function LoginContent() {
     }
   }
 
+  function clearPasswordError() {
+    if (passwordState === "error") {
+      setPasswordState("idle");
+      setPasswordError("");
+    }
+  }
+
+  function failPassword(message: string) {
+    setPasswordState("error");
+    setPasswordError(message);
+  }
+
+  // ---- RETURNING PARENT: email + password ----
   async function handlePasswordSignIn(e: React.FormEvent) {
     e.preventDefault();
-    if (passwordState === "signing-in") return;
+    if (passwordState === "working") return;
 
-    const validationError = validateEmailForAuth(email, "password");
-    if (validationError) {
-      setPasswordState("error");
-      setPasswordError(validationError);
-      return;
-    }
-    if (!password) {
-      setPasswordState("error");
-      setPasswordError("Please enter your password.");
-      return;
-    }
+    const emailError = validateEmailForAuth(email, "password");
+    if (emailError) return failPassword(emailError);
+    if (!password) return failPassword("Please enter your password.");
 
-    setPasswordState("signing-in");
+    setPasswordState("working");
     setPasswordError("");
 
     const { error } = await signInWithPassword(email.trim(), password);
     if (error) {
-      setPasswordState("error");
-      setPasswordError(friendlySignInError(error));
+      failPassword(friendlyPasswordSignInError(error));
     }
-    // On success, the auth state change updates `user` and the redirect
-    // above takes over on the next render — nothing else to do here.
+    // On success the auth state change updates `user` and the redirect above takes over.
   }
 
-  async function handleMagicLinkRequest(e: React.FormEvent) {
+  // ---- NEW PARENT: email + chosen password (+ confirm) ----
+  async function handlePasswordSignUp(e: React.FormEvent) {
+    e.preventDefault();
+    if (passwordState === "working") return;
+
+    const emailError = validateEmailForAuth(email, "create");
+    if (emailError) return failPassword(emailError);
+    const passwordProblem = validateNewPassword(password, confirm);
+    if (passwordProblem) return failPassword(passwordProblem);
+
+    setPasswordState("working");
+    setPasswordError("");
+
+    const result = await signUpWithPassword(email.trim(), password);
+    if (result.error) return failPassword(friendlySignUpError(result.error));
+    if (result.alreadyRegistered) return failPassword(friendlySignUpError("User already registered"));
+    if (result.signedIn) return; // auto-confirmed: the auth state change redirects to the dashboard
+    setPasswordState("idle");
+    setSentKind("create-password");
+    setSignupSent(true);
+  }
+
+  // ---- Secondary: secure email link (Create account or Sign in) ----
+  async function handleLinkRequest(e: React.FormEvent) {
     e.preventDefault();
     if (secondsLeft > 0) return;
 
     const validationError = validateEmailForAuth(email, tab);
     if (validationError) {
-      setMagicLinkState("error");
-      setMagicLinkError(validationError);
+      setLinkState("error");
+      setLinkError(validationError);
       emailInputRef.current?.focus();
       return;
     }
 
     const now = Date.now();
-    if (now - lastMagicLinkSubmitRef.current < DEBOUNCE_MS) return;
-    lastMagicLinkSubmitRef.current = now;
+    if (now - lastLinkSubmitRef.current < DEBOUNCE_MS) return;
+    lastLinkSubmitRef.current = now;
 
-    setLinkIntent(tab);
-    setMagicLinkState("sending");
-    setMagicLinkError("");
+    setSentKind(creating ? "create-link" : "signin-link");
+    setLinkState("sending");
+    setLinkError("");
 
-    const { error } = await signInWithMagicLink(email.trim(), { createAccount: tab === "create" });
+    const { error } = await signInWithMagicLink(email.trim(), { createAccount: creating });
 
     if (error) {
-      setMagicLinkState("error");
+      setLinkState("error");
       const failure = friendlyEmailLinkError(error, tab);
-      setMagicLinkError(failure.message);
+      setLinkError(failure.message);
       if (failure.cooldownSeconds > 0) {
         setRateLimitUntil(Date.now() + failure.cooldownSeconds * 1000);
         setSecondsLeft(failure.cooldownSeconds);
       }
     } else {
-      setMagicLinkState("sent");
+      setLinkState("sent");
     }
   }
 
-  const showLinkForm = tab === "create" || mode === "magic-link";
-  const creating = tab === "create";
+  const sentCopy =
+    sentKind === "create-password" ? checkEmailCopyForPasswordSignup() : checkEmailCopy(sentKind === "create-link" ? "create" : "signin");
+  const showSent = signupSent || linkSent;
+
+  function emailField(id: string, ref?: React.Ref<HTMLInputElement>) {
+    return (
+      <div>
+        <label htmlFor={id} className={LABEL_CLASS}>
+          Email address
+        </label>
+        <div className="relative">
+          <Mail size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500" />
+          <input
+            id={id}
+            ref={ref}
+            type="email"
+            value={email}
+            onChange={handleEmailChange}
+            placeholder="you@example.com"
+            autoComplete="email"
+            autoFocus
+            required
+            className={INPUT_CLASS}
+          />
+        </div>
+      </div>
+    );
+  }
+
+  function passwordField(id: string, label: string, value: string, set: (v: string) => void, autoComplete: string, placeholder: string) {
+    return (
+      <div>
+        <label htmlFor={id} className={LABEL_CLASS}>
+          {label}
+        </label>
+        <div className="relative">
+          <Lock size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500" />
+          <input
+            id={id}
+            type="password"
+            value={value}
+            onChange={(e) => {
+              set(e.target.value);
+              clearPasswordError();
+            }}
+            placeholder={placeholder}
+            autoComplete={autoComplete}
+            required
+            className={INPUT_CLASS}
+          />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-[var(--background)] flex items-center justify-center px-4 py-12">
@@ -205,26 +288,25 @@ function LoginContent() {
 
         {/* Card */}
         <div className="bg-white dark:bg-gray-900 rounded-3xl shadow-sm border border-gray-100 dark:border-gray-800 p-8">
-          {showLinkForm && magicLinkState === "sent" ? (
+          {showSent ? (
             <div className="text-center">
               <div className="inline-flex items-center justify-center w-14 h-14 bg-green-100 dark:bg-green-900 rounded-2xl mb-4">
                 <CheckCircle size={26} className="text-green-600 dark:text-green-400" />
               </div>
-              <h2 className="text-gray-900 dark:text-gray-100 font-bold text-xl mb-2">{checkEmailCopy(linkIntent).title}</h2>
-              <p className="text-gray-500 dark:text-gray-400 text-sm leading-relaxed mb-2">
-                {checkEmailCopy(linkIntent).lead}
-              </p>
+              <h2 className="text-gray-900 dark:text-gray-100 font-bold text-xl mb-2">{sentCopy.title}</h2>
+              <p className="text-gray-500 dark:text-gray-400 text-sm leading-relaxed mb-2">{sentCopy.lead}</p>
               <p className="text-gray-700 dark:text-gray-300 text-sm leading-relaxed mb-1">
                 Sent to <strong>{email}</strong>
               </p>
-              <p className="text-gray-500 dark:text-gray-400 text-sm leading-relaxed mb-6">
-                {checkEmailCopy(linkIntent).next}
-              </p>
+              <p className="text-gray-500 dark:text-gray-400 text-sm leading-relaxed mb-6">{sentCopy.next}</p>
               <p className="text-gray-400 dark:text-gray-500 text-xs">
                 No email? Check your spam folder, or{" "}
                 <button
-                  onClick={() => setMagicLinkState("idle")}
-                  className="text-blue-600 font-medium underline underline-offset-2"
+                  onClick={() => {
+                    setLinkState("idle");
+                    setSignupSent(false);
+                  }}
+                  className={TEXT_LINK_CLASS}
                 >
                   try again
                 </button>
@@ -274,45 +356,25 @@ function LoginContent() {
               </h2>
               <p className="text-gray-400 dark:text-gray-500 text-sm text-center mb-6 leading-relaxed">
                 {creating
-                  ? "For parents and carers. No password needed."
-                  : mode === "magic-link"
+                  ? "For parents and carers. Choose a password, then confirm your email address."
+                  : showLinkForm
                     ? "Enter your email and we'll email you a secure link to sign in. No password needed."
-                    : "Enter the email address and password you set for Angel 11+."}
+                    : "Enter your email address and password."}
               </p>
 
               {showLinkForm ? (
-                <form onSubmit={handleMagicLinkRequest} noValidate className="flex flex-col gap-4">
-                  <div>
-                    <label htmlFor="magic-email" className={LABEL_CLASS}>
-                      Email address
-                    </label>
-                    <div className="relative">
-                      <Mail size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500" />
-                      <input
-                        id="magic-email"
-                        ref={emailInputRef}
-                        type="email"
-                        value={email}
-                        onChange={handleEmailChange}
-                        placeholder="you@example.com"
-                        autoComplete="email"
-                        autoFocus
-                        required
-                        aria-invalid={magicLinkState === "error" && !magicLinkError.startsWith("We ") ? true : undefined}
-                        aria-describedby={magicLinkState === "error" ? "magic-link-error" : undefined}
-                        className={INPUT_CLASS}
-                      />
-                    </div>
-                  </div>
+                /* ---------------- Secure email link (secondary, both journeys) ---------------- */
+                <form onSubmit={handleLinkRequest} noValidate className="flex flex-col gap-4">
+                  {emailField("magic-email", emailInputRef)}
 
-                  {magicLinkState === "error" && <ErrorState variant="banner" id="magic-link-error" message={magicLinkError} />}
+                  {linkState === "error" && <ErrorState variant="banner" id="magic-link-error" message={linkError} />}
 
                   <button
                     type="submit"
-                    disabled={magicLinkState === "sending" || secondsLeft > 0}
+                    disabled={linkState === "sending" || secondsLeft > 0}
                     className={PRIMARY_BUTTON_CLASS}
                   >
-                    {magicLinkState === "sending" ? (
+                    {linkState === "sending" ? (
                       <>
                         <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
                         Sending link…
@@ -321,7 +383,7 @@ function LoginContent() {
                       `Try again in ${secondsLeft}s`
                     ) : (
                       <>
-                        {creating ? "Create account" : "Email me a sign-in link"}
+                        {creating ? "Create account with an email link" : "Email me a sign-in link"}
                         <ArrowRight size={18} />
                       </>
                     )}
@@ -339,67 +401,66 @@ function LoginContent() {
                     </p>
                   )}
 
-                  {!creating && (
-                    <div className="text-center text-xs mt-1">
-                      <button type="button" onClick={() => setMode("password")} className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 underline underline-offset-2">
-                        I set a password. Sign in with it instead
-                      </button>
-                    </div>
-                  )}
+                  <div className="text-center text-xs mt-1">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        resetFeedback();
+                        if (creating) setCreateUsesLink(false);
+                        else setSigninUsesLink(false);
+                      }}
+                      className={SUBTLE_LINK_CLASS}
+                    >
+                      {creating ? "Choose a password instead" : "Sign in with a password instead"}
+                    </button>
+                  </div>
+                </form>
+              ) : creating ? (
+                /* ---------------- NEW PARENT: email + password + confirm ---------------- */
+                <form onSubmit={handlePasswordSignUp} noValidate className="flex flex-col gap-4">
+                  {emailField("signup-email")}
+                  {passwordField("signup-password", "Password", password, setPassword, "new-password", `At least ${PASSWORD_MIN_LENGTH} characters`)}
+                  {passwordField("signup-confirm", "Confirm password", confirm, setConfirm, "new-password", "Type it again")}
+
+                  {passwordState === "error" && <ErrorState variant="banner" id="signup-error" message={passwordError} />}
+
+                  <button type="submit" disabled={passwordState === "working"} className={PRIMARY_BUTTON_CLASS}>
+                    {passwordState === "working" ? (
+                      <>
+                        <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                        Creating account…
+                      </>
+                    ) : (
+                      <>
+                        Create account
+                        <ArrowRight size={18} />
+                      </>
+                    )}
+                  </button>
+
+                  <div className="text-center text-xs mt-1">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        resetFeedback();
+                        setCreateUsesLink(true);
+                      }}
+                      className={SUBTLE_LINK_CLASS}
+                    >
+                      Prefer no password? Create your account with an email link instead
+                    </button>
+                  </div>
                 </form>
               ) : (
+                /* ---------------- RETURNING PARENT: email + password ---------------- */
                 <form onSubmit={handlePasswordSignIn} noValidate className="flex flex-col gap-4">
-                  <div>
-                    <label htmlFor="email" className={LABEL_CLASS}>
-                      Email address
-                    </label>
-                    <div className="relative">
-                      <Mail size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500" />
-                      <input
-                        id="email"
-                        type="email"
-                        value={email}
-                        onChange={handleEmailChange}
-                        placeholder="you@example.com"
-                        autoComplete="email"
-                        autoFocus
-                        required
-                        className={INPUT_CLASS}
-                      />
-                    </div>
-                  </div>
-
-                  <div>
-                    <label htmlFor="password" className={LABEL_CLASS}>
-                      Password
-                    </label>
-                    <div className="relative">
-                      <Lock size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500" />
-                      <input
-                        id="password"
-                        type="password"
-                        value={password}
-                        onChange={(e) => {
-                          setPassword(e.target.value);
-                          if (passwordState === "error") { setPasswordState("idle"); setPasswordError(""); }
-                        }}
-                        placeholder="Your password"
-                        autoComplete="current-password"
-                        required
-                        aria-describedby={passwordState === "error" ? "password-error" : undefined}
-                        className={INPUT_CLASS}
-                      />
-                    </div>
-                  </div>
+                  {emailField("email")}
+                  {passwordField("password", "Password", password, setPassword, "current-password", "Your password")}
 
                   {passwordState === "error" && <ErrorState variant="banner" id="password-error" message={passwordError} />}
 
-                  <button
-                    type="submit"
-                    disabled={passwordState === "signing-in"}
-                    className={PRIMARY_BUTTON_CLASS}
-                  >
-                    {passwordState === "signing-in" ? (
+                  <button type="submit" disabled={passwordState === "working"} className={PRIMARY_BUTTON_CLASS}>
+                    {passwordState === "working" ? (
                       <>
                         <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
                         Signing in…
@@ -412,43 +473,39 @@ function LoginContent() {
                     )}
                   </button>
 
-                  <div className="text-xs mt-1">
+                  <div className="flex flex-col items-start gap-2 text-xs mt-1">
                     <button type="button" onClick={() => router.push("/reset-password")} className="text-blue-600 font-medium hover:underline">
                       Forgot password, or need to set one?
                     </button>
-                  </div>
-
-                  {/* Accounts made through Create account never ask the parent to
-                      choose a password (Supabase stores a random temporary one nobody
-                      knows), so this is a first-class path for a returning parent,
-                      not a footnote. */}
-                  <div className="rounded-xl border border-gray-200 dark:border-gray-700 px-4 py-3 text-center">
-                    <p className="text-gray-500 dark:text-gray-400 text-xs mb-2">
-                      Never set a password? You don&apos;t need one.
-                    </p>
                     <button
                       type="button"
-                      onClick={() => setMode("magic-link")}
-                      className="text-sm font-semibold text-blue-700 dark:text-blue-400 hover:underline"
+                      onClick={() => {
+                        resetFeedback();
+                        setSigninUsesLink(true);
+                      }}
+                      className={SUBTLE_LINK_CLASS}
                     >
-                      Email me a sign-in link
+                      Email me a sign-in link instead
                     </button>
                   </div>
+                  <p className="text-gray-400 dark:text-gray-500 text-xs leading-relaxed">
+                    Never set a password? You don&apos;t need one: use the email link, or choose &ldquo;Forgot password&rdquo; to set one.
+                  </p>
                 </form>
               )}
 
               <p className="text-gray-400 dark:text-gray-500 text-xs text-center mt-6 leading-relaxed">
                 {creating ? (
                   <>
-                    Already have an account?{" "}
-                    <button type="button" onClick={() => selectTab("signin")} className="text-blue-600 font-medium underline underline-offset-2">
+                    Already registered?{" "}
+                    <button type="button" onClick={() => selectTab("signin")} className={TEXT_LINK_CLASS}>
                       Sign in
                     </button>
                   </>
                 ) : (
                   <>
                     New to Angel 11+?{" "}
-                    <button type="button" onClick={() => selectTab("create")} className="text-blue-600 font-medium underline underline-offset-2">
+                    <button type="button" onClick={() => selectTab("create")} className={TEXT_LINK_CLASS}>
                       Create an account
                     </button>
                   </>

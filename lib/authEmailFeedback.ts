@@ -117,3 +117,69 @@ export function checkEmailCopy(intent: EmailLinkIntent): { title: string; lead: 
         next: "Open the email and tap the link to sign in.",
       };
 }
+
+// ---------------------------------------------------------------------------------------------------------------
+// Password registration and password sign-in (parent authentication UX).
+// ---------------------------------------------------------------------------------------------------------------
+
+/** Same minimum the reset-password page already enforces, so a parent meets one rule everywhere. */
+export const PASSWORD_MIN_LENGTH = 8;
+
+/** Returns the message to show for a NEW password (Create account), or null when acceptable. */
+export function validateNewPassword(password: string, confirm: string): string | null {
+  if (!password) return "Choose a password for your account.";
+  if (password.length < PASSWORD_MIN_LENGTH) return `Please choose a password with at least ${PASSWORD_MIN_LENGTH} characters.`;
+  if (confirm !== password) return "Those passwords don't match. Please check and try again.";
+  return null;
+}
+
+export const ALREADY_REGISTERED_MESSAGE =
+  "An Angel 11+ account already exists for that email address. Sign in instead, or choose “Forgot password?” to set a password.";
+
+/** Plain-language message for a failed password sign-up. Never surfaces service wording. */
+export function friendlySignUpError(msg: string): string {
+  if (/already (been )?registered|user_already_exists|already exists/i.test(msg)) return ALREADY_REGISTERED_MESSAGE;
+  if (isPerAddressCooldown(msg)) return "Please wait a minute before trying again.";
+  if (isEmailSendingLimit(msg) || /rate.?limit|too many/i.test(msg)) {
+    return "We can't send any more emails for a little while. Please try again in about an hour, or contact us and we'll help you get in.";
+  }
+  if (/password/i.test(msg) && /(weak|short|at least|characters|known|easy)/i.test(msg)) {
+    return "That password is too easy to guess. Please choose a longer or less common password.";
+  }
+  if (/signups? not allowed|signup.*disabled/i.test(msg)) {
+    return "New accounts can't be created at the moment. Please contact us and we'll help you get started.";
+  }
+  if (/invalid|unable to validate email|email address.*not valid/i.test(msg)) return EMAIL_INVALID_MESSAGE;
+  if (/failed to fetch|network|load failed|fetch/i.test(msg)) {
+    return "We couldn't reach Angel 11+. Please check your connection and try again.";
+  }
+  return "We couldn't create your account just now. Please try again in a moment.";
+}
+
+/**
+ * Friendly message for a failed PASSWORD sign-in. Every existing account created through the email link holds a
+ * random temporary password nobody knows, so "invalid credentials" usually means "you have not set a password yet";
+ * say so, and point at the two routes that work.
+ */
+export function friendlyPasswordSignInError(msg: string): string {
+  if (isPerAddressCooldown(msg) || isEmailSendingLimit(msg)) return friendlyEmailLinkError(msg, "signin").message;
+  if (/invalid login credentials|invalid credentials/i.test(msg)) {
+    return "That email and password don't match. If you signed up with an email link you haven't set a password yet: choose “Forgot password?” to set one, or email yourself a sign-in link instead.";
+  }
+  if (/email not confirmed/i.test(msg)) {
+    return "Please confirm your email address first. Check your inbox for our confirmation email.";
+  }
+  if (/failed to fetch|network|load failed|fetch/i.test(msg)) {
+    return "We couldn't reach Angel 11+. Please check your connection and try again.";
+  }
+  return "We couldn't sign you in just now. Please try again in a moment.";
+}
+
+/** Success copy after a PASSWORD registration: the address still has to be confirmed by email. */
+export function checkEmailCopyForPasswordSignup(): { title: string; lead: string; next: string } {
+  return {
+    title: "Check your email",
+    lead: "We've sent you a secure link to confirm your Angel 11+ account.",
+    next: "Open the email and tap the link to finish creating your account. You'll then be signed in to set up your child.",
+  };
+}
