@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import type { WritingFeedbackRequest, WritingFeedback, WritingDimensionFeedback } from "@/types/writing-feedback";
 import { runWritingPreflightChecks, WRITING_DIMENSIONS, WRITING_DIMENSION_LABEL, computeOverallScoreFromDimensions } from "@/lib/learningEngine/writingRubric";
+import { requireSupabaseUser } from "@/lib/server/requireSupabaseUser";
 import { WRITING_FEEDBACK_SYSTEM_PROMPT, stripDashPunctuation, buildWritingFeedbackUserMessage } from "@/lib/learningEngine/writingFeedbackPrompt";
 
 /**
@@ -14,6 +15,11 @@ import { WRITING_FEEDBACK_SYSTEM_PROMPT, stripDashPunctuation, buildWritingFeedb
  */
 
 export async function POST(request: NextRequest) {
+  // Access control FIRST: this route spends money on a third-party model, so a request must carry a real Supabase
+  // session (permanent OR the anonymous session every visitor holds), verified against Supabase Auth. Fails closed.
+  const caller = await requireSupabaseUser(request.headers.get("authorization"));
+  if (!caller.ok) return NextResponse.json({ error: caller.error }, { status: caller.status });
+
   const apiKey = process.env.OPENAI_API_KEY;
   if (!apiKey) {
     return NextResponse.json(

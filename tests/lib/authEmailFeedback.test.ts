@@ -163,3 +163,27 @@ test("the email-link sign-in never creates an account (still shouldCreateUser:fa
   assert.match(provider, /shouldCreateUser: options\?\.createAccount \?\? true/);
   assert.match(fs.readFileSync("app/login/page.tsx", "utf8"), /createAccount: creating/);
 });
+
+import { friendlyPasswordResetError } from "@/lib/authEmailFeedback";
+
+test("PASSWORD RESET: the project-level email limit is explained honestly (no email was sent; a minute will not help)", () => {
+  const limited = friendlyPasswordResetError("email rate limit exceeded");
+  assert.ok(limited.includes("no reset email has been sent"));
+  assert.ok(limited.includes("about an hour"));
+  assert.ok(!limited.toLowerCase().includes("wait a minute"));
+  assert.ok(friendlyPasswordResetError("For security purposes, you can only request this after 45 seconds").includes("wait a minute"));
+});
+
+test("PASSWORD RESET: other failures are plain language, never raw service wording", () => {
+  assert.ok(friendlyPasswordResetError("Failed to fetch").includes("couldn't reach Angel 11+"));
+  assert.ok(friendlyPasswordResetError("Unable to validate email address: invalid format").includes("doesn't look right"));
+  const unknown = friendlyPasswordResetError("500 internal SMTP failure");
+  assert.ok(unknown.includes("couldn't send the reset email just now"));
+  assert.ok(!/smtp|500/i.test(unknown));
+});
+
+test("PASSWORD RESET: the reset page uses the shared message, never the raw error", () => {
+  const src = fs.readFileSync("app/reset-password/page.tsx", "utf8");
+  assert.ok(src.includes("friendlyPasswordResetError(error)"));
+  assert.ok(!src.includes("setRequestError(error)"));
+});

@@ -13,6 +13,22 @@ practice_eligible. See "Closed programme (most recent)" below.
 
 ---
 
+## Access-control investigation (2026-09-21) -- OPEN: 4 analytics views readable by the public anon key
+
+Founder saw "Viewing: Child 1" + "Sign out" in a browser they believed signed out. Verified: EVERY visitor silently gets a real ANONYMOUS
+Supabase session (anonymous-first design, no route guards/middleware), and the header shows the account menu for it -- so this is
+expected behaviour, not a bypass; a browser with NO session shows "Sign in" and no learner data. Signing out in one browser does not
+end another browser's session. Confirmed by count-only probes on production: every learner table/RPC/write fails closed for the
+public key and for anonymous sessions; ownership header is DB-validated. **DEFECTS FOUND:** (1) migration-003 views
+`profile_summary`, `recent_activity`, `lesson_analytics`, `subject_analytics` are readable by the PUBLIC anon key (98/101/37/26 rows;
+profile_summary exposes profile_id, device_id, auth_user_id, XP, streak, last_activity, session counts; recent_activity exposes
+per-learner lesson scores; NOT learner_name/emails). Unused by the app. Needs a Founder-authorised migration (revoke select from
+anon/authenticated + security_invoker) -- NOT created yet. (2) `/api/writing-feedback` had no authentication (unauthenticated OpenAI
+use) -- fixed by `lib/server/requireSupabaseUser.ts` (verifies a Supabase session; anonymous allowed) + client sends the token.
+Reset page said "wait a minute" for the project-level email limit (`over_email_send_rate_limit`, blocks the send, ~1h) -- fixed copy.
+
+---
+
 ## Parent authentication UX (2026-09-21) -- password primary, email link secondary
 
 /login is now the familiar model: **Create account** = email + password + confirm (Supabase `signUp`, address confirmed by an

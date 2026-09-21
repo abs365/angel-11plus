@@ -626,9 +626,15 @@ export default function PracticeSessionPage({
       const q = current.prompt as { title: string; prompt: string; type: string };
       setWritingFeedbackError("");
       try {
+        // The route verifies the caller's Supabase session (it spends money on a third-party model); send it.
+        const sessionClient = getSupabaseClient();
+        const accessToken = sessionClient ? (await sessionClient.auth.getSession()).data.session?.access_token : undefined;
         const res = await fetch("/api/writing-feedback", {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: {
+            "Content-Type": "application/json",
+            ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
+          },
           body: JSON.stringify({
             promptTitle: q.title,
             promptType: q.type,
@@ -639,7 +645,11 @@ export default function PracticeSessionPage({
         });
         if (!res.ok) {
           const body = await res.json().catch(() => ({}));
-          setWritingFeedbackError(body.error ?? "Smart feedback is temporarily unavailable.");
+          setWritingFeedbackError(
+            res.status === 401
+              ? "Please refresh the page and try again."
+              : (body.error ?? "Smart feedback is temporarily unavailable.")
+          );
           return;
         }
         const feedback: WritingFeedback = await res.json();

@@ -183,3 +183,20 @@ export function checkEmailCopyForPasswordSignup(): { title: string; lead: string
     next: "Open the email and tap the link to finish creating your account. You'll then be signed in to set up your child.",
   };
 }
+
+/**
+ * Plain-language message for a failed PASSWORD-RESET request. The reset page used to show "Please wait a minute" for
+ * every rate-limit error; but a project-level email limit ("email rate limit exceeded") blocks the send entirely
+ * and lasts up to an hour, so a minute never helps and no email is on its way. Say so.
+ */
+export function friendlyPasswordResetError(msg: string): string {
+  if (isPerAddressCooldown(msg)) return "Please wait a minute before requesting another reset link.";
+  if (isEmailSendingLimit(msg) || /rate.?limit|too many/i.test(msg)) {
+    return "We can't send any more emails for a little while, so no reset email has been sent. Please try again in about an hour, or contact us and we'll help you get in.";
+  }
+  if (/failed to fetch|network|load failed|fetch/i.test(msg)) {
+    return "We couldn't reach Angel 11+. Please check your connection and try again.";
+  }
+  if (/invalid|unable to validate email|email address.*not valid/i.test(msg)) return EMAIL_INVALID_MESSAGE;
+  return "We couldn't send the reset email just now. Please try again in a moment.";
+}

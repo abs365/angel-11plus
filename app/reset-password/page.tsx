@@ -7,6 +7,7 @@ import { BookOpen, Mail, Lock, ArrowRight, CheckCircle } from "lucide-react";
 import { useAuth } from "@/components/providers/AuthProvider";
 import ErrorState from "@/components/ErrorState";
 import { isPasswordRecoveryUrl } from "@/lib/passwordRecoveryUrl";
+import { friendlyPasswordResetError } from "@/lib/authEmailFeedback";
 
 type RequestState = "idle" | "sending" | "sent" | "error";
 type UpdateState = "idle" | "saving" | "saved" | "error";
@@ -45,7 +46,7 @@ export default function ResetPasswordPage() {
     const { error } = await sendPasswordResetEmail(trimmed);
     if (error) {
       setRequestState("error");
-      setRequestError(/rate.?limit/i.test(error) ? "Please wait a minute before trying again." : error);
+      setRequestError(friendlyPasswordResetError(error));
       return;
     }
     setRequestState("sent");
