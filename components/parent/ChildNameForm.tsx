@@ -5,8 +5,10 @@ import { useState } from "react";
 /**
  * Small inline form for the child's first name (or nickname). Shared by the
  * Parent Dashboard identity banner and the first-run setup card so the
- * wording and limits are identical everywhere. The name is local to this
- * device (lib/childProfile.ts) -- never sent to Angel 11+ servers.
+ * wording and limits are identical everywhere. Since migration 260 the name
+ * is stored on the learner's own account record (profiles.learner_name) so a
+ * parent can identify and switch between children; a first name or nickname
+ * only.
  */
 export default function ChildNameForm({
   initial,

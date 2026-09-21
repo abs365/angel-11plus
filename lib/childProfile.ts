@@ -1,4 +1,11 @@
 /**
+ * SUPERSEDED by migration 260 (multi-learner household model): a child's
+ * first name / nickname now lives on the learner's own database record
+ * (profiles.learner_name) and is read through the learner context. This
+ * module remains ONLY to read the pre-260, browser-local name once so
+ * lib/learnerActivation.ts can adopt it onto the learner (a parent never
+ * has to retype it). The rest of this comment describes the pre-260 state.
+ *
  * Child display name -- Family #1 onboarding correction.
  *
  * Verified architecture (see the Family #1 onboarding report): one

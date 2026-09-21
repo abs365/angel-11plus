@@ -13,6 +13,21 @@ practice_eligible. See "Closed programme (most recent)" below.
 
 ---
 
+## Multi-learner household architecture (2026-09-21) -- PREPARED, AWAITING FOUNDER MIGRATION
+
+Founder decision: one parent account -> many learners. Branch `multi-learner-household` (NOT merged/deployed).
+Migration `260_multi_learner_household_architecture.sql` is written, self-verifying and tested on real Postgres
+(PGlite) but **NOT applied** -- Founder applies it via Supabase SQL Editor, then Claude merges + deploys. Full
+design, dependency map, safe order and Founder steps: `ANGEL_MULTI_LEARNER_HOUSEHOLD_ARCHITECTURE.md`;
+read-only before/after pack: `ANGEL_MULTI_LEARNER_MIGRATION_VERIFICATION_PACK.sql`. profiles stays the learner
+table (no evidence moves); 23 learner-resolving SECURITY DEFINER functions rewritten to a validated,
+header-named active learner; two pre-existing `is_admin` self-write gaps found and closed. Supersedes the
+one-child-per-account finding in the Family #1 onboarding entry below. Clean checkout now builds/type-checks
+by the normal process (`scripts/verify-clean-checkout.mjs`); the 7 "baseline" failing tests are untracked
+local files of a separate Wave-1 arc, not in git.
+
+---
+
 ## Family #1 onboarding correction (2026-09-21, commit `9381ed1`, deployed, Vercel Ready)
 
 Real-family evidence: a parent could not tell how to register on `/login`, and could not see which child

@@ -76,8 +76,8 @@ export default function ParentSetupCard({
             {!hasName && (
               <>
                 <p className="text-gray-500 dark:text-gray-400 text-xs mt-0.5 mb-2 leading-relaxed">
-                  So you always know whose progress you are looking at. A nickname is fine. It is kept on this device
-                  only and is never sent to Angel 11+.
+                  So you always know whose progress you are looking at. A first name or nickname is enough. It is
+                  saved with your account only so you can tell your children apart.
                 </p>
                 <ChildNameForm autoFocus={false} onSave={onSaveName} />
               </>

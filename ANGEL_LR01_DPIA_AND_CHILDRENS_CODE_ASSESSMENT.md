@@ -65,7 +65,7 @@ address, phone number, photograph, precise geolocation, school name (only a gene
 
 | Table | What it holds | Child-data sensitivity |
 |---|---|---|
-| `profiles` | `id`, `device_id`, `name` (**always the literal default `"Angel"` in the database — never a real child's name**, see LR-02/AN-102), `auth_user_id`, `is_admin`, `selected_pathway_id` | Low — no real name, no DOB |
+| `profiles` | one row per **learner** (a parent account may own several — see §16): `id` (the stable learner id), `device_id`, `name` (**always the literal default `"Angel"` — never a real child's name**), `auth_user_id` (the owning parent account), `is_admin`, `selected_pathway_id`, and, **since migration 260 / Amendment A1 (§16)**, `learner_name` (parent-entered first name or nickname only), `target_exam_date`, `target_exam_date_provenance`, `school_year` | Low — a first name/nickname is now stored (§16); still no surname, DOB, photo, school, address, phone or location |
 | `user_stats` | XP, streak, last activity | Low |
 | `lesson_progress` | per-lesson completion, score, XP | Low-medium (performance data) |
 | `ali_student_question_history` | times seen/correct, last given answer (first + final), confidence rating, time taken, support tier, "working shown" | Medium — this is genuine learning-evidence profiling (§4) |
@@ -77,8 +77,10 @@ address, phone number, photograph, precise geolocation, school name (only a gene
 
 **Frontend/browser storage** (`localStorage`, no cookies used for auth — see §9):
 `sb-<ref>-auth-token` (session, essential), `angel_device_id` (essential, anonymous), local practice
-progress mirror, `selectedPathwayId`, `angel_child_name` (optional, **local-only, never reaches the
-database** — see §8), `angel11plus_beta_events` (local-only usage counters, never transmitted
+progress mirror **scoped per learner** (`angel11plus_progress:<learner-id>`, §16; the old device-wide key is
+read once to migrate it and never deleted), `angel_active_learner_v2` (which child this device/tab last
+showed — a UI preference holding an opaque id, no name), `angel_child_name*` (**legacy, pre-260**: read once
+to adopt a previously entered name onto the learner; superseded by `profiles.learner_name`, §16), `angel11plus_beta_events` (local-only usage counters, never transmitted
 anywhere — not third-party analytics in any regulatory sense).
 
 ## 3. Data minimisation findings
@@ -382,3 +384,57 @@ and distinguishes that from open questions requiring Founder or legal judgement.
 remain genuinely open (Article 8 characterisation; OpenAI account-level retention setting) and are
 explicitly marked FOUNDER/LEGAL REVIEW REQUIRED / FOUNDER VERIFICATION REQUIRED rather than
 resolved by assumption.*
+
+---
+
+## 16. Amendment A1 — Multi-learner household model (Wave 0, 2026-09-21)
+
+**Scope.** A bounded data-inventory amendment prompted by real Family #1 onboarding evidence. LR-01 is not
+reopened generally. Status: **prepared, not yet applied to production** (migration `260`, Founder-applied);
+this section describes the intended state and must be re-confirmed after application.
+
+**What changed.**
+- One parent/family account can own **up to 8 learner profiles**. Each learner is a `profiles` row; the
+  existing profile of every current account simply becomes that account's first learner (no evidence moves,
+  is copied, or is re-keyed — verified by migration invariants and tests).
+- New persisted personal data, per learner: **`learner_name`** (parent-entered **first name or nickname
+  only**, max 40 characters, control characters rejected by a database constraint), plus the learner's
+  exam date, its provenance and school year (Year 4/5/6) — the last three were already collected but held
+  only in device-wide browser storage; they now live on the learner record so they cannot bleed between
+  siblings or devices.
+
+**Purpose and necessity (data minimisation).** A first name/nickname is the minimum needed for a parent to
+recognise and switch between their children and for the Parent Dashboard to state whose progress is shown.
+Moving exam date/school year to the learner record is a *security/isolation* correction, not new collection.
+Explicitly **not collected for this purpose**: surname, date of birth, photograph, school, address, phone,
+precise location. The add-child form states this to the parent at the point of entry.
+
+**Separation of children's data.** Educational evidence remains keyed by learner id. Row-level security
+continues to test account ownership; a new database function validates, on every request, that the learner the
+browser names belongs to the signed-in account and refuses (never falls back) otherwise. Educational
+Intelligence, Recommended Focus, practice and Mock results are per learner; children are never combined into
+an aggregate score. Verified by real-Postgres tests (cross-account, cross-sibling, Mock, anonymous upgrade)
+and deterministic Educational Intelligence isolation tests.
+
+**Security findings closed in the same migration** (found by test, not assumed): a client could set its own
+`profiles.is_admin` by INSERT and by UPDATE (migration 008's column-level revoke is ineffective under
+Supabase's table-level default grant). Migration 260 forces `is_admin=false` on client inserts and replaces the
+table-level UPDATE grant with explicit column grants; `is_admin`/`auth_user_id` are no longer client-writable.
+Production status of the update gap is to be confirmed with the read-only check in the verification pack.
+
+**Lawful basis / children's-code position.** Unchanged from §1 and §11 — the parent creates and controls the
+account; the added field is a parent-entered label. A nickname may still be a child's real first name, so it is
+treated as personal data of a child (access, correction and erasure handled as in §10).
+
+**Retention / deletion.** Unchanged (§10, accepted beta position — not self-service). Note: removing a single
+child from an account is not yet self-service; it is handled on request. Recorded as a residual item.
+
+**Residual risks (new).** (1) A parent could type a full name into the field; guidance text discourages it but
+the field cannot detect it. (2) On a shared device, whoever is signed in to the account sees that account's
+children's first names in the switcher — protection is account-level, as it already is for progress.
+(3) The active-learner id sent as a request header is an opaque identifier, not a secret; ownership is
+enforced by the database, not by the id being unguessable.
+
+**Documents updated:** this file (§2, §9-relevant storage inventory, §16) and the `/privacy` notice
+(account-sync data, multi-child statement; the earlier statement that the child's name is device-only has been
+removed because it would now be untrue).
