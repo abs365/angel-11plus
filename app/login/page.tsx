@@ -5,6 +5,13 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { BookOpen, Mail, Lock, ArrowRight, CheckCircle } from "lucide-react";
 import { useAuth } from "@/components/providers/AuthProvider";
 import ErrorState from "@/components/ErrorState";
+import {
+  validateEmailForAuth,
+  friendlyEmailLinkError,
+  checkEmailCopy,
+  isPerAddressCooldown,
+  isEmailSendingLimit,
+} from "@/lib/authEmailFeedback";
 
 type MagicLinkState = "idle" | "sending" | "sent" | "error";
 type PasswordState = "idle" | "signing-in" | "error";
@@ -26,29 +33,6 @@ export function resolveLoginTab(modeParam: string | null | undefined): Tab {
   return modeParam === "signin" ? "signin" : "create";
 }
 
-// Domains that are reserved for documentation or are well-known disposable services
-const BLOCKED_DOMAINS = new Set([
-  "example.com", "example.org", "example.net",
-  "test.com", "test.org", "test.net",
-  "fake.com", "fake.org",
-  "mailinator.com", "yopmail.com", "tempmail.com",
-  "guerrillamail.com", "10minutemail.com", "trashmail.com",
-  "sharklasers.com", "spam4.me", "dispostable.com",
-]);
-
-function validateEmail(raw: string): string | null {
-  const email = raw.trim();
-  if (/\s/.test(email)) return "Please enter a valid email address";
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) return "Please enter a valid email address";
-  const domain = email.slice(email.indexOf("@") + 1).toLowerCase();
-  if (BLOCKED_DOMAINS.has(domain)) return "Please enter a valid email address";
-  return null;
-}
-
-function isRateLimitError(msg: string) {
-  return /rate.?limit|only request this after/i.test(msg);
-}
-
 /**
  * Returning-user access improvement — the exact production defect that
  * prompted this page: a returning learner/parent had no reliable way in
@@ -58,7 +42,7 @@ function isRateLimitError(msg: string) {
  * message here is written for a parent or child, in plain English.
  */
 function friendlySignInError(msg: string): string {
-  if (isRateLimitError(msg)) return "Please wait a minute before requesting another sign-in link.";
+  if (isPerAddressCooldown(msg) || isEmailSendingLimit(msg)) return friendlyEmailLinkError(msg, "signin").message;
   if (/invalid login credentials/i.test(msg)) {
     return "That email and password don't match. Check them, or use “Forgot password?” below.";
   }
@@ -129,6 +113,7 @@ function LoginContent() {
   const [rateLimitUntil, setRateLimitUntil] = useState<number | null>(null);
   const [secondsLeft, setSecondsLeft] = useState(0);
   const lastMagicLinkSubmitRef = useRef(0);
+  const emailInputRef = useRef<HTMLInputElement>(null);
 
   const [passwordState, setPasswordState] = useState<PasswordState>("idle");
   const [passwordError, setPasswordError] = useState("");
@@ -180,7 +165,7 @@ function LoginContent() {
     e.preventDefault();
     if (passwordState === "signing-in") return;
 
-    const validationError = validateEmail(email);
+    const validationError = validateEmailForAuth(email, "signin");
     if (validationError) {
       setPasswordState("error");
       setPasswordError(validationError);
@@ -208,10 +193,11 @@ function LoginContent() {
     e.preventDefault();
     if (secondsLeft > 0) return;
 
-    const validationError = validateEmail(email);
+    const validationError = validateEmailForAuth(email, tab);
     if (validationError) {
       setMagicLinkState("error");
       setMagicLinkError(validationError);
+      emailInputRef.current?.focus();
       return;
     }
 
@@ -227,13 +213,11 @@ function LoginContent() {
 
     if (error) {
       setMagicLinkState("error");
-      if (isRateLimitError(error)) {
-        setMagicLinkError("Please wait a minute before requesting another sign-in link.");
-        const until = Date.now() + 60_000;
-        setRateLimitUntil(until);
-        setSecondsLeft(60);
-      } else {
-        setMagicLinkError(error);
+      const failure = friendlyEmailLinkError(error, tab);
+      setMagicLinkError(failure.message);
+      if (failure.cooldownSeconds > 0) {
+        setRateLimitUntil(Date.now() + failure.cooldownSeconds * 1000);
+        setSecondsLeft(failure.cooldownSeconds);
       }
     } else {
       setMagicLinkState("sent");
@@ -262,20 +246,16 @@ function LoginContent() {
               <div className="inline-flex items-center justify-center w-14 h-14 bg-green-100 dark:bg-green-900 rounded-2xl mb-4">
                 <CheckCircle size={26} className="text-green-600 dark:text-green-400" />
               </div>
-              <h2 className="text-gray-900 dark:text-gray-100 font-bold text-xl mb-2">Check your email</h2>
-              {linkIntent === "create" ? (
-                <p className="text-gray-500 dark:text-gray-400 text-sm leading-relaxed mb-6">
-                  We&apos;ve sent a link to{" "}
-                  <strong className="text-gray-700 dark:text-gray-300">{email}</strong> to confirm your account.
-                  Open the email and tap the link. It brings you straight back to Angel 11+ to set up your child.
-                </p>
-              ) : (
-                <p className="text-gray-500 dark:text-gray-400 text-sm leading-relaxed mb-6">
-                  We&apos;ve sent a secure sign-in link to{" "}
-                  <strong className="text-gray-700 dark:text-gray-300">{email}</strong>.
-                  Open the email and tap the link to sign in.
-                </p>
-              )}
+              <h2 className="text-gray-900 dark:text-gray-100 font-bold text-xl mb-2">{checkEmailCopy(linkIntent).title}</h2>
+              <p className="text-gray-500 dark:text-gray-400 text-sm leading-relaxed mb-2">
+                {checkEmailCopy(linkIntent).lead}
+              </p>
+              <p className="text-gray-700 dark:text-gray-300 text-sm leading-relaxed mb-1">
+                Sent to <strong>{email}</strong>
+              </p>
+              <p className="text-gray-500 dark:text-gray-400 text-sm leading-relaxed mb-6">
+                {checkEmailCopy(linkIntent).next}
+              </p>
               <p className="text-gray-400 dark:text-gray-500 text-xs">
                 No email? Check your spam folder, or{" "}
                 <button
@@ -335,7 +315,7 @@ function LoginContent() {
               </p>
 
               {showLinkForm ? (
-                <form onSubmit={handleMagicLinkRequest} className="flex flex-col gap-4">
+                <form onSubmit={handleMagicLinkRequest} noValidate className="flex flex-col gap-4">
                   <div>
                     <label htmlFor="magic-email" className={LABEL_CLASS}>
                       Email address
@@ -344,6 +324,7 @@ function LoginContent() {
                       <Mail size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500" />
                       <input
                         id="magic-email"
+                        ref={emailInputRef}
                         type="email"
                         value={email}
                         onChange={handleEmailChange}
@@ -351,6 +332,7 @@ function LoginContent() {
                         autoComplete="email"
                         autoFocus
                         required
+                        aria-invalid={magicLinkState === "error" && !magicLinkError.startsWith("We ") ? true : undefined}
                         aria-describedby={magicLinkState === "error" ? "magic-link-error" : undefined}
                         className={INPUT_CLASS}
                       />
@@ -361,7 +343,7 @@ function LoginContent() {
 
                   <button
                     type="submit"
-                    disabled={magicLinkState === "sending" || !email.trim() || secondsLeft > 0}
+                    disabled={magicLinkState === "sending" || secondsLeft > 0}
                     className={PRIMARY_BUTTON_CLASS}
                   >
                     {magicLinkState === "sending" ? (
@@ -400,7 +382,7 @@ function LoginContent() {
                   )}
                 </form>
               ) : (
-                <form onSubmit={handlePasswordSignIn} className="flex flex-col gap-4">
+                <form onSubmit={handlePasswordSignIn} noValidate className="flex flex-col gap-4">
                   <div>
                     <label htmlFor="email" className={LABEL_CLASS}>
                       Email address
@@ -448,7 +430,7 @@ function LoginContent() {
 
                   <button
                     type="submit"
-                    disabled={passwordState === "signing-in" || !email.trim() || !password}
+                    disabled={passwordState === "signing-in"}
                     className={PRIMARY_BUTTON_CLASS}
                   >
                     {passwordState === "signing-in" ? (
