@@ -14,6 +14,8 @@
  */
 
 export type EmailLinkIntent = "create" | "signin";
+/** The password form has its own wording: it is not asking for an email link. */
+export type EmailFieldIntent = EmailLinkIntent | "password";
 
 // Domains that are reserved for documentation or are well-known disposable services
 const BLOCKED_DOMAINS = new Set([
@@ -28,12 +30,12 @@ const BLOCKED_DOMAINS = new Set([
 export const EMAIL_INVALID_MESSAGE = "That email address doesn't look right. Please check it and try again.";
 
 /** Returns the message to show, or null if the address is acceptable. Never silent on empty. */
-export function validateEmailForAuth(raw: string, intent: EmailLinkIntent): string | null {
+export function validateEmailForAuth(raw: string, intent: EmailFieldIntent): string | null {
   const email = raw.trim();
   if (!email) {
-    return intent === "create"
-      ? "Enter your email address to create your account."
-      : "Enter your email address to get your sign-in link.";
+    if (intent === "create") return "Enter your email address to create your account.";
+    if (intent === "password") return "Enter your email address to sign in.";
+    return "Enter your email address to get your sign-in link.";
   }
   if (/\s/.test(email)) return EMAIL_INVALID_MESSAGE;
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) return EMAIL_INVALID_MESSAGE;

@@ -22,6 +22,7 @@ test("empty email is never silent: create and sign-in each get their own inline 
   assert.equal(validateEmailForAuth("", "create"), "Enter your email address to create your account.");
   assert.equal(validateEmailForAuth("   ", "create"), "Enter your email address to create your account.");
   assert.equal(validateEmailForAuth("", "signin"), "Enter your email address to get your sign-in link.");
+  assert.equal(validateEmailForAuth("", "password"), "Enter your email address to sign in.");
 });
 
 test("malformed, spaced and throwaway/reserved-domain addresses get the understandable validation message", () => {

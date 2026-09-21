@@ -165,7 +165,7 @@ function LoginContent() {
     e.preventDefault();
     if (passwordState === "signing-in") return;
 
-    const validationError = validateEmailForAuth(email, "signin");
+    const validationError = validateEmailForAuth(email, "password");
     if (validationError) {
       setPasswordState("error");
       setPasswordError(validationError);
