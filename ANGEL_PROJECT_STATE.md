@@ -13,7 +13,7 @@ practice_eligible. See "Closed programme (most recent)" below.
 
 ---
 
-## Access-control investigation (2026-09-21) -- OPEN: 4 analytics views readable by the public anon key
+## Access-control investigation (2026-09-21) -- REMEDIATION PREPARED: Migration 261 awaits Founder application
 
 Founder saw "Viewing: Child 1" + "Sign out" in a browser they believed signed out. Verified: EVERY visitor silently gets a real ANONYMOUS
 Supabase session (anonymous-first design, no route guards/middleware), and the header shows the account menu for it -- so this is
@@ -26,6 +26,18 @@ per-learner lesson scores; NOT learner_name/emails). Unused by the app. Needs a 
 anon/authenticated + security_invoker) -- NOT created yet. (2) `/api/writing-feedback` had no authentication (unauthenticated OpenAI
 use) -- fixed by `lib/server/requireSupabaseUser.ts` (verifies a Supabase session; anonymous allowed) + client sends the token.
 Reset page said "wait a minute" for the project-level email limit (`over_email_send_rate_limit`, blocks the send, ~1h) -- fixed copy.
+
+**Founder decisions 2026-09-21 and what they changed.** (a) Migration `261_revoke_public_access_to_learner_analytics_views.sql`
+(revoke all on the four views from public/anon/authenticated + `security_invoker = true`; nothing else touched) is PREPARED, verified on real
+Postgres, and NOT yet applied -- AUTH ACCESS CONTROL stays FAIL until the Founder applies it and the production AFTER probes pass.
+(b) Controlled-beta policy: **a registered parent account is required for the persistent learner experience.** A Supabase anonymous
+session is a technical identity, not a parent account: `lib/registeredAccess.ts` (`hasRegisteredParentAccount`, `decideAccess`,
+fail-closed route lists) + `components/RegisteredAccountGate.tsx` (wrapped once in `app/layout.tsx`) show a Create account / Sign in panel
+instead of any learner surface (Today, Learn, Practice, Mock, Progress, Pathways, Parent Dashboard, Add child) for anonymous/no
+session, and the learner page never mounts (no reads, no evidence writes). Header/Navigation show Sign in + Create account (no
+"Viewing: ...", no account menu, no "Sign out") for anonymous; `AuthProvider` no longer creates/activates/claims a learner profile for an
+anonymous session. The anonymous session itself is still bootstrapped (support forms call ensureProfile). Public pages unchanged.
+Existing anonymous learners/evidence (139 anonymous accounts) are untouched but no longer reachable from the UI.
 
 ---
 

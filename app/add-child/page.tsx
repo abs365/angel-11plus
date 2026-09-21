@@ -53,7 +53,7 @@ export default function AddChildPage() {
           <div className="mt-6 rounded-2xl border border-gray-100 dark:border-gray-800 p-5">
             <p className="text-gray-800 dark:text-gray-200 font-semibold text-sm">Create an account first</p>
             <p className="text-gray-500 dark:text-gray-400 text-sm mt-1 leading-relaxed">
-              You can add more children once you have an Angel 11+ account. It takes a minute and needs no password.
+              You can add more children once you have an Angel 11+ account. It only takes a minute.
             </p>
             <Link href="/login" className="inline-block mt-3 text-sm font-semibold bg-sky-700 text-white rounded-lg px-4 py-2 hover:bg-sky-800">
               Create account

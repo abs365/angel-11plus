@@ -25,6 +25,7 @@ import {
 import type { LucideIcon } from "lucide-react";
 import { useAuth } from "@/components/providers/AuthProvider";
 import UserMenu from "@/components/ui/UserMenu";
+import { hasRegisteredParentAccount } from "@/lib/registeredAccess";
 import PathwaySwitcher from "@/components/PathwaySwitcher";
 import { cn } from "@/lib/cn";
 import { getSelectedPathwayId } from "@/lib/progress";
@@ -311,7 +312,9 @@ function MobileMoreDrawer({
 }) {
   const panelRef = useRef<HTMLDivElement>(null);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
-  const { user, signOut, loading } = useAuth();
+  const { user: sessionUser, signOut, loading } = useAuth();
+  // An anonymous technical session is not a registered parent account (lib/registeredAccess.ts).
+  const user = hasRegisteredParentAccount(sessionUser) ? sessionUser : null;
   const router = useRouter();
 
   async function handleSignOut() {
@@ -521,7 +524,9 @@ function MoreMenu({ pathname }: { pathname: string }) {
 export default function Navigation() {
   const pathname = usePathname();
   const router = useRouter();
-  const { user, signOut, loading } = useAuth();
+  const { user: sessionUser, signOut, loading } = useAuth();
+  // An anonymous technical session is not a registered parent account (lib/registeredAccess.ts).
+  const user = hasRegisteredParentAccount(sessionUser) ? sessionUser : null;
   const [drawerOpen, setDrawerOpen] = useState(false);
   const moreTabRef = useRef<HTMLButtonElement>(null);
   const isCsse = useCssePathway();

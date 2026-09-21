@@ -14,6 +14,7 @@ import { getDeviceId, ensureProfile } from "@/lib/supabaseProgress";
 import { ensureLearnerSession } from "@/lib/learnerIdentity";
 import { clearLearnerContext } from "@/lib/learnerContext";
 import { activateLearner } from "@/lib/learnerActivation";
+import { hasRegisteredParentAccount } from "@/lib/registeredAccess";
 
 interface AuthContextValue {
   user: User | null;
@@ -162,9 +163,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setLoading(false);
 
       if (data.session?.user) {
-        // Ensure profile exists and is linked — fire and forget
-        ensureProfile().then(activateLearner).catch(() => {});
-        linkAuthToDeviceProfile(data.session.user.id).catch(() => {});
+        // Ensure profile exists and is linked — fire and forget. Only for a REGISTERED parent: an anonymous
+        // technical session must not silently grow a learner profile (controlled-beta policy, lib/registeredAccess.ts).
+        if (hasRegisteredParentAccount(data.session.user)) {
+          ensureProfile().then(activateLearner).catch(() => {});
+          linkAuthToDeviceProfile(data.session.user.id).catch(() => {});
+        }
       } else {
         ensureLearnerSession().catch(() => {});
       }
@@ -188,7 +192,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       if (event === "SIGNED_OUT") clearLearnerContext();
 
-      if (newSession?.user) {
+      if (newSession?.user && hasRegisteredParentAccount(newSession.user)) {
         ensureProfile().then(activateLearner).catch(() => {});
         linkAuthToDeviceProfile(newSession.user.id).catch(() => {});
       }

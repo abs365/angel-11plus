@@ -10,6 +10,7 @@ import Popover from "@/components/ui/Popover";
 import SearchBar from "@/components/ui/SearchBar";
 import NotificationArea from "@/components/ui/NotificationArea";
 import Breadcrumbs, { type Breadcrumb } from "@/components/ui/Breadcrumbs";
+import { hasRegisteredParentAccount } from "@/lib/registeredAccess";
 
 /**
  * Sprint 2 (Platform Shell) — the new top header bar every page now
@@ -29,7 +30,11 @@ interface HeaderProps {
 }
 
 export default function Header({ breadcrumbs }: HeaderProps) {
-  const { user, signOut, loading } = useAuth();
+  const { user: sessionUser, signOut, loading } = useAuth();
+  // Every visitor holds a Supabase ANONYMOUS technical session. That is not a registered parent account, so it
+  // never gets the child switcher ("Viewing: ...") or the account menu ("Sign out") -- only Sign in / Create
+  // account (controlled-beta policy, lib/registeredAccess.ts).
+  const user = hasRegisteredParentAccount(sessionUser) ? sessionUser : null;
   const router = useRouter();
   const { name: childName } = useChildName();
 
@@ -108,13 +113,21 @@ export default function Header({ breadcrumbs }: HeaderProps) {
           </Popover>
         ) : (
           !loading && (
-            <Link
-              href="/login?mode=signin"
-              className="flex items-center gap-1.5 text-sm font-medium text-slate-600 dark:text-slate-400 hover:underline shrink-0"
-            >
-              <LogIn size={15} />
-              <span className="hidden sm:inline">Sign in</span>
-            </Link>
+            <div className="flex items-center gap-3 shrink-0">
+              <Link
+                href="/login?mode=signin"
+                className="flex items-center gap-1.5 text-sm font-medium text-slate-600 dark:text-slate-400 hover:underline shrink-0"
+              >
+                <LogIn size={15} />
+                <span>Sign in</span>
+              </Link>
+              <Link
+                href="/login"
+                className="text-sm font-semibold bg-sky-700 text-white rounded-lg px-3 py-1.5 hover:bg-sky-800 transition-colors motion-reduce:transition-none shrink-0"
+              >
+                Create account
+              </Link>
+            </div>
           )
         )}
       </div>

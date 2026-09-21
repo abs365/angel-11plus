@@ -3,6 +3,7 @@ import { Lexend } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "@/components/providers/AuthProvider";
 import PWAProvider from "@/components/PWAProvider";
+import RegisteredAccountGate from "@/components/RegisteredAccountGate";
 
 /**
  * Experience Programme, Stage 1 — typography foundation. Replaces the bare
@@ -109,7 +110,9 @@ export default function RootLayout({
   return (
     <html lang="en" className={`h-full ${lexend.variable}`}>
       <body className="min-h-full antialiased">
-        <AuthProvider>{children}</AuthProvider>
+        <AuthProvider>
+          <RegisteredAccountGate>{children}</RegisteredAccountGate>
+        </AuthProvider>
         <PWAProvider />
       </body>
     </html>
