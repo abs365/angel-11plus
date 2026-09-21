@@ -6,6 +6,7 @@ import {
   ensureLearnerContext,
   learnerScopedKey,
   setActiveLearner,
+  getLearnerContextSnapshot,
 } from "@/lib/learnerContext";
 import { getProgress, saveProgress } from "@/lib/progress";
 import { claimLegacyLocalState, learnerOwnsThisDevice, reconcileSetup } from "@/lib/learnerActivation";
@@ -26,6 +27,7 @@ import { claimLegacyLocalState, learnerOwnsThisDevice, reconcileSetup } from "@/
 const UA = "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa"; // Parent A (previous user of this browser)
 const UB = "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb"; // Parent B (NEW email, same browser)
 const LA = "a1a1a1a1-0000-4000-8000-000000000001";
+const LA2 = "a2a2a2a2-0000-4000-8000-000000000002"; // Parent A's second child
 const LB = "b1b1b1b1-0000-4000-8000-000000000001";
 const DEVICE = "device-D";
 const REST = "https://x.supabase.co/rest/v1";
@@ -43,7 +45,7 @@ const jwt = (sub: string) => {
   return `${b64({ alg: "HS256" })}.${b64({ sub, role: "authenticated" })}.sig`;
 };
 function backend() {
-  const learners: Record<string, { id: string }[]> = { [UA]: [{ id: LA }], [UB]: [{ id: LB }] };
+  const learners: Record<string, { id: string }[]> = { [UA]: [{ id: LA }, { id: LA2 }], [UB]: [{ id: LB }] };
   const baseFetch: typeof fetch = async (input) => {
     const url = typeof input === "string" ? input : input instanceof URL ? input.href : input.url;
     if (url.includes("/profiles?")) {
@@ -250,4 +252,51 @@ test("the SAME inputs on the current production code (device-wide key) would hav
   clearLearnerContext();
   const beforeAnyLearnerIsKnown = getProgress();
   assert.equal(beforeAnyLearnerIsKnown.completedLessons.length, 0, "the legacy device-wide blob is never read as anyone's state");
+});
+
+// ---------------------------------------------------------------------------------------------------------------
+// Release acceptance points 11 and 13.
+// ---------------------------------------------------------------------------------------------------------------
+
+test("LOGOUT / LOGIN (same account): the parent returns to the child they last used, with that child's state, and the sibling is intact", async () => {
+  await signInAs(UA); // default: oldest child
+  saveProgress({ ...getProgress(), xp: 11, completedLessons: ["eng-1"], selectedPathwayId: "csse" });
+  assert.equal(setActiveLearner(LA2), true);
+  saveProgress({ ...getProgress(), xp: 77, completedLessons: ["maths-1", "maths-2"], selectedPathwayId: "gl" });
+
+  clearLearnerContext(); // logout: in-memory context dropped, the account-keyed pointer is kept
+  await ensureLearnerContext(UA, jwt(UA)); // login again
+  assert.equal(getProgress().xp, 77, "returns to the child last used (Child 2)");
+  assert.equal(getProgress().selectedPathwayId, "gl");
+
+  assert.equal(setActiveLearner(LA), true); // switch back to Child 1
+  assert.equal(getProgress().xp, 11, "Child 1's state is intact");
+  assert.equal(getProgress().selectedPathwayId, "csse");
+});
+
+test("LOGOUT then a DIFFERENT parent logs in on the same browser: they get their own child, never Parent A's last-used child", async () => {
+  await signInAs(UA);
+  setActiveLearner(LA2);
+  saveProgress({ ...getProgress(), xp: 77 });
+  clearLearnerContext();
+  await ensureLearnerContext(UB, jwt(UB));
+  assert.equal(getProgress().xp, 0);
+  assert.equal(getLearnerContextSnapshot().learnerId, LB);
+});
+
+test("EXISTING single-child families are not forced through setup or migration: the setup card only appears while a name or pathway is genuinely missing", async () => {
+  const fs = await import("node:fs");
+  const dash = fs.readFileSync("app/dashboard/page.tsx", "utf8");
+  assert.match(dash, /progress && childNameReady && \(!childName \|\| !pathway\) && \(/, "setup card is conditional on missing setup");
+  // A returning family whose learner already has a pathway needs no server-side migration step: reconciliation is idempotent.
+  const r = reconcileSetup(
+    { xp: 5, streak: 2, completedLessons: ["l1"], lastActivity: "2026-09-01T00:00:00Z", selectedPathwayId: "csse", schoolYear: "Year 5" },
+    { selected_pathway_id: "csse", target_exam_date: null, target_exam_date_provenance: null, school_year: "Year 5" }
+  );
+  assert.equal(r.changedLocal, false);
+  assert.equal(r.push, null);
+  // The switcher is a header control, not a gate: nothing routes a single-child parent to /add-child.
+  const routes = fs.readFileSync("components/LearnerSwitcher.tsx", "utf8");
+  assert.match(routes, /href="\/add-child"/);
+  assert.doesNotMatch(dash, /router\.(push|replace)\("\/add-child"\)/);
 });
