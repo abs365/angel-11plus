@@ -485,3 +485,26 @@ test("SIGN-OUT / SIGN-IN and shared device: switching to the other parent's sess
     });
   }
 });
+
+test("ANONYMOUS -> NEW permanent account (server side): the anonymous learner's evidence stays under the anonymous identity; the new account neither sees nor claims it", async () => {
+  const ANON2 = "12121212-1212-4212-8212-121212121212";
+  const PERM_NEW = "34343434-3434-4434-8434-343434343434";
+  const ANON_PROFILE = "c1c1c1c1-0000-4000-8000-0000000000aa";
+  const lessonSubject = await firstEnum("lesson_progress", "subject");
+  await db.exec(`
+    insert into auth.users (id, email, is_anonymous) values ('${ANON2}', null, true), ('${PERM_NEW}', 'p@example.test', false);
+    insert into public.profiles (id, device_id, auth_user_id) values ('${ANON_PROFILE}', 'dev-shared-browser', '${ANON2}');
+    insert into public.lesson_progress (profile_id, lesson_id, subject, score, xp_gained) values ('${ANON_PROFILE}', 'l1', '${lessonSubject}', 70, 10);
+  `);
+  await asUser(db, { uid: PERM_NEW }, async (q) => {
+    // Same browser => same device id; the anonymous profile is OWNED, so it is not claimable.
+    const claim = await q("select public.claim_legacy_profile('dev-shared-browser') as id");
+    assert.equal(claim.rows[0].id, null);
+    const seen = await q("select id from public.lesson_progress");
+    assert.deepEqual(seen.rows, [], "the new permanent account must not see the anonymous learner's evidence");
+    const profiles = await q("select id from public.profiles");
+    assert.deepEqual(profiles.rows, []);
+  });
+  const still = await db.query<{ n: number }>(`select count(*)::int n from public.lesson_progress where profile_id='${ANON_PROFILE}'`);
+  assert.equal(still.rows[0].n, 1, "the anonymous evidence is preserved, untouched, under its own identity");
+});

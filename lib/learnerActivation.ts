@@ -27,6 +27,20 @@ import { readChildName, normaliseChildName } from "./childProfile";
  * renders from the reconciled state.
  */
 
+/**
+ * The ONLY condition under which a learner may claim this browser's legacy
+ * device-wide state: its profile row was created on THIS device
+ * (profiles.device_id === this device's id). A new account, another parent,
+ * or a second learner has a different device id (device_id is unique per
+ * profile, so a same-device newcomer is issued a fresh one -- see
+ * ensureProfile()), so they can never inherit a previous person's state just
+ * because they used the same browser. Pure so the shared-device behaviour is
+ * directly tested.
+ */
+export function learnerOwnsThisDevice(rowDeviceId: string | null | undefined, localDeviceId: string): boolean {
+  return Boolean(localDeviceId) && Boolean(rowDeviceId) && rowDeviceId === localDeviceId;
+}
+
 const CLAIM_MARKER_KEY = "angel11plus_legacy_state_claimed_by";
 
 type StateStorage = Pick<Storage, "getItem" | "setItem">;
@@ -161,7 +175,7 @@ export async function activateLearner(learnerId: string | null): Promise<void> {
     if (!row) return;
 
     let changed = false;
-    const sameDevice = row.device_id === getDeviceId();
+    const sameDevice = learnerOwnsThisDevice(row.device_id, getDeviceId());
     if (sameDevice) changed = claimLegacyLocalState(window.localStorage, learnerId);
 
     const { data: stats } = await supabase
