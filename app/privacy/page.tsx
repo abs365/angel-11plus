@@ -37,6 +37,7 @@ export default function PrivacyPage() {
             <li>• Practice session results and scores</li>
             <li>• Streaks, XP and earned badges</li>
             <li>• Selected exam pathway</li>
+            <li>• Your child&apos;s first name or nickname, if you choose to add one (kept on this device only; never sent to us)</li>
             <li>• Mock exam results</li>
             <li>• Vocabulary progress</li>
           </ul>

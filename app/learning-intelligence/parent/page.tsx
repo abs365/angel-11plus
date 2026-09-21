@@ -8,6 +8,7 @@ import type { MockResult } from "@/types/mock";
 import { CssePathwayParentContent } from "@/components/parent/CssePathwayParentContent";
 import { LegacyPathwayParentContent } from "@/components/parent/LegacyPathwayParentContent";
 import { MockHistorySection } from "@/components/parent/MockHistorySection";
+import LearnerIdentityBanner from "@/components/parent/LearnerIdentityBanner";
 
 /**
  * Unified Parent Dashboard (FD-020, Sprint 4 Completion Package, WP4B).
@@ -48,6 +49,8 @@ export default function ParentDashboardPage() {
             </p>
           </div>
         </div>
+
+        <LearnerIdentityBanner />
 
         {isCsse === undefined && <p className="text-sm text-gray-400 dark:text-gray-500 mt-6" aria-live="polite">Loading…</p>}
 

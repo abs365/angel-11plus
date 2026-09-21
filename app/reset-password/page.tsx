@@ -282,7 +282,7 @@ export default function ResetPasswordPage() {
         </div>
 
         <div className="text-center mt-5">
-          <Link href="/login" className="text-gray-400 dark:text-gray-500 text-sm hover:text-gray-600 dark:hover:text-gray-300 transition-colors">
+          <Link href="/login?mode=signin" className="text-gray-400 dark:text-gray-500 text-sm hover:text-gray-600 dark:hover:text-gray-300 transition-colors">
             ← Back to sign in
           </Link>
         </div>

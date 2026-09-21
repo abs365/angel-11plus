@@ -29,7 +29,7 @@ test("a 'Forgot password?' link routes to /reset-password", () => {
 
 test("the existing magic-link method remains fully present and reachable as a secondary option", () => {
   assert.match(SOURCE, /await signInWithMagicLink\(email\.trim\(\)\);/);
-  assert.match(SOURCE, /Email me a secure sign-in link/);
+  assert.match(SOURCE, /Email me a sign-in link/);
   assert.match(SOURCE, /Sign in with a password instead/);
 });
 
@@ -72,7 +72,39 @@ test("router.push to /dashboard is no longer reachable from a button on this pag
   assert.doesNotMatch(SOURCE, /router\.push\("\/dashboard"\)/);
 });
 
-test("copy for new users never claims password sign-in auto-creates an account -- only the magic-link path does that", () => {
+test("copy for new users never claims password sign-in auto-creates an account -- only the email-link path does that", () => {
   assert.doesNotMatch(SOURCE, /sign in above[\s\S]{0,40}created automatically/i);
-  assert.match(SOURCE, /New here\?/);
+});
+
+/**
+ * Family #1 onboarding finding: a real parent could not tell how to
+ * register -- the only registration path was a faint "Email me a secure
+ * sign-in link" plus small print. Account creation is now a first-class,
+ * always-visible journey alongside Sign in.
+ */
+test("both journeys are always visible as tabs: Create account and Sign in", () => {
+  assert.match(SOURCE, /role="tablist"/);
+  assert.match(SOURCE, /label: "Create account"/);
+  assert.match(SOURCE, /label: "Sign in"/);
+  assert.match(SOURCE, /New to Angel 11\+/);
+  assert.match(SOURCE, /Already registered/);
+});
+
+test("Create account is the email-link flow underneath (same signInWithMagicLink call -- no second auth system, no duplicate accounts)", () => {
+  assert.match(SOURCE, /showLinkForm = tab === "create" \|\| mode === "magic-link"/);
+  assert.match(SOURCE, /We&apos;ll email you a secure link to confirm your account\./);
+});
+
+test("the old small-print registration hint is gone", () => {
+  assert.doesNotMatch(SOURCE, /New here\?/);
+  assert.doesNotMatch(SOURCE, /to create your account\./);
+});
+
+test("a returning parent who signed up by email link (no password) gets a prominent, explained path", () => {
+  assert.match(SOURCE, /Signed up with an email link\? You may not have a password\./);
+});
+
+test("the product name is never shortened to bare 'Angel' in visible login copy", () => {
+  const userFacingText = SOURCE.match(/>[^<{]*[a-zA-Z][^<{]*</g)?.join(" ") ?? "";
+  assert.doesNotMatch(userFacingText, /\bAngel\b(?!\s*(11\+|&))/);
 });

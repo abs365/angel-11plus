@@ -4,6 +4,7 @@ import { Bell, User, LogIn } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/components/providers/AuthProvider";
+import { useChildName } from "@/lib/useChildName";
 import Popover from "@/components/ui/Popover";
 import SearchBar from "@/components/ui/SearchBar";
 import NotificationArea from "@/components/ui/NotificationArea";
@@ -29,6 +30,7 @@ interface HeaderProps {
 export default function Header({ breadcrumbs }: HeaderProps) {
   const { user, signOut, loading } = useAuth();
   const router = useRouter();
+  const { name: childName } = useChildName();
 
   async function handleSignOut() {
     await signOut();
@@ -84,6 +86,15 @@ export default function Header({ breadcrumbs }: HeaderProps) {
           >
             <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 shadow-lg p-3 w-56">
               <p className="text-xs text-gray-500 dark:text-gray-400 truncate px-2 mb-2">{user.email}</p>
+              <Link
+                href="/learning-intelligence/parent"
+                className="block w-full text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 rounded-lg px-2 py-1.5 transition-colors"
+              >
+                Parent Dashboard
+                <span className="block text-xs text-gray-500 dark:text-gray-400 truncate">
+                  {childName ? `Viewing: ${childName}` : "Add your child’s first name"}
+                </span>
+              </Link>
               <button
                 onClick={handleSignOut}
                 className="w-full text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 rounded-lg px-2 py-1.5 transition-colors"
@@ -95,7 +106,7 @@ export default function Header({ breadcrumbs }: HeaderProps) {
         ) : (
           !loading && (
             <Link
-              href="/login"
+              href="/login?mode=signin"
               className="flex items-center gap-1.5 text-sm font-medium text-slate-600 dark:text-slate-400 hover:underline shrink-0"
             >
               <LogIn size={15} />

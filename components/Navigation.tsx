@@ -607,7 +607,7 @@ export default function Navigation() {
           ) : (
             !loading && (
               <Link
-                href="/login"
+                href="/login?mode=signin"
                 title="Sign in"
                 aria-label="Sign in"
                 className="w-10 h-10 rounded-full flex items-center justify-center text-sky-700 dark:text-sky-400 hover:bg-sky-50 dark:hover:bg-sky-950 transition-colors motion-reduce:transition-none"

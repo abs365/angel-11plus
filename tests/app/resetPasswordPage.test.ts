@@ -49,5 +49,5 @@ test("no raw Supabase/technical jargon is ever shown to the user", () => {
 });
 
 test("a link back to /login is always present", () => {
-  assert.match(SOURCE, /href="\/login"/);
+  assert.match(SOURCE, /href="\/login(\?mode=signin)?"/);
 });

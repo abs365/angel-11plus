@@ -27,7 +27,7 @@ export default function UserMenu({ email, loading, onSignOut }: UserMenuProps) {
   if (!email) {
     return (
       <Link
-        href="/login"
+        href="/login?mode=signin"
         className="flex items-center gap-2 w-full text-xs text-slate-600 dark:text-slate-400 font-medium py-1.5 px-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-950 transition-colors motion-reduce:transition-none"
       >
         <LogIn size={13} aria-hidden="true" />

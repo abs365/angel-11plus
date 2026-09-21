@@ -35,6 +35,8 @@ import { getRecommendations } from "@/lib/learningEngine/educationalIntelligence
 import { competencyLabel } from "@/lib/ali/labels";
 import NewBadgeBanner from "@/components/NewBadgeBanner";
 import { getPathwayById } from "@/lib/pathways";
+import { useChildName } from "@/lib/useChildName";
+import ParentSetupCard from "@/components/parent/ParentSetupCard";
 import { Card, MissionCard } from "@/components/ui/Card";
 import { ReadinessIndicator } from "@/components/ui/Progress";
 import { ButtonLink } from "@/components/ui/Button";
@@ -232,27 +234,10 @@ function getEncouragingMessage(progress: UserProgress, weeklyGoal: WeeklyGoal | 
 // Standard V1 Correction 2).
 // ───────────────────────────────────────────────────────────────────────
 
-const CHILD_NAME_KEY = "angel_child_name";
-
-/**
- * No mechanism anywhere in this product currently captures a real child's
- * name (`profiles.name` exists in the schema but is always the literal
- * default "Angel", written once, never read back — verified in
- * lib/supabaseProgress.ts before writing this). Rather than fabricate a
- * name or invent a new schema-backed profile feature (outside this work
- * package's "Dashboard only" scope, and no migration is permitted), this
- * is a minimal, local-only, fully optional and fully reversible affordance
- * — the same tier of mechanism getSelectedPathwayId() already uses. It is
- * a deliberate, disclosed interpretation of Step 3's "child's name"
- * requirement, not a claim that this is how the product will store names
- * long-term; flagged for Founder review in the AN-102 report.
- */
-function saveChildName(next: string): string | null {
-  const trimmed = next.trim().slice(0, 40);
-  if (!trimmed) return null;
-  localStorage.setItem(CHILD_NAME_KEY, trimmed);
-  return trimmed;
-}
+// The child's display name is a local-only, optional label (LR-01) -- its
+// storage, per-account scoping and legacy migration now live in
+// lib/childProfile.ts, read through useChildName() (Family #1 onboarding
+// correction).
 
 function OrientationHeader({
   progress,
@@ -304,7 +289,7 @@ function OrientationHeader({
             className="flex items-center gap-1 text-gray-400 dark:text-gray-500 hover:text-sky-700 dark:hover:text-sky-400 text-xs font-medium shrink-0 py-1 transition-colors motion-reduce:transition-none"
           >
             <Pencil size={11} aria-hidden="true" />
-            {childName ? "Edit" : "Add your child's name"}
+            {childName ? "Edit" : "Add your child's first name"}
           </button>
         )}
       </div>
@@ -380,7 +365,7 @@ export default function DashboardPage() {
   const [newBadgeIds, setNewBadgeIds] = useState<string[]>([]);
   const [pathway, setPathway] = useState<Pathway | undefined>();
   const [parentReport, setParentReport] = useState<ParentReport | null>(null);
-  const [childName, setChildName] = useState<string | null>(null);
+  const { name: childName, ready: childNameReady, save: saveChildName } = useChildName();
   const [mockResults, setMockResults] = useState<MockResult[]>([]);
 
   useEffect(() => {
@@ -401,7 +386,6 @@ export default function DashboardPage() {
     // AN-102 — read alongside everything else already loaded here, rather
     // than a second effect, so this doesn't add a new instance of this
     // file's existing (pre-AN-102) set-state-in-effect pattern.
-    setChildName(localStorage.getItem(CHILD_NAME_KEY));
     // Increment 4 — one read, derived per-pathway below via the pure
     // bestScoreForPathway()/countForPathway() helpers, same idiom.
     getMockResults().then(setMockResults);
@@ -543,8 +527,7 @@ export default function DashboardPage() {
   }
 
   function handleSaveChildName(name: string) {
-    const saved = saveChildName(name);
-    if (saved) setChildName(saved);
+    saveChildName(name);
   }
 
   const mockSupported = pathway && MOCK_PATHWAY_IDS.includes(pathway.id as MockPathwayId);
@@ -573,6 +556,14 @@ export default function DashboardPage() {
             readiness={parentReport?.examReadiness ?? null}
             childName={childName}
             onSaveChildName={handleSaveChildName}
+          />
+        )}
+
+        {progress && childNameReady && (!childName || !pathway) && (
+          <ParentSetupCard
+            hasName={Boolean(childName)}
+            pathwayName={pathway?.shortName ?? null}
+            onSaveName={handleSaveChildName}
           />
         )}
 
