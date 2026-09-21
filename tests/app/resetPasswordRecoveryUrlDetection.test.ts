@@ -1,7 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import fs from "node:fs";
-import { isPasswordRecoveryUrl } from "@/app/reset-password/page";
+import { isPasswordRecoveryUrl } from "@/lib/passwordRecoveryUrl";
 
 /**
  * Password recovery flow defect (real Founder production test) — proven
@@ -52,7 +52,7 @@ test("hash and search values are parsed identically whether or not a leading '#'
 });
 
 test("never reads or exposes the access token itself -- only the non-secret type flag is inspected", () => {
-  const fn = SOURCE.match(/export function isPasswordRecoveryUrl\([\s\S]*?\n\}/);
+  const fn = fs.readFileSync("lib/passwordRecoveryUrl.ts", "utf8").match(/export function isPasswordRecoveryUrl\([\s\S]*?\n\}/);
   assert.ok(fn);
   assert.doesNotMatch(fn![0], /access_token/);
   assert.doesNotMatch(fn![0], /refresh_token/);

@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { isPermanentlyAuthenticated } from "@/app/login/page";
+import { isPermanentlyAuthenticated } from "@/lib/loginRouting";
 
 /**
  * Gate 3 production defect (this session): /login redirected away from

@@ -47,9 +47,10 @@ test("friendlySignInError never surfaces Supabase's raw 'Invalid login credentia
   assert.match(fn![0], /Forgot password/i);
 });
 
-test("the existing Gate 3 isPermanentlyAuthenticated redirect predicate is completely unchanged", () => {
-  assert.match(SOURCE, /export function isPermanentlyAuthenticated\(user: \{ is_anonymous\?: boolean \} \| null \| undefined\): boolean \{/);
-  assert.match(SOURCE, /return Boolean\(user\) && !user!\.is_anonymous;/);
+test("the existing Gate 3 isPermanentlyAuthenticated redirect predicate is completely unchanged (now in lib/loginRouting.ts)", () => {
+  const ROUTING = fs.readFileSync("lib/loginRouting.ts", "utf8");
+  assert.match(ROUTING, /export function isPermanentlyAuthenticated\(user: \{ is_anonymous\?: boolean \} \| null \| undefined\): boolean \{/);
+  assert.match(ROUTING, /return Boolean\(user\) && !user!\.is_anonymous;/);
 });
 
 /**

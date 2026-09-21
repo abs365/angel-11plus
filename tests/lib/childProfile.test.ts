@@ -8,7 +8,7 @@ import {
   saveChildName,
   type ChildNameOwner,
 } from "@/lib/childProfile";
-import { resolveLoginTab } from "@/app/login/page";
+import { resolveLoginTab } from "@/lib/loginRouting";
 
 /**
  * Family #1 onboarding correction. Verified architecture: one account owns
