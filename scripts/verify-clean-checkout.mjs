@@ -33,7 +33,10 @@ function run(cmd, cwd) {
 
 mkdirSync(join(SCRATCH, ".."), { recursive: true });
 try { run(`git worktree remove --force "${SCRATCH}"`, ROOT); } catch { /* none */ }
-run(`git -c core.longpaths=true worktree add --detach "${SCRATCH}" HEAD`, ROOT);
+// core.autocrlf=false: production (Vercel) checks out on Linux with LF. A Windows checkout with
+// autocrlf=true converts to CRLF, which makes tests that pattern-match migration text on "\n"
+// fail for a reason that does not exist in production.
+run(`git -c core.longpaths=true -c core.autocrlf=false worktree add --detach "${SCRATCH}" HEAD`, ROOT);
 try {
   const env = join(ROOT, ".env.local");
   if (existsSync(env)) copyFileSync(env, join(SCRATCH, ".env.local")); // env only; never committed
