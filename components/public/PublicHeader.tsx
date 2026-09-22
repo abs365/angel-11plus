@@ -34,10 +34,14 @@ export default function PublicHeader() {
   const user = hasRegisteredParentAccount(sessionUser) ? sessionUser : null;
 
   return (
-    <header className="sticky top-0 z-40 bg-[var(--surface)]/95 backdrop-blur border-b border-[var(--border)]">
-      <div className="max-w-6xl mx-auto px-4 md:px-8 h-16 flex items-center gap-4">
+    <header className="sticky top-0 z-40 bg-[var(--angel-paper)]/95 backdrop-blur border-b border-[var(--angel-border)]">
+      <div className="max-w-7xl mx-auto px-4 md:px-8 h-16 flex items-center gap-4">
         <Link href="/" className="flex items-center gap-2 shrink-0 mr-2">
-          <span className="text-lg md:text-xl font-bold text-blue-700 dark:text-blue-400">Angel 11+</span>
+          {/* Increment 1A — Academic Navy is now the default wordmark
+              treatment (brand identity/authority), not the interactive
+              blue reserved for CTAs/links/active controls. The name
+              itself carries the brand; no mark/icon was added. */}
+          <span className="text-xl md:text-2xl font-bold tracking-tight text-[var(--angel-navy)]">Angel 11+</span>
         </Link>
 
         <nav aria-label="Angel 11+" className="hidden md:flex items-center gap-1 flex-1 min-w-0">
@@ -45,7 +49,7 @@ export default function PublicHeader() {
             <Link
               key={item.href}
               href={item.href}
-              className="px-3 py-2 rounded-lg text-sm font-medium text-[var(--text-secondary)] hover:bg-[var(--surface-raised)] hover:text-[var(--text-primary)] transition-colors motion-reduce:transition-none"
+              className="px-3 py-2 rounded-lg text-sm font-medium text-[var(--angel-muted)] hover:bg-[var(--angel-ivory)] hover:text-[var(--angel-navy)] transition-colors motion-reduce:transition-none"
             >
               {item.label}
             </Link>
@@ -62,7 +66,7 @@ export default function PublicHeader() {
             <div className="flex items-center gap-2 md:gap-3 shrink-0">
               <Link
                 href="/login?mode=signin"
-                className="hidden sm:inline text-sm font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors motion-reduce:transition-none"
+                className="hidden sm:inline text-sm font-medium text-[var(--angel-muted)] hover:text-[var(--angel-navy)] transition-colors motion-reduce:transition-none"
               >
                 Sign in
               </Link>

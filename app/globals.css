@@ -314,3 +314,71 @@ html {
   outline: 2px solid #1d4ed8;
   outline-offset: 2px;
 }
+
+/* ── Increment 1A — Angel Brand Foundation v1.0 (PUBLIC marketing surface
+   only, components/public/*) ──────────────────────────────────────────────
+   New semantic roles introduced specifically to move the public homepage
+   away from a generic icon-card SaaS pattern toward a calmer, editorial
+   education-brand identity, per the Founder's visual review of the
+   Increment 1 production homepage. Deliberately does NOT modify any
+   existing --color-, --role- or --text- prefixed token or value above — every
+   authenticated app surface (Navigation, Header, dashboard, Learn,
+   Practise, Mock, Parent Dashboard, etc.) is completely unaffected, per
+   the governing instruction's explicit scope-protection rule (§27): a
+   shared token here must never silently recolour the rest of the product.
+   --angel-blue, --angel-paper and --angel-muted intentionally REUSE the
+   existing --color-primary / --surface / --color-secondary values (they
+   are literally the same colours already verified elsewhere in this file)
+   rather than duplicating them as a second, competing set of values.
+
+   WCAG contrast — verified by direct relative-luminance calculation
+   (WCAG 2.x formula), not eyeballed; every pairing this page actually
+   uses is listed here (full working shown in ANGEL_11PLUS_INCREMENT1A_
+   VISUAL_REFINEMENT_REPORT.md §A):
+     ink   (#172033) vs ivory (#FAF8F3): 15.33:1
+     ink   (#172033) vs paper (#FFFFFF): 16.27:1
+     navy  (#14213D) vs ivory (#FAF8F3): 15.05:1
+     navy  (#14213D) vs paper (#FFFFFF): 15.97:1
+     slate (#475569) vs ivory (#FAF8F3): 7.14:1
+     slate (#475569) vs paper (#FFFFFF): 7.58:1
+     blue  (#2563EB) vs ivory (#FAF8F3): 4.87:1
+     blue  (#2563EB) vs paper (#FFFFFF): 5.17:1
+     ink/navy/blue vs sky (#EAF2FF): 14.44:1 / 14.18:1 / 4.59:1
+   All of the above clear WCAG AA (4.5:1) for normal text with margin.
+   Warm Gold (#C58A2A) vs ivory is 2.81:1, vs paper 2.98:1 — fails AA
+   normal text (4.5:1) and fails even the 3:1 large-text/non-text
+   threshold. Per the governing instruction's own direction ("very
+   restrained... occasional milestone detail... NOT a primary UI
+   colour"), the fix here is scope, not a colour change: --angel-gold is
+   restricted to purely decorative, non-text accents (a thin rule, a
+   small marker) that are never the sole carrier of information and never
+   sit behind text — it must never be applied to actual text, a button
+   fill, or any surface with text rendered on top of it. */
+:root {
+  --angel-navy: #14213D;
+  --angel-blue: var(--color-primary);       /* #2563eb — identical to the existing brand blue, not a second value */
+  --angel-ivory: #FAF8F3;
+  --angel-paper: var(--surface);            /* #ffffff */
+  --angel-gold: #C58A2A;                    /* decorative-only — see note above, never text/fill */
+  --angel-sky: #EAF2FF;
+  --angel-ink: #172033;
+  --angel-muted: var(--color-secondary);    /* #475569 — identical to the existing slate token */
+  --angel-border: #E7E2D6;                  /* warm-neutral border, distinct from the app's cooler --border */
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    /* Dark-mode equivalents deliberately reuse this file's own existing,
+       already-contrast-verified dark tokens rather than inventing a
+       parallel set — --foreground/--background/--surface/--border already
+       branch correctly for dark mode above; aliasing them here keeps the
+       public page's dark rendering consistent with the rest of the app
+       without a second verification pass. */
+    --angel-navy: var(--foreground);
+    --angel-ivory: var(--background);
+    --angel-paper: var(--surface);
+    --angel-gold: #D9A54A;                  /* lightened for dark-surface legibility; still decorative-only */
+    --angel-ink: var(--foreground);
+    --angel-border: var(--border);
+  }
+}

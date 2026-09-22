@@ -1,36 +1,53 @@
 /**
- * Increment 1 (Public Experience Foundation) — the hero's "one strong
- * educational visual" (ANGEL_11PLUS_EXPERIENCE_TRANSFORMATION Increment 1
- * §4B). This is an original, hand-authored flat-line illustration, not a
- * photograph and not a fake product dashboard.
+ * Increment 1A — Hero visual, revised. Two Founder-directed changes from
+ * Increment 1's version:
  *
- * Why illustration, not photography, in this increment: the Experience Gap
- * Audit's photography direction calls for real, natural imagery of children
- * studying — and the same audit's own licensing rule (§7) is explicit that
- * no image may be introduced without established commercial-use rights, and
- * that a real child must never be fabricated and presented as if
- * photographed. No such licensed asset was available during this increment.
- * This illustration is the documented, deliberately-neutral placeholder that
- * rule calls for: it depicts objects only (a book, a pencil), never a
- * person, so it cannot misrepresent anyone. See the Increment 1 report's
- * "Photography requirement" section for the real photography brief this
- * should be replaced with once production-licensed imagery is available.
+ * 1. Reduced dominance. Increment 1 wrapped this in a large, heavily
+ *    padded, rounded, bordered panel — itself an instance of the exact
+ *    "rounded bordered card" pattern the Founder's visual review flagged
+ *    as generic-SaaS. This version drops the card treatment entirely: the
+ *    illustration sits directly in a fixed-aspect image slot with no
+ *    border and a quiet fill, so it reads as an image position, not a
+ *    decorative box.
  *
- * No gradients, no purple, no glow/sparkle effects — flat shapes and the
- * same restrained blue/warm-accent palette as the rest of the product.
+ * 2. PHOTOGRAPHY-READY, NOT A PERMANENT ASSET. This remains an original,
+ *    hand-authored SVG (no photograph exists with cleared commercial-use
+ *    rights yet — see the governing instruction §10/§23 and the Increment
+ *    1A report's Photography section). The wrapping container below is
+ *    deliberately built to the exact aspect ratio and crop-safety rules a
+ *    real photograph should use, so swapping in a licensed photo later is
+ *    a one-line change (replace this component's contents with a
+ *    next/image using the same `aspect-[4/5]` container), never a layout
+ *    restructure:
+ *      - Aspect ratio: 4:5 portrait (matches this slot on desktop).
+ *      - Recommended source resolution: at least 2400x3000px, so it can
+ *        be re-cropped for other placements later without upscaling.
+ *      - Desktop crop: the full 4:5 frame, object-fit: cover.
+ *      - Mobile crop: the same source image at object-fit: cover inside a
+ *        wider ~4:3 frame (this component's aspect ratio would need a
+ *        `max-sm:aspect-[4/3]` override at that point) — keep the
+ *        subject centred/upper-third so both crops stay usable from one
+ *        source file.
+ *      - Safe subject area: keep the main subject (the child, their
+ *        hands/work) within the centre 80% of the frame on all sides, so
+ *        neither crop nor a future focal-point adjustment cuts them off.
+ *      - Format/loading: serve as WebP/AVIF via next/image, `priority`
+ *        (it's above the fold), a real `sizes` attribute, and a
+ *        `placeholder="blur"` blurDataURL once the real asset exists.
+ *        Target file weight under ~150KB optimised.
  */
 export default function StudyIllustration() {
   return (
     <div
       role="img"
       aria-label="An open book with a pencil resting across the pages"
-      className="w-full rounded-3xl border border-[var(--border)] bg-[#F5EFE3] p-6 md:p-10"
+      className="aspect-[4/5] w-full max-w-sm mx-auto md:mx-0 rounded-xl bg-[var(--angel-ivory)] flex items-center justify-center p-10"
     >
       <svg viewBox="0 0 480 320" className="w-full h-auto" aria-hidden="true" focusable="false">
         {/* Left page */}
-        <polygon points="240,58 78,92 78,256 240,278" fill="#ffffff" stroke="#1a1a2e" strokeWidth="3" strokeLinejoin="round" />
+        <polygon points="240,58 78,92 78,256 240,278" fill="#ffffff" stroke="#14213D" strokeWidth="3" strokeLinejoin="round" />
         {/* Right page */}
-        <polygon points="240,58 402,92 402,256 240,278" fill="#ffffff" stroke="#1a1a2e" strokeWidth="3" strokeLinejoin="round" />
+        <polygon points="240,58 402,92 402,256 240,278" fill="#ffffff" stroke="#14213D" strokeWidth="3" strokeLinejoin="round" />
         {/* Spine */}
         <line x1="240" y1="58" x2="240" y2="278" stroke="#2563eb" strokeWidth="4" strokeLinecap="round" />
 
@@ -48,10 +65,10 @@ export default function StudyIllustration() {
 
         {/* Pencil, resting diagonally across the right page */}
         <g transform="rotate(-38 300 190)">
-          <rect x="230" y="182" width="150" height="16" rx="5" fill="#d97706" />
+          <rect x="230" y="182" width="150" height="16" rx="5" fill="#C58A2A" />
           <polygon points="380,182 402,190 380,198" fill="#f3d19a" />
           <polygon points="392,186 402,190 392,194" fill="#3f3f46" />
-          <rect x="230" y="182" width="14" height="16" rx="3" fill="#e11d48" />
+          <rect x="230" y="182" width="14" height="16" rx="3" fill="#14213D" />
         </g>
       </svg>
     </div>
