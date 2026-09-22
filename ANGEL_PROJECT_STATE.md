@@ -672,3 +672,29 @@ Commit `c2e88b0`, pushed, deployed to `https://angel-11plus.vercel.app`:**
   PASS, lint/copy-guard baselines unchanged, genuine `next build` PASS.
 - `angel11plus.com`, Cloudflare, SMTP and Supabase Auth configuration were not touched. Photography
   sourcing was not begun as a separate programme, per instruction.
+
+**2026-09-22 (same day) — Homepage Final Image + Footer Completion
+(`ANGEL_11PLUS_HOMEPAGE_IMAGE_FOOTER_COMPLETION_REPORT.md`). TECHNICAL STATUS GO, HERO IMAGE
+INTEGRATION GO, FOOTER GO, FINAL VISUAL FOUNDER ACCEPTANCE PENDING FOUNDER REVIEW. Commit `56762c1`,
+pushed, deployed to `https://angel-11plus.vercel.app`:**
+
+- The Founder supplied the approved hero photograph (`public/images/hero-preparation.png`, copied
+  byte-for-byte, unaltered). It is 1536x1024 (3:2 landscape), a single image containing two
+  photographs side by side — not the single-subject portrait Increment 1B's documented 4:5 spec
+  assumed. Forcing that portrait crop onto a 3:2 source would cut through the boundary between the
+  two photos, violating the governing instruction's own "do not crop faces/heads/activity" rule, so
+  the hero image container's aspect ratio was set to match the source (`aspect-[3/2]`) instead —
+  a disclosed, necessary deviation, not a silent one. `components/public/StudyIllustration.tsx` (the
+  temporary SVG) was removed outright; `components/public/HeroPhoto.tsx` replaces it, served via
+  `next/image`.
+- Footer corrected to a two-row composition (wordmark+descriptor/nav links, divider, independence
+  statement/copyright) on the same content grid as the rest of the page — presentation/alignment
+  only, legal wording unchanged.
+- No other homepage change: structure, copy, Brand Foundation, preparation journey, Today's Plan,
+  personalisation, subjects, parent section, Mock section and CTA are all untouched.
+- Clean-checkout gate: typecheck 0 errors, tests 4,736/4,737 (matches baseline), migration-sql-guard
+  PASS, lint/copy-guard baselines unchanged, genuine `next build` PASS (no layout-shift risk, `/`
+  still statically prerendered with `next/image` in the hero).
+- Real production evidence captured (not DOM text) at desktop, genuine tablet (998px) and genuine
+  mobile (390px) widths, all against `https://angel-11plus.vercel.app` directly.
+- `angel11plus.com`, Cloudflare, SMTP and Supabase Auth were not touched.
