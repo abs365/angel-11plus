@@ -611,3 +611,36 @@ live blocker without genuinely new evidence.
   cutover decision.
 - **Do not reopen** the CSSE/non-CSSE split, the two unreachable lessons, or the Zero-Purple
   inventory without a scoped Increment 2 — all three are recorded, not solved, by design.
+
+**2026-09-22 (same day) — Increment 1A, Public Homepage Visual Refinement + Brand Foundation v1.0
+(`ANGEL_11PLUS_INCREMENT1A_VISUAL_REFINEMENT_REPORT.md`). TECHNICAL STATUS GO, BRAND FOUNDATION
+IMPLEMENTATION GO, VISUAL FOUNDER ACCEPTANCE PENDING. Commit `e2a64cb`, pushed, deployed to
+`https://angel-11plus.vercel.app`:**
+
+- Founder visual review of the Increment 1 homepage found it too close to a generic icon-card
+  SaaS pattern. This increment introduces the Angel Brand Foundation v1.0 (`--angel-*` tokens,
+  `app/globals.css`, scoped to `components/public/*` only) and rebuilds the homepage content
+  around it: the six Learn/Practise/Check/Review/Mock/Improve cards become one connected numbered
+  progression; the subjects/trust sections lose their icon-in-circle cards for plain editorial
+  typography; two new, explicitly-labelled illustrative sections ("A clear plan for today," "Going
+  well / Needs attention / Coming next") were added, both disclosing they are not real learner
+  data; the wordmark moved to Academic Navy.
+- WCAG contrast verified by direct relative-luminance calculation for every colour pairing used;
+  Warm Gold fails 4.5:1 against both backgrounds and is restricted to decorative, non-text accents
+  only (documented in the token block itself), not used as text anywhere.
+- A real `next dev` (Turbopack) CSS/HMR artifact was found and root-caused during this increment:
+  newly-introduced `md:` utility classes intermittently failed to apply live after hot-reloads.
+  Confirmed dev-only (not a real defect) by a genuine `next build && next start` locally, then
+  reconfirmed on the actual Vercel deployment — every utility applies correctly in production.
+- Clean-checkout gate: typecheck 0 errors, tests 4,736/4,737 (0 failures, matching baseline),
+  migration-sql-guard PASS, ESLint/copy-guard baselines (114/51) confirmed byte-identical
+  before/after, genuine `next build` PASS (no bypass).
+- Live production verification: hero, preparation journey, product story, personalisation,
+  subjects, parent story, Mock section, and CTA/footer all confirmed via real screenshots and a
+  full page-text capture; zero console errors; no purple, no AI/dev terminology anywhere on the
+  new page; the existing authenticated dashboard was confirmed still fully reachable and
+  unaffected.
+- **Not verified this pass**: a genuine ~390px mobile screenshot (same `resize_window` tooling
+  limitation as before) and a dedicated tablet-width check — neither blocks the technical GO;
+  recommended as a quick follow-up before or shortly after Founder visual review.
+- `angel11plus.com`, Cloudflare, SMTP and Supabase Auth configuration were not touched.
