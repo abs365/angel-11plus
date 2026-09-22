@@ -698,3 +698,23 @@ pushed, deployed to `https://angel-11plus.vercel.app`:**
 - Real production evidence captured (not DOM text) at desktop, genuine tablet (998px) and genuine
   mobile (390px) widths, all against `https://angel-11plus.vercel.app` directly.
 - `angel11plus.com`, Cloudflare, SMTP and Supabase Auth were not touched.
+
+**2026-09-22 (same day) — Hero Background + Footer Simplification
+(`ANGEL_11PLUS_HERO_BACKGROUND_FOOTER_SIMPLIFICATION_REPORT.md`). TECHNICAL STATUS GO, HERO VISUAL
+FINISH GO, FOOTER GO, FINAL HOMEPAGE FOUNDER ACCEPTANCE PENDING FOUNDER REVIEW. Commit `a6a6b75`,
+pushed, deployed to `https://angel-11plus.vercel.app`:**
+
+- Founder review: the hero's plain white background read as too empty/clinical. Added a warm ivory
+  base plus two large, heavily blurred, low-opacity decorative shapes (`--angel-gold` at 8% opacity
+  lower-left, `--angel-sky` at 60% opacity upper-right) — both already-existing Brand Foundation
+  tokens, no new colour, no gradient, no image, no animation. Shapes are `aria-hidden`,
+  `pointer-events-none`, sit behind the content (content explicitly `relative z-10`), clipped by
+  `overflow-hidden`. Structure, copy, CTAs, the approved photograph and responsive behaviour
+  unchanged.
+- Footer: "Sign in" removed from the footer nav per Founder decision (redundant with the header's own
+  Sign in, which is untouched). Footer nav is now Privacy / Terms / Contact and support only.
+- Clean-checkout gate: typecheck 0 errors, tests 4,736/4,737 (matches baseline), migration-sql-guard
+  PASS, lint/copy-guard baselines unchanged, genuine `next build` PASS.
+- Real production evidence captured (not DOM text) at desktop, genuine tablet (900px) and genuine
+  mobile (390px) widths, all against `https://angel-11plus.vercel.app` directly.
+- `angel11plus.com`, Cloudflare, SMTP and Supabase Auth were not touched.
