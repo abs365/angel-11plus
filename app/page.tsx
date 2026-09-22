@@ -90,27 +90,50 @@ export default function HomePage() {
       <PublicHeader />
 
       <main>
-        {/* Hero */}
-        <section className="max-w-7xl mx-auto px-4 md:px-8 pt-14 md:pt-24 pb-16 md:pb-28 grid md:grid-cols-12 gap-10 md:gap-16 items-center">
-          <div className="md:col-span-7">
-            <h1 className="text-5xl md:text-7xl font-bold leading-[1.03] tracking-tight text-[var(--angel-navy)] max-w-2xl">
-              11+ preparation shaped around your child.
-            </h1>
-            <p className="mt-7 text-xl text-[var(--angel-muted)] leading-relaxed max-w-xl">
-              Angel 11+ helps your child learn, practise and prepare with a clear plan that responds to their
-              progress.
-            </p>
-            <div className="mt-10 flex flex-wrap items-center gap-3">
-              <ButtonLink href="/login" size="lg">
-                Start preparing
-              </ButtonLink>
-              <ButtonLink href="#how-it-works" variant="outline" size="lg">
-                See how Angel 11+ works
-              </ButtonLink>
-            </div>
+        {/* Hero — background treatment only, per Founder review of the plain-
+            white production hero ("too empty and clinical"). Structure,
+            copy, CTAs and the approved photograph are unchanged; only the
+            section now carries a warm ivory base plus two large, heavily
+            blurred, low-opacity decorative shapes using EXISTING Brand
+            Foundation tokens (no new colour introduced). The shapes are
+            `aria-hidden`, `pointer-events-none`, purely CSS (no new image),
+            sit behind the content in a separate absolutely-positioned layer
+            (z-index below the content, which is explicitly `relative z-10`),
+            and are clipped by `overflow-hidden` so they never cause
+            horizontal scroll on mobile. No gradient, no purple, no
+            animation. */}
+        <section className="relative overflow-hidden bg-[var(--angel-ivory)]">
+          <div aria-hidden="true" className="pointer-events-none absolute inset-0 overflow-hidden">
+            {/* Warm gold/cream, lower-left — --angel-gold at low opacity so it
+                reads as a pale cream wash, not a saturated gold shape. */}
+            <div className="absolute -left-32 -bottom-32 w-[32rem] h-[32rem] rounded-full bg-[var(--angel-gold)] opacity-[0.08] blur-3xl" />
+            {/* Angel Sky, right — already a pale blue token; blurred and set
+                just below full opacity so it diffuses softly into the ivory
+                base rather than reading as a distinct panel. */}
+            <div className="absolute -right-24 top-0 w-[28rem] h-[28rem] rounded-full bg-[var(--angel-sky)] opacity-60 blur-3xl" />
           </div>
-          <div className="md:col-span-5">
-            <HeroPhoto />
+
+          <div className="relative z-10 max-w-7xl mx-auto px-4 md:px-8 pt-14 md:pt-24 pb-16 md:pb-28 grid md:grid-cols-12 gap-10 md:gap-16 items-center">
+            <div className="md:col-span-7">
+              <h1 className="text-5xl md:text-7xl font-bold leading-[1.03] tracking-tight text-[var(--angel-navy)] max-w-2xl">
+                11+ preparation shaped around your child.
+              </h1>
+              <p className="mt-7 text-xl text-[var(--angel-muted)] leading-relaxed max-w-xl">
+                Angel 11+ helps your child learn, practise and prepare with a clear plan that responds to their
+                progress.
+              </p>
+              <div className="mt-10 flex flex-wrap items-center gap-3">
+                <ButtonLink href="/login" size="lg">
+                  Start preparing
+                </ButtonLink>
+                <ButtonLink href="#how-it-works" variant="outline" size="lg">
+                  See how Angel 11+ works
+                </ButtonLink>
+              </div>
+            </div>
+            <div className="md:col-span-5">
+              <HeroPhoto />
+            </div>
           </div>
         </section>
 

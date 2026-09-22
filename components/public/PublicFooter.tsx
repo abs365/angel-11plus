@@ -3,18 +3,20 @@ import Link from "next/link";
 /**
  * The homepage's own footer. Deliberately separate from SupportFooter.tsx
  * (the compact four-link strip used inside the authenticated app shell):
- * the public homepage needs its own independence statement and a full
- * Sign in link.
+ * the public homepage needs its own independence statement.
  *
- * Homepage Final Image + Footer Completion pass — corrects presentation
- * and alignment only, per Founder review; the legal/independence wording
- * itself is unchanged (same sentence, same links). Two rows on the same
- * max-w-7xl content grid as the rest of the page: a top row pairing the
- * wordmark with the navigation links, a divider, then a bottom row
- * pairing the independence statement with the copyright line. Both rows
- * stack (top-to-bottom, independence statement before copyright) on
- * mobile rather than spreading across the width. No footer cards, icons
- * or badges were introduced.
+ * Two rows on the same max-w-7xl content grid as the rest of the page: a
+ * top row pairing the wordmark with the navigation links, a divider, then
+ * a bottom row pairing the independence statement with the copyright
+ * line. Both rows stack (top-to-bottom, independence statement before
+ * copyright) on mobile rather than spreading across the width. No footer
+ * cards, icons or badges were introduced.
+ *
+ * Hero Background + Footer Simplification pass — "Sign in" removed per
+ * Founder decision: authentication is already reachable from the header
+ * on every page, so the footer's own copy was a redundant second path.
+ * The header's Sign in link is untouched; this is a footer-only removal.
+ * Final footer nav: Privacy / Terms / Contact and support.
  */
 export default function PublicFooter() {
   return (
@@ -37,9 +39,6 @@ export default function PublicFooter() {
             </Link>
             <Link href="/contact" className="hover:text-[var(--angel-navy)] transition-colors motion-reduce:transition-none">
               Contact and support
-            </Link>
-            <Link href="/login?mode=signin" className="hover:text-[var(--angel-navy)] transition-colors motion-reduce:transition-none">
-              Sign in
             </Link>
           </div>
         </div>
