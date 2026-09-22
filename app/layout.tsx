@@ -4,6 +4,7 @@ import "./globals.css";
 import { AuthProvider } from "@/components/providers/AuthProvider";
 import PWAProvider from "@/components/PWAProvider";
 import RegisteredAccountGate from "@/components/RegisteredAccountGate";
+import { SITE_URL } from "@/lib/siteUrl";
 
 /**
  * Experience Programme, Stage 1 — typography foundation. Replaces the bare
@@ -31,10 +32,8 @@ const lexend = Lexend({
   variable: "--font-sans",
 });
 
-const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? "https://angel11plus.com";
-
 export const metadata: Metadata = {
-  metadataBase: new URL(APP_URL),
+  metadataBase: new URL(SITE_URL),
 
   title: {
     default: "Angel 11+: Smart UK 11+ Preparation",
@@ -58,7 +57,7 @@ export const metadata: Metadata = {
     title: "Angel 11+: Smart UK 11+ Preparation",
     description:
       "Original exam-style practice for UK 11+ preparation. Personalised practice across English, Maths, Reasoning, Writing and Reading Fluency.",
-    url: APP_URL,
+    url: SITE_URL,
     // og:image — add /og-image.png (1200×630) once brand assets are ready
     // images: [{ url: "/og-image.png", width: 1200, height: 630 }],
   },

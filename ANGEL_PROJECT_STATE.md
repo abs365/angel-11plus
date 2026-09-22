@@ -567,3 +567,33 @@ stimuli, not just one) is the next material gap, following the same Family Depth
 established for Maths. Do not generate volume for its own sake; check what teaching gap remains
 first, and author any new stimulus through the governed Question Factory / independent-review
 mechanism this Wave used, never a shallow permutation of the existing scene.
+
+**2026-09-22 — Experience Gap Audit (`ANGEL_11PLUS_EXPERIENCE_GAP_AUDIT_V1.md`) and Increment 1,
+Public Experience + Human Design Foundation (`ANGEL_11PLUS_INCREMENT1_PUBLIC_EXPERIENCE_REPORT.md`),
+STATUS PARTIAL, not yet committed/deployed:**
+
+- The audit found the platform's product architecture stronger than assumed, and four material
+  gaps: no public first-impression page existed at all (`/` unconditionally redirected to
+  `/dashboard`); an undisclosed split between the CSSE and non-CSSE learner experiences, most
+  visible in a non-CSSE Parent Dashboard that reads as a generic template; two real, built English
+  lessons unreachable from any navigation; and six live Zero-Purple violations, two inside the
+  CSSE Mock Report/Mock card themselves.
+- Increment 1 built a real public homepage at `/` (isolated `components/public/*` shell, not the
+  authenticated app's `Navigation`/`Header`), canonical-domain readiness for `angel11plus.com`
+  (`lib/siteUrl.ts`), and `app/robots.ts`/`app/sitemap.ts` (this product had neither before). The
+  Zero-Purple violations and the two unreachable lessons were deliberately NOT touched (recorded
+  as Increment 2 inputs); Today/Learn/Practice/Mock Centre/Parent Dashboard were NOT redesigned.
+- Tests: 4,779/4,782 pass; the 2 failures and a full `next build` are both blocked by a
+  **pre-existing, unrelated** issue in untracked `lib/ali/questionFactory/*` content files (not
+  created by this increment, not part of git history at the time) — flagged for separate Founder
+  attention, since it will block any deploy until resolved, but is out of this increment's scope.
+- PARTIAL, not GO: production reachability could not be verified (`angel11plus.com` unreachable
+  from this environment via both the browser tool and a direct network request; DNS resolution
+  failure, consistent with an environment restriction, not confirmed as a live outage), and a
+  live mobile-viewport screenshot could not be captured (a `resize_window` tooling limitation,
+  confirmed via `window.innerWidth` staying fixed regardless of the resize call). Both are
+  disclosed in the report rather than assumed passing. All other checks (typecheck, lint,
+  copy-guard, Zero-Purple/AI-language scans, and a real rendered browser check against a local
+  dev server, including the account-gate regression check) pass cleanly.
+- **Do not reopen** the CSSE/non-CSSE split, the two unreachable lessons, or the Zero-Purple
+  inventory without a scoped Increment 2 — all three are recorded, not solved, by design.
