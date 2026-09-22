@@ -1,6 +1,15 @@
 // Angel 11+ Service Worker
 // Bump CACHE_VER whenever you need to force a full cache flush on all clients.
-const CACHE_VER    = 'v3';
+// v4 — App Icon Brand Correction: app/favicon.ico replaced (the old default
+// black-circle/white-triangle Next.js scaffold icon was never swapped for a
+// real Angel 11+ mark). favicon.ico is not in PRECACHE_ASSETS, but the fetch
+// handler below still serves it cache-first from STATIC_CACHE once a client
+// has fetched it once -- without this version bump, any browser that had
+// already cached the old icon would keep serving it from STATIC_CACHE
+// indefinitely, even after the new file deploys. Bumping the version forces
+// the activate handler's cache cleanup to drop the stale angel-static-v3
+// cache for every client on next visit.
+const CACHE_VER    = 'v4';
 const STATIC_CACHE = `angel-static-${CACHE_VER}`;
 const PAGES_CACHE  = `angel-pages-${CACHE_VER}`;
 const OFFLINE_PAGE = '/offline.html';
