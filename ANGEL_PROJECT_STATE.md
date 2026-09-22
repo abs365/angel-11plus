@@ -718,3 +718,26 @@ pushed, deployed to `https://angel-11plus.vercel.app`:**
 - Real production evidence captured (not DOM text) at desktop, genuine tablet (900px) and genuine
   mobile (390px) widths, all against `https://angel-11plus.vercel.app` directly.
 - `angel11plus.com`, Cloudflare, SMTP and Supabase Auth were not touched.
+
+**2026-09-22 (same day) — App Icon / Favicon Brand Correction
+(`ANGEL_11PLUS_APP_ICON_BRAND_CORRECTION_REPORT.md`). ANGEL 11+ APP ICON BRAND CORRECTION: GO. Commit
+`72ab3ec`, pushed, deployed. Verified live on the now-connected permanent domain,
+`https://www.angel11plus.com/`:**
+
+- Root cause: `app/favicon.ico` was the literal, unreplaced default Next.js/Vercel scaffold icon
+  (black circle, white triangle), dated to the project's original scaffolding — never swapped in any
+  prior branding pass. `app/layout.tsx`'s icon metadata already correctly pointed at `/favicon.ico`;
+  this was purely a file-content problem, not a wiring problem.
+- Fix: regenerated `app/favicon.ico` as a proper multi-resolution ICO (16/32/48/64/256px) from the
+  already-correct Angel "A" mark (`public/icon-192.png`/`icon-512.png`), so the whole icon system is
+  now one consistent mark rather than two different ones. Verified legible at true 16px scale.
+- `public/sw.js` `CACHE_VER` bumped v3 to v4, since the fetch handler serves `/favicon.ico`
+  cache-first from `STATIC_CACHE` once fetched once — without the bump, returning visitors' installed
+  service workers would keep serving the old cached icon indefinitely.
+- Verified by fetching `https://www.angel11plus.com/favicon.ico` directly (not through a browser) and
+  decoding it: confirmed the new mark, `Last-Modified` matching the deployment timestamp exactly (not
+  a stale edge cache). `angel11plus.com` is genuinely connected and reachable now, confirmed directly.
+- No homepage, layout, hero, photograph, colours, typography, navigation, footer, copy, or
+  authenticated-app change. Disclosed, non-fixable-from-here caveat: individual browsers'/messaging
+  apps' own favicon caching may still show the old icon to some returning visitors/previously-shared
+  links until their own cache expires — not a server-side defect, confirmed by the direct fetch above.
