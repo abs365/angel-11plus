@@ -644,3 +644,31 @@ IMPLEMENTATION GO, VISUAL FOUNDER ACCEPTANCE PENDING. Commit `e2a64cb`, pushed, 
   limitation as before) and a dedicated tablet-width check — neither blocks the technical GO;
   recommended as a quick follow-up before or shortly after Founder visual review.
 - `angel11plus.com`, Cloudflare, SMTP and Supabase Auth configuration were not touched.
+
+**2026-09-22 (same day) — Increment 1B, Final Public Homepage Visual Finish
+(`ANGEL_11PLUS_INCREMENT1B_FINAL_VISUAL_FINISH_REPORT.md`). TECHNICAL STATUS GO, EDITORIAL VISUAL
+FINISH GO, PHOTOGRAPHY PENDING FOUNDER ASSET APPROVAL, FINAL VISUAL FOUNDER ACCEPTANCE PENDING.
+Commit `c2e88b0`, pushed, deployed to `https://angel-11plus.vercel.app`:**
+
+- Founder review of the real Increment 1A production screenshots accepted the structure, content
+  and Brand Foundation, and asked for narrower visual finishing only: preparation-journey
+  legibility, hero scale, editorial composition, and whitespace (the parent section specifically).
+  No section added/removed/reordered, no card/icon system reintroduced.
+- Preparation journey: 6 narrow single-row columns → 3-wide/2-row grid (each step roughly doubles
+  in width), bigger numerals/titles, shortened copy, and the connecting rule now uses Warm Gold as
+  a restrained, purely decorative "journey connector."
+- Parent section: the illustrative example and the real benefit list were stacked, leaving the
+  desktop canvas under-filled — now paired side by side at larger scale, the Founder's main
+  whitespace complaint.
+- Hero: heading enlarged, the image slot's `max-w-sm` cap removed so it fills its column;
+  `StudyIllustration.tsx` now documents and implements the full photography-ready spec (desktop/
+  tablet/mobile container sizes, object-fit/object-position, a real mobile 4:3 crop override) so a
+  licensed photograph can replace it with a one-line change, never a restructure.
+- Responsive verification used a genuine, legitimate method (a same-origin iframe sized to the
+  exact target CSS width, confirmed via `iframe.contentWindow.innerWidth`) after `resize_window`
+  again failed to change the real viewport in this environment — real desktop/tablet/mobile
+  evidence was captured against the actual deployed production URL, not simulated.
+- Clean-checkout gate: typecheck 0 errors, tests 4,736/4,737 (matches baseline), migration-sql-guard
+  PASS, lint/copy-guard baselines unchanged, genuine `next build` PASS.
+- `angel11plus.com`, Cloudflare, SMTP and Supabase Auth configuration were not touched. Photography
+  sourcing was not begun as a separate programme, per instruction.
