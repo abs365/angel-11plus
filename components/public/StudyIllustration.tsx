@@ -1,47 +1,55 @@
 /**
- * Increment 1A — Hero visual, revised. Two Founder-directed changes from
- * Increment 1's version:
+ * Hero visual. Increment 1A dropped the heavy rounded/bordered card
+ * treatment; Increment 1B (Final Visual Finish) enlarges the slot itself —
+ * the Founder's review of the 1A production screenshots found the image
+ * area too small relative to the surrounding whitespace, making the hero
+ * feel unfinished. This removes the `max-w-sm` cap so the slot fills its
+ * full grid column (see app/page.tsx's hero, `md:col-span-5` of a
+ * `max-w-7xl` container) and softens the corner radius slightly
+ * (`rounded-xl` → `rounded-lg`) for a calmer, less "card" edge, per the
+ * governing instruction's explicit "avoid a photo frame that looks like a
+ * card" direction (no thick border, no shadow, no decorative treatment
+ * behind it).
  *
- * 1. Reduced dominance. Increment 1 wrapped this in a large, heavily
- *    padded, rounded, bordered panel — itself an instance of the exact
- *    "rounded bordered card" pattern the Founder's visual review flagged
- *    as generic-SaaS. This version drops the card treatment entirely: the
- *    illustration sits directly in a fixed-aspect image slot with no
- *    border and a quiet fill, so it reads as an image position, not a
- *    decorative box.
+ * PHOTOGRAPHY-READY, STILL NOT A PERMANENT ASSET. This remains an original,
+ * hand-authored SVG — no licensed photograph exists yet (governing
+ * instruction §3/§10/§23). The container is built to the exact spec a real
+ * photograph should use, so replacing this component's contents with a
+ * `next/image` inside the same wrapper is a one-line change, never a
+ * layout restructure:
  *
- * 2. PHOTOGRAPHY-READY, NOT A PERMANENT ASSET. This remains an original,
- *    hand-authored SVG (no photograph exists with cleared commercial-use
- *    rights yet — see the governing instruction §10/§23 and the Increment
- *    1A report's Photography section). The wrapping container below is
- *    deliberately built to the exact aspect ratio and crop-safety rules a
- *    real photograph should use, so swapping in a licensed photo later is
- *    a one-line change (replace this component's contents with a
- *    next/image using the same `aspect-[4/5]` container), never a layout
- *    restructure:
- *      - Aspect ratio: 4:5 portrait (matches this slot on desktop).
- *      - Recommended source resolution: at least 2400x3000px, so it can
- *        be re-cropped for other placements later without upscaling.
- *      - Desktop crop: the full 4:5 frame, object-fit: cover.
- *      - Mobile crop: the same source image at object-fit: cover inside a
- *        wider ~4:3 frame (this component's aspect ratio would need a
- *        `max-sm:aspect-[4/3]` override at that point) — keep the
- *        subject centred/upper-third so both crops stay usable from one
- *        source file.
- *      - Safe subject area: keep the main subject (the child, their
- *        hands/work) within the centre 80% of the frame on all sides, so
- *        neither crop nor a future focal-point adjustment cuts them off.
- *      - Format/loading: serve as WebP/AVIF via next/image, `priority`
- *        (it's above the fold), a real `sizes` attribute, and a
- *        `placeholder="blur"` blurDataURL once the real asset exists.
- *        Target file weight under ~150KB optimised.
+ *   - Aspect ratio: 4:5 portrait on tablet/desktop, 4:3 landscape on mobile
+ *     (`aspect-[4/5] max-sm:aspect-[4/3]`, already implemented below).
+ *   - Desktop container size: fills `md:col-span-5` of the hero's
+ *     `max-w-7xl` grid — roughly 480-620px wide at typical desktop
+ *     viewports (1280-1920px), height following from the 4:5 ratio
+ *     (~600-780px). Not a fixed pixel box; it scales with the column.
+ *   - Tablet (≈768-1023px, still `md:` and up): same 4:5 ratio, narrower
+ *     column width (the hero's two columns are more even at this range),
+ *     roughly 300-380px wide.
+ *   - Mobile (<768px): full-width, 4:3 landscape crop (shorter, wider —
+ *     avoids an overly tall image pushing the CTAs far down the page).
+ *   - Recommended source resolution: at least 2400x3000px, so one file
+ *     covers both crops without upscaling.
+ *   - Safe subject area: keep the child and their work within the centre
+ *     80% of the frame on all sides, so neither the 4:5 nor the 4:3 crop
+ *     (nor a future focal-point adjustment) cuts them off.
+ *   - object-fit / object-position: `object-fit: cover`,
+ *     `object-position: center 30%` — biases the crop toward the upper
+ *     third, where a child's face/hands doing the work will usually sit,
+ *     rather than a dead-centre crop that risks cutting the top of the
+ *     frame.
+ *   - Format/loading: WebP/AVIF via `next/image`, `priority` (above the
+ *     fold), a real `sizes` attribute matching the column's actual
+ *     rendered width, `placeholder="blur"` once the asset exists. Target
+ *     file weight under ~150KB optimised.
  */
 export default function StudyIllustration() {
   return (
     <div
       role="img"
       aria-label="An open book with a pencil resting across the pages"
-      className="aspect-[4/5] w-full max-w-sm mx-auto md:mx-0 rounded-xl bg-[var(--angel-ivory)] flex items-center justify-center p-10"
+      className="aspect-[4/5] max-sm:aspect-[4/3] w-full rounded-lg bg-[var(--angel-ivory)] flex items-center justify-center p-8 md:p-10"
     >
       <svg viewBox="0 0 480 320" className="w-full h-auto" aria-hidden="true" focusable="false">
         {/* Left page */}
