@@ -568,9 +568,24 @@ established for Maths. Do not generate volume for its own sake; check what teach
 first, and author any new stimulus through the governed Question Factory / independent-review
 mechanism this Wave used, never a shallow permutation of the existing scene.
 
-**2026-09-22 — Experience Gap Audit (`ANGEL_11PLUS_EXPERIENCE_GAP_AUDIT_V1.md`) and Increment 1,
-Public Experience + Human Design Foundation (`ANGEL_11PLUS_INCREMENT1_PUBLIC_EXPERIENCE_REPORT.md`),
-STATUS PARTIAL, not yet committed/deployed:**
+**2026-09-22 — Experience Gap Audit (`ANGEL_11PLUS_EXPERIENCE_GAP_AUDIT_V1.md`), Increment 1
+(`ANGEL_11PLUS_INCREMENT1_PUBLIC_EXPERIENCE_REPORT.md`), and its Release Readiness follow-up
+(`ANGEL_11PLUS_INCREMENT1_RELEASE_READINESS_REPORT.md`). STATUS: TECHNICAL RELEASE GO, VISUAL
+FOUNDER ACCEPTANCE PENDING. Committed (`060663f`, `3a28115`), pushed to `origin/main`, and
+deployed to the existing Vercel production environment (`https://angel-11plus.vercel.app`).
+`angel11plus.com` itself remains disconnected, exactly as instructed.**
+
+**Correction to the same-day entry below**: the original PARTIAL verdict treated a local `next
+build` typecheck failure as a real, deploy-blocking defect. It was not. Root-cause diagnosis
+(git history, `git grep`, a genuinely clean `git worktree` checkout) proved the untracked
+`lib/ali/questionFactory/*` files responsible were deliberately `git rm --cached` in an earlier,
+unrelated session (`810208b`, 2026-09-08, per explicit Founder instruction) specifically because
+committing them broke the Vercel build — they were never part of `main`, so Vercel never saw them.
+A clean-checkout build from `HEAD` passes genuinely (no bypass), with typecheck, the full test
+suite (4,736/4,737, 0 failures), and migration-sql-guard all clean; the pre-existing ESLint/copy-guard
+baselines (114 problems / 51 violations) are confirmed byte-identical before and after Increment 1
+— zero new issues. See the Release Readiness report for full evidence. Do not re-open this as a
+live blocker without genuinely new evidence.
 
 - The audit found the platform's product architecture stronger than assumed, and four material
   gaps: no public first-impression page existed at all (`/` unconditionally redirected to
@@ -583,17 +598,16 @@ STATUS PARTIAL, not yet committed/deployed:**
   (`lib/siteUrl.ts`), and `app/robots.ts`/`app/sitemap.ts` (this product had neither before). The
   Zero-Purple violations and the two unreachable lessons were deliberately NOT touched (recorded
   as Increment 2 inputs); Today/Learn/Practice/Mock Centre/Parent Dashboard were NOT redesigned.
-- Tests: 4,779/4,782 pass; the 2 failures and a full `next build` are both blocked by a
-  **pre-existing, unrelated** issue in untracked `lib/ali/questionFactory/*` content files (not
-  created by this increment, not part of git history at the time) — flagged for separate Founder
-  attention, since it will block any deploy until resolved, but is out of this increment's scope.
-- PARTIAL, not GO: production reachability could not be verified (`angel11plus.com` unreachable
-  from this environment via both the browser tool and a direct network request; DNS resolution
-  failure, consistent with an environment restriction, not confirmed as a live outage), and a
-  live mobile-viewport screenshot could not be captured (a `resize_window` tooling limitation,
-  confirmed via `window.innerWidth` staying fixed regardless of the resize call). Both are
-  disclosed in the report rather than assumed passing. All other checks (typecheck, lint,
-  copy-guard, Zero-Purple/AI-language scans, and a real rendered browser check against a local
-  dev server, including the account-gate regression check) pass cleanly.
+- Tests (clean-checkout, see correction above): 4,736/4,737 pass, 0 failures. The local
+  working-directory `next build` failure this entry originally reported was traced to the
+  untracked files above and does **not** occur on `main` — see the correction note above this
+  entry.
+- Same-day `angel11plus.com` unreachability finding still stands as reported (DNS resolution
+  failure from this environment, consistent with the domain simply not being connected yet, not
+  confirmed as an outage) — irrelevant now that verification moved to the actual deployed Vercel
+  URL instead, where the homepage was directly confirmed live and working.
+- TECHNICAL RELEASE STATUS: GO (Release Readiness report). VISUAL FOUNDER ACCEPTANCE: PENDING —
+  the Founder should view `https://angel-11plus.vercel.app` directly before any `angel11plus.com`
+  cutover decision.
 - **Do not reopen** the CSSE/non-CSSE split, the two unreachable lessons, or the Zero-Purple
   inventory without a scoped Increment 2 — all three are recorded, not solved, by design.
