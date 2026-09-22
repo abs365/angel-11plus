@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { CheckCircle2 } from "lucide-react";
 import PublicHeader from "@/components/public/PublicHeader";
 import PublicFooter from "@/components/public/PublicFooter";
-import StudyIllustration from "@/components/public/StudyIllustration";
+import HeroPhoto from "@/components/public/HeroPhoto";
 import { ButtonLink } from "@/components/ui/Button";
 import { SITE_URL } from "@/lib/siteUrl";
 
@@ -110,7 +110,7 @@ export default function HomePage() {
             </div>
           </div>
           <div className="md:col-span-5">
-            <StudyIllustration />
+            <HeroPhoto />
           </div>
         </section>
 
