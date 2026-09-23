@@ -46,6 +46,14 @@ test("every piece of content rendered comes from the stimulus prop -- no hard-co
   assert.ok(!/week 1|attendance/i.test(source));
 });
 
-test("dark-mode classes are present, matching every other component in this codebase's own convention", () => {
-  assert.match(source, /dark:/);
+// Angel Foundation visual pass (Increment 2) — this component now uses
+// the Angel design token custom properties (--angel-navy/-ink/-muted/
+// -sky/-border/-paper) instead of per-element Tailwind dark: variants.
+// Those tokens already branch light/dark via CSS (app/globals.css's own
+// prefers-color-scheme/[data-theme] rules), matching the same established
+// convention Today/Learn already use -- so dark-mode support is real, just
+// no longer expressed as literal `dark:` Tailwind classes in this file.
+test("dark mode is handled via Angel design tokens (--angel-*), not per-element dark: classes", () => {
+  assert.match(source, /var\(--angel-/);
+  assert.ok(!/dark:/.test(source), "should use Angel tokens, which already branch dark/light, rather than a second dark: system");
 });

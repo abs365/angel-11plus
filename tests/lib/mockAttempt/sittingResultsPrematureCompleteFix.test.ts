@@ -28,7 +28,7 @@ test("a distinct resultsStillPreparing state exists for sittingComplete && !both
 });
 
 test("the status banner renders three distinct messages, never claiming 'all assessment complete' while results are still preparing", () => {
-  const bannerMatch = SOURCE.match(/\{resultsStillPreparing[\s\S]*?<\/InfoCard>/);
+  const bannerMatch = SOURCE.match(/\{resultsStillPreparing[\s\S]*?<\/div>/);
   assert.ok(bannerMatch, "status banner block not found");
   const body = bannerMatch![0];
   assert.match(body, /Sitting complete — results still being prepared/);

@@ -35,12 +35,12 @@ test("analysis complete + strengths present renders the real, evidence-derived s
 // --- 2: analysis complete + strengths empty -> NO_SECURE_STRENGTHS_NOTE, never ANALYSIS_PENDING_NOTE ---
 
 test("analysis complete + strengths empty renders NO_SECURE_STRENGTHS_NOTE", () => {
-  const section2 = PARENT_PAGE.split("2. Diagnostic interpretation")[1]?.split("</InfoCard>")[0] ?? "";
+  const section2 = PARENT_PAGE.split('mb-1">Diagnostic interpretation</p>')[1]?.split("</InfoCard>")[0] ?? "";
   assert.match(section2, /\{NO_SECURE_STRENGTHS_NOTE\}/);
 });
 
 test("the empty-strengths branch is reached only when analysisState IS complete -- it can never be confused with the pending-analysis branch", () => {
-  const section2 = PARENT_PAGE.split("2. Diagnostic interpretation")[1]?.split("</InfoCard>")[0] ?? "";
+  const section2 = PARENT_PAGE.split('mb-1">Diagnostic interpretation</p>')[1]?.split("</InfoCard>")[0] ?? "";
   // Exactly one ternary chain, three outcomes: pending / real strengths / no-secure-strengths.
   const analysisNoteCount = (section2.match(/\{ANALYSIS_PENDING_NOTE\}/g) ?? []).length;
   const noSecureCount = (section2.match(/\{NO_SECURE_STRENGTHS_NOTE\}/g) ?? []).length;
