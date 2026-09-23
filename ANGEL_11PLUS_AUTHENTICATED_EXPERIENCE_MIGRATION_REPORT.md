@@ -817,3 +817,191 @@ directly and confirmed byte-for-byte: the new introductory copy is genuinely pre
 `"Vocabulary: not available here"` and `"Skills Profile, Evidence Profile"` are genuinely absent.
 
 **Not declaring GO.** The Founder performs final production visual acceptance.
+
+---
+
+## Increment 3: Progress, Results, Parent Dashboard (2026-09-23, same day)
+
+Founder acceptance of the Practise Hub Final Human-Design Refinement above. Mission: transform Progress,
+Results and the Parent Dashboard into a coherent Angel 11+ educational intelligence experience — "not a
+cosmetic restyle" — while keeping "Angel 11+ is an evidence-based preparation platform, not an analytics
+dashboard" as the non-negotiable governing principle. Today, Learn, Practise, Mock and Private Learner
+Space were not reopened; no PIN/auth change; no migration.
+
+**1. Real-data and journey audit findings** (mandatory, performed before any UI change, via three parallel
+research passes): Progress's real destination is `/learning-intelligence` ("Learning Report" page, nav
+labels it "Progress"), fully Supabase-backed via `fetchLearnerIntelligenceProfile()` (Learning Engine V1:
+`computeCompetencyStatus` → `computeDiagnosticFindings` → `computeComponentReadiness` →
+`computeRecommendations`), genuinely honest zero-evidence state, but 100% generic Tailwind styling. Legacy
+`/progress` runs on an entirely separate `localStorage`-based engine (`lib/progress.ts` → `computeAnalytics`
+→ `computeParentReport`) — a genuinely different system, not just different styling; Today's own "Your
+Progress" teaser widget reads from this legacy engine even for CSSE learners, a disclosed pre-existing
+incoherence, out of Today's frozen scope, not fixed here. The Mock Results surfaces
+(`mock-report/[attemptId]`, child and parent) and the Parent Dashboard (`/learning-intelligence/parent` →
+`CssePathwayParentContent.tsx`) are all real, Supabase-backed, zero Angel-token styling anywhere. Confirmed
+`hasAnyContent` is a platform-content fact (almost always true), not a learner fact — `hasAnyEvidence` is
+the correct learner-specific zero-evidence signal, and Progress's own zero-evidence banner was gated on
+the wrong one (see Section 9). Revision Planner and Readiness Timeline confirmed genuinely real, not
+stubs. The Parent Dashboard's first screen had no "What's going well?" section at all before this pass.
+
+**2. Progress before/after**: before — generic gray/white cards, an "Assessment Coverage" card exposing
+internal per-question-type content-authoring inventory ("Platform content available: X of 27 question
+types"), a 2-badge-per-row clutter (Signal chip + 5-dot Tier badge) on every competency, 5 separately
+color-coded icon cards for strengths/mastered/emerging/development/low-confidence, a dense summary line
+("X strengths · Y development areas · Z of N not yet evidenced"). After — Angel Brand Foundation tokens
+throughout; `EvidenceProfile` replaced with one honest sentence ("Based on N real practice attempt(s)
+across M skill(s) so far", or the honest zero-evidence sentence); `CompetencyProfile` now one
+`StatusIndicator` per row via a new `evidenceSignalLabel()` plain-language map (Demonstrated → "Doing
+well", Developing → "Developing", Not Yet Demonstrated → "Needs more practice", Not Yet Observed → "Not
+started yet"); `DiagnosticOverview` now exactly two calm typography-led groups ("What's going well" /
+"What to work on") with sky-tinted chip lists, no icons; `RecommendationSummary` now plain `divide-y` rows
+with a `{Verb} {Skill}` title (Practise/Keep building/Revisit/Try extending/Review) instead of a
+category-coded icon-tile card. Page restructured into the instruction's own hierarchy: intro → Practise
+now CTA → zero-evidence banner (now correctly gated) → How you're doing → What's going well/what to work
+on → What to do next → Recent work → Parent Dashboard link → More ways to explore → full competency detail
+demoted to the bottom as secondary depth.
+
+**3. Results before/after**: both the child (`mock-report/[attemptId]`) and parent
+(`parent/mock-report/[attemptId]`) Mock report pages restyled to Angel tokens (InfoCard and all gray-*
+classes removed). Parent page specifically: renamed clinical headings ("Diagnostic interpretation" → "What
+this shows", "Evidence" → "How to read this result") to plain language; fixed a verbatim "mastery" leak
+(→ "how they're doing overall"); removed a duplicate weakness-sentence rendering (previously shown twice
+across two sections, now shown once under a new "What to work on next" section); added a real, previously
+entirely-missing Writing assessment display (`WritingAssessmentSummary`, reusing the same
+`getMockWritingAssessments()` call and real dimension labels the child report already used) — closing a
+genuine content gap where a parent whose child sat Continuous Writing saw nothing about it. Child page:
+fixed a real `border-purple-200 dark:border-purple-900` rule violation in the Writing section; tightened
+two `childFriendlySkillLabel()` fallback arguments from the raw `entry.questionTypeId` (a latent QT-code
+leak path if `competencyId` were ever null) to the literal, always-safe "This skill".
+
+**4. Parent Dashboard before/after**: shell (`/learning-intelligence/parent`) and every real subpage
+(admissions-readiness, journey, mock-readiness, readiness-timeline, revision-planner, weekly-report) fully
+restyled to Angel tokens, InfoCard removed throughout. `journey/page.tsx` fully rewritten to remove a
+textbook banned pattern — 7 stages each with their own rainbow-colored icon tile (blue/teal/sky/emerald/
+amber/rose/slate) — replaced with one plain numbered `divide-y` list, all real copy/links unchanged. A
+genuinely new "What's going well?" section added to `CssePathwayParentContent.tsx`'s first screen (between
+"How is my child doing?" and "What needs attention?"), built from real `profile.diagnostics.strengths`/
+`masteredSkills` data — this section did not exist before. `EvidenceComposition`'s wrapping heading
+renamed "Evidence Growth" → "Evidence Right Now" (the component's own honest disclosure already states no
+true trend/historical-persistence mechanism exists — the old heading implied one).
+
+**5. Internal terminology removed**: "Assessment Coverage" / "Platform content available: X of 27 question
+types" (Progress); "Diagnostic interpretation" / verbatim "mastery" (parent Results); "Durably Mastered" →
+"Confidently mastered", "Observed Evidence"/"Educational Interpretation"/"Recommended Next Action" → "What
+happened"/"What this means"/"What to do" (`ReadinessEvidenceTimeline`); dense audit-toned readiness summary
+line simplified to "X skill(s) going well · Y to work on"; "Recommendation Centre" → "Recommendations"
+(plainer heading, less admin-panel-sounding). No competency IDs, evidence-tier codes, question-type IDs, or
+database terminology found rendered as learner/parent-facing text on any touched surface (confirmed by
+source-text tests in `mockReportAnalysisRendering.test.ts`).
+
+**6. Zero-evidence behaviour**: Progress's zero-evidence banner now correctly gated on `hasAnyEvidence`
+(learner-specific) instead of `hasAnyContent` (platform-content, almost always true) — a real defect fix,
+documented in a header comment in `app/learning-intelligence/page.tsx`. `EvidenceProfile`'s new zero-state
+sentence: "Angel hasn't recorded any real practice yet, so this picture is still empty." Parent Dashboard's
+existing zero/low-evidence honesty (e.g. "We're still building a picture of...") was already real and is
+preserved, now on Angel-token styling.
+
+**7. Some-evidence behaviour**: `EvidenceProfile`'s real-evidence sentence ("Based on N real practice
+attempt(s) across M skill(s) so far") is driven entirely by real competency/attempt counts, never a
+fabricated percentage or chart. `DiagnosticOverview`'s two groups render only real, non-empty
+`strengths`/`masteredSkills`/`emergingSkills`/`developmentAreas`/`lowConfidenceAreas` arrays — an empty
+group renders nothing, never a manufactured placeholder.
+
+**8. Multi-learner verification (structural, no live login)**: every touched fetch call traced by source —
+all route through the existing `fetchLearnerIntelligenceProfile()` / `ensureProfile()` /
+`getSelectedPathwayId()` mechanisms, which resolve the active learner via `useLearners()` and the
+server-validated `x-angel-learner-id` header (`public.current_learner_id()`), unchanged. No new query path,
+no new table read, no new client-supplied learner-id parameter introduced anywhere in this increment.
+Private Learner Space architecture, Learner PIN, Parent PIN: untouched (confirmed by `git diff --stat`
+showing zero changes to `lib/learnerContext.ts`, `LearnerPinModal.tsx`, or migrations 260–263).
+
+**9. Real defects found and fixed** (all within Parent Dashboard/Progress's own authorized scope, a data-
+accuracy class of defect, not learner-isolation/cross-contamination — the explicit STOP condition for
+isolation defects was not triggered):
+   - `hasAnyContent`/`hasAnyEvidence` mix-up on Progress's zero-evidence gate (Section 6).
+   - `mockAttemptCount` was computed from `getMockResults()` (`lib/mockProgress.ts`), a legacy
+     `localStorage` store the real CSSE Mock system (`app/learning-intelligence/mock-exam/**`, writing to
+     `ali_mock_attempt`/`ali_mock_attempt_report`) never writes to — structurally always wrong for CSSE
+     learners. Fixed once, centrally, as a new `fetchRealCsseMockAttemptCount()` in
+     `lib/learningEngine/mockReadiness.ts` (reuses the existing, already-tested `getActiveMockForm()` /
+     `getSubmittedMockAttempts()` — no new RPC, no new table, no scoring/eligibility change), and wired
+     into all three real consumers: `computeCsseMockReadiness()` (used by the already-closed Increment 2
+     Mock Centre hub), `CssePathwayParentContent.tsx`'s "Are they ready for a mock?" card, and the
+     standalone Mock Readiness page. The former "most recently on {date}" sub-fact on the Mock Readiness
+     page depended on the same wrong-source data and has been dropped rather than reconstructed from a
+     different field, since the real count now stands on its own.
+   - `MockHistorySection` on the Parent Dashboard shell unconditionally claimed "no mocks attempted" for
+     CSSE families (same root cause) — now shown only for the non-CSSE/legacy pathway, where the legacy
+     `getMockResults()` data source is genuinely correct.
+   - `RecentActivity`'s `plainLanguage` prop had a raw-QT-code-showing default branch that 0 of 4 real
+     call sites ever relied on — removed as dead code and a standing leak-risk; the component now always
+     shows plain language (signature change required updating all 4 call sites).
+
+**10. Mock/Writing governance preserved**: Mock's sealed-content boundary untouched — no Practice/Mock
+content-sharing change, no scoring/marking-contract change (`mock_release_report`, `mock_apply_manual_mark`,
+`mock_analyse_attempt` not referenced by any Increment 3 diff). Writing's five-dimension evaluation,
+`ASSESSMENT COMPLETE`/`REVIEW REQUIRED` language, and `review_required` honesty are unchanged and now also
+correctly surfaced to parents (Section 3) — `review_required` is shown honestly on the new parent summary,
+never silently upgraded, matching the child report's own established rule.
+
+**11. Responsive verification**: no authenticated session created (standing rule). Static-HTML
+reproduction of Progress, a Mock Results page and the Parent Dashboard, tested via injected iframes at all
+nine required widths (390/430/768/900/1024/1280/1366/1440/1920) — zero horizontal overflow at any width;
+the Parent Dashboard's own card stack correctly remains single-column and fully legible at 390/430.
+
+**12. Files changed**: 31 files across two commits — `app/learning-intelligence/page.tsx`,
+`app/learning-intelligence/{timeline,recommendations}/page.tsx`, `app/learning-intelligence/mock-report/
+[attemptId]/page.tsx`, `app/learning-intelligence/parent/{page,admissions-readiness/page,journey/page,
+mock-readiness/page,mock-report/[attemptId]/page,readiness-timeline/page,revision-planner/page,
+weekly-report/page}.tsx`, 11 `components/learningEngine/**` and `components/learningEngine/parent/**`
+files, 6 `components/parent/**` files, `lib/learningEngine/mockReadiness.ts`, `lib/learningEngine/
+practiceContent.ts` (the small closure copy correction below), plus 2 test files updated to match the new
+markup/tightened fallback (`tests/lib/mockAttempt/mockReportAnalysisRendering.test.ts`, `tests/lib/
+mockAttempt/mockParentReportAnalysisCopyCorrection.test.ts`).
+
+**13. Tests/build**: full clean-checkout gate in an isolated worktree at the final commit — typecheck 0
+errors; tests 4,741/4,766 pass (25 pre-existing failures, all in `tests/supabase/*` migration/passage
+byte-identical comparisons and Question Factory fixtures unrelated to this increment — a pre-existing
+CRLF-checkout artifact on this Windows environment, confirmed by reproducing and fixing the identical class
+of issue in this increment's own 2 test files; zero failures in any Increment 3 file); migration-sql-guard
+PASS 259 files (unchanged, confirming no migration was introduced); copy-guard 51/51 baseline violations
+(0 new — 2 new em-dash-as-sentence-punctuation violations were caught and fixed before the final gate run,
+see commit `e49e4ce`); eslint 113 problems / 83 errors (baseline, 0 new; 30 warnings, 1 fewer than baseline
+following the `plainLanguage` dead-code removal); genuine `next build` PASS, all Progress/Results/Parent
+Dashboard routes compiled and prerendered cleanly.
+
+**14. Commits**: `bc37193` (Increment 3 implementation) + `e49e4ce` (gate fixes: 2 copy-guard corrections,
+5 test assertions updated to match the new markup).
+
+**15. Production deployment verification**: pushed to `origin/main`. Vercel auto-deployed
+(`angel-11plus-k5htw73bi-abs365s-projects.vercel.app`, Ready), confirmed aliased to
+`https://www.angel11plus.com`. Fetched the live deployed JS chunks for `/learning-intelligence` and
+`/learning-intelligence/parent` directly and confirmed byte-for-byte: the new "Angel recommends. You and
+your family choose what to act on." sentence and the restyled Parent Dashboard markup are genuinely
+present in production.
+
+**16. Requiring Founder visual verification**: the entire restyled Progress hub, both Mock Results pages,
+and the full Parent Dashboard tree (shell + 6 subpages) — none of this has been visually inspected in a
+live browser this pass (standing no-authenticated-session rule); the responsive verification in Section 11
+is structural (static-HTML + iframe), not a live-session visual check.
+
+**17. Genuine defects/decisions deliberately left outside this increment's scope**:
+   - Legacy `/progress` and `LegacyPathwayParentContent.tsx` (the non-CSSE pathway) were deliberately not
+     redesigned or restyled — CSSE-primary scope discipline, consistent with the whole engagement's
+     established precedent. Recorded as deferred technical debt, not a defect.
+   - Today's own "Your Progress" mini-widget still reads from the legacy engine even for CSSE learners
+     (confirmed during the Section 1 audit) — a real incoherence, but out of Today's frozen scope; not
+     touched.
+   - The already-known, separately-tracked LEARNER DATA RLS HARDENING item (`ali_mock_attempt`/
+     `ali_mock_attempt_report` RLS is account-scoped, not active-learner-scoped) was re-confirmed present
+     during the Section 1 audit — not touched, per the instruction's own explicit "do not silently turn
+     Increment 3 into the ~30-table RLS rewrite" boundary.
+   - Small closure copy correction (explicitly authorized as part of closure): the CSSE Practise hub's
+     Reading Comprehension description changed from "Answer real comprehension questions and see which
+     competencies they evidence." to "Answer real comprehension questions and build your reading skills."
+     in `lib/learningEngine/practiceContent.ts`. Practise itself was not otherwise reopened or redesigned.
+
+**Not declaring Increment 3 GO.** The Founder makes the final visual acceptance decision from the real
+production Progress hub, Mock Results pages, and Parent Dashboard, per the governing instruction's own
+explicit stop condition. This concludes Increment 3 — no further increment begins without new Founder
+instruction.

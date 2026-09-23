@@ -1146,3 +1146,43 @@ still not declared:**
 - Production evidence: fetched the live `/learning-intelligence/practice` JS chunk directly — new copy
   genuinely present, both old internal-language strings genuinely absent.
 - Founder's required next step: final production visual acceptance.
+
+**2026-09-23 (same day) — Increment 3: Progress, Results, Parent Dashboard. Commits `bc37193` +
+`e49e4ce`, pushed, deployed, confirmed live. Founder accepted the Practise Hub Final Human-Design
+Refinement above. GO not declared — Founder performs final production visual acceptance:**
+
+- Mandatory real-data audit performed first: Progress's real destination (`/learning-intelligence`) is
+  fully Supabase-backed via Learning Engine V1; legacy `/progress` runs on an entirely separate
+  `localStorage` engine (deliberately not touched — CSSE-primary scope discipline). Confirmed
+  `hasAnyContent` (platform-content fact) was being used where `hasAnyEvidence` (learner-specific fact)
+  was needed.
+- Progress, both Mock Results pages (child + parent), and the full Parent Dashboard tree (shell + 6
+  subpages) restyled to Angel Brand Foundation tokens; `InfoCard` and gray-* Tailwind removed throughout.
+  Internal terminology removed ("Assessment Coverage", "Diagnostic interpretation", verbatim "mastery",
+  dense audit-toned summary lines). Rainbow per-stage icon tiles removed from the Parent Journey page.
+- **3 real defects found and fixed** (data-accuracy class, not learner-isolation — the isolation STOP
+  condition was not triggered): (1) Progress's zero-evidence banner gated on the wrong flag; (2)
+  `mockAttemptCount` read from a legacy `localStorage` store the real CSSE Mock system never writes to,
+  making it structurally always wrong for CSSE learners — fixed centrally as
+  `fetchRealCsseMockAttemptCount()` in `lib/learningEngine/mockReadiness.ts`, correcting all 3 real
+  consumers including the already-closed Increment 2 Mock Centre hub; (3) `MockHistorySection` falsely
+  claimed "no mocks attempted" for CSSE families on the Parent Dashboard — now legacy-pathway-only.
+- Real content gap closed: parent Mock report never showed Writing assessment results at all (child
+  report did) — added, reusing the same real data/component pattern.
+- New, genuinely absent-before section added: "What's going well?" on the Parent Dashboard's first
+  screen, built from real diagnostic data.
+- Small authorized closure copy correction: CSSE Practise hub's Reading Comprehension description no
+  longer mentions "competencies" (`lib/learningEngine/practiceContent.ts`).
+- Non-regression confirmed: Today, Learn, Practise, Mock, Private Learner Space, PIN/auth architecture,
+  migrations 260–263 all untouched. 5 shared `components/learningEngine/**` components (also rendered on
+  the frozen Practice results screen) kept byte-identical export signatures — internal rendering only.
+- Clean-checkout gate (isolated worktree, final commit `e49e4ce`): typecheck 0 errors; tests 4,741/4,766
+  (25 pre-existing failures, all `tests/supabase/*` + Question Factory, a pre-existing Windows-checkout
+  CRLF artifact unrelated to this increment — 0 failures in any Increment 3 file); migration-sql-guard
+  PASS 259 files (unchanged, no migration introduced); copy-guard 51/51 baseline (0 new — 2 new em-dash
+  violations were caught and fixed pre-gate); eslint 113 problems/83 errors (baseline, 0 new; warnings
+  improved 31→30); genuine `next build` PASS.
+- Production evidence: fetched the live `/learning-intelligence` and `/learning-intelligence/parent` JS
+  chunks directly — new copy and restyled markup genuinely present.
+- Founder's required next step: final visual acceptance decision from the real production Progress hub,
+  Mock Results pages, and Parent Dashboard. No further increment begins without new Founder instruction.
