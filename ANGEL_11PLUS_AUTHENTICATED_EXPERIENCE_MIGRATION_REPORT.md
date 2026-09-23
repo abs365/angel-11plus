@@ -335,3 +335,105 @@ deployed; both routes return HTTP 200.
 deployment passing is not sufficient grounds for that verdict — the Founder will perform final
 production visual acceptance from real screenshots. Stopping here: Practise, Mock, Progress, Results,
 Parent Dashboard and the RLS-hardening item were not started.
+
+---
+
+## Increment 1C — Founder final visual acceptance corrections (2026-09-23, same day)
+
+Founder reviewed real production Today and Learn screens after commit `469f97d` and confirmed the
+visual direction from Increment 1B is materially improved and must be preserved. This is a bounded
+finishing pass fixing specific defects/weaknesses, not a further redesign.
+
+**1. Root cause of the Today clipping defect**: no horizontal overflow was reproducible at any tested
+width (verified 390px–1920px via a static, unauthenticated reproduction built from the real
+`app/globals.css` Angel tokens and the exact className strings in the real JSX, with deliberately
+long worst-case text). The genuine cause was structural, not an overflow bug: the grid's `lg:`
+(1024px) breakpoint meant any browser window narrower than 1024px — a very common non-maximised
+"desktop" width — fell back to single-column, stacking Progress/Mock Exams below a now-tall primary
+recommendation panel, pushing it far enough down the page that a first screenful, or a screenshot,
+would genuinely not show it. That reads as "clipped beyond the viewport" even though nothing was
+technically clipped.
+
+**2. Exact responsive correction**: Today's grid split now activates at `md:` (768px) instead of
+`lg:` (1024px) — `app/dashboard/page.tsx`'s three grid-related class strings changed from
+`lg:grid lg:grid-cols-3 lg:gap-10 lg:items-start` / `lg:col-span-2` / `lg:mt-0 lg:col-span-1` to
+`md:grid md:grid-cols-3 md:gap-8 lg:gap-10 md:items-start` / `md:col-span-2` / `md:mt-0
+md:col-span-1`. Progress/Mock now sits genuinely beside the plan across nearly all realistic desktop/
+laptop widths; single-column stacking now only happens below 768px (true tablet-portrait/mobile),
+matching the governing instruction's own explicit allowance ("At narrower widths: allow the secondary
+progress area to move below the main plan when necessary"). Added defensive `min-w-0` to both grid
+columns and to the recommended-activity headline's flex row (standard CSS Grid/Flexbox hardening
+against long real-world text overflowing a flex item). Trimmed a small amount of vertical spacing
+above "Today's Plan" (`mt-10 md:mt-14` → `mt-8 md:mt-10`) — proportionate, not a reversal of
+Increment 1B's larger type/spacing direction.
+
+**3. Learn content-width correction**: outer container widened from `max-w-3xl` (768px) to
+`max-w-4xl lg:max-w-6xl`, matching Today's own container convention exactly — closing the "almost the
+entire canvas is empty" gap the Founder observed at typical zoom levels. Lesson text itself (title +
+blurb + status) is capped at `max-w-2xl` inside the now-wider sky panel, and each subject's one-line
+intro is capped at `max-w-xl`, so line lengths stay comfortable even though the panel itself now uses
+materially more of the available canvas.
+
+**4. Lesson Start/Continue affordance correction**: the previous single small `ArrowRight` icon (the
+only visual cue a row was clickable) is replaced with an explicit rounded pill — `bg-blue-600
+text-white` — reading "Start lesson" or "Continue" plus a small arrow, genuine-state only. State is
+derived directly from the same real `educationalState` already fetched via
+`getEducationalIntelligence()`: "Continue" only once the fetch has resolved (`loaded`) and the state is
+neither `undefined` nor `"exploring"` — the exact same not-started condition `hubProgressionLabel`
+itself already uses. Before the fetch resolves, the pill defaults to "Start lesson" — a safe,
+non-claiming default — never "Continue" ahead of real evidence. The entire row remains one `<Link>`
+(whole-row-clickable); the pill is a styled `<span>`, not a nested interactive element, so no invalid
+nested-link/button markup was introduced.
+
+**5. Secondary navigation separated from lessons**: "Practise instead" and "See your Learning Report"
+no longer use `LessonRow`'s treatment (icon roundel, title/body pair, arrow) inside any sky panel.
+They now render as two small plain-text links (`text-sm font-medium text-[var(--angel-blue)]`) under a
+"More ways to work" label, positioned after and visually lighter than the real lesson catalogue —
+matching the instruction's own target: Learn = lessons, Practise = questions, Learning Report =
+progress, visually distinct at a glance.
+
+**6. All five genuine lessons confirmed unchanged**: 3 Mathematics (`MR-01`/`MR-04`/`MR-03`) + 2
+English Reading (`RC-01`/`RC-02`), same routes, same `fullLessonRegistry.ts` source, same
+`getEducationalIntelligence()` calls — confirmed by diff, no lesson entry added, removed or reworded
+beyond the two subject-level intro sentences (Part 4 below).
+
+**Subject copy** (governing instruction Part 4): Mathematics intro changed from "Core skills and
+methods for CSSE Mathematics." to "Build the mathematical skills and methods you need for
+selective-school preparation." English: Reading intro changed from "Working with real passages, not
+isolated trick questions." to "Find evidence, understand meaning, and make inferences from what you
+read." Both drop internal/pathway jargon in favour of the instruction's own given language.
+
+**7. Desktop/tablet/mobile verification actually performed**: no authenticated production session was
+created or used, per the project's standing rule — the same disclosed limitation every prior increment
+touching an authenticated surface in this engagement has carried. What was genuinely done instead: a
+standalone static HTML reproduction, built from the real `--angel-*` custom properties in
+`app/globals.css` and the exact className strings copied verbatim from the real, currently-committed
+JSX in both files, served locally and inspected via injected `<iframe>` elements at specific pixel
+widths with `getComputedStyle` used to confirm the grid genuinely activates/deactivates at the intended
+breakpoint (not just that no error occurred). Tested widths: 390px and 430px (mobile), 768px, 900px and
+1024px (tablet / common non-maximised laptop), 1280px, 1366px, 1440px and 1920px (desktop), at heights
+down to 700px. Result: zero horizontal overflow at every width tested, including with deliberately
+long worst-case text in the primary recommendation headline, the "why this today" paragraph and lesson
+titles/blurbs; the grid correctly falls back to single-column only below 768px. This is a structural,
+class-level verification against the real rendering rules (Tailwind v4's own grid/flex behaviour), not
+a claim of having seen the real authenticated production page — that step remains the Founder's, per
+the governing instruction's own explicit requirement to state this honestly rather than claim visual
+verification that did not occur.
+
+**8. Commit and deployment status**: commit `d56d3b3` — `feat(experience): Increment 1C -- Today/Learn
+final visual acceptance corrections`. Clean-checkout gate in an isolated worktree at this exact commit:
+typecheck 0 errors, tests 4,783/4,784 pass (1 pre-existing skip, unchanged), migration-sql-guard PASS
+259 files, copy-guard 51 pre-existing violations (unchanged, no new violation), eslint 114 problems
+(83 errors/31 warnings, unchanged baseline), genuine `next build` PASS. Pushed to `origin/main`,
+Vercel auto-deployed (`angel-11plus-h9ejm1qu1-abs365s-projects.vercel.app`, Ready), confirmed aliased
+to `https://www.angel11plus.com`. Fetched the live, deployed JS chunks for both routes directly
+(`0mcdwneml2g1s.js` for Learn, `0ha47zd5yfs2r.js` for Today) and confirmed byte-for-byte: the new
+subject copy, the "Start lesson"/"Continue" pill text, "More ways to work", and the `md:grid
+md:grid-cols-3` breakpoint class are all genuinely present in production; the corresponding old strings
+and the old `lg:grid lg:grid-cols-3` class are confirmed absent.
+
+**Not declaring visual GO.** The Founder performs final visual acceptance from real production
+screens, per the governing instruction's own explicit stop condition. Stopping here: Practise, Mock,
+Progress, Results, Parent Dashboard, RLS hardening and educational content expansion were not started;
+migrations 260–263, Parent PIN, Learner PIN, Private Learner Space, authentication, learner isolation,
+Educational Intelligence and recommendation logic were not touched.

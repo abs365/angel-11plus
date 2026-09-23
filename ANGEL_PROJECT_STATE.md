@@ -995,3 +995,36 @@ Founder visual GO not declared — production screenshots still required:**
 - Clean-checkout gate and production bundle verification both clean, matching established baseline.
 - Not verifiable this session (disclosed, same as Increment 1): real tablet/mobile screenshots against
   a live authenticated session — Founder's required next step for final visual acceptance.
+
+**2026-09-23 (same day) — Increment 1C: Today + Learn Final Visual Acceptance Corrections. Commit
+`d56d3b3`, pushed, deployed, confirmed live. Bounded finishing pass on top of Increment 1B (visual
+direction preserved, not redesigned). Founder visual GO not declared — real screens still required:**
+
+- Today's "Progress/Mock clipped beyond viewport" root cause: not a horizontal-overflow bug (none
+  reproducible 390-1920px with worst-case text) but the `lg:` (1024px) grid breakpoint — any window
+  narrower than 1024px, a very common non-maximised desktop width, single-column-stacked Progress/Mock
+  below a tall primary panel, far enough down to require scrolling past it.
+- Fix: grid split moved to `md:` (768px); `md:col-span-2`/`md:col-span-1` + defensive `min-w-0` on both
+  columns and the recommendation headline; small proportionate spacing trim above "Today's Plan".
+  Single-column fallback now only below 768px (true mobile/tablet-portrait), matching the instruction's
+  own explicit allowance.
+- Learn: container widened `max-w-3xl` → `max-w-4xl lg:max-w-6xl` (matches Today's own convention);
+  lesson text capped `max-w-2xl` for readability inside the wider panel.
+- Lesson rows: weak `ArrowRight`-only affordance replaced with an explicit "Start lesson"/"Continue"
+  pill, genuine-state only (same not-started condition `hubProgressionLabel` already uses).
+- "Practise instead"/"See your Learning Report" moved out of the sky panel into a small plain-text
+  "More ways to work" strip, no longer sharing lesson-row visual weight.
+- Subject copy reworded to plain, child-friendly language with no internal/pathway terminology.
+- Confirmed unchanged: all 5 real lessons; Private Learner Space, PIN architecture, migrations 260-263,
+  Educational Intelligence and recommendation logic untouched (diff shows only the two page files).
+- Clean-checkout gate: typecheck 0, tests 4,783/4,784 (unchanged), migration-sql-guard PASS,
+  copy-guard/eslint unchanged from baseline, genuine `next build` PASS.
+- Responsive verification: no authenticated session used (standing rule). Genuine static-HTML
+  reproduction (real Angel tokens + real className strings) tested via injected iframes at 390/430
+  (mobile), 768/900/1024 (tablet/common laptop), 1280/1366/1440/1920 (desktop), heights down to 700px —
+  zero overflow at any width, grid confirmed genuinely active/inactive via `getComputedStyle` at each
+  breakpoint. This verifies the real CSS rules, not a live authenticated screenshot.
+- Production evidence: fetched the live deployed JS chunks for both routes directly and confirmed the
+  new copy, the Start/Continue pill text, "More ways to work", and the `md:grid` breakpoint class are
+  genuinely present; the old copy and the old `lg:grid` class are genuinely absent.
+- Founder's required next step: final visual acceptance from real production screens.
