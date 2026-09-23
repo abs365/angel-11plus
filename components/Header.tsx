@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Bell, User, LogIn, Lock } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -12,6 +12,8 @@ import NotificationArea from "@/components/ui/NotificationArea";
 import Breadcrumbs, { type Breadcrumb } from "@/components/ui/Breadcrumbs";
 import { hasRegisteredParentAccount } from "@/lib/registeredAccess";
 import { useHouseholdMode } from "@/lib/useHouseholdMode";
+import { useLearners } from "@/lib/useLearners";
+import { getHouseholdPinStatus } from "@/lib/householdPin";
 import ParentPinModal from "@/components/parent/ParentPinModal";
 
 /**
@@ -38,8 +40,38 @@ export default function Header({ breadcrumbs }: HeaderProps) {
   // account (controlled-beta policy, lib/registeredAccess.ts).
   const user = hasRegisteredParentAccount(sessionUser) ? sessionUser : null;
   const router = useRouter();
-  const { isLearnerMode, exitToParentMode } = useHouseholdMode();
+  const { isLearnerMode, enterLearnerSpace, exitToParentMode } = useHouseholdMode();
+  const { active, ready: learnersReady } = useLearners();
   const [showPinModal, setShowPinModal] = useState(false);
+  // PRIVATE LEARNER SPACE -- the account menu is the one surface visible on
+  // every page (Today included), so this is where "Enter learner space" must
+  // be reachable without first finding the separate Parent Dashboard page.
+  // Same PIN-first-time gate as LearnerIdentityBanner's own "Enter learner
+  // space" action (lib/householdPin.ts); deliberately self-contained here
+  // rather than refactored into a shared hook, so this fix touches nothing
+  // already working.
+  const [hasPin, setHasPin] = useState<boolean | null>(null);
+  const [enterPinModal, setEnterPinModal] = useState(false);
+
+  useEffect(() => {
+    if (isLearnerMode || !user) return;
+    let cancelled = false;
+    getHouseholdPinStatus().then((status) => {
+      if (!cancelled) setHasPin(status?.hasPin ?? false);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [isLearnerMode, user]);
+
+  function handleEnterLearnerSpace() {
+    if (!active) return;
+    if (hasPin === false) {
+      setEnterPinModal(true);
+      return;
+    }
+    enterLearnerSpace(active.id);
+  }
 
   async function handleSignOut() {
     await signOut();
@@ -100,6 +132,16 @@ export default function Header({ breadcrumbs }: HeaderProps) {
                 Parent Account
               </p>
               <p className="text-xs text-gray-500 dark:text-gray-400 truncate px-2 mb-2">{user.email}</p>
+              {!isLearnerMode && learnersReady && active && (
+                <button
+                  onClick={handleEnterLearnerSpace}
+                  disabled={hasPin === null}
+                  className="flex items-center gap-1.5 w-full text-left text-sm font-semibold text-sky-700 dark:text-sky-400 hover:bg-sky-50 dark:hover:bg-sky-950 rounded-lg px-2 py-1.5 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <LogIn size={13} aria-hidden="true" />
+                  Enter {active.name ?? "learner"}&rsquo;s space
+                </button>
+              )}
               {isLearnerMode ? (
                 <button
                   onClick={() => setShowPinModal(true)}
@@ -152,6 +194,18 @@ export default function Header({ breadcrumbs }: HeaderProps) {
           onSuccess={() => {
             setShowPinModal(false);
             exitToParentMode();
+          }}
+        />
+      )}
+
+      {enterPinModal && (
+        <ParentPinModal
+          mode="set"
+          onCancel={() => setEnterPinModal(false)}
+          onSuccess={() => {
+            setEnterPinModal(false);
+            setHasPin(true);
+            if (active) enterLearnerSpace(active.id);
           }}
         />
       )}

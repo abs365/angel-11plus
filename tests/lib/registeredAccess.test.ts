@@ -157,3 +157,12 @@ test("RegisteredAccountGate blocks parent-only routes in Learner Mode BEFORE the
   const allowIndex = gate.indexOf('if (decision === "allow") return');
   assert.ok(parentOnlyIndex > -1 && allowIndex > -1 && parentOnlyIndex < allowIndex);
 });
+
+test("Enter learner space is reachable from Header's account menu -- visible on every page, not only the separate Parent Dashboard page", () => {
+  const header = read("components/Header.tsx");
+  assert.match(header, /Enter \{active\.name .*\}&rsquo;s space/);
+  assert.match(header, /!isLearnerMode && learnersReady && active/);
+  // It must be gated behind the same PIN-first-time flow as the Parent Dashboard's own entry action, not a bypass.
+  assert.match(header, /if \(hasPin === false\) \{\s*\n\s*setEnterPinModal\(true\);/);
+  assert.match(header, /mode="set"[\s\S]*?enterLearnerSpace\(active\.id\)/);
+});
