@@ -469,7 +469,7 @@ export default function AdaptiveGlMockPage() {
               <div className="text-xs text-amber-700 dark:text-amber-300 space-y-1 leading-relaxed">
                 <p className="font-semibold">Before you start</p>
                 <p>Section 1 selects questions matched to your level. Sections 2–4 are standard timed practice. This is original practice content and is not affiliated with GL Assessment.</p>
-                <p>Section 1&apos;s question bank is currently a small sample set while we build out the full one, so you may see the same questions again across sessions.</p>
+                <p>You may see the same Section 1 questions again across sessions as you keep practising.</p>
               </div>
             </div>
           </div>

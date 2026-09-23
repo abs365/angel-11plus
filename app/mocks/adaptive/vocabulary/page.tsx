@@ -293,7 +293,7 @@ export default function AdaptiveVocabularyMockPage() {
               <div className="text-xs text-amber-700 dark:text-amber-300 space-y-1 leading-relaxed">
                 <p className="font-semibold">Before you start</p>
                 <p>This is separate from the Vocabulary flashcards: a quick multiple-choice practice session instead.</p>
-                <p>Our word bank is currently a small sample set while we build out the full one, so you may see the same word again across sessions.</p>
+                <p>You may see the same word again across sessions as you keep practising.</p>
               </div>
             </div>
           </div>

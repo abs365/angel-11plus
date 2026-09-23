@@ -1,34 +1,51 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Puzzle, Shapes, Compass, Hash, Play, Clock } from "lucide-react";
+import Link from "next/link";
+import { Puzzle, Shapes, Compass, Hash, Play, Clock, Calculator, BookOpen, ChevronRight } from "lucide-react";
 import PageLayout from "@/components/PageLayout";
-import SubjectCard from "@/components/SubjectCard";
 import { ButtonLink } from "@/components/ui/Button";
-import { getProgress } from "@/lib/progress";
+import { CompetencyIndicator } from "@/components/ui/Progress";
+import { getProgress, getSelectedPathwayId } from "@/lib/progress";
 import { computeAnalytics } from "@/lib/analytics";
 import { computeAdaptiveState } from "@/lib/adaptiveEngine";
 import type { AnalyticsReport } from "@/types/analytics";
 import type { DailyMission } from "@/types/adaptive";
 import type { SkillType } from "@/types";
+import type { LucideIcon } from "lucide-react";
 
-// Angel V2.0 Sprint 5 (Practice Experience & Competency Journey) — this is
-// the existing "Practice" nav entry (components/Navigation.tsx already
-// labels /reasoning "Practice"); it already served as the entry point for
-// the four reasoning subjects (AXT-002 §2's "collapse by mental model"
-// pattern, established for these four routes before Learn's own Sprint 4
-// collapse). This sprint enriches that existing hub in place — Quick
-// Resume, real Competency Focus per subject, and real progress — rather
-// than creating a second, competing entry point. The four underlying
-// routes are completely unchanged.
+/**
+ * Increment 2 Final Visual Closure (Practise Hub Only) — Founder real
+ * production evidence: this page (the actual destination the "Practise"
+ * nav item reaches for any non-CSSE learner, and the destination any
+ * learner reaches when their persisted pathway hasn't resolved to "csse"
+ * at click time, since getSelectedPathwayId()/getProgress() are per-active-
+ * learner localStorage reads — Private Learner Space, migration 260 — with
+ * no server-side fallback) still carried the pre-Angel-Foundation bright
+ * multi-colour identity and internal development-status language.
+ *
+ * PATHWAY-AWARE TRACE (before any visual change): components/Navigation.tsx
+ * already branches "Practise" correctly (isCsse ? CSSE_PRACTISE_HREF :
+ * "/reasoning") — the routing mechanism is intentional (Answer A for the
+ * nav layer). This PAGE itself, however, was Answer C: a flat, single,
+ * all-pathways catalogue with zero pathway-conditional content, so ANY
+ * learner who reaches it — including a genuinely CSSE-pathway learner
+ * whose local pathway value hasn't (yet, or ever, on this browser/device)
+ * resolved to "csse" — saw identical, un-personalised, GL/CEM/ISEB-branded
+ * content with no CSSE relevance at all. This pass makes the page itself
+ * genuinely pathway-aware (reads the same getSelectedPathwayId() the nav
+ * already trusts), closing the gap defensively at this one page without
+ * touching Navigation.tsx or the underlying per-learner storage mechanism
+ * (both out of this bounded correction's scope). No GL/CEM/ISEB capability
+ * is removed — every existing route/card below is still reachable for
+ * every pathway, only foregrounded differently.
+ */
 
 const reasoningSubjects: {
   href: string;
   title: string;
   description: string;
-  icon: typeof Puzzle;
-  color: "violet" | "cyan" | "teal" | "rose";
-  badge: string;
+  icon: LucideIcon;
   skillType: SkillType;
 }[] = [
   {
@@ -36,8 +53,6 @@ const reasoningSubjects: {
     title: "Verbal Reasoning",
     description: "Word analogies, letter codes, hidden words & sequences.",
     icon: Puzzle,
-    color: "violet",
-    badge: "GL · CEM · ISEB",
     skillType: "verbal-reasoning",
   },
   {
@@ -45,8 +60,6 @@ const reasoningSubjects: {
     title: "Non-Verbal Reasoning",
     description: "Pattern grids, rotation, reflection & symbol sequences.",
     icon: Shapes,
-    color: "cyan",
-    badge: "GL · ISEB",
     skillType: "non-verbal-reasoning",
   },
   {
@@ -54,8 +67,6 @@ const reasoningSubjects: {
     title: "Spatial Reasoning",
     description: "Paper folding, 3D shapes, symmetry & compass directions.",
     icon: Compass,
-    color: "teal",
-    badge: "Independent",
     skillType: "spatial-reasoning",
   },
   {
@@ -63,9 +74,27 @@ const reasoningSubjects: {
     title: "Numerical Reasoning",
     description: "Number patterns, ratio, averages & data interpretation.",
     icon: Hash,
-    color: "rose",
-    badge: "CEM · GL · ISEB",
     skillType: "numerical-reasoning",
+  },
+];
+
+/**
+ * CSSE's own real, evidence-recording practice areas — the exact same
+ * routes app/learning-intelligence/practice/page.tsx already links to.
+ * Reused directly, never duplicated or reimplemented.
+ */
+const csseSubjectCards: { href: string; title: string; description: string; icon: LucideIcon }[] = [
+  {
+    href: "/learning-intelligence/practice/mathematics",
+    title: "Mathematics",
+    description: "Build your skills and methods for the real CSSE Mathematics paper.",
+    icon: Calculator,
+  },
+  {
+    href: "/learning-intelligence/practice/reading-comprehension",
+    title: "Reading Comprehension",
+    description: "Work with real passages, one at a time, with every question that belongs to it.",
+    icon: BookOpen,
   },
 ];
 
@@ -79,70 +108,103 @@ const reasoningSubjects: {
  *
  * Gate 3 Closure Wave, Defect D (2026-09-02) — the Mathematics and Reading
  * Practice cards now link directly to their CSSE-scoped, evidence-recording
- * successors (/learning-intelligence/practice/mathematics and
- * .../reading-comprehension) instead of the retired /mocks/adaptive/{maths,
- * english} routes, which silently bypassed the Educational Intelligence
- * evidence pipeline for any non-GL learner (see those two routes' own
- * retirement doc comments). GL Verbal Reasoning and Vocabulary Practice are
- * unchanged — GL genuinely is GL-only content by design, and Vocabulary has
- * no CSSE-scoped successor to redirect to, so it was fixed in place instead
- * (see app/mocks/adaptive/vocabulary/page.tsx).
+ * successors instead of the retired /mocks/adaptive/{maths,english} routes.
+ * GL Verbal Reasoning and Vocabulary Practice are unchanged — GL genuinely
+ * is GL-only content by design, and Vocabulary has no CSSE-scoped successor
+ * to redirect to, so it stays reachable for every pathway including CSSE
+ * (never removed — see this file's own header note on not deleting
+ * capabilities a learner still genuinely needs).
  */
 const personalisedPracticeCards: {
   href: string;
   title: string;
   description: string;
   minutes: string;
-  bg: string;
-  border: string;
-  badgeBg: string;
-  badgeText: string;
 }[] = [
   {
     href: "/mocks/adaptive/gl",
     title: "GL Verbal Reasoning",
     description: "Verbal Reasoning questions matched to your practice level.",
     minutes: "35 min",
-    bg: "bg-lime-50 dark:bg-lime-950",
-    border: "border-lime-100 dark:border-lime-900",
-    badgeBg: "bg-lime-100 dark:bg-lime-900",
-    badgeText: "text-lime-700 dark:text-lime-300",
   },
   {
     href: "/learning-intelligence/practice/mathematics",
     title: "Mathematics Practice",
     description: "Maths questions matched to your practice level.",
     minutes: "12 min",
-    bg: "bg-blue-50 dark:bg-blue-950",
-    border: "border-blue-100 dark:border-blue-900",
-    badgeBg: "bg-blue-100 dark:bg-blue-900",
-    badgeText: "text-blue-700 dark:text-blue-300",
   },
   {
     href: "/learning-intelligence/practice/reading-comprehension",
     title: "Reading Practice",
     description: "One passage at a time, with every question that belongs to it.",
     minutes: "10-15 min",
-    bg: "bg-yellow-50 dark:bg-yellow-950",
-    border: "border-yellow-100 dark:border-yellow-900",
-    badgeBg: "bg-yellow-100 dark:bg-yellow-900",
-    badgeText: "text-yellow-700 dark:text-yellow-300",
   },
   {
     href: "/mocks/adaptive/vocabulary",
     title: "Vocabulary Practice",
     description: "One word at a time: synonyms, antonyms and usage in context.",
     minutes: "5-10 min",
-    bg: "bg-emerald-50 dark:bg-emerald-950",
-    border: "border-emerald-100 dark:border-emerald-900",
-    badgeBg: "bg-emerald-100 dark:bg-emerald-900",
-    badgeText: "text-emerald-700 dark:text-emerald-300",
   },
 ];
+
+function PersonalisedCard({ card }: { card: (typeof personalisedPracticeCards)[number] }) {
+  return (
+    <div className="bg-[var(--angel-paper)] border border-[var(--angel-border)] rounded-lg p-5">
+      <div className="flex items-start justify-between mb-2 gap-3">
+        <div className="min-w-0">
+          <p className="text-[10px] font-bold uppercase tracking-widest text-[var(--angel-blue)] mb-1">Personalised</p>
+          <h3 className="text-base font-bold text-[var(--angel-navy)]">{card.title}</h3>
+        </div>
+        <div className="flex items-center gap-1 text-xs text-[var(--angel-muted)] shrink-0">
+          <Clock size={13} />
+          {card.minutes}
+        </div>
+      </div>
+      <p className="text-sm text-[var(--angel-ink)] leading-relaxed mb-4 opacity-90">{card.description}</p>
+      <ButtonLink href={card.href} variant="outline" size="sm" leftIcon={<Play size={14} />}>
+        Start practice
+      </ButtonLink>
+    </div>
+  );
+}
+
+function ReasoningSubjectCard({
+  subject,
+  competency,
+  progressNote,
+}: {
+  subject: { href: string; title: string; description: string; icon: LucideIcon };
+  competency?: { label: string; percent: number };
+  progressNote?: string;
+}) {
+  const Icon = subject.icon;
+  return (
+    <Link
+      href={subject.href}
+      className="block group bg-[var(--angel-paper)] border border-[var(--angel-border)] rounded-lg p-6 hover:border-[var(--angel-blue)] transition-colors motion-reduce:transition-none"
+    >
+      <div className="w-12 h-12 rounded-lg bg-[var(--angel-sky)] flex items-center justify-center shrink-0 mb-4">
+        <Icon size={22} className="text-[var(--angel-blue)]" aria-hidden="true" />
+      </div>
+      <h3 className="text-[var(--angel-navy)] font-bold text-base leading-snug group-hover:underline">{subject.title}</h3>
+      <p className="text-[var(--angel-muted)] text-sm mt-1 leading-relaxed">{subject.description}</p>
+      {competency && (
+        <div className="mt-4">
+          <CompetencyIndicator competencyLabel={competency.label} percent={competency.percent} />
+          {progressNote && <p className="text-[var(--angel-muted)] text-xs mt-1.5">{progressNote}</p>}
+        </div>
+      )}
+      <div className="flex justify-end mt-4">
+        <ChevronRight size={16} aria-hidden="true" className="text-[var(--angel-muted)] group-hover:text-[var(--angel-blue)] transition-colors motion-reduce:transition-none" />
+      </div>
+    </Link>
+  );
+}
 
 export default function ReasoningHubPage() {
   const [report, setReport] = useState<AnalyticsReport | null>(null);
   const [mission, setMission] = useState<DailyMission | null>(null);
+  const [isCsse, setIsCsse] = useState<boolean | null>(null);
 
   useEffect(() => {
     const p = getProgress();
@@ -150,99 +212,111 @@ export default function ReasoningHubPage() {
     const adaptive = computeAdaptiveState(p, r);
     setReport(r);
     setMission(adaptive.dailyMission);
+    setIsCsse(getSelectedPathwayId() === "csse");
   }, []);
 
   // Quick Resume — reuses the same real Daily Mission output the Dashboard
-  // and Learning Hub already render, filtered to this hub's four subjects;
-  // not a second recommendation.
+  // and Learning Hub already render, filtered to this hub's four Reasoning
+  // subjects; not a second recommendation.
   const practiceMissionItem = mission?.items.find((item) =>
     reasoningSubjects.some((s) => s.href === item.href)
   );
 
   return (
-    <PageLayout breadcrumbs={[{ label: "Today", href: "/dashboard" }, { label: "Practice" }]}>
-      <div className="max-w-3xl mx-auto px-4 py-6 md:px-8 md:py-8">
-        {/* AN-107: the manual "← Home" back-link is replaced with the same
-            breadcrumbs prop Dashboard/Learning Hub already use — consistent
-            navigation pattern, and "Home" predated AN-101's "Today" nav
-            relabel. */}
-        <div className="mb-6">
-          <h1 className="text-gray-900 dark:text-gray-100 font-bold text-2xl mb-2">Practice</h1>
-          <p className="text-gray-500 dark:text-gray-400 text-sm leading-relaxed max-w-lg">
-            Reasoning skills are tested across nearly every UK selective school entrance exam. Each discipline below
-            strengthens a specific competency and adapts to your level as you practise. Consistent practice here
-            contributes directly to admission readiness.
-          </p>
-        </div>
+    <PageLayout breadcrumbs={[{ label: "Today", href: "/dashboard" }, { label: "Practise" }]}>
+      <div className="max-w-4xl lg:max-w-6xl mx-auto px-4 py-6 md:px-8 md:py-8">
+        <h1 className="text-[var(--angel-navy)] font-bold text-3xl md:text-4xl leading-tight">Practise</h1>
+        <p className="text-[var(--angel-muted)] text-sm md:text-base mt-2 max-w-xl">
+          Practise strengthens what you&apos;ve learned. Short, personalised sessions — questions adapt to you every
+          time.
+        </p>
 
-        {/* AN-108: hub-chrome strip (not subject-specific) moved from purple to the muted-slate educational accent. */}
         {practiceMissionItem && (
-          <div className="bg-slate-50 dark:bg-slate-950 border border-slate-100 dark:border-slate-900 rounded-2xl p-4 mb-6 flex items-center justify-between gap-3 flex-wrap">
-            <div className="min-w-0">
-              <p className="text-sm text-slate-800 dark:text-slate-200 min-w-0">
-                Continue where you left off: <span className="font-semibold">{practiceMissionItem.label}</span>
-              </p>
-            </div>
+          <div className="mt-6 bg-[var(--angel-sky)] rounded-lg p-4 flex items-center justify-between gap-3 flex-wrap">
+            <p className="text-sm text-[var(--angel-ink)] min-w-0">
+              Continue where you left off: <span className="font-semibold text-[var(--angel-navy)]">{practiceMissionItem.label}</span>
+            </p>
             <ButtonLink href={practiceMissionItem.href} variant="primary" size="sm" leftIcon={<Play size={13} aria-hidden="true" />}>
               Continue Practice
             </ButtonLink>
           </div>
         )}
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          {reasoningSubjects.map((subject) => {
-            const skill = report?.skills.find((s) => s.skill === subject.skillType);
-            const subjectRow = report?.subjects.find((s) => s.subject === subject.skillType);
-            return (
-              <SubjectCard
-                key={subject.href}
-                href={subject.href}
-                title={subject.title}
-                description={subject.description}
-                icon={subject.icon}
-                color={subject.color}
-                badge={subject.badge}
-                competency={skill ? { label: skill.label, percent: skill.estimatedAccuracy } : undefined}
-                progressNote={
-                  subjectRow && subjectRow.attempts > 0
-                    ? `${subjectRow.attempts} session${subjectRow.attempts === 1 ? "" : "s"} · ${subjectRow.avgScore}% average`
-                    : subjectRow
-                    ? "Not started yet"
-                    : undefined
-                }
-              />
-            );
-          })}
-        </div>
-
-        <div className="mt-8 space-y-3">
-          <div>
-            <h2 className="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">Personalised Practice</h2>
-            <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">Short, daily sessions. Questions adapt to you every time.</p>
-          </div>
-          {personalisedPracticeCards.map((card) => (
-            <div key={card.href} className={`rounded-2xl border ${card.bg} ${card.border} p-5`}>
-              <div className="flex items-start justify-between mb-3">
-                <div className="flex items-center gap-2.5">
-                  <span className={`text-xs font-bold px-2.5 py-1 rounded-lg ${card.badgeBg} ${card.badgeText}`}>
-                    Personalised
-                  </span>
-                  <h3 className="text-base font-bold text-gray-900 dark:text-gray-100">{card.title}</h3>
-                </div>
-                <div className="flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400">
-                  <Clock size={13} />
-                  {card.minutes}
-                </div>
-              </div>
-              <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed mb-1">{card.description}</p>
-              <p className="text-xs text-amber-700 dark:text-amber-400 leading-relaxed mb-4">
-                Currently a small sample set while we build out the full question bank.
-              </p>
-              <ButtonLink href={card.href} variant="outline" size="sm" leftIcon={<Play size={14} />}>
-                Start practice
-              </ButtonLink>
+        {/* WHAT SHOULD I PRACTISE — CSSE: the real, evidence-recording CSSE
+            subjects, foregrounded. Non-CSSE (or pathway not yet resolved):
+            the existing four personalised, adaptive cards, unchanged in
+            capability, only re-skinned. isCsse === null (not yet resolved
+            client-side) renders nothing extra here rather than guessing. */}
+        {isCsse === true && (
+          <div className="mt-10">
+            <h2 className="text-[var(--angel-navy)] font-bold text-2xl md:text-3xl leading-tight">What should I practise?</h2>
+            <p className="text-[var(--angel-muted)] text-sm md:text-base mt-1 max-w-xl">
+              Your CSSE preparation. Every session here updates your Skills Profile, Evidence Profile, Readiness and
+              Recommendations on your learning report.
+            </p>
+            <div className="mt-5 grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {csseSubjectCards.map((subject) => (
+                <ReasoningSubjectCard key={subject.href} subject={subject} />
+              ))}
             </div>
-          ))}
+          </div>
+        )}
+
+        {isCsse === false && (
+          <div className="mt-10">
+            <h2 className="text-[var(--angel-navy)] font-bold text-2xl md:text-3xl leading-tight">What should I practise?</h2>
+            <p className="text-[var(--angel-muted)] text-sm md:text-base mt-1 max-w-xl">Short, personalised sessions matched to your level.</p>
+            <div className="mt-5 grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {personalisedPracticeCards.map((card) => (
+                <PersonalisedCard key={card.href} card={card} />
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* WHAT ELSE CAN I CHOOSE — the four Reasoning subjects. Always
+            present for every pathway (never deleted); demoted to secondary
+            position and given an honest, pathway-appropriate "why" line
+            rather than a repeated GL/CEM/ISEB badge on every card. */}
+        <div className="mt-12">
+          <h2 className="text-[var(--angel-navy)] font-bold text-2xl md:text-3xl leading-tight">What else can I choose?</h2>
+          <p className="text-[var(--angel-muted)] text-sm md:text-base mt-1 max-w-xl">
+            {isCsse === true
+              ? "These four skills aren't part of the CSSE exam itself, but many other selective schools test them — useful extra practice if that applies to you."
+              : "Reasoning skills are tested across nearly every UK selective school entrance exam. Each one below strengthens a specific competency and adapts to your level as you practise."}
+          </p>
+          <div className="mt-5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {reasoningSubjects.map((subject) => {
+              const skill = report?.skills.find((s) => s.skill === subject.skillType);
+              const subjectRow = report?.subjects.find((s) => s.subject === subject.skillType);
+              return (
+                <ReasoningSubjectCard
+                  key={subject.href}
+                  subject={subject}
+                  competency={skill ? { label: skill.label, percent: skill.estimatedAccuracy } : undefined}
+                  progressNote={
+                    subjectRow && subjectRow.attempts > 0
+                      ? `${subjectRow.attempts} session${subjectRow.attempts === 1 ? "" : "s"} · ${subjectRow.avgScore}% average`
+                      : subjectRow
+                      ? "Not started yet"
+                      : undefined
+                  }
+                />
+              );
+            })}
+          </div>
+          {/* CSSE: Vocabulary and GL Verbal Reasoning practice remain fully
+              reachable here too (never removed), just not presented as
+              CSSE's own primary subjects above. */}
+          {isCsse === true && (
+            <div className="mt-5 grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {personalisedPracticeCards
+                .filter((c) => c.title === "Vocabulary Practice" || c.title === "GL Verbal Reasoning")
+                .map((card) => (
+                  <PersonalisedCard key={card.href} card={card} />
+                ))}
+            </div>
+          )}
         </div>
       </div>
     </PageLayout>
