@@ -4,7 +4,7 @@ import { use, useState, useEffect, useRef, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import {
-  ArrowLeft, Clock, CheckCircle, XCircle, ChevronRight,
+  ArrowLeft, Clock, ChevronRight,
   Trophy, RotateCcw, AlertCircle,
 } from "lucide-react";
 import { verbalReasoningQuestions } from "@/data/verbal-reasoning";
@@ -273,7 +273,6 @@ export default function MockPage({
   const [questionIdx, setQuestionIdx] = useState(0);
   const [input, setInput] = useState("");
   const [answered, setAnswered] = useState(false);
-  const [wasCorrect, setWasCorrect] = useState(false);
   const [sectionAnswers, setSectionAnswers] = useState<boolean[]>([]);
   const [sectionResults, setSectionResults] = useState<MockSectionResult[]>([]);
   const [timeLeft, setTimeLeft] = useState(0);
@@ -396,7 +395,6 @@ export default function MockPage({
   function submitAnswer() {
     if (!currentQuestion || answered) return;
     const correct = checkAnswer(currentQuestion, input);
-    setWasCorrect(correct);
     setAnswered(true);
     setSectionAnswers((prev) => [...prev, correct]);
   }
@@ -404,7 +402,6 @@ export default function MockPage({
   function nextQuestion() {
     setInput("");
     setAnswered(false);
-    setWasCorrect(false);
 
     if (questionIdx + 1 < sectionQuestions.length) {
       setQuestionIdx((prev) => prev + 1);
@@ -419,7 +416,6 @@ export default function MockPage({
     setQuestionIdx(0);
     setInput("");
     setAnswered(false);
-    setWasCorrect(false);
     setMode("section");
     setTimeout(() => inputRef.current?.focus(), 100);
   }
@@ -603,25 +599,20 @@ export default function MockPage({
           </div>
 
           {answered ? (
-            <div className={`rounded-2xl border p-5 ${wasCorrect ? "bg-green-50 dark:bg-green-950 border-green-100 dark:border-green-900" : "bg-red-50 dark:bg-red-950 border-red-100 dark:border-red-900"}`}>
-              <div className="flex items-start gap-2.5">
-                {wasCorrect ? (
-                  <CheckCircle size={18} className="text-green-500 shrink-0 mt-0.5" />
-                ) : (
-                  <XCircle size={18} className="text-red-400 shrink-0 mt-0.5" />
-                )}
-                <div className="flex-1">
-                  <p className={`text-sm font-semibold mb-1 ${wasCorrect ? "text-green-700 dark:text-green-300" : "text-red-600 dark:text-red-400"}`}>
-                    {wasCorrect ? "Correct!" : `Incorrect. Answer: ${currentQuestion.answer}`}
-                  </p>
-                  <p className="text-xs text-gray-600 dark:text-gray-400 leading-relaxed">{currentQuestion.explanation}</p>
-                </div>
-              </div>
+            // Mock assessment-integrity correction — a live timed Mock must
+            // never reveal correctness, the correct answer, or an
+            // explanation while the assessment is still active ("Practice
+            // teaches, Mock measures"). This confirmation is deliberately
+            // neutral: it acknowledges the answer was recorded and lets the
+            // learner continue, without any correctness signal of any kind
+            // (no colour, no icon, no revealed answer, no explanation).
+            // Correctness is still computed and recorded (sectionAnswers,
+            // scoring) exactly as before -- only this render branch changed.
+            <div className="rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-5">
+              <p className="text-sm font-semibold text-gray-700 dark:text-gray-300">Answer recorded.</p>
               <button
                 onClick={nextQuestion}
-                className={`w-full mt-4 flex items-center justify-center gap-2 py-3 rounded-xl font-semibold text-sm transition-opacity hover:opacity-90 ${
-                  wasCorrect ? "bg-green-600 text-white" : "bg-gray-700 text-white"
-                }`}
+                className={`w-full mt-4 flex items-center justify-center gap-2 py-3 rounded-xl font-semibold text-sm transition-opacity hover:opacity-90 ${config.headerBg} text-white`}
               >
                 {questionIdx + 1 < sectionQuestions.length ? "Next Question" : "End Section"}
                 <ChevronRight size={16} />
