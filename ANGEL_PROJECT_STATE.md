@@ -1084,3 +1084,37 @@ direction preserved, not redesigned). Founder visual GO not declared — real sc
 - Production evidence: fetched the live deployed `/mocks/gl` JS chunk directly — "Answer recorded." is
   genuinely present, "Incorrect. Answer:" and "Correct!" are genuinely absent.
 - Founder's required next step: final production visual and behavioural acceptance.
+
+**2026-09-23 (same day) — Increment 2 Final Visual Closure: Practise Hub Only. Commit `1d64162` +
+`89ce3cd`, pushed, deployed, confirmed live. Founder accepted the Practice question runner unchanged;
+rejected the Practice hub (`app/reasoning/page.tsx`). Increment 2 GO still not declared:**
+
+- Root cause: `app/reasoning/page.tsx` — the actual destination any learner reaches when their locally
+  persisted pathway (per-active-learner localStorage, migration 260, no server fallback) hasn't resolved
+  to "csse" at click time, even a genuinely CSSE learner on a fresh session/device. Nav routing itself
+  (`components/Navigation.tsx`) was already correctly pathway-branched (Answer A); the page it could
+  still land a learner on had zero pathway-conditional content of its own (Answer C).
+- Fix: the page now reads `getSelectedPathwayId()` itself and reorganises around it — CSSE learners see
+  the two real CSSE subjects (Mathematics, Reading Comprehension) foregrounded as "What should I
+  practise?", with the four Reasoning subjects + GL Verbal Reasoning/Vocabulary demoted to "What else can
+  I choose?", honestly framed (not part of the CSSE exam, useful for other schools). Non-CSSE learners
+  keep every existing card, unchanged capability, just reordered/re-skinned above the subject grid.
+- Visual: removed `SubjectCard.tsx`'s lime/cyan/violet/rose/pink/yellow identity (confirmed this page is
+  its only real consumer — component itself left untouched); inline Angel-token cards instead, matching
+  Today/Learn/Practice's own convention; repeated GL/CEM/ISEB badge pills removed from every card.
+- Internal language: "Currently a small sample set while we build out the full question bank." removed
+  from the hub; swept related Practice surfaces and found + fixed the same pattern in
+  `/mocks/adaptive/vocabulary` and `/mocks/adaptive/gl`. Mock's own two remaining instances
+  (`app/mocks/page.tsx`) found but not touched — explicitly out of this correction's "do not touch Mock"
+  scope.
+- Non-regression confirmed: Today, Learn, the accepted Practice runner, and all of Mock untouched (diff
+  shows only the 3 files above). No new recommendation/evidence logic — reuses existing real data only.
+- Responsive: verified at all 9 required widths (390–1920) via the established static-reproduction +
+  iframe methodology — zero overflow, correct grid reflow, container never trapped narrow on desktop.
+- Clean-checkout gate: typecheck 0, tests 4,796/4,797 (unchanged), migration-sql-guard PASS, eslint
+  unchanged. Copy-guard caught a genuine +2 regression (two new em dashes) mid-pass — fixed, back to the
+  51-violation baseline before the final gate run.
+- Production evidence: fetched the live `/reasoning`, `/mocks/adaptive/vocabulary` and `/mocks/adaptive/
+  gl` JS chunks directly — new hierarchy headings and honest copy genuinely present, old badges/internal
+  language genuinely absent, across all three.
+- Founder's required next step: final visual acceptance decision from the real production Practice hub.

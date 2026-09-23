@@ -659,3 +659,95 @@ from GL alone.
 
 **Not declaring Increment 2 GO.** The Founder performs final production visual and behavioural
 acceptance, per the governing instruction's own explicit stop condition.
+
+---
+
+## Increment 2 Final Visual Closure — Practise Hub Only (2026-09-23, same day)
+
+Founder real production acceptance: the Practice question-working screen is **accepted** — question
+stays dominant, real educational feedback (explanation/worked reasoning) after an incorrect answer is
+correct and unchanged, and was not touched this pass. The Practice landing/hub is **not accepted** —
+Founder screenshot showed Verbal/Non-Verbal/Spatial/Numerical Reasoning subjects dominant, with
+`GL · CEM · ISEB` / `GL · ISEB` / `Independent` / `CEM · GL · ISEB` badges, bright lime/cyan/pink/yellow
+cards, and internal development-status language.
+
+**1. Root cause**: the Founder's screenshot is `app/reasoning/page.tsx` — confirmed by exact match on
+its badges and its internal-language sentence, `"Currently a small sample set while we build out the
+full question bank."`. `components/Navigation.tsx` already branches the "Practise" nav item correctly
+(`isCsse ? CSSE_PRACTISE_HREF : "/reasoning"`) — the nav layer is intentionally pathway-aware. The page
+itself was not: `getSelectedPathwayId()`/`getProgress()` are per-active-learner `localStorage` reads
+(Private Learner Space, migration 260) with no server-side fallback, so any learner whose locally
+persisted pathway hasn't resolved to `"csse"` at click time — including a genuinely CSSE-pathway learner
+on a fresh session, a different browser/device, or before the value has settled — lands on `/reasoning`,
+which had zero pathway-conditional content of its own and showed identical GL/CEM/ISEB-branded content
+to everyone.
+
+**2. Pathway-awareness verdict**: **Answer C** for the page itself (effectively a generic all-pathways
+catalogue) sitting behind **Answer A** nav-level routing (the nav's own branch is intentional and
+correct). This is the real, load-bearing distinction the trace required: the routing mechanism was
+sound; the destination page it could still land a CSSE learner on was not pathway-aware at all.
+
+**3. What a CSSE learner now sees first**: "What should I practise?" — the two real, evidence-recording
+CSSE subjects (Mathematics, Reading Comprehension — the exact same routes already used elsewhere, no
+new content), framed with the real "updates your Skills Profile, Evidence Profile, Readiness and
+Recommendations" copy. "What else can I choose?" — the four Reasoning subjects plus GL Verbal
+Reasoning/Vocabulary practice, demoted to secondary, honestly framed ("aren't part of the CSSE exam
+itself, but many other selective schools test them").
+
+**4. What GL/CEM/ISEB learners will see**: unchanged capability — "What should I practise?" still shows
+all four personalised cards (GL Verbal Reasoning, Mathematics, Reading, Vocabulary practice) exactly as
+before, only re-skinned and reordered above the subject grid rather than below it. "What else can I
+choose?" still shows all four Reasoning subjects, restyled. Nothing was deleted.
+
+**5. Visual changes**: `components/SubjectCard.tsx`'s lime/cyan/violet/rose/pink/yellow per-subject
+identity is gone from this page — confirmed via trace that this page is `SubjectCard`'s only real
+consumer (two other files only mention it in comments), so the shared component itself was left
+completely untouched and this page now uses inline Angel-token cards instead (`bg-[var(--angel-paper)]
+border border-[var(--angel-border)]`, `bg-[var(--angel-sky)]` icon tiles), matching the established
+Today/Learn/Practice convention. Repeated exam-board badge pills removed from every Reasoning card;
+pathway context now stated once, calmly, per section intro. Container widened to the same
+`max-w-4xl lg:max-w-6xl` convention already approved on Today/Learn (confirmed via the same
+iframe-injection responsive methodology: 60–99% of viewport width depending on screen size, not a
+narrow strip on a large desktop).
+
+**6. Internal-development language removed**: `"Currently a small sample set while we build out the
+full question bank."` deleted outright (no replacement volume claim) from `/reasoning`. Swept every
+directly-linked Practice surface for the same pattern and found two more, both fixed: `app/mocks/
+adaptive/vocabulary/page.tsx` and `app/mocks/adaptive/gl/page.tsx` each had `"...is currently a small
+sample set while we build out the full one"` — both reworded to a truthful behavioural disclosure ("you
+may see the same X again across sessions") with no volume/completeness claim. Mock's own two remaining
+`"is still being built"` instances (`app/mocks/page.tsx`) were found and are explicitly **not** touched
+— out of this correction's "do not touch Mock" scope, reported here for visibility.
+
+**7. Educational logic preserved**: confirmed by diff — `git diff --stat` on this correction shows only
+`app/reasoning/page.tsx`, `app/mocks/adaptive/vocabulary/page.tsx` and `app/mocks/adaptive/gl/page.tsx`
+changed. Today, Learn, the accepted Practice question runner, and all of Mock (`app/mocks/page.tsx`,
+`app/mocks/[pathway]/page.tsx`, `app/learning-intelligence/mock-exam/**`) are untouched. Every data
+source on this page (`computeAnalytics`, `computeAdaptiveState`, `getProgress`) is unchanged — this is a
+presentation/content-organisation pass over existing real routes and existing real data, never new
+recommendation logic. No fabricated recommendation, evidence, or progress was introduced anywhere.
+
+**8. Responsive verification**: no authenticated session created (standing rule). Static-HTML
+reproduction of both the CSSE and non-CSSE variants, tested via injected iframes at all nine required
+widths (390/430/768/900/1024/1280/1366/1440/1920) — zero horizontal overflow at any width; the primary
+practice-card grid correctly reflows 1→2 columns at the `sm:` breakpoint, the secondary Reasoning grid
+correctly reflows 1→2→4 columns up to `lg:`; container fraction of viewport measured directly (99% at
+1024px down to 60% at 1920px), confirming no "narrow content trapped in the centre of a large desktop."
+
+**9. Tests/build**: clean-checkout gate in an isolated worktree — typecheck 0 errors; tests 4,796/4,797
+pass (1 pre-existing skip, unchanged baseline, all pre-existing tests including this file's own
+`mockLegacyAssessmentIntegrityCorrection.test.ts` still pass); migration-sql-guard PASS 259 files;
+copy-guard 51 pre-existing violations (unchanged — a genuine +2 regression from two new sentence-
+punctuation em dashes was caught and fixed before this final gate run, see commit `89ce3cd`); eslint 114
+problems (83 errors/31 warnings, unchanged baseline); genuine `next build` PASS, including `/reasoning`.
+
+**10. Commit/deployment**: `1d64162` (fix) + `89ce3cd` (copy-guard fix). Pushed to `origin/main`. Vercel
+auto-deployed (`angel-11plus-7t3hvt3w1-abs365s-projects.vercel.app`, Ready), confirmed aliased to
+`https://www.angel11plus.com`. Fetched the live deployed JS chunks for `/reasoning`, `/mocks/adaptive/
+vocabulary` and `/mocks/adaptive/gl` directly and confirmed byte-for-byte: the new "What should I
+practise?"/"What else can I choose?" hierarchy headings and the new behavioural-disclosure sentences are
+genuinely present; the old internal-language sentence and the old `"GL · CEM · ISEB"`-style badge text
+are genuinely absent, across all three files.
+
+**Not declaring Increment 2 GO.** The Founder makes the final visual acceptance decision from the real
+production Practice hub, per the governing instruction's own explicit stop condition.
