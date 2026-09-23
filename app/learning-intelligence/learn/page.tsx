@@ -12,22 +12,24 @@ import type { CompetencyId } from "@/lib/learningEngine/types";
 import type { LucideIcon } from "lucide-react";
 
 /**
- * AUTHENTICATED EXPERIENCE & DESIGN SYSTEM MIGRATION, Increment 1B (Founder
- * visual correction) — Increment 1's own content fix (all 5 real lessons
- * shown, the "being rebuilt" development-process copy removed) is
- * unchanged and preserved exactly; what changed here is composition only,
- * per the Founder's own production finding that the page still read as "a
- * narrow list of bordered rows," not a real Angel 11+ learning surface.
- *
- * The subject itself is now the organising principle, matching the
- * homepage's own "Five subjects. One connected plan." treatment
- * (app/page.tsx): a real subject identity (icon, name, one-line intro) at
- * homepage type scale, then that subject's lessons as a single flowing
- * divided list inside one sky-tinted panel — the exact same
- * bg-[var(--angel-sky)] + divide-y divide-[var(--angel-border)] pattern
- * the homepage's own "A clear plan for today" example section already
- * uses, reused here for the real thing rather than duplicated as a new
- * treatment. No per-lesson bordered box, no card grid, no catalogue.
+ * AUTHENTICATED EXPERIENCE & DESIGN SYSTEM MIGRATION, Increment 1C (Founder
+ * final visual acceptance correction) — Increment 1B's composition
+ * (subject-as-organising-principle, sky-tinted panel, homepage-derived
+ * type scale) is preserved exactly. Three corrections only, from the
+ * Founder's own real production screenshots: (1) the outer container was
+ * max-w-3xl (768px) — at typical desktop zoom this read as a thin central
+ * column with the rest of the canvas empty, so it now matches Today's own
+ * container convention (max-w-4xl lg:max-w-6xl); lesson text itself stays
+ * capped at a comfortable reading measure (max-w-2xl) inside that wider
+ * panel rather than stretching edge-to-edge. (2) LessonRow's affordance
+ * was a single small ArrowRight icon, too weak for an 8-11-year-old
+ * learner to reliably read as "this starts something" — each row now
+ * carries an explicit Start/Continue pill, genuine-state only (derived
+ * from the same real educationalState already fetched, never invented).
+ * (3) "Practise instead" / "See your Learning Report" previously used the
+ * same row treatment as real lessons inside the same visual system; they
+ * are not lessons, so they now sit outside any sky panel as small plain
+ * text links under their own "More ways to work" label.
  */
 
 interface LessonEntry {
@@ -81,16 +83,26 @@ const ENGLISH_LESSONS: LessonEntry[] = [
 
 function LessonRow({ entry, state, loaded }: { entry: LessonEntry; state: EducationalIntelligenceSnapshot["educationalState"] | undefined; loaded: boolean }) {
   const progression = hubProgressionLabel(state);
+  // Genuine state only: "not started" is exactly the same condition
+  // hubProgressionLabel itself treats as not-started (undefined or
+  // "exploring"). Before the real fetch resolves, default the pill to
+  // "Start lesson" -- a safe, non-claiming default, never "Continue"
+  // ahead of real evidence.
+  const notStarted = state === undefined || state === "exploring";
+  const continuing = loaded && !notStarted;
   return (
     <Link href={entry.href} className="flex items-center gap-4 py-5 group">
-      <div className="min-w-0 flex-1">
+      <div className="min-w-0 flex-1 max-w-2xl">
         <p className="text-[var(--angel-navy)] text-lg font-semibold leading-snug group-hover:underline">{entry.title}</p>
         <p className="text-[var(--angel-ink)] text-sm mt-1 leading-relaxed opacity-90">{entry.blurb}</p>
         {loaded && (
           <p className="text-[var(--angel-blue)] text-xs mt-1.5 font-semibold uppercase tracking-wide">{progression.label}</p>
         )}
       </div>
-      <ArrowRight size={18} className="text-[var(--angel-muted)] group-hover:text-[var(--angel-blue)] transition-colors motion-reduce:transition-none shrink-0" />
+      <span className="inline-flex items-center gap-1.5 rounded-full bg-blue-600 text-white text-sm font-semibold px-4 py-2 shrink-0 group-hover:opacity-90 transition-opacity motion-reduce:transition-none">
+        {continuing ? "Continue" : "Start lesson"}
+        <ArrowRight size={14} aria-hidden="true" />
+      </span>
     </Link>
   );
 }
@@ -111,7 +123,7 @@ function SubjectSection({ title, intro, icon: Icon, lessons, states, loaded }: {
         </div>
         <div>
           <h2 className="text-[var(--angel-navy)] font-bold text-2xl md:text-3xl leading-tight">{title}</h2>
-          <p className="text-[var(--angel-muted)] text-sm mt-0.5">{intro}</p>
+          <p className="text-[var(--angel-muted)] text-sm mt-0.5 max-w-xl">{intro}</p>
         </div>
       </div>
 
@@ -126,17 +138,21 @@ function SubjectSection({ title, intro, icon: Icon, lessons, states, loaded }: {
   );
 }
 
-function MoreLink({ href, icon: Icon, title, body }: { href: string; icon: LucideIcon; title: string; body: string }) {
+/**
+ * Deliberately small, plain-text secondary navigation -- Practise and the
+ * Learning Report are real destinations but are NOT lessons, so they must
+ * not share LessonRow's visual weight (no sky panel, no title/blurb pair,
+ * no Start pill). A child should read this strip as "other things I can
+ * do", clearly after and beneath the real lesson catalogue above.
+ */
+function MoreLink({ href, icon: Icon, title }: { href: string; icon: LucideIcon; title: string }) {
   return (
-    <Link href={href} className="flex items-start gap-3.5 py-5 group">
-      <div className="w-10 h-10 rounded-lg bg-[var(--angel-sky)] flex items-center justify-center shrink-0">
-        <Icon size={18} className="text-[var(--angel-blue)]" />
-      </div>
-      <div className="min-w-0 flex-1">
-        <p className="text-[var(--angel-navy)] text-base font-semibold group-hover:underline">{title}</p>
-        <p className="text-[var(--angel-muted)] text-sm mt-0.5 leading-relaxed">{body}</p>
-      </div>
-      <ArrowRight size={16} className="text-[var(--angel-muted)] group-hover:text-[var(--angel-blue)] transition-colors motion-reduce:transition-none shrink-0 mt-2" />
+    <Link
+      href={href}
+      className="inline-flex items-center gap-2 text-sm font-medium text-[var(--angel-blue)] hover:underline"
+    >
+      <Icon size={15} aria-hidden="true" />
+      {title}
     </Link>
   );
 }
@@ -177,7 +193,7 @@ export default function CsseLearnPage() {
 
   return (
     <PageLayout breadcrumbs={[{ label: "Learn" }]}>
-      <div className="max-w-3xl mx-auto px-4 py-8 md:px-8 md:py-12">
+      <div className="max-w-4xl lg:max-w-6xl mx-auto px-4 py-8 md:px-8 md:py-12">
         <h1 className="text-[var(--angel-navy)] font-bold text-3xl md:text-4xl">Learn</h1>
         <p className="text-[var(--angel-ink)] text-base md:text-lg mt-3 leading-relaxed max-w-xl">
           Real, step-by-step lessons for CSSE preparation. Each one teaches a method, then lets you try
@@ -191,7 +207,7 @@ export default function CsseLearnPage() {
         <div className="mt-10 space-y-12">
           <SubjectSection
             title="Mathematics"
-            intro="Core skills and methods for CSSE Mathematics."
+            intro="Build the mathematical skills and methods you need for selective-school preparation."
             icon={Calculator}
             lessons={MATHEMATICS_LESSONS}
             states={states}
@@ -199,7 +215,7 @@ export default function CsseLearnPage() {
           />
           <SubjectSection
             title="English: Reading"
-            intro="Working with real passages, not isolated trick questions."
+            intro="Find evidence, understand meaning, and make inferences from what you read."
             icon={BookOpen}
             lessons={ENGLISH_LESSONS}
             states={states}
@@ -207,19 +223,14 @@ export default function CsseLearnPage() {
           />
         </div>
 
-        <div className="mt-12 pt-8 border-t border-[var(--angel-border)] divide-y divide-[var(--angel-border)]">
-          <MoreLink
-            href="/learning-intelligence/practice"
-            icon={BookOpen}
-            title="Practise instead"
-            body="Real, evidence-driven CSSE practice across Reading Comprehension, Mathematics and Continuous Writing."
-          />
-          <MoreLink
-            href="/learning-intelligence"
-            icon={Brain}
-            title="See your Learning Report"
-            body="Real competency and evidence data from everything you've practised so far."
-          />
+        <div className="mt-12 pt-8 border-t border-[var(--angel-border)]">
+          <p className="text-[var(--angel-muted)] text-xs font-semibold uppercase tracking-wide mb-3">
+            More ways to work
+          </p>
+          <div className="flex flex-wrap gap-x-6 gap-y-2">
+            <MoreLink href="/learning-intelligence/practice" icon={BookOpen} title="Practise instead" />
+            <MoreLink href="/learning-intelligence" icon={Brain} title="See your Learning Report" />
+          </div>
         </div>
       </div>
     </PageLayout>

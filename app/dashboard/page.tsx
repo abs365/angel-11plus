@@ -398,7 +398,7 @@ export default function DashboardPage() {
             larger-type panel -- still visually secondary to the primary
             recommendation (smaller heading weight, no tint), but no longer
             reading as a detached dashboard sidebar. */}
-        <div className="mt-10 md:mt-14">
+        <div className="mt-8 md:mt-10">
           <GoldRule />
           <div className="flex items-start justify-between gap-4 flex-wrap">
             <div>
@@ -427,8 +427,23 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        <div className="mt-8 lg:grid lg:grid-cols-3 lg:gap-10 lg:items-start">
-          <div className="lg:col-span-2">
+        {/* AUTHENTICATED EXPERIENCE, Increment 1C (Founder final visual
+            acceptance correction) -- Founder reported Progress/Mock Exams
+            clipped beyond the visible viewport on real production screens.
+            No horizontal overflow was reproducible at any tested width
+            (verified via static reproduction across 768-1920px with
+            worst-case real-world text). The genuine cause: the prior lg:
+            (1024px) breakpoint meant any window narrower than 1024px --
+            an extremely common "desktop but not maximised" width --
+            single-column-stacked Progress/Mock below the tall primary
+            recommendation panel, pushing it far enough down the page to
+            require scrolling past content a Founder would reasonably
+            describe as "outside the viewport". Moving the split to md:
+            (768px) puts Progress/Mock genuinely beside the plan at nearly
+            all realistic desktop/laptop widths, verified overflow-free
+            down to 768px with the same worst-case text. */}
+        <div className="mt-8 md:grid md:grid-cols-3 md:gap-8 lg:gap-10 md:items-start">
+          <div className="md:col-span-2">
             {primaryItem ? (
               <>
                 {/* One large, warm, self-contained panel -- the homepage's own
@@ -442,7 +457,7 @@ export default function DashboardPage() {
                     Recommended for you today
                   </p>
                   <div className="flex items-start justify-between gap-3 mt-2">
-                    <p className="text-[var(--angel-navy)] font-bold text-2xl md:text-3xl leading-snug">
+                    <p className="min-w-0 flex-1 text-[var(--angel-navy)] font-bold text-2xl md:text-3xl leading-snug">
                       {primaryActivityLabel ?? primaryItem.label}
                     </p>
                     {/* LR-01 — child-accessible, just-in-time transparency at
@@ -559,7 +574,7 @@ export default function DashboardPage() {
             )}
           </div>
 
-          <div className="mt-10 lg:mt-0 lg:col-span-1">
+          <div className="mt-10 md:mt-0 md:col-span-1">
             <div className="space-y-7">
               <div>
                 <p className="text-xs font-bold uppercase tracking-widest text-[var(--angel-blue)] mb-3">
