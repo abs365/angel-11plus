@@ -741,3 +741,49 @@ pushed, deployed to `https://angel-11plus.vercel.app`:**
   authenticated-app change. Disclosed, non-fixable-from-here caveat: individual browsers'/messaging
   apps' own favicon caching may still show the old icon to some returning visitors/previously-shared
   links until their own cache expires — not a server-side defect, confirmed by the direct fetch above.
+
+**2026-09-23 — Family Account & Entry Experience Correction
+(`ANGEL_11PLUS_FAMILY_ACCOUNT_ENTRY_ACCEPTANCE_REPORT.md`). ANGEL 11+ FAMILY ACCOUNT & ENTRY
+EXPERIENCE: PARTIAL. Commit `a13a48f`, pushed, deployed, confirmed live on
+`https://www.angel11plus.com`:**
+
+- Part A root cause: `AuthProvider.updatePassword()` called Supabase's `updateUser()` but never
+  `signOut()` afterward, so the genuine recovery session established by the emailed link silently
+  continued on as the ongoing authenticated session — the parent landed straight in the account
+  instead of being asked to sign in with the new password. Fixed at the source (`updatePassword()`
+  now signs out + clears learner context on success, so every caller gets the guarantee).
+  `app/reset-password/page.tsx`'s success screen now says the parent has been signed out and routes
+  to `/login?mode=signin` (was `/dashboard`). A test that had encoded the old buggy destination as
+  "expected" was corrected to require the fix and forbid regressing to it.
+- Part B: Header's account-menu popover was icon-only with no "Parent Account" label and duplicated
+  the adjacent LearnerSwitcher's "Viewing: {child}" inside its own Parent Dashboard link. Added an
+  explicit "Parent Account" label, removed the duplicated subtitle. LearnerSwitcher,
+  LearnerIdentityBanner and ParentSetupCard were audited and already satisfy the parent/learner
+  hierarchy requirement — left unchanged.
+- Part C: verified current authoritative facts for GL/CSSE/CEM/ISEB by web research. CSSE and ISEB
+  descriptions now spell out the consortium/board name in plain English. **Material finding**: CEM
+  has withdrawn from the standard paper-based grammar-school 11+ market and is no longer administered
+  by Durham University (acquired by Cambridge University Press & Assessment, 2019); the prior
+  "Birmingham, Kent, Bucks" claim was stale (Kent confirmed GL, not CEM). `lib/pathways.ts`'s CEM
+  entry rewritten to state this honestly and direct families to confirm with their target school;
+  badge changed to "Check With School". The existing "Not Sure Yet" pathway (already in
+  `lib/pathways.ts`, already selectable on `/pathways`, deliberately excluded from
+  `REAL_PATHWAY_IDS`) already serves as the safe "not sure" route — confirmed working, nothing new
+  built.
+- Part D: audited the first-entry journey (`/login` → `/dashboard`, `ParentSetupCard`'s
+  name-or-pathway-missing gating, `/add-child`) — already short, non-wizard, and does not re-prompt
+  an already-set-up single-learner family. No change made.
+- Clean-checkout gate: typecheck 0 errors, tests 4,737/4,738 (baseline 4,736/4,737 plus this
+  increment's own new regression test), migration-sql-guard PASS, copy-guard 51 violations and eslint
+  114 problems both unchanged from baseline, genuine `next build` PASS.
+- Production evidence: fetched the live JS bundles for `/pathways` and `/reset-password` directly (not
+  through a browser) and confirmed the new CSSE/CEM/reset-password/Header copy is genuinely deployed.
+  This session's browser tab, previously assumed authenticated from a prior increment's carryover, was
+  found unauthenticated (screenshotted the public access gate) — per AGENTS.md, no account was created
+  and no password was entered. PARTIAL rather than GO because the real email-based password-reset
+  round trip and the fully-authenticated re-render of the Parent Account/learner-hierarchy surfaces
+  still require the Founder's own hands-on production pass (items 1-4, 7 and the live-rendered check
+  of 8-11 of the report's 13-point checklist) — everything reachable without a real inbox or a real
+  login was verified directly.
+- Per the governing instruction, this increment stops here — no wider authenticated-experience
+  redesign or "Increment 2" was started.
