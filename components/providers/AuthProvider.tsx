@@ -67,7 +67,10 @@ interface AuthContextValue {
    * genuine Supabase password-recovery session is active (isPasswordRecovery
    * true), exactly Supabase's own supported flow
    * (auth.updateUser({ password })). Never a custom password store, never
-   * plaintext, never anywhere but Supabase Auth's own auth.users table.
+   * plaintext, never anywhere but Supabase Auth's own auth.users table. On
+   * success this also ends the recovery session (signs out) so it can never
+   * silently continue on as the ongoing authenticated session — the caller
+   * must present a fresh Sign in, not the account itself.
    */
   updatePassword: (newPassword: string) => Promise<{ error: string | null }>;
   /**
@@ -280,6 +283,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       const { error } = await supabase.auth.updateUser({ password: newPassword });
       if (error) return { error: error.message };
+
+      // Part A fix: a password-recovery session is a real, valid Supabase
+      // session — left alone it silently continues on as the ongoing
+      // authenticated session, taking the parent straight into the account
+      // instead of back to Sign in. End it here, at the source, so every
+      // caller (not just this one page) gets the same guarantee.
+      await supabase.auth.signOut();
+      clearLearnerContext();
+
       return { error: null };
     },
     []

@@ -16,15 +16,15 @@ export const PATHWAYS: Pathway[] = [
   },
   {
     id: "cem",
-    name: "CEM (Durham University)",
+    name: "CEM",
     shortName: "CEM",
     description:
-      "Used by grammar schools in Birmingham, Kent, Bucks and others. Focuses more on literacy and comprehension than pure reasoning.",
+      "CEM (Centre for Evaluation and Monitoring) was originally based at Durham University and is now part of Cambridge University Press & Assessment. CEM has withdrawn from the standard paper-based grammar-school 11+ market, and many areas that previously tested with CEM have since moved to GL Assessment or their own school-set test. If your target school still uses a CEM-style adaptive test, please confirm directly with the school, as coverage has been changing.",
     subjects: ["English & Literacy", "Maths & Numerical Reasoning", "Verbal Reasoning"],
     recommendedYears: "Year 5–6",
     examFormatNotes:
-      "Adaptive-style papers. Fewer pure non-verbal questions. Harder to specifically 'drill' due to variety.",
-    badge: "Grammar Schools",
+      "Where still used: adaptive-style papers with fewer pure non-verbal-reasoning questions than GL Assessment. Always confirm directly with your target school which test they currently use.",
+    badge: "Check With School",
     accentColor: "indigo",
   },
   {
@@ -32,7 +32,7 @@ export const PATHWAYS: Pathway[] = [
     name: "CSSE (Essex)",
     shortName: "CSSE",
     description:
-      "Used by selective grammar schools in Essex. Extended written responses required alongside comprehension and maths.",
+      "CSSE stands for the Consortium of Selective Schools in Essex, a group of Essex grammar schools that share a common 11+ entrance exam. Extended written responses are required alongside comprehension and maths.",
     subjects: ["English Comprehension", "Creative Writing", "Maths", "Vocabulary"],
     recommendedYears: "Year 5–6",
     examFormatNotes:
@@ -45,7 +45,7 @@ export const PATHWAYS: Pathway[] = [
     name: "ISEB Pre-Test",
     shortName: "ISEB",
     description:
-      "Common Pre-Test used by many independent senior schools including Eton, Harrow, Wycombe Abbey and others.",
+      "ISEB (the Independent Schools Examinations Board) sets the Common Pre-Test used by many independent senior schools, including Eton, Harrow, Wycombe Abbey and others.",
     subjects: ["English", "Maths", "Verbal Reasoning", "Non-Verbal Reasoning"],
     recommendedYears: "Year 6–7",
     examFormatNotes:

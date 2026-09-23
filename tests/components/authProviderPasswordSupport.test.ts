@@ -28,6 +28,16 @@ test("updatePassword calls Supabase's own updateUser -- never a custom password 
   assert.doesNotMatch(SOURCE, /\.from\(["']profiles["']\)[\s\S]{0,80}password/i, "password must never be written to the profiles table or any application table");
 });
 
+test("updatePassword ends the recovery session on success -- it must never silently continue on as the ongoing authenticated session", () => {
+  const block = SOURCE.slice(SOURCE.indexOf("const updatePassword"), SOURCE.indexOf("const signOut ="));
+  assert.match(block, /await supabase\.auth\.signOut\(\);/);
+  assert.match(block, /clearLearnerContext\(\);/);
+  // The signOut must happen after the update succeeds (below the error check), not before it.
+  const errorCheckIndex = block.indexOf("if (error) return");
+  const signOutIndex = block.indexOf("supabase.auth.signOut()");
+  assert.ok(errorCheckIndex > -1 && signOutIndex > errorCheckIndex, "signOut must run only after a successful password update, not before the error check");
+});
+
 test("isPasswordRecovery is derived only from the real PASSWORD_RECOVERY auth event, never a client-guessed flag", () => {
   assert.match(SOURCE, /setIsPasswordRecovery\(event === "PASSWORD_RECOVERY"\)/);
 });

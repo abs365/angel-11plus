@@ -93,15 +93,15 @@ export default function ResetPasswordPage() {
                 <div className="inline-flex items-center justify-center w-14 h-14 bg-green-100 dark:bg-green-900 rounded-2xl mb-4">
                   <CheckCircle size={26} className="text-green-600 dark:text-green-400" />
                 </div>
-                <h2 className="text-gray-900 dark:text-gray-100 font-bold text-xl mb-2">Password set</h2>
+                <h2 className="text-gray-900 dark:text-gray-100 font-bold text-xl mb-2">Password updated</h2>
                 <p className="text-gray-500 dark:text-gray-400 text-sm leading-relaxed mb-6">
-                  You can now sign in with your email and new password whenever you like.
+                  For your security, we&apos;ve signed you out. Please sign in again with your new password.
                 </p>
                 <button
-                  onClick={() => router.push("/dashboard")}
+                  onClick={() => router.push("/login?mode=signin")}
                   className="w-full bg-blue-600 text-white rounded-xl py-3.5 font-semibold text-sm hover:bg-blue-700 transition-colors"
                 >
-                  Continue to Angel 11+
+                  Sign in
                 </button>
               </div>
             ) : (

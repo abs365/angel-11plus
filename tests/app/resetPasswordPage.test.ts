@@ -36,9 +36,10 @@ test("both password inputs use type=password and new-password autocomplete -- ne
   assert.equal(autoCompleteMatches.length, 2, "expected exactly 2 autoComplete=\"new-password\" inputs");
 });
 
-test("a successful password update offers a path back into the app, never an automatic silent redirect that could hide the confirmation", () => {
+test("a successful password update shows a confirmation and sends the parent to sign in fresh -- never straight into the account on the old recovery session", () => {
   assert.match(SOURCE, /updateState === "saved"/);
-  assert.match(SOURCE, /router\.push\("\/dashboard"\)/);
+  assert.match(SOURCE, /router\.push\("\/login\?mode=signin"\)/);
+  assert.doesNotMatch(SOURCE, /router\.push\("\/dashboard"\)/, "a successful password update must never route straight into the account -- the recovery session must end and the parent must sign in again");
 });
 
 test("no raw Supabase/technical jargon is ever shown to the user", () => {
