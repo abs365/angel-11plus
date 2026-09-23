@@ -901,3 +901,33 @@ required:**
 - Founder next step: apply migration 263 (do not rerun 260/261/262), then perform the real Plantest1/
   Plantest2 cross-PIN acceptance walkthrough (governing instruction Part 16) before Private Learner
   Space is called GO.
+
+**2026-09-23 (same day) — Private Learner Space: FINAL FOUNDER PRODUCTION ACCEPTANCE. Documentation
+only, no code change, no redeployment. Migration 263 confirmed applied by the Founder (not rerun; 260/
+261/262 also untouched).**
+
+- Real Founder production testing (not an automated result): Learner PIN creation for Plantest1 and
+  Plantest2 both PASS; an incorrect PIN is rejected with the exact production message "That PIN
+  doesn't match. Please try again."; cross-learner PIN isolation tested in both real directions in
+  production — Plantest1's PIN against Plantest2 REJECTED, Plantest2's PIN against Plantest1
+  REJECTED, each learner's own correct PIN PASS; learner environment isolation reconfirmed (sibling/
+  Parent Dashboard/pathway controls absent in each Learner Mode, Today/Learn/Practise/Mock/Progress
+  retained); Parent PIN protection reconfirmed (Return to Parent Mode requires it, wrong PIN
+  rejected, correct PIN restores Parent Mode) — Parent PIN and Learner PIN confirmed operating as two
+  distinct controls in live use, not merely in code.
+- **ANGEL 11+ PRIVATE LEARNER SPACE MILESTONE: CLOSED, GO.** Do not reopen absent a genuine new
+  production defect. Do not rerun migrations 260-263.
+- **Security-hardening debt formally recorded, not closed by this GO**: `LEARNER DATA RLS HARDENING`
+  — some evidence-table RLS remains account-scoped from the migration 260 architecture; a raw REST
+  request naming a sibling `profile_id` directly may bypass `current_learner_id()` where a table's
+  own RLS doesn't separately enforce learner-level ownership. Required before broader/public launch
+  security sign-off. Not started, not scoped. Next step is a bounded adversarial assessment ("can an
+  ordinary authenticated learner/browser, using realistically available production-client
+  capabilities, retrieve or mutate a sibling's data outside the intended app flows?"), not a ~30-table
+  RLS rewrite — the assessment determines scope, not assumed in advance.
+- `ANGEL_11PLUS_PRODUCT_DESIGN_STANDARD_V1.md` reconfirmed as the governing visual standard, derived
+  from the approved/frozen homepage; the authenticated app does not yet consistently meet it. Next
+  major experience increment, **recorded, not started**: **ANGEL 11+ AUTHENTICATED EXPERIENCE &
+  DESIGN SYSTEM MIGRATION** (Parent Dashboard, Today, Learn, Practise, Mock, Progress, Results —
+  preserve educational engines, learner isolation, Parent/Learner Mode; remove legacy/generic SaaS
+  visual language; zero-purple/no-gradient; do not disguise educational-content gaps with redesign).

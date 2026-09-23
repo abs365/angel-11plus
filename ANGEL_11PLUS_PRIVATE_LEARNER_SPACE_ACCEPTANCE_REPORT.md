@@ -1,9 +1,87 @@
 # ANGEL 11+ — Private Learner Space: Acceptance Report
 
-## UPDATE 2026-09-23 — Learner PIN (Part 2), superseding the verdict below
+## FINAL FOUNDER PRODUCTION ACCEPTANCE — 2026-09-23, superseding every verdict below
 
-This section is the current, authoritative status. Everything below it is the original increment's
-report, kept as history, not rewritten.
+Migration 263 was applied by the Founder. Real Founder production testing (not an automated test
+result) then exercised the live system directly and observed:
+
+**1. Learner PIN creation — PASS.** Plantest1: a separate Learner PIN was created successfully; the
+correct Plantest1 PIN opens Plantest1's learner environment. Plantest2: a separate Learner PIN was
+created successfully; the correct Plantest2 PIN opens Plantest2's learner environment.
+
+**2. Incorrect PIN — PASS.** An incorrect Learner PIN is rejected. Founder observed the exact
+production message "That PIN doesn't match. Please try again." — the learner space was not opened.
+
+**3. Cross-learner PIN isolation — PASS**, tested in both directions directly in production:
+Plantest1's PIN against Plantest2 → REJECTED. Plantest2's PIN against Plantest1 → REJECTED. Plantest1's
+correct PIN against Plantest1 → PASS. Plantest2's correct PIN against Plantest2 → PASS. This is the
+exact scenario the previous update's migration-263 test suite proved against real Postgres; the
+Founder has now independently confirmed the identical result in live production.
+
+**4. Learner environment isolation — PASS** (previously verified, reconfirmed, not retested further).
+In Plantest1's Learner Mode: Plantest2 unavailable, sibling switcher unavailable, Parent Dashboard
+unavailable, pathway-changing controls unavailable, Today/Learn/Practise/Mock/Progress retained. In
+Plantest2's Learner Mode: Plantest1 unavailable, sibling switcher unavailable, Parent Dashboard
+unavailable, pathway-changing controls unavailable, the learner working environment retained.
+
+**5. Parent Mode protection — PASS.** Learner Mode → Return to Parent Mode → Parent PIN required.
+Incorrect Parent PIN → rejected. Correct Parent PIN → Parent Mode restored. The Parent PIN and Learner
+PIN are confirmed operating as two distinct controls in real production use, not merely in code.
+
+**6. Acceptance decision:**
+
+```
+ANGEL 11+ PRIVATE LEARNER SPACE
+PRODUCTION ACCEPTANCE: GO
+
+MIGRATION 263:                        APPLIED SUCCESSFULLY
+LEARNER PIN:                          PRODUCTION VERIFIED
+CROSS-LEARNER PIN ISOLATION:          PRODUCTION VERIFIED
+PARENT PIN:                           PRODUCTION VERIFIED
+MULTI-LEARNER USER EXPERIENCE:        PRODUCTION VERIFIED
+
+PRIVATE LEARNER SPACE MILESTONE:      CLOSED
+```
+
+Do not reopen this milestone absent a genuine new production defect.
+
+**7. Security-hardening debt — recorded, not closed by this GO.** This GO does **not** represent
+complete database-level sibling isolation. As disclosed in this report's own Threat Model section
+(unchanged, re-affirmed here): some evidence-table RLS remains account-scoped from the migration 260
+architecture, and a raw REST request naming a sibling's `profile_id` directly may bypass
+`current_learner_id()` where a given table's own RLS does not separately enforce learner-level
+ownership. This is retained as its own named, separate backlog item:
+
+> **LEARNER DATA RLS HARDENING** — required before broader/public launch security sign-off. Not
+> started, not scoped, not scheduled automatically. The next security activity on this item is a
+> **bounded adversarial assessment**, not an implementation: *"Can an ordinary authenticated
+> learner/browser, using capabilities realistically available from the production client, retrieve or
+> mutate a sibling's learner data outside the intended Angel 11+ application flows?"* That assessment
+> determines the necessary hardening scope — the answer, and therefore whether or how much of a
+> ~30-table RLS rewrite is genuinely warranted, is not inferred or assumed here.
+
+**8. Product design standard — confirmed governing.** `ANGEL_11PLUS_PRODUCT_DESIGN_STANDARD_V1.md`
+remains the governing visual standard, derived from the approved/frozen homepage. The Founder has
+explicitly stated this identity must carry throughout the product. The current authenticated learner
+interfaces do not yet consistently meet it — this is explicitly **not** part of the now-closed Private
+Learner Space milestone. The next major experience increment, **recorded, not started**, is:
+
+> **ANGEL 11+ AUTHENTICATED EXPERIENCE & DESIGN SYSTEM MIGRATION** — scope: Parent Dashboard, Today,
+> Learn, Practise, Mock, Progress, Results, in a controlled sequence. Objectives: one coherent Angel
+> 11+ identity from homepage into the product; preserve working educational engines; preserve learner
+> isolation; preserve Parent/Learner Mode; improve child-facing clarity and quality; remove legacy/
+> generic SaaS visual language; maintain zero-purple/no-gradient requirements; do not disguise
+> educational-content gaps with visual redesign.
+
+Not started automatically, per the governing instruction.
+
+---
+
+## UPDATE 2026-09-23 — Learner PIN (Part 2)
+
+Superseded by the FINAL FOUNDER PRODUCTION ACCEPTANCE section above (the milestone is now CLOSED,
+GO). Kept as the detailed implementation record for this part (threat model, lifecycle, cross-learner
+tests, bypass tests, files changed) — not rewritten.
 
 ### Production findings that triggered this update
 
@@ -281,13 +359,11 @@ depth debt, explicitly not to be fixed by any visual redesign.
 
 ---
 
-**ANGEL 11+ PRIVATE LEARNER SPACE: PARTIAL (superseding the original verdict below).**
-
-The Learner PIN is designed, implemented as the smallest extension that gives genuine server-side
-per-learner binding (not a client-side gate alone), proven directly against a real Postgres engine
-including the exact production scenario reported, deployed, and confirmed live. PARTIAL, not GO,
-because migration 263 has not yet been applied and the Founder's own required cross-learner PIN
-acceptance walkthrough has not yet been run against production — both are now ready to complete.
+**ANGEL 11+ PRIVATE LEARNER SPACE: PARTIAL — since superseded by GO.** See the FINAL FOUNDER PRODUCTION
+ACCEPTANCE section at the top of this document: migration 263 was applied and the Founder's real
+cross-learner PIN walkthrough passed in production. This PARTIAL verdict is kept as the historical
+record of this document's own state at the point this section was written, not edited to say GO
+retroactively.
 
 Per the governing instruction: this increment stops here. The full authenticated-interface redesign
 was not started.
