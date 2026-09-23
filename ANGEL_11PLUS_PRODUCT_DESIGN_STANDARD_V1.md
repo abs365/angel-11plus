@@ -53,6 +53,26 @@ Purple, gradients, generic AI/SaaS appearance, glassmorphism, excessive rounded 
 pills, repeated icon-square components everywhere, robot/AI imagery, glowing brains, futuristic AI
 motifs, fake analytics, unnecessary dashboards, visual clutter, generic template appearance.
 
+## Governing principle: no AI-interface visual fingerprint (Practise Hub Final Human-Design Refinement)
+
+This is a governing product rule, not a page-specific preference — it applies to every Angel 11+
+surface, present and future, not only Practise:
+
+> Angel 11+ must not acquire the visual fingerprints of an AI-generated interface. Components, icons,
+> colour blocks, pills and cards are used only when they improve educational comprehension or
+> navigation. Typography, composition, whitespace, real educational content and purposeful imagery
+> carry the identity.
+>
+> Do not solve visual hierarchy by creating another card, coloured tile, pill or icon container. First
+> attempt to solve it with typography, spacing, grouping, dividers and composition.
+
+Concretely: a repeated pattern of `icon tile → title → description → button`, applied identically to
+every item in a short list, is the specific shape this rule exists to catch — even when every colour
+used is already an approved Angel token. A decorative icon that repeats what the title text already
+says, a coloured pill used purely for emphasis rather than as a genuine action or status, or a card
+border introduced only to separate items that a plain divider would separate just as clearly, are each
+signs the AI/SaaS default was reached for before typography and composition were actually tried.
+
 ## What "one Angel 11+ experience" means in practice (Part 11)
 
 The transition from the public homepage into the authenticated product should feel continuous in

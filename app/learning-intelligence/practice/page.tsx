@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { BookOpen, Calculator, PenLine, HelpCircle } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import PageLayout from "@/components/PageLayout";
 import { PRACTICE_AREAS, type PracticeAreaId } from "@/lib/learningEngine/practiceContent";
 import { areaHasPracticeContent } from "@/lib/learningEngine/sessionGenerator";
@@ -20,12 +20,15 @@ import { getSupabaseClient } from "@/lib/supabase";
  * work of two different things. Nesting here keeps this feature clearly
  * scoped to the Assessment Brain V1 / Learning Engine V1 model it feeds,
  * with zero naming collision.
+ *
+ * Practise Hub Final Human-Design Refinement — the prior per-row icon tile
+ * (BookOpen/Calculator/PenLine) was purely decorative, duplicating what
+ * each subject's own title already says; removed per
+ * ANGEL_11PLUS_PRODUCT_DESIGN_STANDARD_V1.md's governing rule against
+ * icon/card/pill decoration that doesn't improve comprehension or
+ * navigation. Typography, spacing and a restrained divider now carry the
+ * hierarchy for these three rows instead.
  */
-const AREA_ICON: Record<string, typeof BookOpen> = {
-  "reading-comprehension": BookOpen,
-  mathematics: Calculator,
-  "continuous-writing": PenLine,
-};
 
 /**
  * Decision 258 — `undefined` (not yet checked) is deliberately treated as
@@ -65,66 +68,44 @@ export default function PracticeAreaSelectorPage() {
       <div className="max-w-3xl mx-auto px-4 py-6 md:px-8 md:py-8">
         <h1 className="text-[var(--angel-navy)] font-bold text-3xl md:text-4xl leading-tight">Choose a Practice Area</h1>
         <p className="text-[var(--angel-muted)] text-sm md:text-base mt-2 max-w-xl">
-          Practice strengthens what you&apos;ve learned. Each activity you complete updates your Skills Profile,
-          Evidence Profile, Readiness and Recommendations.
+          Practise the skills you need for your preparation. Angel 11+ uses your work to understand what you&apos;re
+          doing well and what to focus on next.
         </p>
 
         <div className="mt-8 bg-[var(--angel-sky)] rounded-lg px-6 md:px-8">
           <div className="divide-y divide-[var(--angel-border)]">
             {PRACTICE_AREAS.map((area) => {
-              const Icon = AREA_ICON[area.id];
               const isAvailable = availability[area.id];
 
               if (isAvailable !== true) {
                 return (
-                  <div key={area.id} className="flex items-center gap-4 py-5 opacity-60">
-                    <div className="w-12 h-12 rounded-lg bg-[var(--angel-paper)] flex items-center justify-center shrink-0">
-                      <Icon size={20} className="text-[var(--angel-muted)]" />
-                    </div>
-                    <div className="min-w-0 flex-1 max-w-2xl">
-                      <p className="text-[var(--angel-navy)] text-lg font-semibold leading-snug">
-                        {area.label}
-                        {isAvailable === false ? ": being prepared" : ""}
-                      </p>
-                      <p className="text-[var(--angel-ink)] text-sm mt-1 leading-relaxed opacity-90">
-                        {isAvailable === false
-                          ? "This practice area doesn't have practice-ready content yet. Check back soon."
-                          : "Checking availability…"}
-                      </p>
-                    </div>
+                  <div key={area.id} className="py-5 opacity-60">
+                    <p className="text-[var(--angel-navy)] text-lg font-semibold leading-snug">
+                      {area.label}
+                      {isAvailable === false ? ": being prepared" : ""}
+                    </p>
+                    <p className="text-[var(--angel-ink)] text-sm mt-1 leading-relaxed opacity-90">
+                      {isAvailable === false
+                        ? "This practice area doesn't have practice-ready content yet. Check back soon."
+                        : "Checking availability…"}
+                    </p>
                   </div>
                 );
               }
 
               return (
-                <Link key={area.id} href={`/learning-intelligence/practice/${area.id}`} className="flex items-center gap-4 py-5 group">
-                  <div className="w-12 h-12 rounded-lg bg-[var(--angel-paper)] flex items-center justify-center shrink-0">
-                    <Icon size={20} className="text-[var(--angel-blue)]" />
-                  </div>
-                  <div className="min-w-0 flex-1 max-w-2xl">
+                <Link key={area.id} href={`/learning-intelligence/practice/${area.id}`} className="flex items-center justify-between gap-4 py-5 group">
+                  <div className="min-w-0 flex-1">
                     <p className="text-[var(--angel-navy)] text-lg font-semibold leading-snug group-hover:underline">{area.label}</p>
                     <p className="text-[var(--angel-ink)] text-sm mt-1 leading-relaxed opacity-90">{area.description}</p>
                   </div>
-                  <span className="inline-flex items-center gap-1.5 rounded-full bg-blue-600 text-white text-sm font-semibold px-4 py-2 shrink-0 group-hover:opacity-90 transition-opacity motion-reduce:transition-none">
+                  <span className="inline-flex items-center gap-1 text-[var(--angel-blue)] text-sm font-semibold shrink-0">
                     Start
+                    <ArrowRight size={14} aria-hidden="true" className="group-hover:translate-x-0.5 transition-transform motion-reduce:transition-none" />
                   </span>
                 </Link>
               );
             })}
-
-            <div className="flex items-center gap-4 py-5 opacity-60">
-              <div className="w-12 h-12 rounded-lg bg-[var(--angel-paper)] flex items-center justify-center shrink-0">
-                <HelpCircle size={20} className="text-[var(--angel-muted)]" />
-              </div>
-              <div className="min-w-0 flex-1 max-w-2xl">
-                <p className="text-[var(--angel-navy)] text-lg font-semibold leading-snug">Vocabulary: not available here</p>
-                <p className="text-[var(--angel-ink)] text-sm mt-1 leading-relaxed opacity-90">
-                  Vocabulary isn&apos;t part of this skills structure yet, so Vocabulary practice cannot yet connect to
-                  your learning report. Vocabulary practice is still available from the main Learn hub, it just won&apos;t
-                  appear on this dashboard.
-                </p>
-              </div>
-            </div>
           </div>
         </div>
       </div>
