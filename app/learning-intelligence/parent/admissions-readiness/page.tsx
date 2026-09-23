@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { MapPin, ClipboardList } from "lucide-react";
 import PageLayout from "@/components/PageLayout";
-import { InfoCard } from "@/components/ui/Card";
 import { getSelectedPathwayId } from "@/lib/progress";
 import { getSupabaseClient } from "@/lib/supabase";
 import { fetchLearnerIntelligenceProfile } from "@/lib/learningEngine/profile";
@@ -75,57 +74,53 @@ export default function AdmissionsReadinessPage() {
       ]}
     >
       <div className="max-w-3xl mx-auto px-4 py-6 md:px-8 md:py-8">
-        <div className="flex items-center gap-3 mb-2">
-          <div>
-            <h1 className="text-gray-900 dark:text-gray-100 font-bold text-2xl">Admissions Readiness</h1>
-            <p className="text-gray-400 dark:text-gray-500 text-sm">
-              What real evidence shows so far. Not a prediction of the outcome
-            </p>
-          </div>
-        </div>
+        <h1 className="text-[var(--angel-navy)] font-bold text-3xl md:text-4xl leading-tight">Admissions Readiness</h1>
+        <p className="text-[var(--angel-muted)] text-sm md:text-base mt-2 max-w-xl">
+          What real evidence shows so far. Not a prediction of the outcome.
+        </p>
 
         {pathwayEligible === false && (
-          <InfoCard className="mt-6 flex items-start gap-3">
-            <MapPin size={18} className="text-blue-400 mt-0.5 shrink-0" />
-            <p className="text-sm text-gray-700 dark:text-gray-300">Available for the CSSE pathway only.</p>
-          </InfoCard>
+          <div className="mt-6 flex items-start gap-3 bg-[var(--angel-paper)] border border-[var(--angel-border)] rounded-lg p-5">
+            <MapPin size={18} className="text-[var(--angel-blue)] mt-0.5 shrink-0" />
+            <p className="text-sm text-[var(--angel-ink)]">Available for the CSSE pathway only.</p>
+          </div>
         )}
 
-        {pathwayEligible && !loaded && <p className="text-sm text-gray-400 dark:text-gray-500 mt-6" aria-live="polite">Loading…</p>}
+        {pathwayEligible && !loaded && <p className="text-sm text-[var(--angel-muted)] mt-6" aria-live="polite">Loading…</p>}
 
         {pathwayEligible && loaded && profile === null && (
-          <InfoCard className="mt-6 text-center">
-            <p className="text-sm text-gray-500 dark:text-gray-400">This page isn&apos;t available right now.</p>
-          </InfoCard>
+          <div className="mt-6 text-center bg-[var(--angel-paper)] border border-[var(--angel-border)] rounded-lg p-6">
+            <p className="text-sm text-[var(--angel-muted)]">This page isn&apos;t available right now.</p>
+          </div>
         )}
 
         {pathwayEligible && profile && !profile.pathwayEligible && (
-          <InfoCard className="mt-6 flex items-start gap-3">
-            <MapPin size={18} className="text-blue-400 mt-0.5 shrink-0" />
-            <p className="text-sm text-gray-700 dark:text-gray-300">
+          <div className="mt-6 flex items-start gap-3 bg-[var(--angel-paper)] border border-[var(--angel-border)] rounded-lg p-5">
+            <MapPin size={18} className="text-[var(--angel-blue)] mt-0.5 shrink-0" />
+            <p className="text-sm text-[var(--angel-ink)]">
               This section is built entirely from CSSE&apos;s own official exam evidence.
             </p>
-          </InfoCard>
+          </div>
         )}
 
         {pathwayEligible && profile && profile.pathwayEligible && (
-          <div className="space-y-8 mt-6">
+          <div className="space-y-8 mt-8">
             <section>
-              <h2 className="text-gray-900 dark:text-gray-100 font-bold text-lg mb-1">Educational Readiness</h2>
-              <p className="text-xs text-gray-400 dark:text-gray-500 mb-3">
+              <h2 className="text-[var(--angel-navy)] font-bold text-lg md:text-xl mb-1">Educational Readiness</h2>
+              <p className="text-xs text-[var(--angel-muted)] mb-3">
                 How well-evidenced each part of CSSE&apos;s exam is, area by area. Never a single blended score.
               </p>
               <ReadinessSummary readiness={profile.readiness} />
               {/* Sprint 5 (WP5B) — secondary link; the page's one primary
                   action (Revision Planner, below) is unchanged. */}
-              <Link href="/learning-intelligence/parent/readiness-timeline" className="inline-block text-xs font-semibold text-blue-600 dark:text-blue-400 mt-2">
+              <Link href="/learning-intelligence/parent/readiness-timeline" className="inline-block text-xs font-semibold text-[var(--angel-blue)] mt-2 hover:underline">
                 See how this changed over time →
               </Link>
             </section>
 
             <section>
-              <h2 className="text-gray-900 dark:text-gray-100 font-bold text-lg mb-1">Educational Evidence</h2>
-              <p className="text-xs text-gray-400 dark:text-gray-500 mb-3">
+              <h2 className="text-[var(--angel-navy)] font-bold text-lg md:text-xl mb-1">Educational Evidence</h2>
+              <p className="text-xs text-[var(--angel-muted)] mb-3">
                 How much of what CSSE actually tests has real recorded evidence behind it.
               </p>
               <EvidenceProfile competencies={profile.competencies} />
@@ -134,8 +129,8 @@ export default function AdmissionsReadinessPage() {
             <HistoricalContextPanel />
 
             <section>
-              <h2 className="text-gray-900 dark:text-gray-100 font-bold text-lg mb-3">Recommended Next Action</h2>
-              {recommendations === undefined && <p className="text-sm text-gray-400 dark:text-gray-500" aria-live="polite">Loading…</p>}
+              <h2 className="text-[var(--angel-navy)] font-bold text-lg md:text-xl mb-3">Recommended Next Action</h2>
+              {recommendations === undefined && <p className="text-sm text-[var(--angel-muted)]" aria-live="polite">Loading…</p>}
               {recommendations !== undefined && (
                 <RecommendationExplanation result={recommendations ?? { ordered: [], explanations: new Map(), vetoedCompetencyCodes: [] }} />
               )}
@@ -153,13 +148,13 @@ export default function AdmissionsReadinessPage() {
               </Link>
               {/* Sprint 5 (WP5C) — secondary link; the primary action above is unchanged. */}
               <div className="mt-2">
-                <Link href="/learning-intelligence/parent/mock-readiness" className="text-xs font-semibold text-gray-500 dark:text-gray-400">
+                <Link href="/learning-intelligence/parent/mock-readiness" className="text-xs font-semibold text-[var(--angel-muted)] hover:text-[var(--angel-blue)]">
                   Is another mock worthwhile right now? →
                 </Link>
               </div>
             </div>
 
-            <p className="text-xs text-gray-400 dark:text-gray-500 leading-relaxed">
+            <p className="text-xs text-[var(--angel-muted)] leading-relaxed">
               Angel does not predict admissions outcomes, offer likelihood, or how your child compares to other
               applicants. It only shows what real evidence exists, and CSSE&apos;s own published facts, shown separately.
             </p>

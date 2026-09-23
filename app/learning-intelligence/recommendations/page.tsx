@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { MapPin } from "lucide-react";
 import PageLayout from "@/components/PageLayout";
-import { InfoCard } from "@/components/ui/Card";
 import { getSelectedPathwayId } from "@/lib/progress";
 import { fetchLearnerIntelligenceProfile } from "@/lib/learningEngine/profile";
 import { RecommendationSummary } from "@/components/learningEngine/RecommendationSummary";
@@ -29,26 +28,22 @@ export default function RecommendationCentrePage() {
   return (
     <PageLayout breadcrumbs={[{ label: "Learning Report", href: "/learning-intelligence" }, { label: "Recommendations" }]}>
       <div className="max-w-3xl mx-auto px-4 py-6 md:px-8 md:py-8">
-        <div className="flex items-center gap-3 mb-2">
-          <div>
-            <h1 className="text-gray-900 dark:text-gray-100 font-bold text-2xl">Recommendation Centre</h1>
-            <p className="text-gray-400 dark:text-gray-500 text-sm">What to focus on next, based on your recorded evidence</p>
-          </div>
-        </div>
+        <h1 className="text-[var(--angel-navy)] font-bold text-3xl md:text-4xl leading-tight">Recommendations</h1>
+        <p className="text-[var(--angel-muted)] text-sm md:text-base mt-2 max-w-xl">What to focus on next, based on your recorded evidence.</p>
 
-        {profile === undefined && <p className="text-sm text-gray-400 dark:text-gray-500 mt-6" aria-live="polite">Loading…</p>}
+        {profile === undefined && <p className="text-sm text-[var(--angel-muted)] mt-6" aria-live="polite">Loading…</p>}
 
         {profile === null && (
-          <InfoCard className="mt-6 text-center">
-            <p className="text-sm text-gray-500 dark:text-gray-400">Recommendations aren&apos;t available right now.</p>
-          </InfoCard>
+          <div className="mt-6 text-center bg-[var(--angel-paper)] border border-[var(--angel-border)] rounded-lg p-6">
+            <p className="text-sm text-[var(--angel-muted)]">Recommendations aren&apos;t available right now.</p>
+          </div>
         )}
 
         {profile && !profile.pathwayEligible && (
-          <InfoCard className="mt-6 flex items-start gap-3">
-            <MapPin size={18} className="text-blue-400 mt-0.5 shrink-0" />
-            <p className="text-sm text-gray-700 dark:text-gray-300">Available for the CSSE pathway only.</p>
-          </InfoCard>
+          <div className="mt-6 flex items-start gap-3 bg-[var(--angel-paper)] border border-[var(--angel-border)] rounded-lg p-5">
+            <MapPin size={18} className="text-[var(--angel-blue)] mt-0.5 shrink-0" />
+            <p className="text-sm text-[var(--angel-ink)]">Available for the CSSE pathway only.</p>
+          </div>
         )}
 
         {profile && profile.pathwayEligible && (
@@ -59,7 +54,7 @@ export default function RecommendationCentrePage() {
               href="/learning-intelligence/practice"
               className="inline-block bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-colors mt-6"
             >
-              Practice now →
+              Practise now →
             </Link>
           </div>
         )}

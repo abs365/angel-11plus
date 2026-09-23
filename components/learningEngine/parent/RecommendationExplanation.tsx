@@ -1,5 +1,3 @@
-import { Lightbulb } from "lucide-react";
-import { InfoCard } from "@/components/ui/Card";
 import type { RecommendationRuntimeResult } from "@/lib/ali/persistence/recommendationRuntime";
 
 /**
@@ -27,14 +25,14 @@ export function RecommendationExplanation({
 
   if (visible.length === 0) {
     return (
-      <p className="text-sm text-gray-400 dark:text-gray-500 italic">
+      <p className="text-sm text-[var(--angel-muted)] italic">
         Nothing to suggest right now. Check back as your child completes more practice.
       </p>
     );
   }
 
   return (
-    <div className="space-y-2">
+    <div className="bg-[var(--angel-paper)] border border-[var(--angel-border)] rounded-lg divide-y divide-[var(--angel-border)]">
       {visible.map((candidate) => {
         const parentExplanation = result.explanations
           .get(candidate.competencyCode)
@@ -42,10 +40,9 @@ export function RecommendationExplanation({
         if (!parentExplanation) return null;
 
         return (
-          <InfoCard key={candidate.competencyCode} className="flex items-start gap-3">
-            <Lightbulb size={16} className="text-blue-500 mt-0.5 shrink-0" />
-            <p className="text-sm text-gray-700 dark:text-gray-300">{parentExplanation.text}</p>
-          </InfoCard>
+          <p key={candidate.competencyCode} className="text-sm text-[var(--angel-ink)] p-5">
+            {parentExplanation.text}
+          </p>
         );
       })}
     </div>

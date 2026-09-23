@@ -1,5 +1,4 @@
 import type { ReactNode } from "react";
-import { InfoCard } from "@/components/ui/Card";
 
 /**
  * At a Glance — WP4C (Parent Trust), FD-020/Sprint 4 Completion Package.
@@ -37,16 +36,16 @@ const QUESTIONS: { key: keyof AtAGlanceAnswers; label: string }[] = [
 
 export function AtAGlancePanel({ answers }: { answers: AtAGlanceAnswers }) {
   return (
-    <InfoCard>
-      <p className="text-xs font-bold uppercase tracking-wide text-gray-400 dark:text-gray-500 mb-3">At a Glance</p>
-      <div className="space-y-3">
+    <div className="bg-[var(--angel-paper)] border border-[var(--angel-border)] rounded-lg p-5">
+      <p className="text-xs font-bold uppercase tracking-widest text-[var(--angel-muted)] mb-3">At a Glance</p>
+      <div className="divide-y divide-[var(--angel-border)]">
         {QUESTIONS.map(({ key, label }) => (
-          <div key={key}>
-            <p className="text-xs font-semibold text-gray-500 dark:text-gray-400">{label}</p>
-            <div className="text-sm text-gray-700 dark:text-gray-300 mt-0.5 leading-relaxed">{answers[key]}</div>
+          <div key={key} className="py-3 first:pt-0 last:pb-0">
+            <p className="text-xs font-semibold text-[var(--angel-muted)]">{label}</p>
+            <div className="text-sm text-[var(--angel-ink)] mt-0.5 leading-relaxed">{answers[key]}</div>
           </div>
         ))}
       </div>
-    </InfoCard>
+    </div>
   );
 }

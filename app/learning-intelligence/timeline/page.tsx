@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { MapPin } from "lucide-react";
 import PageLayout from "@/components/PageLayout";
-import { InfoCard } from "@/components/ui/Card";
 import { getSelectedPathwayId } from "@/lib/progress";
 import { getSupabaseClient } from "@/lib/supabase";
 import { ensureProfile } from "@/lib/supabaseProgress";
@@ -67,42 +66,38 @@ export default function ProgressTimelinePage() {
   return (
     <PageLayout breadcrumbs={[{ label: "Learning Report", href: "/learning-intelligence" }, { label: "Progress Timeline" }]}>
       <div className="max-w-3xl mx-auto px-4 py-6 md:px-8 md:py-8">
-        <div className="flex items-center gap-3 mb-2">
-          <div>
-            <h1 className="text-gray-900 dark:text-gray-100 font-bold text-2xl">Progress Timeline</h1>
-            <p className="text-gray-400 dark:text-gray-500 text-sm">Every CSSE practice activity you&apos;ve completed, newest first</p>
-          </div>
-        </div>
+        <h1 className="text-[var(--angel-navy)] font-bold text-3xl md:text-4xl leading-tight">Progress Timeline</h1>
+        <p className="text-[var(--angel-muted)] text-sm md:text-base mt-2 max-w-xl">Every CSSE practice activity you&apos;ve completed, newest first.</p>
 
         {pathwayEligible === false && (
-          <InfoCard className="mt-6 flex items-start gap-3">
-            <MapPin size={18} className="text-blue-400 mt-0.5 shrink-0" />
-            <p className="text-sm text-gray-700 dark:text-gray-300">Available for the CSSE pathway only.</p>
-          </InfoCard>
+          <div className="mt-6 flex items-start gap-3 bg-[var(--angel-paper)] border border-[var(--angel-border)] rounded-lg p-5">
+            <MapPin size={18} className="text-[var(--angel-blue)] mt-0.5 shrink-0" />
+            <p className="text-sm text-[var(--angel-ink)]">Available for the CSSE pathway only.</p>
+          </div>
         )}
 
-        {pathwayEligible && items === undefined && <p className="text-sm text-gray-400 dark:text-gray-500 mt-6" aria-live="polite">Loading…</p>}
+        {pathwayEligible && items === undefined && <p className="text-sm text-[var(--angel-muted)] mt-6" aria-live="polite">Loading…</p>}
 
         {pathwayEligible && items === null && (
-          <InfoCard className="mt-6 text-center">
-            <p className="text-sm text-gray-500 dark:text-gray-400">Your timeline isn&apos;t available right now.</p>
-          </InfoCard>
+          <div className="mt-6 text-center bg-[var(--angel-paper)] border border-[var(--angel-border)] rounded-lg p-6">
+            <p className="text-sm text-[var(--angel-muted)]">Your timeline isn&apos;t available right now.</p>
+          </div>
         )}
 
         {pathwayEligible && items && (
           <div className="mt-6 space-y-8">
             <section>
-              <h2 className="text-gray-900 dark:text-gray-100 font-bold text-lg mb-3">Milestones</h2>
-              {milestones === undefined && <p className="text-sm text-gray-400 dark:text-gray-500" aria-live="polite">Loading…</p>}
+              <h2 className="text-[var(--angel-navy)] font-bold text-lg md:text-xl mb-3">Milestones</h2>
+              {milestones === undefined && <p className="text-sm text-[var(--angel-muted)]" aria-live="polite">Loading…</p>}
               {milestones !== undefined && <EducationalTimeline milestones={milestones ?? []} />}
             </section>
 
             <section>
-              <h2 className="text-gray-900 dark:text-gray-100 font-bold text-lg mb-3">Every activity</h2>
-              <RecentActivity items={items} plainLanguage />
+              <h2 className="text-[var(--angel-navy)] font-bold text-lg md:text-xl mb-3">Every activity</h2>
+              <RecentActivity items={items} />
             </section>
 
-            <p className="text-[11px] text-gray-400 dark:text-gray-500 leading-relaxed">
+            <p className="text-[11px] text-[var(--angel-muted)] leading-relaxed">
               Milestones above are real, dated events: mastery and durable mastery, as the Engine reaches them. What
               Angel doesn&apos;t yet show is a continuous trend of how your Evidence Tier moved between those
               moments.
@@ -113,7 +108,7 @@ export default function ProgressTimelinePage() {
               href="/learning-intelligence/practice"
               className="inline-block bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-colors"
             >
-              Practice now →
+              Practise now →
             </Link>
           </div>
         )}

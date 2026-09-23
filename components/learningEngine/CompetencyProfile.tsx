@@ -1,6 +1,5 @@
-import { InfoCard } from "@/components/ui/Card";
 import { StatusIndicator } from "@/components/ui/Progress";
-import { EvidenceTierBadge, evidenceSignalTone } from "./EvidenceTierBadge";
+import { evidenceSignalTone, evidenceSignalLabel } from "./EvidenceTierBadge";
 import { COMPETENCIES, ALL_ASSESSMENT_COMPONENTS } from "@/lib/learningEngine/assessmentBrainMap";
 import type { CompetencyStatus } from "@/lib/learningEngine/types";
 
@@ -28,6 +27,14 @@ import type { CompetencyStatus } from "@/lib/learningEngine/types";
  * visible to the learner, hidden from the parent" as a deliberate design
  * axis; FD-019's "Plain English throughout" supersedes that split for this
  * shared component, so the code is gone for every caller, not toggled.
+ *
+ * Increment 3 — the separate 5-step Evidence Tier badge (ET-0..ET-4,
+ * shown alongside the Evidence Signal chip) was real but redundant
+ * badge clutter: both described "how much evidence exists" in two
+ * different vocabularies on the same row. EvidenceTierBadge.tsx's own
+ * computation is untouched and still exported for any future caller that
+ * needs the finer-grained tier; this component now shows one clear,
+ * warm-language signal per skill instead of two overlapping indicators.
  */
 export function CompetencyProfile({
   competencies,
@@ -45,25 +52,24 @@ export function CompetencyProfile({
         if (ids.length === 0) return null;
         return (
           <div key={component}>
-            <p className="text-xs font-bold uppercase tracking-wide text-gray-400 dark:text-gray-500 mb-2">{component}</p>
-            <div className="space-y-2">
+            <p className="text-xs font-bold uppercase tracking-widest text-[var(--angel-muted)] mb-2">{component}</p>
+            <div className="divide-y divide-[var(--angel-border)]">
               {ids.map((id) => {
                 const status = byId.get(id as keyof typeof COMPETENCIES);
                 if (!status) return null;
                 const meta = COMPETENCIES[id as keyof typeof COMPETENCIES];
                 return (
-                  <InfoCard key={id} className="flex items-center justify-between gap-3 flex-wrap">
+                  <div key={id} className="flex items-center justify-between gap-3 py-3 flex-wrap">
                     <div className="min-w-0">
-                      <p className="text-sm font-semibold text-gray-900 dark:text-gray-100 truncate">{meta.name}</p>
+                      <p className="text-sm font-semibold text-[var(--angel-navy)] truncate">{meta.name}</p>
                     </div>
                     <div className="flex items-center gap-3 flex-wrap">
                       {durableCompetencyIds?.has(id) && (
-                        <StatusIndicator tone="success" label="Durably Mastered" />
+                        <StatusIndicator tone="success" label="Confidently mastered" />
                       )}
-                      <StatusIndicator tone={evidenceSignalTone(status.signal)} label={status.signal} />
-                      <EvidenceTierBadge tier={status.tier} />
+                      <StatusIndicator tone={evidenceSignalTone(status.signal)} label={evidenceSignalLabel(status.signal)} />
                     </div>
-                  </InfoCard>
+                  </div>
                 );
               })}
             </div>

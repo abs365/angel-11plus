@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { CalendarDays, ClipboardList, GraduationCap, Route, ChevronDown } from "lucide-react";
-import { InfoCard } from "@/components/ui/Card";
 import { getSelectedPathwayId } from "@/lib/progress";
 import { getSupabaseClient } from "@/lib/supabase";
 import { fetchLearnerIntelligenceProfile } from "@/lib/learningEngine/profile";
@@ -11,8 +10,7 @@ import { fetchRecentActivity, type RecentActivityItem } from "@/lib/learningEngi
 import { fetchEducationalMilestones } from "@/lib/ali/persistence/auditStore";
 import { getRecommendations } from "@/lib/learningEngine/educationalIntelligenceService";
 import { COMPETENCIES, ALL_COMPETENCY_IDS } from "@/lib/learningEngine/assessmentBrainMap";
-import { getMockResults } from "@/lib/mockProgress";
-import { assessMockReadiness, type MockReadinessAssessment } from "@/lib/learningEngine/mockReadiness";
+import { assessMockReadiness, fetchRealCsseMockAttemptCount, type MockReadinessAssessment } from "@/lib/learningEngine/mockReadiness";
 import { getActiveMockForm, isMockFormAvailable } from "@/lib/mockAttempt/client";
 import { CompetencySummary } from "@/components/learningEngine/parent/CompetencySummary";
 import { EvidenceComposition } from "@/components/learningEngine/parent/EvidenceComposition";
@@ -84,15 +82,28 @@ export function CssePathwayParentContent() {
             .then((items) => setWeekMilestoneCount(items.length))
             .catch(() => setWeekMilestoneCount(0));
         }
-        getMockResults()
-          .then((results) => setMockAttemptCount(results.length))
-          .catch(() => setMockAttemptCount(0));
+        if (supabase) {
+          fetchRealCsseMockAttemptCount(supabase)
+            .then(setMockAttemptCount)
+            .catch(() => setMockAttemptCount(0));
+        } else {
+          setMockAttemptCount(0);
+        }
       })
       .catch(() => setProfile(null));
   }, []);
 
   const evidencedCount = profile?.competencies.filter((c) => c.tier !== "ET-0").length ?? 0;
   const totalCount = profile?.competencies.length ?? 0;
+  // Increment 3 (Progress + Results + Parent Dashboard) — real, already-
+  // computed strengths/mastered-skill data (profile.diagnostics, the same
+  // DiagnosticFindings computeDiagnosticFindings() always produced) was
+  // fetched but never surfaced on the first screen at all -- a parent
+  // asking "what's going well?" had no answer until they opened detailed
+  // progress. No new computation: same data, now also shown here.
+  const goingWellNames = profile
+    ? [...profile.diagnostics.strengths, ...profile.diagnostics.masteredSkills].map((id) => COMPETENCIES[id].name)
+    : [];
   const topCandidate = recommendations?.ordered[0];
   const topParentReason = topCandidate
     ? recommendations?.explanations.get(topCandidate.competencyCode)?.find((e) => e.audience === "parent")?.text
@@ -127,7 +138,7 @@ export function CssePathwayParentContent() {
     thisWeek: topCandidateLabel ? (
       <>
         Focus on <span className="font-medium">{topCandidateLabel}</span>. See the{" "}
-        <Link href="/learning-intelligence/parent/revision-planner" className="text-blue-600 dark:text-blue-400 font-semibold">
+        <Link href="/learning-intelligence/parent/revision-planner" className="text-[var(--angel-blue)] font-semibold hover:underline">
           Revision Planner
         </Link>{" "}
         for this week&apos;s full plan.
@@ -152,50 +163,68 @@ export function CssePathwayParentContent() {
 
   return (
     <>
-      {profile === undefined && <p className="text-sm text-gray-400 dark:text-gray-500" aria-live="polite">Loading…</p>}
+      {profile === undefined && <p className="text-sm text-[var(--angel-muted)]" aria-live="polite">Loading…</p>}
 
       {profile === null && (
-        <InfoCard className="text-center">
-          <p className="text-sm text-gray-500 dark:text-gray-400">This dashboard isn&apos;t available right now.</p>
-        </InfoCard>
+        <div className="text-center bg-[var(--angel-paper)] border border-[var(--angel-border)] rounded-lg p-6">
+          <p className="text-sm text-[var(--angel-muted)]">This dashboard isn&apos;t available right now.</p>
+        </div>
       )}
 
       {profile && !profile.pathwayEligible && (
-        <InfoCard className="flex items-start gap-3">
-          <div>
-            <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">CSSE evidence not available yet</p>
-            <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">
-              This section is built entirely from CSSE&apos;s own official exam evidence.
-            </p>
-          </div>
-        </InfoCard>
+        <div className="bg-[var(--angel-paper)] border border-[var(--angel-border)] rounded-lg p-5">
+          <p className="text-sm font-semibold text-[var(--angel-navy)]">CSSE evidence not available yet</p>
+          <p className="text-xs text-[var(--angel-muted)] mt-1">
+            This section is built entirely from CSSE&apos;s own official exam evidence.
+          </p>
+        </div>
       )}
 
       {profile && profile.pathwayEligible && (
         <div className="space-y-6">
-          {/* New Learner Experience Migration — first screen, four questions
-              a parent actually has, understandable within ~10 seconds. See
-              PARENT_DASHBOARD_SIMPLIFICATION_SPEC.md. Every value here is
-              read from data already computed above; nothing new is fetched
-              or calculated for this section. */}
+          {/* New Learner Experience Migration — first screen, the questions
+              a parent actually has, understandable within ~10 seconds. Every
+              value here is read from data already computed above; nothing
+              new is fetched or calculated for this section. */}
           <section>
-            <h2 className="text-gray-500 dark:text-gray-400 font-semibold text-xs uppercase tracking-wide mb-2">
+            <h2 className="text-[var(--angel-muted)] font-semibold text-xs uppercase tracking-widest mb-2">
               How is my child doing?
             </h2>
-            <InfoCard>
-              <p className="text-sm text-gray-700 dark:text-gray-300">{atAGlanceAnswers.improving}</p>
-            </InfoCard>
+            <div className="bg-[var(--angel-paper)] border border-[var(--angel-border)] rounded-lg p-5">
+              <p className="text-sm text-[var(--angel-ink)]">{atAGlanceAnswers.improving}</p>
+            </div>
           </section>
 
           <section>
-            <h2 className="text-gray-500 dark:text-gray-400 font-semibold text-xs uppercase tracking-wide mb-2">
+            <h2 className="text-[var(--angel-muted)] font-semibold text-xs uppercase tracking-widest mb-2">
+              What&apos;s going well?
+            </h2>
+            <div className="bg-[var(--angel-paper)] border border-[var(--angel-border)] rounded-lg p-5">
+              {goingWellNames.length > 0 ? (
+                <div className="flex flex-wrap gap-1.5">
+                  {goingWellNames.map((name) => (
+                    <span key={name} className="text-xs font-medium px-2.5 py-1 rounded-full bg-[var(--angel-sky)] text-[var(--angel-ink)]">
+                      {name}
+                    </span>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-sm text-[var(--angel-muted)]">
+                  Nothing confirmed yet. This fills in as your child completes more practice.
+                </p>
+              )}
+            </div>
+          </section>
+
+          <section>
+            <h2 className="text-[var(--angel-muted)] font-semibold text-xs uppercase tracking-widest mb-2">
               What needs attention?
             </h2>
-            <InfoCard>
-              <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">
+            <div className="bg-[var(--angel-paper)] border border-[var(--angel-border)] rounded-lg p-5">
+              <p className="text-sm font-semibold text-[var(--angel-navy)]">
                 {topCandidateLabel ? <>Angel recommends: {topCandidateLabel}</> : "No specific focus yet"}
               </p>
-              <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 leading-relaxed">
+              <p className="text-xs text-[var(--angel-muted)] mt-1 leading-relaxed">
                 {topParentReason ?? "This fills in once there's evidence to respond to."}
               </p>
               {/* Mathematics Reference Vertical — a real, working lesson
@@ -205,16 +234,16 @@ export function CssePathwayParentContent() {
               {topCandidate?.competencyCode === "MR-01" && (
                 <Link
                   href="/learning-intelligence/learn/mathematics/arithmetic"
-                  className="inline-block text-xs font-semibold text-blue-600 dark:text-blue-400 mt-2"
+                  className="inline-block text-xs font-semibold text-[var(--angel-blue)] mt-2 hover:underline"
                 >
                   Start this lesson →
                 </Link>
               )}
-            </InfoCard>
+            </div>
           </section>
 
           <section>
-            <h2 className="text-gray-500 dark:text-gray-400 font-semibold text-xs uppercase tracking-wide mb-2">
+            <h2 className="text-[var(--angel-muted)] font-semibold text-xs uppercase tracking-widest mb-2">
               What should they do next?
             </h2>
             <Link
@@ -226,34 +255,34 @@ export function CssePathwayParentContent() {
           </section>
 
           <section>
-            <h2 className="text-gray-500 dark:text-gray-400 font-semibold text-xs uppercase tracking-wide mb-2">
+            <h2 className="text-[var(--angel-muted)] font-semibold text-xs uppercase tracking-widest mb-2">
               Are they ready for a mock?
             </h2>
-            <InfoCard>
+            <div className="bg-[var(--angel-paper)] border border-[var(--angel-border)] rounded-lg p-5">
               {mockReadiness === undefined ? (
-                <p className="text-sm text-gray-400 dark:text-gray-500" aria-live="polite">Checking…</p>
+                <p className="text-sm text-[var(--angel-muted)]" aria-live="polite">Checking…</p>
               ) : (
                 <>
-                  <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">
+                  <p className="text-sm font-semibold text-[var(--angel-navy)]">
                     {{
                       "practice-first": "Keep preparing",
                       "first-mock-valuable": "A first mock would be valuable",
                       "mock-valuable": "A mock would be valuable",
                     }[mockReadiness.verdict]}
                   </p>
-                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 leading-relaxed">{mockReadiness.explanation}</p>
+                  <p className="text-xs text-[var(--angel-muted)] mt-1 leading-relaxed">{mockReadiness.explanation}</p>
                   {mockReadiness.nextAction.href === "/learning-intelligence/mock-exam" && !csseMockAvailable ? (
-                    <Link href="/learning-intelligence/practice" className="inline-block text-xs font-semibold text-blue-600 dark:text-blue-400 mt-2">
+                    <Link href="/learning-intelligence/practice" className="inline-block text-xs font-semibold text-[var(--angel-blue)] mt-2 hover:underline">
                       See practice areas →
                     </Link>
                   ) : (
-                    <Link href={mockReadiness.nextAction.href} className="inline-block text-xs font-semibold text-blue-600 dark:text-blue-400 mt-2">
+                    <Link href={mockReadiness.nextAction.href} className="inline-block text-xs font-semibold text-[var(--angel-blue)] mt-2 hover:underline">
                       {mockReadiness.nextAction.label}
                     </Link>
                   )}
                 </>
               )}
-            </InfoCard>
+            </div>
           </section>
 
           {/* Secondary links — progressive disclosure. Nothing below is
@@ -261,46 +290,46 @@ export function CssePathwayParentContent() {
           <div className="flex items-center gap-4 flex-wrap pt-1">
             <button
               onClick={() => setShowDetails((v) => !v)}
-              className="inline-flex items-center gap-1 text-xs font-semibold text-blue-600 dark:text-blue-400"
+              className="inline-flex items-center gap-1 text-xs font-semibold text-[var(--angel-blue)]"
             >
               {showDetails ? "Hide detailed progress" : "View detailed progress"}
               <ChevronDown size={13} className={showDetails ? "rotate-180 transition-transform" : "transition-transform"} />
             </button>
-            <Link href="/learning-intelligence/parent/weekly-report" className="text-xs font-semibold text-gray-500 dark:text-gray-400 inline-flex items-center gap-1">
+            <Link href="/learning-intelligence/parent/weekly-report" className="text-xs font-semibold text-[var(--angel-muted)] inline-flex items-center gap-1 hover:text-[var(--angel-blue)]">
               <CalendarDays size={13} /> Weekly Report →
             </Link>
-            <Link href="/learning-intelligence/parent/admissions-readiness" className="text-xs font-semibold text-gray-500 dark:text-gray-400 inline-flex items-center gap-1">
+            <Link href="/learning-intelligence/parent/admissions-readiness" className="text-xs font-semibold text-[var(--angel-muted)] inline-flex items-center gap-1 hover:text-[var(--angel-blue)]">
               <GraduationCap size={13} /> School/Admissions Readiness →
             </Link>
-            <Link href="/learning-intelligence/parent/journey" className="text-xs font-semibold text-gray-500 dark:text-gray-400 inline-flex items-center gap-1">
+            <Link href="/learning-intelligence/parent/journey" className="text-xs font-semibold text-[var(--angel-muted)] inline-flex items-center gap-1 hover:text-[var(--angel-blue)]">
               <Route size={13} /> Learning history →
             </Link>
           </div>
 
           {showDetails && (
-        <div className="space-y-8 pt-4 border-t border-gray-100 dark:border-gray-800">
+        <div className="space-y-8 pt-4 border-t border-[var(--angel-border)]">
           <section>
             <AtAGlancePanel answers={atAGlanceAnswers} />
           </section>
 
           <section>
-            <h2 className="text-gray-900 dark:text-gray-100 font-bold text-lg mb-3">Child Progress</h2>
-            <InfoCard>
-              <p className="text-sm text-gray-700 dark:text-gray-300">
+            <h2 className="text-[var(--angel-navy)] font-bold text-lg md:text-xl mb-3">Child Progress</h2>
+            <div className="bg-[var(--angel-paper)] border border-[var(--angel-border)] rounded-lg p-5">
+              <p className="text-sm text-[var(--angel-ink)]">
                 {evidencedCount === 0
                   ? "No practice evidence recorded yet. This fills in as your child completes practice activities."
                   : `${evidencedCount} of ${totalCount} CSSE skills now have some recorded evidence.`}
               </p>
-              <Link href="/learning-intelligence/practice" className="inline-block text-xs font-semibold text-blue-600 dark:text-blue-400 mt-2">
+              <Link href="/learning-intelligence/practice" className="inline-block text-xs font-semibold text-[var(--angel-blue)] mt-2 hover:underline">
                 See practice areas →
               </Link>
-            </InfoCard>
+            </div>
           </section>
 
           <section>
-            <h2 className="text-gray-900 dark:text-gray-100 font-bold text-lg mb-3">This Week</h2>
-            <InfoCard>
-              <p className="text-sm text-gray-700 dark:text-gray-300" aria-live="polite">
+            <h2 className="text-[var(--angel-navy)] font-bold text-lg md:text-xl mb-3">This Week</h2>
+            <div className="bg-[var(--angel-paper)] border border-[var(--angel-border)] rounded-lg p-5">
+              <p className="text-sm text-[var(--angel-ink)]" aria-live="polite">
                 {weekActivityCount === undefined || weekMilestoneCount === undefined
                   ? "Loading…"
                   : weekActivityCount === 0 && weekMilestoneCount === 0
@@ -308,69 +337,69 @@ export function CssePathwayParentContent() {
                   : `${weekActivityCount} activit${weekActivityCount === 1 ? "y" : "ies"} this week` +
                     (weekMilestoneCount > 0 ? `, ${weekMilestoneCount} milestone${weekMilestoneCount === 1 ? "" : "s"} reached.` : ".")}
               </p>
-              <Link href="/learning-intelligence/parent/weekly-report" className="inline-block text-xs font-semibold text-blue-600 dark:text-blue-400 mt-2">
+              <Link href="/learning-intelligence/parent/weekly-report" className="inline-block text-xs font-semibold text-[var(--angel-blue)] mt-2 hover:underline">
                 Full weekly report →
               </Link>
-            </InfoCard>
+            </div>
           </section>
 
           <section>
-            <h2 className="text-gray-900 dark:text-gray-100 font-bold text-lg mb-3">What&apos;s Next</h2>
+            <h2 className="text-[var(--angel-navy)] font-bold text-lg md:text-xl mb-3">What&apos;s Next</h2>
             {topParentReason && (
-              <p className="text-sm text-gray-500 dark:text-gray-400 italic mb-3">
+              <p className="text-sm text-[var(--angel-muted)] italic mb-3">
                 Here&apos;s what your child needs next, and why:
               </p>
             )}
-            {recommendations === undefined && <p className="text-sm text-gray-400 dark:text-gray-500" aria-live="polite">Loading…</p>}
+            {recommendations === undefined && <p className="text-sm text-[var(--angel-muted)]" aria-live="polite">Loading…</p>}
             {recommendations !== undefined && <RecommendationExplanation result={recommendations ?? { ordered: [], explanations: new Map(), vetoedCompetencyCodes: [] }} />}
             {/* WP4C — moved here from the page's bottom so the explainer sits
                 right where a parent is reading a recommendation and asking
                 "why," instead of being isolated at the end of the page. */}
-            <InfoCard className="mt-3">
-              <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">How Angel decides what to recommend</p>
-              <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 leading-relaxed">
+            <div className="mt-3 bg-[var(--angel-paper)] border border-[var(--angel-border)] rounded-lg p-5">
+              <p className="text-sm font-semibold text-[var(--angel-navy)]">How Angel decides what to recommend</p>
+              <p className="text-xs text-[var(--angel-muted)] mt-1 leading-relaxed">
                 Every suggestion here comes from what your child has actually done in practice, real evidence of what
                 they can do confidently and what still needs work, never a fixed script. It updates as new evidence
                 comes in, and always explains why a particular skill was chosen.
               </p>
-            </InfoCard>
+            </div>
           </section>
 
           <section>
-            <h2 className="text-gray-900 dark:text-gray-100 font-bold text-lg mb-3">Skills Summary</h2>
+            <h2 className="text-[var(--angel-navy)] font-bold text-lg md:text-xl mb-3">Skills Summary</h2>
             <CompetencySummary competencies={profile.competencies} />
           </section>
 
           <section>
-            <h2 className="text-gray-900 dark:text-gray-100 font-bold text-lg mb-3">Readiness Summary</h2>
+            <h2 className="text-[var(--angel-navy)] font-bold text-lg md:text-xl mb-3">Readiness Summary</h2>
             <ReadinessSummary readiness={profile.readiness} />
           </section>
 
           <section>
-            <h2 className="text-gray-900 dark:text-gray-100 font-bold text-lg mb-3">Evidence Growth</h2>
+            <h2 className="text-[var(--angel-navy)] font-bold text-lg md:text-xl mb-3">Evidence Right Now</h2>
             <EvidenceComposition competencies={profile.competencies} />
           </section>
 
           <section>
-            <h2 className="text-gray-900 dark:text-gray-100 font-bold text-lg mb-3">Development Areas</h2>
-            <InfoCard>
+            <h2 className="text-[var(--angel-navy)] font-bold text-lg md:text-xl mb-3">Development Areas</h2>
+            <div className="bg-[var(--angel-paper)] border border-[var(--angel-border)] rounded-lg p-5">
               {profile.diagnostics.developmentAreas.length === 0 ? (
-                <p className="text-xs text-gray-400 dark:text-gray-500 italic">None identified yet</p>
+                <p className="text-xs text-[var(--angel-muted)] italic">None identified yet</p>
               ) : (
                 <div className="flex flex-wrap gap-1.5">
                   {profile.diagnostics.developmentAreas.map((id) => (
-                    <span key={id} className="text-xs font-medium px-2 py-1 rounded-lg bg-amber-50 dark:bg-amber-950 text-amber-700 dark:text-amber-300">
+                    <span key={id} className="text-xs font-medium px-2.5 py-1 rounded-full bg-[var(--angel-sky)] text-[var(--angel-ink)]">
                       {COMPETENCIES[id].name}
                     </span>
                   ))}
                 </div>
               )}
-            </InfoCard>
+            </div>
           </section>
 
           <section>
-            <h2 className="text-gray-900 dark:text-gray-100 font-bold text-lg mb-3">Recent Activity</h2>
-            <RecentActivity items={recentActivity} plainLanguage />
+            <h2 className="text-[var(--angel-navy)] font-bold text-lg md:text-xl mb-3">Recent Activity</h2>
+            <RecentActivity items={recentActivity} />
           </section>
         </div>
           )}

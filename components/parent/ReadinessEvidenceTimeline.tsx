@@ -1,5 +1,4 @@
 import { Award, ShieldCheck, HeartHandshake, Sparkles } from "lucide-react";
-import { InfoCard } from "@/components/ui/Card";
 import { competencyLabel } from "@/lib/ali/labels";
 import type { EducationalAuditRecord, ConclusionType } from "@/types/ali/audit";
 
@@ -86,14 +85,14 @@ function milestoneIcon(conclusionType: ConclusionType) {
     case "wellbeing-veto":
       return <HeartHandshake size={16} className="text-amber-500 shrink-0" />;
     default:
-      return <Sparkles size={16} className="text-gray-400 shrink-0" />;
+      return <Sparkles size={16} className="text-[var(--angel-muted)] shrink-0" />;
   }
 }
 
 export function ReadinessEvidenceTimeline({ milestones }: { milestones: EducationalAuditRecord[] }) {
   if (milestones.length === 0) {
     return (
-      <p className="text-sm text-gray-400 dark:text-gray-500 italic">
+      <p className="text-sm text-[var(--angel-muted)] italic">
         No readiness milestones recorded yet. This fills in as your child&apos;s evidence grows.
       </p>
     );
@@ -106,23 +105,23 @@ export function ReadinessEvidenceTimeline({ milestones }: { milestones: Educatio
   return (
     <div className="space-y-3">
       {chronological.map((record) => (
-        <InfoCard key={record.id} className="flex items-start gap-3">
+        <div key={record.id} className="flex items-start gap-3 bg-[var(--angel-paper)] border border-[var(--angel-border)] rounded-lg p-5">
           <div className="mt-0.5">{milestoneIcon(record.conclusionType)}</div>
           <div className="min-w-0 flex-1 space-y-2">
             <div>
-              <p className="text-[10px] font-bold uppercase tracking-wide text-gray-400 dark:text-gray-500">Observed Evidence</p>
-              <p className="text-sm text-gray-900 dark:text-gray-100">{observedEvidence(record)}</p>
+              <p className="text-[10px] font-bold uppercase tracking-widest text-[var(--angel-muted)]">What happened</p>
+              <p className="text-sm text-[var(--angel-navy)]">{observedEvidence(record)}</p>
             </div>
             <div>
-              <p className="text-[10px] font-bold uppercase tracking-wide text-gray-400 dark:text-gray-500">Educational Interpretation</p>
-              <p className="text-sm text-gray-700 dark:text-gray-300">{educationalInterpretation(record.conclusionType)}</p>
+              <p className="text-[10px] font-bold uppercase tracking-widest text-[var(--angel-muted)]">What this means</p>
+              <p className="text-sm text-[var(--angel-ink)]">{educationalInterpretation(record.conclusionType)}</p>
             </div>
             <div>
-              <p className="text-[10px] font-bold uppercase tracking-wide text-gray-400 dark:text-gray-500">Recommended Next Action</p>
-              <p className="text-sm text-gray-500 dark:text-gray-400">{recommendedNextAction(record.conclusionType)}</p>
+              <p className="text-[10px] font-bold uppercase tracking-widest text-[var(--angel-muted)]">What to do</p>
+              <p className="text-sm text-[var(--angel-muted)]">{recommendedNextAction(record.conclusionType)}</p>
             </div>
           </div>
-        </InfoCard>
+        </div>
       ))}
     </div>
   );

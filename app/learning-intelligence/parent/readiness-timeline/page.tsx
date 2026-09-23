@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { MapPin, ClipboardList, Target } from "lucide-react";
 import PageLayout from "@/components/PageLayout";
-import { InfoCard } from "@/components/ui/Card";
 import { getSelectedPathwayId } from "@/lib/progress";
 import { getSupabaseClient } from "@/lib/supabase";
 import { ensureProfile } from "@/lib/supabaseProgress";
@@ -53,28 +52,24 @@ export default function ReadinessTimelinePage() {
       ]}
     >
       <div className="max-w-3xl mx-auto px-4 py-6 md:px-8 md:py-8">
-        <div className="flex items-center gap-3 mb-2">
-          <div>
-            <h1 className="text-gray-900 dark:text-gray-100 font-bold text-2xl">Readiness Timeline</h1>
-            <p className="text-gray-400 dark:text-gray-500 text-sm">Why readiness has changed, in your child&apos;s own real evidence</p>
-          </div>
-        </div>
+        <h1 className="text-[var(--angel-navy)] font-bold text-3xl md:text-4xl leading-tight">Readiness Timeline</h1>
+        <p className="text-[var(--angel-muted)] text-sm md:text-base mt-2 max-w-xl">Why readiness has changed, in your child&apos;s own real evidence.</p>
 
         {pathwayEligible === false && (
-          <InfoCard className="mt-6 flex items-start gap-3">
-            <MapPin size={18} className="text-blue-400 mt-0.5 shrink-0" />
-            <p className="text-sm text-gray-700 dark:text-gray-300">Available for the CSSE pathway only.</p>
-          </InfoCard>
+          <div className="mt-6 flex items-start gap-3 bg-[var(--angel-paper)] border border-[var(--angel-border)] rounded-lg p-5">
+            <MapPin size={18} className="text-[var(--angel-blue)] mt-0.5 shrink-0" />
+            <p className="text-sm text-[var(--angel-ink)]">Available for the CSSE pathway only.</p>
+          </div>
         )}
 
         {pathwayEligible && milestones === undefined && (
-          <p className="text-sm text-gray-400 dark:text-gray-500 mt-6" aria-live="polite">Loading…</p>
+          <p className="text-sm text-[var(--angel-muted)] mt-6" aria-live="polite">Loading…</p>
         )}
 
         {pathwayEligible && milestones === null && (
-          <InfoCard className="mt-6 text-center">
-            <p className="text-sm text-gray-500 dark:text-gray-400">This timeline isn&apos;t available right now.</p>
-          </InfoCard>
+          <div className="mt-6 text-center bg-[var(--angel-paper)] border border-[var(--angel-border)] rounded-lg p-6">
+            <p className="text-sm text-[var(--angel-muted)]">This timeline isn&apos;t available right now.</p>
+          </div>
         )}
 
         {pathwayEligible && milestones && (
@@ -96,7 +91,7 @@ export default function ReadinessTimelinePage() {
                   <Target size={14} /> Is Another Mock Worthwhile? →
                 </Link>
                 <div className="mt-2">
-                  <Link href="/learning-intelligence/parent/revision-planner" className="text-xs font-semibold text-gray-500 dark:text-gray-400 inline-flex items-center gap-1">
+                  <Link href="/learning-intelligence/parent/revision-planner" className="text-xs font-semibold text-[var(--angel-muted)] hover:text-[var(--angel-blue)] inline-flex items-center gap-1">
                     <ClipboardList size={13} /> See This Week&apos;s Revision Plan →
                   </Link>
                 </div>

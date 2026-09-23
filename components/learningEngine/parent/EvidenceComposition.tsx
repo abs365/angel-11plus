@@ -1,4 +1,3 @@
-import { InfoCard } from "@/components/ui/Card";
 import { EVIDENCE_TIER_LABEL, EVIDENCE_TIER_ORDER } from "@/lib/learningEngine/types";
 import type { CompetencyStatus } from "@/lib/learningEngine/types";
 
@@ -28,23 +27,22 @@ export function EvidenceComposition({ competencies }: { competencies: Competency
   const total = competencies.length || 1;
 
   return (
-    <InfoCard>
-      <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">Evidence Composition (today)</p>
-      <div className="space-y-1.5 mt-3">
+    <div className="bg-[var(--angel-paper)] border border-[var(--angel-border)] rounded-lg p-5">
+      <div className="space-y-1.5">
         {counts.map(({ tier, label, count }) => (
           <div key={tier} className="flex items-center gap-2">
-            <span className="text-xs text-gray-500 dark:text-gray-400 w-24 shrink-0">{label}</span>
-            <div className="flex-1 h-2 rounded-full bg-gray-100 dark:bg-gray-800 overflow-hidden">
-              <div className="h-full bg-blue-500 dark:bg-blue-400" style={{ width: `${(count / total) * 100}%` }} />
+            <span className="text-xs text-[var(--angel-muted)] w-24 shrink-0">{label}</span>
+            <div className="flex-1 h-2 rounded-full bg-[var(--angel-sky)] overflow-hidden">
+              <div className="h-full bg-[var(--angel-blue)]" style={{ width: `${(count / total) * 100}%` }} />
             </div>
-            <span className="text-xs text-gray-400 dark:text-gray-500 w-6 text-right shrink-0">{count}</span>
+            <span className="text-xs text-[var(--angel-muted)] w-6 text-right shrink-0">{count}</span>
           </div>
         ))}
       </div>
-      <p className="text-[11px] text-gray-400 dark:text-gray-500 mt-3 leading-relaxed">
+      <p className="text-[11px] text-[var(--angel-muted)] mt-3 leading-relaxed">
         This is today&apos;s snapshot, not a trend over time. Angel does not yet keep a history of how this changes
         week to week, so we&apos;re not showing a growth line until that can be shown honestly.
       </p>
-    </InfoCard>
+    </div>
   );
 }

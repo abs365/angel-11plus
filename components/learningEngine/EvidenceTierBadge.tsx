@@ -48,3 +48,23 @@ const SIGNAL_TONE: Record<EvidenceSignal, "success" | "warning" | "info" | "neut
 export function evidenceSignalTone(signal: EvidenceSignal) {
   return SIGNAL_TONE[signal];
 }
+
+/**
+ * Increment 3 (Progress + Results + Parent Dashboard) — the raw
+ * EvidenceSignal enum value is already plain English, but reads as an
+ * audit-report state ("Not Yet Observed", "Not Yet Demonstrated") rather
+ * than natural educational language a child or parent would use. This is
+ * a display-only translation -- the underlying signal computation
+ * (lib/learningEngine/rollup.ts) and every caller's own logic are
+ * completely unchanged; only the label shown next to a skill name changes.
+ */
+const SIGNAL_LABEL: Record<EvidenceSignal, string> = {
+  Demonstrated: "Doing well",
+  Developing: "Developing",
+  "Not Yet Demonstrated": "Needs more practice",
+  "Not Yet Observed": "Not started yet",
+};
+
+export function evidenceSignalLabel(signal: EvidenceSignal) {
+  return SIGNAL_LABEL[signal];
+}

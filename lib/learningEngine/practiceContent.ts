@@ -34,7 +34,7 @@ export const PRACTICE_AREAS: PracticeAreaConfig[] = [
     id: "reading-comprehension",
     label: "Reading Comprehension",
     subject: "english",
-    description: "Answer real comprehension questions and see which competencies they evidence.",
+    description: "Answer real comprehension questions and build your reading skills.",
     sessionSize: 8,
   },
   {

@@ -1,4 +1,3 @@
-import { InfoCard } from "@/components/ui/Card";
 import { COMPETENCIES, ALL_ASSESSMENT_COMPONENTS } from "@/lib/learningEngine/assessmentBrainMap";
 import type { CompetencyStatus } from "@/lib/learningEngine/types";
 
@@ -23,19 +22,19 @@ export function CompetencySummary({ competencies }: { competencies: CompetencySt
         const notYet = statuses.filter((s) => s.tier === "ET-0").length;
 
         return (
-          <InfoCard key={component}>
-            <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">{component}</p>
+          <div key={component} className="bg-[var(--angel-paper)] border border-[var(--angel-border)] rounded-lg p-5">
+            <p className="text-sm font-semibold text-[var(--angel-navy)]">{component}</p>
             {demonstrated.length > 0 ? (
-              <p className="text-xs text-emerald-600 dark:text-emerald-400 mt-1">Showing real progress in: {demonstrated.join(", ")}</p>
+              <p className="text-xs text-emerald-700 dark:text-emerald-400 mt-1">Showing real progress in: {demonstrated.join(", ")}</p>
             ) : (
-              <p className="text-xs text-gray-400 dark:text-gray-500 mt-1 italic">No demonstrated evidence yet</p>
+              <p className="text-xs text-[var(--angel-muted)] mt-1 italic">No demonstrated evidence yet</p>
             )}
             {notYet > 0 && (
-              <p className="text-[11px] text-gray-400 dark:text-gray-500 mt-1">
+              <p className="text-[11px] text-[var(--angel-muted)] mt-1">
                 {notYet} of {statuses.length} area{statuses.length === 1 ? "" : "s"} in this section not yet evidenced. That&apos;s a coverage gap, not a concern.
               </p>
             )}
-          </InfoCard>
+          </div>
         );
       })}
     </div>

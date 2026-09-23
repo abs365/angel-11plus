@@ -1,5 +1,4 @@
 import { Award, ShieldCheck, HeartHandshake, Sparkles } from "lucide-react";
-import { InfoCard } from "@/components/ui/Card";
 import { competencyLabel } from "@/lib/ali/labels";
 import type { EducationalAuditRecord, ConclusionType } from "@/types/ali/audit";
 
@@ -41,29 +40,29 @@ function milestoneIcon(conclusionType: ConclusionType) {
     case "wellbeing-veto":
       return <HeartHandshake size={16} className="text-amber-500 shrink-0" />;
     default:
-      return <Sparkles size={16} className="text-gray-400 shrink-0" />;
+      return <Sparkles size={16} className="text-[var(--angel-muted)] shrink-0" />;
   }
 }
 
 export function EducationalTimeline({ milestones }: { milestones: EducationalAuditRecord[] }) {
   if (milestones.length === 0) {
     return (
-      <p className="text-sm text-gray-400 dark:text-gray-500 italic">
-        No milestones recorded yet. This fills in as mastery is reached and confirmed.
+      <p className="text-sm text-[var(--angel-muted)] italic">
+        No milestones recorded yet. This fills in as your child&apos;s evidence grows.
       </p>
     );
   }
 
   return (
-    <div className="space-y-2">
+    <div className="bg-[var(--angel-paper)] border border-[var(--angel-border)] rounded-lg divide-y divide-[var(--angel-border)]">
       {milestones.map((record) => (
-        <InfoCard key={record.id} className="flex items-center gap-3">
+        <div key={record.id} className="flex items-center gap-3 p-4">
           {milestoneIcon(record.conclusionType)}
           <div className="min-w-0 flex-1">
-            <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">{milestoneText(record)}</p>
+            <p className="text-sm font-semibold text-[var(--angel-navy)]">{milestoneText(record)}</p>
           </div>
-          <span className="text-xs text-gray-400 dark:text-gray-500 shrink-0">{formatDate(record.concludedAt)}</span>
-        </InfoCard>
+          <span className="text-xs text-[var(--angel-muted)] shrink-0">{formatDate(record.concludedAt)}</span>
+        </div>
       ))}
     </div>
   );

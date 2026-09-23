@@ -62,24 +62,24 @@ export default function LearnerIdentityBanner() {
   return (
     <section
       aria-label="Which child this dashboard shows"
-      className="mt-4 rounded-2xl border border-sky-100 dark:border-sky-900 bg-sky-50/60 dark:bg-sky-950/30 px-4 py-3"
+      className="rounded-lg bg-[var(--angel-sky)] px-4 py-3"
     >
-      <p className="text-[10px] font-bold uppercase tracking-wide text-sky-700 dark:text-sky-400">Viewing</p>
+      <p className="text-[10px] font-bold uppercase tracking-widest text-[var(--angel-blue)]">Viewing</p>
 
       {name && !editing && (
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0">
-            <p className="text-gray-900 dark:text-gray-100 font-bold text-xl leading-snug truncate">
+            <p className="text-[var(--angel-navy)] font-bold text-xl leading-snug truncate">
               {name}&rsquo;s progress
             </p>
             {pathway && (
-              <p className="text-gray-500 dark:text-gray-400 text-xs mt-0.5">{pathway.shortName} pathway</p>
+              <p className="text-[var(--angel-muted)] text-xs mt-0.5">{pathway.shortName} pathway</p>
             )}
           </div>
           <button
             type="button"
             onClick={() => setEditing(true)}
-            className="flex items-center gap-1 text-gray-500 dark:text-gray-400 hover:text-sky-700 dark:hover:text-sky-400 text-xs font-medium shrink-0 py-1 transition-colors motion-reduce:transition-none"
+            className="flex items-center gap-1 text-[var(--angel-muted)] hover:text-[var(--angel-blue)] text-xs font-medium shrink-0 py-1 transition-colors motion-reduce:transition-none"
           >
             <Pencil size={11} aria-hidden="true" />
             Edit name
@@ -90,7 +90,7 @@ export default function LearnerIdentityBanner() {
       {showForm && (
         <div className="mt-1">
           {!name && (
-            <p className="text-gray-900 dark:text-gray-100 font-semibold text-base mb-2">
+            <p className="text-[var(--angel-navy)] font-semibold text-base mb-2">
               Add {learnerDisplayName(active, activeIndex)}&rsquo;s first name so you can see whose progress this is
             </p>
           )}
@@ -111,7 +111,7 @@ export default function LearnerIdentityBanner() {
             type="button"
             onClick={handleEnterLearnerSpace}
             disabled={hasLearnerPin === null}
-            className="flex-1 flex items-center justify-center gap-2 bg-sky-700 text-white rounded-xl py-2.5 text-sm font-semibold hover:bg-sky-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            className="flex-1 flex items-center justify-center gap-2 bg-blue-600 text-white rounded-xl py-2.5 text-sm font-semibold hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
           >
             <LogIn size={15} aria-hidden="true" />
             Enter {activeDisplayName}&rsquo;s learner space
@@ -122,14 +122,14 @@ export default function LearnerIdentityBanner() {
             disabled={hasLearnerPin === null}
             title={hasLearnerPin ? `Change ${activeDisplayName}'s learner PIN` : `Set ${activeDisplayName}'s learner PIN`}
             aria-label={hasLearnerPin ? `Change ${activeDisplayName}'s learner PIN` : `Set ${activeDisplayName}'s learner PIN`}
-            className="shrink-0 flex items-center justify-center w-10 h-10 rounded-xl border border-sky-200 dark:border-sky-800 text-sky-700 dark:text-sky-400 hover:bg-sky-100 dark:hover:bg-sky-950 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            className="shrink-0 flex items-center justify-center w-10 h-10 rounded-xl border border-[var(--angel-border)] text-[var(--angel-blue)] hover:bg-[var(--angel-paper)] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
           >
             <KeyRound size={16} aria-hidden="true" />
           </button>
         </div>
       )}
       {hasLearnerPin === false && (
-        <p className="text-gray-500 dark:text-gray-400 text-xs leading-relaxed mt-1.5">
+        <p className="text-[var(--angel-muted)] text-xs leading-relaxed mt-1.5">
           {activeDisplayName} has no learner PIN yet. Entering will ask you to create one.
         </p>
       )}
@@ -150,8 +150,8 @@ export default function LearnerIdentityBanner() {
         />
       )}
 
-      <div className="mt-3 pt-3 border-t border-sky-100 dark:border-sky-900">
-        <p className="text-[10px] font-bold uppercase tracking-wide text-gray-500 dark:text-gray-400 mb-2">
+      <div className="mt-3 pt-3 border-t border-[var(--angel-border)]">
+        <p className="text-[10px] font-bold uppercase tracking-widest text-[var(--angel-muted)] mb-2">
           Your children
         </p>
         <ul className="flex flex-wrap items-center gap-2">
@@ -165,8 +165,8 @@ export default function LearnerIdentityBanner() {
                   aria-pressed={isActive}
                   className={
                     isActive
-                      ? "text-sm font-semibold rounded-full px-3 py-1 bg-sky-700 text-white"
-                      : "text-sm font-medium rounded-full px-3 py-1 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 hover:border-sky-400"
+                      ? "text-sm font-semibold rounded-full px-3 py-1 bg-blue-600 text-white"
+                      : "text-sm font-medium rounded-full px-3 py-1 bg-[var(--angel-paper)] border border-[var(--angel-border)] text-[var(--angel-ink)] hover:border-[var(--angel-blue)]"
                   }
                 >
                   {learnerDisplayName(l, i)}
@@ -177,14 +177,14 @@ export default function LearnerIdentityBanner() {
           <li>
             <Link
               href="/add-child"
-              className="inline-flex items-center gap-1 text-sm font-medium text-sky-700 dark:text-sky-400 hover:underline px-1 py-1"
+              className="inline-flex items-center gap-1 text-sm font-medium text-[var(--angel-blue)] hover:underline px-1 py-1"
             >
               <Plus size={14} aria-hidden="true" />
               Add another child
             </Link>
           </li>
         </ul>
-        <p className="text-gray-500 dark:text-gray-400 text-xs leading-relaxed mt-2">
+        <p className="text-[var(--angel-muted)] text-xs leading-relaxed mt-2">
           Each child has their own progress, practice and recommendations. A first name or nickname is all Angel 11+ stores to tell them apart.
         </p>
       </div>

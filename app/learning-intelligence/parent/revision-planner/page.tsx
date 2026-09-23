@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { MapPin, Clock, ArrowRight } from "lucide-react";
 import PageLayout from "@/components/PageLayout";
-import { InfoCard } from "@/components/ui/Card";
 import { getSelectedPathwayId } from "@/lib/progress";
 import { getSupabaseClient } from "@/lib/supabase";
 import { ensureProfile } from "@/lib/supabaseProgress";
@@ -48,61 +47,57 @@ export default function RevisionPlannerPage() {
       ]}
     >
       <div className="max-w-3xl mx-auto px-4 py-6 md:px-8 md:py-8">
-        <div className="flex items-center gap-3 mb-2">
-          <div>
-            <h1 className="text-gray-900 dark:text-gray-100 font-bold text-2xl">Revision Planner</h1>
-            <p className="text-gray-400 dark:text-gray-500 text-sm">This week&apos;s focus, prioritised and explained</p>
-          </div>
-        </div>
+        <h1 className="text-[var(--angel-navy)] font-bold text-3xl md:text-4xl leading-tight">Revision Planner</h1>
+        <p className="text-[var(--angel-muted)] text-sm md:text-base mt-2 max-w-xl">This week&apos;s focus, prioritised and explained.</p>
 
         {pathwayEligible === false && (
-          <InfoCard className="mt-6 flex items-start gap-3">
-            <MapPin size={18} className="text-blue-400 mt-0.5 shrink-0" />
-            <p className="text-sm text-gray-700 dark:text-gray-300">Available for the CSSE pathway only.</p>
-          </InfoCard>
+          <div className="mt-6 flex items-start gap-3 bg-[var(--angel-paper)] border border-[var(--angel-border)] rounded-lg p-5">
+            <MapPin size={18} className="text-[var(--angel-blue)] mt-0.5 shrink-0" />
+            <p className="text-sm text-[var(--angel-ink)]">Available for the CSSE pathway only.</p>
+          </div>
         )}
 
-        {pathwayEligible && plan === undefined && <p className="text-sm text-gray-400 dark:text-gray-500 mt-6" aria-live="polite">Loading…</p>}
+        {pathwayEligible && plan === undefined && <p className="text-sm text-[var(--angel-muted)] mt-6" aria-live="polite">Loading…</p>}
 
         {pathwayEligible && plan === null && (
-          <InfoCard className="mt-6 text-center">
-            <p className="text-sm text-gray-500 dark:text-gray-400">This planner isn&apos;t available right now.</p>
-          </InfoCard>
+          <div className="mt-6 text-center bg-[var(--angel-paper)] border border-[var(--angel-border)] rounded-lg p-6">
+            <p className="text-sm text-[var(--angel-muted)]">This planner isn&apos;t available right now.</p>
+          </div>
         )}
 
         {pathwayEligible && plan && plan.items.length === 0 && (
-          <InfoCard className="mt-6 text-center">
-            <p className="text-sm text-gray-500 dark:text-gray-400">Nothing to prioritise right now. Check back as your child completes more practice.</p>
-          </InfoCard>
+          <div className="mt-6 text-center bg-[var(--angel-paper)] border border-[var(--angel-border)] rounded-lg p-6">
+            <p className="text-sm text-[var(--angel-muted)]">Nothing to prioritise right now. Check back as your child completes more practice.</p>
+          </div>
         )}
 
         {pathwayEligible && plan && plan.items.length > 0 && (
-          <div className="mt-6">
-            <InfoCard className="mb-4 flex items-center gap-2">
-              <Clock size={16} className="text-blue-500 shrink-0" />
-              <p className="text-sm text-gray-700 dark:text-gray-300">
-                About <span className="font-semibold">{plan.totalMinutes} minutes</span> this week, across {plan.items.length} focus area
+          <div className="mt-8">
+            <div className="mb-4 flex items-center gap-2 bg-[var(--angel-sky)] rounded-lg p-4">
+              <Clock size={16} className="text-[var(--angel-blue)] shrink-0" />
+              <p className="text-sm text-[var(--angel-ink)]">
+                About <span className="font-semibold text-[var(--angel-navy)]">{plan.totalMinutes} minutes</span> this week, across {plan.items.length} focus area
                 {plan.items.length === 1 ? "" : "s"}.
               </p>
-            </InfoCard>
+            </div>
 
-            <div className="space-y-2">
+            <div className="bg-[var(--angel-paper)] border border-[var(--angel-border)] rounded-lg divide-y divide-[var(--angel-border)]">
               {plan.items.map((item) => (
-                <InfoCard key={item.competencyId}>
+                <div key={item.competencyId} className="p-5">
                   <div className="flex items-center justify-between gap-3">
-                    <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">{item.label}</p>
-                    <span className="text-xs font-medium text-gray-400 dark:text-gray-500 shrink-0">~{item.estimatedMinutes} min</span>
+                    <p className="text-sm font-semibold text-[var(--angel-navy)]">{item.label}</p>
+                    <span className="text-xs font-medium text-[var(--angel-muted)] shrink-0">~{item.estimatedMinutes} min</span>
                   </div>
-                  <p className="text-sm text-gray-700 dark:text-gray-300 mt-1">{item.parentReason}</p>
+                  <p className="text-sm text-[var(--angel-ink)] mt-1">{item.parentReason}</p>
                   {item.practiceAreaId && (
                     <Link
                       href={`/learning-intelligence/practice/${item.practiceAreaId}`}
-                      className="inline-flex items-center gap-1 text-xs font-semibold text-blue-600 dark:text-blue-400 mt-2"
+                      className="inline-flex items-center gap-1 text-xs font-semibold text-[var(--angel-blue)] mt-2 hover:underline"
                     >
                       Start this now <ArrowRight size={12} />
                     </Link>
                   )}
-                </InfoCard>
+                </div>
               ))}
             </div>
 
@@ -112,10 +107,10 @@ export default function RevisionPlannerPage() {
                 first. Secondary — each item's own "Start this now" is the
                 real primary action on this page. */}
             <div className="mt-6">
-              <Link href="/learning-intelligence" className="text-xs font-semibold text-gray-500 dark:text-gray-400">
+              <Link href="/learning-intelligence" className="text-xs font-semibold text-[var(--angel-muted)] hover:text-[var(--angel-blue)]">
                 Full Learning Report →
               </Link>
-              <p className="text-[11px] text-gray-400 dark:text-gray-500 mt-0.5">
+              <p className="text-[11px] text-[var(--angel-muted)] mt-0.5">
                 Once you&apos;ve practised, your Learning Report updates with the new evidence.
               </p>
             </div>

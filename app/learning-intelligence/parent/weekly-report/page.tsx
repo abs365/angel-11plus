@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { ClipboardList, MapPin } from "lucide-react";
 import PageLayout from "@/components/PageLayout";
-import { InfoCard } from "@/components/ui/Card";
 import { getSelectedPathwayId } from "@/lib/progress";
 import { getSupabaseClient } from "@/lib/supabase";
 import { ensureProfile } from "@/lib/supabaseProgress";
@@ -84,45 +83,41 @@ export default function WeeklyLearningReportPage() {
       ]}
     >
       <div className="max-w-3xl mx-auto px-4 py-6 md:px-8 md:py-8">
-        <div className="flex items-center gap-3 mb-2">
-          <div>
-            <h1 className="text-gray-900 dark:text-gray-100 font-bold text-2xl">Weekly Learning Report</h1>
-            <p className="text-gray-400 dark:text-gray-500 text-sm">The last 7 days: what improved, what changed, what&apos;s next</p>
-          </div>
-        </div>
+        <h1 className="text-[var(--angel-navy)] font-bold text-3xl md:text-4xl leading-tight">Weekly Learning Report</h1>
+        <p className="text-[var(--angel-muted)] text-sm md:text-base mt-2 max-w-xl">The last 7 days: what improved, what changed, what&apos;s next.</p>
 
         {pathwayEligible === false && (
-          <InfoCard className="mt-6 flex items-start gap-3">
-            <MapPin size={18} className="text-blue-400 mt-0.5 shrink-0" />
-            <p className="text-sm text-gray-700 dark:text-gray-300">Available for the CSSE pathway only.</p>
-          </InfoCard>
+          <div className="mt-6 flex items-start gap-3 bg-[var(--angel-paper)] border border-[var(--angel-border)] rounded-lg p-5">
+            <MapPin size={18} className="text-[var(--angel-blue)] mt-0.5 shrink-0" />
+            <p className="text-sm text-[var(--angel-ink)]">Available for the CSSE pathway only.</p>
+          </div>
         )}
 
-        {pathwayEligible && !loaded && <p className="text-sm text-gray-400 dark:text-gray-500 mt-6" aria-live="polite">Loading…</p>}
+        {pathwayEligible && !loaded && <p className="text-sm text-[var(--angel-muted)] mt-6" aria-live="polite">Loading…</p>}
 
         {pathwayEligible && loaded && nothingThisWeek && (
-          <InfoCard className="mt-6 text-center">
-            <p className="text-sm text-gray-500 dark:text-gray-400">No activity recorded this week yet.</p>
-            <Link href="/learning-intelligence/practice" className="inline-block text-xs font-semibold text-blue-600 dark:text-blue-400 mt-2">
+          <div className="mt-6 text-center bg-[var(--angel-paper)] border border-[var(--angel-border)] rounded-lg p-6">
+            <p className="text-sm text-[var(--angel-muted)]">No activity recorded this week yet.</p>
+            <Link href="/learning-intelligence/practice" className="inline-block text-xs font-semibold text-[var(--angel-blue)] mt-2 hover:underline">
               Start a practice session →
             </Link>
-          </InfoCard>
+          </div>
         )}
 
         {pathwayEligible && loaded && !nothingThisWeek && (
-          <div className="space-y-8 mt-6">
+          <div className="space-y-8 mt-8">
             <section>
-              <h2 className="text-gray-900 dark:text-gray-100 font-bold text-lg mb-3">What improved</h2>
+              <h2 className="text-[var(--angel-navy)] font-bold text-lg md:text-xl mb-3">What improved</h2>
               <EducationalTimeline milestones={milestones ?? []} />
             </section>
 
             <section>
-              <h2 className="text-gray-900 dark:text-gray-100 font-bold text-lg mb-3">What changed</h2>
-              <RecentActivity items={activity ?? []} plainLanguage />
+              <h2 className="text-[var(--angel-navy)] font-bold text-lg md:text-xl mb-3">What changed</h2>
+              <RecentActivity items={activity ?? []} />
             </section>
 
             <section>
-              <h2 className="text-gray-900 dark:text-gray-100 font-bold text-lg mb-3">What should happen next</h2>
+              <h2 className="text-[var(--angel-navy)] font-bold text-lg md:text-xl mb-3">What should happen next</h2>
               <RecommendationExplanation result={recommendations ?? { ordered: [], explanations: new Map(), vetoedCompetencyCodes: [] }} />
             </section>
 

@@ -1,30 +1,31 @@
-import { Dumbbell, Layers, RotateCcw, ArrowUpRight, RefreshCw } from "lucide-react";
-import { RecommendationCard } from "@/components/ui/Card";
 import { COMPETENCIES } from "@/lib/learningEngine/assessmentBrainMap";
 import type { Recommendation, RecommendationCategory } from "@/lib/learningEngine/types";
 
 /**
- * Feature 6 — Recommendation Summary (LEARNING_ENGINE_V1.md §7). Renders
- * categories only, in a fixed display order for readability — this fixed
- * order is a presentation choice, not a priority ranking, and callers must
- * not treat it as one (§7/§9: no selection or prioritisation logic).
- * Reuses the existing RecommendationCard component (components/ui/Card.tsx)
- * directly rather than a new card treatment.
+ * Feature 6 — Recommendation Summary (LEARNING_ENGINE_V1.md §7).
+ *
+ * Increment 3 (Progress + Results + Parent Dashboard) — also rendered on
+ * the accepted, frozen Practice results screen; export signature
+ * unchanged (`{ recommendations: Recommendation[] }`). The prior version
+ * showed a coloured icon tile per recommendation category (Practice/
+ * Consolidation/Revision/Extension/Review) with the title formatted as
+ * "{Category} · {Skill}" — internal recommendation-engine taxonomy
+ * exposed as the headline, and per-category colour tiles the governing
+ * design standard rules out. "Angel recommends, family chooses": each
+ * recommendation now reads as a plain next step ("Practise {skill}") with
+ * its own real reason underneath, matching the instruction's own example
+ * ("Practise percentages" / "Recent work suggests this skill needs more
+ * independent practice") — same real category/competency/reason data,
+ * fixed display order preserved (a presentation choice, never a priority
+ * ranking, per the original file's own rule), just not shown as the
+ * headline any more.
  */
-const CATEGORY_ICON: Record<RecommendationCategory, typeof Dumbbell> = {
-  Practice: Dumbbell,
-  Consolidation: Layers,
-  Revision: RotateCcw,
-  Extension: ArrowUpRight,
-  Review: RefreshCw,
-};
-
-const CATEGORY_COLOR: Record<RecommendationCategory, "purple" | "emerald" | "blue" | "amber"> = {
-  Practice: "blue",
-  Consolidation: "purple",
-  Revision: "amber",
-  Extension: "emerald",
-  Review: "blue",
+const CATEGORY_VERB: Record<RecommendationCategory, string> = {
+  Practice: "Practise",
+  Consolidation: "Keep building",
+  Revision: "Revisit",
+  Extension: "Try extending",
+  Review: "Review",
 };
 
 const DISPLAY_ORDER: RecommendationCategory[] = ["Revision", "Practice", "Consolidation", "Extension", "Review"];
@@ -32,24 +33,23 @@ const DISPLAY_ORDER: RecommendationCategory[] = ["Revision", "Practice", "Consol
 export function RecommendationSummary({ recommendations }: { recommendations: Recommendation[] }) {
   if (recommendations.length === 0) {
     return (
-      <p className="text-sm text-gray-400 dark:text-gray-500 italic">
+      <p className="text-sm text-[var(--angel-muted)] italic">
         No recommendations yet. These are generated once there is recorded evidence to respond to.
       </p>
     );
   }
 
   return (
-    <div className="space-y-3">
+    <div className="divide-y divide-[var(--angel-border)]">
       {DISPLAY_ORDER.flatMap((category) => {
         const items = recommendations.filter((r) => r.category === category);
         return items.map((r) => (
-          <RecommendationCard
-            key={`${r.category}-${r.competencyId}`}
-            icon={CATEGORY_ICON[r.category]}
-            title={`${r.category} · ${COMPETENCIES[r.competencyId].name}`}
-            reason={r.reason}
-            color={CATEGORY_COLOR[r.category]}
-          />
+          <div key={`${r.category}-${r.competencyId}`} className="py-4 first:pt-0">
+            <p className="text-sm font-semibold text-[var(--angel-navy)]">
+              {CATEGORY_VERB[r.category]} {COMPETENCIES[r.competencyId].name}
+            </p>
+            <p className="text-sm text-[var(--angel-ink)] leading-relaxed mt-0.5 opacity-90">{r.reason}</p>
+          </div>
         ));
       })}
     </div>

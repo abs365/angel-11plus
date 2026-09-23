@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { Brain, MapPin, ArrowRight } from "lucide-react";
+import { MapPin, ArrowRight } from "lucide-react";
 import PageLayout from "@/components/PageLayout";
 import { getSelectedPathwayId } from "@/lib/progress";
 import { getPathwayById } from "@/lib/pathways";
@@ -22,20 +22,31 @@ import type { Pathway } from "@/types/pathway";
 
 /**
  * Feature 1 — Learner Dashboard (Capability 3, Wave 1; enhanced Wave 3 with
- * Recent Learning Activity). Composes Competency Profile, Evidence Profile,
- * Diagnostic Overview (Coverage Gaps live in its own "Not Yet Evidenced"
- * section — not duplicated into a separate component), Learning Readiness,
- * Recommendation Summary, and Recent Learning Activity into one page, per
- * docs/intelligence/LEARNING_ENGINE_V1.md.
+ * Recent Learning Activity). CSSE-scoped only. Every value rendered on this
+ * page comes from fetchLearnerIntelligenceProfile() — a real Supabase read
+ * against ali_question_bank/ali_student_question_history — no value is
+ * hardcoded, randomised, or a placeholder.
  *
- * CSSE-scoped only. Every value rendered on this page comes from
- * fetchLearnerIntelligenceProfile() — a real Supabase read against the
- * existing ali_question_bank/ali_student_question_history tables, keyed on
- * the new Assessment Brain V1 Question Type IDs. No value on this page is
- * hardcoded, randomised, or a placeholder: today, in production, this
- * reads as "no evidence yet" everywhere, honestly, because no content has
- * been authored/tagged against the new CSSE taxonomy — see the CAP-3 Wave
- * 1 evidence package for the full explanation of why, and what unblocks it.
+ * Increment 3 (Progress + Results + Parent Dashboard) — reorganised around
+ * the questions a learner actually asks (How am I doing? / What's going
+ * well? / What to work on? / What should I do next? / Recent work?)
+ * instead of a flat list of engine-named sections ("Evidence Profile",
+ * "Diagnostic Overview & Coverage Gaps"). Every section still traces to
+ * the exact same real fetch and computation as before — this pass changed
+ * presentation and section boundaries, not what is computed.
+ *
+ * Real defect found and fixed while verifying this page's own zero-
+ * evidence state: the banner was gated on `!profile.hasAnyContent`, which
+ * checks whether ANY of Angel's own content exists for ANY of the 13
+ * competencies (lib/learningEngine/profile.ts:55) — a platform-content
+ * fact, true today regardless of which learner is asking, since real
+ * Mathematics/Reading/Writing content now exists. That gate could
+ * essentially never show for any learner, new or experienced. The correct,
+ * genuinely learner-specific signal is `hasAnyEvidence`
+ * (profile.ts:56 — true once this learner's own tier moves past ET-0),
+ * which is what the banner now checks. lib/learningEngine/profile.ts
+ * itself is unchanged — both flags were already computed correctly; only
+ * which one this page reads for this purpose was wrong.
  */
 export default function LearningIntelligencePage() {
   const [profile, setProfile] = useState<LearnerIntelligenceProfile | null | undefined>(undefined);
@@ -76,36 +87,34 @@ export default function LearningIntelligencePage() {
   return (
     <PageLayout breadcrumbs={[{ label: "Learning Report" }]}>
       <div className="max-w-3xl mx-auto px-4 py-6 md:px-8 md:py-8">
-        <div className="flex items-center gap-3 mb-2">
-          <div>
-            <h1 className="text-gray-900 dark:text-gray-100 font-bold text-2xl">Learning Report</h1>
-            <p className="text-gray-400 dark:text-gray-500 text-sm">CSSE skills evidence, diagnostics and readiness</p>
-          </div>
-        </div>
+        <h1 className="text-[var(--angel-navy)] font-bold text-3xl md:text-4xl leading-tight">Learning Report</h1>
+        <p className="text-[var(--angel-muted)] text-sm md:text-base mt-2 max-w-xl">
+          A clear picture of how your CSSE preparation is going, built entirely from real work you&apos;ve completed.
+        </p>
 
         {profile === undefined && (
-          <p className="text-sm text-gray-400 dark:text-gray-500 mt-6" aria-live="polite">Loading…</p>
+          <p className="text-sm text-[var(--angel-muted)] mt-6" aria-live="polite">Loading…</p>
         )}
 
         {profile === null && (
-          <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-6 mt-6 text-center">
-            <p className="text-sm text-gray-500 dark:text-gray-400">Your learning report isn&apos;t available right now.</p>
+          <div className="bg-[var(--angel-paper)] border border-[var(--angel-border)] rounded-lg p-6 mt-6 text-center">
+            <p className="text-sm text-[var(--angel-muted)]">Your learning report isn&apos;t available right now.</p>
           </div>
         )}
 
         {profile && !profile.pathwayEligible && (
-          <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-6 mt-6 flex items-start gap-3">
-            <MapPin size={18} className="text-blue-400 mt-0.5 shrink-0" />
+          <div className="bg-[var(--angel-paper)] border border-[var(--angel-border)] rounded-lg p-6 mt-6 flex items-start gap-3">
+            <MapPin size={18} className="text-[var(--angel-blue)] mt-0.5 shrink-0" />
             <div>
-              <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">
+              <p className="text-sm font-semibold text-[var(--angel-navy)]">
                 Your learning report is available for the CSSE pathway
               </p>
-              <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">
+              <p className="text-xs text-[var(--angel-muted)] mt-1">
                 {pathway ? `Your current pathway is ${pathway.name}.` : "Choose CSSE as your target pathway to see this."}{" "}
                 It is built entirely from CSSE&apos;s own official exam evidence, so it does not
                 yet apply to GL, CEM, ISEB, or Independent preparation.
               </p>
-              <Link href="/pathways" className="inline-block text-xs font-semibold text-blue-600 dark:text-blue-400 mt-3">
+              <Link href="/pathways" className="inline-block text-xs font-semibold text-[var(--angel-blue)] mt-3 hover:underline">
                 Review School Intelligence →
               </Link>
             </div>
@@ -113,95 +122,92 @@ export default function LearningIntelligencePage() {
         )}
 
         {profile && profile.pathwayEligible && (
-          <div className="space-y-8 mt-6">
+          <div className="mt-8 space-y-10">
             <Link
               href="/learning-intelligence/practice"
-              className="flex items-center justify-between gap-3 bg-blue-600 hover:bg-blue-700 text-white rounded-2xl px-5 py-4 transition-colors"
+              className="flex items-center justify-between gap-3 bg-[var(--angel-sky)] rounded-lg px-6 py-5 group"
             >
               <div>
-                <p className="text-sm font-bold">Practice now</p>
-                <p className="text-xs text-blue-100 mt-0.5">
-                  Complete a Reading Comprehension, Mathematics or Continuous Writing activity to update this profile.
+                <p className="text-[var(--angel-navy)] font-bold text-base">Practise now</p>
+                <p className="text-[var(--angel-muted)] text-sm mt-0.5">
+                  Complete a Reading Comprehension, Mathematics or Continuous Writing activity to update this report.
                 </p>
               </div>
-              <ArrowRight size={18} className="shrink-0" />
+              <ArrowRight size={18} className="text-[var(--angel-blue)] shrink-0 group-hover:translate-x-0.5 transition-transform motion-reduce:transition-none" />
             </Link>
 
-            {/* WP5D — captioned, since Parent Dashboard is the start of the
-                admissions journey (Learning -> Evidence -> Admissions
-                Readiness -> ... ); the other links stay a flat secondary row. */}
-            <div>
-              <Link href="/learning-intelligence/parent" className="text-sm font-semibold text-blue-600 dark:text-blue-400">
-                Parent Dashboard →
-              </Link>
-              <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">
-                See this same evidence from a parent&apos;s view, including Admissions Readiness.
-              </p>
-            </div>
-
-            <div className="flex items-center gap-4 flex-wrap text-xs font-semibold">
-              <Link href="/learning-intelligence/recommendations" className="text-blue-600 dark:text-blue-400">
-                Recommendation Centre →
-              </Link>
-              <Link href="/learning-intelligence/timeline" className="text-blue-600 dark:text-blue-400">
-                Progress Timeline →
-              </Link>
-              <Link href="/learning-intelligence/parent/weekly-report" className="text-blue-600 dark:text-blue-400">
-                Weekly Report →
-              </Link>
-              <Link href="/learning-intelligence/parent/revision-planner" className="text-blue-600 dark:text-blue-400">
-                Revision Planner →
-              </Link>
-              <Link href="/learning-intelligence/mock-exam" className="text-blue-600 dark:text-blue-400">
-                CSSE mock exam →
-              </Link>
-              {/* Sprint 3, Increment 5 — same row, same weight as every
-                  link above; explains how they all connect rather than
-                  adding a new destination of its own. */}
-              <Link href="/learning-intelligence/parent/journey" className="text-blue-600 dark:text-blue-400">
-                How this all fits together →
-              </Link>
-            </div>
-
-            {!profile.hasAnyContent && (
-              <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 px-4 py-4">
-                <p className="text-gray-700 dark:text-gray-300 font-semibold text-sm">No evidence recorded yet</p>
-                <p className="text-gray-400 dark:text-gray-500 text-xs mt-1 leading-relaxed">
-                  Every skill below is shown honestly as &quot;Not Yet Observed.&quot; This isn&apos;t an error.
-                  Angel&apos;s own content bank does not yet have any practice questions authored against CSSE&apos;s
-                  official skills structure, so there is genuinely nothing to report yet.
+            {!profile.hasAnyEvidence && (
+              <div className="bg-[var(--angel-paper)] border border-[var(--angel-border)] rounded-lg px-5 py-5">
+                <p className="text-[var(--angel-navy)] font-semibold text-sm">You&apos;re just getting started</p>
+                <p className="text-[var(--angel-muted)] text-sm mt-1 leading-relaxed">
+                  Complete a few practice activities and Angel will begin building a clearer picture of what&apos;s
+                  going well and what to work on next.
                 </p>
               </div>
             )}
 
             <section>
-              <h2 className="text-gray-900 dark:text-gray-100 font-bold text-lg mb-3">Skills Profile</h2>
-              <CompetencyProfile competencies={profile.competencies} durableCompetencyIds={durableCompetencyIds} />
-            </section>
-
-            <section>
-              <h2 className="text-gray-900 dark:text-gray-100 font-bold text-lg mb-3">Evidence Profile</h2>
+              <h2 className="text-[var(--angel-navy)] font-bold text-lg md:text-xl mb-2">How you&apos;re doing</h2>
               <EvidenceProfile competencies={profile.competencies} />
+              <div className="mt-4">
+                <ReadinessSummary readiness={profile.readiness} />
+              </div>
             </section>
 
-            <section>
-              <h2 className="text-gray-900 dark:text-gray-100 font-bold text-lg mb-3">Diagnostic Overview &amp; Coverage Gaps</h2>
-              <DiagnosticOverview findings={profile.diagnostics} />
-            </section>
+            <DiagnosticOverview findings={profile.diagnostics} />
 
             <section>
-              <h2 className="text-gray-900 dark:text-gray-100 font-bold text-lg mb-3">Learning Readiness</h2>
-              <ReadinessSummary readiness={profile.readiness} />
-            </section>
-
-            <section>
-              <h2 className="text-gray-900 dark:text-gray-100 font-bold text-lg mb-3">Recommendations</h2>
+              <h2 className="text-[var(--angel-navy)] font-bold text-lg md:text-xl mb-2">What to do next</h2>
+              <p className="text-sm text-[var(--angel-muted)] mb-3">
+                Angel recommends — you and your family choose what to act on.
+              </p>
               <RecommendationSummary recommendations={profile.recommendations} />
             </section>
 
             <section>
-              <h2 className="text-gray-900 dark:text-gray-100 font-bold text-lg mb-3">Recent Learning Activity</h2>
-              <RecentActivity items={recentActivity} plainLanguage />
+              <h2 className="text-[var(--angel-navy)] font-bold text-lg md:text-xl mb-2">Recent work</h2>
+              <RecentActivity items={recentActivity} />
+            </section>
+
+            <div>
+              <Link href="/learning-intelligence/parent" className="text-sm font-semibold text-[var(--angel-blue)] hover:underline">
+                Parent Dashboard →
+              </Link>
+              <p className="text-xs text-[var(--angel-muted)] mt-0.5">
+                See this same evidence from a parent&apos;s view, including Admissions Readiness.
+              </p>
+            </div>
+
+            <div className="pt-6 border-t border-[var(--angel-border)]">
+              <p className="text-xs font-bold uppercase tracking-widest text-[var(--angel-muted)] mb-3">More ways to explore</p>
+              <div className="flex flex-wrap gap-x-6 gap-y-2 text-sm font-semibold">
+                <Link href="/learning-intelligence/recommendations" className="text-[var(--angel-blue)] hover:underline">
+                  Recommendation Centre
+                </Link>
+                <Link href="/learning-intelligence/timeline" className="text-[var(--angel-blue)] hover:underline">
+                  Progress Timeline
+                </Link>
+                <Link href="/learning-intelligence/parent/weekly-report" className="text-[var(--angel-blue)] hover:underline">
+                  Weekly Report
+                </Link>
+                <Link href="/learning-intelligence/parent/revision-planner" className="text-[var(--angel-blue)] hover:underline">
+                  Revision Planner
+                </Link>
+                <Link href="/learning-intelligence/mock-exam" className="text-[var(--angel-blue)] hover:underline">
+                  CSSE mock exam
+                </Link>
+                <Link href="/learning-intelligence/parent/journey" className="text-[var(--angel-blue)] hover:underline">
+                  How this all fits together
+                </Link>
+              </div>
+            </div>
+
+            <section>
+              <h2 className="text-[var(--angel-navy)] font-bold text-lg md:text-xl mb-2">All skills, in detail</h2>
+              <p className="text-sm text-[var(--angel-muted)] mb-3">
+                Every skill CSSE preparation covers, shown honestly even where nothing has been recorded yet.
+              </p>
+              <CompetencyProfile competencies={profile.competencies} durableCompetencyIds={durableCompetencyIds} />
             </section>
           </div>
         )}

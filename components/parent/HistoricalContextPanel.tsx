@@ -1,5 +1,4 @@
 import { Info, AlertTriangle } from "lucide-react";
-import { InfoCard } from "@/components/ui/Card";
 import {
   CSSE_ADMISSIONS_CONTEXT_FACT,
   CSSE_ADMISSIONS_CONTEXT_RELEVANCE,
@@ -34,28 +33,28 @@ export function HistoricalContextPanel() {
   return (
     <section>
       <div className="flex items-center gap-2 mb-1">
-        <h2 className="text-gray-900 dark:text-gray-100 font-bold text-lg">Historical Context</h2>
-        <span className="text-[10px] font-bold uppercase tracking-wide text-gray-400 dark:text-gray-500 bg-gray-100 dark:bg-gray-800 px-1.5 py-0.5 rounded">
+        <h2 className="text-[var(--angel-navy)] font-bold text-lg md:text-xl">Historical Context</h2>
+        <span className="text-[10px] font-bold uppercase tracking-wide text-[var(--angel-muted)] bg-[var(--angel-sky)] px-1.5 py-0.5 rounded">
           Not your child&apos;s evidence
         </span>
       </div>
 
-      <InfoCard className="flex items-start gap-3">
-        <Info size={16} className="text-gray-400 mt-0.5 shrink-0" />
+      <div className="flex items-start gap-3 bg-[var(--angel-paper)] border border-[var(--angel-border)] rounded-lg p-5">
+        <Info size={16} className="text-[var(--angel-muted)] mt-0.5 shrink-0" />
         <div>
-          <p className="text-sm text-gray-700 dark:text-gray-300">{CSSE_ADMISSIONS_CONTEXT_FACT}</p>
-          <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">{CSSE_ADMISSIONS_CONTEXT_RELEVANCE}</p>
-          <p className="text-[11px] text-gray-400 dark:text-gray-500 mt-2">{CSSE_ADMISSIONS_CONTEXT_SOURCE}</p>
+          <p className="text-sm text-[var(--angel-ink)]">{CSSE_ADMISSIONS_CONTEXT_FACT}</p>
+          <p className="text-xs text-[var(--angel-muted)] mt-2">{CSSE_ADMISSIONS_CONTEXT_RELEVANCE}</p>
+          <p className="text-[11px] text-[var(--angel-muted)] mt-2">{CSSE_ADMISSIONS_CONTEXT_SOURCE}</p>
         </div>
-      </InfoCard>
+      </div>
 
-      <InfoCard className="flex items-start gap-3 mt-2 border-amber-100 dark:border-amber-900">
+      <div className="flex items-start gap-3 mt-2 bg-amber-50 dark:bg-amber-950 border border-amber-100 dark:border-amber-900 rounded-lg p-5">
         <AlertTriangle size={16} className="text-amber-500 mt-0.5 shrink-0" />
         <div>
-          <p className="text-xs font-semibold text-gray-900 dark:text-gray-100">What this does not mean</p>
-          <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">{CSSE_ADMISSIONS_CONTEXT_DISCLAIMER}</p>
+          <p className="text-xs font-semibold text-[var(--angel-navy)]">What this does not mean</p>
+          <p className="text-xs text-[var(--angel-muted)] mt-1">{CSSE_ADMISSIONS_CONTEXT_DISCLAIMER}</p>
         </div>
-      </InfoCard>
+      </div>
     </section>
   );
 }

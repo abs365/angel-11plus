@@ -4,7 +4,6 @@ import { useEffect, useRef, useState } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import PageLayout from "@/components/PageLayout";
-import { InfoCard } from "@/components/ui/Card";
 import { useAuth } from "@/components/providers/AuthProvider";
 import { getSupabaseClient } from "@/lib/supabase";
 import { ensureProfile } from "@/lib/supabaseProgress";
@@ -194,53 +193,51 @@ export default function MockReportPage() {
     <PageLayout breadcrumbs={[{ label: "Learning Report", href: "/learning-intelligence" }, { label: "Mock result" }]}>
       <div className="max-w-2xl mx-auto px-4 py-6 md:px-8 md:py-8">
         {phase === "loading" && (
-          <p className="text-sm text-gray-400 dark:text-gray-500" aria-live="polite">Checking your Mock result…</p>
+          <p className="text-sm text-[var(--angel-muted)]" aria-live="polite">Checking your Mock result…</p>
         )}
 
         {phase === "error" && (
-          <InfoCard className="text-center">
-            <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">We couldn&apos;t load this result</p>
-            <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">{errorMessage}</p>
-          </InfoCard>
+          <div className="text-center bg-[var(--angel-paper)] border border-[var(--angel-border)] rounded-lg p-6">
+            <p className="text-sm font-semibold text-[var(--angel-navy)]">We couldn&apos;t load this result</p>
+            <p className="text-xs text-[var(--angel-muted)] mt-1">{errorMessage}</p>
+          </div>
         )}
 
         {phase === "not-available" && (
-          <InfoCard className="text-center">
-            <p className="text-lg font-bold text-gray-900 dark:text-gray-100">Your report isn&apos;t ready yet</p>
-            <p className="text-sm text-gray-500 dark:text-gray-400 mt-2 leading-relaxed">
+          <div className="text-center bg-[var(--angel-paper)] border border-[var(--angel-border)] rounded-lg p-6">
+            <p className="text-[var(--angel-navy)] font-bold text-lg">Your report isn&apos;t ready yet</p>
+            <p className="text-sm text-[var(--angel-muted)] mt-2 leading-relaxed">
               Your Mock is being prepared. Check back soon.
             </p>
-            <Link href="/learning-intelligence" className="inline-block mt-4 text-xs font-semibold text-blue-600 dark:text-blue-400">
+            <Link href="/learning-intelligence" className="inline-block mt-4 text-xs font-semibold text-[var(--angel-blue)] hover:underline">
               Back to dashboard
             </Link>
-          </InfoCard>
+          </div>
         )}
 
         {phase === "ready" && report && (
-          <div className="space-y-5">
+          <div className="space-y-6">
             {/* Section 1 — YOUR MOCK RESULT: concise, unchanged core facts. */}
             <div>
-              <h1 className="text-gray-900 dark:text-gray-100 font-bold text-2xl">Your Mock result</h1>
+              <h1 className="text-[var(--angel-navy)] font-bold text-2xl md:text-3xl leading-tight">Your Mock result</h1>
               {report.overall && (
-                <p className="text-sm text-gray-700 dark:text-gray-300 mt-2 leading-relaxed">{scoreSummarySentence(report.overall)}</p>
+                <p className="text-sm md:text-base text-[var(--angel-ink)] mt-2 leading-relaxed">{scoreSummarySentence(report.overall)}</p>
               )}
             </div>
 
-            <InfoCard>
-              <p className="text-xs text-gray-500 dark:text-gray-400 leading-relaxed">{OFFICIAL_SCORE_DISCLAIMER}</p>
-            </InfoCard>
+            <p className="text-xs text-[var(--angel-muted)] leading-relaxed">{OFFICIAL_SCORE_DISCLAIMER}</p>
 
             {report.analysisState === "complete" && report.skillEvidence ? (
               <MockAnalysisSections report={report} />
             ) : (
-              <InfoCard>
-                <p className="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">{ANALYSIS_PENDING_NOTE}</p>
-              </InfoCard>
+              <div className="bg-[var(--angel-paper)] border border-[var(--angel-border)] rounded-lg p-5">
+                <p className="text-sm text-[var(--angel-muted)] leading-relaxed">{ANALYSIS_PENDING_NOTE}</p>
+              </div>
             )}
 
             {writingAssessments.length > 0 && <WritingAssessmentSection assessments={writingAssessments} />}
 
-            <Link href="/learning-intelligence" className="inline-block text-xs font-semibold text-blue-600 dark:text-blue-400">
+            <Link href="/learning-intelligence" className="inline-block text-xs font-semibold text-[var(--angel-blue)] hover:underline">
               Back to dashboard
             </Link>
           </div>
@@ -308,47 +305,47 @@ function MockAnalysisSections({ report }: { report: MockAttemptReport }) {
     <>
       {/* Section 2 — YOUR PERFORMANCE TODAY. */}
       {report.overall && report.overall.percentage !== null && (
-        <InfoCard>
-          <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">Your performance today</p>
+        <div className="bg-[var(--angel-paper)] border border-[var(--angel-border)] rounded-lg p-5">
+          <p className="text-sm font-semibold text-[var(--angel-navy)]">Your performance today</p>
           <div className="mt-2">
             <ProgressBar percent={report.overall.percentage} label="Marks achieved this Mock" />
           </div>
-          <p className="text-xs text-gray-500 dark:text-gray-400 mt-2 leading-relaxed">{PERFORMANCE_CONTEXT_NOTE}</p>
-        </InfoCard>
+          <p className="text-xs text-[var(--angel-muted)] mt-2 leading-relaxed">{PERFORMANCE_CONTEXT_NOTE}</p>
+        </div>
       )}
 
       {/* Section 3 — WHAT YOU SHOWED. Only evidence-supported strengths; never a manufactured compliment when empty. */}
       {report.strengths && report.strengths.length > 0 ? (
-        <InfoCard className="border-emerald-200 dark:border-emerald-900 bg-emerald-50 dark:bg-emerald-950/40">
+        <div className="bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-100 dark:border-emerald-900 rounded-lg p-5">
           <p className="text-sm font-semibold text-emerald-800 dark:text-emerald-300">What you showed</p>
           <p className="text-sm text-emerald-700 dark:text-emerald-400 mt-1 leading-relaxed">{strengthSentence(report.strengths)}</p>
-        </InfoCard>
+        </div>
       ) : (
-        <InfoCard>
-          <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">What you showed</p>
-          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1 leading-relaxed">{NO_SECURE_STRENGTHS_NOTE}</p>
-        </InfoCard>
+        <div className="bg-[var(--angel-paper)] border border-[var(--angel-border)] rounded-lg p-5">
+          <p className="text-sm font-semibold text-[var(--angel-navy)]">What you showed</p>
+          <p className="text-sm text-[var(--angel-muted)] mt-1 leading-relaxed">{NO_SECURE_STRENGTHS_NOTE}</p>
+        </div>
       )}
 
       {/* Section 4 — YOUR PRIORITIES. The dominant section, up to 3 cards. */}
       {priorityEntries.length > 0 && (
         <div>
-          <p className="text-sm font-semibold text-gray-900 dark:text-gray-100 mb-2">Your priorities</p>
+          <p className="text-sm font-semibold text-[var(--angel-navy)] mb-2">Your priorities</p>
           <div className="space-y-3">
             {priorityEntries.map((entry) => (
-              <InfoCard key={entry.questionTypeId} className="border-blue-200 dark:border-blue-900">
+              <div key={entry.questionTypeId} className="bg-[var(--angel-paper)] border border-[var(--angel-border)] rounded-lg p-5">
                 <div className="flex items-center justify-between gap-2">
-                  <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">
-                    {childFriendlySkillLabel(entry.competencyId, entry.questionTypeId)}
+                  <p className="text-sm font-semibold text-[var(--angel-navy)]">
+                    {childFriendlySkillLabel(entry.competencyId, "This skill")}
                   </p>
                   <StatusIndicator tone={skillEvidenceChipTone(entry.evidenceLevel)} label={skillEvidenceChipLabel(entry.evidenceLevel)} />
                 </div>
-                <p className="text-sm text-gray-600 dark:text-gray-400 mt-1.5 leading-relaxed">{priorityStatusSentence(entry)}</p>
-                <p className="text-xs text-gray-500 dark:text-gray-500 mt-1 leading-relaxed">{priorityExplanationSentence(entry)}</p>
+                <p className="text-sm text-[var(--angel-ink)] mt-1.5 leading-relaxed opacity-90">{priorityStatusSentence(entry)}</p>
+                <p className="text-xs text-[var(--angel-muted)] mt-1 leading-relaxed">{priorityExplanationSentence(entry)}</p>
                 <ButtonLink href={practiceRouteFor(entry.competencyId)} variant="outline" size="sm" className="mt-3">
                   {practiceActionLabelFor(entry.competencyId)}
                 </ButtonLink>
-              </InfoCard>
+              </div>
             ))}
           </div>
         </div>
@@ -356,20 +353,20 @@ function MockAnalysisSections({ report }: { report: MockAttemptReport }) {
 
       {/* Section 5 — OTHER SKILLS TO KEEP DEVELOPING. Compact chips, never a paragraph per skill. */}
       {otherSkills.length > 0 && (
-        <InfoCard>
-          <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">Other skills to keep developing</p>
+        <div className="bg-[var(--angel-paper)] border border-[var(--angel-border)] rounded-lg p-5">
+          <p className="text-sm font-semibold text-[var(--angel-navy)]">Other skills to keep developing</p>
           <div className="mt-2.5 flex flex-wrap gap-2">
             {otherSkills.map((entry) => (
               <div
                 key={entry.questionTypeId}
-                className="flex items-center gap-1.5 text-xs bg-gray-50 dark:bg-gray-900 rounded-full pl-2.5 pr-1.5 py-1 border border-gray-100 dark:border-gray-800"
+                className="flex items-center gap-1.5 text-xs bg-[var(--angel-sky)] rounded-full pl-2.5 pr-1.5 py-1"
               >
-                <span className="text-gray-700 dark:text-gray-300">{childFriendlySkillLabel(entry.competencyId, entry.questionTypeId)}</span>
+                <span className="text-[var(--angel-ink)]">{childFriendlySkillLabel(entry.competencyId, "This skill")}</span>
                 <StatusIndicator tone={skillEvidenceChipTone(entry.evidenceLevel)} label={skillEvidenceChipLabel(entry.evidenceLevel)} />
               </div>
             ))}
           </div>
-        </InfoCard>
+        </div>
       )}
 
       {/* Section 7 — WHAT ANGEL RECOMMENDS NEXT. One closing action, reusing
@@ -380,13 +377,13 @@ function MockAnalysisSections({ report }: { report: MockAttemptReport }) {
           regardless of subject, which misrouted an English-only priority
           set (e.g. Reading Comprehension) to the Mathematics practice area. */}
       {nextPracticeSentence(nextPracticePriorities) && (
-        <InfoCard className="border-blue-200 dark:border-blue-900 bg-blue-50 dark:bg-blue-950/40">
-          <p className="text-sm font-semibold text-blue-800 dark:text-blue-300">What to do now</p>
-          <p className="text-sm text-blue-700 dark:text-blue-400 mt-1 leading-relaxed">{nextPracticeSentence(nextPracticePriorities)}</p>
+        <div className="bg-[var(--angel-sky)] rounded-lg p-6">
+          <p className="text-sm font-semibold text-[var(--angel-navy)]">What to do now</p>
+          <p className="text-sm text-[var(--angel-ink)] mt-1 leading-relaxed opacity-90">{nextPracticeSentence(nextPracticePriorities)}</p>
           <ButtonLink href={practiceRouteFor(priorityEntries[0]?.competencyId ?? null)} className="mt-3">
             {practiceActionLabelFor(priorityEntries[0]?.competencyId ?? null)}
           </ButtonLink>
-        </InfoCard>
+        </div>
       )}
     </>
   );
@@ -423,17 +420,17 @@ const WRITING_TASK_LABEL: Record<MockWritingAssessment["taskType"], string> = {
 function WritingAssessmentSection({ assessments }: { assessments: MockWritingAssessment[] }) {
   const orderedAssessments = [...assessments].sort((a, b) => a.taskType.localeCompare(b.taskType));
   return (
-    <InfoCard className="border-purple-200 dark:border-purple-900">
-      <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">Continuous Writing</p>
-      <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 leading-relaxed">
+    <div className="bg-[var(--angel-paper)] border border-[var(--angel-border)] rounded-lg p-5">
+      <p className="text-sm font-semibold text-[var(--angel-navy)]">Continuous Writing</p>
+      <p className="text-xs text-[var(--angel-muted)] mt-1 leading-relaxed">
         Assessed separately from your Comprehension/Mathematics marks above — Angel does not currently have a confirmed official CSSE mark split
         between components, so these are reported on their own rather than combined into one figure.
       </p>
       <div className="mt-3 space-y-3">
         {orderedAssessments.map((assessment) => (
-          <div key={assessment.questionId} className="border border-gray-100 dark:border-gray-800 rounded-lg p-3">
+          <div key={assessment.questionId} className="border border-[var(--angel-border)] rounded-lg p-3">
             <div className="flex items-center justify-between gap-2 mb-2">
-              <span className="text-xs font-semibold text-gray-700 dark:text-gray-300">
+              <span className="text-xs font-semibold text-[var(--angel-ink)]">
                 {WRITING_TASK_LABEL[assessment.taskType] ?? assessment.taskType}
               </span>
               {assessment.assessmentStatus === "review_required" ? (
@@ -443,7 +440,7 @@ function WritingAssessmentSection({ assessments }: { assessments: MockWritingAss
               )}
             </div>
             {assessment.assessmentStatus === "review_required" ? (
-              <p className="text-xs text-gray-500 dark:text-gray-400 leading-relaxed">
+              <p className="text-xs text-[var(--angel-muted)] leading-relaxed">
                 Angel could not confidently assess this response automatically
                 {assessment.reviewRequiredReasons && assessment.reviewRequiredReasons.length > 0
                   ? `: ${assessment.reviewRequiredReasons.join("; ")}.`
@@ -454,7 +451,7 @@ function WritingAssessmentSection({ assessments }: { assessments: MockWritingAss
               <div className="space-y-1.5">
                 {(assessment.humanReviewDimensions ?? assessment.dimensions).map((d) => (
                   <div key={d.dimension} className="flex items-start justify-between gap-2">
-                    <span className="text-xs font-medium text-gray-700 dark:text-gray-300">{WRITING_DIMENSION_LABEL[d.dimension]}</span>
+                    <span className="text-xs font-medium text-[var(--angel-ink)]">{WRITING_DIMENSION_LABEL[d.dimension]}</span>
                     <StatusIndicator tone={d.level === "strong" ? "success" : d.level === "secure" ? "info" : "warning"} label={d.level} />
                   </div>
                 ))}
@@ -463,6 +460,6 @@ function WritingAssessmentSection({ assessments }: { assessments: MockWritingAss
           </div>
         ))}
       </div>
-    </InfoCard>
+    </div>
   );
 }

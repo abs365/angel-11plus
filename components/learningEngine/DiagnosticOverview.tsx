@@ -1,32 +1,40 @@
-import { Award, TrendingUp, Sprout, AlertCircle, HelpCircle } from "lucide-react";
-import { InfoCard } from "@/components/ui/Card";
 import { COMPETENCIES } from "@/lib/learningEngine/assessmentBrainMap";
 import type { CompetencyId, DiagnosticFindings } from "@/lib/learningEngine/types";
 
 /**
- * Feature 4 — Diagnostic Overview (LEARNING_ENGINE_V1.md §4). Renders the
+ * Feature 4 — Diagnostic Overview (LEARNING_ENGINE_V1.md §4). Reads the
  * five named categories exactly as computed by lib/learningEngine/
- * diagnostics.ts, plus the "not yet evidenced" coverage list — kept
- * visually separate from the five diagnostic categories, never merged into
- * Development Areas, per §4's explicit rule that absence of evidence is
- * not itself a finding.
+ * diagnostics.ts — no filtering, no invented category.
+ *
+ * Increment 3 (Progress + Results + Parent Dashboard) — this component is
+ * also rendered on the accepted Practice results screen
+ * (app/learning-intelligence/practice/[area]/page.tsx), which stays
+ * closed/frozen this increment; its export signature
+ * (`{ findings: DiagnosticFindings }`) is unchanged so that call site
+ * needs no edit. What changed is internal presentation only: the prior
+ * version was five separately-coloured icon cards (Strengths/Mastered
+ * Skills/Emerging Skills/Development Areas/Low Confidence Areas) plus a
+ * sixth dashed "Not Yet Evidenced" card — exactly the "grid of rounded
+ * statistic cards" / "icon tile beside every heading" / "rainbow category
+ * colours" pattern the governing design standard rules out. Rewritten as
+ * two calm, typography-led groups a family actually asks about --
+ * "What's going well" (strengths + mastered + emerging skills, the real
+ * positive-evidence categories) and "What to work on" (development areas
+ * + low-confidence areas) — no icon, no colour-block, no card grid. The
+ * "Not Yet Evidenced" coverage list is dropped from this component
+ * entirely: it duplicates the page-level honest zero-evidence state every
+ * caller of this component already shows, and repeating a long list of
+ * "nothing yet" competencies a second time inside this component added
+ * length without adding a genuine answer to a family's question.
  */
-const SECTIONS: { key: keyof DiagnosticFindings; label: string; icon: typeof Award; iconTone: string; bgTone: string }[] = [
-  { key: "strengths", label: "Strengths", icon: Award, iconTone: "text-emerald-600 dark:text-emerald-400", bgTone: "bg-emerald-50 dark:bg-emerald-950" },
-  { key: "masteredSkills", label: "Mastered Skills", icon: TrendingUp, iconTone: "text-blue-600 dark:text-blue-400", bgTone: "bg-blue-50 dark:bg-blue-950" },
-  { key: "emergingSkills", label: "Emerging Skills", icon: Sprout, iconTone: "text-sky-600 dark:text-sky-400", bgTone: "bg-sky-50 dark:bg-sky-950" },
-  { key: "developmentAreas", label: "Development Areas", icon: AlertCircle, iconTone: "text-amber-600 dark:text-amber-400", bgTone: "bg-amber-50 dark:bg-amber-950" },
-  { key: "lowConfidenceAreas", label: "Low Confidence Areas", icon: HelpCircle, iconTone: "text-gray-600 dark:text-gray-400", bgTone: "bg-gray-100 dark:bg-gray-800" },
-];
-
 function CompetencyChipList({ ids }: { ids: CompetencyId[] }) {
   if (ids.length === 0) {
-    return <p className="text-xs text-gray-400 dark:text-gray-500 italic">None yet</p>;
+    return <p className="text-xs text-[var(--angel-muted)] italic">None yet</p>;
   }
   return (
     <div className="flex flex-wrap gap-1.5">
       {ids.map((id) => (
-        <span key={id} className="text-xs font-medium px-2 py-1 rounded-lg bg-white/70 dark:bg-black/20">
+        <span key={id} className="text-xs font-medium px-2.5 py-1 rounded-full bg-[var(--angel-paper)] text-[var(--angel-ink)]">
           {COMPETENCIES[id].name}
         </span>
       ))}
@@ -35,24 +43,19 @@ function CompetencyChipList({ ids }: { ids: CompetencyId[] }) {
 }
 
 export function DiagnosticOverview({ findings }: { findings: DiagnosticFindings }) {
-  return (
-    <div className="space-y-3">
-      {SECTIONS.map(({ key, label, icon: Icon, iconTone, bgTone }) => (
-        <InfoCard key={key} className={bgTone}>
-          <div className="flex items-center gap-2 mb-2">
-            <Icon size={16} className={iconTone} />
-            <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">{label}</p>
-          </div>
-          <CompetencyChipList ids={findings[key] as CompetencyId[]} />
-        </InfoCard>
-      ))}
+  const goingWell = [...findings.strengths, ...findings.masteredSkills, ...findings.emergingSkills];
+  const toWorkOn = [...findings.developmentAreas, ...findings.lowConfidenceAreas];
 
-      {findings.notYetEvidenced.length > 0 && (
-        <InfoCard className="border-dashed">
-          <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 mb-2">Not Yet Evidenced (coverage gap, not a finding)</p>
-          <CompetencyChipList ids={findings.notYetEvidenced} />
-        </InfoCard>
-      )}
+  return (
+    <div className="space-y-6">
+      <div>
+        <p className="text-xs font-bold uppercase tracking-widest text-[var(--angel-blue)] mb-2">What&apos;s going well</p>
+        <CompetencyChipList ids={goingWell} />
+      </div>
+      <div>
+        <p className="text-xs font-bold uppercase tracking-widest text-[var(--angel-muted)] mb-2">What to work on</p>
+        <CompetencyChipList ids={toWorkOn} />
+      </div>
     </div>
   );
 }

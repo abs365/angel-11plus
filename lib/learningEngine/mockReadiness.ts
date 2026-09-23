@@ -4,7 +4,36 @@ import type { RecommendationTrigger } from "@/types/ali/recommendationOrchestrat
 import { fetchLearnerIntelligenceProfile } from "./profile";
 import { getRecommendations } from "./educationalIntelligenceService";
 import { ALL_COMPETENCY_IDS } from "./assessmentBrainMap";
-import { getMockResults } from "@/lib/mockProgress";
+import { getActiveMockForm, getSubmittedMockAttempts } from "@/lib/mockAttempt/client";
+
+/**
+ * Increment 3 (Progress + Results + Parent Dashboard) — real defect found
+ * and fixed: `mockAttemptCount` previously came from getMockResults()
+ * (lib/mockProgress.ts), a legacy localStorage store the real CSSE Mock
+ * system (app/learning-intelligence/mock-exam/**) never writes to — its
+ * own attempts live in ali_mock_attempt/ali_mock_attempt_report. For a
+ * CSSE family this made `mockAttemptCount` structurally always 0,
+ * regardless of how many real Mocks their child had actually completed,
+ * feeding a wrong count into every one of this module's three real
+ * consumers (this file's own computeCsseMockReadiness(), used by the Mock
+ * Centre hub; CssePathwayParentContent.tsx's "Are they ready for a mock?"
+ * card; and the standalone Mock Readiness page). Fixed once, here, by
+ * discovering the same real, active CSSE forms app/mocks/page.tsx already
+ * discovers (getActiveMockForm) and counting real submitted attempts
+ * against each (getSubmittedMockAttempts) — both pre-existing,
+ * already-tested functions, no new RPC, no new table, no scoring/
+ * eligibility change.
+ */
+export async function fetchRealCsseMockAttemptCount(supabase: SupabaseClient<Database>): Promise<number> {
+  const forms = await Promise.all([
+    getActiveMockForm(supabase, "full_mock", "mathematics"),
+    getActiveMockForm(supabase, "timed_section"),
+  ]);
+  const formIds = forms.map((f) => f.data?.formId).filter((id): id is string => Boolean(id));
+  if (formIds.length === 0) return 0;
+  const counts = await Promise.all(formIds.map((formId) => getSubmittedMockAttempts(supabase, formId)));
+  return counts.reduce((sum, c) => sum + (c.data?.length ?? 0), 0);
+}
 
 /**
  * Mock Readiness Intelligence (Sprint 5, WP5C). "Help parents understand
@@ -114,16 +143,16 @@ export async function computeCsseMockReadiness(
   const profile = await fetchLearnerIntelligenceProfile(pathwayId);
   if (!profile || !profile.pathwayEligible) return null;
 
-  const [recommendations, mockResults] = await Promise.all([
+  const [recommendations, mockAttemptCount] = await Promise.all([
     getRecommendations(supabase, profile.profileId, ALL_COMPETENCY_IDS).catch(() => null),
-    getMockResults().catch(() => []),
+    fetchRealCsseMockAttemptCount(supabase).catch(() => 0),
   ]);
 
   const topTriggerReason = recommendations?.ordered[0]?.triggerReason ?? null;
 
   const assessment = assessMockReadiness({
     hasAnyEvidence: profile.hasAnyEvidence,
-    mockAttemptCount: mockResults.length,
+    mockAttemptCount,
     topTriggerReason,
   });
 
