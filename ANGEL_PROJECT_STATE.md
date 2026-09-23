@@ -787,3 +787,54 @@ EXPERIENCE: PARTIAL. Commit `a13a48f`, pushed, deployed, confirmed live on
   login was verified directly.
 - Per the governing instruction, this increment stops here — no wider authenticated-experience
   redesign or "Increment 2" was started.
+
+**2026-09-23 (same day) — Private Learner Space & Family Access Model
+(`ANGEL_11PLUS_PRIVATE_LEARNER_SPACE_ACCEPTANCE_REPORT.md`,
+`ANGEL_11PLUS_PRIVATE_LEARNER_SPACE_DECISION_RECORD.md`). ANGEL 11+ PRIVATE LEARNER SPACE: PARTIAL.
+Commit `fc0e45f`, pushed, deployed, confirmed live on `https://www.angel11plus.com`. Founder note:
+**password recovery is now CLOSED by real Founder production acceptance — do not reopen without new
+regression evidence.**
+
+- Current-state finding: every learner under one parent shares the parent's own Supabase JWT (no
+  separate credential per child) — `current_learner_id()` (migration 260) validates account
+  ownership, not "which family member is holding the device," so true DB-level cryptographic
+  sibling isolation is architecturally bounded without either separate per-learner identities
+  (explicitly forbidden) or a Supabase Auth Custom Access Token Hook (assessed as disproportionate
+  auth-pipeline risk this session, right after this same project closed a real auth incident).
+  Decision record written before implementation, with alternatives honestly rejected on the record.
+- Selected model: Parent Mode / Learner Mode (`lib/householdMode.ts`, mirrors
+  `lib/learnerContext.ts`'s own account-scoped pointer pattern, default always Parent Mode), plus
+  two real server-enforced pieces: (1) `PARENT_ONLY_PATH_PREFIXES`/`isParentOnlyRoute()`
+  (`/add-child`, `/pathways`, `/learning-intelligence/parent`) blocked in `RegisteredAccountGate`
+  regardless of how they're reached; (2) migration 262's Parent PIN (salted `sha256()`, core
+  Postgres, not pgcrypto — this repo's PGlite test harness has no pgcrypto compiled in, confirmed
+  directly rather than assumed; rate-limited 5 attempts / 5 min lockout, never readable by any
+  client role) gating the one controlled route back from Learner Mode to Parent Mode.
+- Real defect found and closed while inspecting the architecture: `lib/learnerContext.ts`'s
+  pre-existing `fetchLearners()` fetched every sibling's id/name on every request regardless of
+  mode; now narrowed to the pinned learner's own row while in Learner Mode, verified by a new test
+  against a fake backend mirroring PostgREST's own `id=eq.<x>` filtering.
+- Header/Navigation: sibling switcher, pathway switcher, Parent Dashboard links and School
+  Intelligence nav entry removed entirely (not hidden) in Learner Mode. Dashboard pathway line reads
+  "Your preparation: X" instead of a pathway-configuration link in Learner Mode (Part 5).
+  LearnerIdentityBanner: "Enter learner space" per learner, requires a Parent PIN to exist first.
+- Honestly disclosed, not closed: a technically sophisticated user with dev-tools access to their
+  own account's already-valid JWT can still hand-craft a request for sibling data — this is a real
+  architectural boundary of the shared-JWT/no-separate-child-account model, not a gap this increment
+  silently missed.
+- Clean-checkout gate: typecheck 0 errors, tests 4,760/4,761 (includes migration 262's own 10 tests
+  run against a real Postgres engine, PGlite, the same harness migration 260 uses), migration-sql-guard
+  PASS (258 files), copy-guard 51 violations and eslint 114 problems both unchanged from baseline,
+  genuine `next build` PASS.
+- Production evidence: fetched the live JS bundles directly (not through a browser) and confirmed
+  the new copy ("Return to Parent Mode", "learner space", "Ask a parent or carer", "Your
+  preparation:") is genuinely deployed; all affected routes return HTTP 200; browser screenshot
+  confirms no regression to the public access gate.
+- PARTIAL rather than GO: **migration 262 is NOT YET APPLIED** (Founder-applied convention, per
+  every prior migration in this project) — "Enter learner space" is live in the UI but inert
+  (fails with a plain error, no crash or data exposure) until applied. The instruction's own
+  required two-real-learner acceptance walkthrough also could not be performed this session (no
+  authenticated session available; per this project's standing rule, none was created) and is the
+  Founder's next step.
+- Per the governing instruction, this increment stops here — no wider authenticated-experience
+  redesign was started.
