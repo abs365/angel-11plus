@@ -227,8 +227,8 @@ export default function ReasoningHubPage() {
       <div className="max-w-4xl lg:max-w-6xl mx-auto px-4 py-6 md:px-8 md:py-8">
         <h1 className="text-[var(--angel-navy)] font-bold text-3xl md:text-4xl leading-tight">Practise</h1>
         <p className="text-[var(--angel-muted)] text-sm md:text-base mt-2 max-w-xl">
-          Practise strengthens what you&apos;ve learned. Short, personalised sessions — questions adapt to you every
-          time.
+          Practise strengthens what you&apos;ve learned. Short, personalised sessions, with questions that adapt to
+          you every time.
         </p>
 
         {practiceMissionItem && (
@@ -282,7 +282,7 @@ export default function ReasoningHubPage() {
           <h2 className="text-[var(--angel-navy)] font-bold text-2xl md:text-3xl leading-tight">What else can I choose?</h2>
           <p className="text-[var(--angel-muted)] text-sm md:text-base mt-1 max-w-xl">
             {isCsse === true
-              ? "These four skills aren't part of the CSSE exam itself, but many other selective schools test them — useful extra practice if that applies to you."
+              ? "These four skills aren't part of the CSSE exam itself, but many other selective schools test them. Useful extra practice if that applies to you."
               : "Reasoning skills are tested across nearly every UK selective school entrance exam. Each one below strengthens a specific competency and adapts to your level as you practise."}
           </p>
           <div className="mt-5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
