@@ -13,8 +13,9 @@ import Breadcrumbs, { type Breadcrumb } from "@/components/ui/Breadcrumbs";
 import { hasRegisteredParentAccount } from "@/lib/registeredAccess";
 import { useHouseholdMode } from "@/lib/useHouseholdMode";
 import { useLearners } from "@/lib/useLearners";
-import { getHouseholdPinStatus } from "@/lib/householdPin";
+import { getLearnerPinStatus } from "@/lib/learnerPin";
 import ParentPinModal from "@/components/parent/ParentPinModal";
+import LearnerPinModal from "@/components/parent/LearnerPinModal";
 
 /**
  * Sprint 2 (Platform Shell) — the new top header bar every page now
@@ -43,34 +44,30 @@ export default function Header({ breadcrumbs }: HeaderProps) {
   const { isLearnerMode, enterLearnerSpace, exitToParentMode } = useHouseholdMode();
   const { active, ready: learnersReady } = useLearners();
   const [showPinModal, setShowPinModal] = useState(false);
-  // PRIVATE LEARNER SPACE -- the account menu is the one surface visible on
-  // every page (Today included), so this is where "Enter learner space" must
-  // be reachable without first finding the separate Parent Dashboard page.
-  // Same PIN-first-time gate as LearnerIdentityBanner's own "Enter learner
-  // space" action (lib/householdPin.ts); deliberately self-contained here
-  // rather than refactored into a shared hook, so this fix touches nothing
-  // already working.
-  const [hasPin, setHasPin] = useState<boolean | null>(null);
-  const [enterPinModal, setEnterPinModal] = useState(false);
+  // PRIVATE LEARNER SPACE, Part 2 -- the account menu is the one surface
+  // visible on every page (Today included), so this is where "Enter
+  // learner space" must be reachable without first finding the separate
+  // Parent Dashboard page. Gated by THIS learner's own PIN (migration 263),
+  // never the household's Parent PIN -- entering and returning are
+  // different credentials protecting different directions.
+  const [pinStatusFor, setPinStatusFor] = useState<{ id: string; hasPin: boolean } | null>(null);
+  const hasLearnerPin = pinStatusFor && active && pinStatusFor.id === active.id ? pinStatusFor.hasPin : null;
+  const [learnerPinModal, setLearnerPinModal] = useState<"set" | "verify" | null>(null);
 
   useEffect(() => {
-    if (isLearnerMode || !user) return;
+    if (isLearnerMode || !user || !active) return;
     let cancelled = false;
-    getHouseholdPinStatus().then((status) => {
-      if (!cancelled) setHasPin(status?.hasPin ?? false);
+    getLearnerPinStatus(active.id).then((status) => {
+      if (!cancelled) setPinStatusFor({ id: active.id, hasPin: status?.hasPin ?? false });
     });
     return () => {
       cancelled = true;
     };
-  }, [isLearnerMode, user]);
+  }, [isLearnerMode, user, active]);
 
   function handleEnterLearnerSpace() {
     if (!active) return;
-    if (hasPin === false) {
-      setEnterPinModal(true);
-      return;
-    }
-    enterLearnerSpace(active.id);
+    setLearnerPinModal(hasLearnerPin === false ? "set" : "verify");
   }
 
   async function handleSignOut() {
@@ -135,8 +132,8 @@ export default function Header({ breadcrumbs }: HeaderProps) {
               {!isLearnerMode && learnersReady && active && (
                 <button
                   onClick={handleEnterLearnerSpace}
-                  disabled={hasPin === null}
-                  className="flex items-center gap-1.5 w-full text-left text-sm font-semibold text-sky-700 dark:text-sky-400 hover:bg-sky-50 dark:hover:bg-sky-950 rounded-lg px-2 py-1.5 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  disabled={hasLearnerPin === null}
+                  className="flex items-center gap-1.5 w-full text-left text-sm font-semibold text-[var(--angel-blue)] hover:bg-[var(--angel-sky)] rounded-lg px-2 py-1.5 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <LogIn size={13} aria-hidden="true" />
                   Enter {active.name ?? "learner"}&rsquo;s space
@@ -198,14 +195,15 @@ export default function Header({ breadcrumbs }: HeaderProps) {
         />
       )}
 
-      {enterPinModal && (
-        <ParentPinModal
-          mode="set"
-          onCancel={() => setEnterPinModal(false)}
-          onSuccess={() => {
-            setEnterPinModal(false);
-            setHasPin(true);
-            if (active) enterLearnerSpace(active.id);
+      {learnerPinModal && active && (
+        <LearnerPinModal
+          mode={learnerPinModal}
+          learnerId={active.id}
+          learnerName={active.name ?? "your child"}
+          onCancel={() => setLearnerPinModal(null)}
+          onSuccess={(sessionToken) => {
+            setLearnerPinModal(null);
+            enterLearnerSpace(active.id, sessionToken);
           }}
         />
       )}

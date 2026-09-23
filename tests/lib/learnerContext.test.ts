@@ -2,6 +2,7 @@ import { test, beforeEach, afterEach } from "node:test";
 import assert from "node:assert/strict";
 import {
   LEARNER_HEADER,
+  LEARNER_TOKEN_HEADER,
   chooseActiveLearner,
   clearLearnerContext,
   createLearnerAwareFetch,
@@ -21,7 +22,7 @@ import { claimLegacyLocalState, reconcileSetup, type LocalSetup } from "@/lib/le
 import { forwardedLearnerHeaders } from "@/lib/learnerRequestForwarding";
 import { switchDestination, friendlyLearnerError } from "@/lib/useLearners";
 import { learnerDisplayName } from "@/lib/learnerDisplay";
-import { clearHouseholdMode, enterLearnerMode } from "@/lib/householdMode";
+import { clearHouseholdMode, enterLearnerMode, returnToParentMode } from "@/lib/householdMode";
 
 /**
  * Wave 0 multi-learner architecture (client side): the single active-
@@ -281,7 +282,7 @@ test("PRIVATE LEARNER SPACE: in Learner Mode, the learner-list fetch is restrict
   assert.equal(getLearnerContextSnapshot().learners.length, 2);
 
   setActiveLearner(L2);
-  enterLearnerMode(U1);
+  enterLearnerMode(U1, "tok-1");
   clearLearnerContext(); // force a fresh load, as a real page reload would
 
   await ensureLearnerContext(U1, jwt(U1));
@@ -289,6 +290,33 @@ test("PRIVATE LEARNER SPACE: in Learner Mode, the learner-list fetch is restrict
   assert.match(learnerModeCall.url, new RegExp(`[?&]id=eq\\.${L2}\\b`), "Learner Mode must request only the pinned learner's own row");
   assert.equal(getLearnerContextSnapshot().learners.length, 1, "the sibling's id and name must never enter this session's state in Learner Mode");
   assert.equal(getLearnerContextSnapshot().learners[0].id, L2);
+
+  // PRIVATE LEARNER SPACE, Part 2: a real subsequent request now also carries
+  // the learner-PIN session token, the thing migration 263's current_learner_id()
+  // actually validates -- not merely the plain learner-id header.
+  const f = createLearnerAwareFetch({ restBase: REST, anonKey: "anon", baseFetch });
+  await f(`${REST}/rpc/mock_start_attempt`, { method: "POST", headers: { authorization: `Bearer ${jwt(U1)}` } });
+  const rpcCall = calls.find((c) => c.url.endsWith("/rpc/mock_start_attempt"))!;
+  assert.equal(rpcCall.headers.get(LEARNER_HEADER), L2);
+  assert.equal(rpcCall.headers.get(LEARNER_TOKEN_HEADER), "tok-1");
+  assert.deepEqual(learnerRequestHeaders(), { [LEARNER_HEADER]: L2, [LEARNER_TOKEN_HEADER]: "tok-1" });
+});
+
+test("PRIVATE LEARNER SPACE, Part 2: in Parent Mode, no learner-PIN token header is ever sent, even if one happens to be present from a prior Learner Mode session in this tab", async () => {
+  process.env.NEXT_PUBLIC_SUPABASE_URL = "https://x.supabase.co";
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY = "k";
+  const ls = new FakeStorage();
+  g.window = { localStorage: ls, sessionStorage: new FakeStorage() };
+  g.localStorage = ls;
+  const { calls, baseFetch } = fakeBackend({ [U1]: [{ id: L1, name: "Loni" }] });
+  const f = createLearnerAwareFetch({ restBase: REST, anonKey: "anon", baseFetch });
+
+  enterLearnerMode(U1, "stale-token");
+  returnToParentMode(U1); // clears the token pointer -- see lib/householdMode.ts
+
+  await f(`${REST}/rpc/one`, { headers: { authorization: `Bearer ${jwt(U1)}` } });
+  const call = calls.find((c) => c.url.endsWith("/rpc/one"))!;
+  assert.equal(call.headers.get(LEARNER_TOKEN_HEADER), null);
 });
 
 test("writes before the learner is known are skipped, never landing in another learner's or the legacy key", () => {

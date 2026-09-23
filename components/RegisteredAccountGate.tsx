@@ -2,11 +2,13 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import type { ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 import { useAuth } from "@/components/providers/AuthProvider";
 import PageLayout from "@/components/PageLayout";
 import { decideAccess, isParentOnlyRoute } from "@/lib/registeredAccess";
 import { useHouseholdMode } from "@/lib/useHouseholdMode";
+import { useLearners } from "@/lib/useLearners";
+import LearnerPinModal from "@/components/parent/LearnerPinModal";
 
 /**
  * Controlled-beta policy: a registered parent account is required for the persistent learner experience
@@ -21,7 +23,8 @@ export default function RegisteredAccountGate({ children }: { children: ReactNod
   const pathname = usePathname() ?? "/";
   const { user, loading } = useAuth();
   const decision = decideAccess({ pathname, loading, user });
-  const { isLearnerMode } = useHouseholdMode();
+  const { isLearnerMode, hasLearnerToken, enterLearnerSpace } = useHouseholdMode();
+  const { active: activeLearner, ready: learnersReady } = useLearners();
 
   if (decision === "allow" && isLearnerMode && isParentOnlyRoute(pathname)) {
     return (
@@ -42,6 +45,33 @@ export default function RegisteredAccountGate({ children }: { children: ReactNod
               Back to my preparation
             </Link>
           </div>
+        </div>
+      </PageLayout>
+    );
+  }
+
+  // PRIVATE LEARNER SPACE, Part 2: the mode pointer says "learner" (it
+  // persists across a closed/reopened tab on the same device, by design --
+  // see lib/householdMode.ts) but no learner-PIN session token is present
+  // in THIS tab (tokens are session-only, never persisted to localStorage).
+  // This is the real server-enforced boundary, not merely a UI nicety:
+  // current_learner_id() itself would refuse any data request here anyway
+  // (migration 263) -- this panel is what turns that refusal into a clear
+  // "enter your PIN" moment instead of a blank/broken page. Learners with
+  // no PIN configured are unaffected (isLearnerMode can only be true here
+  // via a genuine prior entry, and a learner with no PIN never needed a
+  // token in the first place).
+  if (decision === "allow" && isLearnerMode && !hasLearnerToken && learnersReady && activeLearner) {
+    return (
+      <PageLayout>
+        <div className="max-w-xl mx-auto px-4 py-10 md:px-8 md:py-16" data-testid="learner-pin-required">
+          <h1 className="text-gray-900 dark:text-gray-100 font-bold text-2xl md:text-3xl">
+            Enter your learner PIN
+          </h1>
+          <p className="text-gray-600 dark:text-gray-400 text-sm md:text-base mt-3 leading-relaxed">
+            {activeLearner.name ?? "This learner"}, enter your PIN to open your learning space.
+          </p>
+          <PinRePromptButton learnerId={activeLearner.id} learnerName={activeLearner.name ?? "your child"} onSuccess={(token) => enterLearnerSpace(activeLearner.id, token)} />
         </div>
       </PageLayout>
     );
@@ -90,5 +120,43 @@ export default function RegisteredAccountGate({ children }: { children: ReactNod
         </p>
       </div>
     </PageLayout>
+  );
+}
+
+/** Opens LearnerPinModal (verify mode) for the learner-PIN re-prompt panel above. A separate component so its own open/close state doesn't force the whole gate to re-render on every keystroke. */
+function PinRePromptButton({
+  learnerId,
+  learnerName,
+  onSuccess,
+}: {
+  learnerId: string;
+  learnerName: string;
+  onSuccess: (sessionToken: string) => void;
+}) {
+  const [open, setOpen] = useState(false);
+  return (
+    <>
+      <div className="mt-6">
+        <button
+          type="button"
+          onClick={() => setOpen(true)}
+          className="inline-flex items-center justify-center text-sm font-semibold bg-sky-700 text-white rounded-xl px-5 py-3 hover:bg-sky-800 transition-colors motion-reduce:transition-none"
+        >
+          Enter PIN
+        </button>
+      </div>
+      {open && (
+        <LearnerPinModal
+          mode="verify"
+          learnerId={learnerId}
+          learnerName={learnerName}
+          onCancel={() => setOpen(false)}
+          onSuccess={(token) => {
+            setOpen(false);
+            onSuccess(token);
+          }}
+        />
+      )}
+    </>
   );
 }

@@ -158,11 +158,24 @@ test("RegisteredAccountGate blocks parent-only routes in Learner Mode BEFORE the
   assert.ok(parentOnlyIndex > -1 && allowIndex > -1 && parentOnlyIndex < allowIndex);
 });
 
+test("RegisteredAccountGate also re-prompts for the learner's own PIN when the mode pointer says Learner Mode but no session token is present (e.g. a freshly opened tab) -- BEFORE the plain allow branch, so a page can never silently render with sibling-tainted or unauthorised state", () => {
+  const gate = read("components/RegisteredAccountGate.tsx");
+  assert.match(gate, /isLearnerMode && !hasLearnerToken && learnersReady && activeLearner/);
+  assert.match(gate, /data-testid="learner-pin-required"/);
+  assert.match(gate, /mode="verify"/);
+  const pinRequiredIndex = gate.indexOf("!hasLearnerToken");
+  const allowIndex = gate.indexOf('if (decision === "allow") return');
+  assert.ok(pinRequiredIndex > -1 && allowIndex > -1 && pinRequiredIndex < allowIndex);
+});
+
 test("Enter learner space is reachable from Header's account menu -- visible on every page, not only the separate Parent Dashboard page", () => {
   const header = read("components/Header.tsx");
   assert.match(header, /Enter \{active\.name .*\}&rsquo;s space/);
   assert.match(header, /!isLearnerMode && learnersReady && active/);
-  // It must be gated behind the same PIN-first-time flow as the Parent Dashboard's own entry action, not a bypass.
-  assert.match(header, /if \(hasPin === false\) \{\s*\n\s*setEnterPinModal\(true\);/);
-  assert.match(header, /mode="set"[\s\S]*?enterLearnerSpace\(active\.id\)/);
+  // PRIVATE LEARNER SPACE, Part 2: gated by THIS learner's own PIN
+  // (learner_pin_status/LearnerPinModal), never the household Parent PIN --
+  // entering and returning are different credentials.
+  assert.match(header, /getLearnerPinStatus\(active\.id\)/);
+  assert.match(header, /setLearnerPinModal\(hasLearnerPin === false \? "set" : "verify"\)/);
+  assert.match(header, /enterLearnerSpace\(active\.id, sessionToken\)/);
 });

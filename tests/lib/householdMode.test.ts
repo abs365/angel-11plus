@@ -4,12 +4,15 @@ import {
   SERVER_HOUSEHOLD_MODE,
   clearHouseholdMode,
   clearModePointer,
+  clearTokenPointer,
   ensureHouseholdMode,
   enterLearnerMode,
   getHouseholdModeSnapshot,
   readModePointer,
+  readTokenPointer,
   returnToParentMode,
   writeModePointer,
+  writeTokenPointer,
 } from "@/lib/householdMode";
 
 /**
@@ -90,13 +93,42 @@ test("module state: ensureHouseholdMode/enterLearnerMode/returnToParentMode/clea
   assert.equal(getHouseholdModeSnapshot().mode, "parent");
   assert.equal(getHouseholdModeSnapshot().uid, U1);
 
-  enterLearnerMode(U1);
+  enterLearnerMode(U1, "tok-1");
   assert.equal(getHouseholdModeSnapshot().mode, "learner");
+  assert.equal(getHouseholdModeSnapshot().learnerToken, "tok-1");
 
   returnToParentMode(U1);
   assert.equal(getHouseholdModeSnapshot().mode, "parent");
+  assert.equal(getHouseholdModeSnapshot().learnerToken, null, "returning to Parent Mode must clear the learner-PIN token");
 
   clearHouseholdMode();
   assert.equal(getHouseholdModeSnapshot().uid, null);
   assert.equal(getHouseholdModeSnapshot().mode, "parent");
+});
+
+test("the learner-PIN token pointer is session-only -- it round-trips for the same account but is never written to a local (device) store", () => {
+  const session = new FakeStorage();
+  writeTokenPointer(session, U1, "tok-abc");
+  assert.equal(readTokenPointer(session, U1), "tok-abc");
+  // No local-storage variant exists to even call -- the function signature itself only accepts one store.
+  assert.equal(readTokenPointer(null, U1), null, "no session store at all -> no token");
+});
+
+test("a learner-PIN token belonging to a different account is never inherited", () => {
+  const session = new FakeStorage();
+  writeTokenPointer(session, U1, "tok-abc");
+  assert.equal(readTokenPointer(session, U2), null);
+});
+
+test("clearTokenPointer removes it", () => {
+  const session = new FakeStorage();
+  writeTokenPointer(session, U1, "tok-abc");
+  clearTokenPointer(session);
+  assert.equal(readTokenPointer(session, U1), null);
+});
+
+test("a malformed stored token pointer is ignored, not thrown", () => {
+  const session = new FakeStorage();
+  session.setItem("angel_learner_pin_token_v1", "{not json");
+  assert.equal(readTokenPointer(session, U1), null);
 });

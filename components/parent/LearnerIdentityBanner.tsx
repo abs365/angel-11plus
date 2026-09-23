@@ -2,13 +2,13 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { LogIn, Pencil, Plus } from "lucide-react";
+import { KeyRound, LogIn, Pencil, Plus } from "lucide-react";
 import { useLearners } from "@/lib/useLearners";
 import { learnerDisplayName } from "@/lib/learnerDisplay";
 import { getPathwayById } from "@/lib/pathways";
 import ChildNameForm from "@/components/parent/ChildNameForm";
-import ParentPinModal from "@/components/parent/ParentPinModal";
-import { getHouseholdPinStatus } from "@/lib/householdPin";
+import LearnerPinModal from "@/components/parent/LearnerPinModal";
+import { getLearnerPinStatus } from "@/lib/learnerPin";
 import { useHouseholdMode } from "@/lib/useHouseholdMode";
 
 /**
@@ -17,26 +17,35 @@ import { useHouseholdMode } from "@/lib/useHouseholdMode";
  * progress and evidence, so this states plainly WHOSE progress is on screen,
  * lets the parent choose another child, and offers "Add another child".
  * Children are never combined into an aggregate score.
+ *
+ * PRIVATE LEARNER SPACE, Part 2 -- "Enter learner space" is gated by THIS
+ * learner's own PIN (migration 263), not the household's Parent PIN
+ * (ParentPinModal, used only for the Learner Mode -> Parent Mode return
+ * trip). "Manage learner PIN" lets the parent set or reset it at any time.
  */
 export default function LearnerIdentityBanner() {
   const { learners, active, ready, switchLearner, renameLearner } = useLearners();
   const { enterLearnerSpace } = useHouseholdMode();
   const [editing, setEditing] = useState(false);
-  // PRIVATE LEARNER SPACE -- a household PIN must exist before Learner Mode
-  // can ever be entered (the return gate must already work). null = not yet
-  // known; the button is disabled rather than risk entering with no PIN set.
-  const [hasPin, setHasPin] = useState<boolean | null>(null);
-  const [pinModal, setPinModal] = useState<"set" | null>(null);
+  // null = not yet known for the current active learner; refetched whenever
+  // the parent switches which child this banner is showing. Derived from
+  // "status belongs to this exact learner id" rather than reset via a
+  // synchronous setState in the effect body, so switching learners shows a
+  // genuine loading state (null) with no extra render.
+  const [pinStatusFor, setPinStatusFor] = useState<{ id: string; hasPin: boolean } | null>(null);
+  const hasLearnerPin = pinStatusFor && active && pinStatusFor.id === active.id ? pinStatusFor.hasPin : null;
+  const [pinModal, setPinModal] = useState<"set" | "verify" | "manage" | null>(null);
 
   useEffect(() => {
+    if (!active) return;
     let cancelled = false;
-    getHouseholdPinStatus().then((status) => {
-      if (!cancelled) setHasPin(status?.hasPin ?? false);
+    getLearnerPinStatus(active.id).then((status) => {
+      if (!cancelled) setPinStatusFor({ id: active.id, hasPin: status?.hasPin ?? false });
     });
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [active]);
 
   if (!ready || !active) return null;
 
@@ -47,11 +56,7 @@ export default function LearnerIdentityBanner() {
   const activeDisplayName = name ?? learnerDisplayName(active, activeIndex);
 
   function handleEnterLearnerSpace() {
-    if (hasPin === false) {
-      setPinModal("set");
-      return;
-    }
-    enterLearnerSpace(active!.id);
+    setPinModal(hasLearnerPin === false ? "set" : "verify");
   }
 
   return (
@@ -101,30 +106,46 @@ export default function LearnerIdentityBanner() {
       )}
 
       {name && !editing && (
-        <button
-          type="button"
-          onClick={handleEnterLearnerSpace}
-          disabled={hasPin === null}
-          className="mt-3 flex items-center justify-center gap-2 w-full bg-sky-700 text-white rounded-xl py-2.5 text-sm font-semibold hover:bg-sky-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-        >
-          <LogIn size={15} aria-hidden="true" />
-          Enter {activeDisplayName}&rsquo;s learner space
-        </button>
+        <div className="mt-3 flex items-center gap-2">
+          <button
+            type="button"
+            onClick={handleEnterLearnerSpace}
+            disabled={hasLearnerPin === null}
+            className="flex-1 flex items-center justify-center gap-2 bg-sky-700 text-white rounded-xl py-2.5 text-sm font-semibold hover:bg-sky-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          >
+            <LogIn size={15} aria-hidden="true" />
+            Enter {activeDisplayName}&rsquo;s learner space
+          </button>
+          <button
+            type="button"
+            onClick={() => setPinModal("manage")}
+            disabled={hasLearnerPin === null}
+            title={hasLearnerPin ? `Change ${activeDisplayName}'s learner PIN` : `Set ${activeDisplayName}'s learner PIN`}
+            aria-label={hasLearnerPin ? `Change ${activeDisplayName}'s learner PIN` : `Set ${activeDisplayName}'s learner PIN`}
+            className="shrink-0 flex items-center justify-center w-10 h-10 rounded-xl border border-sky-200 dark:border-sky-800 text-sky-700 dark:text-sky-400 hover:bg-sky-100 dark:hover:bg-sky-950 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          >
+            <KeyRound size={16} aria-hidden="true" />
+          </button>
+        </div>
       )}
-      {hasPin === false && (
+      {hasLearnerPin === false && (
         <p className="text-gray-500 dark:text-gray-400 text-xs leading-relaxed mt-1.5">
-          You&rsquo;ll be asked to set a Parent PIN first, so you can always get back here.
+          {activeDisplayName} has no learner PIN yet. Entering will ask you to create one.
         </p>
       )}
 
       {pinModal && (
-        <ParentPinModal
-          mode={pinModal}
+        <LearnerPinModal
+          mode={pinModal === "manage" ? "set" : pinModal}
+          learnerId={active.id}
+          learnerName={activeDisplayName}
           onCancel={() => setPinModal(null)}
-          onSuccess={() => {
+          onSuccess={(sessionToken) => {
             setPinModal(null);
-            setHasPin(true);
-            enterLearnerSpace(active!.id);
+            setPinStatusFor({ id: active.id, hasPin: true });
+            // "Manage learner PIN" only sets/resets it -- it does not enter
+            // the learner's space on the parent's behalf.
+            if (pinModal !== "manage") enterLearnerSpace(active.id, sessionToken);
           }}
         />
       )}

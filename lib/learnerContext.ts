@@ -29,6 +29,8 @@
 import { getHouseholdModeSnapshot } from "@/lib/householdMode";
 
 export const LEARNER_HEADER = "x-angel-learner-id";
+/** PRIVATE LEARNER SPACE, Part 2 (migration 263): the learner-PIN session token, when one is active for the current Learner Mode session (lib/householdMode.ts). */
+export const LEARNER_TOKEN_HEADER = "x-angel-learner-token";
 const POINTER_KEY = "angel_active_learner_v2";
 
 export interface LearnerSummary {
@@ -342,7 +344,11 @@ export function clearLearnerContext(): void {
 /** Headers a same-origin API call must forward so server routes act for the same learner. */
 export function learnerRequestHeaders(): Record<string, string> {
   const id = state.uid && state.learnerId ? state.learnerId : getActiveLearnerIdSync();
-  return id ? { [LEARNER_HEADER]: id } : {};
+  if (!id) return {};
+  const headers: Record<string, string> = { [LEARNER_HEADER]: id };
+  const hh = getHouseholdModeSnapshot();
+  if (hh.uid && hh.mode === "learner" && hh.learnerToken) headers[LEARNER_TOKEN_HEADER] = hh.learnerToken;
+  return headers;
 }
 
 /**
@@ -362,7 +368,11 @@ export function createLearnerAwareFetch(config: LearnerTransportConfig): typeof 
     if (!uid || !authorization) return config.baseFetch(input, init);
 
     const ctx = await ensureLearnerContext(uid, authorization.replace(/^Bearer\s+/i, ""));
-    if (ctx.uid === uid && ctx.learnerId) headers.set(LEARNER_HEADER, ctx.learnerId);
+    if (ctx.uid === uid && ctx.learnerId) {
+      headers.set(LEARNER_HEADER, ctx.learnerId);
+      const hh = getHouseholdModeSnapshot();
+      if (hh.uid === uid && hh.mode === "learner" && hh.learnerToken) headers.set(LEARNER_TOKEN_HEADER, hh.learnerToken);
+    }
     if (typeof input === "object" && !(input instanceof URL)) {
       return config.baseFetch(new Request(input, { ...init, headers }));
     }

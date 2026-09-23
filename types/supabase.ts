@@ -888,6 +888,22 @@ export interface Database {
         Args: Record<string, never>;
         Returns: { has_pin: boolean; retry_at: string | null }[];
       };
+      // PRIVATE LEARNER SPACE, Part 2 -- supabase/migrations/263_learner_pin.sql.
+      // Not yet applied to production; declared here so lib/learnerPin.ts can
+      // call these through the typed supabase.rpc() the same way every other
+      // RPC in this codebase already does.
+      set_learner_pin: {
+        Args: { p_learner_id: string; p_pin: string };
+        Returns: undefined;
+      };
+      verify_learner_pin: {
+        Args: { p_learner_id: string; p_pin: string };
+        Returns: { ok: boolean; retry_at: string | null; session_token: string | null }[];
+      };
+      learner_pin_status: {
+        Args: { p_learner_id: string };
+        Returns: { has_pin: boolean; retry_at: string | null }[];
+      };
       // Programme Increment 008D — supabase/migrations/070_mock_attempt_engine.sql.
       // Not yet applied to production; declared here so lib/mockAttempt/client.ts
       // can call these through the typed supabase.rpc() the same way every

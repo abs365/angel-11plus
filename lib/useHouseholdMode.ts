@@ -16,8 +16,9 @@ import { setActiveLearner } from "@/lib/learnerContext";
  * The one hook every surface uses to know "Parent Mode or Learner Mode".
  * See lib/householdMode.ts for the storage model and
  * ANGEL_11PLUS_PRIVATE_LEARNER_SPACE_DECISION_RECORD.md for why this is a
- * client-side concept paired with server-side route gating
- * (RegisteredAccountGate), not a claim of database-level sibling isolation.
+ * client-side concept paired with server-side enforcement -- the parent-
+ * only route gate (RegisteredAccountGate) and, since Part 2, the learner-
+ * PIN session token current_learner_id() itself validates (migration 263).
  */
 export function useHouseholdMode() {
   const { user } = useAuth();
@@ -29,18 +30,26 @@ export function useHouseholdMode() {
   }, [uid]);
 
   const isLearnerMode = Boolean(uid) && s.uid === uid && s.mode === "learner";
+  // True once a learner's PIN has genuinely been verified this tab session
+  // (see lib/householdMode.ts's own header for why this is session-only).
+  // A false value while isLearnerMode is true means the mode pointer says
+  // "learner" (e.g. a freshly opened tab on the same device) but no token
+  // has been verified here yet -- callers should prompt for the learner's
+  // PIN again rather than assume access, matching how the server itself
+  // (current_learner_id()) would refuse the same request.
+  const hasLearnerToken = isLearnerMode && Boolean(s.learnerToken);
 
   /**
-   * Enter a specific learner's space. The caller (the Parent Dashboard's
-   * "Enter learner space" action) is responsible for having already
-   * confirmed a household PIN exists (household_pin_status()) before
-   * offering this -- Learner Mode must never be reachable without a
-   * working return gate already in place.
+   * Enter a specific learner's space. The caller (Header's account menu or
+   * the Parent Dashboard's "Enter learner space" action) is responsible for
+   * having already obtained a valid session token from a successful
+   * verify_learner_pin() call -- this function stores it, it does not
+   * verify anything itself.
    */
-  function enterLearnerSpace(learnerId: string) {
+  function enterLearnerSpace(learnerId: string, learnerToken: string) {
     if (!uid) return;
     setActiveLearner(learnerId);
-    enterLearnerMode(uid);
+    enterLearnerMode(uid, learnerToken);
     window.location.assign("/dashboard");
   }
 
@@ -55,5 +64,5 @@ export function useHouseholdMode() {
     window.location.assign("/learning-intelligence/parent");
   }
 
-  return { isLearnerMode, enterLearnerSpace, exitToParentMode, uid };
+  return { isLearnerMode, hasLearnerToken, enterLearnerSpace, exitToParentMode, uid };
 }

@@ -146,6 +146,8 @@ export interface Caller {
   anonymous?: boolean;
   /** Value of the x-angel-learner-id request header, if the client sent one. */
   learnerHeader?: string | null;
+  /** PRIVATE LEARNER SPACE (migration 263): value of the x-angel-learner-token request header, if the client sent one. */
+  learnerToken?: string | null;
 }
 
 export interface QueryResult {
@@ -164,7 +166,10 @@ export async function asUser<T>(
   fn: (q: (sql: string, params?: unknown[]) => Promise<QueryResult>) => Promise<T>
 ): Promise<T> {
   const claims = JSON.stringify({ sub: caller.uid, role: "authenticated", is_anonymous: Boolean(caller.anonymous) });
-  const headers = JSON.stringify(caller.learnerHeader ? { "x-angel-learner-id": caller.learnerHeader } : {});
+  const headerObj: Record<string, string> = {};
+  if (caller.learnerHeader) headerObj["x-angel-learner-id"] = caller.learnerHeader;
+  if (caller.learnerToken) headerObj["x-angel-learner-token"] = caller.learnerToken;
+  const headers = JSON.stringify(headerObj);
   await db.query("select set_config('request.jwt.claim.sub', $1, false)", [caller.uid]);
   await db.query("select set_config('request.jwt.claim.role', 'authenticated', false)");
   await db.query("select set_config('request.jwt.claims', $1, false)", [claims]);
