@@ -931,3 +931,47 @@ only, no code change, no redeployment. Migration 263 confirmed applied by the Fo
   DESIGN SYSTEM MIGRATION** (Parent Dashboard, Today, Learn, Practise, Mock, Progress, Results —
   preserve educational engines, learner isolation, Parent/Learner Mode; remove legacy/generic SaaS
   visual language; zero-purple/no-gradient; do not disguise educational-content gaps with redesign).
+
+**2026-09-23 (same day) — Authenticated Experience & Design System Migration, Increment 1 (Today +
+Learn). Commit `bbac365`, pushed, deployed, confirmed live on `https://www.angel11plus.com`. Private
+Learner Space untouched (still CLOSED, GO). IMPLEMENTED/TESTED/DEPLOYED/PRODUCTION-VERIFIED as far as
+available access permits — Founder visual/experience acceptance still required:**
+
+- Presentation-layer only: `app/dashboard/page.tsx`'s entire data-fetching effect (every real engine
+  call — analytics, adaptive state, gamification, parent report, the CSSE preparation-decision block)
+  is byte-identical to before; only composition and colour changed.
+- **Real content gap found and fixed, not just stale copy**: `lib/learningEngine/
+  fullLessonRegistry.ts` lists 5 real lessons (3 Mathematics + 2 English Reading, RC-01/RC-02), but
+  the Learn hub only ever showed the 3 Mathematics ones — found by reading the actual registry rather
+  than trusting the Founder's own (now-stale) screenshot. Both real English lessons now appear,
+  grouped by subject.
+- The internal-development-process copy ("Angel's CSSE Learn experience is being rebuilt one real
+  lesson at a time...") is removed entirely, confirmed absent from the live production bundle.
+- Today: the previous two-stacked-cards layout (a standalone "Angel recommends next" card above a
+  separate mission-list card) is now one connected hero — Today's Plan -> primary recommended
+  activity -> "Why this today?" (real `preparationDecision.stagePrincipleText` or the mission item's
+  own real reason, never invented) -> duration -> Start -> a de-emphasised "Then" list. Zero-evidence
+  state now reads "Let's find your starting point" / "A short check helps Angel choose the right level
+  and what to practise first," per the governing instruction's own wording.
+- Both pages now use `ANGEL_11PLUS_PRODUCT_DESIGN_STANDARD_V1.md`'s tokens throughout
+  (`--angel-navy/-ink/-blue/-sky/-border/-paper`), reusing `components/ui/Button.tsx` (already
+  token-identical to the homepage's own CTAs) rather than hand-rolled classes. No new shared component
+  library was built, per the instruction's own "do not create a giant design-system project."
+  `components/ui/Card.tsx` (shared with out-of-scope Progress/Parent Dashboard) was deliberately left
+  untouched to avoid rippling into pages this increment must not redesign.
+- Private Learner Space files (Header.tsx, Navigation.tsx, RegisteredAccountGate.tsx,
+  useHouseholdMode.ts, learnerPin.ts, householdPin.ts) were **not touched** — confirmed by `git diff
+  --stat` showing only the two page files changed.
+- Clean-checkout gate: typecheck 0 errors, tests 4,783/4,784 (unchanged count — presentation-only),
+  migration-sql-guard PASS, copy-guard/eslint unchanged from baseline, genuine `next build` PASS
+  (`/dashboard` and all 5 real Learn lesson routes built and statically prerendered).
+- Production evidence: fetched the live JS bundles directly and confirmed the new Today/Learn copy is
+  genuinely deployed and the old "being rebuilt" copy is genuinely absent.
+- **Not verifiable this session, disclosed**: the governing instruction's own Real Content Test and
+  Acceptance Evidence (zero-evidence/some-evidence/recommendation states, desktop/tablet/mobile
+  screenshots of the real authenticated pages) require a real authenticated session, which I do not
+  have and, per this project's standing rule, did not create — this is the Founder's required next
+  step before this increment is considered complete.
+- Per the governing instruction, this increment stops here: Practise, Mock, Progress, Results and
+  Parent Dashboard were not started; the full authenticated experience migration is not marked
+  complete.
