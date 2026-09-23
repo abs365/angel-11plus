@@ -259,3 +259,79 @@ Section 16's explicit disclosure of what could not be verified without an authen
 
 Per the governing instruction: STOP here. Practise, Mock, Progress, Results and Parent Dashboard were
 not started. The full authenticated experience migration is not marked complete.
+
+---
+
+## Increment 1B — Founder visual correction (2026-09-23, same day)
+
+Founder production visual review found Increment 1's content/data corrections sound (preserved
+exactly, unchanged) but the composition still too plain and application-like — not yet carrying the
+homepage's own identity. This is a presentation-only correction on top of Increment 1; no data source,
+calculation, lesson, route or educational logic changed in either file.
+
+**1. What visually changed on Today**: the primary recommendation moved from a bordered white
+application card into one large `bg-[var(--angel-sky)] rounded-lg p-6 md:p-10` panel — the exact same
+treatment the homepage's own "A clear plan for today" example section already uses. Typography scaled
+up throughout to match the homepage's own editorial scale: the greeting message
+(`text-xl` → `text-2xl md:text-3xl`), "Today's Plan" heading (`text-2xl` → `text-3xl md:text-4xl`,
+now preceded by the homepage's own `GoldRule` accent), "why this today" (now a flowing
+`text-base md:text-lg` paragraph instead of a cramped `text-sm` sub-box). The "Then" list moved out of
+a nested card into a plain `divide-y divide-[var(--angel-border)]` list at larger type, matching the
+homepage's own list rhythm exactly. The Progress/Mock panel gained more padding and larger type so it
+reads as a real secondary section, not a detached dashboard widget. The zero-evidence placement state
+now gets the identical confident sky-tinted treatment as a real recommendation, not a smaller/lesser
+placeholder box.
+
+**2. What visually changed on Learn**: subject (Mathematics, English: Reading) is now the real
+organising principle — a genuine heading (icon roundel + `text-2xl md:text-3xl` subject name +
+one-line intro), matching the homepage's own "Five subjects. One connected plan." treatment, with
+that subject's lessons shown as one flowing divided list inside a single sky-tinted panel (same
+`bg-[var(--angel-sky)]` + `divide-y divide-[var(--angel-border)]` pattern as Today's own hero and the
+homepage's own example panel) — replacing the previous narrow list of individually bordered rows.
+
+**3. How the homepage identity was carried through**: every new treatment in both files is a direct,
+named reuse of a pattern already visible in `app/page.tsx` — the sky-tinted panel (`bg-[var(--angel-
+sky)] rounded-lg p-8 md:p-12` → "Today's Plan" example section), the divided list inside it
+(`divide-y divide-[var(--angel-border)]`), the `GoldRule` accent before a primary heading, the
+`text-3xl md:text-4xl` section-heading scale, and the `dt/dd`-style subject identity (icon + large
+name + one-line intro) from "Five subjects. One connected plan." No new visual treatment was invented;
+each one is traceable to a specific homepage section, checked directly before use.
+
+**4. All five genuine lessons remain**: confirmed unchanged — 3 Mathematics (`MR-01`/`MR-04`/`MR-03`)
++ 2 English Reading (`RC-01`/`RC-02`), same routes, same `fullLessonRegistry.ts` source, same
+`getEducationalIntelligence()` calls.
+
+**5. No fake/new lessons or progress introduced**: confirmed by diff — no new lesson entry, no new
+competency id, no new mock data, no new calculation anywhere in either file. The one real, valid piece
+of data dropped from the visible layout (the aggregate `mission.totalMinutes` pill that previously sat
+beside the old heading) was a deliberate decluttering choice, not data suppression — the per-item
+duration for the primary recommendation is still shown, and the aggregate figure is still real and
+computed, simply no longer surfaced as its own pill now that the primary item's own duration is more
+prominent.
+
+**6. Private Learner Space and PIN architecture untouched**: confirmed by `git diff --stat` on both
+commits (`bbac365`, `469f97d`) — only `app/dashboard/page.tsx` and
+`app/learning-intelligence/learn/page.tsx` changed; `Header.tsx`, `Navigation.tsx`,
+`RegisteredAccountGate.tsx`, `useHouseholdMode.ts`, `learnerPin.ts`, `householdPin.ts` and every
+migration are untouched. Migrations 260–263 were not reopened or rerun.
+
+**7. Desktop/tablet/mobile implementation status**: no responsive breakpoint structure was changed —
+Today's `lg:grid lg:grid-cols-3` split and Learn's single-column layout are structurally identical to
+Increment 1; only colour, type scale and internal spacing changed within those unchanged breakpoints.
+Not independently re-verified at real tablet/mobile widths against a live authenticated session this
+session — same disclosed limitation as Increment 1 (Section 16 above): no authenticated production
+session is available, and none was created, per this project's standing rule.
+
+**8. Commit and deployment status**: commit `469f97d` —
+`feat(experience): Increment 1B -- visual correction for Today + Learn`. Clean-checkout gate: typecheck
+0 errors, tests 4,783/4,784 (unchanged), migration-sql-guard PASS, copy-guard/eslint unchanged from
+baseline, genuine `next build` PASS. Pushed, deployed
+(`angel-11plus-mnjlkrhab-abs365s-projects.vercel.app`, Ready), confirmed aliased to
+`https://www.angel11plus.com`. Fetched the live JS bundles for both routes directly and confirmed the
+new copy ("Recommended for you today", "Core skills and methods for CSSE Mathematics") is genuinely
+deployed; both routes return HTTP 200.
+
+**Not declaring visual GO.** Per the governing instruction's own explicit instruction, tests/build/
+deployment passing is not sufficient grounds for that verdict — the Founder will perform final
+production visual acceptance from real screenshots. Stopping here: Practise, Mock, Progress, Results,
+Parent Dashboard and the RLS-hardening item were not started.

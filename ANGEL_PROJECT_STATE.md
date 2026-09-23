@@ -975,3 +975,23 @@ available access permits — Founder visual/experience acceptance still required
 - Per the governing instruction, this increment stops here: Practise, Mock, Progress, Results and
   Parent Dashboard were not started; the full authenticated experience migration is not marked
   complete.
+
+**2026-09-23 (same day) — Increment 1B: Today + Learn Visual Correction. Commit `469f97d`, pushed,
+deployed, confirmed live. Presentation-only correction on top of Increment 1 (no data/logic change).
+Founder visual GO not declared — production screenshots still required:**
+
+- Founder review of Increment 1 found the content fixes sound (all 5 lessons, no dev-process copy)
+  but the composition still plain/application-like. Every new treatment is a direct, named reuse of a
+  specific homepage section (checked in `app/page.tsx` before use): the sky-tinted panel + divided
+  list from "A clear plan for today", the `GoldRule` accent, the `text-3xl md:text-4xl` heading scale,
+  the icon+name+intro subject identity from "Five subjects. One connected plan."
+- Today: primary recommendation now lives in one large `bg-[var(--angel-sky)]` panel instead of a
+  bordered white card; typography scaled up to homepage rhythm throughout.
+- Learn: Mathematics and English Reading are now real subject sections (icon + large heading + intro)
+  each holding their lessons as one flowing divided list in a sky panel, replacing the previous narrow
+  bordered-row list.
+- Confirmed unchanged: all 5 real lessons, no new/fake data, Private Learner Space and PIN
+  architecture (diff shows only the two page files touched), migrations 260-263 untouched.
+- Clean-checkout gate and production bundle verification both clean, matching established baseline.
+- Not verifiable this session (disclosed, same as Increment 1): real tablet/mobile screenshots against
+  a live authenticated session — Founder's required next step for final visual acceptance.
