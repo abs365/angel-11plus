@@ -1,5 +1,301 @@
 # ANGEL 11+ — Private Learner Space: Acceptance Report
 
+## UPDATE 2026-09-23 — Learner PIN (Part 2), superseding the verdict below
+
+This section is the current, authoritative status. Everything below it is the original increment's
+report, kept as history, not rewritten.
+
+### Production findings that triggered this update
+
+Real Founder production testing (this same day, after the previous increment's fixes) confirmed as
+genuinely PASSING: Parent Mode managing both learners; Plantest1 entering Learner Mode; Plantest2
+disappearing completely from Plantest1's Learner Mode (and vice versa); the sibling switcher, Parent
+Dashboard and pathway-changing controls all disappearing in Learner Mode; Today/Learn/Practise/Mock/
+Progress retained; Return to Parent Mode correctly protected by the Parent PIN, with a wrong PIN
+denied and a correct PIN restoring Parent Mode. None of this was retested or redesigned here, per the
+governing instruction's own "do not retest or redesign working architecture without cause."
+
+Two material findings remained:
+
+1. **Learner entry itself was not authenticated.** The Parent PIN protects Learner Mode -> Parent
+   Mode, but nothing protected family environment -> a *specific* learner's space — the Founder was
+   able to enter Plantest2's workspace without Plantest2 supplying any credential of their own.
+2. **Visual identity fragmentation**, formally recorded as a product-wide requirement — see
+   `ANGEL_11PLUS_PRODUCT_DESIGN_STANDARD_V1.md` (new this update), derived from the approved homepage.
+
+### What this update implements
+
+A learner-specific PIN, distinct from the household's own Parent PIN, that a browser must verify
+before it may act as a given learner — see the **Threat model**, **Learner PIN lifecycle** and
+**Cross-learner tests** sections below for the full detail, and
+`ANGEL_11PLUS_PRIVATE_LEARNER_SPACE_DECISION_RECORD.md`'s own "UPDATE" section for the design
+reasoning. In one sentence: migration 263 adds `learner_access` (one PIN per learner, salted
+`sha256()`, never client-readable) and `learner_pin_sessions` (opaque tokens minted only by a correct
+PIN), and redefines `current_learner_id()` — the single resolver every real data path already goes
+through — to require a token matching the specific learner named, once that learner has a PIN
+configured. A token verified for Plantest1 does not satisfy a request naming Plantest2; proven
+directly against a real Postgres engine, including the exact production scenario the Founder found.
+
+### Revised access model
+
+```
+Parent Account
+  |
+  +-- PARENT ACCOUNT PASSWORD -- protects authentication into the family account (unchanged)
+  |
+  +-- Parent Mode
+  |     +-- PARENT PIN -- protects Learner Mode -> Parent Mode (unchanged, migration 262)
+  |
+  +-- Plantest1
+  |      +-- PLANTEST1'S LEARNER PIN -- protects family environment -> Plantest1's space (NEW, migration 263)
+  |      +-- Plantest1's private workspace
+  |
+  +-- Plantest2
+         +-- PLANTEST2'S LEARNER PIN -- protects family environment -> Plantest2's space (NEW, migration 263)
+         +-- Plantest2's private workspace
+```
+
+Architecture is unchanged: one Parent Account, one household, multiple learner profiles. The Learner
+PIN is a household learner-access mechanism the parent creates/manages/resets from Parent Mode — not
+a second Supabase Auth identity. No independent email/Supabase account was created for either learner.
+
+### Threat model
+
+**What the Learner PIN genuinely stops, server-side, proven not asserted:** any request that resolves
+"which learner" through `current_learner_id()` — which is every one of the ~38 functions migration
+260 already routes through it (mock attempts, recommendations, preparation state, and everything the
+product's own client code actually calls) — now fails closed (`angel_learner_pin_required`) unless the
+browser holds a session token minted by that *specific* learner's own correct PIN. Verified directly:
+a token minted for Plantest1 is refused for a request naming Plantest2, even though the account owns
+both (16 tests, real Postgres, PGlite — the same engine migration 260's own test suite already proved
+itself against). Rate limiting (5 wrong attempts -> 5-minute lockout) is per learner, not per account
+— Plantest1 being locked out never affects Plantest2's own attempts, also proven directly. Resetting a
+PIN invalidates every existing session for that learner immediately.
+
+**What it does not stop, disclosed honestly, unchanged in principle from the Parent PIN's own
+boundary:** `current_learner_id()` is what the product's *own code* uses. It is not RLS itself. Every
+evidence table's row-level security (all ~30 of them) is still scoped only to account ownership
+(`profiles.auth_user_id = auth.uid()`), per migration 260's own original design — a raw REST query
+that names a sibling's `profile_id` directly, bypassing `current_learner_id()` and the app's own code
+entirely, would still succeed today. Closing that fully would mean rewriting every evidence table's
+own RLS policy — explicitly out of this increment's "smallest safe extension" scope (Part 15's
+protected-systems list), and a materially larger, separately-reviewable change if the Founder wants it
+closed. A second, narrower nuance specific to this update: `lib/learnerContext.ts`'s own
+`fetchLearners()` (restricted to the pinned learner's row while in Learner Mode, the previous
+increment's own hardening) reads `profiles` directly, not through `current_learner_id()` — so a user
+who manually edits the browser's stored *active-learner id* (not the PIN token) to a sibling's id
+could still see that sibling's *name and pathway* (not their evidence, progress, Mock results or
+recommendations, which all remain blocked by the token check) via this one specific path. Disclosed,
+not closed, for the same "smallest safe extension" reason.
+
+### Learner PIN lifecycle
+
+- **Create**: Parent Mode -> "Enter {name}'s learner space" (no PIN yet) -> `LearnerPinModal` (mode
+  `set`) -> "Create {name}'s learner PIN", explicitly distinguished from the Parent PIN in its own
+  copy ("This PIN lets {name} open their own learning space... different from your own Parent PIN") ->
+  `set_learner_pin()` -> immediately verified with the same value (still in memory, not re-typed) to
+  mint the first session token, so establishing the PIN and entering happen in one smooth flow.
+- **Normal entry**: "Enter {name}'s learner space" (PIN already exists) -> `LearnerPinModal` (mode
+  `verify`) -> correct PIN -> `verify_learner_pin()` mints a session token -> Learner Mode. Wrong PIN:
+  refused, remains in Parent Mode, no sibling information exposed at any point.
+- **Reset**: Parent Mode -> the key icon beside "Enter learner space" ("Manage learner PIN") ->
+  `LearnerPinModal` (mode `set`, reused) -> new PIN saved, every existing session for that learner
+  invalidated immediately.
+- **No raw PIN stored, returned, or logged**: only a per-row random salt (`gen_random_uuid()`) and a
+  `sha256()` hash are ever written (core Postgres, no `pgcrypto` — this repo's PGlite test harness has
+  none compiled in, confirmed directly, same finding as migration 262). `verify_learner_pin()` returns
+  a `session_token` only on success — an opaque, unguessable id, never the PIN itself, never logged.
+
+### Parent PIN lifecycle (unchanged, re-affirmed working, not retested beyond confirming it still is)
+
+Learner Mode -> Header's account menu -> "Return to Parent Mode" -> `ParentPinModal` (mode `verify`,
+migration 262, untouched this update) -> correct PIN -> Parent Mode restored; wrong PIN -> denied. Not
+modified, not rerun, not reopened — Part 9's explicit instruction. The two PINs are visually and
+functionally distinct: the Parent PIN modal never mentions a learner by name; the Learner PIN modal's
+own eyebrow label always names the specific learner and never appears in the same flow as the Parent
+PIN.
+
+### Server-side enforcement
+
+`current_learner_id()` (migration 263, redefining migration 260's own function, not a second
+resolver) now: resolves the learner exactly as before (explicit `x-angel-learner-id` header validated
+against account ownership, or the existing single-learner no-header fallback) — then, only if that
+learner has a `learner_access` row (opt-in, matching the create-PIN-first bootstrap), requires the
+request to also carry a valid `x-angel-learner-token` header naming a `learner_pin_sessions` row for
+that exact learner, that exact account, not expired. Any mismatch, absence, or malformed value raises
+`angel_learner_pin_required` — fails closed, not silently falls back to account-ownership-only.
+
+### Schema / migration changes
+
+**Migration 263 (`263_learner_pin.sql`) — NOT YET APPLIED.** Generated for Founder review and manual
+application via the Supabase Dashboard, matching this repository's standing convention (identical to
+how migrations 260, 261 and 262 were delivered). **Migration 262 is confirmed applied in production
+and was not rerun.** Migrations 260 and 261 were not touched. If the Founder later wants the deeper
+RLS-level closure disclosed above, that is explicitly a *separate*, independently-reviewable
+migration, not an extension of 263.
+
+New objects: `public.learner_access` (table), `public.learner_pin_sessions` (table),
+`public.set_learner_pin(uuid, text)`, `public.verify_learner_pin(uuid, text)`,
+`public.learner_pin_status(uuid)` (functions), `public.current_learner_id()` (redefined).
+
+### Cross-learner tests (real Postgres, `tests/supabase/migration263LearnerPin.test.ts`, 16 tests, all passing)
+
+Directly proves, against a real Postgres engine (PGlite) running the actual migration chain: a
+learner with no PIN is unaffected; only the owning parent account can set a learner's PIN; invalid PIN
+formats rejected; once a PIN is configured, the plain learner-id header alone is refused
+(`angel_learner_pin_required`); a correctly-verified token is accepted for that learner; **the exact
+production finding, reproduced and proven fixed** — a token verified for Plantest1 does not satisfy a
+request naming Plantest2, even before Plantest2 has their own PIN, and still fails after Plantest2
+gets one; Plantest1 PIN against Plantest2 = fails, Plantest2 PIN against Plantest1 = fails, each
+learner's own correct PIN against themself = succeeds; a random/garbage token satisfies neither
+learner; 5 wrong attempts lock out that learner only (Plantest2's own attempts are unaffected by
+Plantest1's lockout); resetting a PIN invalidates every existing session for that learner; the two new
+tables are never directly readable by `authenticated`; `learner_pin_status` is parent-only and never
+exposes the hash/salt, and never confirms or denies another account's learner has a PIN at all; a
+learner belonging to a different account entirely is fully isolated. No real PIN value appears in any
+test assertion, evidence, or log — only synthetic test values (`'4821'`, `'9911'`, etc.).
+
+### Bypass tests
+
+- **Direct URL to Learn/Practice/Mock/Progress while in Learner Mode with no valid token**: blocked
+  before the page renders — `RegisteredAccountGate`'s new branch (`isLearnerMode && !hasLearnerToken`)
+  shows "Enter your learner PIN" instead of mounting the page, for any learner-surface route, not only
+  the parent-only ones. Even if that client check were bypassed, the underlying data fetch would still
+  fail server-side (`current_learner_id()` raises `angel_learner_pin_required`).
+- **Browser refresh**: the token is session-storage-scoped (per tab, not per device — see the decision
+  record's own storage-model note), so a refresh within the same tab keeps the verified session; no
+  re-prompt.
+- **Browser back / bookmarked learner URL**: same route-gate check applies regardless of navigation
+  method; no special-cased bypass exists.
+- **Changed learner ID (manipulating the active-learner pointer while a token for a different learner
+  is held)**: the token is bound to one specific learner id server-side; presenting it alongside a
+  different `x-angel-learner-id` fails `current_learner_id()`'s match check — proven directly in the
+  "crossed tokens" test above. The one disclosed nuance (sibling *name*, not evidence, visible via
+  `fetchLearners()`'s own direct `profiles` read in this specific manipulation) is documented in the
+  Threat model section above, not silently left out.
+- **`x-angel-learner-id` / `x-angel-learner-token` manipulation directly (not through the app's own
+  UI)**: this is exactly what the cross-learner test suite exercises — a garbage token, a token for
+  the wrong learner, and a missing token are all refused.
+- **`localStorage`/`sessionStorage` manipulation**: the mode pointer (parent/learner) is deliberately
+  separate from the PIN session token; editing the mode pointer alone (e.g. forcing `"learner"` in a
+  fresh tab) without a genuine token still lands on the "Enter your learner PIN" re-prompt, never a
+  silent bypass, because the route gate checks the token's *presence*, and any subsequent real data
+  request checks the token's *validity* server-side regardless of what the client claims.
+
+### Session behaviour
+
+- Mode pointer: unchanged from the previous increment (session then local storage, account-scoped),
+  not touched by this update.
+- Learner-PIN session token: **session-storage only, deliberately never written to localStorage** — a
+  full browser/tab close always requires the learner's PIN again on the next visit, even on the same
+  device, which is the correct property for a shared family device (see decision record).
+- A freshly opened second tab on the same device, after Learner Mode was entered in a first tab: mode
+  pointer says "learner" (inherited via localStorage), no token (session-only) -> the new
+  `RegisteredAccountGate` branch re-prompts for that learner's PIN before rendering anything, rather
+  than showing a blank or broken page.
+- Signing out, or returning to Parent Mode, always clears the token immediately.
+
+### Files changed
+
+`supabase/migrations/263_learner_pin.sql` (new); `lib/learnerPin.ts` (new, RPC wrapper);
+`components/parent/LearnerPinModal.tsx` (new, built to the new design standard);
+`ANGEL_11PLUS_PRODUCT_DESIGN_STANDARD_V1.md` (new); `lib/householdMode.ts` (session-only token
+pointer added alongside the existing mode pointer); `lib/useHouseholdMode.ts` (`enterLearnerSpace` now
+takes the token; new `hasLearnerToken`); `lib/learnerContext.ts` (`x-angel-learner-token` sent
+alongside the existing learner-id header, both call sites); `components/Header.tsx` and
+`components/parent/LearnerIdentityBanner.tsx` ("Enter learner space" re-gated to the Learner PIN, not
+the Parent PIN; "Manage learner PIN" added); `components/RegisteredAccountGate.tsx` (new re-prompt
+branch); `types/supabase.ts` (three new RPC types); `tests/supabase/support/pgliteHarness.ts` (test
+harness extended to send a second header); 6 test files updated/added — see Tests/build below.
+
+### Tests / build (clean-checkout gate, genuine `git worktree` of the deployed commit)
+
+Typecheck 0 errors; tests **4,783 / 4,784 pass, 0 failures, 1 pre-existing skip** (includes migration
+263's own 16 real-Postgres tests plus 9 new/updated client-side tests); `migration-sql-guard` PASS, 259
+files; `copy-guard` 51 violations, identical to the established baseline, every touched file clean;
+`eslint` 114 problems (83 errors / 31 warnings), identical to the established baseline; genuine `next
+build` PASS, no bypass flag.
+
+### Commit
+
+`2ecd9cf` — `feat(learner-space): per-learner PIN binds Learner Mode to the authorised learner`.
+
+### Deployment
+
+Pushed to `origin/main`. Vercel deployed automatically
+(`angel-11plus-47bn86p2n-abs365s-projects.vercel.app`, status Ready), confirmed aliased to
+`https://www.angel11plus.com` and the other production domains.
+
+### Production verification
+
+Fetched the live JS bundles referenced by `/dashboard` directly (not through a browser) and confirmed
+both the new Learner PIN UI copy and the new `x-angel-learner-token` header mechanism are genuinely
+deployed. Loaded the live homepage/gate in a real browser: renders correctly, no regression. I do not
+have an authenticated production session and, per this project's standing rule, did not create one —
+the exact Founder acceptance steps below are the required next step, not something I could complete
+from here.
+
+### Exact Founder acceptance steps (governing instruction, Part 16 — unchanged, quoted for convenience)
+
+1. **Apply migration 263** in the Supabase Dashboard SQL editor (do not rerun 260, 261 or 262).
+2. Parent -> Plantest1 -> establish/use Plantest1's learner PIN -> enter Plantest1 -> verify Plantest2
+   unavailable -> confirm Return to Parent Mode still requires the Parent PIN.
+3. Parent -> Plantest2 -> establish/use Plantest2's learner PIN -> enter Plantest2 -> verify Plantest1
+   unavailable -> confirm Return to Parent Mode still requires the Parent PIN.
+4. Plantest1's PIN entered against Plantest2 -> MUST FAIL. Plantest2's PIN entered against Plantest1
+   -> MUST FAIL.
+
+Only after those real production tests may Private Learner Space be considered for GO.
+
+### Product design standard created
+
+`ANGEL_11PLUS_PRODUCT_DESIGN_STANDARD_V1.md` — derived directly from the approved, frozen homepage
+(`app/page.tsx`, the Brand Foundation token block in `app/globals.css`) and the existing shared
+`components/ui/Button.tsx`; nothing invented. Documents the nine `--angel-*` tokens and their roles,
+the reusable primitives, the "strictly avoid" list (re-affirmed, unchanged), and — explicitly — which
+authenticated surfaces still need migrating (Parent Dashboard, Today, Learn, Practise, Mock, Progress,
+Results, the pre-existing `ParentPinModal`) as the next, not-yet-started increment. This increment's
+own new surfaces (`LearnerPinModal`, the "Enter learner space" / "Manage learner PIN" additions to
+`Header.tsx` and `LearnerIdentityBanner.tsx`) were built to it directly.
+
+### Authenticated surfaces remaining to migrate
+
+Recorded, not started, per Part 14: Parent Dashboard, Today, Learn, Practise, Mock, Progress, Results,
+and the existing `ParentPinModal` (migration 262's own UI) all still use pre-Brand-Foundation styling.
+The next increment, not started automatically, is **ANGEL 11+ AUTHENTICATED EXPERIENCE & DESIGN SYSTEM
+MIGRATION**. Separately recorded, not addressed here: the current Learn page's own "being rebuilt one
+real lesson at a time" state and its three-lesson Mathematics-only inventory is content/educational
+depth debt, explicitly not to be fixed by any visual redesign.
+
+### Genuine remaining limitations (this update)
+
+- Migration 263 is not yet applied — the Learner PIN UI is live but inert (a plain error, no crash, no
+  data exposure) until the Founder applies it.
+- The RLS-level boundary disclosed in the Threat model section (a raw REST query naming a sibling's
+  `profile_id` directly bypasses `current_learner_id()` entirely) is real, not closed by this update,
+  and was judged out of this increment's scope.
+- The narrower `fetchLearners()` name/pathway-only nuance disclosed in the Threat model section is
+  real, not closed, for the same reason.
+- The Founder's own real two-learner cross-PIN acceptance walkthrough (Part 16) is the one item this
+  update cannot complete from here.
+
+---
+
+**ANGEL 11+ PRIVATE LEARNER SPACE: PARTIAL (superseding the original verdict below).**
+
+The Learner PIN is designed, implemented as the smallest extension that gives genuine server-side
+per-learner binding (not a client-side gate alone), proven directly against a real Postgres engine
+including the exact production scenario reported, deployed, and confirmed live. PARTIAL, not GO,
+because migration 263 has not yet been applied and the Founder's own required cross-learner PIN
+acceptance walkthrough has not yet been run against production — both are now ready to complete.
+
+Per the governing instruction: this increment stops here. The full authenticated-interface redesign
+was not started.
+
+---
+
+# Original report (history, superseded by the update above)
+
 Governing instruction: "ANGEL 11+ — PRIVATE LEARNER SPACE & FAMILY ACCESS MODEL." Password recovery
 is confirmed CLOSED by real Founder production acceptance and was not reopened or touched by this
 increment. Sequence followed exactly as instructed: inspect -> decision record -> implement -> test

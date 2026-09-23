@@ -1,5 +1,78 @@
 # ANGEL 11+ — Private Learner Space: Decision Record
 
+## UPDATE 2026-09-23 — Learner PIN (Part 2)
+
+Written before this update's implementation, same sequence as the original record below.
+
+**Trigger**: real Founder production testing confirmed the original access model (Parent Mode /
+Learner Mode + Parent PIN) works exactly as designed, but found the gap this record's own original
+"what this does not stop" section implied without naming directly: nothing bound *entry into a
+specific learner's space* to that learner at all — any request naming any learner the account owns
+was, and remained, honoured. The Founder reached Plantest2's workspace supplying no credential of
+Plantest2's own.
+
+**Decision**: a per-learner PIN (migration 263), the same salted-`sha256()`-plus-rate-limit shape as
+the Parent PIN (migration 262), but with one real, new piece of mechanism the Parent PIN never needed:
+a **session token**, minted server-side only by a correct `verify_learner_pin()` call, that
+`current_learner_id()` itself validates matches the specific learner named in the request. This is new
+relative to the original record's own design, and deserves its own reasoning:
+
+**Why a session token, when the Parent PIN needed none.** The Parent PIN protects a *client-side
+concept* (which mode the UI is in) — its own record already disclosed that no server-side mechanism
+could distinguish "the parent chose this" from "a child is holding an already-authenticated device,"
+and accepted that boundary because the realistic threat (normal navigation) was already closed by
+route gating and UI removal. The Learner PIN protects something narrower and more concrete: *which of
+the account's own several learners a given request may act as* — and the account already legitimately
+holds a JWT valid for all of them. Without some request-level proof beyond "the header names a learner
+this account owns" (already true and already insufficient, which is the whole finding), the PIN would
+be decorative — checked once at a UI boundary, then forgotten. A session token is the smallest
+mechanism that makes the check apply to every real request, not just the entry moment: mint it only on
+a correct PIN, bind it in the database to one learner and one account, require it wherever
+`current_learner_id()` is already the resolver (no new resolver, no new call sites to audit).
+
+**Alternatives reconsidered here, briefly (full reasoning matches the original record's own
+Alternatives section, same conclusions, now applied to a narrower problem):**
+- A second Supabase Auth identity per learner — still explicitly forbidden (Part 2 of the governing
+  instruction), still a materially larger change than "smallest safe extension."
+- A Supabase Auth Custom Access Token Hook, embedding the verified learner in the JWT itself — still
+  the one mechanism that could close the RLS-level gap fully, still rejected for the same reason as
+  before (external Dashboard wiring unverifiable from here, token-issuance-pipeline risk, and this is
+  the *second* time in one day this exact tradeoff has come up, which if anything strengthens the case
+  that it is a real, standing option worth the Founder's separate consideration rather than something
+  to fold into an already-moving increment).
+- Requiring the PIN on literally every request (no session token, no caching) — rejected as
+  unnecessary friction with no real security gain: the token is itself bound to one learner and one
+  account and expires; re-checking the raw PIN on every request would mean transmitting it far more
+  often for no additional protection.
+- Storing the token in `localStorage` (surviving a full browser close) — rejected in favour of
+  `sessionStorage` only, specifically because this is a *shared family device* scenario (Part 6): a
+  token that outlives the tab is a token a sibling could inherit just by reopening the browser, which
+  defeats the PIN's own purpose more than the minor inconvenience of re-entering it in a fresh tab.
+
+**Honest, unchanged boundary, now more precisely stated.** `current_learner_id()` is not RLS. It is
+what the product's own code uses. A raw REST query naming a sibling's `profile_id` directly, issued by
+someone who has extracted the account's own JWT and chosen not to go through the app at all, still
+succeeds — because every evidence table's own RLS policy (migration 260's original, deliberate design)
+checks only account ownership. Closing that is a different, larger, separately-reviewable piece of
+work (rewriting ~30 tables' RLS), not an extension of this migration. This record continues to treat
+that as a disclosed, accepted boundary of the current architecture rather than a defect this increment
+silently missed.
+
+**Shared-family-device entry point (Part 6), deferred, documented as instructed.** The instruction
+explicitly permits deferring a "neutral, parent-independent" learner-selection entry point (one a
+child could reach without any Parent Mode UI at all) if it would require more architecture than this
+increment warrants, rather than building a second authentication system to satisfy it. This update did
+not build one: "Enter learner space" remains reachable only through the existing Parent Mode UI
+(Header's account menu, now visible on every page since the previous increment's fix, or the Parent
+Dashboard). A child on a shared device still needs a parent (or another adult) to have the household
+signed in and be in Parent Mode before they can reach their own PIN prompt. A genuinely neutral
+"who is this" picker, reachable with no Parent Mode context at all, is recorded as a candidate for the
+next authenticated-experience increment, not built here.
+
+---
+
+# Original decision record (history, extended by the update above)
+
 Written before implementation, per the governing instruction's own sequence. Concise by design.
 
 ## Current-state finding

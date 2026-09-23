@@ -861,3 +861,43 @@ Plantest2 isolation acceptance now that the entry control is reachable:**
   the new "Enter {name}'s space" text is genuinely deployed.
 - Founder next step: sign in, open the account menu from Today, confirm "Enter Plantest1's space" is
   visible and reachable, then perform the real two-learner isolation acceptance.
+
+**2026-09-23 (same day) — Learner Entry Authentication + Product Identity Standard. Commit `2ecd9cf`,
+pushed, deployed, confirmed live on `https://www.angel11plus.com`. Migration 262 confirmed applied
+(not rerun); migration 263 NOT YET APPLIED. Not GO — Founder cross-learner PIN acceptance still
+required:**
+
+- Founder production testing confirmed the Parent Mode/Learner Mode/Parent PIN architecture genuinely
+  works (Plantest1 entering, Plantest2 fully hidden and vice versa, sibling switcher/Parent Dashboard/
+  pathway controls all absent in Learner Mode, Parent PIN correctly gating the return trip) — not
+  retested or redesigned. Two material findings remained: (1) family environment -> a *specific*
+  learner's space had no credential at all (the Founder could enter Plantest2 supplying nothing of
+  Plantest2's own); (2) the authenticated app's visual identity is fragmented from the approved
+  homepage, formally recorded as a product-wide requirement.
+- Fix for (1): migration 263 adds a per-learner PIN (`learner_access`, salted `sha256()`, same
+  core-Postgres-no-pgcrypto finding as migration 262) plus `learner_pin_sessions` (opaque tokens
+  minted only by a correct PIN). `current_learner_id()` is redefined (not replaced) to require a
+  matching token once a learner has a PIN configured — every one of the ~38 functions migration 260
+  already routes through it is protected, with no other function touched. **16 new tests, run against
+  a real Postgres engine (PGlite), reproduce and prove fixed the exact production scenario**: a token
+  verified for Plantest1 never satisfies a request naming Plantest2, rate limiting is per-learner not
+  per-account, resetting a PIN invalidates every existing session. Honestly disclosed, not closed: a
+  raw REST query naming a sibling's `profile_id` directly still bypasses `current_learner_id()`
+  entirely, since every evidence table's own RLS is still account-scoped only (migration 260's
+  original design) — closing that fully means rewriting ~30 tables' RLS, explicitly out of this
+  increment's "smallest safe extension" scope.
+- Fix for (2): `ANGEL_11PLUS_PRODUCT_DESIGN_STANDARD_V1.md` created, derived directly from the
+  approved homepage's own Brand Foundation tokens and `components/ui/Button.tsx` — nothing invented.
+  Applied only to this increment's own new surfaces (`LearnerPinModal`, the Header/
+  LearnerIdentityBanner additions), per the governing instruction's explicit scope limit. The full
+  authenticated-surface migration (Parent Dashboard, Today, Learn, Practise, Mock, Progress, Results)
+  is recorded as the next, not-yet-started increment.
+- Clean-checkout gate: typecheck 0 errors, tests 4,783/4,784 (baseline plus 25 new/updated tests),
+  migration-sql-guard PASS (259 files), copy-guard/eslint unchanged from baseline, genuine
+  `next build` PASS.
+- Production evidence: fetched the live JS bundles referenced by `/dashboard` directly and confirmed
+  both the new Learner PIN copy and the new `x-angel-learner-token` header mechanism are genuinely
+  deployed.
+- Founder next step: apply migration 263 (do not rerun 260/261/262), then perform the real Plantest1/
+  Plantest2 cross-PIN acceptance walkthrough (governing instruction Part 16) before Private Learner
+  Space is called GO.
