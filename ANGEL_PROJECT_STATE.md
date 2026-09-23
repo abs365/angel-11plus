@@ -1028,3 +1028,34 @@ direction preserved, not redesigned). Founder visual GO not declared — real sc
   new copy, the Start/Continue pill text, "More ways to work", and the `md:grid` breakpoint class are
   genuinely present; the old copy and the old `lg:grid` class are genuinely absent.
 - Founder's required next step: final visual acceptance from real production screens.
+
+**2026-09-23 (same day) — Increment 2: Practise + Mock Angel Foundation Visual Pass. Commit `c3bd15e`
+(feature) + `3b4cc28` (test fixes), pushed, deployed, confirmed live. Founder milestone: Today + Learn
+— GO, frozen. Visual GO not declared for this increment — real screens still required:**
+
+- Full-journey inspection (not just landing pages) confirmed: the real CSSE Practice runner
+  (`practice/[area]/page.tsx`, shared engine for Reading/Maths/Writing) and the real CSSE Mock journey
+  (`/mocks` — the literal front door for every pathway including CSSE — through `mock-exam/**`) used
+  zero Angel tokens; Today/Learn's redesign stopped at the first click of "Practise"/"Mock".
+- Practise: question now the dominant object (bigger stem typography); Reading passage readability
+  fixed (was `text-xs`, height-capped at 224px scrollable — now readable, capped 288–384px); Angel-paper
+  cards replace `InfoCard`/generic-gray throughout; "Angel progress indicator" → "Your writing score".
+- Mock: deliberately calmer than Practise (per instruction) — exam-board cards moved from full bright
+  coloured backgrounds to a thin neutral accent stripe; sitting engine + all 5 shared `mockAttempt/*`
+  components restyled the same way; already-correct calm/sealed behaviour (no hints, no mid-sitting
+  feedback, flat non-celebratory submission) confirmed unchanged by diff.
+- Two genuine defects fixed in passing (small, targeted, on this increment's own "no internal
+  terminology" rule): raw competencyId codes leaking on the two-paper Mock results screen (now via
+  `childFriendlySkillLabel()`); internal section-numbering ("1. Result"..."6. Exam context") leaking
+  into the parent Mock report (prefixes removed).
+- Reported, not fixed: `app/mocks/[pathway]/page.tsx` (legacy GL/CEM/ISEB Mock) shows correct/incorrect
+  + explanation feedback DURING the timed section — a real "Mock never teaches" violation for the three
+  pathways with no other Mock experience. Separate, larger decision; out of this increment's visual scope.
+- Clean-checkout gate: typecheck 0, tests 4,783/4,784 (unchanged), migration-sql-guard PASS,
+  copy-guard/eslint unchanged from baseline, genuine `next build` PASS across every touched route.
+  Three pre-existing structural source-text tests had selectors updated to match deliberate markup/copy
+  changes (not reverted); their real assertions unaffected.
+- Production evidence: fetched the live deployed JS chunks for Practice hub, Mock hub and the Mock
+  sitting engine and confirmed new copy/markup genuinely present, old generic classes genuinely absent.
+- Founder's required next step: real device visual acceptance, and a separate decision on the legacy
+  GL/CEM/ISEB Mock mid-sitting-feedback defect above.

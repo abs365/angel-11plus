@@ -437,3 +437,135 @@ screens, per the governing instruction's own explicit stop condition. Stopping h
 Progress, Results, Parent Dashboard, RLS hardening and educational content expansion were not started;
 migrations 260–263, Parent PIN, Learner PIN, Private Learner Space, authentication, learner isolation,
 Educational Intelligence and recommendation logic were not touched.
+
+---
+
+## Increment 2 — Practise + Mock Angel Foundation visual pass (2026-09-23)
+
+Founder milestone: **Today + Learn — GO**, frozen except for genuine production defects. This
+increment brings the real CSSE Practise and Mock learner journeys into the same Angel 11+ identity,
+following full-journey inspection rather than a landing-page-only restyle.
+
+**1. Practise baseline problems found**: the CSSE Practice runner (`app/learning-intelligence/
+practice/[area]/page.tsx`, the single shared engine for Reading Comprehension, Mathematics and
+Continuous Writing — confirmed via import/route trace, not filename) and its area-selector hub used
+**zero** Angel Foundation tokens — 100% generic Tailwind gray/white/blue, the shared `InfoCard`
+component's own default styling throughout. The Reading passage was `text-xs`, height-capped at 224px
+and force-scrollable — the opposite of "a comfortable reading measure." The only per-lesson affordance
+was a small `ArrowRight` icon (the same weakness already corrected on Learn in Increment 1C, never
+carried to Practise). Writing feedback was labelled "Angel progress indicator: X/100" — internal-
+sounding phrasing. Two genuinely separate systems exist (legacy pathway Practice at `/reasoning` +
+`/english`/`/maths`/`/vocabulary`, vs. the CSSE engine); the CSSE nav "Practise" tab and every real
+CSSE entry point (Today's mission items, Learn's lesson "ready to practise" links) reach the CSSE
+engine exclusively, confirmed by trace — that is what this increment restyled.
+
+**2. Mock baseline problems found**: `/mocks` (Mock Centre) is the literal, unconditional front door
+for **every** pathway including CSSE — Today's own "Mock Exams" panel and the global nav "Mock" tab
+both link there with no pathway branching, confirmed by reading `app/dashboard/page.tsx` and
+`components/Navigation.tsx` directly. From there, a CSSE learner reaches the real, canonical engine
+(`app/learning-intelligence/mock-exam/**`); zero Angel tokens anywhere in either the hub or the engine.
+The hub's exam-board cards used full bright coloured backgrounds (blue-50/slate-50/emerald-50) —
+readable as a gamified pathway picker, not calm assessment. The engine's own *behaviour* was already
+correct and is explicitly preserved: no hints, no mid-sitting feedback, no gamification, a flat
+non-celebratory "Your Mock has been submitted" hand-off — confirmed unchanged by diff (no state,
+handler, RPC call, or phase-transition logic touched anywhere in this increment).
+
+**3. Exact learner surfaces changed** (12 files, visual/copy only): `app/learning-intelligence/
+practice/page.tsx`, `app/learning-intelligence/practice/[area]/page.tsx`, `app/mocks/page.tsx`,
+`app/learning-intelligence/mock-exam/page.tsx`, `app/learning-intelligence/mock-exam/sitting/page.tsx`,
+`app/learning-intelligence/mock-exam/sitting/results/page.tsx`, `components/mockAttempt/{ExamTimer,
+QuestionPalette,DataTableStimulus,ImageStimulus,ReadingPassage}.tsx`. One further file received a
+copy-only defect fix, not a visual pass: `app/learning-intelligence/parent/mock-report/[attemptId]/
+page.tsx`.
+
+**4. Visual/UX changes made**:
+- **Practise**: `InfoCard`/generic-gray replaced with Angel-paper (`bg-[var(--angel-paper)] border
+  border-[var(--angel-border)]`) cards throughout the runner, hub and results screen — the same
+  established pattern Today/Learn already use for out-of-scope-shared-component avoidance. The
+  question stem is now the dominant object (`text-base md:text-lg font-semibold`, up from `text-sm`).
+  The Reading passage is now `text-sm md:text-base`, capped at 288–384px (was 224px) — genuinely more
+  readable, not just technically "not tiny". Feedback/model-answer/misconception boxes now use
+  `bg-[var(--angel-sky)]` (Today's own established "supportive content" tint), matching Phase 3's "can
+  feel supportive and instructional" for Practice specifically. The area-selector hub adopts Learn's
+  own sky-panel/divided-list/pill-affordance pattern from Increment 1C, for family consistency between
+  the two adjacent "what do I do" screens.
+- **Mock**: deliberately calmer than Practise, per Phase 3's explicit instruction not to reuse the same
+  treatment everywhere. Exam-board identity on Mock Centre's cards moved from a full bright coloured
+  card background to a thin left accent stripe on an otherwise neutral Angel-paper card — distinguishable
+  at a glance, without reading as gamified. The live sitting engine, its question renderer, and all
+  five shared `mockAttempt/*` components got the same neutral Angel-paper/border treatment, bigger
+  question typography, and a readable (no longer height-capped) passage — with the sitting's own
+  already-correct restraint (no colour celebration, no confetti, a flat submission screen) fully
+  preserved.
+
+**5. Educational behaviour preserved** (confirmed by diff, not assertion): every state variable, event
+handler, evidence-recording call (`recordPresentation`/`recordOutcome`/`processEvidenceForCompetency`),
+guided-practice scaffold, self-assessment flow, `computePreparationDecision`/placement-redirect logic,
+and every Mock RPC call (`createMockAttempt`/`startMockAttempt`/`submitMockAnswer`/`submitMockAttempt`/
+`setMockFlag`/`requestReadingScoring`) is byte-for-byte unchanged. Only `className` strings and the
+handful of copy strings named in Section 4/6 below changed. `git diff --stat` confirms no other file
+outside the 13 listed was touched — migrations 260–263, Parent PIN, Learner PIN, Private Learner Space,
+authentication, learner isolation, Educational Intelligence and recommendation logic untouched.
+
+**6. Question-working surfaces verified**: readable typography confirmed for question stems, Reading
+passages and Mock question/passage rendering (all bumped from `text-xs`/`text-sm` to `text-sm`/
+`text-base` with a genuinely larger passage viewport); Mathematics diagrams (`CompoundShapeDiagramGroup`)
+and the data-table/image Mock stimuli (`DataTableStimulus`/`ImageStimulus`) untouched in logic, restyled
+to Angel tokens only; answer controls (textareas/inputs) gained visible focus rings
+(`focus-visible:outline-2 outline-[var(--angel-blue)]`) they previously lacked; selected/answered states
+in the Mock `QuestionPalette` remain colour-plus-shape distinct (never colour-only), unchanged in logic;
+Next/Previous/Submit and the Mock flag control unchanged in behaviour, restyled only. Confirmed **no**
+hint/teaching/answer-revealing feedback exists anywhere in the live Mock sitting (unchanged from
+baseline — this was already correct). Two copy fixes made in passing, both directly on this
+increment's own "no internal engineering terminology visible to a learner" rule: "Angel progress
+indicator: X/100" → "Your writing score: X/100" (Practice Writing feedback); raw `competencyId` codes
+(e.g. "RC-01", "MR-03") rendered as visible strength/weakness text on the two-paper Mock results screen
+→ passed through the same `childFriendlySkillLabel()` translation the sibling mock-report page already
+established for exactly this purpose; internal directive section-numbering ("1. Result", "2. Diagnostic
+interpretation" … "6. Exam context") leaking into the parent Mock report → numeric prefixes removed.
+
+**7. Responsive verification**: no authenticated production session was created, per the project's
+standing rule — the same disclosed limitation every increment touching an authenticated surface in this
+engagement has carried. Verified instead: a full clean-checkout `next build` succeeded for every touched
+route (`/learning-intelligence/practice`, `/learning-intelligence/practice/[area]`, `/mocks`,
+`/learning-intelligence/mock-exam`, `/learning-intelligence/mock-exam/sitting`, `/learning-intelligence/
+mock-exam/sitting/results`), confirming no compile-time responsive-class error; every className change
+follows the identical, already-verified Tailwind v4 breakpoint discipline established and iframe-tested
+in Increments 1/1B/1C (standard `md:`/`lg:` breakpoints, `min-w-0` hardening on flex/grid items where
+introduced). A genuine, real-viewport screenshot walkthrough at 390/430/768/900/1024/1280/1366/1440/1920
+was not performed this session and is not claimed — the Founder's own production screens remain the
+required final responsive/visual evidence, exactly as the governing instruction itself requires.
+
+**8. Tests/build result**: clean-checkout gate in an isolated worktree — typecheck 0 errors; tests
+4,783/4,784 pass (1 pre-existing skip, unchanged); migration-sql-guard PASS 259 files; copy-guard 51
+pre-existing violations (unchanged, no new violation); eslint 114 problems (83 errors/31 warnings,
+unchanged baseline); genuine `next build` PASS. Three pre-existing structural source-text tests (this
+project's established no-jsdom convention for these pages) had selectors anchored on exact strings this
+increment deliberately changed (`</InfoCard>` → `</div>`; a literal `dark:` assertion superseded by
+Angel tokens, which already branch dark/light via CSS; the removed `"2. "` section-number prefix) —
+updated to match the new, correct source rather than reverting the underlying change; their real
+assertions (message content, conditional ordering, dark-mode support) are unaffected.
+
+**9. Commit**: `c3bd15e` (feature) + `3b4cc28` (test-selector updates for the above). Pushed to
+`origin/main`.
+
+**10. Deployment status**: Vercel auto-deployed (`angel-11plus-h08ac0z30-abs365s-projects.vercel.app`,
+Ready), confirmed aliased to `https://www.angel11plus.com`. Fetched the live deployed JS chunks for
+Practice hub, Mock hub and the Mock sitting engine directly and confirmed the new copy/markup is
+genuinely present (e.g. "Choose a Practice Area", "A quiet, formal check of your progress", "Before you
+begin") and the old generic-Tailwind card/background classes are genuinely absent.
+
+**11. Requires Founder production verification**: (a) the full visual/UX result on real devices —
+desktop, tablet and mobile, exactly as Increment 1/1B/1C's own screens were; (b) a separate, larger
+decision on `app/mocks/[pathway]/page.tsx` (the live GL/CEM/ISEB legacy Mock) — during Phase 1
+inspection this was found to show correct/incorrect **plus a worked explanation** immediately after
+each answer, **during the timed section itself**, which is a genuine violation of "Mock is quiet
+assessment... no answer-revealing feedback" for the three pathways that have no other Mock experience
+at all. This is a real product defect, not a visual one, and is reported here rather than fixed —
+correcting it means changing live scoring-timing behaviour for a separate pathway system, which is a
+materially larger and separate decision than this increment's visual scope, per the governing
+instruction's own "smallest safe correction" discipline for an in-passing finding.
+
+**Not declaring visual GO or Increment 2 GO.** Per the governing instruction's own explicit stop
+condition, the Founder performs final visual/UX acceptance from the real production learner experience.
+Stopping here: Progress, Results and Parent Dashboard were not started.
