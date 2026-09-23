@@ -29,6 +29,7 @@ import { hasRegisteredParentAccount } from "@/lib/registeredAccess";
 import PathwaySwitcher from "@/components/PathwaySwitcher";
 import { cn } from "@/lib/cn";
 import { getSelectedPathwayId } from "@/lib/progress";
+import { useHouseholdMode } from "@/lib/useHouseholdMode";
 
 type NavItem = {
   href: string;
@@ -137,6 +138,25 @@ const familySection: NavSection = {
     { href: "/angel-plus", label: "Angel Plus", icon: Crown, badge: "Soon" },
   ],
 };
+
+/**
+ * PRIVATE LEARNER SPACE -- in Learner Mode, household-management and
+ * pathway-configuration destinations (Part 5: pathway selection belongs to
+ * the parent, not daily learning) are removed from these sections entirely,
+ * not merely hidden behind a control a child could still reach. The real
+ * enforcement is RegisteredAccountGate's parent-only route check
+ * (lib/registeredAccess.ts); this keeps the nav honest about what's
+ * actually reachable.
+ */
+function journeySectionForMode(isLearnerMode: boolean): NavSection {
+  if (!isLearnerMode) return journeySection;
+  return { ...journeySection, items: journeySection.items.filter((i) => i.href !== "/pathways") };
+}
+
+function familySectionForMode(isLearnerMode: boolean): NavSection {
+  if (!isLearnerMode) return familySection;
+  return { ...familySection, items: familySection.items.filter((i) => i.href !== "/learning-intelligence/parent") };
+}
 
 const supportItems: NavItem[] = [
   { href: "/getting-started", label: "Getting Started", icon: HelpCircle },
@@ -304,11 +324,13 @@ function MobileMoreDrawer({
   onClose,
   pathname,
   triggerRef,
+  isLearnerMode,
 }: {
   open: boolean;
   onClose: () => void;
   pathname: string;
   triggerRef: React.RefObject<HTMLButtonElement | null>;
+  isLearnerMode: boolean;
 }) {
   const panelRef = useRef<HTMLDivElement>(null);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
@@ -389,13 +411,17 @@ function MobileMoreDrawer({
         </div>
 
         {/* Active Pathway Context — discoverable on mobile too (Section 19),
-            without crowding the fixed bottom-tab bar. */}
-        <div className="px-1 pb-2 mb-1 border-b border-gray-100 dark:border-gray-800">
-          <PathwaySwitcher />
-        </div>
+            without crowding the fixed bottom-tab bar. PRIVATE LEARNER SPACE:
+            hidden entirely in Learner Mode -- pathway configuration belongs
+            to the parent (Part 5), not daily learning. */}
+        {!isLearnerMode && (
+          <div className="px-1 pb-2 mb-1 border-b border-gray-100 dark:border-gray-800">
+            <PathwaySwitcher />
+          </div>
+        )}
 
-        <SectionGroup section={journeySection} pathname={pathname} bordered={false} />
-        <SectionGroup section={familySection} pathname={pathname} />
+        <SectionGroup section={journeySectionForMode(isLearnerMode)} pathname={pathname} bordered={false} />
+        <SectionGroup section={familySectionForMode(isLearnerMode)} pathname={pathname} />
         <HelpSupportDisclosure pathname={pathname} />
 
         <div className="mt-2 pt-3 border-t border-gray-100 dark:border-gray-800">
@@ -470,7 +496,7 @@ function TopBarLink({ item, pathname, collapsed = false }: { item: NavItem; path
  * reachable but deliberately not competing visually with the 5 primary
  * daily-journey items, per the governing instruction's explicit direction.
  */
-function MoreMenu({ pathname }: { pathname: string }) {
+function MoreMenu({ pathname, isLearnerMode }: { pathname: string; isLearnerMode: boolean }) {
   const [open, setOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
@@ -492,7 +518,11 @@ function MoreMenu({ pathname }: { pathname: string }) {
     };
   }, [open]);
 
-  const allItems = [...journeySection.items, ...familySection.items.filter((i) => i.href !== "/learning-intelligence/parent"), ...supportItems];
+  const allItems = [
+    ...journeySectionForMode(isLearnerMode).items,
+    ...familySectionForMode(isLearnerMode).items.filter((i) => i.href !== "/learning-intelligence/parent"),
+    ...supportItems,
+  ];
 
   return (
     <div className="relative">
@@ -531,6 +561,7 @@ export default function Navigation() {
   const moreTabRef = useRef<HTMLButtonElement>(null);
   const isCsse = useCssePathway();
   const primaryItems = primaryItemsFor(isCsse);
+  const { isLearnerMode } = useHouseholdMode();
 
   async function handleSignOut() {
     await signOut();
@@ -574,29 +605,40 @@ export default function Navigation() {
 
         {/* Active Pathway Context — compact target switcher, not a
             catalogue; sits alongside the 5 primary items, never replacing
-            them or restoring a permanent sidebar (Section 5). */}
-        <div className="hidden md:block shrink-0">
-          <PathwaySwitcher />
-        </div>
+            them or restoring a permanent sidebar (Section 5). PRIVATE
+            LEARNER SPACE: hidden entirely in Learner Mode (Part 5). */}
+        {!isLearnerMode && (
+          <div className="hidden md:block shrink-0">
+            <PathwaySwitcher />
+          </div>
+        )}
 
-        {/* Parent access — clearly available, not buried, per governing instruction */}
-        <Link
-          href="/learning-intelligence/parent"
-          className="hidden lg:flex items-center gap-1.5 h-11 px-3.5 rounded-xl text-sm font-medium text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-gray-800 dark:hover:text-gray-200 transition-colors motion-reduce:transition-none shrink-0"
-        >
-          <Users size={18} aria-hidden="true" />
-          Parent Dashboard
-        </Link>
-        <Link
-          href="/learning-intelligence/parent"
-          aria-label="Parent Dashboard"
-          title="Parent Dashboard"
-          className="lg:hidden flex items-center justify-center w-10 h-10 rounded-xl text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors motion-reduce:transition-none shrink-0"
-        >
-          <Users size={18} aria-hidden="true" />
-        </Link>
+        {/* Parent access — clearly available, not buried, per governing
+            instruction. PRIVATE LEARNER SPACE: removed entirely in Learner
+            Mode, not merely styled away -- the controlled route back to
+            Parent Mode lives in Header.tsx's account menu (PIN-gated),
+            never a plain link a child could tap straight through. */}
+        {!isLearnerMode && (
+          <>
+            <Link
+              href="/learning-intelligence/parent"
+              className="hidden lg:flex items-center gap-1.5 h-11 px-3.5 rounded-xl text-sm font-medium text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-gray-800 dark:hover:text-gray-200 transition-colors motion-reduce:transition-none shrink-0"
+            >
+              <Users size={18} aria-hidden="true" />
+              Parent Dashboard
+            </Link>
+            <Link
+              href="/learning-intelligence/parent"
+              aria-label="Parent Dashboard"
+              title="Parent Dashboard"
+              className="lg:hidden flex items-center justify-center w-10 h-10 rounded-xl text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors motion-reduce:transition-none shrink-0"
+            >
+              <Users size={18} aria-hidden="true" />
+            </Link>
+          </>
+        )}
 
-        <MoreMenu pathname={pathname} />
+        <MoreMenu pathname={pathname} isLearnerMode={isLearnerMode} />
 
         {/* Account — right edge */}
         <div className="shrink-0 pl-2 ml-1 border-l border-gray-100 dark:border-gray-800">
@@ -667,7 +709,7 @@ export default function Navigation() {
       </nav>
 
       <div id="mobile-more-drawer">
-        <MobileMoreDrawer open={drawerOpen} onClose={() => setDrawerOpen(false)} pathname={pathname} triggerRef={moreTabRef} />
+        <MobileMoreDrawer open={drawerOpen} onClose={() => setDrawerOpen(false)} pathname={pathname} triggerRef={moreTabRef} isLearnerMode={isLearnerMode} />
       </div>
     </>
   );

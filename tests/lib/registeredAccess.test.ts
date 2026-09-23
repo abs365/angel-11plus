@@ -4,10 +4,12 @@ import fs from "node:fs";
 import path from "node:path";
 import {
   LEARNER_TOP_LEVEL_ROUTES,
+  PARENT_ONLY_PATH_PREFIXES,
   PUBLIC_TOP_LEVEL_ROUTES,
   decideAccess,
   hasRegisteredParentAccount,
   isLearnerSurface,
+  isParentOnlyRoute,
 } from "@/lib/registeredAccess";
 
 /**
@@ -102,7 +104,8 @@ test("Header and Navigation treat an anonymous session as signed OUT: no 'Viewin
     assert.doesNotMatch(src, /const \{ user, signOut, loading \} = useAuth\(\)/, `${f} must not use the raw session user`);
   }
   const header = read("components/Header.tsx");
-  assert.match(header, /\{!loading && user && <LearnerSwitcher \/>\}/); // `user` is now registered-only
+  // `user` is now registered-only; PRIVATE LEARNER SPACE also hides the sibling switcher in Learner Mode.
+  assert.match(header, /\{!loading && user && !isLearnerMode && <LearnerSwitcher \/>\}/);
   assert.match(header, /href="\/login\?mode=signin"[\s\S]*?Sign in[\s\S]*?href="\/login"[\s\S]*?Create account/);
 });
 
@@ -112,4 +115,45 @@ test("AuthProvider no longer creates, activates or claims a learner profile for 
   assert.match(src, /if \(newSession\?\.user && hasRegisteredParentAccount\(newSession\.user\)\) \{\s*\n\s*ensureProfile\(\)\.then\(activateLearner\)/);
   // the anonymous session itself is still bootstrapped (internal technical identity) -- only the learner side effects stopped
   assert.match(src, /ensureLearnerSession\(\)\.catch/);
+});
+
+// ---------------------------------------------------------------------
+// PRIVATE LEARNER SPACE -- parent-only routes (household management,
+// pathway configuration) that must never render their real content while
+// a household is in Learner Mode, regardless of how they're reached.
+// ---------------------------------------------------------------------
+
+test("isParentOnlyRoute matches exactly the household-management and pathway-configuration routes, by full path prefix", () => {
+  for (const p of ["/add-child", "/add-child/", "/pathways", "/pathways/anything", "/learning-intelligence/parent", "/learning-intelligence/parent/weekly-report"]) {
+    assert.equal(isParentOnlyRoute(p), true, p);
+  }
+});
+
+test("isParentOnlyRoute does NOT match the CSSE learner's own /learning-intelligence routes -- a shared top-level segment must not over-match", () => {
+  for (const p of ["/learning-intelligence", "/learning-intelligence/learn", "/learning-intelligence/practice", "/learning-intelligence/timeline"]) {
+    assert.equal(isParentOnlyRoute(p), false, p);
+  }
+});
+
+test("isParentOnlyRoute does not match ordinary learner surfaces or public routes", () => {
+  for (const p of ["/dashboard", "/mocks", "/progress", "/", "/login", "/getting-started"]) {
+    assert.equal(isParentOnlyRoute(p), false, p);
+  }
+});
+
+test("every entry in PARENT_ONLY_PATH_PREFIXES is itself a learner surface (never a public route) -- the two checks must never contradict each other", () => {
+  for (const prefix of PARENT_ONLY_PATH_PREFIXES) {
+    assert.equal(isLearnerSurface(prefix), true, prefix);
+  }
+});
+
+test("RegisteredAccountGate blocks parent-only routes in Learner Mode BEFORE the ordinary allow branch, with its own real route back", () => {
+  const gate = read("components/RegisteredAccountGate.tsx");
+  assert.match(gate, /isLearnerMode && isParentOnlyRoute\(pathname\)/);
+  assert.match(gate, /data-testid="parent-mode-required"/);
+  assert.match(gate, /href="\/dashboard"/);
+  // The new branch must be checked before the plain "allow" branch, or it would never be reached.
+  const parentOnlyIndex = gate.indexOf("isParentOnlyRoute(pathname)");
+  const allowIndex = gate.indexOf('if (decision === "allow") return');
+  assert.ok(parentOnlyIndex > -1 && allowIndex > -1 && parentOnlyIndex < allowIndex);
 });

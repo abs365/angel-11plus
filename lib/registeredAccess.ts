@@ -75,6 +75,25 @@ export function isLearnerSurface(pathname: string): boolean {
   return !PUBLIC_TOP_LEVEL_ROUTES.includes(topLevelSegment(pathname));
 }
 
+/**
+ * PRIVATE LEARNER SPACE -- routes that manage the household rather than one
+ * learner's own preparation: adding/removing children, the Parent
+ * Dashboard (all learners' evidence, account/security), and pathway
+ * configuration (Part 5: "the child should not be expected to understand
+ * CSSE/GL/CEM/ISEB as admissions configuration choices" -- pathway
+ * selection belongs to the parent). Full-path prefixes, not top-level
+ * segments: /learning-intelligence/parent shares its top-level segment with
+ * the CSSE learner's own Learn/Practise/Progress routes
+ * (/learning-intelligence/learn etc.), which must stay reachable in Learner
+ * Mode.
+ */
+export const PARENT_ONLY_PATH_PREFIXES: readonly string[] = ["/add-child", "/pathways", "/learning-intelligence/parent"];
+
+export function isParentOnlyRoute(pathname: string): boolean {
+  const path = (pathname || "/").split("?")[0].split("#")[0];
+  return PARENT_ONLY_PATH_PREFIXES.some((prefix) => path === prefix || path.startsWith(prefix + "/"));
+}
+
 export type AccessDecision = "allow" | "pending" | "require-account";
 
 /**

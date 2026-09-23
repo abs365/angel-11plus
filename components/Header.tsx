@@ -1,6 +1,7 @@
 "use client";
 
-import { Bell, User, LogIn } from "lucide-react";
+import { useState } from "react";
+import { Bell, User, LogIn, Lock } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/components/providers/AuthProvider";
@@ -10,6 +11,8 @@ import SearchBar from "@/components/ui/SearchBar";
 import NotificationArea from "@/components/ui/NotificationArea";
 import Breadcrumbs, { type Breadcrumb } from "@/components/ui/Breadcrumbs";
 import { hasRegisteredParentAccount } from "@/lib/registeredAccess";
+import { useHouseholdMode } from "@/lib/useHouseholdMode";
+import ParentPinModal from "@/components/parent/ParentPinModal";
 
 /**
  * Sprint 2 (Platform Shell) — the new top header bar every page now
@@ -35,6 +38,8 @@ export default function Header({ breadcrumbs }: HeaderProps) {
   // account (controlled-beta policy, lib/registeredAccess.ts).
   const user = hasRegisteredParentAccount(sessionUser) ? sessionUser : null;
   const router = useRouter();
+  const { isLearnerMode, exitToParentMode } = useHouseholdMode();
+  const [showPinModal, setShowPinModal] = useState(false);
 
   async function handleSignOut() {
     await signOut();
@@ -60,7 +65,7 @@ export default function Header({ breadcrumbs }: HeaderProps) {
           <SearchBar />
         </div>
 
-        {!loading && user && <LearnerSwitcher />}
+        {!loading && user && !isLearnerMode && <LearnerSwitcher />}
 
         <Popover
           label="Notifications"
@@ -95,12 +100,22 @@ export default function Header({ breadcrumbs }: HeaderProps) {
                 Parent Account
               </p>
               <p className="text-xs text-gray-500 dark:text-gray-400 truncate px-2 mb-2">{user.email}</p>
-              <Link
-                href="/learning-intelligence/parent"
-                className="block w-full text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 rounded-lg px-2 py-1.5 transition-colors"
-              >
-                Parent Dashboard
-              </Link>
+              {isLearnerMode ? (
+                <button
+                  onClick={() => setShowPinModal(true)}
+                  className="flex items-center gap-1.5 w-full text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 rounded-lg px-2 py-1.5 transition-colors"
+                >
+                  <Lock size={13} aria-hidden="true" />
+                  Return to Parent Mode
+                </button>
+              ) : (
+                <Link
+                  href="/learning-intelligence/parent"
+                  className="block w-full text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 rounded-lg px-2 py-1.5 transition-colors"
+                >
+                  Parent Dashboard
+                </Link>
+              )}
               <button
                 onClick={handleSignOut}
                 className="w-full text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 rounded-lg px-2 py-1.5 transition-colors"
@@ -129,6 +144,17 @@ export default function Header({ breadcrumbs }: HeaderProps) {
           )
         )}
       </div>
+
+      {showPinModal && (
+        <ParentPinModal
+          mode="verify"
+          onCancel={() => setShowPinModal(false)}
+          onSuccess={() => {
+            setShowPinModal(false);
+            exitToParentMode();
+          }}
+        />
+      )}
     </header>
   );
 }

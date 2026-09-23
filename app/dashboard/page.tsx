@@ -36,6 +36,7 @@ import { competencyLabel } from "@/lib/ali/labels";
 import NewBadgeBanner from "@/components/NewBadgeBanner";
 import { getPathwayById } from "@/lib/pathways";
 import { useChildName } from "@/lib/useChildName";
+import { useHouseholdMode } from "@/lib/useHouseholdMode";
 import ParentSetupCard from "@/components/parent/ParentSetupCard";
 import { Card, MissionCard } from "@/components/ui/Card";
 import { ReadinessIndicator } from "@/components/ui/Progress";
@@ -366,6 +367,7 @@ export default function DashboardPage() {
   const [pathway, setPathway] = useState<Pathway | undefined>();
   const [parentReport, setParentReport] = useState<ParentReport | null>(null);
   const { name: childName, ready: childNameReady, save: saveChildName } = useChildName();
+  const { isLearnerMode } = useHouseholdMode();
   const [mockResults, setMockResults] = useState<MockResult[]>([]);
 
   useEffect(() => {
@@ -613,7 +615,19 @@ export default function DashboardPage() {
           <div className="flex items-center justify-between mb-3">
             <div>
               <h2 className="text-gray-900 dark:text-gray-100 font-bold text-2xl leading-tight">Today&apos;s Admission Mission</h2>
-              {pathway ? (
+              {/* PRIVATE LEARNER SPACE, Part 5 -- pathway configuration
+                  belongs to the parent, not daily learning. In Learner Mode
+                  this is a plain statement ("Your preparation: X"), not a
+                  link into School Intelligence's admissions-configuration
+                  view (which is a parent-only route regardless -- this also
+                  avoids inviting the tap in the first place). */}
+              {isLearnerMode ? (
+                pathway && (
+                  <p className="text-xs text-gray-500 dark:text-gray-400 font-medium mt-0.5">
+                    Your preparation: {pathway.shortName}
+                  </p>
+                )
+              ) : pathway ? (
                 <Link
                   href="/pathways"
                   className="inline-flex items-center gap-1 text-xs text-sky-700 dark:text-sky-400 font-medium mt-0.5 hover:underline"

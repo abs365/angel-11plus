@@ -26,6 +26,8 @@
  * device-wide key.
  */
 
+import { getHouseholdModeSnapshot } from "@/lib/householdMode";
+
 export const LEARNER_HEADER = "x-angel-learner-id";
 const POINTER_KEY = "angel_active_learner_v2";
 
@@ -241,11 +243,25 @@ interface ProfileRow {
   created_at: string;
 }
 
-async function fetchLearners(uid: string, accessToken: string): Promise<LearnerSummary[]> {
+/**
+ * PRIVATE LEARNER SPACE -- `restrictToId` narrows the query to exactly one
+ * learner row. Used only while a household is in Learner Mode (see
+ * ensureLearnerContext below): without it, every request that needs the
+ * active-learner header re-fetches EVERY sibling's id and name, regardless
+ * of mode -- the switcher UI is hidden in Learner Mode, but the underlying
+ * network response was not, until this. Reduces what a Learner Mode
+ * session's own network traffic ever contains; it does not and cannot
+ * change what the account's own JWT is entitled to request directly (see
+ * ANGEL_11PLUS_PRIVATE_LEARNER_SPACE_DECISION_RECORD.md's disclosed
+ * boundary) -- this is a real reduction in exposure through the product's
+ * own code, not a claim of new database-level enforcement.
+ */
+async function fetchLearners(uid: string, accessToken: string, restrictToId?: string | null): Promise<LearnerSummary[]> {
   if (!transport) return [];
-  const url =
+  let url =
     `${transport.restBase}/profiles?select=id,learner_name,selected_pathway_id,created_at` +
     `&auth_user_id=eq.${encodeURIComponent(uid)}&order=created_at.asc,id.asc`;
+  if (restrictToId) url += `&id=eq.${encodeURIComponent(restrictToId)}`;
   const res = await transport.baseFetch(url, {
     headers: { apikey: transport.anonKey, Authorization: `Bearer ${accessToken}` },
   });
@@ -267,8 +283,14 @@ export function ensureLearnerContext(uid: string, accessToken: string): Promise<
 
   const p = (async () => {
     try {
-      const learners = await fetchLearners(uid, accessToken);
       const { session, local } = browserStores();
+      // PRIVATE LEARNER SPACE: while locked into a specific learner's space,
+      // only that learner's own row is ever requested -- see fetchLearners()'s
+      // own comment for exactly what this does and does not guarantee.
+      const householdMode = getHouseholdModeSnapshot();
+      const pinnedLearnerId =
+        householdMode.uid === uid && householdMode.mode === "learner" ? readActivePointer(session, local, uid) : null;
+      const learners = await fetchLearners(uid, accessToken, pinnedLearnerId);
       const chosen = chooseActiveLearner(learners, readActivePointer(session, local, uid));
       if (chosen) writeActivePointer(session, local, uid, chosen);
       setState({ uid, learnerId: chosen, learners, status: "ready" });

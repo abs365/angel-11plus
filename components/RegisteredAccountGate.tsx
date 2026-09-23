@@ -5,7 +5,8 @@ import { usePathname } from "next/navigation";
 import type { ReactNode } from "react";
 import { useAuth } from "@/components/providers/AuthProvider";
 import PageLayout from "@/components/PageLayout";
-import { decideAccess } from "@/lib/registeredAccess";
+import { decideAccess, isParentOnlyRoute } from "@/lib/registeredAccess";
+import { useHouseholdMode } from "@/lib/useHouseholdMode";
 
 /**
  * Controlled-beta policy: a registered parent account is required for the persistent learner experience
@@ -20,6 +21,31 @@ export default function RegisteredAccountGate({ children }: { children: ReactNod
   const pathname = usePathname() ?? "/";
   const { user, loading } = useAuth();
   const decision = decideAccess({ pathname, loading, user });
+  const { isLearnerMode } = useHouseholdMode();
+
+  if (decision === "allow" && isLearnerMode && isParentOnlyRoute(pathname)) {
+    return (
+      <PageLayout>
+        <div className="max-w-xl mx-auto px-4 py-10 md:px-8 md:py-16" data-testid="parent-mode-required">
+          <h1 className="text-gray-900 dark:text-gray-100 font-bold text-2xl md:text-3xl">
+            Ask a parent or carer
+          </h1>
+          <p className="text-gray-600 dark:text-gray-400 text-sm md:text-base mt-3 leading-relaxed">
+            This page is for parents and carers to manage the account. A parent or carer can return
+            here using their Parent PIN.
+          </p>
+          <div className="mt-6">
+            <Link
+              href="/dashboard"
+              className="inline-flex items-center justify-center text-sm font-semibold bg-sky-700 text-white rounded-xl px-5 py-3 hover:bg-sky-800 transition-colors motion-reduce:transition-none"
+            >
+              Back to my preparation
+            </Link>
+          </div>
+        </div>
+      </PageLayout>
+    );
+  }
 
   if (decision === "allow") return <>{children}</>;
 

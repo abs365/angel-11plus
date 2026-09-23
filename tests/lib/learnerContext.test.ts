@@ -21,6 +21,7 @@ import { claimLegacyLocalState, reconcileSetup, type LocalSetup } from "@/lib/le
 import { forwardedLearnerHeaders } from "@/lib/learnerRequestForwarding";
 import { switchDestination, friendlyLearnerError } from "@/lib/useLearners";
 import { learnerDisplayName } from "@/lib/learnerDisplay";
+import { clearHouseholdMode, enterLearnerMode } from "@/lib/householdMode";
 
 /**
  * Wave 0 multi-learner architecture (client side): the single active-
@@ -61,9 +62,14 @@ function fakeBackend(learnersByUid: Record<string, { id: string; name: string | 
     calls.push({ url, headers });
     if (url.includes("/profiles?")) {
       const uid = decodeURIComponent(/auth_user_id=eq\.([^&]+)/.exec(url)![1]);
-      const rows = (learnersByUid[uid] ?? []).map((l, i) => ({
+      let rows = (learnersByUid[uid] ?? []).map((l, i) => ({
         id: l.id, learner_name: l.name, selected_pathway_id: null, created_at: `2026-01-0${i + 1}T00:00:00Z`,
       }));
+      // PRIVATE LEARNER SPACE: mirrors real PostgREST's own id=eq.<x> filtering,
+      // so a test can prove the CLIENT actually narrowed the request, not just
+      // that it happened to discard extra rows the fake server sent anyway.
+      const idFilter = /[?&]id=eq\.([^&]+)/.exec(url);
+      if (idFilter) rows = rows.filter((r) => r.id === decodeURIComponent(idFilter[1]));
       return new Response(JSON.stringify(rows), { status: 200 });
     }
     return new Response("{}", { status: 200 });
@@ -76,10 +82,12 @@ let savedEnv: { url?: string; key?: string };
 
 beforeEach(() => {
   clearLearnerContext();
+  clearHouseholdMode();
   savedEnv = { url: process.env.NEXT_PUBLIC_SUPABASE_URL, key: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY };
 });
 afterEach(() => {
   clearLearnerContext();
+  clearHouseholdMode();
   process.env.NEXT_PUBLIC_SUPABASE_URL = savedEnv.url;
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY = savedEnv.key;
   if (savedEnv.url === undefined) delete process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -255,6 +263,32 @@ test("SIBLING isolation in the browser: A1's XP/pathway/exam date never appear f
   assert.deepEqual(getProgress(), a1);
   setActiveLearner(L2);
   assert.equal(getProgress().selectedPathwayId, "gl");
+});
+
+test("PRIVATE LEARNER SPACE: in Learner Mode, the learner-list fetch is restricted to the pinned learner's own row -- sibling ids/names never appear in the request or its response", async () => {
+  process.env.NEXT_PUBLIC_SUPABASE_URL = "https://x.supabase.co";
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY = "k";
+  const ls = new FakeStorage();
+  g.window = { localStorage: ls, sessionStorage: new FakeStorage() };
+  g.localStorage = ls;
+  const { calls, baseFetch } = fakeBackend({ [U1]: [{ id: L1, name: "Loni" }, { id: L2, name: "Sam" }] });
+  createLearnerAwareFetch({ restBase: REST, anonKey: "anon", baseFetch });
+
+  // Parent Mode (the default): the full sibling list is fetched, as today.
+  await ensureLearnerContext(U1, jwt(U1));
+  const parentModeCall = calls.find((c) => c.url.includes("/profiles?"))!;
+  assert.doesNotMatch(parentModeCall.url, /[?&]id=eq\./, "Parent Mode must still fetch every learner (the switcher needs it)");
+  assert.equal(getLearnerContextSnapshot().learners.length, 2);
+
+  setActiveLearner(L2);
+  enterLearnerMode(U1);
+  clearLearnerContext(); // force a fresh load, as a real page reload would
+
+  await ensureLearnerContext(U1, jwt(U1));
+  const learnerModeCall = calls.filter((c) => c.url.includes("/profiles?")).at(-1)!;
+  assert.match(learnerModeCall.url, new RegExp(`[?&]id=eq\\.${L2}\\b`), "Learner Mode must request only the pinned learner's own row");
+  assert.equal(getLearnerContextSnapshot().learners.length, 1, "the sibling's id and name must never enter this session's state in Learner Mode");
+  assert.equal(getLearnerContextSnapshot().learners[0].id, L2);
 });
 
 test("writes before the learner is known are skipped, never landing in another learner's or the legacy key", () => {

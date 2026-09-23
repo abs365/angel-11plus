@@ -13,6 +13,7 @@ import { getSupabaseClient } from "@/lib/supabase";
 import { getDeviceId, ensureProfile } from "@/lib/supabaseProgress";
 import { ensureLearnerSession } from "@/lib/learnerIdentity";
 import { clearLearnerContext } from "@/lib/learnerContext";
+import { clearHouseholdMode } from "@/lib/householdMode";
 import { activateLearner } from "@/lib/learnerActivation";
 import { hasRegisteredParentAccount } from "@/lib/registeredAccess";
 
@@ -193,7 +194,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setLoading(false);
       setIsPasswordRecovery(event === "PASSWORD_RECOVERY");
 
-      if (event === "SIGNED_OUT") clearLearnerContext();
+      if (event === "SIGNED_OUT") {
+        clearLearnerContext();
+        clearHouseholdMode();
+      }
 
       if (newSession?.user && hasRegisteredParentAccount(newSession.user)) {
         ensureProfile().then(activateLearner).catch(() => {});
@@ -291,6 +295,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       // caller (not just this one page) gets the same guarantee.
       await supabase.auth.signOut();
       clearLearnerContext();
+      clearHouseholdMode();
 
       return { error: null };
     },
@@ -302,6 +307,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (!supabase) return;
     await supabase.auth.signOut();
     clearLearnerContext();
+    clearHouseholdMode();
   }, []);
 
   return (

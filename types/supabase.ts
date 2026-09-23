@@ -872,6 +872,22 @@ export interface Database {
         Args: { p_device_id: string };
         Returns: string | null;
       };
+      // PRIVATE LEARNER SPACE -- supabase/migrations/262_household_parent_pin.sql.
+      // Not yet applied to production; declared here so lib/householdPin.ts can
+      // call these through the typed supabase.rpc() the same way every other
+      // RPC in this codebase already does.
+      set_household_pin: {
+        Args: { p_pin: string };
+        Returns: undefined;
+      };
+      verify_household_pin: {
+        Args: { p_pin: string };
+        Returns: { ok: boolean; retry_at: string | null }[];
+      };
+      household_pin_status: {
+        Args: Record<string, never>;
+        Returns: { has_pin: boolean; retry_at: string | null }[];
+      };
       // Programme Increment 008D — supabase/migrations/070_mock_attempt_engine.sql.
       // Not yet applied to production; declared here so lib/mockAttempt/client.ts
       // can call these through the typed supabase.rpc() the same way every
