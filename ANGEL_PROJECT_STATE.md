@@ -838,3 +838,26 @@ regression evidence.**
   Founder's next step.
 - Per the governing instruction, this increment stops here — no wider authenticated-experience
   redesign was started.
+
+**2026-09-23 (same day) — Private Learner Space Entry: Production Finding, fixed. Commit `9c73cce`,
+pushed, deployed, confirmed live on `https://www.angel11plus.com`. Migration 262 confirmed applied by
+the Founder (not rerun). Not marked GO — the Founder still needs to perform the real Plantest1/
+Plantest2 isolation acceptance now that the entry control is reachable:**
+
+- Root cause (confirmed by direct code inspection, matching the governing instruction's own
+  candidate #1 exactly): "Enter learner space" existed only inside `LearnerIdentityBanner`, rendered
+  solely on the separate Parent Dashboard page (`/learning-intelligence/parent`) — never on the main
+  Today page or in the always-visible Header/Navigation shell the Founder's screenshot showed. Not a
+  detection/deployment/environment problem — the control genuinely didn't exist anywhere reachable
+  from Today.
+- Smallest correction: the same, already-built `enterLearnerSpace()`/PIN-gate flow is now also
+  reachable from Header's account menu (the small avatar icon, top right, visible on every page) as
+  its first, distinctly-styled item, "Enter {name}'s space". Self-contained state in `Header.tsx`
+  rather than a shared hook, so `LearnerIdentityBanner` and the rest of the architecture are
+  untouched. No architecture change, no migration change.
+- Clean-checkout gate: typecheck 0 errors, tests 4,761/4,762 (baseline plus one new structural test),
+  migration-sql-guard PASS, copy-guard/eslint unchanged from baseline, genuine `next build` PASS.
+- Production evidence: fetched the live JS bundle referenced by `/dashboard` directly and confirmed
+  the new "Enter {name}'s space" text is genuinely deployed.
+- Founder next step: sign in, open the account menu from Today, confirm "Enter Plantest1's space" is
+  visible and reachable, then perform the real two-learner isolation acceptance.
