@@ -12,34 +12,22 @@ import type { CompetencyId } from "@/lib/learningEngine/types";
 import type { LucideIcon } from "lucide-react";
 
 /**
- * AUTHENTICATED EXPERIENCE & DESIGN SYSTEM MIGRATION, Increment 1 (Learn) —
- * two real, concrete corrections found by verifying against the actual
- * evidence rather than the Founder's own (now stale) screenshot:
+ * AUTHENTICATED EXPERIENCE & DESIGN SYSTEM MIGRATION, Increment 1B (Founder
+ * visual correction) — Increment 1's own content fix (all 5 real lessons
+ * shown, the "being rebuilt" development-process copy removed) is
+ * unchanged and preserved exactly; what changed here is composition only,
+ * per the Founder's own production finding that the page still read as "a
+ * narrow list of bordered rows," not a real Angel 11+ learning surface.
  *
- * 1. Two genuinely real, already-shipped English Reading lessons (RC-01
- *    "Finding the Answer in the Text", RC-02 "What the Text Doesn't Quite
- *    Say" — both real routes under app/learning-intelligence/learn/english/,
- *    both already registered in lib/learningEngine/fullLessonRegistry.ts)
- *    were missing from this hub entirely. The previous version listed only
- *    the 3 Mathematics lessons. This version reads the SAME real registry
- *    every other real caller (the canonical decision contract) already
- *    uses, so this hub can never silently drift from what's actually
- *    recommendable again.
- * 2. The learner-facing copy stating the experience "is being rebuilt one
- *    real lesson at a time" — internal development-process language, per
- *    the governing instruction's own explicit "children should experience
- *    the finished learning environment, not our development process" rule
- *    — is removed. What remains is an honest, organised, professional
- *    presentation of exactly what's genuinely available today, organised
- *    by subject, with no padding, no manufactured "coming soon" lessons,
- *    and no implied curriculum completeness.
- *
- * Each lesson's own real, unmodified educationalState is fetched via the
- * exact same getEducationalIntelligence() call each lesson page itself
- * already makes -- unchanged from the prior implementation, extended from
- * 3 calls to 5. No new evidence computation, no invented prerequisite:
- * every lesson is always fully accessible, and any "recommended"/status
- * framing is copy over real evidence, never a lock.
+ * The subject itself is now the organising principle, matching the
+ * homepage's own "Five subjects. One connected plan." treatment
+ * (app/page.tsx): a real subject identity (icon, name, one-line intro) at
+ * homepage type scale, then that subject's lessons as a single flowing
+ * divided list inside one sky-tinted panel — the exact same
+ * bg-[var(--angel-sky)] + divide-y divide-[var(--angel-border)] pattern
+ * the homepage's own "A clear plan for today" example section already
+ * uses, reused here for the real thing rather than duplicated as a new
+ * treatment. No per-lesson bordered box, no card grid, no catalogue.
  */
 
 interface LessonEntry {
@@ -92,42 +80,64 @@ const ENGLISH_LESSONS: LessonEntry[] = [
 ];
 
 function LessonRow({ entry, state, loaded }: { entry: LessonEntry; state: EducationalIntelligenceSnapshot["educationalState"] | undefined; loaded: boolean }) {
-  const Icon = entry.icon;
   const progression = hubProgressionLabel(state);
   return (
-    <Link href={entry.href}>
-      <div className="flex items-center gap-4 bg-[var(--angel-paper)] rounded-lg border border-[var(--angel-border)] p-4 hover:border-[var(--angel-blue)] transition-colors">
-        <div className="bg-[var(--angel-sky)] p-3 rounded-lg shrink-0">
-          <Icon size={20} className="text-[var(--angel-blue)]" />
-        </div>
-        <div className="min-w-0 flex-1">
-          <p className="text-sm font-semibold text-[var(--angel-navy)]">{entry.title}</p>
-          <p className="text-xs text-[var(--angel-muted)] mt-0.5">{entry.blurb}</p>
-          {loaded && (
-            <p className="text-xs text-[var(--angel-blue)] mt-1 font-medium">{progression.label}</p>
-          )}
-        </div>
-        <ArrowRight size={16} className="text-[var(--angel-muted)] shrink-0" />
+    <Link href={entry.href} className="flex items-center gap-4 py-5 group">
+      <div className="min-w-0 flex-1">
+        <p className="text-[var(--angel-navy)] text-lg font-semibold leading-snug group-hover:underline">{entry.title}</p>
+        <p className="text-[var(--angel-ink)] text-sm mt-1 leading-relaxed opacity-90">{entry.blurb}</p>
+        {loaded && (
+          <p className="text-[var(--angel-blue)] text-xs mt-1.5 font-semibold uppercase tracking-wide">{progression.label}</p>
+        )}
       </div>
+      <ArrowRight size={18} className="text-[var(--angel-muted)] group-hover:text-[var(--angel-blue)] transition-colors motion-reduce:transition-none shrink-0" />
     </Link>
   );
 }
 
-function SubjectGroup({ title, lessons, states, loaded }: {
+function SubjectSection({ title, intro, icon: Icon, lessons, states, loaded }: {
   title: string;
+  intro: string;
+  icon: LucideIcon;
   lessons: LessonEntry[];
   states: Partial<Record<CompetencyId, EducationalIntelligenceSnapshot["educationalState"]>>;
   loaded: boolean;
 }) {
   return (
     <div>
-      <p className="text-[10px] font-bold uppercase tracking-wide text-[var(--angel-muted)] mb-2.5">{title}</p>
-      <div className="grid gap-3">
-        {lessons.map((entry) => (
-          <LessonRow key={entry.competencyId} entry={entry} state={states[entry.competencyId]} loaded={loaded} />
-        ))}
+      <div className="flex items-center gap-3.5">
+        <div className="w-12 h-12 rounded-lg bg-[var(--angel-sky)] flex items-center justify-center shrink-0">
+          <Icon size={22} className="text-[var(--angel-blue)]" />
+        </div>
+        <div>
+          <h2 className="text-[var(--angel-navy)] font-bold text-2xl md:text-3xl leading-tight">{title}</h2>
+          <p className="text-[var(--angel-muted)] text-sm mt-0.5">{intro}</p>
+        </div>
+      </div>
+
+      <div className="mt-5 bg-[var(--angel-sky)] rounded-lg px-6 md:px-8">
+        <div className="divide-y divide-[var(--angel-border)]">
+          {lessons.map((entry) => (
+            <LessonRow key={entry.competencyId} entry={entry} state={states[entry.competencyId]} loaded={loaded} />
+          ))}
+        </div>
       </div>
     </div>
+  );
+}
+
+function MoreLink({ href, icon: Icon, title, body }: { href: string; icon: LucideIcon; title: string; body: string }) {
+  return (
+    <Link href={href} className="flex items-start gap-3.5 py-5 group">
+      <div className="w-10 h-10 rounded-lg bg-[var(--angel-sky)] flex items-center justify-center shrink-0">
+        <Icon size={18} className="text-[var(--angel-blue)]" />
+      </div>
+      <div className="min-w-0 flex-1">
+        <p className="text-[var(--angel-navy)] text-base font-semibold group-hover:underline">{title}</p>
+        <p className="text-[var(--angel-muted)] text-sm mt-0.5 leading-relaxed">{body}</p>
+      </div>
+      <ArrowRight size={16} className="text-[var(--angel-muted)] group-hover:text-[var(--angel-blue)] transition-colors motion-reduce:transition-none shrink-0 mt-2" />
+    </Link>
   );
 }
 
@@ -167,53 +177,49 @@ export default function CsseLearnPage() {
 
   return (
     <PageLayout breadcrumbs={[{ label: "Learn" }]}>
-      <div className="max-w-2xl mx-auto px-4 py-6 md:px-8 md:py-8">
-        <h1 className="text-[var(--angel-navy)] font-bold text-2xl">Learn</h1>
-        <p className="text-[var(--angel-muted)] text-sm mt-2 leading-relaxed">
-          Real, step-by-step lessons for CSSE preparation. Each one teaches a method, then lets you try it
-          with support before trying it alone.
+      <div className="max-w-3xl mx-auto px-4 py-8 md:px-8 md:py-12">
+        <h1 className="text-[var(--angel-navy)] font-bold text-3xl md:text-4xl">Learn</h1>
+        <p className="text-[var(--angel-ink)] text-base md:text-lg mt-3 leading-relaxed max-w-xl">
+          Real, step-by-step lessons for CSSE preparation. Each one teaches a method, then lets you try
+          it with support before trying it alone.
         </p>
-        <p className="text-[var(--angel-muted)] text-xs mt-2 leading-relaxed opacity-80">
+        <p className="text-[var(--angel-muted)] text-sm mt-2 leading-relaxed max-w-xl">
           Learn teaches a skill. Practise applies and strengthens it. Mock measures it under real exam
           conditions.
         </p>
 
-        <div className="mt-6 space-y-6">
-          <SubjectGroup title="Mathematics" lessons={MATHEMATICS_LESSONS} states={states} loaded={loaded} />
-          <SubjectGroup title="English: Reading" lessons={ENGLISH_LESSONS} states={states} loaded={loaded} />
+        <div className="mt-10 space-y-12">
+          <SubjectSection
+            title="Mathematics"
+            intro="Core skills and methods for CSSE Mathematics."
+            icon={Calculator}
+            lessons={MATHEMATICS_LESSONS}
+            states={states}
+            loaded={loaded}
+          />
+          <SubjectSection
+            title="English: Reading"
+            intro="Working with real passages, not isolated trick questions."
+            icon={BookOpen}
+            lessons={ENGLISH_LESSONS}
+            states={states}
+            loaded={loaded}
+          />
         </div>
 
-        <div className="grid gap-3 mt-6 pt-6 border-t border-[var(--angel-border)]">
-          <Link href="/learning-intelligence/practice">
-            <div className="flex items-center gap-4 bg-[var(--angel-paper)] rounded-lg border border-[var(--angel-border)] p-4 hover:border-[var(--angel-blue)] transition-colors">
-              <div className="bg-[var(--angel-sky)] p-3 rounded-lg shrink-0">
-                <BookOpen size={20} className="text-[var(--angel-blue)]" />
-              </div>
-              <div className="min-w-0 flex-1">
-                <p className="text-sm font-semibold text-[var(--angel-navy)]">Practise instead</p>
-                <p className="text-xs text-[var(--angel-muted)] mt-0.5">
-                  Real, evidence-driven CSSE practice across Reading Comprehension, Mathematics and
-                  Continuous Writing.
-                </p>
-              </div>
-              <ArrowRight size={16} className="text-[var(--angel-muted)] shrink-0" />
-            </div>
-          </Link>
-
-          <Link href="/learning-intelligence">
-            <div className="flex items-center gap-4 bg-[var(--angel-paper)] rounded-lg border border-[var(--angel-border)] p-4 hover:border-[var(--angel-blue)] transition-colors">
-              <div className="bg-[var(--angel-sky)] p-3 rounded-lg shrink-0">
-                <Brain size={20} className="text-[var(--angel-blue)]" />
-              </div>
-              <div className="min-w-0 flex-1">
-                <p className="text-sm font-semibold text-[var(--angel-navy)]">See your Learning Report</p>
-                <p className="text-xs text-[var(--angel-muted)] mt-0.5">
-                  Real competency and evidence data from everything you&apos;ve practised so far.
-                </p>
-              </div>
-              <ArrowRight size={16} className="text-[var(--angel-muted)] shrink-0" />
-            </div>
-          </Link>
+        <div className="mt-12 pt-8 border-t border-[var(--angel-border)] divide-y divide-[var(--angel-border)]">
+          <MoreLink
+            href="/learning-intelligence/practice"
+            icon={BookOpen}
+            title="Practise instead"
+            body="Real, evidence-driven CSSE practice across Reading Comprehension, Mathematics and Continuous Writing."
+          />
+          <MoreLink
+            href="/learning-intelligence"
+            icon={Brain}
+            title="See your Learning Report"
+            body="Real competency and evidence data from everything you've practised so far."
+          />
         </div>
       </div>
     </PageLayout>

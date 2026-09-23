@@ -110,6 +110,11 @@ function describeRecommendedActivity(activityType: ActivityType, competencyId: s
   }
 }
 
+/** Purely decorative — never the sole carrier of meaning, a heading always sits beside it. Same treatment as the homepage's own GoldRule (app/page.tsx), reused here for the one authenticated heading (Today's Plan) that plays the same "primary section" role the homepage uses it for. */
+function GoldRule() {
+  return <span aria-hidden="true" className="block w-10 h-0.5 bg-[var(--angel-gold)] mb-4" />;
+}
+
 const STAGE_NAMES = ["Starting", "Building Foundations", "Building Skills", "Developing Confidence", "Admission Ready"] as const;
 
 const MOCK_PATHWAY_IDS: MockPathwayId[] = ["gl", "cem", "csse", "iseb"];
@@ -214,7 +219,7 @@ function OrientationHeader({
         </form>
       )}
 
-      <p className="text-[var(--angel-navy)] font-bold text-xl leading-snug mb-3">{message}</p>
+      <p className="text-[var(--angel-navy)] font-bold text-2xl md:text-3xl leading-snug mb-4">{message}</p>
 
       <div className="flex items-center gap-2 flex-wrap text-xs text-[var(--angel-muted)]">
         <span className="inline-flex items-center gap-1.5 bg-[var(--angel-sky)] rounded-full px-3 py-1.5 text-[var(--angel-ink)]">
@@ -382,176 +387,189 @@ export default function DashboardPage() {
           </div>
         )}
 
-        <div className="mt-6 lg:mt-8 lg:grid lg:grid-cols-3 lg:gap-8 lg:items-start">
-          <div className="lg:col-span-2">
-            <section>
-              <div className="flex items-center justify-between mb-3">
-                <div>
-                  <h2 className="text-[var(--angel-navy)] font-bold text-2xl leading-tight">Today&apos;s Plan</h2>
-                  {isLearnerMode ? (
-                    pathway && (
-                      <p className="text-xs text-[var(--angel-muted)] font-medium mt-0.5">
-                        Your preparation: {pathway.shortName}
-                      </p>
-                    )
-                  ) : pathway ? (
-                    <Link
-                      href="/pathways"
-                      className="inline-flex items-center gap-1 text-xs text-[var(--angel-blue)] font-medium mt-0.5 hover:underline"
-                    >
-                      {pathway.shortName} pathway · School Intelligence
-                      <ChevronRight size={11} aria-hidden="true" />
-                    </Link>
-                  ) : (
-                    <Link href="/pathways" className="inline-flex items-center gap-1 text-xs text-[var(--angel-blue)] font-medium mt-0.5 hover:underline">
-                      Choose your target pathway
-                      <ChevronRight size={11} aria-hidden="true" />
-                    </Link>
-                  )}
-                </div>
-                {mission && mission.items.length > 0 && (
-                  <div className="flex items-center gap-1.5 text-[var(--angel-muted)] bg-[var(--angel-sky)] px-3 py-1.5 rounded-full shrink-0">
-                    <Clock size={12} />
-                    <span className="text-xs font-medium">~{mission.totalMinutes} min</span>
-                  </div>
-                )}
-              </div>
+        {/* AUTHENTICATED EXPERIENCE, Increment 1B (Founder visual correction) —
+            Today's Plan now mirrors the homepage's own "A clear plan for
+            today" example section almost exactly: a large sky-tinted panel
+            (not a bordered white application card) carrying the real
+            recommendation, generous padding and type scale matching the
+            homepage's own editorial rhythm, and a separate flowing "Then"
+            list below rather than a cramped nested sub-panel. Progress/Mock
+            move from a small bordered widget to their own more spacious,
+            larger-type panel -- still visually secondary to the primary
+            recommendation (smaller heading weight, no tint), but no longer
+            reading as a detached dashboard sidebar. */}
+        <div className="mt-10 md:mt-14">
+          <GoldRule />
+          <div className="flex items-start justify-between gap-4 flex-wrap">
+            <div>
+              <h2 className="text-[var(--angel-navy)] font-bold text-3xl md:text-4xl leading-tight">Today&apos;s Plan</h2>
+              {isLearnerMode ? (
+                pathway && (
+                  <p className="text-sm text-[var(--angel-muted)] font-medium mt-1.5">
+                    Your preparation: {pathway.shortName}
+                  </p>
+                )
+              ) : pathway ? (
+                <Link
+                  href="/pathways"
+                  className="inline-flex items-center gap-1 text-sm text-[var(--angel-blue)] font-medium mt-1.5 hover:underline"
+                >
+                  {pathway.shortName} pathway · School Intelligence
+                  <ChevronRight size={13} aria-hidden="true" />
+                </Link>
+              ) : (
+                <Link href="/pathways" className="inline-flex items-center gap-1 text-sm text-[var(--angel-blue)] font-medium mt-1.5 hover:underline">
+                  Choose your target pathway
+                  <ChevronRight size={13} aria-hidden="true" />
+                </Link>
+              )}
+            </div>
+          </div>
+        </div>
 
-              {primaryItem ? (
-                // ONE connected hero surface: recommended activity, the real
-                // "why this today" evidence (canonical decision contract when
-                // resolved, the mission engine's own reason otherwise), effort
-                // and a single clear Start action -- replaces the previous
-                // two-stacked-cards layout (a standalone "Angel recommends
-                // next" card directly above a separate mission-list card)
-                // with the governing design standard's own connected-section
-                // hierarchy. Both real data sources are still shown, in one
-                // place, never invented.
-                <div className="bg-[var(--angel-paper)] rounded-lg border border-[var(--angel-border)] shadow-sm overflow-hidden">
-                  <div className="p-5 md:p-6 border-b border-[var(--angel-border)]">
-                    <p className="text-[10px] font-bold uppercase tracking-wide text-[var(--angel-blue)] mb-1.5">
-                      Today&apos;s recommended activity
-                    </p>
-                    <p className="text-[var(--angel-navy)] font-bold text-xl leading-snug mb-2">
+        <div className="mt-8 lg:grid lg:grid-cols-3 lg:gap-10 lg:items-start">
+          <div className="lg:col-span-2">
+            {primaryItem ? (
+              <>
+                {/* One large, warm, self-contained panel -- the homepage's own
+                    "Today's Plan" illustrative treatment, now carrying the
+                    real recommendation. Recommendation, "why", duration and
+                    Start action all live in one connected flow, at homepage
+                    type scale, so this genuinely dominates the page rather
+                    than reading as one bordered card among several. */}
+                <div className="bg-[var(--angel-sky)] rounded-lg p-6 md:p-10">
+                  <p className="text-xs font-bold uppercase tracking-widest text-[var(--angel-blue)]">
+                    Recommended for you today
+                  </p>
+                  <div className="flex items-start justify-between gap-3 mt-2">
+                    <p className="text-[var(--angel-navy)] font-bold text-2xl md:text-3xl leading-snug">
                       {primaryActivityLabel ?? primaryItem.label}
                     </p>
-                    {whyToday && (
-                      <div className="flex items-start gap-2 mt-3">
-                        <div className="flex-1 min-w-0">
-                          <p className="text-[10px] font-bold uppercase tracking-wide text-[var(--angel-muted)] mb-1">
-                            Why this today?
-                          </p>
-                          <p className="text-[var(--angel-ink)] text-sm leading-relaxed opacity-90">{whyToday}</p>
-                        </div>
-                        {/* LR-01 — child-accessible, just-in-time transparency at
-                            the one point the product acts on a child's own
-                            performance evidence to choose what to show next. */}
-                        <Popover
-                          label="Why does Angel suggest this?"
-                          align="right"
-                          trigger={(props) => (
-                            <button
-                              {...props}
-                              className="shrink-0 text-[var(--angel-muted)] hover:text-[var(--angel-navy)] p-0.5"
-                            >
-                              <Info size={16} aria-hidden="true" />
-                              <span className="sr-only">Why does Angel suggest this?</span>
-                            </button>
-                          )}
+                    {/* LR-01 — child-accessible, just-in-time transparency at
+                        the one point the product acts on a child's own
+                        performance evidence to choose what to show next. */}
+                    <Popover
+                      label="Why does Angel suggest this?"
+                      align="right"
+                      trigger={(props) => (
+                        <button
+                          {...props}
+                          className="shrink-0 mt-1 text-[var(--angel-muted)] hover:text-[var(--angel-navy)] p-0.5"
                         >
-                          <div className="w-72 max-w-[80vw] bg-[var(--angel-paper)] border border-[var(--angel-border)] rounded-lg shadow-lg p-4 text-sm text-[var(--angel-ink)] leading-relaxed">
-                            <p className="font-semibold text-[var(--angel-navy)] mb-2">Why does Angel suggest this?</p>
-                            <ul className="space-y-1.5 list-disc pl-4">
-                              <li>Angel remembers how you&apos;re getting on with each topic you practise.</li>
-                              <li>Your answers and results help Angel suggest useful practice for next time.</li>
-                              <li>Your parent or carer can see your learning progress.</li>
-                              <li>If you write something for feedback, a computer program helps check it and give you tips.</li>
-                              <li>Angel doesn&apos;t need things like your address, a photo, or your location to work.</li>
-                              <li>Not sure about something? Ask your parent or carer — they&apos;re in charge of your Angel account.</li>
-                              <li>You, or your parent or carer, can always ask us for help with your information.</li>
-                            </ul>
-                            <Link href="/privacy" className="inline-block mt-3 text-[var(--angel-blue)] font-medium hover:underline">
-                              Read our full Privacy Notice →
-                            </Link>
-                          </div>
-                        </Popover>
+                          <Info size={18} aria-hidden="true" />
+                          <span className="sr-only">Why does Angel suggest this?</span>
+                        </button>
+                      )}
+                    >
+                      <div className="w-72 max-w-[80vw] bg-[var(--angel-paper)] border border-[var(--angel-border)] rounded-lg shadow-lg p-4 text-sm text-[var(--angel-ink)] leading-relaxed">
+                        <p className="font-semibold text-[var(--angel-navy)] mb-2">Why does Angel suggest this?</p>
+                        <ul className="space-y-1.5 list-disc pl-4">
+                          <li>Angel remembers how you&apos;re getting on with each topic you practise.</li>
+                          <li>Your answers and results help Angel suggest useful practice for next time.</li>
+                          <li>Your parent or carer can see your learning progress.</li>
+                          <li>If you write something for feedback, a computer program helps check it and give you tips.</li>
+                          <li>Angel doesn&apos;t need things like your address, a photo, or your location to work.</li>
+                          <li>Not sure about something? Ask your parent or carer — they&apos;re in charge of your Angel account.</li>
+                          <li>You, or your parent or carer, can always ask us for help with your information.</li>
+                        </ul>
+                        <Link href="/privacy" className="inline-block mt-3 text-[var(--angel-blue)] font-medium hover:underline">
+                          Read our full Privacy Notice →
+                        </Link>
                       </div>
-                    )}
-                    <div className="flex items-center gap-1.5 mt-4 text-xs text-[var(--angel-muted)]">
-                      <Clock size={12} aria-hidden="true" />
-                      <span>~{primaryItem.estimatedMinutes} min</span>
-                    </div>
+                    </Popover>
                   </div>
-                  <div className="p-5 md:p-6">
-                    <ButtonLink href={primaryItem.href} size="lg" className="w-full justify-center" leftIcon={<Play size={16} aria-hidden="true" />}>
+
+                  {whyToday && (
+                    <div className="mt-4">
+                      <p className="text-xs font-bold uppercase tracking-widest text-[var(--angel-muted)]">
+                        Why this today?
+                      </p>
+                      <p className="text-[var(--angel-ink)] text-base md:text-lg leading-relaxed mt-1.5 max-w-xl">
+                        {whyToday}
+                      </p>
+                    </div>
+                  )}
+
+                  <div className="flex items-center gap-1.5 mt-5 text-sm text-[var(--angel-muted)]">
+                    <Clock size={14} aria-hidden="true" />
+                    <span>About {primaryItem.estimatedMinutes} min</span>
+                  </div>
+
+                  <div className="mt-7">
+                    <ButtonLink href={primaryItem.href} size="lg" leftIcon={<Play size={16} aria-hidden="true" />}>
                       Start today&apos;s plan
                     </ButtonLink>
-                    <p className="text-[var(--angel-muted)] text-xs text-center mt-3">
+                    <p className="text-[var(--angel-muted)] text-sm mt-3">
                       Your Progress and Learning Report update automatically once you finish.
                     </p>
                   </div>
+                </div>
 
-                  {secondaryItems.length > 0 && (
-                    <div className="border-t border-[var(--angel-border)] px-5 md:px-6 py-4">
-                      <p className="text-[10px] font-bold uppercase tracking-wide text-[var(--angel-muted)] mb-2.5">
-                        Then
-                      </p>
-                      <ul className="space-y-2.5">
-                        {secondaryItems.map((item) => (
-                          <li key={item.id}>
-                            <Link href={item.href} className="flex items-start gap-2.5 group">
-                              <span aria-hidden="true" className={`w-1.5 h-1.5 rounded-full shrink-0 mt-1.5 ${MISSION_ACCENT_DOT[item.priority]}`} />
-                              <span className="min-w-0 flex-1">
-                                <span className="flex items-center gap-1.5 flex-wrap">
-                                  <span className="text-[var(--angel-navy)] text-sm font-semibold group-hover:underline">{item.label}</span>
-                                  <span className="text-[9px] font-bold uppercase tracking-wide text-[var(--angel-muted)]">
-                                    {PRIORITY_LABEL[item.priority]}
-                                  </span>
+                {secondaryItems.length > 0 && (
+                  <div className="mt-8">
+                    <p className="text-xs font-bold uppercase tracking-widest text-[var(--angel-muted)] mb-3">
+                      Then
+                    </p>
+                    <ul className="divide-y divide-[var(--angel-border)]">
+                      {secondaryItems.map((item) => (
+                        <li key={item.id}>
+                          <Link href={item.href} className="flex items-start gap-3 py-4 group">
+                            <span aria-hidden="true" className={`w-2 h-2 rounded-full shrink-0 mt-2 ${MISSION_ACCENT_DOT[item.priority]}`} />
+                            <span className="min-w-0 flex-1">
+                              <span className="flex items-center gap-2 flex-wrap">
+                                <span className="text-[var(--angel-navy)] text-base font-semibold group-hover:underline">{item.label}</span>
+                                <span className="text-[10px] font-bold uppercase tracking-wide text-[var(--angel-muted)]">
+                                  {PRIORITY_LABEL[item.priority]}
                                 </span>
-                                <span className="block text-[var(--angel-muted)] text-xs leading-relaxed mt-0.5">{item.reason}</span>
                               </span>
-                              <span className="text-[var(--angel-muted)] text-xs shrink-0">~{item.estimatedMinutes} min</span>
-                            </Link>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  )}
-                </div>
-              ) : (
-                // Placement / new-learner state: honest about needing a
-                // starting check, never claiming personalisation before
-                // evidence exists (governing instruction's own wording).
-                <div className="bg-[var(--angel-paper)] rounded-lg border border-[var(--angel-border)] shadow-sm p-8 text-center">
-                  <div className="w-16 h-16 bg-[var(--angel-sky)] rounded-lg flex items-center justify-center mx-auto mb-4">
-                    <Target size={30} className="text-[var(--angel-blue)]" />
+                              <span className="block text-[var(--angel-muted)] text-sm leading-relaxed mt-0.5">{item.reason}</span>
+                            </span>
+                            <span className="text-[var(--angel-muted)] text-sm shrink-0 whitespace-nowrap">~{item.estimatedMinutes} min</span>
+                          </Link>
+                        </li>
+                      ))}
+                    </ul>
                   </div>
-                  <p className="text-[var(--angel-navy)] font-bold text-base mb-1.5">Let&apos;s find your starting point</p>
-                  <p className="text-[var(--angel-muted)] text-sm leading-relaxed mb-5 max-w-xs mx-auto">
-                    A short check helps Angel choose the right level and what to practise first.
-                  </p>
-                  <ButtonLink
-                    href={getSelectedPathwayId() === "csse" ? "/learning-intelligence/learn" : "/english"}
-                    leftIcon={<Play size={14} aria-hidden="true" />}
-                  >
-                    Start
-                  </ButtonLink>
+                )}
+              </>
+            ) : (
+              // Placement / new-learner state: honest about needing a
+              // starting check, never claiming personalisation before
+              // evidence exists (governing instruction's own wording). Now
+              // the same large, confident, sky-tinted treatment as the real
+              // recommendation panel above -- a new learner should feel
+              // Angel 11+ has confidently begun, not land on a smaller,
+              // lower-status placeholder box.
+              <div className="bg-[var(--angel-sky)] rounded-lg p-10 md:p-14 text-center">
+                <div className="w-16 h-16 bg-[var(--angel-paper)] rounded-lg flex items-center justify-center mx-auto mb-5">
+                  <Target size={30} className="text-[var(--angel-blue)]" />
                 </div>
-              )}
-            </section>
+                <p className="text-[var(--angel-navy)] font-bold text-2xl md:text-3xl mb-2">Let&apos;s find your starting point</p>
+                <p className="text-[var(--angel-ink)] text-base md:text-lg leading-relaxed mb-7 max-w-sm mx-auto">
+                  A short check helps Angel choose the right level and what to practise first.
+                </p>
+                <ButtonLink
+                  href={getSelectedPathwayId() === "csse" ? "/learning-intelligence/learn" : "/english"}
+                  size="lg"
+                  leftIcon={<Play size={16} aria-hidden="true" />}
+                >
+                  Start
+                </ButtonLink>
+              </div>
+            )}
           </div>
 
-          <div className="mt-8 lg:mt-0 lg:col-span-1">
-            <div className="bg-[var(--angel-paper)] rounded-lg border border-[var(--angel-border)] p-5 space-y-5">
+          <div className="mt-10 lg:mt-0 lg:col-span-1">
+            <div className="space-y-7">
               <div>
-                <p className="text-xs font-semibold uppercase tracking-wide text-[var(--angel-muted)] mb-3">
+                <p className="text-xs font-bold uppercase tracking-widest text-[var(--angel-blue)] mb-3">
                   Your Progress
                 </p>
                 {parentReport && parentReport.hasEnoughData ? (
                   <div className="space-y-3">
                     <ReadinessBar readiness={parentReport.examReadiness} />
                     {weeklyGoal && (
-                      <p className="text-xs text-[var(--angel-muted)]">
+                      <p className="text-sm text-[var(--angel-ink)]">
                         {weeklyGoal.isComplete
                           ? "Weekly goal complete. Great work!"
                           : `${weeklyGoal.sessions} of ${weeklyGoal.target} sessions this week`}
@@ -568,10 +586,10 @@ export default function DashboardPage() {
                   </div>
                 ) : (
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-[var(--angel-sky)] rounded-lg flex items-center justify-center shrink-0">
-                      <BarChart2 size={18} className="text-[var(--angel-blue)] opacity-60" />
+                    <div className="w-11 h-11 bg-[var(--angel-sky)] rounded-lg flex items-center justify-center shrink-0">
+                      <BarChart2 size={20} className="text-[var(--angel-blue)]" />
                     </div>
-                    <p className="text-[var(--angel-muted)] text-xs leading-relaxed">
+                    <p className="text-[var(--angel-ink)] text-sm leading-relaxed">
                       Complete a few more sessions to unlock your progress snapshot
                     </p>
                   </div>
@@ -581,28 +599,28 @@ export default function DashboardPage() {
               <div className="h-px bg-[var(--angel-border)]" />
 
               <div>
-                <p className="text-xs font-semibold uppercase tracking-wide text-[var(--angel-muted)] mb-3">
+                <p className="text-xs font-bold uppercase tracking-widest text-[var(--angel-blue)] mb-3">
                   Mock Exams
                 </p>
                 {pathway && mockSupported ? (
                   <Link href="/mocks" className="flex items-center gap-3 group">
-                    <div className="w-10 h-10 rounded-lg bg-[var(--angel-sky)] flex items-center justify-center shrink-0">
-                      <Trophy size={18} className="text-[var(--angel-blue)]" />
+                    <div className="w-11 h-11 rounded-lg bg-[var(--angel-sky)] flex items-center justify-center shrink-0">
+                      <Trophy size={20} className="text-[var(--angel-blue)]" />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="text-[var(--angel-navy)] font-semibold text-sm leading-snug">{pathway.name} Mock Exam</p>
-                      <p className="text-[var(--angel-muted)] text-xs mt-0.5">
+                      <p className="text-[var(--angel-navy)] font-semibold text-base leading-snug">{pathway.name} Mock Exam</p>
+                      <p className="text-[var(--angel-muted)] text-sm mt-0.5">
                         {mockAttempts > 0 ? `${mockAttempts} attempt${mockAttempts === 1 ? "" : "s"} · Best ${bestMockScore}%` : "Not attempted yet"}
                       </p>
                     </div>
-                    <ChevronRight size={16} aria-hidden="true" className="text-[var(--angel-muted)] group-hover:text-[var(--angel-blue)] transition-colors motion-reduce:transition-none shrink-0" />
+                    <ChevronRight size={18} aria-hidden="true" className="text-[var(--angel-muted)] group-hover:text-[var(--angel-blue)] transition-colors motion-reduce:transition-none shrink-0" />
                   </Link>
                 ) : (
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-[var(--angel-sky)] rounded-lg flex items-center justify-center shrink-0 opacity-60">
-                      <Trophy size={18} className="text-[var(--angel-blue)]" />
+                    <div className="w-11 h-11 bg-[var(--angel-sky)] rounded-lg flex items-center justify-center shrink-0 opacity-60">
+                      <Trophy size={20} className="text-[var(--angel-blue)]" />
                     </div>
-                    <p className="text-[var(--angel-muted)] text-xs leading-relaxed">
+                    <p className="text-[var(--angel-ink)] text-sm leading-relaxed">
                       {pathway ? "No mock exam yet for this pathway" : "Choose target schools to see available mocks"}
                     </p>
                   </div>
@@ -612,9 +630,9 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        <div className="mt-10 pt-6 border-t border-[var(--angel-border)]">
+        <div className="mt-14 pt-8 border-t border-[var(--angel-border)]">
           <p className="text-[var(--angel-muted)] text-xs font-semibold uppercase tracking-wide mb-2">About Angel 11+</p>
-          <p className="text-[var(--angel-muted)] text-xs leading-relaxed opacity-90">
+          <p className="text-[var(--angel-muted)] text-sm leading-relaxed opacity-90">
             Original exam-style practice for UK 11+ preparation across English, Maths, Reasoning, Writing and Vocabulary. Angel 11+ provides original practice content and is not affiliated with or endorsed by any exam board or school.
           </p>
         </div>
