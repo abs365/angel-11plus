@@ -159,7 +159,7 @@ export default function LearningIntelligencePage() {
             <section>
               <h2 className="text-[var(--angel-navy)] font-bold text-lg md:text-xl mb-2">What to do next</h2>
               <p className="text-sm text-[var(--angel-muted)] mb-3">
-                Angel recommends — you and your family choose what to act on.
+                Angel recommends. You and your family choose what to act on.
               </p>
               <RecommendationSummary recommendations={profile.recommendations} />
             </section>

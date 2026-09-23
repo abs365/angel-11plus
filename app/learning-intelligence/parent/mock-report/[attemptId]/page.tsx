@@ -176,7 +176,7 @@ function WritingAssessmentSummary({ assessments }: { assessments: MockWritingAss
     <div className="bg-[var(--angel-paper)] border border-[var(--angel-border)] rounded-lg p-5">
       <p className="text-xs font-semibold text-[var(--angel-muted)] uppercase tracking-widest mb-1">Continuous Writing</p>
       <p className="text-xs text-[var(--angel-muted)] leading-relaxed mb-3">
-        Assessed separately from the Comprehension/Mathematics result above — Angel does not currently have a
+        Assessed separately from the Comprehension/Mathematics result above. Angel does not currently have a
         confirmed official CSSE mark split between components, so this is reported on its own.
       </p>
       <div className="space-y-3">

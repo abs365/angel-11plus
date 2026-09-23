@@ -46,8 +46,15 @@ test("no QT-MR-XX style code is ever rendered as visible learner-facing text -- 
 });
 
 test("every skill label rendered on the page goes through childFriendlySkillLabel(), never entry.competencyId or entry.questionTypeId interpolated directly as display text", () => {
-  const displayedLabelSites = [...PAGE.matchAll(/childFriendlySkillLabel\(entry\.competencyId, entry\.questionTypeId\)/g)];
+  // Increment 3 (Progress + Results + Parent Dashboard) tightened the
+  // fallback argument from entry.questionTypeId (a raw QT code, e.g.
+  // "QT-MR-07", that would render verbatim if competencyId were ever
+  // null) to the literal, always-safe "This skill" -- closing a narrow
+  // latent raw-code-leak path. Still exactly two call sites: the
+  // priority-card heading and the compact chip label.
+  const displayedLabelSites = [...PAGE.matchAll(/childFriendlySkillLabel\(entry\.competencyId, "This skill"\)/g)];
   assert.ok(displayedLabelSites.length >= 2, "expected the priority-card heading and the compact chip label to both use childFriendlySkillLabel()");
+  assert.ok(!/childFriendlySkillLabel\(entry\.competencyId, entry\.questionTypeId\)/.test(PAGE), "the raw questionTypeId fallback must not return -- it can leak an internal QT code as display text");
 });
 
 test("childFriendlySkillLabel never returns a raw competency id or blank string for any real Mathematics Mock 1 competency", () => {
@@ -170,7 +177,9 @@ test("the report page still gates 'ready' strictly on reportReleaseState === rel
 
 test("the pending-analysis fallback is preserved for analysisState !== 'complete' -- no regression to the currently-live real report", () => {
   assert.match(PAGE, /report\.analysisState === "complete" && report\.skillEvidence \? \(/);
-  assert.match(PAGE, /<InfoCard>\s*<p className="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">\{ANALYSIS_PENDING_NOTE\}<\/p>\s*<\/InfoCard>/);
+  // Increment 3 restyled this block from InfoCard/gray-* Tailwind classes
+  // to the Angel Brand Foundation tokens -- same structure, same note.
+  assert.match(PAGE, /<p className="text-sm text-\[var\(--angel-muted\)\] leading-relaxed">\{ANALYSIS_PENDING_NOTE\}<\/p>/);
 });
 
 // === Additional structural safety =========================================

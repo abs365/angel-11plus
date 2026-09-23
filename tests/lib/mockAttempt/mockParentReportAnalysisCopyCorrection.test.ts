@@ -35,12 +35,15 @@ test("analysis complete + strengths present renders the real, evidence-derived s
 // --- 2: analysis complete + strengths empty -> NO_SECURE_STRENGTHS_NOTE, never ANALYSIS_PENDING_NOTE ---
 
 test("analysis complete + strengths empty renders NO_SECURE_STRENGTHS_NOTE", () => {
-  const section2 = PARENT_PAGE.split('mb-1">Diagnostic interpretation</p>')[1]?.split("</InfoCard>")[0] ?? "";
+  // Increment 3 restyled this from InfoCard to a plain Angel-token div and
+  // renamed the heading from "Diagnostic interpretation" to "What this
+  // shows" -- same section, same three-way gate.
+  const section2 = PARENT_PAGE.split('mb-1">What this shows</p>')[1]?.split("</div>")[0] ?? "";
   assert.match(section2, /\{NO_SECURE_STRENGTHS_NOTE\}/);
 });
 
 test("the empty-strengths branch is reached only when analysisState IS complete -- it can never be confused with the pending-analysis branch", () => {
-  const section2 = PARENT_PAGE.split('mb-1">Diagnostic interpretation</p>')[1]?.split("</InfoCard>")[0] ?? "";
+  const section2 = PARENT_PAGE.split('mb-1">What this shows</p>')[1]?.split("</div>")[0] ?? "";
   // Exactly one ternary chain, three outcomes: pending / real strengths / no-secure-strengths.
   const analysisNoteCount = (section2.match(/\{ANALYSIS_PENDING_NOTE\}/g) ?? []).length;
   const noSecureCount = (section2.match(/\{NO_SECURE_STRENGTHS_NOTE\}/g) ?? []).length;
@@ -58,7 +61,11 @@ test("ANALYSIS_PENDING_NOTE in the parent report is gated on report.analysisStat
 // --- 3: analysis incomplete -> pending-analysis behaviour remains correct ---
 
 test("analysis incomplete (analysisState !== 'complete') still renders ANALYSIS_PENDING_NOTE regardless of strengths -- no regression to the pre-existing, correct pending behaviour", () => {
-  assert.match(PARENT_PAGE, /report\.analysisState !== "complete" \? \(\s*\n(?:\s*\/\/.*\n)*\s*<p className="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">\{ANALYSIS_PENDING_NOTE\}<\/p>/);
+  // Increment 3 restyled gray-500/gray-400 Tailwind classes to the Angel
+  // Brand Foundation tokens -- same structure, same note. Comment lines use
+  // \r?\n (not a bare \n) since JS regex `.` excludes \r as a line
+  // terminator, and a Windows checkout renders source files with CRLF.
+  assert.match(PARENT_PAGE, /report\.analysisState !== "complete" \? \(\s*\r?\n(?:\s*\/\/.*\r?\n)*\s*<p className="text-sm text-\[var\(--angel-muted\)\] leading-relaxed">\{ANALYSIS_PENDING_NOTE\}<\/p>/);
 });
 
 // --- 4: no fabricated strength -----------------------------------------
