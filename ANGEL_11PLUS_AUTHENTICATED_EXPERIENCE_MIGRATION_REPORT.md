@@ -751,3 +751,69 @@ are genuinely absent, across all three files.
 
 **Not declaring Increment 2 GO.** The Founder makes the final visual acceptance decision from the real
 production Practice hub, per the governing instruction's own explicit stop condition.
+
+---
+
+## Practise Hub Final Human-Design Refinement (2026-09-23, same day)
+
+Founder acceptance of the pathway correction above: Plantest2 correctly receives a CSSE-focused
+Practice experience (Reading Comprehension / Mathematics / Continuous Writing). Pathway routing was not
+reopened or redesigned this pass — one final bounded human-design and learner-language refinement to
+`app/learning-intelligence/practice/page.tsx` only.
+
+**1. Internal system language removed**: the "Vocabulary: not available here" block — which exposed
+"this skills structure", inability to "connect to the learner profile", and what can/cannot appear on
+"this dashboard" directly to a child — removed entirely, no replacement unavailable/coming-soon card.
+Vocabulary practice's own existing route (`/mocks/adaptive/vocabulary`, already linked from
+`app/reasoning/page.tsx`) is untouched.
+
+**2. Introductory copy simplified**: `"Each activity you complete updates your Skills Profile, Evidence
+Profile, Readiness and Recommendations"` (internal data-model terminology) replaced with `"Practise the
+skills you need for your preparation. Angel 11+ uses your work to understand what you're doing well and
+what to focus on next."` — no internal profile/table/engine name anywhere in the sentence.
+
+**3. AI/SaaS visual fingerprints removed**: the repeated `icon tile → title → description → Start
+button` pattern across the three subject rows is gone. Confirmed by inspection that the decorative icon
+(`BookOpen`/`Calculator`/`PenLine`) served no accessibility or navigation purpose — each one only
+duplicated its own row's title text — so it was removed rather than replaced. The filled `bg-blue-600`
+pill became a plain "Start →" text-plus-arrow affordance in Angel blue. No replacement icon, card, or
+additional pill was introduced; typography, spacing and the existing `divide-y` divider carry the row
+hierarchy.
+
+**4. Governing design principle recorded**: `ANGEL_11PLUS_PRODUCT_DESIGN_STANDARD_V1.md` now has a
+dedicated, product-wide section — "Governing principle: no AI-interface visual fingerprint" — stating
+that components/icons/colour blocks/pills/cards are used only when they improve comprehension or
+navigation, and that visual hierarchy should be solved with typography/spacing/grouping/dividers/
+composition before another card, tile, pill or icon container is reached for. This applies to every
+Angel 11+ surface going forward, not only Practise.
+
+**5. Not changed**: pathway logic, Practice recommendation logic, the question runner, question
+eligibility, educational feedback, the Educational Intelligence Engine, mastery, Today, Learn, Mock,
+Progress, Results, Parent Dashboard, Parent/Learner PIN architecture, migrations 260–263 — confirmed by
+`git diff --stat` showing only `app/learning-intelligence/practice/page.tsx` and
+`ANGEL_11PLUS_PRODUCT_DESIGN_STANDARD_V1.md` changed.
+
+**6. Recorded technical debt, not fixed**: **Practice Pathway Resolution Hardening** — Practice hub
+routing (both the nav's own branch and this page's own pathway-aware content, added in the prior
+Increment 2 Final Visual Closure pass) depends on per-active-learner `localStorage` pathway state with
+no server-side fallback. Founder production testing confirms correct CSSE routing today, so this is not
+a current blocker — recorded for later bounded assessment of whether a multi-learner household could
+transiently receive the wrong Practice environment while browser pathway state is unresolved or stale.
+Not turned into an engineering increment this pass, per explicit instruction.
+
+**7. Verification**: exactly three CSSE Practice choices remain (Reading Comprehension, Mathematics,
+Continuous Writing — `lib/learningEngine/practiceContent.ts`'s own `PRACTICE_AREAS`, unchanged), all
+three existing routes unchanged; no unavailable-Vocabulary architecture message; no internal profile/
+engine terminology found in the deployed bundle; no new decorative icon/card/pill system. Clean-checkout
+gate in an isolated worktree: typecheck 0 errors; tests 4,796/4,797 pass (1 pre-existing skip,
+unchanged); migration-sql-guard PASS 259 files; copy-guard 51 pre-existing violations (unchanged, no
+regression this pass); eslint 114 problems (unchanged baseline); genuine `next build` PASS. Question
+runner, Today, Learn and Mock confirmed unchanged by the same `git diff --stat` check as Section 5.
+
+**Commit**: `186f53a`. Pushed to `origin/main`. Vercel auto-deployed
+(`angel-11plus-czztpvobp-abs365s-projects.vercel.app`, Ready), confirmed aliased to
+`https://www.angel11plus.com`. Fetched the live deployed JS chunk for `/learning-intelligence/practice`
+directly and confirmed byte-for-byte: the new introductory copy is genuinely present; both
+`"Vocabulary: not available here"` and `"Skills Profile, Evidence Profile"` are genuinely absent.
+
+**Not declaring GO.** The Founder performs final production visual acceptance.

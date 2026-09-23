@@ -1118,3 +1118,31 @@ rejected the Practice hub (`app/reasoning/page.tsx`). Increment 2 GO still not d
   gl` JS chunks directly — new hierarchy headings and honest copy genuinely present, old badges/internal
   language genuinely absent, across all three.
 - Founder's required next step: final visual acceptance decision from the real production Practice hub.
+
+**2026-09-23 (same day) — Practise Hub Final Human-Design Refinement. Commit `186f53a`, pushed,
+deployed, confirmed live. Founder accepted the Increment 2 pathway correction (Plantest2 correctly gets
+CSSE-focused Reading Comprehension/Mathematics/Continuous Writing); pathway routing not reopened. GO
+still not declared:**
+
+- Removed the "Vocabulary: not available here" block (exposed internal architecture language — "this
+  skills structure", "connect to the learner profile", "this dashboard") entirely, no replacement card.
+- Simplified intro copy: "updates your Skills Profile, Evidence Profile, Readiness and Recommendations"
+  → "Practise the skills you need for your preparation. Angel 11+ uses your work to understand what
+  you're doing well and what to focus on next."
+- Removed decorative per-row icon tiles (no accessibility/navigation need found) from the three subject
+  rows; filled "Start" pill became a plain "Start →" text-plus-arrow affordance. Typography/spacing/
+  divider carry hierarchy now — no replacement icon, card, or additional pill.
+- Added a new governing, product-wide section to `ANGEL_11PLUS_PRODUCT_DESIGN_STANDARD_V1.md`: "no
+  AI-interface visual fingerprint" — components/icons/pills/cards only when they aid comprehension or
+  navigation; solve hierarchy with typography/spacing/composition first.
+- **Recorded technical debt, not fixed**: Practice pathway resolution depends on per-active-learner
+  localStorage with no server fallback (both nav routing and this page's own pathway-aware content).
+  Founder testing confirms correct CSSE routing today — not a current blocker, but flagged for later
+  bounded assessment of multi-learner-household transient-staleness risk.
+- Non-regression confirmed: pathway logic, question runner, Today, Learn, Mock, Progress, Results,
+  Parent Dashboard, PIN architecture, migrations 260–263 all untouched (diff shows only 2 files).
+- Clean-checkout gate: typecheck 0, tests 4,796/4,797 (unchanged), migration-sql-guard PASS, copy-guard/
+  eslint unchanged from baseline, genuine `next build` PASS.
+- Production evidence: fetched the live `/learning-intelligence/practice` JS chunk directly — new copy
+  genuinely present, both old internal-language strings genuinely absent.
+- Founder's required next step: final production visual acceptance.
