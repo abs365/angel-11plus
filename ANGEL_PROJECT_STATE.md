@@ -1059,3 +1059,28 @@ direction preserved, not redesigned). Founder visual GO not declared — real sc
   sitting engine and confirmed new copy/markup genuinely present, old generic classes genuinely absent.
 - Founder's required next step: real device visual acceptance, and a separate decision on the legacy
   GL/CEM/ISEB Mock mid-sitting-feedback defect above.
+
+**2026-09-23 (same day) — Increment 2 Closure: Bounded Mock Assessment-Integrity Correction. Commit
+`3312f3c`, pushed, deployed, confirmed live. Fixes the mid-sitting feedback leak Increment 2 reported
+(not fixed) in the legacy GL/CEM/ISEB Mock. Increment 2 GO still not declared:**
+
+- Root cause: `app/mocks/[pathway]/page.tsx`'s answered-state render showed "Correct!"/"Incorrect.
+  Answer: {answer}" plus the full explanation immediately after each answer, while that section's own
+  timer was still counting down — violates "Practice teaches, Mock measures."
+- Confirmed shared runtime, not inferred: the whole file has exactly one pathway-conditional branch (an
+  unrelated results-tagging line) — GL/CEM/ISEB genuinely share one implementation of the leaking code
+  path, verified structurally and by test.
+- Fix: the confirmation is now neutral ("Answer recorded." + Next/End Section), no colour/icon/answer/
+  explanation. Correctness is still computed and recorded into `sectionAnswers` exactly as before — only
+  the render branch changed, never scoring. Dead `wasCorrect` display state removed with it.
+- Post-assessment (between-section/results) screens inspected first: only ever showed aggregate section/
+  overall percentages, never per-question correctness — unaffected, not changed.
+- Non-regression confirmed: Practice's own real feedback untouched; the real CSSE Mock engine
+  (`mock-exam/page.tsx`) not touched at all (diff shows only the one file + new test).
+- Tests: 13 new structural tests (`tests/app/mockLegacyAssessmentIntegrityCorrection.test.ts`) proving
+  the leak is gone, recording/navigation/scoring still work, and Practice/CSSE Mock are unaffected.
+- Clean-checkout gate: typecheck 0, tests 4,796/4,797 (unchanged baseline + 13 new, all pass),
+  migration-sql-guard PASS, copy-guard/eslint unchanged from baseline, genuine `next build` PASS.
+- Production evidence: fetched the live deployed `/mocks/gl` JS chunk directly — "Answer recorded." is
+  genuinely present, "Incorrect. Answer:" and "Correct!" are genuinely absent.
+- Founder's required next step: final production visual and behavioural acceptance.

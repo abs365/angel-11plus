@@ -569,3 +569,93 @@ instruction's own "smallest safe correction" discipline for an in-passing findin
 **Not declaring visual GO or Increment 2 GO.** Per the governing instruction's own explicit stop
 condition, the Founder performs final visual/UX acceptance from the real production learner experience.
 Stopping here: Progress, Results and Parent Dashboard were not started.
+
+---
+
+## Increment 2 Closure — Bounded Mock Assessment-Integrity Correction (2026-09-23, same day)
+
+Founder response to Increment 2's own Section 11 finding: the legacy GL/CEM/ISEB Mock's mid-sitting
+feedback leak, reported but not fixed above, must be corrected before Increment 2 can be considered for
+GO. This closure is a bounded, single-defect fix — not a further Mock redesign.
+
+**1. Confirmed root cause**: `app/mocks/[pathway]/page.tsx`'s `answered`-state render (the block shown
+immediately after `submitAnswer()` sets `answered = true`, while that section's own countdown timer is
+still running) rendered a green/red banner containing `"Correct!"` or `` `Incorrect. Answer: ${currentQuestion.answer}` ``
+plus the question's full `currentQuestion.explanation` text — genuine, live, in-sitting correctness/
+answer/explanation exposure, not a cosmetic issue.
+
+**2. Exact pathways affected**: GL, CEM and ISEB — verified individually, not inferred from one.
+`MOCK_CONFIGS` defines `gl`/`cem`/`iseb` (plus a retained, unreachable `csse` entry) as pure data; the
+entire file has exactly one pathway-conditional branch in total — the results-save effect's
+`pathwayId === "csse"` results-tagging line, structurally unrelated to answer/feedback rendering
+(confirmed by direct read and by a structural test asserting this). The live section-taking view itself
+has zero pathway branching, so GL, CEM and ISEB share one single runtime implementation of the exact
+code path that leaked — this is not one pathway standing in as proof for the others.
+
+**3. Exact live feedback previously exposed**, immediately after each answer, while the section timer
+was still counting down: (a) a green "Correct!" or red "Incorrect. Answer: {the correct answer text}"
+label; (b) the question's full stored explanation text; (c) a Next-button colour (green vs. grey) that
+was itself a secondary correctness signal.
+
+**4. Exact correction made**: the `answered`-state block now renders one neutral confirmation —
+"Answer recorded." plus a plain Next Question/End Section control (using the pathway's own header
+colour, not a correctness-derived colour) — with no icon, no colour keyed to correctness, no revealed
+answer, and no explanation. This is a real code-path change, not a CSS/visibility hide: the JSX that
+previously read `currentQuestion.answer`/`currentQuestion.explanation`/`wasCorrect` was removed
+entirely, together with the now-dead `wasCorrect` display-only state and its `CheckCircle`/`XCircle`
+icon imports (unused after the fix, removed to keep the eslint/lint baseline unchanged). Correctness
+itself is still computed (`checkAnswer(currentQuestion, input)`) and still pushed into `sectionAnswers`
+exactly as before — only the render branch changed, never the scoring signal.
+
+**5. Same runtime confirmation**: yes — proven in Section 2 above and asserted by a structural test
+(`tests/app/mockLegacyAssessmentIntegrityCorrection.test.ts`) that counts every pathway-conditional
+branch in the file and confirms the one that exists is the unrelated results-tagging line.
+
+**6. Post-assessment behaviour found, and whether it changed**: inspected before making any change.
+The between-section screen (`mode === "between"`, shown only once that section's own timer has already
+fully elapsed or the last question in it has been answered) and the final results screen
+(`mode === "results"`) both show only aggregate, already-legitimately-collected data —
+`sectionResults[].score`/`.correct`/`.total` (a percentage and a correct-out-of-total count per
+section) and the overall percentage/grade band. Neither screen has ever shown, and does not now show,
+any per-question correctness or explanation. **Not changed** — no change was necessary there, and none
+was made; this closure did not add, remove, or alter any post-assessment copy, score, or claim.
+
+**7. Practice non-regression result**: confirmed unaffected. `app/learning-intelligence/practice/
+[area]/page.tsx` was not touched by this closure; its real per-question feedback (`SubmitOrNext`'s
+"Correct" / "You said: Correct" / "Not quite" labels, driven by `resolveOutcomeLabel()`) is byte-for-
+byte unchanged and asserted present by the new test — Practice still teaches, exactly as before.
+
+**8. CSSE Mock non-regression result**: confirmed unaffected. `app/learning-intelligence/mock-exam/
+page.tsx` (the real, governed CSSE engine) was not touched — `git diff --stat` on this commit shows only
+`app/mocks/[pathway]/page.tsx` and the new test file changed. Its own, already-correct sealed behaviour
+("Answers aren't marked as you go", no in-sitting correctness reveal, `submitMockAnswer` fire-and-forget
+with no correctness returned) is confirmed still present, asserted by the new test.
+
+**9. Tests/build**: added `tests/app/mockLegacyAssessmentIntegrityCorrection.test.ts` (13 tests, this
+project's established structural source-text convention — no jsdom/RTL in this codebase) proving: the
+shared-runtime claim; no `Correct!`/`Incorrect. Answer:`/`currentQuestion.explanation`/`wasCorrect`/
+`CheckCircle`/`XCircle`/correctness-coloured-banner anywhere in the file; the neutral confirmation
+renders with no correctness word of any kind; `submitAnswer`/`sectionAnswers` (recording) unchanged;
+`nextQuestion`/`startSection`/`nextSection`/`finishSection` (navigation) unchanged; `saveMockResult`/
+`completeLesson`/section-score computation (scoring/completion) unchanged; post-assessment screens show
+only aggregate scores; Practice's own feedback labels present and unchanged; the CSSE Mock engine's own
+sealed-behaviour markers present and unchanged, and untouched by this commit. Clean-checkout gate in an
+isolated worktree: typecheck 0 errors; tests 4,796/4,797 pass (1 pre-existing skip, unchanged baseline
+plus the 13 new tests, all passing); migration-sql-guard PASS 259 files; copy-guard 51 pre-existing
+violations (unchanged); eslint 114 problems (83 errors/31 warnings, unchanged — confirms the removed
+`CheckCircle`/`XCircle` imports and `wasCorrect` state left no dangling unused-variable errors); genuine
+`next build` PASS, including `/mocks/[pathway]`.
+
+**10. Commit**: `3312f3c` — `fix(mock): close live-feedback leak in legacy GL/CEM/ISEB timed Mock`.
+Pushed to `origin/main`.
+
+**11. Deployment verification**: Vercel auto-deployed
+(`angel-11plus-pr9shw9su-abs365s-projects.vercel.app`, Ready), confirmed aliased to
+`https://www.angel11plus.com`. Fetched the live deployed JS chunk for `/mocks/gl` directly and confirmed
+byte-for-byte: `"Answer recorded."` is genuinely present, and both `"Incorrect. Answer:"` and
+`"Correct!"` are genuinely absent (0 matches). Since GL/CEM/ISEB share one runtime implementation
+(Section 2/5), this one fetch is direct production evidence for all three pathways, not an inference
+from GL alone.
+
+**Not declaring Increment 2 GO.** The Founder performs final production visual and behavioural
+acceptance, per the governing instruction's own explicit stop condition.
