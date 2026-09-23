@@ -18,15 +18,15 @@ export function ReadingPassage({ title, text }: { title: string | null; text: st
   const headingId = title ? `${title.replace(/\s+/g, "-").toLowerCase()}-passage-heading` : undefined;
   return (
     <section
-      className="my-4 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/40 p-4"
+      className="my-4 rounded-lg border border-[var(--angel-border)] bg-[var(--angel-sky)] p-4 md:p-5"
       aria-labelledby={headingId}
     >
       {title && (
-        <h2 id={headingId} className="text-sm font-bold text-gray-900 dark:text-gray-100 mb-2">
+        <h2 id={headingId} className="text-[var(--angel-navy)] font-bold text-sm md:text-base mb-2">
           {title}
         </h2>
       )}
-      <p className="text-sm text-gray-700 dark:text-gray-300 whitespace-pre-line leading-relaxed">{text}</p>
+      <p className="text-sm md:text-base text-[var(--angel-ink)] whitespace-pre-line leading-relaxed">{text}</p>
     </section>
   );
 }

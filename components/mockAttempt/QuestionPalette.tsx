@@ -26,13 +26,13 @@ export function QuestionPalette({
           aria-current={entry.current || undefined}
           aria-label={`Question ${entry.index + 1}${entry.answered ? ", answered" : ", not answered yet"}${entry.flagged ? ", flagged for review" : ""}`}
           className={cn(
-            "relative h-10 rounded-lg text-xs font-semibold flex items-center justify-center border transition-colors",
+            "relative h-10 rounded-lg text-xs font-semibold flex items-center justify-center border transition-colors motion-reduce:transition-none",
             entry.current
-              ? "border-blue-600 ring-2 ring-blue-200 dark:ring-blue-900"
-              : "border-gray-200 dark:border-gray-700",
+              ? "border-[var(--angel-blue)] ring-2 ring-blue-200 dark:ring-blue-900"
+              : "border-[var(--angel-border)]",
             entry.answered
-              ? "bg-gray-800 text-white dark:bg-gray-200 dark:text-gray-900"
-              : "bg-white text-gray-600 dark:bg-gray-900 dark:text-gray-400"
+              ? "bg-[var(--angel-navy)] text-white"
+              : "bg-[var(--angel-paper)] text-[var(--angel-muted)]"
           )}
         >
           {entry.index + 1}

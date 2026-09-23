@@ -83,12 +83,11 @@ export default function ParentMockReportPage() {
           <>
             <div>
               <h1 className="text-gray-900 dark:text-gray-100 font-bold text-2xl mb-1">Mock result</h1>
-              <p className="text-xs text-gray-400 dark:text-gray-500">1. Result</p>
               {report.overall && <p className="text-sm text-gray-700 dark:text-gray-300 mt-2 leading-relaxed">{scoreSummarySentence(report.overall)}</p>}
             </div>
 
             <InfoCard>
-              <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1">2. Diagnostic interpretation</p>
+              <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1">Diagnostic interpretation</p>
               {report.analysisState !== "complete" ? (
                 // Analysis genuinely hasn't run yet -- the only case this
                 // note may ever describe. Matches the learner report's own
@@ -109,7 +108,7 @@ export default function ParentMockReportPage() {
             </InfoCard>
 
             <InfoCard>
-              <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1">3. Evidence</p>
+              <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1">Evidence</p>
               <p className="text-xs text-gray-500 dark:text-gray-400 leading-relaxed">{OFFICIAL_SCORE_DISCLAIMER}</p>
               <p className="text-xs text-gray-500 dark:text-gray-400 leading-relaxed mt-2">
                 This one Mock is a single data point. It is combined with your child&apos;s wider Practice evidence over time, never
@@ -119,13 +118,13 @@ export default function ParentMockReportPage() {
 
             {report.weaknesses && report.weaknesses.length > 0 && (
               <InfoCard>
-                <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1">4. Preparation priority</p>
+                <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1">Preparation priority</p>
                 <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed">{priorSentence(report.weaknesses)}</p>
               </InfoCard>
             )}
 
             <InfoCard>
-              <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1">6. Exam context</p>
+              <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1">Exam context</p>
               <p className="text-xs text-gray-500 dark:text-gray-400 leading-relaxed">
                 Official CSSE 11+ test date: {OFFICIAL_CSSE_TEST_DATE}.
               </p>

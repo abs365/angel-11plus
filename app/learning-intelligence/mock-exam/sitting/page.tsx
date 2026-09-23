@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { CheckCircle2, Circle, PlayCircle } from "lucide-react";
 import PageLayout from "@/components/PageLayout";
-import { InfoCard } from "@/components/ui/Card";
 import { StatusIndicator, type StatusTone } from "@/components/ui/Progress";
 import { ButtonLink } from "@/components/ui/Button";
 import { getSupabaseClient } from "@/lib/supabase";
@@ -55,7 +54,7 @@ function PaperCard({ info, paperState, attemptId }: { info: PaperInfo; paperStat
   const startHref = `/learning-intelligence/mock-exam?type=full_mock&subject=${info.subject}`;
   const reportHref = attemptId ? `/learning-intelligence/mock-report/${attemptId}` : undefined;
   return (
-    <div className="rounded-2xl border border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-900 p-5">
+    <div className="rounded-lg border border-[var(--angel-border)] bg-[var(--angel-paper)] p-5">
       <div className="flex items-start justify-between mb-2">
         <div className="flex items-center gap-2.5">
           {paperState === "submitted" ? (
@@ -63,19 +62,19 @@ function PaperCard({ info, paperState, attemptId }: { info: PaperInfo; paperStat
           ) : paperState === "in_progress" ? (
             <PlayCircle size={18} className="text-amber-600 shrink-0" />
           ) : (
-            <Circle size={18} className="text-gray-300 dark:text-gray-600 shrink-0" />
+            <Circle size={18} className="text-[var(--angel-muted)] shrink-0" />
           )}
-          <h3 className="text-base font-bold text-gray-900 dark:text-gray-100">{info.displayName}</h3>
+          <h3 className="text-base font-bold text-[var(--angel-navy)]">{info.displayName}</h3>
         </div>
         <StatusIndicator tone={status.tone} label={status.label} />
       </div>
       {!info.available ? (
-        <p className="text-xs text-gray-500 dark:text-gray-400 leading-relaxed">
+        <p className="text-xs text-[var(--angel-muted)] leading-relaxed">
           This paper is not available yet. Angel does not yet have a complete, reviewed set of exam questions to draw from for it.
         </p>
       ) : paperState === "submitted" ? (
         <div className="flex items-center justify-between">
-          <span className="text-xs text-gray-400 dark:text-gray-500">This paper has been submitted.</span>
+          <span className="text-xs text-[var(--angel-muted)]">This paper has been submitted.</span>
           {reportHref && (
             <ButtonLink href={reportHref} variant="outline" size="sm">
               View report
@@ -174,53 +173,53 @@ export default function CompleteCsseMockSittingPage() {
 
   return (
     <PageLayout breadcrumbs={[{ label: "Today", href: "/dashboard" }, { label: "Mock Centre", href: "/mocks" }, { label: "Complete CSSE Mock" }]}>
-      <div className="max-w-2xl mx-auto px-4 pb-16 pt-6 md:pt-8 space-y-6">
-        <div className="mb-1">
-          <h1 className="text-gray-900 dark:text-gray-100 font-bold text-2xl mb-1">Complete CSSE Mock</h1>
-          <p className="text-gray-400 dark:text-gray-500 text-sm">
+      <div className="max-w-3xl mx-auto px-4 pb-16 pt-6 md:pt-8 space-y-8">
+        <div>
+          <h1 className="text-[var(--angel-navy)] font-bold text-3xl md:text-4xl leading-tight mb-2">Complete CSSE Mock</h1>
+          <p className="text-[var(--angel-muted)] text-sm md:text-base max-w-xl">
             English and Mathematics, joined into one complete CSSE sitting. Each paper is its own separate, timed attempt — you can sit them back to back, or come back later for the second one.
           </p>
         </div>
 
-        <div className="bg-amber-50 dark:bg-amber-950 border border-amber-100 dark:border-amber-900 rounded-xl px-4 py-3">
+        <div className="bg-amber-50 dark:bg-amber-950 border border-amber-100 dark:border-amber-900 rounded-lg px-4 py-3">
           <p className="text-xs text-amber-700 dark:text-amber-300 leading-relaxed">
             This is not an official CSSE score, and Angel does not combine English and Mathematics into one single mark — no current CSSE source confirms how the two are weighted together. Each paper&apos;s own result stays visible separately.
           </p>
         </div>
 
         {loading ? (
-          <p className="text-sm text-gray-400 dark:text-gray-500">Loading your sitting…</p>
+          <p className="text-sm text-[var(--angel-muted)]">Loading your sitting…</p>
         ) : errorMessage ? (
-          <InfoCard className="text-sm text-red-600 dark:text-red-400">{errorMessage}</InfoCard>
+          <div className="text-sm text-red-600 dark:text-red-400 bg-[var(--angel-paper)] border border-[var(--angel-border)] rounded-lg p-5">{errorMessage}</div>
         ) : (
           <>
             {transitionMessage && (
-              <InfoCard className="flex items-start gap-3">
-                <PlayCircle size={18} className="text-blue-500 mt-0.5 shrink-0" />
-                <p className="text-sm font-semibold text-gray-800 dark:text-gray-200">{transitionMessage}</p>
-              </InfoCard>
+              <div className="flex items-start gap-3 bg-[var(--angel-paper)] border border-[var(--angel-border)] rounded-lg p-5">
+                <PlayCircle size={18} className="text-[var(--angel-blue)] mt-0.5 shrink-0" />
+                <p className="text-sm font-semibold text-[var(--angel-navy)]">{transitionMessage}</p>
+              </div>
             )}
 
             {sitting.sittingComplete && (
-              <InfoCard className="flex items-start gap-3">
+              <div className="flex items-start gap-3 bg-[var(--angel-paper)] border border-[var(--angel-border)] rounded-lg p-5">
                 <CheckCircle2 size={18} className="text-green-600 mt-0.5 shrink-0" />
                 <div className="min-w-0 flex-1">
-                  <p className="text-sm font-bold text-gray-900 dark:text-gray-100 mb-1">Sitting complete</p>
-                  <p className="text-xs text-gray-500 dark:text-gray-400 leading-relaxed mb-2">
+                  <p className="text-sm font-bold text-[var(--angel-navy)] mb-1">Sitting complete</p>
+                  <p className="text-xs text-[var(--angel-muted)] leading-relaxed mb-2">
                     Both papers have been submitted. Some parts of your English result may still be under review — the rest of your result stays available while that happens.
                   </p>
                   <Link
                     href={`/learning-intelligence/mock-exam/sitting/results?cycleId=${encodeURIComponent(sitting.cycleId)}`}
-                    className="inline-flex items-center gap-1 text-xs font-semibold text-blue-600 dark:text-blue-400"
+                    className="inline-flex items-center gap-1 text-xs font-semibold text-[var(--angel-blue)] hover:underline"
                   >
                     View sitting result →
                   </Link>
                 </div>
-              </InfoCard>
+              </div>
             )}
 
             <section className="space-y-3">
-              <h2 className="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">Your two papers</h2>
+              <h2 className="text-xs font-bold text-[var(--angel-muted)] uppercase tracking-widest">Your two papers</h2>
               <PaperCard info={papers.english} paperState={sitting.english.paperState} attemptId={sitting.english.attemptId} />
               <PaperCard info={papers.mathematics} paperState={sitting.mathematics.paperState} attemptId={sitting.mathematics.attemptId} />
             </section>

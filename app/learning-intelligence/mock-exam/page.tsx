@@ -4,7 +4,6 @@ import { use, useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { Flag, RotateCcw } from "lucide-react";
 import PageLayout from "@/components/PageLayout";
-import { InfoCard } from "@/components/ui/Card";
 import Button, { ButtonLink } from "@/components/ui/Button";
 import { getSupabaseClient } from "@/lib/supabase";
 import { ensureProfile } from "@/lib/supabaseProgress";
@@ -721,8 +720,8 @@ export default function MockExamPage({
                 sitting. Programme Completion Increment 015 — name now
                 comes from the real active form's own metadata (migration
                 214), not a hardcoded literal. */}
-            <h1 className="text-gray-900 dark:text-gray-100 font-bold text-2xl">{mockDisplayName}</h1>
-            <p className="text-gray-400 dark:text-gray-500 text-sm mt-1">
+            <h1 className="text-[var(--angel-navy)] font-bold text-3xl md:text-4xl leading-tight">{mockDisplayName}</h1>
+            <p className="text-[var(--angel-muted)] text-sm md:text-base mt-2 max-w-xl">
               {introSubtitleFor(attemptType, subject)}
             </p>
             {/* Programme Increment 019, Part 6 — Mock Access Policy. Never
@@ -732,12 +731,12 @@ export default function MockExamPage({
                 action right now. The Mock itself is always startable
                 below regardless of what this says. */}
             {mockAccess && mockAccess.availabilityLevel !== "educationally_recommended" && (
-              <p className="text-amber-700 dark:text-amber-400 text-xs mt-2 leading-relaxed">{mockAccess.reasons[0]}</p>
+              <p className="text-amber-700 text-xs mt-2 leading-relaxed">{mockAccess.reasons[0]}</p>
             )}
 
-            <InfoCard className="mt-5">
-              <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">Before you begin</p>
-              <ul className="mt-2 space-y-1.5 text-sm text-gray-600 dark:text-gray-400 leading-relaxed list-disc list-inside">
+            <div className="mt-6 bg-[var(--angel-paper)] border border-[var(--angel-border)] rounded-lg p-6 md:p-8">
+              <p className="text-sm font-semibold text-[var(--angel-navy)]">Before you begin</p>
+              <ul className="mt-3 space-y-1.5 text-sm text-[var(--angel-ink)] leading-relaxed list-disc list-inside">
                 <li>You&apos;ll need a pen or pencil nearby, just like the real test day: no calculator, no notes.</li>
                 <li>Find a quiet space where you won&apos;t be interrupted for the timer&apos;s duration.</li>
                 <li>Once the timer starts, this is the real, timed assessment. Answers aren&apos;t marked as you go.</li>
@@ -747,63 +746,63 @@ export default function MockExamPage({
               <Button onClick={handleBegin} className="mt-5">
                 I&apos;m ready to begin
               </Button>
-            </InfoCard>
+            </div>
 
             {previousAttempts.length > 0 && (
-              <InfoCard className="mt-4">
-                <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">Your previous Mock</p>
+              <div className="mt-4 bg-[var(--angel-paper)] border border-[var(--angel-border)] rounded-lg p-6">
+                <p className="text-sm font-semibold text-[var(--angel-navy)]">Your previous Mock</p>
                 <ul className="mt-2 space-y-1.5">
                   {previousAttempts.map((attempt) => (
                     <li key={attempt.attemptId}>
                       <Link
                         href={`/learning-intelligence/mock-report/${attempt.attemptId}`}
-                        className="text-xs font-semibold text-blue-600 dark:text-blue-400"
+                        className="text-xs font-semibold text-[var(--angel-blue)] hover:underline"
                       >
                         Check your Mock report from {new Date(attempt.submittedAt).toLocaleDateString()} →
                       </Link>
                     </li>
                   ))}
                 </ul>
-              </InfoCard>
+              </div>
             )}
           </div>
         )}
 
         {(phase === "checking" || phase === "starting") && (
-          <p className="text-sm text-gray-400 dark:text-gray-500 mt-6" aria-live="polite">
+          <p className="text-sm text-[var(--angel-muted)] mt-6" aria-live="polite">
             {phase === "checking" ? "Checking for an available mock…" : "Preparing your assessment…"}
           </p>
         )}
 
         {phase === "unavailable" && (
-          <InfoCard className="mt-6 text-center">
-            <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">No mock is currently available</p>
-            <p className="text-xs text-gray-400 dark:text-gray-500 mt-2 leading-relaxed">
+          <div className="mt-6 text-center bg-[var(--angel-paper)] border border-[var(--angel-border)] rounded-lg p-6">
+            <p className="text-sm font-semibold text-[var(--angel-navy)]">No mock is currently available</p>
+            <p className="text-xs text-[var(--angel-muted)] mt-2 leading-relaxed">
               Angel would rather tell you that plainly than run a mock from content that hasn&apos;t been through full
               review yet. Practice is unaffected, since it uses a wider, evidence-tagged content set.
             </p>
-            <Link href="/learning-intelligence" className="inline-block mt-4 text-xs font-semibold text-blue-600 dark:text-blue-400">
+            <Link href="/learning-intelligence" className="inline-block mt-4 text-xs font-semibold text-[var(--angel-blue)] hover:underline">
               Back to dashboard
             </Link>
-          </InfoCard>
+          </div>
         )}
 
         {phase === "error" && (
-          <InfoCard className="mt-6 text-center">
-            <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">We couldn&apos;t continue this assessment</p>
-            <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">{errorMessage}</p>
+          <div className="mt-6 text-center bg-[var(--angel-paper)] border border-[var(--angel-border)] rounded-lg p-6">
+            <p className="text-sm font-semibold text-[var(--angel-navy)]">We couldn&apos;t continue this assessment</p>
+            <p className="text-xs text-[var(--angel-muted)] mt-1">{errorMessage}</p>
             <div className="flex items-center justify-center gap-4 mt-4">
               <button
                 onClick={() => setPhase("intro")}
-                className="min-h-[44px] inline-flex items-center gap-1 text-xs font-semibold text-blue-600 dark:text-blue-400 px-2"
+                className="min-h-[44px] inline-flex items-center gap-1 text-xs font-semibold text-[var(--angel-blue)] px-2"
               >
                 <RotateCcw size={14} /> Start over
               </button>
-              <Link href="/learning-intelligence" className="min-h-[44px] inline-flex items-center text-xs font-semibold text-gray-500 dark:text-gray-400 px-2">
+              <Link href="/learning-intelligence" className="min-h-[44px] inline-flex items-center text-xs font-semibold text-[var(--angel-muted)] px-2">
                 Back to dashboard
               </Link>
             </div>
-          </InfoCard>
+          </div>
         )}
 
         {phase === "in-progress" && (
@@ -814,21 +813,21 @@ export default function MockExamPage({
               return (
                 <>
                   <div className="flex items-center justify-between mb-3">
-                    <p className="text-xs text-gray-400 dark:text-gray-500">
+                    <p className="text-xs text-[var(--angel-muted)]">
                       Question {currentUnitIndex + 1} of {units.length}
                     </p>
                     <ExamTimer remainingSeconds={remainingSeconds ?? 0} />
                   </div>
 
                   {readingPhaseNotice && (
-                    <div className="bg-amber-50 dark:bg-amber-950 border border-amber-100 dark:border-amber-900 rounded-xl px-4 py-3 mb-3">
+                    <div className="bg-amber-50 dark:bg-amber-950 border border-amber-100 dark:border-amber-900 rounded-lg px-4 py-3 mb-3">
                       <p className="text-xs text-amber-700 dark:text-amber-300 leading-relaxed">{readingPhaseNotice}</p>
                     </div>
                   )}
 
-                  <InfoCard>
+                  <div className="bg-[var(--angel-paper)] border border-[var(--angel-border)] rounded-lg p-6 md:p-8">
                     {questionLoading || currentPayloads.length === 0 ? (
-                      <p className="text-sm text-gray-400 dark:text-gray-500" aria-live="polite">Loading question…</p>
+                      <p className="text-sm text-[var(--angel-muted)]" aria-live="polite">Loading question…</p>
                     ) : (
                       <MockQuestionRenderer
                         payloads={currentPayloads}
@@ -837,12 +836,12 @@ export default function MockExamPage({
                       />
                     )}
 
-                    <div className="flex items-center justify-between mt-5 pt-4 border-t border-gray-50 dark:border-gray-800">
+                    <div className="flex items-center justify-between mt-5 pt-4 border-t border-[var(--angel-border)]">
                       <button
                         onClick={handleToggleFlag}
                         disabled={!currentUnit}
                         aria-pressed={currentFlagged}
-                        className="inline-flex items-center gap-1.5 text-xs font-semibold text-gray-500 dark:text-gray-400 disabled:opacity-30"
+                        className="inline-flex items-center gap-1.5 text-xs font-semibold text-[var(--angel-muted)] disabled:opacity-30"
                       >
                         <Flag size={13} className={currentFlagged ? "text-amber-500 fill-amber-500" : ""} />
                         {currentFlagged ? "Flagged for review" : "Flag for review"}
@@ -851,7 +850,7 @@ export default function MockExamPage({
                         <button
                           onClick={() => handleAnswerAndAdvance(previousIndex)}
                           disabled={previousIndex === null}
-                          className="text-xs font-semibold text-gray-500 dark:text-gray-400 disabled:opacity-30 px-2"
+                          className="text-xs font-semibold text-[var(--angel-muted)] disabled:opacity-30 px-2"
                         >
                           Back
                         </button>
@@ -866,7 +865,7 @@ export default function MockExamPage({
                         )}
                       </div>
                     </div>
-                  </InfoCard>
+                  </div>
                 </>
               );
             })()}
@@ -874,10 +873,10 @@ export default function MockExamPage({
             {palette.length > 0 && (
               <div className="mt-5">
                 <div className="flex items-center justify-between mb-2">
-                  <p className="text-xs font-semibold text-gray-500 dark:text-gray-400">Question overview</p>
+                  <p className="text-xs font-semibold text-[var(--angel-muted)]">Question overview</p>
                   <button
                     onClick={() => { void handleAnswerAndAdvance(null); setPhase("reviewing"); }}
-                    className="text-xs font-semibold text-blue-600 dark:text-blue-400"
+                    className="text-xs font-semibold text-[var(--angel-blue)] hover:underline"
                   >
                     Review &amp; submit
                   </button>
@@ -898,23 +897,23 @@ export default function MockExamPage({
         {phase === "reviewing" && (
           <div>
             <div className="flex items-center justify-between mb-3">
-              <h2 className="text-gray-900 dark:text-gray-100 font-bold text-lg">Review before you submit</h2>
+              <h2 className="text-[var(--angel-navy)] font-bold text-lg md:text-xl">Review before you submit</h2>
               <ExamTimer remainingSeconds={remainingSeconds ?? 0} />
             </div>
 
             {unanswered.length > 0 && (
-              <InfoCard className="border-amber-200 dark:border-amber-900 bg-amber-50 dark:bg-amber-950/40 mb-4">
+              <div className="border border-amber-200 dark:border-amber-900 bg-amber-50 dark:bg-amber-950/40 rounded-lg p-5 mb-4">
                 <p className="text-sm font-semibold text-amber-800 dark:text-amber-300">
                   {unanswered.length} question{unanswered.length === 1 ? "" : "s"} not yet answered
                 </p>
-              </InfoCard>
+              </div>
             )}
             {flaggedQuestionIds.size > 0 && (
-              <InfoCard className="mb-4">
-                <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">
+              <div className="bg-[var(--angel-paper)] border border-[var(--angel-border)] rounded-lg p-5 mb-4">
+                <p className="text-sm font-semibold text-[var(--angel-navy)]">
                   {palette.filter((entry) => entry.flagged).length} question{palette.filter((entry) => entry.flagged).length === 1 ? "" : "s"} flagged for review
                 </p>
-              </InfoCard>
+              </div>
             )}
 
             <QuestionPalette
@@ -928,7 +927,7 @@ export default function MockExamPage({
             />
 
             <div className="flex items-center justify-between mt-6">
-              <button onClick={() => setPhase("in-progress")} className="text-xs font-semibold text-gray-500 dark:text-gray-400">
+              <button onClick={() => setPhase("in-progress")} className="text-xs font-semibold text-[var(--angel-muted)]">
                 Back to questions
               </button>
               <Button onClick={handleSubmit} disabled={expired}>
@@ -939,13 +938,13 @@ export default function MockExamPage({
         )}
 
         {phase === "submitting" && (
-          <p className="text-sm text-gray-400 dark:text-gray-500 mt-6" aria-live="polite">Submitting your assessment…</p>
+          <p className="text-sm text-[var(--angel-muted)] mt-6" aria-live="polite">Submitting your assessment…</p>
         )}
 
         {phase === "submitted" && (
-          <InfoCard className="mt-6 text-center">
-            <p className="text-lg font-bold text-gray-900 dark:text-gray-100">Your Mock has been submitted</p>
-            <p className="text-sm text-gray-500 dark:text-gray-400 mt-2 leading-relaxed">
+          <div className="mt-6 text-center bg-[var(--angel-paper)] border border-[var(--angel-border)] rounded-lg p-8">
+            <p className="text-[var(--angel-navy)] font-bold text-xl md:text-2xl">Your Mock has been submitted</p>
+            <p className="text-sm text-[var(--angel-muted)] mt-2 leading-relaxed max-w-sm mx-auto">
               Your assessment is safely recorded. Marking and analysis is a separate step, and your report will be
               ready once that&apos;s complete, not at the same moment as submitting.
             </p>
@@ -961,7 +960,7 @@ export default function MockExamPage({
             <ButtonLink href="/learning-intelligence" className="mt-3" variant="outline">
               Back to dashboard
             </ButtonLink>
-          </InfoCard>
+          </div>
         )}
       </div>
     </PageLayout>
@@ -1000,19 +999,19 @@ function MockQuestionRenderer({
     const imageStimulus = isValidImageStimulus(payload.stimulus) ? payload.stimulus : null;
     return (
       <div>
-        <div className="flex items-center justify-between text-xs text-gray-400 dark:text-gray-500 mb-2">
+        <div className="flex items-center justify-between text-xs text-[var(--angel-muted)] mb-2">
           <span className="uppercase tracking-wide font-semibold">{payload.subject}</span>
           <span>{payload.marks} mark{payload.marks === 1 ? "" : "s"}</span>
         </div>
         {payload.passageText && <ReadingPassage title={payload.passageTitle} text={payload.passageText} />}
-        <p className="text-sm font-semibold text-gray-800 dark:text-gray-200 whitespace-pre-line leading-relaxed">{questionText}</p>
+        <p className="text-[var(--angel-navy)] font-semibold text-base md:text-lg whitespace-pre-line leading-relaxed">{questionText}</p>
         {stimulus && <DataTableStimulus stimulus={stimulus} />}
         {imageStimulus && <ImageStimulus stimulus={imageStimulus} />}
         <textarea
           value={values[0] ?? ""}
           onChange={(e) => onChange(0, e.target.value)}
           rows={4}
-          className="w-full mt-4 text-sm rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-3"
+          className="w-full mt-4 text-sm md:text-base rounded-xl border border-[var(--angel-border)] bg-[var(--angel-paper)] p-3 md:p-4 focus-visible:outline-2 focus-visible:outline-[var(--angel-blue)] focus-visible:outline-offset-2"
           placeholder="Your answer…"
         />
       </div>
@@ -1040,7 +1039,7 @@ function MockQuestionRenderer({
   const sharedStem = resolveGroupSharedStem(payloads.map((payload, i) => ({ question: questionTexts[i], sharedStem: payload.sharedStem })));
   return (
     <div>
-      <div className="flex items-center justify-between text-xs text-gray-400 dark:text-gray-500 mb-2">
+      <div className="flex items-center justify-between text-xs text-[var(--angel-muted)] mb-2">
         <span className="uppercase tracking-wide font-semibold">{payloads[0].subject}</span>
         <span>{totalMarks} mark{totalMarks === 1 ? "" : "s"} total</span>
       </div>
@@ -1052,22 +1051,22 @@ function MockQuestionRenderer({
       {sharedStimulus && <DataTableStimulus stimulus={sharedStimulus} />}
       {sharedImageStimulus && <ImageStimulus stimulus={sharedImageStimulus} />}
       {sharedStem && (
-        <p className="text-sm font-semibold text-gray-800 dark:text-gray-200 whitespace-pre-line leading-relaxed mb-4">{sharedStem.stem}</p>
+        <p className="text-[var(--angel-navy)] font-semibold text-base md:text-lg whitespace-pre-line leading-relaxed mb-4">{sharedStem.stem}</p>
       )}
       <div className="space-y-5">
         {payloads.map((payload, index) => {
           const questionText = sharedStem ? sharedStem.tails[index] : questionTexts[index];
           return (
             <div key={payload.questionId}>
-              <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 mb-1">
+              <p className="text-xs font-semibold text-[var(--angel-muted)] mb-1">
                 {payload.subpartLabel ?? `(${index + 1})`}
               </p>
-              <p className="text-sm font-semibold text-gray-800 dark:text-gray-200 whitespace-pre-line leading-relaxed">{questionText}</p>
+              <p className="text-[var(--angel-navy)] font-semibold text-base md:text-lg whitespace-pre-line leading-relaxed">{questionText}</p>
               <textarea
                 value={values[index] ?? ""}
                 onChange={(e) => onChange(index, e.target.value)}
                 rows={3}
-                className="w-full mt-3 text-sm rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-3"
+                className="w-full mt-3 text-sm md:text-base rounded-xl border border-[var(--angel-border)] bg-[var(--angel-paper)] p-3 md:p-4 focus-visible:outline-2 focus-visible:outline-[var(--angel-blue)] focus-visible:outline-offset-2"
                 placeholder="Your answer…"
               />
             </div>

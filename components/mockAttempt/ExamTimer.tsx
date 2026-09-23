@@ -18,7 +18,7 @@ export function ExamTimer({ remainingSeconds }: { remainingSeconds: number }) {
       ? "text-red-600 dark:text-red-400"
       : urgency === "approaching-end"
         ? "text-amber-600 dark:text-amber-400"
-        : "text-gray-700 dark:text-gray-300";
+        : "text-[var(--angel-navy)]";
 
   return (
     <span

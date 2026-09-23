@@ -5,7 +5,6 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { CheckCircle2, XCircle, ArrowRight, RotateCcw, Loader2 } from "lucide-react";
 import PageLayout from "@/components/PageLayout";
-import { InfoCard } from "@/components/ui/Card";
 import { ProgressBar } from "@/components/ui/Progress";
 import { CompoundShapeDiagramGroup } from "@/components/practice/CompoundShapeDiagram";
 import { getSupabaseClient } from "@/lib/supabase";
@@ -222,12 +221,12 @@ export default function PracticeSessionPage({
     return (
       <PageLayout breadcrumbs={[{ label: "Learning Report", href: "/learning-intelligence" }, { label: "Practice" }]}>
         <div className="max-w-3xl mx-auto px-4 py-6 md:px-8 md:py-8">
-          <InfoCard>
-            <p className="text-sm text-gray-500 dark:text-gray-400">Unknown practice area.</p>
-            <Link href="/learning-intelligence/practice" className="text-xs font-semibold text-blue-600 dark:text-blue-400 mt-2 inline-block">
+          <div className="bg-[var(--angel-paper)] border border-[var(--angel-border)] rounded-lg p-6">
+            <p className="text-sm text-[var(--angel-muted)]">Unknown practice area.</p>
+            <Link href="/learning-intelligence/practice" className="text-xs font-semibold text-[var(--angel-blue)] mt-2 inline-block hover:underline">
               Back to practice
             </Link>
-          </InfoCard>
+          </div>
         </div>
       </PageLayout>
     );
@@ -705,57 +704,57 @@ export default function PracticeSessionPage({
       <div className="max-w-3xl mx-auto px-4 py-6 md:px-8 md:py-8">
         {mode === "intro" && (
           <div>
-            <h1 className="text-gray-900 dark:text-gray-100 font-bold text-2xl">{area.label}</h1>
-            <p className="text-gray-400 dark:text-gray-500 text-sm mt-1">{area.description}</p>
-            <InfoCard className="mt-6">
-              <p className="text-sm text-gray-700 dark:text-gray-300">
+            <h1 className="text-[var(--angel-navy)] font-bold text-3xl md:text-4xl leading-tight">{area.label}</h1>
+            <p className="text-[var(--angel-muted)] text-sm md:text-base mt-2 max-w-xl">{area.description}</p>
+            <div className="mt-8 bg-[var(--angel-paper)] border border-[var(--angel-border)] rounded-lg p-6 md:p-8">
+              <p className="text-[var(--angel-ink)] text-sm md:text-base leading-relaxed">
                 Every question you answer here updates your Skills Profile, Evidence Profile, Readiness and
                 Recommendations on your learning report.
               </p>
               <button
                 onClick={loadAndStart}
-                className="mt-4 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-colors"
+                className="mt-5 inline-flex items-center justify-center rounded-xl px-6 py-3.5 text-base font-semibold bg-blue-600 hover:bg-blue-700 text-white transition-colors"
               >
                 Start practice
               </button>
-            </InfoCard>
+            </div>
           </div>
         )}
 
         {mode === "loading" && (
-          <p className="text-sm text-gray-400 dark:text-gray-500 mt-6" aria-live="polite">Preparing your practice…</p>
+          <p className="text-sm text-[var(--angel-muted)] mt-6" aria-live="polite">Preparing your practice…</p>
         )}
 
         {mode === "error" && (
-          <InfoCard className="mt-6 text-center">
-            <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">We couldn&apos;t prepare this practice session</p>
-            <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">{errorMessage}</p>
+          <div className="mt-6 text-center bg-[var(--angel-paper)] border border-[var(--angel-border)] rounded-lg p-6">
+            <p className="text-sm font-semibold text-[var(--angel-navy)]">We couldn&apos;t prepare this practice session</p>
+            <p className="text-xs text-[var(--angel-muted)] mt-1">{errorMessage}</p>
             <div className="flex items-center justify-center gap-4 mt-4">
               <button
                 onClick={loadAndStart}
-                className="min-h-[44px] inline-flex items-center gap-1 text-xs font-semibold text-blue-600 dark:text-blue-400 px-2"
+                className="min-h-[44px] inline-flex items-center gap-1 text-xs font-semibold text-[var(--angel-blue)] px-2"
               >
                 <RotateCcw size={14} /> Try again
               </button>
-              <Link href="/learning-intelligence/practice" className="min-h-[44px] inline-flex items-center text-xs font-semibold text-gray-500 dark:text-gray-400 px-2">
+              <Link href="/learning-intelligence/practice" className="min-h-[44px] inline-flex items-center text-xs font-semibold text-[var(--angel-muted)] px-2">
                 Back to practice
               </Link>
             </div>
-          </InfoCard>
+          </div>
         )}
 
         {mode === "unavailable" && (
-          <InfoCard className="mt-6 text-center">
-            <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">This practice area is being prepared</p>
-            <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">
+          <div className="mt-6 text-center bg-[var(--angel-paper)] border border-[var(--angel-border)] rounded-lg p-6">
+            <p className="text-sm font-semibold text-[var(--angel-navy)]">This practice area is being prepared</p>
+            <p className="text-xs text-[var(--angel-muted)] mt-1">
               It does not have questions ready for practice yet. Please check back soon, or continue with another subject in the meantime.
             </p>
             <div className="flex items-center justify-center mt-4">
-              <Link href="/learning-intelligence/practice" className="min-h-[44px] inline-flex items-center text-xs font-semibold text-blue-600 dark:text-blue-400 px-2">
+              <Link href="/learning-intelligence/practice" className="min-h-[44px] inline-flex items-center text-xs font-semibold text-[var(--angel-blue)] px-2">
                 Back to practice
               </Link>
             </div>
-          </InfoCard>
+          </div>
         )}
 
         {mode === "session" && current && (
@@ -768,7 +767,7 @@ export default function PracticeSessionPage({
                 established for the Mock report, rather than inventing a
                 second wording. */}
             {familyFocus?.applied && (
-              <p className="text-xs font-semibold text-blue-600 dark:text-blue-400 mb-1">
+              <p className="text-xs font-semibold text-[var(--angel-blue)] mb-1">
                 Focusing on: {childFriendlySkillLabel(familyFocus.competencyId, familyFocus.label)}
               </p>
             )}
@@ -785,13 +784,13 @@ export default function PracticeSessionPage({
                 label="Question progress"
                 className="flex-1"
               />
-              <span className="text-gray-400 dark:text-gray-500 text-xs shrink-0">
+              <span className="text-[var(--angel-muted)] text-xs shrink-0">
                 {index + 1} of {activities.length}
               </span>
             </div>
 
             {activityExplanations.get(current.id) && (
-              <p className="text-xs text-blue-600 dark:text-blue-400 mt-2 mb-3">
+              <p className="text-xs text-[var(--angel-blue)] mt-2 mb-3">
                 {activityExplanations.get(current.id)}
               </p>
             )}
@@ -858,39 +857,39 @@ export default function PracticeSessionPage({
 
         {mode === "results" && (
           <div>
-            <InfoCard className="text-center">
+            <div className="bg-[var(--angel-sky)] rounded-lg p-8 text-center">
               <CheckCircle2 size={28} className="text-emerald-500 mx-auto mb-2" />
-              <p className="text-lg font-bold text-gray-900 dark:text-gray-100">
+              <p className="text-[var(--angel-navy)] font-bold text-xl md:text-2xl">
                 Practice complete: {correctCount} of {activities.length} correct
               </p>
-            </InfoCard>
+            </div>
 
-            {profile === undefined && <p className="text-sm text-gray-400 dark:text-gray-500 mt-6">Updating your profile…</p>}
+            {profile === undefined && <p className="text-sm text-[var(--angel-muted)] mt-6">Updating your profile…</p>}
             {profile === null && (
-              <InfoCard className="mt-6">
-                <p className="text-sm text-gray-500 dark:text-gray-400">Your profile couldn&apos;t be refreshed right now.</p>
-              </InfoCard>
+              <div className="mt-6 bg-[var(--angel-paper)] border border-[var(--angel-border)] rounded-lg p-6">
+                <p className="text-sm text-[var(--angel-muted)]">Your profile couldn&apos;t be refreshed right now.</p>
+              </div>
             )}
             {profile && profile.pathwayEligible && (
-              <div className="space-y-8 mt-6">
+              <div className="space-y-8 mt-8">
                 <section>
-                  <h2 className="text-gray-900 dark:text-gray-100 font-bold text-lg mb-3">Updated Skills Profile</h2>
+                  <h2 className="text-[var(--angel-navy)] font-bold text-lg md:text-xl mb-3">Updated Skills Profile</h2>
                   <CompetencyProfile competencies={profile.competencies} />
                 </section>
                 <section>
-                  <h2 className="text-gray-900 dark:text-gray-100 font-bold text-lg mb-3">Evidence Profile</h2>
+                  <h2 className="text-[var(--angel-navy)] font-bold text-lg md:text-xl mb-3">Evidence Profile</h2>
                   <EvidenceProfile competencies={profile.competencies} />
                 </section>
                 <section>
-                  <h2 className="text-gray-900 dark:text-gray-100 font-bold text-lg mb-3">Diagnostic Overview</h2>
+                  <h2 className="text-[var(--angel-navy)] font-bold text-lg md:text-xl mb-3">Diagnostic Overview</h2>
                   <DiagnosticOverview findings={profile.diagnostics} />
                 </section>
                 <section>
-                  <h2 className="text-gray-900 dark:text-gray-100 font-bold text-lg mb-3">Updated Readiness</h2>
+                  <h2 className="text-[var(--angel-navy)] font-bold text-lg md:text-xl mb-3">Updated Readiness</h2>
                   <ReadinessSummary readiness={profile.readiness} />
                 </section>
                 <section>
-                  <h2 className="text-gray-900 dark:text-gray-100 font-bold text-lg mb-3">Recommendations</h2>
+                  <h2 className="text-[var(--angel-navy)] font-bold text-lg md:text-xl mb-3">Recommendations</h2>
                   <RecommendationSummary recommendations={profile.recommendations} />
                 </section>
               </div>
@@ -904,18 +903,18 @@ export default function PracticeSessionPage({
             <div className="mt-8">
               <Link
                 href="/learning-intelligence/practice"
-                className="inline-block bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-colors"
+                className="inline-flex items-center justify-center rounded-xl px-6 py-3.5 text-base font-semibold bg-blue-600 hover:bg-blue-700 text-white transition-colors"
               >
                 Keep practising →
               </Link>
-              <div className="flex items-center gap-4 flex-wrap mt-3">
-                <Link href="/dashboard" className="text-xs font-semibold text-gray-500 dark:text-gray-400">
+              <div className="flex items-center gap-4 flex-wrap mt-4">
+                <Link href="/dashboard" className="text-xs font-semibold text-[var(--angel-muted)] hover:text-[var(--angel-blue)]">
                   Back to Today
                 </Link>
-                <Link href="/learning-intelligence" className="text-xs font-semibold text-gray-500 dark:text-gray-400">
+                <Link href="/learning-intelligence" className="text-xs font-semibold text-[var(--angel-muted)] hover:text-[var(--angel-blue)]">
                   Full learning report →
                 </Link>
-                <Link href="/learning-intelligence/parent" className="text-xs font-semibold text-gray-500 dark:text-gray-400">
+                <Link href="/learning-intelligence/parent" className="text-xs font-semibold text-[var(--angel-muted)] hover:text-[var(--angel-blue)]">
                   Parent Dashboard →
                 </Link>
               </div>
@@ -990,12 +989,12 @@ function ReadingActivity({
   }, [showsFeedbackRegion]);
 
   return (
-    <InfoCard className="mt-3">
-      <p className="text-sm font-bold text-gray-900 dark:text-gray-100">{prompt.passageTitle}</p>
-      <p className="text-xs text-gray-600 dark:text-gray-400 mt-2 whitespace-pre-line leading-relaxed max-h-56 overflow-y-auto">
+    <div className="mt-3 bg-[var(--angel-paper)] border border-[var(--angel-border)] rounded-lg p-6 md:p-8">
+      <p className="text-[var(--angel-navy)] font-bold text-base md:text-lg">{prompt.passageTitle}</p>
+      <p className="text-sm md:text-base text-[var(--angel-ink)] mt-3 whitespace-pre-line leading-relaxed max-h-72 md:max-h-96 overflow-y-auto">
         {prompt.passageText}
       </p>
-      <p className="text-sm font-semibold text-gray-800 dark:text-gray-200 mt-4">{prompt.question}</p>
+      <p className="text-[var(--angel-navy)] font-semibold text-base md:text-lg mt-5 leading-snug">{prompt.question}</p>
 
       {/* Educational Increment 007B, Part 6 — the same efficient-method
           content as ENGLISH_WAVE1_TEACHING_CARDS_V1.md, in plain
@@ -1105,7 +1104,7 @@ function ReadingActivity({
         }}
         disabled={submitted}
         rows={4}
-        className="w-full mt-2 text-sm rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-3"
+        className="w-full mt-2 text-sm md:text-base rounded-xl border border-[var(--angel-border)] bg-[var(--angel-paper)] p-3 md:p-4 focus-visible:outline-2 focus-visible:outline-[var(--angel-blue)] focus-visible:outline-offset-2"
         placeholder="Type your answer…"
       />
 
@@ -1116,21 +1115,21 @@ function ReadingActivity({
       {submitted && pendingSelfAssessment ? (
         <div className="mt-3 space-y-3">
           {pendingSelfAssessment.quotationFound !== undefined && (
-            <p className="text-xs rounded-xl p-3 bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-blue-300">
+            <p className="text-xs rounded-xl p-3 bg-[var(--angel-sky)] text-[var(--angel-ink)]">
               {pendingSelfAssessment.quotationFound
                 ? "Angel found the exact words you needed in your answer."
                 : "Angel could not find the exact words you needed. Check you copied them precisely from the passage."}
             </p>
           )}
           {pendingSelfAssessment.namedComponentCorrect !== undefined && (
-            <p className="text-xs rounded-xl p-3 bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-blue-300">
+            <p className="text-xs rounded-xl p-3 bg-[var(--angel-sky)] text-[var(--angel-ink)]">
               {pendingSelfAssessment.namedComponentCorrect
                 ? "Angel recognised the feeling you named."
                 : "Angel didn't recognise the feeling you named. Check it against the model answer below."}
             </p>
           )}
           {prompt.modelAnswer && (
-            <p className="text-xs text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-gray-800 rounded-xl p-3">
+            <p className="text-xs text-[var(--angel-muted)] bg-[var(--angel-sky)] rounded-xl p-3">
               <strong>Model answer: </strong>
               {prompt.modelAnswer}
             </p>
@@ -1143,7 +1142,7 @@ function ReadingActivity({
                 comparison, not a score the learner hands themselves. No
                 internal terminology (supportTier, verification provenance,
                 confidence tier, evidence tier) is ever shown here. */}
-            <p className="text-xs font-semibold text-gray-700 dark:text-gray-300 mb-2">
+            <p className="text-xs font-semibold text-[var(--angel-navy)] mb-2">
               Angel can&apos;t read and judge an explanation the way a person can, so this one needs your own honest check.
               Compare what you wrote to the model answer above, then judge honestly how close you got.
             </p>
@@ -1157,7 +1156,7 @@ function ReadingActivity({
               </button>
               <button
                 onClick={() => onSelfAssess(false)}
-                className="flex-1 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 text-sm font-semibold py-2.5 rounded-xl transition-colors"
+                className="flex-1 bg-[var(--angel-sky)] text-[var(--angel-navy)] text-sm font-semibold py-2.5 rounded-xl transition-colors"
               >
                 Not quite
               </button>
@@ -1169,8 +1168,8 @@ function ReadingActivity({
                 tier it cannot verify. */}
             {selfReflectionCategories.length > 0 && (
               <div className="mt-2">
-                <p className="text-[11px] text-gray-400 dark:text-gray-500">If it wasn&apos;t quite right, was it more like:</p>
-                <ul className="text-[11px] text-gray-500 dark:text-gray-400 list-disc list-inside">
+                <p className="text-[11px] text-[var(--angel-muted)]">If it wasn&apos;t quite right, was it more like:</p>
+                <ul className="text-[11px] text-[var(--angel-muted)] list-disc list-inside">
                   {selfReflectionCategories.map((c) => (
                     <li key={c}>{WRONG_ANSWER_CATEGORY_LABEL[c]}</li>
                   ))}
@@ -1190,14 +1189,14 @@ function ReadingActivity({
               other automatically-verified tiers get the general
               classification label. */}
           {submitted && !lastCorrect && lastAutoResult?.multiSelectDetail && (
-            <p className="text-xs text-blue-700 dark:text-blue-300 bg-blue-50 dark:bg-blue-950 rounded-xl p-3 mt-3">
+            <p className="text-xs text-[var(--angel-ink)] bg-[var(--angel-sky)] rounded-xl p-3 mt-3">
               {lastAutoResult.multiSelectDetail.overSelected
                 ? `You ticked ${lastAutoResult.multiSelectDetail.selectedCount} boxes, more than the ${lastAutoResult.multiSelectDetail.requiredCount} asked for. Selecting more than the number instructed loses all the marks for this question, even if some ticks were right.`
                 : `You selected ${lastAutoResult.multiSelectDetail.correctCount} of the ${lastAutoResult.multiSelectDetail.requiredCount} correct boxes. Check each option against the passage one at a time before you decide.`}
             </p>
           )}
           {submitted && !lastCorrect && !lastAutoResult?.multiSelectDetail && automaticErrorCategories.length > 0 && (
-            <div className="text-xs text-blue-700 dark:text-blue-300 bg-blue-50 dark:bg-blue-950 rounded-xl p-3 mt-3">
+            <div className="text-xs text-[var(--angel-ink)] bg-[var(--angel-sky)] rounded-xl p-3 mt-3">
               {automaticErrorCategories.map((c) => (
                 <p key={c}>{WRONG_ANSWER_CATEGORY_LABEL[c]}</p>
               ))}
@@ -1228,20 +1227,20 @@ function ReadingActivity({
               hand-editing individual content rows, fixes every current
               and future slug-shaped value generically. */}
           {shouldRenderMisconceptionNote(submitted, lastCorrect, addressesMisconception) && (
-            <div className="text-xs text-blue-700 dark:text-blue-300 bg-blue-50 dark:bg-blue-950 rounded-xl p-3 mt-3">
+            <div className="text-xs text-[var(--angel-ink)] bg-[var(--angel-sky)] rounded-xl p-3 mt-3">
               <p className="font-semibold">A common mistake with this kind of question:</p>
               <p className="mt-1">{humanizeMisconceptionText(addressesMisconception)}</p>
             </div>
           )}
           {submitted && prompt.modelAnswer && (
-            <p className="text-xs text-gray-500 dark:text-gray-400 mt-3 bg-gray-50 dark:bg-gray-800 rounded-xl p-3">
+            <p className="text-xs text-[var(--angel-muted)] mt-3 bg-[var(--angel-sky)] rounded-xl p-3">
               <strong>Model answer: </strong>
               {prompt.modelAnswer}
             </p>
           )}
         </div>
       )}
-    </InfoCard>
+    </div>
   );
 }
 
@@ -1302,7 +1301,7 @@ function MathsActivity({
   }, [submitted]);
 
   return (
-    <InfoCard className="mt-3">
+    <div className="mt-3 bg-[var(--angel-paper)] border border-[var(--angel-border)] rounded-lg p-6 md:p-8">
       {/* Programme Increment 020, Part 11 -- the first Mathematics diagram
           anywhere in this codebase, rendered deterministically from real
           coordinates on the question's own prompt, never a stock image.
@@ -1310,7 +1309,7 @@ function MathsActivity({
           also covers `prompt.diagrams` (plural), for comparison-style
           questions publishing more than one shape; see its own docstring. */}
       <CompoundShapeDiagramGroup diagram={prompt.diagram} diagrams={prompt.diagrams} />
-      <p className="text-sm font-semibold text-gray-800 dark:text-gray-200">{prompt.question}</p>
+      <p className="text-[var(--angel-navy)] font-semibold text-base md:text-lg leading-snug">{prompt.question}</p>
 
       {/* Educational Increment 007L, Part 3E — Guided toggle, exact same
           interaction pattern as ReadingActivity's guidedMode button
@@ -1413,7 +1412,7 @@ function MathsActivity({
           onSubmit(guidedMode);
         }}
         disabled={submitted}
-        className="w-full mt-3 text-sm rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-3"
+        className="w-full mt-3 text-sm md:text-base rounded-xl border border-[var(--angel-border)] bg-[var(--angel-paper)] p-3 md:p-4 focus-visible:outline-2 focus-visible:outline-[var(--angel-blue)] focus-visible:outline-offset-2"
         placeholder="Your answer…"
       />
       <div ref={feedbackRegionRef} tabIndex={-1} className="outline-none">
@@ -1453,7 +1452,7 @@ function MathsActivity({
             family-level label is now a genuine fallback rather than a
             decoration that only ever appeared alongside text. */}
         {shouldRenderMathsMisconceptionNote(submitted, lastCorrect, addressesMisconception, misconceptionLabel) && (
-          <div className="text-xs text-blue-700 dark:text-blue-300 bg-blue-50 dark:bg-blue-950 rounded-xl p-3 mt-3">
+          <div className="text-xs text-[var(--angel-ink)] bg-[var(--angel-sky)] rounded-xl p-3 mt-3">
             {misconceptionLabel && <p className="font-semibold">{misconceptionLabel}</p>}
             {addressesMisconception && (
               <p className={misconceptionLabel ? "mt-1" : undefined}>{humanizeMisconceptionText(addressesMisconception)}</p>
@@ -1462,7 +1461,7 @@ function MathsActivity({
         )}
 
         {submitted && prompt.workingSteps && (
-          <div className="text-xs text-gray-500 dark:text-gray-400 mt-3 bg-gray-50 dark:bg-gray-800 rounded-xl p-3">
+          <div className="text-xs text-[var(--angel-muted)] mt-3 bg-[var(--angel-sky)] rounded-xl p-3">
             <strong>Correct answer: {String(prompt.answer)}</strong>
             <ul className="list-disc list-inside mt-1 space-y-0.5">
               {prompt.workingSteps.map((s, i) => <li key={i}>{s}</li>)}
@@ -1470,7 +1469,7 @@ function MathsActivity({
           </div>
         )}
       </div>
-    </InfoCard>
+    </div>
   );
 }
 
@@ -1525,8 +1524,8 @@ function WritingActivity({
   }, [feedback]);
 
   return (
-    <InfoCard className="mt-3">
-      <p className="text-sm font-bold text-gray-900 dark:text-gray-100">{prompt.title}</p>
+    <div className="mt-3 bg-[var(--angel-paper)] border border-[var(--angel-border)] rounded-lg p-6 md:p-8">
+      <p className="text-[var(--angel-navy)] font-bold text-base md:text-lg">{prompt.title}</p>
       {/* Educational Depth Phase 1, Wave 2 — the picture stimulus itself.
           Absent on every prompt before this Wave, so this renders nothing
           extra for any existing row (regression-safe by construction).
@@ -1536,10 +1535,10 @@ function WritingActivity({
         <img
           src={prompt.stimulus.imageAssetUrl}
           alt={prompt.stimulus.altText}
-          className="mt-3 w-full max-w-md rounded-xl border border-gray-200 dark:border-gray-700"
+          className="mt-3 w-full max-w-md rounded-xl border border-[var(--angel-border)]"
         />
       )}
-      <p className="text-xs text-gray-600 dark:text-gray-400 mt-2 whitespace-pre-line leading-relaxed">{prompt.prompt}</p>
+      <p className="text-sm md:text-base text-[var(--angel-ink)] mt-3 whitespace-pre-line leading-relaxed">{prompt.prompt}</p>
 
       {teachingContent && !submitted && (
         <div className="mt-2">
@@ -1588,14 +1587,14 @@ function WritingActivity({
         onChange={(e) => setAnswer(e.target.value)}
         disabled={submitted}
         rows={10}
-        className="w-full mt-3 text-sm rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-3"
+        className="w-full mt-3 text-sm md:text-base rounded-xl border border-[var(--angel-border)] bg-[var(--angel-paper)] p-3 md:p-4 focus-visible:outline-2 focus-visible:outline-[var(--angel-blue)] focus-visible:outline-offset-2"
         placeholder="Write your response…"
       />
-      <p className="text-[11px] text-gray-400 dark:text-gray-500 mt-1">{wordCount} words</p>
+      <p className="text-[11px] text-[var(--angel-muted)] mt-1">{wordCount} words</p>
 
       <div className="mt-3 space-y-1.5">
         {visibleChecklist.map((item) => (
-          <label key={item} className="flex items-start gap-2 text-xs text-gray-600 dark:text-gray-400">
+          <label key={item} className="flex items-start gap-2 text-xs text-[var(--angel-ink)]">
             <input
               type="checkbox"
               disabled={submitted}
@@ -1637,29 +1636,29 @@ function WritingActivity({
             ) : (
               <XCircle size={16} className="text-amber-500" />
             )}
-            <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">Angel progress indicator: {feedback.overallScore}/100</p>
+            <p className="text-[var(--angel-navy)] font-semibold text-sm">Your writing score: {feedback.overallScore}/100</p>
           </div>
-          <p className="text-[11px] text-gray-400 dark:text-gray-500">
+          <p className="text-[11px] text-[var(--angel-muted)]">
             AI-generated general writing-quality guidance, not a CSSE (or any exam board&apos;s) official or validated mark.
           </p>
 
           {feedback.dimensions && feedback.dimensions.length > 0 && (
-            <div className="text-xs text-gray-600 dark:text-gray-400 bg-gray-50 dark:bg-gray-800 rounded-xl p-3 space-y-2">
-              <p className="font-semibold text-gray-700 dark:text-gray-300">Against the CSSE Continuous Writing rubric&apos;s own dimensions:</p>
+            <div className="text-xs text-[var(--angel-ink)] bg-[var(--angel-sky)] rounded-xl p-3 space-y-2">
+              <p className="font-semibold text-[var(--angel-navy)]">Against the CSSE Continuous Writing rubric&apos;s own dimensions:</p>
               {feedback.dimensions.map((d) => (
                 <div key={d.dimension}>
                   <p>
                     <strong>{WRITING_DIMENSION_LABEL[d.dimension]}: </strong>
                     <span className="capitalize">{d.level}</span>
-                    {!d.confident && <span className="text-amber-600 dark:text-amber-400"> (not enough here to judge confidently)</span>}
+                    {!d.confident && <span className="text-amber-700"> (not enough here to judge confidently)</span>}
                   </p>
-                  <p className="text-gray-500 dark:text-gray-500">{d.comment}</p>
+                  <p className="text-[var(--angel-muted)]">{d.comment}</p>
                 </div>
               ))}
             </div>
           )}
 
-          <div className="text-xs text-gray-600 dark:text-gray-400 bg-gray-50 dark:bg-gray-800 rounded-xl p-3 space-y-2">
+          <div className="text-xs text-[var(--angel-ink)] bg-[var(--angel-sky)] rounded-xl p-3 space-y-2">
             <p><strong>Strengths:</strong> {feedback.strengths.join(" · ")}</p>
             <p><strong>Areas to improve:</strong> {feedback.areasToImprove.join(" · ")}</p>
             <p><strong>Tutor tip:</strong> {feedback.tutorTip}</p>
@@ -1672,7 +1671,7 @@ function WritingActivity({
           </button>
         </div>
       )}
-    </InfoCard>
+    </div>
   );
 }
 

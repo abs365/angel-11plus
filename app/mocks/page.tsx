@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { ChevronRight, ChevronDown, Clock, Play, Target, TrendingUp } from "lucide-react";
 import PageLayout from "@/components/PageLayout";
-import { InfoCard } from "@/components/ui/Card";
 import { StatusIndicator, type StatusTone } from "@/components/ui/Progress";
 import { ButtonLink } from "@/components/ui/Button";
 import { getSupabaseClient } from "@/lib/supabase";
@@ -27,40 +26,29 @@ const MOCK_CARDS: {
   name: string;
   badge: string;
   totalMinutes: number;
-  bg: string;
-  border: string;
+  /** A calm accent-stripe colour distinguishing exam boards at a glance -- deliberately not a filled card background. */
   badgeBg: string;
-  badgeText: string;
 }[] = [
   {
     pathway: "gl",
     name: "GL Assessment",
     badge: "GL",
     totalMinutes: 35,
-    bg: "bg-blue-50 dark:bg-blue-950",
-    border: "border-blue-100 dark:border-blue-900",
-    badgeBg: "bg-blue-100 dark:bg-blue-900",
-    badgeText: "text-blue-700 dark:text-blue-300",
+    badgeBg: "bg-blue-300",
   },
   {
     pathway: "cem",
     name: "CEM",
     badge: "CEM",
     totalMinutes: 30,
-    bg: "bg-slate-50 dark:bg-slate-950",
-    border: "border-slate-100 dark:border-slate-900",
-    badgeBg: "bg-slate-100 dark:bg-slate-900",
-    badgeText: "text-slate-700 dark:text-slate-300",
+    badgeBg: "bg-slate-300",
   },
   {
     pathway: "iseb",
     name: "ISEB Pre-Test",
     badge: "ISEB",
     totalMinutes: 40,
-    bg: "bg-emerald-50 dark:bg-emerald-950",
-    border: "border-emerald-100 dark:border-emerald-900",
-    badgeBg: "bg-emerald-100 dark:bg-emerald-900",
-    badgeText: "text-emerald-700 dark:text-emerald-300",
+    badgeBg: "bg-emerald-300",
   },
 ];
 
@@ -157,10 +145,7 @@ function LegacyMockCard({ card, best }: { card: (typeof MOCK_CARDS)[number]; bes
     <SimpleMockCard
       badge={card.badge}
       name={card.name}
-      bg={card.bg}
-      border={card.border}
-      badgeBg={card.badgeBg}
-      badgeText={card.badgeText}
+      accent={card.badgeBg}
       minutesLabel={`${card.totalMinutes} min`}
       description={MOCK_SUGGESTED_PREPARATION[card.pathway]}
       href={`/mocks/${card.pathway}`}
@@ -180,9 +165,11 @@ function LegacyMockCard({ card, best }: { card: (typeof MOCK_CARDS)[number]; bes
  * that case, not one of several equal options.
  */
 function SimpleMockCard({
-  badge, name, bg, border, badgeBg, badgeText, minutesLabel, description, href, best, available = true,
+  badge, name, accent, minutesLabel, description, href, best, available = true,
 }: {
-  badge: string; name: string; bg: string; border: string; badgeBg: string; badgeText: string;
+  badge: string; name: string;
+  /** A calm, minimal exam-board identifier — a thin left accent stripe, never a filled coloured card background (Mock is quiet assessment, not a gamified pathway picker). */
+  accent: string;
   minutesLabel: string; description: string; href: string; best: number | undefined;
   /**
    * Completion Assurance Programme, Completion B — genuine content
@@ -194,41 +181,44 @@ function SimpleMockCard({
   available?: boolean;
 }) {
   return (
-    <div className={`rounded-2xl border p-5 ${bg} ${border}`}>
-      <div className="flex items-start justify-between mb-2">
-        <div className="flex items-center gap-2.5">
-          <span className={`text-xs font-bold px-2.5 py-1 rounded-lg ${badgeBg} ${badgeText}`}>{badge}</span>
-          <h3 className="text-base font-bold text-gray-900 dark:text-gray-100">{name}</h3>
+    <div className="flex gap-4 rounded-lg border border-[var(--angel-border)] bg-[var(--angel-paper)] p-5">
+      <div className={`w-1 rounded-full shrink-0 ${accent}`} aria-hidden="true" />
+      <div className="flex-1 min-w-0">
+        <div className="flex items-start justify-between mb-2 gap-3">
+          <div className="flex items-center gap-2.5 min-w-0">
+            <span className="text-xs font-bold text-[var(--angel-muted)] uppercase tracking-wide shrink-0">{badge}</span>
+            <h3 className="text-base font-bold text-[var(--angel-navy)] truncate">{name}</h3>
+          </div>
+          <StatusIndicator
+            tone={best !== undefined ? "success" : "neutral"}
+            label={best !== undefined ? "Completed" : available ? "Available" : "Not ready yet"}
+          />
         </div>
-        <StatusIndicator
-          tone={best !== undefined ? "success" : "neutral"}
-          label={best !== undefined ? "Completed" : available ? "Available" : "Not ready yet"}
-        />
-      </div>
-      <div className="flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400 mb-2">
-        <Clock size={13} />
-        {minutesLabel}
-      </div>
-      <p className="text-xs text-gray-500 dark:text-gray-400 leading-relaxed mb-3">
-        {available ? description : "A full mock is not available right now. Practice stays available in the meantime, and reflects the same real evidence."}
-      </p>
-      <div className="flex items-center justify-between">
-        {best !== undefined ? (
-          <span className="text-xs text-gray-500 dark:text-gray-400">
-            Best score: <span className="font-semibold text-gray-800 dark:text-gray-200">{best}%</span>
-          </span>
-        ) : (
-          <span className="text-xs text-gray-400 dark:text-gray-500">Not attempted yet</span>
-        )}
-        {available ? (
-          <ButtonLink href={href} variant="outline" size="sm" leftIcon={<Play size={14} />}>
-            Start mock
-          </ButtonLink>
-        ) : (
-          <ButtonLink href="/learning-intelligence/practice" variant="outline" size="sm">
-            Go to Practice
-          </ButtonLink>
-        )}
+        <div className="flex items-center gap-1 text-xs text-[var(--angel-muted)] mb-2">
+          <Clock size={13} />
+          {minutesLabel}
+        </div>
+        <p className="text-xs text-[var(--angel-ink)] leading-relaxed mb-3 opacity-90">
+          {available ? description : "A full mock is not available right now. Practice stays available in the meantime, and reflects the same real evidence."}
+        </p>
+        <div className="flex items-center justify-between">
+          {best !== undefined ? (
+            <span className="text-xs text-[var(--angel-muted)]">
+              Best score: <span className="font-semibold text-[var(--angel-navy)]">{best}%</span>
+            </span>
+          ) : (
+            <span className="text-xs text-[var(--angel-muted)]">Not attempted yet</span>
+          )}
+          {available ? (
+            <ButtonLink href={href} variant="outline" size="sm" leftIcon={<Play size={14} />}>
+              Start mock
+            </ButtonLink>
+          ) : (
+            <ButtonLink href="/learning-intelligence/practice" variant="outline" size="sm">
+              Go to Practice
+            </ButtonLink>
+          )}
+        </div>
       </div>
     </div>
   );
@@ -252,43 +242,46 @@ function CsseRichMockCard({
 }) {
   const meta = CSSE_MOCK_META[attemptType];
   return (
-    <div className="rounded-2xl border border-blue-100 dark:border-blue-900 bg-blue-50 dark:bg-blue-950 p-5">
-      <div className="flex items-start justify-between mb-2">
-        <div className="flex items-center gap-2.5">
-          <span className="text-xs font-bold px-2.5 py-1 rounded-lg bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300">CSSE</span>
-          {/* Gate 6 presentation correction (Founder decision) — the
-              active form is subject-pure, never a combined
-              English+Mathematics paper. The heading must name what is
-              actually being offered. Name comes from the real active
-              form's own metadata (migration 214), not a hardcoded
-              literal. */}
-          <h3 className="text-base font-bold text-gray-900 dark:text-gray-100">{displayName}</h3>
+    <div className="flex gap-4 rounded-lg border border-[var(--angel-border)] bg-[var(--angel-paper)] p-5">
+      <div className="w-1 rounded-full shrink-0 bg-[var(--angel-blue)]" aria-hidden="true" />
+      <div className="flex-1 min-w-0">
+        <div className="flex items-start justify-between mb-2 gap-3">
+          <div className="flex items-center gap-2.5 min-w-0">
+            <span className="text-xs font-bold text-[var(--angel-blue)] uppercase tracking-wide shrink-0">CSSE</span>
+            {/* Gate 6 presentation correction (Founder decision) — the
+                active form is subject-pure, never a combined
+                English+Mathematics paper. The heading must name what is
+                actually being offered. Name comes from the real active
+                form's own metadata (migration 214), not a hardcoded
+                literal. */}
+            <h3 className="text-base font-bold text-[var(--angel-navy)] truncate">{displayName}</h3>
+          </div>
+          <StatusIndicator tone={available ? "success" : "neutral"} label={available ? "Available" : "Not ready yet"} />
         </div>
-        <StatusIndicator tone={available ? "success" : "neutral"} label={available ? "Available" : "Not ready yet"} />
-      </div>
-      {available && <p className="text-xs text-gray-500 dark:text-gray-400 mb-2">{meta.summary}</p>}
-      <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed mb-3">
-        {available
-          ? meta.description
-          : "A full mock is not available right now. Angel does not yet have a complete, reviewed set of exam questions to draw from. Practice stays available in the meantime, and reflects the same real evidence about how your child is progressing."}
-      </p>
-      <div className="flex items-center justify-between">
-        {best !== undefined ? (
-          <span className="text-xs text-gray-500 dark:text-gray-400">
-            Best score: <span className="font-semibold text-gray-800 dark:text-gray-200">{best}%</span>
-          </span>
-        ) : (
-          <span className="text-xs text-gray-400 dark:text-gray-500">Not attempted yet</span>
-        )}
-        {available ? (
-          <ButtonLink href={meta.href} variant="outline" size="sm" leftIcon={<Play size={14} />}>
-            Start mock
-          </ButtonLink>
-        ) : (
-          <ButtonLink href="/learning-intelligence/practice" variant="outline" size="sm">
-            Go to Practice
-          </ButtonLink>
-        )}
+        {available && <p className="text-xs text-[var(--angel-muted)] mb-2">{meta.summary}</p>}
+        <p className="text-sm text-[var(--angel-ink)] leading-relaxed mb-3 opacity-90">
+          {available
+            ? meta.description
+            : "A full mock is not available right now. Angel does not yet have a complete, reviewed set of exam questions to draw from. Practice stays available in the meantime, and reflects the same real evidence about how your child is progressing."}
+        </p>
+        <div className="flex items-center justify-between">
+          {best !== undefined ? (
+            <span className="text-xs text-[var(--angel-muted)]">
+              Best score: <span className="font-semibold text-[var(--angel-navy)]">{best}%</span>
+            </span>
+          ) : (
+            <span className="text-xs text-[var(--angel-muted)]">Not attempted yet</span>
+          )}
+          {available ? (
+            <ButtonLink href={meta.href} variant="outline" size="sm" leftIcon={<Play size={14} />}>
+              Start mock
+            </ButtonLink>
+          ) : (
+            <ButtonLink href="/learning-intelligence/practice" variant="outline" size="sm">
+              Go to Practice
+            </ButtonLink>
+          )}
+        </div>
       </div>
     </div>
   );
@@ -308,29 +301,32 @@ function CsseRichMockCard({
  */
 function CsseCompleteMockCard({ available }: { available: boolean }) {
   return (
-    <div className="rounded-2xl border border-blue-100 dark:border-blue-900 bg-blue-50 dark:bg-blue-950 p-5">
-      <div className="flex items-start justify-between mb-2">
-        <div className="flex items-center gap-2.5">
-          <span className="text-xs font-bold px-2.5 py-1 rounded-lg bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300">CSSE</span>
-          <h3 className="text-base font-bold text-gray-900 dark:text-gray-100">Complete CSSE Mock</h3>
+    <div className="flex gap-4 rounded-lg border border-[var(--angel-border)] bg-[var(--angel-paper)] p-5">
+      <div className="w-1 rounded-full shrink-0 bg-[var(--angel-blue)]" aria-hidden="true" />
+      <div className="flex-1 min-w-0">
+        <div className="flex items-start justify-between mb-2 gap-3">
+          <div className="flex items-center gap-2.5 min-w-0">
+            <span className="text-xs font-bold text-[var(--angel-blue)] uppercase tracking-wide shrink-0">CSSE</span>
+            <h3 className="text-base font-bold text-[var(--angel-navy)]">Complete CSSE Mock</h3>
+          </div>
+          <StatusIndicator tone={available ? "success" : "neutral"} label={available ? "Available" : "Not ready yet"} />
         </div>
-        <StatusIndicator tone={available ? "success" : "neutral"} label={available ? "Available" : "Not ready yet"} />
-      </div>
-      <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed mb-3">
-        {available
-          ? "English and Mathematics, joined into one complete CSSE sitting. Each paper is its own separate, timed attempt."
-          : "The Full English Paper is not available yet, so a complete two-paper CSSE sitting cannot be offered. The Reading Comprehension Mock and Mathematics Mock remain available on their own above."}
-      </p>
-      <div className="flex items-center justify-end">
-        {available ? (
-          <ButtonLink href="/learning-intelligence/mock-exam/sitting" variant="outline" size="sm" leftIcon={<Play size={14} />}>
-            Go to your sitting
-          </ButtonLink>
-        ) : (
-          <ButtonLink href="/learning-intelligence/practice" variant="outline" size="sm">
-            Go to Practice
-          </ButtonLink>
-        )}
+        <p className="text-sm text-[var(--angel-ink)] leading-relaxed mb-3 opacity-90">
+          {available
+            ? "English and Mathematics, joined into one complete CSSE sitting. Each paper is its own separate, timed attempt."
+            : "The Full English Paper is not available yet, so a complete two-paper CSSE sitting cannot be offered. The Reading Comprehension Mock and Mathematics Mock remain available on their own above."}
+        </p>
+        <div className="flex items-center justify-end">
+          {available ? (
+            <ButtonLink href="/learning-intelligence/mock-exam/sitting" variant="outline" size="sm" leftIcon={<Play size={14} />}>
+              Go to your sitting
+            </ButtonLink>
+          ) : (
+            <ButtonLink href="/learning-intelligence/practice" variant="outline" size="sm">
+              Go to Practice
+            </ButtonLink>
+          )}
+        </div>
       </div>
     </div>
   );
@@ -445,11 +441,12 @@ export default function MocksPage() {
 
   return (
     <PageLayout breadcrumbs={[{ label: "Today", href: "/dashboard" }, { label: "Mock Centre" }]}>
-      <div className="max-w-2xl mx-auto px-4 pb-16 pt-6 md:pt-8 space-y-6">
-        <div className="mb-1">
-          <h1 className="text-gray-900 dark:text-gray-100 font-bold text-2xl mb-1">Mock Centre</h1>
-          <p className="text-gray-400 dark:text-gray-500 text-sm">
-            Test your progress when you&apos;re ready. Angel uses your learning and practice evidence to help you decide when a mock will be useful.
+      <div className="max-w-3xl mx-auto px-4 pb-16 pt-6 md:pt-8 space-y-8">
+        <div>
+          <h1 className="text-[var(--angel-navy)] font-bold text-3xl md:text-4xl leading-tight mb-2">Mock Centre</h1>
+          <p className="text-[var(--angel-muted)] text-sm md:text-base max-w-xl">
+            A quiet, formal check of your progress when you&apos;re ready. Angel uses your learning and practice
+            evidence to help you decide when a mock will be useful.
           </p>
         </div>
 
@@ -462,29 +459,29 @@ export default function MocksPage() {
             fallback used elsewhere on this page — rather than repeating a CTA that would otherwise
             imply a mock is available. */}
         {isCsse && readiness && (
-          <InfoCard className="flex items-start gap-3">
-            <Target size={18} className="text-slate-500 mt-0.5 shrink-0" />
+          <div className="flex items-start gap-3 bg-[var(--angel-paper)] border border-[var(--angel-border)] rounded-lg p-5">
+            <Target size={18} className="text-[var(--angel-muted)] mt-0.5 shrink-0" />
             <div className="min-w-0 flex-1">
               <div className="flex items-center gap-2 mb-1">
-                <p className="text-sm font-bold text-gray-900 dark:text-gray-100">{readinessDisplay(readiness).label}</p>
+                <p className="text-sm font-bold text-[var(--angel-navy)]">{readinessDisplay(readiness).label}</p>
                 <StatusIndicator tone={readinessDisplay(readiness).tone} label="Your mock readiness" />
               </div>
-              <p className="text-xs text-gray-500 dark:text-gray-400 leading-relaxed mb-2">{readiness.assessment.explanation}</p>
+              <p className="text-xs text-[var(--angel-muted)] leading-relaxed mb-2">{readiness.assessment.explanation}</p>
               {readiness.assessment.nextAction.href === "/learning-intelligence/mock-exam" && !anyCsseMockAvailable ? (
-                <Link href="/learning-intelligence/practice" className="inline-flex items-center gap-1 text-xs font-semibold text-blue-600 dark:text-blue-400">
+                <Link href="/learning-intelligence/practice" className="inline-flex items-center gap-1 text-xs font-semibold text-[var(--angel-blue)] hover:underline">
                   <TrendingUp size={13} /> See practice areas →
                 </Link>
               ) : (
-                <Link href={readiness.assessment.nextAction.href} className="inline-flex items-center gap-1 text-xs font-semibold text-blue-600 dark:text-blue-400">
+                <Link href={readiness.assessment.nextAction.href} className="inline-flex items-center gap-1 text-xs font-semibold text-[var(--angel-blue)] hover:underline">
                   <TrendingUp size={13} /> {readiness.assessment.nextAction.label}
                 </Link>
               )}
             </div>
-          </InfoCard>
+          </div>
         )}
 
         {/* Disclaimer */}
-        <div className="bg-amber-50 dark:bg-amber-950 border border-amber-100 dark:border-amber-900 rounded-xl px-4 py-3">
+        <div className="bg-amber-50 dark:bg-amber-950 border border-amber-100 dark:border-amber-900 rounded-lg px-4 py-3">
           <p className="text-xs text-amber-700 dark:text-amber-300 leading-relaxed">
             These are original practice papers created by Angel 11+. They are not affiliated with or endorsed by GL Assessment, CEM, CSSE, ISEB or any school.
           </p>
@@ -492,7 +489,7 @@ export default function MocksPage() {
 
         {/* YOUR EXAM — pathway-prioritised */}
         <section className="space-y-3">
-          <h2 className="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">Your Exam</h2>
+          <h2 className="text-xs font-bold text-[var(--angel-muted)] uppercase tracking-widest">Your Exam</h2>
 
           {isCsse ? (
             <>
@@ -517,9 +514,9 @@ export default function MocksPage() {
                 />
               ))}
 
-              <div className="rounded-xl border border-gray-100 dark:border-gray-800 px-4 py-3">
-                <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 dark:text-gray-500 mb-1.5">Coming later</p>
-                <ul className="text-xs text-gray-500 dark:text-gray-400 space-y-1">
+              <div className="rounded-lg border border-[var(--angel-border)] px-4 py-3">
+                <p className="text-[10px] font-bold uppercase tracking-widest text-[var(--angel-muted)] mb-1.5">Coming later</p>
+                <ul className="text-xs text-[var(--angel-muted)] space-y-1">
                   {COMING_LATER.map((label) => (
                     <li key={label}>{label}</li>
                   ))}
@@ -542,10 +539,7 @@ export default function MocksPage() {
                   key={attemptType}
                   badge="CSSE"
                   name={csseMocks[attemptType].displayName}
-                  bg="bg-blue-50 dark:bg-blue-950"
-                  border="border-blue-100 dark:border-blue-900"
-                  badgeBg="bg-blue-100 dark:bg-blue-900"
-                  badgeText="text-blue-700 dark:text-blue-300"
+                  accent="bg-[var(--angel-blue)]"
                   minutesLabel={CSSE_MOCK_META[attemptType].minutesLabel}
                   description={CSSE_MOCK_META[attemptType].description}
                   href={CSSE_MOCK_META[attemptType].href}
@@ -563,7 +557,7 @@ export default function MocksPage() {
             <div>
               <button
                 onClick={() => setShowOtherPathways((v) => !v)}
-                className="inline-flex items-center gap-1 text-xs font-semibold text-gray-500 dark:text-gray-400"
+                className="inline-flex items-center gap-1 text-xs font-semibold text-[var(--angel-muted)] hover:text-[var(--angel-blue)]"
               >
                 Explore another pathway
                 <ChevronDown size={13} className={showOtherPathways ? "rotate-180 transition-transform" : "transition-transform"} />
@@ -582,15 +576,15 @@ export default function MocksPage() {
         {/* Recent results — completes the loop, MOCK_CENTRE_EXPERIENCE_BLUEPRINT.md */}
         {recentResults.length > 0 && (
           <section>
-            <h2 className="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-3">Mock History</h2>
-            <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 divide-y divide-gray-50 dark:divide-gray-800">
+            <h2 className="text-xs font-bold text-[var(--angel-muted)] uppercase tracking-widest mb-3">Mock History</h2>
+            <div className="bg-[var(--angel-paper)] rounded-lg border border-[var(--angel-border)] divide-y divide-[var(--angel-border)]">
               {recentResults.map((r) => {
                 const resultDestination = r.pathway === "csse" ? "/learning-intelligence/parent" : `/mocks/${r.pathway}`;
                 return (
                   <Link key={r.id} href={resultDestination} className="flex items-center gap-3 px-4 py-3">
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">{r.pathwayName}</p>
-                      <p className="text-xs text-gray-400 dark:text-gray-500">
+                      <p className="text-sm font-semibold text-[var(--angel-navy)]">{r.pathwayName}</p>
+                      <p className="text-xs text-[var(--angel-muted)]">
                         {new Date(r.date).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })}
                       </p>
                     </div>
@@ -601,7 +595,7 @@ export default function MocksPage() {
                     >
                       {r.totalScore}%
                     </span>
-                    <ChevronRight size={14} className="text-gray-300 dark:text-gray-600 shrink-0" />
+                    <ChevronRight size={14} className="text-[var(--angel-muted)] shrink-0" />
                   </Link>
                 );
               })}
@@ -610,9 +604,9 @@ export default function MocksPage() {
         )}
 
         {/* Info */}
-        <section className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-4">
-          <h3 className="text-sm font-semibold text-gray-800 dark:text-gray-100 mb-2">About these mocks</h3>
-          <ul className="space-y-1.5 text-xs text-gray-500 dark:text-gray-400 leading-relaxed">
+        <section className="bg-[var(--angel-paper)] rounded-lg border border-[var(--angel-border)] p-5">
+          <h3 className="text-sm font-semibold text-[var(--angel-navy)] mb-2">About these mocks</h3>
+          <ul className="space-y-1.5 text-xs text-[var(--angel-muted)] leading-relaxed">
             <li>• All questions are original, created exclusively for Angel 11+ practice</li>
             <li>• Each mock is timed per section, just like the real exam</li>
             <li>• Your results are saved and shown in the Parent Dashboard</li>
