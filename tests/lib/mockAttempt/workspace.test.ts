@@ -476,7 +476,7 @@ test("a resolved form with no subject of its own (a legacy/combined form) is nev
 });
 
 test("no active form at all (data: null) is never flagged as a mismatch -- that is isMockFormAvailable()'s own, separate, pre-existing 'unavailable' concern, not this invariant's", () => {
-  assert.equal(subjectMismatch({ data: null, error: null }, "mathematics"), false);
+  assert.equal(subjectMismatch({ data: null }, "mathematics"), false);
 });
 
 // --- Wiring: both real checks in mock-exam/page.tsx use this exact function ---
