@@ -940,7 +940,9 @@ export interface Database {
       // Migration 245 — p_subject added (optional, defaults to matching
       // any subject). Migration 264 (Increment 3 Closure Blocker) —
       // subject added to Returns, so a caller can verify the resolved
-      // form actually matches the subject it requested.
+      // form actually matches the subject it requested. Migration 265
+      // (supersedes the never-applied 264) — same Returns, plus a
+      // full_mock request with no p_subject returns no row (fail closed).
       mock_get_active_form: {
         Args: { p_attempt_type: string; p_subject?: string | null };
         Returns: { form_id: string; attempt_type: string; subject: string | null; display_name: string | null }[];

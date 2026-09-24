@@ -21,7 +21,7 @@ const PARENT_CONTENT = readFileSync("components/parent/CssePathwayParentContent.
 test("the Mock Readiness card's own CTA is redirected to Practice when it would otherwise point at an unavailable mock, without touching assessMockReadiness()'s own verdict/explanation logic", () => {
   assert.match(
     PARENT_CONTENT,
-    /mockReadiness\.nextAction\.href === "\/learning-intelligence\/mock-exam" && !csseMockAvailable/,
+    /mockReadiness\.nextAction\.href === MOCK_CENTRE_HREF && !csseMockAvailable/,
     "the CTA must be conditioned on real content availability, mirroring app/mocks/page.tsx's own established fix"
   );
   assert.match(PARENT_CONTENT, /See practice areas/, "the fallback CTA must lead somewhere Angel can genuinely deliver");

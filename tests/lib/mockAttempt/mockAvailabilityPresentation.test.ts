@@ -68,7 +68,7 @@ test("B — the Mock Centre shows 'Go to Practice' instead of 'Start mock' when 
 test("A — the Mock Readiness card's own CTA is redirected to Practice when it would otherwise point at an unavailable mock, without touching assessMockReadiness()'s own verdict/explanation logic. Programme Completion Increment 016 — generalised to anyCsseMockAvailable, true when EITHER discovered CSSE form (Mathematics or Reading) is available, not just Mathematics", () => {
   assert.match(
     MOCK_CENTRE,
-    /readiness\.assessment\.nextAction\.href === "\/learning-intelligence\/mock-exam" && !anyCsseMockAvailable/,
+    /readiness\.assessment\.nextAction\.href === MOCK_CENTRE_HREF && !anyCsseMockAvailable/,
     "the readiness card's CTA must be conditioned on real content availability across all discovered CSSE forms"
   );
   assert.match(MOCK_CENTRE, /const anyCsseMockAvailable = csseMocks\.full_mock\.available \|\| csseMocks\.timed_section\.available/);

@@ -52,8 +52,8 @@ const STAGES: Stage[] = [
     whatHappened: "A timed, real exam-condition sitting: Standard (the full paper) or Personalised (a shorter paper weighted to your recorded evidence). No feedback until you submit, just like exam day.",
     whyItMatters: "The exact same evidence pipeline as Practice, gathered under real conditions. It's not a separate, disconnected score.",
     whatsNext: "Results feed straight into Educational Insights and Readiness below, plus a Historical Context comparison against CSSE's own published admissions facts.",
-    href: "/learning-intelligence/mock-exam",
-    linkLabel: "Go to Mock Examination",
+    href: "/mocks",
+    linkLabel: "Go to the Mock Centre",
   },
   {
     name: "Educational Insights",

@@ -77,6 +77,27 @@ export function subjectMismatch(
   return Boolean(subject) && active.data !== null && active.data.subject !== null && active.data.subject !== subject;
 }
 
+/**
+ * Mock subject-routing P0 correction (live Supabase root-cause evidence:
+ * attempt 9ae70cee was created from english-full-mock-v1 by a pre-start
+ * page that ran with no subject, because mock_get_active_form('full_mock',
+ * NULL) resolves the NEWEST full_mock -- English -- while the page's own
+ * fallback title still read "Mathematics Mock 1"). Two subject-pure forms
+ * share attempt_type="full_mock", so a full_mock request without an
+ * explicit, recognised subject is never "any full mock" -- it is an
+ * ambiguous entry point and must fail closed before any form is resolved
+ * or any attempt created. Deliberately does NOT default to mathematics:
+ * that would silently conceal whichever link arrived without a subject.
+ * Other attempt types (timed_section, diagnostic_mock) have exactly one
+ * form each and never needed a subject.
+ */
+export function isAmbiguousFullMockRequest(
+  attemptType: MockAttemptType,
+  subject: "mathematics" | "english" | undefined
+): boolean {
+  return attemptType === "full_mock" && subject === undefined;
+}
+
 /** Never negative — a stale expiresAt in the past reads as 0 remaining, not a negative countdown. */
 export function computeRemainingSeconds(expiresAt: string, now: number = Date.now()): number {
   return Math.max(0, Math.floor((new Date(expiresAt).getTime() - now) / 1000));

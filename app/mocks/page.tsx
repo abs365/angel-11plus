@@ -9,7 +9,7 @@ import { ButtonLink } from "@/components/ui/Button";
 import { getSupabaseClient } from "@/lib/supabase";
 import { getSelectedPathwayId } from "@/lib/progress";
 import { getMockResults, bestScoreForPathway } from "@/lib/mockProgress";
-import { computeCsseMockReadiness, type CsseMockReadiness } from "@/lib/learningEngine/mockReadiness";
+import { computeCsseMockReadiness, MOCK_CENTRE_HREF, type CsseMockReadiness } from "@/lib/learningEngine/mockReadiness";
 import { getActiveMockForm, isMockFormAvailable } from "@/lib/mockAttempt/client";
 import { MOCK_SUGGESTED_PREPARATION } from "@/lib/mockMeta";
 import type { MockResult, MockPathwayId } from "@/types/mock";
@@ -485,7 +485,7 @@ export default function MocksPage() {
                 <StatusIndicator tone={readinessDisplay(readiness).tone} label="Your mock readiness" />
               </div>
               <p className="text-xs text-[var(--angel-muted)] leading-relaxed mb-2">{readiness.assessment.explanation}</p>
-              {readiness.assessment.nextAction.href === "/learning-intelligence/mock-exam" && !anyCsseMockAvailable ? (
+              {readiness.assessment.nextAction.href === MOCK_CENTRE_HREF && !anyCsseMockAvailable ? (
                 <Link href="/learning-intelligence/practice" className="inline-flex items-center gap-1 text-xs font-semibold text-[var(--angel-blue)] hover:underline">
                   <TrendingUp size={13} /> See practice areas →
                 </Link>

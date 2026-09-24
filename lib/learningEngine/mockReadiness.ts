@@ -58,6 +58,15 @@ export async function fetchRealCsseMockAttemptCount(supabase: SupabaseClient<Dat
  * how often getRecommendations() has a real top candidate; "mock-valuable"
  * only fires when there is genuinely nothing more specific to point to.
  */
+/**
+ * Mock subject-routing P0 correction — a generic "take a mock" CTA never
+ * names a subject, so it must never point at /learning-intelligence/
+ * mock-exam directly (a full_mock there without ?subject= is ambiguous
+ * between Mathematics and English and now fails closed). It routes to the
+ * Mock Centre, where the family chooses the paper.
+ */
+export const MOCK_CENTRE_HREF = "/mocks";
+
 export type MockReadinessVerdict = "practice-first" | "first-mock-valuable" | "mock-valuable";
 
 export interface MockReadinessAssessment {
@@ -88,7 +97,7 @@ export function assessMockReadiness(input: MockReadinessInput): MockReadinessAss
       verdict: "first-mock-valuable",
       explanation:
         "Your child has real practice evidence but hasn't sat a mock yet. A first mock would add valuable evidence about how that holds up under timed, exam-style conditions.",
-      nextAction: { label: "Start a mock exam →", href: "/learning-intelligence/mock-exam" },
+      nextAction: { label: "Choose a mock →", href: MOCK_CENTRE_HREF },
     };
   }
 
@@ -105,7 +114,7 @@ export function assessMockReadiness(input: MockReadinessInput): MockReadinessAss
     verdict: "mock-valuable",
     explanation:
       "Evidence is reasonably broad and there's no single area needing focused attention right now. A mock would add real, broad evidence under exam conditions.",
-    nextAction: { label: "Start a mock exam →", href: "/learning-intelligence/mock-exam" },
+    nextAction: { label: "Choose a mock →", href: MOCK_CENTRE_HREF },
   };
 }
 

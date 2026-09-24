@@ -10,7 +10,7 @@ import { fetchRecentActivity, type RecentActivityItem } from "@/lib/learningEngi
 import { fetchEducationalMilestones } from "@/lib/ali/persistence/auditStore";
 import { getRecommendations } from "@/lib/learningEngine/educationalIntelligenceService";
 import { COMPETENCIES, ALL_COMPETENCY_IDS } from "@/lib/learningEngine/assessmentBrainMap";
-import { assessMockReadiness, fetchRealCsseMockAttemptCount, type MockReadinessAssessment } from "@/lib/learningEngine/mockReadiness";
+import { assessMockReadiness, fetchRealCsseMockAttemptCount, MOCK_CENTRE_HREF, type MockReadinessAssessment } from "@/lib/learningEngine/mockReadiness";
 import { getActiveMockForm, isMockFormAvailable } from "@/lib/mockAttempt/client";
 import { CompetencySummary } from "@/components/learningEngine/parent/CompetencySummary";
 import { EvidenceComposition } from "@/components/learningEngine/parent/EvidenceComposition";
@@ -64,7 +64,7 @@ export function CssePathwayParentContent() {
         setProfile(p);
         const supabase = getSupabaseClient();
         if (supabase) {
-          getActiveMockForm(supabase, "full_mock")
+          getActiveMockForm(supabase, "full_mock", "mathematics")
             .then((result) => setCsseMockAvailable(isMockFormAvailable(result)))
             .catch(() => setCsseMockAvailable(false));
         }
@@ -271,7 +271,7 @@ export function CssePathwayParentContent() {
                     }[mockReadiness.verdict]}
                   </p>
                   <p className="text-xs text-[var(--angel-muted)] mt-1 leading-relaxed">{mockReadiness.explanation}</p>
-                  {mockReadiness.nextAction.href === "/learning-intelligence/mock-exam" && !csseMockAvailable ? (
+                  {mockReadiness.nextAction.href === MOCK_CENTRE_HREF && !csseMockAvailable ? (
                     <Link href="/learning-intelligence/practice" className="inline-block text-xs font-semibold text-[var(--angel-blue)] mt-2 hover:underline">
                       See practice areas →
                     </Link>

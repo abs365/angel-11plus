@@ -40,6 +40,7 @@ import type { MockAttemptType, MockQuestionPayload } from "@/lib/mockAttempt/typ
 import {
   resolveAttemptType,
   subjectMismatch,
+  isAmbiguousFullMockRequest,
   computeRemainingSeconds,
   isAttemptExpired,
   buildDisplayUnits,
@@ -203,6 +204,7 @@ function introSubtitleFor(attemptType: MockAttemptType, subject: "mathematics" |
 
 
 type Phase =
+  | "choose-mock"
   | "intro"
   | "checking"
   | "unavailable"
@@ -413,6 +415,11 @@ export default function MockExamPage({
   // anything exam-shaped renders.
   useEffect(() => {
     (async () => {
+      // Mock subject-routing P0 correction — a full_mock entry point with
+      // no explicit, recognised subject never resolves "any full mock"
+      // (see isAmbiguousFullMockRequest()'s own docstring). No form is
+      // resolved and no RPC is called; the learner is sent back to choose.
+      if (isAmbiguousFullMockRequest(attemptType, subject)) { setPhase("choose-mock"); return; }
       const supabase = getSupabaseClient();
       if (!supabase) { setErrorMessage("Not connected."); setPhase("error"); return; }
       supabaseRef.current = supabase;
@@ -535,6 +542,10 @@ export default function MockExamPage({
 
   async function handleBegin() {
     setErrorMessage("");
+    // Mock subject-routing P0 correction — the transactional gate repeats
+    // the mount check: no attempt can ever be created or resumed from an
+    // ambiguous full_mock entry point.
+    if (isAmbiguousFullMockRequest(attemptType, subject)) { setPhase("choose-mock"); return; }
     setPhase("checking");
     const supabase = getSupabaseClient();
     if (!supabase) { setErrorMessage("Not connected."); setPhase("error"); return; }
@@ -801,6 +812,18 @@ export default function MockExamPage({
           <p className="text-sm text-[var(--angel-muted)] mt-6" aria-live="polite">
             {phase === "checking" ? "Checking for an available mock…" : "Preparing your assessment…"}
           </p>
+        )}
+
+        {phase === "choose-mock" && (
+          <div className="mt-6 text-center bg-[var(--angel-paper)] border border-[var(--angel-border)] rounded-lg p-6" data-testid="mock-choose-from-centre">
+            <p className="text-sm font-semibold text-[var(--angel-navy)]">Choose your Mock from the Mock Centre</p>
+            <p className="text-xs text-[var(--angel-muted)] mt-2 leading-relaxed">
+              This link didn&apos;t say which paper to open, so nothing has been started. Pick Mathematics or English in the Mock Centre.
+            </p>
+            <Link href="/mocks" className="inline-block mt-4 text-xs font-semibold text-[var(--angel-blue)] hover:underline">
+              Go to the Mock Centre
+            </Link>
+          </div>
         )}
 
         {phase === "unavailable" && (

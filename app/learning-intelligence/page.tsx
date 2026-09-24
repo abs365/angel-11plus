@@ -194,7 +194,7 @@ export default function LearningIntelligencePage() {
                 <Link href="/learning-intelligence/parent/revision-planner" className="text-[var(--angel-blue)] hover:underline">
                   Revision Planner
                 </Link>
-                <Link href="/learning-intelligence/mock-exam" className="text-[var(--angel-blue)] hover:underline">
+                <Link href="/mocks" className="text-[var(--angel-blue)] hover:underline">
                   CSSE mock exam
                 </Link>
                 <Link href="/learning-intelligence/parent/journey" className="text-[var(--angel-blue)] hover:underline">
