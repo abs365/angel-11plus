@@ -10,7 +10,11 @@ import { getSupabaseClient } from "@/lib/supabase";
 import { ensureProfile } from "@/lib/supabaseProgress";
 import { getActiveMockForm, isMockFormAvailable, getOpenMockCycle, getMostRecentMockCycle, getMockCycleAttempts } from "@/lib/mockAttempt/client";
 import { deriveMockCycleSittingState, type MockCycleSittingState, type MockPaperState } from "@/lib/mockAttempt/cycleState";
-import { friendlyMockStartError } from "@/lib/mockAttempt/startupErrors";
+import { friendlyMockStartError, isPinRecoverableMockStartError } from "@/lib/mockAttempt/startupErrors";
+import { useAuth } from "@/components/providers/AuthProvider";
+import { useLearners } from "@/lib/useLearners";
+import { enterLearnerMode } from "@/lib/householdMode";
+import LearnerPinModal from "@/components/parent/LearnerPinModal";
 
 /**
  * CSSE Two-Paper Mock, pre-activation completion pass (governing brief
@@ -96,6 +100,15 @@ function PaperCard({ info, paperState, attemptId }: { info: PaperInfo; paperStat
 export default function CompleteCsseMockSittingPage() {
   const [loading, setLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
+  // Mock subject-routing P0 retest -- angel_learner_pin_required (live
+  // Founder evidence: mock_get_open_cycle refused by current_learner_id(),
+  // migration 263) was a dead end here, unlike mock-exam/page.tsx. Same
+  // recovery: verify the learner PIN through the existing, unmodified
+  // LearnerPinModal/verify_learner_pin(), then reload. Never bypasses it.
+  const [showPinRecovery, setShowPinRecovery] = useState(false);
+  const [reloadKey, setReloadKey] = useState(0);
+  const { user } = useAuth();
+  const { active: activeLearner } = useLearners();
   const [sitting, setSitting] = useState<MockCycleSittingState>({
     cycleId: "",
     mathematics: { subject: "mathematics", paperState: "not_started", attemptId: null, submittedAt: null },
@@ -109,6 +122,8 @@ export default function CompleteCsseMockSittingPage() {
 
   useEffect(() => {
     (async () => {
+      setLoading(true);
+      setErrorMessage("");
       const supabase = getSupabaseClient();
       if (!supabase) { setErrorMessage("Not connected."); setLoading(false); return; }
 
@@ -157,7 +172,7 @@ export default function CompleteCsseMockSittingPage() {
       }
       setLoading(false);
     })();
-  }, []);
+  }, [reloadKey]);
 
   // Deliberate transition state (§7) — shown only when exactly one paper
   // is genuinely done and the other has not yet been submitted. Never
@@ -191,7 +206,19 @@ export default function CompleteCsseMockSittingPage() {
         {loading ? (
           <p className="text-sm text-[var(--angel-muted)]">Loading your sitting…</p>
         ) : errorMessage ? (
-          <div className="text-sm text-red-600 dark:text-red-400 bg-[var(--angel-paper)] border border-[var(--angel-border)] rounded-lg p-5">{friendlyMockStartError(errorMessage)}</div>
+          <div className="text-sm text-red-600 dark:text-red-400 bg-[var(--angel-paper)] border border-[var(--angel-border)] rounded-lg p-5">
+            {friendlyMockStartError(errorMessage)}
+            {isPinRecoverableMockStartError(errorMessage) && activeLearner && (
+              <div className="mt-3">
+                <button
+                  onClick={() => setShowPinRecovery(true)}
+                  className="min-h-[44px] inline-flex items-center gap-1 text-xs font-semibold text-[var(--angel-blue)] px-2"
+                >
+                  Re-enter your PIN
+                </button>
+              </div>
+            )}
+          </div>
         ) : (
           <>
             {transitionMessage && (
@@ -225,6 +252,20 @@ export default function CompleteCsseMockSittingPage() {
               <PaperCard info={papers.mathematics} paperState={sitting.mathematics.paperState} attemptId={sitting.mathematics.attemptId} />
             </section>
           </>
+        )}
+
+        {showPinRecovery && activeLearner && (
+          <LearnerPinModal
+            mode="verify"
+            learnerId={activeLearner.id}
+            learnerName={activeLearner.name ?? "your child"}
+            onCancel={() => setShowPinRecovery(false)}
+            onSuccess={(token) => {
+              setShowPinRecovery(false);
+              if (user && !user.is_anonymous) enterLearnerMode(user.id, token);
+              setReloadKey((k) => k + 1);
+            }}
+          />
         )}
       </div>
     </PageLayout>

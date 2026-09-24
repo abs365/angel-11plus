@@ -126,7 +126,7 @@ test("a failure fetching previous attempts never blocks the primary \"I'm ready 
   // satisfy react-hooks/exhaustive-deps correctly, not a behavioural
   // change (attemptType is stable for the page's lifetime -- a
   // different ?type= remounts the page tree in the App Router).
-  const mountEffect = mockExamSource.match(/useEffect\(\(\) => \{\s*\(async \(\) => \{[\s\S]*?\}\)\(\);[\s\S]*?\}, \[attemptType\]\);/)?.[0] ?? "";
+  const mountEffect = mockExamSource.match(/useEffect\(\(\) => \{\s*\(async \(\) => \{[\s\S]*?\}\)\(\);[\s\S]*?\}, \[attemptType, subject\]\);/)?.[0] ?? "";
   assert.match(mountEffect, /if \(!submitted\.error && submitted\.data\)/);
   assert.match(mountEffect, /setPhase\(isMockFormAvailable\(active\) \? "intro" : "unavailable"\)/);
 });

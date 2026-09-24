@@ -188,3 +188,59 @@ test("migration 265: preserves the live ACL exactly, is transactional, and touch
   assert.doesNotMatch(M265_SQL, /\b(insert|update|delete)\b\s/i);
   assert.doesNotMatch(M265_SQL, /ali_mock_attempt|ali_mock_cycle|policy|current_learner_id/i);
 });
+
+// --- production root cause: pre-rendered routes receive searchParams = {} ---
+// Live evidence (Founder retest, 2026-09-24): Vercel serves
+// /learning-intelligence/mock-exam pre-rendered (X-Nextjs-Prerender: 1)
+// with `searchParams: {}` baked in, so a `use(searchParams)` prop read never
+// saw ?subject=/?type= and BOTH named Mock Centre cards reached the
+// fail-closed screen. Routes with a dynamic segment (practice/[area]) are
+// rendered per request and were unaffected.
+
+/** Source with comment lines removed, so explanatory docstrings never count as code. */
+function codeOnly(file: string): string {
+  return codeLines(file).map(({ line }) => line).join("\n");
+}
+
+function isStaticRoute(file: string): boolean {
+  return !/\[[^\]]+\]/.test(file.replace(/\\/g, "/"));
+}
+
+test("root cause: no statically pre-renderable client page reads the query via the searchParams prop -- it must use useSearchParams()", () => {
+  const violations: string[] = [];
+  let checked = 0;
+  for (const file of sourceFiles("app")) {
+    if (!/[\\/]page\.tsx$/.test(file) || !isStaticRoute(file)) continue;
+    checked++;
+    const src = codeOnly(file);
+    if (!/^"use client";/m.test(src)) continue;
+    if (/use\(searchParams\)/.test(src)) violations.push(file);
+  }
+  assert.ok(checked > 20, `expected to scan the app's static page files; scanned ${checked}`);
+  assert.deepEqual(violations, [], `pre-rendered client pages reading the (always empty) searchParams prop:\n${violations.join("\n")}`);
+});
+
+test("root cause: the pre-start page reads type/subject from the real browser URL inside a Suspense boundary, keyed on the paper", () => {
+  assert.match(MOCK_EXAM, /import \{ useSearchParams \} from "next\/navigation";/);
+  assert.match(MOCK_EXAM, /export default function MockExamPage\(\) \{\s*return \(\s*<Suspense fallback=\{/);
+  assert.match(MOCK_EXAM, /<MockExamPageInner key=\{`\$\{type \?\? ""\}\|\$\{rawSubject \?\? ""\}`\} type=\{type\} rawSubject=\{rawSubject\} \/>/);
+  assert.doesNotMatch(MOCK_EXAM, /searchParams: Promise</);
+});
+
+test("root cause: the sitting results page reads ?cycleId= from the real browser URL too", () => {
+  const results = read("app/learning-intelligence/mock-exam/sitting/results/page.tsx");
+  assert.match(results, /const cycleId = useSearchParams\(\)\.get\("cycleId"\) \?\? undefined;/);
+  assert.doesNotMatch(codeOnly("app/learning-intelligence/mock-exam/sitting/results/page.tsx"), /use\(searchParams\)/);
+});
+
+// --- sitting hub: angel_learner_pin_required is recoverable, never bypassed ---
+
+test("sitting hub: a PIN-required refusal offers the same governed recovery as the pre-start page (verify PIN via LearnerPinModal, then reload) and never skips verification", () => {
+  const hub = read("app/learning-intelligence/mock-exam/sitting/page.tsx");
+  assert.match(hub, /isPinRecoverableMockStartError\(errorMessage\) && activeLearner && \(/);
+  assert.match(hub, /<LearnerPinModal\s+mode="verify"/);
+  const onSuccess = hub.slice(hub.indexOf("onSuccess={(token) => {"));
+  assert.ok(onSuccess.indexOf("enterLearnerMode(user.id, token)") < onSuccess.indexOf("setReloadKey"), "only a token minted by a successful verify is stored before reloading");
+  assert.match(hub, /\}, \[reloadKey\]\);/);
+  assert.doesNotMatch(hub, /x-angel-learner-token|learnerToken\s*=/, "the hub never handles tokens itself");
+});

@@ -45,7 +45,10 @@ test("fix half 1: the Mock Centre's own full_mock discovery call (used for avail
 });
 
 test("fix half 2: mock-exam/page.tsx already reads ?subject= from its own URL and threads it into every getActiveMockForm() call it makes -- no change was needed there, the ambiguity was created entirely upstream by the Mock Centre's own unscoped href", () => {
-  assert.match(MOCK_EXAM, /const \{ type, subject: rawSubject \} = use\(searchParams\);/);
+  // Mock subject-routing P0: read from the real browser URL (the pre-rendered
+  // route's use(searchParams) prop was always {} in production).
+  assert.match(MOCK_EXAM, /const type = searchParams\.get\("type"\) \?\? undefined;/);
+  assert.match(MOCK_EXAM, /const rawSubject = searchParams\.get\("subject"\) \?\? undefined;/);
   assert.match(
     MOCK_EXAM,
     /const subject: "mathematics" \| "english" \| undefined = rawSubject === "mathematics" \|\| rawSubject === "english" \? rawSubject : undefined;/

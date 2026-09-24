@@ -1,6 +1,7 @@
 "use client";
 
-import { use, useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { AlertTriangle, CheckCircle2, Circle, PlayCircle } from "lucide-react";
 import PageLayout from "@/components/PageLayout";
@@ -161,8 +162,26 @@ function EnglishSection({ report, writing }: { report: MockAttemptReport | null;
   );
 }
 
-export default function CsseMockSittingResultsPage({ searchParams }: { searchParams: Promise<{ cycleId?: string }> }) {
-  const { cycleId } = use(searchParams);
+/**
+ * Mock subject-routing P0 -- same production root cause as
+ * mock-exam/page.tsx: this route is served pre-rendered with
+ * `searchParams: {}` baked in, so the former `use(searchParams)` read never
+ * saw ?cycleId= in production. Read from the real browser URL instead.
+ */
+export default function CsseMockSittingResultsPage() {
+  return (
+    <Suspense fallback={<PageLayout><div className="max-w-3xl mx-auto px-4 py-6" /></PageLayout>}>
+      <CsseMockSittingResultsFromUrl />
+    </Suspense>
+  );
+}
+
+function CsseMockSittingResultsFromUrl() {
+  const cycleId = useSearchParams().get("cycleId") ?? undefined;
+  return <CsseMockSittingResultsInner key={cycleId ?? ""} cycleId={cycleId} />;
+}
+
+function CsseMockSittingResultsInner({ cycleId }: { cycleId: string | undefined }) {
   const [loading, setLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
   const [sitting, setSitting] = useState<MockCycleSittingState | null>(null);

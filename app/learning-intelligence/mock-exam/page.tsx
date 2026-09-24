@@ -1,6 +1,7 @@
 "use client";
 
-import { use, useCallback, useEffect, useRef, useState } from "react";
+import { Suspense, useCallback, useEffect, useRef, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Flag, RotateCcw } from "lucide-react";
 import PageLayout from "@/components/PageLayout";
@@ -215,18 +216,41 @@ type Phase =
   | "submitted"
   | "error";
 
-export default function MockExamPage({
-  searchParams,
-}: {
-  searchParams: Promise<{ type?: string; subject?: string }>;
-}) {
+/**
+ * Mock subject-routing P0, production root cause (live evidence: Vercel
+ * serves this route pre-rendered -- `X-Nextjs-Prerender: 1` -- with
+ * `searchParams: {}` baked into its payload, so the former
+ * `use(searchParams)` prop read NEVER saw ?subject= or ?type= in
+ * production). That is what sent the 05:21 "Mathematics Mock 1" sitting to
+ * the newest full_mock (English), and what later sent both named Mock
+ * Centre cards to the fail-closed "Choose your Mock" screen. The query is
+ * now read from the real browser URL via useSearchParams() (the same
+ * pattern app/learning-intelligence/placement/page.tsx already uses),
+ * inside the Suspense boundary a statically pre-rendered route requires.
+ * Keyed on the paper so moving between papers always remounts fresh state.
+ */
+export default function MockExamPage() {
+  return (
+    <Suspense fallback={<PageLayout breadcrumbs={[{ label: "Learning Report", href: "/learning-intelligence" }, { label: "Mock exam" }]}><div className="max-w-3xl mx-auto px-4 py-6 md:px-8 md:py-8" /></PageLayout>}>
+      <MockExamPageFromUrl />
+    </Suspense>
+  );
+}
+
+function MockExamPageFromUrl() {
+  const searchParams = useSearchParams();
+  const type = searchParams.get("type") ?? undefined;
+  const rawSubject = searchParams.get("subject") ?? undefined;
+  return <MockExamPageInner key={`${type ?? ""}|${rawSubject ?? ""}`} type={type} rawSubject={rawSubject} />;
+}
+
+function MockExamPageInner({ type, rawSubject }: { type: string | undefined; rawSubject: string | undefined }) {
   // Fail-safe validation, matching this codebase's own established
   // "absent/unrecognised is not an error, it silently falls back" pattern
   // (app/learning-intelligence/practice/[area]/page.tsx's own
   // requestedFocus). resolveAttemptType() is a pure, independently-tested
   // function (lib/mockAttempt/workspace.ts) — Programme Completion
   // Increment 016.
-  const { type, subject: rawSubject } = use(searchParams);
   const attemptType: MockAttemptType = resolveAttemptType(type);
   const durationMinutes = DURATION_MINUTES_BY_ATTEMPT_TYPE[attemptType];
   // CSSE Two-Paper Mock, pre-activation completion pass — optional,
@@ -464,13 +488,12 @@ export default function MockExamPage({
         setMockAccess(classifyMockAccess({ technicallyAvailable: isMockFormAvailable(active), stage, clock }));
       })().catch(() => {});
     })();
-    // attemptType is resolved once from searchParams (use()) and is
-    // stable for this component's lifetime — a real navigation to a
-    // different ?type= remounts this page tree in the App Router, it
-    // does not change this value in place. Declared as a dependency
-    // below because this effect genuinely reads it, matching the real
-    // rule, not a suppressed warning.
-  }, [attemptType]);
+    // attemptType and subject are stable for this component's lifetime:
+    // MockExamPageFromUrl keys this component on the URL's paper, so a
+    // navigation to a different ?type=/?subject= remounts it rather than
+    // changing either value in place. Both are declared because this
+    // effect genuinely reads them.
+  }, [attemptType, subject]);
 
   async function loadUnit(supabase: NonNullable<typeof supabaseRef.current>, attemptIdValue: string, unit: DisplayUnit) {
     setQuestionLoading(true);
