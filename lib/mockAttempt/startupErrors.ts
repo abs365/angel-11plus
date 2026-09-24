@@ -17,6 +17,15 @@
  */
 
 const PIN_REQUIRED_CODE = "angel_learner_pin_required";
+/**
+ * Increment 3 Closure Blocker (Mathematics Mock 1 starting an English
+ * assessment) — the client-side half of the invariant now enforced in
+ * app/learning-intelligence/mock-exam/page.tsx: never create or resume an
+ * attempt against a form whose own returned subject does not match the
+ * subject actually requested. See migration 264's own header for the full
+ * root-cause investigation.
+ */
+export const MOCK_SUBJECT_MISMATCH_CODE = "angel_mock_subject_mismatch";
 
 export function isPinRecoverableMockStartError(message: string): boolean {
   return new RegExp(PIN_REQUIRED_CODE).test(message);
@@ -25,6 +34,9 @@ export function isPinRecoverableMockStartError(message: string): boolean {
 export function friendlyMockStartError(message: string): string {
   if (new RegExp(PIN_REQUIRED_CODE).test(message)) {
     return "Your learner session needs to be verified again before starting this Mock.";
+  }
+  if (message === MOCK_SUBJECT_MISMATCH_CODE) {
+    return "Angel couldn't confirm this is the right assessment to start. Please go back and try again, or contact us if this keeps happening.";
   }
   if (/angel_learner_not_owned/.test(message)) return "This isn't one of your children's profiles.";
   if (/angel_learner_required/.test(message)) return "Please choose who's practising first.";

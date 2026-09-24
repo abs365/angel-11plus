@@ -937,9 +937,13 @@ export interface Database {
       // production. display_name added (nullable — null until a form's
       // own composition_provenance carries a displayName key, migrations
       // 212/213).
+      // Migration 245 — p_subject added (optional, defaults to matching
+      // any subject). Migration 264 (Increment 3 Closure Blocker) —
+      // subject added to Returns, so a caller can verify the resolved
+      // form actually matches the subject it requested.
       mock_get_active_form: {
-        Args: { p_attempt_type: string };
-        Returns: { form_id: string; attempt_type: string; display_name: string | null }[];
+        Args: { p_attempt_type: string; p_subject?: string | null };
+        Returns: { form_id: string; attempt_type: string; subject: string | null; display_name: string | null }[];
       };
       mock_get_attempt_manifest: {
         Args: { p_attempt_id: string };

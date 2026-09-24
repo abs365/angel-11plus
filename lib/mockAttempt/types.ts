@@ -188,6 +188,14 @@ export interface MockManifestGroupingEntry {
 export interface ActiveMockForm {
   formId: string;
   attemptType: MockAttemptType;
+  /**
+   * Migration 264 (Increment 3 Closure Blocker) — the resolved form's own
+   * subject column, now returned so a caller that requested a specific
+   * subject can verify the row it actually got back matches, rather than
+   * trusting the server-side filter silently. Null for a non-subject-pure
+   * form (e.g. a legacy/combined form with no subject set).
+   */
+  subject: "mathematics" | "english" | null;
   displayName: string | null;
 }
 

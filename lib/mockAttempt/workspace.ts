@@ -11,7 +11,7 @@
  * page component."
  */
 
-import type { MockAttemptStatus, MockAttemptType, MockImageStimulus, MockManifestGroupingEntry, MockQuestionPayload, MockTableStimulus, ResumableMockAttempt } from "./types";
+import type { ActiveMockForm, MockAttemptStatus, MockAttemptType, MockImageStimulus, MockManifestGroupingEntry, MockQuestionPayload, MockTableStimulus, ResumableMockAttempt } from "./types";
 
 /**
  * Programme Completion Increment 016 — the one, exact, already-activated
@@ -50,6 +50,31 @@ const VALID_ATTEMPT_TYPES: readonly MockAttemptType[] = ["full_mock", "timed_sec
  */
 export function resolveAttemptType(rawType: string | undefined): MockAttemptType {
   return VALID_ATTEMPT_TYPES.includes(rawType as MockAttemptType) ? (rawType as MockAttemptType) : "full_mock";
+}
+
+/**
+ * Increment 3 Closure Blocker (Mathematics Mock 1 starting an English
+ * assessment, real Founder production evidence) — the structural invariant
+ * app/learning-intelligence/mock-exam/page.tsx must never violate: a
+ * caller that explicitly requested one subject must never proceed into an
+ * attempt built from a DIFFERENT subject's form, no matter what caused the
+ * mismatch (server-side resolution, client-side navigation state, or
+ * anything else). Migration 264 widened mock_get_active_form()'s own
+ * return shape specifically so this can be verified rather than assumed.
+ * `subject === undefined` (no subject requested at all, e.g. Reading
+ * Comprehension's own ?type=timed_section link, which has no subject
+ * ambiguity to begin with) is never a mismatch. A resolved form whose own
+ * `subject` is null (a legacy/combined form) is also never flagged here --
+ * mock_get_active_form()'s own WHERE clause (`p_subject is null or
+ * f.subject = p_subject`) makes that combination unreachable whenever a
+ * specific subject was actually requested, so this only ever fires on a
+ * genuine, real mismatch.
+ */
+export function subjectMismatch(
+  active: { data: ActiveMockForm | null },
+  subject: "mathematics" | "english" | undefined
+): boolean {
+  return Boolean(subject) && active.data !== null && active.data.subject !== null && active.data.subject !== subject;
 }
 
 /** Never negative — a stale expiresAt in the past reads as 0 remaining, not a negative countdown. */

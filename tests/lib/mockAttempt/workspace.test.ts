@@ -1,5 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
+import { friendlyMockStartError } from "@/lib/mockAttempt/startupErrors";
 import {
   computeRemainingSeconds,
   isAttemptExpired,
@@ -13,8 +15,9 @@ import {
   computeResumeStartIndex,
   isReadingScoringRecoveryEligible,
   isWritingAssessmentRecoveryEligible,
+  subjectMismatch,
 } from "@/lib/mockAttempt/workspace";
-import type { MockManifestGroupingEntry, ResumableMockAttempt } from "@/lib/mockAttempt/types";
+import type { ActiveMockForm, MockManifestGroupingEntry, ResumableMockAttempt } from "@/lib/mockAttempt/types";
 
 /**
  * Founder invocation-reliability repair (Programme Completion Increment
@@ -433,4 +436,70 @@ test("payloadMatchesQuestion confirms a fetched payload genuinely belongs to the
   };
   assert.equal(payloadMatchesQuestion(payload, "q1"), true);
   assert.equal(payloadMatchesQuestion(payload, "q2"), false);
+});
+
+// === subjectMismatch — Increment 3 Closure Blocker =========================
+// Real Founder production evidence: clicking "Mathematics Mock 1" reached a
+// genuine "Mathematics Mock 1" pre-start screen, then began an English
+// assessment. Every individual piece of the request path (the Mock Centre
+// card's own href, getActiveMockForm()'s client wrapper, its own SQL filter,
+// and Mathematics's own subject column at every point checked in migration
+// history) was independently confirmed correct by static reading -- this is
+// the runtime VERIFICATION layer that was previously entirely absent: the
+// one piece of code that actually checks what came back, rather than
+// trusting what was asked for was what was returned.
+
+function mockForm(subject: "mathematics" | "english" | null, formId = "some-form"): { data: ActiveMockForm; error: null } {
+  return { data: { formId, attemptType: "full_mock", subject, displayName: null }, error: null };
+}
+
+test("Mathematics Mock 1 cannot produce an English form: requesting mathematics, receiving a form whose own subject is english, is flagged as a mismatch", () => {
+  assert.equal(subjectMismatch(mockForm("english", "english-full-mock-v1"), "mathematics"), true);
+});
+
+test("Reading Comprehension Mock 1 cannot produce Mathematics: requesting mathematics is the only subject-scoped full_mock request Reading itself never makes (it uses ?type=timed_section, subject=undefined) -- this proves the symmetric case, requesting english and receiving mathematics, is equally caught", () => {
+  assert.equal(subjectMismatch(mockForm("mathematics", "first-mock-mathematics-v1"), "english"), true);
+});
+
+test("no mismatch: the resolved form's own subject genuinely matches what was requested (the correct, expected case for both Mathematics and English)", () => {
+  assert.equal(subjectMismatch(mockForm("mathematics", "first-mock-mathematics-v1"), "mathematics"), false);
+  assert.equal(subjectMismatch(mockForm("english", "english-full-mock-v1"), "english"), false);
+});
+
+test("no subject requested at all (Reading Comprehension Mock 1's own ?type=timed_section link, or any diagnostic_mock/legacy call) is never flagged, regardless of what subject the resolved form carries", () => {
+  assert.equal(subjectMismatch(mockForm("mathematics"), undefined), false);
+  assert.equal(subjectMismatch(mockForm(null), undefined), false);
+});
+
+test("a resolved form with no subject of its own (a legacy/combined form) is never flagged even if a subject was requested -- structurally unreachable via mock_get_active_form()'s own WHERE clause when a specific subject is requested, but this function does not assume that and stays permissive for that one combination rather than inventing a third error class", () => {
+  assert.equal(subjectMismatch(mockForm(null), "mathematics"), false);
+});
+
+test("no active form at all (data: null) is never flagged as a mismatch -- that is isMockFormAvailable()'s own, separate, pre-existing 'unavailable' concern, not this invariant's", () => {
+  assert.equal(subjectMismatch({ data: null, error: null }, "mathematics"), false);
+});
+
+// --- Wiring: both real checks in mock-exam/page.tsx use this exact function ---
+
+const MOCK_EXAM_PAGE = readFileSync("app/learning-intelligence/mock-exam/page.tsx", "utf8");
+
+test("the truthfulness check (mount effect, before 'Before you begin' renders) refuses on a subject mismatch instead of ever showing the intro screen", () => {
+  const mountEffectSection = MOCK_EXAM_PAGE.split("the pre-instructions")[1]?.split("}, [attemptType]);")[0] ?? "";
+  assert.match(mountEffectSection, /if \(subjectMismatch\(active, subject\)\) \{/);
+  assert.match(mountEffectSection, /setErrorMessage\(MOCK_SUBJECT_MISMATCH_CODE\);/);
+});
+
+test("the authoritative gate (handleBegin, immediately before any attempt is created or resumed) refuses on a subject mismatch, positioned before the resumable-attempt/cycle/create-new branches", () => {
+  const handleBeginSection = MOCK_EXAM_PAGE.split("async function handleBegin() {")[1] ?? "";
+  const mismatchCheckIndex = handleBeginSection.indexOf("subjectMismatch(active, subject)");
+  const resumableCheckIndex = handleBeginSection.indexOf("getResumableMockAttempt(");
+  assert.ok(mismatchCheckIndex > -1, "handleBegin must check subjectMismatch()");
+  assert.ok(resumableCheckIndex > -1, "handleBegin must still call getResumableMockAttempt()");
+  assert.ok(mismatchCheckIndex < resumableCheckIndex, "the subject invariant must be enforced before any resumable-attempt lookup, cycle discovery, or attempt creation");
+});
+
+test("a subject mismatch never reaches the learner as a raw internal code -- it is translated through friendlyMockStartError() like every other Mock-start error", () => {
+  const translated = friendlyMockStartError("angel_mock_subject_mismatch");
+  assert.doesNotMatch(translated, /angel_/);
+  assert.match(translated, /right assessment/i);
 });

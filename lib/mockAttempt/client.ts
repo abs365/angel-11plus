@@ -122,7 +122,12 @@ export async function getActiveMockForm(
   const row = Array.isArray(data) ? data[0] : data;
   if (!row) return { data: null, error: null };
   return {
-    data: { formId: row.form_id, attemptType: row.attempt_type as MockAttemptType, displayName: row.display_name ?? null },
+    data: {
+      formId: row.form_id,
+      attemptType: row.attempt_type as MockAttemptType,
+      subject: (row.subject as "mathematics" | "english" | null) ?? null,
+      displayName: row.display_name ?? null,
+    },
     error: null,
   };
 }

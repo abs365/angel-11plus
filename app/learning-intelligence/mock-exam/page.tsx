@@ -26,7 +26,7 @@ import {
   getSubmittedMockAttempts,
 } from "@/lib/mockAttempt/client";
 import { requestReadingScoring, logReadingScoringRequestOutcome } from "@/lib/mockAttempt/readingScoringRequest";
-import { friendlyMockStartError, isPinRecoverableMockStartError } from "@/lib/mockAttempt/startupErrors";
+import { friendlyMockStartError, isPinRecoverableMockStartError, MOCK_SUBJECT_MISMATCH_CODE } from "@/lib/mockAttempt/startupErrors";
 import { useAuth } from "@/components/providers/AuthProvider";
 import { useLearners } from "@/lib/useLearners";
 import { enterLearnerMode } from "@/lib/householdMode";
@@ -39,6 +39,7 @@ import { getSchoolYear } from "@/lib/progress";
 import type { MockAttemptType, MockQuestionPayload } from "@/lib/mockAttempt/types";
 import {
   resolveAttemptType,
+  subjectMismatch,
   computeRemainingSeconds,
   isAttemptExpired,
   buildDisplayUnits,
@@ -199,6 +200,7 @@ function introSubtitleFor(attemptType: MockAttemptType, subject: "mathematics" |
   }
   return INTRO_SUBTITLE_BY_ATTEMPT_TYPE[attemptType];
 }
+
 
 type Phase =
   | "intro"
@@ -416,6 +418,16 @@ export default function MockExamPage({
       supabaseRef.current = supabase;
       const active = await getActiveMockForm(supabase, attemptType, subject);
       if (active.error) { setErrorMessage(active.error); setPhase("error"); return; }
+      // Increment 3 Closure Blocker (Mathematics Mock 1 starting an
+      // English assessment) — the truthfulness check's own invariant:
+      // never show "Before you begin" for a form whose resolved subject
+      // does not match the one actually requested. See
+      // subjectMismatch()'s own docstring below for the full rationale.
+      if (subjectMismatch(active, subject)) {
+        setErrorMessage(MOCK_SUBJECT_MISMATCH_CODE);
+        setPhase("error");
+        return;
+      }
       // Decision 220 — best-effort, and deliberately AFTER the phase
       // decision below, never gating it: a failure here must never block
       // the "I'm ready to begin" flow itself, only the optional "previous
@@ -530,6 +542,12 @@ export default function MockExamPage({
 
     const active = await getActiveMockForm(supabase, attemptType, subject);
     if (active.error) { setErrorMessage(active.error); setPhase("error"); return; }
+    // Increment 3 Closure Blocker — the authoritative, transactional gate:
+    // never create or resume an attempt against a form whose own resolved
+    // subject does not match the one actually requested. This is the last
+    // check before any attempt is created, so it is the one that actually
+    // matters for preventing the wrong assessment from ever starting.
+    if (subjectMismatch(active, subject)) { setErrorMessage(MOCK_SUBJECT_MISMATCH_CODE); setPhase("error"); return; }
     if (!isMockFormAvailable(active)) { setPhase("unavailable"); return; }
 
     setPhase("starting");
