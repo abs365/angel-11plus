@@ -10,6 +10,7 @@ import { getSupabaseClient } from "@/lib/supabase";
 import { ensureProfile } from "@/lib/supabaseProgress";
 import { getActiveMockForm, isMockFormAvailable, getOpenMockCycle, getMostRecentMockCycle, getMockCycleAttempts } from "@/lib/mockAttempt/client";
 import { deriveMockCycleSittingState, type MockCycleSittingState, type MockPaperState } from "@/lib/mockAttempt/cycleState";
+import { friendlyMockStartError } from "@/lib/mockAttempt/startupErrors";
 
 /**
  * CSSE Two-Paper Mock, pre-activation completion pass (governing brief
@@ -190,7 +191,7 @@ export default function CompleteCsseMockSittingPage() {
         {loading ? (
           <p className="text-sm text-[var(--angel-muted)]">Loading your sitting…</p>
         ) : errorMessage ? (
-          <div className="text-sm text-red-600 dark:text-red-400 bg-[var(--angel-paper)] border border-[var(--angel-border)] rounded-lg p-5">{errorMessage}</div>
+          <div className="text-sm text-red-600 dark:text-red-400 bg-[var(--angel-paper)] border border-[var(--angel-border)] rounded-lg p-5">{friendlyMockStartError(errorMessage)}</div>
         ) : (
           <>
             {transitionMessage && (

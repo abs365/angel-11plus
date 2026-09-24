@@ -12,6 +12,7 @@ import { fetchRecentActivity, type RecentActivityItem } from "@/lib/learningEngi
 import { getEducationalIntelligence } from "@/lib/learningEngine/educationalIntelligenceService";
 import { ALL_COMPETENCY_IDS } from "@/lib/learningEngine/assessmentBrainMap";
 import { CompetencyProfile } from "@/components/learningEngine/CompetencyProfile";
+import { PRACTICE_AREAS } from "@/lib/learningEngine/practiceContent";
 import { EvidenceProfile } from "@/components/learningEngine/EvidenceProfile";
 import { DiagnosticOverview } from "@/components/learningEngine/DiagnosticOverview";
 import { ReadinessSummary } from "@/components/learningEngine/ReadinessSummary";
@@ -202,13 +203,42 @@ export default function LearningIntelligencePage() {
               </div>
             </div>
 
-            <section>
-              <h2 className="text-[var(--angel-navy)] font-bold text-lg md:text-xl mb-2">All skills, in detail</h2>
-              <p className="text-sm text-[var(--angel-muted)] mb-3">
-                Every skill CSSE preparation covers, shown honestly even where nothing has been recorded yet.
-              </p>
-              <CompetencyProfile competencies={profile.competencies} durableCompetencyIds={durableCompetencyIds} />
-            </section>
+            {/* Increment 3 Closure Correction, Section 2 — progressive
+                disclosure. A zero-evidence learner used to see this entire
+                competency catalogue rendered purely to repeat the same
+                not-yet-attempted status on every single row — unnecessary
+                density that made Angel look like a static curriculum
+                tracker. Below is the CSSE
+                subject list only (real, from PRACTICE_AREAS, not the full
+                competency inventory) with an honest explanation. The full
+                detailed catalogue returns automatically, unchanged, the
+                moment hasAnyEvidence becomes true from real recorded work —
+                the underlying competency model and CompetencyProfile
+                component are both untouched. */}
+            {profile.hasAnyEvidence ? (
+              <section>
+                <h2 className="text-[var(--angel-navy)] font-bold text-lg md:text-xl mb-2">All skills, in detail</h2>
+                <p className="text-sm text-[var(--angel-muted)] mb-3">
+                  Every skill CSSE preparation covers, shown honestly even where nothing has been recorded yet.
+                </p>
+                <CompetencyProfile competencies={profile.competencies} durableCompetencyIds={durableCompetencyIds} />
+              </section>
+            ) : (
+              <section>
+                <h2 className="text-[var(--angel-navy)] font-bold text-lg md:text-xl mb-2">Your subject areas</h2>
+                <p className="text-sm text-[var(--angel-muted)] mb-3">
+                  As your child completes activities in each of these, Angel will build a clearer, more detailed
+                  picture of their strengths and what to work on next.
+                </p>
+                <div className="bg-[var(--angel-paper)] border border-[var(--angel-border)] rounded-lg divide-y divide-[var(--angel-border)]">
+                  {PRACTICE_AREAS.map((area) => (
+                    <div key={area.id} className="p-4">
+                      <p className="text-sm font-semibold text-[var(--angel-navy)]">{area.label}</p>
+                    </div>
+                  ))}
+                </div>
+              </section>
+            )}
           </div>
         )}
       </div>

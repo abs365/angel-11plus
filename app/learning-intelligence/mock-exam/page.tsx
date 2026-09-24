@@ -26,6 +26,11 @@ import {
   getSubmittedMockAttempts,
 } from "@/lib/mockAttempt/client";
 import { requestReadingScoring, logReadingScoringRequestOutcome } from "@/lib/mockAttempt/readingScoringRequest";
+import { friendlyMockStartError, isPinRecoverableMockStartError } from "@/lib/mockAttempt/startupErrors";
+import { useAuth } from "@/components/providers/AuthProvider";
+import { useLearners } from "@/lib/useLearners";
+import { enterLearnerMode } from "@/lib/householdMode";
+import LearnerPinModal from "@/components/parent/LearnerPinModal";
 import { computeSubjectPreparationSummary } from "@/lib/learningEngine/preparationState";
 import { derivePreparationStage } from "@/lib/learningEngine/preparationStage";
 import { resolvePreparationClock } from "@/lib/learningEngine/preparationClock";
@@ -238,6 +243,12 @@ export default function MockExamPage({
   // truthful presentation, not a replacement for it.
   const [phase, setPhase] = useState<Phase>("checking");
   const [errorMessage, setErrorMessage] = useState("");
+  // Increment 3 Closure Correction, Section 1 -- a genuine recovery path for
+  // angel_learner_pin_required (see startupErrors.ts and lib/learnerContext.ts's
+  // own fix comment for the root cause), instead of a dead-end error screen.
+  const [showPinRecovery, setShowPinRecovery] = useState(false);
+  const { user } = useAuth();
+  const { active: activeLearner } = useLearners();
   // CSSE Two-Paper Mock, final production acceptance — a real, live P1
   // defect found during the real-learner walkthrough: mock_submit_answer()
   // (migration 245) correctly refuses an answer during a form's own
@@ -790,19 +801,43 @@ export default function MockExamPage({
         {phase === "error" && (
           <div className="mt-6 text-center bg-[var(--angel-paper)] border border-[var(--angel-border)] rounded-lg p-6">
             <p className="text-sm font-semibold text-[var(--angel-navy)]">We couldn&apos;t continue this assessment</p>
-            <p className="text-xs text-[var(--angel-muted)] mt-1">{errorMessage}</p>
+            <p className="text-xs text-[var(--angel-muted)] mt-1">{friendlyMockStartError(errorMessage)}</p>
             <div className="flex items-center justify-center gap-4 mt-4">
-              <button
-                onClick={() => setPhase("intro")}
-                className="min-h-[44px] inline-flex items-center gap-1 text-xs font-semibold text-[var(--angel-blue)] px-2"
-              >
-                <RotateCcw size={14} /> Start over
-              </button>
+              {isPinRecoverableMockStartError(errorMessage) && activeLearner ? (
+                <button
+                  onClick={() => setShowPinRecovery(true)}
+                  className="min-h-[44px] inline-flex items-center gap-1 text-xs font-semibold text-[var(--angel-blue)] px-2"
+                >
+                  Re-enter your PIN
+                </button>
+              ) : (
+                <button
+                  onClick={() => setPhase("intro")}
+                  className="min-h-[44px] inline-flex items-center gap-1 text-xs font-semibold text-[var(--angel-blue)] px-2"
+                >
+                  <RotateCcw size={14} /> Start over
+                </button>
+              )}
               <Link href="/learning-intelligence" className="min-h-[44px] inline-flex items-center text-xs font-semibold text-[var(--angel-muted)] px-2">
                 Back to dashboard
               </Link>
             </div>
           </div>
+        )}
+
+        {showPinRecovery && activeLearner && (
+          <LearnerPinModal
+            mode="verify"
+            learnerId={activeLearner.id}
+            learnerName={activeLearner.name ?? "your child"}
+            onCancel={() => setShowPinRecovery(false)}
+            onSuccess={(token) => {
+              setShowPinRecovery(false);
+              if (user && !user.is_anonymous) enterLearnerMode(user.id, token);
+              setPhase("intro");
+              void handleBegin();
+            }}
+          />
         )}
 
         {phase === "in-progress" && (

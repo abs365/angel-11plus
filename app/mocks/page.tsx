@@ -95,17 +95,28 @@ const COMING_LATER = ["Focused Assessment"];
  * NAME, which always comes from the backend's own displayName once
  * loaded, exactly like every other card on this page.
  */
+/**
+ * Increment 3 Closure Correction, Section 3 — a real, live P1 defect found
+ * during the Founder's production walkthrough: `description` unconditionally
+ * claimed the complete CSSE Mock "is still being built", directly
+ * contradicting the CsseCompleteMockCard shown immediately above once
+ * `completeCsseMockAvailable` is genuinely true. The base sentence never
+ * changes; the "still being built" clause is now appended only while that
+ * is still an honest, current statement of what Angel can deliver.
+ */
 const CSSE_MOCK_META: Record<"full_mock" | "timed_section", {
   fallbackName: string;
   summary: string;
-  description: string;
+  baseDescription: string;
+  notYetCompleteNote: string;
   minutesLabel: string;
   href: string;
 }> = {
   full_mock: {
     fallbackName: "Mathematics Mock 1",
     summary: "Mathematics · 21 questions · 56 marks · 60 minutes",
-    description: "A real, timed Mathematics assessment, marked and reported just like the real exam. The complete CSSE Mock, with English and Mathematics together, is still being built.",
+    baseDescription: "A real, timed Mathematics assessment, marked and reported just like the real exam.",
+    notYetCompleteNote: "The complete CSSE Mock, with English and Mathematics together, is still being built.",
     minutesLabel: "60 min",
     // CSSE Two-Paper Mock, final production acceptance — a real, live P1
     // defect found during the final learner walkthrough: this href never
@@ -124,11 +135,17 @@ const CSSE_MOCK_META: Record<"full_mock" | "timed_section", {
   timed_section: {
     fallbackName: "Reading Comprehension Mock 1",
     summary: "Reading Comprehension · 27 questions · 65 marks · 55 minutes",
-    description: "A real, timed Reading Comprehension assessment across three passages, marked and reported just like a real sitting. The complete CSSE Mock, with Continuous Writing and Mathematics together, is still being built.",
+    baseDescription: "A real, timed Reading Comprehension assessment across three passages, marked and reported just like a real sitting.",
+    notYetCompleteNote: "The complete CSSE Mock, with Continuous Writing and Mathematics together, is still being built.",
     minutesLabel: "55 min",
     href: "/learning-intelligence/mock-exam?type=timed_section",
   },
 };
+
+function csseMockDescription(attemptType: "full_mock" | "timed_section", completeCsseMockAvailable: boolean): string {
+  const meta = CSSE_MOCK_META[attemptType];
+  return completeCsseMockAvailable ? meta.baseDescription : `${meta.baseDescription} ${meta.notYetCompleteNote}`;
+}
 const CSSE_ATTEMPT_TYPES = ["full_mock", "timed_section"] as const;
 
 function readinessDisplay(readiness: CsseMockReadiness): { label: string; tone: StatusTone } {
@@ -233,12 +250,13 @@ function SimpleMockCard({
  * data driving it is now a parameter instead of module-scope state.
  */
 function CsseRichMockCard({
-  attemptType, displayName, available, best,
+  attemptType, displayName, available, best, completeCsseMockAvailable,
 }: {
   attemptType: "full_mock" | "timed_section";
   displayName: string;
   available: boolean;
   best: number | undefined;
+  completeCsseMockAvailable: boolean;
 }) {
   const meta = CSSE_MOCK_META[attemptType];
   return (
@@ -261,7 +279,7 @@ function CsseRichMockCard({
         {available && <p className="text-xs text-[var(--angel-muted)] mb-2">{meta.summary}</p>}
         <p className="text-sm text-[var(--angel-ink)] leading-relaxed mb-3 opacity-90">
           {available
-            ? meta.description
+            ? csseMockDescription(attemptType, completeCsseMockAvailable)
             : "A full mock is not available right now. Angel does not yet have a complete, reviewed set of exam questions to draw from. Practice stays available in the meantime, and reflects the same real evidence about how your child is progressing."}
         </p>
         <div className="flex items-center justify-between">
@@ -480,12 +498,14 @@ export default function MocksPage() {
           </div>
         )}
 
-        {/* Disclaimer */}
-        <div className="bg-amber-50 dark:bg-amber-950 border border-amber-100 dark:border-amber-900 rounded-lg px-4 py-3">
-          <p className="text-xs text-amber-700 dark:text-amber-300 leading-relaxed">
-            These are original practice papers created by Angel 11+. They are not affiliated with or endorsed by GL Assessment, CEM, CSSE, ISEB or any school.
-          </p>
-        </div>
+        {/* Increment 3 Closure Correction, Section 4 — this non-affiliation
+            disclosure must stay present but never compete visually with the
+            learner's actual Mock choices below it. Calm, secondary, plain
+            typography on Angel tokens — no warning-style amber panel, no
+            icon tile, no border box. */}
+        <p className="text-[11px] text-[var(--angel-muted)] leading-relaxed">
+          These are original practice papers created by Angel 11+. They are not affiliated with or endorsed by GL Assessment, CEM, CSSE, ISEB or any school.
+        </p>
 
         {/* YOUR EXAM — pathway-prioritised */}
         <section className="space-y-3">
@@ -511,6 +531,7 @@ export default function MocksPage() {
                   // increment, so "Not attempted yet" is genuinely
                   // correct, not merely a fallback.
                   best={attemptType === "full_mock" ? bestScores.csse : undefined}
+                  completeCsseMockAvailable={completeCsseMockAvailable}
                 />
               ))}
 
@@ -541,7 +562,7 @@ export default function MocksPage() {
                   name={csseMocks[attemptType].displayName}
                   accent="bg-[var(--angel-blue)]"
                   minutesLabel={CSSE_MOCK_META[attemptType].minutesLabel}
-                  description={CSSE_MOCK_META[attemptType].description}
+                  description={csseMockDescription(attemptType, completeCsseMockAvailable)}
                   href={CSSE_MOCK_META[attemptType].href}
                   best={attemptType === "full_mock" ? bestScores.csse : undefined}
                   available={csseMocks[attemptType].available}

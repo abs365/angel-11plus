@@ -26,7 +26,7 @@
  * device-wide key.
  */
 
-import { getHouseholdModeSnapshot } from "@/lib/householdMode";
+import { ensureHouseholdMode, getHouseholdModeSnapshot } from "@/lib/householdMode";
 
 export const LEARNER_HEADER = "x-angel-learner-id";
 /** PRIVATE LEARNER SPACE, Part 2 (migration 263): the learner-PIN session token, when one is active for the current Learner Mode session (lib/householdMode.ts). */
@@ -346,6 +346,11 @@ export function learnerRequestHeaders(): Record<string, string> {
   const id = state.uid && state.learnerId ? state.learnerId : getActiveLearnerIdSync();
   if (!id) return {};
   const headers: Record<string, string> = { [LEARNER_HEADER]: id };
+  // Self-hydrating (see createLearnerAwareFetch's own comment below) --
+  // ensureHouseholdMode() is a synchronous sessionStorage/localStorage read,
+  // safe to call here even if no mounted component's useHouseholdMode()
+  // effect has run yet.
+  if (state.uid) ensureHouseholdMode(state.uid);
   const hh = getHouseholdModeSnapshot();
   if (hh.uid && hh.mode === "learner" && hh.learnerToken) headers[LEARNER_TOKEN_HEADER] = hh.learnerToken;
   return headers;
@@ -355,6 +360,24 @@ export function learnerRequestHeaders(): Record<string, string> {
  * Wraps fetch for the Supabase client: REST/RPC requests made with an
  * account JWT are sent with the validated active-learner header, after the
  * learner context has loaded for that account.
+ *
+ * Increment 3 Closure Correction (P0 Mock-start investigation) -- household
+ * mode (Parent Mode/Learner Mode + the learner-PIN session token) used to be
+ * read here via a bare getHouseholdModeSnapshot() call only, relying on some
+ * OTHER already-mounted component's useHouseholdMode() effect having already
+ * called ensureHouseholdMode() first. Unlike ctx (learner id/context, always
+ * self-hydrated by the awaited ensureLearnerContext() call below), household
+ * mode had no such guarantee -- a request fired before any such component's
+ * effect had run would read the default {mode: "parent", learnerToken: null}
+ * snapshot and silently omit the x-angel-learner-token header, even though
+ * the learner id header (self-hydrated) still resolved correctly. That
+ * combination is exactly what makes current_learner_id() raise
+ * angel_learner_pin_required for a learner who has already verified their
+ * PIN. ensureHouseholdMode() only reads sessionStorage/localStorage
+ * synchronously (no network, no await), so calling it here directly is safe
+ * and idempotent -- it never weakens the PIN check itself, it only makes
+ * sure the real, already-verified token is never missed due to component
+ * mount ordering.
  */
 export function createLearnerAwareFetch(config: LearnerTransportConfig): typeof fetch {
   configureLearnerTransport(config);
@@ -370,6 +393,7 @@ export function createLearnerAwareFetch(config: LearnerTransportConfig): typeof 
     const ctx = await ensureLearnerContext(uid, authorization.replace(/^Bearer\s+/i, ""));
     if (ctx.uid === uid && ctx.learnerId) {
       headers.set(LEARNER_HEADER, ctx.learnerId);
+      ensureHouseholdMode(uid);
       const hh = getHouseholdModeSnapshot();
       if (hh.uid === uid && hh.mode === "learner" && hh.learnerToken) headers.set(LEARNER_TOKEN_HEADER, hh.learnerToken);
     }

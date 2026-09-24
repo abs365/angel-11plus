@@ -22,7 +22,7 @@ import { claimLegacyLocalState, reconcileSetup, type LocalSetup } from "@/lib/le
 import { forwardedLearnerHeaders } from "@/lib/learnerRequestForwarding";
 import { switchDestination, friendlyLearnerError } from "@/lib/useLearners";
 import { learnerDisplayName } from "@/lib/learnerDisplay";
-import { clearHouseholdMode, enterLearnerMode, returnToParentMode } from "@/lib/householdMode";
+import { clearHouseholdMode, enterLearnerMode, returnToParentMode, writeModePointer, writeTokenPointer } from "@/lib/householdMode";
 
 /**
  * Wave 0 multi-learner architecture (client side): the single active-
@@ -317,6 +317,35 @@ test("PRIVATE LEARNER SPACE, Part 2: in Parent Mode, no learner-PIN token header
   await f(`${REST}/rpc/one`, { headers: { authorization: `Bearer ${jwt(U1)}` } });
   const call = calls.find((c) => c.url.endsWith("/rpc/one"))!;
   assert.equal(call.headers.get(LEARNER_TOKEN_HEADER), null);
+});
+
+test("PRODUCTION DEFECT, PROVEN FIXED: a genuinely verified learner-PIN token already sitting in storage (a prior tab/page's real verify_learner_pin() success) is never missed on the FIRST request of a session, even before any mounted component's useHouseholdMode() effect has run -- this is the exact root cause of the reproduced 'angel_learner_pin_required' Mock-start failure (Increment 3 Closure Correction, Section 1). createLearnerAwareFetch() used to read household mode via a bare getHouseholdModeSnapshot() call, trusting some OTHER component to have already called ensureHouseholdMode() first; it now self-hydrates exactly like it already did for learner id/context.", async () => {
+  process.env.NEXT_PUBLIC_SUPABASE_URL = "https://x.supabase.co";
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY = "k";
+  const session = new FakeStorage();
+  const local = new FakeStorage();
+  g.window = { localStorage: local, sessionStorage: session };
+  g.localStorage = local;
+  const { calls, baseFetch } = fakeBackend({ [U1]: [{ id: L1, name: "Loni" }] });
+
+  // Simulate a real prior verify_learner_pin() success persisted to storage
+  // (exactly what enterLearnerMode() itself writes) -- WITHOUT calling
+  // enterLearnerMode()/ensureHouseholdMode() here, so the in-memory
+  // householdMode.ts module state is still at its untouched default. This
+  // is the state a fresh module load genuinely has before any component's
+  // useHouseholdMode() effect has fired.
+  writeModePointer(session, local, U1, "learner");
+  writeTokenPointer(session, U1, "real-verified-token");
+
+  const f = createLearnerAwareFetch({ restBase: REST, anonKey: "anon", baseFetch });
+  await f(`${REST}/rpc/mock_get_open_cycle`, { method: "POST", headers: { authorization: `Bearer ${jwt(U1)}` } });
+  const call = calls.find((c) => c.url.endsWith("/rpc/mock_get_open_cycle"))!;
+  assert.equal(call.headers.get(LEARNER_HEADER), L1);
+  assert.equal(
+    call.headers.get(LEARNER_TOKEN_HEADER),
+    "real-verified-token",
+    "the token already verified and stored by a prior PIN entry must reach the very first RPC call, not just later ones"
+  );
 });
 
 test("writes before the learner is known are skipped, never landing in another learner's or the legacy key", () => {
