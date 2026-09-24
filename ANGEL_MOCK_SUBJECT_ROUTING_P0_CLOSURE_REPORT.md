@@ -26,6 +26,14 @@ Evidence (read-only Supabase MCP + live bundle/headers):
   cards, with zero pre-start RPC traffic, which proved the page received no query at all. The live
   page payload contained `searchParams: {}`.
 
+## Onset (proven by building each commit)
+Commit `c10faef` (2026-09-21 18:54 UTC) wrapped every page in `RegisteredAccountGate` from `app/layout.tsx`.
+At build time the gate renders its panel instead of the page, so the page never read `searchParams`
+on the server and Next pre-rendered it. The route table flipped from `ƒ` (dynamic, commit `8927680`) to
+`○` (static, commit `c10faef`) for `mock-exam`, `mock-exam/sitting` and `mock-exam/sitting/results`.
+Affected window: Sep 21 ~18:54 UTC to the `e609d95` deploy on Sep 24. The only Mock attempt created in
+that window before the fix is `9ae70cee`.
+
 ## Corrections (all deployed and live-verified)
 | Commit / migration | Change |
 |---|---|
