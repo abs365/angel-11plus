@@ -371,15 +371,19 @@ export async function getMockCycleAttempts(
   const { data, error } = await (
     supabase.from as unknown as (table: "ali_mock_attempt") => {
       select: (columns: string) => {
-        eq: (col: string, val: string) => Promise<{
-          data: { id: string; subject: string | null; status: string; submitted_at: string | null }[] | null;
-          error: { message: string } | null;
-        }>;
+        eq: (col: string, val: string) => {
+          neq: (col: string, val: string) => Promise<{
+            data: { id: string; subject: string | null; status: string; submitted_at: string | null }[] | null;
+            error: { message: string } | null;
+          }>;
+        };
       };
     }
   )("ali_mock_attempt")
     .select("id, subject, status, submitted_at")
-    .eq("cycle_id", cycleId);
+    .eq("cycle_id", cycleId)
+    // Migration 266: a voided attempt never occupies its cycle slot.
+    .neq("status", "voided");
   if (error) return { data: null, error: error.message };
   const rows = (data ?? []).map(
     (r): MockCycleAttemptRow => ({

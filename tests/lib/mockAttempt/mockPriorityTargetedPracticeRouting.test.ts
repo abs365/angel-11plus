@@ -161,7 +161,7 @@ test("the report page's own release/security gate is untouched by this decision 
   // inside the same released branch, before its own `return;`.
   assert.match(
     MOCK_REPORT_PAGE,
-    /if \(result\.data && result\.data\.reportReleaseState === "released"\) \{\s*\n\s*setReport\(result\.data\);\s*\n\s*setPhase\("ready"\);\s*\n[\s\S]*?\n\s*return;\s*\n\s*\}\s*\n\s*setPhase\("not-available"\);/
+    /if \(result\.data && result\.data\.reportReleaseState === "released"\) \{\s*\n\s*setReport\(result\.data\);\s*\n\s*setPhase\("ready"\);\s*\n[\s\S]*?\n\s*return;\s*\n\s*\}[\s\S]*?if \(!summary\.error && isVoidedMockAttempt\(summary\.data\)\) \{ setPhase\("no-report"\); return; \}\s*\n\s*setPhase\("not-available"\);/
   );
 });
 

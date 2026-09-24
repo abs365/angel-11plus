@@ -25,7 +25,7 @@ function recoveryBlock(): string {
 }
 
 test("isWritingAssessmentRecoveryEligible is imported alongside the existing isReadingScoringRecoveryEligible", () => {
-  assert.match(SOURCE, /import \{ isReadingScoringRecoveryEligible, isWritingAssessmentRecoveryEligible \} from "@\/lib\/mockAttempt\/workspace";/);
+  assert.match(SOURCE, /import \{ isReadingScoringRecoveryEligible, isWritingAssessmentRecoveryEligible, isVoidedMockAttempt \} from "@\/lib\/mockAttempt\/workspace";/);
 });
 
 test("a writing-assessment recovery request now fires from the pre-release recovery branch, not only after release", () => {

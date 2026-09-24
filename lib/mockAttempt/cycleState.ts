@@ -40,7 +40,9 @@ function deriveSubjectState(subject: "mathematics" | "english", attempts: readon
   // at most one attempt per subject can exist for a given cycle -- this
   // find is never ambiguous by construction of the schema itself, not
   // merely by convention.
-  const attempt = attempts.find((a) => a.subject === subject) ?? null;
+  // A voided attempt (migration 266) never counts as the subject's paper:
+  // the paper reads as not started and can be taken again.
+  const attempt = attempts.find((a) => a.subject === subject && a.status !== "voided") ?? null;
   if (!attempt) return { subject, paperState: "not_started", attemptId: null, submittedAt: null };
   if (attempt.status === "submitted") {
     return { subject, paperState: "submitted", attemptId: attempt.attemptId, submittedAt: attempt.submittedAt };

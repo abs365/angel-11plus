@@ -6,7 +6,10 @@
  * changes, this file must change with it, not the other way round.
  */
 
-export type MockAttemptStatus = "assigned" | "ready" | "in_progress" | "submitted" | "expired";
+// "voided" (migration 266): a terminal, admin-only state for an attempt that
+// must never count as a genuine assessment. Never shown to a learner or parent
+// by name -- every surface treats it as if the attempt did not exist.
+export type MockAttemptStatus = "assigned" | "ready" | "in_progress" | "submitted" | "expired" | "voided";
 export type MockAttemptType = "full_mock" | "timed_section" | "diagnostic_mock";
 
 export interface MockAttempt {

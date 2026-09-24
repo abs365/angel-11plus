@@ -27,7 +27,7 @@ test("recovery eligibility is decided by the real, tested isReadingScoringRecove
   // CSSE Two-Paper Mock P1 Repair (P1-B) — this import now also brings in
   // isWritingAssessmentRecoveryEligible (same file, same discipline);
   // isReadingScoringRecoveryEligible's own contract is unchanged.
-  assert.match(REPORT_PAGE, /import \{ isReadingScoringRecoveryEligible, isWritingAssessmentRecoveryEligible \} from "@\/lib\/mockAttempt\/workspace";/);
+  assert.match(REPORT_PAGE, /import \{ isReadingScoringRecoveryEligible, isWritingAssessmentRecoveryEligible, isVoidedMockAttempt \} from "@\/lib\/mockAttempt\/workspace";/);
   assert.match(REPORT_PAGE, /isReadingScoringRecoveryEligible\(summary\.data\)/);
 });
 

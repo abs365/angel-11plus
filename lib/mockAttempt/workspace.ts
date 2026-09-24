@@ -212,6 +212,15 @@ export function isReadingScoringRecoveryEligible(
  * other existing form has no Writing content, so requesting this for them
  * would always be a safe, cheap no-op, but there is no need to ask.
  */
+/**
+ * Invalid Mock Attempt Governance (migration 266) -- a voided attempt must
+ * never be presented as a genuine result, or as a result still being
+ * prepared. Report pages use this to show neutral copy instead.
+ */
+export function isVoidedMockAttempt(attempt: { status: MockAttemptStatus } | null): boolean {
+  return attempt?.status === "voided";
+}
+
 export function isWritingAssessmentRecoveryEligible(
   attempt: { status: MockAttemptStatus; attemptType: MockAttemptType; formId: string } | null
 ): boolean {

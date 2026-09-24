@@ -8,7 +8,7 @@ import { useAuth } from "@/components/providers/AuthProvider";
 import { getSupabaseClient } from "@/lib/supabase";
 import { ensureProfile } from "@/lib/supabaseProgress";
 import { getMockAttemptReport, getMockAttemptSummary } from "@/lib/mockAttempt/client";
-import { isReadingScoringRecoveryEligible, isWritingAssessmentRecoveryEligible } from "@/lib/mockAttempt/workspace";
+import { isReadingScoringRecoveryEligible, isWritingAssessmentRecoveryEligible, isVoidedMockAttempt } from "@/lib/mockAttempt/workspace";
 import { requestReadingScoring, logReadingScoringRequestOutcome } from "@/lib/mockAttempt/readingScoringRequest";
 import { ingestMockEvidenceIntoEducationalIntelligence } from "@/lib/mockAttempt/evidenceIntegration";
 import { ingestWritingEvidenceIntoEducationalIntelligence } from "@/lib/mockAttempt/writingEvidenceIntegration";
@@ -46,7 +46,7 @@ import type { MockAttemptReport, MockSkillEvidenceEntry, MockWritingAssessment }
  * indistinguishable here on purpose (lib/mockAttempt/client.ts's own
  * getMockAttemptReport() doc comment explains why).
  */
-type Phase = "loading" | "not-available" | "ready" | "error";
+type Phase = "loading" | "not-available" | "no-report" | "ready" | "error";
 
 export default function MockReportPage() {
   const params = useParams<{ attemptId: string }>();
@@ -139,6 +139,11 @@ export default function MockReportPage() {
         });
         return;
       }
+      // Migration 266: a voided attempt never gets a report. Never tell the
+      // learner one is "being prepared", and never request (re)scoring.
+      const summary = await getMockAttemptSummary(supabase, params.attemptId);
+      if (cancelled) return;
+      if (!summary.error && isVoidedMockAttempt(summary.data)) { setPhase("no-report"); return; }
       setPhase("not-available");
 
       // Founder invocation-reliability repair, Part C — bounded,
@@ -162,7 +167,6 @@ export default function MockReportPage() {
       // from this same effect included) can never re-fire it.
       if (!recoveryAttemptedRef.current) {
         recoveryAttemptedRef.current = true;
-        const summary = await getMockAttemptSummary(supabase, params.attemptId);
         if (!cancelled && !summary.error && isReadingScoringRecoveryEligible(summary.data)) {
           void requestReadingScoring(supabase, params.attemptId).then(logReadingScoringRequestOutcome);
         }
@@ -200,6 +204,18 @@ export default function MockReportPage() {
           <div className="text-center bg-[var(--angel-paper)] border border-[var(--angel-border)] rounded-lg p-6">
             <p className="text-sm font-semibold text-[var(--angel-navy)]">We couldn&apos;t load this result</p>
             <p className="text-xs text-[var(--angel-muted)] mt-1">{errorMessage}</p>
+          </div>
+        )}
+
+        {phase === "no-report" && (
+          <div className="text-center bg-[var(--angel-paper)] border border-[var(--angel-border)] rounded-lg p-6" data-testid="mock-no-report">
+            <p className="text-[var(--angel-navy)] font-bold text-lg">There&apos;s no report for this Mock</p>
+            <p className="text-sm text-[var(--angel-muted)] mt-2 leading-relaxed">
+              This Mock doesn&apos;t count towards your results, so there&apos;s nothing to check here.
+            </p>
+            <Link href="/mocks" className="inline-block mt-4 text-xs font-semibold text-[var(--angel-blue)] hover:underline">
+              Go to the Mock Centre
+            </Link>
           </div>
         )}
 

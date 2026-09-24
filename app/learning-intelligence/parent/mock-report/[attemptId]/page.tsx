@@ -6,7 +6,8 @@ import Link from "next/link";
 import PageLayout from "@/components/PageLayout";
 import { StatusIndicator } from "@/components/ui/Progress";
 import { getSupabaseClient } from "@/lib/supabase";
-import { getMockAttemptReport, getMockWritingAssessments } from "@/lib/mockAttempt/client";
+import { getMockAttemptReport, getMockAttemptSummary, getMockWritingAssessments } from "@/lib/mockAttempt/client";
+import { isVoidedMockAttempt } from "@/lib/mockAttempt/workspace";
 import {
   scoreSummarySentence,
   strengthSentence,
@@ -32,7 +33,7 @@ import type { MockAttemptReport, MockWritingAssessment } from "@/lib/mockAttempt
  * official CSSE facts already verified directly from csse.org.uk during
  * 008V — never blended with this attempt's own result.
  */
-type Phase = "loading" | "not-available" | "ready" | "error";
+type Phase = "loading" | "not-available" | "no-report" | "ready" | "error";
 
 const OFFICIAL_CSSE_TEST_DATE = "Saturday 19 September 2026";
 
@@ -52,7 +53,14 @@ export default function ParentMockReportPage() {
       const result = await getMockAttemptReport(supabase, params.attemptId);
       if (cancelled) return;
       if (result.error) { setErrorMessage(result.error); setPhase("error"); return; }
-      if (!result.data || result.data.reportReleaseState !== "released") { setPhase("not-available"); return; }
+      if (!result.data || result.data.reportReleaseState !== "released") {
+        // Migration 266: a voided attempt never gets a report -- never
+        // present it to a parent as a result still being marked.
+        const summary = await getMockAttemptSummary(supabase, params.attemptId);
+        if (cancelled) return;
+        setPhase(!summary.error && isVoidedMockAttempt(summary.data) ? "no-report" : "not-available");
+        return;
+      }
       setReport(result.data);
       setPhase("ready");
       // Increment 3 (Progress + Results + Parent Dashboard) — the parent
@@ -79,6 +87,15 @@ export default function ParentMockReportPage() {
           <div className="text-center bg-[var(--angel-paper)] border border-[var(--angel-border)] rounded-lg p-6">
             <p className="text-sm font-semibold text-[var(--angel-navy)]">We couldn&apos;t load this result</p>
             <p className="text-xs text-[var(--angel-muted)] mt-1">{errorMessage}</p>
+          </div>
+        )}
+
+        {phase === "no-report" && (
+          <div className="text-center bg-[var(--angel-paper)] border border-[var(--angel-border)] rounded-lg p-6" data-testid="mock-no-report">
+            <p className="text-sm font-semibold text-[var(--angel-navy)]">There&apos;s no report for this Mock sitting</p>
+            <p className="text-xs text-[var(--angel-muted)] mt-2 leading-relaxed">
+              This sitting doesn&apos;t count towards your child&apos;s results, so no report will be produced. The paper can be taken again from the Mock Centre.
+            </p>
           </div>
         )}
 
