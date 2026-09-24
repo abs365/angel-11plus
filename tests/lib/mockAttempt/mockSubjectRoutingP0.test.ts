@@ -26,6 +26,11 @@ import type { ActiveMockForm } from "@/lib/mockAttempt/types";
 
 const SOURCE_ROOTS = ["app", "components", "lib"];
 
+/** Line-ending agnostic (a Windows checkout with core.autocrlf yields CRLF). */
+function read(file: string): string {
+  return readFileSync(file, "utf8").replace(/\r\n/g, "\n");
+}
+
 function sourceFiles(dir: string): string[] {
   const out: string[] = [];
   for (const entry of readdirSync(dir)) {
@@ -38,7 +43,7 @@ function sourceFiles(dir: string): string[] {
 
 /** Non-comment source lines only, so docstrings that merely mention the route never count as links. */
 function codeLines(file: string): { line: string; lineNo: number }[] {
-  return readFileSync(file, "utf8")
+  return read(file)
     .split("\n")
     .map((line, i) => ({ line, lineNo: i + 1 }))
     .filter(({ line }) => !/^\s*(\*|\/\/|\/\*)/.test(line));
@@ -72,12 +77,12 @@ test("contract 1: the three previously-bare entry points now route to the Mock C
   const broad = assessMockReadiness({ hasAnyEvidence: true, mockAttemptCount: 3, topTriggerReason: null });
   assert.equal(noEvidence.nextAction.href, MOCK_CENTRE_HREF);
   assert.equal(broad.nextAction.href, MOCK_CENTRE_HREF);
-  assert.match(readFileSync("app/learning-intelligence/page.tsx", "utf8"), /<Link href="\/mocks" className="[^"]*">\s*CSSE mock exam/);
-  assert.match(readFileSync("app/learning-intelligence/parent/journey/page.tsx", "utf8"), /name: "Mock Examination",[\s\S]*?href: "\/mocks",/);
+  assert.match(read("app/learning-intelligence/page.tsx"), /<Link href="\/mocks" className="[^"]*">\s*CSSE mock exam/);
+  assert.match(read("app/learning-intelligence/parent/journey/page.tsx"), /name: "Mock Examination",[\s\S]*?href: "\/mocks",/);
 });
 
 test("contract 1: the Mathematics card still names mathematics and the Reading card still names timed_section", () => {
-  const centre = readFileSync("app/mocks/page.tsx", "utf8");
+  const centre = read("app/mocks/page.tsx");
   assert.match(centre, /href: "\/learning-intelligence\/mock-exam\?subject=mathematics",/);
   assert.match(centre, /href: "\/learning-intelligence\/mock-exam\?type=timed_section",/);
 });
@@ -92,7 +97,7 @@ test("contract 2: a full_mock request with no recognised subject is ambiguous; a
   assert.equal(isAmbiguousFullMockRequest("diagnostic_mock", undefined), false);
 });
 
-const MOCK_EXAM = readFileSync("app/learning-intelligence/mock-exam/page.tsx", "utf8");
+const MOCK_EXAM = read("app/learning-intelligence/mock-exam/page.tsx");
 
 test("contract 2: an invalid ?subject= value is never passed through -- it collapses to undefined and therefore fails closed for full_mock", () => {
   assert.match(
@@ -139,7 +144,7 @@ test("contract 3: no client code resolves a full_mock without naming its subject
     }
   }
   assert.deepEqual(violations, []);
-  assert.match(readFileSync("components/parent/CssePathwayParentContent.tsx", "utf8"), /getActiveMockForm\(supabase, "full_mock", "mathematics"\)/);
+  assert.match(read("components/parent/CssePathwayParentContent.tsx"), /getActiveMockForm\(supabase, "full_mock", "mathematics"\)/);
 });
 
 // --- Phase 5: the subject guard, with the real returned subject -------------
@@ -160,7 +165,7 @@ test("subject guard: requested english + returned english is allowed; missing re
 
 // --- contract 4: migration 265 ---------------------------------------------
 
-const M265 = readFileSync("supabase/migrations/265_mock_get_active_form_full_mock_subject_required.sql", "utf8");
+const M265 = read("supabase/migrations/265_mock_get_active_form_full_mock_subject_required.sql");
 const M265_SQL = M265.split("\n").filter((l) => !/^\s*--/.test(l)).join("\n");
 
 test("migration 265: full_mock without a subject returns no row -- the server can never guess a subject", () => {
