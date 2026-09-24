@@ -105,7 +105,7 @@ test("no learner- or parent-facing source reads or renders any void audit field 
   for (const root of ["app", "components"]) {
     for (const file of sourceFiles(root)) {
       if (/[\\/]admin-beta[\\/]/.test(file)) continue;
-      if (/void_reason_code|void_note|voided_by_|status_before_void|platform_defect|acceptance_test|admin_correction/.test(read(file))) offenders.push(file);
+      if (/ali_mock_attempt_void_audit|internal_note|voided_by_|status_before_void|platform_defect|acceptance_test|admin_correction/.test(read(file))) offenders.push(file);
     }
   }
   assert.deepEqual(offenders, []);

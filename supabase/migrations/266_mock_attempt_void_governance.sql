@@ -8,8 +8,14 @@
 -- WHAT A VOIDED ATTEMPT IS
 --   - Preserved: the attempt row, answers, flags, report row, cycle_id,
 --     manual-mark audit and writing assessments. Nothing is deleted or
---     rewritten except the attempt's own status and void metadata.
+--     rewritten except the attempt's own status.
 --   - Terminal: once voided, the row can never be updated again (trigger).
+--   - Private governance record: WHY/WHO/WHEN lives only in
+--     ali_mock_attempt_void_audit (append-only, RLS on, no policies,
+--     no API-role privileges). ali_mock_attempt -- which learners and
+--     parents can read for their own attempts -- gains nothing but the
+--     terminal 'voided' status. A trigger makes a void without its audit
+--     row impossible, even for the database owner.
 --   - Excluded from: cycle subject-slot occupancy, cycle completion, resume,
 --     report release, standard EI evidence ingestion, Writing EI evidence
 --     ingestion and manual marking.
@@ -67,42 +73,52 @@ begin
      is distinct from 'CREATE UNIQUE INDEX ali_mock_attempt_cycle_subject_unique ON public.ali_mock_attempt USING btree (cycle_id, subject) WHERE (cycle_id IS NOT NULL)' then
     raise exception '266 precondition failed: ali_mock_attempt_cycle_subject_unique differs from the reviewed live definition';
   end if;
-  if exists (select 1 from information_schema.columns
-             where table_schema = 'public' and table_name = 'ali_mock_attempt'
-               and column_name in ('voided_at', 'status_before_void', 'void_reason_code', 'void_note', 'voided_by_profile_id', 'voided_by_actor')) then
-    raise exception '266 precondition failed: void columns already exist';
+  if to_regclass('public.ali_mock_attempt_void_audit') is not null then
+    raise exception '266 precondition failed: ali_mock_attempt_void_audit already exists';
   end if;
 end;
 $pre$;
 
 -- ============================================================
--- 1. STATUS + AUDIT COLUMNS + CONSISTENCY
+-- 1. STATUS + PROTECTED AUDIT TABLE
 -- ============================================================
 alter table public.ali_mock_attempt drop constraint ali_mock_attempt_status_check;
 alter table public.ali_mock_attempt add constraint ali_mock_attempt_status_check
   check (status = any (array['assigned', 'ready', 'in_progress', 'submitted', 'expired', 'voided']));
 
-alter table public.ali_mock_attempt
-  add column voided_at            timestamptz,
-  add column status_before_void   text,
-  add column void_reason_code     text,
-  add column void_note            text,
-  add column voided_by_profile_id uuid references public.profiles(id),
-  add column voided_by_actor      text;
+-- One row per voided attempt, never updated or deleted. Not part of the
+-- learner assessment record: no learner/parent read or write path exists.
+create table public.ali_mock_attempt_void_audit (
+  attempt_id           uuid primary key references public.ali_mock_attempt(id),
+  status_before_void   text not null check (status_before_void = any (array['assigned', 'ready', 'in_progress', 'submitted', 'expired'])),
+  reason_code          text not null check (reason_code = any (array['platform_defect', 'acceptance_test', 'admin_correction'])),
+  internal_note        text,
+  voided_at            timestamptz not null default now(),
+  voided_by_profile_id uuid references public.profiles(id),
+  voided_by_actor      text not null check (btrim(voided_by_actor) <> '')
+);
 
-alter table public.ali_mock_attempt add constraint ali_mock_attempt_void_reason_code_check
-  check (void_reason_code is null or void_reason_code = any (array['platform_defect', 'acceptance_test', 'admin_correction']));
+alter table public.ali_mock_attempt_void_audit enable row level security;
+-- Deliberately NO policies and no privileges for any API role: RLS alone
+-- would already refuse every row; revoking privileges refuses the table.
+-- RLS is not FORCEd: the owner-run governed void path must be able to write.
+revoke all on table public.ali_mock_attempt_void_audit from public, anon, authenticated, service_role;
 
-alter table public.ali_mock_attempt add constraint ali_mock_attempt_status_before_void_check
-  check (status_before_void is null or status_before_void = any (array['assigned', 'ready', 'in_progress', 'submitted', 'expired']));
+create function public.mock_attempt_void_audit_append_only()
+returns trigger
+language plpgsql
+set search_path = public
+as $$
+begin
+  raise exception 'ali_mock_attempt_void_audit is append-only -- % is refused', tg_op;
+end;
+$$;
 
--- voided <=> voided_at set, and a voided row always carries its full audit trail.
-alter table public.ali_mock_attempt add constraint ali_mock_attempt_void_consistency
-  check (
-    ((status = 'voided') = (voided_at is not null))
-    and (status <> 'voided' or (status_before_void is not null and void_reason_code is not null and voided_by_actor is not null and btrim(voided_by_actor) <> ''))
-    and (status = 'voided' or (status_before_void is null and void_reason_code is null and void_note is null and voided_by_profile_id is null and voided_by_actor is null))
-  );
+revoke all on function public.mock_attempt_void_audit_append_only() from public, anon, authenticated, service_role;
+
+create trigger mock_attempt_void_audit_append_only_trigger
+  before update or delete on public.ali_mock_attempt_void_audit
+  for each row execute function public.mock_attempt_void_audit_append_only();
 
 -- ============================================================
 -- 2. SLOT RELEASE -- a voided attempt never occupies its cycle subject slot
@@ -113,16 +129,27 @@ create unique index ali_mock_attempt_cycle_subject_unique
   where cycle_id is not null and status <> 'voided';
 
 -- ============================================================
--- 3. TERMINAL STATE -- a voided row can never be updated again
+-- 3. TERMINAL STATE + AUDIT PAIRING
 -- ============================================================
+-- A voided row can never change again, no row can be created voided, and
+-- no row can become voided unless its audit record already exists.
 create function public.mock_attempt_void_is_terminal()
 returns trigger
 language plpgsql
 set search_path = public
 as $$
 begin
+  if tg_op = 'INSERT' then
+    if new.status = 'voided' then
+      raise exception 'An attempt cannot be created voided';
+    end if;
+    return new;
+  end if;
   if old.status = 'voided' then
     raise exception 'Attempt % is voided -- a voided attempt is terminal and cannot be changed', old.id;
+  end if;
+  if new.status = 'voided' and not exists (select 1 from public.ali_mock_attempt_void_audit where attempt_id = new.id) then
+    raise exception 'Attempt % cannot be voided without its governance audit record', new.id;
   end if;
   return new;
 end;
@@ -131,7 +158,7 @@ $$;
 revoke all on function public.mock_attempt_void_is_terminal() from public, anon, authenticated, service_role;
 
 create trigger mock_attempt_void_is_terminal_trigger
-  before update on public.ali_mock_attempt
+  before insert or update on public.ali_mock_attempt
   for each row execute function public.mock_attempt_void_is_terminal();
 
 -- ============================================================
@@ -266,14 +293,13 @@ begin
     raise exception 'Attempt % has Writing evidence already in Educational Intelligence -- it cannot be voided', p_attempt_id;
   end if;
 
+  insert into public.ali_mock_attempt_void_audit
+    (attempt_id, status_before_void, reason_code, internal_note, voided_by_profile_id, voided_by_actor)
+  values
+    (p_attempt_id, v_attempt.status, p_reason_code, p_note, p_actor_profile_id, p_actor);
+
   update public.ali_mock_attempt
-  set status_before_void   = v_attempt.status,
-      status               = 'voided',
-      voided_at            = now(),
-      void_reason_code     = p_reason_code,
-      void_note            = p_note,
-      voided_by_profile_id = p_actor_profile_id,
-      voided_by_actor      = p_actor
+  set status = 'voided'
   where id = p_attempt_id
   returning * into v_attempt;
 
@@ -305,7 +331,7 @@ begin
   end if;
 
   v_row := public.mock_void_attempt_core(p_attempt_id, p_reason_code, p_note, v_actor_profile_id, 'admin:' || v_actor_profile_id::text);
-  return query select v_row.id, v_row.status, v_row.voided_at;
+  return query select v_row.id, v_row.status, au.voided_at from public.ali_mock_attempt_void_audit au where au.attempt_id = v_row.id;
 end;
 $$;
 
@@ -317,8 +343,17 @@ grant execute on function public.mock_void_attempt(uuid, text, text) to authenti
 -- ============================================================
 do $post$
 begin
-  if exists (select 1 from public.ali_mock_attempt where status = 'voided') then
+  if exists (select 1 from public.ali_mock_attempt where status = 'voided')
+     or exists (select 1 from public.ali_mock_attempt_void_audit) then
     raise exception '266 postcondition failed: this migration must not void any attempt';
+  end if;
+  if exists (select 1 from information_schema.role_table_grants
+             where table_schema = 'public' and table_name = 'ali_mock_attempt_void_audit'
+               and grantee in ('anon', 'authenticated', 'service_role', 'PUBLIC')) then
+    raise exception '266 postcondition failed: void audit table is reachable by an API role';
+  end if;
+  if exists (select 1 from pg_policies where schemaname = 'public' and tablename = 'ali_mock_attempt_void_audit') then
+    raise exception '266 postcondition failed: void audit table must have no policies';
   end if;
   if (select indexdef from pg_indexes where schemaname = 'public' and indexname = 'ali_mock_attempt_cycle_subject_unique')
      not like '%WHERE ((cycle_id IS NOT NULL) AND (status <> ''voided''::text))' then
@@ -336,6 +371,9 @@ commit;
 -- POST-APPLICATION VERIFICATION (read-only)
 -- ============================================================
 -- select count(*) filter (where status = 'voided') from public.ali_mock_attempt;          -- 0
+-- select count(*) from public.ali_mock_attempt_void_audit;                                  -- 0
+-- select grantee, privilege_type from information_schema.role_table_grants
+--   where table_name = 'ali_mock_attempt_void_audit';                                      -- postgres only
 -- select indexdef from pg_indexes where indexname = 'ali_mock_attempt_cycle_subject_unique'; -- ... AND (status <> 'voided')
 -- select proname, md5(prosrc) from pg_proc where proname in ('mock_release_report', 'mock_claim_evidence_ingestion',
 --   'mock_claim_writing_evidence_ingestion', 'mock_apply_manual_mark', 'mock_create_cycle_attempt');  -- all changed, guards present
@@ -343,22 +381,20 @@ commit;
 --   -- mock_void_attempt: authenticated (+owner); core and trigger fn: owner only
 
 -- ============================================================
--- ROLLBACK (only while no attempt has status 'voided')
+-- ROLLBACK (only while no attempt has status 'voided' and the audit table is empty)
 -- ============================================================
 -- begin;
 -- drop function public.mock_void_attempt(uuid, text, text);
 -- drop function public.mock_void_attempt_core(uuid, text, text, uuid, text);
 -- drop trigger mock_attempt_void_is_terminal_trigger on public.ali_mock_attempt;
 -- drop function public.mock_attempt_void_is_terminal();
+-- drop table public.ali_mock_attempt_void_audit;
+-- drop function public.mock_attempt_void_audit_append_only();
 -- -- For each patched function: re-execute pg_get_functiondef() with the
 -- -- inserted guard text removed (the exact inverse of section 4's replace),
 -- -- then assert md5(prosrc) equals the pinned fingerprint above.
 -- drop index public.ali_mock_attempt_cycle_subject_unique;
 -- create unique index ali_mock_attempt_cycle_subject_unique on public.ali_mock_attempt (cycle_id, subject) where cycle_id is not null;
--- alter table public.ali_mock_attempt drop constraint ali_mock_attempt_void_consistency,
---   drop constraint ali_mock_attempt_status_before_void_check, drop constraint ali_mock_attempt_void_reason_code_check;
--- alter table public.ali_mock_attempt drop column voided_at, drop column status_before_void, drop column void_reason_code,
---   drop column void_note, drop column voided_by_profile_id, drop column voided_by_actor;
 -- alter table public.ali_mock_attempt drop constraint ali_mock_attempt_status_check;
 -- alter table public.ali_mock_attempt add constraint ali_mock_attempt_status_check
 --   check (status = any (array['assigned', 'ready', 'in_progress', 'submitted', 'expired']));

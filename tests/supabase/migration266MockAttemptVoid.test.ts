@@ -135,21 +135,43 @@ test("migration 266 applies cleanly against a production-parity schema (all prec
   assert.equal(migrationError, null, migrationError ?? "");
 });
 
-test("status 'voided' is permitted; the six audit columns exist; reason codes are restricted", async () => {
+test("the learner assessment record gains ONLY the 'voided' status -- every governance field lives in the separate audit table", async () => {
   const check = await one<string>(`select pg_get_constraintdef(oid) from pg_constraint where conname = 'ali_mock_attempt_status_check'`);
   assert.match(check, /'voided'::text/);
-  const cols = await db.query(
+  const attemptCols = await db.query(
     `select column_name from information_schema.columns where table_schema = 'public' and table_name = 'ali_mock_attempt'
-     and column_name in ('voided_at','status_before_void','void_reason_code','void_note','voided_by_profile_id','voided_by_actor')`
+     and column_name ~ '(void|reason|note|actor)'`
   );
-  assert.equal(cols.rows.length, 6);
-  await assert.rejects(db.query(`update public.ali_mock_attempt set void_reason_code = 'because' where id = $1`, [validAttempt]));
+  assert.equal(attemptCols.rows.length, 0, "no void metadata column on ali_mock_attempt");
+  const auditCols = (await db.query<{ column_name: string }>(
+    `select column_name from information_schema.columns where table_schema = 'public' and table_name = 'ali_mock_attempt_void_audit' order by ordinal_position`
+  )).rows.map((r) => r.column_name);
+  assert.deepEqual(auditCols, ["attempt_id", "status_before_void", "reason_code", "internal_note", "voided_at", "voided_by_profile_id", "voided_by_actor"]);
 });
 
-test("consistency: a row cannot claim 'voided' without voided_at and a full audit trail, nor carry void metadata while not voided", async () => {
-  await assert.rejects(db.query(`update public.ali_mock_attempt set status = 'voided' where id = $1`, [validAttempt]));
-  await assert.rejects(db.query(`update public.ali_mock_attempt set voided_at = now() where id = $1`, [validAttempt]));
-  await assert.rejects(db.query(`update public.ali_mock_attempt set void_note = 'x' where id = $1`, [validAttempt]));
+test("pairing: even the owner cannot void an attempt without its audit record, nor create an attempt already voided", async () => {
+  await assert.rejects(db.query(`update public.ali_mock_attempt set status = 'voided' where id = $1`, [validAttempt]), /without its governance audit record/);
+  await assert.rejects(
+    db.query(
+      `insert into public.ali_mock_attempt (profile_id, form_id, attempt_type, status, assigned_question_ids) values ($1, 'reading-comprehension-mock-1', 'timed_section', 'voided', array[]::text[])`,
+      [OTHER_LEARNER]
+    ),
+    /cannot be created voided/
+  );
+  await assert.rejects(
+    db.query(`insert into public.ali_mock_attempt_void_audit (attempt_id, status_before_void, reason_code, voided_by_actor) values ($1, 'submitted', 'because', 'x')`, [validAttempt]),
+    /check constraint/,
+    "reason codes are restricted"
+  );
+});
+
+test("privacy: the void audit table has RLS on, no policies, and no privileges for any API role", async () => {
+  assert.equal(await one(`select relrowsecurity from pg_class where oid = 'public.ali_mock_attempt_void_audit'::regclass`), true);
+  assert.equal(await one<number>(`select count(*)::int from pg_policies where tablename = 'ali_mock_attempt_void_audit'`), 0);
+  const grants = await one<number>(
+    `select count(*)::int from information_schema.role_table_grants where table_name = 'ali_mock_attempt_void_audit' and grantee in ('anon','authenticated','service_role','PUBLIC')`
+  );
+  assert.equal(grants, 0);
 });
 
 test("every patched function carries its guard and is otherwise byte-identical to its pre-266 body", async () => {
@@ -196,7 +218,7 @@ test("grants: mock_void_attempt is not executable by anon; the core helper and t
   const voidAcl = await acl("public.mock_void_attempt(uuid, text, text)");
   assert.doesNotMatch(voidAcl, /anon=/);
   assert.match(voidAcl, /authenticated=X/);
-  for (const sig of ["public.mock_void_attempt_core(uuid, text, text, uuid, text)", "public.mock_attempt_void_is_terminal()"]) {
+  for (const sig of ["public.mock_void_attempt_core(uuid, text, text, uuid, text)", "public.mock_attempt_void_is_terminal()", "public.mock_attempt_void_audit_append_only()"]) {
     assert.doesNotMatch(await acl(sig), /(anon|authenticated|service_role)=/, `${sig} must be owner-only`);
   }
 });
@@ -236,11 +258,13 @@ test("admin voids the incident attempt: terminal status, full audit trail, actor
 
   const row = (await db.query<Record<string, unknown>>(`select * from public.ali_mock_attempt where id = $1`, [incidentAttempt])).rows[0];
   assert.equal(row.status, "voided");
-  assert.equal(row.status_before_void, "submitted");
-  assert.equal(row.void_reason_code, "platform_defect");
-  assert.equal(row.voided_by_profile_id, ADMIN_PROFILE);
-  assert.equal(row.voided_by_actor, `admin:${ADMIN_PROFILE}`);
-  assert.ok(row.voided_at);
+  const audit = (await db.query<Record<string, unknown>>(`select * from public.ali_mock_attempt_void_audit where attempt_id = $1`, [incidentAttempt])).rows[0];
+  assert.equal(audit.status_before_void, "submitted");
+  assert.equal(audit.reason_code, "platform_defect");
+  assert.equal(audit.internal_note, "wrong paper served");
+  assert.equal(audit.voided_by_profile_id, ADMIN_PROFILE);
+  assert.equal(audit.voided_by_actor, `admin:${ADMIN_PROFILE}`);
+  assert.ok(audit.voided_at);
   assert.equal(row.cycle_id, cycleId, "cycle relationship preserved");
   assert.equal(row.form_id, ENGLISH_FORM);
   assert.deepEqual(await counts(), before, "answers, flags and report row preserved");
@@ -256,6 +280,47 @@ test("voided is terminal: a second void is refused, and even the owner cannot ch
     assert.match((await q("select * from public.mock_void_attempt($1, 'platform_defect')", [incidentAttempt])).error?.message ?? "", /already voided/);
   });
   await assert.rejects(db.query(`update public.ali_mock_attempt set status = 'submitted' where id = $1`, [incidentAttempt]), /terminal/);
+});
+
+test("a governed migration (database owner) can void through the same core, recording a 'migration:NNN' actor and no profile", async () => {
+  const target = await one<string>(
+    `insert into public.ali_mock_attempt (profile_id, form_id, attempt_type, status, assigned_question_ids)
+     values ($1, 'reading-comprehension-mock-1', 'timed_section', 'in_progress', array[]::text[]) returning id`,
+    [OTHER_LEARNER]
+  );
+  await db.query(`select public.mock_void_attempt_core($1, 'acceptance_test', null, null, 'migration:test')`, [target]);
+  assert.equal(await one(`select status from public.ali_mock_attempt where id = $1`, [target]), "voided");
+  const audit = (await db.query<Record<string, unknown>>(`select * from public.ali_mock_attempt_void_audit where attempt_id = $1`, [target])).rows[0];
+  assert.equal(audit.status_before_void, "in_progress");
+  assert.equal(audit.reason_code, "acceptance_test");
+  assert.equal(audit.voided_by_actor, "migration:test");
+  assert.equal(audit.voided_by_profile_id, null);
+});
+
+test("the audit record is append-only: even the owner cannot update or delete it", async () => {
+  await assert.rejects(db.query(`update public.ali_mock_attempt_void_audit set internal_note = 'x' where attempt_id = $1`, [incidentAttempt]), /append-only/);
+  await assert.rejects(db.query(`delete from public.ali_mock_attempt_void_audit where attempt_id = $1`, [incidentAttempt]), /append-only/);
+});
+
+test("privacy: neither the learner nor the parent can read, write or delete the internal void audit record", async () => {
+  for (const [who, run] of [["learner", asLearner], ["parent", asParent]] as const) {
+    await run(async (q) => {
+      const read = await q("select * from public.ali_mock_attempt_void_audit");
+      assert.match(read.error?.message ?? "", /permission denied/, `${who} must not read the audit table`);
+      const write = await q(
+        "insert into public.ali_mock_attempt_void_audit (attempt_id, status_before_void, reason_code, voided_by_actor) values ($1, 'submitted', 'admin_correction', 'x')",
+        [validAttempt]
+      );
+      assert.match(write.error?.message ?? "", /permission denied/, `${who} must not write the audit table`);
+      const del = await q("delete from public.ali_mock_attempt_void_audit");
+      assert.match(del.error?.message ?? "", /permission denied/, `${who} must not delete from the audit table`);
+      // Their own attempt row reveals only the neutral terminal status.
+      const own = await q("select * from public.ali_mock_attempt where id = $1", [incidentAttempt]);
+      assert.equal(own.rows.length, 1);
+      assert.equal(own.rows[0].status, "voided");
+      for (const key of Object.keys(own.rows[0])) assert.doesNotMatch(key, /void|reason|note|actor/, `${who} row exposes ${key}`);
+    });
+  }
 });
 
 // --- A, B, C: never a result, never evidence --------------------------------
@@ -381,7 +446,14 @@ test("J: a genuine, never-voided attempt is unaffected -- its report still relea
     assert.equal(r.rows[0].claimed, true);
   });
   assert.equal(await one(`select status from public.ali_mock_attempt where id = $1`, [validAttempt]), "submitted");
-  assert.equal(await one(`select count(*)::int from public.ali_mock_attempt where status = 'voided'`), 1, "only the one deliberately voided attempt is voided");
+  assert.equal(await one(`select count(*)::int from public.ali_mock_attempt where status = 'voided'`), 2, "only the two deliberately voided attempts (admin + migration path) are voided");
+  assert.equal(
+    await one<number>(
+      `select count(*)::int from public.ali_mock_attempt a join public.ali_mock_attempt_void_audit au on au.attempt_id = a.id where a.status = 'voided'`
+    ),
+    await one<number>(`select count(*)::int from public.ali_mock_attempt_void_audit`),
+    "every audit record belongs to a voided attempt, one each"
+  );
 });
 
 // --- I: no DELETE ----------------------------------------------------------------

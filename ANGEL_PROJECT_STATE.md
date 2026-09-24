@@ -342,6 +342,10 @@ picture-narrative Practice prompt. **CLOSED, GO.**
   `scripts/*.mjs` files sit in the working tree, uncommitted, from prior EI-003 wave sessions.
   Investigate their state (committed? abandoned? still needed?) before assuming they're either
   live or safe to delete.
+- Backlog (found 2026-09-24, Invalid Mock Attempt Governance; deliberately out of scope):
+  `ali_mock_attempt` grants full table privileges to `anon`/`authenticated`; only RLS (SELECT-only
+  policies) prevents client writes. Not exploitable today, but a privilege-hardening pass should
+  revoke table-level INSERT/UPDATE/DELETE from API roles. Do not bundle into unrelated work.
 
 ## Launch context
 
