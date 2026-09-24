@@ -1186,3 +1186,44 @@ Refinement above. GO not declared — Founder performs final production visual a
   chunks directly — new copy and restyled markup genuinely present.
 - Founder's required next step: final visual acceptance decision from the real production Progress hub,
   Mock Results pages, and Parent Dashboard. No further increment begins without new Founder instruction.
+
+**2026-09-24 — Increment 3 Closure Correction. Commit `b18d541`, pushed, deployed, confirmed live.
+Founder performed real production visual testing and found 4 issues; Increment 3 was NOT closed. GO
+still not declared:**
+
+- **P0 root cause found**: `lib/learnerContext.ts`'s shared Supabase fetch wrapper attached the
+  learner-id header self-hydrated (`ensureLearnerContext`, awaited inline) but read the learner-PIN
+  session token via a bare `getHouseholdModeSnapshot()` call, trusting some other already-mounted
+  component's `useHouseholdMode()` effect to have populated it first. A request racing ahead of that
+  effect silently omitted the token even with a real, valid, already-verified token in storage — exactly
+  `current_learner_id()`'s `angel_learner_pin_required`, for a learner who had genuinely already entered
+  their PIN. Fixed by self-hydrating household mode the same way learner context already does. No RLS/PIN
+  logic touched or weakened; migration 263's own isolation test suite still passes unchanged.
+- Added `lib/mockAttempt/startupErrors.ts`: no learner-facing Mock surface renders a raw RPC error string
+  again; the specific PIN-required case now offers a real recovery (re-enter PIN via the existing
+  `LearnerPinModal`/`verify_learner_pin()`, then auto-retry) instead of a dead end.
+- Learning Report zero-evidence progressive disclosure: the full competency catalogue no longer renders
+  for a zero-evidence learner purely to repeat a not-yet-attempted status on every row — now shows the 3
+  real CSSE subject areas + an honest explanation, gated on `profile.hasAnyEvidence`; full catalogue
+  returns automatically once real evidence exists. Confirmed-correct upper hierarchy unchanged.
+- Stale Mock Centre copy fixed: "the complete CSSE Mock is still being built" no longer shown once
+  `completeCsseMockAvailable` is genuinely true (was unconditional, contradicting the already-available
+  `CsseCompleteMockCard` shown immediately above).
+- Mock Centre non-affiliation disclosure restyled from a warning-style amber panel to calm, secondary
+  Angel-token typography — same text, no icon tile, no card, no gradient.
+- Non-regression confirmed: Today, Learn, Practise, Private Learner Space architecture, PIN/auth
+  behaviour, assessment scoring, question content, Mock timing/educational logic all untouched (`git
+  diff --stat`: exactly 10 files, all in the Mock-start transport layer, Mock Centre page, and Learning
+  Report page).
+- Clean-checkout gate (isolated worktree, final commit): typecheck 0 errors; tests 4,761/4,786 (25
+  pre-existing failures, byte-identical set to Increment 3's own gate, 0 in any touched file, 4 new
+  regression tests added proving the exact defect); migration-sql-guard PASS 259 files (unchanged);
+  copy-guard 51/51 baseline (0 new); eslint at baseline exactly (0 new); genuine `next build` PASS.
+- Production evidence: fetched the live deployed JS bundle directly (not source) — confirmed the calm
+  disclosure markup, the `csseMockDescription()` gating function, and both new strings ("Re-enter your
+  PIN", "Your subject areas") are genuinely present.
+- **Founder's required next step**: re-test the actual Mock-start journey live (Mock Centre → Mathematics
+  Mock 1 → begin) as a PIN-protected learner — this session cannot perform an authenticated browser
+  walkthrough or query the live database directly, so the fix is traced/tested/deployed but not yet
+  confirmed against the original live failure. Also needs visual confirmation of the disclosure restyle
+  and the zero-evidence subject-area list. Increment 3 remains open until then.

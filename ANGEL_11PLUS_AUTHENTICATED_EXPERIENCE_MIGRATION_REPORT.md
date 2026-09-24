@@ -1005,3 +1005,111 @@ is structural (static-HTML + iframe), not a live-session visual check.
 production Progress hub, Mock Results pages, and Parent Dashboard, per the governing instruction's own
 explicit stop condition. This concludes Increment 3 — no further increment begins without new Founder
 instruction.
+
+---
+
+## Increment 3 Closure Correction (2026-09-24)
+
+Founder performed real production visual testing of Increment 3 and found four issues. Increment 3
+was **not** closed. This correction addresses exactly the four findings below and nothing else — Today,
+Learn, Practise, Private Learner Space architecture, PIN/auth behaviour, assessment scoring, question
+content, and Mock timing/educational logic are all untouched (confirmed by `git diff --stat`: 10 files,
+all within the Mock-start transport layer, the Mock Centre page, and the Learning Report page).
+
+**1. P0/P1 Mock-start defect — root cause**. Reproduced production path: Mock Centre → Mathematics
+Mock 1 → "I'm ready to begin" → "We couldn't continue this assessment" / `angel_learner_pin_required`
+shown verbatim. Traced the full chain (learner PIN verification → session token → Mock Centre →
+`handleBegin()`'s RPC sequence → `current_learner_id()`). `current_learner_id()` (migration 263) itself
+is correct and unchanged — its own dedicated test suite already proves the SQL logic in isolation. The
+real defect was client-side, in the shared Supabase fetch wrapper (`lib/learnerContext.ts`,
+`createLearnerAwareFetch`): the active-learner-id header was attached via a **self-hydrating** call
+(`ensureLearnerContext`, awaited inline, so it always has fresh state), but the learner-PIN session
+token header was attached via a **bare `getHouseholdModeSnapshot()` read**, trusting that some *other*
+already-mounted component's `useHouseholdMode()` effect had already called `ensureHouseholdMode()` and
+populated that state first. A request fired before that had happened — or lost the race against it — got
+the id header correctly (explaining why the learner reached the correct, correctly-named Mock intro
+screen) but silently omitted the token header, even though a real, valid, unexpired token already
+existed in storage from the learner's own genuine PIN entry. That is exactly the shape of
+`angel_learner_pin_required`: PIN configured, id resolved, no token attached. Migration 263's own test
+suite never exercised this interaction (it calls `current_learner_id()` directly, never through a real
+Mock RPC), which is why this specific combination was never caught before.
+
+**2. Exact correction**. `ensureHouseholdMode()` is a synchronous `sessionStorage`/`localStorage` read
+with no network call — safe and idempotent to call directly. `createLearnerAwareFetch` (and
+`learnerRequestHeaders()`, the same pattern's second call site) now call it before reading the household
+snapshot, exactly mirroring how learner id/context already self-hydrates. No RLS policy, PIN table, or
+`current_learner_id()` SQL was touched. Separately: no learner-facing surface renders a raw RPC error
+string again — new `lib/mockAttempt/startupErrors.ts` (`friendlyMockStartError()`,
+`isPinRecoverableMockStartError()`) translates every known internal code, applied at both real Mock-start
+surfaces (`/learning-intelligence/mock-exam` and its two-paper `/sitting` counterpart, which had the
+identical raw-error-exposure pattern). For the specific `angel_learner_pin_required` case, the Mock-exam
+page now offers a genuine recovery action — "Re-enter your PIN" opens the existing, unmodified
+`LearnerPinModal` (`mode="verify"`, the real `verify_learner_pin()` RPC), and on success stores the fresh
+token (`enterLearnerMode()`) and automatically retries `handleBegin()` — never a dead end.
+
+**3. Security/isolation effect**: none. The fix makes an already-verified token *more* reliably present,
+never bypasses or weakens the PIN check itself — `current_learner_id()`'s own validation
+(learner ownership, token-to-learner-and-account binding, expiry) is byte-for-byte unchanged. The
+recovery path re-verifies a real PIN through the real RPC every time; there is no client-side shortcut.
+Confirmed structurally: no new query path, no new client-supplied identifier, migrations 260–263 and
+`LearnerPinModal.tsx`'s own verification logic untouched. Migration 263's full existing isolation test
+suite (Plantest1/Plantest2 cross-token rejection, per-learner lockout, etc.) still passes unchanged.
+
+**4. Learning Report zero-evidence correction**. Real production screenshot: a zero-evidence learner's
+"All skills, in detail" section rendered the entire competency catalogue purely to repeat a not-yet-
+attempted status on every row. The upper hierarchy (Practise now / You're just getting started / How
+you're doing / What's going well / What to work on / What to do next), which the Founder confirmed
+correct, is unchanged. Now gated on `profile.hasAnyEvidence`: zero evidence shows the three real CSSE
+subject areas (from the existing `PRACTICE_AREAS` list, not a second hardcoded list) plus an honest
+explanation that Angel will build a clearer picture as the child works; the full detailed catalogue
+returns automatically, unchanged, once real evidence exists. `CompetencyProfile` and the underlying
+competency model are both untouched — only this page's own gating logic changed.
+
+**5. Stale Mock copy found and corrected**. Real production screenshot: "Reading Comprehension Mock 1"
+(and, identically, "Mathematics Mock 1") unconditionally claimed the complete CSSE Mock "is still being
+built", directly contradicting the already-available `CsseCompleteMockCard` shown immediately above once
+`completeCsseMockAvailable` is genuinely true. The claim is now appended only while it remains an honest,
+current statement (`csseMockDescription()`, gated on the same real, live availability signal every other
+card on this page already uses). Searched the directly related CSSE Mock Centre surfaces
+(`app/learning-intelligence/mock-exam/**`) for the same pattern — none found. Separately, the
+non-affiliation disclosure (an amber warning-style panel that visually competed with the learner's actual
+Mock choices) was restyled to calm, secondary typography on Angel tokens — identical disclosure text, no
+icon tile, no card, no gradient, no purple.
+
+**6. Files changed** (10): `app/learning-intelligence/mock-exam/page.tsx`,
+`app/learning-intelligence/mock-exam/sitting/page.tsx`, `app/learning-intelligence/page.tsx`,
+`app/mocks/page.tsx`, `lib/learnerContext.ts`, `lib/mockAttempt/startupErrors.ts` (new),
+`tests/lib/learnerContext.test.ts`, `tests/lib/learningEngine/
+learningReportZeroEvidenceProgressiveDisclosure.test.ts` (new), `tests/lib/mockAttempt/
+mockCentreClosureCorrection.test.ts` (new), `tests/lib/mockAttempt/startupErrors.test.ts` (new).
+
+**7. Tests/build**: full clean-checkout gate in an isolated worktree at the final commit — typecheck 0
+errors; tests 4,761/4,786 pass (25 pre-existing failures, byte-identical set to Increment 3's own gate —
+`tests/supabase/*` migration/passage comparisons and Question Factory fixtures, a pre-existing
+Windows-checkout CRLF artifact, confirmed unrelated; 0 failures in any closure-correction file, including
+4 new regression tests proving the exact production defect fixed); migration-sql-guard PASS 259 files
+(unchanged); copy-guard 51/51 baseline violations (0 new); eslint 113 problems/83 errors (baseline
+exactly, 0 new); genuine `next build` PASS, all routes compiled.
+
+**8. Commit**: `b18d541`.
+
+**9. Deployment status**: pushed to `origin/main`. Vercel auto-deployed
+(`angel-11plus-e1c76oflj-abs365s-projects.vercel.app`, Ready), confirmed aliased to
+`https://www.angel11plus.com`. Verified directly against the live deployed JS bundle (not source): the
+non-affiliation disclosure's markup is genuinely `text-[11px] text-[var(--angel-muted)] leading-relaxed`
+with zero amber classes; `csseMockDescription()`'s own gating function is present and correctly
+conditional; "Re-enter your PIN" and "Your subject areas" (the two new, previously-nonexistent strings)
+are both genuinely present in production.
+
+**10. Requiring Founder verification**: the actual end-to-end Mock-start flow in a real, live browser
+session as Plantest2 (or an equivalent PIN-protected learner) — the root cause was identified and fixed
+through careful tracing (`current_learner_id()`'s own test suite, the client-side transport code path,
+and a new regression test proving the exact defect class), but this session cannot perform an
+authenticated browser walkthrough itself (standing no-credentials rule) or query the live production
+database directly (no service-role key available), so the fix has not been confirmed by reproducing the
+original failure live and watching it now succeed. Also unverified live: the restyled amber-to-calm
+disclosure and the zero-evidence Learning Report's new "Your subject areas" list, both confirmed present
+in the deployed bundle but not visually inspected in a browser.
+
+**Not declaring GO.** Increment 3 remains open pending the Founder's own re-test of the Mock-start
+journey and visual confirmation of the remaining three corrections.
