@@ -1113,3 +1113,137 @@ in the deployed bundle but not visually inspected in a browser.
 
 **Not declaring GO.** Increment 3 remains open pending the Founder's own re-test of the Mock-start
 journey and visual confirmation of the remaining three corrections.
+
+---
+
+## Increment 3 Closure Blocker: Mathematics Mock 1 Wrong-Assessment Defect (2026-09-24)
+
+Founder production evidence: Mock Centre → Mathematics Mock 1 → Start mock → a correctly-titled
+"Mathematics Mock 1" pre-start screen → "I'm ready to begin" → the actual timed assessment that started
+was English ("Crossing the Atlantic: Sail and Steam", Question 1 of 17). This is a P1 closure blocker,
+not resolved by the prior PIN-transport correction (that defect no longer reproduces).
+
+**Proven root cause**: not fully provable from this session's access. Every individual piece of the
+request path was traced and found provably correct by direct reading of committed source, migration
+history, and the live deployed JS bundle:
+- `app/mocks/page.tsx`'s Mathematics card href (`/learning-intelligence/mock-exam?subject=mathematics`)
+  — already correctly scoped by an earlier, separately-committed, already-deployed fix (`f4f21fa`,
+  "remove false Reading awaiting-marking caveat, and stop the Mathematics standalone entry point
+  resolving to English's attempt") — confirmed both in source and in the live bundle.
+- `getActiveMockForm()`'s client wrapper (`lib/mockAttempt/client.ts`) correctly threads `p_subject`
+  through to the RPC — confirmed in source and the live bundle.
+- `mock_get_active_form()`'s own SQL (migration 245, the currently-live version — no later migration
+  redefines it) filters `f.subject = p_subject` — textually correct.
+- `first-mock-mathematics-v1`'s own `subject` column was set to `'mathematics'` at INSERT time
+  (migration 147) and independently RE-VERIFIED unchanged, in the same transaction, by migration 249's
+  own postcondition check, run immediately after `english-full-mock-v1`'s own activation.
+- `mock_create_cycle_attempt()`, `mock_get_resumable_attempt()`, and `mock_start_attempt()` all key
+  every read/write strictly off the exact `form_id`/`attempt_id` passed to them — none re-derives "which
+  form" independently, so none can substitute content on its own.
+
+I could not obtain a definitive live-data or infrastructure cause without either a service-role database
+read (no such credential is available to this session) or an authenticated live browser session
+(standing no-credentials rule) — both are needed to distinguish "the live data genuinely drifted from
+what migration history establishes" from "a client-side navigation/caching interaction specific to this
+project's own Next.js version" (this repository's own `AGENTS.md` explicitly warns this version has
+behavioural differences from standard Next.js).
+
+**Exact affected code/data path**: `app/mocks/page.tsx` (Mathematics card) → `/learning-intelligence/
+mock-exam?subject=mathematics` → `app/learning-intelligence/mock-exam/page.tsx`'s mount-time
+truthfulness check and `handleBegin()` → `getActiveMockForm(supabase, "full_mock", "mathematics")` →
+`mock_get_active_form()` (migration 245) → `mock_create_cycle_attempt()`/`mock_get_resumable_attempt()`
+→ `mock_start_attempt()` → `getMockAttemptManifest()`/`getMockQuestion()`.
+
+**Did the recent PIN correction contribute?** No. That fix (self-hydrating household mode before reading
+the learner-PIN token header) only affects the `x-angel-learner-token` header attached to every REST/RPC
+request; it has no interaction with `attemptType`/`subject` resolution, form discovery, or attempt
+creation. Confirmed by direct reading — the PIN fix touches only `lib/learnerContext.ts`.
+
+**Was an invalid Founder attempt created or reused?** Cannot be determined from this session's access —
+`ali_mock_attempt` RLS restricts reads to each row's own owner, and this session has no service-role
+credential or the Founder's own authenticated session. Structurally, given the existing, unmodified
+`mock_get_resumable_attempt()` filters strictly by `form_id`, a *future* Mathematics start cannot
+accidentally resume whatever attempt was created during this incident — it can only ever resume an
+attempt whose `form_id` genuinely matches the Mathematics form. **Before retesting**, please run this
+read-only query (Supabase Dashboard → SQL Editor, as the Founder) and share the result:
+```sql
+select id, form_id, attempt_type, subject, status, created_at
+from ali_mock_attempt
+where profile_id = (select id from profiles where auth_user_id = auth.uid())
+order by created_at desc
+limit 5;
+```
+If any row shows `form_id = 'english-full-mock-v1'` with a recent `created_at` that you did not
+knowingly start as an English attempt, that is the stray attempt from this incident. It contains no
+answers unless you actually attempted a question, and the safest bounded treatment is to leave it
+alone (it will never be resumed by a Mathematics start, and never counts as a completed English sitting
+unless submitted) — no deletion or mutation is proposed or required.
+
+**Exact correction**: the smallest architectural change that restores the required invariant regardless
+of the exact live cause. `mock_get_active_form()` (migration 264, additive) now also returns the
+resolved row's own `subject` column — previously it returned `(form_id, attempt_type, display_name)`
+only, giving the client no way to verify the row it received actually matched what it asked for.
+`app/learning-intelligence/mock-exam/page.tsx` now calls a new `subjectMismatch()` function
+(`lib/mockAttempt/workspace.ts`, directly unit-tested) at two points: the mount-time truthfulness check
+(before "Before you begin" ever renders) and `handleBegin()`'s own authoritative gate (immediately
+before any attempt is created or resumed, positioned before the resumable-attempt/cycle/create-new
+branches). A mismatch is refused cleanly through the existing `friendlyMockStartError()` translation —
+never a raw internal code, never a silent wrong-assessment start.
+
+**Mathematics routing evidence**: `subjectMismatch()` is called with `subject="mathematics"` at both
+gates; any form whose own resolved `subject` is not `"mathematics"` (including `null`, defensively) is
+refused before any attempt is created. Proven by direct unit test (`tests/lib/mockAttempt/
+workspace.test.ts`): "Mathematics Mock 1 cannot produce an English form" passes.
+
+**Reading routing evidence**: Reading Comprehension Mock 1's own link (`?type=timed_section`, no
+`subject` param) resolves `subject === undefined`, and `subjectMismatch()` is defined to never flag an
+unrequested subject — Reading has no subject ambiguity to begin with (`timed_section` has exactly one
+active form). Proven by unit test: "no subject requested at all... is never flagged."
+
+**Complete CSSE Mock routing evidence**: the two-paper sitting page
+(`app/learning-intelligence/mock-exam/sitting/page.tsx`) links each paper to `/learning-intelligence/
+mock-exam?type=full_mock&subject=${info.subject}` — the exact same page, the exact same two gates, for
+both English and Mathematics. No separate code path exists; the governed two-paper cycle architecture
+(`mock_create_cycle_attempt`'s own one-attempt-per-subject-per-cycle guard) is completely untouched.
+
+**Attempt-resume isolation evidence**: `mock_get_resumable_attempt()`'s own SQL (migration 149, not
+touched by this correction) filters `a.form_id = p_form_id` — an existing attempt for one form can never
+be surfaced as resumable for a different form's request, independent of this correction's own
+`subjectMismatch()` check, which runs even earlier in the sequence.
+
+**PIN non-regression evidence**: this correction touches zero PIN/auth code
+(`lib/learnerContext.ts`, `lib/householdMode.ts`, migration 263 all untouched by this commit). Migration
+263's own full isolation test suite (Plantest1/Plantest2 cross-token rejection, per-learner lockout,
+etc.) still passes unchanged in the clean-checkout gate.
+
+**Tests/build**: full clean-checkout gate in an isolated worktree at the final commit — typecheck 0
+errors; tests 4,770/4,795 pass (25 pre-existing failures, byte-identical set to both prior closure
+correction gates, 0 in any file this correction touches; 9 new behavioural regression tests added,
+directly proving `subjectMismatch()`'s behaviour and its wiring at both gates — not string-only
+structural tests); migration-sql-guard PASS 260 files (259 + this correction's one new, purely additive
+migration); copy-guard 51/51 baseline (0 new); eslint 113 problems/83 errors (baseline exactly, 0 new);
+genuine `next build` PASS, all routes compiled.
+
+**Commits**: `a789f7d` (the correction) + `9ed8a6f` (a typecheck fix to one test fixture, found by the
+clean-worktree gate before deployment).
+
+**Deployment status**: pushed to `origin/main`. Vercel auto-deployed
+(`angel-11plus-dqjgcancp-abs365s-projects.vercel.app`, Ready), confirmed aliased to
+`https://www.angel11plus.com`. Verified directly against the live deployed JS bundle (not source):
+`mock_get_active_form`'s client wrapper genuinely returns `subject`, and both `subjectMismatch(...)` call
+sites (mount-time check and `handleBegin()`) are genuinely present and wired to
+`MOCK_SUBJECT_MISMATCH_CODE`/`friendlyMockStartError()`.
+
+**Exact Founder retest steps** (do not complete either mock):
+1. Mock Centre → Mathematics Mock 1 → Start mock → I'm ready to begin → confirm the first Mathematics
+   question appears (a Mathematics-content question, not a passage/comprehension question).
+2. Separately: Mock Centre → Reading Comprehension Mock 1 → Start mock → confirm the first Reading
+   question appears.
+3. If either instead shows the new "Angel couldn't confirm this is the right assessment to start" error
+   screen, that is direct, conclusive proof the underlying mismatch is still occurring server-side (not
+   merely a client display issue) — please run the two verification queries in migration 264's own
+   footer (`select * from mock_get_active_form('full_mock', 'mathematics')` and the equivalent for
+   `'english'`) and share the results; that would be the first genuinely live confirmation of the exact
+   root cause this session could not access.
+
+**Not declaring GO.** Increment 3 remains open pending the Founder's own retest above.

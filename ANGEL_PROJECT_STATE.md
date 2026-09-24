@@ -1227,3 +1227,39 @@ still not declared:**
   walkthrough or query the live database directly, so the fix is traced/tested/deployed but not yet
   confirmed against the original live failure. Also needs visual confirmation of the disclosure restyle
   and the zero-evidence subject-area list. Increment 3 remains open until then.
+
+**2026-09-24 (same day) — Increment 3 Closure Blocker: Mathematics Mock 1 wrong-assessment defect.
+Commits `a789f7d` + `9ed8a6f`, pushed, deployed, confirmed live. Founder production evidence:
+Mathematics Mock 1's pre-start screen was correctly titled but the actual timed assessment served was
+English. GO still not declared; PIN-transport blocker from the prior correction no longer reproduces:**
+
+- Exhaustive static trace (no service-role DB access, no live browser session available this session):
+  every individual piece of the request path (Mock Centre card href, client RPC wrapper,
+  `mock_get_active_form()`'s SQL, Mathematics form's own `subject` column at every migration checkpoint,
+  attempt-creation/resume functions) is provably correct by direct reading — could not pin down a
+  definitive live-data or Next.js-caching root cause without DB/browser access this session doesn't have.
+- Correction: `mock_get_active_form()` (migration 264, purely additive) now also returns the resolved
+  form's own `subject`; `app/learning-intelligence/mock-exam/page.tsx` now calls a new, unit-tested
+  `subjectMismatch()` (`lib/mockAttempt/workspace.ts`) at both the truthfulness check and `handleBegin()`'s
+  authoritative gate, refusing cleanly before any attempt is ever created against a mismatched form.
+  Structurally enforces "selected Mock → correct assessment → correct form → correct questions" across
+  all 3 CSSE entry points (Mathematics, Reading, Complete CSSE Mock — all route through this same page).
+- Non-regression confirmed: PIN/auth, scoring, timing, question content, migration 263's isolation tests
+  all untouched. `mock_get_resumable_attempt()`'s own pre-existing `form_id` filter already made a
+  cross-form resume structurally impossible, independent of this fix.
+- Cannot confirm from this session whether the Founder's own failed attempt created/reused a stray
+  English-form attempt — `ali_mock_attempt` RLS blocks this session's read; gave the Founder a read-only
+  query to check, with no cleanup action proposed (a stray attempt, if any, can never be resumed by a
+  future correct Mathematics start regardless).
+- Clean-checkout gate (isolated worktree, final commit): typecheck 0 errors; tests 4,770/4,795 (25
+  pre-existing failures, byte-identical set to both prior gates, 0 in any touched file; 9 new behavioural
+  tests added); migration-sql-guard PASS 260 files; copy-guard 51/51 baseline; eslint at baseline exactly;
+  genuine `next build` PASS.
+- Production evidence: fetched the live deployed JS bundle directly — `subject` field genuinely returned
+  by the RPC wrapper, both `subjectMismatch()` call sites genuinely present and wired.
+- **Founder's required next step**: retest Mock Centre → Mathematics Mock 1 → begin (confirm a genuine
+  Mathematics question appears) and separately Reading Comprehension Mock 1 → begin (confirm a genuine
+  Reading question appears) — do not complete either. If the new "couldn't confirm this is the right
+  assessment" error appears instead, run the two verification queries in migration 264's own footer and
+  share results — that would be the first live confirmation of the exact root cause. Increment 3 remains
+  open until then.
