@@ -1,5 +1,13 @@
 -- 264_mock_get_active_form_subject_verification.sql
 --
+-- ************************************************************************
+-- DO NOT APPLY. SUPERSEDED BY MIGRATION 265 (applied 2026-09-24).
+-- This file was never applied to production. Running it now would DROP and
+-- recreate mock_get_active_form() WITHOUT 265's full_mock fail-closed
+-- guard. Its root-cause analysis below is also superseded: see
+-- ANGEL_MOCK_SUBJECT_ROUTING_P0_CLOSURE_REPORT.md.
+-- ************************************************************************
+--
 -- INCREMENT 3 CLOSURE BLOCKER — Mathematics Mock 1 starts the wrong
 -- assessment (real Founder production evidence: clicking "Mathematics
 -- Mock 1" reached a genuine "Mathematics Mock 1" pre-start screen, then

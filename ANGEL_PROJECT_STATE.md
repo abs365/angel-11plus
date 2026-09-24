@@ -4,7 +4,8 @@
 It records current state only — not history. For history, see the specific `ANGEL_*.md` report
 named under each item below. For operating rules, see `AGENTS.md` (imported by `CLAUDE.md`).
 
-Last updated: 2026-09-18, Educational Depth Phase 1 Wave 2 (Writing picture-narrative) —
+Last updated: 2026-09-24, MOCK SUBJECT ROUTING P0 — FINAL GO, INCIDENT CLOSED (see the dated entry at the end
+of this file). Previously: 2026-09-18, Educational Depth Phase 1 Wave 2 (Writing picture-narrative) —
 **GO, CLOSED.** The Founder independently reviewed migration 255's riverboat candidate and
 REJECTED it (real Year 5 learner evidence: "there is nothing to write with the picture"). A
 replacement, "The Treehouse Lantern", was authored, independently reviewed by the Founder
@@ -1263,3 +1264,30 @@ English. GO still not declared; PIN-transport blocker from the prior correction 
   assessment" error appears instead, run the two verification queries in migration 264's own footer and
   share results — that would be the first live confirmation of the exact root cause. Increment 3 remains
   open until then.
+
+**2026-09-24 — MOCK SUBJECT ROUTING P0: FINAL GO. PRODUCTION LEARNER ACCEPTANCE: PASS. INCIDENT CLOSED.**
+Full record: `ANGEL_MOCK_SUBJECT_ROUTING_P0_CLOSURE_REPORT.md`. Supersedes the root-cause statements in the
+two entries above. Increment 3 is no longer blocked by this defect.
+
+- **Confirmed root cause (live evidence):** the Mock Centre cards were correctly supplying their paper
+  parameters (`?subject=mathematics`, `?type=timed_section`), but `/learning-intelligence/mock-exam` is
+  statically pre-rendered (`X-Nextjs-Prerender: 1`, build route `○`) and read the baked `searchParams: {}`
+  via `use(searchParams)` instead of the live browser query string, so the requested paper identity was
+  lost in production. With no subject, `mock_get_active_form('full_mock', NULL)` resolved the newest
+  full_mock (English) — incident attempt `9ae70cee`. **Correction: commit `e609d95`** (query read via
+  `useSearchParams()` in `<Suspense>`; same fix for `mock-exam/sitting/results`). **Migration 265**
+  provides the server-side fail-closed subject invariant (full_mock with no subject returns no row;
+  returns `subject` so the client `subjectMismatch()` guard is real). Hardening in `63a1c40`: page-level
+  fail-closed gate + every bare mock-exam link routed to `/mocks`.
+- **Correction to the entry above:** migration 264 was never applied; the claim that the live RPC returned
+  `subject` at that time was not true (verified live via read-only MCP).
+- **Founder production retest PASS:** Mathematics Mock 1 → Question 1 genuinely Mathematics (21 questions);
+  Reading Comprehension Mock 1 → Question 1 genuinely Reading (27 questions, honeybee passage).
+- **Migration status:** 265 is APPLIED — do not rerun. **264 must NOT be applied** (it would drop 265's
+  fail-closed guard). Migrations 260–265 must not be casually rerun.
+- PIN enforcement (`current_learner_id()`, migration 263) intact and unchanged; no weakening of learner
+  isolation. Mock timing, scoring and all three form manifests unchanged (manifest hashes verified live).
+- Sitting hub now offers governed "Re-enter your PIN" recovery for `angel_learner_pin_required`.
+- **Open follow-up:** incident attempt `9ae70cee` (English, 0 answers, report unreleased, not EI-ingested)
+  still occupies learner `86b9841c`'s English slot in cycle `4e6bfadc`; no void mechanism exists yet —
+  INVALID MOCK ATTEMPT GOVERNANCE assessment in progress. Do not delete or hand-edit it.
