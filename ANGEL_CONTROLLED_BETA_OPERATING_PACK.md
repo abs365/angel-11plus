@@ -33,9 +33,9 @@ material scorecard shift should pause the ramp.
 | Need | Existing mechanism | Notes |
 |---|---|---|
 | Beta application / inbound interest | `/beta-family` (`beta_family_applications` table) | For organic word-of-mouth interest, not needed for a Founder-selected Family #1 |
-| Authentication / account creation | `/login` (magic link or password) | Parent-led, corrected wording live (LR-01) |
-| Parent onboarding, pathway setup | `/pathways` | Confirmed good UX in LR-02 |
-| Learner setup, first activity | Dashboard "Start Today's Mission" | Confirmed working in LR-02 |
+| Authentication / account creation | `/login` (Create account: email + password, confirmed by an emailed link; email sign-in link also available) | Parent-led, password-primary; registered account required before any learner surface (§4) |
+| Parent onboarding, pathway setup | `/pathways`, Parent PIN, Learner PIN | Confirmed good UX in LR-02; PIN architecture Founder-accepted (`ANGEL_PROJECT_STATE.md`) |
+| Learner setup, first activity | Learner space → Today → "Start Today's Mission" | Confirmed working in LR-02 |
 | Progress visibility | Parent Dashboard (`/learning-intelligence/parent`) | Confirmed working in LR-02 |
 | General feedback | `/feedback` (`feedback_submissions`) | Reused for parent feedback, §7 |
 | Bug reports | `/report-bug` (`bug_reports`) | Reused for technical issues, §8 |
@@ -58,25 +58,31 @@ can comfortably show at a glance (a public-launch-scale consideration, not a bet
 
 ## 4. Family #1 invitation process
 
+**Updated 2026-09-27** to match the current production journey (registered-account gate,
+password-primary auth with email confirmation, Parent PIN, Learner PIN). The `vercel.app` domain,
+magic-link-primary sign-in and the old no-PIN journey below are superseded — do not use them.
+
 1. **Founder selects a family** they know personally (Wave 0 — deliberately not a stranger).
-2. **Founder sends a direct message** (email or WhatsApp — no new tooling needed) containing:
-   the **`/login` URL specifically**
-   (`https://angel-11plus.vercel.app/login`, not the bare domain — the bare domain redirects
-   straight into the dashboard without ever showing the sign-in screen, per the Family #1
-   pre-launch defect fix below), one sentence on what Angel is ("an 11+ preparation platform for
-   your child's 11+ preparation — you set it up, they use it"), and an invitation to use "Email
-   me a secure sign-in link" to create the parent-controlled account.
-3. **Parent expectation, stated plainly in the same message**: the parent signs in first (this is
-   now the front door for invited families, not an optional extra); the child then begins
-   practising on that account; the parent can look at `/learning-intelligence/parent` whenever
-   they want to see progress; nothing needs to be "set up" beyond picking a pathway (optional,
-   changeable any time) on first use.
-4. **What the child should do first**: click "Start Today's Mission" on the dashboard — this
-   already routes to a real, working, evidence-based first activity (LR-02).
-5. **What the Founder should not need to explain manually**: the pathway choice (the `/pathways`
-   cards already explain each option in plain language); why Angel picked a topic first (the new
-   dashboard popover, LR-01, explains this to the child directly); what "Building Confidence"
-   etc. means (already explained inline, LR-02).
+2. **Founder sends a direct message** (email or WhatsApp — no new tooling needed) containing: the
+   **`https://www.angel11plus.com/login` URL specifically**, one sentence on what Angel is ("an
+   11+ preparation platform for your child's 11+ preparation — you set it up, they use it"), and
+   an invitation to use "Create account" (email + password, confirmed by an emailed link).
+3. **Parent expectation, stated plainly in the same message**: the parent registers and signs in
+   first (every learner surface is gated behind a registered parent account — there is no
+   anonymous/skip route into it); after confirming their email and signing in, they give their
+   child a first name or nickname and pick a pathway (optional, changeable any time), then set a
+   Parent PIN and a Learner PIN for the child before the child can enter their own learner space.
+4. **What the parent should do first**: `https://www.angel11plus.com/login` → Create account
+   (email, password, confirm password) → confirm via the emailed link → sign in → set the child's
+   first name/nickname and pathway → set a Parent PIN → set the child's Learner PIN → open the
+   avatar menu and choose "Enter <name>'s space" to hand the device to the child.
+5. **What the child should do first**: once in their own learner space, click "Start Today's
+   Mission" on Today — this already routes to a real, working, evidence-based first activity
+   (LR-02).
+6. **What the Founder should not need to explain manually**: the pathway choice (the `/pathways`
+   cards already explain each option in plain language); why Angel picked a topic first (the
+   dashboard popover, LR-01, explains this to the child directly); what "Building Confidence" etc.
+   means (already explained inline, LR-02).
 
 No invitation-code system, no separate onboarding flow, no new engineering — this process is
 adequate for 10–25 families by design.
