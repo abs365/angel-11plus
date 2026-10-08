@@ -1,7 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import fs from "node:fs";
-import { isPasswordRecoveryUrl } from "@/lib/passwordRecoveryUrl";
+import { isPasswordRecoveryUrl, passwordRecoveryArrival } from "@/lib/passwordRecoveryUrl";
 
 /**
  * Password recovery flow defect (real Founder production test) — proven
@@ -58,11 +58,18 @@ test("never reads or exposes the access token itself -- only the non-secret type
   assert.doesNotMatch(fn![0], /refresh_token/);
 });
 
-test("the durable check runs via a lazy useState initializer -- guaranteed to execute during this page's own first render, strictly before any effect", () => {
-  assert.match(
-    SOURCE,
-    /const \[arrivedViaRecoveryLink\] = useState\(\s*\n\s*\(\) => typeof window !== "undefined" && isPasswordRecoveryUrl\(window\.location\.hash, window\.location\.search\)\s*\n\s*\);/
-  );
+test("the link is read once on mount (client only) so the server/client markup cannot mismatch and the email form cannot flash", () => {
+  assert.match(SOURCE, /passwordRecoveryArrival\(window\.location\.hash, window\.location\.search\)/);
+  assert.match(SOURCE, /useSyncExternalStore\(subscribeNever, readArrivalOnce, serverArrival\)/);
+  assert.match(SOURCE, /latchedArrival/, "latched: Supabase strips the hash after establishing the session");
+});
+
+test("passwordRecoveryArrival classifies recovery / invalid (expired, used, scanner-consumed) / none", () => {
+  assert.equal(passwordRecoveryArrival("#access_token=a&type=recovery", ""), "recovery");
+  assert.equal(passwordRecoveryArrival("#error=access_denied&error_code=otp_expired&error_description=x", ""), "invalid");
+  assert.equal(passwordRecoveryArrival("", "?error=access_denied"), "invalid");
+  assert.equal(passwordRecoveryArrival("", ""), "none");
+  assert.equal(passwordRecoveryArrival("#access_token=a&type=magiclink", ""), "none");
 });
 
 test("AuthProvider's own isPasswordRecovery event-based signal is kept, not replaced -- this is additive reinforcement only", () => {

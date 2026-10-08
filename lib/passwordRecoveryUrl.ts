@@ -46,3 +46,22 @@ export function isPasswordRecoveryUrl(hash: string, search: string): boolean {
   const searchParams = new URLSearchParams(stripLeading(search, "?"));
   return hashParams.get("type") === "recovery" || searchParams.get("type") === "recovery";
 }
+
+/**
+ * What a visit to /reset-password carries from the emailed link:
+ *  - "recovery": a genuine recovery link (type=recovery) -> show the new-password form.
+ *  - "invalid":  Supabase redirected back with an error (expired, already used, or
+ *                pre-opened by an email/WhatsApp link scanner) -> say so and offer a fresh link.
+ *  - "none":     an ordinary visit -> the request-a-link form.
+ * Only non-secret mode/error flags are read -- never a token.
+ */
+export type PasswordRecoveryArrival = "recovery" | "invalid" | "none";
+
+export function passwordRecoveryArrival(hash: string, search: string): PasswordRecoveryArrival {
+  if (isPasswordRecoveryUrl(hash, search)) return "recovery";
+  const strip = (raw: string, prefix: string) => (raw.startsWith(prefix) ? raw.slice(1) : raw);
+  const hashParams = new URLSearchParams(strip(hash, "#"));
+  const searchParams = new URLSearchParams(strip(search, "?"));
+  const hasError = (p: URLSearchParams) => p.has("error") || p.has("error_code") || p.has("error_description");
+  return hasError(hashParams) || hasError(searchParams) ? "invalid" : "none";
+}

@@ -1,27 +1,53 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useSyncExternalStore } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { BookOpen, Mail, Lock, ArrowRight, CheckCircle } from "lucide-react";
 import { useAuth } from "@/components/providers/AuthProvider";
 import ErrorState from "@/components/ErrorState";
-import { isPasswordRecoveryUrl } from "@/lib/passwordRecoveryUrl";
+import { passwordRecoveryArrival, type PasswordRecoveryArrival } from "@/lib/passwordRecoveryUrl";
 import { friendlyPasswordResetError } from "@/lib/authEmailFeedback";
 
 type RequestState = "idle" | "sending" | "sent" | "error";
 type UpdateState = "idle" | "saving" | "saved" | "error";
 
 const MIN_PASSWORD_LENGTH = 8;
+// Service wording that means "this recovery session is no longer valid" (expired, used, or never established).
+const SESSION_LOST = /session|expired|invalid.*token|not authenticated|jwt|claim|unauthori|forbidden|refresh token|token|anonymous/i;
 
+function friendlyUpdatePasswordError(msg: string): string {
+  if (SESSION_LOST.test(msg)) {
+    return "This reset link has expired or has already been used. Please request a new one.";
+  }
+  if (/same.*password|different from the old/i.test(msg)) return "Please choose a password you haven't used before.";
+  if (/weak|at least|characters|short/i.test(msg)) return `Please choose a password with at least ${MIN_PASSWORD_LENGTH} characters.`;
+  if (/failed to fetch|network|load failed/i.test(msg)) return "We couldn't reach Angel 11+. Please check your connection and try again.";
+  return "We couldn't change your password just now. Please try again.";
+}
+
+// The link's flags are read from the URL once on the client and latched: Supabase strips the hash after it
+// establishes the session, so a later re-read would wrongly look like an ordinary visit.
+let latchedArrival: PasswordRecoveryArrival | null = null;
+const subscribeNever = () => () => {};
+const serverArrival = (): PasswordRecoveryArrival | null => null;
+function readArrivalOnce(): PasswordRecoveryArrival {
+  if (latchedArrival === null) latchedArrival = passwordRecoveryArrival(window.location.hash, window.location.search);
+  return latchedArrival;
+}
 
 export default function ResetPasswordPage() {
   const { isPasswordRecovery, sendPasswordResetEmail, updatePassword } = useAuth();
   const router = useRouter();
-  const [arrivedViaRecoveryLink] = useState(
-    () => typeof window !== "undefined" && isPasswordRecoveryUrl(window.location.hash, window.location.search)
-  );
-  const showNewPasswordForm = isPasswordRecovery || arrivedViaRecoveryLink;
+  // Read the emailed link's own flags once, on mount (client only -- avoids a server/client markup mismatch).
+  // Until then nothing is chosen, so the email form can never flash up for a parent who has already done that step.
+  const [arrivalOverride, setArrivalOverride] = useState<PasswordRecoveryArrival | null>(null);
+  const storedArrival = useSyncExternalStore(subscribeNever, readArrivalOnce, serverArrival);
+  const arrival = arrivalOverride ?? storedArrival;
+  const arrivedViaRecoveryLink = arrival === "recovery";
+  const [wantsNewLink, setWantsNewLink] = useState(false);
+  const showNewPasswordForm = (isPasswordRecovery || arrivedViaRecoveryLink) && !wantsNewLink;
+  const linkInvalid = !showNewPasswordForm && arrival === "invalid";
+  const [showPasswords, setShowPasswords] = useState(false);
 
   const [email, setEmail] = useState("");
   const [requestState, setRequestState] = useState<RequestState>("idle");
@@ -31,6 +57,7 @@ export default function ResetPasswordPage() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [updateState, setUpdateState] = useState<UpdateState>("idle");
   const [updateError, setUpdateError] = useState("");
+  const [sessionLost, setSessionLost] = useState(false);
 
   async function handleRequestSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -70,36 +97,35 @@ export default function ResetPasswordPage() {
     const { error } = await updatePassword(newPassword);
     if (error) {
       setUpdateState("error");
-      setUpdateError(error);
+      setUpdateError(friendlyUpdatePasswordError(error));
+      if (SESSION_LOST.test(error)) setSessionLost(true);
       return;
     }
     setUpdateState("saved");
   }
 
+  const ptype = showPasswords ? "text" : "password";
+
   return (
     <div className="min-h-screen bg-[var(--background)] flex items-center justify-center px-4 py-12">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-14 h-14 bg-blue-600 rounded-2xl mb-4 shadow-lg shadow-blue-200">
-            <BookOpen size={26} className="text-white" />
-          </div>
           <h1 className="text-gray-900 dark:text-gray-100 font-bold text-2xl">Angel 11+</h1>
         </div>
 
-        <div className="bg-white dark:bg-gray-900 rounded-3xl shadow-sm border border-gray-100 dark:border-gray-800 p-8">
-          {showNewPasswordForm ? (
+        <div className="bg-white dark:bg-gray-900 rounded-3xl shadow-sm border border-gray-100 dark:border-gray-800 p-6 sm:p-8">
+          {arrival === null ? (
+            <div className="py-8 text-center text-gray-400 dark:text-gray-500 text-sm" role="status">Loading…</div>
+          ) : showNewPasswordForm && !sessionLost ? (
             updateState === "saved" ? (
-              <div className="text-center">
-                <div className="inline-flex items-center justify-center w-14 h-14 bg-green-100 dark:bg-green-900 rounded-2xl mb-4">
-                  <CheckCircle size={26} className="text-green-600 dark:text-green-400" />
-                </div>
-                <h2 className="text-gray-900 dark:text-gray-100 font-bold text-xl mb-2">Password updated</h2>
+              <div className="text-center" role="status">
+                <h2 className="text-gray-900 dark:text-gray-100 font-bold text-xl mb-2">Password changed</h2>
                 <p className="text-gray-500 dark:text-gray-400 text-sm leading-relaxed mb-6">
-                  For your security, we&apos;ve signed you out. Please sign in again with your new password.
+                  Your password has been updated. You can now sign in with your new password.
                 </p>
                 <button
                   onClick={() => router.push("/login?mode=signin")}
-                  className="w-full bg-blue-600 text-white rounded-xl py-3.5 font-semibold text-sm hover:bg-blue-700 transition-colors"
+                  className="w-full bg-blue-600 text-white rounded-xl py-4 font-semibold text-base hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                 >
                   Sign in
                 </button>
@@ -107,76 +133,65 @@ export default function ResetPasswordPage() {
             ) : (
               <>
                 <h2 className="text-gray-900 dark:text-gray-100 font-bold text-xl mb-1 text-center">Choose a new password</h2>
-                <p className="text-gray-400 dark:text-gray-500 text-sm text-center mb-8">
-                  You&apos;ll use this to sign in from now on
-                </p>
-                <form onSubmit={handleUpdateSubmit} className="flex flex-col gap-4">
+                <p className="text-gray-500 dark:text-gray-400 text-sm text-center mb-8">Enter your new password below.</p>
+                <form onSubmit={handleUpdateSubmit} className="flex flex-col gap-4" noValidate>
                   <div>
-                    <label htmlFor="new-password" className="block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-2">
-                      New password
-                    </label>
-                    <div className="relative">
-                      <Lock size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500" />
-                      <input
-                        id="new-password"
-                        type="password"
-                        value={newPassword}
-                        onChange={(e) => { setNewPassword(e.target.value); if (updateState === "error") { setUpdateState("idle"); setUpdateError(""); } }}
-                        placeholder={`At least ${MIN_PASSWORD_LENGTH} characters`}
-                        autoComplete="new-password"
-                        autoFocus
-                        required
-                        className="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl pl-10 pr-4 py-3.5 text-sm text-gray-800 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all"
-                      />
-                    </div>
+                    <label htmlFor="new-password" className="block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-2">New password</label>
+                    <input
+                      id="new-password"
+                      type={ptype}
+                      value={newPassword}
+                      onChange={(e) => { setNewPassword(e.target.value); if (updateState === "error") { setUpdateState("idle"); setUpdateError(""); } }}
+                      placeholder={`At least ${MIN_PASSWORD_LENGTH} characters`}
+                      autoComplete="new-password"
+                      autoFocus
+                      required
+                      className="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl px-4 py-3.5 text-base text-gray-800 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all"
+                    />
                   </div>
                   <div>
-                    <label htmlFor="confirm-password" className="block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-2">
-                      Confirm password
-                    </label>
-                    <div className="relative">
-                      <Lock size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500" />
-                      <input
-                        id="confirm-password"
-                        type="password"
-                        value={confirmPassword}
-                        onChange={(e) => { setConfirmPassword(e.target.value); if (updateState === "error") { setUpdateState("idle"); setUpdateError(""); } }}
-                        placeholder="Type it again"
-                        autoComplete="new-password"
-                        required
-                        aria-describedby={updateState === "error" ? "update-password-error" : undefined}
-                        className="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl pl-10 pr-4 py-3.5 text-sm text-gray-800 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all"
-                      />
-                    </div>
+                    <label htmlFor="confirm-password" className="block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-2">Confirm new password</label>
+                    <input
+                      id="confirm-password"
+                      type={ptype}
+                      value={confirmPassword}
+                      onChange={(e) => { setConfirmPassword(e.target.value); if (updateState === "error") { setUpdateState("idle"); setUpdateError(""); } }}
+                      placeholder="Type it again"
+                      autoComplete="new-password"
+                      required
+                      aria-describedby={updateState === "error" ? "update-password-error" : undefined}
+                      className="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl px-4 py-3.5 text-base text-gray-800 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all"
+                    />
                   </div>
+                  <label className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 cursor-pointer">
+                    <input type="checkbox" checked={showPasswords} onChange={(e) => setShowPasswords(e.target.checked)} />
+                    Show passwords
+                  </label>
 
                   {updateState === "error" && <ErrorState variant="banner" id="update-password-error" message={updateError} />}
 
-                  <button
-                    type="submit"
-                    disabled={updateState === "saving" || !newPassword || !confirmPassword}
-                    className="flex items-center justify-center gap-2 w-full bg-blue-600 text-white rounded-xl py-4 font-semibold text-base hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                  >
-                    {updateState === "saving" ? (
-                      <>
-                        <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                        Saving…
-                      </>
-                    ) : (
-                      <>
-                        Save new password
-                        <ArrowRight size={18} />
-                      </>
-                    )}
+                  <button type="submit" disabled={updateState === "saving"} className="w-full bg-blue-600 text-white rounded-xl py-4 font-semibold text-base hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
+                    {updateState === "saving" ? "Saving…" : "Reset password"}
                   </button>
                 </form>
               </>
             )
-          ) : requestState === "sent" ? (
+          ) : linkInvalid || sessionLost ? (
             <div className="text-center">
-              <div className="inline-flex items-center justify-center w-14 h-14 bg-green-100 dark:bg-green-900 rounded-2xl mb-4">
-                <CheckCircle size={26} className="text-green-600 dark:text-green-400" />
-              </div>
+              <h2 className="text-gray-900 dark:text-gray-100 font-bold text-xl mb-2">This reset link can&apos;t be used</h2>
+              <p className="text-gray-500 dark:text-gray-400 text-sm leading-relaxed mb-6">
+                The link has expired or has already been used. Reset links work once, and some email apps open them
+                before you do. Please request a new link.
+              </p>
+              <button
+                onClick={() => { window.history.replaceState(null, "", "/reset-password"); setSessionLost(false); setUpdateState("idle"); setWantsNewLink(true); setArrivalOverride("none"); }}
+                className="w-full bg-blue-600 text-white rounded-xl py-4 font-semibold text-base hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              >
+                Request a new link
+              </button>
+            </div>
+          ) : requestState === "sent" ? (
+            <div className="text-center" role="status">
               <h2 className="text-gray-900 dark:text-gray-100 font-bold text-xl mb-2">Check your email</h2>
               <p className="text-gray-500 dark:text-gray-400 text-sm leading-relaxed mb-6">
                 We&apos;ve sent a secure link to <strong className="text-gray-700 dark:text-gray-300">{email}</strong>.
@@ -193,52 +208,30 @@ export default function ResetPasswordPage() {
           ) : (
             <>
               <h2 className="text-gray-900 dark:text-gray-100 font-bold text-xl mb-1 text-center">Reset your password</h2>
-              <p className="text-gray-400 dark:text-gray-500 text-sm text-center mb-8">
+              <p className="text-gray-500 dark:text-gray-400 text-sm text-center mb-8">
                 We&apos;ll email you a secure link to choose a new one
-              </p>
-              <p className="text-gray-400 dark:text-gray-500 text-xs text-center -mt-6 mb-8 leading-relaxed">
-                Never set a password? You can set one here, or you can always sign in with an email link instead.
               </p>
               <form onSubmit={handleRequestSubmit} className="flex flex-col gap-4">
                 <div>
-                  <label htmlFor="reset-email" className="block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-2">
-                    Email address
-                  </label>
-                  <div className="relative">
-                    <Mail size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500" />
-                    <input
-                      id="reset-email"
-                      type="email"
-                      value={email}
-                      onChange={(e) => { setEmail(e.target.value); if (requestState === "error") { setRequestState("idle"); setRequestError(""); } }}
-                      placeholder="you@example.com"
-                      autoComplete="email"
-                      autoFocus
-                      required
-                      aria-describedby={requestState === "error" ? "reset-request-error" : undefined}
-                      className="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl pl-10 pr-4 py-3.5 text-sm text-gray-800 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all"
-                    />
-                  </div>
+                  <label htmlFor="reset-email" className="block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-2">Email address</label>
+                  <input
+                    id="reset-email"
+                    type="email"
+                    value={email}
+                    onChange={(e) => { setEmail(e.target.value); if (requestState === "error") { setRequestState("idle"); setRequestError(""); } }}
+                    placeholder="you@example.com"
+                    autoComplete="email"
+                    autoFocus
+                    required
+                    aria-describedby={requestState === "error" ? "reset-request-error" : undefined}
+                    className="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl px-4 py-3.5 text-base text-gray-800 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all"
+                  />
                 </div>
 
                 {requestState === "error" && <ErrorState variant="banner" id="reset-request-error" message={requestError} />}
 
-                <button
-                  type="submit"
-                  disabled={requestState === "sending" || !email.trim()}
-                  className="flex items-center justify-center gap-2 w-full bg-blue-600 text-white rounded-xl py-4 font-semibold text-base hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                >
-                  {requestState === "sending" ? (
-                    <>
-                      <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                      Sending…
-                    </>
-                  ) : (
-                    <>
-                      Send reset link
-                      <ArrowRight size={18} />
-                    </>
-                  )}
+                <button type="submit" disabled={requestState === "sending" || !email.trim()} className="w-full bg-blue-600 text-white rounded-xl py-4 font-semibold text-base hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
+                  {requestState === "sending" ? "Sending…" : "Send reset link"}
                 </button>
               </form>
             </>
@@ -246,7 +239,7 @@ export default function ResetPasswordPage() {
         </div>
 
         <div className="text-center mt-5">
-          <Link href="/login?mode=signin" className="text-gray-400 dark:text-gray-500 text-sm hover:text-gray-600 dark:hover:text-gray-300 transition-colors">
+          <Link href="/login?mode=signin" className="text-gray-500 dark:text-gray-400 text-sm hover:text-gray-700 dark:hover:text-gray-300 transition-colors">
             ← Back to sign in
           </Link>
         </div>
