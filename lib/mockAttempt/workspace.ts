@@ -11,7 +11,7 @@
  * page component."
  */
 
-import type { ActiveMockForm, MockAttemptStatus, MockAttemptType, MockBarChartStimulus, MockCoordinateGridStimulus, MockImageStimulus, MockManifestGroupingEntry, MockQuestionPayload, MockTableStimulus, ResumableMockAttempt } from "./types";
+import type { ActiveMockForm, MockAttemptStatus, MockAttemptType, MockAngleFigureStimulus, MockBarChartStimulus, MockCoordinateGridStimulus, MockImageStimulus, MockManifestGroupingEntry, MockQuestionPayload, MockTableStimulus, ResumableMockAttempt } from "./types";
 
 /**
  * Programme Completion Increment 016 — the one, exact, already-activated
@@ -423,6 +423,35 @@ export function isValidCoordinateGridStimulus(value: unknown): value is MockCoor
   }
   if (v.mirrorLine !== undefined && !["x-axis", "y-axis", "y=x"].includes(v.mirrorLine as string)) return false;
   return true;
+}
+
+/**
+ * Angle-figure counterpart, same fail-closed discipline: sizes are whole degrees that sum to the figure's total (180 for a
+ * triangle or a straight line, 360 around a point); a label is either "<size>°" matching the drawn size, or one lowercase
+ * letter for an unknown; at least one angle is unknown and at least one is known.
+ */
+export function isValidAngleFigureStimulus(value: unknown): value is MockAngleFigureStimulus {
+  if (!value || typeof value !== "object") return false;
+  const v = value as Record<string, unknown>;
+  if (v.type !== "angle-figure") return false;
+  if (v.title !== undefined && typeof v.title !== "string") return false;
+  const rules: Record<string, { n: [number, number]; total: number; min: number; max: number }> = {
+    triangle: { n: [3, 3], total: 180, min: 5, max: 170 },
+    "straight-line": { n: [2, 4], total: 180, min: 5, max: 170 },
+    "around-point": { n: [3, 5], total: 360, min: 5, max: 250 },
+  };
+  const rule = typeof v.figure === "string" ? rules[v.figure] : undefined;
+  if (!rule || !Array.isArray(v.angles) || v.angles.length < rule.n[0] || v.angles.length > rule.n[1]) return false;
+  let sum = 0;
+  let unknown = 0;
+  for (const a of v.angles) {
+    const q = a as Record<string, unknown>;
+    if (!q || typeof q.size !== "number" || !Number.isInteger(q.size) || q.size < rule.min || q.size > rule.max || typeof q.shown !== "string") return false;
+    sum += q.size;
+    if (/^[a-z]$/.test(q.shown)) unknown++;
+    else if (q.shown !== `${q.size}°`) return false;
+  }
+  return sum === rule.total && unknown >= 1 && unknown < v.angles.length;
 }
 
 /**

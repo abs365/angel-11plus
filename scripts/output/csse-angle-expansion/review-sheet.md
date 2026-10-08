@@ -1,0 +1,198 @@
+# CSSE angle-figure expansion (QT-MR-07) -- candidates for educational review
+
+All candidates are `pending_review` once submitted. Nothing is published by this package.
+
+## mr03-angle-sum
+
+- **csse-af-mr03-bp-fig-triangle-find-x-01** [easy; interpretation; fig_triangle]
+  - Representation: angle_figure -- angle figure {"figure":"triangle","angles":["x","20°","51°"]}
+  - Q: The diagram shows a triangle. Work out the size of angle x. Give your answer in degrees.
+  - Answer: 109
+  - Working: The angles in a triangle add up to 180° / 20 + 51 = 71 / x = 180 - 71 = 109
+  - Targets: adding the two angles and stopping, or subtracting from 360 or 90 instead of 180
+- **csse-af-mr03-bp-fig-triangle-find-x-02** [medium; interpretation; fig_triangle]
+  - Representation: angle_figure -- angle figure {"figure":"triangle","angles":["x","40°","58°"]}
+  - Q: The diagram shows a triangle. Work out the size of angle x. Give your answer in degrees.
+  - Answer: 82
+  - Working: The angles in a triangle add up to 180° / 40 + 58 = 98 / x = 180 - 98 = 82
+  - Targets: adding the two angles and stopping, or subtracting from 360 or 90 instead of 180
+- **csse-af-mr03-bp-fig-triangle-find-x-03** [hard; interpretation; fig_triangle]
+  - Representation: angle_figure -- angle figure {"figure":"triangle","angles":["57°","x","92°"]}
+  - Q: The diagram shows a triangle. Work out the size of angle x. Give your answer in degrees.
+  - Answer: 31
+  - Working: The angles in a triangle add up to 180° / 57 + 92 = 149 / x = 180 - 149 = 31
+  - Targets: adding the two angles and stopping, or subtracting from 360 or 90 instead of 180
+- **csse-af-mr03-bp-fig-triangle-find-x-04** [easy; interpretation; fig_triangle]
+  - Representation: angle_figure -- angle figure {"figure":"triangle","angles":["x","45°","42°"]}
+  - Q: The diagram shows a triangle. Work out the size of angle x. Give your answer in degrees.
+  - Answer: 93
+  - Working: The angles in a triangle add up to 180° / 45 + 42 = 87 / x = 180 - 87 = 93
+  - Targets: adding the two angles and stopping, or subtracting from 360 or 90 instead of 180
+- **csse-af-mr03-bp-fig-triangle-find-x-05** [medium; interpretation; fig_triangle]
+  - Representation: angle_figure -- angle figure {"figure":"triangle","angles":["66°","x","26°"]}
+  - Q: The diagram shows a triangle. Work out the size of angle x. Give your answer in degrees.
+  - Answer: 88
+  - Working: The angles in a triangle add up to 180° / 66 + 26 = 92 / x = 180 - 92 = 88
+  - Targets: adding the two angles and stopping, or subtracting from 360 or 90 instead of 180
+- **csse-af-mr03-bp-fig-triangle-find-x-06** [hard; interpretation; fig_triangle]
+  - Representation: angle_figure -- angle figure {"figure":"triangle","angles":["x","89°","65°"]}
+  - Q: The diagram shows a triangle. Work out the size of angle x. Give your answer in degrees.
+  - Answer: 26
+  - Working: The angles in a triangle add up to 180° / 89 + 65 = 154 / x = 180 - 154 = 26
+  - Targets: adding the two angles and stopping, or subtracting from 360 or 90 instead of 180
+- **csse-af-mr03-bp-fig-triangle-find-x-07** [easy; interpretation; fig_triangle]
+  - Representation: angle_figure -- angle figure {"figure":"triangle","angles":["23°","16°","x"]}
+  - Q: The diagram shows a triangle. Work out the size of angle x. Give your answer in degrees.
+  - Answer: 141
+  - Working: The angles in a triangle add up to 180° / 23 + 16 = 39 / x = 180 - 39 = 141
+  - Targets: adding the two angles and stopping, or subtracting from 360 or 90 instead of 180
+- **csse-af-mr03-bp-fig-triangle-find-x-08** [medium; interpretation; fig_triangle]
+  - Representation: angle_figure -- angle figure {"figure":"triangle","angles":["x","61°","62°"]}
+  - Q: The diagram shows a triangle. Work out the size of angle x. Give your answer in degrees.
+  - Answer: 57
+  - Working: The angles in a triangle add up to 180° / 61 + 62 = 123 / x = 180 - 123 = 57
+  - Targets: adding the two angles and stopping, or subtracting from 360 or 90 instead of 180
+- **csse-af-mr03-bp-fig-straight-line-find-x-01** [easy; interpretation; fig_straight_line_2_angles]
+  - Representation: angle_figure -- angle figure {"figure":"straight-line","angles":["139°","x"]}
+  - Q: The diagram shows angles on a straight line. Work out the size of angle x. Give your answer in degrees.
+  - Answer: 41
+  - Working: Angles on a straight line add up to 180° / 139 = 139 / x = 180 - 139 = 41
+  - Targets: using 360 (or 90) for angles on a straight line, or leaving out one of the shown angles
+- **csse-af-mr03-bp-fig-straight-line-find-x-02** [medium; interpretation; fig_straight_line_3_angles]
+  - Representation: angle_figure -- angle figure {"figure":"straight-line","angles":["x","116°","34°"]}
+  - Q: The diagram shows angles on a straight line. Work out the size of angle x. Give your answer in degrees.
+  - Answer: 30
+  - Working: Angles on a straight line add up to 180° / 116 + 34 = 150 / x = 180 - 150 = 30
+  - Targets: using 360 (or 90) for angles on a straight line, or leaving out one of the shown angles
+- **csse-af-mr03-bp-fig-straight-line-find-x-03** [hard; interpretation; fig_straight_line_4_angles]
+  - Representation: angle_figure -- angle figure {"figure":"straight-line","angles":["61°","56°","x","18°"]}
+  - Q: The diagram shows angles on a straight line. Work out the size of angle x. Give your answer in degrees.
+  - Answer: 45
+  - Working: Angles on a straight line add up to 180° / 61 + 56 + 18 = 135 / x = 180 - 135 = 45
+  - Targets: using 360 (or 90) for angles on a straight line, or leaving out one of the shown angles
+- **csse-af-mr03-bp-fig-straight-line-find-x-04** [easy; interpretation; fig_straight_line_2_angles]
+  - Representation: angle_figure -- angle figure {"figure":"straight-line","angles":["46°","x"]}
+  - Q: The diagram shows angles on a straight line. Work out the size of angle x. Give your answer in degrees.
+  - Answer: 134
+  - Working: Angles on a straight line add up to 180° / 46 = 46 / x = 180 - 46 = 134
+  - Targets: using 360 (or 90) for angles on a straight line, or leaving out one of the shown angles
+- **csse-af-mr03-bp-fig-straight-line-find-x-05** [medium; interpretation; fig_straight_line_3_angles]
+  - Representation: angle_figure -- angle figure {"figure":"straight-line","angles":["53°","x","84°"]}
+  - Q: The diagram shows angles on a straight line. Work out the size of angle x. Give your answer in degrees.
+  - Answer: 43
+  - Working: Angles on a straight line add up to 180° / 53 + 84 = 137 / x = 180 - 137 = 43
+  - Targets: using 360 (or 90) for angles on a straight line, or leaving out one of the shown angles
+- **csse-af-mr03-bp-fig-straight-line-find-x-06** [hard; interpretation; fig_straight_line_4_angles]
+  - Representation: angle_figure -- angle figure {"figure":"straight-line","angles":["36°","x","64°","42°"]}
+  - Q: The diagram shows angles on a straight line. Work out the size of angle x. Give your answer in degrees.
+  - Answer: 38
+  - Working: Angles on a straight line add up to 180° / 36 + 64 + 42 = 142 / x = 180 - 142 = 38
+  - Targets: using 360 (or 90) for angles on a straight line, or leaving out one of the shown angles
+- **csse-af-mr03-bp-fig-straight-line-find-x-07** [easy; interpretation; fig_straight_line_2_angles]
+  - Representation: angle_figure -- angle figure {"figure":"straight-line","angles":["115°","x"]}
+  - Q: The diagram shows angles on a straight line. Work out the size of angle x. Give your answer in degrees.
+  - Answer: 65
+  - Working: Angles on a straight line add up to 180° / 115 = 115 / x = 180 - 115 = 65
+  - Targets: using 360 (or 90) for angles on a straight line, or leaving out one of the shown angles
+- **csse-af-mr03-bp-fig-straight-line-find-x-08** [medium; interpretation; fig_straight_line_3_angles]
+  - Representation: angle_figure -- angle figure {"figure":"straight-line","angles":["128°","35°","x"]}
+  - Q: The diagram shows angles on a straight line. Work out the size of angle x. Give your answer in degrees.
+  - Answer: 17
+  - Working: Angles on a straight line add up to 180° / 128 + 35 = 163 / x = 180 - 163 = 17
+  - Targets: using 360 (or 90) for angles on a straight line, or leaving out one of the shown angles
+- **csse-af-mr03-bp-fig-around-point-find-x-01** [medium; interpretation; fig_around_point_5_angles]
+  - Representation: angle_figure -- angle figure {"figure":"around-point","angles":["55°","58°","109°","x","77°"]}
+  - Q: The diagram shows angles around a point. Work out the size of angle x. Give your answer in degrees.
+  - Answer: 61
+  - Working: Angles around a point add up to 360° / 55 + 58 + 109 + 77 = 299 / x = 360 - 299 = 61
+  - Targets: using 180 instead of 360 for angles around a point
+- **csse-af-mr03-bp-fig-around-point-find-x-02** [easy; interpretation; fig_around_point_3_angles]
+  - Representation: angle_figure -- angle figure {"figure":"around-point","angles":["142°","114°","x"]}
+  - Q: The diagram shows angles around a point. Work out the size of angle x. Give your answer in degrees.
+  - Answer: 104
+  - Working: Angles around a point add up to 360° / 142 + 114 = 256 / x = 360 - 256 = 104
+  - Targets: using 180 instead of 360 for angles around a point
+- **csse-af-mr03-bp-fig-around-point-find-x-03** [hard; interpretation; fig_around_point_3_angles]
+  - Representation: angle_figure -- angle figure {"figure":"around-point","angles":["26°","106°","x"]}
+  - Q: The diagram shows angles around a point. Work out the size of angle x. Give your answer in degrees.
+  - Answer: 228
+  - Working: Angles around a point add up to 360° / 26 + 106 = 132 / x = 360 - 132 = 228
+  - Targets: using 180 instead of 360 for angles around a point
+- **csse-af-mr03-bp-fig-around-point-find-x-04** [medium; interpretation; fig_around_point_4_angles]
+  - Representation: angle_figure -- angle figure {"figure":"around-point","angles":["105°","114°","46°","x"]}
+  - Q: The diagram shows angles around a point. Work out the size of angle x. Give your answer in degrees.
+  - Answer: 95
+  - Working: Angles around a point add up to 360° / 105 + 114 + 46 = 265 / x = 360 - 265 = 95
+  - Targets: using 180 instead of 360 for angles around a point
+- **csse-af-mr03-bp-fig-around-point-find-x-05** [easy; interpretation; fig_around_point_3_angles]
+  - Representation: angle_figure -- angle figure {"figure":"around-point","angles":["159°","x","158°"]}
+  - Q: The diagram shows angles around a point. Work out the size of angle x. Give your answer in degrees.
+  - Answer: 43
+  - Working: Angles around a point add up to 360° / 159 + 158 = 317 / x = 360 - 317 = 43
+  - Targets: using 180 instead of 360 for angles around a point
+- **csse-af-mr03-bp-fig-around-point-find-x-06** [hard; interpretation; fig_around_point_4_angles]
+  - Representation: angle_figure -- angle figure {"figure":"around-point","angles":["32°","72°","x","36°"]}
+  - Q: The diagram shows angles around a point. Work out the size of angle x. Give your answer in degrees.
+  - Answer: 220
+  - Working: Angles around a point add up to 360° / 32 + 72 + 36 = 140 / x = 360 - 140 = 220
+  - Targets: using 180 instead of 360 for angles around a point
+- **csse-af-mr03-bp-fig-around-point-find-x-07** [medium; interpretation; fig_around_point_4_angles]
+  - Representation: angle_figure -- angle figure {"figure":"around-point","angles":["60°","x","132°","78°"]}
+  - Q: The diagram shows angles around a point. Work out the size of angle x. Give your answer in degrees.
+  - Answer: 90
+  - Working: Angles around a point add up to 360° / 60 + 132 + 78 = 270 / x = 360 - 270 = 90
+  - Targets: using 180 instead of 360 for angles around a point
+- **csse-af-mr03-bp-fig-around-point-find-x-08** [easy; interpretation; fig_around_point_3_angles]
+  - Representation: angle_figure -- angle figure {"figure":"around-point","angles":["75°","109°","x"]}
+  - Q: The diagram shows angles around a point. Work out the size of angle x. Give your answer in degrees.
+  - Answer: 176
+  - Working: Angles around a point add up to 360° / 75 + 109 = 184 / x = 360 - 184 = 176
+  - Targets: using 180 instead of 360 for angles around a point
+- **csse-af-mr03-bp-fig-isosceles-find-base-01** [hard; multi_step_application; fig_isosceles_base]
+  - Representation: angle_figure -- angle figure {"figure":"triangle","angles":["x","106°","x"]}
+  - Q: The diagram shows a triangle. The two angles marked x are equal. Work out the size of angle x. Give your answer in degrees.
+  - Answer: 37
+  - Working: The angles in a triangle add up to 180° / The two angles x are equal, so 2x = 180 - 106 = 74 / x = 74 / 2 = 37
+  - Targets: subtracting from 180 and forgetting to halve (giving 2x), or treating the shown angle as one of the equal pair
+- **csse-af-mr03-bp-fig-isosceles-find-base-02** [medium; multi_step_application; fig_isosceles_base]
+  - Representation: angle_figure -- angle figure {"figure":"triangle","angles":["x","70°","x"]}
+  - Q: The diagram shows a triangle. The two angles marked x are equal. Work out the size of angle x. Give your answer in degrees.
+  - Answer: 55
+  - Working: The angles in a triangle add up to 180° / The two angles x are equal, so 2x = 180 - 70 = 110 / x = 110 / 2 = 55
+  - Targets: subtracting from 180 and forgetting to halve (giving 2x), or treating the shown angle as one of the equal pair
+- **csse-af-mr03-bp-fig-isosceles-find-base-03** [hard; multi_step_application; fig_isosceles_base]
+  - Representation: angle_figure -- angle figure {"figure":"triangle","angles":["x","88°","x"]}
+  - Q: The diagram shows a triangle. The two angles marked x are equal. Work out the size of angle x. Give your answer in degrees.
+  - Answer: 46
+  - Working: The angles in a triangle add up to 180° / The two angles x are equal, so 2x = 180 - 88 = 92 / x = 92 / 2 = 46
+  - Targets: subtracting from 180 and forgetting to halve (giving 2x), or treating the shown angle as one of the equal pair
+- **csse-af-mr03-bp-fig-isosceles-find-base-04** [medium; multi_step_application; fig_isosceles_base]
+  - Representation: angle_figure -- angle figure {"figure":"triangle","angles":["22°","x","x"]}
+  - Q: The diagram shows a triangle. The two angles marked x are equal. Work out the size of angle x. Give your answer in degrees.
+  - Answer: 79
+  - Working: The angles in a triangle add up to 180° / The two angles x are equal, so 2x = 180 - 22 = 158 / x = 158 / 2 = 79
+  - Targets: subtracting from 180 and forgetting to halve (giving 2x), or treating the shown angle as one of the equal pair
+- **csse-af-mr03-bp-fig-isosceles-find-base-05** [hard; multi_step_application; fig_isosceles_base]
+  - Representation: angle_figure -- angle figure {"figure":"triangle","angles":["x","x","122°"]}
+  - Q: The diagram shows a triangle. The two angles marked x are equal. Work out the size of angle x. Give your answer in degrees.
+  - Answer: 29
+  - Working: The angles in a triangle add up to 180° / The two angles x are equal, so 2x = 180 - 122 = 58 / x = 58 / 2 = 29
+  - Targets: subtracting from 180 and forgetting to halve (giving 2x), or treating the shown angle as one of the equal pair
+- **csse-af-mr03-bp-fig-isosceles-find-base-06** [medium; multi_step_application; fig_isosceles_base]
+  - Representation: angle_figure -- angle figure {"figure":"triangle","angles":["x","x","26°"]}
+  - Q: The diagram shows a triangle. The two angles marked x are equal. Work out the size of angle x. Give your answer in degrees.
+  - Answer: 77
+  - Working: The angles in a triangle add up to 180° / The two angles x are equal, so 2x = 180 - 26 = 154 / x = 154 / 2 = 77
+  - Targets: subtracting from 180 and forgetting to halve (giving 2x), or treating the shown angle as one of the equal pair
+- **csse-af-mr03-bp-fig-isosceles-find-base-07** [hard; multi_step_application; fig_isosceles_base]
+  - Representation: angle_figure -- angle figure {"figure":"triangle","angles":["x","112°","x"]}
+  - Q: The diagram shows a triangle. The two angles marked x are equal. Work out the size of angle x. Give your answer in degrees.
+  - Answer: 34
+  - Working: The angles in a triangle add up to 180° / The two angles x are equal, so 2x = 180 - 112 = 68 / x = 68 / 2 = 34
+  - Targets: subtracting from 180 and forgetting to halve (giving 2x), or treating the shown angle as one of the equal pair
+- **csse-af-mr03-bp-fig-isosceles-find-base-08** [medium; multi_step_application; fig_isosceles_base]
+  - Representation: angle_figure -- angle figure {"figure":"triangle","angles":["x","x","78°"]}
+  - Q: The diagram shows a triangle. The two angles marked x are equal. Work out the size of angle x. Give your answer in degrees.
+  - Answer: 51
+  - Working: The angles in a triangle add up to 180° / The two angles x are equal, so 2x = 180 - 78 = 102 / x = 102 / 2 = 51
+  - Targets: subtracting from 180 and forgetting to halve (giving 2x), or treating the shown angle as one of the equal pair

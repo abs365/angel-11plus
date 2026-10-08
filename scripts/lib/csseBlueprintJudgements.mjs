@@ -80,3 +80,10 @@ export const JUDGEMENT_GRID = {
   "mr03-bp-grid-fourth-vertex": { s: "Complete a drawn rectangle or slanted parallelogram from three corners, using the shape's properties. Different from every existing coordinate item. Tests confirm a 'parallelogram' question is never secretly a rectangle.", t: "High. Classic exam shape; builds on both coordinates and properties of quadrilaterals.", r: "Large space; the shape and its corners vary." },
   "mr03-bp-grid-midpoint-of-segment": { s: "Midpoint of a drawn segment with ends read from the grid. The segment is neither horizontal nor vertical, so both coordinates need working out.", t: "Medium-high. A standard coordinate skill, now with the ends read rather than given.", r: "Moderate space: both ends and the grid size vary, with a whole-number-midpoint constraint." },
 };
+
+export const JUDGEMENT_ANGLE = {
+  "mr03-bp-fig-triangle-find-x": { s: "Existing angle-sum items are prose; here the triangle is drawn and the question carries no numbers, so the figure is necessary. x moves between the three vertices. Labelled 'not drawn accurately' so the child calculates rather than measures.", t: "High. Angle sum in a drawn triangle is the standard exam form.", r: "Large space: two angles and the position of x vary." },
+  "mr03-bp-fig-straight-line-find-x": { s: "Angles on a straight line with one to three angles shown. New to the bank: no existing item uses a straight-line figure.", t: "High. A core angle fact, previously absent as a figure.", r: "Large space: number of angles, sizes and position of x vary." },
+  "mr03-bp-fig-around-point-find-x": { s: "Angles around a point (360 degrees), two to four angles shown, including a reflex x. Previously absent from the bank.", t: "High. The third standard angle fact, with a reflex stretch case.", r: "Large space." },
+  "mr03-bp-fig-isosceles-find-base": { s: "Isosceles triangle drawn with two equal angles both marked x. The forgot-to-halve answer is always a different number from the right one (tested).", t: "Medium-high. Combines the angle sum with equality of angles.", r: "Moderate space: one angle (even, 20-140, not 60) and its vertex." },
+};

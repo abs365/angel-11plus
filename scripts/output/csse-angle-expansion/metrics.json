@@ -1,0 +1,68 @@
+[
+  {
+    "familyId": "mr03-angle-sum",
+    "blueprints": 4,
+    "keptCandidates": 32,
+    "rawGenerated": 384,
+    "approvedBeforeBalancing": 362,
+    "blueprintDepth": 4,
+    "dominantBlueprintShare": 0.25,
+    "scaledMemorisationRisk": "MEDIUM",
+    "perBlueprintDifficulty": [
+      {
+        "blueprintId": "mr03-bp-fig-triangle-find-x",
+        "distinctTiersReached": 3,
+        "tierCounts": {
+          "easy": 3,
+          "medium": 3,
+          "hard": 2
+        },
+        "meetsMinimum": true
+      },
+      {
+        "blueprintId": "mr03-bp-fig-straight-line-find-x",
+        "distinctTiersReached": 3,
+        "tierCounts": {
+          "easy": 3,
+          "medium": 3,
+          "hard": 2
+        },
+        "meetsMinimum": true
+      },
+      {
+        "blueprintId": "mr03-bp-fig-around-point-find-x",
+        "distinctTiersReached": 3,
+        "tierCounts": {
+          "medium": 3,
+          "easy": 3,
+          "hard": 2
+        },
+        "meetsMinimum": true
+      },
+      {
+        "blueprintId": "mr03-bp-fig-isosceles-find-base",
+        "distinctTiersReached": 2,
+        "tierCounts": {
+          "hard": 4,
+          "medium": 4
+        },
+        "meetsMinimum": true
+      }
+    ],
+    "parameterSignatureDuplicates": 0,
+    "contexts": [
+      "fig_triangle",
+      "fig_straight_line_2_angles",
+      "fig_straight_line_3_angles",
+      "fig_straight_line_4_angles",
+      "fig_around_point_5_angles",
+      "fig_around_point_3_angles",
+      "fig_around_point_4_angles",
+      "fig_isosceles_base"
+    ],
+    "reasoningRoutes": [
+      "interpretation",
+      "multi_step_application"
+    ]
+  }
+]

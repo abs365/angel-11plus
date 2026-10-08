@@ -1,6 +1,6 @@
 # CSSE Maths candidates: final blueprint-level approval pack
 
-**324 candidates, 31 blueprints. Nothing has been submitted, approved or published.** Governance model (agreed): you review every blueprint, representative samples, difficulty bands, every new representation type, edge cases, diversity warnings and validation failures. You are **not** asked to approve individual permutations. Open `scripts/output/csse-maths-approval-pack/approval-pack.html` to see samples with the real table and chart rendering.
+**356 candidates, 35 blueprints. Nothing has been submitted, approved or published.** Governance model (agreed): you review every blueprint, representative samples, difficulty bands, every new representation type, edge cases, diversity warnings and validation failures. You are **not** asked to approve individual permutations. Open `scripts/output/csse-maths-approval-pack/approval-pack.html` to see samples with the real table and chart rendering.
 
 ## How to decide
 
@@ -41,8 +41,12 @@ For each blueprint choose: **approve** (publish the prepared volume), **approve 
 | mr03-bp-grid-translate-point | MR-03 | mr03-coordinate | 8 | hard 3, easy 3, medium 2 | coordinate_grid | 3847 | LOW | 8 |
 | mr03-bp-grid-fourth-vertex | MR-03 | mr03-coordinate | 8 | hard 3, medium 3, easy 2 | coordinate_grid | 3916 | LOW | 8 |
 | mr03-bp-grid-midpoint-of-segment | MR-03 | mr03-coordinate | 8 | easy 2, hard 3, medium 3 | coordinate_grid | 3666 | LOW | 8 |
+| mr03-bp-fig-triangle-find-x | MR-03 | mr03-angle-sum | 8 | easy 3, medium 3, hard 2 | angle_figure | 3687 | LOW | 8 |
+| mr03-bp-fig-straight-line-find-x | MR-03 | mr03-angle-sum | 8 | easy 3, medium 3, hard 2 | angle_figure | 2132 | MODERATE | 8 |
+| mr03-bp-fig-around-point-find-x | MR-03 | mr03-angle-sum | 8 | medium 3, easy 3, hard 2 | angle_figure | 3978 | LOW | 8 |
+| mr03-bp-fig-isosceles-find-base | MR-03 | mr03-angle-sum | 8 | hard 4, medium 4 | angle_figure | 180 | HIGHER | 8 |
 
-**Recommended publish volume if every blueprint is approved as recommended: 318 of 324** (practice-eligible 901 to 1219). Volume is a result, not a target.
+**Recommended publish volume if every blueprint is approved as recommended: 350 of 356** (practice-eligible 901 to 1251). Volume is a result, not a target.
 
 ## Representation and semantic audit (every table and chart type)
 
@@ -88,6 +92,14 @@ Titles, captions, headers, units, scales and question wording were audited **tog
 | grid-fourth-vertex | grid_complete_parallelogram | Coordinate grid | x -5..5, y -5..5; points A, B, C | A, B and C are three corners of a parallelogram ABCD, in that order. What are the coordinates of corner D? Give your answer in the form (x, y). |
 | grid-fourth-vertex | grid_complete_rectangle | Coordinate grid | x -5..5, y -5..5; points A, B, C | A, B and C are three corners of a rectangle ABCD, in that order. What are the coordinates of corner D? Give your answer in the form (x, y). |
 | grid-midpoint-of-segment | grid_segment_midpoint | Coordinate grid | x -8..8, y -8..8; points A, B | A and B are the ends of the line segment on the grid. What are the coordinates of the midpoint of AB? Give your answer in the form (x, y). |
+| fig-triangle-find-x | fig_triangle | undefined | triangle: x, 20°, 51° | The diagram shows a triangle. Work out the size of angle x. Give your answer in degrees. |
+| fig-straight-line-find-x | fig_straight_line_2_angles | undefined | straight-line: 139°, x | The diagram shows angles on a straight line. Work out the size of angle x. Give your answer in degrees. |
+| fig-straight-line-find-x | fig_straight_line_3_angles | undefined | straight-line: x, 116°, 34° | The diagram shows angles on a straight line. Work out the size of angle x. Give your answer in degrees. |
+| fig-straight-line-find-x | fig_straight_line_4_angles | undefined | straight-line: 61°, 56°, x, 18° | The diagram shows angles on a straight line. Work out the size of angle x. Give your answer in degrees. |
+| fig-around-point-find-x | fig_around_point_5_angles | undefined | around-point: 55°, 58°, 109°, x, 77° | The diagram shows angles around a point. Work out the size of angle x. Give your answer in degrees. |
+| fig-around-point-find-x | fig_around_point_3_angles | undefined | around-point: 142°, 114°, x | The diagram shows angles around a point. Work out the size of angle x. Give your answer in degrees. |
+| fig-around-point-find-x | fig_around_point_4_angles | undefined | around-point: 105°, 114°, 46°, x | The diagram shows angles around a point. Work out the size of angle x. Give your answer in degrees. |
+| fig-isosceles-find-base | fig_isosceles_base | undefined | triangle: x, 106°, x | The diagram shows a triangle. The two angles marked x are equal. Work out the size of angle x. Give your answer in degrees. |
 
 ## Diversity warnings (the gate's own classification of each family's prepared batch)
 
@@ -104,6 +116,7 @@ Titles, captions, headers, units, scales and question wording were audited **tog
 | mr02-sequence-rule | 2 | 16 | HIGH | 0.50 |
 | mr01-average-mean | 2 | 16 | HIGH | 0.50 |
 | mr03-coordinate | 5 | 40 | LOW | 0.20 |
+| mr03-angle-sum | 4 | 32 | MEDIUM | 0.25 |
 
 The gate rates any batch of two or fewer blueprints HIGH or CRITICAL by its own rule. That is why volumes are modest and why a third structure per family should come before scaling a family. It is a warning, not a defect in any single question.
 
@@ -684,5 +697,82 @@ Independent-oracle tests (answers re-derived by simulation, scan, string-digit r
   - _medium band_ — A and B are the ends of the line segment on the grid. What are the coordinates of the midpoint of AB? Give your answer in the form (x, y). [coordinate-grid: {"x":[-6,6],"y":[-6,6],"points":[{"label":"A","x":-1,"y":0},{"label":"B","x":5,"y":6}],"mirrorLine":null}] → **(2, 3)**. A is (-1, 0) and B is (5, 6). The midpoint is halfway in each direction: x = (-1 + 5) ÷ 2 = 2, y = (0 + 6) ÷ 2 = 3.
   - _edge: smallest answer generated_ — A and B are the ends of the line segment on the grid. What are the coordinates of the midpoint of AB? Give your answer in the form (x, y). [coordinate-grid: {"x":[-8,8],"y":[-8,8],"points":[{"label":"A","x":-6,"y":3},{"label":"B","x":-8,"y":7}],"mirrorLine":null}] → **(-7, 5)**. A is (-6, 3) and B is (-8, 7). The midpoint is halfway in each direction: x = (-6 + -8) ÷ 2 = -7, y = (3 + 7) ÷ 2 = 5.
   - _edge: largest answer generated_ — A and B are the ends of the line segment on the grid. What are the coordinates of the midpoint of AB? Give your answer in the form (x, y). [coordinate-grid: {"x":[-8,8],"y":[-8,8],"points":[{"label":"A","x":8,"y":8},{"label":"B","x":6,"y":4}],"mirrorLine":null}] → **(7, 6)**. A is (8, 8) and B is (6, 4). The midpoint is halfway in each direction: x = (8 + 6) ÷ 2 = 7, y = (8 + 4) ÷ 2 = 6.
+
+- **Founder decision:** approve / approve with cap / amend / reject
+
+## Angle-figure set (new representation: angle figure)
+
+### mr03-bp-fig-triangle-find-x
+
+- **Competency / family / skill:** MR-03 / `mr03-angle-sum` / QT-MR-07  |  **Representation:** angle_figure  |  **Prepared:** 8  |  **Difficulty:** easy 3, medium 3, hard 2
+- **Purpose:** Read two angles from a drawn triangle and use the angle sum of 180 degrees to find the third (labelled x).
+- **Misconception targeted:** adding the two angles and stopping, or subtracting from 360 or 90 instead of 180
+- **Structural difference from existing material:** Existing angle-sum items are prose; here the triangle is drawn and the question carries no numbers, so the figure is necessary. x moves between the three vertices. Labelled 'not drawn accurately' so the child calculates rather than measures.
+- **Transfer value:** High. Angle sum in a drawn triangle is the standard exam form.
+- **Deterministic validation (live run, 600 generated):** 600/600 passed range, constraint and answer re-derivation; 596/600 also passed the duplicate check (rejections: exact_duplicate_within_batch 4). Independent-oracle tests for this blueprint are in the test suite named in the pack footer.
+- **Diversity check:** 3687 distinct questions in 4000 draws (LOW); 1 context tag(s) in the prepared set. Large space: two angles and the position of x vary.
+- **Recommended publish volume:** 8 of 8
+- **Representative samples:**
+  - _easy band_ — The diagram shows a triangle. Work out the size of angle x. Give your answer in degrees. [angle-figure: {"figure":"triangle","angles":["x","20°","51°"]}] → **109**. The angles in a triangle add up to 180° 20 + 51 = 71 x = 180 - 71 = 109
+  - _medium band_ — The diagram shows a triangle. Work out the size of angle x. Give your answer in degrees. [angle-figure: {"figure":"triangle","angles":["x","40°","58°"]}] → **82**. The angles in a triangle add up to 180° 40 + 58 = 98 x = 180 - 98 = 82
+  - _hard band_ — The diagram shows a triangle. Work out the size of angle x. Give your answer in degrees. [angle-figure: {"figure":"triangle","angles":["57°","x","92°"]}] → **31**. The angles in a triangle add up to 180° 57 + 92 = 149 x = 180 - 149 = 31
+  - _edge: smallest answer generated_ — The diagram shows a triangle. Work out the size of angle x. Give your answer in degrees. [angle-figure: {"figure":"triangle","angles":["43°","x","117°"]}] → **20**. The angles in a triangle add up to 180° 43 + 117 = 160 x = 180 - 160 = 20
+  - _edge: largest answer generated_ — The diagram shows a triangle. Work out the size of angle x. Give your answer in degrees. [angle-figure: {"figure":"triangle","angles":["x","16°","15°"]}] → **149**. The angles in a triangle add up to 180° 16 + 15 = 31 x = 180 - 31 = 149
+
+- **Founder decision:** approve / approve with cap / amend / reject
+
+### mr03-bp-fig-straight-line-find-x
+
+- **Competency / family / skill:** MR-03 / `mr03-angle-sum` / QT-MR-07  |  **Representation:** angle_figure  |  **Prepared:** 8  |  **Difficulty:** easy 3, medium 3, hard 2
+- **Purpose:** Use the fact that angles on a straight line add up to 180 degrees, with one to three angles shown, to find x.
+- **Misconception targeted:** using 360 (or 90) for angles on a straight line, or leaving out one of the shown angles
+- **Structural difference from existing material:** Angles on a straight line with one to three angles shown. New to the bank: no existing item uses a straight-line figure.
+- **Transfer value:** High. A core angle fact, previously absent as a figure.
+- **Deterministic validation (live run, 600 generated):** 600/600 passed range, constraint and answer re-derivation; 503/600 also passed the duplicate check (rejections: exact_duplicate_within_batch 97). Independent-oracle tests for this blueprint are in the test suite named in the pack footer.
+- **Diversity check:** 2132 distinct questions in 4000 draws (MODERATE); 3 context tag(s) in the prepared set. Large space: number of angles, sizes and position of x vary.
+- **Recommended publish volume:** 8 of 8
+- **Representative samples:**
+  - _easy band_ — The diagram shows angles on a straight line. Work out the size of angle x. Give your answer in degrees. [angle-figure: {"figure":"straight-line","angles":["139°","x"]}] → **41**. Angles on a straight line add up to 180° 139 = 139 x = 180 - 139 = 41
+  - _medium band_ — The diagram shows angles on a straight line. Work out the size of angle x. Give your answer in degrees. [angle-figure: {"figure":"straight-line","angles":["x","116°","34°"]}] → **30**. Angles on a straight line add up to 180° 116 + 34 = 150 x = 180 - 150 = 30
+  - _hard band_ — The diagram shows angles on a straight line. Work out the size of angle x. Give your answer in degrees. [angle-figure: {"figure":"straight-line","angles":["61°","56°","x","18°"]}] → **45**. Angles on a straight line add up to 180° 61 + 56 + 18 = 135 x = 180 - 135 = 45
+  - _edge: smallest answer generated_ — The diagram shows angles on a straight line. Work out the size of angle x. Give your answer in degrees. [angle-figure: {"figure":"straight-line","angles":["86°","31°","48°","x"]}] → **15**. Angles on a straight line add up to 180° 86 + 31 + 48 = 165 x = 180 - 165 = 15
+  - _edge: largest answer generated_ — The diagram shows angles on a straight line. Work out the size of angle x. Give your answer in degrees. [angle-figure: {"figure":"straight-line","angles":["x","15°"]}] → **165**. Angles on a straight line add up to 180° 15 = 15 x = 180 - 15 = 165
+
+- **Founder decision:** approve / approve with cap / amend / reject
+
+### mr03-bp-fig-around-point-find-x
+
+- **Competency / family / skill:** MR-03 / `mr03-angle-sum` / QT-MR-07  |  **Representation:** angle_figure  |  **Prepared:** 8  |  **Difficulty:** medium 3, easy 3, hard 2
+- **Purpose:** Use the fact that angles around a point add up to 360 degrees, with two to four angles shown, to find x (which may be a reflex angle).
+- **Misconception targeted:** using 180 instead of 360 for angles around a point
+- **Structural difference from existing material:** Angles around a point (360 degrees), two to four angles shown, including a reflex x. Previously absent from the bank.
+- **Transfer value:** High. The third standard angle fact, with a reflex stretch case.
+- **Deterministic validation (live run, 600 generated):** 600/600 passed range, constraint and answer re-derivation; 600/600 also passed the duplicate check. Independent-oracle tests for this blueprint are in the test suite named in the pack footer.
+- **Diversity check:** 3978 distinct questions in 4000 draws (LOW); 3 context tag(s) in the prepared set. Large space.
+- **Recommended publish volume:** 8 of 8
+- **Representative samples:**
+  - _medium band_ — The diagram shows angles around a point. Work out the size of angle x. Give your answer in degrees. [angle-figure: {"figure":"around-point","angles":["55°","58°","109°","x","77°"]}] → **61**. Angles around a point add up to 360° 55 + 58 + 109 + 77 = 299 x = 360 - 299 = 61
+  - _easy band_ — The diagram shows angles around a point. Work out the size of angle x. Give your answer in degrees. [angle-figure: {"figure":"around-point","angles":["142°","114°","x"]}] → **104**. Angles around a point add up to 360° 142 + 114 = 256 x = 360 - 256 = 104
+  - _hard band_ — The diagram shows angles around a point. Work out the size of angle x. Give your answer in degrees. [angle-figure: {"figure":"around-point","angles":["26°","106°","x"]}] → **228**. Angles around a point add up to 360° 26 + 106 = 132 x = 360 - 132 = 228
+  - _edge: smallest answer generated_ — The diagram shows angles around a point. Work out the size of angle x. Give your answer in degrees. [angle-figure: {"figure":"around-point","angles":["35°","138°","34°","128°","x"]}] → **25**. Angles around a point add up to 360° 35 + 138 + 34 + 128 = 335 x = 360 - 335 = 25
+  - _edge: largest answer generated_ — The diagram shows angles around a point. Work out the size of angle x. Give your answer in degrees. [angle-figure: {"figure":"around-point","angles":["67°","43°","x"]}] → **250**. Angles around a point add up to 360° 67 + 43 = 110 x = 360 - 110 = 250
+
+- **Founder decision:** approve / approve with cap / amend / reject
+
+### mr03-bp-fig-isosceles-find-base
+
+- **Competency / family / skill:** MR-03 / `mr03-angle-sum` / QT-MR-07  |  **Representation:** angle_figure  |  **Prepared:** 8  |  **Difficulty:** hard 4, medium 4
+- **Purpose:** In an isosceles triangle drawn with the angle between the equal sides shown and the two equal angles both marked x, find x.
+- **Misconception targeted:** subtracting from 180 and forgetting to halve (giving 2x), or treating the shown angle as one of the equal pair
+- **Structural difference from existing material:** Isosceles triangle drawn with two equal angles both marked x. The forgot-to-halve answer is always a different number from the right one (tested).
+- **Transfer value:** Medium-high. Combines the angle sum with equality of angles.
+- **Deterministic validation (live run, 600 generated):** 600/600 passed range, constraint and answer re-derivation; 175/600 also passed the duplicate check (rejections: exact_duplicate_within_batch 425). Independent-oracle tests for this blueprint are in the test suite named in the pack footer.
+- **Diversity check:** 180 distinct questions in 4000 draws (HIGHER); 1 context tag(s) in the prepared set. Moderate space: one angle (even, 20-140, not 60) and its vertex.
+- **Recommended publish volume:** 8 of 8
+- **Representative samples:**
+  - _hard band_ — The diagram shows a triangle. The two angles marked x are equal. Work out the size of angle x. Give your answer in degrees. [angle-figure: {"figure":"triangle","angles":["x","106°","x"]}] → **37**. The angles in a triangle add up to 180° The two angles x are equal, so 2x = 180 - 106 = 74 x = 74 / 2 = 37
+  - _medium band_ — The diagram shows a triangle. The two angles marked x are equal. Work out the size of angle x. Give your answer in degrees. [angle-figure: {"figure":"triangle","angles":["x","70°","x"]}] → **55**. The angles in a triangle add up to 180° The two angles x are equal, so 2x = 180 - 70 = 110 x = 110 / 2 = 55
+  - _edge: smallest answer generated_ — The diagram shows a triangle. The two angles marked x are equal. Work out the size of angle x. Give your answer in degrees. [angle-figure: {"figure":"triangle","angles":["x","x","140°"]}] → **20**. The angles in a triangle add up to 180° The two angles x are equal, so 2x = 180 - 140 = 40 x = 40 / 2 = 20
+  - _edge: largest answer generated_ — The diagram shows a triangle. The two angles marked x are equal. Work out the size of angle x. Give your answer in degrees. [angle-figure: {"figure":"triangle","angles":["x","x","20°"]}] → **80**. The angles in a triangle add up to 180° The two angles x are equal, so 2x = 180 - 20 = 160 x = 160 / 2 = 80
 
 - **Founder decision:** approve / approve with cap / amend / reject

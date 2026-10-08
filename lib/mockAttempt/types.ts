@@ -124,7 +124,20 @@ export interface MockCoordinateGridStimulus {
   mirrorLine?: "x-axis" | "y-axis" | "y=x";
 }
 
-export type MockStimulus = MockTableStimulus | MockImageStimulus | MockBarChartStimulus | MockCoordinateGridStimulus;
+/**
+ * Angle figure (CSSE Completion, representation priority 2): a triangle, angles on a straight line, or angles around a
+ * point, drawn from the data only. `size` is the drawn size in degrees (so the sectors sum to the true total); `shown` is
+ * the label the learner sees: the size with a degree sign, or one lowercase letter for an unknown. The UI says the diagram
+ * is not drawn accurately because the learner must calculate, not measure. The text equivalent never reveals an unknown size.
+ */
+export interface MockAngleFigureStimulus {
+  type: "angle-figure";
+  title?: string;
+  figure: "triangle" | "straight-line" | "around-point";
+  angles: { size: number; shown: string }[];
+}
+
+export type MockStimulus = MockTableStimulus | MockImageStimulus | MockBarChartStimulus | MockCoordinateGridStimulus | MockAngleFigureStimulus;
 
 /**
  * The exact, hand-picked field set mock_get_question() (migration 070,

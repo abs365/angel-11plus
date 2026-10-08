@@ -21,10 +21,11 @@ import { CSSE_CONTEXT_EXPANSION_FAMILIES } from "../lib/ali/questionFactory/csse
 import { MR01_DATA_HANDLING_EXPANSION } from "../lib/ali/questionFactory/csseDataHandlingBlueprints.ts";
 import { CSSE_BREADTH_EXPANSION_FAMILIES } from "../lib/ali/questionFactory/csseBreadthBlueprints.ts";
 import { MR03_GRID_EXPANSION } from "../lib/ali/questionFactory/csseCoordinateGridBlueprints.ts";
+import { MR03_ANGLE_FIGURE_EXPANSION } from "../lib/ali/questionFactory/csseAngleFigureBlueprints.ts";
 import { generateBlueprintCandidate, validateBlueprintCandidate } from "../lib/ali/questionFactory/candidateGeneration.ts";
 import { classifyBlueprintDepth, classifyScaledMemorisationRisk } from "../lib/ali/questionFactory/diversityGates.ts";
 import { StructuredStimulus } from "../components/mockAttempt/StructuredStimulus.tsx";
-import { JUDGEMENT_CONTEXT, JUDGEMENT_B, JUDGEMENT_GRID } from "./lib/csseBlueprintJudgements.mjs";
+import { JUDGEMENT_CONTEXT, JUDGEMENT_B, JUDGEMENT_GRID, JUDGEMENT_ANGLE } from "./lib/csseBlueprintJudgements.mjs";
 
 const esc = (s) => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 const load = (dir) => JSON.parse(fs.readFileSync(`scripts/output/${dir}/submission-payload.json`, "utf8")).submissionPayload.map((p) => p.args);
@@ -33,9 +34,10 @@ const SETS = [
   { name: "Data-handling set (tables and bar charts)", dir: "csse-data-handling-expansion", families: [MR01_DATA_HANDLING_EXPANSION] },
   { name: "Breadth set", dir: "csse-breadth-expansion", families: CSSE_BREADTH_EXPANSION_FAMILIES },
   { name: "Coordinate-grid set (new representation: coordinate grid)", dir: "csse-grid-expansion", families: [MR03_GRID_EXPANSION] },
+  { name: "Angle-figure set (new representation: angle figure)", dir: "csse-angle-expansion", families: [MR03_ANGLE_FIGURE_EXPANSION] },
 ];
 const norm = (j) => (j.structure ? { s: j.structure, t: j.transfer, r: j.risk } : { s: j.s, t: j.t, r: j.r });
-const JUDGE = Object.fromEntries([...Object.entries(JUDGEMENT_CONTEXT), ...Object.entries(JUDGEMENT_B), ...Object.entries(JUDGEMENT_GRID)].map(([k, v]) => [k, norm(v)]));
+const JUDGE = Object.fromEntries([...Object.entries(JUDGEMENT_CONTEXT), ...Object.entries(JUDGEMENT_B), ...Object.entries(JUDGEMENT_GRID), ...Object.entries(JUDGEMENT_ANGLE)].map(([k, v]) => [k, norm(v)]));
 
 function seeded(seed) {
   let a = seed >>> 0;
@@ -123,7 +125,7 @@ for (const set of SETS) {
           const key = a.p_question_content.contextTag;
           if (seen.has(key)) continue;
           seen.add(key);
-          stimulusAudit.push({ bp: bp.blueprintId, ctx: key, title: st.caption ?? st.title, cols: st.headers ? st.headers.join(" | ") : st.type === "coordinate-grid" ? `x ${st.xMin}..${st.xMax}, y ${st.yMin}..${st.yMax}; points ${st.points.map((p) => p.label).join(", ")}${st.mirrorLine ? `; mirror ${st.mirrorLine}` : ""}` : `y: ${st.yLabel}; scale step ${st.scaleStep}; axis 0-${st.axisMax}`, q: a.p_question_content.question });
+          stimulusAudit.push({ bp: bp.blueprintId, ctx: key, title: st.caption ?? st.title, cols: st.headers ? st.headers.join(" | ") : st.type === "angle-figure" ? `${st.figure}: ${st.angles.map((a) => a.shown).join(", ")}` : st.type === "coordinate-grid" ? `x ${st.xMin}..${st.xMax}, y ${st.yMin}..${st.yMax}; points ${st.points.map((p) => p.label).join(", ")}${st.mirrorLine ? `; mirror ${st.mirrorLine}` : ""}` : `y: ${st.yLabel}; scale step ${st.scaleStep}; axis 0-${st.axisMax}`, q: a.p_question_content.question });
         }
       }
 
@@ -140,7 +142,7 @@ for (const set of SETS) {
         `- **Representative samples:**`
       );
       for (const p of picks) {
-        md.push(`  - _${p.tag}_ — ${p.q}${p.stim ? ` [${p.stim.type}: ${p.stim.type === "table" ? JSON.stringify({ headers: p.stim.headers, rows: p.stim.rows }) : p.stim.type === "coordinate-grid" ? JSON.stringify({ x: [p.stim.xMin, p.stim.xMax], y: [p.stim.yMin, p.stim.yMax], points: p.stim.points, mirrorLine: p.stim.mirrorLine ?? null }) : JSON.stringify({ categories: p.stim.categories, values: p.stim.values, scaleStep: p.stim.scaleStep })}]` : ""} → **${p.ans}**. ${p.steps.join(" ")}`);
+        md.push(`  - _${p.tag}_ — ${p.q}${p.stim ? ` [${p.stim.type}: ${p.stim.type === "table" ? JSON.stringify({ headers: p.stim.headers, rows: p.stim.rows }) : p.stim.type === "angle-figure" ? JSON.stringify({ figure: p.stim.figure, angles: p.stim.angles.map((a) => a.shown) }) : p.stim.type === "coordinate-grid" ? JSON.stringify({ x: [p.stim.xMin, p.stim.xMax], y: [p.stim.yMin, p.stim.yMax], points: p.stim.points, mirrorLine: p.stim.mirrorLine ?? null }) : JSON.stringify({ categories: p.stim.categories, values: p.stim.values, scaleStep: p.stim.scaleStep })}]` : ""} → **${p.ans}**. ${p.steps.join(" ")}`);
       }
       md.push("", `- **Founder decision:** approve / approve with cap / amend / reject`, "");
 

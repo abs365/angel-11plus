@@ -1,8 +1,9 @@
 import { DataTableStimulus } from "./DataTableStimulus";
 import { BarChartStimulus } from "./BarChartStimulus";
 import { CoordinateGridStimulus } from "./CoordinateGridStimulus";
+import { AngleFigureStimulus } from "./AngleFigureStimulus";
 import { ImageStimulus } from "./ImageStimulus";
-import { isValidBarChartStimulus, isValidCoordinateGridStimulus, isValidImageStimulus, isValidTableStimulus } from "@/lib/mockAttempt/workspace";
+import { isValidAngleFigureStimulus, isValidBarChartStimulus, isValidCoordinateGridStimulus, isValidImageStimulus, isValidTableStimulus } from "@/lib/mockAttempt/workspace";
 
 /**
  * One entry point for the governed structured stimuli (table, bar chart, coordinate grid, image), so a surface that wants to show
@@ -15,6 +16,7 @@ export function StructuredStimulus({ stimulus }: { stimulus: unknown }) {
   if (isValidTableStimulus(stimulus)) return <DataTableStimulus stimulus={stimulus} />;
   if (isValidBarChartStimulus(stimulus)) return <BarChartStimulus stimulus={stimulus} />;
   if (isValidCoordinateGridStimulus(stimulus)) return <CoordinateGridStimulus stimulus={stimulus} />;
+  if (isValidAngleFigureStimulus(stimulus)) return <AngleFigureStimulus stimulus={stimulus} />;
   if (isValidImageStimulus(stimulus)) return <ImageStimulus stimulus={stimulus} />;
   return null;
 }
