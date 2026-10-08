@@ -1,0 +1,176 @@
+[
+  {
+    "familyId": "mr05-factors-primes",
+    "blueprints": 4,
+    "keptCandidates": 56,
+    "rawGenerated": 168,
+    "approvedBeforeBalancing": 167,
+    "blueprintDepth": 4,
+    "dominantBlueprintShare": 0.25,
+    "scaledMemorisationRisk": "MEDIUM",
+    "perBlueprintDifficulty": [
+      {
+        "blueprintId": "mr05-bp-hcf-equal-groups",
+        "distinctTiersReached": 2,
+        "tierCounts": {
+          "medium": 6,
+          "easy": 8
+        },
+        "meetsMinimum": true
+      },
+      {
+        "blueprintId": "mr05-bp-lcm-repeating-events",
+        "distinctTiersReached": 3,
+        "tierCounts": {
+          "medium": 7,
+          "easy": 4,
+          "hard": 3
+        },
+        "meetsMinimum": true
+      },
+      {
+        "blueprintId": "mr05-bp-smallest-common-multiple-above",
+        "distinctTiersReached": 2,
+        "tierCounts": {
+          "hard": 6,
+          "medium": 8
+        },
+        "meetsMinimum": true
+      },
+      {
+        "blueprintId": "mr05-bp-identify-the-prime",
+        "distinctTiersReached": 2,
+        "tierCounts": {
+          "hard": 7,
+          "medium": 7
+        },
+        "meetsMinimum": true
+      }
+    ],
+    "parameterSignatureDuplicates": 0,
+    "contexts": [
+      "equal_groups_fruit_baskets",
+      "equal_groups_counters",
+      "equal_groups_class_teams",
+      "repeating_events_library",
+      "repeating_events_buses",
+      "repeating_events_lights",
+      "common_multiple_with_boundary",
+      "classify_from_list"
+    ],
+    "reasoningRoutes": [
+      "interpretation",
+      "multi_step_application",
+      "comparison"
+    ]
+  },
+  {
+    "familyId": "mr02-nth-term",
+    "blueprints": 3,
+    "keptCandidates": 42,
+    "rawGenerated": 126,
+    "approvedBeforeBalancing": 126,
+    "blueprintDepth": 3,
+    "dominantBlueprintShare": 0.3333333333333333,
+    "scaledMemorisationRisk": "MEDIUM",
+    "perBlueprintDifficulty": [
+      {
+        "blueprintId": "mr02-bp-pattern-in-context",
+        "distinctTiersReached": 2,
+        "tierCounts": {
+          "hard": 8,
+          "medium": 6
+        },
+        "meetsMinimum": true
+      },
+      {
+        "blueprintId": "mr02-bp-first-term-exceeding",
+        "distinctTiersReached": 2,
+        "tierCounts": {
+          "hard": 11,
+          "medium": 3
+        },
+        "meetsMinimum": true
+      },
+      {
+        "blueprintId": "mr02-bp-whole-periods-to-target",
+        "distinctTiersReached": 2,
+        "tierCounts": {
+          "medium": 3,
+          "hard": 11
+        },
+        "meetsMinimum": true
+      }
+    ],
+    "parameterSignatureDuplicates": 0,
+    "contexts": [
+      "pattern_tile_paths",
+      "pattern_chair_rows",
+      "pattern_matchsticks",
+      "linear_sequence_threshold",
+      "target_reading",
+      "target_plant_growth",
+      "target_savings"
+    ],
+    "reasoningRoutes": [
+      "interpretation",
+      "multi_step_application"
+    ]
+  },
+  {
+    "familyId": "mr01-whole-number-computation",
+    "blueprints": 3,
+    "keptCandidates": 42,
+    "rawGenerated": 126,
+    "approvedBeforeBalancing": 123,
+    "blueprintDepth": 3,
+    "dominantBlueprintShare": 0.3333333333333333,
+    "scaledMemorisationRisk": "MEDIUM",
+    "perBlueprintDifficulty": [
+      {
+        "blueprintId": "mr01-bp-containers-needed",
+        "distinctTiersReached": 2,
+        "tierCounts": {
+          "medium": 9,
+          "hard": 5
+        },
+        "meetsMinimum": true
+      },
+      {
+        "blueprintId": "mr01-bp-change-from-note",
+        "distinctTiersReached": 2,
+        "tierCounts": {
+          "medium": 10,
+          "hard": 4
+        },
+        "meetsMinimum": true
+      },
+      {
+        "blueprintId": "mr01-bp-spend-then-share",
+        "distinctTiersReached": 2,
+        "tierCounts": {
+          "hard": 10,
+          "medium": 4
+        },
+        "meetsMinimum": true
+      }
+    ],
+    "parameterSignatureDuplicates": 0,
+    "contexts": [
+      "containers_minibuses",
+      "containers_egg_trays",
+      "containers_biscuits",
+      "shopping_model_kits",
+      "shopping_notebooks",
+      "shopping_stickers",
+      "shopping_rulers",
+      "spend_then_share_friends",
+      "spend_then_share_club",
+      "spend_then_share_fair"
+    ],
+    "reasoningRoutes": [
+      "interpretation",
+      "multi_step_application"
+    ]
+  }
+]

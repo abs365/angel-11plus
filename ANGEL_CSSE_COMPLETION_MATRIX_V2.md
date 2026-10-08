@@ -136,3 +136,41 @@ Result type now exposes `grade` (none / developing / validated) and the breadth 
 query, all profiles incl. test accounts): of 16 learner×competency masteries, 10 meet the breadth rule and 6 would
 show as developing instead — the intended correction. Not changed (and why): "unfamiliar transfer" and "delayed
 retrieval" are already conditions of *durable* mastery rather than of *validated*, so they were not duplicated.
+
+## Priority 3 — structural diversity and content growth (inc 6: package PREPARED, not applied)
+
+Correction to my earlier reading: the "5–10 skeletons in a 40-item family" were mostly the family's real **blueprints**
+(e.g. `mr04-compound-percentage`: 7 blueprints × ~6 variants). Structure by *demand* was real; what was absent is
+*context* (one `contextTag` per family) and *representation* (prose only), and for number theory / arithmetic the
+skills were only ever asked as bare computation. That is the gap this increment targets, in the three highest-volume
+families whose context was uniformly bare:
+
+| Family | New blueprints (all additive; existing blueprints untouched) | New demand |
+|---|---|---|
+| `mr05-factors-primes` (QT-MR-11) | HCF equal groups; LCM repeating events; smallest common multiple above a boundary; identify the one prime among disguised composites | translate a situation to HCF/LCM; boundary condition; classify from a list |
+| `mr02-nth-term` (QT-MR-05) | pattern in context (matchsticks / tiles / chairs); first term exceeding a target; whole periods to reach a target (round **up**) | interpretation; threshold; rounding up |
+| `mr01-whole-number-computation` (QT-MR-01) | containers needed (remainder → +1); change from a note; spend then share equally | interpret a remainder; two-step order |
+
+Evidence: 9 → 10 blueprints, each with a named misconception; answers derived deterministically and **re-derived in tests by
+independent brute-force oracles** (simulation/scan, not the blueprint's own formula); family batch validation and diversity
+gates pass (new-batch memorisation risk MEDIUM, dominance ≤ 0.33, 0 parameter-signature duplicates); 140 candidates with
+deterministic stable ids (`csse-ctx-<blueprint>-NN`), difficulty mix skewed to medium/hard (no easy for mr01/mr02 — those
+families already hold easy items). Representation is still prose: no table/chart renderer exists in Practice, and none
+was invented — a renderer is a separate product decision.
+
+Not touched: Mock (`mockEligible: false` on every blueprint). Nothing submitted, approved or published.
+
+**Founder action to apply (in order):**
+1. Read `scripts/output/csse-context-expansion/review-sheet.md` (all 140 items, plain text; sample at least one per blueprint).
+2. Sign in as the admin in the browser, open DevTools → Console on any app page, paste `scripts/output/csse-context-expansion/submit-console-script.js`
+   (submits only; candidates stay `pending_review` / `unpublished`).
+3. Review/approve at `/admin-beta/question-factory`, then publish through the existing governed publication step.
+4. Report any item you reject and why; rejections feed back into the blueprint, not into hand edits.
+
+Effect when published: practice-eligible 901 → 1,041 (the first step toward 1,200 — the milestone is a direction, not a target to rush).
+
+## Side finding — stored Maths `explanation` text (closed, no cleanup needed)
+
+- ~85% of `angel_original` and unlabelled-provenance rows (English 192, Maths 190, Writing 6 practice-eligible; more in Mock/reserve) store a **developer/author note** in `ali_question_bank.explanation` (increment, wave, "Assessment Brain", generation script). `lib/adminReview.ts` documents this field as the author's own per-question note.
+- It does **not** reach a CSSE learner surface: the Practice page's `explanation` is the *session selection reason* (`SessionActivity.explanation`), not the bank field; no CSSE page renders `BankQuestion.explanation`. The only code that renders it (`ReasoningSession`, adaptive GL/Vocabulary mocks) serves pathways with **no active rows** in the bank.
+- Verdict: intentionally internal metadata, not misstored learner content; no learner exposure today. Guard to keep: do not render `BankQuestion.explanation` on any CSSE learner surface without first replacing it with learner-facing text. (The 76 empty-explanation English items are a separate matter, fixed in inc 2.)

@@ -1,0 +1,712 @@
+# CSSE context/structure expansion -- candidates for educational review
+
+All candidates are `pending_review` once submitted. Nothing is published by this package.
+
+## mr05-factors-primes
+
+- **csse-ctx-mr05-bp-hcf-equal-groups-01** [medium; interpretation; equal_groups_fruit_baskets]
+  - Q: A shop has 56 apples and 63 oranges. They are packed into identical baskets, each with the same number of apples and the same number of oranges, with no fruit left over. What is the greatest number of baskets that can be filled?
+  - Answer: 7
+  - Working: Every group has the same amount of each kind with none left over, so the number of groups must divide both 56 and 63 exactly. / The greatest number that divides both is the highest common factor: HCF(56, 63) = 7.
+  - Targets: using the smaller number, or the lowest common multiple, when the situation asks for the highest common factor
+- **csse-ctx-mr05-bp-hcf-equal-groups-02** [easy; interpretation; equal_groups_counters]
+  - Q: A teacher has 40 red counters and 48 blue counters. She makes identical groups, each with the same number of red counters and the same number of blue counters, and uses every counter. What is the greatest number of groups she can make?
+  - Answer: 8
+  - Working: Every group has the same amount of each kind with none left over, so the number of groups must divide both 40 and 48 exactly. / The greatest number that divides both is the highest common factor: HCF(40, 48) = 8.
+  - Targets: using the smaller number, or the lowest common multiple, when the situation asks for the highest common factor
+- **csse-ctx-mr05-bp-hcf-equal-groups-03** [medium; interpretation; equal_groups_counters]
+  - Q: A teacher has 72 red counters and 63 blue counters. She makes identical groups, each with the same number of red counters and the same number of blue counters, and uses every counter. What is the greatest number of groups she can make?
+  - Answer: 9
+  - Working: Every group has the same amount of each kind with none left over, so the number of groups must divide both 72 and 63 exactly. / The greatest number that divides both is the highest common factor: HCF(72, 63) = 9.
+  - Targets: using the smaller number, or the lowest common multiple, when the situation asks for the highest common factor
+- **csse-ctx-mr05-bp-hcf-equal-groups-04** [medium; interpretation; equal_groups_counters]
+  - Q: A teacher has 66 red counters and 77 blue counters. She makes identical groups, each with the same number of red counters and the same number of blue counters, and uses every counter. What is the greatest number of groups she can make?
+  - Answer: 11
+  - Working: Every group has the same amount of each kind with none left over, so the number of groups must divide both 66 and 77 exactly. / The greatest number that divides both is the highest common factor: HCF(66, 77) = 11.
+  - Targets: using the smaller number, or the lowest common multiple, when the situation asks for the highest common factor
+- **csse-ctx-mr05-bp-hcf-equal-groups-05** [easy; interpretation; equal_groups_class_teams]
+  - Q: A class has 35 boys and 25 girls. The teacher splits everyone into identical teams, each with the same number of boys and the same number of girls, with nobody left out. What is the greatest number of teams she can make?
+  - Answer: 5
+  - Working: Every group has the same amount of each kind with none left over, so the number of groups must divide both 35 and 25 exactly. / The greatest number that divides both is the highest common factor: HCF(35, 25) = 5.
+  - Targets: using the smaller number, or the lowest common multiple, when the situation asks for the highest common factor
+- **csse-ctx-mr05-bp-hcf-equal-groups-06** [medium; interpretation; equal_groups_fruit_baskets]
+  - Q: A shop has 40 apples and 64 oranges. They are packed into identical baskets, each with the same number of apples and the same number of oranges, with no fruit left over. What is the greatest number of baskets that can be filled?
+  - Answer: 8
+  - Working: Every group has the same amount of each kind with none left over, so the number of groups must divide both 40 and 64 exactly. / The greatest number that divides both is the highest common factor: HCF(40, 64) = 8.
+  - Targets: using the smaller number, or the lowest common multiple, when the situation asks for the highest common factor
+- **csse-ctx-mr05-bp-hcf-equal-groups-07** [easy; interpretation; equal_groups_fruit_baskets]
+  - Q: A shop has 42 apples and 54 oranges. They are packed into identical baskets, each with the same number of apples and the same number of oranges, with no fruit left over. What is the greatest number of baskets that can be filled?
+  - Answer: 6
+  - Working: Every group has the same amount of each kind with none left over, so the number of groups must divide both 42 and 54 exactly. / The greatest number that divides both is the highest common factor: HCF(42, 54) = 6.
+  - Targets: using the smaller number, or the lowest common multiple, when the situation asks for the highest common factor
+- **csse-ctx-mr05-bp-hcf-equal-groups-08** [easy; interpretation; equal_groups_class_teams]
+  - Q: A class has 48 boys and 42 girls. The teacher splits everyone into identical teams, each with the same number of boys and the same number of girls, with nobody left out. What is the greatest number of teams she can make?
+  - Answer: 6
+  - Working: Every group has the same amount of each kind with none left over, so the number of groups must divide both 48 and 42 exactly. / The greatest number that divides both is the highest common factor: HCF(48, 42) = 6.
+  - Targets: using the smaller number, or the lowest common multiple, when the situation asks for the highest common factor
+- **csse-ctx-mr05-bp-hcf-equal-groups-09** [medium; interpretation; equal_groups_counters]
+  - Q: A teacher has 99 red counters and 44 blue counters. She makes identical groups, each with the same number of red counters and the same number of blue counters, and uses every counter. What is the greatest number of groups she can make?
+  - Answer: 11
+  - Working: Every group has the same amount of each kind with none left over, so the number of groups must divide both 99 and 44 exactly. / The greatest number that divides both is the highest common factor: HCF(99, 44) = 11.
+  - Targets: using the smaller number, or the lowest common multiple, when the situation asks for the highest common factor
+- **csse-ctx-mr05-bp-hcf-equal-groups-10** [easy; interpretation; equal_groups_class_teams]
+  - Q: A class has 18 boys and 48 girls. The teacher splits everyone into identical teams, each with the same number of boys and the same number of girls, with nobody left out. What is the greatest number of teams she can make?
+  - Answer: 6
+  - Working: Every group has the same amount of each kind with none left over, so the number of groups must divide both 18 and 48 exactly. / The greatest number that divides both is the highest common factor: HCF(18, 48) = 6.
+  - Targets: using the smaller number, or the lowest common multiple, when the situation asks for the highest common factor
+- **csse-ctx-mr05-bp-hcf-equal-groups-11** [easy; interpretation; equal_groups_class_teams]
+  - Q: A class has 24 boys and 20 girls. The teacher splits everyone into identical teams, each with the same number of boys and the same number of girls, with nobody left out. What is the greatest number of teams she can make?
+  - Answer: 4
+  - Working: Every group has the same amount of each kind with none left over, so the number of groups must divide both 24 and 20 exactly. / The greatest number that divides both is the highest common factor: HCF(24, 20) = 4.
+  - Targets: using the smaller number, or the lowest common multiple, when the situation asks for the highest common factor
+- **csse-ctx-mr05-bp-hcf-equal-groups-12** [easy; interpretation; equal_groups_class_teams]
+  - Q: A class has 55 boys and 44 girls. The teacher splits everyone into identical teams, each with the same number of boys and the same number of girls, with nobody left out. What is the greatest number of teams she can make?
+  - Answer: 11
+  - Working: Every group has the same amount of each kind with none left over, so the number of groups must divide both 55 and 44 exactly. / The greatest number that divides both is the highest common factor: HCF(55, 44) = 11.
+  - Targets: using the smaller number, or the lowest common multiple, when the situation asks for the highest common factor
+- **csse-ctx-mr05-bp-hcf-equal-groups-13** [medium; interpretation; equal_groups_fruit_baskets]
+  - Q: A shop has 81 apples and 63 oranges. They are packed into identical baskets, each with the same number of apples and the same number of oranges, with no fruit left over. What is the greatest number of baskets that can be filled?
+  - Answer: 9
+  - Working: Every group has the same amount of each kind with none left over, so the number of groups must divide both 81 and 63 exactly. / The greatest number that divides both is the highest common factor: HCF(81, 63) = 9.
+  - Targets: using the smaller number, or the lowest common multiple, when the situation asks for the highest common factor
+- **csse-ctx-mr05-bp-hcf-equal-groups-14** [easy; interpretation; equal_groups_counters]
+  - Q: A teacher has 50 red counters and 20 blue counters. She makes identical groups, each with the same number of red counters and the same number of blue counters, and uses every counter. What is the greatest number of groups she can make?
+  - Answer: 10
+  - Working: Every group has the same amount of each kind with none left over, so the number of groups must divide both 50 and 20 exactly. / The greatest number that divides both is the highest common factor: HCF(50, 20) = 10.
+  - Targets: using the smaller number, or the lowest common multiple, when the situation asks for the highest common factor
+- **csse-ctx-mr05-bp-lcm-repeating-events-01** [medium; interpretation; repeating_events_library]
+  - Q: Asha visits the library every 6 days and Ben visits every 13 days. They are both there today. After how many days will they next both be there?
+  - Answer: 78
+  - Working: They coincide again at a time that is a multiple of both 6 and 13; the first such time is the lowest common multiple. / HCF(6, 13) = 1, so LCM = (6 × 13) ÷ 1 = 78.
+  - Targets: multiplying the two intervals, or finding a common factor, instead of the lowest common multiple
+- **csse-ctx-mr05-bp-lcm-repeating-events-02** [medium; interpretation; repeating_events_buses]
+  - Q: Two buses leave the station together. One bus leaves every 10 minutes and the other every 18 minutes. After how many minutes will they next leave together?
+  - Answer: 90
+  - Working: They coincide again at a time that is a multiple of both 10 and 18; the first such time is the lowest common multiple. / HCF(10, 18) = 2, so LCM = (10 × 18) ÷ 2 = 90.
+  - Targets: multiplying the two intervals, or finding a common factor, instead of the lowest common multiple
+- **csse-ctx-mr05-bp-lcm-repeating-events-03** [easy; interpretation; repeating_events_lights]
+  - Q: Two lights start flashing at the same moment. One flashes every 18 seconds and the other every 4 seconds. After how many seconds will they next flash together?
+  - Answer: 36
+  - Working: They coincide again at a time that is a multiple of both 18 and 4; the first such time is the lowest common multiple. / HCF(18, 4) = 2, so LCM = (18 × 4) ÷ 2 = 36.
+  - Targets: multiplying the two intervals, or finding a common factor, instead of the lowest common multiple
+- **csse-ctx-mr05-bp-lcm-repeating-events-04** [easy; interpretation; repeating_events_lights]
+  - Q: Two lights start flashing at the same moment. One flashes every 3 seconds and the other every 11 seconds. After how many seconds will they next flash together?
+  - Answer: 33
+  - Working: They coincide again at a time that is a multiple of both 3 and 11; the first such time is the lowest common multiple. / HCF(3, 11) = 1, so LCM = (3 × 11) ÷ 1 = 33.
+  - Targets: multiplying the two intervals, or finding a common factor, instead of the lowest common multiple
+- **csse-ctx-mr05-bp-lcm-repeating-events-05** [medium; interpretation; repeating_events_lights]
+  - Q: Two lights start flashing at the same moment. One flashes every 18 seconds and the other every 8 seconds. After how many seconds will they next flash together?
+  - Answer: 72
+  - Working: They coincide again at a time that is a multiple of both 18 and 8; the first such time is the lowest common multiple. / HCF(18, 8) = 2, so LCM = (18 × 8) ÷ 2 = 72.
+  - Targets: multiplying the two intervals, or finding a common factor, instead of the lowest common multiple
+- **csse-ctx-mr05-bp-lcm-repeating-events-06** [hard; interpretation; repeating_events_library]
+  - Q: Asha visits the library every 15 days and Ben visits every 13 days. They are both there today. After how many days will they next both be there?
+  - Answer: 195
+  - Working: They coincide again at a time that is a multiple of both 15 and 13; the first such time is the lowest common multiple. / HCF(15, 13) = 1, so LCM = (15 × 13) ÷ 1 = 195.
+  - Targets: multiplying the two intervals, or finding a common factor, instead of the lowest common multiple
+- **csse-ctx-mr05-bp-lcm-repeating-events-07** [hard; interpretation; repeating_events_library]
+  - Q: Asha visits the library every 18 days and Ben visits every 13 days. They are both there today. After how many days will they next both be there?
+  - Answer: 234
+  - Working: They coincide again at a time that is a multiple of both 18 and 13; the first such time is the lowest common multiple. / HCF(18, 13) = 1, so LCM = (18 × 13) ÷ 1 = 234.
+  - Targets: multiplying the two intervals, or finding a common factor, instead of the lowest common multiple
+- **csse-ctx-mr05-bp-lcm-repeating-events-08** [medium; interpretation; repeating_events_lights]
+  - Q: Two lights start flashing at the same moment. One flashes every 4 seconds and the other every 15 seconds. After how many seconds will they next flash together?
+  - Answer: 60
+  - Working: They coincide again at a time that is a multiple of both 4 and 15; the first such time is the lowest common multiple. / HCF(4, 15) = 1, so LCM = (4 × 15) ÷ 1 = 60.
+  - Targets: multiplying the two intervals, or finding a common factor, instead of the lowest common multiple
+- **csse-ctx-mr05-bp-lcm-repeating-events-09** [medium; interpretation; repeating_events_buses]
+  - Q: Two buses leave the station together. One bus leaves every 11 minutes and the other every 10 minutes. After how many minutes will they next leave together?
+  - Answer: 110
+  - Working: They coincide again at a time that is a multiple of both 11 and 10; the first such time is the lowest common multiple. / HCF(11, 10) = 1, so LCM = (11 × 10) ÷ 1 = 110.
+  - Targets: multiplying the two intervals, or finding a common factor, instead of the lowest common multiple
+- **csse-ctx-mr05-bp-lcm-repeating-events-10** [easy; interpretation; repeating_events_buses]
+  - Q: Two buses leave the station together. One bus leaves every 12 minutes and the other every 18 minutes. After how many minutes will they next leave together?
+  - Answer: 36
+  - Working: They coincide again at a time that is a multiple of both 12 and 18; the first such time is the lowest common multiple. / HCF(12, 18) = 6, so LCM = (12 × 18) ÷ 6 = 36.
+  - Targets: multiplying the two intervals, or finding a common factor, instead of the lowest common multiple
+- **csse-ctx-mr05-bp-lcm-repeating-events-11** [medium; interpretation; repeating_events_library]
+  - Q: Asha visits the library every 9 days and Ben visits every 11 days. They are both there today. After how many days will they next both be there?
+  - Answer: 99
+  - Working: They coincide again at a time that is a multiple of both 9 and 11; the first such time is the lowest common multiple. / HCF(9, 11) = 1, so LCM = (9 × 11) ÷ 1 = 99.
+  - Targets: multiplying the two intervals, or finding a common factor, instead of the lowest common multiple
+- **csse-ctx-mr05-bp-lcm-repeating-events-12** [easy; interpretation; repeating_events_buses]
+  - Q: Two buses leave the station together. One bus leaves every 10 minutes and the other every 15 minutes. After how many minutes will they next leave together?
+  - Answer: 30
+  - Working: They coincide again at a time that is a multiple of both 10 and 15; the first such time is the lowest common multiple. / HCF(10, 15) = 5, so LCM = (10 × 15) ÷ 5 = 30.
+  - Targets: multiplying the two intervals, or finding a common factor, instead of the lowest common multiple
+- **csse-ctx-mr05-bp-lcm-repeating-events-13** [hard; interpretation; repeating_events_buses]
+  - Q: Two buses leave the station together. One bus leaves every 18 minutes and the other every 16 minutes. After how many minutes will they next leave together?
+  - Answer: 144
+  - Working: They coincide again at a time that is a multiple of both 18 and 16; the first such time is the lowest common multiple. / HCF(18, 16) = 2, so LCM = (18 × 16) ÷ 2 = 144.
+  - Targets: multiplying the two intervals, or finding a common factor, instead of the lowest common multiple
+- **csse-ctx-mr05-bp-lcm-repeating-events-14** [medium; interpretation; repeating_events_library]
+  - Q: Asha visits the library every 10 days and Ben visits every 12 days. They are both there today. After how many days will they next both be there?
+  - Answer: 60
+  - Working: They coincide again at a time that is a multiple of both 10 and 12; the first such time is the lowest common multiple. / HCF(10, 12) = 2, so LCM = (10 × 12) ÷ 2 = 60.
+  - Targets: multiplying the two intervals, or finding a common factor, instead of the lowest common multiple
+- **csse-ctx-mr05-bp-smallest-common-multiple-above-01** [hard; multi_step_application; common_multiple_with_boundary]
+  - Q: What is the smallest number greater than 118 that is a multiple of both 5 and 8?
+  - Answer: 120
+  - Working: A multiple of both 5 and 8 is a multiple of their lowest common multiple, 40. / The multiples of 40 go up in steps of 40; find the first one that is greater than 118: 120.
+  - Targets: stopping at the lowest common multiple and ignoring the boundary condition
+- **csse-ctx-mr05-bp-smallest-common-multiple-above-02** [medium; multi_step_application; common_multiple_with_boundary]
+  - Q: What is the smallest number greater than 165 that is a multiple of both 4 and 3?
+  - Answer: 168
+  - Working: A multiple of both 4 and 3 is a multiple of their lowest common multiple, 12. / The multiples of 12 go up in steps of 12; find the first one that is greater than 165: 168.
+  - Targets: stopping at the lowest common multiple and ignoring the boundary condition
+- **csse-ctx-mr05-bp-smallest-common-multiple-above-03** [hard; multi_step_application; common_multiple_with_boundary]
+  - Q: What is the smallest number greater than 110 that is a multiple of both 6 and 5?
+  - Answer: 120
+  - Working: A multiple of both 6 and 5 is a multiple of their lowest common multiple, 30. / The multiples of 30 go up in steps of 30; find the first one that is greater than 110: 120.
+  - Targets: stopping at the lowest common multiple and ignoring the boundary condition
+- **csse-ctx-mr05-bp-smallest-common-multiple-above-04** [medium; multi_step_application; common_multiple_with_boundary]
+  - Q: What is the smallest number greater than 119 that is a multiple of both 5 and 3?
+  - Answer: 120
+  - Working: A multiple of both 5 and 3 is a multiple of their lowest common multiple, 15. / The multiples of 15 go up in steps of 15; find the first one that is greater than 119: 120.
+  - Targets: stopping at the lowest common multiple and ignoring the boundary condition
+- **csse-ctx-mr05-bp-smallest-common-multiple-above-05** [medium; multi_step_application; common_multiple_with_boundary]
+  - Q: What is the smallest number greater than 39 that is a multiple of both 10 and 4?
+  - Answer: 40
+  - Working: A multiple of both 10 and 4 is a multiple of their lowest common multiple, 20. / The multiples of 20 go up in steps of 20; find the first one that is greater than 39: 40.
+  - Targets: stopping at the lowest common multiple and ignoring the boundary condition
+- **csse-ctx-mr05-bp-smallest-common-multiple-above-06** [hard; multi_step_application; common_multiple_with_boundary]
+  - Q: What is the smallest number greater than 135 that is a multiple of both 11 and 3?
+  - Answer: 165
+  - Working: A multiple of both 11 and 3 is a multiple of their lowest common multiple, 33. / The multiples of 33 go up in steps of 33; find the first one that is greater than 135: 165.
+  - Targets: stopping at the lowest common multiple and ignoring the boundary condition
+- **csse-ctx-mr05-bp-smallest-common-multiple-above-07** [medium; multi_step_application; common_multiple_with_boundary]
+  - Q: What is the smallest number greater than 126 that is a multiple of both 3 and 4?
+  - Answer: 132
+  - Working: A multiple of both 3 and 4 is a multiple of their lowest common multiple, 12. / The multiples of 12 go up in steps of 12; find the first one that is greater than 126: 132.
+  - Targets: stopping at the lowest common multiple and ignoring the boundary condition
+- **csse-ctx-mr05-bp-smallest-common-multiple-above-08** [medium; multi_step_application; common_multiple_with_boundary]
+  - Q: What is the smallest number greater than 70 that is a multiple of both 5 and 3?
+  - Answer: 75
+  - Working: A multiple of both 5 and 3 is a multiple of their lowest common multiple, 15. / The multiples of 15 go up in steps of 15; find the first one that is greater than 70: 75.
+  - Targets: stopping at the lowest common multiple and ignoring the boundary condition
+- **csse-ctx-mr05-bp-smallest-common-multiple-above-09** [medium; multi_step_application; common_multiple_with_boundary]
+  - Q: What is the smallest number greater than 70 that is a multiple of both 4 and 6?
+  - Answer: 72
+  - Working: A multiple of both 4 and 6 is a multiple of their lowest common multiple, 12. / The multiples of 12 go up in steps of 12; find the first one that is greater than 70: 72.
+  - Targets: stopping at the lowest common multiple and ignoring the boundary condition
+- **csse-ctx-mr05-bp-smallest-common-multiple-above-10** [hard; multi_step_application; common_multiple_with_boundary]
+  - Q: What is the smallest number greater than 171 that is a multiple of both 8 and 10?
+  - Answer: 200
+  - Working: A multiple of both 8 and 10 is a multiple of their lowest common multiple, 40. / The multiples of 40 go up in steps of 40; find the first one that is greater than 171: 200.
+  - Targets: stopping at the lowest common multiple and ignoring the boundary condition
+- **csse-ctx-mr05-bp-smallest-common-multiple-above-11** [hard; multi_step_application; common_multiple_with_boundary]
+  - Q: What is the smallest number greater than 154 that is a multiple of both 11 and 5?
+  - Answer: 165
+  - Working: A multiple of both 11 and 5 is a multiple of their lowest common multiple, 55. / The multiples of 55 go up in steps of 55; find the first one that is greater than 154: 165.
+  - Targets: stopping at the lowest common multiple and ignoring the boundary condition
+- **csse-ctx-mr05-bp-smallest-common-multiple-above-12** [hard; multi_step_application; common_multiple_with_boundary]
+  - Q: What is the smallest number greater than 36 that is a multiple of both 8 and 3?
+  - Answer: 48
+  - Working: A multiple of both 8 and 3 is a multiple of their lowest common multiple, 24. / The multiples of 24 go up in steps of 24; find the first one that is greater than 36: 48.
+  - Targets: stopping at the lowest common multiple and ignoring the boundary condition
+- **csse-ctx-mr05-bp-smallest-common-multiple-above-13** [medium; multi_step_application; common_multiple_with_boundary]
+  - Q: What is the smallest number greater than 139 that is a multiple of both 2 and 3?
+  - Answer: 144
+  - Working: A multiple of both 2 and 3 is a multiple of their lowest common multiple, 6. / The multiples of 6 go up in steps of 6; find the first one that is greater than 139: 144.
+  - Targets: stopping at the lowest common multiple and ignoring the boundary condition
+- **csse-ctx-mr05-bp-smallest-common-multiple-above-14** [medium; multi_step_application; common_multiple_with_boundary]
+  - Q: What is the smallest number greater than 142 that is a multiple of both 3 and 2?
+  - Answer: 144
+  - Working: A multiple of both 3 and 2 is a multiple of their lowest common multiple, 6. / The multiples of 6 go up in steps of 6; find the first one that is greater than 142: 144.
+  - Targets: stopping at the lowest common multiple and ignoring the boundary condition
+- **csse-ctx-mr05-bp-identify-the-prime-01** [hard; comparison; classify_from_list]
+  - Q: Exactly one of these four numbers is prime: 73, 63, 91, 169. Which one?
+  - Answer: 73
+  - Working: 63 = 3 × 21, so 63 is not prime. / 91 = 7 × 13, so 91 is not prime. / 169 = 13 × 13, so 169 is not prime. / 73 has no factor other than 1 and itself, so it is the prime number.
+  - Targets: assuming an odd number that is not in a times table is prime (for example 51, 57, 91)
+- **csse-ctx-mr05-bp-identify-the-prime-02** [hard; comparison; classify_from_list]
+  - Q: Exactly one of these four numbers is prime: 133, 91, 121, 67. Which one?
+  - Answer: 67
+  - Working: 133 = 7 × 19, so 133 is not prime. / 91 = 7 × 13, so 91 is not prime. / 121 = 11 × 11, so 121 is not prime. / 67 has no factor other than 1 and itself, so it is the prime number.
+  - Targets: assuming an odd number that is not in a times table is prime (for example 51, 57, 91)
+- **csse-ctx-mr05-bp-identify-the-prime-03** [hard; comparison; classify_from_list]
+  - Q: Exactly one of these four numbers is prime: 133, 119, 209, 103. Which one?
+  - Answer: 103
+  - Working: 133 = 7 × 19, so 133 is not prime. / 119 = 7 × 17, so 119 is not prime. / 209 = 11 × 19, so 209 is not prime. / 103 has no factor other than 1 and itself, so it is the prime number.
+  - Targets: assuming an odd number that is not in a times table is prime (for example 51, 57, 91)
+- **csse-ctx-mr05-bp-identify-the-prime-04** [medium; comparison; classify_from_list]
+  - Q: Exactly one of these four numbers is prime: 57, 71, 119, 111. Which one?
+  - Answer: 71
+  - Working: 57 = 3 × 19, so 57 is not prime. / 119 = 7 × 17, so 119 is not prime. / 111 = 3 × 37, so 111 is not prime. / 71 has no factor other than 1 and itself, so it is the prime number.
+  - Targets: assuming an odd number that is not in a times table is prime (for example 51, 57, 91)
+- **csse-ctx-mr05-bp-identify-the-prime-05** [medium; comparison; classify_from_list]
+  - Q: Exactly one of these four numbers is prime: 111, 51, 121, 79. Which one?
+  - Answer: 79
+  - Working: 111 = 3 × 37, so 111 is not prime. / 51 = 3 × 17, so 51 is not prime. / 121 = 11 × 11, so 121 is not prime. / 79 has no factor other than 1 and itself, so it is the prime number.
+  - Targets: assuming an odd number that is not in a times table is prime (for example 51, 57, 91)
+- **csse-ctx-mr05-bp-identify-the-prime-06** [hard; comparison; classify_from_list]
+  - Q: Exactly one of these four numbers is prime: 143, 133, 107, 51. Which one?
+  - Answer: 107
+  - Working: 143 = 11 × 13, so 143 is not prime. / 133 = 7 × 19, so 133 is not prime. / 51 = 3 × 17, so 51 is not prime. / 107 has no factor other than 1 and itself, so it is the prime number.
+  - Targets: assuming an odd number that is not in a times table is prime (for example 51, 57, 91)
+- **csse-ctx-mr05-bp-identify-the-prime-07** [medium; comparison; classify_from_list]
+  - Q: Exactly one of these four numbers is prime: 91, 93, 107, 63. Which one?
+  - Answer: 107
+  - Working: 91 = 7 × 13, so 91 is not prime. / 93 = 3 × 31, so 93 is not prime. / 63 = 3 × 21, so 63 is not prime. / 107 has no factor other than 1 and itself, so it is the prime number.
+  - Targets: assuming an odd number that is not in a times table is prime (for example 51, 57, 91)
+- **csse-ctx-mr05-bp-identify-the-prime-08** [medium; comparison; classify_from_list]
+  - Q: Exactly one of these four numbers is prime: 53, 169, 63, 111. Which one?
+  - Answer: 53
+  - Working: 169 = 13 × 13, so 169 is not prime. / 63 = 3 × 21, so 63 is not prime. / 111 = 3 × 37, so 111 is not prime. / 53 has no factor other than 1 and itself, so it is the prime number.
+  - Targets: assuming an odd number that is not in a times table is prime (for example 51, 57, 91)
+- **csse-ctx-mr05-bp-identify-the-prime-09** [hard; comparison; classify_from_list]
+  - Q: Exactly one of these four numbers is prime: 103, 143, 77, 69. Which one?
+  - Answer: 103
+  - Working: 143 = 11 × 13, so 143 is not prime. / 77 = 7 × 11, so 77 is not prime. / 69 = 3 × 23, so 69 is not prime. / 103 has no factor other than 1 and itself, so it is the prime number.
+  - Targets: assuming an odd number that is not in a times table is prime (for example 51, 57, 91)
+- **csse-ctx-mr05-bp-identify-the-prime-10** [hard; comparison; classify_from_list]
+  - Q: Exactly one of these four numbers is prime: 143, 51, 119, 97. Which one?
+  - Answer: 97
+  - Working: 143 = 11 × 13, so 143 is not prime. / 51 = 3 × 17, so 51 is not prime. / 119 = 7 × 17, so 119 is not prime. / 97 has no factor other than 1 and itself, so it is the prime number.
+  - Targets: assuming an odd number that is not in a times table is prime (for example 51, 57, 91)
+- **csse-ctx-mr05-bp-identify-the-prime-11** [hard; comparison; classify_from_list]
+  - Q: Exactly one of these four numbers is prime: 133, 91, 79, 63. Which one?
+  - Answer: 79
+  - Working: 133 = 7 × 19, so 133 is not prime. / 91 = 7 × 13, so 91 is not prime. / 63 = 3 × 21, so 63 is not prime. / 79 has no factor other than 1 and itself, so it is the prime number.
+  - Targets: assuming an odd number that is not in a times table is prime (for example 51, 57, 91)
+- **csse-ctx-mr05-bp-identify-the-prime-12** [medium; comparison; classify_from_list]
+  - Q: Exactly one of these four numbers is prime: 113, 57, 87, 147. Which one?
+  - Answer: 113
+  - Working: 57 = 3 × 19, so 57 is not prime. / 87 = 3 × 29, so 87 is not prime. / 147 = 3 × 49, so 147 is not prime. / 113 has no factor other than 1 and itself, so it is the prime number.
+  - Targets: assuming an odd number that is not in a times table is prime (for example 51, 57, 91)
+- **csse-ctx-mr05-bp-identify-the-prime-13** [medium; comparison; classify_from_list]
+  - Q: Exactly one of these four numbers is prime: 123, 67, 63, 93. Which one?
+  - Answer: 67
+  - Working: 123 = 3 × 41, so 123 is not prime. / 63 = 3 × 21, so 63 is not prime. / 93 = 3 × 31, so 93 is not prime. / 67 has no factor other than 1 and itself, so it is the prime number.
+  - Targets: assuming an odd number that is not in a times table is prime (for example 51, 57, 91)
+- **csse-ctx-mr05-bp-identify-the-prime-14** [medium; comparison; classify_from_list]
+  - Q: Exactly one of these four numbers is prime: 57, 111, 147, 109. Which one?
+  - Answer: 109
+  - Working: 57 = 3 × 19, so 57 is not prime. / 111 = 3 × 37, so 111 is not prime. / 147 = 3 × 49, so 147 is not prime. / 109 has no factor other than 1 and itself, so it is the prime number.
+  - Targets: assuming an odd number that is not in a times table is prime (for example 51, 57, 91)
+
+## mr02-nth-term
+
+- **csse-ctx-mr02-bp-pattern-in-context-01** [hard; interpretation; pattern_tile_paths]
+  - Q: The first path is made from 12 tiles. Each longer path uses 6 more tiles than the last. How many tiles are in path number 23?
+  - Answer: 144
+  - Working: Pattern 1 already has 12. To reach pattern 23, 22 lots of 6 are added. / 12 + 22 × 6 = 144.
+  - Targets: adding n lots of the step instead of n - 1, forgetting that the first pattern is already counted
+- **csse-ctx-mr02-bp-pattern-in-context-02** [hard; interpretation; pattern_chair_rows]
+  - Q: Row 1 of a hall has 14 chairs. Each row behind it has 5 more chairs than the row in front. How many chairs are in row 24?
+  - Answer: 129
+  - Working: Pattern 1 already has 14. To reach pattern 24, 23 lots of 5 are added. / 14 + 23 × 5 = 129.
+  - Targets: adding n lots of the step instead of n - 1, forgetting that the first pattern is already counted
+- **csse-ctx-mr02-bp-pattern-in-context-03** [hard; interpretation; pattern_chair_rows]
+  - Q: Row 1 of a hall has 14 chairs. Each row behind it has 6 more chairs than the row in front. How many chairs are in row 23?
+  - Answer: 146
+  - Working: Pattern 1 already has 14. To reach pattern 23, 22 lots of 6 are added. / 14 + 22 × 6 = 146.
+  - Targets: adding n lots of the step instead of n - 1, forgetting that the first pattern is already counted
+- **csse-ctx-mr02-bp-pattern-in-context-04** [medium; interpretation; pattern_matchsticks]
+  - Q: Pattern 1 in a matchstick design uses 12 matchsticks. Each new pattern uses 3 more matchsticks than the one before. How many matchsticks does pattern 14 use?
+  - Answer: 51
+  - Working: Pattern 1 already has 12. To reach pattern 14, 13 lots of 3 are added. / 12 + 13 × 3 = 51.
+  - Targets: adding n lots of the step instead of n - 1, forgetting that the first pattern is already counted
+- **csse-ctx-mr02-bp-pattern-in-context-05** [hard; interpretation; pattern_tile_paths]
+  - Q: The first path is made from 5 tiles. Each longer path uses 7 more tiles than the last. How many tiles are in path number 34?
+  - Answer: 236
+  - Working: Pattern 1 already has 5. To reach pattern 34, 33 lots of 7 are added. / 5 + 33 × 7 = 236.
+  - Targets: adding n lots of the step instead of n - 1, forgetting that the first pattern is already counted
+- **csse-ctx-mr02-bp-pattern-in-context-06** [hard; interpretation; pattern_matchsticks]
+  - Q: Pattern 1 in a matchstick design uses 5 matchsticks. Each new pattern uses 6 more matchsticks than the one before. How many matchsticks does pattern 35 use?
+  - Answer: 209
+  - Working: Pattern 1 already has 5. To reach pattern 35, 34 lots of 6 are added. / 5 + 34 × 6 = 209.
+  - Targets: adding n lots of the step instead of n - 1, forgetting that the first pattern is already counted
+- **csse-ctx-mr02-bp-pattern-in-context-07** [medium; interpretation; pattern_chair_rows]
+  - Q: Row 1 of a hall has 5 chairs. Each row behind it has 3 more chairs than the row in front. How many chairs are in row 11?
+  - Answer: 35
+  - Working: Pattern 1 already has 5. To reach pattern 11, 10 lots of 3 are added. / 5 + 10 × 3 = 35.
+  - Targets: adding n lots of the step instead of n - 1, forgetting that the first pattern is already counted
+- **csse-ctx-mr02-bp-pattern-in-context-08** [hard; interpretation; pattern_matchsticks]
+  - Q: Pattern 1 in a matchstick design uses 3 matchsticks. Each new pattern uses 6 more matchsticks than the one before. How many matchsticks does pattern 39 use?
+  - Answer: 231
+  - Working: Pattern 1 already has 3. To reach pattern 39, 38 lots of 6 are added. / 3 + 38 × 6 = 231.
+  - Targets: adding n lots of the step instead of n - 1, forgetting that the first pattern is already counted
+- **csse-ctx-mr02-bp-pattern-in-context-09** [hard; interpretation; pattern_chair_rows]
+  - Q: Row 1 of a hall has 12 chairs. Each row behind it has 5 more chairs than the row in front. How many chairs are in row 39?
+  - Answer: 202
+  - Working: Pattern 1 already has 12. To reach pattern 39, 38 lots of 5 are added. / 12 + 38 × 5 = 202.
+  - Targets: adding n lots of the step instead of n - 1, forgetting that the first pattern is already counted
+- **csse-ctx-mr02-bp-pattern-in-context-10** [hard; interpretation; pattern_tile_paths]
+  - Q: The first path is made from 14 tiles. Each longer path uses 7 more tiles than the last. How many tiles are in path number 36?
+  - Answer: 259
+  - Working: Pattern 1 already has 14. To reach pattern 36, 35 lots of 7 are added. / 14 + 35 × 7 = 259.
+  - Targets: adding n lots of the step instead of n - 1, forgetting that the first pattern is already counted
+- **csse-ctx-mr02-bp-pattern-in-context-11** [medium; interpretation; pattern_matchsticks]
+  - Q: Pattern 1 in a matchstick design uses 5 matchsticks. Each new pattern uses 7 more matchsticks than the one before. How many matchsticks does pattern 13 use?
+  - Answer: 89
+  - Working: Pattern 1 already has 5. To reach pattern 13, 12 lots of 7 are added. / 5 + 12 × 7 = 89.
+  - Targets: adding n lots of the step instead of n - 1, forgetting that the first pattern is already counted
+- **csse-ctx-mr02-bp-pattern-in-context-12** [medium; interpretation; pattern_matchsticks]
+  - Q: Pattern 1 in a matchstick design uses 15 matchsticks. Each new pattern uses 6 more matchsticks than the one before. How many matchsticks does pattern 12 use?
+  - Answer: 81
+  - Working: Pattern 1 already has 15. To reach pattern 12, 11 lots of 6 are added. / 15 + 11 × 6 = 81.
+  - Targets: adding n lots of the step instead of n - 1, forgetting that the first pattern is already counted
+- **csse-ctx-mr02-bp-pattern-in-context-13** [medium; interpretation; pattern_chair_rows]
+  - Q: Row 1 of a hall has 15 chairs. Each row behind it has 4 more chairs than the row in front. How many chairs are in row 14?
+  - Answer: 67
+  - Working: Pattern 1 already has 15. To reach pattern 14, 13 lots of 4 are added. / 15 + 13 × 4 = 67.
+  - Targets: adding n lots of the step instead of n - 1, forgetting that the first pattern is already counted
+- **csse-ctx-mr02-bp-pattern-in-context-14** [medium; interpretation; pattern_chair_rows]
+  - Q: Row 1 of a hall has 5 chairs. Each row behind it has 2 more chairs than the row in front. How many chairs are in row 12?
+  - Answer: 27
+  - Working: Pattern 1 already has 5. To reach pattern 12, 11 lots of 2 are added. / 5 + 11 × 2 = 27.
+  - Targets: adding n lots of the step instead of n - 1, forgetting that the first pattern is already counted
+- **csse-ctx-mr02-bp-first-term-exceeding-01** [hard; multi_step_application; linear_sequence_threshold]
+  - Q: A sequence starts at 18 and goes up by 5 each time: 18, 23, 28, ... What is the first term in the sequence that is greater than 80?
+  - Answer: 83
+  - Working: From 18, count how many steps of 5 are needed to pass 80: (80 − 18) ÷ 5 = 12.4, so 13 steps are needed. / 18 + 13 × 5 = 83.
+  - Targets: returning the last term below the target, or the target itself, instead of the first term above it
+- **csse-ctx-mr02-bp-first-term-exceeding-02** [hard; multi_step_application; linear_sequence_threshold]
+  - Q: A sequence starts at 20 and goes up by 3 each time: 20, 23, 26, ... What is the first term in the sequence that is greater than 127?
+  - Answer: 128
+  - Working: From 20, count how many steps of 3 are needed to pass 127: (127 − 20) ÷ 3 = 35.666666666666664, so 36 steps are needed. / 20 + 36 × 3 = 128.
+  - Targets: returning the last term below the target, or the target itself, instead of the first term above it
+- **csse-ctx-mr02-bp-first-term-exceeding-03** [hard; multi_step_application; linear_sequence_threshold]
+  - Q: A sequence starts at 10 and goes up by 7 each time: 10, 17, 24, ... What is the first term in the sequence that is greater than 187?
+  - Answer: 192
+  - Working: From 10, count how many steps of 7 are needed to pass 187: (187 − 10) ÷ 7 = 25.285714285714285, so 26 steps are needed. / 10 + 26 × 7 = 192.
+  - Targets: returning the last term below the target, or the target itself, instead of the first term above it
+- **csse-ctx-mr02-bp-first-term-exceeding-04** [medium; multi_step_application; linear_sequence_threshold]
+  - Q: A sequence starts at 17 and goes up by 8 each time: 17, 25, 33, ... What is the first term in the sequence that is greater than 59?
+  - Answer: 65
+  - Working: From 17, count how many steps of 8 are needed to pass 59: (59 − 17) ÷ 8 = 5.25, so 6 steps are needed. / 17 + 6 × 8 = 65.
+  - Targets: returning the last term below the target, or the target itself, instead of the first term above it
+- **csse-ctx-mr02-bp-first-term-exceeding-05** [hard; multi_step_application; linear_sequence_threshold]
+  - Q: A sequence starts at 12 and goes up by 7 each time: 12, 19, 26, ... What is the first term in the sequence that is greater than 148?
+  - Answer: 152
+  - Working: From 12, count how many steps of 7 are needed to pass 148: (148 − 12) ÷ 7 = 19.428571428571427, so 20 steps are needed. / 12 + 20 × 7 = 152.
+  - Targets: returning the last term below the target, or the target itself, instead of the first term above it
+- **csse-ctx-mr02-bp-first-term-exceeding-06** [hard; multi_step_application; linear_sequence_threshold]
+  - Q: A sequence starts at 18 and goes up by 6 each time: 18, 24, 30, ... What is the first term in the sequence that is greater than 148?
+  - Answer: 150
+  - Working: From 18, count how many steps of 6 are needed to pass 148: (148 − 18) ÷ 6 = 21.666666666666668, so 22 steps are needed. / 18 + 22 × 6 = 150.
+  - Targets: returning the last term below the target, or the target itself, instead of the first term above it
+- **csse-ctx-mr02-bp-first-term-exceeding-07** [medium; multi_step_application; linear_sequence_threshold]
+  - Q: A sequence starts at 2 and goes up by 9 each time: 2, 11, 20, ... What is the first term in the sequence that is greater than 97?
+  - Answer: 101
+  - Working: From 2, count how many steps of 9 are needed to pass 97: (97 − 2) ÷ 9 = 10.555555555555555, so 11 steps are needed. / 2 + 11 × 9 = 101.
+  - Targets: returning the last term below the target, or the target itself, instead of the first term above it
+- **csse-ctx-mr02-bp-first-term-exceeding-08** [hard; multi_step_application; linear_sequence_threshold]
+  - Q: A sequence starts at 15 and goes up by 8 each time: 15, 23, 31, ... What is the first term in the sequence that is greater than 138?
+  - Answer: 143
+  - Working: From 15, count how many steps of 8 are needed to pass 138: (138 − 15) ÷ 8 = 15.375, so 16 steps are needed. / 15 + 16 × 8 = 143.
+  - Targets: returning the last term below the target, or the target itself, instead of the first term above it
+- **csse-ctx-mr02-bp-first-term-exceeding-09** [hard; multi_step_application; linear_sequence_threshold]
+  - Q: A sequence starts at 9 and goes up by 5 each time: 9, 14, 19, ... What is the first term in the sequence that is greater than 96?
+  - Answer: 99
+  - Working: From 9, count how many steps of 5 are needed to pass 96: (96 − 9) ÷ 5 = 17.4, so 18 steps are needed. / 9 + 18 × 5 = 99.
+  - Targets: returning the last term below the target, or the target itself, instead of the first term above it
+- **csse-ctx-mr02-bp-first-term-exceeding-10** [hard; multi_step_application; linear_sequence_threshold]
+  - Q: A sequence starts at 13 and goes up by 4 each time: 13, 17, 21, ... What is the first term in the sequence that is greater than 71?
+  - Answer: 73
+  - Working: From 13, count how many steps of 4 are needed to pass 71: (71 − 13) ÷ 4 = 14.5, so 15 steps are needed. / 13 + 15 × 4 = 73.
+  - Targets: returning the last term below the target, or the target itself, instead of the first term above it
+- **csse-ctx-mr02-bp-first-term-exceeding-11** [hard; multi_step_application; linear_sequence_threshold]
+  - Q: A sequence starts at 7 and goes up by 7 each time: 7, 14, 21, ... What is the first term in the sequence that is greater than 187?
+  - Answer: 189
+  - Working: From 7, count how many steps of 7 are needed to pass 187: (187 − 7) ÷ 7 = 25.714285714285715, so 26 steps are needed. / 7 + 26 × 7 = 189.
+  - Targets: returning the last term below the target, or the target itself, instead of the first term above it
+- **csse-ctx-mr02-bp-first-term-exceeding-12** [hard; multi_step_application; linear_sequence_threshold]
+  - Q: A sequence starts at 18 and goes up by 9 each time: 18, 27, 36, ... What is the first term in the sequence that is greater than 182?
+  - Answer: 189
+  - Working: From 18, count how many steps of 9 are needed to pass 182: (182 − 18) ÷ 9 = 18.22222222222222, so 19 steps are needed. / 18 + 19 × 9 = 189.
+  - Targets: returning the last term below the target, or the target itself, instead of the first term above it
+- **csse-ctx-mr02-bp-first-term-exceeding-13** [hard; multi_step_application; linear_sequence_threshold]
+  - Q: A sequence starts at 6 and goes up by 8 each time: 6, 14, 22, ... What is the first term in the sequence that is greater than 176?
+  - Answer: 182
+  - Working: From 6, count how many steps of 8 are needed to pass 176: (176 − 6) ÷ 8 = 21.25, so 22 steps are needed. / 6 + 22 × 8 = 182.
+  - Targets: returning the last term below the target, or the target itself, instead of the first term above it
+- **csse-ctx-mr02-bp-first-term-exceeding-14** [medium; multi_step_application; linear_sequence_threshold]
+  - Q: A sequence starts at 11 and goes up by 8 each time: 11, 19, 27, ... What is the first term in the sequence that is greater than 42?
+  - Answer: 43
+  - Working: From 11, count how many steps of 8 are needed to pass 42: (42 − 11) ÷ 8 = 3.875, so 4 steps are needed. / 11 + 4 × 8 = 43.
+  - Targets: returning the last term below the target, or the target itself, instead of the first term above it
+- **csse-ctx-mr02-bp-whole-periods-to-target-01** [medium; interpretation; target_reading]
+  - Q: A book has 61 pages. Sam has read 34 pages and reads 8 more pages each day. After how many whole days will he first have read at least 61 pages?
+  - Answer: 4
+  - Working: Amount still needed: 61 − 34 = 27. / 27 ÷ 8 = 3.38, which is not a whole number, so round UP to 4 (after only 3 whole periods the target has not yet been reached).
+  - Targets: rounding the division down (or to the nearest whole number), so the target has not actually been reached
+- **csse-ctx-mr02-bp-whole-periods-to-target-02** [medium; interpretation; target_plant_growth]
+  - Q: A plant is 39 cm tall and grows 10 cm every week. After how many whole weeks will it first be at least 86 cm tall?
+  - Answer: 5
+  - Working: Amount still needed: 86 − 39 = 47. / 47 ÷ 10 = 4.70, which is not a whole number, so round UP to 5 (after only 4 whole periods the target has not yet been reached).
+  - Targets: rounding the division down (or to the nearest whole number), so the target has not actually been reached
+- **csse-ctx-mr02-bp-whole-periods-to-target-03** [hard; interpretation; target_plant_growth]
+  - Q: A plant is 28 cm tall and grows 7 cm every week. After how many whole weeks will it first be at least 146 cm tall?
+  - Answer: 17
+  - Working: Amount still needed: 146 − 28 = 118. / 118 ÷ 7 = 16.86, which is not a whole number, so round UP to 17 (after only 16 whole periods the target has not yet been reached).
+  - Targets: rounding the division down (or to the nearest whole number), so the target has not actually been reached
+- **csse-ctx-mr02-bp-whole-periods-to-target-04** [hard; interpretation; target_savings]
+  - Q: Mia has £27 saved. She adds £11 every week. After how many whole weeks will she first have at least £129?
+  - Answer: 10
+  - Working: Amount still needed: 129 − 27 = 102. / 102 ÷ 11 = 9.27, which is not a whole number, so round UP to 10 (after only 9 whole periods the target has not yet been reached).
+  - Targets: rounding the division down (or to the nearest whole number), so the target has not actually been reached
+- **csse-ctx-mr02-bp-whole-periods-to-target-05** [hard; interpretation; target_reading]
+  - Q: A book has 175 pages. Sam has read 40 pages and reads 8 more pages each day. After how many whole days will he first have read at least 175 pages?
+  - Answer: 17
+  - Working: Amount still needed: 175 − 40 = 135. / 135 ÷ 8 = 16.88, which is not a whole number, so round UP to 17 (after only 16 whole periods the target has not yet been reached).
+  - Targets: rounding the division down (or to the nearest whole number), so the target has not actually been reached
+- **csse-ctx-mr02-bp-whole-periods-to-target-06** [medium; interpretation; target_reading]
+  - Q: A book has 61 pages. Sam has read 27 pages and reads 9 more pages each day. After how many whole days will he first have read at least 61 pages?
+  - Answer: 4
+  - Working: Amount still needed: 61 − 27 = 34. / 34 ÷ 9 = 3.78, which is not a whole number, so round UP to 4 (after only 3 whole periods the target has not yet been reached).
+  - Targets: rounding the division down (or to the nearest whole number), so the target has not actually been reached
+- **csse-ctx-mr02-bp-whole-periods-to-target-07** [hard; interpretation; target_reading]
+  - Q: A book has 110 pages. Sam has read 19 pages and reads 11 more pages each day. After how many whole days will he first have read at least 110 pages?
+  - Answer: 9
+  - Working: Amount still needed: 110 − 19 = 91. / 91 ÷ 11 = 8.27, which is not a whole number, so round UP to 9 (after only 8 whole periods the target has not yet been reached).
+  - Targets: rounding the division down (or to the nearest whole number), so the target has not actually been reached
+- **csse-ctx-mr02-bp-whole-periods-to-target-08** [hard; interpretation; target_savings]
+  - Q: Mia has £40 saved. She adds £8 every week. After how many whole weeks will she first have at least £118?
+  - Answer: 10
+  - Working: Amount still needed: 118 − 40 = 78. / 78 ÷ 8 = 9.75, which is not a whole number, so round UP to 10 (after only 9 whole periods the target has not yet been reached).
+  - Targets: rounding the division down (or to the nearest whole number), so the target has not actually been reached
+- **csse-ctx-mr02-bp-whole-periods-to-target-09** [hard; interpretation; target_plant_growth]
+  - Q: A plant is 13 cm tall and grows 12 cm every week. After how many whole weeks will it first be at least 159 cm tall?
+  - Answer: 13
+  - Working: Amount still needed: 159 − 13 = 146. / 146 ÷ 12 = 12.17, which is not a whole number, so round UP to 13 (after only 12 whole periods the target has not yet been reached).
+  - Targets: rounding the division down (or to the nearest whole number), so the target has not actually been reached
+- **csse-ctx-mr02-bp-whole-periods-to-target-10** [hard; interpretation; target_plant_growth]
+  - Q: A plant is 28 cm tall and grows 8 cm every week. After how many whole weeks will it first be at least 197 cm tall?
+  - Answer: 22
+  - Working: Amount still needed: 197 − 28 = 169. / 169 ÷ 8 = 21.13, which is not a whole number, so round UP to 22 (after only 21 whole periods the target has not yet been reached).
+  - Targets: rounding the division down (or to the nearest whole number), so the target has not actually been reached
+- **csse-ctx-mr02-bp-whole-periods-to-target-11** [hard; interpretation; target_plant_growth]
+  - Q: A plant is 10 cm tall and grows 12 cm every week. After how many whole weeks will it first be at least 150 cm tall?
+  - Answer: 12
+  - Working: Amount still needed: 150 − 10 = 140. / 140 ÷ 12 = 11.67, which is not a whole number, so round UP to 12 (after only 11 whole periods the target has not yet been reached).
+  - Targets: rounding the division down (or to the nearest whole number), so the target has not actually been reached
+- **csse-ctx-mr02-bp-whole-periods-to-target-12** [hard; interpretation; target_savings]
+  - Q: Mia has £35 saved. She adds £6 every week. After how many whole weeks will she first have at least £165?
+  - Answer: 22
+  - Working: Amount still needed: 165 − 35 = 130. / 130 ÷ 6 = 21.67, which is not a whole number, so round UP to 22 (after only 21 whole periods the target has not yet been reached).
+  - Targets: rounding the division down (or to the nearest whole number), so the target has not actually been reached
+- **csse-ctx-mr02-bp-whole-periods-to-target-13** [hard; interpretation; target_plant_growth]
+  - Q: A plant is 13 cm tall and grows 9 cm every week. After how many whole weeks will it first be at least 143 cm tall?
+  - Answer: 15
+  - Working: Amount still needed: 143 − 13 = 130. / 130 ÷ 9 = 14.44, which is not a whole number, so round UP to 15 (after only 14 whole periods the target has not yet been reached).
+  - Targets: rounding the division down (or to the nearest whole number), so the target has not actually been reached
+- **csse-ctx-mr02-bp-whole-periods-to-target-14** [hard; interpretation; target_savings]
+  - Q: Mia has £30 saved. She adds £6 every week. After how many whole weeks will she first have at least £171?
+  - Answer: 24
+  - Working: Amount still needed: 171 − 30 = 141. / 141 ÷ 6 = 23.50, which is not a whole number, so round UP to 24 (after only 23 whole periods the target has not yet been reached).
+  - Targets: rounding the division down (or to the nearest whole number), so the target has not actually been reached
+
+## mr01-whole-number-computation
+
+- **csse-ctx-mr01-bp-containers-needed-01** [medium; interpretation; containers_minibuses]
+  - Q: A school trip has 179 people. Each minibus carries 9 people. How many minibuses are needed so that everyone has a seat?
+  - Answer: 20
+  - Working: 179 ÷ 9 = 19 remainder 8. / 19 full containers hold 171; the 8 left over still need one more container, so 20 are needed.
+  - Targets: giving the whole-number quotient and ignoring the remainder, so some items have no container
+- **csse-ctx-mr01-bp-containers-needed-02** [medium; interpretation; containers_minibuses]
+  - Q: A school trip has 207 people. Each minibus carries 8 people. How many minibuses are needed so that everyone has a seat?
+  - Answer: 26
+  - Working: 207 ÷ 8 = 25 remainder 7. / 25 full containers hold 200; the 7 left over still need one more container, so 26 are needed.
+  - Targets: giving the whole-number quotient and ignoring the remainder, so some items have no container
+- **csse-ctx-mr01-bp-containers-needed-03** [medium; interpretation; containers_egg_trays]
+  - Q: A farm collects 253 eggs. Each tray holds 8 eggs. How many trays are needed to hold all of the eggs?
+  - Answer: 32
+  - Working: 253 ÷ 8 = 31 remainder 5. / 31 full containers hold 248; the 5 left over still need one more container, so 32 are needed.
+  - Targets: giving the whole-number quotient and ignoring the remainder, so some items have no container
+- **csse-ctx-mr01-bp-containers-needed-04** [hard; interpretation; containers_biscuits]
+  - Q: A bakery has 132 biscuits to pack. Each box holds 24 biscuits. How many boxes are needed to pack all of the biscuits?
+  - Answer: 6
+  - Working: 132 ÷ 24 = 5 remainder 12. / 5 full containers hold 120; the 12 left over still need one more container, so 6 are needed.
+  - Targets: giving the whole-number quotient and ignoring the remainder, so some items have no container
+- **csse-ctx-mr01-bp-containers-needed-05** [hard; interpretation; containers_egg_trays]
+  - Q: A farm collects 198 eggs. Each tray holds 16 eggs. How many trays are needed to hold all of the eggs?
+  - Answer: 13
+  - Working: 198 ÷ 16 = 12 remainder 6. / 12 full containers hold 192; the 6 left over still need one more container, so 13 are needed.
+  - Targets: giving the whole-number quotient and ignoring the remainder, so some items have no container
+- **csse-ctx-mr01-bp-containers-needed-06** [medium; interpretation; containers_egg_trays]
+  - Q: A farm collects 282 eggs. Each tray holds 12 eggs. How many trays are needed to hold all of the eggs?
+  - Answer: 24
+  - Working: 282 ÷ 12 = 23 remainder 6. / 23 full containers hold 276; the 6 left over still need one more container, so 24 are needed.
+  - Targets: giving the whole-number quotient and ignoring the remainder, so some items have no container
+- **csse-ctx-mr01-bp-containers-needed-07** [medium; interpretation; containers_biscuits]
+  - Q: A bakery has 74 biscuits to pack. Each box holds 8 biscuits. How many boxes are needed to pack all of the biscuits?
+  - Answer: 10
+  - Working: 74 ÷ 8 = 9 remainder 2. / 9 full containers hold 72; the 2 left over still need one more container, so 10 are needed.
+  - Targets: giving the whole-number quotient and ignoring the remainder, so some items have no container
+- **csse-ctx-mr01-bp-containers-needed-08** [hard; interpretation; containers_biscuits]
+  - Q: A bakery has 374 biscuits to pack. Each box holds 19 biscuits. How many boxes are needed to pack all of the biscuits?
+  - Answer: 20
+  - Working: 374 ÷ 19 = 19 remainder 13. / 19 full containers hold 361; the 13 left over still need one more container, so 20 are needed.
+  - Targets: giving the whole-number quotient and ignoring the remainder, so some items have no container
+- **csse-ctx-mr01-bp-containers-needed-09** [medium; interpretation; containers_minibuses]
+  - Q: A school trip has 49 people. Each minibus carries 6 people. How many minibuses are needed so that everyone has a seat?
+  - Answer: 9
+  - Working: 49 ÷ 6 = 8 remainder 1. / 8 full containers hold 48; the 1 left over still need one more container, so 9 are needed.
+  - Targets: giving the whole-number quotient and ignoring the remainder, so some items have no container
+- **csse-ctx-mr01-bp-containers-needed-10** [medium; interpretation; containers_biscuits]
+  - Q: A bakery has 314 biscuits to pack. Each box holds 10 biscuits. How many boxes are needed to pack all of the biscuits?
+  - Answer: 32
+  - Working: 314 ÷ 10 = 31 remainder 4. / 31 full containers hold 310; the 4 left over still need one more container, so 32 are needed.
+  - Targets: giving the whole-number quotient and ignoring the remainder, so some items have no container
+- **csse-ctx-mr01-bp-containers-needed-11** [medium; interpretation; containers_biscuits]
+  - Q: A bakery has 40 biscuits to pack. Each box holds 11 biscuits. How many boxes are needed to pack all of the biscuits?
+  - Answer: 4
+  - Working: 40 ÷ 11 = 3 remainder 7. / 3 full containers hold 33; the 7 left over still need one more container, so 4 are needed.
+  - Targets: giving the whole-number quotient and ignoring the remainder, so some items have no container
+- **csse-ctx-mr01-bp-containers-needed-12** [hard; interpretation; containers_minibuses]
+  - Q: A school trip has 301 people. Each minibus carries 24 people. How many minibuses are needed so that everyone has a seat?
+  - Answer: 13
+  - Working: 301 ÷ 24 = 12 remainder 13. / 12 full containers hold 288; the 13 left over still need one more container, so 13 are needed.
+  - Targets: giving the whole-number quotient and ignoring the remainder, so some items have no container
+- **csse-ctx-mr01-bp-containers-needed-13** [hard; interpretation; containers_biscuits]
+  - Q: A bakery has 370 biscuits to pack. Each box holds 24 biscuits. How many boxes are needed to pack all of the biscuits?
+  - Answer: 16
+  - Working: 370 ÷ 24 = 15 remainder 10. / 15 full containers hold 360; the 10 left over still need one more container, so 16 are needed.
+  - Targets: giving the whole-number quotient and ignoring the remainder, so some items have no container
+- **csse-ctx-mr01-bp-containers-needed-14** [medium; interpretation; containers_egg_trays]
+  - Q: A farm collects 299 eggs. Each tray holds 10 eggs. How many trays are needed to hold all of the eggs?
+  - Answer: 30
+  - Working: 299 ÷ 10 = 29 remainder 9. / 29 full containers hold 290; the 9 left over still need one more container, so 30 are needed.
+  - Targets: giving the whole-number quotient and ignoring the remainder, so some items have no container
+- **csse-ctx-mr01-bp-change-from-note-01** [medium; multi_step_application; shopping_model_kits]
+  - Q: Leo buys 5 model kits that cost £2 each. They pay with a £20 note. How many pounds change do they get?
+  - Answer: 10
+  - Working: Total cost: 5 × £2 = £10. / Change: £20 − £10 = £10.
+  - Targets: subtracting the price of one item from the note instead of the total cost
+- **csse-ctx-mr01-bp-change-from-note-02** [medium; multi_step_application; shopping_model_kits]
+  - Q: Leo buys 7 model kits that cost £2 each. They pay with a £20 note. How many pounds change do they get?
+  - Answer: 6
+  - Working: Total cost: 7 × £2 = £14. / Change: £20 − £14 = £6.
+  - Targets: subtracting the price of one item from the note instead of the total cost
+- **csse-ctx-mr01-bp-change-from-note-03** [hard; multi_step_application; shopping_notebooks]
+  - Q: Sam buys 13 notebooks that cost £3 each. They pay with a £50 note. How many pounds change do they get?
+  - Answer: 11
+  - Working: Total cost: 13 × £3 = £39. / Change: £50 − £39 = £11.
+  - Targets: subtracting the price of one item from the note instead of the total cost
+- **csse-ctx-mr01-bp-change-from-note-04** [medium; multi_step_application; shopping_model_kits]
+  - Q: Leo buys 4 model kits that cost £6 each. They pay with a £50 note. How many pounds change do they get?
+  - Answer: 26
+  - Working: Total cost: 4 × £6 = £24. / Change: £50 − £24 = £26.
+  - Targets: subtracting the price of one item from the note instead of the total cost
+- **csse-ctx-mr01-bp-change-from-note-05** [medium; multi_step_application; shopping_stickers]
+  - Q: Priya buys 7 packs of stickers that cost £3 each. They pay with a £50 note. How many pounds change do they get?
+  - Answer: 29
+  - Working: Total cost: 7 × £3 = £21. / Change: £50 − £21 = £29.
+  - Targets: subtracting the price of one item from the note instead of the total cost
+- **csse-ctx-mr01-bp-change-from-note-06** [medium; multi_step_application; shopping_model_kits]
+  - Q: Leo buys 4 model kits that cost £2 each. They pay with a £20 note. How many pounds change do they get?
+  - Answer: 12
+  - Working: Total cost: 4 × £2 = £8. / Change: £20 − £8 = £12.
+  - Targets: subtracting the price of one item from the note instead of the total cost
+- **csse-ctx-mr01-bp-change-from-note-07** [hard; multi_step_application; shopping_rulers]
+  - Q: Aisha buys 5 rulers that cost £9 each. They pay with a £50 note. How many pounds change do they get?
+  - Answer: 5
+  - Working: Total cost: 5 × £9 = £45. / Change: £50 − £45 = £5.
+  - Targets: subtracting the price of one item from the note instead of the total cost
+- **csse-ctx-mr01-bp-change-from-note-08** [medium; multi_step_application; shopping_notebooks]
+  - Q: Sam buys 4 notebooks that cost £7 each. They pay with a £50 note. How many pounds change do they get?
+  - Answer: 22
+  - Working: Total cost: 4 × £7 = £28. / Change: £50 − £28 = £22.
+  - Targets: subtracting the price of one item from the note instead of the total cost
+- **csse-ctx-mr01-bp-change-from-note-09** [medium; multi_step_application; shopping_stickers]
+  - Q: Priya buys 4 packs of stickers that cost £6 each. They pay with a £50 note. How many pounds change do they get?
+  - Answer: 26
+  - Working: Total cost: 4 × £6 = £24. / Change: £50 − £24 = £26.
+  - Targets: subtracting the price of one item from the note instead of the total cost
+- **csse-ctx-mr01-bp-change-from-note-10** [hard; multi_step_application; shopping_rulers]
+  - Q: Aisha buys 4 rulers that cost £11 each. They pay with a £50 note. How many pounds change do they get?
+  - Answer: 6
+  - Working: Total cost: 4 × £11 = £44. / Change: £50 − £44 = £6.
+  - Targets: subtracting the price of one item from the note instead of the total cost
+- **csse-ctx-mr01-bp-change-from-note-11** [medium; multi_step_application; shopping_model_kits]
+  - Q: Leo buys 8 model kits that cost £3 each. They pay with a £50 note. How many pounds change do they get?
+  - Answer: 26
+  - Working: Total cost: 8 × £3 = £24. / Change: £50 − £24 = £26.
+  - Targets: subtracting the price of one item from the note instead of the total cost
+- **csse-ctx-mr01-bp-change-from-note-12** [hard; multi_step_application; shopping_model_kits]
+  - Q: Leo buys 8 model kits that cost £4 each. They pay with a £50 note. How many pounds change do they get?
+  - Answer: 18
+  - Working: Total cost: 8 × £4 = £32. / Change: £50 − £32 = £18.
+  - Targets: subtracting the price of one item from the note instead of the total cost
+- **csse-ctx-mr01-bp-change-from-note-13** [medium; multi_step_application; shopping_rulers]
+  - Q: Aisha buys 5 rulers that cost £2 each. They pay with a £20 note. How many pounds change do they get?
+  - Answer: 10
+  - Working: Total cost: 5 × £2 = £10. / Change: £20 − £10 = £10.
+  - Targets: subtracting the price of one item from the note instead of the total cost
+- **csse-ctx-mr01-bp-change-from-note-14** [medium; multi_step_application; shopping_model_kits]
+  - Q: Leo buys 3 model kits that cost £6 each. They pay with a £20 note. How many pounds change do they get?
+  - Answer: 2
+  - Working: Total cost: 3 × £6 = £18. / Change: £20 − £18 = £2.
+  - Targets: subtracting the price of one item from the note instead of the total cost
+- **csse-ctx-mr01-bp-spend-then-share-01** [hard; multi_step_application; spend_then_share_friends]
+  - Q: Some friends collect £560 for a present. They spend £70 on the present and share what is left equally between 5 charities. How many pounds does each charity receive?
+  - Answer: 98
+  - Working: Money left after spending: £560 − £70 = £490. / Share equally: £490 ÷ 5 = £98.
+  - Targets: dividing the whole amount by the number of groups and forgetting to take away what was spent first
+- **csse-ctx-mr01-bp-spend-then-share-02** [hard; multi_step_application; spend_then_share_club]
+  - Q: A club has £486 in its fund. It pays £159 for a hall hire and shares the money left equally among 3 teams. How many pounds does each team get?
+  - Answer: 109
+  - Working: Money left after spending: £486 − £159 = £327. / Share equally: £327 ÷ 3 = £109.
+  - Targets: dividing the whole amount by the number of groups and forgetting to take away what was spent first
+- **csse-ctx-mr01-bp-spend-then-share-03** [medium; multi_step_application; spend_then_share_friends]
+  - Q: Some friends collect £336 for a present. They spend £126 on the present and share what is left equally between 6 charities. How many pounds does each charity receive?
+  - Answer: 35
+  - Working: Money left after spending: £336 − £126 = £210. / Share equally: £210 ÷ 6 = £35.
+  - Targets: dividing the whole amount by the number of groups and forgetting to take away what was spent first
+- **csse-ctx-mr01-bp-spend-then-share-04** [hard; multi_step_application; spend_then_share_friends]
+  - Q: Some friends collect £582 for a present. They spend £66 on the present and share what is left equally between 4 charities. How many pounds does each charity receive?
+  - Answer: 129
+  - Working: Money left after spending: £582 − £66 = £516. / Share equally: £516 ÷ 4 = £129.
+  - Targets: dividing the whole amount by the number of groups and forgetting to take away what was spent first
+- **csse-ctx-mr01-bp-spend-then-share-05** [hard; multi_step_application; spend_then_share_club]
+  - Q: A club has £323 in its fund. It pays £182 for a hall hire and shares the money left equally among 3 teams. How many pounds does each team get?
+  - Answer: 47
+  - Working: Money left after spending: £323 − £182 = £141. / Share equally: £141 ÷ 3 = £47.
+  - Targets: dividing the whole amount by the number of groups and forgetting to take away what was spent first
+- **csse-ctx-mr01-bp-spend-then-share-06** [hard; multi_step_application; spend_then_share_fair]
+  - Q: A school fair raises £519. £71 is spent on prizes and the rest is shared equally between 7 classes. How many pounds does each class receive?
+  - Answer: 64
+  - Working: Money left after spending: £519 − £71 = £448. / Share equally: £448 ÷ 7 = £64.
+  - Targets: dividing the whole amount by the number of groups and forgetting to take away what was spent first
+- **csse-ctx-mr01-bp-spend-then-share-07** [hard; multi_step_application; spend_then_share_club]
+  - Q: A club has £208 in its fund. It pays £34 for a hall hire and shares the money left equally among 3 teams. How many pounds does each team get?
+  - Answer: 58
+  - Working: Money left after spending: £208 − £34 = £174. / Share equally: £174 ÷ 3 = £58.
+  - Targets: dividing the whole amount by the number of groups and forgetting to take away what was spent first
+- **csse-ctx-mr01-bp-spend-then-share-08** [hard; multi_step_application; spend_then_share_friends]
+  - Q: Some friends collect £376 for a present. They spend £131 on the present and share what is left equally between 5 charities. How many pounds does each charity receive?
+  - Answer: 49
+  - Working: Money left after spending: £376 − £131 = £245. / Share equally: £245 ÷ 5 = £49.
+  - Targets: dividing the whole amount by the number of groups and forgetting to take away what was spent first
+- **csse-ctx-mr01-bp-spend-then-share-09** [hard; multi_step_application; spend_then_share_club]
+  - Q: A club has £472 in its fund. It pays £187 for a hall hire and shares the money left equally among 3 teams. How many pounds does each team get?
+  - Answer: 95
+  - Working: Money left after spending: £472 − £187 = £285. / Share equally: £285 ÷ 3 = £95.
+  - Targets: dividing the whole amount by the number of groups and forgetting to take away what was spent first
+- **csse-ctx-mr01-bp-spend-then-share-10** [medium; multi_step_application; spend_then_share_friends]
+  - Q: Some friends collect £426 for a present. They spend £194 on the present and share what is left equally between 8 charities. How many pounds does each charity receive?
+  - Answer: 29
+  - Working: Money left after spending: £426 − £194 = £232. / Share equally: £232 ÷ 8 = £29.
+  - Targets: dividing the whole amount by the number of groups and forgetting to take away what was spent first
+- **csse-ctx-mr01-bp-spend-then-share-11** [medium; multi_step_application; spend_then_share_club]
+  - Q: A club has £449 in its fund. It pays £125 for a hall hire and shares the money left equally among 9 teams. How many pounds does each team get?
+  - Answer: 36
+  - Working: Money left after spending: £449 − £125 = £324. / Share equally: £324 ÷ 9 = £36.
+  - Targets: dividing the whole amount by the number of groups and forgetting to take away what was spent first
+- **csse-ctx-mr01-bp-spend-then-share-12** [hard; multi_step_application; spend_then_share_club]
+  - Q: A club has £398 in its fund. It pays £65 for a hall hire and shares the money left equally among 3 teams. How many pounds does each team get?
+  - Answer: 111
+  - Working: Money left after spending: £398 − £65 = £333. / Share equally: £333 ÷ 3 = £111.
+  - Targets: dividing the whole amount by the number of groups and forgetting to take away what was spent first
+- **csse-ctx-mr01-bp-spend-then-share-13** [hard; multi_step_application; spend_then_share_friends]
+  - Q: Some friends collect £593 for a present. They spend £193 on the present and share what is left equally between 4 charities. How many pounds does each charity receive?
+  - Answer: 100
+  - Working: Money left after spending: £593 − £193 = £400. / Share equally: £400 ÷ 4 = £100.
+  - Targets: dividing the whole amount by the number of groups and forgetting to take away what was spent first
+- **csse-ctx-mr01-bp-spend-then-share-14** [medium; multi_step_application; spend_then_share_friends]
+  - Q: Some friends collect £298 for a present. They spend £102 on the present and share what is left equally between 7 charities. How many pounds does each charity receive?
+  - Answer: 28
+  - Working: Money left after spending: £298 − £102 = £196. / Share equally: £196 ÷ 7 = £28.
+  - Targets: dividing the whole amount by the number of groups and forgetting to take away what was spent first
