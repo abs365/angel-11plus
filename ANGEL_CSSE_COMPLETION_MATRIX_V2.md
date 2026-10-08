@@ -174,3 +174,17 @@ Effect when published: practice-eligible 901 → 1,041 (the first step toward 1,
 - Most `angel_original` and unlabelled-provenance rows (practice-eligible: English 139, Maths 190, Writing 6; more in Mock/reserve) store a **developer/author note** in `ali_question_bank.explanation` (increment, wave, "Assessment Brain", generation script). `lib/adminReview.ts` documents this field as the author's own per-question note.
 - It does **not** reach a CSSE learner surface: the Practice page's `explanation` is the *session selection reason* (`SessionActivity.explanation`), not the bank field; no CSSE page renders `BankQuestion.explanation`. The only code that renders it (`ReasoningSession`, adaptive GL/Vocabulary mocks) serves pathways with **no active rows** in the bank.
 - Verdict: intentionally internal metadata, not misstored learner content; no learner exposure today. Guard to keep: do not render `BankQuestion.explanation` on any CSSE learner surface without first replacing it with learner-facing text. (The 76 empty-explanation English items are a separate matter, fixed in inc 2.)
+
+## Priority 4 — Continuous Writing (inc 7: package PREPARED, not applied)
+
+| Gap | What was prepared | Status |
+|---|---|---|
+| 8 practice prompts (7 reflective, 1 picture) | **7 new candidates:** 4 reflective/discursive (`proudofother`, `onefriendmany`, `tradition`, `wintakepart`) and 3 picture-led narratives (`The Station Clock`, `The Last Bus`, `After Closing Time`), each picture an original SVG with five named story footholds visible in its alt text. Topics checked distinct from every Practice/Mock/reserve Writing topic. | Migration `268_csse_writing_expansion_candidates_pending_review.sql` (candidates only, NOT APPLIED); promotion template `scripts/output/csse-writing-expansion/269_promotion_TEMPLATE.sql` (all ids commented out; refuses unreviewed or Mock-exposed rows) |
+| Skills to teach: task interpretation, ideas, structure, vocabulary, sentence construction, grammar, punctuation, spelling, revision | `WRITING_CRAFT_CHECKS` (9 checks, mapped to the existing 5 rubric dimensions, shown with the worked model before submitting) | **Live in code** |
+| Revision from feedback | **Not built.** Practice Writing is a single submission; rewriting after AI feedback changes what counts as an attempt and needs a product decision. Revision *before* submitting is covered. | Open decision |
+| Human calibration | `ANGEL_WRITING_HUMAN_CALIBRATION_PROTOCOL.md` (sample, two independent readers, measures, proposed thresholds). No calibration run; no result claimed. AI evidence stays supported tier and out of mastery. | Needs Founder/readers |
+
+Resulting Writing supply if all 7 are approved: 15 practice prompts (11 reflective, 4 picture-led). Picture-led depth remains the thinner genre and
+depends on illustration capacity; the three drawings are drafts for **Founder visual and educational review** (the Riverboat rule applies: reject if there is "nothing to write with the picture").
+
+**Founder action:** (1) deploy (so the SVGs are live), (2) apply migration 268, (3) review each family at `/admin-beta/review` (looking at the pictures), recording a decision per family, (4) copy the template to `supabase/migrations/269_…`, uncomment only approved ids, apply.

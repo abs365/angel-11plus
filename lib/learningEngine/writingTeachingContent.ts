@@ -99,6 +99,34 @@ export const WRITING_FAMILY_TEACHING_CONTENT: Record<WritingTaskFamily, WritingF
   },
 };
 
+/**
+ * CSSE Completion Priority 4 -- the craft habits both Writing genres share, one short check per skill the
+ * programme must cover (interpreting the task, ideas, structure, vocabulary, sentence construction, grammar,
+ * punctuation, spelling, revision). Each is tagged with the existing five-dimension rubric dimension it serves;
+ * nothing here adds a dimension, a score or a mark. Shown with the worked model, before the learner submits.
+ *
+ * Not claimed: a post-feedback revision loop. Practice Writing is submitted once; rewriting after AI feedback is a
+ * separate product decision (it would change what counts as an attempt) and is NOT implemented. The last check
+ * below covers revision BEFORE submitting.
+ */
+export interface WritingCraftCheck {
+  skill: string;
+  dimension: "ideas" | "vocabulary" | "grammar" | "structure" | "punctuation";
+  check: string;
+}
+
+export const WRITING_CRAFT_CHECKS: WritingCraftCheck[] = [
+  { skill: "Interpreting the task", dimension: "ideas", check: "Underline what the task asks you to do (tell a story, explain, give your view). Does your first paragraph start doing exactly that?" },
+  { skill: "Ideas", dimension: "ideas", check: "Have you got one clear main idea, with at least one specific detail or example, rather than a list of general facts?" },
+  { skill: "Structure", dimension: "structure", check: "Does each paragraph have one job? Does your ending connect back to your opening?" },
+  { skill: "Vocabulary", dimension: "vocabulary", check: "Find one plain word (nice, good, said, big) and swap it for a more precise word that still fits." },
+  { skill: "Sentence construction", dimension: "structure", check: "Read your first three sentences. Do they all start the same way? Change one opening and make one sentence shorter or longer." },
+  { skill: "Grammar", dimension: "grammar", check: "Does every sentence make complete sense on its own? Does your tense stay the same unless the time really changes?" },
+  { skill: "Punctuation", dimension: "punctuation", check: "Capital letter and full stop on every sentence, commas in lists, and speech marks around any words someone says." },
+  { skill: "Spelling", dimension: "vocabulary", check: "Check the words you felt unsure about, and tricky common ones such as their/there, because and definitely." },
+  { skill: "Revising", dimension: "structure", check: "Read your writing aloud quietly. Change at least one part that sounds clumsy, then read it again." },
+];
+
 export function getWritingTeachingContent(family?: WritingTaskFamily | null): WritingFamilyTeachingContent | undefined {
   if (!family) return undefined;
   return WRITING_FAMILY_TEACHING_CONTENT[family];

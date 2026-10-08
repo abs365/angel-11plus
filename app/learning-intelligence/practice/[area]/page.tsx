@@ -56,7 +56,7 @@ import { RecommendationSummary } from "@/components/learningEngine/Recommendatio
 import type { BankQuestion } from "@/types/ali/questionBank";
 import type { LearnerIntelligenceProfile } from "@/lib/learningEngine/types";
 import type { WritingFeedback } from "@/types/writing-feedback";
-import { getWritingTeachingContent, getWritingTaskFamilyForPromptType } from "@/lib/learningEngine/writingTeachingContent";
+import { getWritingTeachingContent, getWritingTaskFamilyForPromptType, WRITING_CRAFT_CHECKS } from "@/lib/learningEngine/writingTeachingContent";
 import { WRITING_DIMENSION_LABEL } from "@/lib/learningEngine/writingRubric";
 import { presentWritingChecklistForContext, isWritingFamilyGuidedEligible, writingSupportContextForGuidedToggle } from "@/lib/writing/supportLevelPolicy";
 import type { EnglishComprehensionPrompt } from "@/types/ali/questionBank";
@@ -1636,6 +1636,12 @@ function WritingActivity({
                 <p className="font-semibold">Plan your own answer first:</p>
                 <ul className="list-disc list-inside space-y-0.5">
                   {teachingContent.planningScaffold.map((q) => <li key={q.question}>{q.question}</li>)}
+                </ul>
+              </div>
+              <div className="pt-1">
+                <p className="font-semibold">Check your writing before you finish:</p>
+                <ul className="list-disc list-inside space-y-0.5">
+                  {WRITING_CRAFT_CHECKS.map((c) => <li key={c.skill}><strong>{c.skill}: </strong>{c.check}</li>)}
                 </ul>
               </div>
             </div>

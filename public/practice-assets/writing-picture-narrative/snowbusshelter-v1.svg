@@ -1,0 +1,101 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" width="800" height="600" role="img" aria-labelledby="snowShelterTitle snowShelterDesc">
+  <title id="snowShelterTitle">The Last Bus</title>
+  <desc id="snowShelterDesc">A bus shelter beside a quiet road on a snowy evening. Snow is still falling. Inside the shelter a parcel wrapped in brown paper and tied with string sits on the bench, its label smudged so the address cannot be read. A child's red mitten is pinned to the noticeboard with a drawing pin, next to a sheet of paper covered in hurried writing. Two sets of footprints mark the snow: a small set leading into the shelter and not out again, and a larger set leading away down the road. In the distance a bus is approaching with its headlights on, but the sign above its windscreen is blank. In a house across the road, one upstairs window is lit and a small figure stands in it, one hand raised against the glass.</desc>
+  <!-- Original illustration authored directly for Angel 11+ (CSSE Completion, Priority 4). Flat vector art, no photographic or third-party source. Distinct from the Treehouse Lantern, The Station Clock, the Mock-reserved old shed and the rejected riverboat: winter dusk, a road, a shelter, and its own story footholds (an unaddressed parcel, a pinned mitten and hurried note, footprints that go in but not out, a bus with a blank sign, a watcher at a lit window). -->
+  <defs>
+    <linearGradient id="sbSky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#5d7a94"/>
+      <stop offset="60%" stop-color="#9db4c4"/>
+      <stop offset="100%" stop-color="#d6e2e8"/>
+    </linearGradient>
+    <radialGradient id="sbWindowGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#ffe29a" stop-opacity="0.9"/>
+      <stop offset="100%" stop-color="#ffe29a" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="sbHeadlight" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#fff6c8" stop-opacity="0.95"/>
+      <stop offset="100%" stop-color="#fff6c8" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <rect width="800" height="600" fill="url(#sbSky)"/>
+
+  <!-- far rooftops and trees in snow -->
+  <path d="M0 300 L60 262 L120 300 Z" fill="#7d8f9c"/><path d="M90 300 L170 250 L250 300 Z" fill="#6f8290"/>
+  <rect x="0" y="300" width="800" height="60" fill="#c9d5db"/>
+
+  <!-- the house across the road, one upstairs window lit, small figure waving -->
+  <rect x="520" y="170" width="230" height="190" fill="#7e6a5f"/>
+  <path d="M505 170 L635 100 L765 170 Z" fill="#5a4a42"/>
+  <path d="M505 170 L635 100 L765 170 L750 170 L635 112 L520 170 Z" fill="#f4f8fa"/>
+  <rect x="545" y="270" width="52" height="60" fill="#3d4a54"/><rect x="665" y="270" width="52" height="60" fill="#3d4a54"/>
+  <rect x="600" y="300" width="60" height="60" fill="#4a3a33"/>
+  <circle cx="610" cy="206" r="62" fill="url(#sbWindowGlow)"/>
+  <rect x="585" y="180" width="50" height="56" fill="#ffe29a"/>
+  <line x1="610" y1="180" x2="610" y2="236" stroke="#7e6a5f" stroke-width="3"/><line x1="585" y1="208" x2="635" y2="208" stroke="#7e6a5f" stroke-width="3"/>
+  <circle cx="598" cy="206" r="7" fill="#3d3631"/><path d="M590 236 L590 216 Q598 210 606 216 L606 236 Z" fill="#3d3631"/>
+  <path d="M606 220 L616 198" stroke="#3d3631" stroke-width="4" stroke-linecap="round"/>
+
+  <!-- road -->
+  <rect x="0" y="360" width="800" height="120" fill="#6a737a"/>
+  <g stroke="#e8ecee" stroke-width="5" stroke-dasharray="40 30"><line x1="0" y1="420" x2="800" y2="420"/></g>
+  <rect x="0" y="352" width="800" height="12" fill="#e3ecf0"/>
+
+  <!-- the bus in the distance: headlights on, destination sign blank -->
+  <g>
+    <rect x="20" y="368" width="130" height="62" rx="8" fill="#b8423a"/>
+    <rect x="30" y="376" width="110" height="14" rx="2" fill="#1f2a31"/>
+    <rect x="30" y="394" width="30" height="20" fill="#cfe0e8"/><rect x="66" y="394" width="30" height="20" fill="#cfe0e8"/><rect x="102" y="394" width="30" height="20" fill="#cfe0e8"/>
+    <circle cx="154" cy="418" r="22" fill="url(#sbHeadlight)"/>
+    <circle cx="150" cy="418" r="6" fill="#fff6c8"/>
+    <circle cx="48" cy="432" r="9" fill="#2a3036"/><circle cx="120" cy="432" r="9" fill="#2a3036"/>
+  </g>
+
+  <!-- snowy verge and pavement -->
+  <rect x="0" y="480" width="800" height="120" fill="#f2f7f9"/>
+  <path d="M0 480 Q200 468 400 482 T800 478 L800 495 L0 495 Z" fill="#e4edf1"/>
+
+  <!-- footprints: small set INTO the shelter, large set AWAY down the road -->
+  <g fill="#c6d3da">
+    <ellipse cx="170" cy="580" rx="9" ry="5"/><ellipse cx="196" cy="566" rx="9" ry="5"/><ellipse cx="222" cy="553" rx="9" ry="5"/><ellipse cx="248" cy="541" rx="9" ry="5"/><ellipse cx="274" cy="530" rx="9" ry="5"/><ellipse cx="300" cy="520" rx="9" ry="5"/>
+    <ellipse cx="520" cy="548" rx="14" ry="7"/><ellipse cx="560" cy="538" rx="14" ry="7"/><ellipse cx="600" cy="529" rx="14" ry="7"/><ellipse cx="640" cy="521" rx="14" ry="7"/><ellipse cx="680" cy="514" rx="14" ry="7"/><ellipse cx="720" cy="508" rx="14" ry="7"/><ellipse cx="760" cy="503" rx="14" ry="7"/>
+  </g>
+
+  <!-- the bus shelter -->
+  <g>
+    <rect x="300" y="300" width="14" height="230" fill="#3f4d57"/>
+    <rect x="486" y="300" width="14" height="230" fill="#3f4d57"/>
+    <rect x="290" y="288" width="220" height="20" fill="#3f4d57"/>
+    <rect x="283" y="278" width="234" height="16" fill="#f4f8fa"/>
+    <rect x="314" y="308" width="172" height="190" fill="#cfe0e8" opacity="0.45"/>
+    <!-- back wall noticeboard -->
+    <rect x="334" y="330" width="132" height="92" fill="#7b5a3a"/>
+    <rect x="342" y="338" width="116" height="76" fill="#d8c9a6"/>
+    <!-- the pinned red mitten -->
+    <path d="M368 352 Q364 372 372 388 Q384 396 394 388 Q398 372 392 356 Q380 346 368 352 Z" fill="#d93a2b"/>
+    <ellipse cx="364" cy="372" rx="6" ry="9" fill="#d93a2b"/>
+    <rect x="372" y="386" width="22" height="8" fill="#a82e22"/>
+    <circle cx="381" cy="356" r="3.5" fill="#f2c94c" stroke="#8c6d12"/>
+    <!-- hurried note -->
+    <rect x="408" y="346" width="42" height="58" fill="#fbf6e8" stroke="#a9a089"/>
+    <path d="M413 356 L444 354 M412 364 L441 366 M414 373 L446 371 M412 382 L438 384 M414 391 L443 389" stroke="#3d3631" stroke-width="2" fill="none"/>
+    <!-- bench -->
+    <rect x="330" y="452" width="140" height="10" fill="#7b5a3a"/>
+    <rect x="336" y="462" width="8" height="36" fill="#5b4a3a"/><rect x="456" y="462" width="8" height="36" fill="#5b4a3a"/>
+    <!-- the parcel with smudged label -->
+    <rect x="368" y="418" width="64" height="36" rx="3" fill="#a8803f"/>
+    <line x1="400" y1="418" x2="400" y2="454" stroke="#6d4f1f" stroke-width="3"/><line x1="368" y1="436" x2="432" y2="436" stroke="#6d4f1f" stroke-width="3"/>
+    <rect x="404" y="422" width="22" height="13" fill="#fbf6e8"/>
+    <ellipse cx="415" cy="428" rx="9" ry="4" fill="#9aa3a6" opacity="0.7"/>
+    <!-- snow on the shelter floor edge -->
+    <rect x="300" y="498" width="200" height="8" fill="#e4edf1"/>
+  </g>
+
+  <!-- falling snow -->
+  <g fill="#ffffff" opacity="0.9">
+    <circle cx="40" cy="60" r="3"/><circle cx="120" cy="140" r="2.5"/><circle cx="200" cy="40" r="3"/><circle cx="260" cy="190" r="2"/><circle cx="330" cy="90" r="3"/><circle cx="410" cy="150" r="2.5"/>
+    <circle cx="470" cy="50" r="3"/><circle cx="540" cy="120" r="2"/><circle cx="600" cy="60" r="3"/><circle cx="680" cy="30" r="2.5"/><circle cx="760" cy="110" r="3"/><circle cx="90" cy="230" r="2"/>
+    <circle cx="180" cy="280" r="3"/><circle cx="300" cy="250" r="2.5"/><circle cx="380" cy="240" r="3"/><circle cx="460" cy="260" r="2"/><circle cx="560" cy="230" r="2.5"/><circle cx="700" cy="250" r="3"/>
+    <circle cx="60" cy="330" r="2.5"/><circle cx="240" cy="340" r="3"/><circle cx="520" cy="345" r="2"/><circle cx="740" cy="340" r="2.5"/>
+  </g>
+</svg>
