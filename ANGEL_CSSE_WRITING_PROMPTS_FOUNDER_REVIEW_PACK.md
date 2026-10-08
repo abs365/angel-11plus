@@ -1,4 +1,4 @@
-# Writing prompts: Founder review pack (7 candidates, migration 268 NOT applied)
+# Writing prompts: FINAL image-and-prompt review pack (7 Practice candidates + 1 sealed Mock candidate; migration 268 NOT applied)
 
 **Nothing is registered, applied or published.** Open `scripts/output/csse-writing-expansion/review-pack.html` in a browser to **see the three drawings** (the text below is the same content without images).
 
@@ -72,6 +72,8 @@
 - **Relationships it suggests:** Watcher and owner of the suitcase (strangers, relatives, friends?). The person who circled a time on the ticket and the person left behind.
 - **Questions it leaves open:** Why did the clock stop? Who owns the suitcase and why leave it? Why is the tag half torn off? Who is the figure watching, and why did they stay?
 - **Consequences that could follow:** A missed connection, a lost chance, a secret in the suitcase, a reunion or a goodbye.
+- **Plausible stories it supports (5):** Mystery: the suitcase belongs to someone who is not who they claim to be, and the watcher has been waiting for them. / Family drama: a child missed the train on purpose to stay behind with the grandparent who is still on the platform. / Gentle comedy: a disorganised traveller runs for the train, loses the scarf and the tag, and has to chase it by taxi. / Time story: the stopped clock is why everyone is late, and the station-master has to decide whether to fix it or leave it. / Reflective: the watcher is the person left behind, and the story is about saying goodbye.
+- **Leading-ness check:** prompt is the neutral "Write a story based on the picture below."; the checklist names objects to ground the story in but no outcome; the alt text describes only what is visible. Verdict: the task does not point to one predetermined story.
 - **Honest weakness:** Stopped clock plus lone suitcase is a familiar 'mystery' pattern, so many children may choose the same story (the suitcase has a secret). The scarf and the circled ticket give less common routes.
 
 ## 6. The Last Bus
@@ -92,6 +94,8 @@
 - **Relationships it suggests:** The child and the person watching; whoever sent the parcel; the bus driver.
 - **Questions it leaves open:** Where did the small footprints go? Who is the parcel for? What does the hurried note say? Why is the bus sign blank?
 - **Consequences that could follow:** A delivery completed, someone found, a warning understood or ignored, a journey begun.
+- **Plausible stories it supports (5):** Quiet adventure: a child, lost in the snow, follows the last bus to find the way home. / Kindness story: the parcel is a gift that has to reach someone tonight; a stranger helps. / Mystery: the blank sign means the bus is not the one it seems; the child decides whether to board. / Family story: the figure at the window is a grandparent waiting for someone who has not arrived. / Realistic everyday: a child is delivering the parcel and has lost a mitten on the way.
+- **Leading-ness check:** prompt is the neutral "Write a story based on the picture below."; the checklist names objects to ground the story in but no outcome; the alt text describes only what is visible. Verdict: the task does not point to one predetermined story.
 - **Honest weakness:** Footprints 'in but not out' is the strongest hook; make sure a child can see it at a small size. The mitten and note carry little visual detail at phone width.
 
 ## 7. After Closing Time
@@ -112,4 +116,16 @@
 - **Relationships it suggests:** The visitor and the librarian (or the narrator); whoever the key belongs to.
 - **Questions it leaves open:** What does the key open? Why that book? Who left the window open? Why leave the torch shining?
 - **Consequences that could follow:** A hidden thing found, a secret revealed, a friendship tested, a mistake discovered.
+- **Plausible stories it supports (5):** Mystery: someone climbed in for a particular book, and the key opens something hidden in the school. / Fantasy: the book is a doorway, the key is the way in, and the night is when it opens. / Realistic: a pupil locked out of their own project slipped in to retrieve it and must explain in the morning. / Humour: the librarian's cat, the ladder and the torch are the culprit. / Moral dilemma: the finder discovers who it was and must decide whether to tell.
+- **Leading-ness check:** prompt is the neutral "Write a story based on the picture below."; the checklist names objects to ground the story in but no outcome; the alt text describes only what is visible. Verdict: the task does not point to one predetermined story.
 - **Honest weakness:** The obvious reading is 'a burglar'. The key in the book and the single misplaced book are what lift it above that, which is why the drawing makes them prominent.
+
+## Sealed Mock Form B Q2 (not Practice): The Corner Shop
+
+- **Prompt id (proposed):** `eng-q2-picturenarrative-cornershop`; **type:** picture-led narrative; **Mock only, sealed from Practice**
+- **Exact learner prompt:** "Write a story based on the picture below."
+- **Checklist (same six items as the live Mock Q2):** "Write at least six sentences"; "Base your story genuinely on what the picture shows, not an unrelated idea"; "Include a clear turning point or moment of change, not just a description of the scene"; "Use precise, well-chosen vocabulary"; "Organise your writing into clear paragraphs"; "Check spelling and punctuation carefully"
+- **Image:** `public/mock-assets/q2-picture-narrative/cornershop-v1.svg` (view it in the HTML pack). **Alt text:** A small corner shop on a dark street at night. A sign hanging in the door says CLOSED, but the lights are still on at the back of the shop, and the shadow of a person can be seen on the blind. The shop door is open a few centimetres, with a small bell hanging above it. A trail of brightly wrapped sweets leads from the doorway across the pavement, and a broken glass jar lies on its side just inside. A child's bicycle has been dropped on the pavement beside the door, its front wheel still spinning. A small dog is tied to the lamp post and is staring at the door, with a loose lead trailing on the ground. A handwritten note is taped to the inside of the window, but the writing is too small and smudged to read.
+- **Plausible stories it supports (5):** Mystery: whose bicycle is it, and who is behind the blind? / Comic: the dog escaped, ran in, knocked over the jar and the owner is chasing it. / Realistic: a child dropped in for sweets, took fright at something and ran. / Kindness: the shopkeeper has stayed late to prepare something for the community. / Moral dilemma: a child sees the trail of sweets and has to choose whether to tell.
+- **Leading-ness check:** neutral prompt; objects named only in the alt text; no outcome implied. Verdict: multiple plausible narratives.
+- **Status:** draft awaiting your visual and educational approval. Registers nowhere until approved; must never enter Practice.

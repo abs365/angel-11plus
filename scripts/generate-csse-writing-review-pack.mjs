@@ -21,6 +21,43 @@ const EXISTING = {
   negative: "The Riverboat at Dawn (REJECTED: 'there is nothing to write with the picture')",
 };
 
+
+// Distinct story directions each picture supports (the "multiple plausible narratives" check). A picture passes only if
+// at least four genuinely different stories (different genre, tone or central character) can be told from it.
+const NARRATIVES = {
+  "eng-csse-writing-picturenarrative-stationclock-01": [
+    "Mystery: the suitcase belongs to someone who is not who they claim to be, and the watcher has been waiting for them.",
+    "Family drama: a child missed the train on purpose to stay behind with the grandparent who is still on the platform.",
+    "Gentle comedy: a disorganised traveller runs for the train, loses the scarf and the tag, and has to chase it by taxi.",
+    "Time story: the stopped clock is why everyone is late, and the station-master has to decide whether to fix it or leave it.",
+    "Reflective: the watcher is the person left behind, and the story is about saying goodbye.",
+  ],
+  "eng-csse-writing-picturenarrative-lastbus-01": [
+    "Quiet adventure: a child, lost in the snow, follows the last bus to find the way home.",
+    "Kindness story: the parcel is a gift that has to reach someone tonight; a stranger helps.",
+    "Mystery: the blank sign means the bus is not the one it seems; the child decides whether to board.",
+    "Family story: the figure at the window is a grandparent waiting for someone who has not arrived.",
+    "Realistic everyday: a child is delivering the parcel and has lost a mitten on the way.",
+  ],
+  "eng-csse-writing-picturenarrative-afterclosing-01": [
+    "Mystery: someone climbed in for a particular book, and the key opens something hidden in the school.",
+    "Fantasy: the book is a doorway, the key is the way in, and the night is when it opens.",
+    "Realistic: a pupil locked out of their own project slipped in to retrieve it and must explain in the morning.",
+    "Humour: the librarian's cat, the ladder and the torch are the culprit.",
+    "Moral dilemma: the finder discovers who it was and must decide whether to tell.",
+  ],
+  "treehouse-benchmark": [
+    "Mystery of who is in the treehouse.", "Two children, two sets of footprints, one secret.", "The magpie as a witness.", "A rescue or a lost-and-found story.", "A family story about whose bag it is.",
+  ],
+  "cornershop-mock": [
+    "Mystery: whose bicycle is it, and who is behind the blind?",
+    "Comic: the dog escaped, ran in, knocked over the jar and the owner is chasing it.",
+    "Realistic: a child dropped in for sweets, took fright at something and ran.",
+    "Kindness: the shopkeeper has stayed late to prepare something for the community.",
+    "Moral dilemma: a child sees the trail of sweets and has to choose whether to tell.",
+  ],
+};
+
 const REVIEW = {
   "eng-csse-writing-proudofother-01": {
     purpose: "Reflective writing that turns outward: the writer must describe someone else's achievement and explain their own feeling. Practises choosing one real moment, giving concrete detail, and explaining WHY (the 'reflective' half of CSSE Question 1).",
@@ -95,7 +132,7 @@ for (const p of CSSE_WRITING_EXPANSION) {
 const treehouse = fs.readFileSync("public/practice-assets/writing-picture-narrative/treehouselantern-v1.svg", "utf8");
 
 const md = [];
-md.push("# Writing prompts: Founder review pack (7 candidates, migration 268 NOT applied)", "");
+md.push("# Writing prompts: FINAL image-and-prompt review pack (7 Practice candidates + 1 sealed Mock candidate; migration 268 NOT applied)", "");
 md.push("**Nothing is registered, applied or published.** Open `scripts/output/csse-writing-expansion/review-pack.html` in a browser to **see the three drawings** (the text below is the same content without images).", "");
 md.push("**Your decision per prompt:** approve / amend / reject. Picture-led prompts also need your **visual approval of the drawing**. Rejections stay candidates.", "");
 md.push("**Standard applied (Treehouse Lantern):** the picture must generate events, decisions, relationships, questions or consequences; it must not merely give the writer objects to describe. The rejected Riverboat remains negative evidence and is not reintroduced.", "");
@@ -117,7 +154,7 @@ h1{color:var(--navy);font-size:26px}h2{color:var(--navy);font-size:21px;margin-t
 .bad{border-left:4px solid #b3412e;background:#fbeeea;padding:10px 14px;border-radius:0 8px 8px 0}
 ul{margin:4px 0 4px 20px;padding:0}
 </style></head><body><main>`);
-html.push(`<h1>Writing prompts: Founder review pack</h1>
+html.push(`<h1>Writing prompts: final image-and-prompt review pack</h1><p>Each picture is shown with its exact learner prompt, as one educational unit, with the stories it supports and a leading-ness check. The Treehouse Lantern (approved, live) is the benchmark.</p>
 <p><strong>Seven candidates. Nothing is registered, applied or published.</strong> Decide per prompt: approve, amend or reject. For each picture, judge the drawing itself.</p>
 <p><strong>Standard (Treehouse Lantern):</strong> a picture must generate events, decisions, relationships, questions or consequences, not just objects to describe. The rejected Riverboat is negative evidence.</p>
 <div class="card"><h2>Benchmark: The Treehouse Lantern (approved)</h2><div class="img">${treehouse}</div>
@@ -151,6 +188,8 @@ for (const p of CSSE_WRITING_EXPANSION) {
     md.push(`- **Relationships it suggests:** ${r.relationships}`);
     md.push(`- **Questions it leaves open:** ${r.questions}`);
     md.push(`- **Consequences that could follow:** ${r.consequences}`);
+    md.push(`- **Plausible stories it supports (${NARRATIVES[p.id].length}):** ${NARRATIVES[p.id].join(" / ")}`);
+    md.push(`- **Leading-ness check:** prompt is the neutral "Write a story based on the picture below."; the checklist names objects to ground the story in but no outcome; the alt text describes only what is visible. Verdict: the task does not point to one predetermined story.`);
     md.push(`- **Honest weakness:** ${r.weakness}`);
   }
   md.push("");
@@ -163,10 +202,31 @@ for (const p of CSSE_WRITING_EXPANSION) {
   if (picture) rows.push(["Cues named", p.narrativeFootholds.join("; ")], ["Events it implies", r.events], ["Decisions it offers", r.decisions], ["Relationships it suggests", r.relationships], ["Questions it leaves open", r.questions], ["Consequences that could follow", r.consequences]);
   for (const [k, v] of rows) html.push(`<dt>${esc(k)}</dt><dd>${esc(v)}</dd>`);
   html.push("</dl>");
-  if (picture) html.push(`<div class="bad"><strong>Honest weakness:</strong> ${esc(r.weakness)}</div></div></div>`);
+  if (picture) html.push(`<p><strong>Plausible stories it supports:</strong></p><ul>${NARRATIVES[p.id].map((n) => `<li>${esc(n)}</li>`).join("")}</ul><p><strong>Leading-ness check:</strong> the prompt is neutral, the checklist names objects but no outcome, the alt text describes only what is visible. The task does not point to one predetermined story.</p><div class="bad"><strong>Honest weakness:</strong> ${esc(r.weakness)}</div></div></div>`);
   html.push(`<p><strong>Learner checklist:</strong></p><ul>${p.checklist.map((c) => `<li>${esc(c)}</li>`).join("")}</ul>`);
   html.push(`<p><strong>Your decision:</strong> approve / amend / reject${picture ? " (and approve / amend / reject the drawing)" : ""}</p></section>`);
 }
+
+// ---- Sealed Mock Form B Q2 (not a Practice prompt): Corner Shop, paired image + exact prompt ----
+const csSvg = fs.readFileSync("public/mock-assets/q2-picture-narrative/cornershop-v1.svg", "utf8");
+const csAlt = csSvg.match(/<desc[^>]*>([\s\S]*?)<\/desc>/)[1].trim();
+const csChecklist = [
+  "Write at least six sentences",
+  "Base your story genuinely on what the picture shows, not an unrelated idea",
+  "Include a clear turning point or moment of change, not just a description of the scene",
+  "Use precise, well-chosen vocabulary",
+  "Organise your writing into clear paragraphs",
+  "Check spelling and punctuation carefully",
+];
+md.push("## Sealed Mock Form B Q2 (not Practice): The Corner Shop", "");
+md.push("- **Prompt id (proposed):** `eng-q2-picturenarrative-cornershop`; **type:** picture-led narrative; **Mock only, sealed from Practice**");
+md.push('- **Exact learner prompt:** "Write a story based on the picture below."');
+md.push(`- **Checklist (same six items as the live Mock Q2):** ${csChecklist.map((c) => `"${c}"`).join("; ")}`);
+md.push(`- **Image:** \`public/mock-assets/q2-picture-narrative/cornershop-v1.svg\` (view it in the HTML pack). **Alt text:** ${csAlt}`);
+md.push(`- **Plausible stories it supports (${NARRATIVES["cornershop-mock"].length}):** ${NARRATIVES["cornershop-mock"].join(" / ")}`);
+md.push("- **Leading-ness check:** neutral prompt; objects named only in the alt text; no outcome implied. Verdict: multiple plausible narratives.");
+md.push("- **Status:** draft awaiting your visual and educational approval. Registers nowhere until approved; must never enter Practice.", "");
+html.push(`<section class="card"><h2>Sealed Mock Form B Q2 (not Practice): The Corner Shop</h2><p><span class="tag pic">Picture-led narrative, Mock only</span><span class="tag">eng-q2-picturenarrative-cornershop (proposed)</span></p><div class="prompt"><strong>Exact learner prompt:</strong> Write a story based on the picture below.</div><div class="pair"><div class="img">${csSvg}<p class="cap">Drawing for approval. Alt text: ${esc(csAlt)}</p></div><div><p><strong>Plausible stories it supports:</strong></p><ul>${NARRATIVES["cornershop-mock"].map((n) => `<li>${esc(n)}</li>`).join("")}</ul><p><strong>Leading-ness check:</strong> neutral prompt; no outcome implied.</p><p><strong>Checklist:</strong></p><ul>${csChecklist.map((c) => `<li>${esc(c)}</li>`).join("")}</ul></div></div><p><strong>Your decision:</strong> approve / amend / reject the drawing and the prompt. Never to enter Practice.</p></section>`);
 html.push("</main></body></html>");
 
 fs.mkdirSync("scripts/output/csse-writing-expansion", { recursive: true });
