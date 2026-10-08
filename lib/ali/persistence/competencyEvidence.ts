@@ -1,6 +1,7 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Database } from "@/types/supabase";
 import type { QuestionEvidenceInput } from "@/types/ali/confidence";
+import { normaliseStemForNearDuplicateCheck } from "@/lib/ali/antiMemorisationChecks";
 
 /**
  * Work Package WP-17 (IWP-002) — the real aggregation query feeding
@@ -39,6 +40,8 @@ interface QuestionMeta {
   mastery_threshold: number;
   confidence_weight: number;
   family_id?: string | null;
+  /** prompt->>question, aliased in the select -- feeds the skeleton key. */
+  stem?: string | null;
 }
 interface HistoryRow {
   question_id: string;
@@ -72,6 +75,7 @@ export function mergeQuestionsWithHistory(
       masteryThreshold: q.mastery_threshold,
       confidenceWeight: q.confidence_weight,
       familyId: q.family_id ?? null,
+      skeletonKey: q.stem ? normaliseStemForNearDuplicateCheck(q.stem) : null,
       // Stage 2 Educational Integrity Correction (migration 076) — see
       // lib/ali/persistence/educationalStateRuntime.ts's identical mapping
       // for the full rationale; both functions read the same table and
@@ -90,7 +94,7 @@ export async function fetchCompetencyEvidence(
 
   const { data: questions, error: questionsError } = await supabase
     .from("ali_question_bank")
-    .select("id, mastery_threshold, confidence_weight, family_id")
+    .select<string, QuestionMeta>("id, mastery_threshold, confidence_weight, family_id, stem:prompt->>question")
     .in("skill", skillCodes);
 
   if (questionsError || !questions || questions.length === 0) {

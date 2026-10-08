@@ -38,6 +38,12 @@ export interface QuestionEvidenceInput {
    * Used so competency mastery cannot rest on repeated success with one question or one family.
    */
   familyId?: string | null;
+  /**
+   * Normalised question stem (lib/ali/antiMemorisationChecks.ts normaliseStemForNearDuplicateCheck: numbers
+   * replaced by "#"). Two questions sharing a family AND this key are the same skeleton with new numbers.
+   * Optional: absent means the question is treated as its own skeleton.
+   */
+  skeletonKey?: string | null;
 }
 
 export interface CompetencyConfidenceInput {

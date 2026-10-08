@@ -30,9 +30,33 @@ test("threshold met in two different families validates", () => {
   assert.equal(r.validated, true);
 });
 
-test("a competency with only one family can still be validated (cannot demand structure that does not exist)", () => {
-  const r = validateCompetencyMastery({ competencyCode: "X", questions: [q("a", "only", 2), q("b", "only", 0)] });
-  assert.equal(r.validated, true);
+test("a single-family pool needs two DISTINCT skeletons: the same stem with new numbers counts once", () => {
+  const sk = (id: string, key: string, sessions: number) => q(id, "only", sessions, { skeletonKey: key });
+  const sameSkeleton = validateCompetencyMastery({ competencyCode: "X", questions: [sk("a", "cost of # then #", 2), sk("b", "cost of # then #", 2)] });
+  assert.equal(sameSkeleton.validated, false);
+  assert.equal(sameSkeleton.grade, "developing");
+  const differentSkeletons = validateCompetencyMastery({ competencyCode: "X", questions: [sk("a", "cost of # then #", 2), sk("b", "reverse the percentage #", 2)] });
+  assert.equal(differentSkeletons.validated, true);
+});
+
+test("a pool that can never offer two structures stays DEVELOPING, never validated (provisional, not durable)", () => {
+  const r = validateCompetencyMastery({ competencyCode: "X", questions: [q("a", "only", 5, { skeletonKey: "s" })] });
+  assert.equal(r.validated, false);
+  assert.equal(r.grade, "developing");
+});
+
+test("grade distinguishes none / developing / validated and exposes the breadth used", () => {
+  assert.equal(validateCompetencyMastery({ competencyCode: "X", questions: [q("a", "f1", 0), q("b", "f2", 0)] }).grade, "none");
+  const dev = validateCompetencyMastery({ competencyCode: "X", questions: [q("a", "f1", 3), q("b", "f2", 0)] });
+  assert.equal(dev.grade, "developing");
+  assert.deepEqual(dev.breadth, { familiesMet: 1, skeletonsMet: 1, familiesInPool: 2, familiesRequired: 2 });
+  assert.equal(validateCompetencyMastery({ competencyCode: "X", questions: [q("a", "f1", 2), q("b", "f2", 2)] }).grade, "validated");
+});
+
+test("supported-correct answers never reach the breadth check: a question only counts once its independent sessions meet the threshold", () => {
+  // distinctCorrectSessions is independent-only by construction (lib/ali/mastery.ts applyAttemptOutcome).
+  const r = validateCompetencyMastery({ competencyCode: "X", questions: [q("a", "f1", 1), q("b", "f2", 1)] });
+  assert.equal(r.validated, false);
 });
 
 test("questions without a family count as their own structure", () => {

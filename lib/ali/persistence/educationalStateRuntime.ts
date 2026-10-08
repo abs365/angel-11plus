@@ -1,3 +1,4 @@
+import { normaliseStemForNearDuplicateCheck } from "@/lib/ali/antiMemorisationChecks";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Database } from "@/types/supabase";
 import type { EducationalStateQuestionEvidence, EducationalState } from "@/types/ali/educationalState";
@@ -41,6 +42,7 @@ interface StateQuestionMeta {
   mastery_threshold: number;
   confidence_weight: number;
   family_id?: string | null;
+  stem?: string | null;
 }
 
 /**
@@ -93,7 +95,7 @@ async function fetchCompetencyStateEvidence(
 
   const { data: questions, error: questionsError } = await supabase
     .from("ali_question_bank")
-    .select("id, mastery_threshold, confidence_weight, family_id")
+    .select<string, StateQuestionMeta>("id, mastery_threshold, confidence_weight, family_id, stem:prompt->>question")
     .in("skill", skillCodes);
 
   if (questionsError || !questions || questions.length === 0) {
@@ -132,6 +134,7 @@ async function fetchCompetencyStateEvidence(
       masteryThreshold: q.mastery_threshold,
       confidenceWeight: q.confidence_weight,
       familyId: q.family_id ?? null,
+      skeletonKey: q.stem ? normaliseStemForNearDuplicateCheck(q.stem) : null,
       lastAttemptCorrect: row?.last_attempt_correct ?? null,
       // Stage 2 Educational Integrity Correction — undefined (column not
       // yet migrated) and null (no attempt yet, or a genuine pre-migration

@@ -117,3 +117,22 @@ Live behaviour (Practice only; Mock and Writing untouched): 1st wrong in a famil
 note); 2nd → worked reasoning on a separate fixed scenario; 3rd → explicit re-teaching with a link to the full lesson where one exists
 (otherwise worked reasoning). After any wrong answer the next item comes from a different family where one remains
 (same competency preferred). The live question's answer is never shown by the ladder. Angel does not claim to know *why* an answer was wrong.
+
+## Priority 2 — mastery semantics (inc 5)
+
+Principle: mastery is evidence of the skill, not memory of a question or family. The strongest evidence already in the
+architecture is used; no new threshold was invented — the existing per-question independent-session threshold
+(`mastery_threshold`, independent attempts only) is unchanged, and the new rule only widens *where* it must be met.
+
+| Layer | Rule | Source |
+|---|---|---|
+| Question | threshold distinct **independent** sessions, supported-correct never counts | `lib/ali/mastery.ts` (unchanged) |
+| Competency **validated** | threshold met in ≥2 question families (multi-family pool); single-family pool needs ≥2 distinct **skeletons** (normalised stem, numbers → `#`); pool that cannot offer two structures stays **developing** | `lib/ali/masteryValidation.ts` + `normaliseStemForNearDuplicateCheck` (existing) |
+| Competency **durable** | `validated` + survived a ≥14-day maintenance review + transfer corroboration where a link exists | `lib/ali/durableMastery.ts` (unchanged; inherits the stronger `validated`) |
+| Labels | unvalidated "mastered" already surfaces as *reinforcing* (provisional); validated as *mastered*; durable as *durably mastered* | `lib/ali/educationalState.ts` (unchanged) |
+| Writing | excluded: always supported tier | unchanged |
+
+Result type now exposes `grade` (none / developing / validated) and the breadth used. Live-data blast radius (read-only
+query, all profiles incl. test accounts): of 16 learner×competency masteries, 10 meet the breadth rule and 6 would
+show as developing instead — the intended correction. Not changed (and why): "unfamiliar transfer" and "delayed
+retrieval" are already conditions of *durable* mastery rather than of *validated*, so they were not duplicated.
