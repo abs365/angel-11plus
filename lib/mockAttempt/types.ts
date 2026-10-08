@@ -137,7 +137,26 @@ export interface MockAngleFigureStimulus {
   angles: { size: number; shown: string }[];
 }
 
-export type MockStimulus = MockTableStimulus | MockImageStimulus | MockBarChartStimulus | MockCoordinateGridStimulus | MockAngleFigureStimulus;
+/**
+ * Number line (CSSE Completion, representation priority 3, justified by QT-MR-14 precision/rounding and QT-MR-03 scale
+ * reading, both thin and prose-only): a horizontal scale with labelled major ticks, unlabelled minor ticks and up to three
+ * marked points. Used where the SKILL is reading a position on a scale, or rounding a read value. Points are drawn from
+ * `value`; tasks that ask the learner to READ a value keep it out of the text, and the text equivalent names the points
+ * but not their values.
+ */
+export interface MockNumberLineStimulus {
+  type: "number-line";
+  title?: string;
+  min: number;
+  max: number;
+  /** Distance between labelled major ticks. min and max are both multiples of it. */
+  majorStep: number;
+  /** Minor ticks per major interval: 1 (none), 2, 5 or 10. */
+  minorDivisions: number;
+  points: { label: string; value: number }[];
+}
+
+export type MockStimulus = MockTableStimulus | MockImageStimulus | MockBarChartStimulus | MockCoordinateGridStimulus | MockAngleFigureStimulus | MockNumberLineStimulus;
 
 /**
  * The exact, hand-picked field set mock_get_question() (migration 070,

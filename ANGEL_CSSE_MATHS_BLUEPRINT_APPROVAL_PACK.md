@@ -1,6 +1,6 @@
 # CSSE Maths candidates: final blueprint-level approval pack
 
-**356 candidates, 35 blueprints. Nothing has been submitted, approved or published.** Governance model (agreed): you review every blueprint, representative samples, difficulty bands, every new representation type, edge cases, diversity warnings and validation failures. You are **not** asked to approve individual permutations. Open `scripts/output/csse-maths-approval-pack/approval-pack.html` to see samples with the real table and chart rendering.
+**380 candidates, 38 blueprints. Nothing has been submitted, approved or published.** Governance model (agreed): you review every blueprint, representative samples, difficulty bands, every new representation type, edge cases, diversity warnings and validation failures. You are **not** asked to approve individual permutations. Open `scripts/output/csse-maths-approval-pack/approval-pack.html` to see samples with the real table and chart rendering.
 
 ## How to decide
 
@@ -45,8 +45,11 @@ For each blueprint choose: **approve** (publish the prepared volume), **approve 
 | mr03-bp-fig-straight-line-find-x | MR-03 | mr03-angle-sum | 8 | easy 3, medium 3, hard 2 | angle_figure | 2132 | MODERATE | 8 |
 | mr03-bp-fig-around-point-find-x | MR-03 | mr03-angle-sum | 8 | medium 3, easy 3, hard 2 | angle_figure | 3978 | LOW | 8 |
 | mr03-bp-fig-isosceles-find-base | MR-03 | mr03-angle-sum | 8 | hard 4, medium 4 | angle_figure | 180 | HIGHER | 8 |
+| mr01-bp-numberline-read-value | MR-01 | mr01-scale-reading | 8 | hard 3, medium 3, easy 2 | number_line | 3706 | LOW | 8 |
+| mr01-bp-numberline-difference | MR-01 | mr01-scale-reading | 8 | hard 4, medium 4 | number_line | 3878 | LOW | 8 |
+| mr06-bp-numberline-read-then-round | MR-06 | precision-dec | 8 | medium 4, hard 4 | number_line | 3456 | LOW | 8 |
 
-**Recommended publish volume if every blueprint is approved as recommended: 350 of 356** (practice-eligible 901 to 1251). Volume is a result, not a target.
+**Recommended publish volume if every blueprint is approved as recommended: 374 of 380** (practice-eligible 901 to 1275). Volume is a result, not a target.
 
 ## Representation and semantic audit (every table and chart type)
 
@@ -92,14 +95,22 @@ Titles, captions, headers, units, scales and question wording were audited **tog
 | grid-fourth-vertex | grid_complete_parallelogram | Coordinate grid | x -5..5, y -5..5; points A, B, C | A, B and C are three corners of a parallelogram ABCD, in that order. What are the coordinates of corner D? Give your answer in the form (x, y). |
 | grid-fourth-vertex | grid_complete_rectangle | Coordinate grid | x -5..5, y -5..5; points A, B, C | A, B and C are three corners of a rectangle ABCD, in that order. What are the coordinates of corner D? Give your answer in the form (x, y). |
 | grid-midpoint-of-segment | grid_segment_midpoint | Coordinate grid | x -8..8, y -8..8; points A, B | A and B are the ends of the line segment on the grid. What are the coordinates of the midpoint of AB? Give your answer in the form (x, y). |
-| fig-triangle-find-x | fig_triangle | undefined | triangle: x, 20°, 51° | The diagram shows a triangle. Work out the size of angle x. Give your answer in degrees. |
-| fig-straight-line-find-x | fig_straight_line_2_angles | undefined | straight-line: 139°, x | The diagram shows angles on a straight line. Work out the size of angle x. Give your answer in degrees. |
-| fig-straight-line-find-x | fig_straight_line_3_angles | undefined | straight-line: x, 116°, 34° | The diagram shows angles on a straight line. Work out the size of angle x. Give your answer in degrees. |
-| fig-straight-line-find-x | fig_straight_line_4_angles | undefined | straight-line: 61°, 56°, x, 18° | The diagram shows angles on a straight line. Work out the size of angle x. Give your answer in degrees. |
-| fig-around-point-find-x | fig_around_point_5_angles | undefined | around-point: 55°, 58°, 109°, x, 77° | The diagram shows angles around a point. Work out the size of angle x. Give your answer in degrees. |
-| fig-around-point-find-x | fig_around_point_3_angles | undefined | around-point: 142°, 114°, x | The diagram shows angles around a point. Work out the size of angle x. Give your answer in degrees. |
-| fig-around-point-find-x | fig_around_point_4_angles | undefined | around-point: 105°, 114°, 46°, x | The diagram shows angles around a point. Work out the size of angle x. Give your answer in degrees. |
-| fig-isosceles-find-base | fig_isosceles_base | undefined | triangle: x, 106°, x | The diagram shows a triangle. The two angles marked x are equal. Work out the size of angle x. Give your answer in degrees. |
+| fig-triangle-find-x | fig_triangle | (no title) | triangle: x, 20°, 51° | The diagram shows a triangle. Work out the size of angle x. Give your answer in degrees. |
+| fig-straight-line-find-x | fig_straight_line_2_angles | (no title) | straight-line: 139°, x | The diagram shows angles on a straight line. Work out the size of angle x. Give your answer in degrees. |
+| fig-straight-line-find-x | fig_straight_line_3_angles | (no title) | straight-line: x, 116°, 34° | The diagram shows angles on a straight line. Work out the size of angle x. Give your answer in degrees. |
+| fig-straight-line-find-x | fig_straight_line_4_angles | (no title) | straight-line: 61°, 56°, x, 18° | The diagram shows angles on a straight line. Work out the size of angle x. Give your answer in degrees. |
+| fig-around-point-find-x | fig_around_point_5_angles | (no title) | around-point: 55°, 58°, 109°, x, 77° | The diagram shows angles around a point. Work out the size of angle x. Give your answer in degrees. |
+| fig-around-point-find-x | fig_around_point_3_angles | (no title) | around-point: 142°, 114°, x | The diagram shows angles around a point. Work out the size of angle x. Give your answer in degrees. |
+| fig-around-point-find-x | fig_around_point_4_angles | (no title) | around-point: 105°, 114°, 46°, x | The diagram shows angles around a point. Work out the size of angle x. Give your answer in degrees. |
+| fig-isosceles-find-base | fig_isosceles_base | (no title) | triangle: x, 106°, x | The diagram shows a triangle. The two angles marked x are equal. Work out the size of angle x. Give your answer in degrees. |
+| numberline-read-value | numberline_read_10_steps | (no title) | 1..7, major 1, 10 steps; points P | What number does the arrow marked P point to? |
+| numberline-read-value | numberline_read_2_steps | (no title) | 1.2..2, major 0.2, 2 steps; points P | What number does the arrow marked P point to? |
+| numberline-read-value | numberline_read_5_steps | (no title) | 60..130, major 10, 5 steps; points P | What number does the arrow marked P point to? |
+| numberline-difference | numberline_difference | (no title) | 10..18, major 2, 10 steps; points A, B | The arrows marked A and B point to two numbers. How much greater is B than A? |
+| numberline-read-then-round | numberline_round_100 | (no title) | 400..900, major 100, 5 steps; points P | The arrow marked P points to a number. Round this number to the nearest 100. |
+| numberline-read-then-round | numberline_round_10 | (no title) | -20..60, major 10, 10 steps; points P | The arrow marked P points to a number. Round this number to the nearest 10. |
+| numberline-read-then-round | numberline_round_tenth | (no title) | 0.2..0.9, major 0.1, 10 steps; points P | The arrow marked P points to a number. Round this number to the nearest tenth. |
+| numberline-read-then-round | numberline_round_whole_number | (no title) | -4..1, major 1, 5 steps; points P | The arrow marked P points to a number. Round this number to the nearest whole number. |
 
 ## Diversity warnings (the gate's own classification of each family's prepared batch)
 
@@ -117,6 +128,8 @@ Titles, captions, headers, units, scales and question wording were audited **tog
 | mr01-average-mean | 2 | 16 | HIGH | 0.50 |
 | mr03-coordinate | 5 | 40 | LOW | 0.20 |
 | mr03-angle-sum | 4 | 32 | MEDIUM | 0.25 |
+| mr01-scale-reading | 2 | 16 | HIGH | 0.50 |
+| precision-dec | 1 | 8 | CRITICAL | 1.00 |
 
 The gate rates any batch of two or fewer blueprints HIGH or CRITICAL by its own rule. That is why volumes are modest and why a third structure per family should come before scaling a family. It is a warning, not a defect in any single question.
 
@@ -774,5 +787,62 @@ Independent-oracle tests (answers re-derived by simulation, scan, string-digit r
   - _medium band_ — The diagram shows a triangle. The two angles marked x are equal. Work out the size of angle x. Give your answer in degrees. [angle-figure: {"figure":"triangle","angles":["x","70°","x"]}] → **55**. The angles in a triangle add up to 180° The two angles x are equal, so 2x = 180 - 70 = 110 x = 110 / 2 = 55
   - _edge: smallest answer generated_ — The diagram shows a triangle. The two angles marked x are equal. Work out the size of angle x. Give your answer in degrees. [angle-figure: {"figure":"triangle","angles":["x","x","140°"]}] → **20**. The angles in a triangle add up to 180° The two angles x are equal, so 2x = 180 - 140 = 40 x = 40 / 2 = 20
   - _edge: largest answer generated_ — The diagram shows a triangle. The two angles marked x are equal. Work out the size of angle x. Give your answer in degrees. [angle-figure: {"figure":"triangle","angles":["x","x","20°"]}] → **80**. The angles in a triangle add up to 180° The two angles x are equal, so 2x = 180 - 20 = 160 x = 160 / 2 = 80
+
+- **Founder decision:** approve / approve with cap / amend / reject
+
+## Number-line set (new representation: number line)
+
+### mr01-bp-numberline-read-value
+
+- **Competency / family / skill:** MR-01 / `mr01-scale-reading` / QT-MR-03  |  **Representation:** number_line  |  **Prepared:** 8  |  **Difficulty:** hard 3, medium 3, easy 2
+- **Purpose:** Read the value an arrow points to on a scale where only the major marks are labelled, working out the size of each small step (including decimal scales and negative ranges).
+- **Misconception targeted:** reading each small step as one whole unit, or as the same size as the labelled gap
+- **Structural difference from existing material:** Reading a pointer between labelled marks, working out the small-step size (2, 5 or 10 steps per gap, decimal and negative scales). The value is never in the text. QT-MR-03 currently has 5 prose items and no visual.
+- **Transfer value:** High. Scale reading is a real exam skill and the competency is thin.
+- **Deterministic validation (live run, 600 generated):** 600/600 passed range, constraint and answer re-derivation; 598/600 also passed the duplicate check (rejections: exact_duplicate_within_batch 2). Independent-oracle tests for this blueprint are in the test suite named in the pack footer.
+- **Diversity check:** 3706 distinct questions in 4000 draws (LOW); 3 context tag(s) in the prepared set. Large space: scale, range, steps and arrow all vary. Some arrows fall on a labelled mark (easy tier).
+- **Recommended publish volume:** 8 of 8
+- **Representative samples:**
+  - _hard band_ — What number does the arrow marked P point to? [number-line: {"min":1,"max":7,"majorStep":1,"minorDivisions":10,"points":[{"label":"P","value":6.1}]}] → **6.1**. The labelled marks are 1 apart and there are 10 equal steps between them, so each small step is 0.1. Start at 1 and count 51 small steps to the arrow: 1 + 51 × 0.1 = 6.1.
+  - _medium band_ — What number does the arrow marked P point to? [number-line: {"min":1.2,"max":2,"majorStep":0.2,"minorDivisions":2,"points":[{"label":"P","value":1.7}]}] → **1.7**. The labelled marks are 0.2 apart and there are 2 equal steps between them, so each small step is 0.1. Start at 1.2 and count 5 small steps to the arrow: 1.2 + 5 × 0.1 = 1.7.
+  - _easy band_ — What number does the arrow marked P point to? [number-line: {"min":0.5,"max":1.3,"majorStep":0.1,"minorDivisions":2,"points":[{"label":"P","value":0.9}]}] → **0.9**. The labelled marks are 0.1 apart and there are 2 equal steps between them, so each small step is 0.05. Start at 0.5 and count 8 small steps to the arrow: 0.5 + 8 × 0.05 = 0.9.
+  - _edge: smallest answer generated_ — What number does the arrow marked P point to? [number-line: {"min":-400,"max":200,"majorStep":100,"minorDivisions":10,"points":[{"label":"P","value":-370}]}] → **-370**. The labelled marks are 100 apart and there are 10 equal steps between them, so each small step is 10. Start at -400 and count 3 small steps to the arrow: -400 + 3 × 10 = -370.
+  - _edge: largest answer generated_ — What number does the arrow marked P point to? [number-line: {"min":600,"max":1400,"majorStep":100,"minorDivisions":2,"points":[{"label":"P","value":1350}]}] → **1350**. The labelled marks are 100 apart and there are 2 equal steps between them, so each small step is 50. Start at 600 and count 15 small steps to the arrow: 600 + 15 × 50 = 1350.
+
+- **Founder decision:** approve / approve with cap / amend / reject
+
+### mr01-bp-numberline-difference
+
+- **Competency / family / skill:** MR-01 / `mr01-scale-reading` / QT-MR-03  |  **Representation:** number_line  |  **Prepared:** 8  |  **Difficulty:** hard 4, medium 4
+- **Purpose:** Read two arrows on the same scale and find how much greater the right-hand one is (a difference of two read values, possibly across zero).
+- **Misconception targeted:** reading the right-hand number minus zero, or counting labelled marks instead of small steps
+- **Structural difference from existing material:** Two arrows read on one scale, then subtracted, sometimes across zero. Neither arrow sits on a labelled mark, so both must be read between marks.
+- **Transfer value:** Medium-high. Combines reading with a difference, a natural exam step.
+- **Deterministic validation (live run, 600 generated):** 600/600 passed range, constraint and answer re-derivation; 598/600 also passed the duplicate check (rejections: exact_duplicate_within_batch 2). Independent-oracle tests for this blueprint are in the test suite named in the pack footer.
+- **Diversity check:** 3878 distinct questions in 4000 draws (LOW); 1 context tag(s) in the prepared set. Large space.
+- **Recommended publish volume:** 8 of 8
+- **Representative samples:**
+  - _hard band_ — The arrows marked A and B point to two numbers. How much greater is B than A? [number-line: {"min":10,"max":18,"majorStep":2,"minorDivisions":10,"points":[{"label":"A","value":12.2},{"label":"B","value":17.8}]}] → **5.6**. Each small step is 0.2. A is 12.2 and B is 17.8. B is 28 small steps to the right of A: 28 × 0.2 = 5.6.
+  - _medium band_ — The arrows marked A and B point to two numbers. How much greater is B than A? [number-line: {"min":-200,"max":200,"majorStep":100,"minorDivisions":2,"points":[{"label":"A","value":50},{"label":"B","value":150}]}] → **100**. Each small step is 50. A is 50 and B is 150. B is 2 small steps to the right of A: 2 × 50 = 100.
+  - _edge: smallest answer generated_ — The arrows marked A and B point to two numbers. How much greater is B than A? [number-line: {"min":0.6,"max":1,"majorStep":0.1,"minorDivisions":10,"points":[{"label":"A","value":0.69},{"label":"B","value":0.71}]}] → **0.02**. Each small step is 0.01. A is 0.69 and B is 0.71. B is 2 small steps to the right of A: 2 × 0.01 = 0.02.
+  - _edge: largest answer generated_ — The arrows marked A and B point to two numbers. How much greater is B than A? [number-line: {"min":600,"max":1400,"majorStep":100,"minorDivisions":5,"points":[{"label":"A","value":660},{"label":"B","value":1240}]}] → **580**. Each small step is 20. A is 660 and B is 1240. B is 29 small steps to the right of A: 29 × 20 = 580.
+
+- **Founder decision:** approve / approve with cap / amend / reject
+
+### mr06-bp-numberline-read-then-round
+
+- **Competency / family / skill:** MR-06 / `precision-dec` / QT-MR-14  |  **Representation:** number_line  |  **Prepared:** 8  |  **Difficulty:** medium 4, hard 4
+- **Purpose:** Read a number from a scale and round it to the nearest labelled mark (nearest tenth, whole number, 10 or 100), with exact halves excluded.
+- **Misconception targeted:** rounding by always taking the lower mark, or rounding to the nearest small step instead of the nearest labelled mark
+- **Structural difference from existing material:** Read an arrow, then round to the nearest labelled mark (tenth, whole number, 10 or 100). Exact halves are excluded so there is no tie to break. QT-MR-14 has 12 prose items, none with a scale.
+- **Transfer value:** High. The number line is the natural representation for rounding.
+- **Deterministic validation (live run, 600 generated):** 600/600 passed range, constraint and answer re-derivation; 597/600 also passed the duplicate check (rejections: exact_duplicate_within_batch 3). Independent-oracle tests for this blueprint are in the test suite named in the pack footer.
+- **Diversity check:** 3456 distinct questions in 4000 draws (LOW); 4 context tag(s) in the prepared set. Moderate-large space: four rounding units and the scale vary.
+- **Recommended publish volume:** 8 of 8
+- **Representative samples:**
+  - _medium band_ — The arrow marked P points to a number. Round this number to the nearest 100. [number-line: {"min":400,"max":900,"majorStep":100,"minorDivisions":5,"points":[{"label":"P","value":620}]}] → **600**. Each small step is 20, so the arrow points to 620. 620 is between 600 and 700. It is nearer to 600, so the answer is 600.
+  - _hard band_ — The arrow marked P points to a number. Round this number to the nearest 10. [number-line: {"min":-20,"max":60,"majorStep":10,"minorDivisions":10,"points":[{"label":"P","value":-12}]}] → **-10**. Each small step is 1, so the arrow points to -12. -12 is between -20 and -10. It is nearer to -10, so the answer is -10.
+  - _edge: smallest answer generated_ — The arrow marked P points to a number. Round this number to the nearest 100. [number-line: {"min":-400,"max":-100,"majorStep":100,"minorDivisions":5,"points":[{"label":"P","value":-360}]}] → **-400**. Each small step is 20, so the arrow points to -360. -360 is between -400 and -300. It is nearer to -400, so the answer is -400.
+  - _edge: largest answer generated_ — The arrow marked P points to a number. Round this number to the nearest 100. [number-line: {"min":600,"max":1400,"majorStep":100,"minorDivisions":10,"points":[{"label":"P","value":1380}]}] → **1400**. Each small step is 10, so the arrow points to 1380. 1380 is between 1300 and 1400. It is nearer to 1400, so the answer is 1400.
 
 - **Founder decision:** approve / approve with cap / amend / reject

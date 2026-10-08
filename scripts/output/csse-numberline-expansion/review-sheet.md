@@ -1,0 +1,153 @@
+# CSSE number-line expansion (QT-MR-03, QT-MR-14) -- candidates for educational review
+
+All candidates are `pending_review` once submitted. Nothing is published by this package.
+
+## mr01-scale-reading
+
+- **csse-nl-mr01-bp-numberline-read-value-01** [hard; interpretation; numberline_read_10_steps]
+  - Representation: number_line -- number line {"min":1,"max":7,"majorStep":1,"minorDivisions":10,"points":[{"label":"P","value":6.1}]}
+  - Q: What number does the arrow marked P point to?
+  - Answer: 6.1
+  - Working: The labelled marks are 1 apart and there are 10 equal steps between them, so each small step is 0.1. / Start at 1 and count 51 small steps to the arrow: 1 + 51 × 0.1 = 6.1.
+  - Targets: reading each small step as one whole unit, or as the same size as the labelled gap
+- **csse-nl-mr01-bp-numberline-read-value-02** [medium; interpretation; numberline_read_2_steps]
+  - Representation: number_line -- number line {"min":1.2,"max":2,"majorStep":0.2,"minorDivisions":2,"points":[{"label":"P","value":1.7}]}
+  - Q: What number does the arrow marked P point to?
+  - Answer: 1.7
+  - Working: The labelled marks are 0.2 apart and there are 2 equal steps between them, so each small step is 0.1. / Start at 1.2 and count 5 small steps to the arrow: 1.2 + 5 × 0.1 = 1.7.
+  - Targets: reading each small step as one whole unit, or as the same size as the labelled gap
+- **csse-nl-mr01-bp-numberline-read-value-03** [easy; interpretation; numberline_read_2_steps]
+  - Representation: number_line -- number line {"min":0.5,"max":1.3,"majorStep":0.1,"minorDivisions":2,"points":[{"label":"P","value":0.9}]}
+  - Q: What number does the arrow marked P point to?
+  - Answer: 0.9
+  - Working: The labelled marks are 0.1 apart and there are 2 equal steps between them, so each small step is 0.05. / Start at 0.5 and count 8 small steps to the arrow: 0.5 + 8 × 0.05 = 0.9.
+  - Targets: reading each small step as one whole unit, or as the same size as the labelled gap
+- **csse-nl-mr01-bp-numberline-read-value-04** [hard; interpretation; numberline_read_10_steps]
+  - Representation: number_line -- number line {"min":-5,"max":20,"majorStep":5,"minorDivisions":10,"points":[{"label":"P","value":11.5}]}
+  - Q: What number does the arrow marked P point to?
+  - Answer: 11.5
+  - Working: The labelled marks are 5 apart and there are 10 equal steps between them, so each small step is 0.5. / Start at -5 and count 33 small steps to the arrow: -5 + 33 × 0.5 = 11.5.
+  - Targets: reading each small step as one whole unit, or as the same size as the labelled gap
+- **csse-nl-mr01-bp-numberline-read-value-05** [medium; interpretation; numberline_read_2_steps]
+  - Representation: number_line -- number line {"min":0.6,"max":0.9,"majorStep":0.1,"minorDivisions":2,"points":[{"label":"P","value":0.75}]}
+  - Q: What number does the arrow marked P point to?
+  - Answer: 0.75
+  - Working: The labelled marks are 0.1 apart and there are 2 equal steps between them, so each small step is 0.05. / Start at 0.6 and count 3 small steps to the arrow: 0.6 + 3 × 0.05 = 0.75.
+  - Targets: reading each small step as one whole unit, or as the same size as the labelled gap
+- **csse-nl-mr01-bp-numberline-read-value-06** [easy; interpretation; numberline_read_2_steps]
+  - Representation: number_line -- number line {"min":500,"max":1200,"majorStep":100,"minorDivisions":2,"points":[{"label":"P","value":800}]}
+  - Q: What number does the arrow marked P point to?
+  - Answer: 800
+  - Working: The labelled marks are 100 apart and there are 2 equal steps between them, so each small step is 50. / Start at 500 and count 6 small steps to the arrow: 500 + 6 × 50 = 800.
+  - Targets: reading each small step as one whole unit, or as the same size as the labelled gap
+- **csse-nl-mr01-bp-numberline-read-value-07** [hard; interpretation; numberline_read_5_steps]
+  - Representation: number_line -- number line {"min":60,"max":130,"majorStep":10,"minorDivisions":5,"points":[{"label":"P","value":82}]}
+  - Q: What number does the arrow marked P point to?
+  - Answer: 82
+  - Working: The labelled marks are 10 apart and there are 5 equal steps between them, so each small step is 2. / Start at 60 and count 11 small steps to the arrow: 60 + 11 × 2 = 82.
+  - Targets: reading each small step as one whole unit, or as the same size as the labelled gap
+- **csse-nl-mr01-bp-numberline-read-value-08** [medium; interpretation; numberline_read_2_steps]
+  - Representation: number_line -- number line {"min":100,"max":180,"majorStep":20,"minorDivisions":2,"points":[{"label":"P","value":130}]}
+  - Q: What number does the arrow marked P point to?
+  - Answer: 130
+  - Working: The labelled marks are 20 apart and there are 2 equal steps between them, so each small step is 10. / Start at 100 and count 3 small steps to the arrow: 100 + 3 × 10 = 130.
+  - Targets: reading each small step as one whole unit, or as the same size as the labelled gap
+- **csse-nl-mr01-bp-numberline-difference-01** [hard; multi_step_application; numberline_difference]
+  - Representation: number_line -- number line {"min":10,"max":18,"majorStep":2,"minorDivisions":10,"points":[{"label":"A","value":12.2},{"label":"B","value":17.8}]}
+  - Q: The arrows marked A and B point to two numbers. How much greater is B than A?
+  - Answer: 5.6
+  - Working: Each small step is 0.2. A is 12.2 and B is 17.8. / B is 28 small steps to the right of A: 28 × 0.2 = 5.6.
+  - Targets: reading the right-hand number minus zero, or counting labelled marks instead of small steps
+- **csse-nl-mr01-bp-numberline-difference-02** [medium; multi_step_application; numberline_difference]
+  - Representation: number_line -- number line {"min":-200,"max":200,"majorStep":100,"minorDivisions":2,"points":[{"label":"A","value":50},{"label":"B","value":150}]}
+  - Q: The arrows marked A and B point to two numbers. How much greater is B than A?
+  - Answer: 100
+  - Working: Each small step is 50. A is 50 and B is 150. / B is 2 small steps to the right of A: 2 × 50 = 100.
+  - Targets: reading the right-hand number minus zero, or counting labelled marks instead of small steps
+- **csse-nl-mr01-bp-numberline-difference-03** [hard; multi_step_application; numberline_difference]
+  - Representation: number_line -- number line {"min":-40,"max":120,"majorStep":20,"minorDivisions":10,"points":[{"label":"A","value":-24},{"label":"B","value":96}]}
+  - Q: The arrows marked A and B point to two numbers. How much greater is B than A?
+  - Answer: 120
+  - Working: Each small step is 2. A is -24 and B is 96. / B is 60 small steps to the right of A: 60 × 2 = 120.
+  - Targets: reading the right-hand number minus zero, or counting labelled marks instead of small steps
+- **csse-nl-mr01-bp-numberline-difference-04** [medium; multi_step_application; numberline_difference]
+  - Representation: number_line -- number line {"min":300,"max":1100,"majorStep":100,"minorDivisions":2,"points":[{"label":"A","value":350},{"label":"B","value":550}]}
+  - Q: The arrows marked A and B point to two numbers. How much greater is B than A?
+  - Answer: 200
+  - Working: Each small step is 50. A is 350 and B is 550. / B is 4 small steps to the right of A: 4 × 50 = 200.
+  - Targets: reading the right-hand number minus zero, or counting labelled marks instead of small steps
+- **csse-nl-mr01-bp-numberline-difference-05** [hard; multi_step_application; numberline_difference]
+  - Representation: number_line -- number line {"min":1,"max":7,"majorStep":1,"minorDivisions":10,"points":[{"label":"A","value":1.9},{"label":"B","value":5.8}]}
+  - Q: The arrows marked A and B point to two numbers. How much greater is B than A?
+  - Answer: 3.9
+  - Working: Each small step is 0.1. A is 1.9 and B is 5.8. / B is 39 small steps to the right of A: 39 × 0.1 = 3.9.
+  - Targets: reading the right-hand number minus zero, or counting labelled marks instead of small steps
+- **csse-nl-mr01-bp-numberline-difference-06** [medium; multi_step_application; numberline_difference]
+  - Representation: number_line -- number line {"min":6,"max":18,"majorStep":2,"minorDivisions":2,"points":[{"label":"A","value":7},{"label":"B","value":17}]}
+  - Q: The arrows marked A and B point to two numbers. How much greater is B than A?
+  - Answer: 10
+  - Working: Each small step is 1. A is 7 and B is 17. / B is 10 small steps to the right of A: 10 × 1 = 10.
+  - Targets: reading the right-hand number minus zero, or counting labelled marks instead of small steps
+- **csse-nl-mr01-bp-numberline-difference-07** [hard; multi_step_application; numberline_difference]
+  - Representation: number_line -- number line {"min":0,"max":4,"majorStep":1,"minorDivisions":5,"points":[{"label":"A","value":0.4},{"label":"B","value":1.4}]}
+  - Q: The arrows marked A and B point to two numbers. How much greater is B than A?
+  - Answer: 1
+  - Working: Each small step is 0.2. A is 0.4 and B is 1.4. / B is 5 small steps to the right of A: 5 × 0.2 = 1.
+  - Targets: reading the right-hand number minus zero, or counting labelled marks instead of small steps
+- **csse-nl-mr01-bp-numberline-difference-08** [medium; multi_step_application; numberline_difference]
+  - Representation: number_line -- number line {"min":4,"max":8,"majorStep":1,"minorDivisions":2,"points":[{"label":"A","value":5.5},{"label":"B","value":6.5}]}
+  - Q: The arrows marked A and B point to two numbers. How much greater is B than A?
+  - Answer: 1
+  - Working: Each small step is 0.5. A is 5.5 and B is 6.5. / B is 2 small steps to the right of A: 2 × 0.5 = 1.
+  - Targets: reading the right-hand number minus zero, or counting labelled marks instead of small steps
+
+## precision-dec
+
+- **csse-nl-mr06-bp-numberline-read-then-round-01** [medium; multi_step_application; numberline_round_100]
+  - Representation: number_line -- number line {"min":400,"max":900,"majorStep":100,"minorDivisions":5,"points":[{"label":"P","value":620}]}
+  - Q: The arrow marked P points to a number. Round this number to the nearest 100.
+  - Answer: 600
+  - Working: Each small step is 20, so the arrow points to 620. / 620 is between 600 and 700. It is nearer to 600, so the answer is 600.
+  - Targets: rounding by always taking the lower mark, or rounding to the nearest small step instead of the nearest labelled mark
+- **csse-nl-mr06-bp-numberline-read-then-round-02** [hard; multi_step_application; numberline_round_10]
+  - Representation: number_line -- number line {"min":-20,"max":60,"majorStep":10,"minorDivisions":10,"points":[{"label":"P","value":-12}]}
+  - Q: The arrow marked P points to a number. Round this number to the nearest 10.
+  - Answer: -10
+  - Working: Each small step is 1, so the arrow points to -12. / -12 is between -20 and -10. It is nearer to -10, so the answer is -10.
+  - Targets: rounding by always taking the lower mark, or rounding to the nearest small step instead of the nearest labelled mark
+- **csse-nl-mr06-bp-numberline-read-then-round-03** [medium; multi_step_application; numberline_round_tenth]
+  - Representation: number_line -- number line {"min":0.2,"max":0.9,"majorStep":0.1,"minorDivisions":10,"points":[{"label":"P","value":0.28}]}
+  - Q: The arrow marked P points to a number. Round this number to the nearest tenth.
+  - Answer: 0.3
+  - Working: Each small step is 0.01, so the arrow points to 0.28. / 0.28 is between 0.2 and 0.3. It is nearer to 0.3, so the answer is 0.3.
+  - Targets: rounding by always taking the lower mark, or rounding to the nearest small step instead of the nearest labelled mark
+- **csse-nl-mr06-bp-numberline-read-then-round-04** [hard; multi_step_application; numberline_round_whole_number]
+  - Representation: number_line -- number line {"min":-4,"max":1,"majorStep":1,"minorDivisions":5,"points":[{"label":"P","value":0.4}]}
+  - Q: The arrow marked P points to a number. Round this number to the nearest whole number.
+  - Answer: 0
+  - Working: Each small step is 0.2, so the arrow points to 0.4. / 0.4 is between 0 and 1. It is nearer to 0, so the answer is 0.
+  - Targets: rounding by always taking the lower mark, or rounding to the nearest small step instead of the nearest labelled mark
+- **csse-nl-mr06-bp-numberline-read-then-round-05** [medium; multi_step_application; numberline_round_tenth]
+  - Representation: number_line -- number line {"min":0.4,"max":1.1,"majorStep":0.1,"minorDivisions":10,"points":[{"label":"P","value":0.44}]}
+  - Q: The arrow marked P points to a number. Round this number to the nearest tenth.
+  - Answer: 0.4
+  - Working: Each small step is 0.01, so the arrow points to 0.44. / 0.44 is between 0.4 and 0.5. It is nearer to 0.4, so the answer is 0.4.
+  - Targets: rounding by always taking the lower mark, or rounding to the nearest small step instead of the nearest labelled mark
+- **csse-nl-mr06-bp-numberline-read-then-round-06** [hard; multi_step_application; numberline_round_100]
+  - Representation: number_line -- number line {"min":-400,"max":300,"majorStep":100,"minorDivisions":10,"points":[{"label":"P","value":-60}]}
+  - Q: The arrow marked P points to a number. Round this number to the nearest 100.
+  - Answer: -100
+  - Working: Each small step is 10, so the arrow points to -60. / -60 is between -100 and 0. It is nearer to -100, so the answer is -100.
+  - Targets: rounding by always taking the lower mark, or rounding to the nearest small step instead of the nearest labelled mark
+- **csse-nl-mr06-bp-numberline-read-then-round-07** [medium; multi_step_application; numberline_round_tenth]
+  - Representation: number_line -- number line {"min":0.2,"max":0.8,"majorStep":0.1,"minorDivisions":10,"points":[{"label":"P","value":0.31}]}
+  - Q: The arrow marked P points to a number. Round this number to the nearest tenth.
+  - Answer: 0.3
+  - Working: Each small step is 0.01, so the arrow points to 0.31. / 0.31 is between 0.3 and 0.4. It is nearer to 0.3, so the answer is 0.3.
+  - Targets: rounding by always taking the lower mark, or rounding to the nearest small step instead of the nearest labelled mark
+- **csse-nl-mr06-bp-numberline-read-then-round-08** [hard; multi_step_application; numberline_round_100]
+  - Representation: number_line -- number line {"min":-100,"max":400,"majorStep":100,"minorDivisions":10,"points":[{"label":"P","value":140}]}
+  - Q: The arrow marked P points to a number. Round this number to the nearest 100.
+  - Answer: 100
+  - Working: Each small step is 10, so the arrow points to 140. / 140 is between 100 and 200. It is nearer to 100, so the answer is 100.
+  - Targets: rounding by always taking the lower mark, or rounding to the nearest small step instead of the nearest labelled mark

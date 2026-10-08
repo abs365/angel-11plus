@@ -87,3 +87,9 @@ export const JUDGEMENT_ANGLE = {
   "mr03-bp-fig-around-point-find-x": { s: "Angles around a point (360 degrees), two to four angles shown, including a reflex x. Previously absent from the bank.", t: "High. The third standard angle fact, with a reflex stretch case.", r: "Large space." },
   "mr03-bp-fig-isosceles-find-base": { s: "Isosceles triangle drawn with two equal angles both marked x. The forgot-to-halve answer is always a different number from the right one (tested).", t: "Medium-high. Combines the angle sum with equality of angles.", r: "Moderate space: one angle (even, 20-140, not 60) and its vertex." },
 };
+
+export const JUDGEMENT_NUMBERLINE = {
+  "mr01-bp-numberline-read-value": { s: "Reading a pointer between labelled marks, working out the small-step size (2, 5 or 10 steps per gap, decimal and negative scales). The value is never in the text. QT-MR-03 currently has 5 prose items and no visual.", t: "High. Scale reading is a real exam skill and the competency is thin.", r: "Large space: scale, range, steps and arrow all vary. Some arrows fall on a labelled mark (easy tier)." },
+  "mr01-bp-numberline-difference": { s: "Two arrows read on one scale, then subtracted, sometimes across zero. Neither arrow sits on a labelled mark, so both must be read between marks.", t: "Medium-high. Combines reading with a difference, a natural exam step.", r: "Large space." },
+  "mr06-bp-numberline-read-then-round": { s: "Read an arrow, then round to the nearest labelled mark (tenth, whole number, 10 or 100). Exact halves are excluded so there is no tie to break. QT-MR-14 has 12 prose items, none with a scale.", t: "High. The number line is the natural representation for rounding.", r: "Moderate-large space: four rounding units and the scale vary." },
+};

@@ -1,0 +1,75 @@
+[
+  {
+    "familyId": "mr01-scale-reading",
+    "blueprints": 2,
+    "keptCandidates": 16,
+    "rawGenerated": 192,
+    "approvedBeforeBalancing": 192,
+    "blueprintDepth": 2,
+    "dominantBlueprintShare": 0.5,
+    "scaledMemorisationRisk": "HIGH",
+    "perBlueprintDifficulty": [
+      {
+        "blueprintId": "mr01-bp-numberline-read-value",
+        "distinctTiersReached": 3,
+        "tierCounts": {
+          "hard": 3,
+          "medium": 3,
+          "easy": 2
+        },
+        "meetsMinimum": true
+      },
+      {
+        "blueprintId": "mr01-bp-numberline-difference",
+        "distinctTiersReached": 2,
+        "tierCounts": {
+          "hard": 4,
+          "medium": 4
+        },
+        "meetsMinimum": true
+      }
+    ],
+    "parameterSignatureDuplicates": 0,
+    "contexts": [
+      "numberline_read_10_steps",
+      "numberline_read_2_steps",
+      "numberline_read_5_steps",
+      "numberline_difference"
+    ],
+    "reasoningRoutes": [
+      "interpretation",
+      "multi_step_application"
+    ]
+  },
+  {
+    "familyId": "precision-dec",
+    "blueprints": 1,
+    "keptCandidates": 8,
+    "rawGenerated": 96,
+    "approvedBeforeBalancing": 96,
+    "blueprintDepth": 1,
+    "dominantBlueprintShare": 1,
+    "scaledMemorisationRisk": "CRITICAL",
+    "perBlueprintDifficulty": [
+      {
+        "blueprintId": "mr06-bp-numberline-read-then-round",
+        "distinctTiersReached": 2,
+        "tierCounts": {
+          "medium": 4,
+          "hard": 4
+        },
+        "meetsMinimum": true
+      }
+    ],
+    "parameterSignatureDuplicates": 0,
+    "contexts": [
+      "numberline_round_100",
+      "numberline_round_10",
+      "numberline_round_tenth",
+      "numberline_round_whole_number"
+    ],
+    "reasoningRoutes": [
+      "multi_step_application"
+    ]
+  }
+]

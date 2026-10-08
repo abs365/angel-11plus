@@ -11,7 +11,7 @@
  * page component."
  */
 
-import type { ActiveMockForm, MockAttemptStatus, MockAttemptType, MockAngleFigureStimulus, MockBarChartStimulus, MockCoordinateGridStimulus, MockImageStimulus, MockManifestGroupingEntry, MockQuestionPayload, MockTableStimulus, ResumableMockAttempt } from "./types";
+import type { ActiveMockForm, MockAttemptStatus, MockAttemptType, MockAngleFigureStimulus, MockNumberLineStimulus, MockBarChartStimulus, MockCoordinateGridStimulus, MockImageStimulus, MockManifestGroupingEntry, MockQuestionPayload, MockTableStimulus, ResumableMockAttempt } from "./types";
 
 /**
  * Programme Completion Increment 016 — the one, exact, already-activated
@@ -452,6 +452,44 @@ export function isValidAngleFigureStimulus(value: unknown): value is MockAngleFi
     else if (q.shown !== `${q.size}°`) return false;
   }
   return sum === rule.total && unknown >= 1 && unknown < v.angles.length;
+}
+
+/**
+ * Number-line counterpart, same fail-closed discipline. All arithmetic is in thousandths so decimal scales (0.1, 0.5)
+ * are exact. min and max are whole multiples of the major step, there are 2 to 10 major intervals, every point sits on a
+ * minor tick inside the line, and labels are unique single letters.
+ */
+export function isValidNumberLineStimulus(value: unknown): value is MockNumberLineStimulus {
+  if (!value || typeof value !== "object") return false;
+  const v = value as Record<string, unknown>;
+  if (v.type !== "number-line") return false;
+  if (v.title !== undefined && typeof v.title !== "string") return false;
+  const micro = (n: unknown): number | null => {
+    if (typeof n !== "number" || !Number.isFinite(n)) return null;
+    const m = Math.round(n * 1000);
+    return Math.abs(n * 1000 - m) < 1e-6 ? m : null;
+  };
+  const min = micro(v.min);
+  const max = micro(v.max);
+  const major = micro(v.majorStep);
+  if (min === null || max === null || major === null || major <= 0 || max <= min) return false;
+  if (min % major !== 0 || max % major !== 0) return false;
+  const intervals = (max - min) / major;
+  if (intervals < 2 || intervals > 10) return false;
+  if (typeof v.minorDivisions !== "number" || ![1, 2, 5, 10].includes(v.minorDivisions)) return false;
+  if (major % v.minorDivisions !== 0) return false;
+  const minor = major / v.minorDivisions;
+  const pts = v.points;
+  if (!Array.isArray(pts) || pts.length < 1 || pts.length > 3) return false;
+  const labels = new Set<string>();
+  for (const p of pts) {
+    const q = p as Record<string, unknown>;
+    if (!q || typeof q.label !== "string" || !/^[A-Za-z]$/.test(q.label) || labels.has(q.label)) return false;
+    labels.add(q.label);
+    const val = micro(q.value);
+    if (val === null || val < min || val > max || (val - min) % minor !== 0) return false;
+  }
+  return true;
 }
 
 /**
