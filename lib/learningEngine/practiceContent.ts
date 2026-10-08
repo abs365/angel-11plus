@@ -1,4 +1,5 @@
 import type { AliSubject } from "@/types/ali/questionBank";
+import { coordinateAnswersMatch, isCoordinateAnswer } from "./coordinateAnswer";
 
 /**
  * Capability 3, Wave 2 — Practice Experience.
@@ -317,6 +318,10 @@ export function checkMathsAnswer(userAnswer: string, correctAnswer: string): boo
     if (Math.abs(userMeasurement.value - correctMeasurement.value) >= 0.0001) return false;
     return userMeasurement.unit === null || userMeasurement.unit === correctMeasurement.unit;
   }
+
+  // Coordinate-type answers ONLY (decided from the STORED answer): harmless spacing, the Unicode minus and a trailing ".0"
+  // are irrelevant, but brackets are required and both numbers must equal the stored ones. See coordinateAnswer.ts.
+  if (isCoordinateAnswer(correctFirstAlt)) return coordinateAnswersMatch(userTrimmed, correctFirstAlt);
 
   // Original path, unchanged: exact and semicolon-first-alternate text match.
   const userLower = userTrimmed.toLowerCase().replace(/\s+/g, "");

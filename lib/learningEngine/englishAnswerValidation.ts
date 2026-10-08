@@ -283,16 +283,55 @@ function parseMultiSelectAnswer(userAnswer: string): string[] {
     .filter((s) => s.length > 0);
 }
 
+const stripNumbering = (line: string) => line.replace(/^\s*\d+[.)]\s*/, "").trim();
+
 /**
- * Splits a free-text sequencing answer into ordered lines for Tier 4,
- * tolerating numbered-list input ("1. bask" / "1) bask") since the
- * existing Practice UI is a single textarea, not per-item fields.
+ * Splits a free-text sequencing answer into an ORDERED list of items for Tier 4. Order is always the order the learner wrote
+ * the items, and each position is still marked on its own, so this never turns an ordered answer into an unordered set.
+ *
+ * Newlines always separate items, and numbering ("1. bask" / "1) bask") is tolerated, since the Practice and Mock inputs are
+ * a single textarea. If the learner wrote ONE line (the question need not tell them to use separate lines), safe separators
+ * are also honoured: commas, semicolons, arrows, "then" and "and", inline numbering ("1. a 2. b"), and plain spaces when every
+ * expected item is a single word (for example four names). A separator is used only if NO expected item contains it, so a
+ * question whose correct items contain commas or "and" is not split on them and keeps newline-only behaviour. With no
+ * expected items supplied only newlines are used.
  */
-function parseOrderedAnswer(userAnswer: string): string[] {
-  return userAnswer
+export function parseOrderedAnswer(userAnswer: string, expectedItems: readonly string[] = []): string[] {
+  const lines = userAnswer
     .split(/\r?\n/)
-    .map((line) => line.replace(/^\s*\d+[.)]\s*/, "").trim())
+    .map(stripNumbering)
     .filter((line) => line.length > 0);
+  if (lines.length !== 1 || expectedItems.length === 0) return lines;
+  const single = lines[0];
+  const expected = expectedItems.map((e) => e.toLowerCase());
+  const used = (re: RegExp) => expected.some((e) => re.test(e));
+
+  // inline numbering: "1. Elif 2. Casey 3. Wei 4. Grace"
+  if (((single.match(/(?:^|\s)\d+[.)]\s+/g) ?? []).length >= 2 && !used(/\d+[.)]\s/))) {
+    const parts = single.split(/\s*(?:^|\s)\d+[.)]\s+/).map((x) => x.trim()).filter(Boolean);
+    if (parts.length >= 2) return parts.map(stripNumbering);
+  }
+  const allowed: string[] = [];
+  if (!used(/,/)) allowed.push(",");
+  if (!used(/;/)) allowed.push(";");
+  if (!used(/->|→|=>/)) allowed.push("->", "→", "=>");
+  if (!used(/\bthen\b/)) allowed.push("\\bthen\\b");
+  if (!used(/\band\b/)) allowed.push("\\band\\b");
+  const esc = (t: string) => (t.startsWith("\\b") ? t : t.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"));
+  if (allowed.length) {
+    const re = new RegExp("\\s*(?:" + allowed.map(esc).join("|") + ")\\s*", "i");
+    const parts = single
+      .split(re)
+      .map((x) => stripNumbering(x.replace(/^\s*(?:and|then)\s+/i, "").replace(/[.]+$/, "")))
+      .filter(Boolean);
+    if (parts.length >= 2) return parts;
+  }
+  // plain spaces: only when every expected item is one word and the learner gave exactly that many words
+  if (expected.every((e) => /^\S+$/.test(e))) {
+    const words = single.split(/\s+/).map((w) => w.replace(/[.,;]+$/, "")).filter(Boolean);
+    if (words.length === expected.length) return words;
+  }
+  return lines;
 }
 
 export interface ScoreEnglishComprehensionOptions {
@@ -351,7 +390,7 @@ export function scoreEnglishComprehensionAnswer(
       };
     }
     case "TIER4_ORDERED_LIST": {
-      const lines = parseOrderedAnswer(userAnswer);
+      const lines = parseOrderedAnswer(userAnswer, prompt.orderedAnswer ?? []);
       const acceptedSets = (prompt.orderedAnswer ?? []).map((item) => [item]);
       // 007G correction — see ScoreEnglishComprehensionOptions above. The
       // anchor is only ever the real position-1 accepted text Angel
