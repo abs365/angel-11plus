@@ -1,0 +1,8 @@
+{
+  "checkedOn": "2026-10-08",
+  "method": "md5 of the lower-cased, whitespace-collapsed question text, first 8 hex characters, for each of the 279 distinct prepared question texts, compared read-only (SQL) with the same fingerprint of every live Maths bank row; transcription of the list was verified chunk by chunk with matching checksums",
+  "liveRowsCompared": 710,
+  "distinctPreparedQuestionTexts": 279,
+  "exactMatches": 0,
+  "finding": "The first run found ONE exact match: the prepared coordinate-grid reflection stem was word-for-word the stem of the sealed Form B Mock item mock-fb-mr08-reflect-01. The Mock item is already in production (migration 272), so the PRACTICE stem was reworded instead (\"The grid shows a point P and a dashed mirror line. Reflect P in the mirror line...\") and the 8 grid-reflection candidates regenerated. Re-check of the new stem: 0 matches. A new test now fails if any Practice blueprint ever generates a sealed Form B question text (about 9,500 draws across all 38 blueprints)."
+}

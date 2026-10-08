@@ -11,8 +11,8 @@ test("a disagreement is queued for adjudication with both readers' own judgement
   const dims = "ideas,vocabulary,grammar,structure,punctuation";
   const ev = "evidence_ideas,evidence_vocabulary,evidence_grammar,evidence_structure,evidence_punctuation";
   fs.writeFileSync(path.join(dir, "sample-register.csv"), "script_id,genre,task_code,quality_target,awkward_type\nT1,reflective,QT-WC-01a,weak,\n");
-  fs.writeFileSync(path.join(dir, "reader-a.csv"), `script_id,${dims},${ev}\nT1,developing,secure,secure,secure,secure,"has a quoted, comma",,,,\n`);
-  fs.writeFileSync(path.join(dir, "reader-b.csv"), `script_id,${dims},${ev}\nT1,strong,secure,secure,secure,secure,"different view",,,,\n`);
+  fs.writeFileSync(path.join(dir, "reader-1.csv"), `script_id,${dims},${ev}\nT1,developing,secure,secure,secure,secure,"has a quoted, comma",,,,\n`);
+  fs.writeFileSync(path.join(dir, "reader-2.csv"), `script_id,${dims},${ev}\nT1,strong,secure,secure,secure,secure,"different view",,,,\n`);
   fs.writeFileSync(path.join(dir, "ai-run-1.csv"), `script_id,${dims},flagged_low_confidence_or_review_required\nT1,secure,secure,secure,secure,secure,no\n`);
   const r = spawnSync(process.execPath, ["--import", "tsx", "scripts/analyse-writing-calibration.mjs", dir], { encoding: "utf8" });
   assert.equal(r.status, 0, r.stderr);

@@ -1,5 +1,7 @@
 # English Form B: Salmon versus the bee Timed Section: overlap analysis and recommendation (2026-10-08)
 
+**DECISION (Founder, 2026-10-08): REPLACE SALMON** (the recommendation below, option B, was adopted). The replacement is the original passage **"The Great Stink"** with 11 questions and 18 marks (`lib/ali/questionFactory/englishFormBReplacement.ts`, template migration 273, NOT applied), and Salmon is preserved as rejected/replaced evidence that the Mock composer refuses. Original recommendation:
+
 **Recommendation: B. Replace Salmon with a new original informational passage on a different topic and structure.** Differentiating Salmon's questions alone (option A) cannot fix the overlap,
 because it sits in the passage prose as well as in the question format. Nothing has been changed or retired; this is a decision for the Founder.
 
@@ -64,3 +66,15 @@ If you prefer A, say so; I would then rewrite the passage prose as well (otherwi
 
 The English Form B validator pack keeps Salmon in Section B with a banner stating it is recommended for replacement and asking for the validator's own view on the overlap. Section A (Compass Rose, 13 items) is
 unaffected and can be validated now.
+
+## Outcome: the replacement, measured against the same tests
+
+| Measure | Rejected pair (bee and Salmon) | Replacement (bee and The Great Stink) |
+|---|---|---|
+| Longest shared run of words with the bee passage | 8 | below 5 (tested against every held passage: no run of 6 or more) |
+| Content-word overlap with the bee passage | 0.184 | below 0.09 (tested) |
+| Subject | animal navigation by magnetic sense | urban public health (disease, a crisis, and a civil-engineering solution) |
+| Discourse | explanation of parallel methods, still-being-studied closer | chronological problem, failed explanation, crisis, solution, consequence |
+| Recycled frames or example vocabulary | "one of the most remarkable feats of natural navigation", "what is already clear is that a creature with", *remarkable* as the worked example | none (a test bans these and the words *remarkable*, *feat*, *natural navigation*, *compass*, *waggle*) |
+| Question sequence | retrieval, tick-and-reasons, "(a) done for you" synonyms, order four events | three retrievals, pick-the-supported-statement-and-quote, meaning of "put off", four "find and copy a word that means" items, lettered ordering with new separators, effect of detail |
+| Skill profile | RC-01 x3, 02, 04 x4, 06, 10 (+03) | RC-01 x3 (3), RC-02 (3), RC-03 (2), RC-04 x4 (4), RC-06 (4), RC-10 (2) = 11 items, 18 marks |

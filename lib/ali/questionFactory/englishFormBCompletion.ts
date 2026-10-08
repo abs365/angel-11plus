@@ -10,6 +10,9 @@
  *   3. TOP_UP_ITEMS: the six items (8 marks) Form B needs to match Form A's reading shape: 2 x RC-03 (2 marks each, manually
  *      marked) and 4 x RC-04 synonyms (1 mark each, deterministic accepted set) on The Compass Rose Challenge / Salmon.
  *
+ * UPDATE 2026-10-08: the Salmon passage was REJECTED AND REPLACED (see englishFormBReplacement.ts and rejectedMockContent.ts). The Salmon top-up item
+ * `eng-fb-salmonnavigation-q08` below is part of the APPLIED migration 271 record and is now rejected/replaced evidence only; the five Compass Rose items stand.
+ *
  * Every new item is `authentic_assessment_candidate`, `angel_original`, no external rights holder, and stays sealed from
  * Practice. No official CSSE mark allocation is assumed. Items 1 and 3 still need the governed human review.
  */

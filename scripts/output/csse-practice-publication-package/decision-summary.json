@@ -1,0 +1,839 @@
+{
+  "summary": {
+    "prepared": 380,
+    "recommended": 374,
+    "notRecommended": 6,
+    "verifiedCandidates": 380,
+    "failures": [],
+    "internalDuplicates": 0,
+    "byDecision": {
+      "APPROVE": 37,
+      "TRIM": 1
+    }
+  },
+  "decisions": [
+    {
+      "id": "mr05-bp-hcf-equal-groups",
+      "decision": "APPROVE",
+      "prepared": 14,
+      "publish": 14,
+      "verified": 14,
+      "distinct": 1101,
+      "batchRisk": {
+        "risk": "MEDIUM",
+        "depth": 4,
+        "share": 25
+      },
+      "familyRisk": {
+        "risk": "MEDIUM",
+        "depth": 4,
+        "share": 25
+      }
+    },
+    {
+      "id": "mr05-bp-lcm-repeating-events",
+      "decision": "APPROVE",
+      "prepared": 14,
+      "publish": 14,
+      "verified": 14,
+      "distinct": 735,
+      "batchRisk": {
+        "risk": "MEDIUM",
+        "depth": 4,
+        "share": 25
+      },
+      "familyRisk": {
+        "risk": "MEDIUM",
+        "depth": 4,
+        "share": 25
+      }
+    },
+    {
+      "id": "mr05-bp-smallest-common-multiple-above",
+      "decision": "APPROVE",
+      "prepared": 14,
+      "publish": 14,
+      "verified": 14,
+      "distinct": 3370,
+      "batchRisk": {
+        "risk": "MEDIUM",
+        "depth": 4,
+        "share": 25
+      },
+      "familyRisk": {
+        "risk": "MEDIUM",
+        "depth": 4,
+        "share": 25
+      }
+    },
+    {
+      "id": "mr05-bp-identify-the-prime",
+      "decision": "APPROVE",
+      "prepared": 14,
+      "publish": 14,
+      "verified": 14,
+      "distinct": 3977,
+      "batchRisk": {
+        "risk": "MEDIUM",
+        "depth": 4,
+        "share": 25
+      },
+      "familyRisk": {
+        "risk": "MEDIUM",
+        "depth": 4,
+        "share": 25
+      }
+    },
+    {
+      "id": "mr02-bp-pattern-in-context",
+      "decision": "APPROVE",
+      "prepared": 14,
+      "publish": 14,
+      "verified": 14,
+      "distinct": 3171,
+      "batchRisk": {
+        "risk": "MEDIUM",
+        "depth": 3,
+        "share": 33
+      },
+      "familyRisk": {
+        "risk": "MEDIUM",
+        "depth": 3,
+        "share": 33
+      }
+    },
+    {
+      "id": "mr02-bp-first-term-exceeding",
+      "decision": "APPROVE",
+      "prepared": 14,
+      "publish": 14,
+      "verified": 14,
+      "distinct": 3576,
+      "batchRisk": {
+        "risk": "MEDIUM",
+        "depth": 3,
+        "share": 33
+      },
+      "familyRisk": {
+        "risk": "MEDIUM",
+        "depth": 3,
+        "share": 33
+      }
+    },
+    {
+      "id": "mr02-bp-whole-periods-to-target",
+      "decision": "APPROVE",
+      "prepared": 14,
+      "publish": 14,
+      "verified": 14,
+      "distinct": 3939,
+      "batchRisk": {
+        "risk": "MEDIUM",
+        "depth": 3,
+        "share": 33
+      },
+      "familyRisk": {
+        "risk": "MEDIUM",
+        "depth": 3,
+        "share": 33
+      }
+    },
+    {
+      "id": "mr01-bp-containers-needed",
+      "decision": "APPROVE",
+      "prepared": 14,
+      "publish": 14,
+      "verified": 14,
+      "distinct": 3611,
+      "batchRisk": {
+        "risk": "MEDIUM",
+        "depth": 3,
+        "share": 33
+      },
+      "familyRisk": {
+        "risk": "MEDIUM",
+        "depth": 3,
+        "share": 33
+      }
+    },
+    {
+      "id": "mr01-bp-change-from-note",
+      "decision": "TRIM",
+      "prepared": 14,
+      "publish": 8,
+      "verified": 14,
+      "distinct": 276,
+      "batchRisk": {
+        "risk": "MEDIUM",
+        "depth": 3,
+        "share": 33
+      },
+      "familyRisk": {
+        "risk": "MEDIUM",
+        "depth": 3,
+        "share": 33
+      }
+    },
+    {
+      "id": "mr01-bp-spend-then-share",
+      "decision": "APPROVE",
+      "prepared": 14,
+      "publish": 14,
+      "verified": 14,
+      "distinct": 3974,
+      "batchRisk": {
+        "risk": "MEDIUM",
+        "depth": 3,
+        "share": 33
+      },
+      "familyRisk": {
+        "risk": "MEDIUM",
+        "depth": 3,
+        "share": 33
+      }
+    },
+    {
+      "id": "mr01-bp-table-read-and-combine",
+      "decision": "APPROVE",
+      "prepared": 12,
+      "publish": 12,
+      "verified": 12,
+      "distinct": 4000,
+      "batchRisk": {
+        "risk": "MEDIUM",
+        "depth": 4,
+        "share": 25
+      },
+      "familyRisk": {
+        "risk": "MEDIUM",
+        "depth": 4,
+        "share": 25
+      }
+    },
+    {
+      "id": "mr01-bp-table-compare-column-totals",
+      "decision": "APPROVE",
+      "prepared": 12,
+      "publish": 12,
+      "verified": 12,
+      "distinct": 4000,
+      "batchRisk": {
+        "risk": "MEDIUM",
+        "depth": 4,
+        "share": 25
+      },
+      "familyRisk": {
+        "risk": "MEDIUM",
+        "depth": 4,
+        "share": 25
+      }
+    },
+    {
+      "id": "mr01-bp-bar-chart-read-difference",
+      "decision": "APPROVE",
+      "prepared": 12,
+      "publish": 12,
+      "verified": 12,
+      "distinct": 4000,
+      "batchRisk": {
+        "risk": "MEDIUM",
+        "depth": 4,
+        "share": 25
+      },
+      "familyRisk": {
+        "risk": "MEDIUM",
+        "depth": 4,
+        "share": 25
+      }
+    },
+    {
+      "id": "mr01-bp-bar-chart-mean",
+      "decision": "APPROVE",
+      "prepared": 12,
+      "publish": 12,
+      "verified": 12,
+      "distinct": 3998,
+      "batchRisk": {
+        "risk": "MEDIUM",
+        "depth": 4,
+        "share": 25
+      },
+      "familyRisk": {
+        "risk": "MEDIUM",
+        "depth": 4,
+        "share": 25
+      }
+    },
+    {
+      "id": "mr01-bp-think-of-a-number-two-step",
+      "decision": "APPROVE",
+      "prepared": 8,
+      "publish": 8,
+      "verified": 8,
+      "distinct": 3845,
+      "batchRisk": {
+        "risk": "HIGH",
+        "depth": 2,
+        "share": 50
+      },
+      "familyRisk": {
+        "risk": "HIGH",
+        "depth": 2,
+        "share": 50
+      }
+    },
+    {
+      "id": "mr01-bp-consecutive-numbers-from-sum",
+      "decision": "APPROVE",
+      "prepared": 8,
+      "publish": 8,
+      "verified": 8,
+      "distinct": 1001,
+      "batchRisk": {
+        "risk": "HIGH",
+        "depth": 2,
+        "share": 50
+      },
+      "familyRisk": {
+        "risk": "HIGH",
+        "depth": 2,
+        "share": 50
+      }
+    },
+    {
+      "id": "mr06-bp-round-decimal-places",
+      "decision": "APPROVE",
+      "prepared": 8,
+      "publish": 8,
+      "verified": 8,
+      "distinct": 3945,
+      "batchRisk": {
+        "risk": "HIGH",
+        "depth": 2,
+        "share": 50
+      },
+      "familyRisk": {
+        "risk": "MEDIUM",
+        "depth": 3,
+        "share": 33
+      }
+    },
+    {
+      "id": "mr06-bp-round-nearest-in-context",
+      "decision": "APPROVE",
+      "prepared": 8,
+      "publish": 8,
+      "verified": 8,
+      "distinct": 3821,
+      "batchRisk": {
+        "risk": "HIGH",
+        "depth": 2,
+        "share": 50
+      },
+      "familyRisk": {
+        "risk": "MEDIUM",
+        "depth": 3,
+        "share": 33
+      }
+    },
+    {
+      "id": "mr01-bp-compare-different-units",
+      "decision": "APPROVE",
+      "prepared": 8,
+      "publish": 8,
+      "verified": 8,
+      "distinct": 3704,
+      "batchRisk": {
+        "risk": "HIGH",
+        "depth": 2,
+        "share": 50
+      },
+      "familyRisk": {
+        "risk": "HIGH",
+        "depth": 2,
+        "share": 50
+      }
+    },
+    {
+      "id": "mr01-bp-convert-then-divide",
+      "decision": "APPROVE",
+      "prepared": 8,
+      "publish": 8,
+      "verified": 8,
+      "distinct": 1660,
+      "batchRisk": {
+        "risk": "HIGH",
+        "depth": 2,
+        "share": 50
+      },
+      "familyRisk": {
+        "risk": "HIGH",
+        "depth": 2,
+        "share": 50
+      }
+    },
+    {
+      "id": "mr04-bp-timetable-journey-time",
+      "decision": "APPROVE",
+      "prepared": 8,
+      "publish": 8,
+      "verified": 8,
+      "distinct": 4000,
+      "batchRisk": {
+        "risk": "HIGH",
+        "depth": 2,
+        "share": 50
+      },
+      "familyRisk": {
+        "risk": "HIGH",
+        "depth": 2,
+        "share": 50
+      }
+    },
+    {
+      "id": "mr04-bp-timetable-wait-for-next",
+      "decision": "APPROVE",
+      "prepared": 8,
+      "publish": 8,
+      "verified": 8,
+      "distinct": 4000,
+      "batchRisk": {
+        "risk": "HIGH",
+        "depth": 2,
+        "share": 50
+      },
+      "familyRisk": {
+        "risk": "HIGH",
+        "depth": 2,
+        "share": 50
+      }
+    },
+    {
+      "id": "mr02-bp-function-table-rule",
+      "decision": "APPROVE",
+      "prepared": 8,
+      "publish": 8,
+      "verified": 8,
+      "distinct": 2463,
+      "batchRisk": {
+        "risk": "HIGH",
+        "depth": 2,
+        "share": 50
+      },
+      "familyRisk": {
+        "risk": "HIGH",
+        "depth": 2,
+        "share": 50
+      }
+    },
+    {
+      "id": "mr02-bp-function-table-reverse",
+      "decision": "APPROVE",
+      "prepared": 8,
+      "publish": 8,
+      "verified": 8,
+      "distinct": 2463,
+      "batchRisk": {
+        "risk": "HIGH",
+        "depth": 2,
+        "share": 50
+      },
+      "familyRisk": {
+        "risk": "HIGH",
+        "depth": 2,
+        "share": 50
+      }
+    },
+    {
+      "id": "mr01-bp-mean-from-table",
+      "decision": "APPROVE",
+      "prepared": 8,
+      "publish": 8,
+      "verified": 8,
+      "distinct": 4000,
+      "batchRisk": {
+        "risk": "HIGH",
+        "depth": 2,
+        "share": 50
+      },
+      "familyRisk": {
+        "risk": "HIGH",
+        "depth": 2,
+        "share": 50
+      }
+    },
+    {
+      "id": "mr01-bp-mean-missing-value-table",
+      "decision": "APPROVE",
+      "prepared": 8,
+      "publish": 8,
+      "verified": 8,
+      "distinct": 4000,
+      "batchRisk": {
+        "risk": "HIGH",
+        "depth": 2,
+        "share": 50
+      },
+      "familyRisk": {
+        "risk": "HIGH",
+        "depth": 2,
+        "share": 50
+      }
+    },
+    {
+      "id": "mr03-bp-grid-read-point",
+      "decision": "APPROVE",
+      "prepared": 8,
+      "publish": 8,
+      "verified": 8,
+      "distinct": 4000,
+      "batchRisk": {
+        "risk": "LOW",
+        "depth": 5,
+        "share": 20
+      },
+      "familyRisk": {
+        "risk": "LOW",
+        "depth": 5,
+        "share": 20
+      }
+    },
+    {
+      "id": "mr03-bp-grid-reflect-in-mirror-line",
+      "decision": "APPROVE",
+      "prepared": 8,
+      "publish": 8,
+      "verified": 8,
+      "distinct": 1218,
+      "batchRisk": {
+        "risk": "LOW",
+        "depth": 5,
+        "share": 20
+      },
+      "familyRisk": {
+        "risk": "LOW",
+        "depth": 5,
+        "share": 20
+      }
+    },
+    {
+      "id": "mr03-bp-grid-translate-point",
+      "decision": "APPROVE",
+      "prepared": 8,
+      "publish": 8,
+      "verified": 8,
+      "distinct": 3847,
+      "batchRisk": {
+        "risk": "LOW",
+        "depth": 5,
+        "share": 20
+      },
+      "familyRisk": {
+        "risk": "LOW",
+        "depth": 5,
+        "share": 20
+      }
+    },
+    {
+      "id": "mr03-bp-grid-fourth-vertex",
+      "decision": "APPROVE",
+      "prepared": 8,
+      "publish": 8,
+      "verified": 8,
+      "distinct": 3916,
+      "batchRisk": {
+        "risk": "LOW",
+        "depth": 5,
+        "share": 20
+      },
+      "familyRisk": {
+        "risk": "LOW",
+        "depth": 5,
+        "share": 20
+      }
+    },
+    {
+      "id": "mr03-bp-grid-midpoint-of-segment",
+      "decision": "APPROVE",
+      "prepared": 8,
+      "publish": 8,
+      "verified": 8,
+      "distinct": 3666,
+      "batchRisk": {
+        "risk": "LOW",
+        "depth": 5,
+        "share": 20
+      },
+      "familyRisk": {
+        "risk": "LOW",
+        "depth": 5,
+        "share": 20
+      }
+    },
+    {
+      "id": "mr03-bp-fig-triangle-find-x",
+      "decision": "APPROVE",
+      "prepared": 8,
+      "publish": 8,
+      "verified": 8,
+      "distinct": 3687,
+      "batchRisk": {
+        "risk": "MEDIUM",
+        "depth": 4,
+        "share": 25
+      },
+      "familyRisk": {
+        "risk": "MEDIUM",
+        "depth": 4,
+        "share": 25
+      }
+    },
+    {
+      "id": "mr03-bp-fig-straight-line-find-x",
+      "decision": "APPROVE",
+      "prepared": 8,
+      "publish": 8,
+      "verified": 8,
+      "distinct": 2132,
+      "batchRisk": {
+        "risk": "MEDIUM",
+        "depth": 4,
+        "share": 25
+      },
+      "familyRisk": {
+        "risk": "MEDIUM",
+        "depth": 4,
+        "share": 25
+      }
+    },
+    {
+      "id": "mr03-bp-fig-around-point-find-x",
+      "decision": "APPROVE",
+      "prepared": 8,
+      "publish": 8,
+      "verified": 8,
+      "distinct": 3978,
+      "batchRisk": {
+        "risk": "MEDIUM",
+        "depth": 4,
+        "share": 25
+      },
+      "familyRisk": {
+        "risk": "MEDIUM",
+        "depth": 4,
+        "share": 25
+      }
+    },
+    {
+      "id": "mr03-bp-fig-isosceles-find-base",
+      "decision": "APPROVE",
+      "prepared": 8,
+      "publish": 8,
+      "verified": 8,
+      "distinct": 180,
+      "batchRisk": {
+        "risk": "MEDIUM",
+        "depth": 4,
+        "share": 25
+      },
+      "familyRisk": {
+        "risk": "MEDIUM",
+        "depth": 4,
+        "share": 25
+      }
+    },
+    {
+      "id": "mr01-bp-numberline-read-value",
+      "decision": "APPROVE",
+      "prepared": 8,
+      "publish": 8,
+      "verified": 8,
+      "distinct": 3706,
+      "batchRisk": {
+        "risk": "HIGH",
+        "depth": 2,
+        "share": 50
+      },
+      "familyRisk": {
+        "risk": "HIGH",
+        "depth": 2,
+        "share": 50
+      }
+    },
+    {
+      "id": "mr01-bp-numberline-difference",
+      "decision": "APPROVE",
+      "prepared": 8,
+      "publish": 8,
+      "verified": 8,
+      "distinct": 3878,
+      "batchRisk": {
+        "risk": "HIGH",
+        "depth": 2,
+        "share": 50
+      },
+      "familyRisk": {
+        "risk": "HIGH",
+        "depth": 2,
+        "share": 50
+      }
+    },
+    {
+      "id": "mr06-bp-numberline-read-then-round",
+      "decision": "APPROVE",
+      "prepared": 8,
+      "publish": 8,
+      "verified": 8,
+      "distinct": 3456,
+      "batchRisk": {
+        "risk": "CRITICAL",
+        "depth": 1,
+        "share": 100
+      },
+      "familyRisk": {
+        "risk": "MEDIUM",
+        "depth": 3,
+        "share": 33
+      }
+    }
+  ],
+  "familyRisk": {
+    "mr05-factors-primes": {
+      "risk": "MEDIUM",
+      "depth": 4,
+      "share": 25
+    },
+    "mr02-nth-term": {
+      "risk": "MEDIUM",
+      "depth": 3,
+      "share": 33
+    },
+    "mr01-whole-number-computation": {
+      "risk": "MEDIUM",
+      "depth": 3,
+      "share": 33
+    },
+    "mr01-data-table": {
+      "risk": "MEDIUM",
+      "depth": 4,
+      "share": 25
+    },
+    "mr01-missing-operand": {
+      "risk": "HIGH",
+      "depth": 2,
+      "share": 50
+    },
+    "precision-dec": {
+      "risk": "MEDIUM",
+      "depth": 3,
+      "share": 33
+    },
+    "mr01-measurement-conversion": {
+      "risk": "HIGH",
+      "depth": 2,
+      "share": 50
+    },
+    "mr04-elapsed-time": {
+      "risk": "HIGH",
+      "depth": 2,
+      "share": 50
+    },
+    "mr02-sequence-rule": {
+      "risk": "HIGH",
+      "depth": 2,
+      "share": 50
+    },
+    "mr01-average-mean": {
+      "risk": "HIGH",
+      "depth": 2,
+      "share": 50
+    },
+    "mr03-coordinate": {
+      "risk": "LOW",
+      "depth": 5,
+      "share": 20
+    },
+    "mr03-angle-sum": {
+      "risk": "MEDIUM",
+      "depth": 4,
+      "share": 25
+    },
+    "mr01-scale-reading": {
+      "risk": "HIGH",
+      "depth": 2,
+      "share": 50
+    }
+  },
+  "batchRisk": {
+    "mr05-factors-primes|context": {
+      "risk": "MEDIUM",
+      "depth": 4,
+      "share": 25
+    },
+    "mr02-nth-term|context": {
+      "risk": "MEDIUM",
+      "depth": 3,
+      "share": 33
+    },
+    "mr01-whole-number-computation|context": {
+      "risk": "MEDIUM",
+      "depth": 3,
+      "share": 33
+    },
+    "mr01-data-table|data-handling": {
+      "risk": "MEDIUM",
+      "depth": 4,
+      "share": 25
+    },
+    "mr01-missing-operand|breadth": {
+      "risk": "HIGH",
+      "depth": 2,
+      "share": 50
+    },
+    "precision-dec|breadth": {
+      "risk": "HIGH",
+      "depth": 2,
+      "share": 50
+    },
+    "precision-dec|numberline": {
+      "risk": "CRITICAL",
+      "depth": 1,
+      "share": 100
+    },
+    "mr01-measurement-conversion|breadth": {
+      "risk": "HIGH",
+      "depth": 2,
+      "share": 50
+    },
+    "mr04-elapsed-time|breadth": {
+      "risk": "HIGH",
+      "depth": 2,
+      "share": 50
+    },
+    "mr02-sequence-rule|breadth": {
+      "risk": "HIGH",
+      "depth": 2,
+      "share": 50
+    },
+    "mr01-average-mean|breadth": {
+      "risk": "HIGH",
+      "depth": 2,
+      "share": 50
+    },
+    "mr03-coordinate|grid": {
+      "risk": "LOW",
+      "depth": 5,
+      "share": 20
+    },
+    "mr03-angle-sum|angle": {
+      "risk": "MEDIUM",
+      "depth": 4,
+      "share": 25
+    },
+    "mr01-scale-reading|numberline": {
+      "risk": "HIGH",
+      "depth": 2,
+      "share": 50
+    }
+  }
+}

@@ -626,7 +626,7 @@
         "p_preparation_stage": null,
         "p_difficulty": "hard",
         "p_question_content": {
-          "question": "Point P is reflected in the dashed mirror line. What are the coordinates of the image of P? Give your answer in the form (x, y).",
+          "question": "The grid shows a point P and a dashed mirror line. Reflect P in the mirror line. What are the coordinates of the new position of P? Give your answer in the form (x, y).",
           "workingSteps": [
             "P is at (-2, -3) and the mirror line is the x-axis.",
             "In the x-axis the x-coordinate stays and the y-coordinate changes sign. The image is (-2, 3)."
@@ -689,7 +689,7 @@
         "p_preparation_stage": null,
         "p_difficulty": "medium",
         "p_question_content": {
-          "question": "Point P is reflected in the dashed mirror line. What are the coordinates of the image of P? Give your answer in the form (x, y).",
+          "question": "The grid shows a point P and a dashed mirror line. Reflect P in the mirror line. What are the coordinates of the new position of P? Give your answer in the form (x, y).",
           "workingSteps": [
             "P is at (-4, 1) and the mirror line is the x-axis.",
             "In the x-axis the x-coordinate stays and the y-coordinate changes sign. The image is (-4, -1)."
@@ -752,7 +752,7 @@
         "p_preparation_stage": null,
         "p_difficulty": "easy",
         "p_question_content": {
-          "question": "Point P is reflected in the dashed mirror line. What are the coordinates of the image of P? Give your answer in the form (x, y).",
+          "question": "The grid shows a point P and a dashed mirror line. Reflect P in the mirror line. What are the coordinates of the new position of P? Give your answer in the form (x, y).",
           "workingSteps": [
             "P is at (3, 4) and the mirror line is the y-axis.",
             "In the y-axis the y-coordinate stays and the x-coordinate changes sign. The image is (-3, 4)."
@@ -815,7 +815,7 @@
         "p_preparation_stage": null,
         "p_difficulty": "hard",
         "p_question_content": {
-          "question": "Point P is reflected in the dashed mirror line. What are the coordinates of the image of P? Give your answer in the form (x, y).",
+          "question": "The grid shows a point P and a dashed mirror line. Reflect P in the mirror line. What are the coordinates of the new position of P? Give your answer in the form (x, y).",
           "workingSteps": [
             "P is at (3, 2) and the mirror line is the line y = x.",
             "In the line y = x the two coordinates swap places. The image is (2, 3)."
@@ -878,7 +878,7 @@
         "p_preparation_stage": null,
         "p_difficulty": "medium",
         "p_question_content": {
-          "question": "Point P is reflected in the dashed mirror line. What are the coordinates of the image of P? Give your answer in the form (x, y).",
+          "question": "The grid shows a point P and a dashed mirror line. Reflect P in the mirror line. What are the coordinates of the new position of P? Give your answer in the form (x, y).",
           "workingSteps": [
             "P is at (6, -8) and the mirror line is the x-axis.",
             "In the x-axis the x-coordinate stays and the y-coordinate changes sign. The image is (6, 8)."
@@ -941,7 +941,7 @@
         "p_preparation_stage": null,
         "p_difficulty": "easy",
         "p_question_content": {
-          "question": "Point P is reflected in the dashed mirror line. What are the coordinates of the image of P? Give your answer in the form (x, y).",
+          "question": "The grid shows a point P and a dashed mirror line. Reflect P in the mirror line. What are the coordinates of the new position of P? Give your answer in the form (x, y).",
           "workingSteps": [
             "P is at (5, 4) and the mirror line is the y-axis.",
             "In the y-axis the y-coordinate stays and the x-coordinate changes sign. The image is (-5, 4)."
@@ -1004,7 +1004,7 @@
         "p_preparation_stage": null,
         "p_difficulty": "hard",
         "p_question_content": {
-          "question": "Point P is reflected in the dashed mirror line. What are the coordinates of the image of P? Give your answer in the form (x, y).",
+          "question": "The grid shows a point P and a dashed mirror line. Reflect P in the mirror line. What are the coordinates of the new position of P? Give your answer in the form (x, y).",
           "workingSteps": [
             "P is at (-4, 1) and the mirror line is the line y = x.",
             "In the line y = x the two coordinates swap places. The image is (1, -4)."
@@ -1067,7 +1067,7 @@
         "p_preparation_stage": null,
         "p_difficulty": "medium",
         "p_question_content": {
-          "question": "Point P is reflected in the dashed mirror line. What are the coordinates of the image of P? Give your answer in the form (x, y).",
+          "question": "The grid shows a point P and a dashed mirror line. Reflect P in the mirror line. What are the coordinates of the new position of P? Give your answer in the form (x, y).",
           "workingSteps": [
             "P is at (6, -1) and the mirror line is the y-axis.",
             "In the y-axis the y-coordinate stays and the x-coordinate changes sign. The image is (-6, -1)."

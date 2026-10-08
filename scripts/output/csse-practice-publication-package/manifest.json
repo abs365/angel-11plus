@@ -1,0 +1,674 @@
+{
+  "generatedBy": "scripts/generate-csse-maths-final-decision-pack.mjs",
+  "note": "Nothing here has been submitted, approved or published.",
+  "prepared": 380,
+  "recommended": 374,
+  "sets": {
+    "context": {
+      "file": "submit-context.js",
+      "candidates": 134
+    },
+    "data-handling": {
+      "file": "submit-data-handling.js",
+      "candidates": 48
+    },
+    "breadth": {
+      "file": "submit-breadth.js",
+      "candidates": 96
+    },
+    "grid": {
+      "file": "submit-grid.js",
+      "candidates": 40
+    },
+    "angle": {
+      "file": "submit-angle.js",
+      "candidates": 32
+    },
+    "numberline": {
+      "file": "submit-numberline.js",
+      "candidates": 24
+    }
+  },
+  "blueprints": [
+    {
+      "id": "mr05-bp-hcf-equal-groups",
+      "decision": "APPROVE",
+      "publish": 14,
+      "candidateIds": [
+        "csse-ctx-mr05-bp-hcf-equal-groups-01",
+        "csse-ctx-mr05-bp-hcf-equal-groups-02",
+        "csse-ctx-mr05-bp-hcf-equal-groups-03",
+        "csse-ctx-mr05-bp-hcf-equal-groups-04",
+        "csse-ctx-mr05-bp-hcf-equal-groups-05",
+        "csse-ctx-mr05-bp-hcf-equal-groups-06",
+        "csse-ctx-mr05-bp-hcf-equal-groups-07",
+        "csse-ctx-mr05-bp-hcf-equal-groups-08",
+        "csse-ctx-mr05-bp-hcf-equal-groups-09",
+        "csse-ctx-mr05-bp-hcf-equal-groups-10",
+        "csse-ctx-mr05-bp-hcf-equal-groups-11",
+        "csse-ctx-mr05-bp-hcf-equal-groups-12",
+        "csse-ctx-mr05-bp-hcf-equal-groups-13",
+        "csse-ctx-mr05-bp-hcf-equal-groups-14"
+      ]
+    },
+    {
+      "id": "mr05-bp-lcm-repeating-events",
+      "decision": "APPROVE",
+      "publish": 14,
+      "candidateIds": [
+        "csse-ctx-mr05-bp-lcm-repeating-events-01",
+        "csse-ctx-mr05-bp-lcm-repeating-events-02",
+        "csse-ctx-mr05-bp-lcm-repeating-events-03",
+        "csse-ctx-mr05-bp-lcm-repeating-events-04",
+        "csse-ctx-mr05-bp-lcm-repeating-events-05",
+        "csse-ctx-mr05-bp-lcm-repeating-events-06",
+        "csse-ctx-mr05-bp-lcm-repeating-events-07",
+        "csse-ctx-mr05-bp-lcm-repeating-events-08",
+        "csse-ctx-mr05-bp-lcm-repeating-events-09",
+        "csse-ctx-mr05-bp-lcm-repeating-events-10",
+        "csse-ctx-mr05-bp-lcm-repeating-events-11",
+        "csse-ctx-mr05-bp-lcm-repeating-events-12",
+        "csse-ctx-mr05-bp-lcm-repeating-events-13",
+        "csse-ctx-mr05-bp-lcm-repeating-events-14"
+      ]
+    },
+    {
+      "id": "mr05-bp-smallest-common-multiple-above",
+      "decision": "APPROVE",
+      "publish": 14,
+      "candidateIds": [
+        "csse-ctx-mr05-bp-smallest-common-multiple-above-01",
+        "csse-ctx-mr05-bp-smallest-common-multiple-above-02",
+        "csse-ctx-mr05-bp-smallest-common-multiple-above-03",
+        "csse-ctx-mr05-bp-smallest-common-multiple-above-04",
+        "csse-ctx-mr05-bp-smallest-common-multiple-above-05",
+        "csse-ctx-mr05-bp-smallest-common-multiple-above-06",
+        "csse-ctx-mr05-bp-smallest-common-multiple-above-07",
+        "csse-ctx-mr05-bp-smallest-common-multiple-above-08",
+        "csse-ctx-mr05-bp-smallest-common-multiple-above-09",
+        "csse-ctx-mr05-bp-smallest-common-multiple-above-10",
+        "csse-ctx-mr05-bp-smallest-common-multiple-above-11",
+        "csse-ctx-mr05-bp-smallest-common-multiple-above-12",
+        "csse-ctx-mr05-bp-smallest-common-multiple-above-13",
+        "csse-ctx-mr05-bp-smallest-common-multiple-above-14"
+      ]
+    },
+    {
+      "id": "mr05-bp-identify-the-prime",
+      "decision": "APPROVE",
+      "publish": 14,
+      "candidateIds": [
+        "csse-ctx-mr05-bp-identify-the-prime-01",
+        "csse-ctx-mr05-bp-identify-the-prime-02",
+        "csse-ctx-mr05-bp-identify-the-prime-03",
+        "csse-ctx-mr05-bp-identify-the-prime-04",
+        "csse-ctx-mr05-bp-identify-the-prime-05",
+        "csse-ctx-mr05-bp-identify-the-prime-06",
+        "csse-ctx-mr05-bp-identify-the-prime-07",
+        "csse-ctx-mr05-bp-identify-the-prime-08",
+        "csse-ctx-mr05-bp-identify-the-prime-09",
+        "csse-ctx-mr05-bp-identify-the-prime-10",
+        "csse-ctx-mr05-bp-identify-the-prime-11",
+        "csse-ctx-mr05-bp-identify-the-prime-12",
+        "csse-ctx-mr05-bp-identify-the-prime-13",
+        "csse-ctx-mr05-bp-identify-the-prime-14"
+      ]
+    },
+    {
+      "id": "mr02-bp-pattern-in-context",
+      "decision": "APPROVE",
+      "publish": 14,
+      "candidateIds": [
+        "csse-ctx-mr02-bp-pattern-in-context-01",
+        "csse-ctx-mr02-bp-pattern-in-context-02",
+        "csse-ctx-mr02-bp-pattern-in-context-03",
+        "csse-ctx-mr02-bp-pattern-in-context-04",
+        "csse-ctx-mr02-bp-pattern-in-context-05",
+        "csse-ctx-mr02-bp-pattern-in-context-06",
+        "csse-ctx-mr02-bp-pattern-in-context-07",
+        "csse-ctx-mr02-bp-pattern-in-context-08",
+        "csse-ctx-mr02-bp-pattern-in-context-09",
+        "csse-ctx-mr02-bp-pattern-in-context-10",
+        "csse-ctx-mr02-bp-pattern-in-context-11",
+        "csse-ctx-mr02-bp-pattern-in-context-12",
+        "csse-ctx-mr02-bp-pattern-in-context-13",
+        "csse-ctx-mr02-bp-pattern-in-context-14"
+      ]
+    },
+    {
+      "id": "mr02-bp-first-term-exceeding",
+      "decision": "APPROVE",
+      "publish": 14,
+      "candidateIds": [
+        "csse-ctx-mr02-bp-first-term-exceeding-01",
+        "csse-ctx-mr02-bp-first-term-exceeding-02",
+        "csse-ctx-mr02-bp-first-term-exceeding-03",
+        "csse-ctx-mr02-bp-first-term-exceeding-04",
+        "csse-ctx-mr02-bp-first-term-exceeding-05",
+        "csse-ctx-mr02-bp-first-term-exceeding-06",
+        "csse-ctx-mr02-bp-first-term-exceeding-07",
+        "csse-ctx-mr02-bp-first-term-exceeding-08",
+        "csse-ctx-mr02-bp-first-term-exceeding-09",
+        "csse-ctx-mr02-bp-first-term-exceeding-10",
+        "csse-ctx-mr02-bp-first-term-exceeding-11",
+        "csse-ctx-mr02-bp-first-term-exceeding-12",
+        "csse-ctx-mr02-bp-first-term-exceeding-13",
+        "csse-ctx-mr02-bp-first-term-exceeding-14"
+      ]
+    },
+    {
+      "id": "mr02-bp-whole-periods-to-target",
+      "decision": "APPROVE",
+      "publish": 14,
+      "candidateIds": [
+        "csse-ctx-mr02-bp-whole-periods-to-target-01",
+        "csse-ctx-mr02-bp-whole-periods-to-target-02",
+        "csse-ctx-mr02-bp-whole-periods-to-target-03",
+        "csse-ctx-mr02-bp-whole-periods-to-target-04",
+        "csse-ctx-mr02-bp-whole-periods-to-target-05",
+        "csse-ctx-mr02-bp-whole-periods-to-target-06",
+        "csse-ctx-mr02-bp-whole-periods-to-target-07",
+        "csse-ctx-mr02-bp-whole-periods-to-target-08",
+        "csse-ctx-mr02-bp-whole-periods-to-target-09",
+        "csse-ctx-mr02-bp-whole-periods-to-target-10",
+        "csse-ctx-mr02-bp-whole-periods-to-target-11",
+        "csse-ctx-mr02-bp-whole-periods-to-target-12",
+        "csse-ctx-mr02-bp-whole-periods-to-target-13",
+        "csse-ctx-mr02-bp-whole-periods-to-target-14"
+      ]
+    },
+    {
+      "id": "mr01-bp-containers-needed",
+      "decision": "APPROVE",
+      "publish": 14,
+      "candidateIds": [
+        "csse-ctx-mr01-bp-containers-needed-01",
+        "csse-ctx-mr01-bp-containers-needed-02",
+        "csse-ctx-mr01-bp-containers-needed-03",
+        "csse-ctx-mr01-bp-containers-needed-04",
+        "csse-ctx-mr01-bp-containers-needed-05",
+        "csse-ctx-mr01-bp-containers-needed-06",
+        "csse-ctx-mr01-bp-containers-needed-07",
+        "csse-ctx-mr01-bp-containers-needed-08",
+        "csse-ctx-mr01-bp-containers-needed-09",
+        "csse-ctx-mr01-bp-containers-needed-10",
+        "csse-ctx-mr01-bp-containers-needed-11",
+        "csse-ctx-mr01-bp-containers-needed-12",
+        "csse-ctx-mr01-bp-containers-needed-13",
+        "csse-ctx-mr01-bp-containers-needed-14"
+      ]
+    },
+    {
+      "id": "mr01-bp-change-from-note",
+      "decision": "TRIM",
+      "publish": 8,
+      "candidateIds": [
+        "csse-ctx-mr01-bp-change-from-note-03",
+        "csse-ctx-mr01-bp-change-from-note-01",
+        "csse-ctx-mr01-bp-change-from-note-07",
+        "csse-ctx-mr01-bp-change-from-note-05",
+        "csse-ctx-mr01-bp-change-from-note-10",
+        "csse-ctx-mr01-bp-change-from-note-04",
+        "csse-ctx-mr01-bp-change-from-note-12",
+        "csse-ctx-mr01-bp-change-from-note-06"
+      ]
+    },
+    {
+      "id": "mr01-bp-spend-then-share",
+      "decision": "APPROVE",
+      "publish": 14,
+      "candidateIds": [
+        "csse-ctx-mr01-bp-spend-then-share-01",
+        "csse-ctx-mr01-bp-spend-then-share-02",
+        "csse-ctx-mr01-bp-spend-then-share-03",
+        "csse-ctx-mr01-bp-spend-then-share-04",
+        "csse-ctx-mr01-bp-spend-then-share-05",
+        "csse-ctx-mr01-bp-spend-then-share-06",
+        "csse-ctx-mr01-bp-spend-then-share-07",
+        "csse-ctx-mr01-bp-spend-then-share-08",
+        "csse-ctx-mr01-bp-spend-then-share-09",
+        "csse-ctx-mr01-bp-spend-then-share-10",
+        "csse-ctx-mr01-bp-spend-then-share-11",
+        "csse-ctx-mr01-bp-spend-then-share-12",
+        "csse-ctx-mr01-bp-spend-then-share-13",
+        "csse-ctx-mr01-bp-spend-then-share-14"
+      ]
+    },
+    {
+      "id": "mr01-bp-table-read-and-combine",
+      "decision": "APPROVE",
+      "publish": 12,
+      "candidateIds": [
+        "csse-dh-mr01-bp-table-read-and-combine-01",
+        "csse-dh-mr01-bp-table-read-and-combine-02",
+        "csse-dh-mr01-bp-table-read-and-combine-03",
+        "csse-dh-mr01-bp-table-read-and-combine-04",
+        "csse-dh-mr01-bp-table-read-and-combine-05",
+        "csse-dh-mr01-bp-table-read-and-combine-06",
+        "csse-dh-mr01-bp-table-read-and-combine-07",
+        "csse-dh-mr01-bp-table-read-and-combine-08",
+        "csse-dh-mr01-bp-table-read-and-combine-09",
+        "csse-dh-mr01-bp-table-read-and-combine-10",
+        "csse-dh-mr01-bp-table-read-and-combine-11",
+        "csse-dh-mr01-bp-table-read-and-combine-12"
+      ]
+    },
+    {
+      "id": "mr01-bp-table-compare-column-totals",
+      "decision": "APPROVE",
+      "publish": 12,
+      "candidateIds": [
+        "csse-dh-mr01-bp-table-compare-column-totals-01",
+        "csse-dh-mr01-bp-table-compare-column-totals-02",
+        "csse-dh-mr01-bp-table-compare-column-totals-03",
+        "csse-dh-mr01-bp-table-compare-column-totals-04",
+        "csse-dh-mr01-bp-table-compare-column-totals-05",
+        "csse-dh-mr01-bp-table-compare-column-totals-06",
+        "csse-dh-mr01-bp-table-compare-column-totals-07",
+        "csse-dh-mr01-bp-table-compare-column-totals-08",
+        "csse-dh-mr01-bp-table-compare-column-totals-09",
+        "csse-dh-mr01-bp-table-compare-column-totals-10",
+        "csse-dh-mr01-bp-table-compare-column-totals-11",
+        "csse-dh-mr01-bp-table-compare-column-totals-12"
+      ]
+    },
+    {
+      "id": "mr01-bp-bar-chart-read-difference",
+      "decision": "APPROVE",
+      "publish": 12,
+      "candidateIds": [
+        "csse-dh-mr01-bp-bar-chart-read-difference-01",
+        "csse-dh-mr01-bp-bar-chart-read-difference-02",
+        "csse-dh-mr01-bp-bar-chart-read-difference-03",
+        "csse-dh-mr01-bp-bar-chart-read-difference-04",
+        "csse-dh-mr01-bp-bar-chart-read-difference-05",
+        "csse-dh-mr01-bp-bar-chart-read-difference-06",
+        "csse-dh-mr01-bp-bar-chart-read-difference-07",
+        "csse-dh-mr01-bp-bar-chart-read-difference-08",
+        "csse-dh-mr01-bp-bar-chart-read-difference-09",
+        "csse-dh-mr01-bp-bar-chart-read-difference-10",
+        "csse-dh-mr01-bp-bar-chart-read-difference-11",
+        "csse-dh-mr01-bp-bar-chart-read-difference-12"
+      ]
+    },
+    {
+      "id": "mr01-bp-bar-chart-mean",
+      "decision": "APPROVE",
+      "publish": 12,
+      "candidateIds": [
+        "csse-dh-mr01-bp-bar-chart-mean-01",
+        "csse-dh-mr01-bp-bar-chart-mean-02",
+        "csse-dh-mr01-bp-bar-chart-mean-03",
+        "csse-dh-mr01-bp-bar-chart-mean-04",
+        "csse-dh-mr01-bp-bar-chart-mean-05",
+        "csse-dh-mr01-bp-bar-chart-mean-06",
+        "csse-dh-mr01-bp-bar-chart-mean-07",
+        "csse-dh-mr01-bp-bar-chart-mean-08",
+        "csse-dh-mr01-bp-bar-chart-mean-09",
+        "csse-dh-mr01-bp-bar-chart-mean-10",
+        "csse-dh-mr01-bp-bar-chart-mean-11",
+        "csse-dh-mr01-bp-bar-chart-mean-12"
+      ]
+    },
+    {
+      "id": "mr01-bp-think-of-a-number-two-step",
+      "decision": "APPROVE",
+      "publish": 8,
+      "candidateIds": [
+        "csse-br-mr01-bp-think-of-a-number-two-step-01",
+        "csse-br-mr01-bp-think-of-a-number-two-step-02",
+        "csse-br-mr01-bp-think-of-a-number-two-step-03",
+        "csse-br-mr01-bp-think-of-a-number-two-step-04",
+        "csse-br-mr01-bp-think-of-a-number-two-step-05",
+        "csse-br-mr01-bp-think-of-a-number-two-step-06",
+        "csse-br-mr01-bp-think-of-a-number-two-step-07",
+        "csse-br-mr01-bp-think-of-a-number-two-step-08"
+      ]
+    },
+    {
+      "id": "mr01-bp-consecutive-numbers-from-sum",
+      "decision": "APPROVE",
+      "publish": 8,
+      "candidateIds": [
+        "csse-br-mr01-bp-consecutive-numbers-from-sum-01",
+        "csse-br-mr01-bp-consecutive-numbers-from-sum-02",
+        "csse-br-mr01-bp-consecutive-numbers-from-sum-03",
+        "csse-br-mr01-bp-consecutive-numbers-from-sum-04",
+        "csse-br-mr01-bp-consecutive-numbers-from-sum-05",
+        "csse-br-mr01-bp-consecutive-numbers-from-sum-06",
+        "csse-br-mr01-bp-consecutive-numbers-from-sum-07",
+        "csse-br-mr01-bp-consecutive-numbers-from-sum-08"
+      ]
+    },
+    {
+      "id": "mr06-bp-round-decimal-places",
+      "decision": "APPROVE",
+      "publish": 8,
+      "candidateIds": [
+        "csse-br-mr06-bp-round-decimal-places-01",
+        "csse-br-mr06-bp-round-decimal-places-02",
+        "csse-br-mr06-bp-round-decimal-places-03",
+        "csse-br-mr06-bp-round-decimal-places-04",
+        "csse-br-mr06-bp-round-decimal-places-05",
+        "csse-br-mr06-bp-round-decimal-places-06",
+        "csse-br-mr06-bp-round-decimal-places-07",
+        "csse-br-mr06-bp-round-decimal-places-08"
+      ]
+    },
+    {
+      "id": "mr06-bp-round-nearest-in-context",
+      "decision": "APPROVE",
+      "publish": 8,
+      "candidateIds": [
+        "csse-br-mr06-bp-round-nearest-in-context-01",
+        "csse-br-mr06-bp-round-nearest-in-context-02",
+        "csse-br-mr06-bp-round-nearest-in-context-03",
+        "csse-br-mr06-bp-round-nearest-in-context-04",
+        "csse-br-mr06-bp-round-nearest-in-context-05",
+        "csse-br-mr06-bp-round-nearest-in-context-06",
+        "csse-br-mr06-bp-round-nearest-in-context-07",
+        "csse-br-mr06-bp-round-nearest-in-context-08"
+      ]
+    },
+    {
+      "id": "mr01-bp-compare-different-units",
+      "decision": "APPROVE",
+      "publish": 8,
+      "candidateIds": [
+        "csse-br-mr01-bp-compare-different-units-01",
+        "csse-br-mr01-bp-compare-different-units-02",
+        "csse-br-mr01-bp-compare-different-units-03",
+        "csse-br-mr01-bp-compare-different-units-04",
+        "csse-br-mr01-bp-compare-different-units-05",
+        "csse-br-mr01-bp-compare-different-units-06",
+        "csse-br-mr01-bp-compare-different-units-07",
+        "csse-br-mr01-bp-compare-different-units-08"
+      ]
+    },
+    {
+      "id": "mr01-bp-convert-then-divide",
+      "decision": "APPROVE",
+      "publish": 8,
+      "candidateIds": [
+        "csse-br-mr01-bp-convert-then-divide-01",
+        "csse-br-mr01-bp-convert-then-divide-02",
+        "csse-br-mr01-bp-convert-then-divide-03",
+        "csse-br-mr01-bp-convert-then-divide-04",
+        "csse-br-mr01-bp-convert-then-divide-05",
+        "csse-br-mr01-bp-convert-then-divide-06",
+        "csse-br-mr01-bp-convert-then-divide-07",
+        "csse-br-mr01-bp-convert-then-divide-08"
+      ]
+    },
+    {
+      "id": "mr04-bp-timetable-journey-time",
+      "decision": "APPROVE",
+      "publish": 8,
+      "candidateIds": [
+        "csse-br-mr04-bp-timetable-journey-time-01",
+        "csse-br-mr04-bp-timetable-journey-time-02",
+        "csse-br-mr04-bp-timetable-journey-time-03",
+        "csse-br-mr04-bp-timetable-journey-time-04",
+        "csse-br-mr04-bp-timetable-journey-time-05",
+        "csse-br-mr04-bp-timetable-journey-time-06",
+        "csse-br-mr04-bp-timetable-journey-time-07",
+        "csse-br-mr04-bp-timetable-journey-time-08"
+      ]
+    },
+    {
+      "id": "mr04-bp-timetable-wait-for-next",
+      "decision": "APPROVE",
+      "publish": 8,
+      "candidateIds": [
+        "csse-br-mr04-bp-timetable-wait-for-next-01",
+        "csse-br-mr04-bp-timetable-wait-for-next-02",
+        "csse-br-mr04-bp-timetable-wait-for-next-03",
+        "csse-br-mr04-bp-timetable-wait-for-next-04",
+        "csse-br-mr04-bp-timetable-wait-for-next-05",
+        "csse-br-mr04-bp-timetable-wait-for-next-06",
+        "csse-br-mr04-bp-timetable-wait-for-next-07",
+        "csse-br-mr04-bp-timetable-wait-for-next-08"
+      ]
+    },
+    {
+      "id": "mr02-bp-function-table-rule",
+      "decision": "APPROVE",
+      "publish": 8,
+      "candidateIds": [
+        "csse-br-mr02-bp-function-table-rule-01",
+        "csse-br-mr02-bp-function-table-rule-02",
+        "csse-br-mr02-bp-function-table-rule-03",
+        "csse-br-mr02-bp-function-table-rule-04",
+        "csse-br-mr02-bp-function-table-rule-05",
+        "csse-br-mr02-bp-function-table-rule-06",
+        "csse-br-mr02-bp-function-table-rule-07",
+        "csse-br-mr02-bp-function-table-rule-08"
+      ]
+    },
+    {
+      "id": "mr02-bp-function-table-reverse",
+      "decision": "APPROVE",
+      "publish": 8,
+      "candidateIds": [
+        "csse-br-mr02-bp-function-table-reverse-01",
+        "csse-br-mr02-bp-function-table-reverse-02",
+        "csse-br-mr02-bp-function-table-reverse-03",
+        "csse-br-mr02-bp-function-table-reverse-04",
+        "csse-br-mr02-bp-function-table-reverse-05",
+        "csse-br-mr02-bp-function-table-reverse-06",
+        "csse-br-mr02-bp-function-table-reverse-07",
+        "csse-br-mr02-bp-function-table-reverse-08"
+      ]
+    },
+    {
+      "id": "mr01-bp-mean-from-table",
+      "decision": "APPROVE",
+      "publish": 8,
+      "candidateIds": [
+        "csse-br-mr01-bp-mean-from-table-01",
+        "csse-br-mr01-bp-mean-from-table-02",
+        "csse-br-mr01-bp-mean-from-table-03",
+        "csse-br-mr01-bp-mean-from-table-04",
+        "csse-br-mr01-bp-mean-from-table-05",
+        "csse-br-mr01-bp-mean-from-table-06",
+        "csse-br-mr01-bp-mean-from-table-07",
+        "csse-br-mr01-bp-mean-from-table-08"
+      ]
+    },
+    {
+      "id": "mr01-bp-mean-missing-value-table",
+      "decision": "APPROVE",
+      "publish": 8,
+      "candidateIds": [
+        "csse-br-mr01-bp-mean-missing-value-table-01",
+        "csse-br-mr01-bp-mean-missing-value-table-02",
+        "csse-br-mr01-bp-mean-missing-value-table-03",
+        "csse-br-mr01-bp-mean-missing-value-table-04",
+        "csse-br-mr01-bp-mean-missing-value-table-05",
+        "csse-br-mr01-bp-mean-missing-value-table-06",
+        "csse-br-mr01-bp-mean-missing-value-table-07",
+        "csse-br-mr01-bp-mean-missing-value-table-08"
+      ]
+    },
+    {
+      "id": "mr03-bp-grid-read-point",
+      "decision": "APPROVE",
+      "publish": 8,
+      "candidateIds": [
+        "csse-gr-mr03-bp-grid-read-point-01",
+        "csse-gr-mr03-bp-grid-read-point-02",
+        "csse-gr-mr03-bp-grid-read-point-03",
+        "csse-gr-mr03-bp-grid-read-point-04",
+        "csse-gr-mr03-bp-grid-read-point-05",
+        "csse-gr-mr03-bp-grid-read-point-06",
+        "csse-gr-mr03-bp-grid-read-point-07",
+        "csse-gr-mr03-bp-grid-read-point-08"
+      ]
+    },
+    {
+      "id": "mr03-bp-grid-reflect-in-mirror-line",
+      "decision": "APPROVE",
+      "publish": 8,
+      "candidateIds": [
+        "csse-gr-mr03-bp-grid-reflect-in-mirror-line-01",
+        "csse-gr-mr03-bp-grid-reflect-in-mirror-line-02",
+        "csse-gr-mr03-bp-grid-reflect-in-mirror-line-03",
+        "csse-gr-mr03-bp-grid-reflect-in-mirror-line-04",
+        "csse-gr-mr03-bp-grid-reflect-in-mirror-line-05",
+        "csse-gr-mr03-bp-grid-reflect-in-mirror-line-06",
+        "csse-gr-mr03-bp-grid-reflect-in-mirror-line-07",
+        "csse-gr-mr03-bp-grid-reflect-in-mirror-line-08"
+      ]
+    },
+    {
+      "id": "mr03-bp-grid-translate-point",
+      "decision": "APPROVE",
+      "publish": 8,
+      "candidateIds": [
+        "csse-gr-mr03-bp-grid-translate-point-01",
+        "csse-gr-mr03-bp-grid-translate-point-02",
+        "csse-gr-mr03-bp-grid-translate-point-03",
+        "csse-gr-mr03-bp-grid-translate-point-04",
+        "csse-gr-mr03-bp-grid-translate-point-05",
+        "csse-gr-mr03-bp-grid-translate-point-06",
+        "csse-gr-mr03-bp-grid-translate-point-07",
+        "csse-gr-mr03-bp-grid-translate-point-08"
+      ]
+    },
+    {
+      "id": "mr03-bp-grid-fourth-vertex",
+      "decision": "APPROVE",
+      "publish": 8,
+      "candidateIds": [
+        "csse-gr-mr03-bp-grid-fourth-vertex-01",
+        "csse-gr-mr03-bp-grid-fourth-vertex-02",
+        "csse-gr-mr03-bp-grid-fourth-vertex-03",
+        "csse-gr-mr03-bp-grid-fourth-vertex-04",
+        "csse-gr-mr03-bp-grid-fourth-vertex-05",
+        "csse-gr-mr03-bp-grid-fourth-vertex-06",
+        "csse-gr-mr03-bp-grid-fourth-vertex-07",
+        "csse-gr-mr03-bp-grid-fourth-vertex-08"
+      ]
+    },
+    {
+      "id": "mr03-bp-grid-midpoint-of-segment",
+      "decision": "APPROVE",
+      "publish": 8,
+      "candidateIds": [
+        "csse-gr-mr03-bp-grid-midpoint-of-segment-01",
+        "csse-gr-mr03-bp-grid-midpoint-of-segment-02",
+        "csse-gr-mr03-bp-grid-midpoint-of-segment-03",
+        "csse-gr-mr03-bp-grid-midpoint-of-segment-04",
+        "csse-gr-mr03-bp-grid-midpoint-of-segment-05",
+        "csse-gr-mr03-bp-grid-midpoint-of-segment-06",
+        "csse-gr-mr03-bp-grid-midpoint-of-segment-07",
+        "csse-gr-mr03-bp-grid-midpoint-of-segment-08"
+      ]
+    },
+    {
+      "id": "mr03-bp-fig-triangle-find-x",
+      "decision": "APPROVE",
+      "publish": 8,
+      "candidateIds": [
+        "csse-af-mr03-bp-fig-triangle-find-x-01",
+        "csse-af-mr03-bp-fig-triangle-find-x-02",
+        "csse-af-mr03-bp-fig-triangle-find-x-03",
+        "csse-af-mr03-bp-fig-triangle-find-x-04",
+        "csse-af-mr03-bp-fig-triangle-find-x-05",
+        "csse-af-mr03-bp-fig-triangle-find-x-06",
+        "csse-af-mr03-bp-fig-triangle-find-x-07",
+        "csse-af-mr03-bp-fig-triangle-find-x-08"
+      ]
+    },
+    {
+      "id": "mr03-bp-fig-straight-line-find-x",
+      "decision": "APPROVE",
+      "publish": 8,
+      "candidateIds": [
+        "csse-af-mr03-bp-fig-straight-line-find-x-01",
+        "csse-af-mr03-bp-fig-straight-line-find-x-02",
+        "csse-af-mr03-bp-fig-straight-line-find-x-03",
+        "csse-af-mr03-bp-fig-straight-line-find-x-04",
+        "csse-af-mr03-bp-fig-straight-line-find-x-05",
+        "csse-af-mr03-bp-fig-straight-line-find-x-06",
+        "csse-af-mr03-bp-fig-straight-line-find-x-07",
+        "csse-af-mr03-bp-fig-straight-line-find-x-08"
+      ]
+    },
+    {
+      "id": "mr03-bp-fig-around-point-find-x",
+      "decision": "APPROVE",
+      "publish": 8,
+      "candidateIds": [
+        "csse-af-mr03-bp-fig-around-point-find-x-01",
+        "csse-af-mr03-bp-fig-around-point-find-x-02",
+        "csse-af-mr03-bp-fig-around-point-find-x-03",
+        "csse-af-mr03-bp-fig-around-point-find-x-04",
+        "csse-af-mr03-bp-fig-around-point-find-x-05",
+        "csse-af-mr03-bp-fig-around-point-find-x-06",
+        "csse-af-mr03-bp-fig-around-point-find-x-07",
+        "csse-af-mr03-bp-fig-around-point-find-x-08"
+      ]
+    },
+    {
+      "id": "mr03-bp-fig-isosceles-find-base",
+      "decision": "APPROVE",
+      "publish": 8,
+      "candidateIds": [
+        "csse-af-mr03-bp-fig-isosceles-find-base-01",
+        "csse-af-mr03-bp-fig-isosceles-find-base-02",
+        "csse-af-mr03-bp-fig-isosceles-find-base-03",
+        "csse-af-mr03-bp-fig-isosceles-find-base-04",
+        "csse-af-mr03-bp-fig-isosceles-find-base-05",
+        "csse-af-mr03-bp-fig-isosceles-find-base-06",
+        "csse-af-mr03-bp-fig-isosceles-find-base-07",
+        "csse-af-mr03-bp-fig-isosceles-find-base-08"
+      ]
+    },
+    {
+      "id": "mr01-bp-numberline-read-value",
+      "decision": "APPROVE",
+      "publish": 8,
+      "candidateIds": [
+        "csse-nl-mr01-bp-numberline-read-value-01",
+        "csse-nl-mr01-bp-numberline-read-value-02",
+        "csse-nl-mr01-bp-numberline-read-value-03",
+        "csse-nl-mr01-bp-numberline-read-value-04",
+        "csse-nl-mr01-bp-numberline-read-value-05",
+        "csse-nl-mr01-bp-numberline-read-value-06",
+        "csse-nl-mr01-bp-numberline-read-value-07",
+        "csse-nl-mr01-bp-numberline-read-value-08"
+      ]
+    },
+    {
+      "id": "mr01-bp-numberline-difference",
+      "decision": "APPROVE",
+      "publish": 8,
+      "candidateIds": [
+        "csse-nl-mr01-bp-numberline-difference-01",
+        "csse-nl-mr01-bp-numberline-difference-02",
+        "csse-nl-mr01-bp-numberline-difference-03",
+        "csse-nl-mr01-bp-numberline-difference-04",
+        "csse-nl-mr01-bp-numberline-difference-05",
+        "csse-nl-mr01-bp-numberline-difference-06",
+        "csse-nl-mr01-bp-numberline-difference-07",
+        "csse-nl-mr01-bp-numberline-difference-08"
+      ]
+    },
+    {
+      "id": "mr06-bp-numberline-read-then-round",
+      "decision": "APPROVE",
+      "publish": 8,
+      "candidateIds": [
+        "csse-nl-mr06-bp-numberline-read-then-round-01",
+        "csse-nl-mr06-bp-numberline-read-then-round-02",
+        "csse-nl-mr06-bp-numberline-read-then-round-03",
+        "csse-nl-mr06-bp-numberline-read-then-round-04",
+        "csse-nl-mr06-bp-numberline-read-then-round-05",
+        "csse-nl-mr06-bp-numberline-read-then-round-06",
+        "csse-nl-mr06-bp-numberline-read-then-round-07",
+        "csse-nl-mr06-bp-numberline-read-then-round-08"
+      ]
+    }
+  ]
+}

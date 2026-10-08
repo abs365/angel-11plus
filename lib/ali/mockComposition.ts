@@ -2,6 +2,7 @@ import type { BankQuestion, ContentDifficulty } from "@/types/ali/questionBank";
 import type { MockPathwayId } from "@/types/mock";
 import { computeGroupMarks, groupQuestionsByGroupId, isGroupedItem, marksOf, sortGroupMembers } from "./assessmentHierarchy";
 import { isMockEligibleCandidate, type MockEligibilityCandidate } from "./mockEligibility";
+import { isRejectedMockContent, REJECTED_MOCK_LEARNING_UNITS } from "./rejectedMockContent";
 
 /** `BankQuestion`'s `eligibilityStatus`/`active` are optional keys; `MockEligibilityCandidate` requires both keys present (value may still be null/undefined) -- this adapter states that explicitly rather than widening the eligibility predicate's own contract. */
 function toEligibilityCandidate(row: BankQuestion): MockEligibilityCandidate {
@@ -108,6 +109,7 @@ export interface ManifestValidationFailure {
     | "not_mock_eligible"
     | "partial_grouped_family"
     | "unresolved_marks"
+    | "rejected_content"
     | "empty_manifest";
   detail: string;
   questionId?: string;
@@ -183,6 +185,14 @@ export function validateManifest(
       continue;
     }
     resolvedRows.push(row);
+    if (isRejectedMockContent(row)) {
+      const why = REJECTED_MOCK_LEARNING_UNITS[row.learningUnitId];
+      failures.push({
+        code: "rejected_content",
+        detail: `Question id "${id}" belongs to content rejected or replaced for Mock use (${row.learningUnitId}, decided ${why.decidedOn}): ${why.reason}`,
+        questionId: id,
+      });
+    }
     if (!isMockEligibleCandidate(toEligibilityCandidate(row), targetSubject, targetPathway)) {
       failures.push({
         code: "not_mock_eligible",
@@ -275,7 +285,7 @@ export function composeCandidateMock(
   targetSubject: BankQuestion["subject"],
   targetPathway: MockPathwayId
 ): CompositionResult {
-  const eligiblePool = pool.filter((q) => isMockEligibleCandidate(toEligibilityCandidate(q), targetSubject, targetPathway));
+  const eligiblePool = pool.filter((q) => !isRejectedMockContent(q) && isMockEligibleCandidate(toEligibilityCandidate(q), targetSubject, targetPathway));
   const experiences = buildExperiences(eligiblePool).filter((e) => e.marksFullyResolved);
 
   const ranked = [...experiences].sort((a, b) => b.marks - a.marks || a.experienceId.localeCompare(b.experienceId));

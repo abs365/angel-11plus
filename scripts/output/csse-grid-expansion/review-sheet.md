@@ -54,49 +54,49 @@ All candidates are `pending_review` once submitted. Nothing is published by this
   - Targets: writing the y-coordinate first, or dropping the sign of a coordinate on the negative side of an axis
 - **csse-gr-mr03-bp-grid-reflect-in-mirror-line-01** [hard; interpretation; grid_reflect_x_axis]
   - Representation: coordinate_grid -- coordinate grid {"x":[-5,5],"y":[-5,5],"points":[{"label":"P","x":-2,"y":-3}],"mirrorLine":"x-axis","segments":null}
-  - Q: Point P is reflected in the dashed mirror line. What are the coordinates of the image of P? Give your answer in the form (x, y).
+  - Q: The grid shows a point P and a dashed mirror line. Reflect P in the mirror line. What are the coordinates of the new position of P? Give your answer in the form (x, y).
   - Answer: (-2, 3)
   - Working: P is at (-2, -3) and the mirror line is the x-axis. / In the x-axis the x-coordinate stays and the y-coordinate changes sign. The image is (-2, 3).
   - Targets: negating the coordinate that should stay fixed, or negating both coordinates (a rotation) when reflecting in y = x
 - **csse-gr-mr03-bp-grid-reflect-in-mirror-line-02** [medium; interpretation; grid_reflect_x_axis]
   - Representation: coordinate_grid -- coordinate grid {"x":[-6,6],"y":[-6,6],"points":[{"label":"P","x":-4,"y":1}],"mirrorLine":"x-axis","segments":null}
-  - Q: Point P is reflected in the dashed mirror line. What are the coordinates of the image of P? Give your answer in the form (x, y).
+  - Q: The grid shows a point P and a dashed mirror line. Reflect P in the mirror line. What are the coordinates of the new position of P? Give your answer in the form (x, y).
   - Answer: (-4, -1)
   - Working: P is at (-4, 1) and the mirror line is the x-axis. / In the x-axis the x-coordinate stays and the y-coordinate changes sign. The image is (-4, -1).
   - Targets: negating the coordinate that should stay fixed, or negating both coordinates (a rotation) when reflecting in y = x
 - **csse-gr-mr03-bp-grid-reflect-in-mirror-line-03** [easy; interpretation; grid_reflect_y_axis]
   - Representation: coordinate_grid -- coordinate grid {"x":[-5,5],"y":[-5,5],"points":[{"label":"P","x":3,"y":4}],"mirrorLine":"y-axis","segments":null}
-  - Q: Point P is reflected in the dashed mirror line. What are the coordinates of the image of P? Give your answer in the form (x, y).
+  - Q: The grid shows a point P and a dashed mirror line. Reflect P in the mirror line. What are the coordinates of the new position of P? Give your answer in the form (x, y).
   - Answer: (-3, 4)
   - Working: P is at (3, 4) and the mirror line is the y-axis. / In the y-axis the y-coordinate stays and the x-coordinate changes sign. The image is (-3, 4).
   - Targets: negating the coordinate that should stay fixed, or negating both coordinates (a rotation) when reflecting in y = x
 - **csse-gr-mr03-bp-grid-reflect-in-mirror-line-04** [hard; interpretation; grid_reflect_y_equals_x]
   - Representation: coordinate_grid -- coordinate grid {"x":[-8,8],"y":[-8,8],"points":[{"label":"P","x":3,"y":2}],"mirrorLine":"y=x","segments":null}
-  - Q: Point P is reflected in the dashed mirror line. What are the coordinates of the image of P? Give your answer in the form (x, y).
+  - Q: The grid shows a point P and a dashed mirror line. Reflect P in the mirror line. What are the coordinates of the new position of P? Give your answer in the form (x, y).
   - Answer: (2, 3)
   - Working: P is at (3, 2) and the mirror line is the line y = x. / In the line y = x the two coordinates swap places. The image is (2, 3).
   - Targets: negating the coordinate that should stay fixed, or negating both coordinates (a rotation) when reflecting in y = x
 - **csse-gr-mr03-bp-grid-reflect-in-mirror-line-05** [medium; interpretation; grid_reflect_x_axis]
   - Representation: coordinate_grid -- coordinate grid {"x":[-8,8],"y":[-8,8],"points":[{"label":"P","x":6,"y":-8}],"mirrorLine":"x-axis","segments":null}
-  - Q: Point P is reflected in the dashed mirror line. What are the coordinates of the image of P? Give your answer in the form (x, y).
+  - Q: The grid shows a point P and a dashed mirror line. Reflect P in the mirror line. What are the coordinates of the new position of P? Give your answer in the form (x, y).
   - Answer: (6, 8)
   - Working: P is at (6, -8) and the mirror line is the x-axis. / In the x-axis the x-coordinate stays and the y-coordinate changes sign. The image is (6, 8).
   - Targets: negating the coordinate that should stay fixed, or negating both coordinates (a rotation) when reflecting in y = x
 - **csse-gr-mr03-bp-grid-reflect-in-mirror-line-06** [easy; interpretation; grid_reflect_y_axis]
   - Representation: coordinate_grid -- coordinate grid {"x":[-8,8],"y":[-8,8],"points":[{"label":"P","x":5,"y":4}],"mirrorLine":"y-axis","segments":null}
-  - Q: Point P is reflected in the dashed mirror line. What are the coordinates of the image of P? Give your answer in the form (x, y).
+  - Q: The grid shows a point P and a dashed mirror line. Reflect P in the mirror line. What are the coordinates of the new position of P? Give your answer in the form (x, y).
   - Answer: (-5, 4)
   - Working: P is at (5, 4) and the mirror line is the y-axis. / In the y-axis the y-coordinate stays and the x-coordinate changes sign. The image is (-5, 4).
   - Targets: negating the coordinate that should stay fixed, or negating both coordinates (a rotation) when reflecting in y = x
 - **csse-gr-mr03-bp-grid-reflect-in-mirror-line-07** [hard; interpretation; grid_reflect_y_equals_x]
   - Representation: coordinate_grid -- coordinate grid {"x":[-8,8],"y":[-8,8],"points":[{"label":"P","x":-4,"y":1}],"mirrorLine":"y=x","segments":null}
-  - Q: Point P is reflected in the dashed mirror line. What are the coordinates of the image of P? Give your answer in the form (x, y).
+  - Q: The grid shows a point P and a dashed mirror line. Reflect P in the mirror line. What are the coordinates of the new position of P? Give your answer in the form (x, y).
   - Answer: (1, -4)
   - Working: P is at (-4, 1) and the mirror line is the line y = x. / In the line y = x the two coordinates swap places. The image is (1, -4).
   - Targets: negating the coordinate that should stay fixed, or negating both coordinates (a rotation) when reflecting in y = x
 - **csse-gr-mr03-bp-grid-reflect-in-mirror-line-08** [medium; interpretation; grid_reflect_y_axis]
   - Representation: coordinate_grid -- coordinate grid {"x":[-8,8],"y":[-8,8],"points":[{"label":"P","x":6,"y":-1}],"mirrorLine":"y-axis","segments":null}
-  - Q: Point P is reflected in the dashed mirror line. What are the coordinates of the image of P? Give your answer in the form (x, y).
+  - Q: The grid shows a point P and a dashed mirror line. Reflect P in the mirror line. What are the coordinates of the new position of P? Give your answer in the form (x, y).
   - Answer: (-6, -1)
   - Working: P is at (6, -1) and the mirror line is the y-axis. / In the y-axis the y-coordinate stays and the x-coordinate changes sign. The image is (-6, -1).
   - Targets: negating the coordinate that should stay fixed, or negating both coordinates (a rotation) when reflecting in y = x

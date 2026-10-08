@@ -52,12 +52,12 @@ const dims = "ideas,vocabulary,grammar,structure,punctuation";
 const ids = register.map((r) => r.script_id);
 fs.writeFileSync(`${OUT}/reader-sheet-TEMPLATE.csv`, [`script_id,${dims},evidence_ideas,evidence_vocabulary,evidence_grammar,evidence_structure,evidence_punctuation,notes`, ...ids.map((s) => `${s},,,,,,,,,,,`)].join("\n") + "\n");
 fs.writeFileSync(`${OUT}/ai-run-sheet-TEMPLATE.csv`, [`script_id,${dims},flagged_low_confidence_or_review_required,rubric_version,prompt_version`, ...ids.map((s) => `${s},,,,,,,,`)].join("\n") + "\n");
-fs.writeFileSync(`${OUT}/third-reader-sheet-TEMPLATE.csv`, [`script_id,${dims},reason_for_third_reading`, "(only scripts where readers A and B differ)"].join("\n") + "\n");
+fs.writeFileSync(`${OUT}/reader-3-sheet-TEMPLATE.csv`, [`script_id,${dims},reason_for_third_reading`, "(only scripts where Readers 1 and 2 differ)"].join("\n") + "\n");
 fs.writeFileSync(`${OUT}/README.txt`, [
   "Writing calibration kit. Everything here is BLANK on purpose. No script, mark or result has been created.",
   "",
   "Cells use exactly: developing | secure | strong | could_not_judge  (flagged column: yes | no).",
-  "Name the filled sheets: reader-a.csv, reader-b.csv, third-reader.csv, ai-run-1.csv, ai-run-2.csv (second AI pass on 10 scripts), then run:",
+  "Name the filled sheets: reader-1.csv, reader-2.csv, reader-3.csv, ai-run-1.csv, ai-run-2.csv (second AI pass on 10 scripts), then run:",
   "  npx tsx scripts/analyse-writing-calibration.mjs scripts/output/writing-calibration-pack",
   "The analysis reports measures only. It produces no mark, no band, and no CSSE-equivalent number.",
 ].join("\n") + "\n");

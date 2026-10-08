@@ -104,7 +104,7 @@ export const BP_GRID_REFLECT_IN_MIRROR_LINE: StructuralBlueprint<ReflectParams> 
   difficultyControls: (p) => (p.l === 2 ? "hard" : p.x < 0 && p.y < 0 ? "hard" : p.x < 0 || p.y < 0 ? "medium" : "easy"),
   difficultyDimensions: ["mirror_line_type", "negative_coordinates"],
   sampleParams: (random) => ({ x: rint(random, -8, 8), y: rint(random, -8, 8), l: Math.floor(random() * 3), e: EXTENTS[Math.floor(random() * 3)] }),
-  renderQuestionText: () => "Point P is reflected in the dashed mirror line. What are the coordinates of the image of P? Give your answer in the form (x, y).",
+  renderQuestionText: () => "The grid shows a point P and a dashed mirror line. Reflect P in the mirror line. What are the coordinates of the new position of P? Give your answer in the form (x, y).",
   deriveCorrectAnswer: (p) => formatCoordinatePoint(reflectOf(p)),
   deriveWorkedSteps: (p) => {
     const rule = p.l === 0 ? "In the x-axis the x-coordinate stays and the y-coordinate changes sign." : p.l === 1 ? "In the y-axis the y-coordinate stays and the x-coordinate changes sign." : "In the line y = x the two coordinates swap places.";

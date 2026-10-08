@@ -297,3 +297,18 @@ Both: **APPLIED, DO NOT RERUN** (`ANGEL_CSSE_GATE_CLOSURE_VERIFICATION.md`). **2
 | 4 | Final Q2 production artwork | storyboards and contracts only; specialist pipeline to be selected |
 | 5 | Writing human calibration evidence | kit ready, no thresholds, no claim |
 | 6 | Founder production acceptance | script ready (remediation plus visual renderers) |
+
+## Gate execution (Founder decisions of 2026-10-08, after verification of 271 and 272)
+
+| Item | State |
+|---|---|
+| Salmon | **REJECTED AND REPLACED.** Preserved as evidence; `lib/ali/rejectedMockContent.ts` makes the Mock composer skip it and the manifest validator fail on it. Replacement: original passage **"The Great Stink"** (530 words), 11 questions, 18 marks (RC-01 x3, RC-02, RC-03, RC-04 x4, RC-06, RC-10). Form B reading = Compass Rose 13 questions / 21 marks + The Great Stink 11 / 18 = **24 questions, 39 marks**. Template migration 273 prepared, **NOT applied** (adds the sealed candidates and the passage review registration; records Salmon as rejected and deactivates it, deleting nothing) |
+| Writing Q1 `screentime` | approved for human validation, **not** for activation; the validator pack carries the exact prompt and the six assessment points |
+| Writing Q2 | specialist artwork route confirmed; storyboards only; not activated until final artwork has human visual and educational approval |
+| Writing calibration | adjudication rule approved: Reader 1 + Reader 2, and independent Reader 3 where they differ on any dimension; every judgement preserved; no thresholds; no calibration claim |
+| Marking robustness | coordinate normaliser (live in Practice on deploy; Mock scorer via template migration **274, NOT applied**) and safe ordered-list separators (live on deploy, Practice and Mock Reading); Compass Rose accepted-answer semantics deliberately untouched, left to the English validator. `ANGEL_CSSE_MARKING_ROBUSTNESS.md` |
+| Practice candidates | `ANGEL_CSSE_MATHS_PRACTICE_FINAL_DECISION_PACK.md`: 380 prepared, **all 380 re-verified from their own parameters**, **374 recommended** (37 blueprints APPROVE, 1 TRIM, 0 REVISE, 0 REJECT); the 6 not recommended are all from `mr01-bp-change-from-note`; risks preserved per family; publication package and runbook prepared, **nothing submitted or published**. Projected inventory 901 to **1,275** |
+| Validator packs | English (13 Compass + 11 Great Stink + Writing Q1 and Q2) and Maths (56 items) regenerated; self-contained, no code access; APPROVE / REVISE / REJECT plus comments per item |
+| Migrations | **268 and 270 NOT AUTHORISED.** 273 and 274 prepared, NOT applied |
+
+Gate states (six, none added): (1) Practice governance and publication: final decision pack and publication package ready, awaiting Founder authorisation; (2) Form B human validation: packs ready, awaiting validators; (3) Writing prompt approval and publication: pending (268 not authorised); (4) final Q2 artwork: specialist provider to be selected; (5) calibration evidence: kit ready, no readers yet; (6) Founder production acceptance: after the relevant content is live.

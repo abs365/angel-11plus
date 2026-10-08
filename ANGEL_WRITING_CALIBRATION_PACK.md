@@ -21,8 +21,8 @@ split is unresolved; neither is assumed anywhere here.
 | File | Purpose |
 |---|---|
 | `sample-register.csv` | 40 random script ids with the stratified plan: 20 reflective (QT-WC-01a) and 20 picture-led narrative (QT-WC-01b); per genre 7 weak, 6 middling, 7 strong targets and 4 awkward cases (too short, off task, memorised template, plus heavy-spelling-good-ideas for reflective and picture-described-not-a-story for narrative). **Held by the coordinator only; readers never see quality targets or awkward types.** |
-| `reader-sheet-TEMPLATE.csv` | One row per script: a level for each of the five dimensions, an evidence line per dimension, notes. Copy to `reader-a.csv` and `reader-b.csv` |
-| `third-reader-sheet-TEMPLATE.csv` | Only for scripts where A and B differ |
+| `reader-sheet-TEMPLATE.csv` | One row per script: a level for each of the five dimensions, an evidence line per dimension, notes. Copy to `reader-1.csv` and `reader-2.csv` |
+| `reader-3-sheet-TEMPLATE.csv` | Reader 3 only: the scripts and dimensions where Readers 1 and 2 differ (listed in `adjudication-queue.csv`). Reader 3 judges independently, without being told which reader said what unless the Founder decides otherwise |
 | `ai-run-sheet-TEMPLATE.csv` | AI levels, a flag column (low-confidence or review-required), and the rubric/prompt versions used |
 | `README.txt` | Allowed cell values and the one command that produces the results |
 
@@ -53,8 +53,7 @@ this dimension fairly (use it honestly; do not guess).
 
 **Procedure.** (1) Calibration session first: both readers mark the same 4 practice scripts that are not in the sample, then discuss every difference, so the
 rubric language is shared. (2) Mark all 40 independently. (3) Return sheets to the coordinator, not to each other.
-**Disagreement is preserved, not averaged.** Each reader's own judgement and evidence line for every script and dimension is kept exactly as recorded. **Every** difference between A and B
-(one level or two) is queued for adjudication by a third reader, with both readers' evidence side by side; nothing is averaged, rounded or silently resolved. Until a third reading is supplied a
+**Disagreement is preserved, not averaged.** Each reader's own judgement and evidence line for every script and dimension is kept exactly as recorded. **The meaningful level is deliberately set at its most cautious: ANY difference between Reader 1 and Reader 2 on a dimension** (one level or two) is queued for independent adjudication by **Reader 3**, with both readers' evidence side by side; nothing is averaged, rounded or silently resolved. Whether adjacent (one-level) differences deserve a different treatment is a question the evidence may answer later; it is not decided in advance. Until Reader 3 has judged, a
 disputed cell is "unresolved" and is excluded from any comparison with the AI, never guessed.
 
 ## 3. Collecting the scripts (coordinator)

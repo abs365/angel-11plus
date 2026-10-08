@@ -5,6 +5,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { COMPASS_ROSE_FIXES, TOP_UP_ITEMS, REPAIR_TIER } from "../lib/ali/questionFactory/englishFormBCompletion.ts";
+import { REPLACEMENT_FACTUAL_CLAIMS, REPLACEMENT_ITEMS, REPLACEMENT_PASSAGE_TEXT, REPLACEMENT_PASSAGE_TITLE, REPLACEMENT_TOTALS } from "../lib/ali/questionFactory/englishFormBReplacement.ts";
 import { FORM_B_MATHS_ITEMS } from "../lib/ali/questionFactory/mockFormBMathsItems.ts";
 import { FORM_B_REVALIDATION } from "../lib/ali/questionFactory/mockFormBRevalidation.ts";
 
@@ -87,7 +88,6 @@ function parse166(passagePrefix) {
   return out;
 }
 const COMPASS = parse166("eng-inc003-compassrosechallenge");
-const SALMON = parse166("eng-inc003-salmonnavigation");
 for (const f of COMPASS_ROSE_FIXES) {
   const it = COMPASS.find((x) => x.id === f.id);
   if (f.question) it.body.question = f.question;
@@ -97,11 +97,11 @@ const QT_NAME = { "QT-RC-01": "Retrieval of explicit information", "QT-RC-02": "
 const TIER_TEXT = {
   TIER2_ACCEPTED_SET: "AUTOMATIC. Marked correct if the child's answer matches an accepted answer exactly, OR contains an accepted answer as a run of whole words (so extra words around a correct answer are fine, and so is a hedged answer that happens to contain one), OR is a run of two or more whole words taken from inside an accepted answer (so a shortened answer such as \"the sundial\" is accepted if it sits inside a listed one). A single word on its own matches only by exact equality. Capitals and extra spaces are ignored. Please say (a) if any correct answer would be rejected and (b) if any WRONG answer would be accepted by these rules.",
   TIER3_QUOTATION_PLUS_EXPLANATION: "MANUAL. A trained marker awards marks against the model answer; the child must support the answer with a quotation from the text.",
-  TIER4_ORDERED_LIST: "AUTOMATIC. One mark for each item in its correct position. The child must put each item on its OWN LINE (numbers such as '1.' are fine). A correct order typed on one line separated by commas is read as a single item and scores 1 of 4. Please judge whether the question tells the child to use separate lines.",
+  TIER4_ORDERED_LIST: "AUTOMATIC. One mark for each item in its correct position; the ORDER is what is marked. The child may separate items with new lines, commas, semicolons, arrows or the words then / and (and with plain spaces where every item is a single word or letter). Any other order scores only for the positions that happen to be right.",
   TIER5_NAMED_COMPONENT_PLUS_EXPLANATION: "MANUAL. A trained marker awards marks against the model answer or marker guide. Listed accepted answers are prompts for the marker only and never award marks.",
 };
 const validatorNotes = {
-  "eng-inc003-compassrosechallenge-q02b": "Casey's 'bell' is the weathervane only by a small inference (the passage says the weathervane is on the sundial and that Casey read the clue as the sundial). Is that an acceptable inference for this paper, or should the wording change?",
+  "eng-inc003-compassrosechallenge-q02b": "EDUCATIONAL JUDGEMENT FOR YOU (not changed by Angel): (1) does \"the sundial\" deserve the mark? (2) does \"the weathervane\" alone? (3) does a hedged answer such as \"the weathervane or the sundial\"? (4) is Casey's belief about the \"bell\" inferable from the passage, or should the wording change?",
   "eng-inc003-compassrosechallenge-q05": "This question was re-worded after review: the passage shows all four working at the same time, so it can order how they are DESCRIBED but not who investigated first. Confirm the order Elif, Casey, Wei, Grace is the only defensible order.",
   "eng-inc003-compassrosechallenge-q03": "A Yes/No plus explanation item worth 3 marks. Check that the marks split cleanly into observable parts.",
   "eng-fb-compassrosechallenge-q08": "NEW item (authored for Form B). Check the two mark elements are separately observable.",
@@ -124,8 +124,10 @@ function engItem(it, extra = {}) {
 <details><summary>Intended answer, marking treatment and alternative-answer considerations</summary>
 <p><strong>Marking treatment:</strong> ${esc(TIER_TEXT[tier] ?? tier)}</p>
 ${model ? `<p><strong>Intended answer:</strong> ${nl2br(model)}</p>` : ""}
-${b.orderedAnswer ? `<p><strong>Correct order:</strong> ${esc(b.orderedAnswer.join(" , "))}</p>` : ""}
-${b.quotationRequired ? `<p><strong>Quotation the marker looks for:</strong> ${esc(b.quotationRequired.join(" | "))}</p>` : ""}
+${(extra.orderedAnswer ?? b.orderedAnswer) ? `<p><strong>Correct order:</strong> ${esc((extra.orderedAnswer ?? b.orderedAnswer).join(" , "))}</p>` : ""}
+${(extra.quotationRequired ?? b.quotationRequired) ? `<p><strong>Quotation the marker looks for:</strong> ${esc((extra.quotationRequired ?? b.quotationRequired).join(" | "))}</p>` : ""}
+${extra.alternativeAnswerNotes ? `<p><strong>Legitimate alternative answers (author notes):</strong> ${esc(extra.alternativeAnswerNotes)}</p>` : ""}
+${extra.plausibleWrong ? `<p><strong>Plausible wrong answers the marker should reject:</strong> ${esc(extra.plausibleWrong.join(" | "))}</p>` : ""}
 ${extra.markingGuidance ?? b.markingGuidance ? `<p><strong>Marker guide:</strong> ${esc(extra.markingGuidance ?? b.markingGuidance)}</p>` : ""}
 ${acc ? `<p><strong>${tier === "TIER2_ACCEPTED_SET" ? "Accepted answers" : "Named-component prompts (marker support only)"} (${acc.length}):</strong> ${esc(acc.join(" | "))}</p>` : ""}
 ${note ? `<p class="warn"><strong>Please look at this one carefully:</strong> ${esc(note)}</p>` : ""}</details>
@@ -142,25 +144,34 @@ function passageStats(text) {
 
 function englishPack() {
   const cText = COMPASS[0].body.passageText.replace(/\\n/g, "\n");
-  const sText = SALMON[0].body.passageText.replace(/\\n/g, "\n");
-  const cS = passageStats(COMPASS[0].body.passageText), sS = passageStats(SALMON[0].body.passageText);
+  const cS = passageStats(COMPASS[0].body.passageText);
+  const rS = passageStats(REPLACEMENT_PASSAGE_TEXT);
   const cTop = TOP_UP_ITEMS.filter((i) => i.passageId.includes("compass"));
-  const sTop = TOP_UP_ITEMS.filter((i) => i.passageId.includes("salmon"));
   const topItem = (t) => engItem({ id: t.id, qt: t.skill }, { question: t.question, tier: t.tier, marks: t.marks, model: t.modelAnswer, acceptedAnswers: t.acceptedAnswers, markingGuidance: t.markingGuidance, difficulty: t.difficulty, isNew: true });
+  const repItem = (r) => engItem({ id: r.id, qt: r.skill }, { question: r.question, tier: r.tier, marks: r.marks, model: r.modelAnswer, acceptedAnswers: r.acceptedAnswers, orderedAnswer: r.orderedAnswer, quotationRequired: r.quotationRequired, markingGuidance: r.markingGuidance, difficulty: r.difficulty, isNew: true, alternativeAnswerNotes: r.alternativeAnswerNotes, plausibleWrong: r.plausibleWrongAnswers });
   const compassItems = [...COMPASS.map((i) => engItem(i)), ...cTop.map(topItem)];
-  const salmonItems = [...SALMON.map((i) => engItem(i)), ...sTop.map(topItem)];
-  const ids = [...COMPASS.map((i) => i.id), ...cTop.map((t) => t.id), ...SALMON.map((i) => i.id), ...sTop.map((t) => t.id), "writing-q1-screentime", "writing-q2-cornershop-storyboard"];
-  const totalMarks = (arr, tops) => arr.reduce((s, i) => s + i.body.marks, 0) + tops.reduce((s, t) => s + t.marks, 0);
-  const cm = totalMarks(COMPASS, cTop), sm = totalMarks(SALMON, sTop);
+  const replacementItems = REPLACEMENT_ITEMS.map(repItem);
+  const ids = [...COMPASS.map((i) => i.id), ...cTop.map((t) => t.id), ...REPLACEMENT_ITEMS.map((r) => r.id), "writing-q1-screentime", "writing-q2-cornershop-storyboard"];
+  const cm = COMPASS.reduce((s, i) => s + i.body.marks, 0) + cTop.reduce((s, t) => s + t.marks, 0);
+  const rm = REPLACEMENT_TOTALS.marks;
   const skillRows = {};
-  for (const it of [...COMPASS, ...SALMON]) skillRows[it.qt] = (skillRows[it.qt] ?? [0, 0]).map((v, k) => v + (k === 0 ? 1 : it.body.marks));
-  for (const t of TOP_UP_ITEMS) skillRows[t.skill] = (skillRows[t.skill] ?? [0, 0]).map((v, k) => v + (k === 0 ? 1 : t.marks));
+  for (const it of COMPASS) skillRows[it.qt] = (skillRows[it.qt] ?? [0, 0]).map((v, k) => v + (k === 0 ? 1 : it.body.marks));
+  for (const t of cTop) skillRows[t.skill] = (skillRows[t.skill] ?? [0, 0]).map((v, k) => v + (k === 0 ? 1 : t.marks));
+  for (const r of REPLACEMENT_ITEMS) skillRows[r.skill] = (skillRows[r.skill] ?? [0, 0]).map((v, k) => v + (k === 0 ? 1 : r.marks));
   const cornerMd = fs.readFileSync("ANGEL_CSSE_WRITING_NARRATIVE_ASSET_CONTRACTS.md", "utf8");
   const cs = cornerMd.slice(cornerMd.indexOf("## The Corner Shop"));
   const csBlock = cs.slice(0, cs.indexOf("\n## ", 5) > 0 ? cs.indexOf("\n## ", 5) : cs.length).split("\n").filter((l) => l.trim() && !l.startsWith("## ")).map((l) => `<p class="${l.startsWith("  -") ? "meta" : ""}" style="${l.startsWith("  -") ? "margin:2px 0 2px 24px" : ""}">${esc(l.replace(/^\s*-\s*/, "").replace(/\*\*/g, ""))}</p>`).join("");
   const svg = fs.readFileSync("public/mock-assets/q2-picture-narrative/cornershop-v1.svg", "utf8");
   const dataUri = "data:image/svg+xml;base64," + Buffer.from(svg).toString("base64");
   const screen = { prompt: "Do you think there should be limits on how much time children spend using phones, tablets, or screens? Write about your own opinion, using your own experience or things you have noticed to support what you think.", title: "Should Children Have Limits on Screen Time?", checklist: ["Write at least six sentences", "State your own opinion clearly, near the start", "Support your opinion with specific, convincing examples or reasoning, not just a generic list of reasons", "Consider, briefly, why someone might disagree with you", "Keep a genuine personal voice throughout -- this is a personal opinion piece, not a formal debate speech, though a rhetorical question or a moment of deliberate emphasis is fine if it suits your own voice", "Organise your writing into clear paragraphs", "Check spelling and punctuation carefully"] };
+  const q1Criteria = [
+    "Is it accessible to children with different home experiences (for example little or no personal device use, shared devices, strict family rules, or no rules)?",
+    "Does it carry a risk of rehearsed or template responses (a memorised 'screens are bad' essay)?",
+    "Does it elicit a genuine opinion with real justification, rather than a list of generic reasons?",
+    "Is it age appropriate for 10 to 11 year olds?",
+    "Does it give enough opportunity to show organisation, vocabulary and sentence control?",
+    "Does it unfairly assume the child has unrestricted personal device use?",
+  ];
 
   const body = `
 <h1>English Form B: independent validation pack</h1>
@@ -171,36 +182,34 @@ ${validatorHeader("English Form B pack")}
 <h2>1. The form at a glance</h2>
 <div class="card"><p>Reading section: <strong>24 questions, 39 marks</strong>, over two passages (one narrative, one informational), followed by two Writing tasks. The official CSSE division of marks between comprehension and Writing has not been confirmed and nothing here assumes one.</p>
 <table><tr><th>Skill</th><th>Questions</th><th>Marks</th></tr>${Object.keys(skillRows).sort().map((k) => `<tr><td>${esc(k)} ${esc(QT_NAME[k] ?? "")}</td><td>${skillRows[k][0]}</td><td>${skillRows[k][1]}</td></tr>`).join("")}<tr><th>Total</th><th>${Object.values(skillRows).reduce((s, v) => s + v[0], 0)}</th><th>${Object.values(skillRows).reduce((s, v) => s + v[1], 0)}</th></tr></table>
-<p class="meta">Marking mix: some items are marked automatically against a fixed answer list; the explanation items (marked MANUAL) need a trained marker. The mix is stated per item.</p></div>
-<div class="warn"><strong>Pending decision, please read before spending time on Section B.</strong> The informational passage in Section B (How Salmon Find Their Way Home) is recommended for REPLACEMENT because it closely mirrors an existing timed-section passage about bees: it shares the sentences "one of the most remarkable feats of natural navigation" and "what is already clear is that a creature with", and the question formats match. You may still review it (your view on the overlap is welcome), but do not expect it to be used unchanged. Section A (narrative) is not affected.</div>
+<p class="meta">Marking mix: some items are marked automatically against a fixed answer list; the explanation items (marked MANUAL) need a trained marker. The mix is stated per item.</p>
+<p class="meta">History note: an earlier informational passage about salmon was rejected and replaced because it overlapped with an existing passage. It is not part of this pack and must not be reviewed or used.</p></div>
 
 <h2>A. Narrative passage: The Compass Rose Challenge</h2>
 <div class="card"><p class="meta">${cS.words} words, ${cS.sentences} sentences, about ${cS.avgSentence} words per sentence. Intended difficulty: challenging. Items: ${COMPASS.length + cTop.length}, ${cm} marks. Estimated time for these items: ${Math.round((COMPASS.reduce((s, i) => s + i.seconds, 0) + cTop.reduce((s, t) => s + t.estimatedTimeSeconds, 0)) / 60)} minutes.</p>
 <div class="pass">${esc(cText)}</div>
-<details><summary>Load and age-appropriateness aids</summary><p class="meta">Longer words (9 or more letters) a child must handle: ${esc(cS.long.join(", "))}.</p><p><strong>Factual claims to verify:</strong> none. This is fiction. Internal consistency to check: twenty minutes in total, ten spent alone, the marker reached with four minutes to spare; the order in which the four characters are described (Elif, Casey, Wei, Grace).</p><p><strong>Content sensitivity:</strong> none identified.</p></details></div>
+<details><summary>Load and age-appropriateness aids</summary><p class="meta">Longer words (9 or more letters) a child must handle: ${esc(cS.long.join(", "))}.</p><p><strong>Factual claims to verify:</strong> none. This is fiction. Internal consistency to check: twenty minutes in total, ten spent alone, the marker reached with four minutes to spare; the order in which the four characters are described (Elif, Casey, Wei, Grace).</p><p><strong>Content sensitivity:</strong> none identified.</p></details>
+<div class="warn"><strong>Educational judgements left to you (Angel has deliberately not changed these).</strong> For Question 2(b), the accepted answers are the weathervane above the sundial and variants. The automatic marker also accepts a shortened answer taken from inside an accepted one, so "the sundial" and "the stone sundial" currently earn the mark, and an answer that hedges between two things ("the weathervane or the sundial") also earns it. Please say: (1) does "the sundial" deserve the mark; (2) does "the weathervane" alone; (3) does a hedged answer; and (4) is Casey's belief about the "bell" actually inferable from the passage? Use the comment box on Question 2(b) (and 2(a)).</div></div>
 ${compassItems.join("\n")}
 
-<h2>B. Informational passage: How Salmon Find Their Way Home (recommended for replacement)</h2>
-<div class="card"><p class="meta">${sS.words} words, ${sS.sentences} sentences, about ${sS.avgSentence} words per sentence. Intended difficulty: moderate. Items: ${SALMON.length + sTop.length}, ${sm} marks. Estimated time for these items: ${Math.round((SALMON.reduce((s, i) => s + i.seconds, 0) + sTop.reduce((s, t) => s + t.estimatedTimeSeconds, 0)) / 60)} minutes.</p>
-<div class="pass">${esc(sText)}</div>
-<details><summary>Load, age-appropriateness and factual-verification aids</summary><p class="meta">Longer words (9 or more letters): ${esc(sS.long.join(", "))}.</p>
-<p><strong>Factual claims requiring verification against a reliable source:</strong></p><ul>
-<li>Arthur Hasler and Warren Wisby first proposed, in 1951, that salmon find their home stream by its distinctive scent (olfactory imprinting).</li>
-<li>Later research confirmed returning adult salmon can detect and follow the remembered stream scent, choosing the correct tributary at forks.</li>
-<li>Young salmon imprint on the Earth's magnetic field (its strength and angle) around where they first enter the sea, and use it as a map in open ocean (the passage presents this with hedging).</li>
-<li>A salmon may travel thousands of miles to the open ocean and return years later to the same stream.</li>
-<li>Scent is too diluted to follow from far out at sea; the magnetic sense is too broad to pinpoint a single stream.</li></ul>
-<p><strong>Wording to judge:</strong> "no memory of ever having made the outward journey consciously", and "a salmon has no smell, no landmark, and no sun-compass reliable enough…" (where "no smell" means no usable scent at sea). Are they clear enough for a 10 to 11 year old?</p></details></div>
-${salmonItems.join("\n")}
+<h2>B. Informational passage: ${esc(REPLACEMENT_PASSAGE_TITLE)} (new original replacement)</h2>
+<div class="card"><p class="meta">${rS.words} words, ${rS.sentences} sentences, about ${rS.avgSentence} words per sentence. Intended difficulty: moderate. Items: ${REPLACEMENT_ITEMS.length}, ${rm} marks. Estimated time for these items: ${Math.round(REPLACEMENT_ITEMS.reduce((s, i) => s + i.estimatedTimeSeconds, 0) / 60)} minutes. Original Angel text; no external rights holder.</p>
+<p class="meta">Designed to differ from the live timed passage on bees in subject, in structure (a chronological problem, crisis and solution rather than an explanation of parallel methods), in wording (no shared run of six or more words with any held passage, tested) and in question formats.</p>
+<div class="pass">${esc(REPLACEMENT_PASSAGE_TEXT)}</div>
+<details><summary>Load, age-appropriateness and factual-verification aids</summary><p class="meta">Longer words (9 or more letters): ${esc(rS.long.join(", "))}.</p>
+<p><strong>Factual claims requiring verification against a reliable source:</strong></p><ul>${REPLACEMENT_FACTUAL_CLAIMS.map((c) => `<li>${esc(c)}</li>`).join("")}</ul>
+<p><strong>Please also judge:</strong> is the subject suitable for 10 to 11 year olds (disease and death are mentioned briefly and without detail); is the vocabulary load fair (words such as cesspits, miasma, cholera, embankments are used in context); and does every answer rely only on the passage?</p></details></div>
+${replacementItems.join("\n")}
 
 <h2>C. Writing</h2>
-<div class="card" id="item-writing-q1-screentime"><h3>Writing Question 1 (reflective / discursive): "${esc(screen.title)}" <span class="tag">proposed, provisional</span><span class="tag">25 minutes</span></h3>
+<div class="card" id="item-writing-q1-screentime"><h3>Writing Question 1 (reflective / discursive): "${esc(screen.title)}" <span class="tag">approved for human validation, NOT for activation</span><span class="tag">25 minutes</span></h3>
 <p><strong>Exact prompt the child sees:</strong></p><p class="q">${esc(screen.prompt)}</p>
 <p><strong>Checklist shown with it:</strong></p><ul>${screen.checklist.map((c) => `<li>${esc(c)}</li>`).join("")}</ul>
-<div class="note"><strong>Educational rationale.</strong> It is an opinion piece (discursive), so it differs in type from the form A reflective task (changing one's mind about something). Every child has relevant experience, so it tests writing rather than knowledge. It invites a stated position, support from experience, and a counter-view, which are the Ideas and Structure demands of the task. <strong>Risks to judge:</strong> a rehearsed "screens are bad" template; children with strong family rules may find it narrow. Status: already independently validated as an item in the Mock reserve, but <strong>not</strong> activated for Form B merely from that status; this pack asks you to confirm it for Form B.</div>
+<div class="note"><strong>Educational rationale.</strong> It is an opinion piece (discursive), so it differs in type from the form A reflective task (changing one's mind about something). It invites a stated position, support from experience, and a counter-view, which are the Ideas and Structure demands of the task. Status: already independently validated as an item in the Mock reserve, but <strong>not</strong> activated for Form B; it will not be activated until Form B human review closes.</div>
+<div class="warn"><strong>Please specifically assess:</strong><ul>${q1Criteria.map((c) => `<li>${esc(c)}</li>`).join("")}</ul>Record your answer to each point in the comment box.</div>
 ${decisionBlock("writing-q1-screentime", false)}</div>
 <div class="card" id="item-writing-q2-cornershop-storyboard"><h3>Writing Question 2 (picture-led narrative): "The Corner Shop" <span class="tag">educational STORYBOARD, not final art</span></h3>
-<div class="warn">The drawing below is a developer-made storyboard. Final production artwork will be commissioned separately. Please judge the <strong>task</strong>: the prompt, what the picture must show, and whether it supports many different stories. Do not judge the quality of the drawing.</div>
+<div class="warn">The drawing below is a developer-made storyboard. Final production artwork will come from a separately selected specialist illustration or image-generation provider, and Question 2 will not be activated until that artwork has had human visual and educational approval. Please judge the <strong>task</strong>: the prompt, what the picture must show, and whether it supports many different stories. Do not judge the quality of the drawing.</div>
 <div class="fig"><img alt="Storyboard of the corner shop scene" src="${dataUri}" style="max-width:560px"></div>
 ${csBlock}
 ${decisionBlock("writing-q2-cornershop-storyboard", false)}</div>
@@ -239,7 +248,7 @@ function markingContract(answer, question) {
   const word = /^[A-Za-z]+$/.test(answer);
   let rule;
   if (numeric) rule = `Scored by number: the child's entry is read as a number and compared with ${answer} (tolerance 0.0001). So 2.10 and 2.1 are the same. A pound sign, units or words typed with the number make it a text entry, which would be marked wrong.`;
-  else if (bracket) rule = `Scored as exact text (capitals and outer spaces ignored): the child must type exactly ${answer}, with the bracket and the single space after the comma. "${answer.replace(", ", ",")}" without the space would be marked wrong.`;
+  else if (bracket) rule = `Coordinate answer. Brackets are required and both numbers must match ${answer}; harmless spacing does not matter, so "${answer.replace(", ", ",")}" and "( ${answer.slice(1, -1).replace(", ", " , ")} )" are treated as the same answer. This is how the Practice marker works today, and how the Mock scorer will work once migration 274 (prepared, awaiting the Founder) is applied; until then the Mock scorer needs the exact spacing. A missing bracket, a different number or a malformed pair is marked wrong.`;
   else if (time) rule = `Scored as exact text: the child must type ${answer} exactly. "3.50pm", "1550" or "15.50" would be marked wrong.`;
   else if (word) rule = `Scored as exact text (capitals ignored): the child must type ${answer}.`;
   else rule = `Scored as exact text (capitals and outer spaces ignored): the child must type ${answer}.`;
@@ -294,7 +303,7 @@ ${validatorHeader("Mathematics Form B pack")}
 <table><tr><th>Skill</th><th>Items</th></tr>${Object.keys(byQt).sort().map((k) => `<tr><td>${esc(k)} ${esc(QT_MATHS[k] ?? "")}</td><td>${byQt[k]}</td></tr>`).join("")}<tr><th>Total</th><th>${items.length}</th></tr></table>
 <p>Form B includes three skills Form A lacks: coordinates (QT-MR-08), averages (QT-MR-12) and precision (QT-MR-14).</p></div>
 <div class="card"><h3>How answers are marked in the real paper (important for your judgement)</h3>
-<p>The paper's scorer is deliberately simple. If the correct answer is a <strong>number</strong>, the child's entry is read as a number and compared (so 2.10 equals 2.1), but any pound sign, unit or word makes it a text entry and it is marked wrong. Otherwise the entry is compared as <strong>exact text</strong> (capitals and outer spaces ignored, but no other flexibility): coordinates must be typed exactly as (x, y) with one space, times exactly as hh:mm, and true/false or a letter exactly as given. <strong>Please say, per item, if a child could reasonably write a correct answer in a form this would reject</strong> and the question does not warn them.</p></div>
+<p>The paper's scorer is simple. If the correct answer is a <strong>number</strong>, the child's entry is read as a number and compared (so 2.10 equals 2.1), but any pound sign, unit or word makes it a text entry and it is marked wrong. A <strong>coordinate</strong> answer such as (9, 5) must have its brackets and both numbers right, and harmless spacing does not matter (a governed correction: live in Practice now, and in the Mock scorer once migration 274 is applied). Anything else (times, words, letters) is compared as <strong>exact text</strong> (capitals and outer spaces ignored, no other flexibility): times exactly as hh:mm, and true/false or a letter exactly as given. <strong>Please say, per item, if a child could reasonably write a correct answer in a form this would reject</strong> and the question does not warn them.</p></div>
 <h2>2. The 56 items</h2>
 ${items.map(card).join("\n")}
 <h2>Finish</h2><p>Add overall comments at the top, then press "Export my decisions" in the bar above and return both files.</p>`;

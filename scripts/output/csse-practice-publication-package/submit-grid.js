@@ -1,7 +1,7 @@
-// Angel 11+ -- CSSE coordinate-grid expansion: submit 40 candidates (pending_review only).
-// HOW TO RUN (admin only): sign in to the live Angel app as the ADMIN account, open DevTools -> Console on any app page,
-// paste this whole script and press Enter. It uses your own signed-in session; no credentials are typed or exposed.
-// It ONLY submits (review_status = pending_review, publication_status = unpublished). It never approves or publishes.
+// Angel 11+ -- CSSE Maths Practice: SUBMIT 40 recommended candidates (Coordinate-grid set). pending_review only.
+// HOW TO RUN (admin only, ONLY after the Founder has authorised publication): sign in to the live app as the ADMIN account, open
+// DevTools -> Console on any app page, paste this whole script and press Enter. It uses your own signed-in session; no credentials
+// are typed or exposed. It ONLY submits (review_status = pending_review, unpublished). It never approves or publishes.
 (async () => {
   const SUPABASE_URL = "https://agxunwcdatosrmzhhuxj.supabase.co";
   const ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFneHVud2NkYXRvc3JtemhodXhqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg5NTkxNDksImV4cCI6MjA5NDUzNTE0OX0.y1QHCH6puLXOpUPCM0LkpbDjPVhVhLAdtvLONvztnGA";

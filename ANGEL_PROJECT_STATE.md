@@ -298,10 +298,10 @@ Full record: `ANGEL_CSSE_GATE_CLOSURE_VERIFICATION.md` (read-only production ver
 - **Migration 271 is APPLIED and verified: DO NOT RERUN.** **Migration 272 is APPLIED and verified: DO NOT RERUN.** Both are no longer Founder actions or outstanding correctness repairs.
 - **Migrations 268 and 270 are NOT AUTHORISED.** 268 depends on final Writing prompt and image review; 270 depends on final acceptance of the Tier 1 Writing revision event architecture. Do not apply either.
 - **External unresolved specification (never invented):** the exact official comprehension/Writing mark split.
-- **CSSE completion gates, exactly six:** (1) Practice candidate governance and publication (380 Maths candidates, 374 recommended; Writing prompts separately); (2) Form B independent human validation (English 24 reading
+- **CSSE completion gates, exactly six:** (1) Practice candidate governance and publication (380 Maths candidates re-verified, 374 recommended, final decision pack and publication package ready, nothing published; Writing prompts separately); (2) Form B independent human validation (English 24 reading
   questions and Writing tasks; Maths 56 items; validator packs prepared); (3) Writing prompt approval and publication; (4) final Q2 production artwork (narrative pictures are storyboards; a specialist pipeline will be chosen); (5) Writing human
   calibration evidence (kit prepared, no thresholds set, none claimed); (6) Founder production acceptance (remediation plus the visual renderers).
-- **Decision awaiting the Founder, before English Form B activation:** Salmon versus the bee Timed Section (recommended: replace Salmon; `ANGEL_CSSE_SALMON_BEE_DECISION.md`).
+- **Salmon decision CLOSED (2026-10-08): REJECTED AND REPLACED** by the original passage "The Great Stink" (sealed, 11 questions, 18 marks; migration 273 prepared, NOT applied). Salmon is preserved as evidence and refused by the Mock composer. Migrations 273 and 274 (Mock coordinate normaliser) are prepared and NOT applied.
 - Reusable core is mature enough for next-pathway PLANNING ONLY. No GL, CEM, ISEB or Independent implementation until the gates above close.
 
 ## Known material educational risks (from Wave 1's live-production baseline)

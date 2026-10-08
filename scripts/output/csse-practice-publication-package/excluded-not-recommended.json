@@ -1,0 +1,59 @@
+{
+  "note": "Prepared, not recommended, not submitted. Preserved, not deleted.",
+  "candidates": [
+    {
+      "blueprint": "mr01-bp-change-from-note",
+      "candidateId": "csse-ctx-mr01-bp-change-from-note-02",
+      "difficulty": "medium",
+      "question": "Leo buys 7 model kits that cost £2 each. They pay with a £20 note. How many pounds change do they get?",
+      "answer": "6",
+      "context": "shopping_model_kits",
+      "set": "context"
+    },
+    {
+      "blueprint": "mr01-bp-change-from-note",
+      "candidateId": "csse-ctx-mr01-bp-change-from-note-08",
+      "difficulty": "medium",
+      "question": "Sam buys 4 notebooks that cost £7 each. They pay with a £50 note. How many pounds change do they get?",
+      "answer": "22",
+      "context": "shopping_notebooks",
+      "set": "context"
+    },
+    {
+      "blueprint": "mr01-bp-change-from-note",
+      "candidateId": "csse-ctx-mr01-bp-change-from-note-09",
+      "difficulty": "medium",
+      "question": "Priya buys 4 packs of stickers that cost £6 each. They pay with a £50 note. How many pounds change do they get?",
+      "answer": "26",
+      "context": "shopping_stickers",
+      "set": "context"
+    },
+    {
+      "blueprint": "mr01-bp-change-from-note",
+      "candidateId": "csse-ctx-mr01-bp-change-from-note-11",
+      "difficulty": "medium",
+      "question": "Leo buys 8 model kits that cost £3 each. They pay with a £50 note. How many pounds change do they get?",
+      "answer": "26",
+      "context": "shopping_model_kits",
+      "set": "context"
+    },
+    {
+      "blueprint": "mr01-bp-change-from-note",
+      "candidateId": "csse-ctx-mr01-bp-change-from-note-13",
+      "difficulty": "medium",
+      "question": "Aisha buys 5 rulers that cost £2 each. They pay with a £20 note. How many pounds change do they get?",
+      "answer": "10",
+      "context": "shopping_rulers",
+      "set": "context"
+    },
+    {
+      "blueprint": "mr01-bp-change-from-note",
+      "candidateId": "csse-ctx-mr01-bp-change-from-note-14",
+      "difficulty": "medium",
+      "question": "Leo buys 3 model kits that cost £6 each. They pay with a £20 note. How many pounds change do they get?",
+      "answer": "2",
+      "context": "shopping_model_kits",
+      "set": "context"
+    }
+  ]
+}

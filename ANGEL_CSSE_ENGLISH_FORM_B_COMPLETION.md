@@ -7,6 +7,8 @@ Builds on `ANGEL_CSSE_ENGLISH_FORM_B_SUPPLY_PLAN.md`. Source of truth for every 
 recorded in `supabase/migrations/271_english_form_b_completion_APPLIED_DO_NOT_RERUN.sql` by
 `scripts/generate-english-form-b-completion-migration.mjs`.
 
+> **UPDATE (2026-10-08, Founder decision): SALMON IS REJECTED AND REPLACED.** Every reference to *How Salmon Find Their Way Home* below is historical. It overlapped the live bee Timed Section too closely (`ANGEL_CSSE_SALMON_BEE_DECISION.md`). The informational half of Form B is now the ORIGINAL passage **"The Great Stink"** (530 words, 11 questions, 18 marks), sealed and not activated; its migration (273) is prepared and NOT applied. Salmon, its 10 questions and the Salmon top-up item from migration 271 are preserved only as rejected/replaced evidence and are refused by the Mock composer and manifest validator (`lib/ali/rejectedMockContent.ts`). Form B is therefore: Compass Rose (13 questions, 21 marks) + The Great Stink (11 questions, 18 marks) = **24 questions, 39 marks**.
+
 ## 1. Marking-contract defect: repaired (as a template)
 
 **Defect.** The eight free-text explanation items of *The Fossil Hunter of Lyme Regis* (Q3–Q6) and *Two Different Projects*
@@ -53,7 +55,7 @@ marked **H** need a human to verify or decide; I have not marked any item valida
 
 ## 3. Form B composition after the top-up
 
-Pair: **The Compass Rose Challenge (narrative) + How Salmon Find Their Way Home (informational)**, then Writing.
+Pair (superseded): The Compass Rose Challenge (narrative) + How Salmon Find Their Way Home (informational), then Writing. **Current pair: The Compass Rose Challenge + The Great Stink.**
 
 | | Form A (live) | Form B before | Top-up | **Form B after** |
 |---|---|---|---|---|
@@ -98,6 +100,6 @@ passes the production marking-contract gate and rejects its plausible wrong answ
 ## 6. Founder actions
 
 1. ~~Apply migration 271~~ (done and verified; do not rerun).
-2. Commission the independent human review (passages, 24 items, the Q2(b) inference, the two Salmon phrases, fact-check).
+2. Commission the independent human review (the Compass Rose passage and 13 items, The Great Stink passage and 11 items, fact-check of the 12 listed claims; the Compass Q2 accepted-answer semantics are left to the validator).
 3. Choose Writing Q1. 4. Decide the Q2 artwork route. 5. Decide whether the Timed Section's bee passage should be swapped given
 the Salmon structure twin.

@@ -49,8 +49,7 @@ review, and the Mock table holds only 2 assessments (neither human-reviewed). Th
    option per dimension, and one line of evidence for any dimension judged strong or developing.
 3. **Calibration session first:** both readers mark the same 4 practice scripts (not in the sample) and discuss differences
    before the real sample, so they share the rubric language.
-4. **Adjudication:** where the two readers differ by two levels on any dimension, a third reader decides. The *human reference
-   level* is the agreed level (both agree, or third reader).
+4. **Adjudication (Founder-approved rule):** Reader 1 and Reader 2 mark independently. Where their judgements differ on any dimension, an independent Reader 3 adjudicates. Every reader's original judgement is preserved; nothing is averaged. The *human reference level* is the level where Readers 1 and 2 agree, or Reader 3's level where they did not. No agreement threshold is set before evidence exists.
 
 ## 5. AI run
 

@@ -1,7 +1,7 @@
 // Computes descriptive calibration measures from filled reader sheets and builds the ADJUDICATION QUEUE.
 // It preserves every individual reader judgement, never averages disagreement away, sets NO thresholds (none exist before human
 // evidence does), and produces no mark, band or CSSE-equivalent number.
-// Usage: npx tsx scripts/analyse-writing-calibration.mjs <dir with sample-register.csv, reader-a.csv, reader-b.csv, [third-reader.csv], ai-run-1.csv, [ai-run-2.csv]>
+// Usage: npx tsx scripts/analyse-writing-calibration.mjs <dir with sample-register.csv, reader-1.csv, reader-2.csv, [reader-3.csv], ai-run-1.csv, [ai-run-2.csv]>
 import fs from "node:fs";
 import path from "node:path";
 import { CAL_DIMENSIONS, disagreementKind, humanReference, pairStats, quadraticWeightedKappa } from "../lib/learningEngine/writingCalibrationMeasures.ts";
@@ -22,9 +22,9 @@ function csv(name, required = true) {
   });
 }
 const register = csv("sample-register.csv");
-const A = csv("reader-a.csv");
-const B = csv("reader-b.csv");
-const C = csv("third-reader.csv", false) ?? [];
+const A = csv("reader-1.csv");
+const B = csv("reader-2.csv");
+const C = csv("reader-3.csv", false) ?? [];
 const AI1 = csv("ai-run-1.csv");
 const AI2 = csv("ai-run-2.csv", false) ?? [];
 const by = (rows) => new Map(rows.map((r) => [r.script_id, r]));
@@ -38,8 +38,8 @@ const out = [];
 out.push("# Writing calibration results (descriptive measures only)", "", `Scripts analysed: ${ids.length} of ${register.length} in the register. This is **not** a mark, a band or a CSSE-equivalent number, and no pass/fail threshold is applied: thresholds are not set before human evidence exists.`, "");
 
 // 1. Individual judgements are preserved in a long-form file, one row per script and dimension.
-const longRows = ["script_id,dimension,reader_a,reader_b,third_reader,disagreement,ai_run_1,ai_run_2,evidence_a,evidence_b"];
-const queue = ["script_id,dimension,reader_a,reader_b,kind,evidence_a,evidence_b,third_reader_supplied,adjudicated_level,adjudication_notes"];
+const longRows = ["script_id,dimension,reader_1,reader_2,reader_3,disagreement,ai_run_1,ai_run_2,evidence_1,evidence_2"];
+const queue = ["script_id,dimension,reader_1,reader_2,kind,evidence_1,evidence_2,reader_3_supplied,adjudicated_level,adjudication_notes"];
 let disagreements = 0, major = 0;
 for (const s of ids) for (const d of CAL_DIMENSIONS) {
   const ra = cell(a, s, d) ?? "could_not_judge", rb = cell(b, s, d) ?? "could_not_judge", rc = cell(c, s, d) ?? "";
@@ -52,7 +52,7 @@ for (const s of ids) for (const d of CAL_DIMENSIONS) {
 fs.writeFileSync(path.join(dir, "individual-judgements.csv"), longRows.join("\n") + "\n");
 fs.writeFileSync(path.join(dir, "adjudication-queue.csv"), queue.join("\n") + "\n");
 
-out.push("## Human-human agreement (readers A and B)", "", "| Dimension | n | exact | within one | weighted kappa |", "|---|---|---|---|---|");
+out.push("## Human-human agreement (Readers 1 and 2)", "", "| Dimension | n | exact | within one | weighted kappa |", "|---|---|---|---|---|");
 const ref = {};
 for (const d of CAL_DIMENSIONS) {
   const x = ids.map((s) => cell(a, s, d)), y = ids.map((s) => cell(b, s, d));

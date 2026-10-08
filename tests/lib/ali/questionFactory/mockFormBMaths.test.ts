@@ -102,3 +102,25 @@ test("migration 272 record: applied and do-not-rerun, one insert of 24 sealed ca
   assert.equal((code.match(/update public\.ali_question_bank/g) ?? []).length, 1);
   assert.match(code, /mock-mr05-numberpyramid-02/);
 });
+
+test("sealed Form B questions never coincide with any Practice blueprint question (Mock stays sealed from Practice)", async () => {
+  const { CSSE_CONTEXT_EXPANSION_FAMILIES } = await import("@/lib/ali/questionFactory/csseContextBlueprints");
+  const { MR01_DATA_HANDLING_EXPANSION } = await import("@/lib/ali/questionFactory/csseDataHandlingBlueprints");
+  const { CSSE_BREADTH_EXPANSION_FAMILIES } = await import("@/lib/ali/questionFactory/csseBreadthBlueprints");
+  const { MR03_GRID_EXPANSION } = await import("@/lib/ali/questionFactory/csseCoordinateGridBlueprints");
+  const { MR03_ANGLE_FIGURE_EXPANSION } = await import("@/lib/ali/questionFactory/csseAngleFigureBlueprints");
+  const { CSSE_NUMBER_LINE_FAMILIES } = await import("@/lib/ali/questionFactory/csseNumberLineBlueprints");
+  const { generateBlueprintCandidate } = await import("@/lib/ali/questionFactory/candidateGeneration");
+  const norm = (s: string) => s.toLowerCase().replace(/\s+/g, " ").trim();
+  const sealed = new Set(items.map((i) => norm(i.question)));
+  let a = 12345;
+  const rnd = () => { a = (a + 0x6d2b79f5) >>> 0; let t = a; t = Math.imul(t ^ (t >>> 15), t | 1); t ^= t + Math.imul(t ^ (t >>> 7), t | 61); return ((t ^ (t >>> 14)) >>> 0) / 4294967296; };
+  const fams = [...CSSE_CONTEXT_EXPANSION_FAMILIES, MR01_DATA_HANDLING_EXPANSION, ...CSSE_BREADTH_EXPANSION_FAMILIES, MR03_GRID_EXPANSION, MR03_ANGLE_FIGURE_EXPANSION, ...CSSE_NUMBER_LINE_FAMILIES];
+  let checked = 0;
+  for (const f of fams) for (const bp of f.blueprints) for (let i = 0; i < 250; i++) {
+    const c = generateBlueprintCandidate(bp as never, rnd);
+    checked++;
+    assert.ok(!sealed.has(norm(c.question)), `${bp.blueprintId} generates a sealed Form B question: ${c.question}`);
+  }
+  assert.ok(checked > 9000);
+});

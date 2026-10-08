@@ -50,8 +50,8 @@ test("analysis script runs end to end on SYNTHETIC ARITHMETIC TEST DATA (not wri
   const dims = "ideas,vocabulary,grammar,structure,punctuation";
   fs.writeFileSync(path.join(dir, "sample-register.csv"), "script_id,genre,task_code,quality_target,awkward_type\nT1,reflective,QT-WC-01a,weak,\nT2,reflective,QT-WC-01a,strong,too_short\nT3,narrative,QT-WC-01b,middling,\n");
   const sheet = (rows: string[][]) => `script_id,${dims}\n` + rows.map((r) => r.join(",")).join("\n") + "\n";
-  fs.writeFileSync(path.join(dir, "reader-a.csv"), sheet([["T1", ...Array(5).fill("developing")], ["T2", ...Array(5).fill("strong")], ["T3", ...Array(5).fill("secure")]]));
-  fs.writeFileSync(path.join(dir, "reader-b.csv"), sheet([["T1", ...Array(5).fill("developing")], ["T2", ...Array(5).fill("strong")], ["T3", ...Array(5).fill("secure")]]));
+  fs.writeFileSync(path.join(dir, "reader-1.csv"), sheet([["T1", ...Array(5).fill("developing")], ["T2", ...Array(5).fill("strong")], ["T3", ...Array(5).fill("secure")]]));
+  fs.writeFileSync(path.join(dir, "reader-2.csv"), sheet([["T1", ...Array(5).fill("developing")], ["T2", ...Array(5).fill("strong")], ["T3", ...Array(5).fill("secure")]]));
   fs.writeFileSync(path.join(dir, "ai-run-1.csv"), `script_id,${dims},flagged_low_confidence_or_review_required\nT1,developing,developing,developing,developing,developing,no\nT2,strong,strong,strong,strong,strong,yes\nT3,secure,secure,secure,secure,secure,no\n`);
   const r = spawnSync(process.execPath, ["--import", "tsx", "scripts/analyse-writing-calibration.mjs", dir], { encoding: "utf8" });
   assert.equal(r.status, 0, r.stderr);
