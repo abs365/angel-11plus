@@ -226,6 +226,12 @@ export interface StructuralBlueprint<TParams extends Record<string, number>> ext
    * data, so the representation is necessary to answer, not decoration.
    */
   deriveStimulus?(params: TParams): unknown;
+  /**
+   * Optional independent answer verification (see ./independentValidation.ts). When declared, validation recomputes the
+   * answer through it as well as through `deriveCorrectAnswer`, and records `independentlyVerified` on the result.
+   * A mismatch is an `answer_mismatch`. Omitted means "verified only by recomputation with the same formula".
+   */
+  independentAnswerCheck?(params: TParams, claimedAnswer: string): { matches: boolean; recomputedAnswer: string; method: string };
   /** Real content provenance -- never fabricated; every blueprint built this session is `"angel_original"`. */
   provenance: string;
   /** Whether this blueprint's output may ever be considered for the Mock-reserved pool. False for every blueprint in this increment -- publication (migration 230's own `publish_question_candidate()`) always targets `practice_eligible`; a blueprint cannot promote itself to Mock status by declaring this true, it is documentation of intent for a future, separately-gated Mock-supply decision only. */
@@ -290,6 +296,9 @@ export interface MathsQuestionCandidate {
   acceptedAnswerForms?: string[];
   /** Present only for a blueprint that declares `deriveStimulus()`: the structured stimulus stored with the question. */
   stimulus?: unknown;
+  /** Diagram-bearing candidates: copied into the stored question content (publication copies question_content whole). */
+  diagram?: unknown;
+  diagrams?: unknown;
 }
 
 export type ValidationFailureReason =
@@ -306,6 +315,12 @@ export interface ValidationResult {
   approved: boolean;
   reasons: ValidationFailureReason[];
   candidate: MathsQuestionCandidate;
+  /**
+   * True only when the blueprint declares `independentAnswerCheck` and the answer also matched through it (a different
+   * route from `deriveCorrectAnswer`). False for blueprints with no independent check, which are verified by
+   * recomputation with their own formula only (the weaker, disclosed standard).
+   */
+  independentlyVerified: boolean;
 }
 
 export interface ExistingBankRowForComparison {

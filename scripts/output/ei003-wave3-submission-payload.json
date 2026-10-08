@@ -1,0 +1,1603 @@
+[
+  {
+    "p_candidate_id": "ei003-w3-ret-explicit-01",
+    "p_family_id": "wave3-fam-rc01-retrieval",
+    "p_generation_spec_id": "ei003-w3-bp-ret-explicit-detail",
+    "p_generation_spec_version": "1",
+    "p_subject": "english",
+    "p_competency_id": null,
+    "p_skill": "QT-RC-01",
+    "p_question_type": "short-answer",
+    "p_pathway": [
+      "csse"
+    ],
+    "p_preparation_stage": "FOUNDATION",
+    "p_difficulty": "easy",
+    "p_question_content": {
+      "question": "What did Grandad keep his old newspapers in?",
+      "acceptedAnswers": [
+        "a box marked, in faded pen, kites only",
+        "a box labelled kites only",
+        "an old box marked kites only"
+      ],
+      "modelAnswer": "a box marked, in faded pen, kites only",
+      "marks": 1,
+      "validationTier": "TIER2_ACCEPTED_SET",
+      "evidenceQuotes": [
+        "a box marked, in faded pen, KITES ONLY"
+      ],
+      "explanationGuidance": "The passage states directly that Grandad kept a stack of old newspapers in a box marked, in faded pen, KITES ONLY -- a single, clearly-stated detail requiring no inference.",
+      "distractorRationale": null,
+      "blueprintId": "ei003-w3-bp-ret-explicit-detail",
+      "reasoningRoute": "explicit_single_detail",
+      "familyId": "wave3-fam-rc01-retrieval"
+    },
+    "p_claimed_answer": "a box marked, in faded pen, kites only",
+    "p_worked_explanation": "The passage states directly that Grandad kept a stack of old newspapers in a box marked, in faded pen, KITES ONLY -- a single, clearly-stated detail requiring no inference.",
+    "p_distractors": null,
+    "p_mathematical_validation": {
+      "evidenceQuotesVerifiedAgainstRealPassageText": true,
+      "markingContractGatePassed": true,
+      "validator": "scripts/validate-ei003-wave3-manifest.mjs + scripts/validate-ei003-wave3-marking-contracts.mjs",
+      "validatedAt": "2026-09-09T13:02:55.663Z"
+    },
+    "p_similarity_validation": {
+      "approved": true,
+      "reasons": [],
+      "checkedForDuplicateQuestionTextWithinBatch": true
+    },
+    "p_passage_id": "wave1-eng-kitemaker"
+  },
+  {
+    "p_candidate_id": "ei003-w3-ret-explicit-02",
+    "p_family_id": "wave3-fam-rc01-retrieval",
+    "p_generation_spec_id": "ei003-w3-bp-ret-explicit-detail",
+    "p_generation_spec_version": "1",
+    "p_subject": "english",
+    "p_competency_id": null,
+    "p_skill": "QT-RC-01",
+    "p_question_type": "short-answer",
+    "p_pathway": [
+      "csse"
+    ],
+    "p_preparation_stage": "FOUNDATION",
+    "p_difficulty": "easy",
+    "p_question_content": {
+      "question": "How long had Mr Fenwick run the bakery on Corn Street?",
+      "acceptedAnswers": [
+        "forty years",
+        "40 years"
+      ],
+      "modelAnswer": "forty years",
+      "marks": 1,
+      "validationTier": "TIER2_ACCEPTED_SET",
+      "evidenceQuotes": [
+        "Old Mr Fenwick had run the bakery on Corn Street for forty years"
+      ],
+      "explanationGuidance": "The passage states this explicitly in its opening sentence -- forty years, a single clearly-stated fact.",
+      "distractorRationale": null,
+      "blueprintId": "ei003-w3-bp-ret-explicit-detail",
+      "reasoningRoute": "explicit_single_detail",
+      "familyId": "wave3-fam-rc01-retrieval"
+    },
+    "p_claimed_answer": "forty years",
+    "p_worked_explanation": "The passage states this explicitly in its opening sentence -- forty years, a single clearly-stated fact.",
+    "p_distractors": null,
+    "p_mathematical_validation": {
+      "evidenceQuotesVerifiedAgainstRealPassageText": true,
+      "markingContractGatePassed": true,
+      "validator": "scripts/validate-ei003-wave3-manifest.mjs + scripts/validate-ei003-wave3-marking-contracts.mjs",
+      "validatedAt": "2026-09-09T13:02:55.663Z"
+    },
+    "p_similarity_validation": {
+      "approved": true,
+      "reasons": [],
+      "checkedForDuplicateQuestionTextWithinBatch": true
+    },
+    "p_passage_id": "wave3-eng-bakersapprentice"
+  },
+  {
+    "p_candidate_id": "ei003-w3-ret-distractor-01",
+    "p_family_id": "wave3-fam-rc01-retrieval",
+    "p_generation_spec_id": "ei003-w3-bp-ret-distractor",
+    "p_generation_spec_version": "1",
+    "p_subject": "english",
+    "p_competency_id": null,
+    "p_skill": "QT-RC-01",
+    "p_question_type": "short-answer",
+    "p_pathway": [
+      "csse"
+    ],
+    "p_preparation_stage": "DEVELOPMENT",
+    "p_difficulty": "medium",
+    "p_question_content": {
+      "question": "Two different people speak to Priya near the start of her lunchtime. Which one actually invites her to sit with them: the girl with the long plait, or the boy from her form group?",
+      "acceptedAnswers": [
+        "the boy from her form group",
+        "the boy",
+        "the boy, not the girl with the plait"
+      ],
+      "modelAnswer": "the boy from her form group",
+      "marks": 1,
+      "validationTier": "TIER2_ACCEPTED_SET",
+      "evidenceQuotes": [
+        "\"You can sit with us, if you want.\"",
+        "It was a boy from her form group",
+        "A girl with a long plait had smiled at her in the corridor that morning"
+      ],
+      "explanationGuidance": "Both people speak to Priya, which makes this a genuine distinguishing task, not a single-detail lookup. The girl with the plait only asks \"you're the new one, right?\" before being swept away -- she never invites Priya anywhere. It is the boy from her form group who actually says \"You can sit with us, if you want.\" A learner who answers 'the girl' has confused a friendly moment with an actual invitation.",
+      "distractorRationale": "The girl with the long plait is the more prominent, earlier-mentioned social approach, making her a plausible but incorrect answer for a learner skimming rather than reading closely.",
+      "blueprintId": "ei003-w3-bp-ret-distractor",
+      "reasoningRoute": "distinguish_from_distractor",
+      "familyId": "wave3-fam-rc01-retrieval"
+    },
+    "p_claimed_answer": "the boy from her form group",
+    "p_worked_explanation": "Both people speak to Priya, which makes this a genuine distinguishing task, not a single-detail lookup. The girl with the plait only asks \"you're the new one, right?\" before being swept away -- she never invites Priya anywhere. It is the boy from her form group who actually says \"You can sit with us, if you want.\" A learner who answers 'the girl' has confused a friendly moment with an actual invitation.",
+    "p_distractors": {
+      "distractorRationale": "The girl with the long plait is the more prominent, earlier-mentioned social approach, making her a plausible but incorrect answer for a learner skimming rather than reading closely."
+    },
+    "p_mathematical_validation": {
+      "evidenceQuotesVerifiedAgainstRealPassageText": true,
+      "markingContractGatePassed": true,
+      "validator": "scripts/validate-ei003-wave3-manifest.mjs + scripts/validate-ei003-wave3-marking-contracts.mjs",
+      "validatedAt": "2026-09-09T13:02:55.663Z"
+    },
+    "p_similarity_validation": {
+      "approved": true,
+      "reasons": [],
+      "checkedForDuplicateQuestionTextWithinBatch": true
+    },
+    "p_passage_id": "wave1-eng-newgirl"
+  },
+  {
+    "p_candidate_id": "ei003-w3-ret-distractor-02",
+    "p_family_id": "wave3-fam-rc01-retrieval",
+    "p_generation_spec_id": "ei003-w3-bp-ret-distractor",
+    "p_generation_spec_version": "1",
+    "p_subject": "english",
+    "p_competency_id": null,
+    "p_skill": "QT-RC-01",
+    "p_question_type": "short-answer",
+    "p_pathway": [
+      "csse"
+    ],
+    "p_preparation_stage": "DEVELOPMENT",
+    "p_difficulty": "medium",
+    "p_question_content": {
+      "question": "Which runner, Ade or Cass, is described reading their split times again on the morning of the race?",
+      "acceptedAnswers": [
+        "ade",
+        "ade, not cass"
+      ],
+      "modelAnswer": "ade",
+      "marks": 1,
+      "validationTier": "TIER2_ACCEPTED_SET",
+      "evidenceQuotes": [
+        "he had read it twice already that morning, as if the numbers might have changed overnight",
+        "Cass arrived forty minutes before the race, ate half a banana, and lay down on the grass with her cap over her eyes"
+      ],
+      "explanationGuidance": "Both runners are described preparing for the race, so this requires distinguishing between them precisely. It is Ade who has read his split times twice that morning. Cass's own preparation (arriving late, eating a banana, lying down) is described immediately nearby and could be mistaken for the same behaviour by a learner not reading carefully.",
+      "distractorRationale": "Cass is introduced in the very next sentence after Ade's own detail, making her a plausible but incorrect answer if the two characters' actions are conflated.",
+      "blueprintId": "ei003-w3-bp-ret-distractor",
+      "reasoningRoute": "distinguish_from_distractor",
+      "familyId": "wave3-fam-rc01-retrieval"
+    },
+    "p_claimed_answer": "ade",
+    "p_worked_explanation": "Both runners are described preparing for the race, so this requires distinguishing between them precisely. It is Ade who has read his split times twice that morning. Cass's own preparation (arriving late, eating a banana, lying down) is described immediately nearby and could be mistaken for the same behaviour by a learner not reading carefully.",
+    "p_distractors": {
+      "distractorRationale": "Cass is introduced in the very next sentence after Ade's own detail, making her a plausible but incorrect answer if the two characters' actions are conflated."
+    },
+    "p_mathematical_validation": {
+      "evidenceQuotesVerifiedAgainstRealPassageText": true,
+      "markingContractGatePassed": true,
+      "validator": "scripts/validate-ei003-wave3-manifest.mjs + scripts/validate-ei003-wave3-marking-contracts.mjs",
+      "validatedAt": "2026-09-09T13:02:55.663Z"
+    },
+    "p_similarity_validation": {
+      "approved": true,
+      "reasons": [],
+      "checkedForDuplicateQuestionTextWithinBatch": true
+    },
+    "p_passage_id": "wave1-eng-raceday"
+  },
+  {
+    "p_candidate_id": "ei003-w3-ret-combine-01",
+    "p_family_id": "wave3-fam-rc01-retrieval",
+    "p_generation_spec_id": "ei003-w3-bp-ret-combine",
+    "p_generation_spec_version": "1",
+    "p_subject": "english",
+    "p_competency_id": null,
+    "p_skill": "QT-RC-01",
+    "p_question_type": "short-answer",
+    "p_pathway": [
+      "csse"
+    ],
+    "p_preparation_stage": "INDEPENDENT",
+    "p_difficulty": "medium",
+    "p_question_content": {
+      "question": "Name two separate things people do at the harbour that show they sense a storm is coming.",
+      "acceptedAnswers": [
+        "sam's father keeps checking his watch and the water, and mrs okafor closes the harbour café shutters two hours early",
+        "the father repeatedly checks his watch, and mrs okafor shuts the café early",
+        "checking the watch/water repeatedly and closing the shutters early"
+      ],
+      "modelAnswer": "sam's father keeps checking his watch and the water, and mrs okafor closes the harbour café shutters two hours early",
+      "marks": 1,
+      "validationTier": "TIER2_ACCEPTED_SET",
+      "evidenceQuotes": [
+        "his father checked his watch, then looked back out at the water, then checked his watch again",
+        "Mrs Okafor was pulling the shutters closed on the harbour café two hours before she normally would"
+      ],
+      "explanationGuidance": "Neither detail alone fully answers 'two separate things' -- the question explicitly requires citing both: Sam's father's repeated watch-checking, and Mrs Okafor closing the café shutters two hours earlier than usual. Combining them is what the question asks for.",
+      "distractorRationale": null,
+      "blueprintId": "ei003-w3-bp-ret-combine",
+      "reasoningRoute": "combine_two_details",
+      "familyId": "wave3-fam-rc01-retrieval"
+    },
+    "p_claimed_answer": "sam's father keeps checking his watch and the water, and mrs okafor closes the harbour café shutters two hours early",
+    "p_worked_explanation": "Neither detail alone fully answers 'two separate things' -- the question explicitly requires citing both: Sam's father's repeated watch-checking, and Mrs Okafor closing the café shutters two hours earlier than usual. Combining them is what the question asks for.",
+    "p_distractors": null,
+    "p_mathematical_validation": {
+      "evidenceQuotesVerifiedAgainstRealPassageText": true,
+      "markingContractGatePassed": true,
+      "validator": "scripts/validate-ei003-wave3-manifest.mjs + scripts/validate-ei003-wave3-marking-contracts.mjs",
+      "validatedAt": "2026-09-09T13:02:55.663Z"
+    },
+    "p_similarity_validation": {
+      "approved": true,
+      "reasons": [],
+      "checkedForDuplicateQuestionTextWithinBatch": true
+    },
+    "p_passage_id": "wave3-eng-stormharbour"
+  },
+  {
+    "p_candidate_id": "ei003-w3-ret-combine-02",
+    "p_family_id": "wave3-fam-rc01-retrieval",
+    "p_generation_spec_id": "ei003-w3-bp-ret-combine",
+    "p_generation_spec_version": "1",
+    "p_subject": "english",
+    "p_competency_id": null,
+    "p_skill": "QT-RC-01",
+    "p_question_type": "short-answer",
+    "p_pathway": [
+      "csse"
+    ],
+    "p_preparation_stage": "INDEPENDENT",
+    "p_difficulty": "medium",
+    "p_question_content": {
+      "question": "Name two separate things Marcus does to get into the attic before he reaches the trunk.",
+      "acceptedAnswers": [
+        "he works a knife into the door's seam, and he tests each floorboard before trusting his weight",
+        "prising the door open with a knife and carefully testing the boards",
+        "opening the painted-shut door with a knife, then picking his way carefully across the floor"
+      ],
+      "modelAnswer": "he works a knife into the door's seam, and he tests each floorboard before trusting his weight",
+      "marks": 1,
+      "validationTier": "TIER2_ACCEPTED_SET",
+      "evidenceQuotes": [
+        "He worked a flat-bladed knife into the seam where the door met the frame",
+        "He picked his way across the boards, testing each one before he trusted it with his full weight"
+      ],
+      "explanationGuidance": "The question asks for two separate actions, so citing only one is incomplete. Marcus first works a knife into the door's seam to open it, and separately, once inside, tests each floorboard before trusting his weight on it -- two distinct, explicitly-described actions.",
+      "distractorRationale": null,
+      "blueprintId": "ei003-w3-bp-ret-combine",
+      "reasoningRoute": "combine_two_details",
+      "familyId": "wave3-fam-rc01-retrieval"
+    },
+    "p_claimed_answer": "he works a knife into the door's seam, and he tests each floorboard before trusting his weight",
+    "p_worked_explanation": "The question asks for two separate actions, so citing only one is incomplete. Marcus first works a knife into the door's seam to open it, and separately, once inside, tests each floorboard before trusting his weight on it -- two distinct, explicitly-described actions.",
+    "p_distractors": null,
+    "p_mathematical_validation": {
+      "evidenceQuotesVerifiedAgainstRealPassageText": true,
+      "markingContractGatePassed": true,
+      "validator": "scripts/validate-ei003-wave3-manifest.mjs + scripts/validate-ei003-wave3-marking-contracts.mjs",
+      "validatedAt": "2026-09-09T13:02:55.663Z"
+    },
+    "p_similarity_validation": {
+      "approved": true,
+      "reasons": [],
+      "checkedForDuplicateQuestionTextWithinBatch": true
+    },
+    "p_passage_id": "wave1-eng-atticdoor"
+  },
+  {
+    "p_candidate_id": "ei003-w3-ret-distance-01",
+    "p_family_id": "wave3-fam-rc01-retrieval",
+    "p_generation_spec_id": "ei003-w3-bp-ret-distance",
+    "p_generation_spec_version": "1",
+    "p_subject": "english",
+    "p_competency_id": null,
+    "p_skill": "QT-RC-01",
+    "p_question_type": "short-answer",
+    "p_pathway": [
+      "csse"
+    ],
+    "p_preparation_stage": "TRANSFER",
+    "p_difficulty": "hard",
+    "p_question_content": {
+      "question": "By the end of the school day, what has Jayden done with his new trainers, and what does he wear home instead?",
+      "acceptedAnswers": [
+        "he tucks the trainers at the back of his locker and wears his old, scuffed pair home",
+        "hides the new trainers in his locker and walks home in his old pair",
+        "puts the trainers at the back of his locker and wears his scuffed old shoes instead"
+      ],
+      "modelAnswer": "he tucks the trainers at the back of his locker and wears his old, scuffed pair home",
+      "marks": 1,
+      "validationTier": "TIER2_ACCEPTED_SET",
+      "evidenceQuotes": [
+        "the trainers were tucked at the very back of his locker",
+        "Jayden walked home in his old, scuffed pair instead"
+      ],
+      "explanationGuidance": "The answer is explicitly stated, but only in the passage's final sentence, after several unrelated details about the school day (Connor's reaction, Jayden telling himself it didn't matter). A learner must read past that intervening content to find the actual outcome, not stop at the first plausible-sounding detail.",
+      "distractorRationale": null,
+      "blueprintId": "ei003-w3-bp-ret-distance",
+      "reasoningRoute": "retrieve_across_distance",
+      "familyId": "wave3-fam-rc01-retrieval"
+    },
+    "p_claimed_answer": "he tucks the trainers at the back of his locker and wears his old, scuffed pair home",
+    "p_worked_explanation": "The answer is explicitly stated, but only in the passage's final sentence, after several unrelated details about the school day (Connor's reaction, Jayden telling himself it didn't matter). A learner must read past that intervening content to find the actual outcome, not stop at the first plausible-sounding detail.",
+    "p_distractors": null,
+    "p_mathematical_validation": {
+      "evidenceQuotesVerifiedAgainstRealPassageText": true,
+      "markingContractGatePassed": true,
+      "validator": "scripts/validate-ei003-wave3-manifest.mjs + scripts/validate-ei003-wave3-marking-contracts.mjs",
+      "validatedAt": "2026-09-09T13:02:55.663Z"
+    },
+    "p_similarity_validation": {
+      "approved": true,
+      "reasons": [],
+      "checkedForDuplicateQuestionTextWithinBatch": true
+    },
+    "p_passage_id": "wave3-eng-newtrainers"
+  },
+  {
+    "p_candidate_id": "ei003-w3-ret-distance-02",
+    "p_family_id": "wave3-fam-rc01-retrieval",
+    "p_generation_spec_id": "ei003-w3-bp-ret-distance",
+    "p_generation_spec_version": "1",
+    "p_subject": "english",
+    "p_competency_id": null,
+    "p_skill": "QT-RC-01",
+    "p_question_type": "short-answer",
+    "p_pathway": [
+      "csse"
+    ],
+    "p_preparation_stage": "TRANSFER",
+    "p_difficulty": "hard",
+    "p_question_content": {
+      "question": "What specific earlier embarrassing moment does Dara compare her first day getting lost to?",
+      "acceptedAnswers": [
+        "falling off the stage in year 4",
+        "the time she fell off the stage in year 4",
+        "when she fell off stage in year 4"
+      ],
+      "modelAnswer": "falling off the stage in year 4",
+      "marks": 1,
+      "validationTier": "TIER2_ACCEPTED_SET",
+      "evidenceQuotes": [
+        "the most embarrassing thing that has ever happened to me, and I am including the time I fell off the stage in Year 4"
+      ],
+      "explanationGuidance": "The specific comparison is buried inside a longer sentence about her first day getting lost, not stated as its own separate fact -- a learner must read the full sentence carefully to find the embedded detail (falling off the stage in Year 4) rather than stopping at the general claim that it was embarrassing.",
+      "distractorRationale": null,
+      "blueprintId": "ei003-w3-bp-ret-distance",
+      "reasoningRoute": "retrieve_across_distance",
+      "familyId": "wave3-fam-rc01-retrieval"
+    },
+    "p_claimed_answer": "falling off the stage in year 4",
+    "p_worked_explanation": "The specific comparison is buried inside a longer sentence about her first day getting lost, not stated as its own separate fact -- a learner must read the full sentence carefully to find the embedded detail (falling off the stage in Year 4) rather than stopping at the general claim that it was embarrassing.",
+    "p_distractors": null,
+    "p_mathematical_validation": {
+      "evidenceQuotesVerifiedAgainstRealPassageText": true,
+      "markingContractGatePassed": true,
+      "validator": "scripts/validate-ei003-wave3-manifest.mjs + scripts/validate-ei003-wave3-marking-contracts.mjs",
+      "validatedAt": "2026-09-09T13:02:55.663Z"
+    },
+    "p_similarity_validation": {
+      "approved": true,
+      "reasons": [],
+      "checkedForDuplicateQuestionTextWithinBatch": true
+    },
+    "p_passage_id": "wave1-eng-lettertonana"
+  },
+  {
+    "p_candidate_id": "ei003-w3-comp-beforeafter-01",
+    "p_family_id": "wave1-fam-comparative-extraction",
+    "p_generation_spec_id": "ei003-w3-bp-comp-before-after",
+    "p_generation_spec_version": "1",
+    "p_subject": "english",
+    "p_competency_id": null,
+    "p_skill": "QT-RC-07",
+    "p_question_type": "short-answer",
+    "p_pathway": [
+      "csse"
+    ],
+    "p_preparation_stage": "FOUNDATION",
+    "p_difficulty": "medium",
+    "p_question_content": {
+      "question": "Compare how Femi feels about kite-making at the start of the passage with how he feels by the end. What has changed?",
+      "acceptedAnswers": [
+        "at the start he feels clumsy and unsure handling the bamboo, but by the end he feels a quiet sense of achievement",
+        "he begins unfamiliar and awkward with the materials, and ends feeling that the small nod from grandad was enough of a celebration",
+        "his early clumsiness gives way to quiet satisfaction and pride by the end"
+      ],
+      "modelAnswer": "at the start he feels clumsy and unsure handling the bamboo, but by the end he feels a quiet sense of achievement",
+      "marks": 2,
+      "validationTier": "TIER2_ACCEPTED_SET",
+      "evidenceQuotes": [
+        "Femi's hands, usually so quick at video games, felt suddenly clumsy around the thin wood",
+        "Femi realised, watching Grandad's face, that this was the closest thing to a celebration he was going to get, and that somehow it was enough"
+      ],
+      "explanationGuidance": "At the start, Femi's hands feel clumsy and unfamiliar with the bamboo -- a real contrast to how quick they usually are at video games. By the end, after successfully completing the frame, he feels a quiet, real sense of achievement, even though Grandad's own response is understated -- a clear emotional shift across the passage.",
+      "distractorRationale": null,
+      "blueprintId": "ei003-w3-bp-comp-before-after",
+      "reasoningRoute": "single_character_before_after",
+      "familyId": "wave1-fam-comparative-extraction"
+    },
+    "p_claimed_answer": "at the start he feels clumsy and unsure handling the bamboo, but by the end he feels a quiet sense of achievement",
+    "p_worked_explanation": "At the start, Femi's hands feel clumsy and unfamiliar with the bamboo -- a real contrast to how quick they usually are at video games. By the end, after successfully completing the frame, he feels a quiet, real sense of achievement, even though Grandad's own response is understated -- a clear emotional shift across the passage.",
+    "p_distractors": null,
+    "p_mathematical_validation": {
+      "evidenceQuotesVerifiedAgainstRealPassageText": true,
+      "markingContractGatePassed": true,
+      "validator": "scripts/validate-ei003-wave3-manifest.mjs + scripts/validate-ei003-wave3-marking-contracts.mjs",
+      "validatedAt": "2026-09-09T13:02:55.663Z"
+    },
+    "p_similarity_validation": {
+      "approved": true,
+      "reasons": [],
+      "checkedForDuplicateQuestionTextWithinBatch": true
+    },
+    "p_passage_id": "wave1-eng-kitemaker"
+  },
+  {
+    "p_candidate_id": "ei003-w3-comp-beforeafter-02",
+    "p_family_id": "wave1-fam-comparative-extraction",
+    "p_generation_spec_id": "ei003-w3-bp-comp-before-after",
+    "p_generation_spec_version": "1",
+    "p_subject": "english",
+    "p_competency_id": null,
+    "p_skill": "QT-RC-07",
+    "p_question_type": "short-answer",
+    "p_pathway": [
+      "csse"
+    ],
+    "p_preparation_stage": "FOUNDATION",
+    "p_difficulty": "medium",
+    "p_question_content": {
+      "question": "Compare how Jayden behaves with his new trainers at the start of the school day with how he behaves by the end. What has changed?",
+      "acceptedAnswers": [
+        "at the start he proudly takes the longest route to show them off, but by the end he hides them and takes the shortest route home in his old shoes",
+        "he begins deliberately showing the trainers off, and ends deliberately hiding them away",
+        "his early pride and display give way to disappointment and concealment by the end of the day"
+      ],
+      "modelAnswer": "at the start he proudly takes the longest route to show them off, but by the end he hides them and takes the shortest route home in his old shoes",
+      "marks": 2,
+      "validationTier": "TIER2_ACCEPTED_SET",
+      "evidenceQuotes": [
+        "he spent the whole morning walking very deliberately past groups of people, taking the longest possible route between lessons",
+        "the trainers were tucked at the very back of his locker, and Jayden walked home in his old, scuffed pair instead, taking the shortest route he knew"
+      ],
+      "explanationGuidance": "At the start of the day, Jayden deliberately takes the longest route between lessons to show his new trainers off. By the end, after nobody reacts the way he'd hoped, he hides them at the back of his locker and takes the shortest route home in his old pair -- a clear reversal in both his behaviour and his choice of route.",
+      "distractorRationale": null,
+      "blueprintId": "ei003-w3-bp-comp-before-after",
+      "reasoningRoute": "single_character_before_after",
+      "familyId": "wave1-fam-comparative-extraction"
+    },
+    "p_claimed_answer": "at the start he proudly takes the longest route to show them off, but by the end he hides them and takes the shortest route home in his old shoes",
+    "p_worked_explanation": "At the start of the day, Jayden deliberately takes the longest route between lessons to show his new trainers off. By the end, after nobody reacts the way he'd hoped, he hides them at the back of his locker and takes the shortest route home in his old pair -- a clear reversal in both his behaviour and his choice of route.",
+    "p_distractors": null,
+    "p_mathematical_validation": {
+      "evidenceQuotesVerifiedAgainstRealPassageText": true,
+      "markingContractGatePassed": true,
+      "validator": "scripts/validate-ei003-wave3-manifest.mjs + scripts/validate-ei003-wave3-marking-contracts.mjs",
+      "validatedAt": "2026-09-09T13:02:55.663Z"
+    },
+    "p_similarity_validation": {
+      "approved": true,
+      "reasons": [],
+      "checkedForDuplicateQuestionTextWithinBatch": true
+    },
+    "p_passage_id": "wave3-eng-newtrainers"
+  },
+  {
+    "p_candidate_id": "ei003-w3-comp-twochar-01",
+    "p_family_id": "wave1-fam-comparative-extraction",
+    "p_generation_spec_id": "ei003-w3-bp-comp-two-characters",
+    "p_generation_spec_version": "1",
+    "p_subject": "english",
+    "p_competency_id": null,
+    "p_skill": "QT-RC-07",
+    "p_question_type": "short-answer",
+    "p_pathway": [
+      "csse"
+    ],
+    "p_preparation_stage": "DEVELOPMENT",
+    "p_difficulty": "medium",
+    "p_question_content": {
+      "question": "Compare how the girl with the long plait and the boy from Priya's form group each interact with her. What is the difference in how they approach her?",
+      "acceptedAnswers": [
+        "the girl offers a fleeting, friendly moment that is interrupted before it can develop, while the boy makes a direct, casual invitation that actually includes her",
+        "the girl's kindness is brief and cut short, but the boy's is a genuine, followed-through invitation",
+        "one is a passing smile that goes nowhere, the other is a real invitation she accepts"
+      ],
+      "modelAnswer": "the girl offers a fleeting, friendly moment that is interrupted before it can develop, while the boy makes a direct, casual invitation that actually includes her",
+      "marks": 2,
+      "validationTier": "TIER2_ACCEPTED_SET",
+      "evidenceQuotes": [
+        "A girl with a long plait had smiled at her in the corridor that morning, a genuine smile, and said \"you're the new one, right?\" before being swept away by a wave of friends before Priya could answer",
+        "\"You can sit with us, if you want.\""
+      ],
+      "explanationGuidance": "Both the girl and the boy show a moment of kindness towards Priya, but their approaches differ in outcome: the girl's genuine smile and question are interrupted before Priya can even respond, going nowhere, while the boy's casual invitation is direct and leads to Priya actually sitting with him and his friends.",
+      "distractorRationale": null,
+      "blueprintId": "ei003-w3-bp-comp-two-characters",
+      "reasoningRoute": "compare_two_characters_reaction",
+      "familyId": "wave1-fam-comparative-extraction"
+    },
+    "p_claimed_answer": "the girl offers a fleeting, friendly moment that is interrupted before it can develop, while the boy makes a direct, casual invitation that actually includes her",
+    "p_worked_explanation": "Both the girl and the boy show a moment of kindness towards Priya, but their approaches differ in outcome: the girl's genuine smile and question are interrupted before Priya can even respond, going nowhere, while the boy's casual invitation is direct and leads to Priya actually sitting with him and his friends.",
+    "p_distractors": null,
+    "p_mathematical_validation": {
+      "evidenceQuotesVerifiedAgainstRealPassageText": true,
+      "markingContractGatePassed": true,
+      "validator": "scripts/validate-ei003-wave3-manifest.mjs + scripts/validate-ei003-wave3-marking-contracts.mjs",
+      "validatedAt": "2026-09-09T13:02:55.663Z"
+    },
+    "p_similarity_validation": {
+      "approved": true,
+      "reasons": [],
+      "checkedForDuplicateQuestionTextWithinBatch": true
+    },
+    "p_passage_id": "wave1-eng-newgirl"
+  },
+  {
+    "p_candidate_id": "ei003-w3-comp-twochar-02",
+    "p_family_id": "wave1-fam-comparative-extraction",
+    "p_generation_spec_id": "ei003-w3-bp-comp-two-characters",
+    "p_generation_spec_version": "1",
+    "p_subject": "english",
+    "p_competency_id": null,
+    "p_skill": "QT-RC-07",
+    "p_question_type": "short-answer",
+    "p_pathway": [
+      "csse"
+    ],
+    "p_preparation_stage": "DEVELOPMENT",
+    "p_difficulty": "medium",
+    "p_question_content": {
+      "question": "Compare how easily Mr Fenwick carries a flour sack with how Priya manages hers. What is the difference?",
+      "acceptedAnswers": [
+        "mr fenwick lifts and carries his sack with no visible effort, while priya struggles and has to drag hers across the floor",
+        "he handles the sack effortlessly, but she finds it much harder and slower",
+        "his experience makes it look easy, while her inexperience makes it a real struggle"
+      ],
+      "modelAnswer": "mr fenwick lifts and carries his sack with no visible effort, while priya struggles and has to drag hers across the floor",
+      "marks": 2,
+      "validationTier": "TIER2_ACCEPTED_SET",
+      "evidenceQuotes": [
+        "Mr Fenwick picked up a single sack, hoisted it onto his shoulder without any visible effort, and carried it through to the ovens as though it weighed nothing more than a folded newspaper",
+        "Priya hurried to lift a sack of her own. It did not move nearly so easily. By the time she had dragged it halfway across the floor, Mr Fenwick was already three sacks ahead of her"
+      ],
+      "explanationGuidance": "Mr Fenwick's forty years of experience are shown through how effortlessly he lifts and carries his sack, as though it weighs nothing. Priya's inexperience is shown by direct contrast: her own sack does not move nearly so easily, and she is still dragging it across the floor while he is already three sacks ahead.",
+      "distractorRationale": null,
+      "blueprintId": "ei003-w3-bp-comp-two-characters",
+      "reasoningRoute": "compare_two_characters_reaction",
+      "familyId": "wave1-fam-comparative-extraction"
+    },
+    "p_claimed_answer": "mr fenwick lifts and carries his sack with no visible effort, while priya struggles and has to drag hers across the floor",
+    "p_worked_explanation": "Mr Fenwick's forty years of experience are shown through how effortlessly he lifts and carries his sack, as though it weighs nothing. Priya's inexperience is shown by direct contrast: her own sack does not move nearly so easily, and she is still dragging it across the floor while he is already three sacks ahead.",
+    "p_distractors": null,
+    "p_mathematical_validation": {
+      "evidenceQuotesVerifiedAgainstRealPassageText": true,
+      "markingContractGatePassed": true,
+      "validator": "scripts/validate-ei003-wave3-manifest.mjs + scripts/validate-ei003-wave3-marking-contracts.mjs",
+      "validatedAt": "2026-09-09T13:02:55.663Z"
+    },
+    "p_similarity_validation": {
+      "approved": true,
+      "reasons": [],
+      "checkedForDuplicateQuestionTextWithinBatch": true
+    },
+    "p_passage_id": "wave3-eng-bakersapprentice"
+  },
+  {
+    "p_candidate_id": "ei003-w3-comp-settings-01",
+    "p_family_id": "wave1-fam-comparative-extraction",
+    "p_generation_spec_id": "ei003-w3-bp-comp-settings",
+    "p_generation_spec_version": "1",
+    "p_subject": "english",
+    "p_competency_id": null,
+    "p_skill": "QT-RC-07",
+    "p_question_type": "short-answer",
+    "p_pathway": [
+      "csse"
+    ],
+    "p_preparation_stage": "INDEPENDENT",
+    "p_difficulty": "hard",
+    "p_question_content": {
+      "question": "Compare the classroom Maya usually experiences with the classroom she finds this particular morning. What has changed?",
+      "acceptedAnswers": [
+        "usually the classroom just belongs quietly to her before anyone arrives, but this morning it is unusually tidy, clean and still in a way that feels different and unsettling",
+        "normally it is simply empty and hers, but this morning small details -- the clean whiteboard, the shut window, the stillness -- suggest something is different",
+        "the ordinary emptiness she enjoys is replaced this morning by an unusual, careful tidiness and an unsettling quiet"
+      ],
+      "modelAnswer": "usually the classroom just belongs quietly to her before anyone arrives, but this morning it is unusually tidy, clean and still in a way that feels different and unsettling",
+      "marks": 2,
+      "validationTier": "TIER2_ACCEPTED_SET",
+      "evidenceQuotes": [
+        "She liked the ten minutes before anyone else came, when the classroom belonged only to her",
+        "The whiteboard, normally smudged with yesterday's lesson, had been wiped completely clean",
+        "the room held a stillness that made her steps sound too loud"
+      ],
+      "explanationGuidance": "Ordinarily, Maya simply enjoys having the empty classroom to herself. This particular morning is compared directly against that normal state: the whiteboard is unusually clean, the window unusually shut, and the room holds a stillness noticeable enough that her own footsteps sound too loud -- the same room, but changed in several small, specific ways.",
+      "distractorRationale": null,
+      "blueprintId": "ei003-w3-bp-comp-settings",
+      "reasoningRoute": "compare_settings_or_descriptions",
+      "familyId": "wave1-fam-comparative-extraction"
+    },
+    "p_claimed_answer": "usually the classroom just belongs quietly to her before anyone arrives, but this morning it is unusually tidy, clean and still in a way that feels different and unsettling",
+    "p_worked_explanation": "Ordinarily, Maya simply enjoys having the empty classroom to herself. This particular morning is compared directly against that normal state: the whiteboard is unusually clean, the window unusually shut, and the room holds a stillness noticeable enough that her own footsteps sound too loud -- the same room, but changed in several small, specific ways.",
+    "p_distractors": null,
+    "p_mathematical_validation": {
+      "evidenceQuotesVerifiedAgainstRealPassageText": true,
+      "markingContractGatePassed": true,
+      "validator": "scripts/validate-ei003-wave3-manifest.mjs + scripts/validate-ei003-wave3-marking-contracts.mjs",
+      "validatedAt": "2026-09-09T13:02:55.663Z"
+    },
+    "p_similarity_validation": {
+      "approved": true,
+      "reasons": [],
+      "checkedForDuplicateQuestionTextWithinBatch": true
+    },
+    "p_passage_id": "wave3-eng-emptyclassroom"
+  },
+  {
+    "p_candidate_id": "ei003-w3-comp-settings-02",
+    "p_family_id": "wave1-fam-comparative-extraction",
+    "p_generation_spec_id": "ei003-w3-bp-comp-settings",
+    "p_generation_spec_version": "1",
+    "p_subject": "english",
+    "p_competency_id": null,
+    "p_skill": "QT-RC-07",
+    "p_question_type": "short-answer",
+    "p_pathway": [
+      "csse"
+    ],
+    "p_preparation_stage": "INDEPENDENT",
+    "p_difficulty": "hard",
+    "p_question_content": {
+      "question": "Compare the attic door as Marcus first finds it with what he discovers once he is inside the attic. What is the difference between the two?",
+      "acceptedAnswers": [
+        "the door itself is sealed, painted shut and untouched for years, but inside the attic is full of old, dust-covered objects and a specific trunk waiting to be found",
+        "outside is a blank, sealed door nobody has opened in years; inside is a whole hidden space of old furniture and dust",
+        "the sealed, ordinary-looking door hides a dim, cluttered space full of forgotten objects"
+      ],
+      "modelAnswer": "the door itself is sealed, painted shut and untouched for years, but inside the attic is full of old, dust-covered objects and a specific trunk waiting to be found",
+      "marks": 2,
+      "validationTier": "TIER2_ACCEPTED_SET",
+      "evidenceQuotes": [
+        "The attic door had been painted shut for as long as Marcus could remember",
+        "Nobody in the house had opened it in years",
+        "The attic beyond was dim, lit only by a single grimy window at the far end",
+        "Shapes crouched under grey dust sheets, furniture from decades Marcus couldn't guess at, their outlines softened and strange"
+      ],
+      "explanationGuidance": "The door itself is described as sealed and untouched, giving no hint of what lies beyond. Once Marcus is inside, the passage reveals a very different scene: a dim, dusty attic full of old, shape-shifted furniture -- a clear contrast between the plain, blank exterior and the cluttered, atmospheric interior.",
+      "distractorRationale": null,
+      "blueprintId": "ei003-w3-bp-comp-settings",
+      "reasoningRoute": "compare_settings_or_descriptions",
+      "familyId": "wave1-fam-comparative-extraction"
+    },
+    "p_claimed_answer": "the door itself is sealed, painted shut and untouched for years, but inside the attic is full of old, dust-covered objects and a specific trunk waiting to be found",
+    "p_worked_explanation": "The door itself is described as sealed and untouched, giving no hint of what lies beyond. Once Marcus is inside, the passage reveals a very different scene: a dim, dusty attic full of old, shape-shifted furniture -- a clear contrast between the plain, blank exterior and the cluttered, atmospheric interior.",
+    "p_distractors": null,
+    "p_mathematical_validation": {
+      "evidenceQuotesVerifiedAgainstRealPassageText": true,
+      "markingContractGatePassed": true,
+      "validator": "scripts/validate-ei003-wave3-manifest.mjs + scripts/validate-ei003-wave3-marking-contracts.mjs",
+      "validatedAt": "2026-09-09T13:02:55.663Z"
+    },
+    "p_similarity_validation": {
+      "approved": true,
+      "reasons": [],
+      "checkedForDuplicateQuestionTextWithinBatch": true
+    },
+    "p_passage_id": "wave1-eng-atticdoor"
+  },
+  {
+    "p_candidate_id": "ei003-w3-comp-simdiff-01",
+    "p_family_id": "wave1-fam-comparative-extraction",
+    "p_generation_spec_id": "ei003-w3-bp-comp-simdiff",
+    "p_generation_spec_version": "1",
+    "p_subject": "english",
+    "p_competency_id": null,
+    "p_skill": "QT-RC-07",
+    "p_question_type": "short-answer",
+    "p_pathway": [
+      "csse"
+    ],
+    "p_preparation_stage": "TRANSFER",
+    "p_difficulty": "challenge",
+    "p_question_content": {
+      "question": "Compare the girl with the long plait and the boy from Priya's form group. What is one thing they have in common, and what is one way they are different?",
+      "acceptedAnswers": [
+        "similarity: both show Priya a moment of genuine, casual kindness; difference: the girl's moment is cut short before it can go anywhere, while the boy's leads to Priya actually staying with him and his friends",
+        "they are similar because both are kind to her without being asked; they differ because only the boy's kindness actually includes her in something",
+        "both are warm towards her, but only one of them follows through into a real connection"
+      ],
+      "modelAnswer": "similarity: both show Priya a moment of genuine, casual kindness; difference: the girl's moment is cut short before it can go anywhere, while the boy's leads to Priya actually staying with him and his friends",
+      "marks": 2,
+      "validationTier": "TIER2_ACCEPTED_SET",
+      "evidenceQuotes": [
+        "a genuine smile",
+        "an easy, unbothered laugh",
+        "swept away by a wave of friends before Priya could answer",
+        "She sat down at the edge of the group, said very little for the rest of lunch, and found, to her own surprise, that she didn't mind"
+      ],
+      "explanationGuidance": "The similarity: both the girl and the boy show Priya real, unforced warmth -- a genuine smile from one, an easy laugh from the other. The difference lies in what happens next: the girl's moment is interrupted and goes nowhere, while the boy's casual invitation leads to Priya genuinely staying and, to her own surprise, not minding it. Both halves need their own evidence -- the similarity is not enough on its own.",
+      "distractorRationale": null,
+      "blueprintId": "ei003-w3-bp-comp-simdiff",
+      "reasoningRoute": "similarity_and_difference",
+      "familyId": "wave1-fam-comparative-extraction"
+    },
+    "p_claimed_answer": "similarity: both show Priya a moment of genuine, casual kindness; difference: the girl's moment is cut short before it can go anywhere, while the boy's leads to Priya actually staying with him and his friends",
+    "p_worked_explanation": "The similarity: both the girl and the boy show Priya real, unforced warmth -- a genuine smile from one, an easy laugh from the other. The difference lies in what happens next: the girl's moment is interrupted and goes nowhere, while the boy's casual invitation leads to Priya genuinely staying and, to her own surprise, not minding it. Both halves need their own evidence -- the similarity is not enough on its own.",
+    "p_distractors": null,
+    "p_mathematical_validation": {
+      "evidenceQuotesVerifiedAgainstRealPassageText": true,
+      "markingContractGatePassed": true,
+      "validator": "scripts/validate-ei003-wave3-manifest.mjs + scripts/validate-ei003-wave3-marking-contracts.mjs",
+      "validatedAt": "2026-09-09T13:02:55.663Z"
+    },
+    "p_similarity_validation": {
+      "approved": true,
+      "reasons": [],
+      "checkedForDuplicateQuestionTextWithinBatch": true
+    },
+    "p_passage_id": "wave1-eng-newgirl"
+  },
+  {
+    "p_candidate_id": "ei003-w3-comp-simdiff-02",
+    "p_family_id": "wave1-fam-comparative-extraction",
+    "p_generation_spec_id": "ei003-w3-bp-comp-simdiff",
+    "p_generation_spec_version": "1",
+    "p_subject": "english",
+    "p_competency_id": null,
+    "p_skill": "QT-RC-07",
+    "p_question_type": "short-answer",
+    "p_pathway": [
+      "csse"
+    ],
+    "p_preparation_stage": "TRANSFER",
+    "p_difficulty": "challenge",
+    "p_question_content": {
+      "question": "Compare Ade and Cass's performances in the relay race itself. What do they have in common, and what is different about how each of them approaches it?",
+      "acceptedAnswers": [
+        "similarity: both run their leg successfully and well; difference: ade is anxious and methodical about it, while cass is relaxed and seems almost uninterested in the outcome",
+        "they are similar because both perform their leg competently; they differ because his approach is nervous and prepared, while hers is careless and easy",
+        "both succeed in their leg of the race, but his success comes from anxious preparation and hers from apparent indifference"
+      ],
+      "modelAnswer": "similarity: both run their leg successfully and well; difference: ade is anxious and methodical about it, while cass is relaxed and seems almost uninterested in the outcome",
+      "marks": 2,
+      "validationTier": "TIER2_ACCEPTED_SET",
+      "evidenceQuotes": [
+        "Ade ran his leg exactly as planned, matching his practised splits almost to the second, and handed off cleanly",
+        "Cass ran the anchor leg the way she seemed to do everything: as though the outcome had already been decided somewhere she wasn't especially interested in checking",
+        "the familiar tightening in his chest",
+        "without moving the cap"
+      ],
+      "explanationGuidance": "The similarity: both Ade and Cass perform their own leg of the relay successfully -- his handover is clean, and she crosses the line first. The difference is in HOW they get there: Ade's success comes from anxious, methodical preparation (the tightening in his chest, his laminated split times), while Cass's comes with an almost uninterested calm (not even moving her cap to reply). Both halves -- the shared success and the contrasting manner -- need their own evidence.",
+      "distractorRationale": null,
+      "blueprintId": "ei003-w3-bp-comp-simdiff",
+      "reasoningRoute": "similarity_and_difference",
+      "familyId": "wave1-fam-comparative-extraction"
+    },
+    "p_claimed_answer": "similarity: both run their leg successfully and well; difference: ade is anxious and methodical about it, while cass is relaxed and seems almost uninterested in the outcome",
+    "p_worked_explanation": "The similarity: both Ade and Cass perform their own leg of the relay successfully -- his handover is clean, and she crosses the line first. The difference is in HOW they get there: Ade's success comes from anxious, methodical preparation (the tightening in his chest, his laminated split times), while Cass's comes with an almost uninterested calm (not even moving her cap to reply). Both halves -- the shared success and the contrasting manner -- need their own evidence.",
+    "p_distractors": null,
+    "p_mathematical_validation": {
+      "evidenceQuotesVerifiedAgainstRealPassageText": true,
+      "markingContractGatePassed": true,
+      "validator": "scripts/validate-ei003-wave3-manifest.mjs + scripts/validate-ei003-wave3-marking-contracts.mjs",
+      "validatedAt": "2026-09-09T13:02:55.663Z"
+    },
+    "p_similarity_validation": {
+      "approved": true,
+      "reasons": [],
+      "checkedForDuplicateQuestionTextWithinBatch": true
+    },
+    "p_passage_id": "wave1-eng-raceday"
+  },
+  {
+    "p_candidate_id": "ei003-w3-motive-action-01",
+    "p_family_id": "wave1-fam-motive-inference",
+    "p_generation_spec_id": "ei003-w3-bp-motive-action",
+    "p_generation_spec_version": "1",
+    "p_subject": "english",
+    "p_competency_id": null,
+    "p_skill": "QT-RC-02",
+    "p_question_type": "short-answer",
+    "p_pathway": [
+      "csse"
+    ],
+    "p_preparation_stage": "FOUNDATION",
+    "p_difficulty": "medium",
+    "p_question_content": {
+      "question": "Why does Mr Fenwick simply point to the flour sacks and say nothing at all, instead of giving Priya instructions?",
+      "acceptedAnswers": [
+        "he believes in showing rather than explaining -- he wants her to learn by watching and doing, not by being told",
+        "he expects her to learn through observation and experience rather than verbal instruction",
+        "his way of teaching is to demonstrate the work itself, not to give a list of instructions"
+      ],
+      "modelAnswer": "he believes in showing rather than explaining -- he wants her to learn by watching and doing, not by being told",
+      "marks": 2,
+      "validationTier": "TIER2_ACCEPTED_SET",
+      "evidenceQuotes": [
+        "he simply pointed to a mountain of flour sacks stacked against the wall and said nothing at all",
+        "Mr Fenwick picked up a single sack, hoisted it onto his shoulder without any visible effort, and carried it through to the ovens as though it weighed nothing more than a folded newspaper"
+      ],
+      "explanationGuidance": "Mr Fenwick never explains what he wants -- he simply demonstrates it himself, carrying the first sack with visible ease. His action (showing, not telling) is the evidence for his likely motive: he expects Priya to learn the work by watching and doing, the same way he plainly learned it himself.",
+      "distractorRationale": null,
+      "blueprintId": "ei003-w3-bp-motive-action",
+      "reasoningRoute": "motive_from_direct_action",
+      "familyId": "wave1-fam-motive-inference"
+    },
+    "p_claimed_answer": "he believes in showing rather than explaining -- he wants her to learn by watching and doing, not by being told",
+    "p_worked_explanation": "Mr Fenwick never explains what he wants -- he simply demonstrates it himself, carrying the first sack with visible ease. His action (showing, not telling) is the evidence for his likely motive: he expects Priya to learn the work by watching and doing, the same way he plainly learned it himself.",
+    "p_distractors": null,
+    "p_mathematical_validation": {
+      "evidenceQuotesVerifiedAgainstRealPassageText": true,
+      "markingContractGatePassed": true,
+      "validator": "scripts/validate-ei003-wave3-manifest.mjs + scripts/validate-ei003-wave3-marking-contracts.mjs",
+      "validatedAt": "2026-09-09T13:02:55.663Z"
+    },
+    "p_similarity_validation": {
+      "approved": true,
+      "reasons": [],
+      "checkedForDuplicateQuestionTextWithinBatch": true
+    },
+    "p_passage_id": "wave3-eng-bakersapprentice"
+  },
+  {
+    "p_candidate_id": "ei003-w3-motive-action-02",
+    "p_family_id": "wave1-fam-motive-inference",
+    "p_generation_spec_id": "ei003-w3-bp-motive-action",
+    "p_generation_spec_version": "1",
+    "p_subject": "english",
+    "p_competency_id": null,
+    "p_skill": "QT-RC-02",
+    "p_question_type": "short-answer",
+    "p_pathway": [
+      "csse"
+    ],
+    "p_preparation_stage": "FOUNDATION",
+    "p_difficulty": "medium",
+    "p_question_content": {
+      "question": "Why does Jayden take the longest possible route between lessons on the morning he first wears his new trainers?",
+      "acceptedAnswers": [
+        "he wants as many people as possible to notice and see his new trainers",
+        "he is deliberately showing them off by walking where more people will see them",
+        "he hopes people will notice the trainers, so he chooses the route that puts him in front of the most people"
+      ],
+      "modelAnswer": "he wants as many people as possible to notice and see his new trainers",
+      "marks": 2,
+      "validationTier": "TIER2_ACCEPTED_SET",
+      "evidenceQuotes": [
+        "he spent the whole morning walking very deliberately past groups of people, taking the longest possible route between lessons"
+      ],
+      "explanationGuidance": "Choosing the longest route, and doing so \"very deliberately\", only makes sense if the goal is to be seen -- Jayden's action of walking past as many groups as possible is the direct evidence for his motive of wanting his new trainers noticed.",
+      "distractorRationale": null,
+      "blueprintId": "ei003-w3-bp-motive-action",
+      "reasoningRoute": "motive_from_direct_action",
+      "familyId": "wave1-fam-motive-inference"
+    },
+    "p_claimed_answer": "he wants as many people as possible to notice and see his new trainers",
+    "p_worked_explanation": "Choosing the longest route, and doing so \"very deliberately\", only makes sense if the goal is to be seen -- Jayden's action of walking past as many groups as possible is the direct evidence for his motive of wanting his new trainers noticed.",
+    "p_distractors": null,
+    "p_mathematical_validation": {
+      "evidenceQuotesVerifiedAgainstRealPassageText": true,
+      "markingContractGatePassed": true,
+      "validator": "scripts/validate-ei003-wave3-manifest.mjs + scripts/validate-ei003-wave3-marking-contracts.mjs",
+      "validatedAt": "2026-09-09T13:02:55.663Z"
+    },
+    "p_similarity_validation": {
+      "approved": true,
+      "reasons": [],
+      "checkedForDuplicateQuestionTextWithinBatch": true
+    },
+    "p_passage_id": "wave3-eng-newtrainers"
+  },
+  {
+    "p_candidate_id": "ei003-w3-motive-dialogue-01",
+    "p_family_id": "wave1-fam-motive-inference",
+    "p_generation_spec_id": "ei003-w3-bp-motive-dialogue",
+    "p_generation_spec_version": "1",
+    "p_subject": "english",
+    "p_competency_id": null,
+    "p_skill": "QT-RC-02",
+    "p_question_type": "short-answer",
+    "p_pathway": [
+      "csse"
+    ],
+    "p_preparation_stage": "DEVELOPMENT",
+    "p_difficulty": "hard",
+    "p_question_content": {
+      "question": "Priya had rehearsed a sentence about Leicester, but what she actually says is \"Is the pasta usually this cold?\" Why might this unplanned question come out instead of her rehearsed line?",
+      "acceptedAnswers": [
+        "in the nervous, real moment her prepared line doesn't come naturally, so something spontaneous slips out instead",
+        "she is too flustered in the actual moment to use the sentence she had planned, and says the first ordinary thing that comes to mind",
+        "the pressure of the real situation overrides her rehearsed plan, producing an unplanned, more natural remark"
+      ],
+      "modelAnswer": "in the nervous, real moment her prepared line doesn't come naturally, so something spontaneous slips out instead",
+      "marks": 2,
+      "validationTier": "TIER2_ACCEPTED_SET",
+      "evidenceQuotes": [
+        "Her carefully rehearsed sentence about Leicester and disinfectant surfaced in her mind, fully formed, ready to be used. She opened her mouth. What came out instead was, \"Is the pasta usually this cold?\""
+      ],
+      "explanationGuidance": "The passage explicitly shows the rehearsed sentence surfacing in her mind, \"fully formed, ready to be used\" -- and then something else coming out instead. The evidence is in what she actually SAYS versus what she had planned to say: the gap between the two suggests genuine nervousness overriding her preparation, not a deliberate choice.",
+      "distractorRationale": null,
+      "blueprintId": "ei003-w3-bp-motive-dialogue",
+      "reasoningRoute": "motive_from_dialogue",
+      "familyId": "wave1-fam-motive-inference"
+    },
+    "p_claimed_answer": "in the nervous, real moment her prepared line doesn't come naturally, so something spontaneous slips out instead",
+    "p_worked_explanation": "The passage explicitly shows the rehearsed sentence surfacing in her mind, \"fully formed, ready to be used\" -- and then something else coming out instead. The evidence is in what she actually SAYS versus what she had planned to say: the gap between the two suggests genuine nervousness overriding her preparation, not a deliberate choice.",
+    "p_distractors": null,
+    "p_mathematical_validation": {
+      "evidenceQuotesVerifiedAgainstRealPassageText": true,
+      "markingContractGatePassed": true,
+      "validator": "scripts/validate-ei003-wave3-manifest.mjs + scripts/validate-ei003-wave3-marking-contracts.mjs",
+      "validatedAt": "2026-09-09T13:02:55.663Z"
+    },
+    "p_similarity_validation": {
+      "approved": true,
+      "reasons": [],
+      "checkedForDuplicateQuestionTextWithinBatch": true
+    },
+    "p_passage_id": "wave1-eng-newgirl"
+  },
+  {
+    "p_candidate_id": "ei003-w3-motive-dialogue-02",
+    "p_family_id": "wave1-fam-motive-inference",
+    "p_generation_spec_id": "ei003-w3-bp-motive-dialogue",
+    "p_generation_spec_version": "1",
+    "p_subject": "english",
+    "p_competency_id": null,
+    "p_skill": "QT-RC-02",
+    "p_question_type": "short-answer",
+    "p_pathway": [
+      "csse"
+    ],
+    "p_preparation_stage": "DEVELOPMENT",
+    "p_difficulty": "hard",
+    "p_question_content": {
+      "question": "Why might nobody at the harbour have said the word \"storm\" out loud yet, even though everyone is clearly hurrying?",
+      "acceptedAnswers": [
+        "saying it out loud would make the danger feel official and real, so people avoid naming it even while acting on their fear",
+        "not saying the word lets them keep moving quickly without openly admitting how worried they are",
+        "naming it would confirm everyone's fear, so they behave urgently without actually saying what they are afraid of"
+      ],
+      "modelAnswer": "saying it out loud would make the danger feel official and real, so people avoid naming it even while acting on their fear",
+      "marks": 2,
+      "validationTier": "TIER2_ACCEPTED_SET",
+      "evidenceQuotes": [
+        "Nobody had said the word \"storm\" out loud yet, but everybody on the harbour wall seemed to be moving a little faster than usual, and nobody was smiling"
+      ],
+      "explanationGuidance": "What is NOT said is the key evidence here: despite everyone visibly hurrying, nobody actually names the storm aloud. This gap between action (hurrying) and speech (staying silent about why) suggests people are avoiding making the danger feel official or real by naming it directly.",
+      "distractorRationale": null,
+      "blueprintId": "ei003-w3-bp-motive-dialogue",
+      "reasoningRoute": "motive_from_dialogue",
+      "familyId": "wave1-fam-motive-inference"
+    },
+    "p_claimed_answer": "saying it out loud would make the danger feel official and real, so people avoid naming it even while acting on their fear",
+    "p_worked_explanation": "What is NOT said is the key evidence here: despite everyone visibly hurrying, nobody actually names the storm aloud. This gap between action (hurrying) and speech (staying silent about why) suggests people are avoiding making the danger feel official or real by naming it directly.",
+    "p_distractors": null,
+    "p_mathematical_validation": {
+      "evidenceQuotesVerifiedAgainstRealPassageText": true,
+      "markingContractGatePassed": true,
+      "validator": "scripts/validate-ei003-wave3-manifest.mjs + scripts/validate-ei003-wave3-marking-contracts.mjs",
+      "validatedAt": "2026-09-09T13:02:55.663Z"
+    },
+    "p_similarity_validation": {
+      "approved": true,
+      "reasons": [],
+      "checkedForDuplicateQuestionTextWithinBatch": true
+    },
+    "p_passage_id": "wave3-eng-stormharbour"
+  },
+  {
+    "p_candidate_id": "ei003-w3-motive-weigh-01",
+    "p_family_id": "wave1-fam-motive-inference",
+    "p_generation_spec_id": "ei003-w3-bp-motive-weigh",
+    "p_generation_spec_version": "1",
+    "p_subject": "english",
+    "p_competency_id": null,
+    "p_skill": "QT-RC-02",
+    "p_question_type": "short-answer",
+    "p_pathway": [
+      "csse"
+    ],
+    "p_preparation_stage": "INDEPENDENT",
+    "p_difficulty": "hard",
+    "p_question_content": {
+      "question": "Jayden ends up hiding his new trainers at the back of his locker. Is this mainly because Connor said something unkind about them, or because of how Jayden interpreted Connor's silence? Use evidence to decide.",
+      "acceptedAnswers": [
+        "it is because of how jayden interpreted connor's silence -- connor never actually says anything unkind at all, he just glances and says nothing",
+        "connor never criticises the trainers in words; it is jayden's own reading of that silence as disappointing that leads him to hide them",
+        "the cause is jayden's interpretation, not any unkind comment, since connor's actual response is just a brief, wordless glance"
+      ],
+      "modelAnswer": "it is because of how jayden interpreted connor's silence -- connor never actually says anything unkind at all, he just glances and says nothing",
+      "marks": 2,
+      "validationTier": "TIER2_ACCEPTED_SET",
+      "evidenceQuotes": [
+        "Connor glanced down at Jayden's feet for exactly one second, then carried on eating his sandwich without a word",
+        "Jayden told himself it didn't matter what Connor thought"
+      ],
+      "explanationGuidance": "The passage never gives Connor a single unkind word about the trainers -- his entire reaction is a one-second glance and silence. The stronger-supported motive is therefore Jayden's own interpretation of that silence, not any actual criticism, since there is no criticism in the text to point to at all.",
+      "distractorRationale": null,
+      "blueprintId": "ei003-w3-bp-motive-weigh",
+      "reasoningRoute": "motive_weighing_two_reasons",
+      "familyId": "wave1-fam-motive-inference"
+    },
+    "p_claimed_answer": "it is because of how jayden interpreted connor's silence -- connor never actually says anything unkind at all, he just glances and says nothing",
+    "p_worked_explanation": "The passage never gives Connor a single unkind word about the trainers -- his entire reaction is a one-second glance and silence. The stronger-supported motive is therefore Jayden's own interpretation of that silence, not any actual criticism, since there is no criticism in the text to point to at all.",
+    "p_distractors": null,
+    "p_mathematical_validation": {
+      "evidenceQuotesVerifiedAgainstRealPassageText": true,
+      "markingContractGatePassed": true,
+      "validator": "scripts/validate-ei003-wave3-manifest.mjs + scripts/validate-ei003-wave3-marking-contracts.mjs",
+      "validatedAt": "2026-09-09T13:02:55.663Z"
+    },
+    "p_similarity_validation": {
+      "approved": true,
+      "reasons": [],
+      "checkedForDuplicateQuestionTextWithinBatch": true
+    },
+    "p_passage_id": "wave3-eng-newtrainers"
+  },
+  {
+    "p_candidate_id": "ei003-w3-motive-weigh-02",
+    "p_family_id": "wave1-fam-motive-inference",
+    "p_generation_spec_id": "ei003-w3-bp-motive-weigh",
+    "p_generation_spec_version": "1",
+    "p_subject": "english",
+    "p_competency_id": null,
+    "p_skill": "QT-RC-02",
+    "p_question_type": "short-answer",
+    "p_pathway": [
+      "csse"
+    ],
+    "p_preparation_stage": "INDEPENDENT",
+    "p_difficulty": "hard",
+    "p_question_content": {
+      "question": "Does Mr Fenwick stay silent because he is deliberately testing Priya, or simply because that is how he naturally works? Use evidence to decide which is better supported.",
+      "acceptedAnswers": [
+        "it is better supported that this is simply how he naturally works -- he carries on with his own task, whistling to himself, rather than watching or judging her",
+        "the evidence favours it being his normal manner, since he seems absorbed in his own work rather than observing her as a test would require",
+        "he is not shown watching or evaluating her at all, which suggests habit rather than a deliberate test"
+      ],
+      "modelAnswer": "it is better supported that this is simply how he naturally works -- he carries on with his own task, whistling to himself, rather than watching or judging her",
+      "marks": 2,
+      "validationTier": "TIER2_ACCEPTED_SET",
+      "evidenceQuotes": [
+        "Priya waited, unsure whether this was a test or simply how he worked",
+        "Mr Fenwick was already three sacks ahead of her, whistling quietly to himself"
+      ],
+      "explanationGuidance": "The passage explicitly raises both possibilities through Priya's own uncertainty. The stronger evidence points to habit rather than a deliberate test: Mr Fenwick is shown whistling to himself, absorbed in his own steady work, rather than watching or evaluating Priya's progress -- behaviour that fits simply working his normal way, not setting a test.",
+      "distractorRationale": null,
+      "blueprintId": "ei003-w3-bp-motive-weigh",
+      "reasoningRoute": "motive_weighing_two_reasons",
+      "familyId": "wave1-fam-motive-inference"
+    },
+    "p_claimed_answer": "it is better supported that this is simply how he naturally works -- he carries on with his own task, whistling to himself, rather than watching or judging her",
+    "p_worked_explanation": "The passage explicitly raises both possibilities through Priya's own uncertainty. The stronger evidence points to habit rather than a deliberate test: Mr Fenwick is shown whistling to himself, absorbed in his own steady work, rather than watching or evaluating Priya's progress -- behaviour that fits simply working his normal way, not setting a test.",
+    "p_distractors": null,
+    "p_mathematical_validation": {
+      "evidenceQuotesVerifiedAgainstRealPassageText": true,
+      "markingContractGatePassed": true,
+      "validator": "scripts/validate-ei003-wave3-manifest.mjs + scripts/validate-ei003-wave3-marking-contracts.mjs",
+      "validatedAt": "2026-09-09T13:02:55.663Z"
+    },
+    "p_similarity_validation": {
+      "approved": true,
+      "reasons": [],
+      "checkedForDuplicateQuestionTextWithinBatch": true
+    },
+    "p_passage_id": "wave3-eng-bakersapprentice"
+  },
+  {
+    "p_candidate_id": "ei003-w3-motive-shift-01",
+    "p_family_id": "wave1-fam-motive-inference",
+    "p_generation_spec_id": "ei003-w3-bp-motive-shift",
+    "p_generation_spec_version": "1",
+    "p_subject": "english",
+    "p_competency_id": null,
+    "p_skill": "QT-RC-02",
+    "p_question_type": "short-answer",
+    "p_pathway": [
+      "csse"
+    ],
+    "p_preparation_stage": "TRANSFER",
+    "p_difficulty": "challenge",
+    "p_question_content": {
+      "question": "At the start, Marcus simply wants to see what is in the trunk. By the very end, does the passage suggest his feeling about opening it has stayed exactly the same, or has something more complicated crept in? Use evidence from more than one point.",
+      "acceptedAnswers": [
+        "something more complicated has crept in -- he still wants to know, but he also starts to savour the anticipation itself, delaying the moment on purpose",
+        "his simple curiosity develops into something that also values the suspense of not yet knowing, shown by him pausing deliberately before opening it",
+        "it changes from wanting an answer quickly to wanting to prolong the not-knowing a little longer"
+      ],
+      "modelAnswer": "something more complicated has crept in -- he still wants to know, but he also starts to savour the anticipation itself, delaying the moment on purpose",
+      "marks": 2,
+      "validationTier": "TIER2_ACCEPTED_SET",
+      "evidenceQuotes": [
+        "He had wanted to for exactly eleven days",
+        "He knelt in front of it for a long moment before he lifted the lid, savouring, in a way he couldn't quite explain, the last few seconds of not yet knowing"
+      ],
+      "explanationGuidance": "Early in the passage, Marcus's motive is simple: eleven days of wanting to know what's inside. By the final lines, though, his motive has become more complicated -- he deliberately pauses before lifting the lid, savouring the last moments of uncertainty rather than rushing to satisfy his curiosity. Tracing evidence from both the start and the very end is needed to see this shift.",
+      "distractorRationale": null,
+      "blueprintId": "ei003-w3-bp-motive-shift",
+      "reasoningRoute": "motive_shift_across_passage",
+      "familyId": "wave1-fam-motive-inference"
+    },
+    "p_claimed_answer": "something more complicated has crept in -- he still wants to know, but he also starts to savour the anticipation itself, delaying the moment on purpose",
+    "p_worked_explanation": "Early in the passage, Marcus's motive is simple: eleven days of wanting to know what's inside. By the final lines, though, his motive has become more complicated -- he deliberately pauses before lifting the lid, savouring the last moments of uncertainty rather than rushing to satisfy his curiosity. Tracing evidence from both the start and the very end is needed to see this shift.",
+    "p_distractors": null,
+    "p_mathematical_validation": {
+      "evidenceQuotesVerifiedAgainstRealPassageText": true,
+      "markingContractGatePassed": true,
+      "validator": "scripts/validate-ei003-wave3-manifest.mjs + scripts/validate-ei003-wave3-marking-contracts.mjs",
+      "validatedAt": "2026-09-09T13:02:55.663Z"
+    },
+    "p_similarity_validation": {
+      "approved": true,
+      "reasons": [],
+      "checkedForDuplicateQuestionTextWithinBatch": true
+    },
+    "p_passage_id": "wave1-eng-atticdoor"
+  },
+  {
+    "p_candidate_id": "ei003-w3-motive-shift-02",
+    "p_family_id": "wave1-fam-motive-inference",
+    "p_generation_spec_id": "ei003-w3-bp-motive-shift",
+    "p_generation_spec_version": "1",
+    "p_subject": "english",
+    "p_competency_id": null,
+    "p_skill": "QT-RC-02",
+    "p_question_type": "short-answer",
+    "p_pathway": [
+      "csse"
+    ],
+    "p_preparation_stage": "TRANSFER",
+    "p_difficulty": "challenge",
+    "p_question_content": {
+      "question": "Ade's laminated card and repeated checking seem, at first, like simple careful preparation. Does the passage later reveal a deeper motive behind this behaviour? Use evidence from more than one point.",
+      "acceptedAnswers": [
+        "yes -- later the passage reveals the checking is really about managing anxiety, not just practical readiness, shown by the tightening in his chest",
+        "what looks like ordinary preparation is later shown to be linked to real nervousness, not just thoroughness",
+        "the deeper motive, revealed later, is anxiety -- the card is a way of coping with nerves, not simply getting ready"
+      ],
+      "modelAnswer": "yes -- later the passage reveals the checking is really about managing anxiety, not just practical readiness, shown by the tightening in his chest",
+      "marks": 2,
+      "validationTier": "TIER2_ACCEPTED_SET",
+      "evidenceQuotes": [
+        "He had a laminated card in his kit bag listing his split times for the last six meets, and he had read it twice already that morning, as if the numbers might have changed overnight",
+        "the familiar tightening in his chest, the one that had nothing to do with his lungs and everything to do with the six laminated split times folded in his pocket"
+      ],
+      "explanationGuidance": "Early in the passage, Ade's laminated card and repeated checking could simply look like diligent preparation. Later, though, the passage explicitly links the same card to \"the familiar tightening in his chest\" -- revealing that the checking is really a way of managing anxiety, not just practical readiness. Both the earlier and later evidence are needed to see the fuller motive.",
+      "distractorRationale": null,
+      "blueprintId": "ei003-w3-bp-motive-shift",
+      "reasoningRoute": "motive_shift_across_passage",
+      "familyId": "wave1-fam-motive-inference"
+    },
+    "p_claimed_answer": "yes -- later the passage reveals the checking is really about managing anxiety, not just practical readiness, shown by the tightening in his chest",
+    "p_worked_explanation": "Early in the passage, Ade's laminated card and repeated checking could simply look like diligent preparation. Later, though, the passage explicitly links the same card to \"the familiar tightening in his chest\" -- revealing that the checking is really a way of managing anxiety, not just practical readiness. Both the earlier and later evidence are needed to see the fuller motive.",
+    "p_distractors": null,
+    "p_mathematical_validation": {
+      "evidenceQuotesVerifiedAgainstRealPassageText": true,
+      "markingContractGatePassed": true,
+      "validator": "scripts/validate-ei003-wave3-manifest.mjs + scripts/validate-ei003-wave3-marking-contracts.mjs",
+      "validatedAt": "2026-09-09T13:02:55.663Z"
+    },
+    "p_similarity_validation": {
+      "approved": true,
+      "reasons": [],
+      "checkedForDuplicateQuestionTextWithinBatch": true
+    },
+    "p_passage_id": "wave1-eng-raceday"
+  },
+  {
+    "p_candidate_id": "ei003-w3-lang-fig-01",
+    "p_family_id": "wave1-fam-effect-of-language",
+    "p_generation_spec_id": "ei003-w3-bp-lang-figurative",
+    "p_generation_spec_version": "1",
+    "p_subject": "english",
+    "p_competency_id": null,
+    "p_skill": "QT-RC-10",
+    "p_question_type": "short-answer",
+    "p_pathway": [
+      "csse"
+    ],
+    "p_preparation_stage": "FOUNDATION",
+    "p_difficulty": "medium",
+    "p_question_content": {
+      "question": "The sky is described as \"the colour of old bruises.\" What does this comparison suggest?",
+      "acceptedAnswers": [
+        "it suggests something dark, ominous and slightly painful-looking, hinting at the danger of the coming storm",
+        "it creates a threatening, unsettling impression of the sky, foreshadowing trouble",
+        "the comparison makes the sky feel bruised and menacing, suggesting danger ahead"
+      ],
+      "modelAnswer": "it suggests something dark, ominous and slightly painful-looking, hinting at the danger of the coming storm",
+      "marks": 2,
+      "validationTier": "TIER2_ACCEPTED_SET",
+      "evidenceQuotes": [
+        "a sky the colour of old bruises"
+      ],
+      "explanationGuidance": "Comparing the sky to old bruises suggests dark, mottled, faintly painful colours -- far more ominous and unsettling than simply saying the sky was grey or dark, and hinting at the danger the storm will bring.",
+      "distractorRationale": null,
+      "blueprintId": "ei003-w3-bp-lang-figurative",
+      "reasoningRoute": "single_figurative_effect",
+      "familyId": "wave1-fam-effect-of-language"
+    },
+    "p_claimed_answer": "it suggests something dark, ominous and slightly painful-looking, hinting at the danger of the coming storm",
+    "p_worked_explanation": "Comparing the sky to old bruises suggests dark, mottled, faintly painful colours -- far more ominous and unsettling than simply saying the sky was grey or dark, and hinting at the danger the storm will bring.",
+    "p_distractors": null,
+    "p_mathematical_validation": {
+      "evidenceQuotesVerifiedAgainstRealPassageText": true,
+      "markingContractGatePassed": true,
+      "validator": "scripts/validate-ei003-wave3-manifest.mjs + scripts/validate-ei003-wave3-marking-contracts.mjs",
+      "validatedAt": "2026-09-09T13:02:55.663Z"
+    },
+    "p_similarity_validation": {
+      "approved": true,
+      "reasons": [],
+      "checkedForDuplicateQuestionTextWithinBatch": true
+    },
+    "p_passage_id": "wave3-eng-stormharbour"
+  },
+  {
+    "p_candidate_id": "ei003-w3-lang-fig-02",
+    "p_family_id": "wave1-fam-effect-of-language",
+    "p_generation_spec_id": "ei003-w3-bp-lang-figurative",
+    "p_generation_spec_version": "1",
+    "p_subject": "english",
+    "p_competency_id": null,
+    "p_skill": "QT-RC-10",
+    "p_question_type": "short-answer",
+    "p_pathway": [
+      "csse"
+    ],
+    "p_preparation_stage": "FOUNDATION",
+    "p_difficulty": "medium",
+    "p_question_content": {
+      "question": "Mr Fenwick carries the flour sack \"as though it weighed nothing more than a folded newspaper.\" What does this comparison suggest about him?",
+      "acceptedAnswers": [
+        "it suggests he is extremely strong and experienced, making genuinely heavy work look effortless",
+        "it emphasises how easy the physically demanding task is for him, showing his years of practice",
+        "the comparison shows just how little effort the heavy sack costs someone with his experience"
+      ],
+      "modelAnswer": "it suggests he is extremely strong and experienced, making genuinely heavy work look effortless",
+      "marks": 2,
+      "validationTier": "TIER2_ACCEPTED_SET",
+      "evidenceQuotes": [
+        "as though it weighed nothing more than a folded newspaper"
+      ],
+      "explanationGuidance": "Comparing a heavy flour sack to something as light as a folded newspaper emphasises just how effortless the task is for Mr Fenwick -- a vivid way of showing his years of physical experience, far stronger than simply saying he carried it easily.",
+      "distractorRationale": null,
+      "blueprintId": "ei003-w3-bp-lang-figurative",
+      "reasoningRoute": "single_figurative_effect",
+      "familyId": "wave1-fam-effect-of-language"
+    },
+    "p_claimed_answer": "it suggests he is extremely strong and experienced, making genuinely heavy work look effortless",
+    "p_worked_explanation": "Comparing a heavy flour sack to something as light as a folded newspaper emphasises just how effortless the task is for Mr Fenwick -- a vivid way of showing his years of physical experience, far stronger than simply saying he carried it easily.",
+    "p_distractors": null,
+    "p_mathematical_validation": {
+      "evidenceQuotesVerifiedAgainstRealPassageText": true,
+      "markingContractGatePassed": true,
+      "validator": "scripts/validate-ei003-wave3-manifest.mjs + scripts/validate-ei003-wave3-marking-contracts.mjs",
+      "validatedAt": "2026-09-09T13:02:55.663Z"
+    },
+    "p_similarity_validation": {
+      "approved": true,
+      "reasons": [],
+      "checkedForDuplicateQuestionTextWithinBatch": true
+    },
+    "p_passage_id": "wave3-eng-bakersapprentice"
+  },
+  {
+    "p_candidate_id": "ei003-w3-lang-meaning-01",
+    "p_family_id": "wave1-fam-effect-of-language",
+    "p_generation_spec_id": "ei003-w3-bp-lang-meaning",
+    "p_generation_spec_version": "1",
+    "p_subject": "english",
+    "p_competency_id": null,
+    "p_skill": "QT-RC-10",
+    "p_question_type": "short-answer",
+    "p_pathway": [
+      "csse"
+    ],
+    "p_preparation_stage": "DEVELOPMENT",
+    "p_difficulty": "medium",
+    "p_question_content": {
+      "question": "Priya notices her voice \"had come out smaller than she'd intended.\" What does the word \"smaller\" suggest here?",
+      "acceptedAnswers": [
+        "it suggests her voice sounded weaker or less confident than she meant it to, revealing her nervousness",
+        "it implies a lack of confidence, not literal volume, showing she felt more unsure than she wanted to appear",
+        "it suggests she sounded timid or unsure, betraying nerves she was trying to hide"
+      ],
+      "modelAnswer": "it suggests her voice sounded weaker or less confident than she meant it to, revealing her nervousness",
+      "marks": 2,
+      "validationTier": "TIER2_ACCEPTED_SET",
+      "evidenceQuotes": [
+        "her voice had come out smaller than she'd intended"
+      ],
+      "explanationGuidance": "\"Smaller\" here is not describing literal size or loudness -- it suggests her voice sounded weaker and less confident than she meant it to, revealing nervousness she was trying to hide.",
+      "distractorRationale": null,
+      "blueprintId": "ei003-w3-bp-lang-meaning",
+      "reasoningRoute": "meaning_in_context",
+      "familyId": "wave1-fam-effect-of-language"
+    },
+    "p_claimed_answer": "it suggests her voice sounded weaker or less confident than she meant it to, revealing her nervousness",
+    "p_worked_explanation": "\"Smaller\" here is not describing literal size or loudness -- it suggests her voice sounded weaker and less confident than she meant it to, revealing nervousness she was trying to hide.",
+    "p_distractors": null,
+    "p_mathematical_validation": {
+      "evidenceQuotesVerifiedAgainstRealPassageText": true,
+      "markingContractGatePassed": true,
+      "validator": "scripts/validate-ei003-wave3-manifest.mjs + scripts/validate-ei003-wave3-marking-contracts.mjs",
+      "validatedAt": "2026-09-09T13:02:55.663Z"
+    },
+    "p_similarity_validation": {
+      "approved": true,
+      "reasons": [],
+      "checkedForDuplicateQuestionTextWithinBatch": true
+    },
+    "p_passage_id": "wave1-eng-newgirl"
+  },
+  {
+    "p_candidate_id": "ei003-w3-lang-meaning-02",
+    "p_family_id": "wave1-fam-effect-of-language",
+    "p_generation_spec_id": "ei003-w3-bp-lang-meaning",
+    "p_generation_spec_version": "1",
+    "p_subject": "english",
+    "p_competency_id": null,
+    "p_skill": "QT-RC-10",
+    "p_question_type": "short-answer",
+    "p_pathway": [
+      "csse"
+    ],
+    "p_preparation_stage": "DEVELOPMENT",
+    "p_difficulty": "medium",
+    "p_question_content": {
+      "question": "The passage says Jayden \"told himself\" it didn't matter what Connor thought. What does the phrase \"told himself\" suggest about whether he truly believed this?",
+      "acceptedAnswers": [
+        "it suggests he was trying to convince himself of something he didn't fully believe, meaning it probably did matter to him",
+        "'told himself' implies self-persuasion, hinting that he actually did care what connor thought",
+        "it suggests he was talking himself into a feeling rather than genuinely feeling it, showing he was more affected than he admits"
+      ],
+      "modelAnswer": "it suggests he was trying to convince himself of something he didn't fully believe, meaning it probably did matter to him",
+      "marks": 2,
+      "validationTier": "TIER2_ACCEPTED_SET",
+      "evidenceQuotes": [
+        "Jayden told himself it didn't matter what Connor thought"
+      ],
+      "explanationGuidance": "\"Told himself\" is a precise choice -- it implies active self-persuasion, as though he needed convincing, which suggests the opposite of indifference: Jayden likely did care what Connor thought, even while trying to talk himself out of it.",
+      "distractorRationale": null,
+      "blueprintId": "ei003-w3-bp-lang-meaning",
+      "reasoningRoute": "meaning_in_context",
+      "familyId": "wave1-fam-effect-of-language"
+    },
+    "p_claimed_answer": "it suggests he was trying to convince himself of something he didn't fully believe, meaning it probably did matter to him",
+    "p_worked_explanation": "\"Told himself\" is a precise choice -- it implies active self-persuasion, as though he needed convincing, which suggests the opposite of indifference: Jayden likely did care what Connor thought, even while trying to talk himself out of it.",
+    "p_distractors": null,
+    "p_mathematical_validation": {
+      "evidenceQuotesVerifiedAgainstRealPassageText": true,
+      "markingContractGatePassed": true,
+      "validator": "scripts/validate-ei003-wave3-manifest.mjs + scripts/validate-ei003-wave3-marking-contracts.mjs",
+      "validatedAt": "2026-09-09T13:02:55.663Z"
+    },
+    "p_similarity_validation": {
+      "approved": true,
+      "reasons": [],
+      "checkedForDuplicateQuestionTextWithinBatch": true
+    },
+    "p_passage_id": "wave3-eng-newtrainers"
+  },
+  {
+    "p_candidate_id": "ei003-w3-lang-subst-01",
+    "p_family_id": "wave1-fam-effect-of-language",
+    "p_generation_spec_id": "ei003-w3-bp-lang-substitution",
+    "p_generation_spec_version": "1",
+    "p_subject": "english",
+    "p_competency_id": null,
+    "p_skill": "QT-RC-10",
+    "p_question_type": "short-answer",
+    "p_pathway": [
+      "csse"
+    ],
+    "p_preparation_stage": "INDEPENDENT",
+    "p_difficulty": "hard",
+    "p_question_content": {
+      "question": "Why might the writer have chosen \"hurried\" rather than \"went\" in \"Priya hurried to lift a sack of her own\"?",
+      "acceptedAnswers": [
+        "'hurried' suggests urgency and eagerness to keep pace with mr fenwick, more than the plain word 'went' would",
+        "'hurried' shows determination and a wish to match his speed, whereas 'went' would sound neutral and unhurried",
+        "it suggests she felt pressure to keep up immediately, not simply moving over in her own time"
+      ],
+      "modelAnswer": "'hurried' suggests urgency and eagerness to keep pace with mr fenwick, more than the plain word 'went' would",
+      "marks": 2,
+      "validationTier": "TIER2_ACCEPTED_SET",
+      "evidenceQuotes": [
+        "Priya hurried to lift a sack of her own"
+      ],
+      "explanationGuidance": "\"Hurried\" suggests urgency and a real eagerness to keep pace with Mr Fenwick's own effortless speed. \"Went\" would describe the same basic movement but without that sense of pressure or determination.",
+      "distractorRationale": null,
+      "blueprintId": "ei003-w3-bp-lang-substitution",
+      "reasoningRoute": "word_substitution_rationale",
+      "familyId": "wave1-fam-effect-of-language"
+    },
+    "p_claimed_answer": "'hurried' suggests urgency and eagerness to keep pace with mr fenwick, more than the plain word 'went' would",
+    "p_worked_explanation": "\"Hurried\" suggests urgency and a real eagerness to keep pace with Mr Fenwick's own effortless speed. \"Went\" would describe the same basic movement but without that sense of pressure or determination.",
+    "p_distractors": null,
+    "p_mathematical_validation": {
+      "evidenceQuotesVerifiedAgainstRealPassageText": true,
+      "markingContractGatePassed": true,
+      "validator": "scripts/validate-ei003-wave3-manifest.mjs + scripts/validate-ei003-wave3-marking-contracts.mjs",
+      "validatedAt": "2026-09-09T13:02:55.663Z"
+    },
+    "p_similarity_validation": {
+      "approved": true,
+      "reasons": [],
+      "checkedForDuplicateQuestionTextWithinBatch": true
+    },
+    "p_passage_id": "wave3-eng-bakersapprentice"
+  },
+  {
+    "p_candidate_id": "ei003-w3-lang-subst-02",
+    "p_family_id": "wave1-fam-effect-of-language",
+    "p_generation_spec_id": "ei003-w3-bp-lang-substitution",
+    "p_generation_spec_version": "1",
+    "p_subject": "english",
+    "p_competency_id": null,
+    "p_skill": "QT-RC-10",
+    "p_question_type": "short-answer",
+    "p_pathway": [
+      "csse"
+    ],
+    "p_preparation_stage": "INDEPENDENT",
+    "p_difficulty": "hard",
+    "p_question_content": {
+      "question": "Why might the writer have chosen \"clang\" rather than \"knock\" in \"make the loose rigging on the moored boats clang against their masts\"?",
+      "acceptedAnswers": [
+        "'clang' suggests a harsh, sharp, metallic sound, more unsettling and dramatic than the plainer word 'knock'",
+        "'clang' creates a jarring, ominous noise that fits the tense atmosphere, whereas 'knock' would sound mild and ordinary",
+        "it suggests a loud, unpleasant, alarming sound, adding to the sense that something is wrong"
+      ],
+      "modelAnswer": "'clang' suggests a harsh, sharp, metallic sound, more unsettling and dramatic than the plainer word 'knock'",
+      "marks": 2,
+      "validationTier": "TIER2_ACCEPTED_SET",
+      "evidenceQuotes": [
+        "make the loose rigging on the moored boats clang against their masts"
+      ],
+      "explanationGuidance": "\"Clang\" suggests a harsh, sharp, metallic sound -- far more jarring and ominous than the milder \"knock\", and fitting for a passage building tension before a storm.",
+      "distractorRationale": null,
+      "blueprintId": "ei003-w3-bp-lang-substitution",
+      "reasoningRoute": "word_substitution_rationale",
+      "familyId": "wave1-fam-effect-of-language"
+    },
+    "p_claimed_answer": "'clang' suggests a harsh, sharp, metallic sound, more unsettling and dramatic than the plainer word 'knock'",
+    "p_worked_explanation": "\"Clang\" suggests a harsh, sharp, metallic sound -- far more jarring and ominous than the milder \"knock\", and fitting for a passage building tension before a storm.",
+    "p_distractors": null,
+    "p_mathematical_validation": {
+      "evidenceQuotesVerifiedAgainstRealPassageText": true,
+      "markingContractGatePassed": true,
+      "validator": "scripts/validate-ei003-wave3-manifest.mjs + scripts/validate-ei003-wave3-marking-contracts.mjs",
+      "validatedAt": "2026-09-09T13:02:55.663Z"
+    },
+    "p_similarity_validation": {
+      "approved": true,
+      "reasons": [],
+      "checkedForDuplicateQuestionTextWithinBatch": true
+    },
+    "p_passage_id": "wave3-eng-stormharbour"
+  },
+  {
+    "p_candidate_id": "ei003-w3-lang-cumulative-01",
+    "p_family_id": "wave1-fam-effect-of-language",
+    "p_generation_spec_id": "ei003-w3-bp-lang-cumulative",
+    "p_generation_spec_version": "1",
+    "p_subject": "english",
+    "p_competency_id": null,
+    "p_skill": "QT-RC-10",
+    "p_question_type": "short-answer",
+    "p_pathway": [
+      "csse"
+    ],
+    "p_preparation_stage": "TRANSFER",
+    "p_difficulty": "challenge",
+    "p_question_content": {
+      "question": "The passage repeatedly describes dust and age: \"dust drifted down\", \"dust and damp wood\", \"grey dust sheets\", corners \"dulled almost black with age.\" What effect does this repeated pattern of word choice have on the description of the attic?",
+      "acceptedAnswers": [
+        "the repeated references to dust and age build a consistent, cumulative sense of long neglect across the whole attic, not just one object",
+        "using similar dust/decay language for many different things reinforces the impression that everything has been undisturbed for years",
+        "it creates one unified atmosphere of age and abandonment spread across the whole space"
+      ],
+      "modelAnswer": "the repeated references to dust and age build a consistent, cumulative sense of long neglect across the whole attic, not just one object",
+      "marks": 2,
+      "validationTier": "TIER2_ACCEPTED_SET",
+      "evidenceQuotes": [
+        "A fine white dust drifted down and settled on his sleeve",
+        "thick with the particular smell of old houses: dust and damp wood",
+        "Shapes crouched under grey dust sheets",
+        "its brass corners dulled almost black with age"
+      ],
+      "explanationGuidance": "No single word choice creates this alone -- it is the REPETITION of dust-and-age language across the door, the air, the furniture, and the trunk itself that builds one consistent, cumulative sense of long neglect spanning the whole attic, rather than describing one object in isolation.",
+      "distractorRationale": null,
+      "blueprintId": "ei003-w3-bp-lang-cumulative",
+      "reasoningRoute": "cumulative_word_choice_pattern",
+      "familyId": "wave1-fam-effect-of-language"
+    },
+    "p_claimed_answer": "the repeated references to dust and age build a consistent, cumulative sense of long neglect across the whole attic, not just one object",
+    "p_worked_explanation": "No single word choice creates this alone -- it is the REPETITION of dust-and-age language across the door, the air, the furniture, and the trunk itself that builds one consistent, cumulative sense of long neglect spanning the whole attic, rather than describing one object in isolation.",
+    "p_distractors": null,
+    "p_mathematical_validation": {
+      "evidenceQuotesVerifiedAgainstRealPassageText": true,
+      "markingContractGatePassed": true,
+      "validator": "scripts/validate-ei003-wave3-manifest.mjs + scripts/validate-ei003-wave3-marking-contracts.mjs",
+      "validatedAt": "2026-09-09T13:02:55.663Z"
+    },
+    "p_similarity_validation": {
+      "approved": true,
+      "reasons": [],
+      "checkedForDuplicateQuestionTextWithinBatch": true
+    },
+    "p_passage_id": "wave1-eng-atticdoor"
+  },
+  {
+    "p_candidate_id": "ei003-w3-lang-cumulative-02",
+    "p_family_id": "wave1-fam-effect-of-language",
+    "p_generation_spec_id": "ei003-w3-bp-lang-cumulative",
+    "p_generation_spec_version": "1",
+    "p_subject": "english",
+    "p_competency_id": null,
+    "p_skill": "QT-RC-10",
+    "p_question_type": "short-answer",
+    "p_pathway": [
+      "csse"
+    ],
+    "p_preparation_stage": "TRANSFER",
+    "p_difficulty": "challenge",
+    "p_question_content": {
+      "question": "The passage repeatedly emphasises precision in Ade's preparation: \"deliberate laps\", \"exactly the right angle\", \"matching his practised splits almost to the second.\" What effect does this repeated pattern of word choice have on how Ade is presented?",
+      "acceptedAnswers": [
+        "the repeated emphasis on exactness and precision builds an impression of controlled, almost anxious carefulness, contrasting with cass's relaxed manner",
+        "using precise, exact language throughout suggests a character who needs everything to be exactly right, hinting at underlying nervousness",
+        "it creates a consistent sense of controlled precision that later helps explain his anxiety"
+      ],
+      "modelAnswer": "the repeated emphasis on exactness and precision builds an impression of controlled, almost anxious carefulness, contrasting with cass's relaxed manner",
+      "marks": 2,
+      "validationTier": "TIER2_ACCEPTED_SET",
+      "evidenceQuotes": [
+        "jogging slow, deliberate laps to loosen muscles that did not need loosening",
+        "running through the handover with an imaginary baton held out at exactly the right angle",
+        "matching his practised splits almost to the second"
+      ],
+      "explanationGuidance": "No single phrase alone proves Ade is anxious, but the repeated emphasis on precision and exactness -- deliberate laps, an exact angle, splits matched almost to the second -- builds a consistent impression of someone who needs tight control, which the passage later confirms is linked to real nervousness, not simple thoroughness.",
+      "distractorRationale": null,
+      "blueprintId": "ei003-w3-bp-lang-cumulative",
+      "reasoningRoute": "cumulative_word_choice_pattern",
+      "familyId": "wave1-fam-effect-of-language"
+    },
+    "p_claimed_answer": "the repeated emphasis on exactness and precision builds an impression of controlled, almost anxious carefulness, contrasting with cass's relaxed manner",
+    "p_worked_explanation": "No single phrase alone proves Ade is anxious, but the repeated emphasis on precision and exactness -- deliberate laps, an exact angle, splits matched almost to the second -- builds a consistent impression of someone who needs tight control, which the passage later confirms is linked to real nervousness, not simple thoroughness.",
+    "p_distractors": null,
+    "p_mathematical_validation": {
+      "evidenceQuotesVerifiedAgainstRealPassageText": true,
+      "markingContractGatePassed": true,
+      "validator": "scripts/validate-ei003-wave3-manifest.mjs + scripts/validate-ei003-wave3-marking-contracts.mjs",
+      "validatedAt": "2026-09-09T13:02:55.663Z"
+    },
+    "p_similarity_validation": {
+      "approved": true,
+      "reasons": [],
+      "checkedForDuplicateQuestionTextWithinBatch": true
+    },
+    "p_passage_id": "wave1-eng-raceday"
+  }
+]

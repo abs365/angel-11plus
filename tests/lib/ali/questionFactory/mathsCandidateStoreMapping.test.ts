@@ -42,7 +42,7 @@ test("mapMathsCandidateToStoreRow: mathematical_validation and similarity_valida
   const candidate = generateBlueprintCandidate(BP_REVERSE_DIRECT_UNSCAFFOLDED, seededRandom(99));
   const validation = validateBlueprintCandidate(candidate, BP_REVERSE_DIRECT_UNSCAFFOLDED, []);
   const args = mapMathsCandidateToStoreRow("stable-test-id-3", candidate, BP_REVERSE_DIRECT_UNSCAFFOLDED, validation);
-  assert.deepEqual(args.p_mathematical_validation, { mathematicallyValid: validation.mathematicallyValid, reasons: validation.reasons });
+  assert.deepEqual(args.p_mathematical_validation, { mathematicallyValid: validation.mathematicallyValid, independentlyVerified: validation.independentlyVerified, reasons: validation.reasons }); // independentlyVerified is now supplied by the validator
   assert.deepEqual(args.p_similarity_validation, { approved: validation.approved, reasons: [] });
 });
 

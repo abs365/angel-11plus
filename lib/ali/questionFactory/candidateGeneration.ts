@@ -117,6 +117,14 @@ export function validateCandidate<T extends Record<string, number>>(
     reasons.push("answer_mismatch");
   }
 
+  // 3b. Independent verification by a DIFFERENT route (generic, shared functions), when the blueprint declares one.
+  let independentlyVerified = false;
+  const independentCheck = (spec as { independentAnswerCheck?: (p: T, a: string) => { matches: boolean } }).independentAnswerCheck;
+  if (independentCheck) {
+    independentlyVerified = independentCheck(candidate.params as T, candidate.claimedAnswer).matches;
+    if (!independentlyVerified && !reasons.includes("answer_mismatch")) reasons.push("answer_mismatch");
+  }
+
   // The three checks above are the "Automated Validation" stage
   // (mathematical legitimacy). Everything below is the separate
   // "Duplicate/Similarity Check" stage -- a candidate can be
@@ -150,7 +158,7 @@ ${JSON.stringify(stimulus)}` : question);
     }
   }
 
-  return { mathematicallyValid, approved: reasons.length === 0, reasons, candidate };
+  return { mathematicallyValid, approved: reasons.length === 0, reasons, candidate, independentlyVerified };
 }
 
 /**
@@ -289,7 +297,7 @@ export function validateBlueprintCandidate<T extends Record<string, number>>(
   // approved stay consistent with validateCandidate()'s own definitions.
   const reasons = baseResult.reasons.filter((r) => r !== "answer_mismatch");
   const mathematicallyValid = !reasons.some((r) => MATHEMATICAL_VALIDITY_REASONS.has(r));
-  return { mathematicallyValid, approved: reasons.length === 0, reasons, candidate: baseResult.candidate };
+  return { mathematicallyValid, approved: reasons.length === 0, reasons, candidate: baseResult.candidate, independentlyVerified: baseResult.independentlyVerified };
 }
 
 export interface BlueprintUsageMetrics {

@@ -94,7 +94,7 @@ export function mapMathsCandidateToStoreRow(
   stableCandidateId: string,
   candidate: MathsQuestionCandidate,
   blueprint: Pick<StructuralBlueprint<Record<string, number>>, "familyId" | "competencyId" | "questionTypeId" | "blueprintId">,
-  validation: Pick<ValidationResult, "mathematicallyValid" | "approved" | "reasons">
+  validation: Pick<ValidationResult, "mathematicallyValid" | "approved" | "reasons"> & Partial<Pick<ValidationResult, "independentlyVerified">>
 ): SubmitQuestionCandidateArgs {
   return {
     p_candidate_id: stableCandidateId,
@@ -133,11 +133,19 @@ export function mapMathsCandidateToStoreRow(
       blueprintId: candidate.blueprintId ?? blueprint.blueprintId ?? null,
       // Structured stimulus (table / bar chart): copied into prompt.stimulus by publish_question_candidate (it copies question_content whole).
       ...(candidate.stimulus !== undefined ? { stimulus: candidate.stimulus } : {}),
+      // Diagram-bearing candidates: the diagram travels inside question_content and publication copies it whole.
+      ...(candidate.diagram !== undefined && candidate.diagram !== null ? { diagram: candidate.diagram } : {}),
+      ...(candidate.diagrams !== undefined && candidate.diagrams !== null ? { diagrams: candidate.diagrams } : {}),
     },
     p_claimed_answer: candidate.claimedAnswer,
     p_worked_explanation: candidate.workingSteps.join(" "),
     p_distractors: candidate.acceptedAnswerForms ? { acceptedAnswerForms: candidate.acceptedAnswerForms } : null,
-    p_mathematical_validation: { mathematicallyValid: validation.mathematicallyValid, reasons: validation.reasons },
+    p_mathematical_validation: {
+      mathematicallyValid: validation.mathematicallyValid,
+      // Recorded only when the validator supplied it (blueprints that declare an independent answer check).
+      ...(typeof validation.independentlyVerified === "boolean" ? { independentlyVerified: validation.independentlyVerified } : {}),
+      reasons: validation.reasons,
+    },
     p_similarity_validation: { approved: validation.approved, reasons: validation.reasons.filter((r) => r === "exact_duplicate_of_existing_bank_row" || r === "exact_duplicate_within_batch") },
   };
 }
