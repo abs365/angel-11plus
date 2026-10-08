@@ -11,7 +11,7 @@
  * page component."
  */
 
-import type { ActiveMockForm, MockAttemptStatus, MockAttemptType, MockBarChartStimulus, MockImageStimulus, MockManifestGroupingEntry, MockQuestionPayload, MockTableStimulus, ResumableMockAttempt } from "./types";
+import type { ActiveMockForm, MockAttemptStatus, MockAttemptType, MockBarChartStimulus, MockCoordinateGridStimulus, MockImageStimulus, MockManifestGroupingEntry, MockQuestionPayload, MockTableStimulus, ResumableMockAttempt } from "./types";
 
 /**
  * Programme Completion Increment 016 — the one, exact, already-activated
@@ -383,6 +383,46 @@ export function isValidBarChartStimulus(value: unknown): value is MockBarChartSt
   if (typeof axisMax !== "number" || !Number.isInteger(axisMax) || axisMax < scaleStep || axisMax % scaleStep !== 0) return false;
   if (axisMax / scaleStep > 12) return false;
   return values.every((n) => typeof n === "number" && Number.isInteger(n) && n >= 0 && n <= axisMax);
+}
+
+/**
+ * Coordinate-grid counterpart, same fail-closed discipline. The axes must span a drawable, readable range that includes
+ * the origin; every point must lie inside it; labels are unique single-token names; segments and the polygon may only
+ * refer to plotted labels.
+ */
+export function isValidCoordinateGridStimulus(value: unknown): value is MockCoordinateGridStimulus {
+  if (!value || typeof value !== "object") return false;
+  const v = value as Record<string, unknown>;
+  if (v.type !== "coordinate-grid") return false;
+  if (v.title !== undefined && typeof v.title !== "string") return false;
+  const ints = ["xMin", "xMax", "yMin", "yMax"].map((k) => v[k]);
+  if (!ints.every((n) => typeof n === "number" && Number.isInteger(n))) return false;
+  const [xMin, xMax, yMin, yMax] = ints as number[];
+  if (xMin >= 0 || xMax <= 0 || yMin >= 0 || yMax <= 0) return false; // origin visible, all four quadrants present
+  if (xMax - xMin > 24 || yMax - yMin > 24) return false;
+  const pts = v.points;
+  if (!Array.isArray(pts) || pts.length < 1 || pts.length > 8) return false;
+  const labels = new Set<string>();
+  for (const p of pts) {
+    if (!p || typeof p !== "object") return false;
+    const q = p as Record<string, unknown>;
+    if (typeof q.label !== "string" || !/^[A-Za-z][A-Za-z0-9']{0,2}$/.test(q.label) || labels.has(q.label)) return false;
+    labels.add(q.label);
+    if (typeof q.x !== "number" || typeof q.y !== "number" || !Number.isInteger(q.x) || !Number.isInteger(q.y)) return false;
+    if (q.x < xMin || q.x > xMax || q.y < yMin || q.y > yMax) return false;
+  }
+  if (v.segments !== undefined) {
+    if (!Array.isArray(v.segments)) return false;
+    for (const s of v.segments) {
+      const q = s as Record<string, unknown>;
+      if (!q || typeof q.from !== "string" || typeof q.to !== "string" || !labels.has(q.from) || !labels.has(q.to)) return false;
+    }
+  }
+  if (v.polygon !== undefined) {
+    if (!Array.isArray(v.polygon) || v.polygon.length < 3 || !v.polygon.every((l) => typeof l === "string" && labels.has(l))) return false;
+  }
+  if (v.mirrorLine !== undefined && !["x-axis", "y-axis", "y=x"].includes(v.mirrorLine as string)) return false;
+  return true;
 }
 
 /**

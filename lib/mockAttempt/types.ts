@@ -101,7 +101,30 @@ export interface MockBarChartStimulus {
   axisMax: number;
 }
 
-export type MockStimulus = MockTableStimulus | MockImageStimulus | MockBarChartStimulus;
+/**
+ * Coordinate grid (CSSE Completion, representation extension, priority 1): a labelled grid with plotted points,
+ * optional segments / a closed shape through labelled points, and an optional dashed mirror line. Used where the SKILL is
+ * spatial (reading a position, reflecting, translating, completing a shape). The grid is drawn from this data only.
+ * Tasks that ask the learner to READ a coordinate must not have it in the text; the SVG's text equivalent therefore
+ * names the plotted points but not their coordinates (a disclosed limitation for non-visual access to those tasks).
+ */
+export interface MockCoordinateGridStimulus {
+  type: "coordinate-grid";
+  title?: string;
+  xMin: number;
+  xMax: number;
+  yMin: number;
+  yMax: number;
+  points: { label: string; x: number; y: number }[];
+  /** Line segments between labelled points, drawn solid. */
+  segments?: { from: string; to: string }[];
+  /** A closed shape through labelled points in order, drawn solid. */
+  polygon?: string[];
+  /** A dashed mirror line, for reflection tasks. */
+  mirrorLine?: "x-axis" | "y-axis" | "y=x";
+}
+
+export type MockStimulus = MockTableStimulus | MockImageStimulus | MockBarChartStimulus | MockCoordinateGridStimulus;
 
 /**
  * The exact, hand-picked field set mock_get_question() (migration 070,

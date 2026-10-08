@@ -1,0 +1,79 @@
+[
+  {
+    "familyId": "mr03-coordinate",
+    "blueprints": 5,
+    "keptCandidates": 40,
+    "rawGenerated": 480,
+    "approvedBeforeBalancing": 475,
+    "blueprintDepth": 5,
+    "dominantBlueprintShare": 0.2,
+    "scaledMemorisationRisk": "LOW",
+    "perBlueprintDifficulty": [
+      {
+        "blueprintId": "mr03-bp-grid-read-point",
+        "distinctTiersReached": 3,
+        "tierCounts": {
+          "medium": 3,
+          "easy": 3,
+          "hard": 2
+        },
+        "meetsMinimum": true
+      },
+      {
+        "blueprintId": "mr03-bp-grid-reflect-in-mirror-line",
+        "distinctTiersReached": 3,
+        "tierCounts": {
+          "hard": 3,
+          "medium": 3,
+          "easy": 2
+        },
+        "meetsMinimum": true
+      },
+      {
+        "blueprintId": "mr03-bp-grid-translate-point",
+        "distinctTiersReached": 3,
+        "tierCounts": {
+          "hard": 3,
+          "easy": 3,
+          "medium": 2
+        },
+        "meetsMinimum": true
+      },
+      {
+        "blueprintId": "mr03-bp-grid-fourth-vertex",
+        "distinctTiersReached": 3,
+        "tierCounts": {
+          "hard": 3,
+          "medium": 3,
+          "easy": 2
+        },
+        "meetsMinimum": true
+      },
+      {
+        "blueprintId": "mr03-bp-grid-midpoint-of-segment",
+        "distinctTiersReached": 3,
+        "tierCounts": {
+          "easy": 2,
+          "hard": 3,
+          "medium": 3
+        },
+        "meetsMinimum": true
+      }
+    ],
+    "parameterSignatureDuplicates": 0,
+    "contexts": [
+      "grid_read_point",
+      "grid_reflect_x_axis",
+      "grid_reflect_y_axis",
+      "grid_reflect_y_equals_x",
+      "grid_translate_point",
+      "grid_complete_parallelogram",
+      "grid_complete_rectangle",
+      "grid_segment_midpoint"
+    ],
+    "reasoningRoutes": [
+      "interpretation",
+      "multi_step_application"
+    ]
+  }
+]

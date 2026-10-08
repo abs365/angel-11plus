@@ -1,6 +1,6 @@
 # CSSE Maths candidates: final blueprint-level approval pack
 
-**284 candidates, 26 blueprints. Nothing has been submitted, approved or published.** Governance model (agreed): you review every blueprint, representative samples, difficulty bands, every new representation type, edge cases, diversity warnings and validation failures. You are **not** asked to approve individual permutations. Open `scripts/output/csse-maths-approval-pack/approval-pack.html` to see samples with the real table and chart rendering.
+**324 candidates, 31 blueprints. Nothing has been submitted, approved or published.** Governance model (agreed): you review every blueprint, representative samples, difficulty bands, every new representation type, edge cases, diversity warnings and validation failures. You are **not** asked to approve individual permutations. Open `scripts/output/csse-maths-approval-pack/approval-pack.html` to see samples with the real table and chart rendering.
 
 ## How to decide
 
@@ -36,8 +36,13 @@ For each blueprint choose: **approve** (publish the prepared volume), **approve 
 | mr02-bp-function-table-reverse | MR-02 | mr02-sequence-rule | 8 | medium 4, hard 4 | table | 2463 | MODERATE | 8 |
 | mr01-bp-mean-from-table | MR-01 | mr01-average-mean | 8 | hard 4, medium 4 | table | 4000 | LOW | 8 |
 | mr01-bp-mean-missing-value-table | MR-01 | mr01-average-mean | 8 | hard 8 | table | 4000 | LOW | 8 |
+| mr03-bp-grid-read-point | MR-03 | mr03-coordinate | 8 | medium 3, easy 3, hard 2 | coordinate_grid | 4000 | LOW | 8 |
+| mr03-bp-grid-reflect-in-mirror-line | MR-03 | mr03-coordinate | 8 | hard 3, medium 3, easy 2 | coordinate_grid | 1218 | MODERATE | 8 |
+| mr03-bp-grid-translate-point | MR-03 | mr03-coordinate | 8 | hard 3, easy 3, medium 2 | coordinate_grid | 3847 | LOW | 8 |
+| mr03-bp-grid-fourth-vertex | MR-03 | mr03-coordinate | 8 | hard 3, medium 3, easy 2 | coordinate_grid | 3916 | LOW | 8 |
+| mr03-bp-grid-midpoint-of-segment | MR-03 | mr03-coordinate | 8 | easy 2, hard 3, medium 3 | coordinate_grid | 3666 | LOW | 8 |
 
-**Recommended publish volume if every blueprint is approved as recommended: 278 of 284** (practice-eligible 901 to 1179). Volume is a result, not a target.
+**Recommended publish volume if every blueprint is approved as recommended: 318 of 324** (practice-eligible 901 to 1219). Volume is a result, not a target.
 
 ## Representation and semantic audit (every table and chart type)
 
@@ -75,6 +80,14 @@ Titles, captions, headers, units, scales and question wording were audited **tog
 | mean-missing-value-table | mean_table_distance_missing | Distance cycled each day | Day | Distance (km) | The table shows distance cycled each day, but the last value is missing. The mean of all five values is 27. What is the missing value? |
 | mean-missing-value-table | mean_table_scores_missing | Spelling test scores | Pupil | Score | The table shows spelling test scores, but the last value is missing. The mean of all five values is 37. What is the missing value? |
 | mean-missing-value-table | mean_table_rainfall_missing | Rainfall each day | Day | Rainfall (mm) | The table shows rainfall each day, but the last value is missing. The mean of all five values is 37. What is the missing value? |
+| grid-read-point | grid_read_point | Coordinate grid | x -8..8, y -8..8; points A, B, C | The grid shows three points, A, B and C. What are the coordinates of point C? Give your answer in the form (x, y). |
+| grid-reflect-in-mirror-line | grid_reflect_x_axis | Coordinate grid | x -5..5, y -5..5; points P; mirror x-axis | Point P is reflected in the dashed mirror line. What are the coordinates of the image of P? Give your answer in the form (x, y). |
+| grid-reflect-in-mirror-line | grid_reflect_y_axis | Coordinate grid | x -5..5, y -5..5; points P; mirror y-axis | Point P is reflected in the dashed mirror line. What are the coordinates of the image of P? Give your answer in the form (x, y). |
+| grid-reflect-in-mirror-line | grid_reflect_y_equals_x | Coordinate grid | x -8..8, y -8..8; points P; mirror y=x | Point P is reflected in the dashed mirror line. What are the coordinates of the image of P? Give your answer in the form (x, y). |
+| grid-translate-point | grid_translate_point | Coordinate grid | x -6..6, y -6..6; points P | Point P is translated 6 units left and 3 units down. What are the coordinates of its new position? Give your answer in the form (x, y). |
+| grid-fourth-vertex | grid_complete_parallelogram | Coordinate grid | x -5..5, y -5..5; points A, B, C | A, B and C are three corners of a parallelogram ABCD, in that order. What are the coordinates of corner D? Give your answer in the form (x, y). |
+| grid-fourth-vertex | grid_complete_rectangle | Coordinate grid | x -5..5, y -5..5; points A, B, C | A, B and C are three corners of a rectangle ABCD, in that order. What are the coordinates of corner D? Give your answer in the form (x, y). |
+| grid-midpoint-of-segment | grid_segment_midpoint | Coordinate grid | x -8..8, y -8..8; points A, B | A and B are the ends of the line segment on the grid. What are the coordinates of the midpoint of AB? Give your answer in the form (x, y). |
 
 ## Diversity warnings (the gate's own classification of each family's prepared batch)
 
@@ -90,6 +103,7 @@ Titles, captions, headers, units, scales and question wording were audited **tog
 | mr04-elapsed-time | 2 | 16 | HIGH | 0.50 |
 | mr02-sequence-rule | 2 | 16 | HIGH | 0.50 |
 | mr01-average-mean | 2 | 16 | HIGH | 0.50 |
+| mr03-coordinate | 5 | 40 | LOW | 0.20 |
 
 The gate rates any batch of two or fewer blueprints HIGH or CRITICAL by its own rule. That is why volumes are modest and why a third structure per family should come before scaling a family. It is a warning, not a defect in any single question.
 
@@ -573,5 +587,102 @@ Independent-oracle tests (answers re-derived by simulation, scan, string-digit r
   - _hard band_ — The table shows distance cycled each day, but the last value is missing. The mean of all five values is 27. What is the missing value? [table: {"headers":["Day","Distance (km)"],"rows":[["Saturday","10"],["Sunday","5"],["Monday","5"],["Tuesday","40"],["Wednesday","?"]]}] → **75**. Total for five values = mean × 5 = 27 × 5 = 135. Known four add to 60, so the missing value is 135 − 60 = 75.
   - _edge: smallest answer generated_ — The table shows distance cycled each day, but the last value is missing. The mean of all five values is 34. What is the missing value? [table: {"headers":["Day","Distance (km)"],"rows":[["Saturday","23"],["Sunday","39"],["Monday","48"],["Tuesday","56"],["Wednesday","?"]]}] → **4**. Total for five values = mean × 5 = 34 × 5 = 170. Known four add to 166, so the missing value is 170 − 166 = 4.
   - _edge: largest answer generated_ — The table shows distance cycled each day, but the last value is missing. The mean of all five values is 50. What is the missing value? [table: {"headers":["Day","Distance (km)"],"rows":[["Saturday","44"],["Sunday","57"],["Monday","55"],["Tuesday","14"],["Wednesday","?"]]}] → **80**. Total for five values = mean × 5 = 50 × 5 = 250. Known four add to 170, so the missing value is 250 − 170 = 80.
+
+- **Founder decision:** approve / approve with cap / amend / reject
+
+## Coordinate-grid set (new representation: coordinate grid)
+
+### mr03-bp-grid-read-point
+
+- **Competency / family / skill:** MR-03 / `mr03-coordinate` / QT-MR-08  |  **Representation:** coordinate_grid  |  **Prepared:** 8  |  **Difficulty:** medium 3, easy 3, hard 2
+- **Purpose:** Read the coordinates of a plotted point, including negative coordinates, x first then y.
+- **Misconception targeted:** writing the y-coordinate first, or dropping the sign of a coordinate on the negative side of an axis
+- **Structural difference from existing material:** Existing coordinate items are prose; the child never sees a plane. Here the point is only on the grid, so reading the position (x first, then y, with negatives) is the skill. No point has x equal to y, so a swapped answer is always detectable.
+- **Transfer value:** High. Reading a plotted position is the foundation of every coordinate question.
+- **Deterministic validation (live run, 600 generated):** 600/600 passed range, constraint and answer re-derivation; 600/600 also passed the duplicate check. Independent-oracle tests for this blueprint are in the test suite named in the pack footer.
+- **Diversity check:** 4000 distinct questions in 4000 draws (LOW); 1 context tag(s) in the prepared set. Large space: three points, target and grid size all vary.
+- **Recommended publish volume:** 8 of 8
+- **Representative samples:**
+  - _medium band_ — The grid shows three points, A, B and C. What are the coordinates of point C? Give your answer in the form (x, y). [coordinate-grid: {"x":[-8,8],"y":[-8,8],"points":[{"label":"A","x":6,"y":-2},{"label":"B","x":-2,"y":8},{"label":"C","x":5,"y":-7}],"mirrorLine":null}] → **(5, -7)**. Start at the origin. Move along the x-axis first: 5 right. Then move 7 down. The point is (5, -7).
+  - _easy band_ — The grid shows three points, A, B and C. What are the coordinates of point A? Give your answer in the form (x, y). [coordinate-grid: {"x":[-8,8],"y":[-8,8],"points":[{"label":"A","x":5,"y":7},{"label":"B","x":-6,"y":1},{"label":"C","x":3,"y":0}],"mirrorLine":null}] → **(5, 7)**. Start at the origin. Move along the x-axis first: 5 right. Then move 7 up. The point is (5, 7).
+  - _hard band_ — The grid shows three points, A, B and C. What are the coordinates of point C? Give your answer in the form (x, y). [coordinate-grid: {"x":[-6,6],"y":[-6,6],"points":[{"label":"A","x":4,"y":-6},{"label":"B","x":-4,"y":4},{"label":"C","x":6,"y":0}],"mirrorLine":null}] → **(6, 0)**. Start at the origin. Move along the x-axis first: 6 right. Then move 0 (stay on the x-axis). The point is (6, 0).
+  - _edge: smallest answer generated_ — The grid shows three points, A, B and C. What are the coordinates of point A? Give your answer in the form (x, y). [coordinate-grid: {"x":[-8,8],"y":[-8,8],"points":[{"label":"A","x":-8,"y":8},{"label":"B","x":5,"y":7},{"label":"C","x":2,"y":-3}],"mirrorLine":null}] → **(-8, 8)**. Start at the origin. Move along the x-axis first: 8 left. Then move 8 up. The point is (-8, 8).
+  - _edge: largest answer generated_ — The grid shows three points, A, B and C. What are the coordinates of point B? Give your answer in the form (x, y). [coordinate-grid: {"x":[-8,8],"y":[-8,8],"points":[{"label":"A","x":-7,"y":-6},{"label":"B","x":8,"y":7},{"label":"C","x":3,"y":-1}],"mirrorLine":null}] → **(8, 7)**. Start at the origin. Move along the x-axis first: 8 right. Then move 7 up. The point is (8, 7).
+
+- **Founder decision:** approve / approve with cap / amend / reject
+
+### mr03-bp-grid-reflect-in-mirror-line
+
+- **Competency / family / skill:** MR-03 / `mr03-coordinate` / QT-MR-08  |  **Representation:** coordinate_grid  |  **Prepared:** 8  |  **Difficulty:** hard 3, medium 3, easy 2
+- **Purpose:** Reflect a plotted point in a mirror line that is drawn on the grid (an axis or the line y = x) and read off the image.
+- **Misconception targeted:** negating the coordinate that should stay fixed, or negating both coordinates (a rotation) when reflecting in y = x
+- **Structural difference from existing material:** Reflection in a DRAWN mirror line (x-axis, y-axis or the line y = x). Existing items name the axis in words. The line y = x is the hard case: coordinates swap rather than change sign. |x| differs from |y| so the tempting wrong answers are all different from the right one.
+- **Transfer value:** High. Reflection is a core transformation and the y = x case is a common exam stretch.
+- **Deterministic validation (live run, 600 generated):** 600/600 passed range, constraint and answer re-derivation; 516/600 also passed the duplicate check (rejections: exact_duplicate_within_batch 84). Independent-oracle tests for this blueprint are in the test suite named in the pack footer.
+- **Diversity check:** 1218 distinct questions in 4000 draws (MODERATE); 3 context tag(s) in the prepared set. Large space; three mirror lines.
+- **Recommended publish volume:** 8 of 8
+- **Representative samples:**
+  - _hard band_ — Point P is reflected in the dashed mirror line. What are the coordinates of the image of P? Give your answer in the form (x, y). [coordinate-grid: {"x":[-5,5],"y":[-5,5],"points":[{"label":"P","x":-2,"y":-3}],"mirrorLine":"x-axis"}] → **(-2, 3)**. P is at (-2, -3) and the mirror line is the x-axis. In the x-axis the x-coordinate stays and the y-coordinate changes sign. The image is (-2, 3).
+  - _medium band_ — Point P is reflected in the dashed mirror line. What are the coordinates of the image of P? Give your answer in the form (x, y). [coordinate-grid: {"x":[-6,6],"y":[-6,6],"points":[{"label":"P","x":-4,"y":1}],"mirrorLine":"x-axis"}] → **(-4, -1)**. P is at (-4, 1) and the mirror line is the x-axis. In the x-axis the x-coordinate stays and the y-coordinate changes sign. The image is (-4, -1).
+  - _easy band_ — Point P is reflected in the dashed mirror line. What are the coordinates of the image of P? Give your answer in the form (x, y). [coordinate-grid: {"x":[-5,5],"y":[-5,5],"points":[{"label":"P","x":3,"y":4}],"mirrorLine":"y-axis"}] → **(-3, 4)**. P is at (3, 4) and the mirror line is the y-axis. In the y-axis the y-coordinate stays and the x-coordinate changes sign. The image is (-3, 4).
+  - _edge: smallest answer generated_ — Point P is reflected in the dashed mirror line. What are the coordinates of the image of P? Give your answer in the form (x, y). [coordinate-grid: {"x":[-8,8],"y":[-8,8],"points":[{"label":"P","x":7,"y":-8}],"mirrorLine":"y=x"}] → **(-8, 7)**. P is at (7, -8) and the mirror line is the line y = x. In the line y = x the two coordinates swap places. The image is (-8, 7).
+  - _edge: largest answer generated_ — Point P is reflected in the dashed mirror line. What are the coordinates of the image of P? Give your answer in the form (x, y). [coordinate-grid: {"x":[-8,8],"y":[-8,8],"points":[{"label":"P","x":8,"y":-7}],"mirrorLine":"x-axis"}] → **(8, 7)**. P is at (8, -7) and the mirror line is the x-axis. In the x-axis the x-coordinate stays and the y-coordinate changes sign. The image is (8, 7).
+
+- **Founder decision:** approve / approve with cap / amend / reject
+
+### mr03-bp-grid-translate-point
+
+- **Competency / family / skill:** MR-03 / `mr03-coordinate` / QT-MR-08  |  **Representation:** coordinate_grid  |  **Prepared:** 8  |  **Difficulty:** hard 3, easy 3, medium 2
+- **Purpose:** Read a plotted point, apply a described translation (right/left, up/down) and give the new coordinates; the move may cross an axis.
+- **Misconception targeted:** moving the wrong way for a left or down movement, or applying the horizontal movement to y and the vertical to x
+- **Structural difference from existing material:** Read a drawn point, apply a described movement that may cross an axis, give the new coordinates. Existing translation items give the start in the text; here the start must be read from the grid.
+- **Transfer value:** High. Translation with a read start combines two skills in one step.
+- **Deterministic validation (live run, 600 generated):** 600/600 passed range, constraint and answer re-derivation; 599/600 also passed the duplicate check (rejections: exact_duplicate_within_batch 1). Independent-oracle tests for this blueprint are in the test suite named in the pack footer.
+- **Diversity check:** 3847 distinct questions in 4000 draws (LOW); 1 context tag(s) in the prepared set. Large space; movement and start vary independently.
+- **Recommended publish volume:** 8 of 8
+- **Representative samples:**
+  - _hard band_ — Point P is translated 6 units left and 3 units down. What are the coordinates of its new position? Give your answer in the form (x, y). [coordinate-grid: {"x":[-6,6],"y":[-6,6],"points":[{"label":"P","x":1,"y":3}],"mirrorLine":null}] → **(-5, 0)**. P is at (1, 3). Moving left changes x by −6; moving down changes y by −3. New position: (1 − 6, 3 − 3) = (-5, 0).
+  - _easy band_ — Point P is translated 5 units right and 2 units down. What are the coordinates of its new position? Give your answer in the form (x, y). [coordinate-grid: {"x":[-8,8],"y":[-8,8],"points":[{"label":"P","x":2,"y":-1}],"mirrorLine":null}] → **(7, -3)**. P is at (2, -1). Moving right changes x by +5; moving down changes y by −2. New position: (2 + 5, -1 − 2) = (7, -3).
+  - _medium band_ — Point P is translated 1 unit right and 7 units up. What are the coordinates of its new position? Give your answer in the form (x, y). [coordinate-grid: {"x":[-8,8],"y":[-8,8],"points":[{"label":"P","x":-5,"y":-1}],"mirrorLine":null}] → **(-4, 6)**. P is at (-5, -1). Moving right changes x by +1; moving up changes y by +7. New position: (-5 + 1, -1 + 7) = (-4, 6).
+  - _edge: smallest answer generated_ — Point P is translated 6 units left and 1 unit down. What are the coordinates of its new position? Give your answer in the form (x, y). [coordinate-grid: {"x":[-8,8],"y":[-8,8],"points":[{"label":"P","x":-2,"y":8}],"mirrorLine":null}] → **(-8, 7)**. P is at (-2, 8). Moving left changes x by −6; moving down changes y by −1. New position: (-2 − 6, 8 − 1) = (-8, 7).
+  - _edge: largest answer generated_ — Point P is translated 4 units right and 3 units up. What are the coordinates of its new position? Give your answer in the form (x, y). [coordinate-grid: {"x":[-8,8],"y":[-8,8],"points":[{"label":"P","x":4,"y":3}],"mirrorLine":null}] → **(8, 6)**. P is at (4, 3). Moving right changes x by +4; moving up changes y by +3. New position: (4 + 4, 3 + 3) = (8, 6).
+
+- **Founder decision:** approve / approve with cap / amend / reject
+
+### mr03-bp-grid-fourth-vertex
+
+- **Competency / family / skill:** MR-03 / `mr03-coordinate` / QT-MR-08  |  **Representation:** coordinate_grid  |  **Prepared:** 8  |  **Difficulty:** hard 3, medium 3, easy 2
+- **Purpose:** Given three drawn vertices of a rectangle or parallelogram (in order), find the fourth vertex using the shape's properties.
+- **Misconception targeted:** copying the x of one corner and the y of another without checking the shape (correct only for an axis-aligned rectangle), or adding instead of subtracting the opposite corner
+- **Structural difference from existing material:** Complete a drawn rectangle or slanted parallelogram from three corners, using the shape's properties. Different from every existing coordinate item. Tests confirm a 'parallelogram' question is never secretly a rectangle.
+- **Transfer value:** High. Classic exam shape; builds on both coordinates and properties of quadrilaterals.
+- **Deterministic validation (live run, 600 generated):** 600/600 passed range, constraint and answer re-derivation; 599/600 also passed the duplicate check (rejections: exact_duplicate_within_batch 1). Independent-oracle tests for this blueprint are in the test suite named in the pack footer.
+- **Diversity check:** 3916 distinct questions in 4000 draws (LOW); 2 context tag(s) in the prepared set. Large space; the shape and its corners vary.
+- **Recommended publish volume:** 8 of 8
+- **Representative samples:**
+  - _hard band_ — A, B and C are three corners of a parallelogram ABCD, in that order. What are the coordinates of corner D? Give your answer in the form (x, y). [coordinate-grid: {"x":[-5,5],"y":[-5,5],"points":[{"label":"A","x":0,"y":-3},{"label":"B","x":-2,"y":1},{"label":"C","x":-4,"y":0}],"mirrorLine":null}] → **(-2, -4)**. In a parallelogram the side AD is the same movement as BC. Going from B to C is −2 across and −1 up/down. Apply the same movement to A (0, -3): D = (-2, -4).
+  - _medium band_ — A, B and C are three corners of a rectangle ABCD, in that order. What are the coordinates of corner D? Give your answer in the form (x, y). [coordinate-grid: {"x":[-5,5],"y":[-5,5],"points":[{"label":"A","x":2,"y":-3},{"label":"B","x":4,"y":-3},{"label":"C","x":4,"y":-1}],"mirrorLine":null}] → **(2, -1)**. In a rectangle the side AD is the same movement as BC. Going from B to C is +0 across and +2 up/down. Apply the same movement to A (2, -3): D = (2, -1).
+  - _easy band_ — A, B and C are three corners of a rectangle ABCD, in that order. What are the coordinates of corner D? Give your answer in the form (x, y). [coordinate-grid: {"x":[-8,8],"y":[-8,8],"points":[{"label":"A","x":2,"y":7},{"label":"B","x":7,"y":7},{"label":"C","x":7,"y":4}],"mirrorLine":null}] → **(2, 4)**. In a rectangle the side AD is the same movement as BC. Going from B to C is +0 across and −3 up/down. Apply the same movement to A (2, 7): D = (2, 4).
+  - _edge: smallest answer generated_ — A, B and C are three corners of a parallelogram ABCD, in that order. What are the coordinates of corner D? Give your answer in the form (x, y). [coordinate-grid: {"x":[-8,8],"y":[-8,8],"points":[{"label":"A","x":2,"y":-6},{"label":"B","x":7,"y":-8},{"label":"C","x":-3,"y":6}],"mirrorLine":null}] → **(-8, 8)**. In a parallelogram the side AD is the same movement as BC. Going from B to C is −10 across and +14 up/down. Apply the same movement to A (2, -6): D = (-8, 8).
+  - _edge: largest answer generated_ — A, B and C are three corners of a parallelogram ABCD, in that order. What are the coordinates of corner D? Give your answer in the form (x, y). [coordinate-grid: {"x":[-8,8],"y":[-8,8],"points":[{"label":"A","x":6,"y":3},{"label":"B","x":5,"y":-4},{"label":"C","x":7,"y":1}],"mirrorLine":null}] → **(8, 8)**. In a parallelogram the side AD is the same movement as BC. Going from B to C is +2 across and +5 up/down. Apply the same movement to A (6, 3): D = (8, 8).
+
+- **Founder decision:** approve / approve with cap / amend / reject
+
+### mr03-bp-grid-midpoint-of-segment
+
+- **Competency / family / skill:** MR-03 / `mr03-coordinate` / QT-MR-08  |  **Representation:** coordinate_grid  |  **Prepared:** 8  |  **Difficulty:** easy 2, hard 3, medium 3
+- **Purpose:** Read the two ends of a drawn line segment and find the coordinates of its midpoint.
+- **Misconception targeted:** averaging only one coordinate, or giving the length of the segment instead of its midpoint
+- **Structural difference from existing material:** Midpoint of a drawn segment with ends read from the grid. The segment is neither horizontal nor vertical, so both coordinates need working out.
+- **Transfer value:** Medium-high. A standard coordinate skill, now with the ends read rather than given.
+- **Deterministic validation (live run, 600 generated):** 600/600 passed range, constraint and answer re-derivation; 595/600 also passed the duplicate check (rejections: exact_duplicate_within_batch 5). Independent-oracle tests for this blueprint are in the test suite named in the pack footer.
+- **Diversity check:** 3666 distinct questions in 4000 draws (LOW); 1 context tag(s) in the prepared set. Moderate space: both ends and the grid size vary, with a whole-number-midpoint constraint.
+- **Recommended publish volume:** 8 of 8
+- **Representative samples:**
+  - _easy band_ — A and B are the ends of the line segment on the grid. What are the coordinates of the midpoint of AB? Give your answer in the form (x, y). [coordinate-grid: {"x":[-8,8],"y":[-8,8],"points":[{"label":"A","x":6,"y":3},{"label":"B","x":8,"y":7}],"mirrorLine":null}] → **(7, 5)**. A is (6, 3) and B is (8, 7). The midpoint is halfway in each direction: x = (6 + 8) ÷ 2 = 7, y = (3 + 7) ÷ 2 = 5.
+  - _hard band_ — A and B are the ends of the line segment on the grid. What are the coordinates of the midpoint of AB? Give your answer in the form (x, y). [coordinate-grid: {"x":[-8,8],"y":[-8,8],"points":[{"label":"A","x":-4,"y":-4},{"label":"B","x":-2,"y":-8}],"mirrorLine":null}] → **(-3, -6)**. A is (-4, -4) and B is (-2, -8). The midpoint is halfway in each direction: x = (-4 + -2) ÷ 2 = -3, y = (-4 + -8) ÷ 2 = -6.
+  - _medium band_ — A and B are the ends of the line segment on the grid. What are the coordinates of the midpoint of AB? Give your answer in the form (x, y). [coordinate-grid: {"x":[-6,6],"y":[-6,6],"points":[{"label":"A","x":-1,"y":0},{"label":"B","x":5,"y":6}],"mirrorLine":null}] → **(2, 3)**. A is (-1, 0) and B is (5, 6). The midpoint is halfway in each direction: x = (-1 + 5) ÷ 2 = 2, y = (0 + 6) ÷ 2 = 3.
+  - _edge: smallest answer generated_ — A and B are the ends of the line segment on the grid. What are the coordinates of the midpoint of AB? Give your answer in the form (x, y). [coordinate-grid: {"x":[-8,8],"y":[-8,8],"points":[{"label":"A","x":-6,"y":3},{"label":"B","x":-8,"y":7}],"mirrorLine":null}] → **(-7, 5)**. A is (-6, 3) and B is (-8, 7). The midpoint is halfway in each direction: x = (-6 + -8) ÷ 2 = -7, y = (3 + 7) ÷ 2 = 5.
+  - _edge: largest answer generated_ — A and B are the ends of the line segment on the grid. What are the coordinates of the midpoint of AB? Give your answer in the form (x, y). [coordinate-grid: {"x":[-8,8],"y":[-8,8],"points":[{"label":"A","x":8,"y":8},{"label":"B","x":6,"y":4}],"mirrorLine":null}] → **(7, 6)**. A is (8, 8) and B is (6, 4). The midpoint is halfway in each direction: x = (8 + 6) ÷ 2 = 7, y = (8 + 4) ÷ 2 = 6.
 
 - **Founder decision:** approve / approve with cap / amend / reject

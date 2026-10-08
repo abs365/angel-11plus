@@ -1,0 +1,246 @@
+# CSSE coordinate-grid expansion (QT-MR-08) -- candidates for educational review
+
+All candidates are `pending_review` once submitted. Nothing is published by this package.
+
+## mr03-coordinate
+
+- **csse-gr-mr03-bp-grid-read-point-01** [medium; interpretation; grid_read_point]
+  - Representation: coordinate_grid -- coordinate grid {"x":[-8,8],"y":[-8,8],"points":[{"label":"A","x":6,"y":-2},{"label":"B","x":-2,"y":8},{"label":"C","x":5,"y":-7}],"mirrorLine":null,"segments":null}
+  - Q: The grid shows three points, A, B and C. What are the coordinates of point C? Give your answer in the form (x, y).
+  - Answer: (5, -7)
+  - Working: Start at the origin. Move along the x-axis first: 5 right. / Then move 7 down. The point is (5, -7).
+  - Targets: writing the y-coordinate first, or dropping the sign of a coordinate on the negative side of an axis
+- **csse-gr-mr03-bp-grid-read-point-02** [easy; interpretation; grid_read_point]
+  - Representation: coordinate_grid -- coordinate grid {"x":[-8,8],"y":[-8,8],"points":[{"label":"A","x":5,"y":7},{"label":"B","x":-6,"y":1},{"label":"C","x":3,"y":0}],"mirrorLine":null,"segments":null}
+  - Q: The grid shows three points, A, B and C. What are the coordinates of point A? Give your answer in the form (x, y).
+  - Answer: (5, 7)
+  - Working: Start at the origin. Move along the x-axis first: 5 right. / Then move 7 up. The point is (5, 7).
+  - Targets: writing the y-coordinate first, or dropping the sign of a coordinate on the negative side of an axis
+- **csse-gr-mr03-bp-grid-read-point-03** [hard; interpretation; grid_read_point]
+  - Representation: coordinate_grid -- coordinate grid {"x":[-6,6],"y":[-6,6],"points":[{"label":"A","x":4,"y":-6},{"label":"B","x":-4,"y":4},{"label":"C","x":6,"y":0}],"mirrorLine":null,"segments":null}
+  - Q: The grid shows three points, A, B and C. What are the coordinates of point C? Give your answer in the form (x, y).
+  - Answer: (6, 0)
+  - Working: Start at the origin. Move along the x-axis first: 6 right. / Then move 0 (stay on the x-axis). The point is (6, 0).
+  - Targets: writing the y-coordinate first, or dropping the sign of a coordinate on the negative side of an axis
+- **csse-gr-mr03-bp-grid-read-point-04** [medium; interpretation; grid_read_point]
+  - Representation: coordinate_grid -- coordinate grid {"x":[-6,6],"y":[-6,6],"points":[{"label":"A","x":-5,"y":0},{"label":"B","x":1,"y":-6},{"label":"C","x":-5,"y":5}],"mirrorLine":null,"segments":null}
+  - Q: The grid shows three points, A, B and C. What are the coordinates of point C? Give your answer in the form (x, y).
+  - Answer: (-5, 5)
+  - Working: Start at the origin. Move along the x-axis first: 5 left. / Then move 5 up. The point is (-5, 5).
+  - Targets: writing the y-coordinate first, or dropping the sign of a coordinate on the negative side of an axis
+- **csse-gr-mr03-bp-grid-read-point-05** [easy; interpretation; grid_read_point]
+  - Representation: coordinate_grid -- coordinate grid {"x":[-8,8],"y":[-8,8],"points":[{"label":"A","x":1,"y":8},{"label":"B","x":8,"y":1},{"label":"C","x":-3,"y":8}],"mirrorLine":null,"segments":null}
+  - Q: The grid shows three points, A, B and C. What are the coordinates of point A? Give your answer in the form (x, y).
+  - Answer: (1, 8)
+  - Working: Start at the origin. Move along the x-axis first: 1 right. / Then move 8 up. The point is (1, 8).
+  - Targets: writing the y-coordinate first, or dropping the sign of a coordinate on the negative side of an axis
+- **csse-gr-mr03-bp-grid-read-point-06** [hard; interpretation; grid_read_point]
+  - Representation: coordinate_grid -- coordinate grid {"x":[-5,5],"y":[-5,5],"points":[{"label":"A","x":1,"y":-2},{"label":"B","x":0,"y":-4},{"label":"C","x":-5,"y":-4}],"mirrorLine":null,"segments":null}
+  - Q: The grid shows three points, A, B and C. What are the coordinates of point C? Give your answer in the form (x, y).
+  - Answer: (-5, -4)
+  - Working: Start at the origin. Move along the x-axis first: 5 left. / Then move 4 down. The point is (-5, -4).
+  - Targets: writing the y-coordinate first, or dropping the sign of a coordinate on the negative side of an axis
+- **csse-gr-mr03-bp-grid-read-point-07** [medium; interpretation; grid_read_point]
+  - Representation: coordinate_grid -- coordinate grid {"x":[-5,5],"y":[-5,5],"points":[{"label":"A","x":2,"y":-3},{"label":"B","x":4,"y":5},{"label":"C","x":2,"y":4}],"mirrorLine":null,"segments":null}
+  - Q: The grid shows three points, A, B and C. What are the coordinates of point A? Give your answer in the form (x, y).
+  - Answer: (2, -3)
+  - Working: Start at the origin. Move along the x-axis first: 2 right. / Then move 3 down. The point is (2, -3).
+  - Targets: writing the y-coordinate first, or dropping the sign of a coordinate on the negative side of an axis
+- **csse-gr-mr03-bp-grid-read-point-08** [easy; interpretation; grid_read_point]
+  - Representation: coordinate_grid -- coordinate grid {"x":[-6,6],"y":[-6,6],"points":[{"label":"A","x":2,"y":4},{"label":"B","x":0,"y":4},{"label":"C","x":5,"y":3}],"mirrorLine":null,"segments":null}
+  - Q: The grid shows three points, A, B and C. What are the coordinates of point A? Give your answer in the form (x, y).
+  - Answer: (2, 4)
+  - Working: Start at the origin. Move along the x-axis first: 2 right. / Then move 4 up. The point is (2, 4).
+  - Targets: writing the y-coordinate first, or dropping the sign of a coordinate on the negative side of an axis
+- **csse-gr-mr03-bp-grid-reflect-in-mirror-line-01** [hard; interpretation; grid_reflect_x_axis]
+  - Representation: coordinate_grid -- coordinate grid {"x":[-5,5],"y":[-5,5],"points":[{"label":"P","x":-2,"y":-3}],"mirrorLine":"x-axis","segments":null}
+  - Q: Point P is reflected in the dashed mirror line. What are the coordinates of the image of P? Give your answer in the form (x, y).
+  - Answer: (-2, 3)
+  - Working: P is at (-2, -3) and the mirror line is the x-axis. / In the x-axis the x-coordinate stays and the y-coordinate changes sign. The image is (-2, 3).
+  - Targets: negating the coordinate that should stay fixed, or negating both coordinates (a rotation) when reflecting in y = x
+- **csse-gr-mr03-bp-grid-reflect-in-mirror-line-02** [medium; interpretation; grid_reflect_x_axis]
+  - Representation: coordinate_grid -- coordinate grid {"x":[-6,6],"y":[-6,6],"points":[{"label":"P","x":-4,"y":1}],"mirrorLine":"x-axis","segments":null}
+  - Q: Point P is reflected in the dashed mirror line. What are the coordinates of the image of P? Give your answer in the form (x, y).
+  - Answer: (-4, -1)
+  - Working: P is at (-4, 1) and the mirror line is the x-axis. / In the x-axis the x-coordinate stays and the y-coordinate changes sign. The image is (-4, -1).
+  - Targets: negating the coordinate that should stay fixed, or negating both coordinates (a rotation) when reflecting in y = x
+- **csse-gr-mr03-bp-grid-reflect-in-mirror-line-03** [easy; interpretation; grid_reflect_y_axis]
+  - Representation: coordinate_grid -- coordinate grid {"x":[-5,5],"y":[-5,5],"points":[{"label":"P","x":3,"y":4}],"mirrorLine":"y-axis","segments":null}
+  - Q: Point P is reflected in the dashed mirror line. What are the coordinates of the image of P? Give your answer in the form (x, y).
+  - Answer: (-3, 4)
+  - Working: P is at (3, 4) and the mirror line is the y-axis. / In the y-axis the y-coordinate stays and the x-coordinate changes sign. The image is (-3, 4).
+  - Targets: negating the coordinate that should stay fixed, or negating both coordinates (a rotation) when reflecting in y = x
+- **csse-gr-mr03-bp-grid-reflect-in-mirror-line-04** [hard; interpretation; grid_reflect_y_equals_x]
+  - Representation: coordinate_grid -- coordinate grid {"x":[-8,8],"y":[-8,8],"points":[{"label":"P","x":3,"y":2}],"mirrorLine":"y=x","segments":null}
+  - Q: Point P is reflected in the dashed mirror line. What are the coordinates of the image of P? Give your answer in the form (x, y).
+  - Answer: (2, 3)
+  - Working: P is at (3, 2) and the mirror line is the line y = x. / In the line y = x the two coordinates swap places. The image is (2, 3).
+  - Targets: negating the coordinate that should stay fixed, or negating both coordinates (a rotation) when reflecting in y = x
+- **csse-gr-mr03-bp-grid-reflect-in-mirror-line-05** [medium; interpretation; grid_reflect_x_axis]
+  - Representation: coordinate_grid -- coordinate grid {"x":[-8,8],"y":[-8,8],"points":[{"label":"P","x":6,"y":-8}],"mirrorLine":"x-axis","segments":null}
+  - Q: Point P is reflected in the dashed mirror line. What are the coordinates of the image of P? Give your answer in the form (x, y).
+  - Answer: (6, 8)
+  - Working: P is at (6, -8) and the mirror line is the x-axis. / In the x-axis the x-coordinate stays and the y-coordinate changes sign. The image is (6, 8).
+  - Targets: negating the coordinate that should stay fixed, or negating both coordinates (a rotation) when reflecting in y = x
+- **csse-gr-mr03-bp-grid-reflect-in-mirror-line-06** [easy; interpretation; grid_reflect_y_axis]
+  - Representation: coordinate_grid -- coordinate grid {"x":[-8,8],"y":[-8,8],"points":[{"label":"P","x":5,"y":4}],"mirrorLine":"y-axis","segments":null}
+  - Q: Point P is reflected in the dashed mirror line. What are the coordinates of the image of P? Give your answer in the form (x, y).
+  - Answer: (-5, 4)
+  - Working: P is at (5, 4) and the mirror line is the y-axis. / In the y-axis the y-coordinate stays and the x-coordinate changes sign. The image is (-5, 4).
+  - Targets: negating the coordinate that should stay fixed, or negating both coordinates (a rotation) when reflecting in y = x
+- **csse-gr-mr03-bp-grid-reflect-in-mirror-line-07** [hard; interpretation; grid_reflect_y_equals_x]
+  - Representation: coordinate_grid -- coordinate grid {"x":[-8,8],"y":[-8,8],"points":[{"label":"P","x":-4,"y":1}],"mirrorLine":"y=x","segments":null}
+  - Q: Point P is reflected in the dashed mirror line. What are the coordinates of the image of P? Give your answer in the form (x, y).
+  - Answer: (1, -4)
+  - Working: P is at (-4, 1) and the mirror line is the line y = x. / In the line y = x the two coordinates swap places. The image is (1, -4).
+  - Targets: negating the coordinate that should stay fixed, or negating both coordinates (a rotation) when reflecting in y = x
+- **csse-gr-mr03-bp-grid-reflect-in-mirror-line-08** [medium; interpretation; grid_reflect_y_axis]
+  - Representation: coordinate_grid -- coordinate grid {"x":[-8,8],"y":[-8,8],"points":[{"label":"P","x":6,"y":-1}],"mirrorLine":"y-axis","segments":null}
+  - Q: Point P is reflected in the dashed mirror line. What are the coordinates of the image of P? Give your answer in the form (x, y).
+  - Answer: (-6, -1)
+  - Working: P is at (6, -1) and the mirror line is the y-axis. / In the y-axis the y-coordinate stays and the x-coordinate changes sign. The image is (-6, -1).
+  - Targets: negating the coordinate that should stay fixed, or negating both coordinates (a rotation) when reflecting in y = x
+- **csse-gr-mr03-bp-grid-translate-point-01** [hard; multi_step_application; grid_translate_point]
+  - Representation: coordinate_grid -- coordinate grid {"x":[-6,6],"y":[-6,6],"points":[{"label":"P","x":1,"y":3}],"mirrorLine":null,"segments":null}
+  - Q: Point P is translated 6 units left and 3 units down. What are the coordinates of its new position? Give your answer in the form (x, y).
+  - Answer: (-5, 0)
+  - Working: P is at (1, 3). Moving left changes x by −6; moving down changes y by −3. / New position: (1 − 6, 3 − 3) = (-5, 0).
+  - Targets: moving the wrong way for a left or down movement, or applying the horizontal movement to y and the vertical to x
+- **csse-gr-mr03-bp-grid-translate-point-02** [easy; multi_step_application; grid_translate_point]
+  - Representation: coordinate_grid -- coordinate grid {"x":[-8,8],"y":[-8,8],"points":[{"label":"P","x":2,"y":-1}],"mirrorLine":null,"segments":null}
+  - Q: Point P is translated 5 units right and 2 units down. What are the coordinates of its new position? Give your answer in the form (x, y).
+  - Answer: (7, -3)
+  - Working: P is at (2, -1). Moving right changes x by +5; moving down changes y by −2. / New position: (2 + 5, -1 − 2) = (7, -3).
+  - Targets: moving the wrong way for a left or down movement, or applying the horizontal movement to y and the vertical to x
+- **csse-gr-mr03-bp-grid-translate-point-03** [medium; multi_step_application; grid_translate_point]
+  - Representation: coordinate_grid -- coordinate grid {"x":[-8,8],"y":[-8,8],"points":[{"label":"P","x":-5,"y":-1}],"mirrorLine":null,"segments":null}
+  - Q: Point P is translated 1 unit right and 7 units up. What are the coordinates of its new position? Give your answer in the form (x, y).
+  - Answer: (-4, 6)
+  - Working: P is at (-5, -1). Moving right changes x by +1; moving up changes y by +7. / New position: (-5 + 1, -1 + 7) = (-4, 6).
+  - Targets: moving the wrong way for a left or down movement, or applying the horizontal movement to y and the vertical to x
+- **csse-gr-mr03-bp-grid-translate-point-04** [hard; multi_step_application; grid_translate_point]
+  - Representation: coordinate_grid -- coordinate grid {"x":[-8,8],"y":[-8,8],"points":[{"label":"P","x":8,"y":0}],"mirrorLine":null,"segments":null}
+  - Q: Point P is translated 7 units left and 1 unit up. What are the coordinates of its new position? Give your answer in the form (x, y).
+  - Answer: (1, 1)
+  - Working: P is at (8, 0). Moving left changes x by −7; moving up changes y by +1. / New position: (8 − 7, 0 + 1) = (1, 1).
+  - Targets: moving the wrong way for a left or down movement, or applying the horizontal movement to y and the vertical to x
+- **csse-gr-mr03-bp-grid-translate-point-05** [easy; multi_step_application; grid_translate_point]
+  - Representation: coordinate_grid -- coordinate grid {"x":[-8,8],"y":[-8,8],"points":[{"label":"P","x":-5,"y":-7}],"mirrorLine":null,"segments":null}
+  - Q: Point P is translated 2 units left and 6 units up. What are the coordinates of its new position? Give your answer in the form (x, y).
+  - Answer: (-7, -1)
+  - Working: P is at (-5, -7). Moving left changes x by −2; moving up changes y by +6. / New position: (-5 − 2, -7 + 6) = (-7, -1).
+  - Targets: moving the wrong way for a left or down movement, or applying the horizontal movement to y and the vertical to x
+- **csse-gr-mr03-bp-grid-translate-point-06** [medium; multi_step_application; grid_translate_point]
+  - Representation: coordinate_grid -- coordinate grid {"x":[-5,5],"y":[-5,5],"points":[{"label":"P","x":-5,"y":-2}],"mirrorLine":null,"segments":null}
+  - Q: Point P is translated 7 units right and 5 units up. What are the coordinates of its new position? Give your answer in the form (x, y).
+  - Answer: (2, 3)
+  - Working: P is at (-5, -2). Moving right changes x by +7; moving up changes y by +5. / New position: (-5 + 7, -2 + 5) = (2, 3).
+  - Targets: moving the wrong way for a left or down movement, or applying the horizontal movement to y and the vertical to x
+- **csse-gr-mr03-bp-grid-translate-point-07** [hard; multi_step_application; grid_translate_point]
+  - Representation: coordinate_grid -- coordinate grid {"x":[-6,6],"y":[-6,6],"points":[{"label":"P","x":0,"y":1}],"mirrorLine":null,"segments":null}
+  - Q: Point P is translated 2 units left and 1 unit up. What are the coordinates of its new position? Give your answer in the form (x, y).
+  - Answer: (-2, 2)
+  - Working: P is at (0, 1). Moving left changes x by −2; moving up changes y by +1. / New position: (0 − 2, 1 + 1) = (-2, 2).
+  - Targets: moving the wrong way for a left or down movement, or applying the horizontal movement to y and the vertical to x
+- **csse-gr-mr03-bp-grid-translate-point-08** [easy; multi_step_application; grid_translate_point]
+  - Representation: coordinate_grid -- coordinate grid {"x":[-6,6],"y":[-6,6],"points":[{"label":"P","x":-1,"y":-5}],"mirrorLine":null,"segments":null}
+  - Q: Point P is translated 3 units left and 1 unit up. What are the coordinates of its new position? Give your answer in the form (x, y).
+  - Answer: (-4, -4)
+  - Working: P is at (-1, -5). Moving left changes x by −3; moving up changes y by +1. / New position: (-1 − 3, -5 + 1) = (-4, -4).
+  - Targets: moving the wrong way for a left or down movement, or applying the horizontal movement to y and the vertical to x
+- **csse-gr-mr03-bp-grid-fourth-vertex-01** [hard; multi_step_application; grid_complete_parallelogram]
+  - Representation: coordinate_grid -- coordinate grid {"x":[-5,5],"y":[-5,5],"points":[{"label":"A","x":0,"y":-3},{"label":"B","x":-2,"y":1},{"label":"C","x":-4,"y":0}],"mirrorLine":null,"segments":[{"from":"A","to":"B"},{"from":"B","to":"C"}]}
+  - Q: A, B and C are three corners of a parallelogram ABCD, in that order. What are the coordinates of corner D? Give your answer in the form (x, y).
+  - Answer: (-2, -4)
+  - Working: In a parallelogram the side AD is the same movement as BC. Going from B to C is −2 across and −1 up/down. / Apply the same movement to A (0, -3): D = (-2, -4).
+  - Targets: copying the x of one corner and the y of another without checking the shape (correct only for an axis-aligned rectangle), or adding instead of subtracting the opposite corner
+- **csse-gr-mr03-bp-grid-fourth-vertex-02** [medium; multi_step_application; grid_complete_rectangle]
+  - Representation: coordinate_grid -- coordinate grid {"x":[-5,5],"y":[-5,5],"points":[{"label":"A","x":2,"y":-3},{"label":"B","x":4,"y":-3},{"label":"C","x":4,"y":-1}],"mirrorLine":null,"segments":[{"from":"A","to":"B"},{"from":"B","to":"C"}]}
+  - Q: A, B and C are three corners of a rectangle ABCD, in that order. What are the coordinates of corner D? Give your answer in the form (x, y).
+  - Answer: (2, -1)
+  - Working: In a rectangle the side AD is the same movement as BC. Going from B to C is +0 across and +2 up/down. / Apply the same movement to A (2, -3): D = (2, -1).
+  - Targets: copying the x of one corner and the y of another without checking the shape (correct only for an axis-aligned rectangle), or adding instead of subtracting the opposite corner
+- **csse-gr-mr03-bp-grid-fourth-vertex-03** [easy; multi_step_application; grid_complete_rectangle]
+  - Representation: coordinate_grid -- coordinate grid {"x":[-8,8],"y":[-8,8],"points":[{"label":"A","x":2,"y":7},{"label":"B","x":7,"y":7},{"label":"C","x":7,"y":4}],"mirrorLine":null,"segments":[{"from":"A","to":"B"},{"from":"B","to":"C"}]}
+  - Q: A, B and C are three corners of a rectangle ABCD, in that order. What are the coordinates of corner D? Give your answer in the form (x, y).
+  - Answer: (2, 4)
+  - Working: In a rectangle the side AD is the same movement as BC. Going from B to C is +0 across and −3 up/down. / Apply the same movement to A (2, 7): D = (2, 4).
+  - Targets: copying the x of one corner and the y of another without checking the shape (correct only for an axis-aligned rectangle), or adding instead of subtracting the opposite corner
+- **csse-gr-mr03-bp-grid-fourth-vertex-04** [hard; multi_step_application; grid_complete_parallelogram]
+  - Representation: coordinate_grid -- coordinate grid {"x":[-6,6],"y":[-6,6],"points":[{"label":"A","x":-4,"y":-5},{"label":"B","x":4,"y":0},{"label":"C","x":2,"y":4}],"mirrorLine":null,"segments":[{"from":"A","to":"B"},{"from":"B","to":"C"}]}
+  - Q: A, B and C are three corners of a parallelogram ABCD, in that order. What are the coordinates of corner D? Give your answer in the form (x, y).
+  - Answer: (-6, -1)
+  - Working: In a parallelogram the side AD is the same movement as BC. Going from B to C is −2 across and +4 up/down. / Apply the same movement to A (-4, -5): D = (-6, -1).
+  - Targets: copying the x of one corner and the y of another without checking the shape (correct only for an axis-aligned rectangle), or adding instead of subtracting the opposite corner
+- **csse-gr-mr03-bp-grid-fourth-vertex-05** [medium; multi_step_application; grid_complete_rectangle]
+  - Representation: coordinate_grid -- coordinate grid {"x":[-8,8],"y":[-8,8],"points":[{"label":"A","x":-6,"y":0},{"label":"B","x":5,"y":0},{"label":"C","x":5,"y":8}],"mirrorLine":null,"segments":[{"from":"A","to":"B"},{"from":"B","to":"C"}]}
+  - Q: A, B and C are three corners of a rectangle ABCD, in that order. What are the coordinates of corner D? Give your answer in the form (x, y).
+  - Answer: (-6, 8)
+  - Working: In a rectangle the side AD is the same movement as BC. Going from B to C is +0 across and +8 up/down. / Apply the same movement to A (-6, 0): D = (-6, 8).
+  - Targets: copying the x of one corner and the y of another without checking the shape (correct only for an axis-aligned rectangle), or adding instead of subtracting the opposite corner
+- **csse-gr-mr03-bp-grid-fourth-vertex-06** [easy; multi_step_application; grid_complete_rectangle]
+  - Representation: coordinate_grid -- coordinate grid {"x":[-5,5],"y":[-5,5],"points":[{"label":"A","x":2,"y":-4},{"label":"B","x":-2,"y":-4},{"label":"C","x":-2,"y":5}],"mirrorLine":null,"segments":[{"from":"A","to":"B"},{"from":"B","to":"C"}]}
+  - Q: A, B and C are three corners of a rectangle ABCD, in that order. What are the coordinates of corner D? Give your answer in the form (x, y).
+  - Answer: (2, 5)
+  - Working: In a rectangle the side AD is the same movement as BC. Going from B to C is +0 across and +9 up/down. / Apply the same movement to A (2, -4): D = (2, 5).
+  - Targets: copying the x of one corner and the y of another without checking the shape (correct only for an axis-aligned rectangle), or adding instead of subtracting the opposite corner
+- **csse-gr-mr03-bp-grid-fourth-vertex-07** [hard; multi_step_application; grid_complete_parallelogram]
+  - Representation: coordinate_grid -- coordinate grid {"x":[-8,8],"y":[-8,8],"points":[{"label":"A","x":4,"y":0},{"label":"B","x":1,"y":5},{"label":"C","x":-4,"y":1}],"mirrorLine":null,"segments":[{"from":"A","to":"B"},{"from":"B","to":"C"}]}
+  - Q: A, B and C are three corners of a parallelogram ABCD, in that order. What are the coordinates of corner D? Give your answer in the form (x, y).
+  - Answer: (-1, -4)
+  - Working: In a parallelogram the side AD is the same movement as BC. Going from B to C is −5 across and −4 up/down. / Apply the same movement to A (4, 0): D = (-1, -4).
+  - Targets: copying the x of one corner and the y of another without checking the shape (correct only for an axis-aligned rectangle), or adding instead of subtracting the opposite corner
+- **csse-gr-mr03-bp-grid-fourth-vertex-08** [medium; multi_step_application; grid_complete_rectangle]
+  - Representation: coordinate_grid -- coordinate grid {"x":[-8,8],"y":[-8,8],"points":[{"label":"A","x":1,"y":-1},{"label":"B","x":8,"y":-1},{"label":"C","x":8,"y":-6}],"mirrorLine":null,"segments":[{"from":"A","to":"B"},{"from":"B","to":"C"}]}
+  - Q: A, B and C are three corners of a rectangle ABCD, in that order. What are the coordinates of corner D? Give your answer in the form (x, y).
+  - Answer: (1, -6)
+  - Working: In a rectangle the side AD is the same movement as BC. Going from B to C is +0 across and −5 up/down. / Apply the same movement to A (1, -1): D = (1, -6).
+  - Targets: copying the x of one corner and the y of another without checking the shape (correct only for an axis-aligned rectangle), or adding instead of subtracting the opposite corner
+- **csse-gr-mr03-bp-grid-midpoint-of-segment-01** [easy; multi_step_application; grid_segment_midpoint]
+  - Representation: coordinate_grid -- coordinate grid {"x":[-8,8],"y":[-8,8],"points":[{"label":"A","x":6,"y":3},{"label":"B","x":8,"y":7}],"mirrorLine":null,"segments":[{"from":"A","to":"B"}]}
+  - Q: A and B are the ends of the line segment on the grid. What are the coordinates of the midpoint of AB? Give your answer in the form (x, y).
+  - Answer: (7, 5)
+  - Working: A is (6, 3) and B is (8, 7). / The midpoint is halfway in each direction: x = (6 + 8) ÷ 2 = 7, y = (3 + 7) ÷ 2 = 5.
+  - Targets: averaging only one coordinate, or giving the length of the segment instead of its midpoint
+- **csse-gr-mr03-bp-grid-midpoint-of-segment-02** [hard; multi_step_application; grid_segment_midpoint]
+  - Representation: coordinate_grid -- coordinate grid {"x":[-8,8],"y":[-8,8],"points":[{"label":"A","x":-4,"y":-4},{"label":"B","x":-2,"y":-8}],"mirrorLine":null,"segments":[{"from":"A","to":"B"}]}
+  - Q: A and B are the ends of the line segment on the grid. What are the coordinates of the midpoint of AB? Give your answer in the form (x, y).
+  - Answer: (-3, -6)
+  - Working: A is (-4, -4) and B is (-2, -8). / The midpoint is halfway in each direction: x = (-4 + -2) ÷ 2 = -3, y = (-4 + -8) ÷ 2 = -6.
+  - Targets: averaging only one coordinate, or giving the length of the segment instead of its midpoint
+- **csse-gr-mr03-bp-grid-midpoint-of-segment-03** [medium; multi_step_application; grid_segment_midpoint]
+  - Representation: coordinate_grid -- coordinate grid {"x":[-6,6],"y":[-6,6],"points":[{"label":"A","x":-1,"y":0},{"label":"B","x":5,"y":6}],"mirrorLine":null,"segments":[{"from":"A","to":"B"}]}
+  - Q: A and B are the ends of the line segment on the grid. What are the coordinates of the midpoint of AB? Give your answer in the form (x, y).
+  - Answer: (2, 3)
+  - Working: A is (-1, 0) and B is (5, 6). / The midpoint is halfway in each direction: x = (-1 + 5) ÷ 2 = 2, y = (0 + 6) ÷ 2 = 3.
+  - Targets: averaging only one coordinate, or giving the length of the segment instead of its midpoint
+- **csse-gr-mr03-bp-grid-midpoint-of-segment-04** [easy; multi_step_application; grid_segment_midpoint]
+  - Representation: coordinate_grid -- coordinate grid {"x":[-8,8],"y":[-8,8],"points":[{"label":"A","x":7,"y":6},{"label":"B","x":3,"y":4}],"mirrorLine":null,"segments":[{"from":"A","to":"B"}]}
+  - Q: A and B are the ends of the line segment on the grid. What are the coordinates of the midpoint of AB? Give your answer in the form (x, y).
+  - Answer: (5, 5)
+  - Working: A is (7, 6) and B is (3, 4). / The midpoint is halfway in each direction: x = (7 + 3) ÷ 2 = 5, y = (6 + 4) ÷ 2 = 5.
+  - Targets: averaging only one coordinate, or giving the length of the segment instead of its midpoint
+- **csse-gr-mr03-bp-grid-midpoint-of-segment-05** [hard; multi_step_application; grid_segment_midpoint]
+  - Representation: coordinate_grid -- coordinate grid {"x":[-6,6],"y":[-6,6],"points":[{"label":"A","x":-5,"y":0},{"label":"B","x":1,"y":4}],"mirrorLine":null,"segments":[{"from":"A","to":"B"}]}
+  - Q: A and B are the ends of the line segment on the grid. What are the coordinates of the midpoint of AB? Give your answer in the form (x, y).
+  - Answer: (-2, 2)
+  - Working: A is (-5, 0) and B is (1, 4). / The midpoint is halfway in each direction: x = (-5 + 1) ÷ 2 = -2, y = (0 + 4) ÷ 2 = 2.
+  - Targets: averaging only one coordinate, or giving the length of the segment instead of its midpoint
+- **csse-gr-mr03-bp-grid-midpoint-of-segment-06** [medium; multi_step_application; grid_segment_midpoint]
+  - Representation: coordinate_grid -- coordinate grid {"x":[-8,8],"y":[-8,8],"points":[{"label":"A","x":4,"y":-1},{"label":"B","x":8,"y":1}],"mirrorLine":null,"segments":[{"from":"A","to":"B"}]}
+  - Q: A and B are the ends of the line segment on the grid. What are the coordinates of the midpoint of AB? Give your answer in the form (x, y).
+  - Answer: (6, 0)
+  - Working: A is (4, -1) and B is (8, 1). / The midpoint is halfway in each direction: x = (4 + 8) ÷ 2 = 6, y = (-1 + 1) ÷ 2 = 0.
+  - Targets: averaging only one coordinate, or giving the length of the segment instead of its midpoint
+- **csse-gr-mr03-bp-grid-midpoint-of-segment-07** [hard; multi_step_application; grid_segment_midpoint]
+  - Representation: coordinate_grid -- coordinate grid {"x":[-8,8],"y":[-8,8],"points":[{"label":"A","x":3,"y":1},{"label":"B","x":1,"y":-3}],"mirrorLine":null,"segments":[{"from":"A","to":"B"}]}
+  - Q: A and B are the ends of the line segment on the grid. What are the coordinates of the midpoint of AB? Give your answer in the form (x, y).
+  - Answer: (2, -1)
+  - Working: A is (3, 1) and B is (1, -3). / The midpoint is halfway in each direction: x = (3 + 1) ÷ 2 = 2, y = (1 + -3) ÷ 2 = -1.
+  - Targets: averaging only one coordinate, or giving the length of the segment instead of its midpoint
+- **csse-gr-mr03-bp-grid-midpoint-of-segment-08** [medium; multi_step_application; grid_segment_midpoint]
+  - Representation: coordinate_grid -- coordinate grid {"x":[-5,5],"y":[-5,5],"points":[{"label":"A","x":3,"y":5},{"label":"B","x":-3,"y":-1}],"mirrorLine":null,"segments":[{"from":"A","to":"B"}]}
+  - Q: A and B are the ends of the line segment on the grid. What are the coordinates of the midpoint of AB? Give your answer in the form (x, y).
+  - Answer: (0, 2)
+  - Working: A is (3, 5) and B is (-3, -1). / The midpoint is halfway in each direction: x = (3 + -3) ÷ 2 = 0, y = (5 + -1) ÷ 2 = 2.
+  - Targets: averaging only one coordinate, or giving the length of the segment instead of its midpoint

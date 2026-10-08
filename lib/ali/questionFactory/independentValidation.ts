@@ -53,3 +53,9 @@ export function formatCoordinatePoint(point: CoordinatePoint): string {
 export function midpoint(a: CoordinatePoint, b: CoordinatePoint): CoordinatePoint {
   return { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 };
 }
+
+/** Parses the canonical "(x, y)" answer form (spaces optional) back into a point; null if it is not that form. */
+export function parseCoordinatePoint(text: string): CoordinatePoint | null {
+  const m = text.trim().match(/^\(\s*(-?\d+(?:\.\d+)?)\s*,\s*(-?\d+(?:\.\d+)?)\s*\)$/);
+  return m ? { x: Number(m[1]), y: Number(m[2]) } : null;
+}
