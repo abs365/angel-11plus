@@ -34,6 +34,7 @@ import {
 } from "@/lib/learningEngine/practiceContent";
 import { scoreEnglishComprehensionAnswer, checkQuotationPresent, type EnglishScoringResult, type ValidationTier } from "@/lib/learningEngine/englishAnswerValidation";
 import { getExamStrategyHint, getWorkedExample } from "@/lib/learningEngine/englishExamStrategies";
+import { englishCorrectAnswerReveal } from "@/lib/learningEngine/englishFeedback";
 import { getGuidedScaffoldKind, getGuidedInstructionText, checkLiveSelectionCount } from "@/lib/learningEngine/guidedPractice";
 import { classifyAutomaticError, getSelfReflectionCategories, WRONG_ANSWER_CATEGORY_LABEL } from "@/lib/learningEngine/englishErrorClassification";
 import { getMathsTeachingContent, MATHS_MISCONCEPTION_CATEGORY_LABEL, effectiveGuidedRevealStepCount } from "@/lib/learningEngine/mathsTeachingContent";
@@ -1236,6 +1237,20 @@ function ReadingActivity({
             <p className="text-xs text-[var(--angel-muted)] mt-3 bg-[var(--angel-sky)] rounded-xl p-3">
               <strong>Model answer: </strong>
               {prompt.modelAnswer}
+            </p>
+          )}
+          {/* CSSE Completion, Workstream 4: questions with no written model answer previously gave a bare
+              "Not quite" after a wrong answer. Show the answer Angel marked against, after submission only. */}
+          {submitted && !lastCorrect && (() => {
+            const reveal = englishCorrectAnswerReveal(prompt);
+            return reveal ? (
+              <p className="text-xs text-[var(--angel-ink)] mt-3 bg-[var(--angel-sky)] rounded-xl p-3">{reveal}</p>
+            ) : null;
+          })()}
+          {submitted && !lastCorrect && strategyHint && (
+            <p className="text-xs text-[var(--angel-ink)] mt-3 bg-[var(--angel-sky)] rounded-xl p-3">
+              <strong>Next time: </strong>
+              {strategyHint}
             </p>
           )}
         </div>

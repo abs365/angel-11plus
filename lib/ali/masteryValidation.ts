@@ -19,6 +19,9 @@ import type {
  * competency granularity. This module adds a second, additional gate on
  * top of it; it does not replace or duplicate the existing mechanism.
  */
+/** Distinct question families in which the mastery threshold must be met before competency mastery counts as validated. */
+export const MIN_DISTINCT_STRUCTURES = 2;
+
 export interface MasteryValidationResult {
   competencyCode: string;
   thresholdMet: boolean;
@@ -38,9 +41,15 @@ export interface MasteryValidationResult {
 export function validateCompetencyMastery(
   input: CompetencyConfidenceInput
 ): MasteryValidationResult {
-  const thresholdMet = input.questions.some(
-    (q) => q.distinctCorrectSessions >= q.masteryThreshold
+  // "Mastery must not be achievable merely by remembering the same question": the threshold has to be met
+  // across at least MIN_DISTINCT_STRUCTURES different question families (or every family that exists, if fewer).
+  const structureOf = (q: CompetencyConfidenceInput["questions"][number]) => q.familyId ?? `q:${q.questionId}`;
+  const poolStructures = new Set(input.questions.map(structureOf));
+  const requiredStructures = Math.min(MIN_DISTINCT_STRUCTURES, poolStructures.size);
+  const metStructures = new Set(
+    input.questions.filter((q) => q.distinctCorrectSessions >= q.masteryThreshold).map(structureOf)
   );
+  const thresholdMet = metStructures.size >= Math.max(1, requiredStructures);
   const confidenceTier = computeCompetencyConfidence(input);
   const validated = thresholdMet && (confidenceTier === "moderate" || confidenceTier === "high");
 

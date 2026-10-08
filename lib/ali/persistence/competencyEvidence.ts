@@ -38,6 +38,7 @@ interface QuestionMeta {
   id: string;
   mastery_threshold: number;
   confidence_weight: number;
+  family_id?: string | null;
 }
 interface HistoryRow {
   question_id: string;
@@ -70,6 +71,7 @@ export function mergeQuestionsWithHistory(
       distinctCorrectSessions: row?.distinct_correct_sessions ?? 0,
       masteryThreshold: q.mastery_threshold,
       confidenceWeight: q.confidence_weight,
+      familyId: q.family_id ?? null,
       // Stage 2 Educational Integrity Correction (migration 076) — see
       // lib/ali/persistence/educationalStateRuntime.ts's identical mapping
       // for the full rationale; both functions read the same table and
@@ -88,7 +90,7 @@ export async function fetchCompetencyEvidence(
 
   const { data: questions, error: questionsError } = await supabase
     .from("ali_question_bank")
-    .select("id, mastery_threshold, confidence_weight")
+    .select("id, mastery_threshold, confidence_weight, family_id")
     .in("skill", skillCodes);
 
   if (questionsError || !questions || questions.length === 0) {

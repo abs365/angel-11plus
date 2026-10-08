@@ -40,6 +40,7 @@ interface StateQuestionMeta {
   id: string;
   mastery_threshold: number;
   confidence_weight: number;
+  family_id?: string | null;
 }
 
 /**
@@ -92,7 +93,7 @@ async function fetchCompetencyStateEvidence(
 
   const { data: questions, error: questionsError } = await supabase
     .from("ali_question_bank")
-    .select("id, mastery_threshold, confidence_weight")
+    .select("id, mastery_threshold, confidence_weight, family_id")
     .in("skill", skillCodes);
 
   if (questionsError || !questions || questions.length === 0) {
@@ -130,6 +131,7 @@ async function fetchCompetencyStateEvidence(
       distinctCorrectSessions: row?.distinct_correct_sessions ?? 0,
       masteryThreshold: q.mastery_threshold,
       confidenceWeight: q.confidence_weight,
+      familyId: q.family_id ?? null,
       lastAttemptCorrect: row?.last_attempt_correct ?? null,
       // Stage 2 Educational Integrity Correction — undefined (column not
       // yet migrated) and null (no attempt yet, or a genuine pre-migration

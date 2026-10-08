@@ -33,6 +33,11 @@ export interface QuestionEvidenceInput {
    * evidence.
    */
   verified?: boolean;
+  /**
+   * Question family (a structural grouping). Optional: absent or null counts as the question's own structure.
+   * Used so competency mastery cannot rest on repeated success with one question or one family.
+   */
+  familyId?: string | null;
 }
 
 export interface CompetencyConfidenceInput {
