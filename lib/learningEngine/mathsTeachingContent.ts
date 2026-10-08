@@ -686,6 +686,43 @@ export const MATHS_FAMILY_TEACHING_CONTENT: Record<string, MathsFamilyTeachingCo
        step 2, so 1 step is the safe pre-submission reveal boundary. */
     maxGuidedRevealSteps: 1,
   },
+  // CSSE Completion, Workstream 2: the three live Maths families that had no worked-method content.
+  // Scenarios are fixed, separate from every live question (never the live numbers).
+  "mr03-coord-combined": {
+    model: {
+      whatToNotice: "A point goes through TWO transformations, one after the other (for example a reflection, then a translation). The order given is the order you must follow.",
+      relationship: "Do the first transformation completely and write down the new point. Only then apply the second transformation to that new point, not to the starting point.",
+      scenario: "Point P is at (1, 4). It is reflected in the x-axis, then translated 5 units left and 2 units up. What are the final coordinates?",
+      reasoning: [
+        "Reflect in the x-axis: the x-coordinate stays the same and the y-coordinate changes sign, so (1, 4) becomes (1, -4).",
+        "Now translate (1, -4): 5 left means x - 5, and 2 up means y + 2, giving (1 - 5, -4 + 2).",
+        "The final point is (-4, -2).",
+      ],
+      answer: "(-4, -2)",
+      verification: "Check by working backwards: undo the translation (-4 + 5, -2 - 2) = (1, -4), then undo the reflection to get (1, 4), the starting point ✓.",
+    },
+    misconceptionCategory: "PROCEDURAL_SEQUENCE_ERROR",
+    // The second working step states the final coordinates, so only the first step may be revealed before submission.
+    maxGuidedRevealSteps: 1,
+  },
+  "mr04-bv-convert": {
+    model: {
+      whatToNotice: "Two options are priced in DIFFERENT units (for example grams and kilograms). The numbers cannot be compared fairly until both are in the same unit.",
+      relationship: "First convert both options to the same unit. Then find the price for one of that unit (price per kg, per litre, per item) and compare those, not the totals.",
+      scenario: "Juice: Option A is 750ml for £1.50. Option B is 2 litres for £3.60. Which is better value?",
+      reasoning: [
+        "Convert to the same unit: 750ml = 0.75 litres.",
+        "Option A: £1.50 ÷ 0.75 = £2.00 per litre.",
+        "Option B: £3.60 ÷ 2 = £1.80 per litre.",
+        "£1.80 is lower than £2.00, so Option B is better value.",
+      ],
+      answer: "B",
+      verification: "Check each price per litre by multiplying back: 0.75 × £2.00 = £1.50 ✓ and 2 × £1.80 = £3.60 ✓.",
+    },
+    misconceptionCategory: "UNIT_OR_CONVERSION_ERROR",
+    // Steps 3-4 show both prices per unit, which gives the comparison away; reveal only the conversion idea and the first price.
+    maxGuidedRevealSteps: 2,
+  },
 };
 
 export function getMathsTeachingContent(familyId?: string | null): MathsFamilyTeachingContent | undefined {

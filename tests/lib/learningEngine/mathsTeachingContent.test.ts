@@ -45,9 +45,12 @@ const EDUCATIONAL_DEPTH_WAVE1_FAMILIES = [
   "mr01-multistep-order-of-operations",
   "mr01-fraction-computation",
 ];
-const ALL_FAMILIES = [...ORIGINAL_007L_FAMILIES, ...PHASE_B_FAMILIES, ...INCREMENT_020_FAMILIES, ...INCREMENT_003_FAMILIES, ...EDUCATIONAL_DEPTH_WAVE1_FAMILIES];
+// CSSE Completion workstream 2: two further single-tier families that simply lacked worked-method content.
+// (mr05-number-property-search stays deliberately uncovered -- see the fallback test below.)
+const CSSE_COMPLETION_FAMILIES = ["mr03-coord-combined", "mr04-bv-convert"];
+const ALL_FAMILIES = [...ORIGINAL_007L_FAMILIES, ...PHASE_B_FAMILIES, ...INCREMENT_020_FAMILIES, ...INCREMENT_003_FAMILIES, ...EDUCATIONAL_DEPTH_WAVE1_FAMILIES, ...CSSE_COMPLETION_FAMILIES];
 
-test("exactly 34 families have teaching content (4 original 007L + 22 Phase B + 1 Increment 020 + 3 Increment 003 Wave 1 + 4 Educational Depth Wave 1), no more no less", () => {
+test("exactly 36 families have teaching content (4 original 007L + 22 Phase B + 1 Increment 020 + 3 Increment 003 Wave 1 + 4 Educational Depth Wave 1 + 2 CSSE Completion), no more no less", () => {
   assert.deepEqual(Object.keys(MATHS_FAMILY_TEACHING_CONTENT).sort(), [...ALL_FAMILIES].sort());
 });
 

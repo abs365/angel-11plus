@@ -140,8 +140,9 @@ test("C/D: the underlying submitted/lastCorrect/addressesMisconception gating is
 // all 5 -- the fallback-path proof (test E below) still needs a REAL
 // no-teaching-content family to be meaningful, and now also proves the
 // positive case for the 3 families this wave added content to.
-const STILL_NO_TEACHING_CONTENT = ["mr03-coord-combined", "mr04-bv-convert"];
-const GAINED_TEACHING_CONTENT_IN_EI003_WAVE1 = ["mr01-reverse-mean", "mr04-reverse-percentage", "mr04-time-reverse"];
+// CSSE Completion workstream 2 gave these two their own worked-method content; none of this correction's families remains uncovered.
+const STILL_NO_TEACHING_CONTENT: string[] = [];
+const GAINED_TEACHING_CONTENT_IN_EI003_WAVE1 = ["mr01-reverse-mean", "mr04-reverse-percentage", "mr04-time-reverse", "mr03-coord-combined", "mr04-bv-convert"];
 
 test("E: mr03-coord-combined and mr04-bv-convert still have no dedicated teaching content (the exact fallback path this correction fixes); mr01-reverse-mean/mr04-reverse-percentage/mr04-time-reverse now DO (Educational Increment 003, Wave 1) -- every family carries real addressesMisconception text regardless", () => {
   const allNewQuestions = [...mr04DepthQuestions, ...inc006DepthQuestions];
