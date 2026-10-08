@@ -151,7 +151,7 @@ families whose context was uniformly bare:
 | `mr02-nth-term` (QT-MR-05) | pattern in context (matchsticks / tiles / chairs); first term exceeding a target; whole periods to reach a target (round **up**) | interpretation; threshold; rounding up |
 | `mr01-whole-number-computation` (QT-MR-01) | containers needed (remainder → +1); change from a note; spend then share equally | interpret a remainder; two-step order |
 
-Evidence: 9 → 10 blueprints, each with a named misconception; answers derived deterministically and **re-derived in tests by
+Evidence: 10 new blueprints (4 + 3 + 3), each with a named misconception; answers derived deterministically and **re-derived in tests by
 independent brute-force oracles** (simulation/scan, not the blueprint's own formula); family batch validation and diversity
 gates pass (new-batch memorisation risk MEDIUM, dominance ≤ 0.33, 0 parameter-signature duplicates); 140 candidates with
 deterministic stable ids (`csse-ctx-<blueprint>-NN`), difficulty mix skewed to medium/hard (no easy for mr01/mr02 — those
@@ -171,6 +171,6 @@ Effect when published: practice-eligible 901 → 1,041 (the first step toward 1,
 
 ## Side finding — stored Maths `explanation` text (closed, no cleanup needed)
 
-- ~85% of `angel_original` and unlabelled-provenance rows (English 192, Maths 190, Writing 6 practice-eligible; more in Mock/reserve) store a **developer/author note** in `ali_question_bank.explanation` (increment, wave, "Assessment Brain", generation script). `lib/adminReview.ts` documents this field as the author's own per-question note.
+- Most `angel_original` and unlabelled-provenance rows (practice-eligible: English 139, Maths 190, Writing 6; more in Mock/reserve) store a **developer/author note** in `ali_question_bank.explanation` (increment, wave, "Assessment Brain", generation script). `lib/adminReview.ts` documents this field as the author's own per-question note.
 - It does **not** reach a CSSE learner surface: the Practice page's `explanation` is the *session selection reason* (`SessionActivity.explanation`), not the bank field; no CSSE page renders `BankQuestion.explanation`. The only code that renders it (`ReasoningSession`, adaptive GL/Vocabulary mocks) serves pathways with **no active rows** in the bank.
 - Verdict: intentionally internal metadata, not misstored learner content; no learner exposure today. Guard to keep: do not render `BankQuestion.explanation` on any CSSE learner surface without first replacing it with learner-facing text. (The 76 empty-explanation English items are a separate matter, fixed in inc 2.)
