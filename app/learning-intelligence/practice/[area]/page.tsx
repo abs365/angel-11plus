@@ -56,6 +56,7 @@ import { ReadinessSummary } from "@/components/learningEngine/ReadinessSummary";
 import { RecommendationSummary } from "@/components/learningEngine/RecommendationSummary";
 import type { BankQuestion } from "@/types/ali/questionBank";
 import type { LearnerIntelligenceProfile } from "@/lib/learningEngine/types";
+import WritingRevisionPanel from "@/components/learningEngine/WritingRevisionPanel";
 import type { WritingFeedback } from "@/types/writing-feedback";
 import { getWritingTeachingContent, getWritingTaskFamilyForPromptType, WRITING_CRAFT_CHECKS } from "@/lib/learningEngine/writingTeachingContent";
 import { WRITING_DIMENSION_LABEL } from "@/lib/learningEngine/writingRubric";
@@ -1747,6 +1748,16 @@ function WritingActivity({
             <p><strong>Areas to improve:</strong> {feedback.areasToImprove.join(" · ")}</p>
             <p><strong>Tutor tip:</strong> {feedback.tutorTip}</p>
           </div>
+          <WritingRevisionPanel
+            key={promptId}
+            questionId={promptId}
+            promptTitle={prompt.title}
+            promptType={prompt.type ?? ""}
+            promptText={prompt.prompt}
+            originalText={answer}
+            originalFeedback={feedback}
+            checkedItems={Array.from(checkedItems)}
+          />
           <button
             onClick={onNext}
             className="bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-colors inline-flex items-center gap-1.5"
