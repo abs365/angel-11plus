@@ -29,5 +29,26 @@ Mastery needs the same questions answered correctly independently across separat
 
 Expected side effect to be aware of: of the 16 learner-competency masteries recorded in production (including test accounts), 6 would now read "developing". That is the intended correction, not a regression.
 
+## Part 3 — Visual representations (bundled into the same session; only after the first governed publish)
+
+The table, bar-chart, coordinate-grid, angle-figure and number-line renderers are deployed, but **no question that uses them is live until you
+submit and publish some of the pending candidates** (nothing has been submitted). To keep this to one short session, publish a **small
+sample first**, one approved candidate per representation (use the approval pack `ANGEL_CSSE_MATHS_BLUEPRINT_APPROVAL_PACK.md`, then the
+governed submit and publish route), then run this with the same test learner in **Maths practice**:
+
+| # | Find a question showing | You should see | If not |
+|---|---|---|---|
+| 8 | a **table** (data handling) | a titled table with a caption; the question text does not repeat the table's numbers | Screenshot |
+| 9 | a **bar chart** | bars on a labelled scale with gridlines; no value printed on any bar | Screenshot |
+| 10 | a **coordinate grid** | square cells, labelled axes, the point(s) named but their coordinates not printed; a dashed mirror line where the question mentions one | Screenshot |
+| 11 | an **angle figure** | a triangle, straight line or point with arcs; the unknown shown as an italic letter; the line "Diagram not drawn accurately" | Screenshot |
+| 12 | a **number line** | labelled major marks, shorter unlabelled marks, an arrow marked P (or A and B) | Screenshot |
+| 13 | any of the above, on a **phone-width** window | the picture fits the width and every label is readable | Screenshot and the device |
+| 14 | any of the above, with a **screen reader** or by reading the picture's text | a short description names what is drawn but never the answer | Note what it said |
+
+Also confirm one thing that has **not** changed: **a Mock never shows any of these new pictures** (Mock Form B items use the existing image stimulus).
+
+Pass: steps 8-14 behave as written.
+
 ## What to send back
-"Part 1 pass" or the step number and a screenshot; and the test learner's profile id when you want Part 2.3 run.
+"Part 1 pass" (and "Part 3 pass" once the sample is published) or the step number and a screenshot; and the test learner's profile id when you want Part 2.3 run.

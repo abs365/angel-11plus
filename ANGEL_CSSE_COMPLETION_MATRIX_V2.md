@@ -245,3 +245,39 @@ Educational review: `ANGEL_CSSE_MATHS_CANDIDATES_EDUCATIONAL_REVIEW.md` (context
 
 ### H. Writing revision contract
 `ANGEL_CSSE_WRITING_REVISION_CONTRACT.md`. Educational loop, hard rules (original immutable, revision linked and formative, never mastery, no improvement score, one revision per original, Mock excluded), and a two-tier design. **Tier 1 stores no child text** (a text-free evidence event) and is the recommended first increment; Tier 2 (storing writing) is a privacy decision and is not needed for the loop. Formative writing feedback is kept distinct from validated assessment / exam-readiness evidence throughout.
+
+## Continuation 3 (Founder decisions A to J): outcome
+
+| Item | Result |
+|---|---|
+| A. Approval pack | `ANGEL_CSSE_MATHS_BLUEPRINT_APPROVAL_PACK.md` (+ HTML). Governance: competency, family, blueprint, representative sample, deterministic validation, diversity check, failure and edge-case review, approval, publication. Now covers **380 candidates / 38 blueprints, 374 recommended** |
+| B. Writing review pack | `ANGEL_CSSE_WRITING_PROMPTS_FOUNDER_REVIEW_PACK.md`. Later decision: the narrative pictures are **educational storyboards**; contracts in `ANGEL_CSSE_WRITING_NARRATIVE_ASSET_CONTRACTS.md`; nothing published |
+| C. Coordinate grid | shared stimulus kind + renderer + validator; 5 blueprints (read, reflect in a drawn mirror, translate, fourth vertex, midpoint); 40 candidates; independent checks (generic transforms, diagonals bisect, equal steps) |
+| D. Angle figures | shared stimulus kind + renderer + validator; 4 blueprints (triangle, straight line, around a point incl. reflex, isosceles with two equal unknowns); 32 candidates; a fifth blueprint was **rejected** (not distinct); every figure says "not drawn accurately" |
+| E. Number line | justified by QT-MR-03 scale reading and QT-MR-14 rounding (both thin, prose-only); 3 blueprints; 24 candidates; exact thousandths arithmetic; independent checks (tick counting, subtraction, nearest-of-two) |
+| F. English Form B | marking-contract repair for 8 explanation items (TIER2 to TIER5, manual); 2 Compass Rose fixes (Q5 wording the text does not support; Q2 accepted sets too narrow); 6 sealed top-up items (8 marks) -> Form B reading 24 items / 39 marks; template migration 271; `ANGEL_CSSE_ENGLISH_FORM_B_COMPLETION.md` |
+| G. Maths Form B | revalidation of 32 items (all answers re-derive; **one real marking defect**: `numberpyramid-02` instructed bracketed form marked wrong); 24 sealed items (6 easy / 8 medium / 10 hard) with 3 exact figures + 1 table; Form B = 56 items; template migration 272; `ANGEL_CSSE_MATHS_FORM_B_COMPLETION.md` |
+| H. Writing revision (Tier 1) | implemented, Practice only, no child text stored, text-free event store off until migration 270 is applied and a flag is set; Mock cannot reach it |
+| I. Calibration pack | `ANGEL_WRITING_CALIBRATION_PACK.md` + blank kit in `scripts/output/writing-calibration-pack/` + tested analysis measures; no calibration claimed |
+| J. WIP resolution | `ANGEL_WIP_FILES_RESOLUTION.md`; all WIP classified, completed, integrated; clean checkout green |
+| Founder acceptance | `ANGEL_CSSE_FOUNDER_ACCEPTANCE_REMEDIATION_MASTERY.md` Part 3 bundles the renderer check into the same session (after a small governed publish) |
+
+### Maths representation coverage (live = deployed renderer; pending = candidates not yet submitted)
+| Representation | Renderer | Pending candidates | Targets |
+|---|---|---|---|
+| Table | live | 24 (data handling) + timetable/function/mean tables (breadth) | QT-MR-09, -10, -05, -12 |
+| Bar chart | live | 24 | QT-MR-09 |
+| Coordinate grid | deployed | 40 | QT-MR-08 |
+| Angle figure | deployed | 32 | QT-MR-07 |
+| Number line | deployed | 24 | QT-MR-03, QT-MR-14 |
+| Compound shape | live (earlier) | n/a | QT-MR-07 |
+| Not yet: clock face, bar model, measurement diagram with ruler | none | none | not justified yet by thin competencies |
+
+### Practice inventory
+| | Count |
+|---|---|
+| **Currently live** (practice_eligible) | **901** (English 306, Maths 587, Writing 8) |
+| **Pending approval** | Maths **380** candidates in 6 packages (374 recommended), Writing 7 prompts (migration 268) |
+| **Projected if all Maths approved** | 901 + 380 = **1,281** (1,275 on the recommended set); with Writing 1,288 |
+| Sealed Mock Form B (not Practice) | English top-up 6 items; Maths 24 items; Writing Q2 awaiting final artwork |
+
