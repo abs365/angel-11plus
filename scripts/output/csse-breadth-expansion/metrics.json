@@ -1,0 +1,257 @@
+[
+  {
+    "familyId": "mr01-missing-operand",
+    "blueprints": 2,
+    "keptCandidates": 16,
+    "rawGenerated": 192,
+    "approvedBeforeBalancing": 187,
+    "blueprintDepth": 2,
+    "dominantBlueprintShare": 0.5,
+    "scaledMemorisationRisk": "HIGH",
+    "perBlueprintDifficulty": [
+      {
+        "blueprintId": "mr01-bp-think-of-a-number-two-step",
+        "distinctTiersReached": 2,
+        "tierCounts": {
+          "medium": 4,
+          "hard": 4
+        },
+        "meetsMinimum": true
+      },
+      {
+        "blueprintId": "mr01-bp-consecutive-numbers-from-sum",
+        "distinctTiersReached": 2,
+        "tierCounts": {
+          "medium": 4,
+          "hard": 4
+        },
+        "meetsMinimum": true
+      }
+    ],
+    "parameterSignatureDuplicates": 0,
+    "contexts": [
+      "think_of_a_number_named",
+      "think_of_a_number",
+      "number_machine",
+      "consecutive_pages",
+      "consecutive_numbers",
+      "consecutive_house_numbers"
+    ],
+    "reasoningRoutes": [
+      "reverse_reasoning"
+    ]
+  },
+  {
+    "familyId": "precision-dec",
+    "blueprints": 2,
+    "keptCandidates": 16,
+    "rawGenerated": 192,
+    "approvedBeforeBalancing": 192,
+    "blueprintDepth": 2,
+    "dominantBlueprintShare": 0.5,
+    "scaledMemorisationRisk": "HIGH",
+    "perBlueprintDifficulty": [
+      {
+        "blueprintId": "mr06-bp-round-decimal-places",
+        "distinctTiersReached": 3,
+        "tierCounts": {
+          "medium": 3,
+          "easy": 3,
+          "hard": 2
+        },
+        "meetsMinimum": true
+      },
+      {
+        "blueprintId": "mr06-bp-round-nearest-in-context",
+        "distinctTiersReached": 3,
+        "tierCounts": {
+          "hard": 3,
+          "easy": 3,
+          "medium": 2
+        },
+        "meetsMinimum": true
+      }
+    ],
+    "parameterSignatureDuplicates": 0,
+    "contexts": [
+      "round_decimal_length",
+      "round_decimal_bare",
+      "round_nearest_stadium",
+      "round_nearest_library",
+      "round_nearest_town"
+    ],
+    "reasoningRoutes": [
+      "direct_computation",
+      "interpretation"
+    ]
+  },
+  {
+    "familyId": "mr01-measurement-conversion",
+    "blueprints": 2,
+    "keptCandidates": 16,
+    "rawGenerated": 192,
+    "approvedBeforeBalancing": 192,
+    "blueprintDepth": 2,
+    "dominantBlueprintShare": 0.5,
+    "scaledMemorisationRisk": "HIGH",
+    "perBlueprintDifficulty": [
+      {
+        "blueprintId": "mr01-bp-compare-different-units",
+        "distinctTiersReached": 2,
+        "tierCounts": {
+          "hard": 4,
+          "medium": 4
+        },
+        "meetsMinimum": true
+      },
+      {
+        "blueprintId": "mr01-bp-convert-then-divide",
+        "distinctTiersReached": 2,
+        "tierCounts": {
+          "hard": 4,
+          "medium": 4
+        },
+        "meetsMinimum": true
+      }
+    ],
+    "parameterSignatureDuplicates": 0,
+    "contexts": [
+      "units_mass",
+      "units_length",
+      "units_capacity",
+      "portions_mass",
+      "portions_length",
+      "portions_capacity"
+    ],
+    "reasoningRoutes": [
+      "multi_step_application"
+    ]
+  },
+  {
+    "familyId": "mr04-elapsed-time",
+    "blueprints": 2,
+    "keptCandidates": 16,
+    "rawGenerated": 192,
+    "approvedBeforeBalancing": 192,
+    "blueprintDepth": 2,
+    "dominantBlueprintShare": 0.5,
+    "scaledMemorisationRisk": "HIGH",
+    "perBlueprintDifficulty": [
+      {
+        "blueprintId": "mr04-bp-timetable-journey-time",
+        "distinctTiersReached": 2,
+        "tierCounts": {
+          "hard": 4,
+          "medium": 4
+        },
+        "meetsMinimum": true
+      },
+      {
+        "blueprintId": "mr04-bp-timetable-wait-for-next",
+        "distinctTiersReached": 2,
+        "tierCounts": {
+          "hard": 4,
+          "medium": 4
+        },
+        "meetsMinimum": true
+      }
+    ],
+    "parameterSignatureDuplicates": 0,
+    "contexts": [
+      "timetable_bus",
+      "timetable_coach",
+      "timetable_train",
+      "timetable_wait_train",
+      "timetable_wait_ferry",
+      "timetable_wait_bus"
+    ],
+    "reasoningRoutes": [
+      "interpretation"
+    ]
+  },
+  {
+    "familyId": "mr02-sequence-rule",
+    "blueprints": 2,
+    "keptCandidates": 16,
+    "rawGenerated": 192,
+    "approvedBeforeBalancing": 191,
+    "blueprintDepth": 2,
+    "dominantBlueprintShare": 0.5,
+    "scaledMemorisationRisk": "HIGH",
+    "perBlueprintDifficulty": [
+      {
+        "blueprintId": "mr02-bp-function-table-rule",
+        "distinctTiersReached": 2,
+        "tierCounts": {
+          "medium": 4,
+          "hard": 4
+        },
+        "meetsMinimum": true
+      },
+      {
+        "blueprintId": "mr02-bp-function-table-reverse",
+        "distinctTiersReached": 2,
+        "tierCounts": {
+          "medium": 4,
+          "hard": 4
+        },
+        "meetsMinimum": true
+      }
+    ],
+    "parameterSignatureDuplicates": 0,
+    "contexts": [
+      "function_table_machine",
+      "function_table_pattern",
+      "function_table_savings",
+      "function_table_pattern_reverse",
+      "function_table_savings_reverse",
+      "function_table_machine_reverse"
+    ],
+    "reasoningRoutes": [
+      "multi_step_application",
+      "reverse_reasoning"
+    ]
+  },
+  {
+    "familyId": "mr01-average-mean",
+    "blueprints": 2,
+    "keptCandidates": 16,
+    "rawGenerated": 192,
+    "approvedBeforeBalancing": 192,
+    "blueprintDepth": 2,
+    "dominantBlueprintShare": 0.5,
+    "scaledMemorisationRisk": "HIGH",
+    "perBlueprintDifficulty": [
+      {
+        "blueprintId": "mr01-bp-mean-from-table",
+        "distinctTiersReached": 2,
+        "tierCounts": {
+          "hard": 4,
+          "medium": 4
+        },
+        "meetsMinimum": true
+      },
+      {
+        "blueprintId": "mr01-bp-mean-missing-value-table",
+        "distinctTiersReached": 1,
+        "tierCounts": {
+          "hard": 8
+        },
+        "meetsMinimum": false
+      }
+    ],
+    "parameterSignatureDuplicates": 0,
+    "contexts": [
+      "mean_table_scores",
+      "mean_table_rainfall",
+      "mean_table_distance",
+      "mean_table_distance_missing",
+      "mean_table_scores_missing",
+      "mean_table_rainfall_missing"
+    ],
+    "reasoningRoutes": [
+      "interpretation",
+      "reverse_reasoning"
+    ]
+  }
+]

@@ -1,0 +1,597 @@
+# CSSE breadth expansion (precision, measurement, time, rules, averages, missing numbers) -- candidates for educational review
+
+All candidates are `pending_review` once submitted. Nothing is published by this package.
+
+## mr01-missing-operand
+
+- **csse-br-mr01-bp-think-of-a-number-two-step-01** [medium; reverse_reasoning; think_of_a_number_named]
+  - Representation: prose
+  - Q: Priya picks a number, multiplies it by 9, then adds 27. She gets 54. What was her number?
+  - Answer: 3
+  - Working: Work backwards. The last step was to add 27, so subtract 27 first: 54 − 27 = 27. / The first step was to multiply by 9, so divide: 27 ÷ 9 = 3.
+  - Targets: dividing by the multiplier before removing the added (or subtracted) amount, undoing the steps in the order they were done
+- **csse-br-mr01-bp-think-of-a-number-two-step-02** [hard; reverse_reasoning; think_of_a_number]
+  - Representation: prose
+  - Q: I think of a number. I multiply it by 7 and then subtract 33. My answer is 100. What number did I think of?
+  - Answer: 19
+  - Working: Work backwards. The last step was to subtract 33, so add 33 first: 100 + 33 = 133. / The first step was to multiply by 7, so divide: 133 ÷ 7 = 19.
+  - Targets: dividing by the multiplier before removing the added (or subtracted) amount, undoing the steps in the order they were done
+- **csse-br-mr01-bp-think-of-a-number-two-step-03** [medium; reverse_reasoning; think_of_a_number_named]
+  - Representation: prose
+  - Q: Priya picks a number, multiplies it by 2, then takes away 40. She gets 20. What was her number?
+  - Answer: 30
+  - Working: Work backwards. The last step was to subtract 40, so add 40 first: 20 + 40 = 60. / The first step was to multiply by 2, so divide: 60 ÷ 2 = 30.
+  - Targets: dividing by the multiplier before removing the added (or subtracted) amount, undoing the steps in the order they were done
+- **csse-br-mr01-bp-think-of-a-number-two-step-04** [hard; reverse_reasoning; number_machine]
+  - Representation: prose
+  - Q: A number machine multiplies the input by 7 and then subtracts 29. The output is 90. What was the input?
+  - Answer: 17
+  - Working: Work backwards. The last step was to subtract 29, so add 29 first: 90 + 29 = 119. / The first step was to multiply by 7, so divide: 119 ÷ 7 = 17.
+  - Targets: dividing by the multiplier before removing the added (or subtracted) amount, undoing the steps in the order they were done
+- **csse-br-mr01-bp-think-of-a-number-two-step-05** [medium; reverse_reasoning; number_machine]
+  - Representation: prose
+  - Q: A number machine multiplies the input by 6 and then subtracts 34. The output is 146. What was the input?
+  - Answer: 30
+  - Working: Work backwards. The last step was to subtract 34, so add 34 first: 146 + 34 = 180. / The first step was to multiply by 6, so divide: 180 ÷ 6 = 30.
+  - Targets: dividing by the multiplier before removing the added (or subtracted) amount, undoing the steps in the order they were done
+- **csse-br-mr01-bp-think-of-a-number-two-step-06** [hard; reverse_reasoning; number_machine]
+  - Representation: prose
+  - Q: A number machine multiplies the input by 9 and then subtracts 39. The output is 141. What was the input?
+  - Answer: 20
+  - Working: Work backwards. The last step was to subtract 39, so add 39 first: 141 + 39 = 180. / The first step was to multiply by 9, so divide: 180 ÷ 9 = 20.
+  - Targets: dividing by the multiplier before removing the added (or subtracted) amount, undoing the steps in the order they were done
+- **csse-br-mr01-bp-think-of-a-number-two-step-07** [medium; reverse_reasoning; think_of_a_number]
+  - Representation: prose
+  - Q: I think of a number. I multiply it by 3 and then add 17. My answer is 29. What number did I think of?
+  - Answer: 4
+  - Working: Work backwards. The last step was to add 17, so subtract 17 first: 29 − 17 = 12. / The first step was to multiply by 3, so divide: 12 ÷ 3 = 4.
+  - Targets: dividing by the multiplier before removing the added (or subtracted) amount, undoing the steps in the order they were done
+- **csse-br-mr01-bp-think-of-a-number-two-step-08** [hard; reverse_reasoning; think_of_a_number]
+  - Representation: prose
+  - Q: I think of a number. I multiply it by 7 and then subtract 19. My answer is 170. What number did I think of?
+  - Answer: 27
+  - Working: Work backwards. The last step was to subtract 19, so add 19 first: 170 + 19 = 189. / The first step was to multiply by 7, so divide: 189 ÷ 7 = 27.
+  - Targets: dividing by the multiplier before removing the added (or subtracted) amount, undoing the steps in the order they were done
+- **csse-br-mr01-bp-consecutive-numbers-from-sum-01** [medium; reverse_reasoning; consecutive_pages]
+  - Representation: prose
+  - Q: Three consecutive page numbers in a book add up to 252. What is the last of these pages?
+  - Answer: 85
+  - Working: The middle number is the mean: 252 ÷ 3 = 84. / The numbers are 83, 84, 85, so the largest is 85.
+  - Targets: giving the total divided by the count (the middle number) as the smallest or largest, forgetting to move to the end of the run
+- **csse-br-mr01-bp-consecutive-numbers-from-sum-02** [hard; reverse_reasoning; consecutive_numbers]
+  - Representation: prose
+  - Q: The sum of five consecutive whole numbers is 60. What is the largest of the numbers?
+  - Answer: 14
+  - Working: The middle number is the mean: 60 ÷ 5 = 12. / The numbers are 10, 11, 12, 13, 14, so the largest is 14.
+  - Targets: giving the total divided by the count (the middle number) as the smallest or largest, forgetting to move to the end of the run
+- **csse-br-mr01-bp-consecutive-numbers-from-sum-03** [medium; reverse_reasoning; consecutive_house_numbers]
+  - Representation: prose
+  - Q: Three houses next to each other on one side of a road have consecutive numbers. The house numbers add up to 129. What is the lowest house number?
+  - Answer: 42
+  - Working: The middle number is the mean: 129 ÷ 3 = 43. / The numbers are 42, 43, 44, so the smallest is 42.
+  - Targets: giving the total divided by the count (the middle number) as the smallest or largest, forgetting to move to the end of the run
+- **csse-br-mr01-bp-consecutive-numbers-from-sum-04** [hard; reverse_reasoning; consecutive_pages]
+  - Representation: prose
+  - Q: Five consecutive page numbers in a book add up to 75. What is the first of these pages?
+  - Answer: 13
+  - Working: The middle number is the mean: 75 ÷ 5 = 15. / The numbers are 13, 14, 15, 16, 17, so the smallest is 13.
+  - Targets: giving the total divided by the count (the middle number) as the smallest or largest, forgetting to move to the end of the run
+- **csse-br-mr01-bp-consecutive-numbers-from-sum-05** [medium; reverse_reasoning; consecutive_house_numbers]
+  - Representation: prose
+  - Q: Three houses next to each other on one side of a road have consecutive numbers. The house numbers add up to 81. What is the lowest house number?
+  - Answer: 26
+  - Working: The middle number is the mean: 81 ÷ 3 = 27. / The numbers are 26, 27, 28, so the smallest is 26.
+  - Targets: giving the total divided by the count (the middle number) as the smallest or largest, forgetting to move to the end of the run
+- **csse-br-mr01-bp-consecutive-numbers-from-sum-06** [hard; reverse_reasoning; consecutive_house_numbers]
+  - Representation: prose
+  - Q: Five houses next to each other on one side of a road have consecutive numbers. The house numbers add up to 30. What is the highest house number?
+  - Answer: 8
+  - Working: The middle number is the mean: 30 ÷ 5 = 6. / The numbers are 4, 5, 6, 7, 8, so the largest is 8.
+  - Targets: giving the total divided by the count (the middle number) as the smallest or largest, forgetting to move to the end of the run
+- **csse-br-mr01-bp-consecutive-numbers-from-sum-07** [medium; reverse_reasoning; consecutive_house_numbers]
+  - Representation: prose
+  - Q: Three houses next to each other on one side of a road have consecutive numbers. The house numbers add up to 126. What is the highest house number?
+  - Answer: 43
+  - Working: The middle number is the mean: 126 ÷ 3 = 42. / The numbers are 41, 42, 43, so the largest is 43.
+  - Targets: giving the total divided by the count (the middle number) as the smallest or largest, forgetting to move to the end of the run
+- **csse-br-mr01-bp-consecutive-numbers-from-sum-08** [hard; reverse_reasoning; consecutive_house_numbers]
+  - Representation: prose
+  - Q: Five houses next to each other on one side of a road have consecutive numbers. The house numbers add up to 410. What is the highest house number?
+  - Answer: 84
+  - Working: The middle number is the mean: 410 ÷ 5 = 82. / The numbers are 80, 81, 82, 83, 84, so the largest is 84.
+  - Targets: giving the total divided by the count (the middle number) as the smallest or largest, forgetting to move to the end of the run
+
+## precision-dec
+
+- **csse-br-mr06-bp-round-decimal-places-01** [medium; direct_computation; round_decimal_length]
+  - Representation: prose
+  - Q: A piece of wood is 5.527 metres long. Write its length to 2 decimal places.
+  - Answer: 5.53
+  - Working: Look at the digit after the second decimal place: it is 7. / 7 is 5 or more, so round the last kept digit UP (carry if it is a 9). / 5.527 to 2 decimal places = 5.53.
+  - Targets: cutting the digits off (truncating) instead of rounding, or forgetting to carry when the kept digit is a 9
+- **csse-br-mr06-bp-round-decimal-places-02** [easy; direct_computation; round_decimal_bare]
+  - Representation: prose
+  - Q: Round 46.073 to 2 decimal places.
+  - Answer: 46.07
+  - Working: Look at the digit after the second decimal place: it is 3. / 3 is less than 5, so keep the last digit as it is. / 46.073 to 2 decimal places = 46.07.
+  - Targets: cutting the digits off (truncating) instead of rounding, or forgetting to carry when the kept digit is a 9
+- **csse-br-mr06-bp-round-decimal-places-03** [hard; direct_computation; round_decimal_length]
+  - Representation: prose
+  - Q: A piece of wood is 39.845 metres long. Write its length to 2 decimal places.
+  - Answer: 39.85
+  - Working: Look at the digit after the second decimal place: it is 5. / 5 is 5 or more, so round the last kept digit UP (carry if it is a 9). / 39.845 to 2 decimal places = 39.85.
+  - Targets: cutting the digits off (truncating) instead of rounding, or forgetting to carry when the kept digit is a 9
+- **csse-br-mr06-bp-round-decimal-places-04** [medium; direct_computation; round_decimal_bare]
+  - Representation: prose
+  - Q: Round 46.788 to 2 decimal places.
+  - Answer: 46.79
+  - Working: Look at the digit after the second decimal place: it is 8. / 8 is 5 or more, so round the last kept digit UP (carry if it is a 9). / 46.788 to 2 decimal places = 46.79.
+  - Targets: cutting the digits off (truncating) instead of rounding, or forgetting to carry when the kept digit is a 9
+- **csse-br-mr06-bp-round-decimal-places-05** [easy; direct_computation; round_decimal_bare]
+  - Representation: prose
+  - Q: Round 17.234 to 1 decimal place.
+  - Answer: 17.2
+  - Working: Look at the digit after the first decimal place: it is 3. / 3 is less than 5, so keep the last digit as it is. / 17.234 to 1 decimal place = 17.2.
+  - Targets: cutting the digits off (truncating) instead of rounding, or forgetting to carry when the kept digit is a 9
+- **csse-br-mr06-bp-round-decimal-places-06** [hard; direct_computation; round_decimal_bare]
+  - Representation: prose
+  - Q: Round 37.575 to 2 decimal places.
+  - Answer: 37.58
+  - Working: Look at the digit after the second decimal place: it is 5. / 5 is 5 or more, so round the last kept digit UP (carry if it is a 9). / 37.575 to 2 decimal places = 37.58.
+  - Targets: cutting the digits off (truncating) instead of rounding, or forgetting to carry when the kept digit is a 9
+- **csse-br-mr06-bp-round-decimal-places-07** [medium; direct_computation; round_decimal_length]
+  - Representation: prose
+  - Q: A piece of wood is 1.269 metres long. Write its length to 1 decimal place.
+  - Answer: 1.3
+  - Working: Look at the digit after the first decimal place: it is 6. / 6 is 5 or more, so round the last kept digit UP (carry if it is a 9). / 1.269 to 1 decimal place = 1.3.
+  - Targets: cutting the digits off (truncating) instead of rounding, or forgetting to carry when the kept digit is a 9
+- **csse-br-mr06-bp-round-decimal-places-08** [easy; direct_computation; round_decimal_bare]
+  - Representation: prose
+  - Q: Round 42.582 to 2 decimal places.
+  - Answer: 42.58
+  - Working: Look at the digit after the second decimal place: it is 2. / 2 is less than 5, so keep the last digit as it is. / 42.582 to 2 decimal places = 42.58.
+  - Targets: cutting the digits off (truncating) instead of rounding, or forgetting to carry when the kept digit is a 9
+- **csse-br-mr06-bp-round-nearest-in-context-01** [hard; interpretation; round_nearest_stadium]
+  - Representation: prose
+  - Q: A football stadium had 43,500 people at a match. Round this to the nearest 1000.
+  - Answer: 44000
+  - Working: Look at the part below 1000: 500. Half of 1000 is 500. / 500 is 500 or more, so round UP to 44000.
+  - Targets: rounding an exact midpoint down, or rounding down whenever the next digit is not 'big enough' without checking against half the unit
+- **csse-br-mr06-bp-round-nearest-in-context-02** [easy; interpretation; round_nearest_stadium]
+  - Representation: prose
+  - Q: A football stadium had 38,754 people at a match. Round this to the nearest 10.
+  - Answer: 38750
+  - Working: Look at the part below 10: 4. Half of 10 is 5. / 4 is less than 5, so round DOWN to 38750.
+  - Targets: rounding an exact midpoint down, or rounding down whenever the next digit is not 'big enough' without checking against half the unit
+- **csse-br-mr06-bp-round-nearest-in-context-03** [medium; interpretation; round_nearest_library]
+  - Representation: prose
+  - Q: A school library has 64,020 books. Estimate the number by rounding to the nearest 100.
+  - Answer: 64000
+  - Working: Look at the part below 100: 20. Half of 100 is 50. / 20 is less than 50, so round DOWN to 64000.
+  - Targets: rounding an exact midpoint down, or rounding down whenever the next digit is not 'big enough' without checking against half the unit
+- **csse-br-mr06-bp-round-nearest-in-context-04** [hard; interpretation; round_nearest_town]
+  - Representation: prose
+  - Q: A town has 95,085 people living in it. A newspaper rounds this to the nearest 10. What does it print?
+  - Answer: 95090
+  - Working: Look at the part below 10: 5. Half of 10 is 5. / 5 is 5 or more, so round UP to 95090.
+  - Targets: rounding an exact midpoint down, or rounding down whenever the next digit is not 'big enough' without checking against half the unit
+- **csse-br-mr06-bp-round-nearest-in-context-05** [easy; interpretation; round_nearest_stadium]
+  - Representation: prose
+  - Q: A football stadium had 32,452 people at a match. Round this to the nearest 10.
+  - Answer: 32450
+  - Working: Look at the part below 10: 2. Half of 10 is 5. / 2 is less than 5, so round DOWN to 32450.
+  - Targets: rounding an exact midpoint down, or rounding down whenever the next digit is not 'big enough' without checking against half the unit
+- **csse-br-mr06-bp-round-nearest-in-context-06** [medium; interpretation; round_nearest_library]
+  - Representation: prose
+  - Q: A school library has 57,233 books. Estimate the number by rounding to the nearest 100.
+  - Answer: 57200
+  - Working: Look at the part below 100: 33. Half of 100 is 50. / 33 is less than 50, so round DOWN to 57200.
+  - Targets: rounding an exact midpoint down, or rounding down whenever the next digit is not 'big enough' without checking against half the unit
+- **csse-br-mr06-bp-round-nearest-in-context-07** [hard; interpretation; round_nearest_library]
+  - Representation: prose
+  - Q: A school library has 8,500 books. Estimate the number by rounding to the nearest 1000.
+  - Answer: 9000
+  - Working: Look at the part below 1000: 500. Half of 1000 is 500. / 500 is 500 or more, so round UP to 9000.
+  - Targets: rounding an exact midpoint down, or rounding down whenever the next digit is not 'big enough' without checking against half the unit
+- **csse-br-mr06-bp-round-nearest-in-context-08** [easy; interpretation; round_nearest_library]
+  - Representation: prose
+  - Q: A school library has 60,858 books. Estimate the number by rounding to the nearest 10.
+  - Answer: 60860
+  - Working: Look at the part below 10: 8. Half of 10 is 5. / 8 is 5 or more, so round UP to 60860.
+  - Targets: rounding an exact midpoint down, or rounding down whenever the next digit is not 'big enough' without checking against half the unit
+
+## mr01-measurement-conversion
+
+- **csse-br-mr01-bp-compare-different-units-01** [hard; multi_step_application; units_mass]
+  - Representation: prose
+  - Q: One bag of flour is 1.8 kilograms. Another bag of flour is 1510 grams. How many grams heavier is the first bag of flour than the second?
+  - Answer: 290
+  - Working: Change 1.8 kilograms into grams: 1.8 × 1000 = 1800 grams. / Now both are in grams: 1800 − 1510 = 290.
+  - Targets: subtracting the two numbers as they are written, without converting to the same unit first
+- **csse-br-mr01-bp-compare-different-units-02** [medium; multi_step_application; units_length]
+  - Representation: prose
+  - Q: One pipe is 4.7 metres. Another pipe is 425 centimetres. How many centimetres longer is the first pipe than the second?
+  - Answer: 45
+  - Working: Change 4.7 metres into centimetres: 4.7 × 100 = 470 centimetres. / Now both are in centimetres: 470 − 425 = 45.
+  - Targets: subtracting the two numbers as they are written, without converting to the same unit first
+- **csse-br-mr01-bp-compare-different-units-03** [hard; multi_step_application; units_mass]
+  - Representation: prose
+  - Q: One box of apples is 4.0 kilograms. Another box of apples is 3060 grams. How many grams heavier is the first box of apples than the second?
+  - Answer: 940
+  - Working: Change 4.0 kilograms into grams: 4.0 × 1000 = 4000 grams. / Now both are in grams: 4000 − 3060 = 940.
+  - Targets: subtracting the two numbers as they are written, without converting to the same unit first
+- **csse-br-mr01-bp-compare-different-units-04** [medium; multi_step_application; units_length]
+  - Representation: prose
+  - Q: One rope is 4.6 metres. Another rope is 370 centimetres. How many centimetres longer is the first rope than the second?
+  - Answer: 90
+  - Working: Change 4.6 metres into centimetres: 4.6 × 100 = 460 centimetres. / Now both are in centimetres: 460 − 370 = 90.
+  - Targets: subtracting the two numbers as they are written, without converting to the same unit first
+- **csse-br-mr01-bp-compare-different-units-05** [hard; multi_step_application; units_capacity]
+  - Representation: prose
+  - Q: One bottle of juice is 3.3 litres. Another bottle of juice is 1930 millilitres. How many millilitres more is in the first bottle of juice than in the second?
+  - Answer: 1370
+  - Working: Change 3.3 litres into millilitres: 3.3 × 1000 = 3300 millilitres. / Now both are in millilitres: 3300 − 1930 = 1370.
+  - Targets: subtracting the two numbers as they are written, without converting to the same unit first
+- **csse-br-mr01-bp-compare-different-units-06** [medium; multi_step_application; units_length]
+  - Representation: prose
+  - Q: One rope is 3.2 metres. Another rope is 270 centimetres. How many centimetres longer is the first rope than the second?
+  - Answer: 50
+  - Working: Change 3.2 metres into centimetres: 3.2 × 100 = 320 centimetres. / Now both are in centimetres: 320 − 270 = 50.
+  - Targets: subtracting the two numbers as they are written, without converting to the same unit first
+- **csse-br-mr01-bp-compare-different-units-07** [hard; multi_step_application; units_mass]
+  - Representation: prose
+  - Q: One bag of flour is 2.9 kilograms. Another bag of flour is 2440 grams. How many grams heavier is the first bag of flour than the second?
+  - Answer: 460
+  - Working: Change 2.9 kilograms into grams: 2.9 × 1000 = 2900 grams. / Now both are in grams: 2900 − 2440 = 460.
+  - Targets: subtracting the two numbers as they are written, without converting to the same unit first
+- **csse-br-mr01-bp-compare-different-units-08** [medium; multi_step_application; units_length]
+  - Representation: prose
+  - Q: One rope is 3.4 metres. Another rope is 295 centimetres. How many centimetres longer is the first rope than the second?
+  - Answer: 45
+  - Working: Change 3.4 metres into centimetres: 3.4 × 100 = 340 centimetres. / Now both are in centimetres: 340 − 295 = 45.
+  - Targets: subtracting the two numbers as they are written, without converting to the same unit first
+- **csse-br-mr01-bp-convert-then-divide-01** [hard; multi_step_application; portions_mass]
+  - Representation: prose
+  - Q: A parcel holds 2.4 kilograms. It is shared into portions of 160 grams each. How many portions are there?
+  - Answer: 15
+  - Working: Change 2.4 kilograms into grams: 2.4 × 1000 = 2400 grams. / Divide by the portion size: 2400 ÷ 160 = 15.
+  - Targets: dividing the numbers as written (2.4 by 30) without converting, or converting the portion instead of the whole and slipping on the factor
+- **csse-br-mr01-bp-convert-then-divide-02** [medium; multi_step_application; portions_length]
+  - Representation: prose
+  - Q: A rope is 2.0 metres long. It is cut into pieces that are each 10 centimetres long. How many pieces can be cut?
+  - Answer: 20
+  - Working: Change 2.0 metres into centimetres: 2.0 × 100 = 200 centimetres. / Divide by the portion size: 200 ÷ 10 = 20.
+  - Targets: dividing the numbers as written (2.4 by 30) without converting, or converting the portion instead of the whole and slipping on the factor
+- **csse-br-mr01-bp-convert-then-divide-03** [hard; multi_step_application; portions_mass]
+  - Representation: prose
+  - Q: A box of apples holds 2.7 kilograms. It is shared into portions of 75 grams each. How many portions are there?
+  - Answer: 36
+  - Working: Change 2.7 kilograms into grams: 2.7 × 1000 = 2700 grams. / Divide by the portion size: 2700 ÷ 75 = 36.
+  - Targets: dividing the numbers as written (2.4 by 30) without converting, or converting the portion instead of the whole and slipping on the factor
+- **csse-br-mr01-bp-convert-then-divide-04** [medium; multi_step_application; portions_length]
+  - Representation: prose
+  - Q: A ribbon is 2.5 metres long. It is cut into pieces that are each 25 centimetres long. How many pieces can be cut?
+  - Answer: 10
+  - Working: Change 2.5 metres into centimetres: 2.5 × 100 = 250 centimetres. / Divide by the portion size: 250 ÷ 25 = 10.
+  - Targets: dividing the numbers as written (2.4 by 30) without converting, or converting the portion instead of the whole and slipping on the factor
+- **csse-br-mr01-bp-convert-then-divide-05** [hard; multi_step_application; portions_capacity]
+  - Representation: prose
+  - Q: A bottle of juice holds 2.8 litres. Each cup holds 400 millilitres. How many cups can be filled?
+  - Answer: 7
+  - Working: Change 2.8 litres into millilitres: 2.8 × 1000 = 2800 millilitres. / Divide by the portion size: 2800 ÷ 400 = 7.
+  - Targets: dividing the numbers as written (2.4 by 30) without converting, or converting the portion instead of the whole and slipping on the factor
+- **csse-br-mr01-bp-convert-then-divide-06** [medium; multi_step_application; portions_length]
+  - Representation: prose
+  - Q: A pipe is 3.0 metres long. It is cut into pieces that are each 10 centimetres long. How many pieces can be cut?
+  - Answer: 30
+  - Working: Change 3.0 metres into centimetres: 3.0 × 100 = 300 centimetres. / Divide by the portion size: 300 ÷ 10 = 30.
+  - Targets: dividing the numbers as written (2.4 by 30) without converting, or converting the portion instead of the whole and slipping on the factor
+- **csse-br-mr01-bp-convert-then-divide-07** [hard; multi_step_application; portions_mass]
+  - Representation: prose
+  - Q: A parcel holds 2.4 kilograms. It is shared into portions of 120 grams each. How many portions are there?
+  - Answer: 20
+  - Working: Change 2.4 kilograms into grams: 2.4 × 1000 = 2400 grams. / Divide by the portion size: 2400 ÷ 120 = 20.
+  - Targets: dividing the numbers as written (2.4 by 30) without converting, or converting the portion instead of the whole and slipping on the factor
+- **csse-br-mr01-bp-convert-then-divide-08** [medium; multi_step_application; portions_length]
+  - Representation: prose
+  - Q: A pipe is 3.7 metres long. It is cut into pieces that are each 10 centimetres long. How many pieces can be cut?
+  - Answer: 37
+  - Working: Change 3.7 metres into centimetres: 3.7 × 100 = 370 centimetres. / Divide by the portion size: 370 ÷ 10 = 37.
+  - Targets: dividing the numbers as written (2.4 by 30) without converting, or converting the portion instead of the whole and slipping on the factor
+
+## mr04-elapsed-time
+
+- **csse-br-mr04-bp-timetable-journey-time-01** [hard; interpretation; timetable_bus]
+  - Representation: table -- table {"headers":["Stop","Leaves at"],"rows":[["Market Square","15:50"],["Library","16:38"],["School","16:50"],["Park","17:12"]]}
+  - Q: The timetable shows when a bus leaves each stop. How many minutes does the journey from Library to Park take?
+  - Answer: 34
+  - Working: Read the two times: Library at 16:38 and Park at 17:12. / From 16:38 to 17:12 is 34 minutes (count on to the next hour, then add the rest).
+  - Targets: subtracting the minutes digits only, or treating the times as decimals, when the journey crosses the hour
+- **csse-br-mr04-bp-timetable-journey-time-02** [medium; interpretation; timetable_bus]
+  - Representation: table -- table {"headers":["Stop","Leaves at"],"rows":[["Market Square","11:30"],["Library","12:19"],["School","12:41"],["Park","13:34"]]}
+  - Q: The timetable shows when a bus leaves each stop. How many minutes does the journey from Library to Park take?
+  - Answer: 75
+  - Working: Read the two times: Library at 12:19 and Park at 13:34. / From 12:19 to 13:34 is 75 minutes (count on to the next hour, then add the rest).
+  - Targets: subtracting the minutes digits only, or treating the times as decimals, when the journey crosses the hour
+- **csse-br-mr04-bp-timetable-journey-time-03** [hard; interpretation; timetable_coach]
+  - Representation: table -- table {"headers":["Stop","Leaves at"],"rows":[["Depot","12:55"],["Museum","13:46"],["Castle","14:23"],["Beach","14:42"]]}
+  - Q: The timetable shows when a coach leaves each stop. How many minutes does the journey from Museum to Beach take?
+  - Answer: 56
+  - Working: Read the two times: Museum at 13:46 and Beach at 14:42. / From 13:46 to 14:42 is 56 minutes (count on to the next hour, then add the rest).
+  - Targets: subtracting the minutes digits only, or treating the times as decimals, when the journey crosses the hour
+- **csse-br-mr04-bp-timetable-journey-time-04** [medium; interpretation; timetable_coach]
+  - Representation: table -- table {"headers":["Stop","Leaves at"],"rows":[["Depot","10:10"],["Museum","10:33"],["Castle","10:47"],["Beach","10:59"]]}
+  - Q: The timetable shows when a coach leaves each stop. How many minutes does the journey from Castle to Beach take?
+  - Answer: 12
+  - Working: Read the two times: Castle at 10:47 and Beach at 10:59. / From 10:47 to 10:59 is 12 minutes (count on to the next hour, then add the rest).
+  - Targets: subtracting the minutes digits only, or treating the times as decimals, when the journey crosses the hour
+- **csse-br-mr04-bp-timetable-journey-time-05** [hard; interpretation; timetable_train]
+  - Representation: table -- table {"headers":["Stop","Leaves at"],"rows":[["Harbour","15:10"],["Central","15:43"],["Riverside","16:09"],["Hilltop","16:34"]]}
+  - Q: The timetable shows when a train leaves each stop. How many minutes does the journey from Central to Riverside take?
+  - Answer: 26
+  - Working: Read the two times: Central at 15:43 and Riverside at 16:09. / From 15:43 to 16:09 is 26 minutes (count on to the next hour, then add the rest).
+  - Targets: subtracting the minutes digits only, or treating the times as decimals, when the journey crosses the hour
+- **csse-br-mr04-bp-timetable-journey-time-06** [medium; interpretation; timetable_train]
+  - Representation: table -- table {"headers":["Stop","Leaves at"],"rows":[["Harbour","10:20"],["Central","10:32"],["Riverside","11:16"],["Hilltop","11:34"]]}
+  - Q: The timetable shows when a train leaves each stop. How many minutes does the journey from Riverside to Hilltop take?
+  - Answer: 18
+  - Working: Read the two times: Riverside at 11:16 and Hilltop at 11:34. / From 11:16 to 11:34 is 18 minutes (count on to the next hour, then add the rest).
+  - Targets: subtracting the minutes digits only, or treating the times as decimals, when the journey crosses the hour
+- **csse-br-mr04-bp-timetable-journey-time-07** [hard; interpretation; timetable_bus]
+  - Representation: table -- table {"headers":["Stop","Leaves at"],"rows":[["Market Square","16:20"],["Library","16:43"],["School","17:36"],["Park","18:16"]]}
+  - Q: The timetable shows when a bus leaves each stop. How many minutes does the journey from School to Park take?
+  - Answer: 40
+  - Working: Read the two times: School at 17:36 and Park at 18:16. / From 17:36 to 18:16 is 40 minutes (count on to the next hour, then add the rest).
+  - Targets: subtracting the minutes digits only, or treating the times as decimals, when the journey crosses the hour
+- **csse-br-mr04-bp-timetable-journey-time-08** [medium; interpretation; timetable_train]
+  - Representation: table -- table {"headers":["Stop","Leaves at"],"rows":[["Harbour","12:25"],["Central","12:44"],["Riverside","13:04"],["Hilltop","13:36"]]}
+  - Q: The timetable shows when a train leaves each stop. How many minutes does the journey from Riverside to Hilltop take?
+  - Answer: 32
+  - Working: Read the two times: Riverside at 13:04 and Hilltop at 13:36. / From 13:04 to 13:36 is 32 minutes (count on to the next hour, then add the rest).
+  - Targets: subtracting the minutes digits only, or treating the times as decimals, when the journey crosses the hour
+- **csse-br-mr04-bp-timetable-wait-for-next-01** [hard; interpretation; timetable_wait_train]
+  - Representation: table -- table {"headers":["Service","Leaves at"],"rows":[["Train 1","06:20"],["Train 2","07:05"],["Train 3","07:57"],["Train 4","08:15"],["Train 5","08:45"]]}
+  - Q: The timetable shows when each train leaves. Sam gets to the station at 06:23. How many minutes must he wait for the next train?
+  - Answer: 42
+  - Working: Sam arrives at 06:23. Look for the first train AFTER that time: 07:05. / Wait = 07:05 − 06:23 = 42 minutes.
+  - Targets: using the departure BEFORE the arrival time, or the nearest departure, instead of the next one after arriving
+- **csse-br-mr04-bp-timetable-wait-for-next-02** [medium; interpretation; timetable_wait_train]
+  - Representation: table -- table {"headers":["Service","Leaves at"],"rows":[["Train 1","10:55"],["Train 2","11:31"],["Train 3","11:55"],["Train 4","12:13"],["Train 5","12:55"]]}
+  - Q: The timetable shows when each train leaves. Sam gets to the station at 12:36. How many minutes must he wait for the next train?
+  - Answer: 19
+  - Working: Sam arrives at 12:36. Look for the first train AFTER that time: 12:55. / Wait = 12:55 − 12:36 = 19 minutes.
+  - Targets: using the departure BEFORE the arrival time, or the nearest departure, instead of the next one after arriving
+- **csse-br-mr04-bp-timetable-wait-for-next-03** [hard; interpretation; timetable_wait_ferry]
+  - Representation: table -- table {"headers":["Service","Leaves at"],"rows":[["Ferry 1","16:15"],["Ferry 2","17:04"],["Ferry 3","17:51"],["Ferry 4","18:08"],["Ferry 5","18:36"]]}
+  - Q: The timetable shows when each ferry leaves. Sam gets to the harbour at 16:50. How many minutes must he wait for the next ferry?
+  - Answer: 14
+  - Working: Sam arrives at 16:50. Look for the first ferry AFTER that time: 17:04. / Wait = 17:04 − 16:50 = 14 minutes.
+  - Targets: using the departure BEFORE the arrival time, or the nearest departure, instead of the next one after arriving
+- **csse-br-mr04-bp-timetable-wait-for-next-04** [medium; interpretation; timetable_wait_train]
+  - Representation: table -- table {"headers":["Service","Leaves at"],"rows":[["Train 1","10:40"],["Train 2","11:29"],["Train 3","11:49"],["Train 4","12:35"],["Train 5","13:24"]]}
+  - Q: The timetable shows when each train leaves. Sam gets to the station at 13:01. How many minutes must he wait for the next train?
+  - Answer: 23
+  - Working: Sam arrives at 13:01. Look for the first train AFTER that time: 13:24. / Wait = 13:24 − 13:01 = 23 minutes.
+  - Targets: using the departure BEFORE the arrival time, or the nearest departure, instead of the next one after arriving
+- **csse-br-mr04-bp-timetable-wait-for-next-05** [hard; interpretation; timetable_wait_bus]
+  - Representation: table -- table {"headers":["Service","Leaves at"],"rows":[["Bus 1","11:10"],["Bus 2","12:04"],["Bus 3","12:35"],["Bus 4","13:17"],["Bus 5","14:03"]]}
+  - Q: The timetable shows when each bus leaves. Sam gets to the bus stop at 13:28. How many minutes must he wait for the next bus?
+  - Answer: 35
+  - Working: Sam arrives at 13:28. Look for the first bus AFTER that time: 14:03. / Wait = 14:03 − 13:28 = 35 minutes.
+  - Targets: using the departure BEFORE the arrival time, or the nearest departure, instead of the next one after arriving
+- **csse-br-mr04-bp-timetable-wait-for-next-06** [medium; interpretation; timetable_wait_train]
+  - Representation: table -- table {"headers":["Service","Leaves at"],"rows":[["Train 1","17:05"],["Train 2","17:43"],["Train 3","18:22"],["Train 4","18:55"],["Train 5","19:15"]]}
+  - Q: The timetable shows when each train leaves. Sam gets to the station at 19:13. How many minutes must he wait for the next train?
+  - Answer: 2
+  - Working: Sam arrives at 19:13. Look for the first train AFTER that time: 19:15. / Wait = 19:15 − 19:13 = 2 minutes.
+  - Targets: using the departure BEFORE the arrival time, or the nearest departure, instead of the next one after arriving
+- **csse-br-mr04-bp-timetable-wait-for-next-07** [hard; interpretation; timetable_wait_train]
+  - Representation: table -- table {"headers":["Service","Leaves at"],"rows":[["Train 1","16:55"],["Train 2","17:36"],["Train 3","18:18"],["Train 4","18:53"],["Train 5","19:20"]]}
+  - Q: The timetable shows when each train leaves. Sam gets to the station at 17:51. How many minutes must he wait for the next train?
+  - Answer: 27
+  - Working: Sam arrives at 17:51. Look for the first train AFTER that time: 18:18. / Wait = 18:18 − 17:51 = 27 minutes.
+  - Targets: using the departure BEFORE the arrival time, or the nearest departure, instead of the next one after arriving
+- **csse-br-mr04-bp-timetable-wait-for-next-08** [medium; interpretation; timetable_wait_train]
+  - Representation: table -- table {"headers":["Service","Leaves at"],"rows":[["Train 1","16:45"],["Train 2","17:29"],["Train 3","18:21"],["Train 4","18:37"],["Train 5","18:59"]]}
+  - Q: The timetable shows when each train leaves. Sam gets to the station at 18:48. How many minutes must he wait for the next train?
+  - Answer: 11
+  - Working: Sam arrives at 18:48. Look for the first train AFTER that time: 18:59. / Wait = 18:59 − 18:48 = 11 minutes.
+  - Targets: using the departure BEFORE the arrival time, or the nearest departure, instead of the next one after arriving
+
+## mr02-sequence-rule
+
+- **csse-br-mr02-bp-function-table-rule-01** [medium; multi_step_application; function_table_machine]
+  - Representation: table -- table {"headers":["Input","Output"],"rows":[["1","10"],["2","14"],["3","18"],["4","22"]]}
+  - Q: The table shows how the numbers are linked. What is the output when the input is 16?
+  - Answer: 70
+  - Working: Look at how the second column changes: it goes up by 4 each time, so the rule starts with × 4. / Check the first row: 4 × 1 = 4, and the table shows 10, so the rule also adds 6. / Rule: × 4 then + 6. For 16: 4 × 16 + 6 = 70.
+  - Targets: using only the 'adds a each time' pattern (a counting-on rule) and multiplying the input by the step without the starting offset
+- **csse-br-mr02-bp-function-table-rule-02** [hard; multi_step_application; function_table_machine]
+  - Representation: table -- table {"headers":["Input","Output"],"rows":[["1","15"],["2","22"],["3","29"],["4","36"]]}
+  - Q: The table shows how the numbers are linked. What is the output when the input is 15?
+  - Answer: 113
+  - Working: Look at how the second column changes: it goes up by 7 each time, so the rule starts with × 7. / Check the first row: 7 × 1 = 7, and the table shows 15, so the rule also adds 8. / Rule: × 7 then + 8. For 15: 7 × 15 + 8 = 113.
+  - Targets: using only the 'adds a each time' pattern (a counting-on rule) and multiplying the input by the step without the starting offset
+- **csse-br-mr02-bp-function-table-rule-03** [medium; multi_step_application; function_table_pattern]
+  - Representation: table -- table {"headers":["Pattern number","Counters"],"rows":[["1","10"],["2","13"],["3","16"],["4","19"]]}
+  - Q: The table shows how the numbers are linked. How many counters are in pattern number 25?
+  - Answer: 82
+  - Working: Look at how the second column changes: it goes up by 3 each time, so the rule starts with × 3. / Check the first row: 3 × 1 = 3, and the table shows 10, so the rule also adds 7. / Rule: × 3 then + 7. For 25: 3 × 25 + 7 = 82.
+  - Targets: using only the 'adds a each time' pattern (a counting-on rule) and multiplying the input by the step without the starting offset
+- **csse-br-mr02-bp-function-table-rule-04** [hard; multi_step_application; function_table_savings]
+  - Representation: table -- table {"headers":["Week","Total saved (£)"],"rows":[["1","11"],["2","19"],["3","27"],["4","35"]]}
+  - Q: The table shows how the numbers are linked. What is the total saved (£) in week 15?
+  - Answer: 123
+  - Working: Look at how the second column changes: it goes up by 8 each time, so the rule starts with × 8. / Check the first row: 8 × 1 = 8, and the table shows 11, so the rule also adds 3. / Rule: × 8 then + 3. For 15: 8 × 15 + 3 = 123.
+  - Targets: using only the 'adds a each time' pattern (a counting-on rule) and multiplying the input by the step without the starting offset
+- **csse-br-mr02-bp-function-table-rule-05** [medium; multi_step_application; function_table_pattern]
+  - Representation: table -- table {"headers":["Pattern number","Counters"],"rows":[["1","6"],["2","10"],["3","14"],["4","18"]]}
+  - Q: The table shows how the numbers are linked. How many counters are in pattern number 26?
+  - Answer: 106
+  - Working: Look at how the second column changes: it goes up by 4 each time, so the rule starts with × 4. / Check the first row: 4 × 1 = 4, and the table shows 6, so the rule also adds 2. / Rule: × 4 then + 2. For 26: 4 × 26 + 2 = 106.
+  - Targets: using only the 'adds a each time' pattern (a counting-on rule) and multiplying the input by the step without the starting offset
+- **csse-br-mr02-bp-function-table-rule-06** [hard; multi_step_application; function_table_pattern]
+  - Representation: table -- table {"headers":["Pattern number","Counters"],"rows":[["1","17"],["2","26"],["3","35"],["4","44"]]}
+  - Q: The table shows how the numbers are linked. How many counters are in pattern number 13?
+  - Answer: 125
+  - Working: Look at how the second column changes: it goes up by 9 each time, so the rule starts with × 9. / Check the first row: 9 × 1 = 9, and the table shows 17, so the rule also adds 8. / Rule: × 9 then + 8. For 13: 9 × 13 + 8 = 125.
+  - Targets: using only the 'adds a each time' pattern (a counting-on rule) and multiplying the input by the step without the starting offset
+- **csse-br-mr02-bp-function-table-rule-07** [medium; multi_step_application; function_table_pattern]
+  - Representation: table -- table {"headers":["Pattern number","Counters"],"rows":[["1","13"],["2","17"],["3","21"],["4","25"]]}
+  - Q: The table shows how the numbers are linked. How many counters are in pattern number 21?
+  - Answer: 93
+  - Working: Look at how the second column changes: it goes up by 4 each time, so the rule starts with × 4. / Check the first row: 4 × 1 = 4, and the table shows 13, so the rule also adds 9. / Rule: × 4 then + 9. For 21: 4 × 21 + 9 = 93.
+  - Targets: using only the 'adds a each time' pattern (a counting-on rule) and multiplying the input by the step without the starting offset
+- **csse-br-mr02-bp-function-table-rule-08** [hard; multi_step_application; function_table_savings]
+  - Representation: table -- table {"headers":["Week","Total saved (£)"],"rows":[["1","14"],["2","22"],["3","30"],["4","38"]]}
+  - Q: The table shows how the numbers are linked. What is the total saved (£) in week 14?
+  - Answer: 118
+  - Working: Look at how the second column changes: it goes up by 8 each time, so the rule starts with × 8. / Check the first row: 8 × 1 = 8, and the table shows 14, so the rule also adds 6. / Rule: × 8 then + 6. For 14: 8 × 14 + 6 = 118.
+  - Targets: using only the 'adds a each time' pattern (a counting-on rule) and multiplying the input by the step without the starting offset
+- **csse-br-mr02-bp-function-table-reverse-01** [medium; reverse_reasoning; function_table_pattern_reverse]
+  - Representation: table -- table {"headers":["Pattern number","Counters"],"rows":[["1","9"],["2","14"],["3","19"],["4","24"]]}
+  - Q: The table shows how the numbers are linked. A pattern has 109 counters. What is its pattern number?
+  - Answer: 21
+  - Working: From the table the rule is × 5 then + 4 (the second column goes up by 5, and the first row is 5 + 4). / Work backwards from 109: first subtract 4 to get 105, then divide by 5 to get 21.
+  - Targets: dividing the output by the multiplier without first removing the added amount (undoing the steps in the wrong order)
+- **csse-br-mr02-bp-function-table-reverse-02** [hard; reverse_reasoning; function_table_pattern_reverse]
+  - Representation: table -- table {"headers":["Pattern number","Counters"],"rows":[["1","16"],["2","23"],["3","30"],["4","37"]]}
+  - Q: The table shows how the numbers are linked. A pattern has 184 counters. What is its pattern number?
+  - Answer: 25
+  - Working: From the table the rule is × 7 then + 9 (the second column goes up by 7, and the first row is 7 + 9). / Work backwards from 184: first subtract 9 to get 175, then divide by 7 to get 25.
+  - Targets: dividing the output by the multiplier without first removing the added amount (undoing the steps in the wrong order)
+- **csse-br-mr02-bp-function-table-reverse-03** [medium; reverse_reasoning; function_table_savings_reverse]
+  - Representation: table -- table {"headers":["Week","Total saved (£)"],"rows":[["1","14"],["2","19"],["3","24"],["4","29"]]}
+  - Q: The table shows how the numbers are linked. The total saved is £89. In which week is that?
+  - Answer: 16
+  - Working: From the table the rule is × 5 then + 9 (the second column goes up by 5, and the first row is 5 + 9). / Work backwards from 89: first subtract 9 to get 80, then divide by 5 to get 16.
+  - Targets: dividing the output by the multiplier without first removing the added amount (undoing the steps in the wrong order)
+- **csse-br-mr02-bp-function-table-reverse-04** [hard; reverse_reasoning; function_table_savings_reverse]
+  - Representation: table -- table {"headers":["Week","Total saved (£)"],"rows":[["1","15"],["2","23"],["3","31"],["4","39"]]}
+  - Q: The table shows how the numbers are linked. The total saved is £247. In which week is that?
+  - Answer: 30
+  - Working: From the table the rule is × 8 then + 7 (the second column goes up by 8, and the first row is 8 + 7). / Work backwards from 247: first subtract 7 to get 240, then divide by 8 to get 30.
+  - Targets: dividing the output by the multiplier without first removing the added amount (undoing the steps in the wrong order)
+- **csse-br-mr02-bp-function-table-reverse-05** [medium; reverse_reasoning; function_table_savings_reverse]
+  - Representation: table -- table {"headers":["Week","Total saved (£)"],"rows":[["1","13"],["2","18"],["3","23"],["4","28"]]}
+  - Q: The table shows how the numbers are linked. The total saved is £88. In which week is that?
+  - Answer: 16
+  - Working: From the table the rule is × 5 then + 8 (the second column goes up by 5, and the first row is 5 + 8). / Work backwards from 88: first subtract 8 to get 80, then divide by 5 to get 16.
+  - Targets: dividing the output by the multiplier without first removing the added amount (undoing the steps in the wrong order)
+- **csse-br-mr02-bp-function-table-reverse-06** [hard; reverse_reasoning; function_table_pattern_reverse]
+  - Representation: table -- table {"headers":["Pattern number","Counters"],"rows":[["1","10"],["2","18"],["3","26"],["4","34"]]}
+  - Q: The table shows how the numbers are linked. A pattern has 234 counters. What is its pattern number?
+  - Answer: 29
+  - Working: From the table the rule is × 8 then + 2 (the second column goes up by 8, and the first row is 8 + 2). / Work backwards from 234: first subtract 2 to get 232, then divide by 8 to get 29.
+  - Targets: dividing the output by the multiplier without first removing the added amount (undoing the steps in the wrong order)
+- **csse-br-mr02-bp-function-table-reverse-07** [medium; reverse_reasoning; function_table_machine_reverse]
+  - Representation: table -- table {"headers":["Input","Output"],"rows":[["1","13"],["2","17"],["3","21"],["4","25"]]}
+  - Q: The table shows how the numbers are linked. The output is 105. What was the input?
+  - Answer: 24
+  - Working: From the table the rule is × 4 then + 9 (the second column goes up by 4, and the first row is 4 + 9). / Work backwards from 105: first subtract 9 to get 96, then divide by 4 to get 24.
+  - Targets: dividing the output by the multiplier without first removing the added amount (undoing the steps in the wrong order)
+- **csse-br-mr02-bp-function-table-reverse-08** [hard; reverse_reasoning; function_table_machine_reverse]
+  - Representation: table -- table {"headers":["Input","Output"],"rows":[["1","12"],["2","21"],["3","30"],["4","39"]]}
+  - Q: The table shows how the numbers are linked. The output is 147. What was the input?
+  - Answer: 16
+  - Working: From the table the rule is × 9 then + 3 (the second column goes up by 9, and the first row is 9 + 3). / Work backwards from 147: first subtract 3 to get 144, then divide by 9 to get 16.
+  - Targets: dividing the output by the multiplier without first removing the added amount (undoing the steps in the wrong order)
+
+## mr01-average-mean
+
+- **csse-br-mr01-bp-mean-from-table-01** [hard; interpretation; mean_table_scores]
+  - Representation: table -- table {"headers":["Pupil","Score"],"rows":[["Asha","37"],["Ben","14"],["Chloe","45"],["Dev","56"],["Ella","8"]]}
+  - Q: The table shows spelling test scores. What is the mean score?
+  - Answer: 32
+  - Working: Total of the five values: 37 + 14 + 45 + 56 + 8 = 160. / Mean = 160 ÷ 5 = 32.
+  - Targets: dividing the total by the largest value, or by the number of columns in the table instead of the number of values
+- **csse-br-mr01-bp-mean-from-table-02** [medium; interpretation; mean_table_rainfall]
+  - Representation: table -- table {"headers":["Day","Rainfall (mm)"],"rows":[["Monday","29"],["Tuesday","35"],["Wednesday","46"],["Thursday","40"],["Friday","35"]]}
+  - Q: The table shows rainfall each day. What is the mean rainfall per day, in millimetres?
+  - Answer: 37
+  - Working: Total of the five values: 29 + 35 + 46 + 40 + 35 = 185. / Mean = 185 ÷ 5 = 37.
+  - Targets: dividing the total by the largest value, or by the number of columns in the table instead of the number of values
+- **csse-br-mr01-bp-mean-from-table-03** [hard; interpretation; mean_table_distance]
+  - Representation: table -- table {"headers":["Day","Distance (km)"],"rows":[["Saturday","60"],["Sunday","56"],["Monday","28"],["Tuesday","52"],["Wednesday","19"]]}
+  - Q: The table shows distance cycled each day. What is the mean distance cycled per day, in kilometres?
+  - Answer: 43
+  - Working: Total of the five values: 60 + 56 + 28 + 52 + 19 = 215. / Mean = 215 ÷ 5 = 43.
+  - Targets: dividing the total by the largest value, or by the number of columns in the table instead of the number of values
+- **csse-br-mr01-bp-mean-from-table-04** [medium; interpretation; mean_table_scores]
+  - Representation: table -- table {"headers":["Pupil","Score"],"rows":[["Asha","23"],["Ben","28"],["Chloe","33"],["Dev","24"],["Ella","27"]]}
+  - Q: The table shows spelling test scores. What is the mean score?
+  - Answer: 27
+  - Working: Total of the five values: 23 + 28 + 33 + 24 + 27 = 135. / Mean = 135 ÷ 5 = 27.
+  - Targets: dividing the total by the largest value, or by the number of columns in the table instead of the number of values
+- **csse-br-mr01-bp-mean-from-table-05** [hard; interpretation; mean_table_distance]
+  - Representation: table -- table {"headers":["Day","Distance (km)"],"rows":[["Saturday","53"],["Sunday","36"],["Monday","16"],["Tuesday","56"],["Wednesday","24"]]}
+  - Q: The table shows distance cycled each day. What is the mean distance cycled per day, in kilometres?
+  - Answer: 37
+  - Working: Total of the five values: 53 + 36 + 16 + 56 + 24 = 185. / Mean = 185 ÷ 5 = 37.
+  - Targets: dividing the total by the largest value, or by the number of columns in the table instead of the number of values
+- **csse-br-mr01-bp-mean-from-table-06** [medium; interpretation; mean_table_distance]
+  - Representation: table -- table {"headers":["Day","Distance (km)"],"rows":[["Saturday","43"],["Sunday","42"],["Monday","25"],["Tuesday","44"],["Wednesday","36"]]}
+  - Q: The table shows distance cycled each day. What is the mean distance cycled per day, in kilometres?
+  - Answer: 38
+  - Working: Total of the five values: 43 + 42 + 25 + 44 + 36 = 190. / Mean = 190 ÷ 5 = 38.
+  - Targets: dividing the total by the largest value, or by the number of columns in the table instead of the number of values
+- **csse-br-mr01-bp-mean-from-table-07** [hard; interpretation; mean_table_distance]
+  - Representation: table -- table {"headers":["Day","Distance (km)"],"rows":[["Saturday","11"],["Sunday","58"],["Monday","26"],["Tuesday","42"],["Wednesday","48"]]}
+  - Q: The table shows distance cycled each day. What is the mean distance cycled per day, in kilometres?
+  - Answer: 37
+  - Working: Total of the five values: 11 + 58 + 26 + 42 + 48 = 185. / Mean = 185 ÷ 5 = 37.
+  - Targets: dividing the total by the largest value, or by the number of columns in the table instead of the number of values
+- **csse-br-mr01-bp-mean-from-table-08** [medium; interpretation; mean_table_scores]
+  - Representation: table -- table {"headers":["Pupil","Score"],"rows":[["Asha","39"],["Ben","34"],["Chloe","37"],["Dev","21"],["Ella","34"]]}
+  - Q: The table shows spelling test scores. What is the mean score?
+  - Answer: 33
+  - Working: Total of the five values: 39 + 34 + 37 + 21 + 34 = 165. / Mean = 165 ÷ 5 = 33.
+  - Targets: dividing the total by the largest value, or by the number of columns in the table instead of the number of values
+- **csse-br-mr01-bp-mean-missing-value-table-01** [hard; reverse_reasoning; mean_table_distance_missing]
+  - Representation: table -- table {"headers":["Day","Distance (km)"],"rows":[["Saturday","10"],["Sunday","5"],["Monday","5"],["Tuesday","40"],["Wednesday","?"]]}
+  - Q: The table shows distance cycled each day, but the last value is missing. The mean of all five values is 27. What is the missing value?
+  - Answer: 75
+  - Working: Total for five values = mean × 5 = 27 × 5 = 135. / Known four add to 60, so the missing value is 135 − 60 = 75.
+  - Targets: treating the stated mean as the missing value, or subtracting the known values from the mean instead of from the total
+- **csse-br-mr01-bp-mean-missing-value-table-02** [hard; reverse_reasoning; mean_table_distance_missing]
+  - Representation: table -- table {"headers":["Day","Distance (km)"],"rows":[["Saturday","41"],["Sunday","51"],["Monday","16"],["Tuesday","22"],["Wednesday","?"]]}
+  - Q: The table shows distance cycled each day, but the last value is missing. The mean of all five values is 38. What is the missing value?
+  - Answer: 60
+  - Working: Total for five values = mean × 5 = 38 × 5 = 190. / Known four add to 130, so the missing value is 190 − 130 = 60.
+  - Targets: treating the stated mean as the missing value, or subtracting the known values from the mean instead of from the total
+- **csse-br-mr01-bp-mean-missing-value-table-03** [hard; reverse_reasoning; mean_table_scores_missing]
+  - Representation: table -- table {"headers":["Pupil","Score"],"rows":[["Asha","44"],["Ben","30"],["Chloe","31"],["Dev","45"],["Ella","?"]]}
+  - Q: The table shows spelling test scores, but the last value is missing. The mean of all five values is 37. What is the missing value?
+  - Answer: 35
+  - Working: Total for five values = mean × 5 = 37 × 5 = 185. / Known four add to 150, so the missing value is 185 − 150 = 35.
+  - Targets: treating the stated mean as the missing value, or subtracting the known values from the mean instead of from the total
+- **csse-br-mr01-bp-mean-missing-value-table-04** [hard; reverse_reasoning; mean_table_distance_missing]
+  - Representation: table -- table {"headers":["Day","Distance (km)"],"rows":[["Saturday","19"],["Sunday","10"],["Monday","30"],["Tuesday","39"],["Wednesday","?"]]}
+  - Q: The table shows distance cycled each day, but the last value is missing. The mean of all five values is 32. What is the missing value?
+  - Answer: 62
+  - Working: Total for five values = mean × 5 = 32 × 5 = 160. / Known four add to 98, so the missing value is 160 − 98 = 62.
+  - Targets: treating the stated mean as the missing value, or subtracting the known values from the mean instead of from the total
+- **csse-br-mr01-bp-mean-missing-value-table-05** [hard; reverse_reasoning; mean_table_scores_missing]
+  - Representation: table -- table {"headers":["Pupil","Score"],"rows":[["Asha","13"],["Ben","14"],["Chloe","30"],["Dev","56"],["Ella","?"]]}
+  - Q: The table shows spelling test scores, but the last value is missing. The mean of all five values is 37. What is the missing value?
+  - Answer: 72
+  - Working: Total for five values = mean × 5 = 37 × 5 = 185. / Known four add to 113, so the missing value is 185 − 113 = 72.
+  - Targets: treating the stated mean as the missing value, or subtracting the known values from the mean instead of from the total
+- **csse-br-mr01-bp-mean-missing-value-table-06** [hard; reverse_reasoning; mean_table_rainfall_missing]
+  - Representation: table -- table {"headers":["Day","Rainfall (mm)"],"rows":[["Monday","29"],["Tuesday","52"],["Wednesday","7"],["Thursday","44"],["Friday","?"]]}
+  - Q: The table shows rainfall each day, but the last value is missing. The mean of all five values is 37. What is the missing value?
+  - Answer: 53
+  - Working: Total for five values = mean × 5 = 37 × 5 = 185. / Known four add to 132, so the missing value is 185 − 132 = 53.
+  - Targets: treating the stated mean as the missing value, or subtracting the known values from the mean instead of from the total
+- **csse-br-mr01-bp-mean-missing-value-table-07** [hard; reverse_reasoning; mean_table_distance_missing]
+  - Representation: table -- table {"headers":["Day","Distance (km)"],"rows":[["Saturday","30"],["Sunday","7"],["Monday","33"],["Tuesday","8"],["Wednesday","?"]]}
+  - Q: The table shows distance cycled each day, but the last value is missing. The mean of all five values is 28. What is the missing value?
+  - Answer: 62
+  - Working: Total for five values = mean × 5 = 28 × 5 = 140. / Known four add to 78, so the missing value is 140 − 78 = 62.
+  - Targets: treating the stated mean as the missing value, or subtracting the known values from the mean instead of from the total
+- **csse-br-mr01-bp-mean-missing-value-table-08** [hard; reverse_reasoning; mean_table_rainfall_missing]
+  - Representation: table -- table {"headers":["Day","Rainfall (mm)"],"rows":[["Monday","40"],["Tuesday","57"],["Wednesday","23"],["Thursday","31"],["Friday","?"]]}
+  - Q: The table shows rainfall each day, but the last value is missing. The mean of all five values is 46. What is the missing value?
+  - Answer: 79
+  - Working: Total for five values = mean × 5 = 46 × 5 = 230. / Known four add to 151, so the missing value is 230 − 151 = 79.
+  - Targets: treating the stated mean as the missing value, or subtracting the known values from the mean instead of from the total

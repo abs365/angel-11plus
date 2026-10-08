@@ -225,3 +225,14 @@ CSSE is therefore **not yet** ready to move from active completion to stable mai
 | C. Writing prompts review pack | `ANGEL_CSSE_WRITING_PROMPTS_FOUNDER_REVIEW_PACK.md` + `scripts/output/csse-writing-expansion/review-pack.html` (drawings embedded). Migration 268 still NOT applied |
 | D. Representation | `ANGEL_CSSE_MATHEMATICAL_REPRESENTATION_GAP.md`. Reused the `prompt.stimulus` architecture; practice now renders table/chart/image; new bar-chart kind; 48 data-handling candidates prepared (pending) |
 | Repo discipline | Committed HEAD verified green by `scripts/verify-clean-checkout.mjs` (install, tsc, build, 4,956 tests, 0 failures). The two failing test files exist only as **untracked local WIP** (`candidateStoreMapping`, `mr03CoordinateBlueprints`, dated 16 Sep), so main is not failing. Rule from here: explicit-path staging and `git diff --cached --stat` before every commit; use the clean-checkout script, not file-moving, for a green signal |
+
+### E. Content expansion toward 1,200 (prepared, pending, nothing submitted)
+
+| Set | Blueprints | Candidates | Targets |
+|---|---|---|---|
+| Context/structure (earlier) | 10 | 140 | MR-05 number theory in context, MR-02 sequences in context, MR-01 interpretation |
+| Data handling (new, uses the table/bar-chart renderers) | 4 | 48 | QT-MR-09 (was 6 prose items) |
+| Breadth (new) | 12 | 96 | QT-MR-14 precision (12 items), QT-MR-02 missing operand (4), QT-MR-03 measurement (5), QT-MR-10 time, QT-MR-05 rules, QT-MR-12 averages |
+| **Total pending** | **26** | **284** | If all approved: 901 + 284 = **1,185** (short of 1,200 by design; no padding) |
+
+Educational review: `ANGEL_CSSE_MATHS_CANDIDATES_EDUCATIONAL_REVIEW.md` (context set) and `ANGEL_CSSE_MATHS_EXPANSION_B_EDUCATIONAL_REVIEW.md` (data handling + breadth). Honest quality notes: every new family batch has exactly two structures, which the diversity gate rates HIGH (its own rule), so volumes are small and a third structure per family should precede scaling; the easy tier is thin in the new sets; 10 of 16 expansion-B blueprints use a table or chart the question genuinely needs. Not yet addressed: English supply (needs passages and validation) and picture-led Writing depth.
