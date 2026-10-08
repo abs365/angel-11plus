@@ -236,3 +236,12 @@ CSSE is therefore **not yet** ready to move from active completion to stable mai
 | **Total pending** | **26** | **284** | If all approved: 901 + 284 = **1,185** (short of 1,200 by design; no padding) |
 
 Educational review: `ANGEL_CSSE_MATHS_CANDIDATES_EDUCATIONAL_REVIEW.md` (context set) and `ANGEL_CSSE_MATHS_EXPANSION_B_EDUCATIONAL_REVIEW.md` (data handling + breadth). Honest quality notes: every new family batch has exactly two structures, which the diversity gate rates HIGH (its own rule), so volumes are small and a third structure per family should precede scaling; the easy tier is thin in the new sets; 10 of 16 expansion-B blueprints use a table or chart the question genuinely needs. Not yet addressed: English supply (needs passages and validation) and picture-led Writing depth.
+
+### F. English Form B supply (preparation only)
+`ANGEL_CSSE_ENGLISH_FORM_B_SUPPLY_PLAN.md`. Five reserve passages reviewed. Recommended Form B: Compass Rose (narrative) + Salmon (informational), 18 questions / 31 marks against Form A's 22 / 39, so **6 sealed top-up items (8 marks) must be authored**. **Marking defect found:** Anning and Group Project mark free-text explanations as accepted-answer sets (9-13 accepted answers each), which must be repaired before any use. Salmon is a structure twin of the Timed Section's bee passage. Writing: Q1 from the independently validated reserve; **no usable picture-led Q2 exists**, so a sealed draft (`public/mock-assets/q2-picture-narrative/cornershop-v1.svg`) awaits visual approval. Nothing promoted, nothing activated.
+
+### G. Mathematics Form B supply (preparation only)
+`ANGEL_CSSE_MATHS_FORM_B_SUPPLY_PLAN.md`. Proposed Form B shape closes Form A's gaps (adds MR-08 x3, MR-12 x3, MR-14 x2). **32 of the 38 spare/reserve items are usable** (answers re-derived; a pre-review, not governed validation); **24 sealed items must be authored** (6 easy, 8 medium, 10 hard; largest need MR-04 x6). 6 items held for a Form C. Nothing promoted, nothing activated.
+
+### H. Writing revision contract
+`ANGEL_CSSE_WRITING_REVISION_CONTRACT.md`. Educational loop, hard rules (original immutable, revision linked and formative, never mastery, no improvement score, one revision per original, Mock excluded), and a two-tier design. **Tier 1 stores no child text** (a text-free evidence event) and is the recommended first increment; Tier 2 (storing writing) is a privacy decision and is not needed for the loop. Formative writing feedback is kept distinct from validated assessment / exam-readiness evidence throughout.
