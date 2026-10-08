@@ -261,9 +261,9 @@ export const BP_COMPARE_IN_DIFFERENT_UNITS: StructuralBlueprint<UnitCompareParam
 // ---------------------------------------------------------------------------
 type TimetableParams = { t0: number; g1: number; g2: number; g3: number; i: number; j: number; ctx: number };
 const TT_CONTEXTS = [
-  { tag: "timetable_bus", caption: "Bus timetable", stops: ["Market Square", "Library", "School", "Park"], col: "Leaves at", vehicle: "bus" },
-  { tag: "timetable_train", caption: "Train timetable", stops: ["Harbour", "Central", "Riverside", "Hilltop"], col: "Leaves at", vehicle: "train" },
-  { tag: "timetable_coach", caption: "Coach timetable", stops: ["Depot", "Museum", "Castle", "Beach"], col: "Leaves at", vehicle: "coach" },
+  { tag: "timetable_bus", caption: "Bus timetable: time at each stop", stops: ["Market Square", "Library", "School", "Park"], col: "Time", vehicle: "bus" },
+  { tag: "timetable_train", caption: "Train timetable: time at each stop", stops: ["Harbour", "Central", "Riverside", "Hilltop"], col: "Time", vehicle: "train" },
+  { tag: "timetable_coach", caption: "Coach timetable: time at each stop", stops: ["Depot", "Museum", "Castle", "Beach"], col: "Time", vehicle: "coach" },
 ];
 const ttTimes = (p: TimetableParams) => [p.t0, p.t0 + p.g1, p.t0 + p.g1 + p.g2, p.t0 + p.g1 + p.g2 + p.g3];
 export const BP_TIMETABLE_JOURNEY: StructuralBlueprint<TimetableParams> = {
@@ -293,7 +293,7 @@ export const BP_TIMETABLE_JOURNEY: StructuralBlueprint<TimetableParams> = {
   },
   renderQuestionText: (p) => {
     const c = TT_CONTEXTS[p.ctx];
-    return `The timetable shows when a ${c.vehicle} leaves each stop. How many minutes does the journey from ${c.stops[p.i]} to ${c.stops[p.j]} take?`;
+    return `The timetable shows the time a ${c.vehicle} is at each stop. How many minutes does the journey from ${c.stops[p.i]} to ${c.stops[p.j]} take?`;
   },
   deriveCorrectAnswer: (p) => String(ttTimes(p)[p.j] - ttTimes(p)[p.i]),
   deriveWorkedSteps: (p) => {

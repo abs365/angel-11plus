@@ -17,24 +17,41 @@ import type { MockBarChartStimulus, MockTableStimulus } from "@/lib/mockAttempt/
  * re-derive it from the stimulus object itself with an independent method.
  */
 
+/**
+ * Every title, caption, header, unit and question phrase for a situation lives here, together, so the stimulus and the
+ * question are written as one unit and can be audited as one unit (see the semantic audit test). `about` completes
+ * "The table/bar chart shows ___"; `caption` and `chartTitle` are noun phrases describing exactly what the numbers are.
+ */
 const CONTEXTS = [
   {
-    tag: "data_library_loans", thing: "books borrowed from a school library", unit: "books", groups: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"], groupWord: "day", yLabel: "Books borrowed",
+    tag: "data_library_loans", unit: "books", groups: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+    groupHead: "Day", valueHead: "Books borrowed", yLabel: "Books borrowed",
+    about: "the number of books borrowed from a school library each day",
+    caption: "Books borrowed each day", weekCaption: "Books borrowed each day in Week 1 and Week 2", chartTitle: "Books borrowed each day",
     combine: (a: string, b: string) => `How many books were borrowed on ${a} and ${b} together?`,
     more: (a: string, b: string) => `How many more books were borrowed on ${a} than on ${b}?`,
     meanQ: "What is the mean number of books borrowed per day?",
+    weekQ: "The table shows the number of books borrowed on four days in each of two weeks. How many more books were borrowed in Week 2 than in Week 1 altogether?",
   },
   {
-    tag: "data_sports_choice", thing: "the sport each pupil in a club chose", unit: "pupils", groups: ["Football", "Swimming", "Tennis", "Cricket", "Gymnastics"], groupWord: "sport", yLabel: "Number of pupils",
-    combine: (a: string, b: string) => `How many pupils chose ${a} or ${b} altogether?`,
-    more: (a: string, b: string) => `How many more pupils chose ${a} than ${b}?`,
-    meanQ: "What is the mean number of pupils per sport?",
+    tag: "data_sports_choice", unit: "pupils", groups: ["Football", "Swimming", "Tennis", "Cricket", "Gymnastics"],
+    groupHead: "Sport", valueHead: "Pupils", yLabel: "Number of pupils",
+    about: "the number of pupils attending each sport at a club",
+    caption: "Pupils attending each sport", weekCaption: "Pupils attending each sport in Week 1 and Week 2", chartTitle: "Pupils attending each sport",
+    combine: (a: string, b: string) => `How many pupils attended ${a} and ${b} altogether?`,
+    more: (a: string, b: string) => `How many more pupils attended ${a} than ${b}?`,
+    meanQ: "What is the mean number of pupils attending per sport?",
+    weekQ: "The table shows the number of pupils attending four sports at a club in each of two weeks. How many more pupils attended in Week 2 than in Week 1 altogether?",
   },
   {
-    tag: "data_fruit_stall", thing: "fruit sold at a market stall", unit: "kilograms", groups: ["Apples", "Pears", "Plums", "Cherries", "Grapes"], groupWord: "fruit", yLabel: "Kilograms sold",
+    tag: "data_fruit_stall", unit: "kilograms", groups: ["Apples", "Pears", "Plums", "Cherries", "Grapes"],
+    groupHead: "Fruit", valueHead: "Kilograms sold", yLabel: "Kilograms sold",
+    about: "the kilograms of each fruit sold at a market stall",
+    caption: "Kilograms of each fruit sold", weekCaption: "Kilograms of each fruit sold in Week 1 and Week 2", chartTitle: "Kilograms of each fruit sold",
     combine: (a: string, b: string) => `How many kilograms of ${a} and ${b} were sold altogether?`,
     more: (a: string, b: string) => `How many more kilograms of ${a} than ${b} were sold?`,
     meanQ: "What is the mean number of kilograms sold per fruit?",
+    weekQ: "The table shows the kilograms of four fruits sold at a market stall in each of two weeks. How many more kilograms were sold in Week 2 than in Week 1 altogether?",
   },
 ];
 
@@ -68,7 +85,7 @@ export const BP_TABLE_READ_AND_COMBINE: StructuralBlueprint<TableCombineParams> 
       return { v1: v[0], v2: v[1], v3: v[2], v4: v[3], v5: v[4], i, j, ctx: Math.floor(random() * 3) };
     }
   },
-  renderQuestionText: (p) => `The table shows ${CONTEXTS[p.ctx].thing}. ${CONTEXTS[p.ctx].combine(CONTEXTS[p.ctx].groups[p.i], CONTEXTS[p.ctx].groups[p.j])}`,
+  renderQuestionText: (p) => `The table shows ${CONTEXTS[p.ctx].about}. ${CONTEXTS[p.ctx].combine(CONTEXTS[p.ctx].groups[p.i], CONTEXTS[p.ctx].groups[p.j])}`,
   deriveCorrectAnswer: (p) => String(tcVals(p)[p.i] + tcVals(p)[p.j]),
   deriveWorkedSteps: (p) => {
     const c = CONTEXTS[p.ctx];
@@ -77,7 +94,7 @@ export const BP_TABLE_READ_AND_COMBINE: StructuralBlueprint<TableCombineParams> 
   },
   deriveStimulus: (p) => {
     const c = CONTEXTS[p.ctx];
-    return tableStimulus([c.groupWord[0].toUpperCase() + c.groupWord.slice(1), c.yLabel], tcVals(p).map((v, k) => [c.groups[k], v]), c.thing[0].toUpperCase() + c.thing.slice(1));
+    return tableStimulus([c.groupHead, c.valueHead], tcVals(p).map((v, k) => [c.groups[k], v]), c.caption);
   },
   stageSuitability: ["FOUNDATION", "DEVELOPMENT"],
   similarityControls: "five distinct values and the two rows resampled independently; situation rotated by ctx.",
@@ -119,7 +136,7 @@ export const BP_TABLE_COMPARE_COLUMN_TOTALS: StructuralBlueprint<TwoColParams> =
       return { a1: a[0], a2: a[1], a3: a[2], a4: a[3], b1: b[0], b2: b[1], b3: b[2], b4: b[3], ctx: Math.floor(random() * 3) };
     }
   },
-  renderQuestionText: (p) => `The table shows the number of ${CONTEXTS[p.ctx].unit} for each ${CONTEXTS[p.ctx].groupWord} in two weeks. How many more ${CONTEXTS[p.ctx].unit} were recorded in Week 2 than in Week 1 altogether?`,
+  renderQuestionText: (p) => CONTEXTS[p.ctx].weekQ,
   deriveCorrectAnswer: (p) => String(sum(bVals(p)) - sum(aVals(p))),
   deriveWorkedSteps: (p) => [
     `Week 1 total: ${aVals(p).join(" + ")} = ${sum(aVals(p))}.`,
@@ -128,7 +145,7 @@ export const BP_TABLE_COMPARE_COLUMN_TOTALS: StructuralBlueprint<TwoColParams> =
   ],
   deriveStimulus: (p) => {
     const c = CONTEXTS[p.ctx];
-    return tableStimulus([c.groupWord[0].toUpperCase() + c.groupWord.slice(1), "Week 1", "Week 2"], aVals(p).map((v, k) => [c.groups[k], v, bVals(p)[k]]), c.thing[0].toUpperCase() + c.thing.slice(1) + ", by week");
+    return tableStimulus([c.groupHead, "Week 1", "Week 2"], aVals(p).map((v, k) => [c.groups[k], v, bVals(p)[k]]), c.weekCaption);
   },
   stageSuitability: ["DEVELOPMENT", "EXAM_PREPARATION"],
   similarityControls: "eight values resampled with a constrained total difference; situation rotated by ctx.",
@@ -152,7 +169,7 @@ function chartStimulus(ctx: number, values: number[], step: number): MockBarChar
   const c = CONTEXTS[ctx];
   const maxV = Math.max(...values);
   const axisMax = Math.ceil((maxV + 1) / step) * step;
-  return { type: "bar-chart", title: c.thing[0].toUpperCase() + c.thing.slice(1), yLabel: c.yLabel, categories: c.groups, values, scaleStep: step, axisMax };
+  return { type: "bar-chart", title: c.chartTitle, yLabel: c.yLabel, categories: c.groups, values, scaleStep: step, axisMax };
 }
 
 // ---------------------------------------------------------------------------
@@ -194,7 +211,7 @@ export const BP_BAR_CHART_READ_DIFFERENCE: StructuralBlueprint<ChartDiffParams> 
       return { v1: v[0], v2: v[1], v3: v[2], v4: v[3], v5: v[4], i, j, s, ctx: Math.floor(random() * 3) };
     }
   },
-  renderQuestionText: (p) => `The bar chart shows ${CONTEXTS[p.ctx].thing}. ${CONTEXTS[p.ctx].more(CONTEXTS[p.ctx].groups[p.i], CONTEXTS[p.ctx].groups[p.j])} Read the values carefully from the scale.`,
+  renderQuestionText: (p) => `The bar chart shows ${CONTEXTS[p.ctx].about}. ${CONTEXTS[p.ctx].more(CONTEXTS[p.ctx].groups[p.i], CONTEXTS[p.ctx].groups[p.j])} Read the values carefully from the scale.`,
   deriveCorrectAnswer: (p) => String(cdVals(p)[p.i] - cdVals(p)[p.j]),
   deriveWorkedSteps: (p) => {
     const c = CONTEXTS[p.ctx];
@@ -250,7 +267,7 @@ export const BP_BAR_CHART_MEAN: StructuralBlueprint<ChartMeanParams> = {
       return { v1: v[0], v2: v[1], v3: v[2], v4: v[3], v5: v[4], s, ctx: Math.floor(random() * 3) };
     }
   },
-  renderQuestionText: (p) => `The bar chart shows ${CONTEXTS[p.ctx].thing}. ${CONTEXTS[p.ctx].meanQ} Read the values carefully from the scale.`,
+  renderQuestionText: (p) => `The bar chart shows ${CONTEXTS[p.ctx].about}. ${CONTEXTS[p.ctx].meanQ} Read the values carefully from the scale.`,
   deriveCorrectAnswer: (p) => String(sum(cmVals(p)) / 5),
   deriveWorkedSteps: (p) => [
     `Check the scale first: the gridlines go up in steps of ${SCALE_STEPS[p.s]}.`,

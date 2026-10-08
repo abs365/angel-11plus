@@ -18,7 +18,7 @@
         "p_preparation_stage": null,
         "p_difficulty": "medium",
         "p_question_content": {
-          "question": "The table shows fruit sold at a market stall. How many kilograms of Grapes and Apples were sold altogether?",
+          "question": "The table shows the kilograms of each fruit sold at a market stall. How many kilograms of Grapes and Apples were sold altogether?",
           "workingSteps": [
             "Read the two rows needed: Grapes = 91 and Apples = 95.",
             "Add them: 91 + 95 = 186."
@@ -40,7 +40,7 @@
           "blueprintId": "mr01-bp-table-read-and-combine",
           "stimulus": {
             "type": "table",
-            "caption": "Fruit sold at a market stall",
+            "caption": "Kilograms of each fruit sold",
             "headers": [
               "Fruit",
               "Kilograms sold"
@@ -98,7 +98,7 @@
         "p_preparation_stage": null,
         "p_difficulty": "medium",
         "p_question_content": {
-          "question": "The table shows books borrowed from a school library. How many books were borrowed on Wednesday and Tuesday together?",
+          "question": "The table shows the number of books borrowed from a school library each day. How many books were borrowed on Wednesday and Tuesday together?",
           "workingSteps": [
             "Read the two rows needed: Wednesday = 88 and Tuesday = 17.",
             "Add them: 88 + 17 = 105."
@@ -120,7 +120,7 @@
           "blueprintId": "mr01-bp-table-read-and-combine",
           "stimulus": {
             "type": "table",
-            "caption": "Books borrowed from a school library",
+            "caption": "Books borrowed each day",
             "headers": [
               "Day",
               "Books borrowed"
@@ -178,7 +178,7 @@
         "p_preparation_stage": null,
         "p_difficulty": "easy",
         "p_question_content": {
-          "question": "The table shows the sport each pupil in a club chose. How many pupils chose Football or Tennis altogether?",
+          "question": "The table shows the number of pupils attending each sport at a club. How many pupils attended Football and Tennis altogether?",
           "workingSteps": [
             "Read the two rows needed: Football = 54 and Tennis = 39.",
             "Add them: 54 + 39 = 93."
@@ -200,10 +200,10 @@
           "blueprintId": "mr01-bp-table-read-and-combine",
           "stimulus": {
             "type": "table",
-            "caption": "The sport each pupil in a club chose",
+            "caption": "Pupils attending each sport",
             "headers": [
               "Sport",
-              "Number of pupils"
+              "Pupils"
             ],
             "rows": [
               [
@@ -258,7 +258,7 @@
         "p_preparation_stage": null,
         "p_difficulty": "medium",
         "p_question_content": {
-          "question": "The table shows fruit sold at a market stall. How many kilograms of Cherries and Plums were sold altogether?",
+          "question": "The table shows the kilograms of each fruit sold at a market stall. How many kilograms of Cherries and Plums were sold altogether?",
           "workingSteps": [
             "Read the two rows needed: Cherries = 37 and Plums = 74.",
             "Add them: 37 + 74 = 111."
@@ -280,7 +280,7 @@
           "blueprintId": "mr01-bp-table-read-and-combine",
           "stimulus": {
             "type": "table",
-            "caption": "Fruit sold at a market stall",
+            "caption": "Kilograms of each fruit sold",
             "headers": [
               "Fruit",
               "Kilograms sold"
@@ -338,7 +338,7 @@
         "p_preparation_stage": null,
         "p_difficulty": "easy",
         "p_question_content": {
-          "question": "The table shows the sport each pupil in a club chose. How many pupils chose Cricket or Football altogether?",
+          "question": "The table shows the number of pupils attending each sport at a club. How many pupils attended Cricket and Football altogether?",
           "workingSteps": [
             "Read the two rows needed: Cricket = 39 and Football = 27.",
             "Add them: 39 + 27 = 66."
@@ -360,10 +360,10 @@
           "blueprintId": "mr01-bp-table-read-and-combine",
           "stimulus": {
             "type": "table",
-            "caption": "The sport each pupil in a club chose",
+            "caption": "Pupils attending each sport",
             "headers": [
               "Sport",
-              "Number of pupils"
+              "Pupils"
             ],
             "rows": [
               [
@@ -418,7 +418,7 @@
         "p_preparation_stage": null,
         "p_difficulty": "medium",
         "p_question_content": {
-          "question": "The table shows the sport each pupil in a club chose. How many pupils chose Cricket or Football altogether?",
+          "question": "The table shows the number of pupils attending each sport at a club. How many pupils attended Cricket and Football altogether?",
           "workingSteps": [
             "Read the two rows needed: Cricket = 78 and Football = 89.",
             "Add them: 78 + 89 = 167."
@@ -440,10 +440,10 @@
           "blueprintId": "mr01-bp-table-read-and-combine",
           "stimulus": {
             "type": "table",
-            "caption": "The sport each pupil in a club chose",
+            "caption": "Pupils attending each sport",
             "headers": [
               "Sport",
-              "Number of pupils"
+              "Pupils"
             ],
             "rows": [
               [
@@ -498,7 +498,7 @@
         "p_preparation_stage": null,
         "p_difficulty": "medium",
         "p_question_content": {
-          "question": "The table shows fruit sold at a market stall. How many kilograms of Pears and Plums were sold altogether?",
+          "question": "The table shows the kilograms of each fruit sold at a market stall. How many kilograms of Pears and Plums were sold altogether?",
           "workingSteps": [
             "Read the two rows needed: Pears = 55 and Plums = 46.",
             "Add them: 55 + 46 = 101."
@@ -520,7 +520,7 @@
           "blueprintId": "mr01-bp-table-read-and-combine",
           "stimulus": {
             "type": "table",
-            "caption": "Fruit sold at a market stall",
+            "caption": "Kilograms of each fruit sold",
             "headers": [
               "Fruit",
               "Kilograms sold"
@@ -578,7 +578,7 @@
         "p_preparation_stage": null,
         "p_difficulty": "medium",
         "p_question_content": {
-          "question": "The table shows the sport each pupil in a club chose. How many pupils chose Gymnastics or Football altogether?",
+          "question": "The table shows the number of pupils attending each sport at a club. How many pupils attended Gymnastics and Football altogether?",
           "workingSteps": [
             "Read the two rows needed: Gymnastics = 60 and Football = 95.",
             "Add them: 60 + 95 = 155."
@@ -600,10 +600,10 @@
           "blueprintId": "mr01-bp-table-read-and-combine",
           "stimulus": {
             "type": "table",
-            "caption": "The sport each pupil in a club chose",
+            "caption": "Pupils attending each sport",
             "headers": [
               "Sport",
-              "Number of pupils"
+              "Pupils"
             ],
             "rows": [
               [
@@ -658,7 +658,7 @@
         "p_preparation_stage": null,
         "p_difficulty": "medium",
         "p_question_content": {
-          "question": "The table shows books borrowed from a school library. How many books were borrowed on Friday and Wednesday together?",
+          "question": "The table shows the number of books borrowed from a school library each day. How many books were borrowed on Friday and Wednesday together?",
           "workingSteps": [
             "Read the two rows needed: Friday = 34 and Wednesday = 94.",
             "Add them: 34 + 94 = 128."
@@ -680,7 +680,7 @@
           "blueprintId": "mr01-bp-table-read-and-combine",
           "stimulus": {
             "type": "table",
-            "caption": "Books borrowed from a school library",
+            "caption": "Books borrowed each day",
             "headers": [
               "Day",
               "Books borrowed"
@@ -738,7 +738,7 @@
         "p_preparation_stage": null,
         "p_difficulty": "easy",
         "p_question_content": {
-          "question": "The table shows the sport each pupil in a club chose. How many pupils chose Tennis or Cricket altogether?",
+          "question": "The table shows the number of pupils attending each sport at a club. How many pupils attended Tennis and Cricket altogether?",
           "workingSteps": [
             "Read the two rows needed: Tennis = 35 and Cricket = 61.",
             "Add them: 35 + 61 = 96."
@@ -760,10 +760,10 @@
           "blueprintId": "mr01-bp-table-read-and-combine",
           "stimulus": {
             "type": "table",
-            "caption": "The sport each pupil in a club chose",
+            "caption": "Pupils attending each sport",
             "headers": [
               "Sport",
-              "Number of pupils"
+              "Pupils"
             ],
             "rows": [
               [
@@ -818,7 +818,7 @@
         "p_preparation_stage": null,
         "p_difficulty": "easy",
         "p_question_content": {
-          "question": "The table shows the sport each pupil in a club chose. How many pupils chose Cricket or Gymnastics altogether?",
+          "question": "The table shows the number of pupils attending each sport at a club. How many pupils attended Cricket and Gymnastics altogether?",
           "workingSteps": [
             "Read the two rows needed: Cricket = 71 and Gymnastics = 23.",
             "Add them: 71 + 23 = 94."
@@ -840,10 +840,10 @@
           "blueprintId": "mr01-bp-table-read-and-combine",
           "stimulus": {
             "type": "table",
-            "caption": "The sport each pupil in a club chose",
+            "caption": "Pupils attending each sport",
             "headers": [
               "Sport",
-              "Number of pupils"
+              "Pupils"
             ],
             "rows": [
               [
@@ -898,7 +898,7 @@
         "p_preparation_stage": null,
         "p_difficulty": "easy",
         "p_question_content": {
-          "question": "The table shows fruit sold at a market stall. How many kilograms of Cherries and Plums were sold altogether?",
+          "question": "The table shows the kilograms of each fruit sold at a market stall. How many kilograms of Cherries and Plums were sold altogether?",
           "workingSteps": [
             "Read the two rows needed: Cherries = 78 and Plums = 17.",
             "Add them: 78 + 17 = 95."
@@ -920,7 +920,7 @@
           "blueprintId": "mr01-bp-table-read-and-combine",
           "stimulus": {
             "type": "table",
-            "caption": "Fruit sold at a market stall",
+            "caption": "Kilograms of each fruit sold",
             "headers": [
               "Fruit",
               "Kilograms sold"
@@ -978,7 +978,7 @@
         "p_preparation_stage": null,
         "p_difficulty": "medium",
         "p_question_content": {
-          "question": "The table shows the number of pupils for each sport in two weeks. How many more pupils were recorded in Week 2 than in Week 1 altogether?",
+          "question": "The table shows the number of pupils attending four sports at a club in each of two weeks. How many more pupils attended in Week 2 than in Week 1 altogether?",
           "workingSteps": [
             "Week 1 total: 35 + 37 + 43 + 14 = 129.",
             "Week 2 total: 26 + 41 + 11 + 58 = 136.",
@@ -1002,7 +1002,7 @@
           "blueprintId": "mr01-bp-table-compare-column-totals",
           "stimulus": {
             "type": "table",
-            "caption": "The sport each pupil in a club chose, by week",
+            "caption": "Pupils attending each sport in Week 1 and Week 2",
             "headers": [
               "Sport",
               "Week 1",
@@ -1061,7 +1061,7 @@
         "p_preparation_stage": null,
         "p_difficulty": "medium",
         "p_question_content": {
-          "question": "The table shows the number of pupils for each sport in two weeks. How many more pupils were recorded in Week 2 than in Week 1 altogether?",
+          "question": "The table shows the number of pupils attending four sports at a club in each of two weeks. How many more pupils attended in Week 2 than in Week 1 altogether?",
           "workingSteps": [
             "Week 1 total: 44 + 25 + 17 + 37 = 123.",
             "Week 2 total: 35 + 17 + 55 + 32 = 139.",
@@ -1085,7 +1085,7 @@
           "blueprintId": "mr01-bp-table-compare-column-totals",
           "stimulus": {
             "type": "table",
-            "caption": "The sport each pupil in a club chose, by week",
+            "caption": "Pupils attending each sport in Week 1 and Week 2",
             "headers": [
               "Sport",
               "Week 1",
@@ -1144,7 +1144,7 @@
         "p_preparation_stage": null,
         "p_difficulty": "hard",
         "p_question_content": {
-          "question": "The table shows the number of kilograms for each fruit in two weeks. How many more kilograms were recorded in Week 2 than in Week 1 altogether?",
+          "question": "The table shows the kilograms of four fruits sold at a market stall in each of two weeks. How many more kilograms were sold in Week 2 than in Week 1 altogether?",
           "workingSteps": [
             "Week 1 total: 27 + 53 + 43 + 60 = 183.",
             "Week 2 total: 57 + 54 + 51 + 51 = 213.",
@@ -1168,7 +1168,7 @@
           "blueprintId": "mr01-bp-table-compare-column-totals",
           "stimulus": {
             "type": "table",
-            "caption": "Fruit sold at a market stall, by week",
+            "caption": "Kilograms of each fruit sold in Week 1 and Week 2",
             "headers": [
               "Fruit",
               "Week 1",
@@ -1227,7 +1227,7 @@
         "p_preparation_stage": null,
         "p_difficulty": "hard",
         "p_question_content": {
-          "question": "The table shows the number of pupils for each sport in two weeks. How many more pupils were recorded in Week 2 than in Week 1 altogether?",
+          "question": "The table shows the number of pupils attending four sports at a club in each of two weeks. How many more pupils attended in Week 2 than in Week 1 altogether?",
           "workingSteps": [
             "Week 1 total: 32 + 17 + 40 + 22 = 111.",
             "Week 2 total: 17 + 51 + 37 + 41 = 146.",
@@ -1251,7 +1251,7 @@
           "blueprintId": "mr01-bp-table-compare-column-totals",
           "stimulus": {
             "type": "table",
-            "caption": "The sport each pupil in a club chose, by week",
+            "caption": "Pupils attending each sport in Week 1 and Week 2",
             "headers": [
               "Sport",
               "Week 1",
@@ -1310,7 +1310,7 @@
         "p_preparation_stage": null,
         "p_difficulty": "hard",
         "p_question_content": {
-          "question": "The table shows the number of books for each day in two weeks. How many more books were recorded in Week 2 than in Week 1 altogether?",
+          "question": "The table shows the number of books borrowed on four days in each of two weeks. How many more books were borrowed in Week 2 than in Week 1 altogether?",
           "workingSteps": [
             "Week 1 total: 19 + 49 + 27 + 23 = 118.",
             "Week 2 total: 21 + 59 + 42 + 56 = 178.",
@@ -1334,7 +1334,7 @@
           "blueprintId": "mr01-bp-table-compare-column-totals",
           "stimulus": {
             "type": "table",
-            "caption": "Books borrowed from a school library, by week",
+            "caption": "Books borrowed each day in Week 1 and Week 2",
             "headers": [
               "Day",
               "Week 1",
@@ -1393,7 +1393,7 @@
         "p_preparation_stage": null,
         "p_difficulty": "hard",
         "p_question_content": {
-          "question": "The table shows the number of kilograms for each fruit in two weeks. How many more kilograms were recorded in Week 2 than in Week 1 altogether?",
+          "question": "The table shows the kilograms of four fruits sold at a market stall in each of two weeks. How many more kilograms were sold in Week 2 than in Week 1 altogether?",
           "workingSteps": [
             "Week 1 total: 60 + 22 + 22 + 29 = 133.",
             "Week 2 total: 11 + 50 + 54 + 39 = 154.",
@@ -1417,7 +1417,7 @@
           "blueprintId": "mr01-bp-table-compare-column-totals",
           "stimulus": {
             "type": "table",
-            "caption": "Fruit sold at a market stall, by week",
+            "caption": "Kilograms of each fruit sold in Week 1 and Week 2",
             "headers": [
               "Fruit",
               "Week 1",
@@ -1476,7 +1476,7 @@
         "p_preparation_stage": null,
         "p_difficulty": "hard",
         "p_question_content": {
-          "question": "The table shows the number of pupils for each sport in two weeks. How many more pupils were recorded in Week 2 than in Week 1 altogether?",
+          "question": "The table shows the number of pupils attending four sports at a club in each of two weeks. How many more pupils attended in Week 2 than in Week 1 altogether?",
           "workingSteps": [
             "Week 1 total: 60 + 10 + 17 + 21 = 108.",
             "Week 2 total: 36 + 37 + 46 + 39 = 158.",
@@ -1500,7 +1500,7 @@
           "blueprintId": "mr01-bp-table-compare-column-totals",
           "stimulus": {
             "type": "table",
-            "caption": "The sport each pupil in a club chose, by week",
+            "caption": "Pupils attending each sport in Week 1 and Week 2",
             "headers": [
               "Sport",
               "Week 1",
@@ -1559,7 +1559,7 @@
         "p_preparation_stage": null,
         "p_difficulty": "medium",
         "p_question_content": {
-          "question": "The table shows the number of kilograms for each fruit in two weeks. How many more kilograms were recorded in Week 2 than in Week 1 altogether?",
+          "question": "The table shows the kilograms of four fruits sold at a market stall in each of two weeks. How many more kilograms were sold in Week 2 than in Week 1 altogether?",
           "workingSteps": [
             "Week 1 total: 47 + 30 + 29 + 18 = 124.",
             "Week 2 total: 44 + 33 + 24 + 36 = 137.",
@@ -1583,7 +1583,7 @@
           "blueprintId": "mr01-bp-table-compare-column-totals",
           "stimulus": {
             "type": "table",
-            "caption": "Fruit sold at a market stall, by week",
+            "caption": "Kilograms of each fruit sold in Week 1 and Week 2",
             "headers": [
               "Fruit",
               "Week 1",
@@ -1642,7 +1642,7 @@
         "p_preparation_stage": null,
         "p_difficulty": "hard",
         "p_question_content": {
-          "question": "The table shows the number of pupils for each sport in two weeks. How many more pupils were recorded in Week 2 than in Week 1 altogether?",
+          "question": "The table shows the number of pupils attending four sports at a club in each of two weeks. How many more pupils attended in Week 2 than in Week 1 altogether?",
           "workingSteps": [
             "Week 1 total: 42 + 16 + 56 + 20 = 134.",
             "Week 2 total: 35 + 32 + 46 + 50 = 163.",
@@ -1666,7 +1666,7 @@
           "blueprintId": "mr01-bp-table-compare-column-totals",
           "stimulus": {
             "type": "table",
-            "caption": "The sport each pupil in a club chose, by week",
+            "caption": "Pupils attending each sport in Week 1 and Week 2",
             "headers": [
               "Sport",
               "Week 1",
@@ -1725,7 +1725,7 @@
         "p_preparation_stage": null,
         "p_difficulty": "hard",
         "p_question_content": {
-          "question": "The table shows the number of kilograms for each fruit in two weeks. How many more kilograms were recorded in Week 2 than in Week 1 altogether?",
+          "question": "The table shows the kilograms of four fruits sold at a market stall in each of two weeks. How many more kilograms were sold in Week 2 than in Week 1 altogether?",
           "workingSteps": [
             "Week 1 total: 26 + 19 + 46 + 27 = 118.",
             "Week 2 total: 38 + 35 + 37 + 39 = 149.",
@@ -1749,7 +1749,7 @@
           "blueprintId": "mr01-bp-table-compare-column-totals",
           "stimulus": {
             "type": "table",
-            "caption": "Fruit sold at a market stall, by week",
+            "caption": "Kilograms of each fruit sold in Week 1 and Week 2",
             "headers": [
               "Fruit",
               "Week 1",
@@ -1808,7 +1808,7 @@
         "p_preparation_stage": null,
         "p_difficulty": "medium",
         "p_question_content": {
-          "question": "The table shows the number of books for each day in two weeks. How many more books were recorded in Week 2 than in Week 1 altogether?",
+          "question": "The table shows the number of books borrowed on four days in each of two weeks. How many more books were borrowed in Week 2 than in Week 1 altogether?",
           "workingSteps": [
             "Week 1 total: 32 + 16 + 53 + 19 = 120.",
             "Week 2 total: 28 + 25 + 17 + 57 = 127.",
@@ -1832,7 +1832,7 @@
           "blueprintId": "mr01-bp-table-compare-column-totals",
           "stimulus": {
             "type": "table",
-            "caption": "Books borrowed from a school library, by week",
+            "caption": "Books borrowed each day in Week 1 and Week 2",
             "headers": [
               "Day",
               "Week 1",
@@ -1891,7 +1891,7 @@
         "p_preparation_stage": null,
         "p_difficulty": "hard",
         "p_question_content": {
-          "question": "The table shows the number of books for each day in two weeks. How many more books were recorded in Week 2 than in Week 1 altogether?",
+          "question": "The table shows the number of books borrowed on four days in each of two weeks. How many more books were borrowed in Week 2 than in Week 1 altogether?",
           "workingSteps": [
             "Week 1 total: 32 + 34 + 45 + 47 = 158.",
             "Week 2 total: 33 + 60 + 38 + 48 = 179.",
@@ -1915,7 +1915,7 @@
           "blueprintId": "mr01-bp-table-compare-column-totals",
           "stimulus": {
             "type": "table",
-            "caption": "Books borrowed from a school library, by week",
+            "caption": "Books borrowed each day in Week 1 and Week 2",
             "headers": [
               "Day",
               "Week 1",
@@ -1974,7 +1974,7 @@
         "p_preparation_stage": null,
         "p_difficulty": "medium",
         "p_question_content": {
-          "question": "The bar chart shows the sport each pupil in a club chose. How many more pupils chose Football than Tennis? Read the values carefully from the scale.",
+          "question": "The bar chart shows the number of pupils attending each sport at a club. How many more pupils attended Football than Tennis? Read the values carefully from the scale.",
           "workingSteps": [
             "Check the scale first: the gridlines go up in steps of 2.",
             "Football = 8 and Tennis = 4.",
@@ -1998,7 +1998,7 @@
           "blueprintId": "mr01-bp-bar-chart-read-difference",
           "stimulus": {
             "type": "bar-chart",
-            "title": "The sport each pupil in a club chose",
+            "title": "Pupils attending each sport",
             "yLabel": "Number of pupils",
             "categories": [
               "Football",
@@ -2047,7 +2047,7 @@
         "p_preparation_stage": null,
         "p_difficulty": "hard",
         "p_question_content": {
-          "question": "The bar chart shows books borrowed from a school library. How many more books were borrowed on Friday than on Wednesday? Read the values carefully from the scale.",
+          "question": "The bar chart shows the number of books borrowed from a school library each day. How many more books were borrowed on Friday than on Wednesday? Read the values carefully from the scale.",
           "workingSteps": [
             "Check the scale first: the gridlines go up in steps of 20.",
             "Friday = 100 and Wednesday = 80.",
@@ -2071,7 +2071,7 @@
           "blueprintId": "mr01-bp-bar-chart-read-difference",
           "stimulus": {
             "type": "bar-chart",
-            "title": "Books borrowed from a school library",
+            "title": "Books borrowed each day",
             "yLabel": "Books borrowed",
             "categories": [
               "Monday",
@@ -2120,7 +2120,7 @@
         "p_preparation_stage": null,
         "p_difficulty": "hard",
         "p_question_content": {
-          "question": "The bar chart shows fruit sold at a market stall. How many more kilograms of Cherries than Pears were sold? Read the values carefully from the scale.",
+          "question": "The bar chart shows the kilograms of each fruit sold at a market stall. How many more kilograms of Cherries than Pears were sold? Read the values carefully from the scale.",
           "workingSteps": [
             "Check the scale first: the gridlines go up in steps of 4.",
             "Cherries = 40 and Pears = 34.",
@@ -2144,7 +2144,7 @@
           "blueprintId": "mr01-bp-bar-chart-read-difference",
           "stimulus": {
             "type": "bar-chart",
-            "title": "Fruit sold at a market stall",
+            "title": "Kilograms of each fruit sold",
             "yLabel": "Kilograms sold",
             "categories": [
               "Apples",
@@ -2193,7 +2193,7 @@
         "p_preparation_stage": null,
         "p_difficulty": "medium",
         "p_question_content": {
-          "question": "The bar chart shows fruit sold at a market stall. How many more kilograms of Plums than Apples were sold? Read the values carefully from the scale.",
+          "question": "The bar chart shows the kilograms of each fruit sold at a market stall. How many more kilograms of Plums than Apples were sold? Read the values carefully from the scale.",
           "workingSteps": [
             "Check the scale first: the gridlines go up in steps of 2.",
             "Plums = 20 and Apples = 10.",
@@ -2217,7 +2217,7 @@
           "blueprintId": "mr01-bp-bar-chart-read-difference",
           "stimulus": {
             "type": "bar-chart",
-            "title": "Fruit sold at a market stall",
+            "title": "Kilograms of each fruit sold",
             "yLabel": "Kilograms sold",
             "categories": [
               "Apples",
@@ -2266,7 +2266,7 @@
         "p_preparation_stage": null,
         "p_difficulty": "medium",
         "p_question_content": {
-          "question": "The bar chart shows fruit sold at a market stall. How many more kilograms of Pears than Plums were sold? Read the values carefully from the scale.",
+          "question": "The bar chart shows the kilograms of each fruit sold at a market stall. How many more kilograms of Pears than Plums were sold? Read the values carefully from the scale.",
           "workingSteps": [
             "Check the scale first: the gridlines go up in steps of 5.",
             "Pears = 15 and Plums = 5.",
@@ -2290,7 +2290,7 @@
           "blueprintId": "mr01-bp-bar-chart-read-difference",
           "stimulus": {
             "type": "bar-chart",
-            "title": "Fruit sold at a market stall",
+            "title": "Kilograms of each fruit sold",
             "yLabel": "Kilograms sold",
             "categories": [
               "Apples",
@@ -2339,7 +2339,7 @@
         "p_preparation_stage": null,
         "p_difficulty": "hard",
         "p_question_content": {
-          "question": "The bar chart shows books borrowed from a school library. How many more books were borrowed on Thursday than on Tuesday? Read the values carefully from the scale.",
+          "question": "The bar chart shows the number of books borrowed from a school library each day. How many more books were borrowed on Thursday than on Tuesday? Read the values carefully from the scale.",
           "workingSteps": [
             "Check the scale first: the gridlines go up in steps of 20.",
             "Thursday = 120 and Tuesday = 110.",
@@ -2363,7 +2363,7 @@
           "blueprintId": "mr01-bp-bar-chart-read-difference",
           "stimulus": {
             "type": "bar-chart",
-            "title": "Books borrowed from a school library",
+            "title": "Books borrowed each day",
             "yLabel": "Books borrowed",
             "categories": [
               "Monday",
@@ -2412,7 +2412,7 @@
         "p_preparation_stage": null,
         "p_difficulty": "medium",
         "p_question_content": {
-          "question": "The bar chart shows fruit sold at a market stall. How many more kilograms of Grapes than Plums were sold? Read the values carefully from the scale.",
+          "question": "The bar chart shows the kilograms of each fruit sold at a market stall. How many more kilograms of Grapes than Plums were sold? Read the values carefully from the scale.",
           "workingSteps": [
             "Check the scale first: the gridlines go up in steps of 2.",
             "Grapes = 18 and Plums = 2.",
@@ -2436,7 +2436,7 @@
           "blueprintId": "mr01-bp-bar-chart-read-difference",
           "stimulus": {
             "type": "bar-chart",
-            "title": "Fruit sold at a market stall",
+            "title": "Kilograms of each fruit sold",
             "yLabel": "Kilograms sold",
             "categories": [
               "Apples",
@@ -2485,7 +2485,7 @@
         "p_preparation_stage": null,
         "p_difficulty": "hard",
         "p_question_content": {
-          "question": "The bar chart shows fruit sold at a market stall. How many more kilograms of Grapes than Apples were sold? Read the values carefully from the scale.",
+          "question": "The bar chart shows the kilograms of each fruit sold at a market stall. How many more kilograms of Grapes than Apples were sold? Read the values carefully from the scale.",
           "workingSteps": [
             "Check the scale first: the gridlines go up in steps of 10.",
             "Grapes = 95 and Apples = 85.",
@@ -2509,7 +2509,7 @@
           "blueprintId": "mr01-bp-bar-chart-read-difference",
           "stimulus": {
             "type": "bar-chart",
-            "title": "Fruit sold at a market stall",
+            "title": "Kilograms of each fruit sold",
             "yLabel": "Kilograms sold",
             "categories": [
               "Apples",
@@ -2558,7 +2558,7 @@
         "p_preparation_stage": null,
         "p_difficulty": "medium",
         "p_question_content": {
-          "question": "The bar chart shows fruit sold at a market stall. How many more kilograms of Plums than Grapes were sold? Read the values carefully from the scale.",
+          "question": "The bar chart shows the kilograms of each fruit sold at a market stall. How many more kilograms of Plums than Grapes were sold? Read the values carefully from the scale.",
           "workingSteps": [
             "Check the scale first: the gridlines go up in steps of 5.",
             "Plums = 50 and Grapes = 25.",
@@ -2582,7 +2582,7 @@
           "blueprintId": "mr01-bp-bar-chart-read-difference",
           "stimulus": {
             "type": "bar-chart",
-            "title": "Fruit sold at a market stall",
+            "title": "Kilograms of each fruit sold",
             "yLabel": "Kilograms sold",
             "categories": [
               "Apples",
@@ -2631,7 +2631,7 @@
         "p_preparation_stage": null,
         "p_difficulty": "hard",
         "p_question_content": {
-          "question": "The bar chart shows the sport each pupil in a club chose. How many more pupils chose Football than Swimming? Read the values carefully from the scale.",
+          "question": "The bar chart shows the number of pupils attending each sport at a club. How many more pupils attended Football than Swimming? Read the values carefully from the scale.",
           "workingSteps": [
             "Check the scale first: the gridlines go up in steps of 4.",
             "Football = 24 and Swimming = 8.",
@@ -2655,7 +2655,7 @@
           "blueprintId": "mr01-bp-bar-chart-read-difference",
           "stimulus": {
             "type": "bar-chart",
-            "title": "The sport each pupil in a club chose",
+            "title": "Pupils attending each sport",
             "yLabel": "Number of pupils",
             "categories": [
               "Football",
@@ -2704,7 +2704,7 @@
         "p_preparation_stage": null,
         "p_difficulty": "hard",
         "p_question_content": {
-          "question": "The bar chart shows fruit sold at a market stall. How many more kilograms of Plums than Grapes were sold? Read the values carefully from the scale.",
+          "question": "The bar chart shows the kilograms of each fruit sold at a market stall. How many more kilograms of Plums than Grapes were sold? Read the values carefully from the scale.",
           "workingSteps": [
             "Check the scale first: the gridlines go up in steps of 4.",
             "Plums = 32 and Grapes = 10.",
@@ -2728,7 +2728,7 @@
           "blueprintId": "mr01-bp-bar-chart-read-difference",
           "stimulus": {
             "type": "bar-chart",
-            "title": "Fruit sold at a market stall",
+            "title": "Kilograms of each fruit sold",
             "yLabel": "Kilograms sold",
             "categories": [
               "Apples",
@@ -2777,7 +2777,7 @@
         "p_preparation_stage": null,
         "p_difficulty": "hard",
         "p_question_content": {
-          "question": "The bar chart shows fruit sold at a market stall. How many more kilograms of Apples than Pears were sold? Read the values carefully from the scale.",
+          "question": "The bar chart shows the kilograms of each fruit sold at a market stall. How many more kilograms of Apples than Pears were sold? Read the values carefully from the scale.",
           "workingSteps": [
             "Check the scale first: the gridlines go up in steps of 10.",
             "Apples = 100 and Pears = 75.",
@@ -2801,7 +2801,7 @@
           "blueprintId": "mr01-bp-bar-chart-read-difference",
           "stimulus": {
             "type": "bar-chart",
-            "title": "Fruit sold at a market stall",
+            "title": "Kilograms of each fruit sold",
             "yLabel": "Kilograms sold",
             "categories": [
               "Apples",
@@ -2850,7 +2850,7 @@
         "p_preparation_stage": null,
         "p_difficulty": "hard",
         "p_question_content": {
-          "question": "The bar chart shows books borrowed from a school library. What is the mean number of books borrowed per day? Read the values carefully from the scale.",
+          "question": "The bar chart shows the number of books borrowed from a school library each day. What is the mean number of books borrowed per day? Read the values carefully from the scale.",
           "workingSteps": [
             "Check the scale first: the gridlines go up in steps of 20.",
             "Read all five bars: 200, 200, 90, 180, 80. Their total is 750.",
@@ -2872,7 +2872,7 @@
           "blueprintId": "mr01-bp-bar-chart-mean",
           "stimulus": {
             "type": "bar-chart",
-            "title": "Books borrowed from a school library",
+            "title": "Books borrowed each day",
             "yLabel": "Books borrowed",
             "categories": [
               "Monday",
@@ -2921,7 +2921,7 @@
         "p_preparation_stage": null,
         "p_difficulty": "hard",
         "p_question_content": {
-          "question": "The bar chart shows fruit sold at a market stall. What is the mean number of kilograms sold per fruit? Read the values carefully from the scale.",
+          "question": "The bar chart shows the kilograms of each fruit sold at a market stall. What is the mean number of kilograms sold per fruit? Read the values carefully from the scale.",
           "workingSteps": [
             "Check the scale first: the gridlines go up in steps of 4.",
             "Read all five bars: 30, 30, 6, 16, 28. Their total is 110.",
@@ -2943,7 +2943,7 @@
           "blueprintId": "mr01-bp-bar-chart-mean",
           "stimulus": {
             "type": "bar-chart",
-            "title": "Fruit sold at a market stall",
+            "title": "Kilograms of each fruit sold",
             "yLabel": "Kilograms sold",
             "categories": [
               "Apples",
@@ -2992,7 +2992,7 @@
         "p_preparation_stage": null,
         "p_difficulty": "hard",
         "p_question_content": {
-          "question": "The bar chart shows fruit sold at a market stall. What is the mean number of kilograms sold per fruit? Read the values carefully from the scale.",
+          "question": "The bar chart shows the kilograms of each fruit sold at a market stall. What is the mean number of kilograms sold per fruit? Read the values carefully from the scale.",
           "workingSteps": [
             "Check the scale first: the gridlines go up in steps of 20.",
             "Read all five bars: 70, 140, 10, 60, 130. Their total is 410.",
@@ -3014,7 +3014,7 @@
           "blueprintId": "mr01-bp-bar-chart-mean",
           "stimulus": {
             "type": "bar-chart",
-            "title": "Fruit sold at a market stall",
+            "title": "Kilograms of each fruit sold",
             "yLabel": "Kilograms sold",
             "categories": [
               "Apples",
@@ -3063,7 +3063,7 @@
         "p_preparation_stage": null,
         "p_difficulty": "hard",
         "p_question_content": {
-          "question": "The bar chart shows fruit sold at a market stall. What is the mean number of kilograms sold per fruit? Read the values carefully from the scale.",
+          "question": "The bar chart shows the kilograms of each fruit sold at a market stall. What is the mean number of kilograms sold per fruit? Read the values carefully from the scale.",
           "workingSteps": [
             "Check the scale first: the gridlines go up in steps of 4.",
             "Read all five bars: 40, 10, 22, 34, 14. Their total is 120.",
@@ -3085,7 +3085,7 @@
           "blueprintId": "mr01-bp-bar-chart-mean",
           "stimulus": {
             "type": "bar-chart",
-            "title": "Fruit sold at a market stall",
+            "title": "Kilograms of each fruit sold",
             "yLabel": "Kilograms sold",
             "categories": [
               "Apples",
@@ -3134,7 +3134,7 @@
         "p_preparation_stage": null,
         "p_difficulty": "hard",
         "p_question_content": {
-          "question": "The bar chart shows the sport each pupil in a club chose. What is the mean number of pupils per sport? Read the values carefully from the scale.",
+          "question": "The bar chart shows the number of pupils attending each sport at a club. What is the mean number of pupils attending per sport? Read the values carefully from the scale.",
           "workingSteps": [
             "Check the scale first: the gridlines go up in steps of 20.",
             "Read all five bars: 70, 200, 80, 140, 90. Their total is 580.",
@@ -3156,7 +3156,7 @@
           "blueprintId": "mr01-bp-bar-chart-mean",
           "stimulus": {
             "type": "bar-chart",
-            "title": "The sport each pupil in a club chose",
+            "title": "Pupils attending each sport",
             "yLabel": "Number of pupils",
             "categories": [
               "Football",
@@ -3205,7 +3205,7 @@
         "p_preparation_stage": null,
         "p_difficulty": "hard",
         "p_question_content": {
-          "question": "The bar chart shows the sport each pupil in a club chose. What is the mean number of pupils per sport? Read the values carefully from the scale.",
+          "question": "The bar chart shows the number of pupils attending each sport at a club. What is the mean number of pupils attending per sport? Read the values carefully from the scale.",
           "workingSteps": [
             "Check the scale first: the gridlines go up in steps of 20.",
             "Read all five bars: 110, 200, 70, 130, 160. Their total is 670.",
@@ -3227,7 +3227,7 @@
           "blueprintId": "mr01-bp-bar-chart-mean",
           "stimulus": {
             "type": "bar-chart",
-            "title": "The sport each pupil in a club chose",
+            "title": "Pupils attending each sport",
             "yLabel": "Number of pupils",
             "categories": [
               "Football",
@@ -3276,7 +3276,7 @@
         "p_preparation_stage": null,
         "p_difficulty": "hard",
         "p_question_content": {
-          "question": "The bar chart shows fruit sold at a market stall. What is the mean number of kilograms sold per fruit? Read the values carefully from the scale.",
+          "question": "The bar chart shows the kilograms of each fruit sold at a market stall. What is the mean number of kilograms sold per fruit? Read the values carefully from the scale.",
           "workingSteps": [
             "Check the scale first: the gridlines go up in steps of 5.",
             "Read all five bars: 40, 35, 25, 20, 40. Their total is 160.",
@@ -3298,7 +3298,7 @@
           "blueprintId": "mr01-bp-bar-chart-mean",
           "stimulus": {
             "type": "bar-chart",
-            "title": "Fruit sold at a market stall",
+            "title": "Kilograms of each fruit sold",
             "yLabel": "Kilograms sold",
             "categories": [
               "Apples",
@@ -3347,7 +3347,7 @@
         "p_preparation_stage": null,
         "p_difficulty": "hard",
         "p_question_content": {
-          "question": "The bar chart shows fruit sold at a market stall. What is the mean number of kilograms sold per fruit? Read the values carefully from the scale.",
+          "question": "The bar chart shows the kilograms of each fruit sold at a market stall. What is the mean number of kilograms sold per fruit? Read the values carefully from the scale.",
           "workingSteps": [
             "Check the scale first: the gridlines go up in steps of 10.",
             "Read all five bars: 55, 15, 55, 10, 80. Their total is 215.",
@@ -3369,7 +3369,7 @@
           "blueprintId": "mr01-bp-bar-chart-mean",
           "stimulus": {
             "type": "bar-chart",
-            "title": "Fruit sold at a market stall",
+            "title": "Kilograms of each fruit sold",
             "yLabel": "Kilograms sold",
             "categories": [
               "Apples",
@@ -3418,7 +3418,7 @@
         "p_preparation_stage": null,
         "p_difficulty": "hard",
         "p_question_content": {
-          "question": "The bar chart shows fruit sold at a market stall. What is the mean number of kilograms sold per fruit? Read the values carefully from the scale.",
+          "question": "The bar chart shows the kilograms of each fruit sold at a market stall. What is the mean number of kilograms sold per fruit? Read the values carefully from the scale.",
           "workingSteps": [
             "Check the scale first: the gridlines go up in steps of 5.",
             "Read all five bars: 5, 35, 15, 45, 50. Their total is 150.",
@@ -3440,7 +3440,7 @@
           "blueprintId": "mr01-bp-bar-chart-mean",
           "stimulus": {
             "type": "bar-chart",
-            "title": "Fruit sold at a market stall",
+            "title": "Kilograms of each fruit sold",
             "yLabel": "Kilograms sold",
             "categories": [
               "Apples",
@@ -3489,7 +3489,7 @@
         "p_preparation_stage": null,
         "p_difficulty": "hard",
         "p_question_content": {
-          "question": "The bar chart shows books borrowed from a school library. What is the mean number of books borrowed per day? Read the values carefully from the scale.",
+          "question": "The bar chart shows the number of books borrowed from a school library each day. What is the mean number of books borrowed per day? Read the values carefully from the scale.",
           "workingSteps": [
             "Check the scale first: the gridlines go up in steps of 2.",
             "Read all five bars: 2, 2, 16, 12, 18. Their total is 50.",
@@ -3511,7 +3511,7 @@
           "blueprintId": "mr01-bp-bar-chart-mean",
           "stimulus": {
             "type": "bar-chart",
-            "title": "Books borrowed from a school library",
+            "title": "Books borrowed each day",
             "yLabel": "Books borrowed",
             "categories": [
               "Monday",
@@ -3560,7 +3560,7 @@
         "p_preparation_stage": null,
         "p_difficulty": "hard",
         "p_question_content": {
-          "question": "The bar chart shows fruit sold at a market stall. What is the mean number of kilograms sold per fruit? Read the values carefully from the scale.",
+          "question": "The bar chart shows the kilograms of each fruit sold at a market stall. What is the mean number of kilograms sold per fruit? Read the values carefully from the scale.",
           "workingSteps": [
             "Check the scale first: the gridlines go up in steps of 20.",
             "Read all five bars: 130, 200, 170, 10, 170. Their total is 680.",
@@ -3582,7 +3582,7 @@
           "blueprintId": "mr01-bp-bar-chart-mean",
           "stimulus": {
             "type": "bar-chart",
-            "title": "Fruit sold at a market stall",
+            "title": "Kilograms of each fruit sold",
             "yLabel": "Kilograms sold",
             "categories": [
               "Apples",
@@ -3631,7 +3631,7 @@
         "p_preparation_stage": null,
         "p_difficulty": "hard",
         "p_question_content": {
-          "question": "The bar chart shows fruit sold at a market stall. What is the mean number of kilograms sold per fruit? Read the values carefully from the scale.",
+          "question": "The bar chart shows the kilograms of each fruit sold at a market stall. What is the mean number of kilograms sold per fruit? Read the values carefully from the scale.",
           "workingSteps": [
             "Check the scale first: the gridlines go up in steps of 10.",
             "Read all five bars: 5, 75, 10, 10, 15. Their total is 115.",
@@ -3653,7 +3653,7 @@
           "blueprintId": "mr01-bp-bar-chart-mean",
           "stimulus": {
             "type": "bar-chart",
-            "title": "Fruit sold at a market stall",
+            "title": "Kilograms of each fruit sold",
             "yLabel": "Kilograms sold",
             "categories": [
               "Apples",

@@ -302,50 +302,50 @@ All candidates are `pending_review` once submitted. Nothing is published by this
 ## mr04-elapsed-time
 
 - **csse-br-mr04-bp-timetable-journey-time-01** [hard; interpretation; timetable_bus]
-  - Representation: table -- table {"headers":["Stop","Leaves at"],"rows":[["Market Square","15:50"],["Library","16:38"],["School","16:50"],["Park","17:12"]]}
-  - Q: The timetable shows when a bus leaves each stop. How many minutes does the journey from Library to Park take?
+  - Representation: table -- table {"headers":["Stop","Time"],"rows":[["Market Square","15:50"],["Library","16:38"],["School","16:50"],["Park","17:12"]]}
+  - Q: The timetable shows the time a bus is at each stop. How many minutes does the journey from Library to Park take?
   - Answer: 34
   - Working: Read the two times: Library at 16:38 and Park at 17:12. / From 16:38 to 17:12 is 34 minutes (count on to the next hour, then add the rest).
   - Targets: subtracting the minutes digits only, or treating the times as decimals, when the journey crosses the hour
 - **csse-br-mr04-bp-timetable-journey-time-02** [medium; interpretation; timetable_bus]
-  - Representation: table -- table {"headers":["Stop","Leaves at"],"rows":[["Market Square","11:30"],["Library","12:19"],["School","12:41"],["Park","13:34"]]}
-  - Q: The timetable shows when a bus leaves each stop. How many minutes does the journey from Library to Park take?
+  - Representation: table -- table {"headers":["Stop","Time"],"rows":[["Market Square","11:30"],["Library","12:19"],["School","12:41"],["Park","13:34"]]}
+  - Q: The timetable shows the time a bus is at each stop. How many minutes does the journey from Library to Park take?
   - Answer: 75
   - Working: Read the two times: Library at 12:19 and Park at 13:34. / From 12:19 to 13:34 is 75 minutes (count on to the next hour, then add the rest).
   - Targets: subtracting the minutes digits only, or treating the times as decimals, when the journey crosses the hour
 - **csse-br-mr04-bp-timetable-journey-time-03** [hard; interpretation; timetable_coach]
-  - Representation: table -- table {"headers":["Stop","Leaves at"],"rows":[["Depot","12:55"],["Museum","13:46"],["Castle","14:23"],["Beach","14:42"]]}
-  - Q: The timetable shows when a coach leaves each stop. How many minutes does the journey from Museum to Beach take?
+  - Representation: table -- table {"headers":["Stop","Time"],"rows":[["Depot","12:55"],["Museum","13:46"],["Castle","14:23"],["Beach","14:42"]]}
+  - Q: The timetable shows the time a coach is at each stop. How many minutes does the journey from Museum to Beach take?
   - Answer: 56
   - Working: Read the two times: Museum at 13:46 and Beach at 14:42. / From 13:46 to 14:42 is 56 minutes (count on to the next hour, then add the rest).
   - Targets: subtracting the minutes digits only, or treating the times as decimals, when the journey crosses the hour
 - **csse-br-mr04-bp-timetable-journey-time-04** [medium; interpretation; timetable_coach]
-  - Representation: table -- table {"headers":["Stop","Leaves at"],"rows":[["Depot","10:10"],["Museum","10:33"],["Castle","10:47"],["Beach","10:59"]]}
-  - Q: The timetable shows when a coach leaves each stop. How many minutes does the journey from Castle to Beach take?
+  - Representation: table -- table {"headers":["Stop","Time"],"rows":[["Depot","10:10"],["Museum","10:33"],["Castle","10:47"],["Beach","10:59"]]}
+  - Q: The timetable shows the time a coach is at each stop. How many minutes does the journey from Castle to Beach take?
   - Answer: 12
   - Working: Read the two times: Castle at 10:47 and Beach at 10:59. / From 10:47 to 10:59 is 12 minutes (count on to the next hour, then add the rest).
   - Targets: subtracting the minutes digits only, or treating the times as decimals, when the journey crosses the hour
 - **csse-br-mr04-bp-timetable-journey-time-05** [hard; interpretation; timetable_train]
-  - Representation: table -- table {"headers":["Stop","Leaves at"],"rows":[["Harbour","15:10"],["Central","15:43"],["Riverside","16:09"],["Hilltop","16:34"]]}
-  - Q: The timetable shows when a train leaves each stop. How many minutes does the journey from Central to Riverside take?
+  - Representation: table -- table {"headers":["Stop","Time"],"rows":[["Harbour","15:10"],["Central","15:43"],["Riverside","16:09"],["Hilltop","16:34"]]}
+  - Q: The timetable shows the time a train is at each stop. How many minutes does the journey from Central to Riverside take?
   - Answer: 26
   - Working: Read the two times: Central at 15:43 and Riverside at 16:09. / From 15:43 to 16:09 is 26 minutes (count on to the next hour, then add the rest).
   - Targets: subtracting the minutes digits only, or treating the times as decimals, when the journey crosses the hour
 - **csse-br-mr04-bp-timetable-journey-time-06** [medium; interpretation; timetable_train]
-  - Representation: table -- table {"headers":["Stop","Leaves at"],"rows":[["Harbour","10:20"],["Central","10:32"],["Riverside","11:16"],["Hilltop","11:34"]]}
-  - Q: The timetable shows when a train leaves each stop. How many minutes does the journey from Riverside to Hilltop take?
+  - Representation: table -- table {"headers":["Stop","Time"],"rows":[["Harbour","10:20"],["Central","10:32"],["Riverside","11:16"],["Hilltop","11:34"]]}
+  - Q: The timetable shows the time a train is at each stop. How many minutes does the journey from Riverside to Hilltop take?
   - Answer: 18
   - Working: Read the two times: Riverside at 11:16 and Hilltop at 11:34. / From 11:16 to 11:34 is 18 minutes (count on to the next hour, then add the rest).
   - Targets: subtracting the minutes digits only, or treating the times as decimals, when the journey crosses the hour
 - **csse-br-mr04-bp-timetable-journey-time-07** [hard; interpretation; timetable_bus]
-  - Representation: table -- table {"headers":["Stop","Leaves at"],"rows":[["Market Square","16:20"],["Library","16:43"],["School","17:36"],["Park","18:16"]]}
-  - Q: The timetable shows when a bus leaves each stop. How many minutes does the journey from School to Park take?
+  - Representation: table -- table {"headers":["Stop","Time"],"rows":[["Market Square","16:20"],["Library","16:43"],["School","17:36"],["Park","18:16"]]}
+  - Q: The timetable shows the time a bus is at each stop. How many minutes does the journey from School to Park take?
   - Answer: 40
   - Working: Read the two times: School at 17:36 and Park at 18:16. / From 17:36 to 18:16 is 40 minutes (count on to the next hour, then add the rest).
   - Targets: subtracting the minutes digits only, or treating the times as decimals, when the journey crosses the hour
 - **csse-br-mr04-bp-timetable-journey-time-08** [medium; interpretation; timetable_train]
-  - Representation: table -- table {"headers":["Stop","Leaves at"],"rows":[["Harbour","12:25"],["Central","12:44"],["Riverside","13:04"],["Hilltop","13:36"]]}
-  - Q: The timetable shows when a train leaves each stop. How many minutes does the journey from Riverside to Hilltop take?
+  - Representation: table -- table {"headers":["Stop","Time"],"rows":[["Harbour","12:25"],["Central","12:44"],["Riverside","13:04"],["Hilltop","13:36"]]}
+  - Q: The timetable shows the time a train is at each stop. How many minutes does the journey from Riverside to Hilltop take?
   - Answer: 32
   - Working: Read the two times: Riverside at 13:04 and Hilltop at 13:36. / From 13:04 to 13:36 is 32 minutes (count on to the next hour, then add the rest).
   - Targets: subtracting the minutes digits only, or treating the times as decimals, when the journey crosses the hour

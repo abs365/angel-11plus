@@ -40,7 +40,7 @@ Questions to ask of each blueprint: (1) is the demand different from what the ch
 - **Competency / family / skill:** MR-01 / `mr01-data-table` / QT-MR-09
 - **Purpose:** Find the right two rows in a table and add their values, ignoring the other rows.
 - **Misconception targeted:** adding every value in the table, or the wrong two rows, instead of only the rows the question names
-- **Example question:** The table shows fruit sold at a market stall. How many kilograms of Grapes and Apples were sold altogether?
+- **Example question:** The table shows the kilograms of each fruit sold at a market stall. How many kilograms of Grapes and Apples were sold altogether?
 - **Stimulus shown with it:** table {"headers":["Fruit","Kilograms sold"],"rows":[["Apples","95"],["Pears","82"],["Plums","46"],["Cherries","44"],["Grapes","91"]]}
 - **Answer and derivation:** answer **186**. Read the two rows needed: Grapes = 91 and Apples = 95. Add them: 91 + 95 = 186.  _(deterministic; re-derived in tests by an independent method from the text/stimulus the child sees.)_
 - **Structural difference from existing material:** Existing data items list values in a sentence ('Amy: 7, Ben: 4 ...'). Here the data is only in a table and the child must pick the two rows named. Reading a table is the skill; the arithmetic is deliberately easy.
@@ -54,7 +54,7 @@ Questions to ask of each blueprint: (1) is the demand different from what the ch
 - **Competency / family / skill:** MR-01 / `mr01-data-table` / QT-MR-09
 - **Purpose:** Total two columns of a table and find how much greater one total is -- a multi-step read across the whole table.
 - **Misconception targeted:** comparing only one row (or one pair of rows) instead of totalling each whole column before subtracting
-- **Example question:** The table shows the number of pupils for each sport in two weeks. How many more pupils were recorded in Week 2 than in Week 1 altogether?
+- **Example question:** The table shows the number of pupils attending four sports at a club in each of two weeks. How many more pupils attended in Week 2 than in Week 1 altogether?
 - **Stimulus shown with it:** table {"headers":["Sport","Week 1","Week 2"],"rows":[["Football","35","26"],["Swimming","37","41"],["Tennis","43","11"],["Cricket","14","58"]]}
 - **Answer and derivation:** answer **7**. Week 1 total: 35 + 37 + 43 + 14 = 129. Week 2 total: 26 + 41 + 11 + 58 = 136. Difference: 136 − 129 = 7.  _(deterministic; re-derived in tests by an independent method from the text/stimulus the child sees.)_
 - **Structural difference from existing material:** A two-column table where the child totals each column and subtracts. Adds multi-step reading across the whole table, not two cells.
@@ -68,7 +68,7 @@ Questions to ask of each blueprint: (1) is the demand different from what the ch
 - **Competency / family / skill:** MR-01 / `mr01-data-table` / QT-MR-09
 - **Purpose:** Read two bar heights from a scale (including bars that end between gridlines) and find how many more one is than the other.
 - **Misconception targeted:** reading the vertical scale as going up in ones, or reading a bar that ends between gridlines as the lower gridline
-- **Example question:** The bar chart shows the sport each pupil in a club chose. How many more pupils chose Football than Tennis? Read the values carefully from the scale.
+- **Example question:** The bar chart shows the number of pupils attending each sport at a club. How many more pupils attended Football than Tennis? Read the values carefully from the scale.
 - **Stimulus shown with it:** bar chart {"categories":["Football","Swimming","Tennis","Cricket","Gymnastics"],"values":[8,12,4,10,6],"scaleStep":2}
 - **Answer and derivation:** answer **4**. Check the scale first: the gridlines go up in steps of 2. Football = 8 and Tennis = 4. Difference: 8 − 4 = 4.  _(deterministic; re-derived in tests by an independent method from the text/stimulus the child sees.)_
 - **Structural difference from existing material:** A bar chart with a scale that varies (steps of 2, 4, 5, 10, 20) and bars that often end between gridlines. The skill is reading the scale, which prose cannot test.
@@ -82,7 +82,7 @@ Questions to ask of each blueprint: (1) is the demand different from what the ch
 - **Competency / family / skill:** MR-01 / `mr01-data-table` / QT-MR-09
 - **Purpose:** Read all five bars from a scale, total them and divide by the number of bars to find the mean -- averages applied to a chart, not a list.
 - **Misconception targeted:** dividing the total by the largest bar, or by the scale step, instead of by the number of bars
-- **Example question:** The bar chart shows books borrowed from a school library. What is the mean number of books borrowed per day? Read the values carefully from the scale.
+- **Example question:** The bar chart shows the number of books borrowed from a school library each day. What is the mean number of books borrowed per day? Read the values carefully from the scale.
 - **Stimulus shown with it:** bar chart {"categories":["Monday","Tuesday","Wednesday","Thursday","Friday"],"values":[200,200,90,180,80],"scaleStep":20}
 - **Answer and derivation:** answer **150**. Check the scale first: the gridlines go up in steps of 20. Read all five bars: 200, 200, 90, 180, 80. Their total is 750. Mean = 750 ÷ 5 = 150.  _(deterministic; re-derived in tests by an independent method from the text/stimulus the child sees.)_
 - **Structural difference from existing material:** Read five bars, total, divide by five. Connects averages to a chart (existing mean items use lists).
@@ -174,8 +174,8 @@ Questions to ask of each blueprint: (1) is the demand different from what the ch
 - **Competency / family / skill:** MR-04 / `mr04-elapsed-time` / QT-MR-10
 - **Purpose:** Read two times from a timetable and find the journey time in minutes, including journeys that cross an hour boundary.
 - **Misconception targeted:** subtracting the minutes digits only, or treating the times as decimals, when the journey crosses the hour
-- **Example question:** The timetable shows when a bus leaves each stop. How many minutes does the journey from Library to Park take?
-- **Stimulus shown with it:** table {"headers":["Stop","Leaves at"],"rows":[["Market Square","15:50"],["Library","16:38"],["School","16:50"],["Park","17:12"]]}
+- **Example question:** The timetable shows the time a bus is at each stop. How many minutes does the journey from Library to Park take?
+- **Stimulus shown with it:** table {"headers":["Stop","Time"],"rows":[["Market Square","15:50"],["Library","16:38"],["School","16:50"],["Park","17:12"]]}
 - **Answer and derivation:** answer **34**. Read the two times: Library at 16:38 and Park at 17:12. From 16:38 to 17:12 is 34 minutes (count on to the next hour, then add the rest).  _(deterministic; re-derived in tests by an independent method from the text/stimulus the child sees.)_
 - **Structural difference from existing material:** Existing time items are prose ('starts at 14:00 ... lasts 45 minutes'). Here the times are in a timetable, and the journey crosses an hour boundary for roughly a third of items.
 - **Context variation:** 3 context tag(s) in the prepared set: timetable_bus, timetable_coach, timetable_train

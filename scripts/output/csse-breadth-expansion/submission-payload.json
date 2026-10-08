@@ -2226,7 +2226,7 @@
         "p_preparation_stage": null,
         "p_difficulty": "hard",
         "p_question_content": {
-          "question": "The timetable shows when a bus leaves each stop. How many minutes does the journey from Library to Park take?",
+          "question": "The timetable shows the time a bus is at each stop. How many minutes does the journey from Library to Park take?",
           "workingSteps": [
             "Read the two times: Library at 16:38 and Park at 17:12.",
             "From 16:38 to 17:12 is 34 minutes (count on to the next hour, then add the rest)."
@@ -2247,10 +2247,10 @@
           "blueprintId": "mr04-bp-timetable-journey-time",
           "stimulus": {
             "type": "table",
-            "caption": "Bus timetable",
+            "caption": "Bus timetable: time at each stop",
             "headers": [
               "Stop",
-              "Leaves at"
+              "Time"
             ],
             "rows": [
               [
@@ -2301,7 +2301,7 @@
         "p_preparation_stage": null,
         "p_difficulty": "medium",
         "p_question_content": {
-          "question": "The timetable shows when a bus leaves each stop. How many minutes does the journey from Library to Park take?",
+          "question": "The timetable shows the time a bus is at each stop. How many minutes does the journey from Library to Park take?",
           "workingSteps": [
             "Read the two times: Library at 12:19 and Park at 13:34.",
             "From 12:19 to 13:34 is 75 minutes (count on to the next hour, then add the rest)."
@@ -2322,10 +2322,10 @@
           "blueprintId": "mr04-bp-timetable-journey-time",
           "stimulus": {
             "type": "table",
-            "caption": "Bus timetable",
+            "caption": "Bus timetable: time at each stop",
             "headers": [
               "Stop",
-              "Leaves at"
+              "Time"
             ],
             "rows": [
               [
@@ -2376,7 +2376,7 @@
         "p_preparation_stage": null,
         "p_difficulty": "hard",
         "p_question_content": {
-          "question": "The timetable shows when a coach leaves each stop. How many minutes does the journey from Museum to Beach take?",
+          "question": "The timetable shows the time a coach is at each stop. How many minutes does the journey from Museum to Beach take?",
           "workingSteps": [
             "Read the two times: Museum at 13:46 and Beach at 14:42.",
             "From 13:46 to 14:42 is 56 minutes (count on to the next hour, then add the rest)."
@@ -2397,10 +2397,10 @@
           "blueprintId": "mr04-bp-timetable-journey-time",
           "stimulus": {
             "type": "table",
-            "caption": "Coach timetable",
+            "caption": "Coach timetable: time at each stop",
             "headers": [
               "Stop",
-              "Leaves at"
+              "Time"
             ],
             "rows": [
               [
@@ -2451,7 +2451,7 @@
         "p_preparation_stage": null,
         "p_difficulty": "medium",
         "p_question_content": {
-          "question": "The timetable shows when a coach leaves each stop. How many minutes does the journey from Castle to Beach take?",
+          "question": "The timetable shows the time a coach is at each stop. How many minutes does the journey from Castle to Beach take?",
           "workingSteps": [
             "Read the two times: Castle at 10:47 and Beach at 10:59.",
             "From 10:47 to 10:59 is 12 minutes (count on to the next hour, then add the rest)."
@@ -2472,10 +2472,10 @@
           "blueprintId": "mr04-bp-timetable-journey-time",
           "stimulus": {
             "type": "table",
-            "caption": "Coach timetable",
+            "caption": "Coach timetable: time at each stop",
             "headers": [
               "Stop",
-              "Leaves at"
+              "Time"
             ],
             "rows": [
               [
@@ -2526,7 +2526,7 @@
         "p_preparation_stage": null,
         "p_difficulty": "hard",
         "p_question_content": {
-          "question": "The timetable shows when a train leaves each stop. How many minutes does the journey from Central to Riverside take?",
+          "question": "The timetable shows the time a train is at each stop. How many minutes does the journey from Central to Riverside take?",
           "workingSteps": [
             "Read the two times: Central at 15:43 and Riverside at 16:09.",
             "From 15:43 to 16:09 is 26 minutes (count on to the next hour, then add the rest)."
@@ -2547,10 +2547,10 @@
           "blueprintId": "mr04-bp-timetable-journey-time",
           "stimulus": {
             "type": "table",
-            "caption": "Train timetable",
+            "caption": "Train timetable: time at each stop",
             "headers": [
               "Stop",
-              "Leaves at"
+              "Time"
             ],
             "rows": [
               [
@@ -2601,7 +2601,7 @@
         "p_preparation_stage": null,
         "p_difficulty": "medium",
         "p_question_content": {
-          "question": "The timetable shows when a train leaves each stop. How many minutes does the journey from Riverside to Hilltop take?",
+          "question": "The timetable shows the time a train is at each stop. How many minutes does the journey from Riverside to Hilltop take?",
           "workingSteps": [
             "Read the two times: Riverside at 11:16 and Hilltop at 11:34.",
             "From 11:16 to 11:34 is 18 minutes (count on to the next hour, then add the rest)."
@@ -2622,10 +2622,10 @@
           "blueprintId": "mr04-bp-timetable-journey-time",
           "stimulus": {
             "type": "table",
-            "caption": "Train timetable",
+            "caption": "Train timetable: time at each stop",
             "headers": [
               "Stop",
-              "Leaves at"
+              "Time"
             ],
             "rows": [
               [
@@ -2676,7 +2676,7 @@
         "p_preparation_stage": null,
         "p_difficulty": "hard",
         "p_question_content": {
-          "question": "The timetable shows when a bus leaves each stop. How many minutes does the journey from School to Park take?",
+          "question": "The timetable shows the time a bus is at each stop. How many minutes does the journey from School to Park take?",
           "workingSteps": [
             "Read the two times: School at 17:36 and Park at 18:16.",
             "From 17:36 to 18:16 is 40 minutes (count on to the next hour, then add the rest)."
@@ -2697,10 +2697,10 @@
           "blueprintId": "mr04-bp-timetable-journey-time",
           "stimulus": {
             "type": "table",
-            "caption": "Bus timetable",
+            "caption": "Bus timetable: time at each stop",
             "headers": [
               "Stop",
-              "Leaves at"
+              "Time"
             ],
             "rows": [
               [
@@ -2751,7 +2751,7 @@
         "p_preparation_stage": null,
         "p_difficulty": "medium",
         "p_question_content": {
-          "question": "The timetable shows when a train leaves each stop. How many minutes does the journey from Riverside to Hilltop take?",
+          "question": "The timetable shows the time a train is at each stop. How many minutes does the journey from Riverside to Hilltop take?",
           "workingSteps": [
             "Read the two times: Riverside at 13:04 and Hilltop at 13:36.",
             "From 13:04 to 13:36 is 32 minutes (count on to the next hour, then add the rest)."
@@ -2772,10 +2772,10 @@
           "blueprintId": "mr04-bp-timetable-journey-time",
           "stimulus": {
             "type": "table",
-            "caption": "Train timetable",
+            "caption": "Train timetable: time at each stop",
             "headers": [
               "Stop",
-              "Leaves at"
+              "Time"
             ],
             "rows": [
               [
