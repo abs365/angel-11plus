@@ -83,7 +83,25 @@ export interface MockImageStimulus {
   caption?: string;
 }
 
-export type MockStimulus = MockTableStimulus | MockImageStimulus;
+/**
+ * CSSE Completion, mathematical representation extension -- a vertical bar chart, the third structured stimulus kind
+ * in the same discriminated union (after table and image), added exactly the way migration 245 added images: no
+ * redesign, validated fail-closed (isValidBarChartStimulus in lib/mockAttempt/workspace.ts), rendered by one shared
+ * component (components/mockAttempt/BarChartStimulus.tsx). Bars are NOT labelled with their values: reading the value
+ * from the scale is the skill being practised. `scaleStep` is the gridline spacing; `axisMax` is the top of the axis.
+ */
+export interface MockBarChartStimulus {
+  type: "bar-chart";
+  title?: string;
+  xLabel?: string;
+  yLabel?: string;
+  categories: string[];
+  values: number[];
+  scaleStep: number;
+  axisMax: number;
+}
+
+export type MockStimulus = MockTableStimulus | MockImageStimulus | MockBarChartStimulus;
 
 /**
  * The exact, hand-picked field set mock_get_question() (migration 070,

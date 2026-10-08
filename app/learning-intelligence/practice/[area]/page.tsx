@@ -36,6 +36,7 @@ import { scoreEnglishComprehensionAnswer, checkQuotationPresent, type EnglishSco
 import { getExamStrategyHint, getWorkedExample } from "@/lib/learningEngine/englishExamStrategies";
 import { englishCorrectAnswerReveal } from "@/lib/learningEngine/englishFeedback";
 import InSessionSupport from "@/components/learningEngine/InSessionSupport";
+import { StructuredStimulus } from "@/components/mockAttempt/StructuredStimulus";
 import {
   consecutiveFamilyFailures,
   planInSessionSupport,
@@ -1384,6 +1385,8 @@ function MathsActivity({
           also covers `prompt.diagrams` (plural), for comparison-style
           questions publishing more than one shape; see its own docstring. */}
       <CompoundShapeDiagramGroup diagram={prompt.diagram} diagrams={prompt.diagrams} />
+      {/* CSSE Completion representation extension: a table or bar chart carried by the question (reuses the Mock renderers). */}
+      <StructuredStimulus stimulus={prompt.stimulus} />
       <p className="text-[var(--angel-navy)] font-semibold text-base md:text-lg leading-snug">{prompt.question}</p>
 
       {/* Educational Increment 007L, Part 3E — Guided toggle, exact same

@@ -123,10 +123,17 @@ export function validateCandidate<T extends Record<string, number>>(
   // mathematically perfect and still rejected here.
   const mathematicallyValid = reasons.length === 0;
 
-  // 4. Exact-duplicate check against real existing bank rows for this family.
+  // 4. Exact-duplicate check against real existing bank rows for this family. A question's identity includes its
+  // structured stimulus when it has one: "How many more X than Y?" over two different charts is two different
+  // questions, but identical text. (No change for questions without a stimulus.)
+  const identityOf = (question: string, stimulus: unknown) => (stimulus !== undefined && stimulus !== null ? `${question}
+${JSON.stringify(stimulus)}` : question);
   const exactAgainstBank = findExactDuplicateStems([
-    { id: candidate.candidateId, prompt: { question: candidate.question } },
-    ...existingBankRowsForFamily.map((r) => ({ id: r.id, prompt: r.prompt })),
+    { id: candidate.candidateId, prompt: { question: identityOf(candidate.question, candidate.stimulus) } },
+    ...existingBankRowsForFamily.map((r) => {
+      const p = r.prompt as { question?: unknown; stimulus?: unknown } | null;
+      return typeof p?.question === "string" ? { id: r.id, prompt: { question: identityOf(p.question, p.stimulus) } } : { id: r.id, prompt: r.prompt };
+    }),
   ]);
   if (exactAgainstBank.some((group) => group.ids.includes(candidate.candidateId))) {
     reasons.push("exact_duplicate_of_existing_bank_row");
@@ -135,8 +142,8 @@ export function validateCandidate<T extends Record<string, number>>(
   // 5. Exact-duplicate check against sibling candidates already approved in this same batch.
   if (siblingCandidatesAlreadyApproved.length > 0) {
     const exactWithinBatch = findExactDuplicateStems([
-      { id: candidate.candidateId, prompt: { question: candidate.question } },
-      ...siblingCandidatesAlreadyApproved.map((c) => ({ id: c.candidateId, prompt: { question: c.question } })),
+      { id: candidate.candidateId, prompt: { question: identityOf(candidate.question, candidate.stimulus) } },
+      ...siblingCandidatesAlreadyApproved.map((c) => ({ id: c.candidateId, prompt: { question: identityOf(c.question, c.stimulus) } })),
     ]);
     if (exactWithinBatch.some((group) => group.ids.includes(candidate.candidateId))) {
       reasons.push("exact_duplicate_within_batch");
@@ -239,8 +246,10 @@ export function generateBlueprintCandidate<T extends Record<string, number>>(
 ): MathsQuestionCandidate {
   const base = generateCandidate(blueprint, random);
   const acceptedAnswerForms = blueprint.deriveAcceptedAnswerForms?.(base.params as T);
+  const stimulus = blueprint.deriveStimulus?.(base.params as T);
   return {
     ...base,
+    ...(stimulus !== undefined ? { stimulus } : {}),
     blueprintId: blueprint.blueprintId,
     representationType: blueprint.representationType(base.params as T),
     ...(acceptedAnswerForms ? { acceptedAnswerForms } : {}),

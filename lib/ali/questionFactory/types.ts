@@ -220,6 +220,12 @@ export interface StructuralBlueprint<TParams extends Record<string, number>> ext
    * every current angle-sum one, fall here.
    */
   deriveAcceptedAnswerForms?(params: TParams): string[];
+  /**
+   * Optional: the structured stimulus (table or bar chart, see lib/mockAttempt/types.ts) this instance carries. Omitted
+   * means "prose only". When present the question text refers to "the table"/"the chart" rather than restating the
+   * data, so the representation is necessary to answer, not decoration.
+   */
+  deriveStimulus?(params: TParams): unknown;
   /** Real content provenance -- never fabricated; every blueprint built this session is `"angel_original"`. */
   provenance: string;
   /** Whether this blueprint's output may ever be considered for the Mock-reserved pool. False for every blueprint in this increment -- publication (migration 230's own `publish_question_candidate()`) always targets `practice_eligible`; a blueprint cannot promote itself to Mock status by declaring this true, it is documentation of intent for a future, separately-gated Mock-supply decision only. */
@@ -282,6 +288,8 @@ export interface MathsQuestionCandidate {
   representationType?: string;
   /** Present only for a blueprint that declares `deriveAcceptedAnswerForms()` -- every mathematically-equivalent accepted written form, canonical form first. Undefined (not an empty array) means this candidate's answer has no accepted-equivalence ambiguity. */
   acceptedAnswerForms?: string[];
+  /** Present only for a blueprint that declares `deriveStimulus()`: the structured stimulus stored with the question. */
+  stimulus?: unknown;
 }
 
 export type ValidationFailureReason =

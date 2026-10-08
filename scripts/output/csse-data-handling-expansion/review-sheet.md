@@ -1,0 +1,294 @@
+# CSSE data-handling (table / bar chart) expansion -- candidates for educational review
+
+All candidates are `pending_review` once submitted. Nothing is published by this package.
+
+## mr01-data-table
+
+- **csse-dh-mr01-bp-table-read-and-combine-01** [medium; interpretation; data_fruit_stall]
+  - Representation: table -- table {"headers":["Fruit","Kilograms sold"],"rows":[["Apples","95"],["Pears","82"],["Plums","46"],["Cherries","44"],["Grapes","91"]]}
+  - Q: The table shows fruit sold at a market stall. How many kilograms of Grapes and Apples were sold altogether?
+  - Answer: 186
+  - Working: Read the two rows needed: Grapes = 91 and Apples = 95. / Add them: 91 + 95 = 186.
+  - Targets: adding every value in the table, or the wrong two rows, instead of only the rows the question names
+- **csse-dh-mr01-bp-table-read-and-combine-02** [medium; interpretation; data_library_loans]
+  - Representation: table -- table {"headers":["Day","Books borrowed"],"rows":[["Monday","44"],["Tuesday","17"],["Wednesday","88"],["Thursday","53"],["Friday","47"]]}
+  - Q: The table shows books borrowed from a school library. How many books were borrowed on Wednesday and Tuesday together?
+  - Answer: 105
+  - Working: Read the two rows needed: Wednesday = 88 and Tuesday = 17. / Add them: 88 + 17 = 105.
+  - Targets: adding every value in the table, or the wrong two rows, instead of only the rows the question names
+- **csse-dh-mr01-bp-table-read-and-combine-03** [easy; interpretation; data_sports_choice]
+  - Representation: table -- table {"headers":["Sport","Number of pupils"],"rows":[["Football","54"],["Swimming","72"],["Tennis","39"],["Cricket","17"],["Gymnastics","67"]]}
+  - Q: The table shows the sport each pupil in a club chose. How many pupils chose Football or Tennis altogether?
+  - Answer: 93
+  - Working: Read the two rows needed: Football = 54 and Tennis = 39. / Add them: 54 + 39 = 93.
+  - Targets: adding every value in the table, or the wrong two rows, instead of only the rows the question names
+- **csse-dh-mr01-bp-table-read-and-combine-04** [medium; interpretation; data_fruit_stall]
+  - Representation: table -- table {"headers":["Fruit","Kilograms sold"],"rows":[["Apples","32"],["Pears","49"],["Plums","74"],["Cherries","37"],["Grapes","63"]]}
+  - Q: The table shows fruit sold at a market stall. How many kilograms of Cherries and Plums were sold altogether?
+  - Answer: 111
+  - Working: Read the two rows needed: Cherries = 37 and Plums = 74. / Add them: 37 + 74 = 111.
+  - Targets: adding every value in the table, or the wrong two rows, instead of only the rows the question names
+- **csse-dh-mr01-bp-table-read-and-combine-05** [easy; interpretation; data_sports_choice]
+  - Representation: table -- table {"headers":["Sport","Number of pupils"],"rows":[["Football","27"],["Swimming","57"],["Tennis","32"],["Cricket","39"],["Gymnastics","94"]]}
+  - Q: The table shows the sport each pupil in a club chose. How many pupils chose Cricket or Football altogether?
+  - Answer: 66
+  - Working: Read the two rows needed: Cricket = 39 and Football = 27. / Add them: 39 + 27 = 66.
+  - Targets: adding every value in the table, or the wrong two rows, instead of only the rows the question names
+- **csse-dh-mr01-bp-table-read-and-combine-06** [medium; interpretation; data_sports_choice]
+  - Representation: table -- table {"headers":["Sport","Number of pupils"],"rows":[["Football","89"],["Swimming","73"],["Tennis","42"],["Cricket","78"],["Gymnastics","94"]]}
+  - Q: The table shows the sport each pupil in a club chose. How many pupils chose Cricket or Football altogether?
+  - Answer: 167
+  - Working: Read the two rows needed: Cricket = 78 and Football = 89. / Add them: 78 + 89 = 167.
+  - Targets: adding every value in the table, or the wrong two rows, instead of only the rows the question names
+- **csse-dh-mr01-bp-table-read-and-combine-07** [medium; interpretation; data_fruit_stall]
+  - Representation: table -- table {"headers":["Fruit","Kilograms sold"],"rows":[["Apples","51"],["Pears","55"],["Plums","46"],["Cherries","95"],["Grapes","53"]]}
+  - Q: The table shows fruit sold at a market stall. How many kilograms of Pears and Plums were sold altogether?
+  - Answer: 101
+  - Working: Read the two rows needed: Pears = 55 and Plums = 46. / Add them: 55 + 46 = 101.
+  - Targets: adding every value in the table, or the wrong two rows, instead of only the rows the question names
+- **csse-dh-mr01-bp-table-read-and-combine-08** [medium; interpretation; data_sports_choice]
+  - Representation: table -- table {"headers":["Sport","Number of pupils"],"rows":[["Football","95"],["Swimming","31"],["Tennis","79"],["Cricket","70"],["Gymnastics","60"]]}
+  - Q: The table shows the sport each pupil in a club chose. How many pupils chose Gymnastics or Football altogether?
+  - Answer: 155
+  - Working: Read the two rows needed: Gymnastics = 60 and Football = 95. / Add them: 60 + 95 = 155.
+  - Targets: adding every value in the table, or the wrong two rows, instead of only the rows the question names
+- **csse-dh-mr01-bp-table-read-and-combine-09** [medium; interpretation; data_library_loans]
+  - Representation: table -- table {"headers":["Day","Books borrowed"],"rows":[["Monday","41"],["Tuesday","39"],["Wednesday","94"],["Thursday","59"],["Friday","34"]]}
+  - Q: The table shows books borrowed from a school library. How many books were borrowed on Friday and Wednesday together?
+  - Answer: 128
+  - Working: Read the two rows needed: Friday = 34 and Wednesday = 94. / Add them: 34 + 94 = 128.
+  - Targets: adding every value in the table, or the wrong two rows, instead of only the rows the question names
+- **csse-dh-mr01-bp-table-read-and-combine-10** [easy; interpretation; data_sports_choice]
+  - Representation: table -- table {"headers":["Sport","Number of pupils"],"rows":[["Football","81"],["Swimming","16"],["Tennis","35"],["Cricket","61"],["Gymnastics","18"]]}
+  - Q: The table shows the sport each pupil in a club chose. How many pupils chose Tennis or Cricket altogether?
+  - Answer: 96
+  - Working: Read the two rows needed: Tennis = 35 and Cricket = 61. / Add them: 35 + 61 = 96.
+  - Targets: adding every value in the table, or the wrong two rows, instead of only the rows the question names
+- **csse-dh-mr01-bp-table-read-and-combine-11** [easy; interpretation; data_sports_choice]
+  - Representation: table -- table {"headers":["Sport","Number of pupils"],"rows":[["Football","29"],["Swimming","28"],["Tennis","39"],["Cricket","71"],["Gymnastics","23"]]}
+  - Q: The table shows the sport each pupil in a club chose. How many pupils chose Cricket or Gymnastics altogether?
+  - Answer: 94
+  - Working: Read the two rows needed: Cricket = 71 and Gymnastics = 23. / Add them: 71 + 23 = 94.
+  - Targets: adding every value in the table, or the wrong two rows, instead of only the rows the question names
+- **csse-dh-mr01-bp-table-read-and-combine-12** [easy; interpretation; data_fruit_stall]
+  - Representation: table -- table {"headers":["Fruit","Kilograms sold"],"rows":[["Apples","76"],["Pears","82"],["Plums","17"],["Cherries","78"],["Grapes","92"]]}
+  - Q: The table shows fruit sold at a market stall. How many kilograms of Cherries and Plums were sold altogether?
+  - Answer: 95
+  - Working: Read the two rows needed: Cherries = 78 and Plums = 17. / Add them: 78 + 17 = 95.
+  - Targets: adding every value in the table, or the wrong two rows, instead of only the rows the question names
+- **csse-dh-mr01-bp-table-compare-column-totals-01** [medium; multi_step_application; data_sports_choice_two_weeks]
+  - Representation: table -- table {"headers":["Sport","Week 1","Week 2"],"rows":[["Football","35","26"],["Swimming","37","41"],["Tennis","43","11"],["Cricket","14","58"]]}
+  - Q: The table shows the number of pupils for each sport in two weeks. How many more pupils were recorded in Week 2 than in Week 1 altogether?
+  - Answer: 7
+  - Working: Week 1 total: 35 + 37 + 43 + 14 = 129. / Week 2 total: 26 + 41 + 11 + 58 = 136. / Difference: 136 − 129 = 7.
+  - Targets: comparing only one row (or one pair of rows) instead of totalling each whole column before subtracting
+- **csse-dh-mr01-bp-table-compare-column-totals-02** [medium; multi_step_application; data_sports_choice_two_weeks]
+  - Representation: table -- table {"headers":["Sport","Week 1","Week 2"],"rows":[["Football","44","35"],["Swimming","25","17"],["Tennis","17","55"],["Cricket","37","32"]]}
+  - Q: The table shows the number of pupils for each sport in two weeks. How many more pupils were recorded in Week 2 than in Week 1 altogether?
+  - Answer: 16
+  - Working: Week 1 total: 44 + 25 + 17 + 37 = 123. / Week 2 total: 35 + 17 + 55 + 32 = 139. / Difference: 139 − 123 = 16.
+  - Targets: comparing only one row (or one pair of rows) instead of totalling each whole column before subtracting
+- **csse-dh-mr01-bp-table-compare-column-totals-03** [hard; multi_step_application; data_fruit_stall_two_weeks]
+  - Representation: table -- table {"headers":["Fruit","Week 1","Week 2"],"rows":[["Apples","27","57"],["Pears","53","54"],["Plums","43","51"],["Cherries","60","51"]]}
+  - Q: The table shows the number of kilograms for each fruit in two weeks. How many more kilograms were recorded in Week 2 than in Week 1 altogether?
+  - Answer: 30
+  - Working: Week 1 total: 27 + 53 + 43 + 60 = 183. / Week 2 total: 57 + 54 + 51 + 51 = 213. / Difference: 213 − 183 = 30.
+  - Targets: comparing only one row (or one pair of rows) instead of totalling each whole column before subtracting
+- **csse-dh-mr01-bp-table-compare-column-totals-04** [hard; multi_step_application; data_sports_choice_two_weeks]
+  - Representation: table -- table {"headers":["Sport","Week 1","Week 2"],"rows":[["Football","32","17"],["Swimming","17","51"],["Tennis","40","37"],["Cricket","22","41"]]}
+  - Q: The table shows the number of pupils for each sport in two weeks. How many more pupils were recorded in Week 2 than in Week 1 altogether?
+  - Answer: 35
+  - Working: Week 1 total: 32 + 17 + 40 + 22 = 111. / Week 2 total: 17 + 51 + 37 + 41 = 146. / Difference: 146 − 111 = 35.
+  - Targets: comparing only one row (or one pair of rows) instead of totalling each whole column before subtracting
+- **csse-dh-mr01-bp-table-compare-column-totals-05** [hard; multi_step_application; data_library_loans_two_weeks]
+  - Representation: table -- table {"headers":["Day","Week 1","Week 2"],"rows":[["Monday","19","21"],["Tuesday","49","59"],["Wednesday","27","42"],["Thursday","23","56"]]}
+  - Q: The table shows the number of books for each day in two weeks. How many more books were recorded in Week 2 than in Week 1 altogether?
+  - Answer: 60
+  - Working: Week 1 total: 19 + 49 + 27 + 23 = 118. / Week 2 total: 21 + 59 + 42 + 56 = 178. / Difference: 178 − 118 = 60.
+  - Targets: comparing only one row (or one pair of rows) instead of totalling each whole column before subtracting
+- **csse-dh-mr01-bp-table-compare-column-totals-06** [hard; multi_step_application; data_fruit_stall_two_weeks]
+  - Representation: table -- table {"headers":["Fruit","Week 1","Week 2"],"rows":[["Apples","60","11"],["Pears","22","50"],["Plums","22","54"],["Cherries","29","39"]]}
+  - Q: The table shows the number of kilograms for each fruit in two weeks. How many more kilograms were recorded in Week 2 than in Week 1 altogether?
+  - Answer: 21
+  - Working: Week 1 total: 60 + 22 + 22 + 29 = 133. / Week 2 total: 11 + 50 + 54 + 39 = 154. / Difference: 154 − 133 = 21.
+  - Targets: comparing only one row (or one pair of rows) instead of totalling each whole column before subtracting
+- **csse-dh-mr01-bp-table-compare-column-totals-07** [hard; multi_step_application; data_sports_choice_two_weeks]
+  - Representation: table -- table {"headers":["Sport","Week 1","Week 2"],"rows":[["Football","60","36"],["Swimming","10","37"],["Tennis","17","46"],["Cricket","21","39"]]}
+  - Q: The table shows the number of pupils for each sport in two weeks. How many more pupils were recorded in Week 2 than in Week 1 altogether?
+  - Answer: 50
+  - Working: Week 1 total: 60 + 10 + 17 + 21 = 108. / Week 2 total: 36 + 37 + 46 + 39 = 158. / Difference: 158 − 108 = 50.
+  - Targets: comparing only one row (or one pair of rows) instead of totalling each whole column before subtracting
+- **csse-dh-mr01-bp-table-compare-column-totals-08** [medium; multi_step_application; data_fruit_stall_two_weeks]
+  - Representation: table -- table {"headers":["Fruit","Week 1","Week 2"],"rows":[["Apples","47","44"],["Pears","30","33"],["Plums","29","24"],["Cherries","18","36"]]}
+  - Q: The table shows the number of kilograms for each fruit in two weeks. How many more kilograms were recorded in Week 2 than in Week 1 altogether?
+  - Answer: 13
+  - Working: Week 1 total: 47 + 30 + 29 + 18 = 124. / Week 2 total: 44 + 33 + 24 + 36 = 137. / Difference: 137 − 124 = 13.
+  - Targets: comparing only one row (or one pair of rows) instead of totalling each whole column before subtracting
+- **csse-dh-mr01-bp-table-compare-column-totals-09** [hard; multi_step_application; data_sports_choice_two_weeks]
+  - Representation: table -- table {"headers":["Sport","Week 1","Week 2"],"rows":[["Football","42","35"],["Swimming","16","32"],["Tennis","56","46"],["Cricket","20","50"]]}
+  - Q: The table shows the number of pupils for each sport in two weeks. How many more pupils were recorded in Week 2 than in Week 1 altogether?
+  - Answer: 29
+  - Working: Week 1 total: 42 + 16 + 56 + 20 = 134. / Week 2 total: 35 + 32 + 46 + 50 = 163. / Difference: 163 − 134 = 29.
+  - Targets: comparing only one row (or one pair of rows) instead of totalling each whole column before subtracting
+- **csse-dh-mr01-bp-table-compare-column-totals-10** [hard; multi_step_application; data_fruit_stall_two_weeks]
+  - Representation: table -- table {"headers":["Fruit","Week 1","Week 2"],"rows":[["Apples","26","38"],["Pears","19","35"],["Plums","46","37"],["Cherries","27","39"]]}
+  - Q: The table shows the number of kilograms for each fruit in two weeks. How many more kilograms were recorded in Week 2 than in Week 1 altogether?
+  - Answer: 31
+  - Working: Week 1 total: 26 + 19 + 46 + 27 = 118. / Week 2 total: 38 + 35 + 37 + 39 = 149. / Difference: 149 − 118 = 31.
+  - Targets: comparing only one row (or one pair of rows) instead of totalling each whole column before subtracting
+- **csse-dh-mr01-bp-table-compare-column-totals-11** [medium; multi_step_application; data_library_loans_two_weeks]
+  - Representation: table -- table {"headers":["Day","Week 1","Week 2"],"rows":[["Monday","32","28"],["Tuesday","16","25"],["Wednesday","53","17"],["Thursday","19","57"]]}
+  - Q: The table shows the number of books for each day in two weeks. How many more books were recorded in Week 2 than in Week 1 altogether?
+  - Answer: 7
+  - Working: Week 1 total: 32 + 16 + 53 + 19 = 120. / Week 2 total: 28 + 25 + 17 + 57 = 127. / Difference: 127 − 120 = 7.
+  - Targets: comparing only one row (or one pair of rows) instead of totalling each whole column before subtracting
+- **csse-dh-mr01-bp-table-compare-column-totals-12** [hard; multi_step_application; data_library_loans_two_weeks]
+  - Representation: table -- table {"headers":["Day","Week 1","Week 2"],"rows":[["Monday","32","33"],["Tuesday","34","60"],["Wednesday","45","38"],["Thursday","47","48"]]}
+  - Q: The table shows the number of books for each day in two weeks. How many more books were recorded in Week 2 than in Week 1 altogether?
+  - Answer: 21
+  - Working: Week 1 total: 32 + 34 + 45 + 47 = 158. / Week 2 total: 33 + 60 + 38 + 48 = 179. / Difference: 179 − 158 = 21.
+  - Targets: comparing only one row (or one pair of rows) instead of totalling each whole column before subtracting
+- **csse-dh-mr01-bp-bar-chart-read-difference-01** [medium; interpretation; data_sports_choice_bar_chart]
+  - Representation: bar_chart -- bar chart {"categories":["Football","Swimming","Tennis","Cricket","Gymnastics"],"values":[8,12,4,10,6],"scaleStep":2,"axisMax":14}
+  - Q: The bar chart shows the sport each pupil in a club chose. How many more pupils chose Football than Tennis? Read the values carefully from the scale.
+  - Answer: 4
+  - Working: Check the scale first: the gridlines go up in steps of 2. / Football = 8 and Tennis = 4. / Difference: 8 − 4 = 4.
+  - Targets: reading the vertical scale as going up in ones, or reading a bar that ends between gridlines as the lower gridline
+- **csse-dh-mr01-bp-bar-chart-read-difference-02** [hard; interpretation; data_library_loans_bar_chart]
+  - Representation: bar_chart -- bar chart {"categories":["Monday","Tuesday","Wednesday","Thursday","Friday"],"values":[90,30,80,50,100],"scaleStep":20,"axisMax":120}
+  - Q: The bar chart shows books borrowed from a school library. How many more books were borrowed on Friday than on Wednesday? Read the values carefully from the scale.
+  - Answer: 20
+  - Working: Check the scale first: the gridlines go up in steps of 20. / Friday = 100 and Wednesday = 80. / Difference: 100 − 80 = 20.
+  - Targets: reading the vertical scale as going up in ones, or reading a bar that ends between gridlines as the lower gridline
+- **csse-dh-mr01-bp-bar-chart-read-difference-03** [hard; interpretation; data_fruit_stall_bar_chart]
+  - Representation: bar_chart -- bar chart {"categories":["Apples","Pears","Plums","Cherries","Grapes"],"values":[28,34,32,40,12],"scaleStep":4,"axisMax":44}
+  - Q: The bar chart shows fruit sold at a market stall. How many more kilograms of Cherries than Pears were sold? Read the values carefully from the scale.
+  - Answer: 6
+  - Working: Check the scale first: the gridlines go up in steps of 4. / Cherries = 40 and Pears = 34. / Difference: 40 − 34 = 6.
+  - Targets: reading the vertical scale as going up in ones, or reading a bar that ends between gridlines as the lower gridline
+- **csse-dh-mr01-bp-bar-chart-read-difference-04** [medium; interpretation; data_fruit_stall_bar_chart]
+  - Representation: bar_chart -- bar chart {"categories":["Apples","Pears","Plums","Cherries","Grapes"],"values":[10,12,20,18,2],"scaleStep":2,"axisMax":22}
+  - Q: The bar chart shows fruit sold at a market stall. How many more kilograms of Plums than Apples were sold? Read the values carefully from the scale.
+  - Answer: 10
+  - Working: Check the scale first: the gridlines go up in steps of 2. / Plums = 20 and Apples = 10. / Difference: 20 − 10 = 10.
+  - Targets: reading the vertical scale as going up in ones, or reading a bar that ends between gridlines as the lower gridline
+- **csse-dh-mr01-bp-bar-chart-read-difference-05** [medium; interpretation; data_fruit_stall_bar_chart]
+  - Representation: bar_chart -- bar chart {"categories":["Apples","Pears","Plums","Cherries","Grapes"],"values":[20,15,5,50,10],"scaleStep":5,"axisMax":55}
+  - Q: The bar chart shows fruit sold at a market stall. How many more kilograms of Pears than Plums were sold? Read the values carefully from the scale.
+  - Answer: 10
+  - Working: Check the scale first: the gridlines go up in steps of 5. / Pears = 15 and Plums = 5. / Difference: 15 − 5 = 10.
+  - Targets: reading the vertical scale as going up in ones, or reading a bar that ends between gridlines as the lower gridline
+- **csse-dh-mr01-bp-bar-chart-read-difference-06** [hard; interpretation; data_library_loans_bar_chart]
+  - Representation: bar_chart -- bar chart {"categories":["Monday","Tuesday","Wednesday","Thursday","Friday"],"values":[200,110,10,120,160],"scaleStep":20,"axisMax":220}
+  - Q: The bar chart shows books borrowed from a school library. How many more books were borrowed on Thursday than on Tuesday? Read the values carefully from the scale.
+  - Answer: 10
+  - Working: Check the scale first: the gridlines go up in steps of 20. / Thursday = 120 and Tuesday = 110. / Difference: 120 − 110 = 10.
+  - Targets: reading the vertical scale as going up in ones, or reading a bar that ends between gridlines as the lower gridline
+- **csse-dh-mr01-bp-bar-chart-read-difference-07** [medium; interpretation; data_fruit_stall_bar_chart]
+  - Representation: bar_chart -- bar chart {"categories":["Apples","Pears","Plums","Cherries","Grapes"],"values":[10,12,2,4,18],"scaleStep":2,"axisMax":20}
+  - Q: The bar chart shows fruit sold at a market stall. How many more kilograms of Grapes than Plums were sold? Read the values carefully from the scale.
+  - Answer: 16
+  - Working: Check the scale first: the gridlines go up in steps of 2. / Grapes = 18 and Plums = 2. / Difference: 18 − 2 = 16.
+  - Targets: reading the vertical scale as going up in ones, or reading a bar that ends between gridlines as the lower gridline
+- **csse-dh-mr01-bp-bar-chart-read-difference-08** [hard; interpretation; data_fruit_stall_bar_chart]
+  - Representation: bar_chart -- bar chart {"categories":["Apples","Pears","Plums","Cherries","Grapes"],"values":[85,25,15,40,95],"scaleStep":10,"axisMax":100}
+  - Q: The bar chart shows fruit sold at a market stall. How many more kilograms of Grapes than Apples were sold? Read the values carefully from the scale.
+  - Answer: 10
+  - Working: Check the scale first: the gridlines go up in steps of 10. / Grapes = 95 and Apples = 85. / Difference: 95 − 85 = 10.
+  - Targets: reading the vertical scale as going up in ones, or reading a bar that ends between gridlines as the lower gridline
+- **csse-dh-mr01-bp-bar-chart-read-difference-09** [medium; interpretation; data_fruit_stall_bar_chart]
+  - Representation: bar_chart -- bar chart {"categories":["Apples","Pears","Plums","Cherries","Grapes"],"values":[20,30,50,5,25],"scaleStep":5,"axisMax":55}
+  - Q: The bar chart shows fruit sold at a market stall. How many more kilograms of Plums than Grapes were sold? Read the values carefully from the scale.
+  - Answer: 25
+  - Working: Check the scale first: the gridlines go up in steps of 5. / Plums = 50 and Grapes = 25. / Difference: 50 − 25 = 25.
+  - Targets: reading the vertical scale as going up in ones, or reading a bar that ends between gridlines as the lower gridline
+- **csse-dh-mr01-bp-bar-chart-read-difference-10** [hard; interpretation; data_sports_choice_bar_chart]
+  - Representation: bar_chart -- bar chart {"categories":["Football","Swimming","Tennis","Cricket","Gymnastics"],"values":[24,8,6,10,18],"scaleStep":4,"axisMax":28}
+  - Q: The bar chart shows the sport each pupil in a club chose. How many more pupils chose Football than Swimming? Read the values carefully from the scale.
+  - Answer: 16
+  - Working: Check the scale first: the gridlines go up in steps of 4. / Football = 24 and Swimming = 8. / Difference: 24 − 8 = 16.
+  - Targets: reading the vertical scale as going up in ones, or reading a bar that ends between gridlines as the lower gridline
+- **csse-dh-mr01-bp-bar-chart-read-difference-11** [hard; interpretation; data_fruit_stall_bar_chart]
+  - Representation: bar_chart -- bar chart {"categories":["Apples","Pears","Plums","Cherries","Grapes"],"values":[30,28,32,26,10],"scaleStep":4,"axisMax":36}
+  - Q: The bar chart shows fruit sold at a market stall. How many more kilograms of Plums than Grapes were sold? Read the values carefully from the scale.
+  - Answer: 22
+  - Working: Check the scale first: the gridlines go up in steps of 4. / Plums = 32 and Grapes = 10. / Difference: 32 − 10 = 22.
+  - Targets: reading the vertical scale as going up in ones, or reading a bar that ends between gridlines as the lower gridline
+- **csse-dh-mr01-bp-bar-chart-read-difference-12** [hard; interpretation; data_fruit_stall_bar_chart]
+  - Representation: bar_chart -- bar chart {"categories":["Apples","Pears","Plums","Cherries","Grapes"],"values":[100,75,30,20,70],"scaleStep":10,"axisMax":110}
+  - Q: The bar chart shows fruit sold at a market stall. How many more kilograms of Apples than Pears were sold? Read the values carefully from the scale.
+  - Answer: 25
+  - Working: Check the scale first: the gridlines go up in steps of 10. / Apples = 100 and Pears = 75. / Difference: 100 − 75 = 25.
+  - Targets: reading the vertical scale as going up in ones, or reading a bar that ends between gridlines as the lower gridline
+- **csse-dh-mr01-bp-bar-chart-mean-01** [hard; multi_step_application; data_library_loans_bar_chart_mean]
+  - Representation: bar_chart -- bar chart {"categories":["Monday","Tuesday","Wednesday","Thursday","Friday"],"values":[200,200,90,180,80],"scaleStep":20,"axisMax":220}
+  - Q: The bar chart shows books borrowed from a school library. What is the mean number of books borrowed per day? Read the values carefully from the scale.
+  - Answer: 150
+  - Working: Check the scale first: the gridlines go up in steps of 20. / Read all five bars: 200, 200, 90, 180, 80. Their total is 750. / Mean = 750 ÷ 5 = 150.
+  - Targets: dividing the total by the largest bar, or by the scale step, instead of by the number of bars
+- **csse-dh-mr01-bp-bar-chart-mean-02** [hard; multi_step_application; data_fruit_stall_bar_chart_mean]
+  - Representation: bar_chart -- bar chart {"categories":["Apples","Pears","Plums","Cherries","Grapes"],"values":[30,30,6,16,28],"scaleStep":4,"axisMax":32}
+  - Q: The bar chart shows fruit sold at a market stall. What is the mean number of kilograms sold per fruit? Read the values carefully from the scale.
+  - Answer: 22
+  - Working: Check the scale first: the gridlines go up in steps of 4. / Read all five bars: 30, 30, 6, 16, 28. Their total is 110. / Mean = 110 ÷ 5 = 22.
+  - Targets: dividing the total by the largest bar, or by the scale step, instead of by the number of bars
+- **csse-dh-mr01-bp-bar-chart-mean-03** [hard; multi_step_application; data_fruit_stall_bar_chart_mean]
+  - Representation: bar_chart -- bar chart {"categories":["Apples","Pears","Plums","Cherries","Grapes"],"values":[70,140,10,60,130],"scaleStep":20,"axisMax":160}
+  - Q: The bar chart shows fruit sold at a market stall. What is the mean number of kilograms sold per fruit? Read the values carefully from the scale.
+  - Answer: 82
+  - Working: Check the scale first: the gridlines go up in steps of 20. / Read all five bars: 70, 140, 10, 60, 130. Their total is 410. / Mean = 410 ÷ 5 = 82.
+  - Targets: dividing the total by the largest bar, or by the scale step, instead of by the number of bars
+- **csse-dh-mr01-bp-bar-chart-mean-04** [hard; multi_step_application; data_fruit_stall_bar_chart_mean]
+  - Representation: bar_chart -- bar chart {"categories":["Apples","Pears","Plums","Cherries","Grapes"],"values":[40,10,22,34,14],"scaleStep":4,"axisMax":44}
+  - Q: The bar chart shows fruit sold at a market stall. What is the mean number of kilograms sold per fruit? Read the values carefully from the scale.
+  - Answer: 24
+  - Working: Check the scale first: the gridlines go up in steps of 4. / Read all five bars: 40, 10, 22, 34, 14. Their total is 120. / Mean = 120 ÷ 5 = 24.
+  - Targets: dividing the total by the largest bar, or by the scale step, instead of by the number of bars
+- **csse-dh-mr01-bp-bar-chart-mean-05** [hard; multi_step_application; data_sports_choice_bar_chart_mean]
+  - Representation: bar_chart -- bar chart {"categories":["Football","Swimming","Tennis","Cricket","Gymnastics"],"values":[70,200,80,140,90],"scaleStep":20,"axisMax":220}
+  - Q: The bar chart shows the sport each pupil in a club chose. What is the mean number of pupils per sport? Read the values carefully from the scale.
+  - Answer: 116
+  - Working: Check the scale first: the gridlines go up in steps of 20. / Read all five bars: 70, 200, 80, 140, 90. Their total is 580. / Mean = 580 ÷ 5 = 116.
+  - Targets: dividing the total by the largest bar, or by the scale step, instead of by the number of bars
+- **csse-dh-mr01-bp-bar-chart-mean-06** [hard; multi_step_application; data_sports_choice_bar_chart_mean]
+  - Representation: bar_chart -- bar chart {"categories":["Football","Swimming","Tennis","Cricket","Gymnastics"],"values":[110,200,70,130,160],"scaleStep":20,"axisMax":220}
+  - Q: The bar chart shows the sport each pupil in a club chose. What is the mean number of pupils per sport? Read the values carefully from the scale.
+  - Answer: 134
+  - Working: Check the scale first: the gridlines go up in steps of 20. / Read all five bars: 110, 200, 70, 130, 160. Their total is 670. / Mean = 670 ÷ 5 = 134.
+  - Targets: dividing the total by the largest bar, or by the scale step, instead of by the number of bars
+- **csse-dh-mr01-bp-bar-chart-mean-07** [hard; multi_step_application; data_fruit_stall_bar_chart_mean]
+  - Representation: bar_chart -- bar chart {"categories":["Apples","Pears","Plums","Cherries","Grapes"],"values":[40,35,25,20,40],"scaleStep":5,"axisMax":45}
+  - Q: The bar chart shows fruit sold at a market stall. What is the mean number of kilograms sold per fruit? Read the values carefully from the scale.
+  - Answer: 32
+  - Working: Check the scale first: the gridlines go up in steps of 5. / Read all five bars: 40, 35, 25, 20, 40. Their total is 160. / Mean = 160 ÷ 5 = 32.
+  - Targets: dividing the total by the largest bar, or by the scale step, instead of by the number of bars
+- **csse-dh-mr01-bp-bar-chart-mean-08** [hard; multi_step_application; data_fruit_stall_bar_chart_mean]
+  - Representation: bar_chart -- bar chart {"categories":["Apples","Pears","Plums","Cherries","Grapes"],"values":[55,15,55,10,80],"scaleStep":10,"axisMax":90}
+  - Q: The bar chart shows fruit sold at a market stall. What is the mean number of kilograms sold per fruit? Read the values carefully from the scale.
+  - Answer: 43
+  - Working: Check the scale first: the gridlines go up in steps of 10. / Read all five bars: 55, 15, 55, 10, 80. Their total is 215. / Mean = 215 ÷ 5 = 43.
+  - Targets: dividing the total by the largest bar, or by the scale step, instead of by the number of bars
+- **csse-dh-mr01-bp-bar-chart-mean-09** [hard; multi_step_application; data_fruit_stall_bar_chart_mean]
+  - Representation: bar_chart -- bar chart {"categories":["Apples","Pears","Plums","Cherries","Grapes"],"values":[5,35,15,45,50],"scaleStep":5,"axisMax":55}
+  - Q: The bar chart shows fruit sold at a market stall. What is the mean number of kilograms sold per fruit? Read the values carefully from the scale.
+  - Answer: 30
+  - Working: Check the scale first: the gridlines go up in steps of 5. / Read all five bars: 5, 35, 15, 45, 50. Their total is 150. / Mean = 150 ÷ 5 = 30.
+  - Targets: dividing the total by the largest bar, or by the scale step, instead of by the number of bars
+- **csse-dh-mr01-bp-bar-chart-mean-10** [hard; multi_step_application; data_library_loans_bar_chart_mean]
+  - Representation: bar_chart -- bar chart {"categories":["Monday","Tuesday","Wednesday","Thursday","Friday"],"values":[2,2,16,12,18],"scaleStep":2,"axisMax":20}
+  - Q: The bar chart shows books borrowed from a school library. What is the mean number of books borrowed per day? Read the values carefully from the scale.
+  - Answer: 10
+  - Working: Check the scale first: the gridlines go up in steps of 2. / Read all five bars: 2, 2, 16, 12, 18. Their total is 50. / Mean = 50 ÷ 5 = 10.
+  - Targets: dividing the total by the largest bar, or by the scale step, instead of by the number of bars
+- **csse-dh-mr01-bp-bar-chart-mean-11** [hard; multi_step_application; data_fruit_stall_bar_chart_mean]
+  - Representation: bar_chart -- bar chart {"categories":["Apples","Pears","Plums","Cherries","Grapes"],"values":[130,200,170,10,170],"scaleStep":20,"axisMax":220}
+  - Q: The bar chart shows fruit sold at a market stall. What is the mean number of kilograms sold per fruit? Read the values carefully from the scale.
+  - Answer: 136
+  - Working: Check the scale first: the gridlines go up in steps of 20. / Read all five bars: 130, 200, 170, 10, 170. Their total is 680. / Mean = 680 ÷ 5 = 136.
+  - Targets: dividing the total by the largest bar, or by the scale step, instead of by the number of bars
+- **csse-dh-mr01-bp-bar-chart-mean-12** [hard; multi_step_application; data_fruit_stall_bar_chart_mean]
+  - Representation: bar_chart -- bar chart {"categories":["Apples","Pears","Plums","Cherries","Grapes"],"values":[5,75,10,10,15],"scaleStep":10,"axisMax":80}
+  - Q: The bar chart shows fruit sold at a market stall. What is the mean number of kilograms sold per fruit? Read the values carefully from the scale.
+  - Answer: 23
+  - Working: Check the scale first: the gridlines go up in steps of 10. / Read all five bars: 5, 75, 10, 10, 15. Their total is 115. / Mean = 115 ÷ 5 = 23.
+  - Targets: dividing the total by the largest bar, or by the scale step, instead of by the number of bars

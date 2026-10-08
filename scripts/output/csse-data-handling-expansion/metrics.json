@@ -1,0 +1,68 @@
+[
+  {
+    "familyId": "mr01-data-table",
+    "blueprints": 4,
+    "keptCandidates": 48,
+    "rawGenerated": 144,
+    "approvedBeforeBalancing": 144,
+    "blueprintDepth": 4,
+    "dominantBlueprintShare": 0.25,
+    "scaledMemorisationRisk": "MEDIUM",
+    "perBlueprintDifficulty": [
+      {
+        "blueprintId": "mr01-bp-table-read-and-combine",
+        "distinctTiersReached": 2,
+        "tierCounts": {
+          "medium": 7,
+          "easy": 5
+        },
+        "meetsMinimum": true
+      },
+      {
+        "blueprintId": "mr01-bp-table-compare-column-totals",
+        "distinctTiersReached": 2,
+        "tierCounts": {
+          "medium": 4,
+          "hard": 8
+        },
+        "meetsMinimum": true
+      },
+      {
+        "blueprintId": "mr01-bp-bar-chart-read-difference",
+        "distinctTiersReached": 2,
+        "tierCounts": {
+          "medium": 5,
+          "hard": 7
+        },
+        "meetsMinimum": true
+      },
+      {
+        "blueprintId": "mr01-bp-bar-chart-mean",
+        "distinctTiersReached": 1,
+        "tierCounts": {
+          "hard": 12
+        },
+        "meetsMinimum": false
+      }
+    ],
+    "parameterSignatureDuplicates": 0,
+    "contexts": [
+      "data_fruit_stall",
+      "data_library_loans",
+      "data_sports_choice",
+      "data_sports_choice_two_weeks",
+      "data_fruit_stall_two_weeks",
+      "data_library_loans_two_weeks",
+      "data_sports_choice_bar_chart",
+      "data_library_loans_bar_chart",
+      "data_fruit_stall_bar_chart",
+      "data_library_loans_bar_chart_mean",
+      "data_fruit_stall_bar_chart_mean",
+      "data_sports_choice_bar_chart_mean"
+    ],
+    "reasoningRoutes": [
+      "interpretation",
+      "multi_step_application"
+    ]
+  }
+]

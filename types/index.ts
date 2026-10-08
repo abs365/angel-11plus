@@ -126,6 +126,12 @@ export interface MathsQuestion {
   diagram?: CompoundRectilinearDiagram;
   /** Optional ordered list of diagrams for a single question that compares more than one shape (e.g. "Shape A ... Shape B ... which is larger?"). Same per-entry schema as `diagram`; array order is the canonical, meaningful order (first entry = the shape introduced first in the question) and must be preserved by any renderer. */
   diagrams?: CompoundRectilinearDiagram[];
+  /**
+   * Optional governed structured stimulus (table, bar chart or image) attached to the question's own prompt. Declared
+   * `unknown` on purpose: types/ never import from lib/, and the shape is validated at render time
+   * (components/mockAttempt/StructuredStimulus.tsx, lib/mockAttempt/workspace.ts validators), failing closed.
+   */
+  stimulus?: unknown;
 }
 
 export interface SkillRecord {

@@ -131,6 +131,8 @@ export function mapMathsCandidateToStoreRow(
       // only for candidates whose own blueprintId is unset, matching the
       // same fallback already used for p_generation_spec_id above.
       blueprintId: candidate.blueprintId ?? blueprint.blueprintId ?? null,
+      // Structured stimulus (table / bar chart): copied into prompt.stimulus by publish_question_candidate (it copies question_content whole).
+      ...(candidate.stimulus !== undefined ? { stimulus: candidate.stimulus } : {}),
     },
     p_claimed_answer: candidate.claimedAnswer,
     p_worked_explanation: candidate.workingSteps.join(" "),

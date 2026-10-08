@@ -1,0 +1,3690 @@
+{
+  "generatedBy": "scripts/question-factory-csse-data-handling-expansion.mjs",
+  "count": 48,
+  "submissionPayload": [
+    {
+      "args": {
+        "p_candidate_id": "csse-dh-mr01-bp-table-read-and-combine-01",
+        "p_family_id": "mr01-data-table",
+        "p_generation_spec_id": "mr01-bp-table-read-and-combine",
+        "p_generation_spec_version": "1",
+        "p_subject": "maths",
+        "p_competency_id": "MR-01",
+        "p_skill": "QT-MR-09",
+        "p_question_type": "short-answer",
+        "p_pathway": [
+          "csse"
+        ],
+        "p_preparation_stage": null,
+        "p_difficulty": "medium",
+        "p_question_content": {
+          "question": "The table shows fruit sold at a market stall. How many kilograms of Grapes and Apples were sold altogether?",
+          "workingSteps": [
+            "Read the two rows needed: Grapes = 91 and Apples = 95.",
+            "Add them: 91 + 95 = 186."
+          ],
+          "params": {
+            "v1": 95,
+            "v2": 82,
+            "v3": 46,
+            "v4": 44,
+            "v5": 91,
+            "i": 4,
+            "j": 0,
+            "ctx": 2
+          },
+          "reasoningRoute": "interpretation",
+          "contextTag": "data_fruit_stall",
+          "unknownPosition": "combined_table_rows",
+          "representationType": "table",
+          "blueprintId": "mr01-bp-table-read-and-combine",
+          "stimulus": {
+            "type": "table",
+            "caption": "Fruit sold at a market stall",
+            "headers": [
+              "Fruit",
+              "Kilograms sold"
+            ],
+            "rows": [
+              [
+                "Apples",
+                "95"
+              ],
+              [
+                "Pears",
+                "82"
+              ],
+              [
+                "Plums",
+                "46"
+              ],
+              [
+                "Cherries",
+                "44"
+              ],
+              [
+                "Grapes",
+                "91"
+              ]
+            ]
+          }
+        },
+        "p_claimed_answer": "186",
+        "p_worked_explanation": "Read the two rows needed: Grapes = 91 and Apples = 95. Add them: 91 + 95 = 186.",
+        "p_distractors": null,
+        "p_mathematical_validation": {
+          "mathematicallyValid": true,
+          "reasons": []
+        },
+        "p_similarity_validation": {
+          "approved": true,
+          "reasons": []
+        }
+      }
+    },
+    {
+      "args": {
+        "p_candidate_id": "csse-dh-mr01-bp-table-read-and-combine-02",
+        "p_family_id": "mr01-data-table",
+        "p_generation_spec_id": "mr01-bp-table-read-and-combine",
+        "p_generation_spec_version": "1",
+        "p_subject": "maths",
+        "p_competency_id": "MR-01",
+        "p_skill": "QT-MR-09",
+        "p_question_type": "short-answer",
+        "p_pathway": [
+          "csse"
+        ],
+        "p_preparation_stage": null,
+        "p_difficulty": "medium",
+        "p_question_content": {
+          "question": "The table shows books borrowed from a school library. How many books were borrowed on Wednesday and Tuesday together?",
+          "workingSteps": [
+            "Read the two rows needed: Wednesday = 88 and Tuesday = 17.",
+            "Add them: 88 + 17 = 105."
+          ],
+          "params": {
+            "v1": 44,
+            "v2": 17,
+            "v3": 88,
+            "v4": 53,
+            "v5": 47,
+            "i": 2,
+            "j": 1,
+            "ctx": 0
+          },
+          "reasoningRoute": "interpretation",
+          "contextTag": "data_library_loans",
+          "unknownPosition": "combined_table_rows",
+          "representationType": "table",
+          "blueprintId": "mr01-bp-table-read-and-combine",
+          "stimulus": {
+            "type": "table",
+            "caption": "Books borrowed from a school library",
+            "headers": [
+              "Day",
+              "Books borrowed"
+            ],
+            "rows": [
+              [
+                "Monday",
+                "44"
+              ],
+              [
+                "Tuesday",
+                "17"
+              ],
+              [
+                "Wednesday",
+                "88"
+              ],
+              [
+                "Thursday",
+                "53"
+              ],
+              [
+                "Friday",
+                "47"
+              ]
+            ]
+          }
+        },
+        "p_claimed_answer": "105",
+        "p_worked_explanation": "Read the two rows needed: Wednesday = 88 and Tuesday = 17. Add them: 88 + 17 = 105.",
+        "p_distractors": null,
+        "p_mathematical_validation": {
+          "mathematicallyValid": true,
+          "reasons": []
+        },
+        "p_similarity_validation": {
+          "approved": true,
+          "reasons": []
+        }
+      }
+    },
+    {
+      "args": {
+        "p_candidate_id": "csse-dh-mr01-bp-table-read-and-combine-03",
+        "p_family_id": "mr01-data-table",
+        "p_generation_spec_id": "mr01-bp-table-read-and-combine",
+        "p_generation_spec_version": "1",
+        "p_subject": "maths",
+        "p_competency_id": "MR-01",
+        "p_skill": "QT-MR-09",
+        "p_question_type": "short-answer",
+        "p_pathway": [
+          "csse"
+        ],
+        "p_preparation_stage": null,
+        "p_difficulty": "easy",
+        "p_question_content": {
+          "question": "The table shows the sport each pupil in a club chose. How many pupils chose Football or Tennis altogether?",
+          "workingSteps": [
+            "Read the two rows needed: Football = 54 and Tennis = 39.",
+            "Add them: 54 + 39 = 93."
+          ],
+          "params": {
+            "v1": 54,
+            "v2": 72,
+            "v3": 39,
+            "v4": 17,
+            "v5": 67,
+            "i": 0,
+            "j": 2,
+            "ctx": 1
+          },
+          "reasoningRoute": "interpretation",
+          "contextTag": "data_sports_choice",
+          "unknownPosition": "combined_table_rows",
+          "representationType": "table",
+          "blueprintId": "mr01-bp-table-read-and-combine",
+          "stimulus": {
+            "type": "table",
+            "caption": "The sport each pupil in a club chose",
+            "headers": [
+              "Sport",
+              "Number of pupils"
+            ],
+            "rows": [
+              [
+                "Football",
+                "54"
+              ],
+              [
+                "Swimming",
+                "72"
+              ],
+              [
+                "Tennis",
+                "39"
+              ],
+              [
+                "Cricket",
+                "17"
+              ],
+              [
+                "Gymnastics",
+                "67"
+              ]
+            ]
+          }
+        },
+        "p_claimed_answer": "93",
+        "p_worked_explanation": "Read the two rows needed: Football = 54 and Tennis = 39. Add them: 54 + 39 = 93.",
+        "p_distractors": null,
+        "p_mathematical_validation": {
+          "mathematicallyValid": true,
+          "reasons": []
+        },
+        "p_similarity_validation": {
+          "approved": true,
+          "reasons": []
+        }
+      }
+    },
+    {
+      "args": {
+        "p_candidate_id": "csse-dh-mr01-bp-table-read-and-combine-04",
+        "p_family_id": "mr01-data-table",
+        "p_generation_spec_id": "mr01-bp-table-read-and-combine",
+        "p_generation_spec_version": "1",
+        "p_subject": "maths",
+        "p_competency_id": "MR-01",
+        "p_skill": "QT-MR-09",
+        "p_question_type": "short-answer",
+        "p_pathway": [
+          "csse"
+        ],
+        "p_preparation_stage": null,
+        "p_difficulty": "medium",
+        "p_question_content": {
+          "question": "The table shows fruit sold at a market stall. How many kilograms of Cherries and Plums were sold altogether?",
+          "workingSteps": [
+            "Read the two rows needed: Cherries = 37 and Plums = 74.",
+            "Add them: 37 + 74 = 111."
+          ],
+          "params": {
+            "v1": 32,
+            "v2": 49,
+            "v3": 74,
+            "v4": 37,
+            "v5": 63,
+            "i": 3,
+            "j": 2,
+            "ctx": 2
+          },
+          "reasoningRoute": "interpretation",
+          "contextTag": "data_fruit_stall",
+          "unknownPosition": "combined_table_rows",
+          "representationType": "table",
+          "blueprintId": "mr01-bp-table-read-and-combine",
+          "stimulus": {
+            "type": "table",
+            "caption": "Fruit sold at a market stall",
+            "headers": [
+              "Fruit",
+              "Kilograms sold"
+            ],
+            "rows": [
+              [
+                "Apples",
+                "32"
+              ],
+              [
+                "Pears",
+                "49"
+              ],
+              [
+                "Plums",
+                "74"
+              ],
+              [
+                "Cherries",
+                "37"
+              ],
+              [
+                "Grapes",
+                "63"
+              ]
+            ]
+          }
+        },
+        "p_claimed_answer": "111",
+        "p_worked_explanation": "Read the two rows needed: Cherries = 37 and Plums = 74. Add them: 37 + 74 = 111.",
+        "p_distractors": null,
+        "p_mathematical_validation": {
+          "mathematicallyValid": true,
+          "reasons": []
+        },
+        "p_similarity_validation": {
+          "approved": true,
+          "reasons": []
+        }
+      }
+    },
+    {
+      "args": {
+        "p_candidate_id": "csse-dh-mr01-bp-table-read-and-combine-05",
+        "p_family_id": "mr01-data-table",
+        "p_generation_spec_id": "mr01-bp-table-read-and-combine",
+        "p_generation_spec_version": "1",
+        "p_subject": "maths",
+        "p_competency_id": "MR-01",
+        "p_skill": "QT-MR-09",
+        "p_question_type": "short-answer",
+        "p_pathway": [
+          "csse"
+        ],
+        "p_preparation_stage": null,
+        "p_difficulty": "easy",
+        "p_question_content": {
+          "question": "The table shows the sport each pupil in a club chose. How many pupils chose Cricket or Football altogether?",
+          "workingSteps": [
+            "Read the two rows needed: Cricket = 39 and Football = 27.",
+            "Add them: 39 + 27 = 66."
+          ],
+          "params": {
+            "v1": 27,
+            "v2": 57,
+            "v3": 32,
+            "v4": 39,
+            "v5": 94,
+            "i": 3,
+            "j": 0,
+            "ctx": 1
+          },
+          "reasoningRoute": "interpretation",
+          "contextTag": "data_sports_choice",
+          "unknownPosition": "combined_table_rows",
+          "representationType": "table",
+          "blueprintId": "mr01-bp-table-read-and-combine",
+          "stimulus": {
+            "type": "table",
+            "caption": "The sport each pupil in a club chose",
+            "headers": [
+              "Sport",
+              "Number of pupils"
+            ],
+            "rows": [
+              [
+                "Football",
+                "27"
+              ],
+              [
+                "Swimming",
+                "57"
+              ],
+              [
+                "Tennis",
+                "32"
+              ],
+              [
+                "Cricket",
+                "39"
+              ],
+              [
+                "Gymnastics",
+                "94"
+              ]
+            ]
+          }
+        },
+        "p_claimed_answer": "66",
+        "p_worked_explanation": "Read the two rows needed: Cricket = 39 and Football = 27. Add them: 39 + 27 = 66.",
+        "p_distractors": null,
+        "p_mathematical_validation": {
+          "mathematicallyValid": true,
+          "reasons": []
+        },
+        "p_similarity_validation": {
+          "approved": true,
+          "reasons": []
+        }
+      }
+    },
+    {
+      "args": {
+        "p_candidate_id": "csse-dh-mr01-bp-table-read-and-combine-06",
+        "p_family_id": "mr01-data-table",
+        "p_generation_spec_id": "mr01-bp-table-read-and-combine",
+        "p_generation_spec_version": "1",
+        "p_subject": "maths",
+        "p_competency_id": "MR-01",
+        "p_skill": "QT-MR-09",
+        "p_question_type": "short-answer",
+        "p_pathway": [
+          "csse"
+        ],
+        "p_preparation_stage": null,
+        "p_difficulty": "medium",
+        "p_question_content": {
+          "question": "The table shows the sport each pupil in a club chose. How many pupils chose Cricket or Football altogether?",
+          "workingSteps": [
+            "Read the two rows needed: Cricket = 78 and Football = 89.",
+            "Add them: 78 + 89 = 167."
+          ],
+          "params": {
+            "v1": 89,
+            "v2": 73,
+            "v3": 42,
+            "v4": 78,
+            "v5": 94,
+            "i": 3,
+            "j": 0,
+            "ctx": 1
+          },
+          "reasoningRoute": "interpretation",
+          "contextTag": "data_sports_choice",
+          "unknownPosition": "combined_table_rows",
+          "representationType": "table",
+          "blueprintId": "mr01-bp-table-read-and-combine",
+          "stimulus": {
+            "type": "table",
+            "caption": "The sport each pupil in a club chose",
+            "headers": [
+              "Sport",
+              "Number of pupils"
+            ],
+            "rows": [
+              [
+                "Football",
+                "89"
+              ],
+              [
+                "Swimming",
+                "73"
+              ],
+              [
+                "Tennis",
+                "42"
+              ],
+              [
+                "Cricket",
+                "78"
+              ],
+              [
+                "Gymnastics",
+                "94"
+              ]
+            ]
+          }
+        },
+        "p_claimed_answer": "167",
+        "p_worked_explanation": "Read the two rows needed: Cricket = 78 and Football = 89. Add them: 78 + 89 = 167.",
+        "p_distractors": null,
+        "p_mathematical_validation": {
+          "mathematicallyValid": true,
+          "reasons": []
+        },
+        "p_similarity_validation": {
+          "approved": true,
+          "reasons": []
+        }
+      }
+    },
+    {
+      "args": {
+        "p_candidate_id": "csse-dh-mr01-bp-table-read-and-combine-07",
+        "p_family_id": "mr01-data-table",
+        "p_generation_spec_id": "mr01-bp-table-read-and-combine",
+        "p_generation_spec_version": "1",
+        "p_subject": "maths",
+        "p_competency_id": "MR-01",
+        "p_skill": "QT-MR-09",
+        "p_question_type": "short-answer",
+        "p_pathway": [
+          "csse"
+        ],
+        "p_preparation_stage": null,
+        "p_difficulty": "medium",
+        "p_question_content": {
+          "question": "The table shows fruit sold at a market stall. How many kilograms of Pears and Plums were sold altogether?",
+          "workingSteps": [
+            "Read the two rows needed: Pears = 55 and Plums = 46.",
+            "Add them: 55 + 46 = 101."
+          ],
+          "params": {
+            "v1": 51,
+            "v2": 55,
+            "v3": 46,
+            "v4": 95,
+            "v5": 53,
+            "i": 1,
+            "j": 2,
+            "ctx": 2
+          },
+          "reasoningRoute": "interpretation",
+          "contextTag": "data_fruit_stall",
+          "unknownPosition": "combined_table_rows",
+          "representationType": "table",
+          "blueprintId": "mr01-bp-table-read-and-combine",
+          "stimulus": {
+            "type": "table",
+            "caption": "Fruit sold at a market stall",
+            "headers": [
+              "Fruit",
+              "Kilograms sold"
+            ],
+            "rows": [
+              [
+                "Apples",
+                "51"
+              ],
+              [
+                "Pears",
+                "55"
+              ],
+              [
+                "Plums",
+                "46"
+              ],
+              [
+                "Cherries",
+                "95"
+              ],
+              [
+                "Grapes",
+                "53"
+              ]
+            ]
+          }
+        },
+        "p_claimed_answer": "101",
+        "p_worked_explanation": "Read the two rows needed: Pears = 55 and Plums = 46. Add them: 55 + 46 = 101.",
+        "p_distractors": null,
+        "p_mathematical_validation": {
+          "mathematicallyValid": true,
+          "reasons": []
+        },
+        "p_similarity_validation": {
+          "approved": true,
+          "reasons": []
+        }
+      }
+    },
+    {
+      "args": {
+        "p_candidate_id": "csse-dh-mr01-bp-table-read-and-combine-08",
+        "p_family_id": "mr01-data-table",
+        "p_generation_spec_id": "mr01-bp-table-read-and-combine",
+        "p_generation_spec_version": "1",
+        "p_subject": "maths",
+        "p_competency_id": "MR-01",
+        "p_skill": "QT-MR-09",
+        "p_question_type": "short-answer",
+        "p_pathway": [
+          "csse"
+        ],
+        "p_preparation_stage": null,
+        "p_difficulty": "medium",
+        "p_question_content": {
+          "question": "The table shows the sport each pupil in a club chose. How many pupils chose Gymnastics or Football altogether?",
+          "workingSteps": [
+            "Read the two rows needed: Gymnastics = 60 and Football = 95.",
+            "Add them: 60 + 95 = 155."
+          ],
+          "params": {
+            "v1": 95,
+            "v2": 31,
+            "v3": 79,
+            "v4": 70,
+            "v5": 60,
+            "i": 4,
+            "j": 0,
+            "ctx": 1
+          },
+          "reasoningRoute": "interpretation",
+          "contextTag": "data_sports_choice",
+          "unknownPosition": "combined_table_rows",
+          "representationType": "table",
+          "blueprintId": "mr01-bp-table-read-and-combine",
+          "stimulus": {
+            "type": "table",
+            "caption": "The sport each pupil in a club chose",
+            "headers": [
+              "Sport",
+              "Number of pupils"
+            ],
+            "rows": [
+              [
+                "Football",
+                "95"
+              ],
+              [
+                "Swimming",
+                "31"
+              ],
+              [
+                "Tennis",
+                "79"
+              ],
+              [
+                "Cricket",
+                "70"
+              ],
+              [
+                "Gymnastics",
+                "60"
+              ]
+            ]
+          }
+        },
+        "p_claimed_answer": "155",
+        "p_worked_explanation": "Read the two rows needed: Gymnastics = 60 and Football = 95. Add them: 60 + 95 = 155.",
+        "p_distractors": null,
+        "p_mathematical_validation": {
+          "mathematicallyValid": true,
+          "reasons": []
+        },
+        "p_similarity_validation": {
+          "approved": true,
+          "reasons": []
+        }
+      }
+    },
+    {
+      "args": {
+        "p_candidate_id": "csse-dh-mr01-bp-table-read-and-combine-09",
+        "p_family_id": "mr01-data-table",
+        "p_generation_spec_id": "mr01-bp-table-read-and-combine",
+        "p_generation_spec_version": "1",
+        "p_subject": "maths",
+        "p_competency_id": "MR-01",
+        "p_skill": "QT-MR-09",
+        "p_question_type": "short-answer",
+        "p_pathway": [
+          "csse"
+        ],
+        "p_preparation_stage": null,
+        "p_difficulty": "medium",
+        "p_question_content": {
+          "question": "The table shows books borrowed from a school library. How many books were borrowed on Friday and Wednesday together?",
+          "workingSteps": [
+            "Read the two rows needed: Friday = 34 and Wednesday = 94.",
+            "Add them: 34 + 94 = 128."
+          ],
+          "params": {
+            "v1": 41,
+            "v2": 39,
+            "v3": 94,
+            "v4": 59,
+            "v5": 34,
+            "i": 4,
+            "j": 2,
+            "ctx": 0
+          },
+          "reasoningRoute": "interpretation",
+          "contextTag": "data_library_loans",
+          "unknownPosition": "combined_table_rows",
+          "representationType": "table",
+          "blueprintId": "mr01-bp-table-read-and-combine",
+          "stimulus": {
+            "type": "table",
+            "caption": "Books borrowed from a school library",
+            "headers": [
+              "Day",
+              "Books borrowed"
+            ],
+            "rows": [
+              [
+                "Monday",
+                "41"
+              ],
+              [
+                "Tuesday",
+                "39"
+              ],
+              [
+                "Wednesday",
+                "94"
+              ],
+              [
+                "Thursday",
+                "59"
+              ],
+              [
+                "Friday",
+                "34"
+              ]
+            ]
+          }
+        },
+        "p_claimed_answer": "128",
+        "p_worked_explanation": "Read the two rows needed: Friday = 34 and Wednesday = 94. Add them: 34 + 94 = 128.",
+        "p_distractors": null,
+        "p_mathematical_validation": {
+          "mathematicallyValid": true,
+          "reasons": []
+        },
+        "p_similarity_validation": {
+          "approved": true,
+          "reasons": []
+        }
+      }
+    },
+    {
+      "args": {
+        "p_candidate_id": "csse-dh-mr01-bp-table-read-and-combine-10",
+        "p_family_id": "mr01-data-table",
+        "p_generation_spec_id": "mr01-bp-table-read-and-combine",
+        "p_generation_spec_version": "1",
+        "p_subject": "maths",
+        "p_competency_id": "MR-01",
+        "p_skill": "QT-MR-09",
+        "p_question_type": "short-answer",
+        "p_pathway": [
+          "csse"
+        ],
+        "p_preparation_stage": null,
+        "p_difficulty": "easy",
+        "p_question_content": {
+          "question": "The table shows the sport each pupil in a club chose. How many pupils chose Tennis or Cricket altogether?",
+          "workingSteps": [
+            "Read the two rows needed: Tennis = 35 and Cricket = 61.",
+            "Add them: 35 + 61 = 96."
+          ],
+          "params": {
+            "v1": 81,
+            "v2": 16,
+            "v3": 35,
+            "v4": 61,
+            "v5": 18,
+            "i": 2,
+            "j": 3,
+            "ctx": 1
+          },
+          "reasoningRoute": "interpretation",
+          "contextTag": "data_sports_choice",
+          "unknownPosition": "combined_table_rows",
+          "representationType": "table",
+          "blueprintId": "mr01-bp-table-read-and-combine",
+          "stimulus": {
+            "type": "table",
+            "caption": "The sport each pupil in a club chose",
+            "headers": [
+              "Sport",
+              "Number of pupils"
+            ],
+            "rows": [
+              [
+                "Football",
+                "81"
+              ],
+              [
+                "Swimming",
+                "16"
+              ],
+              [
+                "Tennis",
+                "35"
+              ],
+              [
+                "Cricket",
+                "61"
+              ],
+              [
+                "Gymnastics",
+                "18"
+              ]
+            ]
+          }
+        },
+        "p_claimed_answer": "96",
+        "p_worked_explanation": "Read the two rows needed: Tennis = 35 and Cricket = 61. Add them: 35 + 61 = 96.",
+        "p_distractors": null,
+        "p_mathematical_validation": {
+          "mathematicallyValid": true,
+          "reasons": []
+        },
+        "p_similarity_validation": {
+          "approved": true,
+          "reasons": []
+        }
+      }
+    },
+    {
+      "args": {
+        "p_candidate_id": "csse-dh-mr01-bp-table-read-and-combine-11",
+        "p_family_id": "mr01-data-table",
+        "p_generation_spec_id": "mr01-bp-table-read-and-combine",
+        "p_generation_spec_version": "1",
+        "p_subject": "maths",
+        "p_competency_id": "MR-01",
+        "p_skill": "QT-MR-09",
+        "p_question_type": "short-answer",
+        "p_pathway": [
+          "csse"
+        ],
+        "p_preparation_stage": null,
+        "p_difficulty": "easy",
+        "p_question_content": {
+          "question": "The table shows the sport each pupil in a club chose. How many pupils chose Cricket or Gymnastics altogether?",
+          "workingSteps": [
+            "Read the two rows needed: Cricket = 71 and Gymnastics = 23.",
+            "Add them: 71 + 23 = 94."
+          ],
+          "params": {
+            "v1": 29,
+            "v2": 28,
+            "v3": 39,
+            "v4": 71,
+            "v5": 23,
+            "i": 3,
+            "j": 4,
+            "ctx": 1
+          },
+          "reasoningRoute": "interpretation",
+          "contextTag": "data_sports_choice",
+          "unknownPosition": "combined_table_rows",
+          "representationType": "table",
+          "blueprintId": "mr01-bp-table-read-and-combine",
+          "stimulus": {
+            "type": "table",
+            "caption": "The sport each pupil in a club chose",
+            "headers": [
+              "Sport",
+              "Number of pupils"
+            ],
+            "rows": [
+              [
+                "Football",
+                "29"
+              ],
+              [
+                "Swimming",
+                "28"
+              ],
+              [
+                "Tennis",
+                "39"
+              ],
+              [
+                "Cricket",
+                "71"
+              ],
+              [
+                "Gymnastics",
+                "23"
+              ]
+            ]
+          }
+        },
+        "p_claimed_answer": "94",
+        "p_worked_explanation": "Read the two rows needed: Cricket = 71 and Gymnastics = 23. Add them: 71 + 23 = 94.",
+        "p_distractors": null,
+        "p_mathematical_validation": {
+          "mathematicallyValid": true,
+          "reasons": []
+        },
+        "p_similarity_validation": {
+          "approved": true,
+          "reasons": []
+        }
+      }
+    },
+    {
+      "args": {
+        "p_candidate_id": "csse-dh-mr01-bp-table-read-and-combine-12",
+        "p_family_id": "mr01-data-table",
+        "p_generation_spec_id": "mr01-bp-table-read-and-combine",
+        "p_generation_spec_version": "1",
+        "p_subject": "maths",
+        "p_competency_id": "MR-01",
+        "p_skill": "QT-MR-09",
+        "p_question_type": "short-answer",
+        "p_pathway": [
+          "csse"
+        ],
+        "p_preparation_stage": null,
+        "p_difficulty": "easy",
+        "p_question_content": {
+          "question": "The table shows fruit sold at a market stall. How many kilograms of Cherries and Plums were sold altogether?",
+          "workingSteps": [
+            "Read the two rows needed: Cherries = 78 and Plums = 17.",
+            "Add them: 78 + 17 = 95."
+          ],
+          "params": {
+            "v1": 76,
+            "v2": 82,
+            "v3": 17,
+            "v4": 78,
+            "v5": 92,
+            "i": 3,
+            "j": 2,
+            "ctx": 2
+          },
+          "reasoningRoute": "interpretation",
+          "contextTag": "data_fruit_stall",
+          "unknownPosition": "combined_table_rows",
+          "representationType": "table",
+          "blueprintId": "mr01-bp-table-read-and-combine",
+          "stimulus": {
+            "type": "table",
+            "caption": "Fruit sold at a market stall",
+            "headers": [
+              "Fruit",
+              "Kilograms sold"
+            ],
+            "rows": [
+              [
+                "Apples",
+                "76"
+              ],
+              [
+                "Pears",
+                "82"
+              ],
+              [
+                "Plums",
+                "17"
+              ],
+              [
+                "Cherries",
+                "78"
+              ],
+              [
+                "Grapes",
+                "92"
+              ]
+            ]
+          }
+        },
+        "p_claimed_answer": "95",
+        "p_worked_explanation": "Read the two rows needed: Cherries = 78 and Plums = 17. Add them: 78 + 17 = 95.",
+        "p_distractors": null,
+        "p_mathematical_validation": {
+          "mathematicallyValid": true,
+          "reasons": []
+        },
+        "p_similarity_validation": {
+          "approved": true,
+          "reasons": []
+        }
+      }
+    },
+    {
+      "args": {
+        "p_candidate_id": "csse-dh-mr01-bp-table-compare-column-totals-01",
+        "p_family_id": "mr01-data-table",
+        "p_generation_spec_id": "mr01-bp-table-compare-column-totals",
+        "p_generation_spec_version": "1",
+        "p_subject": "maths",
+        "p_competency_id": "MR-01",
+        "p_skill": "QT-MR-09",
+        "p_question_type": "short-answer",
+        "p_pathway": [
+          "csse"
+        ],
+        "p_preparation_stage": null,
+        "p_difficulty": "medium",
+        "p_question_content": {
+          "question": "The table shows the number of pupils for each sport in two weeks. How many more pupils were recorded in Week 2 than in Week 1 altogether?",
+          "workingSteps": [
+            "Week 1 total: 35 + 37 + 43 + 14 = 129.",
+            "Week 2 total: 26 + 41 + 11 + 58 = 136.",
+            "Difference: 136 − 129 = 7."
+          ],
+          "params": {
+            "a1": 35,
+            "a2": 37,
+            "a3": 43,
+            "a4": 14,
+            "b1": 26,
+            "b2": 41,
+            "b3": 11,
+            "b4": 58,
+            "ctx": 1
+          },
+          "reasoningRoute": "multi_step_application",
+          "contextTag": "data_sports_choice_two_weeks",
+          "unknownPosition": "difference_of_column_totals",
+          "representationType": "table",
+          "blueprintId": "mr01-bp-table-compare-column-totals",
+          "stimulus": {
+            "type": "table",
+            "caption": "The sport each pupil in a club chose, by week",
+            "headers": [
+              "Sport",
+              "Week 1",
+              "Week 2"
+            ],
+            "rows": [
+              [
+                "Football",
+                "35",
+                "26"
+              ],
+              [
+                "Swimming",
+                "37",
+                "41"
+              ],
+              [
+                "Tennis",
+                "43",
+                "11"
+              ],
+              [
+                "Cricket",
+                "14",
+                "58"
+              ]
+            ]
+          }
+        },
+        "p_claimed_answer": "7",
+        "p_worked_explanation": "Week 1 total: 35 + 37 + 43 + 14 = 129. Week 2 total: 26 + 41 + 11 + 58 = 136. Difference: 136 − 129 = 7.",
+        "p_distractors": null,
+        "p_mathematical_validation": {
+          "mathematicallyValid": true,
+          "reasons": []
+        },
+        "p_similarity_validation": {
+          "approved": true,
+          "reasons": []
+        }
+      }
+    },
+    {
+      "args": {
+        "p_candidate_id": "csse-dh-mr01-bp-table-compare-column-totals-02",
+        "p_family_id": "mr01-data-table",
+        "p_generation_spec_id": "mr01-bp-table-compare-column-totals",
+        "p_generation_spec_version": "1",
+        "p_subject": "maths",
+        "p_competency_id": "MR-01",
+        "p_skill": "QT-MR-09",
+        "p_question_type": "short-answer",
+        "p_pathway": [
+          "csse"
+        ],
+        "p_preparation_stage": null,
+        "p_difficulty": "medium",
+        "p_question_content": {
+          "question": "The table shows the number of pupils for each sport in two weeks. How many more pupils were recorded in Week 2 than in Week 1 altogether?",
+          "workingSteps": [
+            "Week 1 total: 44 + 25 + 17 + 37 = 123.",
+            "Week 2 total: 35 + 17 + 55 + 32 = 139.",
+            "Difference: 139 − 123 = 16."
+          ],
+          "params": {
+            "a1": 44,
+            "a2": 25,
+            "a3": 17,
+            "a4": 37,
+            "b1": 35,
+            "b2": 17,
+            "b3": 55,
+            "b4": 32,
+            "ctx": 1
+          },
+          "reasoningRoute": "multi_step_application",
+          "contextTag": "data_sports_choice_two_weeks",
+          "unknownPosition": "difference_of_column_totals",
+          "representationType": "table",
+          "blueprintId": "mr01-bp-table-compare-column-totals",
+          "stimulus": {
+            "type": "table",
+            "caption": "The sport each pupil in a club chose, by week",
+            "headers": [
+              "Sport",
+              "Week 1",
+              "Week 2"
+            ],
+            "rows": [
+              [
+                "Football",
+                "44",
+                "35"
+              ],
+              [
+                "Swimming",
+                "25",
+                "17"
+              ],
+              [
+                "Tennis",
+                "17",
+                "55"
+              ],
+              [
+                "Cricket",
+                "37",
+                "32"
+              ]
+            ]
+          }
+        },
+        "p_claimed_answer": "16",
+        "p_worked_explanation": "Week 1 total: 44 + 25 + 17 + 37 = 123. Week 2 total: 35 + 17 + 55 + 32 = 139. Difference: 139 − 123 = 16.",
+        "p_distractors": null,
+        "p_mathematical_validation": {
+          "mathematicallyValid": true,
+          "reasons": []
+        },
+        "p_similarity_validation": {
+          "approved": true,
+          "reasons": []
+        }
+      }
+    },
+    {
+      "args": {
+        "p_candidate_id": "csse-dh-mr01-bp-table-compare-column-totals-03",
+        "p_family_id": "mr01-data-table",
+        "p_generation_spec_id": "mr01-bp-table-compare-column-totals",
+        "p_generation_spec_version": "1",
+        "p_subject": "maths",
+        "p_competency_id": "MR-01",
+        "p_skill": "QT-MR-09",
+        "p_question_type": "short-answer",
+        "p_pathway": [
+          "csse"
+        ],
+        "p_preparation_stage": null,
+        "p_difficulty": "hard",
+        "p_question_content": {
+          "question": "The table shows the number of kilograms for each fruit in two weeks. How many more kilograms were recorded in Week 2 than in Week 1 altogether?",
+          "workingSteps": [
+            "Week 1 total: 27 + 53 + 43 + 60 = 183.",
+            "Week 2 total: 57 + 54 + 51 + 51 = 213.",
+            "Difference: 213 − 183 = 30."
+          ],
+          "params": {
+            "a1": 27,
+            "a2": 53,
+            "a3": 43,
+            "a4": 60,
+            "b1": 57,
+            "b2": 54,
+            "b3": 51,
+            "b4": 51,
+            "ctx": 2
+          },
+          "reasoningRoute": "multi_step_application",
+          "contextTag": "data_fruit_stall_two_weeks",
+          "unknownPosition": "difference_of_column_totals",
+          "representationType": "table",
+          "blueprintId": "mr01-bp-table-compare-column-totals",
+          "stimulus": {
+            "type": "table",
+            "caption": "Fruit sold at a market stall, by week",
+            "headers": [
+              "Fruit",
+              "Week 1",
+              "Week 2"
+            ],
+            "rows": [
+              [
+                "Apples",
+                "27",
+                "57"
+              ],
+              [
+                "Pears",
+                "53",
+                "54"
+              ],
+              [
+                "Plums",
+                "43",
+                "51"
+              ],
+              [
+                "Cherries",
+                "60",
+                "51"
+              ]
+            ]
+          }
+        },
+        "p_claimed_answer": "30",
+        "p_worked_explanation": "Week 1 total: 27 + 53 + 43 + 60 = 183. Week 2 total: 57 + 54 + 51 + 51 = 213. Difference: 213 − 183 = 30.",
+        "p_distractors": null,
+        "p_mathematical_validation": {
+          "mathematicallyValid": true,
+          "reasons": []
+        },
+        "p_similarity_validation": {
+          "approved": true,
+          "reasons": []
+        }
+      }
+    },
+    {
+      "args": {
+        "p_candidate_id": "csse-dh-mr01-bp-table-compare-column-totals-04",
+        "p_family_id": "mr01-data-table",
+        "p_generation_spec_id": "mr01-bp-table-compare-column-totals",
+        "p_generation_spec_version": "1",
+        "p_subject": "maths",
+        "p_competency_id": "MR-01",
+        "p_skill": "QT-MR-09",
+        "p_question_type": "short-answer",
+        "p_pathway": [
+          "csse"
+        ],
+        "p_preparation_stage": null,
+        "p_difficulty": "hard",
+        "p_question_content": {
+          "question": "The table shows the number of pupils for each sport in two weeks. How many more pupils were recorded in Week 2 than in Week 1 altogether?",
+          "workingSteps": [
+            "Week 1 total: 32 + 17 + 40 + 22 = 111.",
+            "Week 2 total: 17 + 51 + 37 + 41 = 146.",
+            "Difference: 146 − 111 = 35."
+          ],
+          "params": {
+            "a1": 32,
+            "a2": 17,
+            "a3": 40,
+            "a4": 22,
+            "b1": 17,
+            "b2": 51,
+            "b3": 37,
+            "b4": 41,
+            "ctx": 1
+          },
+          "reasoningRoute": "multi_step_application",
+          "contextTag": "data_sports_choice_two_weeks",
+          "unknownPosition": "difference_of_column_totals",
+          "representationType": "table",
+          "blueprintId": "mr01-bp-table-compare-column-totals",
+          "stimulus": {
+            "type": "table",
+            "caption": "The sport each pupil in a club chose, by week",
+            "headers": [
+              "Sport",
+              "Week 1",
+              "Week 2"
+            ],
+            "rows": [
+              [
+                "Football",
+                "32",
+                "17"
+              ],
+              [
+                "Swimming",
+                "17",
+                "51"
+              ],
+              [
+                "Tennis",
+                "40",
+                "37"
+              ],
+              [
+                "Cricket",
+                "22",
+                "41"
+              ]
+            ]
+          }
+        },
+        "p_claimed_answer": "35",
+        "p_worked_explanation": "Week 1 total: 32 + 17 + 40 + 22 = 111. Week 2 total: 17 + 51 + 37 + 41 = 146. Difference: 146 − 111 = 35.",
+        "p_distractors": null,
+        "p_mathematical_validation": {
+          "mathematicallyValid": true,
+          "reasons": []
+        },
+        "p_similarity_validation": {
+          "approved": true,
+          "reasons": []
+        }
+      }
+    },
+    {
+      "args": {
+        "p_candidate_id": "csse-dh-mr01-bp-table-compare-column-totals-05",
+        "p_family_id": "mr01-data-table",
+        "p_generation_spec_id": "mr01-bp-table-compare-column-totals",
+        "p_generation_spec_version": "1",
+        "p_subject": "maths",
+        "p_competency_id": "MR-01",
+        "p_skill": "QT-MR-09",
+        "p_question_type": "short-answer",
+        "p_pathway": [
+          "csse"
+        ],
+        "p_preparation_stage": null,
+        "p_difficulty": "hard",
+        "p_question_content": {
+          "question": "The table shows the number of books for each day in two weeks. How many more books were recorded in Week 2 than in Week 1 altogether?",
+          "workingSteps": [
+            "Week 1 total: 19 + 49 + 27 + 23 = 118.",
+            "Week 2 total: 21 + 59 + 42 + 56 = 178.",
+            "Difference: 178 − 118 = 60."
+          ],
+          "params": {
+            "a1": 19,
+            "a2": 49,
+            "a3": 27,
+            "a4": 23,
+            "b1": 21,
+            "b2": 59,
+            "b3": 42,
+            "b4": 56,
+            "ctx": 0
+          },
+          "reasoningRoute": "multi_step_application",
+          "contextTag": "data_library_loans_two_weeks",
+          "unknownPosition": "difference_of_column_totals",
+          "representationType": "table",
+          "blueprintId": "mr01-bp-table-compare-column-totals",
+          "stimulus": {
+            "type": "table",
+            "caption": "Books borrowed from a school library, by week",
+            "headers": [
+              "Day",
+              "Week 1",
+              "Week 2"
+            ],
+            "rows": [
+              [
+                "Monday",
+                "19",
+                "21"
+              ],
+              [
+                "Tuesday",
+                "49",
+                "59"
+              ],
+              [
+                "Wednesday",
+                "27",
+                "42"
+              ],
+              [
+                "Thursday",
+                "23",
+                "56"
+              ]
+            ]
+          }
+        },
+        "p_claimed_answer": "60",
+        "p_worked_explanation": "Week 1 total: 19 + 49 + 27 + 23 = 118. Week 2 total: 21 + 59 + 42 + 56 = 178. Difference: 178 − 118 = 60.",
+        "p_distractors": null,
+        "p_mathematical_validation": {
+          "mathematicallyValid": true,
+          "reasons": []
+        },
+        "p_similarity_validation": {
+          "approved": true,
+          "reasons": []
+        }
+      }
+    },
+    {
+      "args": {
+        "p_candidate_id": "csse-dh-mr01-bp-table-compare-column-totals-06",
+        "p_family_id": "mr01-data-table",
+        "p_generation_spec_id": "mr01-bp-table-compare-column-totals",
+        "p_generation_spec_version": "1",
+        "p_subject": "maths",
+        "p_competency_id": "MR-01",
+        "p_skill": "QT-MR-09",
+        "p_question_type": "short-answer",
+        "p_pathway": [
+          "csse"
+        ],
+        "p_preparation_stage": null,
+        "p_difficulty": "hard",
+        "p_question_content": {
+          "question": "The table shows the number of kilograms for each fruit in two weeks. How many more kilograms were recorded in Week 2 than in Week 1 altogether?",
+          "workingSteps": [
+            "Week 1 total: 60 + 22 + 22 + 29 = 133.",
+            "Week 2 total: 11 + 50 + 54 + 39 = 154.",
+            "Difference: 154 − 133 = 21."
+          ],
+          "params": {
+            "a1": 60,
+            "a2": 22,
+            "a3": 22,
+            "a4": 29,
+            "b1": 11,
+            "b2": 50,
+            "b3": 54,
+            "b4": 39,
+            "ctx": 2
+          },
+          "reasoningRoute": "multi_step_application",
+          "contextTag": "data_fruit_stall_two_weeks",
+          "unknownPosition": "difference_of_column_totals",
+          "representationType": "table",
+          "blueprintId": "mr01-bp-table-compare-column-totals",
+          "stimulus": {
+            "type": "table",
+            "caption": "Fruit sold at a market stall, by week",
+            "headers": [
+              "Fruit",
+              "Week 1",
+              "Week 2"
+            ],
+            "rows": [
+              [
+                "Apples",
+                "60",
+                "11"
+              ],
+              [
+                "Pears",
+                "22",
+                "50"
+              ],
+              [
+                "Plums",
+                "22",
+                "54"
+              ],
+              [
+                "Cherries",
+                "29",
+                "39"
+              ]
+            ]
+          }
+        },
+        "p_claimed_answer": "21",
+        "p_worked_explanation": "Week 1 total: 60 + 22 + 22 + 29 = 133. Week 2 total: 11 + 50 + 54 + 39 = 154. Difference: 154 − 133 = 21.",
+        "p_distractors": null,
+        "p_mathematical_validation": {
+          "mathematicallyValid": true,
+          "reasons": []
+        },
+        "p_similarity_validation": {
+          "approved": true,
+          "reasons": []
+        }
+      }
+    },
+    {
+      "args": {
+        "p_candidate_id": "csse-dh-mr01-bp-table-compare-column-totals-07",
+        "p_family_id": "mr01-data-table",
+        "p_generation_spec_id": "mr01-bp-table-compare-column-totals",
+        "p_generation_spec_version": "1",
+        "p_subject": "maths",
+        "p_competency_id": "MR-01",
+        "p_skill": "QT-MR-09",
+        "p_question_type": "short-answer",
+        "p_pathway": [
+          "csse"
+        ],
+        "p_preparation_stage": null,
+        "p_difficulty": "hard",
+        "p_question_content": {
+          "question": "The table shows the number of pupils for each sport in two weeks. How many more pupils were recorded in Week 2 than in Week 1 altogether?",
+          "workingSteps": [
+            "Week 1 total: 60 + 10 + 17 + 21 = 108.",
+            "Week 2 total: 36 + 37 + 46 + 39 = 158.",
+            "Difference: 158 − 108 = 50."
+          ],
+          "params": {
+            "a1": 60,
+            "a2": 10,
+            "a3": 17,
+            "a4": 21,
+            "b1": 36,
+            "b2": 37,
+            "b3": 46,
+            "b4": 39,
+            "ctx": 1
+          },
+          "reasoningRoute": "multi_step_application",
+          "contextTag": "data_sports_choice_two_weeks",
+          "unknownPosition": "difference_of_column_totals",
+          "representationType": "table",
+          "blueprintId": "mr01-bp-table-compare-column-totals",
+          "stimulus": {
+            "type": "table",
+            "caption": "The sport each pupil in a club chose, by week",
+            "headers": [
+              "Sport",
+              "Week 1",
+              "Week 2"
+            ],
+            "rows": [
+              [
+                "Football",
+                "60",
+                "36"
+              ],
+              [
+                "Swimming",
+                "10",
+                "37"
+              ],
+              [
+                "Tennis",
+                "17",
+                "46"
+              ],
+              [
+                "Cricket",
+                "21",
+                "39"
+              ]
+            ]
+          }
+        },
+        "p_claimed_answer": "50",
+        "p_worked_explanation": "Week 1 total: 60 + 10 + 17 + 21 = 108. Week 2 total: 36 + 37 + 46 + 39 = 158. Difference: 158 − 108 = 50.",
+        "p_distractors": null,
+        "p_mathematical_validation": {
+          "mathematicallyValid": true,
+          "reasons": []
+        },
+        "p_similarity_validation": {
+          "approved": true,
+          "reasons": []
+        }
+      }
+    },
+    {
+      "args": {
+        "p_candidate_id": "csse-dh-mr01-bp-table-compare-column-totals-08",
+        "p_family_id": "mr01-data-table",
+        "p_generation_spec_id": "mr01-bp-table-compare-column-totals",
+        "p_generation_spec_version": "1",
+        "p_subject": "maths",
+        "p_competency_id": "MR-01",
+        "p_skill": "QT-MR-09",
+        "p_question_type": "short-answer",
+        "p_pathway": [
+          "csse"
+        ],
+        "p_preparation_stage": null,
+        "p_difficulty": "medium",
+        "p_question_content": {
+          "question": "The table shows the number of kilograms for each fruit in two weeks. How many more kilograms were recorded in Week 2 than in Week 1 altogether?",
+          "workingSteps": [
+            "Week 1 total: 47 + 30 + 29 + 18 = 124.",
+            "Week 2 total: 44 + 33 + 24 + 36 = 137.",
+            "Difference: 137 − 124 = 13."
+          ],
+          "params": {
+            "a1": 47,
+            "a2": 30,
+            "a3": 29,
+            "a4": 18,
+            "b1": 44,
+            "b2": 33,
+            "b3": 24,
+            "b4": 36,
+            "ctx": 2
+          },
+          "reasoningRoute": "multi_step_application",
+          "contextTag": "data_fruit_stall_two_weeks",
+          "unknownPosition": "difference_of_column_totals",
+          "representationType": "table",
+          "blueprintId": "mr01-bp-table-compare-column-totals",
+          "stimulus": {
+            "type": "table",
+            "caption": "Fruit sold at a market stall, by week",
+            "headers": [
+              "Fruit",
+              "Week 1",
+              "Week 2"
+            ],
+            "rows": [
+              [
+                "Apples",
+                "47",
+                "44"
+              ],
+              [
+                "Pears",
+                "30",
+                "33"
+              ],
+              [
+                "Plums",
+                "29",
+                "24"
+              ],
+              [
+                "Cherries",
+                "18",
+                "36"
+              ]
+            ]
+          }
+        },
+        "p_claimed_answer": "13",
+        "p_worked_explanation": "Week 1 total: 47 + 30 + 29 + 18 = 124. Week 2 total: 44 + 33 + 24 + 36 = 137. Difference: 137 − 124 = 13.",
+        "p_distractors": null,
+        "p_mathematical_validation": {
+          "mathematicallyValid": true,
+          "reasons": []
+        },
+        "p_similarity_validation": {
+          "approved": true,
+          "reasons": []
+        }
+      }
+    },
+    {
+      "args": {
+        "p_candidate_id": "csse-dh-mr01-bp-table-compare-column-totals-09",
+        "p_family_id": "mr01-data-table",
+        "p_generation_spec_id": "mr01-bp-table-compare-column-totals",
+        "p_generation_spec_version": "1",
+        "p_subject": "maths",
+        "p_competency_id": "MR-01",
+        "p_skill": "QT-MR-09",
+        "p_question_type": "short-answer",
+        "p_pathway": [
+          "csse"
+        ],
+        "p_preparation_stage": null,
+        "p_difficulty": "hard",
+        "p_question_content": {
+          "question": "The table shows the number of pupils for each sport in two weeks. How many more pupils were recorded in Week 2 than in Week 1 altogether?",
+          "workingSteps": [
+            "Week 1 total: 42 + 16 + 56 + 20 = 134.",
+            "Week 2 total: 35 + 32 + 46 + 50 = 163.",
+            "Difference: 163 − 134 = 29."
+          ],
+          "params": {
+            "a1": 42,
+            "a2": 16,
+            "a3": 56,
+            "a4": 20,
+            "b1": 35,
+            "b2": 32,
+            "b3": 46,
+            "b4": 50,
+            "ctx": 1
+          },
+          "reasoningRoute": "multi_step_application",
+          "contextTag": "data_sports_choice_two_weeks",
+          "unknownPosition": "difference_of_column_totals",
+          "representationType": "table",
+          "blueprintId": "mr01-bp-table-compare-column-totals",
+          "stimulus": {
+            "type": "table",
+            "caption": "The sport each pupil in a club chose, by week",
+            "headers": [
+              "Sport",
+              "Week 1",
+              "Week 2"
+            ],
+            "rows": [
+              [
+                "Football",
+                "42",
+                "35"
+              ],
+              [
+                "Swimming",
+                "16",
+                "32"
+              ],
+              [
+                "Tennis",
+                "56",
+                "46"
+              ],
+              [
+                "Cricket",
+                "20",
+                "50"
+              ]
+            ]
+          }
+        },
+        "p_claimed_answer": "29",
+        "p_worked_explanation": "Week 1 total: 42 + 16 + 56 + 20 = 134. Week 2 total: 35 + 32 + 46 + 50 = 163. Difference: 163 − 134 = 29.",
+        "p_distractors": null,
+        "p_mathematical_validation": {
+          "mathematicallyValid": true,
+          "reasons": []
+        },
+        "p_similarity_validation": {
+          "approved": true,
+          "reasons": []
+        }
+      }
+    },
+    {
+      "args": {
+        "p_candidate_id": "csse-dh-mr01-bp-table-compare-column-totals-10",
+        "p_family_id": "mr01-data-table",
+        "p_generation_spec_id": "mr01-bp-table-compare-column-totals",
+        "p_generation_spec_version": "1",
+        "p_subject": "maths",
+        "p_competency_id": "MR-01",
+        "p_skill": "QT-MR-09",
+        "p_question_type": "short-answer",
+        "p_pathway": [
+          "csse"
+        ],
+        "p_preparation_stage": null,
+        "p_difficulty": "hard",
+        "p_question_content": {
+          "question": "The table shows the number of kilograms for each fruit in two weeks. How many more kilograms were recorded in Week 2 than in Week 1 altogether?",
+          "workingSteps": [
+            "Week 1 total: 26 + 19 + 46 + 27 = 118.",
+            "Week 2 total: 38 + 35 + 37 + 39 = 149.",
+            "Difference: 149 − 118 = 31."
+          ],
+          "params": {
+            "a1": 26,
+            "a2": 19,
+            "a3": 46,
+            "a4": 27,
+            "b1": 38,
+            "b2": 35,
+            "b3": 37,
+            "b4": 39,
+            "ctx": 2
+          },
+          "reasoningRoute": "multi_step_application",
+          "contextTag": "data_fruit_stall_two_weeks",
+          "unknownPosition": "difference_of_column_totals",
+          "representationType": "table",
+          "blueprintId": "mr01-bp-table-compare-column-totals",
+          "stimulus": {
+            "type": "table",
+            "caption": "Fruit sold at a market stall, by week",
+            "headers": [
+              "Fruit",
+              "Week 1",
+              "Week 2"
+            ],
+            "rows": [
+              [
+                "Apples",
+                "26",
+                "38"
+              ],
+              [
+                "Pears",
+                "19",
+                "35"
+              ],
+              [
+                "Plums",
+                "46",
+                "37"
+              ],
+              [
+                "Cherries",
+                "27",
+                "39"
+              ]
+            ]
+          }
+        },
+        "p_claimed_answer": "31",
+        "p_worked_explanation": "Week 1 total: 26 + 19 + 46 + 27 = 118. Week 2 total: 38 + 35 + 37 + 39 = 149. Difference: 149 − 118 = 31.",
+        "p_distractors": null,
+        "p_mathematical_validation": {
+          "mathematicallyValid": true,
+          "reasons": []
+        },
+        "p_similarity_validation": {
+          "approved": true,
+          "reasons": []
+        }
+      }
+    },
+    {
+      "args": {
+        "p_candidate_id": "csse-dh-mr01-bp-table-compare-column-totals-11",
+        "p_family_id": "mr01-data-table",
+        "p_generation_spec_id": "mr01-bp-table-compare-column-totals",
+        "p_generation_spec_version": "1",
+        "p_subject": "maths",
+        "p_competency_id": "MR-01",
+        "p_skill": "QT-MR-09",
+        "p_question_type": "short-answer",
+        "p_pathway": [
+          "csse"
+        ],
+        "p_preparation_stage": null,
+        "p_difficulty": "medium",
+        "p_question_content": {
+          "question": "The table shows the number of books for each day in two weeks. How many more books were recorded in Week 2 than in Week 1 altogether?",
+          "workingSteps": [
+            "Week 1 total: 32 + 16 + 53 + 19 = 120.",
+            "Week 2 total: 28 + 25 + 17 + 57 = 127.",
+            "Difference: 127 − 120 = 7."
+          ],
+          "params": {
+            "a1": 32,
+            "a2": 16,
+            "a3": 53,
+            "a4": 19,
+            "b1": 28,
+            "b2": 25,
+            "b3": 17,
+            "b4": 57,
+            "ctx": 0
+          },
+          "reasoningRoute": "multi_step_application",
+          "contextTag": "data_library_loans_two_weeks",
+          "unknownPosition": "difference_of_column_totals",
+          "representationType": "table",
+          "blueprintId": "mr01-bp-table-compare-column-totals",
+          "stimulus": {
+            "type": "table",
+            "caption": "Books borrowed from a school library, by week",
+            "headers": [
+              "Day",
+              "Week 1",
+              "Week 2"
+            ],
+            "rows": [
+              [
+                "Monday",
+                "32",
+                "28"
+              ],
+              [
+                "Tuesday",
+                "16",
+                "25"
+              ],
+              [
+                "Wednesday",
+                "53",
+                "17"
+              ],
+              [
+                "Thursday",
+                "19",
+                "57"
+              ]
+            ]
+          }
+        },
+        "p_claimed_answer": "7",
+        "p_worked_explanation": "Week 1 total: 32 + 16 + 53 + 19 = 120. Week 2 total: 28 + 25 + 17 + 57 = 127. Difference: 127 − 120 = 7.",
+        "p_distractors": null,
+        "p_mathematical_validation": {
+          "mathematicallyValid": true,
+          "reasons": []
+        },
+        "p_similarity_validation": {
+          "approved": true,
+          "reasons": []
+        }
+      }
+    },
+    {
+      "args": {
+        "p_candidate_id": "csse-dh-mr01-bp-table-compare-column-totals-12",
+        "p_family_id": "mr01-data-table",
+        "p_generation_spec_id": "mr01-bp-table-compare-column-totals",
+        "p_generation_spec_version": "1",
+        "p_subject": "maths",
+        "p_competency_id": "MR-01",
+        "p_skill": "QT-MR-09",
+        "p_question_type": "short-answer",
+        "p_pathway": [
+          "csse"
+        ],
+        "p_preparation_stage": null,
+        "p_difficulty": "hard",
+        "p_question_content": {
+          "question": "The table shows the number of books for each day in two weeks. How many more books were recorded in Week 2 than in Week 1 altogether?",
+          "workingSteps": [
+            "Week 1 total: 32 + 34 + 45 + 47 = 158.",
+            "Week 2 total: 33 + 60 + 38 + 48 = 179.",
+            "Difference: 179 − 158 = 21."
+          ],
+          "params": {
+            "a1": 32,
+            "a2": 34,
+            "a3": 45,
+            "a4": 47,
+            "b1": 33,
+            "b2": 60,
+            "b3": 38,
+            "b4": 48,
+            "ctx": 0
+          },
+          "reasoningRoute": "multi_step_application",
+          "contextTag": "data_library_loans_two_weeks",
+          "unknownPosition": "difference_of_column_totals",
+          "representationType": "table",
+          "blueprintId": "mr01-bp-table-compare-column-totals",
+          "stimulus": {
+            "type": "table",
+            "caption": "Books borrowed from a school library, by week",
+            "headers": [
+              "Day",
+              "Week 1",
+              "Week 2"
+            ],
+            "rows": [
+              [
+                "Monday",
+                "32",
+                "33"
+              ],
+              [
+                "Tuesday",
+                "34",
+                "60"
+              ],
+              [
+                "Wednesday",
+                "45",
+                "38"
+              ],
+              [
+                "Thursday",
+                "47",
+                "48"
+              ]
+            ]
+          }
+        },
+        "p_claimed_answer": "21",
+        "p_worked_explanation": "Week 1 total: 32 + 34 + 45 + 47 = 158. Week 2 total: 33 + 60 + 38 + 48 = 179. Difference: 179 − 158 = 21.",
+        "p_distractors": null,
+        "p_mathematical_validation": {
+          "mathematicallyValid": true,
+          "reasons": []
+        },
+        "p_similarity_validation": {
+          "approved": true,
+          "reasons": []
+        }
+      }
+    },
+    {
+      "args": {
+        "p_candidate_id": "csse-dh-mr01-bp-bar-chart-read-difference-01",
+        "p_family_id": "mr01-data-table",
+        "p_generation_spec_id": "mr01-bp-bar-chart-read-difference",
+        "p_generation_spec_version": "1",
+        "p_subject": "maths",
+        "p_competency_id": "MR-01",
+        "p_skill": "QT-MR-09",
+        "p_question_type": "short-answer",
+        "p_pathway": [
+          "csse"
+        ],
+        "p_preparation_stage": null,
+        "p_difficulty": "medium",
+        "p_question_content": {
+          "question": "The bar chart shows the sport each pupil in a club chose. How many more pupils chose Football than Tennis? Read the values carefully from the scale.",
+          "workingSteps": [
+            "Check the scale first: the gridlines go up in steps of 2.",
+            "Football = 8 and Tennis = 4.",
+            "Difference: 8 − 4 = 4."
+          ],
+          "params": {
+            "v1": 8,
+            "v2": 12,
+            "v3": 4,
+            "v4": 10,
+            "v5": 6,
+            "i": 0,
+            "j": 2,
+            "s": 0,
+            "ctx": 1
+          },
+          "reasoningRoute": "interpretation",
+          "contextTag": "data_sports_choice_bar_chart",
+          "unknownPosition": "difference_between_bars",
+          "representationType": "bar_chart",
+          "blueprintId": "mr01-bp-bar-chart-read-difference",
+          "stimulus": {
+            "type": "bar-chart",
+            "title": "The sport each pupil in a club chose",
+            "yLabel": "Number of pupils",
+            "categories": [
+              "Football",
+              "Swimming",
+              "Tennis",
+              "Cricket",
+              "Gymnastics"
+            ],
+            "values": [
+              8,
+              12,
+              4,
+              10,
+              6
+            ],
+            "scaleStep": 2,
+            "axisMax": 14
+          }
+        },
+        "p_claimed_answer": "4",
+        "p_worked_explanation": "Check the scale first: the gridlines go up in steps of 2. Football = 8 and Tennis = 4. Difference: 8 − 4 = 4.",
+        "p_distractors": null,
+        "p_mathematical_validation": {
+          "mathematicallyValid": true,
+          "reasons": []
+        },
+        "p_similarity_validation": {
+          "approved": true,
+          "reasons": []
+        }
+      }
+    },
+    {
+      "args": {
+        "p_candidate_id": "csse-dh-mr01-bp-bar-chart-read-difference-02",
+        "p_family_id": "mr01-data-table",
+        "p_generation_spec_id": "mr01-bp-bar-chart-read-difference",
+        "p_generation_spec_version": "1",
+        "p_subject": "maths",
+        "p_competency_id": "MR-01",
+        "p_skill": "QT-MR-09",
+        "p_question_type": "short-answer",
+        "p_pathway": [
+          "csse"
+        ],
+        "p_preparation_stage": null,
+        "p_difficulty": "hard",
+        "p_question_content": {
+          "question": "The bar chart shows books borrowed from a school library. How many more books were borrowed on Friday than on Wednesday? Read the values carefully from the scale.",
+          "workingSteps": [
+            "Check the scale first: the gridlines go up in steps of 20.",
+            "Friday = 100 and Wednesday = 80.",
+            "Difference: 100 − 80 = 20."
+          ],
+          "params": {
+            "v1": 90,
+            "v2": 30,
+            "v3": 80,
+            "v4": 50,
+            "v5": 100,
+            "i": 4,
+            "j": 2,
+            "s": 4,
+            "ctx": 0
+          },
+          "reasoningRoute": "interpretation",
+          "contextTag": "data_library_loans_bar_chart",
+          "unknownPosition": "difference_between_bars",
+          "representationType": "bar_chart",
+          "blueprintId": "mr01-bp-bar-chart-read-difference",
+          "stimulus": {
+            "type": "bar-chart",
+            "title": "Books borrowed from a school library",
+            "yLabel": "Books borrowed",
+            "categories": [
+              "Monday",
+              "Tuesday",
+              "Wednesday",
+              "Thursday",
+              "Friday"
+            ],
+            "values": [
+              90,
+              30,
+              80,
+              50,
+              100
+            ],
+            "scaleStep": 20,
+            "axisMax": 120
+          }
+        },
+        "p_claimed_answer": "20",
+        "p_worked_explanation": "Check the scale first: the gridlines go up in steps of 20. Friday = 100 and Wednesday = 80. Difference: 100 − 80 = 20.",
+        "p_distractors": null,
+        "p_mathematical_validation": {
+          "mathematicallyValid": true,
+          "reasons": []
+        },
+        "p_similarity_validation": {
+          "approved": true,
+          "reasons": []
+        }
+      }
+    },
+    {
+      "args": {
+        "p_candidate_id": "csse-dh-mr01-bp-bar-chart-read-difference-03",
+        "p_family_id": "mr01-data-table",
+        "p_generation_spec_id": "mr01-bp-bar-chart-read-difference",
+        "p_generation_spec_version": "1",
+        "p_subject": "maths",
+        "p_competency_id": "MR-01",
+        "p_skill": "QT-MR-09",
+        "p_question_type": "short-answer",
+        "p_pathway": [
+          "csse"
+        ],
+        "p_preparation_stage": null,
+        "p_difficulty": "hard",
+        "p_question_content": {
+          "question": "The bar chart shows fruit sold at a market stall. How many more kilograms of Cherries than Pears were sold? Read the values carefully from the scale.",
+          "workingSteps": [
+            "Check the scale first: the gridlines go up in steps of 4.",
+            "Cherries = 40 and Pears = 34.",
+            "Difference: 40 − 34 = 6."
+          ],
+          "params": {
+            "v1": 28,
+            "v2": 34,
+            "v3": 32,
+            "v4": 40,
+            "v5": 12,
+            "i": 3,
+            "j": 1,
+            "s": 1,
+            "ctx": 2
+          },
+          "reasoningRoute": "interpretation",
+          "contextTag": "data_fruit_stall_bar_chart",
+          "unknownPosition": "difference_between_bars",
+          "representationType": "bar_chart",
+          "blueprintId": "mr01-bp-bar-chart-read-difference",
+          "stimulus": {
+            "type": "bar-chart",
+            "title": "Fruit sold at a market stall",
+            "yLabel": "Kilograms sold",
+            "categories": [
+              "Apples",
+              "Pears",
+              "Plums",
+              "Cherries",
+              "Grapes"
+            ],
+            "values": [
+              28,
+              34,
+              32,
+              40,
+              12
+            ],
+            "scaleStep": 4,
+            "axisMax": 44
+          }
+        },
+        "p_claimed_answer": "6",
+        "p_worked_explanation": "Check the scale first: the gridlines go up in steps of 4. Cherries = 40 and Pears = 34. Difference: 40 − 34 = 6.",
+        "p_distractors": null,
+        "p_mathematical_validation": {
+          "mathematicallyValid": true,
+          "reasons": []
+        },
+        "p_similarity_validation": {
+          "approved": true,
+          "reasons": []
+        }
+      }
+    },
+    {
+      "args": {
+        "p_candidate_id": "csse-dh-mr01-bp-bar-chart-read-difference-04",
+        "p_family_id": "mr01-data-table",
+        "p_generation_spec_id": "mr01-bp-bar-chart-read-difference",
+        "p_generation_spec_version": "1",
+        "p_subject": "maths",
+        "p_competency_id": "MR-01",
+        "p_skill": "QT-MR-09",
+        "p_question_type": "short-answer",
+        "p_pathway": [
+          "csse"
+        ],
+        "p_preparation_stage": null,
+        "p_difficulty": "medium",
+        "p_question_content": {
+          "question": "The bar chart shows fruit sold at a market stall. How many more kilograms of Plums than Apples were sold? Read the values carefully from the scale.",
+          "workingSteps": [
+            "Check the scale first: the gridlines go up in steps of 2.",
+            "Plums = 20 and Apples = 10.",
+            "Difference: 20 − 10 = 10."
+          ],
+          "params": {
+            "v1": 10,
+            "v2": 12,
+            "v3": 20,
+            "v4": 18,
+            "v5": 2,
+            "i": 2,
+            "j": 0,
+            "s": 0,
+            "ctx": 2
+          },
+          "reasoningRoute": "interpretation",
+          "contextTag": "data_fruit_stall_bar_chart",
+          "unknownPosition": "difference_between_bars",
+          "representationType": "bar_chart",
+          "blueprintId": "mr01-bp-bar-chart-read-difference",
+          "stimulus": {
+            "type": "bar-chart",
+            "title": "Fruit sold at a market stall",
+            "yLabel": "Kilograms sold",
+            "categories": [
+              "Apples",
+              "Pears",
+              "Plums",
+              "Cherries",
+              "Grapes"
+            ],
+            "values": [
+              10,
+              12,
+              20,
+              18,
+              2
+            ],
+            "scaleStep": 2,
+            "axisMax": 22
+          }
+        },
+        "p_claimed_answer": "10",
+        "p_worked_explanation": "Check the scale first: the gridlines go up in steps of 2. Plums = 20 and Apples = 10. Difference: 20 − 10 = 10.",
+        "p_distractors": null,
+        "p_mathematical_validation": {
+          "mathematicallyValid": true,
+          "reasons": []
+        },
+        "p_similarity_validation": {
+          "approved": true,
+          "reasons": []
+        }
+      }
+    },
+    {
+      "args": {
+        "p_candidate_id": "csse-dh-mr01-bp-bar-chart-read-difference-05",
+        "p_family_id": "mr01-data-table",
+        "p_generation_spec_id": "mr01-bp-bar-chart-read-difference",
+        "p_generation_spec_version": "1",
+        "p_subject": "maths",
+        "p_competency_id": "MR-01",
+        "p_skill": "QT-MR-09",
+        "p_question_type": "short-answer",
+        "p_pathway": [
+          "csse"
+        ],
+        "p_preparation_stage": null,
+        "p_difficulty": "medium",
+        "p_question_content": {
+          "question": "The bar chart shows fruit sold at a market stall. How many more kilograms of Pears than Plums were sold? Read the values carefully from the scale.",
+          "workingSteps": [
+            "Check the scale first: the gridlines go up in steps of 5.",
+            "Pears = 15 and Plums = 5.",
+            "Difference: 15 − 5 = 10."
+          ],
+          "params": {
+            "v1": 20,
+            "v2": 15,
+            "v3": 5,
+            "v4": 50,
+            "v5": 10,
+            "i": 1,
+            "j": 2,
+            "s": 2,
+            "ctx": 2
+          },
+          "reasoningRoute": "interpretation",
+          "contextTag": "data_fruit_stall_bar_chart",
+          "unknownPosition": "difference_between_bars",
+          "representationType": "bar_chart",
+          "blueprintId": "mr01-bp-bar-chart-read-difference",
+          "stimulus": {
+            "type": "bar-chart",
+            "title": "Fruit sold at a market stall",
+            "yLabel": "Kilograms sold",
+            "categories": [
+              "Apples",
+              "Pears",
+              "Plums",
+              "Cherries",
+              "Grapes"
+            ],
+            "values": [
+              20,
+              15,
+              5,
+              50,
+              10
+            ],
+            "scaleStep": 5,
+            "axisMax": 55
+          }
+        },
+        "p_claimed_answer": "10",
+        "p_worked_explanation": "Check the scale first: the gridlines go up in steps of 5. Pears = 15 and Plums = 5. Difference: 15 − 5 = 10.",
+        "p_distractors": null,
+        "p_mathematical_validation": {
+          "mathematicallyValid": true,
+          "reasons": []
+        },
+        "p_similarity_validation": {
+          "approved": true,
+          "reasons": []
+        }
+      }
+    },
+    {
+      "args": {
+        "p_candidate_id": "csse-dh-mr01-bp-bar-chart-read-difference-06",
+        "p_family_id": "mr01-data-table",
+        "p_generation_spec_id": "mr01-bp-bar-chart-read-difference",
+        "p_generation_spec_version": "1",
+        "p_subject": "maths",
+        "p_competency_id": "MR-01",
+        "p_skill": "QT-MR-09",
+        "p_question_type": "short-answer",
+        "p_pathway": [
+          "csse"
+        ],
+        "p_preparation_stage": null,
+        "p_difficulty": "hard",
+        "p_question_content": {
+          "question": "The bar chart shows books borrowed from a school library. How many more books were borrowed on Thursday than on Tuesday? Read the values carefully from the scale.",
+          "workingSteps": [
+            "Check the scale first: the gridlines go up in steps of 20.",
+            "Thursday = 120 and Tuesday = 110.",
+            "Difference: 120 − 110 = 10."
+          ],
+          "params": {
+            "v1": 200,
+            "v2": 110,
+            "v3": 10,
+            "v4": 120,
+            "v5": 160,
+            "i": 3,
+            "j": 1,
+            "s": 4,
+            "ctx": 0
+          },
+          "reasoningRoute": "interpretation",
+          "contextTag": "data_library_loans_bar_chart",
+          "unknownPosition": "difference_between_bars",
+          "representationType": "bar_chart",
+          "blueprintId": "mr01-bp-bar-chart-read-difference",
+          "stimulus": {
+            "type": "bar-chart",
+            "title": "Books borrowed from a school library",
+            "yLabel": "Books borrowed",
+            "categories": [
+              "Monday",
+              "Tuesday",
+              "Wednesday",
+              "Thursday",
+              "Friday"
+            ],
+            "values": [
+              200,
+              110,
+              10,
+              120,
+              160
+            ],
+            "scaleStep": 20,
+            "axisMax": 220
+          }
+        },
+        "p_claimed_answer": "10",
+        "p_worked_explanation": "Check the scale first: the gridlines go up in steps of 20. Thursday = 120 and Tuesday = 110. Difference: 120 − 110 = 10.",
+        "p_distractors": null,
+        "p_mathematical_validation": {
+          "mathematicallyValid": true,
+          "reasons": []
+        },
+        "p_similarity_validation": {
+          "approved": true,
+          "reasons": []
+        }
+      }
+    },
+    {
+      "args": {
+        "p_candidate_id": "csse-dh-mr01-bp-bar-chart-read-difference-07",
+        "p_family_id": "mr01-data-table",
+        "p_generation_spec_id": "mr01-bp-bar-chart-read-difference",
+        "p_generation_spec_version": "1",
+        "p_subject": "maths",
+        "p_competency_id": "MR-01",
+        "p_skill": "QT-MR-09",
+        "p_question_type": "short-answer",
+        "p_pathway": [
+          "csse"
+        ],
+        "p_preparation_stage": null,
+        "p_difficulty": "medium",
+        "p_question_content": {
+          "question": "The bar chart shows fruit sold at a market stall. How many more kilograms of Grapes than Plums were sold? Read the values carefully from the scale.",
+          "workingSteps": [
+            "Check the scale first: the gridlines go up in steps of 2.",
+            "Grapes = 18 and Plums = 2.",
+            "Difference: 18 − 2 = 16."
+          ],
+          "params": {
+            "v1": 10,
+            "v2": 12,
+            "v3": 2,
+            "v4": 4,
+            "v5": 18,
+            "i": 4,
+            "j": 2,
+            "s": 0,
+            "ctx": 2
+          },
+          "reasoningRoute": "interpretation",
+          "contextTag": "data_fruit_stall_bar_chart",
+          "unknownPosition": "difference_between_bars",
+          "representationType": "bar_chart",
+          "blueprintId": "mr01-bp-bar-chart-read-difference",
+          "stimulus": {
+            "type": "bar-chart",
+            "title": "Fruit sold at a market stall",
+            "yLabel": "Kilograms sold",
+            "categories": [
+              "Apples",
+              "Pears",
+              "Plums",
+              "Cherries",
+              "Grapes"
+            ],
+            "values": [
+              10,
+              12,
+              2,
+              4,
+              18
+            ],
+            "scaleStep": 2,
+            "axisMax": 20
+          }
+        },
+        "p_claimed_answer": "16",
+        "p_worked_explanation": "Check the scale first: the gridlines go up in steps of 2. Grapes = 18 and Plums = 2. Difference: 18 − 2 = 16.",
+        "p_distractors": null,
+        "p_mathematical_validation": {
+          "mathematicallyValid": true,
+          "reasons": []
+        },
+        "p_similarity_validation": {
+          "approved": true,
+          "reasons": []
+        }
+      }
+    },
+    {
+      "args": {
+        "p_candidate_id": "csse-dh-mr01-bp-bar-chart-read-difference-08",
+        "p_family_id": "mr01-data-table",
+        "p_generation_spec_id": "mr01-bp-bar-chart-read-difference",
+        "p_generation_spec_version": "1",
+        "p_subject": "maths",
+        "p_competency_id": "MR-01",
+        "p_skill": "QT-MR-09",
+        "p_question_type": "short-answer",
+        "p_pathway": [
+          "csse"
+        ],
+        "p_preparation_stage": null,
+        "p_difficulty": "hard",
+        "p_question_content": {
+          "question": "The bar chart shows fruit sold at a market stall. How many more kilograms of Grapes than Apples were sold? Read the values carefully from the scale.",
+          "workingSteps": [
+            "Check the scale first: the gridlines go up in steps of 10.",
+            "Grapes = 95 and Apples = 85.",
+            "Difference: 95 − 85 = 10."
+          ],
+          "params": {
+            "v1": 85,
+            "v2": 25,
+            "v3": 15,
+            "v4": 40,
+            "v5": 95,
+            "i": 4,
+            "j": 0,
+            "s": 3,
+            "ctx": 2
+          },
+          "reasoningRoute": "interpretation",
+          "contextTag": "data_fruit_stall_bar_chart",
+          "unknownPosition": "difference_between_bars",
+          "representationType": "bar_chart",
+          "blueprintId": "mr01-bp-bar-chart-read-difference",
+          "stimulus": {
+            "type": "bar-chart",
+            "title": "Fruit sold at a market stall",
+            "yLabel": "Kilograms sold",
+            "categories": [
+              "Apples",
+              "Pears",
+              "Plums",
+              "Cherries",
+              "Grapes"
+            ],
+            "values": [
+              85,
+              25,
+              15,
+              40,
+              95
+            ],
+            "scaleStep": 10,
+            "axisMax": 100
+          }
+        },
+        "p_claimed_answer": "10",
+        "p_worked_explanation": "Check the scale first: the gridlines go up in steps of 10. Grapes = 95 and Apples = 85. Difference: 95 − 85 = 10.",
+        "p_distractors": null,
+        "p_mathematical_validation": {
+          "mathematicallyValid": true,
+          "reasons": []
+        },
+        "p_similarity_validation": {
+          "approved": true,
+          "reasons": []
+        }
+      }
+    },
+    {
+      "args": {
+        "p_candidate_id": "csse-dh-mr01-bp-bar-chart-read-difference-09",
+        "p_family_id": "mr01-data-table",
+        "p_generation_spec_id": "mr01-bp-bar-chart-read-difference",
+        "p_generation_spec_version": "1",
+        "p_subject": "maths",
+        "p_competency_id": "MR-01",
+        "p_skill": "QT-MR-09",
+        "p_question_type": "short-answer",
+        "p_pathway": [
+          "csse"
+        ],
+        "p_preparation_stage": null,
+        "p_difficulty": "medium",
+        "p_question_content": {
+          "question": "The bar chart shows fruit sold at a market stall. How many more kilograms of Plums than Grapes were sold? Read the values carefully from the scale.",
+          "workingSteps": [
+            "Check the scale first: the gridlines go up in steps of 5.",
+            "Plums = 50 and Grapes = 25.",
+            "Difference: 50 − 25 = 25."
+          ],
+          "params": {
+            "v1": 20,
+            "v2": 30,
+            "v3": 50,
+            "v4": 5,
+            "v5": 25,
+            "i": 2,
+            "j": 4,
+            "s": 2,
+            "ctx": 2
+          },
+          "reasoningRoute": "interpretation",
+          "contextTag": "data_fruit_stall_bar_chart",
+          "unknownPosition": "difference_between_bars",
+          "representationType": "bar_chart",
+          "blueprintId": "mr01-bp-bar-chart-read-difference",
+          "stimulus": {
+            "type": "bar-chart",
+            "title": "Fruit sold at a market stall",
+            "yLabel": "Kilograms sold",
+            "categories": [
+              "Apples",
+              "Pears",
+              "Plums",
+              "Cherries",
+              "Grapes"
+            ],
+            "values": [
+              20,
+              30,
+              50,
+              5,
+              25
+            ],
+            "scaleStep": 5,
+            "axisMax": 55
+          }
+        },
+        "p_claimed_answer": "25",
+        "p_worked_explanation": "Check the scale first: the gridlines go up in steps of 5. Plums = 50 and Grapes = 25. Difference: 50 − 25 = 25.",
+        "p_distractors": null,
+        "p_mathematical_validation": {
+          "mathematicallyValid": true,
+          "reasons": []
+        },
+        "p_similarity_validation": {
+          "approved": true,
+          "reasons": []
+        }
+      }
+    },
+    {
+      "args": {
+        "p_candidate_id": "csse-dh-mr01-bp-bar-chart-read-difference-10",
+        "p_family_id": "mr01-data-table",
+        "p_generation_spec_id": "mr01-bp-bar-chart-read-difference",
+        "p_generation_spec_version": "1",
+        "p_subject": "maths",
+        "p_competency_id": "MR-01",
+        "p_skill": "QT-MR-09",
+        "p_question_type": "short-answer",
+        "p_pathway": [
+          "csse"
+        ],
+        "p_preparation_stage": null,
+        "p_difficulty": "hard",
+        "p_question_content": {
+          "question": "The bar chart shows the sport each pupil in a club chose. How many more pupils chose Football than Swimming? Read the values carefully from the scale.",
+          "workingSteps": [
+            "Check the scale first: the gridlines go up in steps of 4.",
+            "Football = 24 and Swimming = 8.",
+            "Difference: 24 − 8 = 16."
+          ],
+          "params": {
+            "v1": 24,
+            "v2": 8,
+            "v3": 6,
+            "v4": 10,
+            "v5": 18,
+            "i": 0,
+            "j": 1,
+            "s": 1,
+            "ctx": 1
+          },
+          "reasoningRoute": "interpretation",
+          "contextTag": "data_sports_choice_bar_chart",
+          "unknownPosition": "difference_between_bars",
+          "representationType": "bar_chart",
+          "blueprintId": "mr01-bp-bar-chart-read-difference",
+          "stimulus": {
+            "type": "bar-chart",
+            "title": "The sport each pupil in a club chose",
+            "yLabel": "Number of pupils",
+            "categories": [
+              "Football",
+              "Swimming",
+              "Tennis",
+              "Cricket",
+              "Gymnastics"
+            ],
+            "values": [
+              24,
+              8,
+              6,
+              10,
+              18
+            ],
+            "scaleStep": 4,
+            "axisMax": 28
+          }
+        },
+        "p_claimed_answer": "16",
+        "p_worked_explanation": "Check the scale first: the gridlines go up in steps of 4. Football = 24 and Swimming = 8. Difference: 24 − 8 = 16.",
+        "p_distractors": null,
+        "p_mathematical_validation": {
+          "mathematicallyValid": true,
+          "reasons": []
+        },
+        "p_similarity_validation": {
+          "approved": true,
+          "reasons": []
+        }
+      }
+    },
+    {
+      "args": {
+        "p_candidate_id": "csse-dh-mr01-bp-bar-chart-read-difference-11",
+        "p_family_id": "mr01-data-table",
+        "p_generation_spec_id": "mr01-bp-bar-chart-read-difference",
+        "p_generation_spec_version": "1",
+        "p_subject": "maths",
+        "p_competency_id": "MR-01",
+        "p_skill": "QT-MR-09",
+        "p_question_type": "short-answer",
+        "p_pathway": [
+          "csse"
+        ],
+        "p_preparation_stage": null,
+        "p_difficulty": "hard",
+        "p_question_content": {
+          "question": "The bar chart shows fruit sold at a market stall. How many more kilograms of Plums than Grapes were sold? Read the values carefully from the scale.",
+          "workingSteps": [
+            "Check the scale first: the gridlines go up in steps of 4.",
+            "Plums = 32 and Grapes = 10.",
+            "Difference: 32 − 10 = 22."
+          ],
+          "params": {
+            "v1": 30,
+            "v2": 28,
+            "v3": 32,
+            "v4": 26,
+            "v5": 10,
+            "i": 2,
+            "j": 4,
+            "s": 1,
+            "ctx": 2
+          },
+          "reasoningRoute": "interpretation",
+          "contextTag": "data_fruit_stall_bar_chart",
+          "unknownPosition": "difference_between_bars",
+          "representationType": "bar_chart",
+          "blueprintId": "mr01-bp-bar-chart-read-difference",
+          "stimulus": {
+            "type": "bar-chart",
+            "title": "Fruit sold at a market stall",
+            "yLabel": "Kilograms sold",
+            "categories": [
+              "Apples",
+              "Pears",
+              "Plums",
+              "Cherries",
+              "Grapes"
+            ],
+            "values": [
+              30,
+              28,
+              32,
+              26,
+              10
+            ],
+            "scaleStep": 4,
+            "axisMax": 36
+          }
+        },
+        "p_claimed_answer": "22",
+        "p_worked_explanation": "Check the scale first: the gridlines go up in steps of 4. Plums = 32 and Grapes = 10. Difference: 32 − 10 = 22.",
+        "p_distractors": null,
+        "p_mathematical_validation": {
+          "mathematicallyValid": true,
+          "reasons": []
+        },
+        "p_similarity_validation": {
+          "approved": true,
+          "reasons": []
+        }
+      }
+    },
+    {
+      "args": {
+        "p_candidate_id": "csse-dh-mr01-bp-bar-chart-read-difference-12",
+        "p_family_id": "mr01-data-table",
+        "p_generation_spec_id": "mr01-bp-bar-chart-read-difference",
+        "p_generation_spec_version": "1",
+        "p_subject": "maths",
+        "p_competency_id": "MR-01",
+        "p_skill": "QT-MR-09",
+        "p_question_type": "short-answer",
+        "p_pathway": [
+          "csse"
+        ],
+        "p_preparation_stage": null,
+        "p_difficulty": "hard",
+        "p_question_content": {
+          "question": "The bar chart shows fruit sold at a market stall. How many more kilograms of Apples than Pears were sold? Read the values carefully from the scale.",
+          "workingSteps": [
+            "Check the scale first: the gridlines go up in steps of 10.",
+            "Apples = 100 and Pears = 75.",
+            "Difference: 100 − 75 = 25."
+          ],
+          "params": {
+            "v1": 100,
+            "v2": 75,
+            "v3": 30,
+            "v4": 20,
+            "v5": 70,
+            "i": 0,
+            "j": 1,
+            "s": 3,
+            "ctx": 2
+          },
+          "reasoningRoute": "interpretation",
+          "contextTag": "data_fruit_stall_bar_chart",
+          "unknownPosition": "difference_between_bars",
+          "representationType": "bar_chart",
+          "blueprintId": "mr01-bp-bar-chart-read-difference",
+          "stimulus": {
+            "type": "bar-chart",
+            "title": "Fruit sold at a market stall",
+            "yLabel": "Kilograms sold",
+            "categories": [
+              "Apples",
+              "Pears",
+              "Plums",
+              "Cherries",
+              "Grapes"
+            ],
+            "values": [
+              100,
+              75,
+              30,
+              20,
+              70
+            ],
+            "scaleStep": 10,
+            "axisMax": 110
+          }
+        },
+        "p_claimed_answer": "25",
+        "p_worked_explanation": "Check the scale first: the gridlines go up in steps of 10. Apples = 100 and Pears = 75. Difference: 100 − 75 = 25.",
+        "p_distractors": null,
+        "p_mathematical_validation": {
+          "mathematicallyValid": true,
+          "reasons": []
+        },
+        "p_similarity_validation": {
+          "approved": true,
+          "reasons": []
+        }
+      }
+    },
+    {
+      "args": {
+        "p_candidate_id": "csse-dh-mr01-bp-bar-chart-mean-01",
+        "p_family_id": "mr01-data-table",
+        "p_generation_spec_id": "mr01-bp-bar-chart-mean",
+        "p_generation_spec_version": "1",
+        "p_subject": "maths",
+        "p_competency_id": "MR-01",
+        "p_skill": "QT-MR-09",
+        "p_question_type": "short-answer",
+        "p_pathway": [
+          "csse"
+        ],
+        "p_preparation_stage": null,
+        "p_difficulty": "hard",
+        "p_question_content": {
+          "question": "The bar chart shows books borrowed from a school library. What is the mean number of books borrowed per day? Read the values carefully from the scale.",
+          "workingSteps": [
+            "Check the scale first: the gridlines go up in steps of 20.",
+            "Read all five bars: 200, 200, 90, 180, 80. Their total is 750.",
+            "Mean = 750 ÷ 5 = 150."
+          ],
+          "params": {
+            "v1": 200,
+            "v2": 200,
+            "v3": 90,
+            "v4": 180,
+            "v5": 80,
+            "s": 4,
+            "ctx": 0
+          },
+          "reasoningRoute": "multi_step_application",
+          "contextTag": "data_library_loans_bar_chart_mean",
+          "unknownPosition": "mean_of_bars",
+          "representationType": "bar_chart",
+          "blueprintId": "mr01-bp-bar-chart-mean",
+          "stimulus": {
+            "type": "bar-chart",
+            "title": "Books borrowed from a school library",
+            "yLabel": "Books borrowed",
+            "categories": [
+              "Monday",
+              "Tuesday",
+              "Wednesday",
+              "Thursday",
+              "Friday"
+            ],
+            "values": [
+              200,
+              200,
+              90,
+              180,
+              80
+            ],
+            "scaleStep": 20,
+            "axisMax": 220
+          }
+        },
+        "p_claimed_answer": "150",
+        "p_worked_explanation": "Check the scale first: the gridlines go up in steps of 20. Read all five bars: 200, 200, 90, 180, 80. Their total is 750. Mean = 750 ÷ 5 = 150.",
+        "p_distractors": null,
+        "p_mathematical_validation": {
+          "mathematicallyValid": true,
+          "reasons": []
+        },
+        "p_similarity_validation": {
+          "approved": true,
+          "reasons": []
+        }
+      }
+    },
+    {
+      "args": {
+        "p_candidate_id": "csse-dh-mr01-bp-bar-chart-mean-02",
+        "p_family_id": "mr01-data-table",
+        "p_generation_spec_id": "mr01-bp-bar-chart-mean",
+        "p_generation_spec_version": "1",
+        "p_subject": "maths",
+        "p_competency_id": "MR-01",
+        "p_skill": "QT-MR-09",
+        "p_question_type": "short-answer",
+        "p_pathway": [
+          "csse"
+        ],
+        "p_preparation_stage": null,
+        "p_difficulty": "hard",
+        "p_question_content": {
+          "question": "The bar chart shows fruit sold at a market stall. What is the mean number of kilograms sold per fruit? Read the values carefully from the scale.",
+          "workingSteps": [
+            "Check the scale first: the gridlines go up in steps of 4.",
+            "Read all five bars: 30, 30, 6, 16, 28. Their total is 110.",
+            "Mean = 110 ÷ 5 = 22."
+          ],
+          "params": {
+            "v1": 30,
+            "v2": 30,
+            "v3": 6,
+            "v4": 16,
+            "v5": 28,
+            "s": 1,
+            "ctx": 2
+          },
+          "reasoningRoute": "multi_step_application",
+          "contextTag": "data_fruit_stall_bar_chart_mean",
+          "unknownPosition": "mean_of_bars",
+          "representationType": "bar_chart",
+          "blueprintId": "mr01-bp-bar-chart-mean",
+          "stimulus": {
+            "type": "bar-chart",
+            "title": "Fruit sold at a market stall",
+            "yLabel": "Kilograms sold",
+            "categories": [
+              "Apples",
+              "Pears",
+              "Plums",
+              "Cherries",
+              "Grapes"
+            ],
+            "values": [
+              30,
+              30,
+              6,
+              16,
+              28
+            ],
+            "scaleStep": 4,
+            "axisMax": 32
+          }
+        },
+        "p_claimed_answer": "22",
+        "p_worked_explanation": "Check the scale first: the gridlines go up in steps of 4. Read all five bars: 30, 30, 6, 16, 28. Their total is 110. Mean = 110 ÷ 5 = 22.",
+        "p_distractors": null,
+        "p_mathematical_validation": {
+          "mathematicallyValid": true,
+          "reasons": []
+        },
+        "p_similarity_validation": {
+          "approved": true,
+          "reasons": []
+        }
+      }
+    },
+    {
+      "args": {
+        "p_candidate_id": "csse-dh-mr01-bp-bar-chart-mean-03",
+        "p_family_id": "mr01-data-table",
+        "p_generation_spec_id": "mr01-bp-bar-chart-mean",
+        "p_generation_spec_version": "1",
+        "p_subject": "maths",
+        "p_competency_id": "MR-01",
+        "p_skill": "QT-MR-09",
+        "p_question_type": "short-answer",
+        "p_pathway": [
+          "csse"
+        ],
+        "p_preparation_stage": null,
+        "p_difficulty": "hard",
+        "p_question_content": {
+          "question": "The bar chart shows fruit sold at a market stall. What is the mean number of kilograms sold per fruit? Read the values carefully from the scale.",
+          "workingSteps": [
+            "Check the scale first: the gridlines go up in steps of 20.",
+            "Read all five bars: 70, 140, 10, 60, 130. Their total is 410.",
+            "Mean = 410 ÷ 5 = 82."
+          ],
+          "params": {
+            "v1": 70,
+            "v2": 140,
+            "v3": 10,
+            "v4": 60,
+            "v5": 130,
+            "s": 4,
+            "ctx": 2
+          },
+          "reasoningRoute": "multi_step_application",
+          "contextTag": "data_fruit_stall_bar_chart_mean",
+          "unknownPosition": "mean_of_bars",
+          "representationType": "bar_chart",
+          "blueprintId": "mr01-bp-bar-chart-mean",
+          "stimulus": {
+            "type": "bar-chart",
+            "title": "Fruit sold at a market stall",
+            "yLabel": "Kilograms sold",
+            "categories": [
+              "Apples",
+              "Pears",
+              "Plums",
+              "Cherries",
+              "Grapes"
+            ],
+            "values": [
+              70,
+              140,
+              10,
+              60,
+              130
+            ],
+            "scaleStep": 20,
+            "axisMax": 160
+          }
+        },
+        "p_claimed_answer": "82",
+        "p_worked_explanation": "Check the scale first: the gridlines go up in steps of 20. Read all five bars: 70, 140, 10, 60, 130. Their total is 410. Mean = 410 ÷ 5 = 82.",
+        "p_distractors": null,
+        "p_mathematical_validation": {
+          "mathematicallyValid": true,
+          "reasons": []
+        },
+        "p_similarity_validation": {
+          "approved": true,
+          "reasons": []
+        }
+      }
+    },
+    {
+      "args": {
+        "p_candidate_id": "csse-dh-mr01-bp-bar-chart-mean-04",
+        "p_family_id": "mr01-data-table",
+        "p_generation_spec_id": "mr01-bp-bar-chart-mean",
+        "p_generation_spec_version": "1",
+        "p_subject": "maths",
+        "p_competency_id": "MR-01",
+        "p_skill": "QT-MR-09",
+        "p_question_type": "short-answer",
+        "p_pathway": [
+          "csse"
+        ],
+        "p_preparation_stage": null,
+        "p_difficulty": "hard",
+        "p_question_content": {
+          "question": "The bar chart shows fruit sold at a market stall. What is the mean number of kilograms sold per fruit? Read the values carefully from the scale.",
+          "workingSteps": [
+            "Check the scale first: the gridlines go up in steps of 4.",
+            "Read all five bars: 40, 10, 22, 34, 14. Their total is 120.",
+            "Mean = 120 ÷ 5 = 24."
+          ],
+          "params": {
+            "v1": 40,
+            "v2": 10,
+            "v3": 22,
+            "v4": 34,
+            "v5": 14,
+            "s": 1,
+            "ctx": 2
+          },
+          "reasoningRoute": "multi_step_application",
+          "contextTag": "data_fruit_stall_bar_chart_mean",
+          "unknownPosition": "mean_of_bars",
+          "representationType": "bar_chart",
+          "blueprintId": "mr01-bp-bar-chart-mean",
+          "stimulus": {
+            "type": "bar-chart",
+            "title": "Fruit sold at a market stall",
+            "yLabel": "Kilograms sold",
+            "categories": [
+              "Apples",
+              "Pears",
+              "Plums",
+              "Cherries",
+              "Grapes"
+            ],
+            "values": [
+              40,
+              10,
+              22,
+              34,
+              14
+            ],
+            "scaleStep": 4,
+            "axisMax": 44
+          }
+        },
+        "p_claimed_answer": "24",
+        "p_worked_explanation": "Check the scale first: the gridlines go up in steps of 4. Read all five bars: 40, 10, 22, 34, 14. Their total is 120. Mean = 120 ÷ 5 = 24.",
+        "p_distractors": null,
+        "p_mathematical_validation": {
+          "mathematicallyValid": true,
+          "reasons": []
+        },
+        "p_similarity_validation": {
+          "approved": true,
+          "reasons": []
+        }
+      }
+    },
+    {
+      "args": {
+        "p_candidate_id": "csse-dh-mr01-bp-bar-chart-mean-05",
+        "p_family_id": "mr01-data-table",
+        "p_generation_spec_id": "mr01-bp-bar-chart-mean",
+        "p_generation_spec_version": "1",
+        "p_subject": "maths",
+        "p_competency_id": "MR-01",
+        "p_skill": "QT-MR-09",
+        "p_question_type": "short-answer",
+        "p_pathway": [
+          "csse"
+        ],
+        "p_preparation_stage": null,
+        "p_difficulty": "hard",
+        "p_question_content": {
+          "question": "The bar chart shows the sport each pupil in a club chose. What is the mean number of pupils per sport? Read the values carefully from the scale.",
+          "workingSteps": [
+            "Check the scale first: the gridlines go up in steps of 20.",
+            "Read all five bars: 70, 200, 80, 140, 90. Their total is 580.",
+            "Mean = 580 ÷ 5 = 116."
+          ],
+          "params": {
+            "v1": 70,
+            "v2": 200,
+            "v3": 80,
+            "v4": 140,
+            "v5": 90,
+            "s": 4,
+            "ctx": 1
+          },
+          "reasoningRoute": "multi_step_application",
+          "contextTag": "data_sports_choice_bar_chart_mean",
+          "unknownPosition": "mean_of_bars",
+          "representationType": "bar_chart",
+          "blueprintId": "mr01-bp-bar-chart-mean",
+          "stimulus": {
+            "type": "bar-chart",
+            "title": "The sport each pupil in a club chose",
+            "yLabel": "Number of pupils",
+            "categories": [
+              "Football",
+              "Swimming",
+              "Tennis",
+              "Cricket",
+              "Gymnastics"
+            ],
+            "values": [
+              70,
+              200,
+              80,
+              140,
+              90
+            ],
+            "scaleStep": 20,
+            "axisMax": 220
+          }
+        },
+        "p_claimed_answer": "116",
+        "p_worked_explanation": "Check the scale first: the gridlines go up in steps of 20. Read all five bars: 70, 200, 80, 140, 90. Their total is 580. Mean = 580 ÷ 5 = 116.",
+        "p_distractors": null,
+        "p_mathematical_validation": {
+          "mathematicallyValid": true,
+          "reasons": []
+        },
+        "p_similarity_validation": {
+          "approved": true,
+          "reasons": []
+        }
+      }
+    },
+    {
+      "args": {
+        "p_candidate_id": "csse-dh-mr01-bp-bar-chart-mean-06",
+        "p_family_id": "mr01-data-table",
+        "p_generation_spec_id": "mr01-bp-bar-chart-mean",
+        "p_generation_spec_version": "1",
+        "p_subject": "maths",
+        "p_competency_id": "MR-01",
+        "p_skill": "QT-MR-09",
+        "p_question_type": "short-answer",
+        "p_pathway": [
+          "csse"
+        ],
+        "p_preparation_stage": null,
+        "p_difficulty": "hard",
+        "p_question_content": {
+          "question": "The bar chart shows the sport each pupil in a club chose. What is the mean number of pupils per sport? Read the values carefully from the scale.",
+          "workingSteps": [
+            "Check the scale first: the gridlines go up in steps of 20.",
+            "Read all five bars: 110, 200, 70, 130, 160. Their total is 670.",
+            "Mean = 670 ÷ 5 = 134."
+          ],
+          "params": {
+            "v1": 110,
+            "v2": 200,
+            "v3": 70,
+            "v4": 130,
+            "v5": 160,
+            "s": 4,
+            "ctx": 1
+          },
+          "reasoningRoute": "multi_step_application",
+          "contextTag": "data_sports_choice_bar_chart_mean",
+          "unknownPosition": "mean_of_bars",
+          "representationType": "bar_chart",
+          "blueprintId": "mr01-bp-bar-chart-mean",
+          "stimulus": {
+            "type": "bar-chart",
+            "title": "The sport each pupil in a club chose",
+            "yLabel": "Number of pupils",
+            "categories": [
+              "Football",
+              "Swimming",
+              "Tennis",
+              "Cricket",
+              "Gymnastics"
+            ],
+            "values": [
+              110,
+              200,
+              70,
+              130,
+              160
+            ],
+            "scaleStep": 20,
+            "axisMax": 220
+          }
+        },
+        "p_claimed_answer": "134",
+        "p_worked_explanation": "Check the scale first: the gridlines go up in steps of 20. Read all five bars: 110, 200, 70, 130, 160. Their total is 670. Mean = 670 ÷ 5 = 134.",
+        "p_distractors": null,
+        "p_mathematical_validation": {
+          "mathematicallyValid": true,
+          "reasons": []
+        },
+        "p_similarity_validation": {
+          "approved": true,
+          "reasons": []
+        }
+      }
+    },
+    {
+      "args": {
+        "p_candidate_id": "csse-dh-mr01-bp-bar-chart-mean-07",
+        "p_family_id": "mr01-data-table",
+        "p_generation_spec_id": "mr01-bp-bar-chart-mean",
+        "p_generation_spec_version": "1",
+        "p_subject": "maths",
+        "p_competency_id": "MR-01",
+        "p_skill": "QT-MR-09",
+        "p_question_type": "short-answer",
+        "p_pathway": [
+          "csse"
+        ],
+        "p_preparation_stage": null,
+        "p_difficulty": "hard",
+        "p_question_content": {
+          "question": "The bar chart shows fruit sold at a market stall. What is the mean number of kilograms sold per fruit? Read the values carefully from the scale.",
+          "workingSteps": [
+            "Check the scale first: the gridlines go up in steps of 5.",
+            "Read all five bars: 40, 35, 25, 20, 40. Their total is 160.",
+            "Mean = 160 ÷ 5 = 32."
+          ],
+          "params": {
+            "v1": 40,
+            "v2": 35,
+            "v3": 25,
+            "v4": 20,
+            "v5": 40,
+            "s": 2,
+            "ctx": 2
+          },
+          "reasoningRoute": "multi_step_application",
+          "contextTag": "data_fruit_stall_bar_chart_mean",
+          "unknownPosition": "mean_of_bars",
+          "representationType": "bar_chart",
+          "blueprintId": "mr01-bp-bar-chart-mean",
+          "stimulus": {
+            "type": "bar-chart",
+            "title": "Fruit sold at a market stall",
+            "yLabel": "Kilograms sold",
+            "categories": [
+              "Apples",
+              "Pears",
+              "Plums",
+              "Cherries",
+              "Grapes"
+            ],
+            "values": [
+              40,
+              35,
+              25,
+              20,
+              40
+            ],
+            "scaleStep": 5,
+            "axisMax": 45
+          }
+        },
+        "p_claimed_answer": "32",
+        "p_worked_explanation": "Check the scale first: the gridlines go up in steps of 5. Read all five bars: 40, 35, 25, 20, 40. Their total is 160. Mean = 160 ÷ 5 = 32.",
+        "p_distractors": null,
+        "p_mathematical_validation": {
+          "mathematicallyValid": true,
+          "reasons": []
+        },
+        "p_similarity_validation": {
+          "approved": true,
+          "reasons": []
+        }
+      }
+    },
+    {
+      "args": {
+        "p_candidate_id": "csse-dh-mr01-bp-bar-chart-mean-08",
+        "p_family_id": "mr01-data-table",
+        "p_generation_spec_id": "mr01-bp-bar-chart-mean",
+        "p_generation_spec_version": "1",
+        "p_subject": "maths",
+        "p_competency_id": "MR-01",
+        "p_skill": "QT-MR-09",
+        "p_question_type": "short-answer",
+        "p_pathway": [
+          "csse"
+        ],
+        "p_preparation_stage": null,
+        "p_difficulty": "hard",
+        "p_question_content": {
+          "question": "The bar chart shows fruit sold at a market stall. What is the mean number of kilograms sold per fruit? Read the values carefully from the scale.",
+          "workingSteps": [
+            "Check the scale first: the gridlines go up in steps of 10.",
+            "Read all five bars: 55, 15, 55, 10, 80. Their total is 215.",
+            "Mean = 215 ÷ 5 = 43."
+          ],
+          "params": {
+            "v1": 55,
+            "v2": 15,
+            "v3": 55,
+            "v4": 10,
+            "v5": 80,
+            "s": 3,
+            "ctx": 2
+          },
+          "reasoningRoute": "multi_step_application",
+          "contextTag": "data_fruit_stall_bar_chart_mean",
+          "unknownPosition": "mean_of_bars",
+          "representationType": "bar_chart",
+          "blueprintId": "mr01-bp-bar-chart-mean",
+          "stimulus": {
+            "type": "bar-chart",
+            "title": "Fruit sold at a market stall",
+            "yLabel": "Kilograms sold",
+            "categories": [
+              "Apples",
+              "Pears",
+              "Plums",
+              "Cherries",
+              "Grapes"
+            ],
+            "values": [
+              55,
+              15,
+              55,
+              10,
+              80
+            ],
+            "scaleStep": 10,
+            "axisMax": 90
+          }
+        },
+        "p_claimed_answer": "43",
+        "p_worked_explanation": "Check the scale first: the gridlines go up in steps of 10. Read all five bars: 55, 15, 55, 10, 80. Their total is 215. Mean = 215 ÷ 5 = 43.",
+        "p_distractors": null,
+        "p_mathematical_validation": {
+          "mathematicallyValid": true,
+          "reasons": []
+        },
+        "p_similarity_validation": {
+          "approved": true,
+          "reasons": []
+        }
+      }
+    },
+    {
+      "args": {
+        "p_candidate_id": "csse-dh-mr01-bp-bar-chart-mean-09",
+        "p_family_id": "mr01-data-table",
+        "p_generation_spec_id": "mr01-bp-bar-chart-mean",
+        "p_generation_spec_version": "1",
+        "p_subject": "maths",
+        "p_competency_id": "MR-01",
+        "p_skill": "QT-MR-09",
+        "p_question_type": "short-answer",
+        "p_pathway": [
+          "csse"
+        ],
+        "p_preparation_stage": null,
+        "p_difficulty": "hard",
+        "p_question_content": {
+          "question": "The bar chart shows fruit sold at a market stall. What is the mean number of kilograms sold per fruit? Read the values carefully from the scale.",
+          "workingSteps": [
+            "Check the scale first: the gridlines go up in steps of 5.",
+            "Read all five bars: 5, 35, 15, 45, 50. Their total is 150.",
+            "Mean = 150 ÷ 5 = 30."
+          ],
+          "params": {
+            "v1": 5,
+            "v2": 35,
+            "v3": 15,
+            "v4": 45,
+            "v5": 50,
+            "s": 2,
+            "ctx": 2
+          },
+          "reasoningRoute": "multi_step_application",
+          "contextTag": "data_fruit_stall_bar_chart_mean",
+          "unknownPosition": "mean_of_bars",
+          "representationType": "bar_chart",
+          "blueprintId": "mr01-bp-bar-chart-mean",
+          "stimulus": {
+            "type": "bar-chart",
+            "title": "Fruit sold at a market stall",
+            "yLabel": "Kilograms sold",
+            "categories": [
+              "Apples",
+              "Pears",
+              "Plums",
+              "Cherries",
+              "Grapes"
+            ],
+            "values": [
+              5,
+              35,
+              15,
+              45,
+              50
+            ],
+            "scaleStep": 5,
+            "axisMax": 55
+          }
+        },
+        "p_claimed_answer": "30",
+        "p_worked_explanation": "Check the scale first: the gridlines go up in steps of 5. Read all five bars: 5, 35, 15, 45, 50. Their total is 150. Mean = 150 ÷ 5 = 30.",
+        "p_distractors": null,
+        "p_mathematical_validation": {
+          "mathematicallyValid": true,
+          "reasons": []
+        },
+        "p_similarity_validation": {
+          "approved": true,
+          "reasons": []
+        }
+      }
+    },
+    {
+      "args": {
+        "p_candidate_id": "csse-dh-mr01-bp-bar-chart-mean-10",
+        "p_family_id": "mr01-data-table",
+        "p_generation_spec_id": "mr01-bp-bar-chart-mean",
+        "p_generation_spec_version": "1",
+        "p_subject": "maths",
+        "p_competency_id": "MR-01",
+        "p_skill": "QT-MR-09",
+        "p_question_type": "short-answer",
+        "p_pathway": [
+          "csse"
+        ],
+        "p_preparation_stage": null,
+        "p_difficulty": "hard",
+        "p_question_content": {
+          "question": "The bar chart shows books borrowed from a school library. What is the mean number of books borrowed per day? Read the values carefully from the scale.",
+          "workingSteps": [
+            "Check the scale first: the gridlines go up in steps of 2.",
+            "Read all five bars: 2, 2, 16, 12, 18. Their total is 50.",
+            "Mean = 50 ÷ 5 = 10."
+          ],
+          "params": {
+            "v1": 2,
+            "v2": 2,
+            "v3": 16,
+            "v4": 12,
+            "v5": 18,
+            "s": 0,
+            "ctx": 0
+          },
+          "reasoningRoute": "multi_step_application",
+          "contextTag": "data_library_loans_bar_chart_mean",
+          "unknownPosition": "mean_of_bars",
+          "representationType": "bar_chart",
+          "blueprintId": "mr01-bp-bar-chart-mean",
+          "stimulus": {
+            "type": "bar-chart",
+            "title": "Books borrowed from a school library",
+            "yLabel": "Books borrowed",
+            "categories": [
+              "Monday",
+              "Tuesday",
+              "Wednesday",
+              "Thursday",
+              "Friday"
+            ],
+            "values": [
+              2,
+              2,
+              16,
+              12,
+              18
+            ],
+            "scaleStep": 2,
+            "axisMax": 20
+          }
+        },
+        "p_claimed_answer": "10",
+        "p_worked_explanation": "Check the scale first: the gridlines go up in steps of 2. Read all five bars: 2, 2, 16, 12, 18. Their total is 50. Mean = 50 ÷ 5 = 10.",
+        "p_distractors": null,
+        "p_mathematical_validation": {
+          "mathematicallyValid": true,
+          "reasons": []
+        },
+        "p_similarity_validation": {
+          "approved": true,
+          "reasons": []
+        }
+      }
+    },
+    {
+      "args": {
+        "p_candidate_id": "csse-dh-mr01-bp-bar-chart-mean-11",
+        "p_family_id": "mr01-data-table",
+        "p_generation_spec_id": "mr01-bp-bar-chart-mean",
+        "p_generation_spec_version": "1",
+        "p_subject": "maths",
+        "p_competency_id": "MR-01",
+        "p_skill": "QT-MR-09",
+        "p_question_type": "short-answer",
+        "p_pathway": [
+          "csse"
+        ],
+        "p_preparation_stage": null,
+        "p_difficulty": "hard",
+        "p_question_content": {
+          "question": "The bar chart shows fruit sold at a market stall. What is the mean number of kilograms sold per fruit? Read the values carefully from the scale.",
+          "workingSteps": [
+            "Check the scale first: the gridlines go up in steps of 20.",
+            "Read all five bars: 130, 200, 170, 10, 170. Their total is 680.",
+            "Mean = 680 ÷ 5 = 136."
+          ],
+          "params": {
+            "v1": 130,
+            "v2": 200,
+            "v3": 170,
+            "v4": 10,
+            "v5": 170,
+            "s": 4,
+            "ctx": 2
+          },
+          "reasoningRoute": "multi_step_application",
+          "contextTag": "data_fruit_stall_bar_chart_mean",
+          "unknownPosition": "mean_of_bars",
+          "representationType": "bar_chart",
+          "blueprintId": "mr01-bp-bar-chart-mean",
+          "stimulus": {
+            "type": "bar-chart",
+            "title": "Fruit sold at a market stall",
+            "yLabel": "Kilograms sold",
+            "categories": [
+              "Apples",
+              "Pears",
+              "Plums",
+              "Cherries",
+              "Grapes"
+            ],
+            "values": [
+              130,
+              200,
+              170,
+              10,
+              170
+            ],
+            "scaleStep": 20,
+            "axisMax": 220
+          }
+        },
+        "p_claimed_answer": "136",
+        "p_worked_explanation": "Check the scale first: the gridlines go up in steps of 20. Read all five bars: 130, 200, 170, 10, 170. Their total is 680. Mean = 680 ÷ 5 = 136.",
+        "p_distractors": null,
+        "p_mathematical_validation": {
+          "mathematicallyValid": true,
+          "reasons": []
+        },
+        "p_similarity_validation": {
+          "approved": true,
+          "reasons": []
+        }
+      }
+    },
+    {
+      "args": {
+        "p_candidate_id": "csse-dh-mr01-bp-bar-chart-mean-12",
+        "p_family_id": "mr01-data-table",
+        "p_generation_spec_id": "mr01-bp-bar-chart-mean",
+        "p_generation_spec_version": "1",
+        "p_subject": "maths",
+        "p_competency_id": "MR-01",
+        "p_skill": "QT-MR-09",
+        "p_question_type": "short-answer",
+        "p_pathway": [
+          "csse"
+        ],
+        "p_preparation_stage": null,
+        "p_difficulty": "hard",
+        "p_question_content": {
+          "question": "The bar chart shows fruit sold at a market stall. What is the mean number of kilograms sold per fruit? Read the values carefully from the scale.",
+          "workingSteps": [
+            "Check the scale first: the gridlines go up in steps of 10.",
+            "Read all five bars: 5, 75, 10, 10, 15. Their total is 115.",
+            "Mean = 115 ÷ 5 = 23."
+          ],
+          "params": {
+            "v1": 5,
+            "v2": 75,
+            "v3": 10,
+            "v4": 10,
+            "v5": 15,
+            "s": 3,
+            "ctx": 2
+          },
+          "reasoningRoute": "multi_step_application",
+          "contextTag": "data_fruit_stall_bar_chart_mean",
+          "unknownPosition": "mean_of_bars",
+          "representationType": "bar_chart",
+          "blueprintId": "mr01-bp-bar-chart-mean",
+          "stimulus": {
+            "type": "bar-chart",
+            "title": "Fruit sold at a market stall",
+            "yLabel": "Kilograms sold",
+            "categories": [
+              "Apples",
+              "Pears",
+              "Plums",
+              "Cherries",
+              "Grapes"
+            ],
+            "values": [
+              5,
+              75,
+              10,
+              10,
+              15
+            ],
+            "scaleStep": 10,
+            "axisMax": 80
+          }
+        },
+        "p_claimed_answer": "23",
+        "p_worked_explanation": "Check the scale first: the gridlines go up in steps of 10. Read all five bars: 5, 75, 10, 10, 15. Their total is 115. Mean = 115 ÷ 5 = 23.",
+        "p_distractors": null,
+        "p_mathematical_validation": {
+          "mathematicallyValid": true,
+          "reasons": []
+        },
+        "p_similarity_validation": {
+          "approved": true,
+          "reasons": []
+        }
+      }
+    }
+  ]
+}

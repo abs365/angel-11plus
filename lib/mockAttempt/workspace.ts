@@ -11,7 +11,7 @@
  * page component."
  */
 
-import type { ActiveMockForm, MockAttemptStatus, MockAttemptType, MockImageStimulus, MockManifestGroupingEntry, MockQuestionPayload, MockTableStimulus, ResumableMockAttempt } from "./types";
+import type { ActiveMockForm, MockAttemptStatus, MockAttemptType, MockBarChartStimulus, MockImageStimulus, MockManifestGroupingEntry, MockQuestionPayload, MockTableStimulus, ResumableMockAttempt } from "./types";
 
 /**
  * Programme Completion Increment 016 — the one, exact, already-activated
@@ -363,6 +363,26 @@ export function isValidTableStimulus(value: unknown): value is MockTableStimulus
   const rows = v.rows;
   if (!Array.isArray(rows) || rows.length === 0) return false;
   return rows.every((row) => Array.isArray(row) && row.length === headers.length && row.every((cell) => typeof cell === "string"));
+}
+
+/**
+ * Bar-chart counterpart to isValidTableStimulus(), same fail-closed discipline. A chart that could not be drawn
+ * faithfully (mismatched lengths, non-integer or out-of-range values, a scale that does not divide the axis, or an
+ * axis with too many gridlines to read) is rejected rather than rendered wrongly.
+ */
+export function isValidBarChartStimulus(value: unknown): value is MockBarChartStimulus {
+  if (!value || typeof value !== "object") return false;
+  const v = value as Record<string, unknown>;
+  if (v.type !== "bar-chart") return false;
+  for (const k of ["title", "xLabel", "yLabel"] as const) if (v[k] !== undefined && typeof v[k] !== "string") return false;
+  const { categories, values, scaleStep, axisMax } = v;
+  if (!Array.isArray(categories) || categories.length < 2 || categories.length > 8) return false;
+  if (!categories.every((c) => typeof c === "string" && c.length > 0)) return false;
+  if (!Array.isArray(values) || values.length !== categories.length) return false;
+  if (typeof scaleStep !== "number" || !Number.isInteger(scaleStep) || scaleStep < 1) return false;
+  if (typeof axisMax !== "number" || !Number.isInteger(axisMax) || axisMax < scaleStep || axisMax % scaleStep !== 0) return false;
+  if (axisMax / scaleStep > 12) return false;
+  return values.every((n) => typeof n === "number" && Number.isInteger(n) && n >= 0 && n <= axisMax);
 }
 
 /**

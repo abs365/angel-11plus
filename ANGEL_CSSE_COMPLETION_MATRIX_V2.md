@@ -215,3 +215,13 @@ not generated: an unreviewed item in a sealed form silently distorts measurement
 | 12 | Controlled-beta evidence collected without blocking improvements | **Yes** (Family #1 untouched) |
 
 CSSE is therefore **not yet** ready to move from active completion to stable maintenance; the CSSE Pathway Completion Report is not issued.
+
+## Continuation 2 (post Founder review)
+
+| Item | Result |
+|---|---|
+| A. Remediation/mastery acceptance | `ANGEL_CSSE_FOUNDER_ACCEPTANCE_REMEDIATION_MASTERY.md` (test learner only; mastery acceptance = tests + natural use + read-only data re-check) |
+| B. 140 Maths candidates | `ANGEL_CSSE_MATHS_CANDIDATES_EDUCATIONAL_REVIEW.md` (per blueprint: purpose, misconception, example, derivation, structural difference, context, difficulty, transfer, repetition risk). Still pending, not submitted. Recommendation: publish at most 8 of 14 `change-from-note` |
+| C. Writing prompts review pack | `ANGEL_CSSE_WRITING_PROMPTS_FOUNDER_REVIEW_PACK.md` + `scripts/output/csse-writing-expansion/review-pack.html` (drawings embedded). Migration 268 still NOT applied |
+| D. Representation | `ANGEL_CSSE_MATHEMATICAL_REPRESENTATION_GAP.md`. Reused the `prompt.stimulus` architecture; practice now renders table/chart/image; new bar-chart kind; 48 data-handling candidates prepared (pending) |
+| Repo discipline | Committed HEAD verified green by `scripts/verify-clean-checkout.mjs` (install, tsc, build, 4,956 tests, 0 failures). The two failing test files exist only as **untracked local WIP** (`candidateStoreMapping`, `mr03CoordinateBlueprints`, dated 16 Sep), so main is not failing. Rule from here: explicit-path staging and `git diff --cached --stat` before every commit; use the clean-checkout script, not file-moving, for a green signal |
