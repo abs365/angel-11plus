@@ -188,3 +188,30 @@ Resulting Writing supply if all 7 are approved: 15 practice prompts (11 reflecti
 depends on illustration capacity; the three drawings are drafts for **Founder visual and educational review** (the Riverboat rule applies: reject if there is "nothing to write with the picture").
 
 **Founder action:** (1) deploy (so the SVGs are live), (2) apply migration 268, (3) review each family at `/admin-beta/review` (looking at the pictures), recording a decision per family, (4) copy the template to `supabase/migrations/269_…`, uncomment only approved ids, apply.
+
+## Priority 5 — assessment and Mock depth (inc 8: analysis and plan; nothing authored)
+
+See `ANGEL_CSSE_ASSESSMENT_SUPPLY_PLAN.md`. Headline, from live data: one protected full form per paper; a second Maths form is short by
+at least 28 items per-skill (38 spare/reserve items against 56 needed, 17 of them unreviewed), the first Maths form has no MR-08/MR-12/MR-14,
+English has five reserve passages (40 questions) that could plausibly form Form B after independent validation, and there is no usable
+picture-led Writing prompt for a second Mock (the only reserve picture is the rejected Riverboat). Mock-grade content was deliberately
+not generated: an unreviewed item in a sealed form silently distorts measurement.
+
+## Exit criteria status (as of this document)
+
+| # | Criterion | Status |
+|---|---|---|
+| 1 | Competency coverage complete and evidence-mapped | **Mapped** (this matrix); none COMPLETE overall yet |
+| 2 | Important competencies have credible teaching/remediation routes | **Largely met** in code (worked-method 36/37, strategy 17/17, worked example 15/17, ladder live); needs Founder acceptance of the ladder |
+| 3 | English teaching/content depth mature | **Partial** (wrong-answer reveal done; 2 worked examples and passage variety open) |
+| 4 | Maths has sufficient structural diversity | **In progress** (140 candidates prepared, unapplied; representation still prose) |
+| 5 | Continuous Writing has mature practice depth | **In progress** (7 candidates prepared, unapplied; picture-led still the thin genre) |
+| 6 | Mastery requires credible independent/transfer evidence | **Met in code** (breadth by family/skeleton; durable adds delay + transfer); unvalidated against outcomes |
+| 7 | Retrieval/maintenance operational | **Capability exists** (14-day provisional review); learner evidence immature |
+| 8 | Assessment depth supports progress measurement | **Not met** (one form per paper) |
+| 9 | Protected Mock supply sufficient for the lifecycle | **Not met** (see supply plan) |
+| 10 | Content supply on a governed path toward 1,200 → 2,000 → 3,000+ | **Started** (901 → 1,041 pending Founder application) |
+| 11 | No known P0/P1 educational blocker | **None found** |
+| 12 | Controlled-beta evidence collected without blocking improvements | **Yes** (Family #1 untouched) |
+
+CSSE is therefore **not yet** ready to move from active completion to stable maintenance; the CSSE Pathway Completion Report is not issued.
