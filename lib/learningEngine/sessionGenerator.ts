@@ -16,6 +16,7 @@ import { computeLearnerCapacityEvidence, type LearnerCapacityEvidence } from "@/
 import { getMathsTeachingContent } from "./mathsTeachingContent";
 import type { ActivityType, PreparationDecision } from "./preparationDecision";
 import type { TeachingState } from "./teachingState";
+import { deriveFamilyCapabilities, type FamilyCapabilities } from "./liveRemediation";
 
 /**
  * Personalised Session Generation (Sprint 3, ANGEL-CSSE-002A). Single entry
@@ -249,6 +250,12 @@ export interface PersonalisedSession {
    * weighting is deliberately deferred, not silently skipped.
    */
   internalCapacityEvidence?: LearnerCapacityEvidence;
+  /**
+   * CSSE Completion Priority 1 -- what the real question bank can say about each family in this area (alternative
+   * blueprints / representations / authored misconception text). Used only by in-session Practice remediation;
+   * never by Mock. Absent on early-return sessions.
+   */
+  familyCapabilities?: Record<string, FamilyCapabilities>;
 }
 
 /**
@@ -583,5 +590,11 @@ export async function generatePersonalisedSession(
   // PersonalisedSession.internalCapacityEvidence's own docstring.
   const internalCapacityEvidence = computeLearnerCapacityEvidence(candidatePool, history, currentSequence);
 
-  return { activities: [...reviewActivities, ...priorityActivities], summary, familyFocus, internalCapacityEvidence };
+  return {
+    activities: [...reviewActivities, ...priorityActivities],
+    summary,
+    familyFocus,
+    internalCapacityEvidence,
+    familyCapabilities: Object.fromEntries(deriveFamilyCapabilities(tagged)),
+  };
 }

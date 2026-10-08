@@ -35,6 +35,15 @@ import {
 import { scoreEnglishComprehensionAnswer, checkQuotationPresent, type EnglishScoringResult, type ValidationTier } from "@/lib/learningEngine/englishAnswerValidation";
 import { getExamStrategyHint, getWorkedExample } from "@/lib/learningEngine/englishExamStrategies";
 import { englishCorrectAnswerReveal } from "@/lib/learningEngine/englishFeedback";
+import InSessionSupport from "@/components/learningEngine/InSessionSupport";
+import {
+  consecutiveFamilyFailures,
+  planInSessionSupport,
+  reorderRemainingAfterFailure,
+  type FamilyCapabilities,
+  type InSessionSupportPlan,
+  type SessionOutcome,
+} from "@/lib/learningEngine/liveRemediation";
 import { getGuidedScaffoldKind, getGuidedInstructionText, checkLiveSelectionCount } from "@/lib/learningEngine/guidedPractice";
 import { classifyAutomaticError, getSelfReflectionCategories, WRONG_ANSWER_CATEGORY_LABEL } from "@/lib/learningEngine/englishErrorClassification";
 import { getMathsTeachingContent, MATHS_MISCONCEPTION_CATEGORY_LABEL, effectiveGuidedRevealStepCount } from "@/lib/learningEngine/mathsTeachingContent";
@@ -178,6 +187,12 @@ export default function PracticeSessionPage({
   // learner answers it correctly under guidance ("gradually reduce
   // support" — session-local only, not a new mastery mechanic).
   const guidedFamiliesRef = useRef<Set<string>>(new Set());
+  // CSSE Completion Priority 1 -- in-session remediation (Practice only). The log feeds
+  // consecutiveFamilyFailures(); the capabilities come from the real bank (generatePersonalisedSession).
+  const sessionOutcomesRef = useRef<SessionOutcome[]>([]);
+  const familyCapabilitiesRef = useRef<Record<string, FamilyCapabilities>>({});
+  const [supportPlan, setSupportPlan] = useState<InSessionSupportPlan | null>(null);
+  const [supportLessonRoute, setSupportLessonRoute] = useState<string | undefined>(undefined);
   // Educational Increment 007L — Mathematics Guided Practice proof.
   // Mirrors guidedFamiliesRef's exact "gradually reduce support" discipline
   // above, scoped to the 4 proof-set Mathematics families
@@ -344,6 +359,8 @@ export default function PracticeSessionPage({
       }
 
       setActivityExplanations(new Map(session.activities.map((a) => [a.question.id, a.explanation])));
+      sessionOutcomesRef.current = [];
+      familyCapabilitiesRef.current = session.familyCapabilities ?? {};
 
       // Capture each competency's Educational Intelligence snapshot BEFORE
       // recordPresentation() below touches last_presented_at for every
@@ -422,6 +439,7 @@ export default function PracticeSessionPage({
     setWritingFeedbackError("");
     setCheckedItems(new Set());
     setWritingSubmitting(false);
+    setSupportPlan(null);
     isSubmittingRef.current = false;
     questionShownAtRef.current = Date.now(); // Part 17 — this newly-current question's own shown-at moment
   }
@@ -441,6 +459,27 @@ export default function PracticeSessionPage({
     setLastCorrect(isCorrect);
     setSubmitted(true);
     if (isCorrect) setCorrectCount((c) => c + 1);
+    sessionOutcomesRef.current.push({
+      questionId: current.id,
+      familyId: current.familyId,
+      competencyId: QUESTION_TYPE_PRIMARY_COMPETENCY[current.skill as QuestionTypeId],
+      correct: isCorrect,
+      supportTier,
+    });
+    if (!isCorrect && area!.id !== "continuous-writing") {
+      const competencyId = QUESTION_TYPE_PRIMARY_COMPETENCY[current.skill as QuestionTypeId];
+      setSupportPlan(
+        planInSessionSupport({
+          consecutiveFailures: consecutiveFamilyFailures(sessionOutcomesRef.current, current.familyId),
+          hasWorkedContent: Boolean(
+            area!.id === "mathematics" ? getMathsTeachingContent(current.familyId) : getWorkedExample(current.familyId)
+          ),
+          hasFullLesson: Boolean(competencyId && hasFullLessonAvailable(competencyId)),
+          capabilities: current.familyId ? familyCapabilitiesRef.current[current.familyId] : undefined,
+        })
+      );
+      setSupportLessonRoute(competencyId ? FULL_LESSON_ROUTE[competencyId] : undefined);
+    }
 
     const supabase = supabaseRef.current;
     if (supabase && profileIdRef.current) {
@@ -670,6 +709,18 @@ export default function PracticeSessionPage({
 
   async function goToNextOrFinish() {
     if (index + 1 < activities.length) {
+      // A wrong answer must not be followed immediately by the same family again: bring a different family forward.
+      if (lastCorrect === false && area!.id !== "continuous-writing") {
+        const competencyId = QUESTION_TYPE_PRIMARY_COMPETENCY[current.skill as QuestionTypeId];
+        const rest = activities.slice(index + 1).map((q) => ({
+          q,
+          id: q.id,
+          familyId: q.familyId,
+          competencyId: QUESTION_TYPE_PRIMARY_COMPETENCY[q.skill as QuestionTypeId],
+        }));
+        const reordered = reorderRemainingAfterFailure(rest, { familyId: current.familyId, competencyId });
+        setActivities([...activities.slice(0, index + 1), ...reordered.map((r) => r.q)]);
+      }
       setIndex((i) => i + 1);
       resetActivityUiState();
       return;
@@ -851,6 +902,15 @@ export default function PracticeSessionPage({
                 onSubmit={submitWriting}
                 onNext={goToNextOrFinish}
                 isLast={index + 1 === activities.length}
+              />
+            )}
+
+            {submitted && lastCorrect === false && supportPlan && (
+              <InSessionSupport
+                step={supportPlan.step}
+                subject={area.id === "mathematics" ? "maths" : "english"}
+                familyId={current.familyId}
+                lessonRoute={supportLessonRoute}
               />
             )}
           </div>

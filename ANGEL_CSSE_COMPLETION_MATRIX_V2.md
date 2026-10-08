@@ -16,14 +16,20 @@ Status rules (applied the same way to every row):
 | Transfer | `transfer_class` tagged on a meaningful share | few/none tagged | — |
 | Mock | ≥2 items in a live protected form | reserve only | not in any form |
 
-## Corrections to the earlier Evidence Audit (found while building this matrix)
-- Teaching is wider than "5 full lessons". Beside the 5 full lessons, **34 of 37 Maths families** have worked-method
-  content (missing: `mr03-coord-combined`, `mr05-number-property-search`, `mr04-bv-convert`), and **17 of 17 English
-  families** have an exam strategy, **15 of 17** a worked example (missing: `wave1-fam-synonym-battery`,
-  `wave1-fam-emotion-cause`), 9 have a guided scaffold. The "implemented: false" stages in
-  `subjectTeachingContracts.ts` describe an aspirational lesson sequence, not the absence of all teaching.
-- The real gap that remains is *what happens after a wrong answer* and *how mastery is judged*, fixed in
-  increments 1–2 below, plus supply depth.
+## Teaching capabilities (distinct, not interchangeable)
+
+"Five full lessons" is one capability among eight. It must not be read as "only five areas have teaching".
+
+| Capability | What it is | Live coverage (verified in code + bank, 2026-10-08) |
+|---|---|---|
+| FULL LESSON | Explain → model → guided → independent → transfer page | 5 competencies: MR-01, MR-03, MR-04, RC-01, RC-02 |
+| WORKED-METHOD TEACHING (Maths) | Per-family method, relationship, separate worked scenario, verification, misconception category | **36 of 37** Maths families. Only `mr05-number-property-search` is uncovered, **intentionally**, under the existing transfer-safety decision (not reopened without new evidence) |
+| STRATEGY TEACHING (English) | Per-family "efficient exam method" line | **17 of 17** English families |
+| WORKED EXAMPLE (English) | Per-family safe scenario, model reasoning, weak-answer contrast | **15 of 17** (missing: `wave1-fam-synonym-battery`, `wave1-fam-emotion-cause`) |
+| GUIDED SUPPORT | Scaffolded attempt, supported tier | English scaffolds on 9 families; Maths guided step-reveal on every family with worked-method content (answer-leak caps set per family); Writing guided checklist |
+| REMEDIATION | What happens after a wrong answer | Authored misconception note where it exists; post-answer correct-answer reveal + "Next time" strategy (inc 2); **in-session support ladder + structure change (inc 4)** |
+| TRANSFER | Items tagged `transfer_class` | See question-type table (MR-14 has none) |
+| RETRIEVAL | Delayed re-exposure / maintenance review | Capability exists (14-day provisional interval); learner evidence immature |
 
 ## Competency summary
 
@@ -81,7 +87,7 @@ No competency is MISSING outright; none is COMPLETE overall yet. The matrix is c
 |---|---|---|---|---|
 | 1 | Mastery could rest on one remembered question (`some()` in `validateCompetencyMastery`) | mastery/transfer | Mastery now needs the threshold met in ≥2 question families | **DONE, deployed `f728d81`** |
 | 2 | 76 English items: wrong answer showed only "Not quite" | remediation (English) | Post-submission correct-answer reveal + family "Next time" strategy (Practice only) | **DONE, deployed `f728d81`** |
-| 3 | Remediation policy not wired to live selection | remediation | Wire `remediationPolicy` to session selection (same-skeleton failures → different structure / re-teach) | next |
+| 3 | Remediation not wired into the live loop | remediation | Inc 4: session outcome log, support ladder (strategic hint → worked reasoning → re-teach), failed family not re-served next, policy inputs fed from the real bank | **DONE (see Priority 1 notes), pending Founder acceptance** |
 | 4 | Maths structural diversity (6–10 skeletons in 40-item families) | structure | Blueprint-level expansion through the Question Factory gate; needs Founder-applied publication | needs Founder application |
 | 5 | Writing: 8 prompts, uncalibrated AI | Writing | Governed prompt expansion + human-calibration protocol | needs Founder review of prompts |
 | 6 | Mock depth: one form per paper; MR-08/12/14 absent | assessment | Additional protected forms from reserve + new authored items | needs Founder application |
@@ -91,3 +97,23 @@ No competency is MISSING outright; none is COMPLETE overall yet. The matrix is c
 Governance limits that apply to this programme (not obstacles to bypass): publication is admin-gated
 (`submit_question_candidate` / `publish_question_candidate`); migrations are applied by the Founder only; Mock
 content stays sealed from Practice; no official CSSE mark split exists in the repo and none is invented.
+
+## Priority 1 — live remediation wiring: what was hardcoded, what is now real
+
+Path traced: learner answer → `recordAndAdvance` (outcome + support tier recorded) → Educational Intelligence evidence →
+*(previously nothing changed in-session)* → next session's weak-skill override. The session list was fixed at load, and
+`remediationPolicy` fired only from the dashboard's "rebuilding" regression signal.
+
+| `RemediationContext` input | Before | Now | Why |
+|---|---|---|---|
+| `consecutiveFailuresOnSameSkeleton` | 2 if "rebuilding", else 0 | Real in-session run of wrong answers **in the same family** | No per-skeleton counter exists; a family is a deliberately broader stand-in, so support may escalate slightly early rather than claim a skeleton |
+| `hasFullLessonAvailable` | real | real | unchanged |
+| `hasMisconceptionTargetedBlueprintAvailable` | false | from bank: family has authored misconception text | availability of content, not a diagnosis of the learner |
+| `hasAlternativeRepresentationAvailable` | false | from bank: >1 context tag / representation in family | |
+| `hasMultipleBlueprintsInFamily` | false | from bank: >1 `blueprintId` in family | |
+| `hasPrerequisiteCompetencyWithWeakEvidence` | false | **still false** | the only prerequisite graph has no CSSE MR/RC/WC edges; it cannot answer the question |
+
+Live behaviour (Practice only; Mock and Writing untouched): 1st wrong in a family → strategic hint (existing "Next time" / misconception
+note); 2nd → worked reasoning on a separate fixed scenario; 3rd → explicit re-teaching with a link to the full lesson where one exists
+(otherwise worked reasoning). After any wrong answer the next item comes from a different family where one remains
+(same competency preferred). The live question's answer is never shown by the ladder. Angel does not claim to know *why* an answer was wrong.
