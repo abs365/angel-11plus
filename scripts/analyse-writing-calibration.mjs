@@ -1,8 +1,10 @@
-// Computes the agreed calibration measures from filled reader sheets. Reports measures only: no mark, no band, no CSSE number.
-// Usage: npx tsx scripts/analyse-writing-calibration.mjs <dir containing sample-register.csv, reader-a.csv, reader-b.csv, [third-reader.csv], ai-run-1.csv, [ai-run-2.csv]>
+// Computes descriptive calibration measures from filled reader sheets and builds the ADJUDICATION QUEUE.
+// It preserves every individual reader judgement, never averages disagreement away, sets NO thresholds (none exist before human
+// evidence does), and produces no mark, band or CSSE-equivalent number.
+// Usage: npx tsx scripts/analyse-writing-calibration.mjs <dir with sample-register.csv, reader-a.csv, reader-b.csv, [third-reader.csv], ai-run-1.csv, [ai-run-2.csv]>
 import fs from "node:fs";
 import path from "node:path";
-import { CAL_DIMENSIONS, checkThresholds, humanReference, needsThirdReader, pairStats, quadraticWeightedKappa } from "../lib/learningEngine/writingCalibrationMeasures.ts";
+import { CAL_DIMENSIONS, disagreementKind, humanReference, pairStats, quadraticWeightedKappa } from "../lib/learningEngine/writingCalibrationMeasures.ts";
 
 const dir = process.argv[2];
 if (!dir) { console.error("usage: analyse-writing-calibration.mjs <dir>"); process.exit(1); }
@@ -11,7 +13,13 @@ function csv(name, required = true) {
   if (!fs.existsSync(p)) { if (required) { console.error("missing " + p); process.exit(1); } return null; }
   const lines = fs.readFileSync(p, "utf8").split(/\r?\n/).filter((l) => l.trim() && !l.startsWith("("));
   const head = lines[0].split(",");
-  return lines.slice(1).map((l) => Object.fromEntries(l.split(",").map((v, i) => [head[i], (v ?? "").trim()])));
+  return lines.slice(1).map((l) => {
+    // minimal CSV: quoted fields may contain commas
+    const cells = []; let cur = "", q = false;
+    for (const ch of l) { if (ch === '"') q = !q; else if (ch === "," && !q) { cells.push(cur); cur = ""; } else cur += ch; }
+    cells.push(cur);
+    return Object.fromEntries(cells.map((v, i) => [head[i], (v ?? "").trim()]));
+  });
 }
 const register = csv("sample-register.csv");
 const A = csv("reader-a.csv");
@@ -27,39 +35,46 @@ const num = (x) => (x === null ? "n/a" : x.toFixed(2));
 
 const ids = register.map((r) => r.script_id).filter((s) => a.has(s) && b.has(s) && ai1.has(s));
 const out = [];
-out.push("# Writing calibration results (measures only)", "", `Scripts analysed: ${ids.length} of ${register.length} in the register. This is **not** a mark, a band or a CSSE-equivalent number.`, "");
-out.push("## Human-human agreement (readers A and B)", "", "| Dimension | n | exact | within one | weighted kappa | third reader required | recommended |", "|---|---|---|---|---|---|---|");
+out.push("# Writing calibration results (descriptive measures only)", "", `Scripts analysed: ${ids.length} of ${register.length} in the register. This is **not** a mark, a band or a CSSE-equivalent number, and no pass/fail threshold is applied: thresholds are not set before human evidence exists.`, "");
+
+// 1. Individual judgements are preserved in a long-form file, one row per script and dimension.
+const longRows = ["script_id,dimension,reader_a,reader_b,third_reader,disagreement,ai_run_1,ai_run_2,evidence_a,evidence_b"];
+const queue = ["script_id,dimension,reader_a,reader_b,kind,evidence_a,evidence_b,third_reader_supplied,adjudicated_level,adjudication_notes"];
+let disagreements = 0, major = 0;
+for (const s of ids) for (const d of CAL_DIMENSIONS) {
+  const ra = cell(a, s, d) ?? "could_not_judge", rb = cell(b, s, d) ?? "could_not_judge", rc = cell(c, s, d) ?? "";
+  const kind = disagreementKind(ra, rb);
+  const ea = a.get(s)?.["evidence_" + d] ?? "", eb = b.get(s)?.["evidence_" + d] ?? "";
+  const qd = (x) => '"' + String(x).replace(/"/g, '""') + '"';
+  longRows.push([s, d, ra, rb, rc, kind, cell(ai1, s, d) ?? "", cell(ai2, s, d) ?? "", qd(ea), qd(eb)].join(","));
+  if (kind === "adjacent" || kind === "major") { disagreements++; if (kind === "major") major++; queue.push([s, d, ra, rb, kind, qd(ea), qd(eb), rc ? "yes" : "no", rc, ""].join(",")); }
+}
+fs.writeFileSync(path.join(dir, "individual-judgements.csv"), longRows.join("\n") + "\n");
+fs.writeFileSync(path.join(dir, "adjudication-queue.csv"), queue.join("\n") + "\n");
+
+out.push("## Human-human agreement (readers A and B)", "", "| Dimension | n | exact | within one | weighted kappa |", "|---|---|---|---|---|");
 const ref = {};
 for (const d of CAL_DIMENSIONS) {
   const x = ids.map((s) => cell(a, s, d)), y = ids.map((s) => cell(b, s, d));
   const st = pairStats(x, y);
-  const need = ids.map((s, i) => needsThirdReader(x[i] ?? "could_not_judge", y[i] ?? "could_not_judge"));
-  out.push(`| ${d} | ${st.n} | ${pct(st.exact)} | ${pct(st.withinOne)} | ${num(quadraticWeightedKappa(x, y))} | ${need.filter((n) => n === "required").length} | ${need.filter((n) => n === "recommended").length} |`);
+  out.push(`| ${d} | ${st.n} | ${pct(st.exact)} | ${pct(st.withinOne)} | ${num(quadraticWeightedKappa(x, y))} |`);
   ref[d] = ids.map((s, i) => humanReference(x[i] ?? "could_not_judge", y[i] ?? "could_not_judge", cell(c, s, d)));
 }
 const unresolved = CAL_DIMENSIONS.reduce((n, d) => n + ref[d].filter((r) => r.how === "unresolved").length, 0);
-out.push("", `Cells with no human reference (readers split and no third reading supplied): **${unresolved}**. These are excluded from the AI comparison below, not guessed.`, "");
-out.push("## AI vs human reference", "", "| Dimension | n | exact | within one | weighted kappa | AI more generous (share of disagreements) |", "|---|---|---|---|---|---|");
-const agg = { w1: [], gen: [] };
+out.push("", `## Disagreements for adjudication: ${disagreements}`, "", `${major} are two-level differences. **Every** difference between the two readers is in \`adjudication-queue.csv\` with both readers' own judgements and evidence lines. Nothing has been averaged or resolved. Cells still awaiting a third reading: **${unresolved}**; they are excluded from the AI comparison below, not guessed. Each reader's complete judgements are preserved in \`individual-judgements.csv\`.`, "");
+out.push("## AI vs human reference (only where a human reference exists)", "", "| Dimension | n | exact | within one | weighted kappa | AI more generous (share of disagreements) |", "|---|---|---|---|---|---|");
 for (const d of CAL_DIMENSIONS) {
   const h = ids.map((s, i) => ref[d][i].level ?? undefined), g = ids.map((s) => cell(ai1, s, d));
   const st = pairStats(h, g);
   out.push(`| ${d} | ${st.n} | ${pct(st.exact)} | ${pct(st.withinOne)} | ${num(quadraticWeightedKappa(h, g))} | ${pct(st.secondMoreGenerousShare)} |`);
-  if (st.withinOne !== null) agg.w1.push(st.withinOne);
-  if (st.secondMoreGenerousShare !== null) agg.gen.push(st.secondMoreGenerousShare);
 }
-const mean = (v) => (v.length ? v.reduce((s, x) => s + x, 0) / v.length : null);
-// AI repeatability on the scripts that have a second run
 const rep = ids.filter((s) => ai2.has(s));
-const repW1 = rep.length ? mean(CAL_DIMENSIONS.map((d) => pairStats(rep.map((s) => cell(ai1, s, d)), rep.map((s) => cell(ai2, s, d))).withinOne).filter((x) => x !== null)) : null;
-out.push("", `## AI repeatability (same script twice)`, "", `Scripts with a second AI run: ${rep.length}. Mean within-one-level agreement across dimensions: ${pct(repW1)}.`, "");
-// Awkward scripts and the safety net
+const repRows = CAL_DIMENSIONS.map((d) => pairStats(rep.map((s) => cell(ai1, s, d)), rep.map((s) => cell(ai2, s, d))));
+out.push("", "## AI repeatability (same script twice)", "", `Scripts with a second AI run: ${rep.length}.`, "", "| Dimension | n | exact | within one |", "|---|---|---|---|");
+CAL_DIMENSIONS.forEach((d, i) => out.push(`| ${d} | ${repRows[i].n} | ${pct(repRows[i].exact)} | ${pct(repRows[i].withinOne)} |`));
 const awkward = ids.filter((s) => reg.get(s)?.awkward_type);
 const flagged = awkward.filter((s) => (ai1.get(s)?.flagged_low_confidence_or_review_required ?? "").toLowerCase() === "yes");
-const awkFlagged = awkward.length ? flagged.length / awkward.length : null;
-out.push("## Safety net on awkward scripts", "", `Awkward scripts analysed: ${awkward.length}; flagged low-confidence or review-required by the AI run: ${flagged.length} (${pct(awkFlagged)}).`, "");
-out.push("## Against the PROPOSED, provisional thresholds (Founder sets the real ones)", "", "| Check | value | threshold | met |", "|---|---|---|---|");
-for (const t of checkThresholds({ withinOne: mean(agg.w1), secondMoreGenerousShare: mean(agg.gen), repeatabilityWithinOne: repW1, awkwardFlagged: awkFlagged })) out.push(`| ${t.name} | ${pct(t.value)} | ${pct(t.threshold)} | ${t.met === null ? "not computable" : t.met ? "yes" : "no"} |`);
-out.push("", "Nothing in the product changes automatically from these numbers.");
+out.push("", "## Safety net on awkward scripts", "", `Awkward scripts analysed: ${awkward.length}; flagged low-confidence or review-required by the AI run: ${flagged.length} (${pct(awkward.length ? flagged.length / awkward.length : null)}).`, "");
+out.push("These are descriptive measures for the Founder's decision record. No claim of calibrated Writing assessment follows from them until the Founder has reviewed actual human comparison evidence.");
 fs.writeFileSync(path.join(dir, "results.md"), out.join("\n") + "\n");
 console.log(out.join("\n"));

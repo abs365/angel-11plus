@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { checkThresholds, humanReference, needsThirdReader, pairStats, quadraticWeightedKappa, type CalCell } from "@/lib/learningEngine/writingCalibrationMeasures";
+import { disagreementKind, humanReference, pairStats, quadraticWeightedKappa, type CalCell } from "@/lib/learningEngine/writingCalibrationMeasures";
 
 const L = (s: string): CalCell[] => s.split("").map((c) => (c === "d" ? "developing" : c === "s" ? "secure" : c === "g" ? "strong" : "could_not_judge"));
 
@@ -24,22 +24,21 @@ test("quadratic-weighted kappa: hand-computed value 0.8; perfect agreement 1; re
   assert.equal(quadraticWeightedKappa(L("x"), L("x")), null);
 });
 
-test("human reference: agree, or third reader; a one-level split with no third reader is left unresolved, never guessed", () => {
+test("human reference: agree, or third reader; any split with no third reader is left unresolved, never guessed or averaged", () => {
   assert.deepEqual(humanReference("secure", "secure"), { level: "secure", how: "both_agree" });
   assert.deepEqual(humanReference("developing", "strong", "secure"), { level: "secure", how: "third_reader" });
   assert.deepEqual(humanReference("developing", "secure"), { level: null, how: "unresolved" });
   assert.deepEqual(humanReference("could_not_judge", "secure"), { level: null, how: "could_not_judge" });
-  assert.equal(needsThirdReader("developing", "strong"), "required");
-  assert.equal(needsThirdReader("developing", "secure"), "recommended");
-  assert.equal(needsThirdReader("secure", "secure"), "no");
+  assert.equal(disagreementKind("developing", "strong"), "major");
+  assert.equal(disagreementKind("developing", "secure"), "adjacent");
+  assert.equal(disagreementKind("secure", "secure"), "none");
+  assert.equal(disagreementKind("secure", "could_not_judge"), "not_comparable");
 });
 
-test("threshold report states met / not met / not computable and invents nothing", () => {
-  const r = checkThresholds({ withinOne: 0.95, secondMoreGenerousShare: 0.8, repeatabilityWithinOne: null, awkwardFlagged: 0.5 });
-  assert.equal(r[0].met, true);
-  assert.equal(r[1].met, false, "80% of disagreements in one direction exceeds the proposed 70% limit");
-  assert.equal(r[2].met, null);
-  assert.equal(r[3].met, false);
+test("no calibration thresholds exist in code: they are not set before human evidence exists", async () => {
+  const mod = await import("@/lib/learningEngine/writingCalibrationMeasures");
+  assert.equal("checkThresholds" in mod, false);
+  assert.equal("PROPOSED_THRESHOLDS" in mod, false);
 });
 
 test("analysis script runs end to end on SYNTHETIC ARITHMETIC TEST DATA (not writing, not calibration) and reports measures only", async () => {

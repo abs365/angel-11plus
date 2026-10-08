@@ -75,5 +75,7 @@ values
 ${rows.join(",\n")}
 on conflict (id) do nothing;
 `;
-fs.writeFileSync("supabase/migrations/272_maths_form_b_completion_TEMPLATE_NOT_APPLIED.sql", out);
+// Migration 272 has been APPLIED (do not rerun). This generator now writes a comparison copy only and never touches supabase/migrations.
+fs.mkdirSync("scripts/output/form-b-applied-sources", { recursive: true });
+fs.writeFileSync("scripts/output/form-b-applied-sources/272_regenerated_FOR_COMPARISON_ONLY.sql", out);
 console.log("written", Object.keys(files).length, "figures;", rows.length, "rows;", defects.length, "repairs");

@@ -66,9 +66,8 @@ export function quadraticWeightedKappa(a: readonly (CalCell | undefined)[], b: r
 export type ReferenceResult = { level: CalLevel; how: "both_agree" | "third_reader" } | { level: null; how: "unresolved" | "could_not_judge" };
 
 /**
- * The human reference level for one cell, per the protocol: both readers agree, or a third reader decides. The protocol requires
- * a third reader at a two-level difference; for a ONE-level difference it is silent, so this returns "unresolved" unless a third
- * reader is supplied (a gap for the Founder to settle: the safest reading is to send every difference to the third reader).
+ * The human reference level for one cell: both readers agree, or a third reader decides. Any difference is a disagreement for
+ * adjudication: with no third reading the cell stays "unresolved" and is excluded from any comparison, never guessed or averaged.
  */
 export function humanReference(a: CalCell, b: CalCell, third?: CalCell): ReferenceResult {
   if (!isLevel(a) || !isLevel(b)) return { level: null, how: "could_not_judge" };
@@ -77,30 +76,15 @@ export function humanReference(a: CalCell, b: CalCell, third?: CalCell): Referen
   return { level: null, how: "unresolved" };
 }
 
-export function needsThirdReader(a: CalCell, b: CalCell): "required" | "recommended" | "no" {
-  if (!isLevel(a) || !isLevel(b)) return "no";
+export type DisagreementKind = "none" | "adjacent" | "major" | "not_comparable";
+
+/**
+ * Classifies a pair of reader judgements. EVERY difference ("adjacent" = one level, "major" = two levels) is queued for
+ * adjudication by the caller; nothing is averaged or resolved here, and each reader's own judgement is always preserved.
+ * No calibration threshold exists in code: thresholds are not set before human evidence exists.
+ */
+export function disagreementKind(a: CalCell, b: CalCell): DisagreementKind {
+  if (!isLevel(a) || !isLevel(b)) return "not_comparable";
   const d = Math.abs(ORD[a] - ORD[b]);
-  return d >= 2 ? "required" : d === 1 ? "recommended" : "no";
-}
-
-export interface ThresholdCheck {
-  name: string;
-  value: number | null;
-  threshold: number;
-  met: boolean | null;
-}
-
-/** The protocol's PROPOSED, provisional thresholds (section 7). They are inputs the Founder sets; this only reports against whatever is passed. */
-export const PROPOSED_THRESHOLDS = { withinOne: 0.9, oneDirectionalBias: 0.7, repeatabilityWithinOne: 0.9, lowConfidenceOnAwkward: 0.8 } as const;
-
-export function checkThresholds(input: { withinOne: number | null; secondMoreGenerousShare: number | null; repeatabilityWithinOne: number | null; awkwardFlagged: number | null }, t = PROPOSED_THRESHOLDS): ThresholdCheck[] {
-  const ge = (name: string, value: number | null, threshold: number): ThresholdCheck => ({ name, value, threshold, met: value === null ? null : value >= threshold });
-  const bias = input.secondMoreGenerousShare;
-  const biasOk = bias === null ? null : Math.max(bias, 1 - bias) <= t.oneDirectionalBias;
-  return [
-    ge("AI vs human reference, within one level", input.withinOne, t.withinOne),
-    { name: "No one-directional bias beyond the limit", value: bias === null ? null : Math.max(bias, 1 - bias), threshold: t.oneDirectionalBias, met: biasOk },
-    ge("AI repeatability, within one level", input.repeatabilityWithinOne, t.repeatabilityWithinOne),
-    ge("Low-confidence flag fires on awkward scripts", input.awkwardFlagged, t.lowConfidenceOnAwkward),
-  ];
+  return d === 0 ? "none" : d === 1 ? "adjacent" : "major";
 }

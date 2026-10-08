@@ -53,9 +53,9 @@ this dimension fairly (use it honestly; do not guess).
 
 **Procedure.** (1) Calibration session first: both readers mark the same 4 practice scripts that are not in the sample, then discuss every difference, so the
 rubric language is shared. (2) Mark all 40 independently. (3) Return sheets to the coordinator, not to each other.
-**Third reader.** The protocol requires a third reader where A and B differ by two levels. It is **silent on one-level differences**: this pack flags them as
-"recommended" for the third reader and the analysis leaves any cell with no human reference **unresolved and excluded**, never guessed. **Founder to settle:** the
-safest rule is that every difference goes to the third reader.
+**Disagreement is preserved, not averaged.** Each reader's own judgement and evidence line for every script and dimension is kept exactly as recorded. **Every** difference between A and B
+(one level or two) is queued for adjudication by a third reader, with both readers' evidence side by side; nothing is averaged, rounded or silently resolved. Until a third reading is supplied a
+disputed cell is "unresolved" and is excluded from any comparison with the AI, never guessed.
 
 ## 3. Collecting the scripts (coordinator)
 
@@ -74,12 +74,14 @@ safest rule is that every difference goes to the third reader.
 Run the live feedback logic once per script with the production prompt and rubric, recording the version identifiers in the sheet; run a second time on a random 10 for
 repeatability. No prompt change during the run. Existing helper: `scripts/writing-rubric-calibration.mjs`. Record the flag column from the same run.
 
-## 5. Measures (from the protocol, section 6) and how to read them
+## 5. Measures and how to read them
 
-Human-human exact and within-one agreement (the ceiling); AI vs the human reference (exact, within-one, quadratic-weighted kappa); direction of disagreement (which way and how
-often); AI repeatability; behaviour of the low-confidence and review flags on exactly the awkward scripts. Against the **proposed, provisional** thresholds (within one level at
-least 90% per dimension; no more than 70% of disagreements in one direction; repeatability within one at least 90%; flags on at least 80% of awkward cases) the results file says met, not
-met, or not computable. If the humans agree with each other less than the AI agrees with them, that is itself a finding about the rubric, not the AI.
+The analysis reports descriptive measures only: human-human exact and within-one agreement and weighted kappa (what the humans achieve among themselves), the same measures for the AI against the
+adjudicated human reference where one exists, which way the AI differs, AI repeatability, and how often the low-confidence and review flags fire on exactly the awkward scripts. It also writes
+`individual-judgements.csv` (every reader's judgements) and `adjudication-queue.csv` (every disagreement, ready for the third reader).
+**No pass/fail threshold is applied or proposed here.** Thresholds are not set before human evidence exists; the Founder decides what, if anything, counts as acceptable after reading the actual
+comparison. If the humans agree with each other less than the AI agrees with them, that is itself a finding about the rubric, not the AI. **No claim of calibrated Writing assessment follows until that
+evidence has been produced and reviewed.**
 
 ## 6. Decision record (Founder, after the results)
 
@@ -88,5 +90,4 @@ what, if anything, would justify a future and separate governed decision about W
 
 ## 7. Founder actions to start
 
-1. Choose two independent readers (and a third) and brief them with sections 2 and 3. 2. Choose the consent route and the script sources. 3. Set or confirm the thresholds and the
-one-level-difference rule. 4. Decide whether the official CSSE sample mark scheme may be handed to readers.
+1. Choose two independent readers (and a third) and brief them with sections 2 and 3. 2. Choose the consent route and the script sources. 3. Confirm the adjudication rule (every difference goes to the third reader). 4. Decide whether the official CSSE sample mark scheme may be handed to readers.

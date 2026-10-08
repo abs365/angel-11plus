@@ -255,8 +255,8 @@ Educational review: `ANGEL_CSSE_MATHS_CANDIDATES_EDUCATIONAL_REVIEW.md` (context
 | C. Coordinate grid | shared stimulus kind + renderer + validator; 5 blueprints (read, reflect in a drawn mirror, translate, fourth vertex, midpoint); 40 candidates; independent checks (generic transforms, diagonals bisect, equal steps) |
 | D. Angle figures | shared stimulus kind + renderer + validator; 4 blueprints (triangle, straight line, around a point incl. reflex, isosceles with two equal unknowns); 32 candidates; a fifth blueprint was **rejected** (not distinct); every figure says "not drawn accurately" |
 | E. Number line | justified by QT-MR-03 scale reading and QT-MR-14 rounding (both thin, prose-only); 3 blueprints; 24 candidates; exact thousandths arithmetic; independent checks (tick counting, subtraction, nearest-of-two) |
-| F. English Form B | marking-contract repair for 8 explanation items (TIER2 to TIER5, manual); 2 Compass Rose fixes (Q5 wording the text does not support; Q2 accepted sets too narrow); 6 sealed top-up items (8 marks) -> Form B reading 24 items / 39 marks; template migration 271; `ANGEL_CSSE_ENGLISH_FORM_B_COMPLETION.md` |
-| G. Maths Form B | revalidation of 32 items (all answers re-derive; **one real marking defect**: `numberpyramid-02` instructed bracketed form marked wrong); 24 sealed items (6 easy / 8 medium / 10 hard) with 3 exact figures + 1 table; Form B = 56 items; template migration 272; `ANGEL_CSSE_MATHS_FORM_B_COMPLETION.md` |
+| F. English Form B | marking-contract repair for 8 explanation items (TIER2 to TIER5, manual); 2 Compass Rose fixes (Q5 wording the text does not support; Q2 accepted sets extended, though "the weathervane" was in fact already accepted); 6 sealed top-up items (8 marks) -> Form B reading 24 items / 39 marks; migration 271 **APPLIED and verified in production, do not rerun**; `ANGEL_CSSE_ENGLISH_FORM_B_COMPLETION.md` |
+| G. Maths Form B | revalidation of 32 items (all answers re-derive; **one real marking defect**: `numberpyramid-02` instructed bracketed form marked wrong); 24 sealed items (6 easy / 8 medium / 10 hard) with 3 exact figures + 1 table; Form B = 56 items; migration 272 **APPLIED and verified in production, do not rerun**; `ANGEL_CSSE_MATHS_FORM_B_COMPLETION.md` |
 | H. Writing revision (Tier 1) | implemented, Practice only, no child text stored, text-free event store off until migration 270 is applied and a flag is set; Mock cannot reach it |
 | I. Calibration pack | `ANGEL_WRITING_CALIBRATION_PACK.md` + blank kit in `scripts/output/writing-calibration-pack/` + tested analysis measures; no calibration claimed |
 | J. WIP resolution | `ANGEL_WIP_FILES_RESOLUTION.md`; all WIP classified, completed, integrated; clean checkout green |
@@ -281,3 +281,19 @@ Educational review: `ANGEL_CSSE_MATHS_CANDIDATES_EDUCATIONAL_REVIEW.md` (context
 | **Projected if all Maths approved** | 901 + 380 = **1,281** (1,275 on the recommended set); with Writing 1,288 |
 | Sealed Mock Form B (not Practice) | English top-up 6 items; Maths 24 items; Writing Q2 awaiting final artwork |
 
+## Gate closure (after migrations 271 and 272 were applied and verified)
+
+Applied and verified, no longer Founder actions or open correctness repairs: **migration 271** (English marking contract, Compass Rose fixes, six sealed items) and **migration 272** (`numberpyramid-02` repair, 24 sealed Maths items).
+Both: **APPLIED, DO NOT RERUN** (`ANGEL_CSSE_GATE_CLOSURE_VERIFICATION.md`). **268 and 270 remain NOT AUTHORISED.**
+
+**External unresolved specification:** the exact official comprehension/Writing mark split (not invented).
+
+**Remaining CSSE completion gates (exactly these; none added):**
+| # | Gate | State |
+|---|---|---|
+| 1 | Practice candidate governance and publication | 380 Maths candidates pending (374 recommended), approval pack ready; Writing prompts under gate 3 |
+| 2 | Form B independent human validation | English (24 reading questions + Writing Q1/Q2) and Maths (56 items) validator packs prepared; Salmon replacement decision pending |
+| 3 | Writing prompt approval and publication | 7 prompts pending (migration 268 not authorised) |
+| 4 | Final Q2 production artwork | storyboards and contracts only; specialist pipeline to be selected |
+| 5 | Writing human calibration evidence | kit ready, no thresholds, no claim |
+| 6 | Founder production acceptance | script ready (remediation plus visual renderers) |

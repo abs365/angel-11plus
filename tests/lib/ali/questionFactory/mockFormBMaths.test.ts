@@ -70,7 +70,7 @@ test("grid item: the answer is the labelled point read from the figure, reflecte
   assert.equal(FB_REFLECTION.mirrorLine, "y=x");
   assert.equal(it.answer, `(${p.y}, ${p.x})`);
   assert.doesNotMatch(it.question, /\(\s*-?\d+\s*,\s*-?\d+\s*\)/, "no coordinate in the question text");
-  assert.equal(checkMathsAnswer("(7,-4)", it.answer), true, "spacing tolerated");
+  assert.equal(checkMathsAnswer("(7,-4)", it.answer), true, "the Practice marker tolerates spacing; the Mock scorer does NOT (exact text), see ANGEL_CSSE_GATE_CLOSURE_VERIFICATION.md");
   assert.equal(checkMathsAnswer("7, -4", it.answer), false, "brackets are required, and the question says so");
   assert.match(it.question, /form \(x, y\)/);
 });
@@ -90,9 +90,9 @@ test("revalidation found one real marking defect: the instructed bracketed form 
   assert.equal(checkMathsAnswer("(9,5)", d.defect!.repairedAnswer!), true);
 });
 
-test("migration 272 template: not applied, one insert of 24 sealed candidates, one marking repair, nothing promoted", () => {
-  const sql = fs.readFileSync("supabase/migrations/272_maths_form_b_completion_TEMPLATE_NOT_APPLIED.sql", "utf8");
-  assert.match(sql, /NOT APPLIED/);
+test("migration 272 record: applied and do-not-rerun, one insert of 24 sealed candidates, one marking repair, nothing promoted", () => {
+  const sql = fs.readFileSync("supabase/migrations/272_maths_form_b_completion_APPLIED_DO_NOT_RERUN.sql", "utf8");
+  assert.match(sql, /APPLIED to production by the Founder[\s\S]*DO NOT RERUN/);
   assert.equal((sql.match(/insert into public\.ali_question_bank/g) ?? []).length, 1);
   assert.equal(new Set(sql.match(/mock-fb-[a-z0-9-]+/g)).size >= 24, true);
   for (const i of items) assert.ok(sql.includes(i.id), i.id);

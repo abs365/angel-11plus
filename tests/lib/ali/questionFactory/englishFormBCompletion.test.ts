@@ -88,9 +88,9 @@ test("marking repair targets the eight free-text explanation items, all of which
   assert.ok(!MARKING_CONTRACT_REPAIRS.some((id) => id.endsWith("-q01") || id.endsWith("-q02")));
 });
 
-test("migration 271 template exists, is marked not applied, and applies nothing but the declared changes", () => {
-  const sql = fs.readFileSync("supabase/migrations/271_english_form_b_completion_TEMPLATE_NOT_APPLIED.sql", "utf8");
-  assert.match(sql, /NOT APPLIED/);
+test("migration 271 record is marked applied and do-not-rerun, and applies nothing but the declared changes", () => {
+  const sql = fs.readFileSync("supabase/migrations/271_english_form_b_completion_APPLIED_DO_NOT_RERUN.sql", "utf8");
+  assert.match(sql, /APPLIED to production by the Founder[\s\S]*DO NOT RERUN/);
   assert.equal((sql.match(/insert into public\.ali_question_bank/g) ?? []).length, 1);
   assert.equal((sql.match(/eng-fb-/g) ?? []).length >= 6, true);
   const code = sql.split(/\r?\n/).filter((l) => !l.trim().startsWith("--")).join(" ");

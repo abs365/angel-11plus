@@ -1,0 +1,1067 @@
+<!doctype html><html lang="en-GB"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Mathematics Form B: independent validation pack</title><style>
+:root{--ink:#1d2b44;--muted:#51607a;--blue:#2457c5;--sky:#eaf0fb;--border:#d9d4c7;--paper:#ffffff;--bg:#faf8f2;--warn:#8a4b00;--warnbg:#fff4e0}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,Segoe UI,Arial,sans-serif}
+main{max-width:920px;margin:0 auto;padding:16px}h1{font-size:1.5rem;margin:.2em 0}h2{font-size:1.2rem;margin:1.6em 0 .4em;border-bottom:2px solid var(--blue);padding-bottom:.2em}h3{font-size:1.02rem;margin:.2em 0}
+.card{background:var(--paper);border:1px solid var(--border);border-radius:10px;padding:14px;margin:12px 0}.note{background:var(--sky);border-radius:8px;padding:10px 12px;margin:10px 0}
+.warn{background:var(--warnbg);border:1px solid #e6c48a;color:var(--warn);border-radius:8px;padding:10px 12px;margin:10px 0}
+table{border-collapse:collapse;width:100%;margin:8px 0;font-size:.92rem}th,td{border:1px solid var(--border);padding:5px 8px;text-align:left;vertical-align:top}th{background:var(--sky)}
+.meta{color:var(--muted);font-size:.88rem}.q{font-weight:600;white-space:pre-line}.pass{white-space:pre-line;background:#fff;border-left:4px solid var(--blue);padding:8px 12px;margin:8px 0}
+details{margin:6px 0}summary{cursor:pointer;color:var(--blue);font-weight:600}fieldset{border:0;padding:0;margin:8px 0}legend{font-weight:600}
+label.opt{display:inline-block;margin-right:14px}textarea,input[type=text]{width:100%;border:1px solid var(--border);border-radius:6px;padding:6px;font:inherit}
+.bar{position:sticky;top:0;background:var(--paper);border-bottom:1px solid var(--border);padding:8px 16px;z-index:5;display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+button{background:var(--blue);color:#fff;border:0;border-radius:8px;padding:8px 14px;font:inherit;font-weight:600;cursor:pointer}button.alt{background:#fff;color:var(--blue);border:1px solid var(--blue)}
+.tag{display:inline-block;background:var(--sky);border-radius:99px;padding:1px 9px;font-size:.8rem;margin-right:6px}.fig svg,.fig img{max-width:100%;height:auto;background:#fff}
+@media print{.bar{display:none}.card{break-inside:avoid}}</style></head><body>
+<div class="bar"><strong>Mathematics Form B: independent validation pack</strong><span id="prog" class="meta">0 recorded</span><button onclick="exportAll()">Export my decisions (CSV and JSON)</button><button class="alt" onclick="window.print()">Print</button></div>
+<main>
+<h1>Mathematics Form B: independent validation pack</h1>
+<p class="meta">Sealed content. Do not share beyond the validator. Prepared 2026-10-08.</p>
+<div class="warn"><strong>This is a request for independent human judgement.</strong> The author's re-derivations and tests are NOT validation and are hidden behind each item so that you can first work every item yourself. Nothing in this pack has been marked validated.</div>
+<div class="note"><strong>How to use this pack.</strong> For each of the 56 items: work out the answer yourself and type it in the box, then open "Intended answer…". Choose APPROVE (fit as it is), REVISE (fixable: say exactly how), or REJECT (not fit: say why). Also judge: is the answer unambiguous and unique; is the wording clear for a 10 to 11 year old; is the answer format something a child would know to type; is the picture or table necessary and correct; is the difficulty label fair. Your work saves automatically in this browser. When finished press "Export my decisions" and return the two files. You need no software or source code.</div>
+<div class="card"><h2 style="margin-top:0">About you</h2>
+<p class="meta">These details are exported with your decisions.</p>
+<label>Your name<input type="text" id="vname" autocomplete="off"></label><label>Your role (for example teacher, tutor, examiner)<input type="text" id="vrole" autocomplete="off"></label><label>Date<input type="text" id="vdate" placeholder="YYYY-MM-DD"></label>
+<p><label><input type="checkbox" id="vind"> I confirm that I did not write any of these items, that I have worked through them independently, and that these are my own judgements.</label></p>
+<label>Overall comments on the Mathematics Form B pack<textarea id="overall" rows="4"></textarea></label></div>
+<h2>1. The form at a glance</h2>
+<div class="card"><p><strong>56 items, one mark each</strong> (32 already held in the protected bank and re-checked, 24 newly authored). Difficulty: 6 easy, 23 medium, 27 hard (the live Form A is 8 / 22 / 26). The official CSSE mark structure is not assumed.</p>
+<table><tr><th>Skill</th><th>Items</th></tr><tr><td>QT-MR-01 Arithmetic</td><td>4</td></tr><tr><td>QT-MR-02 Missing operand and reverse operations</td><td>5</td></tr><tr><td>QT-MR-03 Measurement and units</td><td>3</td></tr><tr><td>QT-MR-04 Percentages</td><td>6</td></tr><tr><td>QT-MR-05 Sequences and rules / algebraic reasoning</td><td>4</td></tr><tr><td>QT-MR-06 Algebraic reasoning</td><td>6</td></tr><tr><td>QT-MR-07 Geometry (angles, perimeter, area)</td><td>4</td></tr><tr><td>QT-MR-08 Coordinates and transformations</td><td>3</td></tr><tr><td>QT-MR-09 Data handling</td><td>4</td></tr><tr><td>QT-MR-10 Time</td><td>4</td></tr><tr><td>QT-MR-11 Number properties</td><td>4</td></tr><tr><td>QT-MR-12 Averages</td><td>3</td></tr><tr><td>QT-MR-13 Ratio, value and multi-step problems</td><td>4</td></tr><tr><td>QT-MR-14 Precision and rounding</td><td>2</td></tr><tr><th>Total</th><th>56</th></tr></table>
+<p>Form B includes three skills Form A lacks: coordinates (QT-MR-08), averages (QT-MR-12) and precision (QT-MR-14).</p></div>
+<div class="card"><h3>How answers are marked in the real paper (important for your judgement)</h3>
+<p>The paper's scorer is deliberately simple. If the correct answer is a <strong>number</strong>, the child's entry is read as a number and compared (so 2.10 equals 2.1), but any pound sign, unit or word makes it a text entry and it is marked wrong. Otherwise the entry is compared as <strong>exact text</strong> (capitals and outer spaces ignored, but no other flexibility): coordinates must be typed exactly as (x, y) with one space, times exactly as hh:mm, and true/false or a letter exactly as given. <strong>Please say, per item, if a child could reasonably write a correct answer in a form this would reject</strong> and the question does not warn them.</p></div>
+<h2>2. The 56 items</h2>
+<div class="card" id="item-mock-fb-mr01-arith-01"><h3>mock-fb-mr01-arith-01 <span class="tag">QT-MR-01</span><span class="tag">Arithmetic</span><span class="tag">easy</span><span class="tag">1 mark</span><span class="tag">Text only</span><span class="tag">new (authored for Form B)</span></h3>
+<p class="q">A school library has 4,205 books. 1,768 of them are on loan. How many books are on the shelves?</p>
+
+<p class="meta">Marking treatment: <strong>automatic</strong>, one mark.</p>
+<fieldset><legend>Your decision</legend>
+<label class="opt"><input type="radio" name="d-mock-fb-mr01-arith-01" value="APPROVE"> APPROVE</label><label class="opt"><input type="radio" name="d-mock-fb-mr01-arith-01" value="REVISE"> REVISE</label><label class="opt"><input type="radio" name="d-mock-fb-mr01-arith-01" value="REJECT"> REJECT</label></fieldset>
+<label class="meta">Your own answer, worked out before you open the intended answer (recommended)<input type="text" id="a-mock-fb-mr01-arith-01" autocomplete="off"></label>
+<fieldset><legend class="meta">Is it suitable for the age group (Year 5 to 6, about 10 to 11 years)?</legend><label class="opt"><input type="radio" name="g-mock-fb-mr01-arith-01" value="yes"> Yes</label><label class="opt"><input type="radio" name="g-mock-fb-mr01-arith-01" value="no"> No</label><label class="opt"><input type="radio" name="g-mock-fb-mr01-arith-01" value="unsure"> Unsure</label></fieldset>
+<label class="meta">Reason or comments (required for REVISE or REJECT: say exactly what to change)<textarea id="r-mock-fb-mr01-arith-01" rows="3"></textarea></label>
+<details><summary>Intended answer, independent derivation and marking contract (open after you have your own answer)</summary>
+<p><strong>Intended answer:</strong> 2437</p>
+<p><strong>Worked method:</strong></p><ol><li>4,205 − 1,768 = 2,437</li></ol>
+<p><strong>Independent derivation by script</strong> (written separately from the stored answer; a convenience, not validation): 2437 (agrees)</p>
+<p><strong>What the child must type, and how it is marked:</strong> Scored by number: the child's entry is read as a number and compared with 2437 (tolerance 0.0001). So 2.10 and 2.1 are the same. A pound sign, units or words typed with the number make it a text entry, which would be marked wrong. A plain number is the natural form.</p>
+<p><strong>Mistake this item is designed to catch:</strong> Subtracting the smaller digit from the larger in each column without exchanging.</p>
+
+
+</details></div>
+<div class="card" id="item-mock-fb-mr01-arith-02"><h3>mock-fb-mr01-arith-02 <span class="tag">QT-MR-01</span><span class="tag">Arithmetic</span><span class="tag">easy</span><span class="tag">1 mark</span><span class="tag">Text only</span><span class="tag">new (authored for Form B)</span></h3>
+<p class="q">A bakery packs 25 rolls in each tray. How many rolls are there in 36 trays?</p>
+
+<p class="meta">Marking treatment: <strong>automatic</strong>, one mark.</p>
+<fieldset><legend>Your decision</legend>
+<label class="opt"><input type="radio" name="d-mock-fb-mr01-arith-02" value="APPROVE"> APPROVE</label><label class="opt"><input type="radio" name="d-mock-fb-mr01-arith-02" value="REVISE"> REVISE</label><label class="opt"><input type="radio" name="d-mock-fb-mr01-arith-02" value="REJECT"> REJECT</label></fieldset>
+<label class="meta">Your own answer, worked out before you open the intended answer (recommended)<input type="text" id="a-mock-fb-mr01-arith-02" autocomplete="off"></label>
+<fieldset><legend class="meta">Is it suitable for the age group (Year 5 to 6, about 10 to 11 years)?</legend><label class="opt"><input type="radio" name="g-mock-fb-mr01-arith-02" value="yes"> Yes</label><label class="opt"><input type="radio" name="g-mock-fb-mr01-arith-02" value="no"> No</label><label class="opt"><input type="radio" name="g-mock-fb-mr01-arith-02" value="unsure"> Unsure</label></fieldset>
+<label class="meta">Reason or comments (required for REVISE or REJECT: say exactly what to change)<textarea id="r-mock-fb-mr01-arith-02" rows="3"></textarea></label>
+<details><summary>Intended answer, independent derivation and marking contract (open after you have your own answer)</summary>
+<p><strong>Intended answer:</strong> 900</p>
+<p><strong>Worked method:</strong></p><ol><li>36 × 25 = 900 (36 × 100 ÷ 4)</li></ol>
+<p><strong>Independent derivation by script</strong> (written separately from the stored answer; a convenience, not validation): 900 (agrees)</p>
+<p><strong>What the child must type, and how it is marked:</strong> Scored by number: the child's entry is read as a number and compared with 900 (tolerance 0.0001). So 2.10 and 2.1 are the same. A pound sign, units or words typed with the number make it a text entry, which would be marked wrong. A plain number is the natural form.</p>
+<p><strong>Mistake this item is designed to catch:</strong> Forgetting to carry when multiplying by the tens digit.</p>
+
+
+</details></div>
+<div class="card" id="item-mock-fb-mr01-arith-03"><h3>mock-fb-mr01-arith-03 <span class="tag">QT-MR-01</span><span class="tag">Arithmetic</span><span class="tag">hard</span><span class="tag">1 mark</span><span class="tag">Text only</span><span class="tag">new (authored for Form B)</span></h3>
+<p class="q">Work out the value of 8 + 6 × (23 − 17) ÷ 4 − 3.</p>
+
+<p class="meta">Marking treatment: <strong>automatic</strong>, one mark.</p>
+<fieldset><legend>Your decision</legend>
+<label class="opt"><input type="radio" name="d-mock-fb-mr01-arith-03" value="APPROVE"> APPROVE</label><label class="opt"><input type="radio" name="d-mock-fb-mr01-arith-03" value="REVISE"> REVISE</label><label class="opt"><input type="radio" name="d-mock-fb-mr01-arith-03" value="REJECT"> REJECT</label></fieldset>
+<label class="meta">Your own answer, worked out before you open the intended answer (recommended)<input type="text" id="a-mock-fb-mr01-arith-03" autocomplete="off"></label>
+<fieldset><legend class="meta">Is it suitable for the age group (Year 5 to 6, about 10 to 11 years)?</legend><label class="opt"><input type="radio" name="g-mock-fb-mr01-arith-03" value="yes"> Yes</label><label class="opt"><input type="radio" name="g-mock-fb-mr01-arith-03" value="no"> No</label><label class="opt"><input type="radio" name="g-mock-fb-mr01-arith-03" value="unsure"> Unsure</label></fieldset>
+<label class="meta">Reason or comments (required for REVISE or REJECT: say exactly what to change)<textarea id="r-mock-fb-mr01-arith-03" rows="3"></textarea></label>
+<details><summary>Intended answer, independent derivation and marking contract (open after you have your own answer)</summary>
+<p><strong>Intended answer:</strong> 14</p>
+<p><strong>Worked method:</strong></p><ol><li>Brackets first: 23 − 17 = 6</li><li>Then multiply and divide from the left: 6 × 6 = 36, 36 ÷ 4 = 9</li><li>Then add and subtract: 8 + 9 − 3 = 14</li></ol>
+<p><strong>Independent derivation by script</strong> (written separately from the stored answer; a convenience, not validation): 14 (agrees)</p>
+<p><strong>What the child must type, and how it is marked:</strong> Scored by number: the child's entry is read as a number and compared with 14 (tolerance 0.0001). So 2.10 and 2.1 are the same. A pound sign, units or words typed with the number make it a text entry, which would be marked wrong. A plain number is the natural form.</p>
+<p><strong>Mistake this item is designed to catch:</strong> Working strictly left to right, or doing 8 + 6 before multiplying.</p>
+
+
+</details></div>
+<div class="card" id="item-mock-fb-mr01-arith-04"><h3>mock-fb-mr01-arith-04 <span class="tag">QT-MR-01</span><span class="tag">Arithmetic</span><span class="tag">hard</span><span class="tag">1 mark</span><span class="tag">Text only</span><span class="tag">new (authored for Form B)</span></h3>
+<p class="q">Work out 3.6 × 0.25 + 2.4 ÷ 0.8.</p>
+
+<p class="meta">Marking treatment: <strong>automatic</strong>, one mark.</p>
+<fieldset><legend>Your decision</legend>
+<label class="opt"><input type="radio" name="d-mock-fb-mr01-arith-04" value="APPROVE"> APPROVE</label><label class="opt"><input type="radio" name="d-mock-fb-mr01-arith-04" value="REVISE"> REVISE</label><label class="opt"><input type="radio" name="d-mock-fb-mr01-arith-04" value="REJECT"> REJECT</label></fieldset>
+<label class="meta">Your own answer, worked out before you open the intended answer (recommended)<input type="text" id="a-mock-fb-mr01-arith-04" autocomplete="off"></label>
+<fieldset><legend class="meta">Is it suitable for the age group (Year 5 to 6, about 10 to 11 years)?</legend><label class="opt"><input type="radio" name="g-mock-fb-mr01-arith-04" value="yes"> Yes</label><label class="opt"><input type="radio" name="g-mock-fb-mr01-arith-04" value="no"> No</label><label class="opt"><input type="radio" name="g-mock-fb-mr01-arith-04" value="unsure"> Unsure</label></fieldset>
+<label class="meta">Reason or comments (required for REVISE or REJECT: say exactly what to change)<textarea id="r-mock-fb-mr01-arith-04" rows="3"></textarea></label>
+<details><summary>Intended answer, independent derivation and marking contract (open after you have your own answer)</summary>
+<p><strong>Intended answer:</strong> 3.9</p>
+<p><strong>Worked method:</strong></p><ol><li>3.6 × 0.25 = 0.9 (a quarter of 3.6)</li><li>2.4 ÷ 0.8 = 24 ÷ 8 = 3</li><li>0.9 + 3 = 3.9</li></ol>
+<p><strong>Independent derivation by script</strong> (written separately from the stored answer; a convenience, not validation): 3.9 (agrees)</p>
+<p><strong>What the child must type, and how it is marked:</strong> Scored by number: the child's entry is read as a number and compared with 3.9 (tolerance 0.0001). So 2.10 and 2.1 are the same. A pound sign, units or words typed with the number make it a text entry, which would be marked wrong. A plain number is the natural form.</p>
+<p><strong>Mistake this item is designed to catch:</strong> Misplacing the decimal point when multiplying by 0.25, or dividing 2.4 by 8 instead of 0.8.</p>
+
+
+</details></div>
+<div class="card" id="item-mock-fb-mr02-missing-01"><h3>mock-fb-mr02-missing-01 <span class="tag">QT-MR-02</span><span class="tag">Missing operand and reverse operations</span><span class="tag">easy</span><span class="tag">1 mark</span><span class="tag">Text only</span><span class="tag">new (authored for Form B)</span></h3>
+<p class="q">Find the missing number: 48 + ? = 113.</p>
+
+<p class="meta">Marking treatment: <strong>automatic</strong>, one mark.</p>
+<fieldset><legend>Your decision</legend>
+<label class="opt"><input type="radio" name="d-mock-fb-mr02-missing-01" value="APPROVE"> APPROVE</label><label class="opt"><input type="radio" name="d-mock-fb-mr02-missing-01" value="REVISE"> REVISE</label><label class="opt"><input type="radio" name="d-mock-fb-mr02-missing-01" value="REJECT"> REJECT</label></fieldset>
+<label class="meta">Your own answer, worked out before you open the intended answer (recommended)<input type="text" id="a-mock-fb-mr02-missing-01" autocomplete="off"></label>
+<fieldset><legend class="meta">Is it suitable for the age group (Year 5 to 6, about 10 to 11 years)?</legend><label class="opt"><input type="radio" name="g-mock-fb-mr02-missing-01" value="yes"> Yes</label><label class="opt"><input type="radio" name="g-mock-fb-mr02-missing-01" value="no"> No</label><label class="opt"><input type="radio" name="g-mock-fb-mr02-missing-01" value="unsure"> Unsure</label></fieldset>
+<label class="meta">Reason or comments (required for REVISE or REJECT: say exactly what to change)<textarea id="r-mock-fb-mr02-missing-01" rows="3"></textarea></label>
+<details><summary>Intended answer, independent derivation and marking contract (open after you have your own answer)</summary>
+<p><strong>Intended answer:</strong> 65</p>
+<p><strong>Worked method:</strong></p><ol><li>113 − 48 = 65</li></ol>
+<p><strong>Independent derivation by script</strong> (written separately from the stored answer; a convenience, not validation): 65 (agrees)</p>
+<p><strong>What the child must type, and how it is marked:</strong> Scored by number: the child's entry is read as a number and compared with 65 (tolerance 0.0001). So 2.10 and 2.1 are the same. A pound sign, units or words typed with the number make it a text entry, which would be marked wrong. A plain number is the natural form.</p>
+<p><strong>Mistake this item is designed to catch:</strong> Adding 48 and 113 instead of using the inverse operation.</p>
+
+
+</details></div>
+<div class="card" id="item-mock-fb-mr02-missing-02"><h3>mock-fb-mr02-missing-02 <span class="tag">QT-MR-02</span><span class="tag">Missing operand and reverse operations</span><span class="tag">easy</span><span class="tag">1 mark</span><span class="tag">Text only</span><span class="tag">new (authored for Form B)</span></h3>
+<p class="q">Find the missing number: ? × 7 = 189.</p>
+
+<p class="meta">Marking treatment: <strong>automatic</strong>, one mark.</p>
+<fieldset><legend>Your decision</legend>
+<label class="opt"><input type="radio" name="d-mock-fb-mr02-missing-02" value="APPROVE"> APPROVE</label><label class="opt"><input type="radio" name="d-mock-fb-mr02-missing-02" value="REVISE"> REVISE</label><label class="opt"><input type="radio" name="d-mock-fb-mr02-missing-02" value="REJECT"> REJECT</label></fieldset>
+<label class="meta">Your own answer, worked out before you open the intended answer (recommended)<input type="text" id="a-mock-fb-mr02-missing-02" autocomplete="off"></label>
+<fieldset><legend class="meta">Is it suitable for the age group (Year 5 to 6, about 10 to 11 years)?</legend><label class="opt"><input type="radio" name="g-mock-fb-mr02-missing-02" value="yes"> Yes</label><label class="opt"><input type="radio" name="g-mock-fb-mr02-missing-02" value="no"> No</label><label class="opt"><input type="radio" name="g-mock-fb-mr02-missing-02" value="unsure"> Unsure</label></fieldset>
+<label class="meta">Reason or comments (required for REVISE or REJECT: say exactly what to change)<textarea id="r-mock-fb-mr02-missing-02" rows="3"></textarea></label>
+<details><summary>Intended answer, independent derivation and marking contract (open after you have your own answer)</summary>
+<p><strong>Intended answer:</strong> 27</p>
+<p><strong>Worked method:</strong></p><ol><li>189 ÷ 7 = 27</li></ol>
+<p><strong>Independent derivation by script</strong> (written separately from the stored answer; a convenience, not validation): 27 (agrees)</p>
+<p><strong>What the child must type, and how it is marked:</strong> Scored by number: the child's entry is read as a number and compared with 27 (tolerance 0.0001). So 2.10 and 2.1 are the same. A pound sign, units or words typed with the number make it a text entry, which would be marked wrong. A plain number is the natural form.</p>
+<p><strong>Mistake this item is designed to catch:</strong> Multiplying 189 by 7.</p>
+
+
+</details></div>
+<div class="card" id="item-mock-fb-mr02-missing-03"><h3>mock-fb-mr02-missing-03 <span class="tag">QT-MR-02</span><span class="tag">Missing operand and reverse operations</span><span class="tag">easy</span><span class="tag">1 mark</span><span class="tag">Text only</span><span class="tag">new (authored for Form B)</span></h3>
+<p class="q">Maya thinks of a number and adds 17. The answer is 52. What number did Maya think of?</p>
+
+<p class="meta">Marking treatment: <strong>automatic</strong>, one mark.</p>
+<fieldset><legend>Your decision</legend>
+<label class="opt"><input type="radio" name="d-mock-fb-mr02-missing-03" value="APPROVE"> APPROVE</label><label class="opt"><input type="radio" name="d-mock-fb-mr02-missing-03" value="REVISE"> REVISE</label><label class="opt"><input type="radio" name="d-mock-fb-mr02-missing-03" value="REJECT"> REJECT</label></fieldset>
+<label class="meta">Your own answer, worked out before you open the intended answer (recommended)<input type="text" id="a-mock-fb-mr02-missing-03" autocomplete="off"></label>
+<fieldset><legend class="meta">Is it suitable for the age group (Year 5 to 6, about 10 to 11 years)?</legend><label class="opt"><input type="radio" name="g-mock-fb-mr02-missing-03" value="yes"> Yes</label><label class="opt"><input type="radio" name="g-mock-fb-mr02-missing-03" value="no"> No</label><label class="opt"><input type="radio" name="g-mock-fb-mr02-missing-03" value="unsure"> Unsure</label></fieldset>
+<label class="meta">Reason or comments (required for REVISE or REJECT: say exactly what to change)<textarea id="r-mock-fb-mr02-missing-03" rows="3"></textarea></label>
+<details><summary>Intended answer, independent derivation and marking contract (open after you have your own answer)</summary>
+<p><strong>Intended answer:</strong> 35</p>
+<p><strong>Worked method:</strong></p><ol><li>52 − 17 = 35</li></ol>
+<p><strong>Independent derivation by script</strong> (written separately from the stored answer; a convenience, not validation): 35 (agrees)</p>
+<p><strong>What the child must type, and how it is marked:</strong> Scored by number: the child's entry is read as a number and compared with 35 (tolerance 0.0001). So 2.10 and 2.1 are the same. A pound sign, units or words typed with the number make it a text entry, which would be marked wrong. A plain number is the natural form.</p>
+<p><strong>Mistake this item is designed to catch:</strong> Adding 17 to 52.</p>
+
+
+</details></div>
+<div class="card" id="item-mock-fb-mr02-missing-04"><h3>mock-fb-mr02-missing-04 <span class="tag">QT-MR-02</span><span class="tag">Missing operand and reverse operations</span><span class="tag">hard</span><span class="tag">1 mark</span><span class="tag">Text only</span><span class="tag">new (authored for Form B)</span></h3>
+<p class="q">Raj thinks of a number. He multiplies it by 6, subtracts 14, and gets 100. What number did Raj think of?</p>
+
+<p class="meta">Marking treatment: <strong>automatic</strong>, one mark.</p>
+<fieldset><legend>Your decision</legend>
+<label class="opt"><input type="radio" name="d-mock-fb-mr02-missing-04" value="APPROVE"> APPROVE</label><label class="opt"><input type="radio" name="d-mock-fb-mr02-missing-04" value="REVISE"> REVISE</label><label class="opt"><input type="radio" name="d-mock-fb-mr02-missing-04" value="REJECT"> REJECT</label></fieldset>
+<label class="meta">Your own answer, worked out before you open the intended answer (recommended)<input type="text" id="a-mock-fb-mr02-missing-04" autocomplete="off"></label>
+<fieldset><legend class="meta">Is it suitable for the age group (Year 5 to 6, about 10 to 11 years)?</legend><label class="opt"><input type="radio" name="g-mock-fb-mr02-missing-04" value="yes"> Yes</label><label class="opt"><input type="radio" name="g-mock-fb-mr02-missing-04" value="no"> No</label><label class="opt"><input type="radio" name="g-mock-fb-mr02-missing-04" value="unsure"> Unsure</label></fieldset>
+<label class="meta">Reason or comments (required for REVISE or REJECT: say exactly what to change)<textarea id="r-mock-fb-mr02-missing-04" rows="3"></textarea></label>
+<details><summary>Intended answer, independent derivation and marking contract (open after you have your own answer)</summary>
+<p><strong>Intended answer:</strong> 19</p>
+<p><strong>Worked method:</strong></p><ol><li>Undo the subtraction: 100 + 14 = 114</li><li>Undo the multiplication: 114 ÷ 6 = 19</li></ol>
+<p><strong>Independent derivation by script</strong> (written separately from the stored answer; a convenience, not validation): 19 (agrees)</p>
+<p><strong>What the child must type, and how it is marked:</strong> Scored by number: the child's entry is read as a number and compared with 19 (tolerance 0.0001). So 2.10 and 2.1 are the same. A pound sign, units or words typed with the number make it a text entry, which would be marked wrong. A plain number is the natural form.</p>
+<p><strong>Mistake this item is designed to catch:</strong> Undoing the steps in the same order instead of reverse order, or subtracting 14 again.</p>
+
+
+</details></div>
+<div class="card" id="item-mock-fb-mr02-missing-05"><h3>mock-fb-mr02-missing-05 <span class="tag">QT-MR-02</span><span class="tag">Missing operand and reverse operations</span><span class="tag">hard</span><span class="tag">1 mark</span><span class="tag">Text only</span><span class="tag">new (authored for Form B)</span></h3>
+<p class="q">A number is divided by 4. Then 7 is added. The result is then multiplied by 3 to give 51. What is the number?</p>
+
+<p class="meta">Marking treatment: <strong>automatic</strong>, one mark.</p>
+<fieldset><legend>Your decision</legend>
+<label class="opt"><input type="radio" name="d-mock-fb-mr02-missing-05" value="APPROVE"> APPROVE</label><label class="opt"><input type="radio" name="d-mock-fb-mr02-missing-05" value="REVISE"> REVISE</label><label class="opt"><input type="radio" name="d-mock-fb-mr02-missing-05" value="REJECT"> REJECT</label></fieldset>
+<label class="meta">Your own answer, worked out before you open the intended answer (recommended)<input type="text" id="a-mock-fb-mr02-missing-05" autocomplete="off"></label>
+<fieldset><legend class="meta">Is it suitable for the age group (Year 5 to 6, about 10 to 11 years)?</legend><label class="opt"><input type="radio" name="g-mock-fb-mr02-missing-05" value="yes"> Yes</label><label class="opt"><input type="radio" name="g-mock-fb-mr02-missing-05" value="no"> No</label><label class="opt"><input type="radio" name="g-mock-fb-mr02-missing-05" value="unsure"> Unsure</label></fieldset>
+<label class="meta">Reason or comments (required for REVISE or REJECT: say exactly what to change)<textarea id="r-mock-fb-mr02-missing-05" rows="3"></textarea></label>
+<details><summary>Intended answer, independent derivation and marking contract (open after you have your own answer)</summary>
+<p><strong>Intended answer:</strong> 40</p>
+<p><strong>Worked method:</strong></p><ol><li>Undo × 3: 51 ÷ 3 = 17</li><li>Undo + 7: 17 − 7 = 10</li><li>Undo ÷ 4: 10 × 4 = 40</li></ol>
+<p><strong>Independent derivation by script</strong> (written separately from the stored answer; a convenience, not validation): 40 (agrees)</p>
+<p><strong>What the child must type, and how it is marked:</strong> Scored by number: the child's entry is read as a number and compared with 40 (tolerance 0.0001). So 2.10 and 2.1 are the same. A pound sign, units or words typed with the number make it a text entry, which would be marked wrong. A plain number is the natural form.</p>
+<p><strong>Mistake this item is designed to catch:</strong> Undoing the operations in the wrong order.</p>
+
+
+</details></div>
+<div class="card" id="item-mock-fb-mr03-measure-01"><h3>mock-fb-mr03-measure-01 <span class="tag">QT-MR-03</span><span class="tag">Measurement and units</span><span class="tag">medium</span><span class="tag">1 mark</span><span class="tag">Text only</span><span class="tag">new (authored for Form B)</span></h3>
+<p class="q">A rope is 4.5 metres long. Tom cuts it into pieces that are each 90 centimetres long. How many pieces does he get?</p>
+
+<p class="meta">Marking treatment: <strong>automatic</strong>, one mark.</p>
+<fieldset><legend>Your decision</legend>
+<label class="opt"><input type="radio" name="d-mock-fb-mr03-measure-01" value="APPROVE"> APPROVE</label><label class="opt"><input type="radio" name="d-mock-fb-mr03-measure-01" value="REVISE"> REVISE</label><label class="opt"><input type="radio" name="d-mock-fb-mr03-measure-01" value="REJECT"> REJECT</label></fieldset>
+<label class="meta">Your own answer, worked out before you open the intended answer (recommended)<input type="text" id="a-mock-fb-mr03-measure-01" autocomplete="off"></label>
+<fieldset><legend class="meta">Is it suitable for the age group (Year 5 to 6, about 10 to 11 years)?</legend><label class="opt"><input type="radio" name="g-mock-fb-mr03-measure-01" value="yes"> Yes</label><label class="opt"><input type="radio" name="g-mock-fb-mr03-measure-01" value="no"> No</label><label class="opt"><input type="radio" name="g-mock-fb-mr03-measure-01" value="unsure"> Unsure</label></fieldset>
+<label class="meta">Reason or comments (required for REVISE or REJECT: say exactly what to change)<textarea id="r-mock-fb-mr03-measure-01" rows="3"></textarea></label>
+<details><summary>Intended answer, independent derivation and marking contract (open after you have your own answer)</summary>
+<p><strong>Intended answer:</strong> 5</p>
+<p><strong>Worked method:</strong></p><ol><li>4.5 m = 450 cm</li><li>450 ÷ 90 = 5</li></ol>
+<p><strong>Independent derivation by script</strong> (written separately from the stored answer; a convenience, not validation): 5 (agrees)</p>
+<p><strong>What the child must type, and how it is marked:</strong> Scored by number: the child's entry is read as a number and compared with 5 (tolerance 0.0001). So 2.10 and 2.1 are the same. A pound sign, units or words typed with the number make it a text entry, which would be marked wrong. A plain number is the natural form.</p>
+<p><strong>Mistake this item is designed to catch:</strong> Dividing 4.5 by 90 without converting to the same unit.</p>
+
+
+</details></div>
+<div class="card" id="item-mock-mr03mr07-perimeterarea-01a"><h3>mock-mr03mr07-perimeterarea-01a <span class="tag">QT-MR-03</span><span class="tag">Measurement and units</span><span class="tag">hard</span><span class="tag">1 mark</span><span class="tag">Text only</span><span class="tag">existing (protected bank)</span></h3>
+<p class="q">A rectangular garden bed is 3.6 metres long and 250 centimetres wide. Convert the width to metres, then find the perimeter of the garden bed in metres.</p>
+
+<p class="meta">Marking treatment: <strong>automatic</strong>, one mark.</p>
+<fieldset><legend>Your decision</legend>
+<label class="opt"><input type="radio" name="d-mock-mr03mr07-perimeterarea-01a" value="APPROVE"> APPROVE</label><label class="opt"><input type="radio" name="d-mock-mr03mr07-perimeterarea-01a" value="REVISE"> REVISE</label><label class="opt"><input type="radio" name="d-mock-mr03mr07-perimeterarea-01a" value="REJECT"> REJECT</label></fieldset>
+<label class="meta">Your own answer, worked out before you open the intended answer (recommended)<input type="text" id="a-mock-mr03mr07-perimeterarea-01a" autocomplete="off"></label>
+<fieldset><legend class="meta">Is it suitable for the age group (Year 5 to 6, about 10 to 11 years)?</legend><label class="opt"><input type="radio" name="g-mock-mr03mr07-perimeterarea-01a" value="yes"> Yes</label><label class="opt"><input type="radio" name="g-mock-mr03mr07-perimeterarea-01a" value="no"> No</label><label class="opt"><input type="radio" name="g-mock-mr03mr07-perimeterarea-01a" value="unsure"> Unsure</label></fieldset>
+<label class="meta">Reason or comments (required for REVISE or REJECT: say exactly what to change)<textarea id="r-mock-mr03mr07-perimeterarea-01a" rows="3"></textarea></label>
+<details><summary>Intended answer, independent derivation and marking contract (open after you have your own answer)</summary>
+<p><strong>Intended answer:</strong> 12.2</p>
+<p><strong>Worked method:</strong></p><ol><li>250cm = 2.5 metres</li><li>Perimeter = 2 × (3.6 + 2.5) = 2 × 6.1 = 12.2 metres</li></ol>
+<p><strong>Independent derivation by script</strong> (written separately from the stored answer; a convenience, not validation): 12.2 (agrees)</p>
+<p><strong>What the child must type, and how it is marked:</strong> Scored by number: the child's entry is read as a number and compared with 12.2 (tolerance 0.0001). So 2.10 and 2.1 are the same. A pound sign, units or words typed with the number make it a text entry, which would be marked wrong. A plain number is the natural form.</p>
+
+
+
+</details></div>
+<div class="card" id="item-mock-mr03mr07-perimeterarea-02a"><h3>mock-mr03mr07-perimeterarea-02a <span class="tag">QT-MR-03</span><span class="tag">Measurement and units</span><span class="tag">hard</span><span class="tag">1 mark</span><span class="tag">Text only</span><span class="tag">existing (protected bank)</span></h3>
+<p class="q">A rectangular window pane is 90 centimetres long and 450 millimetres wide. Convert the width to centimetres, then find the perimeter of the window pane in centimetres.</p>
+
+<p class="meta">Marking treatment: <strong>automatic</strong>, one mark.</p>
+<fieldset><legend>Your decision</legend>
+<label class="opt"><input type="radio" name="d-mock-mr03mr07-perimeterarea-02a" value="APPROVE"> APPROVE</label><label class="opt"><input type="radio" name="d-mock-mr03mr07-perimeterarea-02a" value="REVISE"> REVISE</label><label class="opt"><input type="radio" name="d-mock-mr03mr07-perimeterarea-02a" value="REJECT"> REJECT</label></fieldset>
+<label class="meta">Your own answer, worked out before you open the intended answer (recommended)<input type="text" id="a-mock-mr03mr07-perimeterarea-02a" autocomplete="off"></label>
+<fieldset><legend class="meta">Is it suitable for the age group (Year 5 to 6, about 10 to 11 years)?</legend><label class="opt"><input type="radio" name="g-mock-mr03mr07-perimeterarea-02a" value="yes"> Yes</label><label class="opt"><input type="radio" name="g-mock-mr03mr07-perimeterarea-02a" value="no"> No</label><label class="opt"><input type="radio" name="g-mock-mr03mr07-perimeterarea-02a" value="unsure"> Unsure</label></fieldset>
+<label class="meta">Reason or comments (required for REVISE or REJECT: say exactly what to change)<textarea id="r-mock-mr03mr07-perimeterarea-02a" rows="3"></textarea></label>
+<details><summary>Intended answer, independent derivation and marking contract (open after you have your own answer)</summary>
+<p><strong>Intended answer:</strong> 270</p>
+<p><strong>Worked method:</strong></p><ol><li>450mm = 45 centimetres</li><li>Perimeter = 2 × (90 + 45) = 2 × 135 = 270 centimetres</li></ol>
+<p><strong>Independent derivation by script</strong> (written separately from the stored answer; a convenience, not validation): 270 (agrees)</p>
+<p><strong>What the child must type, and how it is marked:</strong> Scored by number: the child's entry is read as a number and compared with 270 (tolerance 0.0001). So 2.10 and 2.1 are the same. A pound sign, units or words typed with the number make it a text entry, which would be marked wrong. A plain number is the natural form.</p>
+
+
+
+</details></div>
+<div class="card" id="item-mock-fb-mr04-percent-01"><h3>mock-fb-mr04-percent-01 <span class="tag">QT-MR-04</span><span class="tag">Percentages</span><span class="tag">easy</span><span class="tag">1 mark</span><span class="tag">Text only</span><span class="tag">new (authored for Form B)</span></h3>
+<p class="q">A coat costs £60. In a sale the price is reduced by 10%. What is the sale price in pounds?</p>
+
+<p class="meta">Marking treatment: <strong>automatic</strong>, one mark.</p>
+<fieldset><legend>Your decision</legend>
+<label class="opt"><input type="radio" name="d-mock-fb-mr04-percent-01" value="APPROVE"> APPROVE</label><label class="opt"><input type="radio" name="d-mock-fb-mr04-percent-01" value="REVISE"> REVISE</label><label class="opt"><input type="radio" name="d-mock-fb-mr04-percent-01" value="REJECT"> REJECT</label></fieldset>
+<label class="meta">Your own answer, worked out before you open the intended answer (recommended)<input type="text" id="a-mock-fb-mr04-percent-01" autocomplete="off"></label>
+<fieldset><legend class="meta">Is it suitable for the age group (Year 5 to 6, about 10 to 11 years)?</legend><label class="opt"><input type="radio" name="g-mock-fb-mr04-percent-01" value="yes"> Yes</label><label class="opt"><input type="radio" name="g-mock-fb-mr04-percent-01" value="no"> No</label><label class="opt"><input type="radio" name="g-mock-fb-mr04-percent-01" value="unsure"> Unsure</label></fieldset>
+<label class="meta">Reason or comments (required for REVISE or REJECT: say exactly what to change)<textarea id="r-mock-fb-mr04-percent-01" rows="3"></textarea></label>
+<details><summary>Intended answer, independent derivation and marking contract (open after you have your own answer)</summary>
+<p><strong>Intended answer:</strong> 54</p>
+<p><strong>Worked method:</strong></p><ol><li>10% of 60 = 6</li><li>60 − 6 = 54</li></ol>
+<p><strong>Independent derivation by script</strong> (written separately from the stored answer; a convenience, not validation): 54 (agrees)</p>
+<p><strong>What the child must type, and how it is marked:</strong> Scored by number: the child's entry is read as a number and compared with 54 (tolerance 0.0001). So 2.10 and 2.1 are the same. A pound sign, units or words typed with the number make it a text entry, which would be marked wrong. A plain number is the natural form.</p>
+<p><strong>Mistake this item is designed to catch:</strong> Giving the discount (6) instead of the new price.</p>
+
+
+</details></div>
+<div class="card" id="item-mock-fb-mr04-percent-02"><h3>mock-fb-mr04-percent-02 <span class="tag">QT-MR-04</span><span class="tag">Percentages</span><span class="tag">medium</span><span class="tag">1 mark</span><span class="tag">Text only</span><span class="tag">new (authored for Form B)</span></h3>
+<p class="q">A school has 480 pupils. 35% of them walk to school. How many pupils do not walk to school?</p>
+
+<p class="meta">Marking treatment: <strong>automatic</strong>, one mark.</p>
+<fieldset><legend>Your decision</legend>
+<label class="opt"><input type="radio" name="d-mock-fb-mr04-percent-02" value="APPROVE"> APPROVE</label><label class="opt"><input type="radio" name="d-mock-fb-mr04-percent-02" value="REVISE"> REVISE</label><label class="opt"><input type="radio" name="d-mock-fb-mr04-percent-02" value="REJECT"> REJECT</label></fieldset>
+<label class="meta">Your own answer, worked out before you open the intended answer (recommended)<input type="text" id="a-mock-fb-mr04-percent-02" autocomplete="off"></label>
+<fieldset><legend class="meta">Is it suitable for the age group (Year 5 to 6, about 10 to 11 years)?</legend><label class="opt"><input type="radio" name="g-mock-fb-mr04-percent-02" value="yes"> Yes</label><label class="opt"><input type="radio" name="g-mock-fb-mr04-percent-02" value="no"> No</label><label class="opt"><input type="radio" name="g-mock-fb-mr04-percent-02" value="unsure"> Unsure</label></fieldset>
+<label class="meta">Reason or comments (required for REVISE or REJECT: say exactly what to change)<textarea id="r-mock-fb-mr04-percent-02" rows="3"></textarea></label>
+<details><summary>Intended answer, independent derivation and marking contract (open after you have your own answer)</summary>
+<p><strong>Intended answer:</strong> 312</p>
+<p><strong>Worked method:</strong></p><ol><li>35% of 480 = 168</li><li>480 − 168 = 312</li></ol>
+<p><strong>Independent derivation by script</strong> (written separately from the stored answer; a convenience, not validation): 312 (agrees)</p>
+<p><strong>What the child must type, and how it is marked:</strong> Scored by number: the child's entry is read as a number and compared with 312 (tolerance 0.0001). So 2.10 and 2.1 are the same. A pound sign, units or words typed with the number make it a text entry, which would be marked wrong. A plain number is the natural form.</p>
+<p><strong>Mistake this item is designed to catch:</strong> Giving the number who walk (168) instead of those who do not.</p>
+
+
+</details></div>
+<div class="card" id="item-mock-fb-mr04-percent-03"><h3>mock-fb-mr04-percent-03 <span class="tag">QT-MR-04</span><span class="tag">Percentages</span><span class="tag">medium</span><span class="tag">1 mark</span><span class="tag">Text only</span><span class="tag">new (authored for Form B)</span></h3>
+<p class="q">A phone costs £240 before 20% VAT is added. Anil pays the full price including VAT in 4 equal monthly payments. How much is each payment in pounds?</p>
+
+<p class="meta">Marking treatment: <strong>automatic</strong>, one mark.</p>
+<fieldset><legend>Your decision</legend>
+<label class="opt"><input type="radio" name="d-mock-fb-mr04-percent-03" value="APPROVE"> APPROVE</label><label class="opt"><input type="radio" name="d-mock-fb-mr04-percent-03" value="REVISE"> REVISE</label><label class="opt"><input type="radio" name="d-mock-fb-mr04-percent-03" value="REJECT"> REJECT</label></fieldset>
+<label class="meta">Your own answer, worked out before you open the intended answer (recommended)<input type="text" id="a-mock-fb-mr04-percent-03" autocomplete="off"></label>
+<fieldset><legend class="meta">Is it suitable for the age group (Year 5 to 6, about 10 to 11 years)?</legend><label class="opt"><input type="radio" name="g-mock-fb-mr04-percent-03" value="yes"> Yes</label><label class="opt"><input type="radio" name="g-mock-fb-mr04-percent-03" value="no"> No</label><label class="opt"><input type="radio" name="g-mock-fb-mr04-percent-03" value="unsure"> Unsure</label></fieldset>
+<label class="meta">Reason or comments (required for REVISE or REJECT: say exactly what to change)<textarea id="r-mock-fb-mr04-percent-03" rows="3"></textarea></label>
+<details><summary>Intended answer, independent derivation and marking contract (open after you have your own answer)</summary>
+<p><strong>Intended answer:</strong> 72</p>
+<p><strong>Worked method:</strong></p><ol><li>20% of 240 = 48</li><li>240 + 48 = 288</li><li>288 ÷ 4 = 72</li></ol>
+<p><strong>Independent derivation by script</strong> (written separately from the stored answer; a convenience, not validation): 72 (agrees)</p>
+<p><strong>What the child must type, and how it is marked:</strong> Scored by number: the child's entry is read as a number and compared with 72 (tolerance 0.0001). So 2.10 and 2.1 are the same. A pound sign, units or words typed with the number make it a text entry, which would be marked wrong. A plain number is the natural form.</p>
+<p><strong>Mistake this item is designed to catch:</strong> Dividing 240 by 4 and adding 20% of that, or forgetting to add the VAT.</p>
+
+
+</details></div>
+<div class="card" id="item-mock-fb-mr04-percent-04"><h3>mock-fb-mr04-percent-04 <span class="tag">QT-MR-04</span><span class="tag">Percentages</span><span class="tag">hard</span><span class="tag">1 mark</span><span class="tag">Text only</span><span class="tag">new (authored for Form B)</span></h3>
+<p class="q">A jacket costs £80. In a sale the price is reduced by 15%. A week later the sale price is reduced by a further 10%. What is the final price in pounds?</p>
+
+<p class="meta">Marking treatment: <strong>automatic</strong>, one mark.</p>
+<fieldset><legend>Your decision</legend>
+<label class="opt"><input type="radio" name="d-mock-fb-mr04-percent-04" value="APPROVE"> APPROVE</label><label class="opt"><input type="radio" name="d-mock-fb-mr04-percent-04" value="REVISE"> REVISE</label><label class="opt"><input type="radio" name="d-mock-fb-mr04-percent-04" value="REJECT"> REJECT</label></fieldset>
+<label class="meta">Your own answer, worked out before you open the intended answer (recommended)<input type="text" id="a-mock-fb-mr04-percent-04" autocomplete="off"></label>
+<fieldset><legend class="meta">Is it suitable for the age group (Year 5 to 6, about 10 to 11 years)?</legend><label class="opt"><input type="radio" name="g-mock-fb-mr04-percent-04" value="yes"> Yes</label><label class="opt"><input type="radio" name="g-mock-fb-mr04-percent-04" value="no"> No</label><label class="opt"><input type="radio" name="g-mock-fb-mr04-percent-04" value="unsure"> Unsure</label></fieldset>
+<label class="meta">Reason or comments (required for REVISE or REJECT: say exactly what to change)<textarea id="r-mock-fb-mr04-percent-04" rows="3"></textarea></label>
+<details><summary>Intended answer, independent derivation and marking contract (open after you have your own answer)</summary>
+<p><strong>Intended answer:</strong> 61.2</p>
+<p><strong>Worked method:</strong></p><ol><li>After 15% off: 80 × 0.85 = 68</li><li>After a further 10% off: 68 × 0.9 = 61.2</li></ol>
+<p><strong>Independent derivation by script</strong> (written separately from the stored answer; a convenience, not validation): 61.2 (agrees)</p>
+<p><strong>What the child must type, and how it is marked:</strong> Scored by number: the child's entry is read as a number and compared with 61.2 (tolerance 0.0001). So 2.10 and 2.1 are the same. A pound sign, units or words typed with the number make it a text entry, which would be marked wrong. A plain number is the natural form.</p>
+<p><strong>Mistake this item is designed to catch:</strong> Adding the two percentages and taking 25% off the original price (60).</p>
+
+
+</details></div>
+<div class="card" id="item-mock-fb-mr04-percent-05"><h3>mock-fb-mr04-percent-05 <span class="tag">QT-MR-04</span><span class="tag">Percentages</span><span class="tag">hard</span><span class="tag">1 mark</span><span class="tag">Text only</span><span class="tag">new (authored for Form B)</span></h3>
+<p class="q">After a 25% increase, a bicycle costs £150. What was its price before the increase, in pounds?</p>
+
+<p class="meta">Marking treatment: <strong>automatic</strong>, one mark.</p>
+<fieldset><legend>Your decision</legend>
+<label class="opt"><input type="radio" name="d-mock-fb-mr04-percent-05" value="APPROVE"> APPROVE</label><label class="opt"><input type="radio" name="d-mock-fb-mr04-percent-05" value="REVISE"> REVISE</label><label class="opt"><input type="radio" name="d-mock-fb-mr04-percent-05" value="REJECT"> REJECT</label></fieldset>
+<label class="meta">Your own answer, worked out before you open the intended answer (recommended)<input type="text" id="a-mock-fb-mr04-percent-05" autocomplete="off"></label>
+<fieldset><legend class="meta">Is it suitable for the age group (Year 5 to 6, about 10 to 11 years)?</legend><label class="opt"><input type="radio" name="g-mock-fb-mr04-percent-05" value="yes"> Yes</label><label class="opt"><input type="radio" name="g-mock-fb-mr04-percent-05" value="no"> No</label><label class="opt"><input type="radio" name="g-mock-fb-mr04-percent-05" value="unsure"> Unsure</label></fieldset>
+<label class="meta">Reason or comments (required for REVISE or REJECT: say exactly what to change)<textarea id="r-mock-fb-mr04-percent-05" rows="3"></textarea></label>
+<details><summary>Intended answer, independent derivation and marking contract (open after you have your own answer)</summary>
+<p><strong>Intended answer:</strong> 120</p>
+<p><strong>Worked method:</strong></p><ol><li>150 is 125% of the original price</li><li>150 ÷ 1.25 = 120</li></ol>
+<p><strong>Independent derivation by script</strong> (written separately from the stored answer; a convenience, not validation): 120 (agrees)</p>
+<p><strong>What the child must type, and how it is marked:</strong> Scored by number: the child's entry is read as a number and compared with 120 (tolerance 0.0001). So 2.10 and 2.1 are the same. A pound sign, units or words typed with the number make it a text entry, which would be marked wrong. A plain number is the natural form.</p>
+<p><strong>Mistake this item is designed to catch:</strong> Taking 25% off £150 (giving 112.50).</p>
+
+
+</details></div>
+<div class="card" id="item-mock-fb-mr04-percent-06"><h3>mock-fb-mr04-percent-06 <span class="tag">QT-MR-04</span><span class="tag">Percentages</span><span class="tag">hard</span><span class="tag">1 mark</span><span class="tag">Text only</span><span class="tag">new (authored for Form B)</span></h3>
+<p class="q">There are 50 pupils in a club. 40% of them are boys. 15% of the boys and 20% of the girls wear glasses. How many pupils in the club wear glasses?</p>
+
+<p class="meta">Marking treatment: <strong>automatic</strong>, one mark.</p>
+<fieldset><legend>Your decision</legend>
+<label class="opt"><input type="radio" name="d-mock-fb-mr04-percent-06" value="APPROVE"> APPROVE</label><label class="opt"><input type="radio" name="d-mock-fb-mr04-percent-06" value="REVISE"> REVISE</label><label class="opt"><input type="radio" name="d-mock-fb-mr04-percent-06" value="REJECT"> REJECT</label></fieldset>
+<label class="meta">Your own answer, worked out before you open the intended answer (recommended)<input type="text" id="a-mock-fb-mr04-percent-06" autocomplete="off"></label>
+<fieldset><legend class="meta">Is it suitable for the age group (Year 5 to 6, about 10 to 11 years)?</legend><label class="opt"><input type="radio" name="g-mock-fb-mr04-percent-06" value="yes"> Yes</label><label class="opt"><input type="radio" name="g-mock-fb-mr04-percent-06" value="no"> No</label><label class="opt"><input type="radio" name="g-mock-fb-mr04-percent-06" value="unsure"> Unsure</label></fieldset>
+<label class="meta">Reason or comments (required for REVISE or REJECT: say exactly what to change)<textarea id="r-mock-fb-mr04-percent-06" rows="3"></textarea></label>
+<details><summary>Intended answer, independent derivation and marking contract (open after you have your own answer)</summary>
+<p><strong>Intended answer:</strong> 9</p>
+<p><strong>Worked method:</strong></p><ol><li>Boys: 40% of 50 = 20; girls: 50 − 20 = 30</li><li>Boys with glasses: 15% of 20 = 3; girls with glasses: 20% of 30 = 6</li><li>3 + 6 = 9</li></ol>
+<p><strong>Independent derivation by script</strong> (written separately from the stored answer; a convenience, not validation): 9 (agrees)</p>
+<p><strong>What the child must type, and how it is marked:</strong> Scored by number: the child's entry is read as a number and compared with 9 (tolerance 0.0001). So 2.10 and 2.1 are the same. A pound sign, units or words typed with the number make it a text entry, which would be marked wrong. A plain number is the natural form.</p>
+<p><strong>Mistake this item is designed to catch:</strong> Applying one percentage to the whole club, or using 15% + 20% = 35% of 50.</p>
+
+
+</details></div>
+<div class="card" id="item-mock-fb-mr05-sequence-01"><h3>mock-fb-mr05-sequence-01 <span class="tag">QT-MR-05</span><span class="tag">Sequences and rules / algebraic reasoning</span><span class="tag">medium</span><span class="tag">1 mark</span><span class="tag">Text only</span><span class="tag">new (authored for Form B)</span></h3>
+<p class="q">A sequence starts 7, 12, 17, 22, and carries on in the same way. What is the 8th term?</p>
+
+<p class="meta">Marking treatment: <strong>automatic</strong>, one mark.</p>
+<fieldset><legend>Your decision</legend>
+<label class="opt"><input type="radio" name="d-mock-fb-mr05-sequence-01" value="APPROVE"> APPROVE</label><label class="opt"><input type="radio" name="d-mock-fb-mr05-sequence-01" value="REVISE"> REVISE</label><label class="opt"><input type="radio" name="d-mock-fb-mr05-sequence-01" value="REJECT"> REJECT</label></fieldset>
+<label class="meta">Your own answer, worked out before you open the intended answer (recommended)<input type="text" id="a-mock-fb-mr05-sequence-01" autocomplete="off"></label>
+<fieldset><legend class="meta">Is it suitable for the age group (Year 5 to 6, about 10 to 11 years)?</legend><label class="opt"><input type="radio" name="g-mock-fb-mr05-sequence-01" value="yes"> Yes</label><label class="opt"><input type="radio" name="g-mock-fb-mr05-sequence-01" value="no"> No</label><label class="opt"><input type="radio" name="g-mock-fb-mr05-sequence-01" value="unsure"> Unsure</label></fieldset>
+<label class="meta">Reason or comments (required for REVISE or REJECT: say exactly what to change)<textarea id="r-mock-fb-mr05-sequence-01" rows="3"></textarea></label>
+<details><summary>Intended answer, independent derivation and marking contract (open after you have your own answer)</summary>
+<p><strong>Intended answer:</strong> 42</p>
+<p><strong>Worked method:</strong></p><ol><li>The rule is add 5, so the nth term is 5n + 2</li><li>8th term: 5 × 8 + 2 = 42</li></ol>
+<p><strong>Independent derivation by script</strong> (written separately from the stored answer; a convenience, not validation): 42 (agrees)</p>
+<p><strong>What the child must type, and how it is marked:</strong> Scored by number: the child's entry is read as a number and compared with 42 (tolerance 0.0001). So 2.10 and 2.1 are the same. A pound sign, units or words typed with the number make it a text entry, which would be marked wrong. A plain number is the natural form.</p>
+<p><strong>Mistake this item is designed to catch:</strong> Multiplying the common difference by the term number (5 × 8 = 40) without the starting adjustment.</p>
+
+
+</details></div>
+<div class="card" id="item-mock-mr05-numberpyramid-01"><h3>mock-mr05-numberpyramid-01 <span class="tag">QT-MR-05</span><span class="tag">Sequences and rules / algebraic reasoning</span><span class="tag">hard</span><span class="tag">1 mark</span><span class="tag">Text only</span><span class="tag">existing (protected bank)</span></h3>
+<p class="q">In a number pyramid, the value in each brick is the sum of the two bricks directly below it. Here is a partly-filled 5-row pyramid, described row by row from top to bottom, with a question mark for every value not yet known. Row 1 (top, 1 brick): 72. Row 2 (2 bricks): 36, ?. Row 3 (3 bricks): 19, ?, 19. Row 4 (4 bricks): 11, 8, ?, ?. Row 5 (bottom, 5 bricks): ?, 6, 2, A, 3. What is the value of A?</p>
+
+<p class="meta">Marking treatment: <strong>automatic</strong>, one mark.</p>
+<fieldset><legend>Your decision</legend>
+<label class="opt"><input type="radio" name="d-mock-mr05-numberpyramid-01" value="APPROVE"> APPROVE</label><label class="opt"><input type="radio" name="d-mock-mr05-numberpyramid-01" value="REVISE"> REVISE</label><label class="opt"><input type="radio" name="d-mock-mr05-numberpyramid-01" value="REJECT"> REJECT</label></fieldset>
+<label class="meta">Your own answer, worked out before you open the intended answer (recommended)<input type="text" id="a-mock-mr05-numberpyramid-01" autocomplete="off"></label>
+<fieldset><legend class="meta">Is it suitable for the age group (Year 5 to 6, about 10 to 11 years)?</legend><label class="opt"><input type="radio" name="g-mock-mr05-numberpyramid-01" value="yes"> Yes</label><label class="opt"><input type="radio" name="g-mock-mr05-numberpyramid-01" value="no"> No</label><label class="opt"><input type="radio" name="g-mock-mr05-numberpyramid-01" value="unsure"> Unsure</label></fieldset>
+<label class="meta">Reason or comments (required for REVISE or REJECT: say exactly what to change)<textarea id="r-mock-mr05-numberpyramid-01" rows="3"></textarea></label>
+<details><summary>Intended answer, independent derivation and marking contract (open after you have your own answer)</summary>
+<p><strong>Intended answer:</strong> 7</p>
+<p><strong>Worked method:</strong></p><ol><li>Row 3's left value (19) should equal Row 4's first two values added: 11 + 8 = 19 -- confirms Row 4 so far</li><li>Row 2's first value (36) equals Row 3's first two values added, so Row 3's middle value = 36 - 19 = 17</li><li>Row 3's middle value (17) equals Row 4's 2nd and 3rd values added: 8 + Row4[3] = 17, so Row4[3] = 9</li><li>Row 3's right value (19) equals Row 4's 3rd and 4th values added: 9 + Row4[4] = 19, so Row4[4] = 10</li><li>Row 4's 4th value (10) equals Row 5's 4th and 5th values added: A + 3 = 10, so A = 7</li></ol>
+<p><strong>Independent derivation by script</strong> (written separately from the stored answer; a convenience, not validation): 7 (agrees)</p>
+<p><strong>What the child must type, and how it is marked:</strong> Scored by number: the child's entry is read as a number and compared with 7 (tolerance 0.0001). So 2.10 and 2.1 are the same. A pound sign, units or words typed with the number make it a text entry, which would be marked wrong. A plain number is the natural form.</p>
+
+<p class="warn"><strong>Author's observation:</strong> The whole pyramid is consistent (bottom row 5, 6, 2, 7, 3).</p>
+
+</details></div>
+<div class="card" id="item-mock-mr05-numberpyramid-02"><h3>mock-mr05-numberpyramid-02 <span class="tag">QT-MR-05</span><span class="tag">Sequences and rules / algebraic reasoning</span><span class="tag">hard</span><span class="tag">1 mark</span><span class="tag">Text only</span><span class="tag">existing (protected bank)</span></h3>
+<p class="q">In a number pyramid, the value in each brick is the sum of the two bricks directly below it. In a different pyramid, every brick on the bottom row has the same whole number value. The top brick's value is 144. What is the smallest possible bottom-row value, and how many rows does the pyramid have? Give your answer in the form (smallest bottom-row value, number of rows).</p>
+
+<p class="meta">Marking treatment: <strong>automatic</strong>, one mark.</p>
+<fieldset><legend>Your decision</legend>
+<label class="opt"><input type="radio" name="d-mock-mr05-numberpyramid-02" value="APPROVE"> APPROVE</label><label class="opt"><input type="radio" name="d-mock-mr05-numberpyramid-02" value="REVISE"> REVISE</label><label class="opt"><input type="radio" name="d-mock-mr05-numberpyramid-02" value="REJECT"> REJECT</label></fieldset>
+<label class="meta">Your own answer, worked out before you open the intended answer (recommended)<input type="text" id="a-mock-mr05-numberpyramid-02" autocomplete="off"></label>
+<fieldset><legend class="meta">Is it suitable for the age group (Year 5 to 6, about 10 to 11 years)?</legend><label class="opt"><input type="radio" name="g-mock-mr05-numberpyramid-02" value="yes"> Yes</label><label class="opt"><input type="radio" name="g-mock-mr05-numberpyramid-02" value="no"> No</label><label class="opt"><input type="radio" name="g-mock-mr05-numberpyramid-02" value="unsure"> Unsure</label></fieldset>
+<label class="meta">Reason or comments (required for REVISE or REJECT: say exactly what to change)<textarea id="r-mock-mr05-numberpyramid-02" rows="3"></textarea></label>
+<details><summary>Intended answer, independent derivation and marking contract (open after you have your own answer)</summary>
+<p><strong>Intended answer:</strong> (9, 5)</p>
+<p><strong>Worked method:</strong></p><ol><li>If the bottom row has n equal bricks of value x, the top brick's value is x multiplied by 2 to the power (n-1) -- each row up doubles the multiplier, since every brick above is the sum of two equal bricks below</li><li>144 = 2^4 x 3^2, so the largest power of 2 that divides 144 exactly is 2^4 = 16 (144 / 16 = 9, a whole number; 144 / 32 = 4.5, not a whole number)</li><li>The smallest possible bottom-row value comes from using the LARGEST valid power of 2, since a bigger multiplier needs a smaller x: x = 144 / 16 = 9, using n - 1 = 4, i.e. 5 rows</li><li>Check: bottom row of five 9s -&gt; next row 18,18,18,18 -&gt; next 36,36,36 -&gt; next 72,72 -&gt; top 144</li></ol>
+<p><strong>Independent derivation by script</strong> (written separately from the stored answer; a convenience, not validation): 9, 5 (agrees) This agrees with the stored value as it was BEFORE the repair; the repair only added the brackets the question itself asks for.</p>
+<p><strong>What the child must type, and how it is marked:</strong> Scored as exact text (capitals and outer spaces ignored): the child must type exactly (9, 5), with the bracket and the single space after the comma. &quot;(9,5)&quot; without the space would be marked wrong. The question does not state the exact form: please judge whether a child would know what to type.</p>
+
+<p class="warn"><strong>Author's observation:</strong> The number of rows is deduced, not given.</p>
+<p class="warn"><strong>Defect found and repaired in production:</strong> The question asks for the answer &quot;in the form (smallest bottom-row value, number of rows)&quot;, so a child writes &quot;(9, 5)&quot;, but the stored answer is &quot;9, 5&quot; and the marker requires matching brackets, so the instructed form is marked wrong.</p>
+</details></div>
+<div class="card" id="item-mock-mr05-numberpyramid-03"><h3>mock-mr05-numberpyramid-03 <span class="tag">QT-MR-05</span><span class="tag">Sequences and rules / algebraic reasoning</span><span class="tag">medium</span><span class="tag">1 mark</span><span class="tag">Text only</span><span class="tag">existing (protected bank)</span></h3>
+<p class="q">In a different kind of number pyramid, the value in each brick is the PRODUCT of the two bricks below it (multiplied together), rather than the sum. In one such pyramid, the top brick's value is 0. Which of these statements is definitely true? A. The top brick is guaranteed to be 0 if there is a negative number somewhere on the bottom row. B. The top brick is guaranteed to be 0 if there is a 0 somewhere on the bottom row. C. The top brick is guaranteed to be 0 if every brick on the bottom row has the same value as every other brick on the bottom row. Give the letter of the correct statement.</p>
+
+<p class="meta">Marking treatment: <strong>automatic</strong>, one mark.</p>
+<fieldset><legend>Your decision</legend>
+<label class="opt"><input type="radio" name="d-mock-mr05-numberpyramid-03" value="APPROVE"> APPROVE</label><label class="opt"><input type="radio" name="d-mock-mr05-numberpyramid-03" value="REVISE"> REVISE</label><label class="opt"><input type="radio" name="d-mock-mr05-numberpyramid-03" value="REJECT"> REJECT</label></fieldset>
+<label class="meta">Your own answer, worked out before you open the intended answer (recommended)<input type="text" id="a-mock-mr05-numberpyramid-03" autocomplete="off"></label>
+<fieldset><legend class="meta">Is it suitable for the age group (Year 5 to 6, about 10 to 11 years)?</legend><label class="opt"><input type="radio" name="g-mock-mr05-numberpyramid-03" value="yes"> Yes</label><label class="opt"><input type="radio" name="g-mock-mr05-numberpyramid-03" value="no"> No</label><label class="opt"><input type="radio" name="g-mock-mr05-numberpyramid-03" value="unsure"> Unsure</label></fieldset>
+<label class="meta">Reason or comments (required for REVISE or REJECT: say exactly what to change)<textarea id="r-mock-mr05-numberpyramid-03" rows="3"></textarea></label>
+<details><summary>Intended answer, independent derivation and marking contract (open after you have your own answer)</summary>
+<p><strong>Intended answer:</strong> B</p>
+<p><strong>Worked method:</strong></p><ol><li>Statement A is false: a negative number does not force a product of 0 -- for example, bottom values -2 and 3 multiply to -6, not 0</li><li>Statement C is false: if every bottom brick has the same non-zero value (e.g. all bricks are 2), the top brick will be a large positive number, not 0</li><li>Statement B is true: every brick is built by multiplying the bricks below it, so every bottom-row value is one of the factors that eventually gets multiplied together to make the top value -- if any bottom-row value is 0, that 0 is one of those factors, and anything multiplied by 0 is 0, all the way to the top</li></ol>
+<p><strong>Independent derivation by script</strong> (written separately from the stored answer; a convenience, not validation): B (agrees)</p>
+<p><strong>What the child must type, and how it is marked:</strong> Scored as exact text (capitals ignored): the child must type B. The question does not state the exact form: please judge whether a child would know what to type.</p>
+
+<p class="warn"><strong>Author's observation:</strong> Opens with &quot;the top brick's value is 0&quot;, but the statements are conditionals independent of that premise; may confuse. Not a correctness error.</p>
+
+</details></div>
+<div class="card" id="item-mock-fb-mr06-digits-01"><h3>mock-fb-mr06-digits-01 <span class="tag">QT-MR-06</span><span class="tag">Algebraic reasoning</span><span class="tag">medium</span><span class="tag">1 mark</span><span class="tag">Text only</span><span class="tag">new (authored for Form B)</span></h3>
+<p class="q">Tia thinks of a two-digit number. Its digits add up to 11. When its digits are reversed, the number increases by 27. What was Tia's number?</p>
+
+<p class="meta">Marking treatment: <strong>automatic</strong>, one mark.</p>
+<fieldset><legend>Your decision</legend>
+<label class="opt"><input type="radio" name="d-mock-fb-mr06-digits-01" value="APPROVE"> APPROVE</label><label class="opt"><input type="radio" name="d-mock-fb-mr06-digits-01" value="REVISE"> REVISE</label><label class="opt"><input type="radio" name="d-mock-fb-mr06-digits-01" value="REJECT"> REJECT</label></fieldset>
+<label class="meta">Your own answer, worked out before you open the intended answer (recommended)<input type="text" id="a-mock-fb-mr06-digits-01" autocomplete="off"></label>
+<fieldset><legend class="meta">Is it suitable for the age group (Year 5 to 6, about 10 to 11 years)?</legend><label class="opt"><input type="radio" name="g-mock-fb-mr06-digits-01" value="yes"> Yes</label><label class="opt"><input type="radio" name="g-mock-fb-mr06-digits-01" value="no"> No</label><label class="opt"><input type="radio" name="g-mock-fb-mr06-digits-01" value="unsure"> Unsure</label></fieldset>
+<label class="meta">Reason or comments (required for REVISE or REJECT: say exactly what to change)<textarea id="r-mock-fb-mr06-digits-01" rows="3"></textarea></label>
+<details><summary>Intended answer, independent derivation and marking contract (open after you have your own answer)</summary>
+<p><strong>Intended answer:</strong> 47</p>
+<p><strong>Worked method:</strong></p><ol><li>Reversing changes the number by 9 × (difference of the digits), so the difference is 27 ÷ 9 = 3</li><li>Digits add to 11 and differ by 3: they are 4 and 7</li><li>Reversing must increase it, so the number is 47 (74 − 47 = 27)</li></ol>
+<p><strong>Independent derivation by script</strong> (written separately from the stored answer; a convenience, not validation): 47 (agrees)</p>
+<p><strong>What the child must type, and how it is marked:</strong> Scored by number: the child's entry is read as a number and compared with 47 (tolerance 0.0001). So 2.10 and 2.1 are the same. A pound sign, units or words typed with the number make it a text entry, which would be marked wrong. A plain number is the natural form.</p>
+<p><strong>Mistake this item is designed to catch:</strong> Finding digits that add to 11 but not checking that the reversed number is 27 larger.</p>
+
+
+</details></div>
+<div class="card" id="item-mock-mr06-agenarrative-01"><h3>mock-mr06-agenarrative-01 <span class="tag">QT-MR-06</span><span class="tag">Algebraic reasoning</span><span class="tag">hard</span><span class="tag">1 mark</span><span class="tag">Text only</span><span class="tag">existing (protected bank)</span></h3>
+<p class="q">Priya was born in 1985. Her cousin Tom was born in 2009. For example, in the year 2015, Priya was 30 and Tom was 6. In what year was Tom's age exactly half of Priya's age?</p>
+
+<p class="meta">Marking treatment: <strong>automatic</strong>, one mark.</p>
+<fieldset><legend>Your decision</legend>
+<label class="opt"><input type="radio" name="d-mock-mr06-agenarrative-01" value="APPROVE"> APPROVE</label><label class="opt"><input type="radio" name="d-mock-mr06-agenarrative-01" value="REVISE"> REVISE</label><label class="opt"><input type="radio" name="d-mock-mr06-agenarrative-01" value="REJECT"> REJECT</label></fieldset>
+<label class="meta">Your own answer, worked out before you open the intended answer (recommended)<input type="text" id="a-mock-mr06-agenarrative-01" autocomplete="off"></label>
+<fieldset><legend class="meta">Is it suitable for the age group (Year 5 to 6, about 10 to 11 years)?</legend><label class="opt"><input type="radio" name="g-mock-mr06-agenarrative-01" value="yes"> Yes</label><label class="opt"><input type="radio" name="g-mock-mr06-agenarrative-01" value="no"> No</label><label class="opt"><input type="radio" name="g-mock-mr06-agenarrative-01" value="unsure"> Unsure</label></fieldset>
+<label class="meta">Reason or comments (required for REVISE or REJECT: say exactly what to change)<textarea id="r-mock-mr06-agenarrative-01" rows="3"></textarea></label>
+<details><summary>Intended answer, independent derivation and marking contract (open after you have your own answer)</summary>
+<p><strong>Intended answer:</strong> 2033</p>
+<p><strong>Worked method:</strong></p><ol><li>Let the year be Y. Priya's age = Y - 1985. Tom's age = Y - 2009</li><li>Tom's age is half Priya's age: 2 x (Y - 2009) = Y - 1985</li><li>2Y - 4018 = Y - 1985, so Y = 4018 - 1985 = 2033</li><li>Check: in 2033, Priya is 48 and Tom is 24, and 24 is half of 48</li></ol>
+<p><strong>Independent derivation by script</strong> (written separately from the stored answer; a convenience, not validation): 2033 (agrees)</p>
+<p><strong>What the child must type, and how it is marked:</strong> Scored by number: the child's entry is read as a number and compared with 2033 (tolerance 0.0001). So 2.10 and 2.1 are the same. A pound sign, units or words typed with the number make it a text entry, which would be marked wrong. A plain number is the natural form.</p>
+
+
+
+</details></div>
+<div class="card" id="item-mock-mr06-agenarrative-02"><h3>mock-mr06-agenarrative-02 <span class="tag">QT-MR-06</span><span class="tag">Algebraic reasoning</span><span class="tag">medium</span><span class="tag">1 mark</span><span class="tag">Text only</span><span class="tag">existing (protected bank)</span></h3>
+<p class="q">Priya was born in 1985. Her cousin Tom was born in 2009. For example, in the year 2015, Priya was 30 and Tom was 6. In what year did Priya's age and Tom's age add up to 100?</p>
+
+<p class="meta">Marking treatment: <strong>automatic</strong>, one mark.</p>
+<fieldset><legend>Your decision</legend>
+<label class="opt"><input type="radio" name="d-mock-mr06-agenarrative-02" value="APPROVE"> APPROVE</label><label class="opt"><input type="radio" name="d-mock-mr06-agenarrative-02" value="REVISE"> REVISE</label><label class="opt"><input type="radio" name="d-mock-mr06-agenarrative-02" value="REJECT"> REJECT</label></fieldset>
+<label class="meta">Your own answer, worked out before you open the intended answer (recommended)<input type="text" id="a-mock-mr06-agenarrative-02" autocomplete="off"></label>
+<fieldset><legend class="meta">Is it suitable for the age group (Year 5 to 6, about 10 to 11 years)?</legend><label class="opt"><input type="radio" name="g-mock-mr06-agenarrative-02" value="yes"> Yes</label><label class="opt"><input type="radio" name="g-mock-mr06-agenarrative-02" value="no"> No</label><label class="opt"><input type="radio" name="g-mock-mr06-agenarrative-02" value="unsure"> Unsure</label></fieldset>
+<label class="meta">Reason or comments (required for REVISE or REJECT: say exactly what to change)<textarea id="r-mock-mr06-agenarrative-02" rows="3"></textarea></label>
+<details><summary>Intended answer, independent derivation and marking contract (open after you have your own answer)</summary>
+<p><strong>Intended answer:</strong> 2047</p>
+<p><strong>Worked method:</strong></p><ol><li>Let the year be Y. Priya's age = Y - 1985. Tom's age = Y - 2009</li><li>(Y - 1985) + (Y - 2009) = 100</li><li>2Y - 3994 = 100, so 2Y = 4094, Y = 2047</li><li>Check: in 2047, Priya is 62 and Tom is 38, and 62 + 38 = 100</li></ol>
+<p><strong>Independent derivation by script</strong> (written separately from the stored answer; a convenience, not validation): 2047 (agrees)</p>
+<p><strong>What the child must type, and how it is marked:</strong> Scored by number: the child's entry is read as a number and compared with 2047 (tolerance 0.0001). So 2.10 and 2.1 are the same. A pound sign, units or words typed with the number make it a text entry, which would be marked wrong. A plain number is the natural form.</p>
+
+
+
+</details></div>
+<div class="card" id="item-mock-mr06-agenarrative-03"><h3>mock-mr06-agenarrative-03 <span class="tag">QT-MR-06</span><span class="tag">Algebraic reasoning</span><span class="tag">hard</span><span class="tag">1 mark</span><span class="tag">Text only</span><span class="tag">existing (protected bank)</span></h3>
+<p class="q">Priya was born in 1985. Her cousin Tom was born in 2009. For example, in the year 2015, Priya was 30 and Tom was 6. Priya's age and Tom's age stay exactly 24 years apart every year, since Tom was born 24 years after Priya. Find the EARLIEST year in which both Priya's age and Tom's age were square numbers (a square number is a whole number multiplied by itself, like 1, 4, 9, 16, 25...).</p>
+
+<p class="meta">Marking treatment: <strong>automatic</strong>, one mark.</p>
+<fieldset><legend>Your decision</legend>
+<label class="opt"><input type="radio" name="d-mock-mr06-agenarrative-03" value="APPROVE"> APPROVE</label><label class="opt"><input type="radio" name="d-mock-mr06-agenarrative-03" value="REVISE"> REVISE</label><label class="opt"><input type="radio" name="d-mock-mr06-agenarrative-03" value="REJECT"> REJECT</label></fieldset>
+<label class="meta">Your own answer, worked out before you open the intended answer (recommended)<input type="text" id="a-mock-mr06-agenarrative-03" autocomplete="off"></label>
+<fieldset><legend class="meta">Is it suitable for the age group (Year 5 to 6, about 10 to 11 years)?</legend><label class="opt"><input type="radio" name="g-mock-mr06-agenarrative-03" value="yes"> Yes</label><label class="opt"><input type="radio" name="g-mock-mr06-agenarrative-03" value="no"> No</label><label class="opt"><input type="radio" name="g-mock-mr06-agenarrative-03" value="unsure"> Unsure</label></fieldset>
+<label class="meta">Reason or comments (required for REVISE or REJECT: say exactly what to change)<textarea id="r-mock-mr06-agenarrative-03" rows="3"></textarea></label>
+<details><summary>Intended answer, independent derivation and marking contract (open after you have your own answer)</summary>
+<p><strong>Intended answer:</strong> 2010</p>
+<p><strong>Worked method:</strong></p><ol><li>Priya's age minus Tom's age is always 24. If Priya's age is m^2 and Tom's age is d^2, then m^2 - d^2 = 24, which factorises as (m - d)(m + d) = 24</li><li>Find whole-number factor pairs of 24 where both factors are the same odd/even type (since m - d and m + d always match): 2 x 12 gives m = 7, d = 5; 4 x 6 gives m = 5, d = 1 (1 x 24 has mixed odd/even type and does not give a whole-number solution)</li><li>Pair m = 5, d = 1: Priya's age = 25, Tom's age = 1, year = 1985 + 25 = 2010 (check: Tom's year = 2009 + 1 = 2010, matches)</li><li>Pair m = 7, d = 5: Priya's age = 49, Tom's age = 25, year = 1985 + 49 = 2034 -- a later year</li><li>The earliest of the two valid years is 2010</li></ol>
+<p><strong>Independent derivation by script</strong> (written separately from the stored answer; a convenience, not validation): 2010 (agrees)</p>
+<p><strong>What the child must type, and how it is marked:</strong> Scored by number: the child's entry is read as a number and compared with 2010 (tolerance 0.0001). So 2.10 and 2.1 are the same. A pound sign, units or words typed with the number make it a text entry, which would be marked wrong. A plain number is the natural form.</p>
+
+
+
+</details></div>
+<div class="card" id="item-mock-mr06-sumdiff-01"><h3>mock-mr06-sumdiff-01 <span class="tag">QT-MR-06</span><span class="tag">Algebraic reasoning</span><span class="tag">medium</span><span class="tag">1 mark</span><span class="tag">Text only</span><span class="tag">existing (protected bank)</span></h3>
+<p class="q">The sum of two numbers is 58. Their difference is 12. What is the larger number?</p>
+
+<p class="meta">Marking treatment: <strong>automatic</strong>, one mark.</p>
+<fieldset><legend>Your decision</legend>
+<label class="opt"><input type="radio" name="d-mock-mr06-sumdiff-01" value="APPROVE"> APPROVE</label><label class="opt"><input type="radio" name="d-mock-mr06-sumdiff-01" value="REVISE"> REVISE</label><label class="opt"><input type="radio" name="d-mock-mr06-sumdiff-01" value="REJECT"> REJECT</label></fieldset>
+<label class="meta">Your own answer, worked out before you open the intended answer (recommended)<input type="text" id="a-mock-mr06-sumdiff-01" autocomplete="off"></label>
+<fieldset><legend class="meta">Is it suitable for the age group (Year 5 to 6, about 10 to 11 years)?</legend><label class="opt"><input type="radio" name="g-mock-mr06-sumdiff-01" value="yes"> Yes</label><label class="opt"><input type="radio" name="g-mock-mr06-sumdiff-01" value="no"> No</label><label class="opt"><input type="radio" name="g-mock-mr06-sumdiff-01" value="unsure"> Unsure</label></fieldset>
+<label class="meta">Reason or comments (required for REVISE or REJECT: say exactly what to change)<textarea id="r-mock-mr06-sumdiff-01" rows="3"></textarea></label>
+<details><summary>Intended answer, independent derivation and marking contract (open after you have your own answer)</summary>
+<p><strong>Intended answer:</strong> 35</p>
+<p><strong>Worked method:</strong></p><ol><li>Larger + smaller = 58, and larger - smaller = 12</li><li>Adding both equations: 2 x larger = 70</li><li>larger = 35</li></ol>
+<p><strong>Independent derivation by script</strong> (written separately from the stored answer; a convenience, not validation): 35 (agrees)</p>
+<p><strong>What the child must type, and how it is marked:</strong> Scored by number: the child's entry is read as a number and compared with 35 (tolerance 0.0001). So 2.10 and 2.1 are the same. A pound sign, units or words typed with the number make it a text entry, which would be marked wrong. A plain number is the natural form.</p>
+
+
+
+</details></div>
+<div class="card" id="item-mock-mr06-sumdiff-02"><h3>mock-mr06-sumdiff-02 <span class="tag">QT-MR-06</span><span class="tag">Algebraic reasoning</span><span class="tag">medium</span><span class="tag">1 mark</span><span class="tag">Text only</span><span class="tag">existing (protected bank)</span></h3>
+<p class="q">The sum of two numbers is 74. Their difference is 18. What is the smaller number?</p>
+
+<p class="meta">Marking treatment: <strong>automatic</strong>, one mark.</p>
+<fieldset><legend>Your decision</legend>
+<label class="opt"><input type="radio" name="d-mock-mr06-sumdiff-02" value="APPROVE"> APPROVE</label><label class="opt"><input type="radio" name="d-mock-mr06-sumdiff-02" value="REVISE"> REVISE</label><label class="opt"><input type="radio" name="d-mock-mr06-sumdiff-02" value="REJECT"> REJECT</label></fieldset>
+<label class="meta">Your own answer, worked out before you open the intended answer (recommended)<input type="text" id="a-mock-mr06-sumdiff-02" autocomplete="off"></label>
+<fieldset><legend class="meta">Is it suitable for the age group (Year 5 to 6, about 10 to 11 years)?</legend><label class="opt"><input type="radio" name="g-mock-mr06-sumdiff-02" value="yes"> Yes</label><label class="opt"><input type="radio" name="g-mock-mr06-sumdiff-02" value="no"> No</label><label class="opt"><input type="radio" name="g-mock-mr06-sumdiff-02" value="unsure"> Unsure</label></fieldset>
+<label class="meta">Reason or comments (required for REVISE or REJECT: say exactly what to change)<textarea id="r-mock-mr06-sumdiff-02" rows="3"></textarea></label>
+<details><summary>Intended answer, independent derivation and marking contract (open after you have your own answer)</summary>
+<p><strong>Intended answer:</strong> 28</p>
+<p><strong>Worked method:</strong></p><ol><li>Larger + smaller = 74, and larger - smaller = 18</li><li>Adding both equations: 2 x larger = 92, so larger = 46</li><li>smaller = 74 - 46 = 28</li></ol>
+<p><strong>Independent derivation by script</strong> (written separately from the stored answer; a convenience, not validation): 28 (agrees)</p>
+<p><strong>What the child must type, and how it is marked:</strong> Scored by number: the child's entry is read as a number and compared with 28 (tolerance 0.0001). So 2.10 and 2.1 are the same. A pound sign, units or words typed with the number make it a text entry, which would be marked wrong. A plain number is the natural form.</p>
+
+
+
+</details></div>
+<div class="card" id="item-mock-fb-mr07-angles-01"><h3>mock-fb-mr07-angles-01 <span class="tag">QT-MR-07</span><span class="tag">Geometry (angles, perimeter, area)</span><span class="tag">medium</span><span class="tag">1 mark</span><span class="tag">Figure (static diagram)</span><span class="tag">new (authored for Form B)</span></h3>
+<p class="q">The diagram shows angles on a straight line. Work out the size of angle x, in degrees.</p>
+<div class="fig"><svg xmlns="http://www.w3.org/2000/svg" width="360" height="240" font-family="Arial, sans-serif" viewBox="0 0 360 240" role="img" aria-label="Angle diagram of angles on a straight line. Known angles: 38°, 64°. Unknown: x. Not drawn accurately."><rect width="360" height="240" fill="#ffffff"/><line x1="30" y1="190" x2="330" y2="190" stroke="#2457c5" stroke-width="2.5" stroke-linecap="round"></line><line x1="180" y1="190" x2="298.2016130410083" y2="97.65077870115127" stroke="#2457c5" stroke-width="2.5" stroke-linecap="round"></line><line x1="180" y1="190" x2="114.24432798163838" y2="55.180893055124955" stroke="#2457c5" stroke-width="2.5" stroke-linecap="round"></line><path d="M 203.9853798484583 189.16241207913998 A 24 24 0 0 0 199.41640786499875 175.89315394498064" fill="none" stroke="#1d2b44" stroke-width="1.5"></path><path d="M 205.27946662292626 168.7880088803442 A 33 33 0 0 0 166.5776907784986 159.85299989779418" fill="none" stroke="#1d2b44" stroke-width="1.5"></path><path d="M 168.73268249313864 168.80925777138575 A 24 24 0 0 0 156.0146201515417 189.16241207913998" fill="none" stroke="#1d2b44" stroke-width="1.5"></path><text x="274.5518575599317" y="162.44318455428433" text-anchor="middle" font-size="16" font-weight="700" font-style="normal" fill="#1d2b44">38°</text><text x="195.07172064103895" y="129.71720565938924" text-anchor="middle" font-size="16" font-weight="700" font-style="italic" fill="#1d2b44">x</text><text x="130.81321042292728" y="164.2646826744741" text-anchor="middle" font-size="16" font-weight="700" font-style="normal" fill="#1d2b44">64°</text></svg><p class="meta">Diagram not drawn accurately.</p><p class="meta">Text description given with the picture: A straight line with three angles marked above it. Two angles are labelled 38 degrees and 64 degrees. The middle angle, between them, is labelled x. The diagram is not drawn accurately.</p></div>
+<p class="meta">Marking treatment: <strong>automatic</strong>, one mark.</p>
+<fieldset><legend>Your decision</legend>
+<label class="opt"><input type="radio" name="d-mock-fb-mr07-angles-01" value="APPROVE"> APPROVE</label><label class="opt"><input type="radio" name="d-mock-fb-mr07-angles-01" value="REVISE"> REVISE</label><label class="opt"><input type="radio" name="d-mock-fb-mr07-angles-01" value="REJECT"> REJECT</label></fieldset>
+<label class="meta">Your own answer, worked out before you open the intended answer (recommended)<input type="text" id="a-mock-fb-mr07-angles-01" autocomplete="off"></label>
+<fieldset><legend class="meta">Is it suitable for the age group (Year 5 to 6, about 10 to 11 years)?</legend><label class="opt"><input type="radio" name="g-mock-fb-mr07-angles-01" value="yes"> Yes</label><label class="opt"><input type="radio" name="g-mock-fb-mr07-angles-01" value="no"> No</label><label class="opt"><input type="radio" name="g-mock-fb-mr07-angles-01" value="unsure"> Unsure</label></fieldset>
+<label class="meta">Reason or comments (required for REVISE or REJECT: say exactly what to change)<textarea id="r-mock-fb-mr07-angles-01" rows="3"></textarea></label>
+<details><summary>Intended answer, independent derivation and marking contract (open after you have your own answer)</summary>
+<p><strong>Intended answer:</strong> 78</p>
+<p><strong>Worked method:</strong></p><ol><li>Angles on a straight line add up to 180°</li><li>38 + 64 = 102</li><li>x = 180 − 102 = 78</li></ol>
+<p><strong>Independent derivation by script</strong> (written separately from the stored answer; a convenience, not validation): 78 (agrees)</p>
+<p><strong>What the child must type, and how it is marked:</strong> Scored by number: the child's entry is read as a number and compared with 78 (tolerance 0.0001). So 2.10 and 2.1 are the same. A pound sign, units or words typed with the number make it a text entry, which would be marked wrong. A plain number is the natural form.</p>
+<p><strong>Mistake this item is designed to catch:</strong> Using 360° instead of 180°, or measuring the drawing.</p>
+
+
+</details></div>
+<div class="card" id="item-mock-fb-mr07-lshape-01"><h3>mock-fb-mr07-lshape-01 <span class="tag">QT-MR-07</span><span class="tag">Geometry (angles, perimeter, area)</span><span class="tag">hard</span><span class="tag">1 mark</span><span class="tag">Figure (static diagram)</span><span class="tag">new (authored for Form B)</span></h3>
+<p class="q">The diagram shows an L-shaped garden. All the angles are right angles. Work out the area of the garden, in square metres.</p>
+<div class="fig"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 260" width="360" height="260" role="img" aria-label="L-shaped garden with some side lengths marked"><rect width="360" height="260" fill="#ffffff"/><path d="M 50 210 L 290 210 L 290 90 L 190 90 L 190 30 L 50 30 Z" fill="#eaf0fb" stroke="#2457c5" stroke-width="3" stroke-linejoin="round"/><text x="170" y="234" text-anchor="middle" font-family="Arial, sans-serif" font-size="16" font-weight="600" fill="#1d2b44">12 m</text><text x="38" y="125" text-anchor="end" font-family="Arial, sans-serif" font-size="16" font-weight="600" fill="#1d2b44">9 m</text><text x="120" y="22" text-anchor="middle" font-family="Arial, sans-serif" font-size="16" font-weight="600" fill="#1d2b44">7 m</text><text x="302" y="155" text-anchor="start" font-family="Arial, sans-serif" font-size="16" font-weight="600" fill="#1d2b44">6 m</text></svg><p class="meta">Diagram not drawn to scale.</p><p class="meta">Text description given with the picture: An L-shaped garden. The bottom side is 12 metres and the left side is 9 metres. The top edge, on the left, is 7 metres. The right-hand side, below the missing corner, is 6 metres. The sides of the missing corner are not labelled. All angles are right angles. The diagram is not drawn to scale.</p></div>
+<p class="meta">Marking treatment: <strong>automatic</strong>, one mark.</p>
+<fieldset><legend>Your decision</legend>
+<label class="opt"><input type="radio" name="d-mock-fb-mr07-lshape-01" value="APPROVE"> APPROVE</label><label class="opt"><input type="radio" name="d-mock-fb-mr07-lshape-01" value="REVISE"> REVISE</label><label class="opt"><input type="radio" name="d-mock-fb-mr07-lshape-01" value="REJECT"> REJECT</label></fieldset>
+<label class="meta">Your own answer, worked out before you open the intended answer (recommended)<input type="text" id="a-mock-fb-mr07-lshape-01" autocomplete="off"></label>
+<fieldset><legend class="meta">Is it suitable for the age group (Year 5 to 6, about 10 to 11 years)?</legend><label class="opt"><input type="radio" name="g-mock-fb-mr07-lshape-01" value="yes"> Yes</label><label class="opt"><input type="radio" name="g-mock-fb-mr07-lshape-01" value="no"> No</label><label class="opt"><input type="radio" name="g-mock-fb-mr07-lshape-01" value="unsure"> Unsure</label></fieldset>
+<label class="meta">Reason or comments (required for REVISE or REJECT: say exactly what to change)<textarea id="r-mock-fb-mr07-lshape-01" rows="3"></textarea></label>
+<details><summary>Intended answer, independent derivation and marking contract (open after you have your own answer)</summary>
+<p><strong>Intended answer:</strong> 93</p>
+<p><strong>Worked method:</strong></p><ol><li>The full rectangle is 12 m by 9 m: 108 m²</li><li>The missing corner is (12 − 7) m by (9 − 6) m = 5 m by 3 m = 15 m²</li><li>108 − 15 = 93</li></ol>
+<p><strong>Independent derivation by script</strong> (written separately from the stored answer; a convenience, not validation): 93 (agrees)</p>
+<p><strong>What the child must type, and how it is marked:</strong> Scored by number: the child's entry is read as a number and compared with 93 (tolerance 0.0001). So 2.10 and 2.1 are the same. A pound sign, units or words typed with the number make it a text entry, which would be marked wrong. A plain number is the natural form.</p>
+<p><strong>Mistake this item is designed to catch:</strong> Multiplying only the labelled lengths together, or forgetting to work out the sides of the missing corner.</p>
+
+
+</details></div>
+<div class="card" id="item-mock-mr03mr07-perimeterarea-01b"><h3>mock-mr03mr07-perimeterarea-01b <span class="tag">QT-MR-07</span><span class="tag">Geometry (angles, perimeter, area)</span><span class="tag">hard</span><span class="tag">1 mark</span><span class="tag">Text only</span><span class="tag">existing (protected bank)</span></h3>
+<p class="q">A rectangular garden bed measures 3.6 metres by 2.5 metres. What is its area in square metres?</p>
+
+<p class="meta">Marking treatment: <strong>automatic</strong>, one mark.</p>
+<fieldset><legend>Your decision</legend>
+<label class="opt"><input type="radio" name="d-mock-mr03mr07-perimeterarea-01b" value="APPROVE"> APPROVE</label><label class="opt"><input type="radio" name="d-mock-mr03mr07-perimeterarea-01b" value="REVISE"> REVISE</label><label class="opt"><input type="radio" name="d-mock-mr03mr07-perimeterarea-01b" value="REJECT"> REJECT</label></fieldset>
+<label class="meta">Your own answer, worked out before you open the intended answer (recommended)<input type="text" id="a-mock-mr03mr07-perimeterarea-01b" autocomplete="off"></label>
+<fieldset><legend class="meta">Is it suitable for the age group (Year 5 to 6, about 10 to 11 years)?</legend><label class="opt"><input type="radio" name="g-mock-mr03mr07-perimeterarea-01b" value="yes"> Yes</label><label class="opt"><input type="radio" name="g-mock-mr03mr07-perimeterarea-01b" value="no"> No</label><label class="opt"><input type="radio" name="g-mock-mr03mr07-perimeterarea-01b" value="unsure"> Unsure</label></fieldset>
+<label class="meta">Reason or comments (required for REVISE or REJECT: say exactly what to change)<textarea id="r-mock-mr03mr07-perimeterarea-01b" rows="3"></textarea></label>
+<details><summary>Intended answer, independent derivation and marking contract (open after you have your own answer)</summary>
+<p><strong>Intended answer:</strong> 9</p>
+<p><strong>Worked method:</strong></p><ol><li>Area = 3.6 × 2.5 = 9 square metres</li></ol>
+<p><strong>Independent derivation by script</strong> (written separately from the stored answer; a convenience, not validation): 9 (agrees)</p>
+<p><strong>What the child must type, and how it is marked:</strong> Scored by number: the child's entry is read as a number and compared with 9 (tolerance 0.0001). So 2.10 and 2.1 are the same. A pound sign, units or words typed with the number make it a text entry, which would be marked wrong. A plain number is the natural form.</p>
+
+
+
+</details></div>
+<div class="card" id="item-mock-mr03mr07-perimeterarea-02b"><h3>mock-mr03mr07-perimeterarea-02b <span class="tag">QT-MR-07</span><span class="tag">Geometry (angles, perimeter, area)</span><span class="tag">hard</span><span class="tag">1 mark</span><span class="tag">Text only</span><span class="tag">existing (protected bank)</span></h3>
+<p class="q">A rectangular window pane measures 90 centimetres by 45 centimetres. What is its area in square centimetres?</p>
+
+<p class="meta">Marking treatment: <strong>automatic</strong>, one mark.</p>
+<fieldset><legend>Your decision</legend>
+<label class="opt"><input type="radio" name="d-mock-mr03mr07-perimeterarea-02b" value="APPROVE"> APPROVE</label><label class="opt"><input type="radio" name="d-mock-mr03mr07-perimeterarea-02b" value="REVISE"> REVISE</label><label class="opt"><input type="radio" name="d-mock-mr03mr07-perimeterarea-02b" value="REJECT"> REJECT</label></fieldset>
+<label class="meta">Your own answer, worked out before you open the intended answer (recommended)<input type="text" id="a-mock-mr03mr07-perimeterarea-02b" autocomplete="off"></label>
+<fieldset><legend class="meta">Is it suitable for the age group (Year 5 to 6, about 10 to 11 years)?</legend><label class="opt"><input type="radio" name="g-mock-mr03mr07-perimeterarea-02b" value="yes"> Yes</label><label class="opt"><input type="radio" name="g-mock-mr03mr07-perimeterarea-02b" value="no"> No</label><label class="opt"><input type="radio" name="g-mock-mr03mr07-perimeterarea-02b" value="unsure"> Unsure</label></fieldset>
+<label class="meta">Reason or comments (required for REVISE or REJECT: say exactly what to change)<textarea id="r-mock-mr03mr07-perimeterarea-02b" rows="3"></textarea></label>
+<details><summary>Intended answer, independent derivation and marking contract (open after you have your own answer)</summary>
+<p><strong>Intended answer:</strong> 4050</p>
+<p><strong>Worked method:</strong></p><ol><li>Area = 90 × 45 = 4050 square centimetres</li></ol>
+<p><strong>Independent derivation by script</strong> (written separately from the stored answer; a convenience, not validation): 4050 (agrees)</p>
+<p><strong>What the child must type, and how it is marked:</strong> Scored by number: the child's entry is read as a number and compared with 4050 (tolerance 0.0001). So 2.10 and 2.1 are the same. A pound sign, units or words typed with the number make it a text entry, which would be marked wrong. A plain number is the natural form.</p>
+
+
+
+</details></div>
+<div class="card" id="item-mock-fb-mr08-reflect-01"><h3>mock-fb-mr08-reflect-01 <span class="tag">QT-MR-08</span><span class="tag">Coordinates and transformations</span><span class="tag">medium</span><span class="tag">1 mark</span><span class="tag">Figure (static diagram)</span><span class="tag">new (authored for Form B)</span></h3>
+<p class="q">Point P is reflected in the dashed mirror line. What are the coordinates of the image of P? Give your answer in the form (x, y).</p>
+<div class="fig"><svg xmlns="http://www.w3.org/2000/svg" width="476" height="476" font-family="Arial, sans-serif" viewBox="0 0 476 476" role="img" aria-label="Coordinate grid, x from -8 to 8 and y from -8 to 8. Plotted points: P. A dashed mirror line is drawn along the line y = x."><rect width="476" height="476" fill="#ffffff"/><line x1="30" x2="30" y1="446" y2="30" stroke="#d9d4c7" stroke-width="1"></line><line x1="56" x2="56" y1="446" y2="30" stroke="#d9d4c7" stroke-width="1"></line><line x1="82" x2="82" y1="446" y2="30" stroke="#d9d4c7" stroke-width="1"></line><line x1="108" x2="108" y1="446" y2="30" stroke="#d9d4c7" stroke-width="1"></line><line x1="134" x2="134" y1="446" y2="30" stroke="#d9d4c7" stroke-width="1"></line><line x1="160" x2="160" y1="446" y2="30" stroke="#d9d4c7" stroke-width="1"></line><line x1="186" x2="186" y1="446" y2="30" stroke="#d9d4c7" stroke-width="1"></line><line x1="212" x2="212" y1="446" y2="30" stroke="#d9d4c7" stroke-width="1"></line><line x1="238" x2="238" y1="446" y2="30" stroke="#d9d4c7" stroke-width="1"></line><line x1="264" x2="264" y1="446" y2="30" stroke="#d9d4c7" stroke-width="1"></line><line x1="290" x2="290" y1="446" y2="30" stroke="#d9d4c7" stroke-width="1"></line><line x1="316" x2="316" y1="446" y2="30" stroke="#d9d4c7" stroke-width="1"></line><line x1="342" x2="342" y1="446" y2="30" stroke="#d9d4c7" stroke-width="1"></line><line x1="368" x2="368" y1="446" y2="30" stroke="#d9d4c7" stroke-width="1"></line><line x1="394" x2="394" y1="446" y2="30" stroke="#d9d4c7" stroke-width="1"></line><line x1="420" x2="420" y1="446" y2="30" stroke="#d9d4c7" stroke-width="1"></line><line x1="446" x2="446" y1="446" y2="30" stroke="#d9d4c7" stroke-width="1"></line><line y1="446" y2="446" x1="30" x2="446" stroke="#d9d4c7" stroke-width="1"></line><line y1="420" y2="420" x1="30" x2="446" stroke="#d9d4c7" stroke-width="1"></line><line y1="394" y2="394" x1="30" x2="446" stroke="#d9d4c7" stroke-width="1"></line><line y1="368" y2="368" x1="30" x2="446" stroke="#d9d4c7" stroke-width="1"></line><line y1="342" y2="342" x1="30" x2="446" stroke="#d9d4c7" stroke-width="1"></line><line y1="316" y2="316" x1="30" x2="446" stroke="#d9d4c7" stroke-width="1"></line><line y1="290" y2="290" x1="30" x2="446" stroke="#d9d4c7" stroke-width="1"></line><line y1="264" y2="264" x1="30" x2="446" stroke="#d9d4c7" stroke-width="1"></line><line y1="238" y2="238" x1="30" x2="446" stroke="#d9d4c7" stroke-width="1"></line><line y1="212" y2="212" x1="30" x2="446" stroke="#d9d4c7" stroke-width="1"></line><line y1="186" y2="186" x1="30" x2="446" stroke="#d9d4c7" stroke-width="1"></line><line y1="160" y2="160" x1="30" x2="446" stroke="#d9d4c7" stroke-width="1"></line><line y1="134" y2="134" x1="30" x2="446" stroke="#d9d4c7" stroke-width="1"></line><line y1="108" y2="108" x1="30" x2="446" stroke="#d9d4c7" stroke-width="1"></line><line y1="82" y2="82" x1="30" x2="446" stroke="#d9d4c7" stroke-width="1"></line><line y1="56" y2="56" x1="30" x2="446" stroke="#d9d4c7" stroke-width="1"></line><line y1="30" y2="30" x1="30" x2="446" stroke="#d9d4c7" stroke-width="1"></line><line x1="30" x2="446" y1="238" y2="238" stroke="#1d2b44" stroke-width="2"></line><line y1="446" y2="30" x1="238" x2="238" stroke="#1d2b44" stroke-width="2"></line><text x="30" y="252" text-anchor="middle" font-size="11" fill="#1d2b44">-8</text><text x="82" y="252" text-anchor="middle" font-size="11" fill="#1d2b44">-6</text><text x="134" y="252" text-anchor="middle" font-size="11" fill="#1d2b44">-4</text><text x="186" y="252" text-anchor="middle" font-size="11" fill="#1d2b44">-2</text><text x="290" y="252" text-anchor="middle" font-size="11" fill="#1d2b44">2</text><text x="342" y="252" text-anchor="middle" font-size="11" fill="#1d2b44">4</text><text x="394" y="252" text-anchor="middle" font-size="11" fill="#1d2b44">6</text><text x="446" y="252" text-anchor="middle" font-size="11" fill="#1d2b44">8</text><text x="232" y="450" text-anchor="end" font-size="11" fill="#1d2b44">-8</text><text x="232" y="398" text-anchor="end" font-size="11" fill="#1d2b44">-6</text><text x="232" y="346" text-anchor="end" font-size="11" fill="#1d2b44">-4</text><text x="232" y="294" text-anchor="end" font-size="11" fill="#1d2b44">-2</text><text x="232" y="190" text-anchor="end" font-size="11" fill="#1d2b44">2</text><text x="232" y="138" text-anchor="end" font-size="11" fill="#1d2b44">4</text><text x="232" y="86" text-anchor="end" font-size="11" fill="#1d2b44">6</text><text x="232" y="34" text-anchor="end" font-size="11" fill="#1d2b44">8</text><text x="448" y="232" font-size="13" font-weight="600" fill="#1d2b44">x</text><text x="244" y="26" font-size="13" font-weight="600" fill="#1d2b44">y</text><text x="232" y="252" text-anchor="end" font-size="11" fill="#1d2b44">0</text><line x1="30" y1="446" x2="446" y2="30" stroke="#1d2b44" stroke-width="2" stroke-dasharray="7 5"></line><g><circle cx="134" cy="56" r="5" fill="#2457c5" stroke="#fff" stroke-width="1.5"></circle><text x="142" y="48" font-size="14" font-weight="700" fill="#1d2b44">P</text></g></svg><p class="meta"></p><p class="meta">Text description given with the picture: A coordinate grid from -8 to 8 on both axes. A point P is plotted. A dashed mirror line runs along the line y = x.</p></div>
+<p class="meta">Marking treatment: <strong>automatic</strong>, one mark.</p>
+<fieldset><legend>Your decision</legend>
+<label class="opt"><input type="radio" name="d-mock-fb-mr08-reflect-01" value="APPROVE"> APPROVE</label><label class="opt"><input type="radio" name="d-mock-fb-mr08-reflect-01" value="REVISE"> REVISE</label><label class="opt"><input type="radio" name="d-mock-fb-mr08-reflect-01" value="REJECT"> REJECT</label></fieldset>
+<label class="meta">Your own answer, worked out before you open the intended answer (recommended)<input type="text" id="a-mock-fb-mr08-reflect-01" autocomplete="off"></label>
+<fieldset><legend class="meta">Is it suitable for the age group (Year 5 to 6, about 10 to 11 years)?</legend><label class="opt"><input type="radio" name="g-mock-fb-mr08-reflect-01" value="yes"> Yes</label><label class="opt"><input type="radio" name="g-mock-fb-mr08-reflect-01" value="no"> No</label><label class="opt"><input type="radio" name="g-mock-fb-mr08-reflect-01" value="unsure"> Unsure</label></fieldset>
+<label class="meta">Reason or comments (required for REVISE or REJECT: say exactly what to change)<textarea id="r-mock-fb-mr08-reflect-01" rows="3"></textarea></label>
+<details><summary>Intended answer, independent derivation and marking contract (open after you have your own answer)</summary>
+<p><strong>Intended answer:</strong> (7, -4)</p>
+<p><strong>Worked method:</strong></p><ol><li>Read P from the grid: (−4, 7)</li><li>Reflection in the line y = x swaps the coordinates</li><li>Image: (7, −4)</li></ol>
+<p><strong>Independent derivation by script</strong> (written separately from the stored answer; a convenience, not validation): (7, -4) (agrees)</p>
+<p><strong>What the child must type, and how it is marked:</strong> Scored as exact text (capitals and outer spaces ignored): the child must type exactly (7, -4), with the bracket and the single space after the comma. &quot;(7,-4)&quot; without the space would be marked wrong. The question tells the child the form.</p>
+<p><strong>Mistake this item is designed to catch:</strong> Negating a coordinate as for a reflection in an axis, giving (4, 7) or (-7, 4).</p>
+
+
+</details></div>
+<div class="card" id="item-mock-mr08-rotation-01"><h3>mock-mr08-rotation-01 <span class="tag">QT-MR-08</span><span class="tag">Coordinates and transformations</span><span class="tag">medium</span><span class="tag">1 mark</span><span class="tag">Text only</span><span class="tag">existing (protected bank)</span></h3>
+<p class="q">The point (3, 5) is rotated 90° clockwise about the origin (0, 0). What are the coordinates of the new point? Give your answer in the form (x, y).</p>
+
+<p class="meta">Marking treatment: <strong>automatic</strong>, one mark.</p>
+<fieldset><legend>Your decision</legend>
+<label class="opt"><input type="radio" name="d-mock-mr08-rotation-01" value="APPROVE"> APPROVE</label><label class="opt"><input type="radio" name="d-mock-mr08-rotation-01" value="REVISE"> REVISE</label><label class="opt"><input type="radio" name="d-mock-mr08-rotation-01" value="REJECT"> REJECT</label></fieldset>
+<label class="meta">Your own answer, worked out before you open the intended answer (recommended)<input type="text" id="a-mock-mr08-rotation-01" autocomplete="off"></label>
+<fieldset><legend class="meta">Is it suitable for the age group (Year 5 to 6, about 10 to 11 years)?</legend><label class="opt"><input type="radio" name="g-mock-mr08-rotation-01" value="yes"> Yes</label><label class="opt"><input type="radio" name="g-mock-mr08-rotation-01" value="no"> No</label><label class="opt"><input type="radio" name="g-mock-mr08-rotation-01" value="unsure"> Unsure</label></fieldset>
+<label class="meta">Reason or comments (required for REVISE or REJECT: say exactly what to change)<textarea id="r-mock-mr08-rotation-01" rows="3"></textarea></label>
+<details><summary>Intended answer, independent derivation and marking contract (open after you have your own answer)</summary>
+<p><strong>Intended answer:</strong> (5, -3)</p>
+<p><strong>Worked method:</strong></p><ol><li>A 90° clockwise rotation about the origin maps (x, y) to (y, -x)</li><li>(3, 5) → (5, -3)</li></ol>
+<p><strong>Independent derivation by script</strong> (written separately from the stored answer; a convenience, not validation): (5, -3) (agrees)</p>
+<p><strong>What the child must type, and how it is marked:</strong> Scored as exact text (capitals and outer spaces ignored): the child must type exactly (5, -3), with the bracket and the single space after the comma. &quot;(5,-3)&quot; without the space would be marked wrong. The question tells the child the form.</p>
+
+
+
+</details></div>
+<div class="card" id="item-mock-mr08-rotation-02"><h3>mock-mr08-rotation-02 <span class="tag">QT-MR-08</span><span class="tag">Coordinates and transformations</span><span class="tag">medium</span><span class="tag">1 mark</span><span class="tag">Text only</span><span class="tag">existing (protected bank)</span></h3>
+<p class="q">The point (-2, 6) is rotated 180° about the origin (0, 0). What are the coordinates of the new point? Give your answer in the form (x, y).</p>
+
+<p class="meta">Marking treatment: <strong>automatic</strong>, one mark.</p>
+<fieldset><legend>Your decision</legend>
+<label class="opt"><input type="radio" name="d-mock-mr08-rotation-02" value="APPROVE"> APPROVE</label><label class="opt"><input type="radio" name="d-mock-mr08-rotation-02" value="REVISE"> REVISE</label><label class="opt"><input type="radio" name="d-mock-mr08-rotation-02" value="REJECT"> REJECT</label></fieldset>
+<label class="meta">Your own answer, worked out before you open the intended answer (recommended)<input type="text" id="a-mock-mr08-rotation-02" autocomplete="off"></label>
+<fieldset><legend class="meta">Is it suitable for the age group (Year 5 to 6, about 10 to 11 years)?</legend><label class="opt"><input type="radio" name="g-mock-mr08-rotation-02" value="yes"> Yes</label><label class="opt"><input type="radio" name="g-mock-mr08-rotation-02" value="no"> No</label><label class="opt"><input type="radio" name="g-mock-mr08-rotation-02" value="unsure"> Unsure</label></fieldset>
+<label class="meta">Reason or comments (required for REVISE or REJECT: say exactly what to change)<textarea id="r-mock-mr08-rotation-02" rows="3"></textarea></label>
+<details><summary>Intended answer, independent derivation and marking contract (open after you have your own answer)</summary>
+<p><strong>Intended answer:</strong> (2, -6)</p>
+<p><strong>Worked method:</strong></p><ol><li>A 180° rotation about the origin maps (x, y) to (-x, -y)</li><li>(-2, 6) → (2, -6)</li></ol>
+<p><strong>Independent derivation by script</strong> (written separately from the stored answer; a convenience, not validation): (2, -6) (agrees)</p>
+<p><strong>What the child must type, and how it is marked:</strong> Scored as exact text (capitals and outer spaces ignored): the child must type exactly (2, -6), with the bracket and the single space after the comma. &quot;(2,-6)&quot; without the space would be marked wrong. The question tells the child the form.</p>
+
+
+
+</details></div>
+<div class="card" id="item-mock-fb-mr09-table-01"><h3>mock-fb-mr09-table-01 <span class="tag">QT-MR-09</span><span class="tag">Data handling</span><span class="tag">hard</span><span class="tag">1 mark</span><span class="tag">Table</span><span class="tag">new (authored for Form B)</span></h3>
+<p class="q">The table shows how many of each item a market stall sold on four days. A hat costs £6, a scarf costs £4 and a pair of gloves costs £5. How much money, in pounds, did the stall take altogether over the four days?</p>
+<table><caption class="meta">Items sold by the stall</caption><tr><th>Day</th><th>Hats</th><th>Scarves</th><th>Gloves</th></tr><tr><td>Monday</td><td>5</td><td>7</td><td>4</td></tr><tr><td>Tuesday</td><td>8</td><td>2</td><td>6</td></tr><tr><td>Wednesday</td><td>3</td><td>9</td><td>3</td></tr><tr><td>Thursday</td><td>6</td><td>4</td><td>7</td></tr></table>
+<p class="meta">Marking treatment: <strong>automatic</strong>, one mark.</p>
+<fieldset><legend>Your decision</legend>
+<label class="opt"><input type="radio" name="d-mock-fb-mr09-table-01" value="APPROVE"> APPROVE</label><label class="opt"><input type="radio" name="d-mock-fb-mr09-table-01" value="REVISE"> REVISE</label><label class="opt"><input type="radio" name="d-mock-fb-mr09-table-01" value="REJECT"> REJECT</label></fieldset>
+<label class="meta">Your own answer, worked out before you open the intended answer (recommended)<input type="text" id="a-mock-fb-mr09-table-01" autocomplete="off"></label>
+<fieldset><legend class="meta">Is it suitable for the age group (Year 5 to 6, about 10 to 11 years)?</legend><label class="opt"><input type="radio" name="g-mock-fb-mr09-table-01" value="yes"> Yes</label><label class="opt"><input type="radio" name="g-mock-fb-mr09-table-01" value="no"> No</label><label class="opt"><input type="radio" name="g-mock-fb-mr09-table-01" value="unsure"> Unsure</label></fieldset>
+<label class="meta">Reason or comments (required for REVISE or REJECT: say exactly what to change)<textarea id="r-mock-fb-mr09-table-01" rows="3"></textarea></label>
+<details><summary>Intended answer, independent derivation and marking contract (open after you have your own answer)</summary>
+<p><strong>Intended answer:</strong> 320</p>
+<p><strong>Worked method:</strong></p><ol><li>Hats: 5 + 8 + 3 + 6 = 22, and 22 × 6 = 132</li><li>Scarves: 7 + 2 + 9 + 4 = 22, and 22 × 4 = 88</li><li>Gloves: 4 + 6 + 3 + 7 = 20, and 20 × 5 = 100</li><li>132 + 88 + 100 = 320</li></ol>
+<p><strong>Independent derivation by script</strong> (written separately from the stored answer; a convenience, not validation): 320 (agrees)</p>
+<p><strong>What the child must type, and how it is marked:</strong> Scored by number: the child's entry is read as a number and compared with 320 (tolerance 0.0001). So 2.10 and 2.1 are the same. A pound sign, units or words typed with the number make it a text entry, which would be marked wrong. A plain number is the natural form.</p>
+<p><strong>Mistake this item is designed to catch:</strong> Adding all the counts and multiplying by one price, or reading the table by rows without applying each price to its own column.</p>
+
+
+</details></div>
+<div class="card" id="item-mock-mr09-data-01"><h3>mock-mr09-data-01 <span class="tag">QT-MR-09</span><span class="tag">Data handling</span><span class="tag">medium</span><span class="tag">1 mark</span><span class="tag">Text only</span><span class="tag">existing (protected bank)</span></h3>
+<p class="q">Four classes took part in a reading challenge. Class A read 24 books, Class B read 31 books, Class C read 18 books, and Class D read 27 books. What is the difference between the number of books read by the class that read the most and the class that read the fewest?</p>
+
+<p class="meta">Marking treatment: <strong>automatic</strong>, one mark.</p>
+<fieldset><legend>Your decision</legend>
+<label class="opt"><input type="radio" name="d-mock-mr09-data-01" value="APPROVE"> APPROVE</label><label class="opt"><input type="radio" name="d-mock-mr09-data-01" value="REVISE"> REVISE</label><label class="opt"><input type="radio" name="d-mock-mr09-data-01" value="REJECT"> REJECT</label></fieldset>
+<label class="meta">Your own answer, worked out before you open the intended answer (recommended)<input type="text" id="a-mock-mr09-data-01" autocomplete="off"></label>
+<fieldset><legend class="meta">Is it suitable for the age group (Year 5 to 6, about 10 to 11 years)?</legend><label class="opt"><input type="radio" name="g-mock-mr09-data-01" value="yes"> Yes</label><label class="opt"><input type="radio" name="g-mock-mr09-data-01" value="no"> No</label><label class="opt"><input type="radio" name="g-mock-mr09-data-01" value="unsure"> Unsure</label></fieldset>
+<label class="meta">Reason or comments (required for REVISE or REJECT: say exactly what to change)<textarea id="r-mock-mr09-data-01" rows="3"></textarea></label>
+<details><summary>Intended answer, independent derivation and marking contract (open after you have your own answer)</summary>
+<p><strong>Intended answer:</strong> 13</p>
+<p><strong>Worked method:</strong></p><ol><li>The class with the most books is Class B, with 31</li><li>The class with the fewest books is Class C, with 18</li><li>Difference = 31 − 18 = 13</li></ol>
+<p><strong>Independent derivation by script</strong> (written separately from the stored answer; a convenience, not validation): 13 (agrees)</p>
+<p><strong>What the child must type, and how it is marked:</strong> Scored by number: the child's entry is read as a number and compared with 13 (tolerance 0.0001). So 2.10 and 2.1 are the same. A pound sign, units or words typed with the number make it a text entry, which would be marked wrong. A plain number is the natural form.</p>
+
+
+
+</details></div>
+<div class="card" id="item-mock-mr09-data-02"><h3>mock-mr09-data-02 <span class="tag">QT-MR-09</span><span class="tag">Data handling</span><span class="tag">medium</span><span class="tag">1 mark</span><span class="tag">Text only</span><span class="tag">existing (protected bank)</span></h3>
+<p class="q">The midday temperature was recorded for five days: Monday 14°C, Tuesday 19°C, Wednesday 11°C, Thursday 17°C, Friday 9°C. What was the mean temperature across the five days, in °C?</p>
+
+<p class="meta">Marking treatment: <strong>automatic</strong>, one mark.</p>
+<fieldset><legend>Your decision</legend>
+<label class="opt"><input type="radio" name="d-mock-mr09-data-02" value="APPROVE"> APPROVE</label><label class="opt"><input type="radio" name="d-mock-mr09-data-02" value="REVISE"> REVISE</label><label class="opt"><input type="radio" name="d-mock-mr09-data-02" value="REJECT"> REJECT</label></fieldset>
+<label class="meta">Your own answer, worked out before you open the intended answer (recommended)<input type="text" id="a-mock-mr09-data-02" autocomplete="off"></label>
+<fieldset><legend class="meta">Is it suitable for the age group (Year 5 to 6, about 10 to 11 years)?</legend><label class="opt"><input type="radio" name="g-mock-mr09-data-02" value="yes"> Yes</label><label class="opt"><input type="radio" name="g-mock-mr09-data-02" value="no"> No</label><label class="opt"><input type="radio" name="g-mock-mr09-data-02" value="unsure"> Unsure</label></fieldset>
+<label class="meta">Reason or comments (required for REVISE or REJECT: say exactly what to change)<textarea id="r-mock-mr09-data-02" rows="3"></textarea></label>
+<details><summary>Intended answer, independent derivation and marking contract (open after you have your own answer)</summary>
+<p><strong>Intended answer:</strong> 14</p>
+<p><strong>Worked method:</strong></p><ol><li>Total = 14 + 19 + 11 + 17 + 9 = 70</li><li>Mean = 70 ÷ 5 = 14</li></ol>
+<p><strong>Independent derivation by script</strong> (written separately from the stored answer; a convenience, not validation): 14 (agrees)</p>
+<p><strong>What the child must type, and how it is marked:</strong> Scored by number: the child's entry is read as a number and compared with 14 (tolerance 0.0001). So 2.10 and 2.1 are the same. A pound sign, units or words typed with the number make it a text entry, which would be marked wrong. A plain number is the natural form.</p>
+
+
+
+</details></div>
+<div class="card" id="item-mock-mr09-data-03"><h3>mock-mr09-data-03 <span class="tag">QT-MR-09</span><span class="tag">Data handling</span><span class="tag">hard</span><span class="tag">1 mark</span><span class="tag">Text only</span><span class="tag">existing (protected bank)</span></h3>
+<p class="q">A school fair sold three types of ticket: Adult tickets at £8 each (45 sold), Child tickets at £5 each (32 sold), and Senior tickets at £6 each (18 sold). How much money in total was raised from ticket sales, in pounds?</p>
+
+<p class="meta">Marking treatment: <strong>automatic</strong>, one mark.</p>
+<fieldset><legend>Your decision</legend>
+<label class="opt"><input type="radio" name="d-mock-mr09-data-03" value="APPROVE"> APPROVE</label><label class="opt"><input type="radio" name="d-mock-mr09-data-03" value="REVISE"> REVISE</label><label class="opt"><input type="radio" name="d-mock-mr09-data-03" value="REJECT"> REJECT</label></fieldset>
+<label class="meta">Your own answer, worked out before you open the intended answer (recommended)<input type="text" id="a-mock-mr09-data-03" autocomplete="off"></label>
+<fieldset><legend class="meta">Is it suitable for the age group (Year 5 to 6, about 10 to 11 years)?</legend><label class="opt"><input type="radio" name="g-mock-mr09-data-03" value="yes"> Yes</label><label class="opt"><input type="radio" name="g-mock-mr09-data-03" value="no"> No</label><label class="opt"><input type="radio" name="g-mock-mr09-data-03" value="unsure"> Unsure</label></fieldset>
+<label class="meta">Reason or comments (required for REVISE or REJECT: say exactly what to change)<textarea id="r-mock-mr09-data-03" rows="3"></textarea></label>
+<details><summary>Intended answer, independent derivation and marking contract (open after you have your own answer)</summary>
+<p><strong>Intended answer:</strong> 628</p>
+<p><strong>Worked method:</strong></p><ol><li>Adult tickets: 8 × 45 = £360</li><li>Child tickets: 5 × 32 = £160</li><li>Senior tickets: 6 × 18 = £108</li><li>Total = 360 + 160 + 108 = £628</li></ol>
+<p><strong>Independent derivation by script</strong> (written separately from the stored answer; a convenience, not validation): 628 (agrees)</p>
+<p><strong>What the child must type, and how it is marked:</strong> Scored by number: the child's entry is read as a number and compared with 628 (tolerance 0.0001). So 2.10 and 2.1 are the same. A pound sign, units or words typed with the number make it a text entry, which would be marked wrong. A plain number is the natural form.</p>
+
+
+
+</details></div>
+<div class="card" id="item-mock-mr10-fairprep-01"><h3>mock-mr10-fairprep-01 <span class="tag">QT-MR-10</span><span class="tag">Time</span><span class="tag">medium</span><span class="tag">1 mark</span><span class="tag">Text only</span><span class="tag">existing (protected bank)</span></h3>
+<p class="q">A group of students is setting up a robotics display for the school science fair. Assembling the display takes 1 hour 55 minutes, and testing the robots afterwards takes a further 40 minutes. If the students start assembling at 13:15, what time do they finish testing? Give your answer in 24-hour time.</p>
+
+<p class="meta">Marking treatment: <strong>automatic</strong>, one mark.</p>
+<fieldset><legend>Your decision</legend>
+<label class="opt"><input type="radio" name="d-mock-mr10-fairprep-01" value="APPROVE"> APPROVE</label><label class="opt"><input type="radio" name="d-mock-mr10-fairprep-01" value="REVISE"> REVISE</label><label class="opt"><input type="radio" name="d-mock-mr10-fairprep-01" value="REJECT"> REJECT</label></fieldset>
+<label class="meta">Your own answer, worked out before you open the intended answer (recommended)<input type="text" id="a-mock-mr10-fairprep-01" autocomplete="off"></label>
+<fieldset><legend class="meta">Is it suitable for the age group (Year 5 to 6, about 10 to 11 years)?</legend><label class="opt"><input type="radio" name="g-mock-mr10-fairprep-01" value="yes"> Yes</label><label class="opt"><input type="radio" name="g-mock-mr10-fairprep-01" value="no"> No</label><label class="opt"><input type="radio" name="g-mock-mr10-fairprep-01" value="unsure"> Unsure</label></fieldset>
+<label class="meta">Reason or comments (required for REVISE or REJECT: say exactly what to change)<textarea id="r-mock-mr10-fairprep-01" rows="3"></textarea></label>
+<details><summary>Intended answer, independent derivation and marking contract (open after you have your own answer)</summary>
+<p><strong>Intended answer:</strong> 15:50</p>
+<p><strong>Worked method:</strong></p><ol><li>13:15 + 1 hour 55 minutes = 15:10</li><li>15:10 + 40 minutes = 15:50</li></ol>
+<p><strong>Independent derivation by script</strong> (written separately from the stored answer; a convenience, not validation): 15:50 (agrees)</p>
+<p><strong>What the child must type, and how it is marked:</strong> Scored as exact text: the child must type 15:50 exactly. &quot;3.50pm&quot;, &quot;1550&quot; or &quot;15.50&quot; would be marked wrong. The question says 24-hour time but not the exact layout hh:mm.</p>
+
+
+
+</details></div>
+<div class="card" id="item-mock-mr10-fairprep-02"><h3>mock-mr10-fairprep-02 <span class="tag">QT-MR-10</span><span class="tag">Time</span><span class="tag">hard</span><span class="tag">1 mark</span><span class="tag">Text only</span><span class="tag">existing (protected bank)</span></h3>
+<p class="q">A group of students is setting up a robotics display for the school science fair. Assembling the display takes 1 hour 55 minutes, and testing the robots afterwards takes a further 40 minutes. The science fair opens to visitors at 16:30, and the students want to finish at least 20 minutes before it opens. What is the latest time they can start assembling? Give your answer in 24-hour time.</p>
+
+<p class="meta">Marking treatment: <strong>automatic</strong>, one mark.</p>
+<fieldset><legend>Your decision</legend>
+<label class="opt"><input type="radio" name="d-mock-mr10-fairprep-02" value="APPROVE"> APPROVE</label><label class="opt"><input type="radio" name="d-mock-mr10-fairprep-02" value="REVISE"> REVISE</label><label class="opt"><input type="radio" name="d-mock-mr10-fairprep-02" value="REJECT"> REJECT</label></fieldset>
+<label class="meta">Your own answer, worked out before you open the intended answer (recommended)<input type="text" id="a-mock-mr10-fairprep-02" autocomplete="off"></label>
+<fieldset><legend class="meta">Is it suitable for the age group (Year 5 to 6, about 10 to 11 years)?</legend><label class="opt"><input type="radio" name="g-mock-mr10-fairprep-02" value="yes"> Yes</label><label class="opt"><input type="radio" name="g-mock-mr10-fairprep-02" value="no"> No</label><label class="opt"><input type="radio" name="g-mock-mr10-fairprep-02" value="unsure"> Unsure</label></fieldset>
+<label class="meta">Reason or comments (required for REVISE or REJECT: say exactly what to change)<textarea id="r-mock-mr10-fairprep-02" rows="3"></textarea></label>
+<details><summary>Intended answer, independent derivation and marking contract (open after you have your own answer)</summary>
+<p><strong>Intended answer:</strong> 13:35</p>
+<p><strong>Worked method:</strong></p><ol><li>Target finish time: 16:30 − 20 minutes = 16:10</li><li>Undo testing: 16:10 − 40 minutes = 15:30</li><li>Undo assembling: 15:30 − 1 hour 55 minutes = 13:35</li></ol>
+<p><strong>Independent derivation by script</strong> (written separately from the stored answer; a convenience, not validation): 13:35 (agrees)</p>
+<p><strong>What the child must type, and how it is marked:</strong> Scored as exact text: the child must type 13:35 exactly. &quot;3.50pm&quot;, &quot;1550&quot; or &quot;15.50&quot; would be marked wrong. The question says 24-hour time but not the exact layout hh:mm.</p>
+
+
+
+</details></div>
+<div class="card" id="item-mock-mr10-reverseschedule-01"><h3>mock-mr10-reverseschedule-01 <span class="tag">QT-MR-10</span><span class="tag">Time</span><span class="tag">hard</span><span class="tag">1 mark</span><span class="tag">Text only</span><span class="tag">existing (protected bank)</span></h3>
+<p class="q">A flight has two legs and lands at 18:05. The second leg takes 2 hours 10 minutes, preceded by a 20-minute stopover, preceded by a first leg taking 1 hour 35 minutes. What time did the flight depart? Give your answer in 24-hour time.</p>
+
+<p class="meta">Marking treatment: <strong>automatic</strong>, one mark.</p>
+<fieldset><legend>Your decision</legend>
+<label class="opt"><input type="radio" name="d-mock-mr10-reverseschedule-01" value="APPROVE"> APPROVE</label><label class="opt"><input type="radio" name="d-mock-mr10-reverseschedule-01" value="REVISE"> REVISE</label><label class="opt"><input type="radio" name="d-mock-mr10-reverseschedule-01" value="REJECT"> REJECT</label></fieldset>
+<label class="meta">Your own answer, worked out before you open the intended answer (recommended)<input type="text" id="a-mock-mr10-reverseschedule-01" autocomplete="off"></label>
+<fieldset><legend class="meta">Is it suitable for the age group (Year 5 to 6, about 10 to 11 years)?</legend><label class="opt"><input type="radio" name="g-mock-mr10-reverseschedule-01" value="yes"> Yes</label><label class="opt"><input type="radio" name="g-mock-mr10-reverseschedule-01" value="no"> No</label><label class="opt"><input type="radio" name="g-mock-mr10-reverseschedule-01" value="unsure"> Unsure</label></fieldset>
+<label class="meta">Reason or comments (required for REVISE or REJECT: say exactly what to change)<textarea id="r-mock-mr10-reverseschedule-01" rows="3"></textarea></label>
+<details><summary>Intended answer, independent derivation and marking contract (open after you have your own answer)</summary>
+<p><strong>Intended answer:</strong> 14:00</p>
+<p><strong>Worked method:</strong></p><ol><li>18:05 minus 2 hours 10 minutes = 15:55</li><li>15:55 minus the 20 minute stopover = 15:35</li><li>15:35 minus 1 hour 35 minutes = 14:00</li></ol>
+<p><strong>Independent derivation by script</strong> (written separately from the stored answer; a convenience, not validation): 14:00 (agrees)</p>
+<p><strong>What the child must type, and how it is marked:</strong> Scored as exact text: the child must type 14:00 exactly. &quot;3.50pm&quot;, &quot;1550&quot; or &quot;15.50&quot; would be marked wrong. The question says 24-hour time but not the exact layout hh:mm.</p>
+
+
+
+</details></div>
+<div class="card" id="item-mock-mr10-reverseschedule-02"><h3>mock-mr10-reverseschedule-02 <span class="tag">QT-MR-10</span><span class="tag">Time</span><span class="tag">hard</span><span class="tag">1 mark</span><span class="tag">Text only</span><span class="tag">existing (protected bank)</span></h3>
+<p class="q">A delivery van must arrive at 16:40. The final leg of its route takes 45 minutes, preceded by a 15-minute loading stop, preceded by a first leg taking 1 hour 10 minutes. What time must the van set off? Give your answer in 24-hour time.</p>
+
+<p class="meta">Marking treatment: <strong>automatic</strong>, one mark.</p>
+<fieldset><legend>Your decision</legend>
+<label class="opt"><input type="radio" name="d-mock-mr10-reverseschedule-02" value="APPROVE"> APPROVE</label><label class="opt"><input type="radio" name="d-mock-mr10-reverseschedule-02" value="REVISE"> REVISE</label><label class="opt"><input type="radio" name="d-mock-mr10-reverseschedule-02" value="REJECT"> REJECT</label></fieldset>
+<label class="meta">Your own answer, worked out before you open the intended answer (recommended)<input type="text" id="a-mock-mr10-reverseschedule-02" autocomplete="off"></label>
+<fieldset><legend class="meta">Is it suitable for the age group (Year 5 to 6, about 10 to 11 years)?</legend><label class="opt"><input type="radio" name="g-mock-mr10-reverseschedule-02" value="yes"> Yes</label><label class="opt"><input type="radio" name="g-mock-mr10-reverseschedule-02" value="no"> No</label><label class="opt"><input type="radio" name="g-mock-mr10-reverseschedule-02" value="unsure"> Unsure</label></fieldset>
+<label class="meta">Reason or comments (required for REVISE or REJECT: say exactly what to change)<textarea id="r-mock-mr10-reverseschedule-02" rows="3"></textarea></label>
+<details><summary>Intended answer, independent derivation and marking contract (open after you have your own answer)</summary>
+<p><strong>Intended answer:</strong> 14:30</p>
+<p><strong>Worked method:</strong></p><ol><li>16:40 minus 45 minutes = 15:55</li><li>15:55 minus the 15 minute loading stop = 15:40</li><li>15:40 minus 1 hour 10 minutes = 14:30</li></ol>
+<p><strong>Independent derivation by script</strong> (written separately from the stored answer; a convenience, not validation): 14:30 (agrees)</p>
+<p><strong>What the child must type, and how it is marked:</strong> Scored as exact text: the child must type 14:30 exactly. &quot;3.50pm&quot;, &quot;1550&quot; or &quot;15.50&quot; would be marked wrong. The question says 24-hour time but not the exact layout hh:mm.</p>
+
+
+
+</details></div>
+<div class="card" id="item-mock-mr11-propertysearch-01"><h3>mock-mr11-propertysearch-01 <span class="tag">QT-MR-11</span><span class="tag">Number properties</span><span class="tag">hard</span><span class="tag">1 mark</span><span class="tag">Text only</span><span class="tag">existing (protected bank)</span></h3>
+<p class="q">Find a prime number that is exactly one more than a perfect square, and is between 20 and 50.</p>
+
+<p class="meta">Marking treatment: <strong>automatic</strong>, one mark.</p>
+<fieldset><legend>Your decision</legend>
+<label class="opt"><input type="radio" name="d-mock-mr11-propertysearch-01" value="APPROVE"> APPROVE</label><label class="opt"><input type="radio" name="d-mock-mr11-propertysearch-01" value="REVISE"> REVISE</label><label class="opt"><input type="radio" name="d-mock-mr11-propertysearch-01" value="REJECT"> REJECT</label></fieldset>
+<label class="meta">Your own answer, worked out before you open the intended answer (recommended)<input type="text" id="a-mock-mr11-propertysearch-01" autocomplete="off"></label>
+<fieldset><legend class="meta">Is it suitable for the age group (Year 5 to 6, about 10 to 11 years)?</legend><label class="opt"><input type="radio" name="g-mock-mr11-propertysearch-01" value="yes"> Yes</label><label class="opt"><input type="radio" name="g-mock-mr11-propertysearch-01" value="no"> No</label><label class="opt"><input type="radio" name="g-mock-mr11-propertysearch-01" value="unsure"> Unsure</label></fieldset>
+<label class="meta">Reason or comments (required for REVISE or REJECT: say exactly what to change)<textarea id="r-mock-mr11-propertysearch-01" rows="3"></textarea></label>
+<details><summary>Intended answer, independent derivation and marking contract (open after you have your own answer)</summary>
+<p><strong>Intended answer:</strong> 37</p>
+<p><strong>Worked method:</strong></p><ol><li>Perfect squares near this range: 25 (5 squared), 36 (6 squared), 49 (7 squared)</li><li>One more than each: 26, 37, 50</li><li>Check which of these is prime and within 20-50: 26 = 2 x 13 (not prime); 37 is prime; 50 is not prime and outside the range</li><li>The answer is 37</li></ol>
+<p><strong>Independent derivation by script</strong> (written separately from the stored answer; a convenience, not validation): 37 (agrees)</p>
+<p><strong>What the child must type, and how it is marked:</strong> Scored by number: the child's entry is read as a number and compared with 37 (tolerance 0.0001). So 2.10 and 2.1 are the same. A pound sign, units or words typed with the number make it a text entry, which would be marked wrong. A plain number is the natural form.</p>
+
+<p class="warn"><strong>Author's observation:</strong> Unique answer in range (checked).</p>
+
+</details></div>
+<div class="card" id="item-mock-mr11-propertysearch-02"><h3>mock-mr11-propertysearch-02 <span class="tag">QT-MR-11</span><span class="tag">Number properties</span><span class="tag">hard</span><span class="tag">1 mark</span><span class="tag">Text only</span><span class="tag">existing (protected bank)</span></h3>
+<p class="q">Find a number between 50 and 100 that is both a perfect square and an odd number.</p>
+
+<p class="meta">Marking treatment: <strong>automatic</strong>, one mark.</p>
+<fieldset><legend>Your decision</legend>
+<label class="opt"><input type="radio" name="d-mock-mr11-propertysearch-02" value="APPROVE"> APPROVE</label><label class="opt"><input type="radio" name="d-mock-mr11-propertysearch-02" value="REVISE"> REVISE</label><label class="opt"><input type="radio" name="d-mock-mr11-propertysearch-02" value="REJECT"> REJECT</label></fieldset>
+<label class="meta">Your own answer, worked out before you open the intended answer (recommended)<input type="text" id="a-mock-mr11-propertysearch-02" autocomplete="off"></label>
+<fieldset><legend class="meta">Is it suitable for the age group (Year 5 to 6, about 10 to 11 years)?</legend><label class="opt"><input type="radio" name="g-mock-mr11-propertysearch-02" value="yes"> Yes</label><label class="opt"><input type="radio" name="g-mock-mr11-propertysearch-02" value="no"> No</label><label class="opt"><input type="radio" name="g-mock-mr11-propertysearch-02" value="unsure"> Unsure</label></fieldset>
+<label class="meta">Reason or comments (required for REVISE or REJECT: say exactly what to change)<textarea id="r-mock-mr11-propertysearch-02" rows="3"></textarea></label>
+<details><summary>Intended answer, independent derivation and marking contract (open after you have your own answer)</summary>
+<p><strong>Intended answer:</strong> 81</p>
+<p><strong>Worked method:</strong></p><ol><li>Perfect squares between 50 and 100: 64 (8 squared) and 81 (9 squared)</li><li>64 is even; 81 is odd</li><li>The answer is 81</li></ol>
+<p><strong>Independent derivation by script</strong> (written separately from the stored answer; a convenience, not validation): 81 (agrees)</p>
+<p><strong>What the child must type, and how it is marked:</strong> Scored by number: the child's entry is read as a number and compared with 81 (tolerance 0.0001). So 2.10 and 2.1 are the same. A pound sign, units or words typed with the number make it a text entry, which would be marked wrong. A plain number is the natural form.</p>
+
+<p class="warn"><strong>Author's observation:</strong> Unique answer in range (checked).</p>
+
+</details></div>
+<div class="card" id="item-mock-mr11-truefalsejudgement-01"><h3>mock-mr11-truefalsejudgement-01 <span class="tag">QT-MR-11</span><span class="tag">Number properties</span><span class="tag">medium</span><span class="tag">1 mark</span><span class="tag">Text only</span><span class="tag">existing (protected bank)</span></h3>
+<p class="q">True or false: &quot;The sum of any two odd numbers is always even.&quot; Answer with true or false.</p>
+
+<p class="meta">Marking treatment: <strong>automatic</strong>, one mark.</p>
+<fieldset><legend>Your decision</legend>
+<label class="opt"><input type="radio" name="d-mock-mr11-truefalsejudgement-01" value="APPROVE"> APPROVE</label><label class="opt"><input type="radio" name="d-mock-mr11-truefalsejudgement-01" value="REVISE"> REVISE</label><label class="opt"><input type="radio" name="d-mock-mr11-truefalsejudgement-01" value="REJECT"> REJECT</label></fieldset>
+<label class="meta">Your own answer, worked out before you open the intended answer (recommended)<input type="text" id="a-mock-mr11-truefalsejudgement-01" autocomplete="off"></label>
+<fieldset><legend class="meta">Is it suitable for the age group (Year 5 to 6, about 10 to 11 years)?</legend><label class="opt"><input type="radio" name="g-mock-mr11-truefalsejudgement-01" value="yes"> Yes</label><label class="opt"><input type="radio" name="g-mock-mr11-truefalsejudgement-01" value="no"> No</label><label class="opt"><input type="radio" name="g-mock-mr11-truefalsejudgement-01" value="unsure"> Unsure</label></fieldset>
+<label class="meta">Reason or comments (required for REVISE or REJECT: say exactly what to change)<textarea id="r-mock-mr11-truefalsejudgement-01" rows="3"></textarea></label>
+<details><summary>Intended answer, independent derivation and marking contract (open after you have your own answer)</summary>
+<p><strong>Intended answer:</strong> true</p>
+<p><strong>Worked method:</strong></p><ol><li>Any odd number can be written as 2k + 1 for some whole number k</li><li>Two odd numbers: (2k + 1) + (2m + 1) = 2k + 2m + 2 = 2(k + m + 1)</li><li>This is always a multiple of 2, so the sum is always even: true</li></ol>
+<p><strong>Independent derivation by script</strong> (written separately from the stored answer; a convenience, not validation): true (agrees)</p>
+<p><strong>What the child must type, and how it is marked:</strong> Scored as exact text (capitals ignored): the child must type true. The question does not state the exact form: please judge whether a child would know what to type.</p>
+
+
+
+</details></div>
+<div class="card" id="item-mock-mr11-truefalsejudgement-02"><h3>mock-mr11-truefalsejudgement-02 <span class="tag">QT-MR-11</span><span class="tag">Number properties</span><span class="tag">medium</span><span class="tag">1 mark</span><span class="tag">Text only</span><span class="tag">existing (protected bank)</span></h3>
+<p class="q">True or false: &quot;The product of any two prime numbers is always odd.&quot; Answer with true or false.</p>
+
+<p class="meta">Marking treatment: <strong>automatic</strong>, one mark.</p>
+<fieldset><legend>Your decision</legend>
+<label class="opt"><input type="radio" name="d-mock-mr11-truefalsejudgement-02" value="APPROVE"> APPROVE</label><label class="opt"><input type="radio" name="d-mock-mr11-truefalsejudgement-02" value="REVISE"> REVISE</label><label class="opt"><input type="radio" name="d-mock-mr11-truefalsejudgement-02" value="REJECT"> REJECT</label></fieldset>
+<label class="meta">Your own answer, worked out before you open the intended answer (recommended)<input type="text" id="a-mock-mr11-truefalsejudgement-02" autocomplete="off"></label>
+<fieldset><legend class="meta">Is it suitable for the age group (Year 5 to 6, about 10 to 11 years)?</legend><label class="opt"><input type="radio" name="g-mock-mr11-truefalsejudgement-02" value="yes"> Yes</label><label class="opt"><input type="radio" name="g-mock-mr11-truefalsejudgement-02" value="no"> No</label><label class="opt"><input type="radio" name="g-mock-mr11-truefalsejudgement-02" value="unsure"> Unsure</label></fieldset>
+<label class="meta">Reason or comments (required for REVISE or REJECT: say exactly what to change)<textarea id="r-mock-mr11-truefalsejudgement-02" rows="3"></textarea></label>
+<details><summary>Intended answer, independent derivation and marking contract (open after you have your own answer)</summary>
+<p><strong>Intended answer:</strong> false</p>
+<p><strong>Worked method:</strong></p><ol><li>2 is a prime number</li><li>2 x 3 = 6, and 6 is even</li><li>So the claim is false -- a single counter-example is enough to disprove a general claim</li></ol>
+<p><strong>Independent derivation by script</strong> (written separately from the stored answer; a convenience, not validation): false (agrees)</p>
+<p><strong>What the child must type, and how it is marked:</strong> Scored as exact text (capitals ignored): the child must type false. The question does not state the exact form: please judge whether a child would know what to type.</p>
+
+
+
+</details></div>
+<div class="card" id="item-mock-mr12-reversemean-01"><h3>mock-mr12-reversemean-01 <span class="tag">QT-MR-12</span><span class="tag">Averages</span><span class="tag">hard</span><span class="tag">1 mark</span><span class="tag">Text only</span><span class="tag">existing (protected bank)</span></h3>
+<p class="q">After 5 tests, a student's mean score was 72. After a sixth test, the mean rose to 74. What was the score on the sixth test?</p>
+
+<p class="meta">Marking treatment: <strong>automatic</strong>, one mark.</p>
+<fieldset><legend>Your decision</legend>
+<label class="opt"><input type="radio" name="d-mock-mr12-reversemean-01" value="APPROVE"> APPROVE</label><label class="opt"><input type="radio" name="d-mock-mr12-reversemean-01" value="REVISE"> REVISE</label><label class="opt"><input type="radio" name="d-mock-mr12-reversemean-01" value="REJECT"> REJECT</label></fieldset>
+<label class="meta">Your own answer, worked out before you open the intended answer (recommended)<input type="text" id="a-mock-mr12-reversemean-01" autocomplete="off"></label>
+<fieldset><legend class="meta">Is it suitable for the age group (Year 5 to 6, about 10 to 11 years)?</legend><label class="opt"><input type="radio" name="g-mock-mr12-reversemean-01" value="yes"> Yes</label><label class="opt"><input type="radio" name="g-mock-mr12-reversemean-01" value="no"> No</label><label class="opt"><input type="radio" name="g-mock-mr12-reversemean-01" value="unsure"> Unsure</label></fieldset>
+<label class="meta">Reason or comments (required for REVISE or REJECT: say exactly what to change)<textarea id="r-mock-mr12-reversemean-01" rows="3"></textarea></label>
+<details><summary>Intended answer, independent derivation and marking contract (open after you have your own answer)</summary>
+<p><strong>Intended answer:</strong> 84</p>
+<p><strong>Worked method:</strong></p><ol><li>Total after 5 tests = 72 × 5 = 360</li><li>Total after 6 tests = 74 × 6 = 444</li><li>Sixth test score = 444 − 360 = 84</li></ol>
+<p><strong>Independent derivation by script</strong> (written separately from the stored answer; a convenience, not validation): 84 (agrees)</p>
+<p><strong>What the child must type, and how it is marked:</strong> Scored by number: the child's entry is read as a number and compared with 84 (tolerance 0.0001). So 2.10 and 2.1 are the same. A pound sign, units or words typed with the number make it a text entry, which would be marked wrong. A plain number is the natural form.</p>
+
+
+
+</details></div>
+<div class="card" id="item-mock-mr12-reversemean-02"><h3>mock-mr12-reversemean-02 <span class="tag">QT-MR-12</span><span class="tag">Averages</span><span class="tag">hard</span><span class="tag">1 mark</span><span class="tag">Text only</span><span class="tag">existing (protected bank)</span></h3>
+<p class="q">After 4 matches, a team's mean score was 58. After a fifth match, the mean fell to 55. What was the team's score in the fifth match?</p>
+
+<p class="meta">Marking treatment: <strong>automatic</strong>, one mark.</p>
+<fieldset><legend>Your decision</legend>
+<label class="opt"><input type="radio" name="d-mock-mr12-reversemean-02" value="APPROVE"> APPROVE</label><label class="opt"><input type="radio" name="d-mock-mr12-reversemean-02" value="REVISE"> REVISE</label><label class="opt"><input type="radio" name="d-mock-mr12-reversemean-02" value="REJECT"> REJECT</label></fieldset>
+<label class="meta">Your own answer, worked out before you open the intended answer (recommended)<input type="text" id="a-mock-mr12-reversemean-02" autocomplete="off"></label>
+<fieldset><legend class="meta">Is it suitable for the age group (Year 5 to 6, about 10 to 11 years)?</legend><label class="opt"><input type="radio" name="g-mock-mr12-reversemean-02" value="yes"> Yes</label><label class="opt"><input type="radio" name="g-mock-mr12-reversemean-02" value="no"> No</label><label class="opt"><input type="radio" name="g-mock-mr12-reversemean-02" value="unsure"> Unsure</label></fieldset>
+<label class="meta">Reason or comments (required for REVISE or REJECT: say exactly what to change)<textarea id="r-mock-mr12-reversemean-02" rows="3"></textarea></label>
+<details><summary>Intended answer, independent derivation and marking contract (open after you have your own answer)</summary>
+<p><strong>Intended answer:</strong> 43</p>
+<p><strong>Worked method:</strong></p><ol><li>Total after 4 matches = 58 × 4 = 232</li><li>Total after 5 matches = 55 × 5 = 275</li><li>Fifth match score = 275 − 232 = 43</li></ol>
+<p><strong>Independent derivation by script</strong> (written separately from the stored answer; a convenience, not validation): 43 (agrees)</p>
+<p><strong>What the child must type, and how it is marked:</strong> Scored by number: the child's entry is read as a number and compared with 43 (tolerance 0.0001). So 2.10 and 2.1 are the same. A pound sign, units or words typed with the number make it a text entry, which would be marked wrong. A plain number is the natural form.</p>
+
+
+
+</details></div>
+<div class="card" id="item-mock-mr12-weightedmean-01"><h3>mock-mr12-weightedmean-01 <span class="tag">QT-MR-12</span><span class="tag">Averages</span><span class="tag">medium</span><span class="tag">1 mark</span><span class="tag">Text only</span><span class="tag">existing (protected bank)</span></h3>
+<p class="q">Class 5A has 4 pupils with a mean quiz score of 6. Class 5B has 6 pupils with a mean quiz score of 11. What is the mean quiz score for all 10 pupils in the two classes combined?</p>
+
+<p class="meta">Marking treatment: <strong>automatic</strong>, one mark.</p>
+<fieldset><legend>Your decision</legend>
+<label class="opt"><input type="radio" name="d-mock-mr12-weightedmean-01" value="APPROVE"> APPROVE</label><label class="opt"><input type="radio" name="d-mock-mr12-weightedmean-01" value="REVISE"> REVISE</label><label class="opt"><input type="radio" name="d-mock-mr12-weightedmean-01" value="REJECT"> REJECT</label></fieldset>
+<label class="meta">Your own answer, worked out before you open the intended answer (recommended)<input type="text" id="a-mock-mr12-weightedmean-01" autocomplete="off"></label>
+<fieldset><legend class="meta">Is it suitable for the age group (Year 5 to 6, about 10 to 11 years)?</legend><label class="opt"><input type="radio" name="g-mock-mr12-weightedmean-01" value="yes"> Yes</label><label class="opt"><input type="radio" name="g-mock-mr12-weightedmean-01" value="no"> No</label><label class="opt"><input type="radio" name="g-mock-mr12-weightedmean-01" value="unsure"> Unsure</label></fieldset>
+<label class="meta">Reason or comments (required for REVISE or REJECT: say exactly what to change)<textarea id="r-mock-mr12-weightedmean-01" rows="3"></textarea></label>
+<details><summary>Intended answer, independent derivation and marking contract (open after you have your own answer)</summary>
+<p><strong>Intended answer:</strong> 9</p>
+<p><strong>Worked method:</strong></p><ol><li>Class 5A's total score = 4 x 6 = 24</li><li>Class 5B's total score = 6 x 11 = 66</li><li>Combined total score = 24 + 66 = 90, combined number of pupils = 4 + 6 = 10</li><li>Combined mean = 90 / 10 = 9</li></ol>
+<p><strong>Independent derivation by script</strong> (written separately from the stored answer; a convenience, not validation): 9 (agrees)</p>
+<p><strong>What the child must type, and how it is marked:</strong> Scored by number: the child's entry is read as a number and compared with 9 (tolerance 0.0001). So 2.10 and 2.1 are the same. A pound sign, units or words typed with the number make it a text entry, which would be marked wrong. A plain number is the natural form.</p>
+
+
+
+</details></div>
+<div class="card" id="item-mock-mr13-bestvalue-01"><h3>mock-mr13-bestvalue-01 <span class="tag">QT-MR-13</span><span class="tag">Ratio, value and multi-step problems</span><span class="tag">medium</span><span class="tag">1 mark</span><span class="tag">Text only</span><span class="tag">existing (protected bank)</span></h3>
+<p class="q">Juice is sold in two sizes: a 750ml bottle for £1.80, or a 2 litre bottle for £4.20. What is the lower price per litre, in pounds, rounded to 2 decimal places?</p>
+
+<p class="meta">Marking treatment: <strong>automatic</strong>, one mark.</p>
+<fieldset><legend>Your decision</legend>
+<label class="opt"><input type="radio" name="d-mock-mr13-bestvalue-01" value="APPROVE"> APPROVE</label><label class="opt"><input type="radio" name="d-mock-mr13-bestvalue-01" value="REVISE"> REVISE</label><label class="opt"><input type="radio" name="d-mock-mr13-bestvalue-01" value="REJECT"> REJECT</label></fieldset>
+<label class="meta">Your own answer, worked out before you open the intended answer (recommended)<input type="text" id="a-mock-mr13-bestvalue-01" autocomplete="off"></label>
+<fieldset><legend class="meta">Is it suitable for the age group (Year 5 to 6, about 10 to 11 years)?</legend><label class="opt"><input type="radio" name="g-mock-mr13-bestvalue-01" value="yes"> Yes</label><label class="opt"><input type="radio" name="g-mock-mr13-bestvalue-01" value="no"> No</label><label class="opt"><input type="radio" name="g-mock-mr13-bestvalue-01" value="unsure"> Unsure</label></fieldset>
+<label class="meta">Reason or comments (required for REVISE or REJECT: say exactly what to change)<textarea id="r-mock-mr13-bestvalue-01" rows="3"></textarea></label>
+<details><summary>Intended answer, independent derivation and marking contract (open after you have your own answer)</summary>
+<p><strong>Intended answer:</strong> 2.10</p>
+<p><strong>Worked method:</strong></p><ol><li>750ml bottle: £1.80 ÷ 0.75 = £2.40 per litre</li><li>2 litre bottle: £4.20 ÷ 2 = £2.10 per litre</li><li>£2.10 is lower than £2.40</li></ol>
+<p><strong>Independent derivation by script</strong> (written separately from the stored answer; a convenience, not validation): 2.10 (agrees)</p>
+<p><strong>What the child must type, and how it is marked:</strong> Scored by number: the child's entry is read as a number and compared with 2.10 (tolerance 0.0001). So 2.10 and 2.1 are the same. A pound sign, units or words typed with the number make it a text entry, which would be marked wrong. A plain number is the natural form.</p>
+
+
+
+</details></div>
+<div class="card" id="item-mock-mr13-bestvalue-02"><h3>mock-mr13-bestvalue-02 <span class="tag">QT-MR-13</span><span class="tag">Ratio, value and multi-step problems</span><span class="tag">medium</span><span class="tag">1 mark</span><span class="tag">Text only</span><span class="tag">existing (protected bank)</span></h3>
+<p class="q">Rice is sold in two bags: a 2kg bag for £3.20, or a 5kg bag for £7.50. What is the lower price per kilogram, in pounds, rounded to 2 decimal places?</p>
+
+<p class="meta">Marking treatment: <strong>automatic</strong>, one mark.</p>
+<fieldset><legend>Your decision</legend>
+<label class="opt"><input type="radio" name="d-mock-mr13-bestvalue-02" value="APPROVE"> APPROVE</label><label class="opt"><input type="radio" name="d-mock-mr13-bestvalue-02" value="REVISE"> REVISE</label><label class="opt"><input type="radio" name="d-mock-mr13-bestvalue-02" value="REJECT"> REJECT</label></fieldset>
+<label class="meta">Your own answer, worked out before you open the intended answer (recommended)<input type="text" id="a-mock-mr13-bestvalue-02" autocomplete="off"></label>
+<fieldset><legend class="meta">Is it suitable for the age group (Year 5 to 6, about 10 to 11 years)?</legend><label class="opt"><input type="radio" name="g-mock-mr13-bestvalue-02" value="yes"> Yes</label><label class="opt"><input type="radio" name="g-mock-mr13-bestvalue-02" value="no"> No</label><label class="opt"><input type="radio" name="g-mock-mr13-bestvalue-02" value="unsure"> Unsure</label></fieldset>
+<label class="meta">Reason or comments (required for REVISE or REJECT: say exactly what to change)<textarea id="r-mock-mr13-bestvalue-02" rows="3"></textarea></label>
+<details><summary>Intended answer, independent derivation and marking contract (open after you have your own answer)</summary>
+<p><strong>Intended answer:</strong> 1.50</p>
+<p><strong>Worked method:</strong></p><ol><li>2kg bag: £3.20 ÷ 2 = £1.60 per kilogram</li><li>5kg bag: £7.50 ÷ 5 = £1.50 per kilogram</li><li>£1.50 is lower than £1.60</li></ol>
+<p><strong>Independent derivation by script</strong> (written separately from the stored answer; a convenience, not validation): 1.50 (agrees)</p>
+<p><strong>What the child must type, and how it is marked:</strong> Scored by number: the child's entry is read as a number and compared with 1.50 (tolerance 0.0001). So 2.10 and 2.1 are the same. A pound sign, units or words typed with the number make it a text entry, which would be marked wrong. A plain number is the natural form.</p>
+
+
+
+</details></div>
+<div class="card" id="item-mock-mr13-toppingcombos-01"><h3>mock-mr13-toppingcombos-01 <span class="tag">QT-MR-13</span><span class="tag">Ratio, value and multi-step problems</span><span class="tag">medium</span><span class="tag">1 mark</span><span class="tag">Text only</span><span class="tag">existing (protected bank)</span></h3>
+<p class="q">At a school fair pizza stall, a customer chooses one base and any number of toppings. There are 2 bases (Tomato, Pesto) and 5 toppings (Mushroom, Pepper, Sweetcorn, Olives, Ham). If a customer chooses one base and ONE topping, how many different pizzas are possible?</p>
+
+<p class="meta">Marking treatment: <strong>automatic</strong>, one mark.</p>
+<fieldset><legend>Your decision</legend>
+<label class="opt"><input type="radio" name="d-mock-mr13-toppingcombos-01" value="APPROVE"> APPROVE</label><label class="opt"><input type="radio" name="d-mock-mr13-toppingcombos-01" value="REVISE"> REVISE</label><label class="opt"><input type="radio" name="d-mock-mr13-toppingcombos-01" value="REJECT"> REJECT</label></fieldset>
+<label class="meta">Your own answer, worked out before you open the intended answer (recommended)<input type="text" id="a-mock-mr13-toppingcombos-01" autocomplete="off"></label>
+<fieldset><legend class="meta">Is it suitable for the age group (Year 5 to 6, about 10 to 11 years)?</legend><label class="opt"><input type="radio" name="g-mock-mr13-toppingcombos-01" value="yes"> Yes</label><label class="opt"><input type="radio" name="g-mock-mr13-toppingcombos-01" value="no"> No</label><label class="opt"><input type="radio" name="g-mock-mr13-toppingcombos-01" value="unsure"> Unsure</label></fieldset>
+<label class="meta">Reason or comments (required for REVISE or REJECT: say exactly what to change)<textarea id="r-mock-mr13-toppingcombos-01" rows="3"></textarea></label>
+<details><summary>Intended answer, independent derivation and marking contract (open after you have your own answer)</summary>
+<p><strong>Intended answer:</strong> 10</p>
+<p><strong>Worked method:</strong></p><ol><li>There are 2 choices for the base</li><li>There are 5 choices for the one topping</li><li>Total different pizzas = 2 x 5 = 10</li></ol>
+<p><strong>Independent derivation by script</strong> (written separately from the stored answer; a convenience, not validation): 10 (agrees)</p>
+<p><strong>What the child must type, and how it is marked:</strong> Scored by number: the child's entry is read as a number and compared with 10 (tolerance 0.0001). So 2.10 and 2.1 are the same. A pound sign, units or words typed with the number make it a text entry, which would be marked wrong. A plain number is the natural form.</p>
+
+
+
+</details></div>
+<div class="card" id="item-mock-mr13-toppingcombos-02"><h3>mock-mr13-toppingcombos-02 <span class="tag">QT-MR-13</span><span class="tag">Ratio, value and multi-step problems</span><span class="tag">hard</span><span class="tag">1 mark</span><span class="tag">Text only</span><span class="tag">existing (protected bank)</span></h3>
+<p class="q">At a school fair pizza stall, a customer chooses one base and any number of toppings. There are 2 bases (Tomato, Pesto) and 5 toppings (Mushroom, Pepper, Sweetcorn, Olives, Ham). If a customer chooses one base and TWO DIFFERENT toppings, how many different pizzas are possible?</p>
+
+<p class="meta">Marking treatment: <strong>automatic</strong>, one mark.</p>
+<fieldset><legend>Your decision</legend>
+<label class="opt"><input type="radio" name="d-mock-mr13-toppingcombos-02" value="APPROVE"> APPROVE</label><label class="opt"><input type="radio" name="d-mock-mr13-toppingcombos-02" value="REVISE"> REVISE</label><label class="opt"><input type="radio" name="d-mock-mr13-toppingcombos-02" value="REJECT"> REJECT</label></fieldset>
+<label class="meta">Your own answer, worked out before you open the intended answer (recommended)<input type="text" id="a-mock-mr13-toppingcombos-02" autocomplete="off"></label>
+<fieldset><legend class="meta">Is it suitable for the age group (Year 5 to 6, about 10 to 11 years)?</legend><label class="opt"><input type="radio" name="g-mock-mr13-toppingcombos-02" value="yes"> Yes</label><label class="opt"><input type="radio" name="g-mock-mr13-toppingcombos-02" value="no"> No</label><label class="opt"><input type="radio" name="g-mock-mr13-toppingcombos-02" value="unsure"> Unsure</label></fieldset>
+<label class="meta">Reason or comments (required for REVISE or REJECT: say exactly what to change)<textarea id="r-mock-mr13-toppingcombos-02" rows="3"></textarea></label>
+<details><summary>Intended answer, independent derivation and marking contract (open after you have your own answer)</summary>
+<p><strong>Intended answer:</strong> 20</p>
+<p><strong>Worked method:</strong></p><ol><li>The number of ways to choose 2 different toppings out of 5, where the order does not matter, is 10 (Mushroom+Pepper, Mushroom+Sweetcorn, Mushroom+Olives, Mushroom+Ham, Pepper+Sweetcorn, Pepper+Olives, Pepper+Ham, Sweetcorn+Olives, Sweetcorn+Ham, Olives+Ham)</li><li>There are 2 choices for the base</li><li>Total different pizzas = 2 x 10 = 20</li></ol>
+<p><strong>Independent derivation by script</strong> (written separately from the stored answer; a convenience, not validation): 20 (agrees)</p>
+<p><strong>What the child must type, and how it is marked:</strong> Scored by number: the child's entry is read as a number and compared with 20 (tolerance 0.0001). So 2.10 and 2.1 are the same. A pound sign, units or words typed with the number make it a text entry, which would be marked wrong. A plain number is the natural form.</p>
+
+
+
+</details></div>
+<div class="card" id="item-mock-fb-mr14-precision-01"><h3>mock-fb-mr14-precision-01 <span class="tag">QT-MR-14</span><span class="tag">Precision and rounding</span><span class="tag">medium</span><span class="tag">1 mark</span><span class="tag">Text only</span><span class="tag">new (authored for Form B)</span></h3>
+<p class="q">A whole number is rounded to the nearest 10 and the answer is 350. What is the smallest whole number it could have been?</p>
+
+<p class="meta">Marking treatment: <strong>automatic</strong>, one mark.</p>
+<fieldset><legend>Your decision</legend>
+<label class="opt"><input type="radio" name="d-mock-fb-mr14-precision-01" value="APPROVE"> APPROVE</label><label class="opt"><input type="radio" name="d-mock-fb-mr14-precision-01" value="REVISE"> REVISE</label><label class="opt"><input type="radio" name="d-mock-fb-mr14-precision-01" value="REJECT"> REJECT</label></fieldset>
+<label class="meta">Your own answer, worked out before you open the intended answer (recommended)<input type="text" id="a-mock-fb-mr14-precision-01" autocomplete="off"></label>
+<fieldset><legend class="meta">Is it suitable for the age group (Year 5 to 6, about 10 to 11 years)?</legend><label class="opt"><input type="radio" name="g-mock-fb-mr14-precision-01" value="yes"> Yes</label><label class="opt"><input type="radio" name="g-mock-fb-mr14-precision-01" value="no"> No</label><label class="opt"><input type="radio" name="g-mock-fb-mr14-precision-01" value="unsure"> Unsure</label></fieldset>
+<label class="meta">Reason or comments (required for REVISE or REJECT: say exactly what to change)<textarea id="r-mock-fb-mr14-precision-01" rows="3"></textarea></label>
+<details><summary>Intended answer, independent derivation and marking contract (open after you have your own answer)</summary>
+<p><strong>Intended answer:</strong> 345</p>
+<p><strong>Worked method:</strong></p><ol><li>Numbers from 345 up to 354 round to 350 (345 rounds up)</li><li>The smallest is 345</li></ol>
+<p><strong>Independent derivation by script</strong> (written separately from the stored answer; a convenience, not validation): 345 (agrees)</p>
+<p><strong>What the child must type, and how it is marked:</strong> Scored by number: the child's entry is read as a number and compared with 345 (tolerance 0.0001). So 2.10 and 2.1 are the same. A pound sign, units or words typed with the number make it a text entry, which would be marked wrong. A plain number is the natural form.</p>
+<p><strong>Mistake this item is designed to catch:</strong> Giving 340 or 349 (misplacing the rounding boundary).</p>
+
+
+</details></div>
+<div class="card" id="item-mock-fb-mr14-precision-02"><h3>mock-fb-mr14-precision-02 <span class="tag">QT-MR-14</span><span class="tag">Precision and rounding</span><span class="tag">hard</span><span class="tag">1 mark</span><span class="tag">Text only</span><span class="tag">new (authored for Form B)</span></h3>
+<p class="q">A length is 6.4 metres, rounded to 1 decimal place. What is the greatest whole number of centimetres the length could be?</p>
+
+<p class="meta">Marking treatment: <strong>automatic</strong>, one mark.</p>
+<fieldset><legend>Your decision</legend>
+<label class="opt"><input type="radio" name="d-mock-fb-mr14-precision-02" value="APPROVE"> APPROVE</label><label class="opt"><input type="radio" name="d-mock-fb-mr14-precision-02" value="REVISE"> REVISE</label><label class="opt"><input type="radio" name="d-mock-fb-mr14-precision-02" value="REJECT"> REJECT</label></fieldset>
+<label class="meta">Your own answer, worked out before you open the intended answer (recommended)<input type="text" id="a-mock-fb-mr14-precision-02" autocomplete="off"></label>
+<fieldset><legend class="meta">Is it suitable for the age group (Year 5 to 6, about 10 to 11 years)?</legend><label class="opt"><input type="radio" name="g-mock-fb-mr14-precision-02" value="yes"> Yes</label><label class="opt"><input type="radio" name="g-mock-fb-mr14-precision-02" value="no"> No</label><label class="opt"><input type="radio" name="g-mock-fb-mr14-precision-02" value="unsure"> Unsure</label></fieldset>
+<label class="meta">Reason or comments (required for REVISE or REJECT: say exactly what to change)<textarea id="r-mock-fb-mr14-precision-02" rows="3"></textarea></label>
+<details><summary>Intended answer, independent derivation and marking contract (open after you have your own answer)</summary>
+<p><strong>Intended answer:</strong> 644</p>
+<p><strong>Worked method:</strong></p><ol><li>6.4 m is 640 cm. Rounding to 1 decimal place means within 5 cm either side</li><li>The length is at least 635 cm and less than 645 cm</li><li>The greatest whole number of centimetres is 644</li></ol>
+<p><strong>Independent derivation by script</strong> (written separately from the stored answer; a convenience, not validation): 644 (agrees)</p>
+<p><strong>What the child must type, and how it is marked:</strong> Scored by number: the child's entry is read as a number and compared with 644 (tolerance 0.0001). So 2.10 and 2.1 are the same. A pound sign, units or words typed with the number make it a text entry, which would be marked wrong. A plain number is the natural form.</p>
+<p><strong>Mistake this item is designed to catch:</strong> Giving 645 (the boundary, which would round up to 6.5), or 649.</p>
+
+
+</details></div>
+<h2>Finish</h2><p>Add overall comments at the top, then press "Export my decisions" in the bar above and return both files.</p></main><script>
+const PACK="maths-form-b";const IDS=["mock-fb-mr01-arith-01","mock-fb-mr01-arith-02","mock-fb-mr01-arith-03","mock-fb-mr01-arith-04","mock-fb-mr02-missing-01","mock-fb-mr02-missing-02","mock-fb-mr02-missing-03","mock-fb-mr02-missing-04","mock-fb-mr02-missing-05","mock-fb-mr03-measure-01","mock-mr03mr07-perimeterarea-01a","mock-mr03mr07-perimeterarea-02a","mock-fb-mr04-percent-01","mock-fb-mr04-percent-02","mock-fb-mr04-percent-03","mock-fb-mr04-percent-04","mock-fb-mr04-percent-05","mock-fb-mr04-percent-06","mock-fb-mr05-sequence-01","mock-mr05-numberpyramid-01","mock-mr05-numberpyramid-02","mock-mr05-numberpyramid-03","mock-fb-mr06-digits-01","mock-mr06-agenarrative-01","mock-mr06-agenarrative-02","mock-mr06-agenarrative-03","mock-mr06-sumdiff-01","mock-mr06-sumdiff-02","mock-fb-mr07-angles-01","mock-fb-mr07-lshape-01","mock-mr03mr07-perimeterarea-01b","mock-mr03mr07-perimeterarea-02b","mock-fb-mr08-reflect-01","mock-mr08-rotation-01","mock-mr08-rotation-02","mock-fb-mr09-table-01","mock-mr09-data-01","mock-mr09-data-02","mock-mr09-data-03","mock-mr10-fairprep-01","mock-mr10-fairprep-02","mock-mr10-reverseschedule-01","mock-mr10-reverseschedule-02","mock-mr11-propertysearch-01","mock-mr11-propertysearch-02","mock-mr11-truefalsejudgement-01","mock-mr11-truefalsejudgement-02","mock-mr12-reversemean-01","mock-mr12-reversemean-02","mock-mr12-weightedmean-01","mock-mr13-bestvalue-01","mock-mr13-bestvalue-02","mock-mr13-toppingcombos-01","mock-mr13-toppingcombos-02","mock-fb-mr14-precision-01","mock-fb-mr14-precision-02"];
+const KEY='angel-validation-'+PACK;
+function load(){try{return JSON.parse(localStorage.getItem(KEY)||'{}')}catch(e){return{}}}
+function save(){const d={validator:{name:v('vname'),role:v('vrole'),date:v('vdate'),independence:document.getElementById('vind').checked},overall:v('overall'),items:{}};
+ for(const id of IDS){const r=document.querySelector('input[name="d-'+id+'"]:checked');d.items[id]={decision:r?r.value:'',reason:v('r-'+id),ownAnswer:v('a-'+id),ageOk:(document.querySelector('input[name="g-'+id+'"]:checked')||{}).value||''}}
+ try{localStorage.setItem(KEY,JSON.stringify(d))}catch(e){}return d}
+function v(id){const e=document.getElementById(id);return e?e.value:''}
+function restore(){const d=load();if(!d.items)return;const set=(id,x)=>{const e=document.getElementById(id);if(e)e.value=x||''};
+ set('vname',d.validator&&d.validator.name);set('vrole',d.validator&&d.validator.role);set('vdate',d.validator&&d.validator.date);set('overall',d.overall);
+ if(d.validator&&d.validator.independence)document.getElementById('vind').checked=true;
+ for(const id of IDS){const it=d.items[id];if(!it)continue;if(it.decision){const r=document.querySelector('input[name="d-'+id+'"][value="'+it.decision+'"]');if(r)r.checked=true}
+  if(it.ageOk){const r=document.querySelector('input[name="g-'+id+'"][value="'+it.ageOk+'"]');if(r)r.checked=true}set('r-'+id,it.reason);set('a-'+id,it.ownAnswer)}
+ count()}
+function count(){const d=save();let n=0,a=0,r=0,j=0;for(const id of IDS){const x=d.items[id].decision;if(x)n++;if(x==='APPROVE')a++;if(x==='REVISE')r++;if(x==='REJECT')j++}
+ document.getElementById('prog').textContent=n+' of '+IDS.length+' recorded ('+a+' approve, '+r+' revise, '+j+' reject)'}
+function dl(name,text,type){const b=new Blob([text],{type});const u=URL.createObjectURL(b);const a=document.createElement('a');a.href=u;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),500)}
+function exportAll(){const d=save();const miss=IDS.filter(id=>!d.items[id].decision);const bad=IDS.filter(id=>(d.items[id].decision==='REVISE'||d.items[id].decision==='REJECT')&&!d.items[id].reason.trim());
+ if(!d.validator.name){alert('Please enter your name before exporting.');return}
+ if(!d.validator.independence){alert('Please tick the independence declaration before exporting.');return}
+ if(bad.length&&!confirm('These REVISE or REJECT decisions have no reason: '+bad.join(', ')+'. Export anyway?'))return;
+ if(miss.length&&!confirm(miss.length+' items have no decision yet. Export anyway?'))return;
+ const q=s=>'"'+String(s).replace(/"/g,'""')+'"';const rows=[['item_id','decision','reason','own_answer','age_appropriate'].join(',')];
+ for(const id of IDS){const x=d.items[id];rows.push([id,x.decision,q(x.reason),q(x.ownAnswer),x.ageOk].map(String).join(','))}
+ const stamp=(d.validator.date||new Date().toISOString().slice(0,10));
+ dl(PACK+'-decisions-'+stamp+'.csv',rows.join('\n'),'text/csv');dl(PACK+'-decisions-'+stamp+'.json',JSON.stringify(d,null,2),'application/json')}
+document.addEventListener('input',count);document.addEventListener('change',count);window.addEventListener('DOMContentLoaded',restore);</script></body></html>

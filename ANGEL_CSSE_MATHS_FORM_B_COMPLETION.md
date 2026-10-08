@@ -1,10 +1,10 @@
 # ANGEL 11+ — CSSE MATHEMATICS FORM B COMPLETION (2026-10-08)
 
-Status: **prepared, sealed, not activated.** Nothing was applied to production. Migration 272 is a template. No item is marked
+Status: **MIGRATION 272 APPLIED by the Founder and verified in production (see `ANGEL_CSSE_GATE_CLOSURE_VERIFICATION.md`): DO NOT RERUN.** The 24 items are sealed candidates, not activated. No item is marked
 `independently_validated` or `mock_eligible`, and none is `practice_eligible`. No official CSSE mark structure is assumed.
 Builds on `ANGEL_CSSE_MATHS_FORM_B_SUPPLY_PLAN.md`. Sources of truth (all tested):
 `lib/ali/questionFactory/mockFormBMathsItems.ts` (24 new items), `mockFormBRevalidation.ts` (32 existing items), tests in
-`tests/lib/ali/questionFactory/mockFormBMaths.test.ts`, template `supabase/migrations/272_maths_form_b_completion_TEMPLATE_NOT_APPLIED.sql`,
+`tests/lib/ali/questionFactory/mockFormBMaths.test.ts`, record `supabase/migrations/272_maths_form_b_completion_APPLIED_DO_NOT_RERUN.sql`,
 figures in `public/mock-assets/formb-maths/`, all produced by `scripts/generate-mock-form-b-maths-assets-and-migration.mjs`.
 
 ## 1. Revalidation of the 32 existing items: one real defect found
@@ -14,7 +14,7 @@ re-derived answers equal the stored answers.** One **marking defect** was found,
 
 - `mock-mr05-numberpyramid-02` asks for the answer "in the form (smallest bottom-row value, number of rows)", so a child writes
   **"(9, 5)"**. The stored answer is **"9, 5"**, and the marker requires matching brackets, so the instructed form is **marked wrong**
-  (tested against the real `checkMathsAnswer`). Repair (in migration 272): store `"(9, 5)"`. After repair "(9, 5)" and "(9,5)" are accepted.
+  (true for the Practice marker and for the Mock scorer, which compares exact text). Repair (in migration 272): store `"(9, 5)"`. After repair "(9, 5)" and "(9,5)" are accepted.
   **Human verifier to confirm** that the Mock scoring path used for Form B treats the answer the same way as Practice's marker.
 - Wording observations (not defects): `numberpyramid-03` opens with a premise ("the top brick's value is 0") that the three
   conditional statements do not depend on; `numberpyramid-02` asks for a pair and the row count is deduced, not given.
@@ -60,14 +60,18 @@ the Founder confirmed the shape as a design choice, not a CSSE specification.
 - The grid item's text equivalent names the point but not its coordinates, because reading them is the task. A non-visual accessible
   alternative must be arranged separately (for example a teacher-read description under exam access arrangements).
 - Static SVGs live under a public path; they show only what the task shows. They are not referenced from Practice.
-- The three MR-04 hard items and the MR-14 hard item rely on exact numeric entry; the marker is tolerant of format (spacing, trailing
-  zeros, a pound sign) but not of rounding.
+- **Correction (2026-10-08, after reading the production scorer):** the real Mock Maths scorer (`mock_score_attempt`) reads a numeric
+  answer as a number (tolerance 0.0001, so 2.10 equals 2.1) and otherwise compares exact text (capitals and outer spaces ignored). It does
+  **not** normalise spacing or a pound sign. So in a Mock a bracketed answer must be typed exactly as `(x, y)` with one space, a time exactly
+  as `hh:mm`, and a pound sign or unit makes a numeric answer wrong. The Practice marker (`checkMathsAnswer`) is more tolerant, which is
+  what this document's earlier tests exercised. This is existing platform behaviour (it applies equally to the live rotation items), not a
+  defect of the new items, but it is a format-sensitivity the human validator is asked to judge item by item (the validator pack states it).
 
 ## 5. Readiness against the gates
 
 | Gate | State |
 |---|---|
-| Revalidation record for the 32 items | **done** (one defect found, repair in 272) |
+| Revalidation record for the 32 items | **done** (one defect found, repaired by migration 272, verified) |
 | 24 sealed items authored | **done (candidates in 272)** |
 | Independent human validation of the 56 items | **outstanding (human)** |
 | Founder confirmation of the Form B shape and of the Practice blueprint library as design source | **outstanding** (the 24 were hand-authored, not generated from the Practice blueprints) |
@@ -75,6 +79,6 @@ the Founder confirmed the shape as a design choice, not a CSSE specification.
 
 ## 6. Founder actions
 
-1. Apply migration 272 when ready (repairs the pyramid answer; adds 24 sealed candidates). 2. Commission the independent human validation of
+1. ~~Apply migration 272~~ (done and verified; do not rerun). 2. Commission the independent human validation of
 all 56 items, starting with the marking-path check on `numberpyramid-02`. 3. Confirm the Form B shape. 4. Decide the accessible alternative
 for the grid item.

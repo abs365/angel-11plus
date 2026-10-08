@@ -1,10 +1,10 @@
 # ANGEL 11+ — CSSE ENGLISH FORM B COMPLETION (2026-10-08)
 
-Status: **prepared, sealed, not activated.** Nothing was applied to production. Migration 271 is a template. No item is marked
+Status: **MIGRATION 271 APPLIED by the Founder and verified in production (see `ANGEL_CSSE_GATE_CLOSURE_VERIFICATION.md`): DO NOT RERUN.** Form B is sealed, not activated. No item is marked
 `independently_validated` or `mock_eligible`. No official CSSE comprehension/Writing mark split is assumed.
 Builds on `ANGEL_CSSE_ENGLISH_FORM_B_SUPPLY_PLAN.md`. Source of truth for every change below:
 `lib/ali/questionFactory/englishFormBCompletion.ts` (tested by `tests/lib/ali/questionFactory/englishFormBCompletion.test.ts`),
-rendered into `supabase/migrations/271_english_form_b_completion_TEMPLATE_NOT_APPLIED.sql` by
+recorded in `supabase/migrations/271_english_form_b_completion_APPLIED_DO_NOT_RERUN.sql` by
 `scripts/generate-english-form-b-completion-migration.mjs`.
 
 ## 1. Marking-contract defect: repaired (as a template)
@@ -88,7 +88,7 @@ passes the production marking-contract gate and rejects its plausible wrong answ
 
 | Gate | State |
 |---|---|
-| Marking contract repaired (template) | **ready, awaiting Founder apply** (migration 271) |
+| Marking contract repaired | **done: migration 271 applied and verified** |
 | Six top-up items authored | **done (sealed candidates, in 271)** |
 | Independent human review of passages and 24 items | **outstanding (human)** |
 | Founder choice of Writing Q1 | **outstanding** |
@@ -97,7 +97,7 @@ passes the production marking-contract gate and rejects its plausible wrong answ
 
 ## 6. Founder actions
 
-1. Apply migration 271 when ready (it repairs marking, fixes the Compass Rose items, and adds six sealed candidates).
+1. ~~Apply migration 271~~ (done and verified; do not rerun).
 2. Commission the independent human review (passages, 24 items, the Q2(b) inference, the two Salmon phrases, fact-check).
 3. Choose Writing Q1. 4. Decide the Q2 artwork route. 5. Decide whether the Timed Section's bee passage should be swapped given
 the Salmon structure twin.

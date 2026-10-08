@@ -1,7 +1,7 @@
 # ANGEL 11+ — CONTINUOUS WRITING: HUMAN CALIBRATION PROTOCOL (V1, 2026-10-08)
 
 Status: **PROTOCOL ONLY. No calibration has been run. No result is claimed.**
-Owner of every threshold and every decision below: the Founder. Thresholds are *proposed design choices*, not research findings.
+Owner of every decision below: the Founder. No calibration threshold is set before human evidence exists (see section 7).
 
 ## 1. What this protocol is for, and what it is not
 
@@ -71,13 +71,11 @@ Per dimension and overall, report all of:
 | Behaviour of the `confident` flag and of `review_required`: how often it fires on exactly the awkward scripts | the safety net the product relies on |
 | Genre difference (reflective vs picture-led) | the two may need separate conclusions |
 
-## 7. Proposed starting thresholds (Founder to set — provisional, not evidence-derived)
+## 7. Thresholds (WITHDRAWN: none are set before human evidence exists)
 
-For the AI read to be described *to parents* as "a useful first read" (never "marking"), propose at least: within-one-level
-agreement ≥ 90% on each dimension; no dimension with a one-directional bias on more than 70% of its disagreements; AI
-repeatability within one level on ≥ 90% of repeats; and `review_required`/low-confidence firing on ≥ 80% of the awkward cases.
-If a threshold is missed, the finding is recorded and the parent-facing wording stays cautious. **Nothing in the product
-changes automatically from these numbers.**
+An earlier draft of this protocol proposed starting thresholds. Those figures were not evidence-derived and are withdrawn. No threshold is set, proposed or coded
+until actual human comparison evidence exists; the Founder then decides what, if anything, counts as acceptable. The analysis reports measures and queues every
+reader disagreement for adjudication without averaging. **Nothing in the product changes automatically.**
 
 ## 8. Outputs
 
@@ -87,7 +85,7 @@ changes automatically from these numbers.**
 ## 9. Founder actions needed to start
 
 1. Choose and brief two independent readers; agree consent route and sources (§3).
-2. Approve or change the proposed sample size and thresholds (§3, §7).
+2. Approve or change the proposed sample size (§3). Thresholds are set only after evidence exists (§7).
 3. Provide the anonymised scripts (or ask for adult-simulated scripts to be commissioned).
 4. Decide where the results file lives (outside production).
 
