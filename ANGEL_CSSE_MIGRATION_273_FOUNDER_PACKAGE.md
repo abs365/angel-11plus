@@ -1,8 +1,8 @@
-# Migration 273: Great Stink controlled Founder package (prepared 2026-10-09). NOT APPLIED. Do not apply until approved.
+# Migration 273: Great Stink. **APPLIED by the Founder 2026-10-09: DO NOT RERUN.** Production verification PASS (line-ending-neutral). Original package below (the file hashes in it describe the pre-application file; the file was renamed and its header comment edited afterwards, the statements are unchanged).
 
-1. **Filename:** `supabase/migrations/273_english_form_b_salmon_replacement_TEMPLATE_NOT_APPLIED.sql` (renamed to `..._APPLIED_DO_NOT_RERUN.sql` by me only after you confirm it ran).
+1. **Filename:** `supabase/migrations/273_english_form_b_salmon_replacement_APPLIED_DO_NOT_RERUN.sql` (renamed to `..._APPLIED_DO_NOT_RERUN.sql` by me only after you confirm it ran).
 2. **Commit containing it:** `e68179eb1557f07207dec2f580d28f30d99f89ca` (short `e68179e`).
-3. **SHA256 (LF):** `7ea77c975f1c52d50fdcb3e7677b0ef147a94636a7bbe14ee7954d13b3c8607d`
+3. **SHA256 (LF):** `7ea77c975f1c52d50fdcb3e7677b0ef147a94636a7bbe14ee7954d13b3c8607d (as applied; the repository file now has an edited header, SHA256 a362586764310cac2ad7eb8f1f554c5bb62c19f64a6ae6b435c2823d9bd212df)`
 4. **origin/main:** contains that commit and the file hash above (checked with `git show origin/main:<file>`).
 5. **Never applied:** read-only 2026-10-09: Great Stink rows 0 (passage, questions, reviews); Salmon still active; Salmon reviews approved + pending only; the project migration table is empty (SQL is applied by hand), so absence of the data is the evidence.
 6. **BEFORE:** bank 1,517 rows; passages 40; family_review 315; Practice-eligible 1,275 (Maths 961, English 306, Writing 8); mock_eligible Maths 77, English 50, Writing 2; Salmon passage + 11 questions active; Salmon content hashes: questions 086890d4f297f55b18bd7b83d55d985b, text d9664bcb23421f804554931dc5a723a4, passage 806a3f8f85466ac80a5bd8ec2862c3ef; other-rows hash af55ba0d0255505159e5a3b8ff1b4f93 (1,132 rows); 3 Mock forms, none naming Compass, Salmon or Great Stink.

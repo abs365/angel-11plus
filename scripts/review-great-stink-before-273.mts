@@ -11,7 +11,7 @@ import { scoreEnglishAnswer } from "@/lib/learningEngine/practiceContent";
 import { buildDisjointWrongAnswer, validateEnglishMarkingContract } from "@/lib/ali/questionFactory/englishMarkingContractGate";
 import { REPLACEMENT_ITEMS, REPLACEMENT_PASSAGE_TEXT } from "@/lib/ali/questionFactory/englishFormBReplacement";
 
-const FILE = "supabase/migrations/273_english_form_b_salmon_replacement_TEMPLATE_NOT_APPLIED.sql";
+const FILE = "supabase/migrations/273_english_form_b_salmon_replacement_APPLIED_DO_NOT_RERUN.sql";
 const sql = fs.readFileSync(FILE, "utf8");
 const passage = sql.slice(sql.indexOf("$passage$") + 9, sql.indexOf("$passage$", sql.indexOf("$passage$") + 9));
 type Q = { id: string; marks: number; skill: string; question: string; modelAnswer: string; passageText: string; validationTier: string; acceptedAnswers?: string[]; orderedAnswer?: string[]; quotationRequired?: string[]; markingGuidance?: string };

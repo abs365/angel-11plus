@@ -1,9 +1,21 @@
 -- READ-ONLY verification for migration 273 (Great Stink sealed + Salmon rejected/replaced). Nothing here writes.
 -- Run the BEFORE column expectations first if you wish (they were captured read-only on 2026-10-09), then apply 273 ONCE, then run these.
 
--- A. Great Stink passage. EXPECT 1 row: authentic_assessment_candidate, active true, {csse}, word_count 530, review_state null,
---    text_md5 ea793ad48685208cc0a1ecd65722283c  (BEFORE: no row).
-select id, eligibility_status, active, pathway, word_count, review_state, md5(original_text) as text_md5 from ali_passage_bank where id = 'eng-fb-greatstink';
+-- A. Great Stink passage. LINE-ENDING-NEUTRAL textual integrity (Founder decision 2026-10-09: every passage row in ali_passage_bank is stored with Windows line endings,
+--    and this row follows that convention, so CRLF and LF are equivalent for the text check; migration 276 was therefore NOT required and is not applied).
+--    EXPECT 1 row: authentic_assessment_candidate, active true, {csse}, word_count 530, review_state null,
+--    text_lf_md5 ea793ad48685208cc0a1ecd65722283c  (md5 of the text after removing carriage returns = the canonical approved text),
+--    lf_length 3000, newlines 10, bare_newlines_ok true (every carriage return is part of a CRLF pair, none is stray),
+--    raw_length 3000 (LF storage) or 3010 (CRLF storage), carriage_returns 0 or 10 and equal to the number of CRLF pairs, same_as_question_copies true.  (BEFORE: no row.)
+select id, eligibility_status, active, pathway, word_count, review_state,
+       md5(replace(original_text, chr(13), '')) as text_lf_md5,
+       length(replace(original_text, chr(13), '')) as lf_length,
+       length(original_text) - length(replace(original_text, chr(10), '')) as newlines,
+       length(original_text) as raw_length,
+       length(original_text) - length(replace(original_text, chr(13), '')) as carriage_returns,
+       (length(original_text) - length(replace(original_text, chr(13), ''))) = (length(original_text) - length(replace(original_text, chr(13)||chr(10), chr(10)))) as bare_newlines_ok,
+       (select bool_and(replace(q.prompt->>'passageText', chr(13), '') = replace(p.original_text, chr(13), '')) from ali_question_bank q where q.id like 'eng-fb-greatstink-q%') as same_as_question_copies
+  from ali_passage_bank p where id = 'eng-fb-greatstink';
 
 -- B. Great Stink questions. EXPECT: n 11, all_candidates true, all_active true, all_csse true, all_unit_ok true, marks_total 18, passage_text_ok 11.
 --    BEFORE: n 0.

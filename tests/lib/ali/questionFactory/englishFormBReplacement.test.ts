@@ -172,9 +172,9 @@ test("Salmon is recorded as rejected and replaced, and the composer and validato
   assert.ok(v.failures.some((f) => f.code === "rejected_content"));
 });
 
-test("migration 273 template is prepared, not applied, adds only sealed candidates, and retires Salmon without deleting it", () => {
-  const sql = fs.readFileSync("supabase/migrations/273_english_form_b_salmon_replacement_TEMPLATE_NOT_APPLIED.sql", "utf8");
-  assert.match(sql, /NOT APPLIED/);
+test("migration 273 (applied) adds only sealed candidates, and retires Salmon without deleting it", () => {
+  const sql = fs.readFileSync("supabase/migrations/273_english_form_b_salmon_replacement_APPLIED_DO_NOT_RERUN.sql", "utf8");
+  assert.match(sql, /APPLIED to production by the Founder/);
   assert.equal((sql.match(/insert into public\.ali_passage_bank/g) ?? []).length, 1);
   assert.equal((sql.match(/insert into public\.ali_question_bank/g) ?? []).length, 1);
   for (const i of REPLACEMENT_ITEMS) assert.ok(sql.includes(i.id), i.id);

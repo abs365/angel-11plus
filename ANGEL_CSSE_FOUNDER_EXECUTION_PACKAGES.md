@@ -69,9 +69,9 @@ The six trimmed candidates remain in the repository only: never submitted, never
 
 | | |
 |---|---|
-| Exact filename | `supabase/migrations/273_english_form_b_salmon_replacement_TEMPLATE_NOT_APPLIED.sql` (to be renamed `…_APPLIED_DO_NOT_RERUN.sql` by me only after you confirm it ran) |
+| Exact filename | `supabase/migrations/273_english_form_b_salmon_replacement_APPLIED_DO_NOT_RERUN.sql` (to be renamed `…_APPLIED_DO_NOT_RERUN.sql` by me only after you confirm it ran) |
 | Exact commit | `bfea0e5` |
-| SHA256 | `7ea77c975f1c52d50fdcb3e7677b0ef147a94636a7bbe14ee7954d13b3c8607d` |
+| SHA256 | `a362586764310cac2ad7eb8f1f554c5bb62c19f64a6ae6b435c2823d9bd212df` |
 | Applied by | the Founder only, in the Supabase SQL editor, once. **Not applied by me.** |
 | Transaction | one explicit `begin; … commit;`: if any statement fails, nothing is changed |
 | Checked without running | parsed by the real PostgreSQL grammar (libpg-query): 5 top-level statements, no errors; the passage insert has 16 columns and 16 values, the question insert 18 columns and 18 values in all 11 rows; all 11 JSON bodies are valid. The one `DO` block was read against the table constraints below. |
@@ -96,7 +96,7 @@ The six trimmed candidates remain in the repository only: never submitted, never
 
 **Run-once status:** run once. It is written to be repeat-safe (inserts use `on conflict do nothing` or `where not exists`; the updates are idempotent) but treat it as run-once. After AFTER verification passes I will mark it `MIGRATION 273 APPLIED: DO NOT RERUN`.
 
-**AFTER verification procedure:** run `scripts/output/founder-execution/02-migration-273-verification.sql` blocks A to I (read-only) and compare with the expected values written beside each block (A passage, B questions, C tiers, D sealed, E reviews, F Salmon preserved, G Salmon content identical, H nothing else changed, I inventory, permissions and functions unchanged). Any difference: report, do not repair. SHA256 of that file: `36639aefb74a096506e2c54ee4c52a891ad326c7279992e0008f94087f8aaa24` (commit `71c599a`).
+**AFTER verification procedure:** run `scripts/output/founder-execution/02-migration-273-verification.sql` blocks A to I (read-only) and compare with the expected values written beside each block (A passage, B questions, C tiers, D sealed, E reviews, F Salmon preserved, G Salmon content identical, H nothing else changed, I inventory, permissions and functions unchanged). Any difference: report, do not repair. SHA256 of that file: `a8205651a81dad47357b9d544c10c9723d10bb63b68edbd626595310eb2daf54` (commit `71c599a`).
 
 **Rollback (only if you ask, and only before validators begin work):** `scripts/output/founder-execution/273-ROLLBACK-remove-additions-reactivate-salmon.sql` (SHA256 `98737e02213c6d4967f13cf5aed843f66bc50bb76f7106ea4f7a6cae4d4641f1`), scoped to explicit ids. Not part of the sequence.
 
