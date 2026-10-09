@@ -305,18 +305,26 @@ const publishScript = `// Angel 11+ -- CSSE Maths Practice: APPROVE then PUBLISH
     const res = await fetch(SUPABASE_URL + "/rest/v1/rpc/" + fn, { method: "POST", headers: { apikey: ANON_KEY, Authorization: "Bearer " + accessToken, "Content-Type": "application/json" }, body: JSON.stringify(body) });
     return { ok: res.ok, status: res.status, body: await res.json().catch(() => null) };
   };
+  // The Founder approved by BLUEPRINT with representative sampling and deterministic verification, not variant by variant, so the
+  // governed review method is controlled_batch_sampling and the record carries a genuine approval_basis (never 'individual').
+  const BASIS = { governance: "competency > family > blueprint > representative samples > deterministic answer verification > representation verification > diversity assessment > edge/failure review > approval", decision_pack: "ANGEL_CSSE_MATHS_PRACTICE_FINAL_DECISION_PACK.md", founder_decision: "2026-10-08: 37 blueprints APPROVE, 1 TRIM, 374 candidates; 6 mr01-bp-change-from-note candidates excluded", verification: "all 380 prepared candidates re-verified from their stored parameters; zero exact-text matches against the live bank; zero crossover with sealed Form B text", disclosed_risks: "coordinate grid LOW; angle figures MEDIUM; number-line scale reading HIGH; isolated rounding batch CRITICAL, MEDIUM across its three structures" };
   const ids = Object.values(AUTHORISED_BLUEPRINTS).flat();
-  let approved = 0, published = 0;
-  for (const id of ids) {
-    const r1 = await call("review_question_candidate", { p_candidate_id: id, p_decision: "approved" });
-    if (!r1.ok) { console.error("APPROVE FAIL", id, r1.status, r1.body); continue; }
-    approved++;
-    const r2 = await call("publish_question_candidate", { p_candidate_id: id });
-    if (!r2.ok) { console.error("PUBLISH FAIL", id, r2.status, r2.body); continue; }
-    published++;
-    console.log("PUBLISHED", id, r2.body);
+  let approved = 0, published = 0, skipped = 0;
+  for (const bp of Object.keys(AUTHORISED_BLUEPRINTS)) {
+    for (const id of AUTHORISED_BLUEPRINTS[bp]) {
+      const r1 = await call("review_question_candidate", { p_candidate_id: id, p_decision: "approved", p_review_method: "controlled_batch_sampling", p_approval_basis: Object.assign({ blueprint_id: bp }, BASIS) });
+      if (!r1.ok) { console.error("APPROVE FAIL", id, r1.status, r1.body); continue; }
+      approved++;
+      const r2 = await call("publish_question_candidate", { p_candidate_id: id });
+      if (!r2.ok) {
+        if (JSON.stringify(r2.body || "").indexOf("already been published") >= 0) { skipped++; console.log("ALREADY PUBLISHED (skipped)", id); continue; }
+        console.error("PUBLISH FAIL", id, r2.status, r2.body); continue;
+      }
+      published++;
+      console.log("PUBLISHED", id, r2.body);
+    }
   }
-  console.log("Done: approved " + approved + "/" + ids.length + ", published " + published + "/" + ids.length + ".");
+  console.log("Done: approved " + approved + "/" + ids.length + ", published " + published + "/" + ids.length + ", already published " + skipped + ".");
 })();
 `;
 fs.writeFileSync(`${OUT}/review-and-publish-GUARDED.js`, publishScript);

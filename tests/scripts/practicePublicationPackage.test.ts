@@ -43,6 +43,9 @@ test("the approve-and-publish script is GUARDED (does nothing unless the Founder
   assert.match(s, /if \(!FOUNDER_AUTHORISED\) \{ console\.warn\("Not authorised: nothing was approved or published\."\); return; \}/);
   assert.ok(s.indexOf("FOUNDER_AUTHORISED") < s.indexOf("localStorage"), "the guard runs before any session is read");
   assert.match(s, /review_question_candidate/);
+  assert.match(s, /p_review_method: "controlled_batch_sampling"/);
+  assert.match(s, /p_approval_basis: Object\.assign\(\{ blueprint_id: bp \}, BASIS\)/);
+  assert.doesNotMatch(s, /p_review_method: "individual"/, "approval by blueprint must not be recorded as individual review");
   assert.match(s, /publish_question_candidate/);
   assert.doesNotMatch(s, /\/rest\/v1\/ali_question_bank|\.insert\(|\.update\(|delete from/i, "no raw write");
   const ids = Object.values(JSON.parse(s.match(/const AUTHORISED_BLUEPRINTS = (\{[\s\S]*?\});\n/)![1]) as Record<string, string[]>).flat();

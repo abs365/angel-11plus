@@ -23,7 +23,7 @@
 
 1. Run the six `submit-*.js` scripts one at a time (DevTools, Console, paste, Enter). Each ends with "Done: N/N submitted". Expected: 140 context set minus 6 = 134, then 48, 96, 40, 32, 24 (374 in all).
 2. Confirm read-only that 374 rows exist at `pending_review` (verification query 1 below).
-3. Edit `review-and-publish-GUARDED.js`: set `FOUNDER_AUTHORISED = true` and trim `AUTHORISED_BLUEPRINTS`. Run it. It approves and publishes each candidate through the governed functions, one call each.
+3. Edit `review-and-publish-GUARDED.js`: set `FOUNDER_AUTHORISED = true` and trim `AUTHORISED_BLUEPRINTS`. Run it. It approves each candidate through the governed `review_question_candidate` using the method `controlled_batch_sampling` with a genuine `approval_basis` (the Founder approved by blueprint, with sampling and deterministic verification, so the record must not claim individual review), then publishes it through `publish_question_candidate`, one call each. A candidate already published is skipped, so a re-run is safe.
 4. Run the verification queries below (read-only). Report any difference; do not repair automatically.
 
 ## Read-only verification after publication
