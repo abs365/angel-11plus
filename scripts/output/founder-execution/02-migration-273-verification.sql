@@ -44,8 +44,9 @@ select (select md5(string_agg(id||'|'||prompt::text||'|'||eligibility_status||'|
        (select md5(string_agg(id||'|'||eligibility_status||'|'||original_text||'|'||title, E'\n' order by id)) from ali_passage_bank where id = 'eng-inc003-salmonnavigation') as passage_hash;
 
 -- H. NOTHING ELSE changed. EXPECT each value to equal BEFORE:
---    question_bank_other_rows 1132 / 1ec47ab8efc9ffee02822989e523c84f ; passage_other_hash 01db9646d743f6104bb3936c027226d3 (passages_total 41 after, 40 before) ;
---    family_review_other_hash fda9bb9f76641d4e2c78a59e9a60318d (family_review_total 317 after, 315 before) ; bank_total 1154 after (1143 before).
+--    (BEFORE values re-captured read-only on 2026-10-09 after the 374 publication and migration 275; they supersede any earlier figures.)
+--    question_bank_other_rows 1132 / af55ba0d0255505159e5a3b8ff1b4f93 ; passage_other_hash 01db9646d743f6104bb3936c027226d3 (passages_total 41 after, 40 before) ;
+--    family_review_other_hash fda9bb9f76641d4e2c78a59e9a60318d (family_review_total 317 after, 315 before) ; bank_total 1528 after (1517 before) ; qf_csse rows 374 before and after.
 select (select count(*) from ali_question_bank where not (learning_unit_id = 'eng-inc003-salmonnavigation' or id like 'eng-fb-greatstink-%' or learning_unit_id = 'eng-fb-greatstink' or id like 'qf-csse-%')) as question_bank_other_rows,
        (select md5(string_agg(id||'|'||subject::text||'|'||skill||'|'||coalesce(learning_unit_id,'')||'|'||eligibility_status||'|'||active::text||'|'||content_version::text||'|'||prompt::text||'|'||coalesce(marking_mode,''), E'\n' order by id)) from ali_question_bank where not (learning_unit_id = 'eng-inc003-salmonnavigation' or id like 'eng-fb-greatstink-%' or learning_unit_id = 'eng-fb-greatstink' or id like 'qf-csse-%')) as question_bank_other_hash,
        (select md5(string_agg(id||'|'||eligibility_status||'|'||active::text||'|'||original_text, E'\n' order by id)) from ali_passage_bank where id not in ('eng-inc003-salmonnavigation','eng-fb-greatstink')) as passage_other_hash,
@@ -54,10 +55,21 @@ select (select count(*) from ali_question_bank where not (learning_unit_id = 'en
        (select count(*) from ali_family_review) as family_review_total,
        (select count(*) from ali_question_bank) as bank_total;
 
--- I. Inventory and permissions unchanged. EXPECT: practice maths 587 / english 306 / writing 8 ; mock_eligible maths 77 / english 50 / writing 2 ;
+-- I. Inventory and permissions unchanged. EXPECT (identical before and after): practice maths 961 / english 306 / writing 8 (total 1,275) ; mock_eligible maths 77 / english 50 / writing 2 ;
 --    RLS on for all four tables with policy counts 1, 1, 1, 2 ; function hash d757a642c8bcb273e78924a6ddd7357c over 56 functions (migration 273 changes no function).
 select subject::text, eligibility_status, count(*) from ali_question_bank where active and eligibility_status in ('practice_eligible','mock_eligible') group by 1, 2 order by 1, 2;
 select c.relname, c.relrowsecurity, (select count(*) from pg_policies p where p.tablename = c.relname) as policies from pg_class c where c.oid in ('public.ali_question_bank'::regclass, 'public.ali_passage_bank'::regclass, 'public.ali_family_review'::regclass, 'public.ali_question_candidate'::regclass) order by 1;
 select count(*) as function_count, md5(string_agg(p.proname||'|'||md5(p.prosrc), E'\n' order by p.proname, p.oid)) as all_functions_hash from pg_proc p join pg_namespace n on n.oid = p.pronamespace where n.nspname = 'public';
+
+-- K. The 11 Great Stink questions are EXACTLY the reviewed text (everything except the repeated passageText, which block B already checks by md5).
+--    EXPECT: n 11 and questions_content_md5 76d94f0897731a00d4d8a9b84c1ee353  (BEFORE: n 0). This value was computed read-only from the migration's own JSON bodies.
+select count(*) as n, md5(string_agg(id||'|'||(prompt - 'passageText')::text, E'
+' order by id)) as questions_content_md5 from ali_question_bank where id like 'eng-fb-greatstink-q%';
+
+-- L. No Form B exists and nothing references the new or the old passage. EXPECT: forms_total 3 (first-mock-mathematics-v1, reading-comprehension-mock-1, english-full-mock-v1), every other number 0.
+select (select count(*) from ali_mock_form) as forms_total,
+       (select count(*) from ali_mock_form f where to_jsonb(f)::text ~* 'compass|salmon|greatstink|form-b|formb|form_b') as forms_naming_form_b_or_these_passages,
+       (select count(*) from ali_mock_exposed_question_ids e where to_jsonb(e)::text ~* 'salmon|greatstink|compass') as exposed_question_hits,
+       (select count(*) from ali_mock_attempt a where to_jsonb(a)::text ~* 'salmon|greatstink') as attempt_hits;
 
 -- J. The Mock composer guard is in code (lib/ali/rejectedMockContent.ts), not in the database: confirm the deployed build contains commit bfea0e5 or later.

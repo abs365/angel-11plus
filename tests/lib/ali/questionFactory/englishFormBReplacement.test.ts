@@ -185,3 +185,13 @@ test("migration 273 template is prepared, not applied, adds only sealed candidat
   assert.match(code, /'rejected'/);
   assert.match(code, /active = false/);
 });
+
+test("no answer leakage inside the paper: a synonym item's answer word never appears in another item's question (found and fixed before execution: Q10 used to print 'exceptionally', the Q06 answer)", () => {
+  for (const syn of REPLACEMENT_ITEMS.filter((i) => i.skill === "QT-RC-04")) {
+    const answer = syn.acceptedAnswers![0];
+    for (const other of REPLACEMENT_ITEMS) if (other.id !== syn.id) assert.ok(!new RegExp(`\b${answer}\b`, "i").test(other.question), `${other.id} contains the answer to ${syn.id}: ${answer}`);
+  }
+  const q10 = REPLACEMENT_ITEMS.find((i) => i.id.endsWith("q10"))!;
+  assert.match(q10.question, /B\. London had a hot, dry summer in 1858\./);
+  assert.deepEqual(q10.orderedAnswer, ["c", "b", "a", "d"]);
+});

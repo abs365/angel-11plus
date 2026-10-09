@@ -1,0 +1,194 @@
+{
+ "passage": {
+  "words": 531,
+  "paragraphs": 6,
+  "sentences": 31,
+  "avgSentenceWords": 17.1,
+  "longestSentenceWords": 40,
+  "fleschKincaidGrade": 8,
+  "wordsOfNineLettersOrMore": 25,
+  "hardWords": [
+   "nineteenth",
+   "londoners",
+   "collected",
+   "sometimes",
+   "afterwards",
+   "discovery",
+   "convinced",
+   "exceptionally",
+   "newspapers",
+   "parliament",
+   "politicians",
+   "handkerchiefs",
+   "chemicals",
+   "bazalgette",
+   "principle",
+   "eastwards",
+   "downstream",
+   "thousands",
+   "labourers",
+   "outbreaks",
+   "engineers",
+   "embankments",
+   "healthier"
+  ],
+  "identicalToTypeScriptSource": true,
+  "americanSpellingFound": [],
+  "sensitiveContentNote": "cholera deaths and sewage are stated plainly, once each, without detail; standard KS2 Victorian-history content"
+ },
+ "items": [
+  {
+   "id": "q01",
+   "qt": "QT-RC-01",
+   "difficulty": "easy",
+   "marks": 1,
+   "tier": "TIER2_ACCEPTED_SET",
+   "wordsInStem": 12,
+   "marking": "marking contract valid",
+   "flags": []
+  },
+  {
+   "id": "q02",
+   "qt": "QT-RC-01",
+   "difficulty": "easy",
+   "marks": 1,
+   "tier": "TIER2_ACCEPTED_SET",
+   "wordsInStem": 11,
+   "marking": "marking contract valid",
+   "flags": []
+  },
+  {
+   "id": "q03",
+   "qt": "QT-RC-01",
+   "difficulty": "medium",
+   "marks": 1,
+   "tier": "TIER2_ACCEPTED_SET",
+   "wordsInStem": 9,
+   "marking": "marking contract valid",
+   "flags": []
+  },
+  {
+   "id": "q04",
+   "qt": "QT-RC-02",
+   "difficulty": "medium",
+   "marks": 3,
+   "tier": "TIER3_QUOTATION_PLUS_EXPLANATION",
+   "wordsInStem": 69,
+   "marking": "quotation + explanation",
+   "flags": []
+  },
+  {
+   "id": "q05",
+   "qt": "QT-RC-03",
+   "difficulty": "hard",
+   "marks": 2,
+   "tier": "TIER5_NAMED_COMPONENT_PLUS_EXPLANATION",
+   "wordsInStem": 33,
+   "marking": "manual (named components)",
+   "flags": []
+  },
+  {
+   "id": "q06",
+   "qt": "QT-RC-04",
+   "difficulty": "medium",
+   "marks": 1,
+   "tier": "TIER2_ACCEPTED_SET",
+   "wordsInStem": 16,
+   "marking": "marking contract valid",
+   "flags": []
+  },
+  {
+   "id": "q07",
+   "qt": "QT-RC-04",
+   "difficulty": "medium",
+   "marks": 1,
+   "tier": "TIER2_ACCEPTED_SET",
+   "wordsInStem": 14,
+   "marking": "marking contract valid",
+   "flags": []
+  },
+  {
+   "id": "q08",
+   "qt": "QT-RC-04",
+   "difficulty": "medium",
+   "marks": 1,
+   "tier": "TIER2_ACCEPTED_SET",
+   "wordsInStem": 14,
+   "marking": "marking contract valid",
+   "flags": []
+  },
+  {
+   "id": "q09",
+   "qt": "QT-RC-04",
+   "difficulty": "medium",
+   "marks": 1,
+   "tier": "TIER2_ACCEPTED_SET",
+   "wordsInStem": 16,
+   "marking": "marking contract valid",
+   "flags": []
+  },
+  {
+   "id": "q10",
+   "qt": "QT-RC-06",
+   "difficulty": "medium",
+   "marks": 4,
+   "tier": "TIER4_ORDERED_LIST",
+   "wordsInStem": 77,
+   "marking": "ordered: correct=4/4, reversed=0",
+   "flags": []
+  },
+  {
+   "id": "q11",
+   "qt": "QT-RC-10",
+   "difficulty": "hard",
+   "marks": 2,
+   "tier": "TIER5_NAMED_COMPONENT_PLUS_EXPLANATION",
+   "wordsInStem": 26,
+   "marking": "manual (named components)",
+   "flags": []
+  }
+ ],
+ "totals": {
+  "questions": 11,
+  "marks": 18,
+  "byDifficulty": {
+   "easy": 2,
+   "medium": 7,
+   "hard": 2
+  },
+  "byMarks": {
+   "1": 7,
+   "2": 2,
+   "3": 1,
+   "4": 1
+  },
+  "byTier": {
+   "TIER2_ACCEPTED_SET": 7,
+   "TIER3_QUOTATION_PLUS_EXPLANATION": 1,
+   "TIER5_NAMED_COMPONENT_PLUS_EXPLANATION": 2,
+   "TIER4_ORDERED_LIST": 1
+  },
+  "byQuestionType": {
+   "QT-RC-01": 3,
+   "QT-RC-02": 1,
+   "QT-RC-03": 1,
+   "QT-RC-04": 4,
+   "QT-RC-06": 1,
+   "QT-RC-10": 1
+  },
+  "allFlags": []
+ },
+ "noDeleteNoDdl": true,
+ "rowEffects": {
+  "passageInserts": 1,
+  "questionInsertRowsDeclared": 11,
+  "reviewInsertStatements": 2,
+  "updates": [
+   "update public.ali_passage_bank set active = false",
+   "update public.ali_question_bank set active = false"
+  ],
+  "eligibilityValuesWritten": {
+   "authentic_assessment_candidate": 14
+  }
+ }
+}
