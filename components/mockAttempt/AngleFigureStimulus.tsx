@@ -1,4 +1,7 @@
+"use client";
+
 import type { MockAngleFigureStimulus } from "@/lib/mockAttempt/types";
+import { isNarrowFigure, MIN_FIGURE_TEXT_PX, useFigureWidth } from "./useFigureWidth";
 
 /**
  * Shared angle-figure renderer (same family as the table / chart / grid renderers). Callers validate with
@@ -10,7 +13,15 @@ import type { MockAngleFigureStimulus } from "@/lib/mockAttempt/types";
 const rad = (d: number) => (d * Math.PI) / 180;
 const isUnknown = (s: string) => /^[a-z]$/.test(s);
 
+/** Angle labels stay at 16 units normally; on a very narrow figure they grow (capped) so they still render at about 10px. */
+export function angleLabelFont(width: number | null): number {
+  if (!isNarrowFigure(width)) return 16;
+  return Math.min(22, Math.max(16, Math.ceil((MIN_FIGURE_TEXT_PX * 360) / Math.min(width, 420))));
+}
+
 export function AngleFigureStimulus({ stimulus }: { stimulus: MockAngleFigureStimulus }) {
+  const [ref, width] = useFigureWidth();
+  const labelFont = angleLabelFont(width);
   const W = 360;
   const H = 240;
   const labels: { x: number; y: number; text: string; unknown: boolean }[] = [];
@@ -80,8 +91,9 @@ export function AngleFigureStimulus({ stimulus }: { stimulus: MockAngleFigureSti
   const textEquivalent = `Angle diagram of ${what}. Known angles: ${known.join(", ")}. Unknown: ${unknownLetters.join(", ")}. Not drawn accurately.`;
 
   return (
-    <figure className="my-4 rounded-lg border border-[var(--angel-border)] bg-[var(--angel-paper)] p-3">
+    <figure className="my-4 rounded-lg border border-[var(--angel-border)] bg-[var(--angel-paper)] p-2 sm:p-3">
       {stimulus.title && <figcaption className="text-xs font-semibold text-[var(--angel-muted)] mb-1">{stimulus.title}</figcaption>}
+      <div ref={ref}>
       <svg viewBox={`0 0 ${W} ${H}`} role="img" aria-label={textEquivalent} className="w-full h-auto max-w-[420px] mx-auto block">
         {lines.map((l, i) => (
           <line key={`l${i}`} {...l} stroke="var(--angel-blue)" strokeWidth={2.5} strokeLinecap="round" />
@@ -90,11 +102,12 @@ export function AngleFigureStimulus({ stimulus }: { stimulus: MockAngleFigureSti
           <path key={`a${i}`} d={d} fill="none" stroke="var(--angel-ink)" strokeWidth={1.5} />
         ))}
         {labels.map((l, i) => (
-          <text key={`t${i}`} x={l.x} y={l.y} textAnchor="middle" fontSize="16" fontWeight="700" fontStyle={l.unknown ? "italic" : "normal"} fill="var(--angel-ink)">
+          <text key={`t${i}`} x={l.x} y={l.y} textAnchor="middle" fontSize={labelFont} fontWeight="700" fontStyle={l.unknown ? "italic" : "normal"} fill="var(--angel-ink)">
             {l.text}
           </text>
         ))}
       </svg>
+      </div>
       <p className="text-[11px] text-[var(--angel-muted)] text-center">Diagram not drawn accurately. Work the angle out; do not measure.</p>
     </figure>
   );
