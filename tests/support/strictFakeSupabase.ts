@@ -24,13 +24,19 @@ export const LEARNER_KEYED_TABLES: Record<string, string> = {
 
 type Row = Record<string, unknown>;
 
-class Builder implements PromiseLike<{ data: unknown; error: null }> {
+/** PostgREST max_rows on this project (proven against production: a 0-1999 request returns exactly 1,000). */
+export const SERVER_MAX_ROWS = 1000;
+
+class Builder implements PromiseLike<{ data: unknown; error: null; count: number | null }> {
   private filters: Array<(r: Row) => boolean> = [];
   private learnerFilterValues: unknown[] = [];
   private orderCol: string | null = null;
   private ascending = true;
   private limitN: number | null = null;
   private single: "maybe" | "one" | null = null;
+  private wantCount = false;
+  private rangeFrom: number | null = null;
+  private rangeTo: number | null = null;
 
   constructor(
     private readonly table: string,
@@ -38,7 +44,9 @@ class Builder implements PromiseLike<{ data: unknown; error: null }> {
     private readonly log: string[]
   ) {}
 
-  select() { return this; }
+  select(_cols?: string, opts?: { count?: string }) { this.wantCount = opts?.count === "exact"; return this; }
+  /** Mirrors PostgREST: inclusive range, and the server never returns more than MAX_ROWS in one response. */
+  range(from: number, to: number) { this.rangeFrom = from; this.rangeTo = to; return this; }
   eq(col: string, val: unknown) {
     if (col === LEARNER_KEYED_TABLES[this.table]) this.learnerFilterValues.push(val);
     this.filters.push((r) => r[col] === val);
@@ -64,7 +72,7 @@ class Builder implements PromiseLike<{ data: unknown; error: null }> {
   }
 
   then<T1, T2>(
-    onfulfilled?: ((v: { data: unknown; error: null }) => T1 | PromiseLike<T1>) | null,
+    onfulfilled?: ((v: { data: unknown; error: null; count: number | null }) => T1 | PromiseLike<T1>) | null,
     onrejected?: ((e: unknown) => T2 | PromiseLike<T2>) | null
   ): PromiseLike<T1 | T2> {
     try {
@@ -75,8 +83,11 @@ class Builder implements PromiseLike<{ data: unknown; error: null }> {
         out = [...out].sort((a, b) => ((a[c] as number) > (b[c] as number) ? 1 : -1) * (this.ascending ? 1 : -1));
       }
       if (this.limitN !== null) out = out.slice(0, this.limitN);
+      const total = out.length;
+      if (this.rangeFrom !== null && this.rangeTo !== null) out = out.slice(this.rangeFrom, Math.min(this.rangeTo + 1, this.rangeFrom + SERVER_MAX_ROWS));
+      else out = out.slice(0, SERVER_MAX_ROWS);
       const data = this.single ? out[0] ?? null : out;
-      return Promise.resolve({ data, error: null as null }).then(onfulfilled, onrejected);
+      return Promise.resolve({ data, error: null as null, count: this.wantCount ? total : null }).then(onfulfilled, onrejected);
     } catch (e) {
       return Promise.reject(e).then(onfulfilled, onrejected);
     }

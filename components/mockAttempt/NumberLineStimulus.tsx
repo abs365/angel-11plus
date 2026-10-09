@@ -45,7 +45,7 @@ export function NumberLineStimulus({ stimulus }: { stimulus: MockNumberLineStimu
     if (i < intervals) for (let j = 1; j < minorDivisions; j++) ticks.push({ v: min + i * majorStep + (j * majorStep) / minorDivisions, major: false });
   }
   const fmt = (v: number) => (Math.abs(v) < 1e-9 ? 0 : v).toFixed(dec);
-  const textEquivalent = `Number line from ${fmt(min)} to ${fmt(max)}, with labelled marks every ${fmt(majorStep)}${minorDivisions > 1 ? ` and ${minorDivisions - 1} smaller marks between each pair` : ""}. Marked points: ${stimulus.points.map((p) => p.label).join(", ")}.`;
+  const textEquivalent = `Number line from ${fmt(min)} to ${fmt(max)}, with labelled marks every ${fmt(majorStep)}${minorDivisions > 1 ? ` and ${minorDivisions - 1} smaller ${minorDivisions - 1 === 1 ? "mark" : "marks"} between each pair` : ""}. Marked points: ${stimulus.points.map((p) => p.label).join(", ")}.`;
 
   return (
     <figure className="my-4 rounded-lg border border-[var(--angel-border)] bg-[var(--angel-paper)] p-2 sm:p-3">

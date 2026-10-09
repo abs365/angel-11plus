@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { MR05_FACTORS_PRIMES_FAMILY, BP_HIGHEST_COMMON_FACTOR, BP_LOWEST_COMMON_MULTIPLE, BP_IS_PRIME, BP_COUNT_FACTORS } from "@/lib/ali/questionFactory/mr05FactorsPrimesBlueprints";
+import { BP_ERROR_IDENTIFICATION_FACTORS, MR05_FACTORS_PRIMES_FAMILY, BP_HIGHEST_COMMON_FACTOR, BP_LOWEST_COMMON_MULTIPLE, BP_IS_PRIME, BP_COUNT_FACTORS } from "@/lib/ali/questionFactory/mr05FactorsPrimesBlueprints";
 import { runFamilyBatch, generateBlueprintCandidate, validateBlueprintCandidate } from "@/lib/ali/questionFactory/candidateGeneration";
 import { classifyBlueprintDepth, classifyScaledMemorisationRisk } from "@/lib/ali/questionFactory/diversityGates";
 
@@ -83,4 +83,34 @@ test("exact-duplicate rejection against a real existing bank row", () => {
   const result = validateBlueprintCandidate(candidate, bp, [existingBankRow]);
   assert.equal(result.approved, false);
   assert.ok(result.reasons.includes("exact_duplicate_of_existing_bank_row"));
+});
+
+test("error-identification wording is grammatical for EVERY valid parameter set: never '1 factors', never a claimed count below 1 (so never '0 factors')", () => {
+  const bp = BP_ERROR_IDENTIFICATION_FACTORS;
+  let singular = 0;
+  let checked = 0;
+  for (let n = 6; n <= 100; n++) {
+    for (let wrongOffset = -2; wrongOffset <= 2; wrongOffset++) {
+      const p = { n, wrongOffset };
+      if (!bp.constraints(p)) continue; // the generator's own validity gate: only valid parameter sets are ever rendered
+      checked++;
+      const text = bp.renderQuestionText(p);
+      const claimed = Number(text.match(/says \d+ has (\d+) factors?\./)![1]);
+      assert.ok(claimed >= 1, `n=${n} offset=${wrongOffset}: claimed count ${claimed}`);
+      assert.doesNotMatch(text, /1 factors/, text);
+      assert.doesNotMatch(text, /(?:[02-9]|\d{2,}) factor/, text);
+      if (claimed === 1) {
+        singular++;
+        assert.match(text, / has 1 factor\. This is incorrect/);
+      }
+    }
+  }
+  assert.ok(checked > 300);
+  assert.ok(singular > 0, "the singular case genuinely occurs (primes with offset -1), so the test exercises it");
+  assert.equal(bp.renderQuestionText({ n: 61, wrongOffset: -1 }), "A student says 61 has 1 factor. This is incorrect. How many factors does 61 actually have?");
+});
+
+test("the live defect is reproduced by the OLD wording and is gone from the generator", () => {
+  const text = BP_ERROR_IDENTIFICATION_FACTORS.renderQuestionText({ n: 61, wrongOffset: -1 });
+  assert.notEqual(text, "A student says 61 has 1 factors. This is incorrect. How many factors does 61 actually have?");
 });

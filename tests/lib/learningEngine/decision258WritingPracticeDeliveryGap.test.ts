@@ -32,8 +32,20 @@ function fakeSupabase(rows: Record<string, unknown>[]) {
   return {
     from(_table: string) {
       const filters: Array<(row: Record<string, unknown>) => boolean> = [];
+      let wantCount = false;
+      let rangeFrom = 0;
+      let rangeTo = Number.MAX_SAFE_INTEGER;
       const builder = {
-        select() {
+        select(_cols?: string, opts?: { count?: string }) {
+          wantCount = opts?.count === "exact";
+          return builder;
+        },
+        order() {
+          return builder;
+        },
+        range(from: number, to: number) {
+          rangeFrom = from;
+          rangeTo = to;
           return builder;
         },
         eq(col: string, val: unknown) {
@@ -47,8 +59,10 @@ function fakeSupabase(rows: Record<string, unknown>[]) {
           });
           return builder;
         },
-        then(resolve: (result: { data: Record<string, unknown>[]; error: null }) => void) {
-          resolve({ data: rows.filter((row) => filters.every((f) => f(row))), error: null });
+        then(resolve: (result: { data: Record<string, unknown>[]; error: null; count: number | null }) => void) {
+          const all = rows.filter((row) => filters.every((f) => f(row)));
+          // PostgREST semantics: inclusive range, never more than 1,000 rows in one response.
+          resolve({ data: all.slice(rangeFrom, Math.min(rangeTo + 1, rangeFrom + 1000)), error: null, count: wantCount ? all.length : null });
         },
       };
       return builder;

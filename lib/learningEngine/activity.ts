@@ -1,4 +1,5 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
+import { fetchAllRows } from "@/lib/ali/fetchAllRows";
 import type { Database } from "@/types/supabase";
 import type { CompetencyId, QuestionTypeId } from "./types";
 import { ALL_QUESTION_TYPE_IDS, QUESTION_TYPE_PRIMARY_COMPETENCY, COMPETENCIES } from "./assessmentBrainMap";
@@ -46,11 +47,16 @@ export async function fetchRecentActivity(
    */
   sinceIso?: string
 ): Promise<RecentActivityItem[]> {
-  const { data: questions, error: questionsError } = await supabase
-    .from("ali_question_bank")
-    .select("id, skill")
-    .in("skill", ALL_QUESTION_TYPE_IDS)
-    .contains("pathway", ["csse"]);
+  // Paginated: this all-skills lookup spans every CSSE subject (1,264 Practice rows today) and PostgREST truncates a response at 1,000.
+  const { data: questions, error: questionsError } = await fetchAllRows<{ id: string; skill: string }>((from, to, first) =>
+    supabase
+      .from("ali_question_bank")
+      .select("id, skill", first ? { count: "exact" } : undefined)
+      .in("skill", ALL_QUESTION_TYPE_IDS)
+      .contains("pathway", ["csse"])
+      .order("id", { ascending: true })
+      .range(from, to)
+  );
 
   if (questionsError) {
     console.warn("[LearningEngine] fetchRecentActivity (question lookup) failed:", questionsError.message);

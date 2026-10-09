@@ -274,6 +274,16 @@ export function checkMathsAnswer(userAnswer: string, correctAnswer: string): boo
     return Math.abs(userNum - correctNum) < 0.0001;
   }
 
+  // Simple percentage answers ONLY: a stored answer that is exactly an UNSIGNED number followed by "%" (e.g. "25%") accepts the
+  // mathematically equivalent bare number ("25") or the same number with a "%" ("25%", "25 %"), compared numerically. Deliberately narrow:
+  // a signed stored answer ("+18.37%", "-30.97%": the sign IS the answer there) and an answer carrying words ("45% increase": the direction
+  // matters) never match this pattern, so they keep the exact-text path below, unchanged. A wrong number is rejected here directly.
+  const simplePercent = correctFirstAlt.match(/^(\d+(?:\.\d+)?)%$/);
+  if (simplePercent) {
+    const userPercent = userTrimmed.match(/^(\d+(?:\.\d+)?)\s*%?$/);
+    if (userPercent) return Math.abs(Number(userPercent[1]) - Number(simplePercent[1])) < 0.0001;
+  }
+
   // Fraction/mixed-number equivalence (see parseExactFraction doc comment
   // above). Only activates when the STORED answer is itself fraction-
   // formatted, and only accepts a user answer that is ALSO given in exact

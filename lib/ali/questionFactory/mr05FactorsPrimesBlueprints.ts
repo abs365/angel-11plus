@@ -260,7 +260,8 @@ export const BP_ERROR_IDENTIFICATION_FACTORS: StructuralBlueprint<ErrorFactorPar
   }),
   renderQuestionText: (p) => {
     const wrongCount = countFactors(p.n) + p.wrongOffset;
-    return `A student says ${p.n} has ${wrongCount} factors. This is incorrect. How many factors does ${p.n} actually have?`;
+    // Singular when the (wrong) claimed count is 1: "has 1 factor", never "has 1 factors". The constraint above already keeps the claimed count >= 1.
+    return `A student says ${p.n} has ${wrongCount} ${wrongCount === 1 ? "factor" : "factors"}. This is incorrect. How many factors does ${p.n} actually have?`;
   },
   deriveCorrectAnswer: (p) => String(countFactors(p.n)),
   deriveWorkedSteps: (p) => {

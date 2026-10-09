@@ -2,6 +2,7 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Database } from "@/types/supabase";
 import type { BankQuestion, AliSubject } from "@/types/ali/questionBank";
 import type { MockPathwayId } from "@/types/mock";
+import { fetchAllRows } from "@/lib/ali/fetchAllRows";
 
 type BankRow = Database["public"]["Tables"]["ali_question_bank"]["Row"];
 
@@ -119,11 +120,17 @@ export async function fetchQuestionBank(
   subject: AliSubject,
   pathway: MockPathwayId
 ): Promise<BankQuestion[]> {
-  const { data, error } = await supabase
-    .from("ali_question_bank")
-    .select("*")
-    .eq("subject", subject)
-    .contains("pathway", [pathway]);
+  // Complete, deterministic retrieval (lib/ali/fetchAllRows.ts): PostgREST silently truncates one response to 1,000 rows, in an
+  // unspecified order, so an unpaginated read loses rows as the bank grows. Selection behaviour is unchanged: the same rows, now all of them.
+  const { data, error } = await fetchAllRows<BankRow>((from, to, first) =>
+    supabase
+      .from("ali_question_bank")
+      .select("*", first ? { count: "exact" } : undefined)
+      .eq("subject", subject)
+      .contains("pathway", [pathway])
+      .order("id", { ascending: true })
+      .range(from, to)
+  );
 
   if (error || !data) {
     console.warn("[ALI] fetchQuestionBank failed:", error?.message);
@@ -159,13 +166,17 @@ export async function fetchMockEligibleQuestionBank(
   subject: AliSubject,
   pathway: MockPathwayId
 ): Promise<BankQuestion[]> {
-  const { data, error } = await supabase
-    .from("ali_question_bank")
-    .select("*")
-    .eq("subject", subject)
-    .contains("pathway", [pathway])
-    .eq("eligibility_status", "mock_eligible")
-    .eq("active", true);
+  const { data, error } = await fetchAllRows<BankRow>((from, to, first) =>
+    supabase
+      .from("ali_question_bank")
+      .select("*", first ? { count: "exact" } : undefined)
+      .eq("subject", subject)
+      .contains("pathway", [pathway])
+      .eq("eligibility_status", "mock_eligible")
+      .eq("active", true)
+      .order("id", { ascending: true })
+      .range(from, to)
+  );
 
   if (error || !data) {
     console.warn("[ALI] fetchMockEligibleQuestionBank failed:", error?.message);

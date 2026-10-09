@@ -1,4 +1,5 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
+import { fetchAllRows } from "@/lib/ali/fetchAllRows";
 import type { Database } from "@/types/supabase";
 import type {
   RecommendationCandidate,
@@ -118,10 +119,14 @@ async function fetchRecentAttemptSignalsForCompetency(
   competencyCode: string,
   skillCodes: string[]
 ): Promise<RecentAttemptSignal[]> {
-  const { data: questions, error: questionsError } = await supabase
-    .from("ali_question_bank")
-    .select("id")
-    .in("skill", skillCodes);
+  const { data: questions, error: questionsError } = await fetchAllRows<{ id: string }>((from, to, first) =>
+    supabase
+      .from("ali_question_bank")
+      .select("id", first ? { count: "exact" } : undefined)
+      .in("skill", skillCodes)
+      .order("id", { ascending: true })
+      .range(from, to)
+  );
 
   if (questionsError || !questions || questions.length === 0) {
     if (questionsError) {

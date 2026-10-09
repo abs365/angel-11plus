@@ -1,4 +1,5 @@
 import { normaliseStemForNearDuplicateCheck } from "@/lib/ali/antiMemorisationChecks";
+import { fetchAllRows } from "@/lib/ali/fetchAllRows";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Database } from "@/types/supabase";
 import type { EducationalStateQuestionEvidence, EducationalState } from "@/types/ali/educationalState";
@@ -93,10 +94,14 @@ async function fetchCompetencyStateEvidence(
 ): Promise<{ evidence: EducationalStateQuestionEvidence[]; masteryState: string; reviewDue: boolean }> {
   if (skillCodes.length === 0) return { evidence: [], masteryState: "new", reviewDue: false };
 
-  const { data: questions, error: questionsError } = await supabase
-    .from("ali_question_bank")
-    .select<string, StateQuestionMeta>("id, mastery_threshold, confidence_weight, family_id, stem:prompt->>question")
-    .in("skill", skillCodes);
+  const { data: questions, error: questionsError } = await fetchAllRows<StateQuestionMeta>((from, to, first) =>
+    supabase
+      .from("ali_question_bank")
+      .select<string, StateQuestionMeta>("id, mastery_threshold, confidence_weight, family_id, stem:prompt->>question", first ? { count: "exact" } : undefined)
+      .in("skill", skillCodes)
+      .order("id", { ascending: true })
+      .range(from, to)
+  );
 
   if (questionsError || !questions || questions.length === 0) {
     if (questionsError) console.warn("[ALI] fetchCompetencyStateEvidence (question lookup) failed:", questionsError.message);

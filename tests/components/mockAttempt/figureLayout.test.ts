@@ -165,3 +165,14 @@ test("Mock is untouched: no Mock surface imports the figure renderers changed he
 function walk(d: string): string[] {
   return fs.readdirSync(d, { withFileTypes: true }).flatMap((e) => (e.isDirectory() ? walk(`${d}/${e.name}`) : /\.(ts|tsx)$/.test(e.name) ? [`${d}/${e.name}`] : []));
 }
+
+test("number-line text equivalent uses correct singular/plural: '1 smaller mark', '4 smaller marks', none when there are no minor marks", () => {
+  const base = { type: "number-line", min: 1.2, max: 2, majorStep: 0.2, points: [{ label: "P", value: 1.7 }] };
+  const aria = (minorDivisions: number) => html(React.createElement(NumberLineStimulus, { stimulus: { ...base, minorDivisions } as never })).match(/aria-label="([^"]*)"/)![1];
+  assert.match(aria(2), /and 1 smaller mark between each pair/);
+  assert.doesNotMatch(aria(2), /1 smaller marks/);
+  assert.match(aria(5), /and 4 smaller marks between each pair/);
+  assert.match(aria(10), /and 9 smaller marks between each pair/);
+  assert.doesNotMatch(aria(1), /smaller/);
+  for (const { st } of ofType("number-line")) assert.doesNotMatch(html(React.createElement(NumberLineStimulus, { stimulus: st as never })), /\b1 smaller marks\b/);
+});

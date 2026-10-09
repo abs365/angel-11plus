@@ -52,7 +52,7 @@ function makeDelayedStubClient(delayMsByCompetency: Record<string, number>): Sup
       if (table === "ali_question_bank") {
         return {
           select: () => ({
-            in: async () => ({ data: [], error: null }),
+            in: () => ({ order: () => ({ range: async () => ({ data: [], error: null, count: 0 }) }) }),
           }),
         };
       }

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { fetchAllRows } from "@/lib/ali/fetchAllRows";
 import Link from "next/link";
 import {
   Users, MessageSquare, Bug, Lightbulb, Star, Target,
@@ -107,17 +108,21 @@ function LearningEngineCoverage() {
       const supabase = getSupabaseClient();
       if (!supabase) return setState("error");
 
-      const { data, error } = await supabase
-        .from("ali_question_bank")
-        .select("skill")
-        .in("skill", ALL_QUESTION_TYPE_IDS)
-        .contains("pathway", ["csse"]);
+      const { data, error } = await fetchAllRows<{ id: string; skill: string }>((from, to, first) =>
+        supabase
+          .from("ali_question_bank")
+          .select("id, skill", first ? { count: "exact" } : undefined)
+          .in("skill", ALL_QUESTION_TYPE_IDS)
+          .contains("pathway", ["csse"])
+          .order("id", { ascending: true })
+          .range(from, to)
+      );
 
       if (error) {
         // PGRST205 = table not found in schema cache — the honest, expected
         // state until migrations 004-013 are applied (see
         // CAP4_LAUNCH_ACCEPTANCE_PACK.md), not a bug to hide.
-        return setState(error.code === "PGRST205" ? "no-table" : "error");
+        return setState(/PGRST205|schema cache/.test(error.message ?? "") ? "no-table" : "error");
       }
       setWithContent(new Set((data ?? []).map((r) => r.skill)).size);
       setState("ready");

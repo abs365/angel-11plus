@@ -1,4 +1,5 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
+import { fetchAllRows } from "@/lib/ali/fetchAllRows";
 import type { Database } from "@/types/supabase";
 import type { QuestionEvidenceInput } from "@/types/ali/confidence";
 import { normaliseStemForNearDuplicateCheck } from "@/lib/ali/antiMemorisationChecks";
@@ -92,10 +93,14 @@ export async function fetchCompetencyEvidence(
 ): Promise<QuestionEvidenceInput[]> {
   if (skillCodes.length === 0) return [];
 
-  const { data: questions, error: questionsError } = await supabase
-    .from("ali_question_bank")
-    .select<string, QuestionMeta>("id, mastery_threshold, confidence_weight, family_id, stem:prompt->>question")
-    .in("skill", skillCodes);
+  const { data: questions, error: questionsError } = await fetchAllRows<QuestionMeta>((from, to, first) =>
+    supabase
+      .from("ali_question_bank")
+      .select<string, QuestionMeta>("id, mastery_threshold, confidence_weight, family_id, stem:prompt->>question", first ? { count: "exact" } : undefined)
+      .in("skill", skillCodes)
+      .order("id", { ascending: true })
+      .range(from, to)
+  );
 
   if (questionsError || !questions || questions.length === 0) {
     if (questionsError) console.warn("[ALI] fetchCompetencyEvidence (question lookup) failed:", questionsError.message);

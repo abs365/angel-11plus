@@ -58,18 +58,30 @@ function row(overrides: Partial<BankRow>): BankRow {
 
 /** Minimal fluent stub mimicking exactly the chain calls questionBank.ts issues, genuinely applying filters to `rows` rather than returning them unconditionally. */
 function stubClient(rows: BankRow[]): SupabaseClient<Database> {
-  function builder(filtered: BankRow[]) {
+  function builder(filtered: BankRow[], state = { wantCount: false, from: 0, to: Number.MAX_SAFE_INTEGER }) {
     const b = {
-      select: () => b,
-      eq: (col: string, val: unknown) => builder(filtered.filter((r) => (r as unknown as Record<string, unknown>)[col] === val)),
+      select: (_cols?: string, opts?: { count?: string }) => {
+        state.wantCount = opts?.count === "exact";
+        return b;
+      },
+      order: () => b,
+      range: (from: number, to: number) => {
+        state.from = from;
+        state.to = to;
+        return b;
+      },
+      eq: (col: string, val: unknown) => builder(filtered.filter((r) => (r as unknown as Record<string, unknown>)[col] === val), state),
       contains: (col: string, val: unknown[]) =>
         builder(
           filtered.filter((r) => {
             const field = (r as unknown as Record<string, unknown>)[col];
             return Array.isArray(field) && val.every((v) => field.includes(v));
-          })
+          }),
+          state
         ),
-      then: (resolve: (v: { data: BankRow[]; error: null }) => void) => resolve({ data: filtered, error: null }),
+      // PostgREST semantics: inclusive range, never more than 1,000 rows in one response.
+      then: (resolve: (v: { data: BankRow[]; error: null; count: number | null }) => void) =>
+        resolve({ data: filtered.slice(state.from, Math.min(state.to + 1, state.from + 1000)), error: null, count: state.wantCount ? filtered.length : null }),
     };
     return b;
   }
