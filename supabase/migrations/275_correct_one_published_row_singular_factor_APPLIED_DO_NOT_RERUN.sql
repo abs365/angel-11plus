@@ -1,4 +1,6 @@
--- Angel Digital 11+ — Migration 275 — TEMPLATE, NOT APPLIED. Founder-applied only (same governed pattern as migration 272's guarded one-row repair).
+-- Angel Digital 11+ — Migration 275 — APPLIED to production by the Founder (2026-10-09, "Success. No rows returned"). DO NOT RERUN.
+-- Read-only production verification PASSED (2026-10-09): target prompt md5 now 72d047d65be4e98e2109dbd019449ee2 (the expected AFTER), answer, family, difficulty, eligibility,
+-- explanation and every other field unchanged; 0 rows still read "has 1 factors". Founder-applied governed pattern (same as migration 272's guarded one-row repair).
 -- Purpose: correct the grammar of ONE published Practice row ("has 1 factors" -> "has 1 factor"). Wording only: the answer, the stimulus, the
 -- difficulty, the eligibility and every other field are untouched. The generator that produced the defect was fixed at source
 -- (lib/ali/questionFactory/mr05FactorsPrimesBlueprints.ts) so it cannot regenerate it.
