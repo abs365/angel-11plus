@@ -65,6 +65,8 @@ The six trimmed candidates remain in the repository only: never submitted, never
 
 ## B. Migration 273: Great Stink sealed, Salmon rejected and replaced
 
+> **SUPERSEDED (2026-10-09):** the authoritative, refreshed package for migration 273 is `ANGEL_CSSE_MIGRATION_273_FOUNDER_PACKAGE.md` (commit `e68179e` contains the migration; one answer leak in Q10 was fixed; BEFORE and AFTER counts re-captured after the 374 publication and migration 275). The commit and the BEFORE counts below are the earlier figures; use the new package.
+
 | | |
 |---|---|
 | Exact filename | `supabase/migrations/273_english_form_b_salmon_replacement_TEMPLATE_NOT_APPLIED.sql` (to be renamed `…_APPLIED_DO_NOT_RERUN.sql` by me only after you confirm it ran) |
