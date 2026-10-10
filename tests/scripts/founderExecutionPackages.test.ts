@@ -14,7 +14,7 @@ const files = [
   "supabase/migrations/274_mock_maths_coordinate_answer_normaliser_TEMPLATE_NOT_APPLIED.sql",
   ...["context", "data-handling", "breadth", "grid", "angle", "numberline"].map((k) => `${pk}/submit-${k}.js`),
   `${pk}/review-and-publish-GUARDED.js`, `${pk}/manifest.json`,
-  `${fx}/01-practice-374-verification.sql`, `${fx}/02-migration-273-verification.sql`, `${fx}/03-migration-274-verification.sql`,
+  `${fx}/01-practice-374-verification.sql`, `${fx}/02-migration-273-verification.sql`, `${fx}/03-migration-274-verification.sql`, `${fx}/274-POST-APPLY-READONLY-verification.sql`,
   `${fx}/273-ROLLBACK-remove-additions-reactivate-salmon.sql`, `${fx}/274-ROLLBACK-restore-previous-function.sql`,
 ];
 const sha = (f: string) => crypto.createHash("sha256").update(fs.readFileSync(f, "utf8").replace(/\r\n/g, "\n"), "utf8").digest("hex");
