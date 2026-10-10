@@ -11,10 +11,10 @@ The Compass Rose accepted-answer semantics (the sundial, the weathervane, hedged
 | Still rejected | no brackets (`9, 5`), different numbers (`(5, 9)`, `(9, 6)`), three values, wrong separators (`(9;5)`, `(9 5)`, `(9,,5)`), words (`(nine, 5)`), malformed (`(9, 5`) |
 | Not loosened | numeric answers, times (`15:50`), words, letters and every other exact-text answer keep their existing behaviour; there is no fuzzy matching |
 | Code (live on deploy) | `lib/learningEngine/coordinateAnswer.ts`, used by the Practice marker `checkMathsAnswer` |
-| Mock Maths scorer | the Mock scorer is **SQL** (`mock_score_attempt`), so it needs a migration: **`274_mock_maths_coordinate_answer_normaliser_TEMPLATE_NOT_APPLIED.sql`, prepared, NOT applied, Founder to apply**. It adds one branch for coordinate-type stored answers and changes nothing else (numeric path, exact-text path, manual-marking and marking-mode safety, grouping metadata, idempotency and grants preserved). |
+| Mock Maths scorer | the Mock scorer is **SQL** (`mock_score_attempt`), so it needs a migration: **`274_mock_maths_coordinate_answer_normaliser_APPLIED_DO_NOT_RERUN.sql`, APPLIED by the Founder 2026-10-10 and verified PASS**. It adds one branch for coordinate-type stored answers and changes nothing else (numeric path, exact-text path, manual-marking and marking-mode safety, grouping metadata, idempotency and grants preserved). |
 | Evidence | the identical 18 cases were run **read-only against production SQL** with the migration's expression and agree with the TypeScript results; both sets are in `tests/lib/learningEngine/markingRobustness.test.ts` |
 
-Until 274 is applied, the Mock scorer still requires exact `(x, y)` spacing; the Maths validator pack says so.
+Migration 274 is applied (2026-10-10): the Mock scorer now accepts equivalent coordinate spellings. Any earlier statement that the Mock scorer requires exact `(x, y)` spacing (for example in a previously generated Maths validator pack) is out of date.
 
 ## B. Ordered-list answers
 

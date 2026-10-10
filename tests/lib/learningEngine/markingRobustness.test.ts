@@ -35,9 +35,9 @@ test("coordinate normaliser applies ONLY to coordinate-type stored answers; noth
   assert.equal(checkMathsAnswer("(9,5)", "9, 5"), false, "a bracketed response is not accepted for a non-coordinate stored answer");
 });
 
-test("migration 274 template changes only the coordinate branch of the Mock scorer and is not applied", () => {
-  const sql = fs.readFileSync("supabase/migrations/274_mock_maths_coordinate_answer_normaliser_TEMPLATE_NOT_APPLIED.sql", "utf8");
-  assert.match(sql, /NOT APPLIED/);
+test("migration 274 template changes only the coordinate branch of the Mock scorer and is recorded as applied", () => {
+  const sql = fs.readFileSync("supabase/migrations/274_mock_maths_coordinate_answer_normaliser_APPLIED_DO_NOT_RERUN.sql", "utf8");
+  assert.match(sql, /APPLIED to production by the Founder/);
   assert.equal((sql.match(/create or replace function/gi) ?? []).length, 1);
   assert.match(sql, /elsif v_coord_stored is not null then/);
   assert.match(sql, /elsif lower\(trim\(coalesce\(v_response_value, ''\)\)\) = lower\(trim\(v_stored_answer\)\) then/, "exact-text path preserved");

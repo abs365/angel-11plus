@@ -1,4 +1,5 @@
--- Angel Digital 11+ — Migration 274 (TEMPLATE, NOT APPLIED; Founder decision required)
+-- Angel Digital 11+ — Migration 274 — APPLIED to production by the Founder (2026-10-10, "Success. No rows returned"). DO NOT RERUN.
+-- Read-only verification blocks A to J PASS: see ANGEL_PROJECT_STATE.md and scripts/output/founder-execution/274-POST-APPLY-READONLY-verification.sql. Header edited after application; the statements below are byte-for-byte what was run.
 -- Governed coordinate-answer normaliser for the Mock Mathematics scorer.
 --
 -- WHY: the live scorer compares a non-numeric answer as exact text, so a mathematically correct coordinate typed without the

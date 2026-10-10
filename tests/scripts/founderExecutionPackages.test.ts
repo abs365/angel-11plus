@@ -11,7 +11,7 @@ const pk = "scripts/output/csse-practice-publication-package";
 const fx = "scripts/output/founder-execution";
 const files = [
   "supabase/migrations/273_english_form_b_salmon_replacement_APPLIED_DO_NOT_RERUN.sql",
-  "supabase/migrations/274_mock_maths_coordinate_answer_normaliser_TEMPLATE_NOT_APPLIED.sql",
+  "supabase/migrations/274_mock_maths_coordinate_answer_normaliser_APPLIED_DO_NOT_RERUN.sql",
   ...["context", "data-handling", "breadth", "grid", "angle", "numberline"].map((k) => `${pk}/submit-${k}.js`),
   `${pk}/review-and-publish-GUARDED.js`, `${pk}/manifest.json`,
   `${fx}/01-practice-374-verification.sql`, `${fx}/02-migration-273-verification.sql`, `${fx}/03-migration-274-verification.sql`, `${fx}/274-POST-APPLY-READONLY-verification.sql`,

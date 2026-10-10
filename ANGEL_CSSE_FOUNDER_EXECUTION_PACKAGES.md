@@ -106,10 +106,10 @@ The six trimmed candidates remain in the repository only: never submitted, never
 
 | | |
 |---|---|
-| Exact filename | `supabase/migrations/274_mock_maths_coordinate_answer_normaliser_TEMPLATE_NOT_APPLIED.sql` (to be renamed `…_APPLIED_DO_NOT_RERUN.sql` by me only after you confirm) |
+| Exact filename | `supabase/migrations/274_mock_maths_coordinate_answer_normaliser_APPLIED_DO_NOT_RERUN.sql` (**APPLIED by the Founder 2026-10-10 and verified PASS; DO NOT RERUN.** Renamed from `…_TEMPLATE_NOT_APPLIED.sql`; only the two header comment lines changed, the function is byte-for-byte as run. The as-run SHA256 is recorded in `ANGEL_PROJECT_STATE.md`.) |
 | Exact commit | `7fd556a` |
-| SHA256 | `65205e921742cdeb3a4fa62b33e9793cf883ce79a5855a7084713c7f7e8fb8a1` |
-| Applied by | the Founder only, once. **Not applied by me.** |
+| SHA256 (current file, with the post-application header) | `4be90d301f1bc7debd6d0b7a4f5094ce7df2f12abbf7d109b8933ba560ef870b` |
+| Applied by | the Founder, once (2026-10-10). Not applied by me. |
 | Checked without running | parsed by the real PostgreSQL grammar: one `CREATE FUNCTION`, no errors. The function body is compiled by PostgreSQL when the statement runs; a body error would make the statement fail and leave the current function untouched. |
 
 **Exact function and contract changed:** `public.mock_score_attempt(uuid)`, the Mock scorer's comparison step. It gains **one** branch, reached only when the **stored answer** is a coordinate pair `(x, y)` (two plain decimal numbers in brackets). Nothing else in the function changes: **proved, not asserted.** The live function's code (comments and whitespace removed) has hash `28840b5d4a9b9e0300b040f458123676`; the migration's function with exactly its three declared additions removed (3 declarations, 2 assignments, 1 branch) has the same hash; the migration's function as written has hash `2315004514e2d5a20897d826b8c96519`.
