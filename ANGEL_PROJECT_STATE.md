@@ -326,6 +326,15 @@ Full record: `ANGEL_CSSE_GATE_CLOSURE_VERIFICATION.md` (read-only production ver
 - **Obsolete:** `03-migration-274-verification.sql` (block C syntax error); superseded by the 274-POST-APPLY script.
 - **Migration status:** 273 APPLIED + VERIFIED; 274 APPLIED + VERIFIED; 276 SUPERSEDED, do not run; 268 and 270 NOT AUTHORISED. English Form B sealed, awaiting independent human validation; not activated.
 
+## CSSE Form B independent validation packs prepared (2026-10-10) -- READY FOR REAL HUMAN VALIDATION; NOTHING VALIDATED
+
+- **Packs:** `scripts/output/form-b-validation-packs/english-form-b-validation-pack.html` (26 decision points: 24 reading questions, Compass Rose 13 / 21 marks and The Great Stink 11 / 18 marks, 39 comprehension marks in all, plus Writing Q1 and Q2; 3 section reviews) and `maths-form-b-validation-pack.html` (56 items, 6 / 23 / 27; 1 whole-paper review). Distribution instructions, reviewer capabilities, unresolved concerns and the approval evidence set: `ANGEL_CSSE_FORM_B_VALIDATION_DISTRIBUTION.md`.
+- **Corrected:** the Mathematics pack no longer says the Mock scorer needs exact "(x, y)" spacing or that 274 is pending (274 is applied and verified); it states the live contract. No answer or marking logic changed. Great Stink Q10 correction confirmed present. The 39 marks are stated as this Form B's comprehension marks only, not the official CSSE allocation.
+- **Added:** structured checks per item, passage and whole-form reviews, reviewer capacity (external educator / Founder / other), pack fingerprint, English own-answer box above the reveal, explicit Writing status table (approved content / specification / provisional storyboard / final artwork NOT READY / other pending prompts not included).
+- **Independence:** packs open blank; no decision, name or comment is pre-filled; Claude is not a reviewer and has recorded no decision.
+- **Verification:** 16 of 16 pack tests; real-browser (Edge, headless) test at desktop and tablet sizes covering autosave, export of CSV and JSON, identifier preservation, attribution and export guards (`scripts/test-form-b-packs-in-browser.mjs`). Edge only.
+- **State unchanged:** English Form B and Mathematics Form B remain SEALED, not activated; 268 and 270 not authorised; 276 superseded; no migration run; no production data touched.
+
 ## Known material educational risks (from Wave 1's live-production baseline)
 
 1. **Writing is still thin, though no longer single-shape**: 8 practice-eligible rows across 8

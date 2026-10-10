@@ -292,7 +292,7 @@ Both: **APPLIED, DO NOT RERUN** (`ANGEL_CSSE_GATE_CLOSURE_VERIFICATION.md`). **2
 | # | Gate | State |
 |---|---|---|
 | 1 | Practice candidate governance and publication | 380 Maths candidates pending (374 recommended), approval pack ready; Writing prompts under gate 3 |
-| 2 | Form B independent human validation | English (24 reading questions + Writing Q1/Q2) and Maths (56 items) validator packs prepared; Salmon replacement decision pending |
+| 2 | Form B independent human validation | English (24 reading questions, 39 marks, + Writing Q1/Q2) and Maths (56 items) validator packs READY for distribution (2026-10-10); Salmon replaced (273 applied); no reviewer has yet responded; see `ANGEL_CSSE_FORM_B_VALIDATION_DISTRIBUTION.md` |
 | 3 | Writing prompt approval and publication | 7 prompts pending (migration 268 not authorised) |
 | 4 | Final Q2 production artwork | storyboards and contracts only; specialist pipeline to be selected |
 | 5 | Writing human calibration evidence | kit ready, no thresholds, no claim |
